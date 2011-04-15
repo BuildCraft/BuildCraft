@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft;
 
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.TreeMap;
 
 import net.minecraft.client.Minecraft;
@@ -16,8 +15,6 @@ import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
 public class BlockMachine extends BlockContainer implements ITickListener {
-
-	static Random random = new Random ();
 	
 	int textureTop;
 	int textureFront;
@@ -51,21 +48,9 @@ public class BlockMachine extends BlockContainer implements ITickListener {
     
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
     {
-    	double Dx = i - entityliving.posX;
-    	double Dz = k - entityliving.posZ;
-    	double angle = Math.atan2(Dz, Dx) / Math.PI * 180 + 180;
-    	
-    	int orientation = 0;
-    	
-    	if (angle < 45 || angle > 315) {
-    		orientation = 5;
-    	} else if (angle < 135) {
-    		orientation = 3;
-    	} else if (angle < 225) {
-    		orientation = 4;
-    	} else {
-    		orientation = 2;
-    	}
+		int orientation = Utils.getOrientation(new Position(entityliving.posX,
+				entityliving.posY, entityliving.posZ, 0), new Position(i, j, k,
+				0));    	
     	
     	world.setBlockMetadataWithNotify(i, j, k, orientation);    	
     	
@@ -90,22 +75,22 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		for (int h = 0; h < 2; ++h) {
 			for (int s = 0; s < 4; ++s) {
 				p.moveRight(1);
-				world.setBlockWithNotify(p.i, p.j, p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
 			}
 
 			for (int s = 0; s < 4; ++s) {
 				p.moveForwards(1);
-				world.setBlockWithNotify(p.i, p.j, p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
 			}
 
 			for (int s = 0; s < 4; ++s) {
 				p.moveLeft(1);
-				world.setBlockWithNotify(p.i, p.j, p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
 			}
 
 			for (int s = 0; s < 4; ++s) {
 				p.moveBackwards(1);
-				world.setBlockWithNotify(p.i, p.j, p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
 			}
 			
 			p.j++;

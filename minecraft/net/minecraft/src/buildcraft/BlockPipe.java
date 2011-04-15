@@ -1,12 +1,6 @@
 package net.minecraft.src.buildcraft;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -19,7 +13,7 @@ public class BlockPipe extends BlockContainer {
 	public int texture;
 	
 	public BlockPipe(int i, int j) {
-		super(i, j, Material.rock);
+		super(i, j, Material.ground);
 
 		modelID = ModLoader.getUniqueBlockModelID(mod_BuildCraft.getInstance(),
 				true);
