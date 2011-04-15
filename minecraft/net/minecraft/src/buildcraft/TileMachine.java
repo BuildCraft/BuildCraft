@@ -38,33 +38,31 @@ public class TileMachine extends TileEntity {
 		orientation = corientation;
 	}
 	
-	public void addToPipe(TilePipe pipe, Item item, Position pos) {
-		System.out.println (pos.i + ", " + pos.j + ", " + pos.k);
-		
+	public void addToPipe(TilePipe pipe, Item item, int orientation) {		
 		World world = ModLoader.getMinecraftInstance().theWorld;
 		
+		Position itemPos = new Position (i, j, k, 2);
+		
+		// move to the center of the machine
+		
+		itemPos.i += 0.51;
+		itemPos.j += 0.51;
+		itemPos.k += 0.51;		
+		
+		// move to the beginig of the pipe
+		
+		itemPos.orientation = orientation;
+		itemPos.moveForwards(0.5);
+		itemPos.moveDown(0.1);
+		
 		EntityItem entityitem = new EntityPassiveItem(
-				world, (float) pos.i + 0.5,
-				(float) pos.j + 0.3, (float) pos.k + 0.5 /*0.3*/,
+				world, (float) itemPos.i,
+				(float) itemPos.j, (float) itemPos.k,
 				new ItemStack(item, 1));
 		
-		float f = 0;// world.rand.nextFloat() * 0.8F + 0.1F;
-		float f1 = 0;//world.rand.nextFloat() * 0.8F + 0.1F;
-		float f2 = 0;//world.rand.nextFloat() * 0.8F + 0.1F;
-
-//		EntityItem entityitem = new EntityPassiveItem(world, (float) pos.i + 0.5,
-//				(float) pos.j + 0.5, (float) pos.k + 0.3, new ItemStack(
-//						item, 1));
-
-		float f3 = 0.05F;
-//		entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-//		entityitem.motionY = (float) world.rand.nextGaussian() * f3
-//				+ 0.1F;
-//		entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
 		world.entityJoinedWorld(entityitem);
-		
-		System.out.println (world.entityJoinedWorld(entityitem));
-		pipe.entityEntering(entityitem);		
+				
+		pipe.entityEntering(entityitem, itemPos.orientation);		
 	}
 
 	/**
@@ -140,7 +138,7 @@ public class TileMachine extends TileEntity {
 			return;
 		}
 
-		int blockId = world.getBlockId(pos.i, pos.j, pos.k);
+		int blockId = world.getBlockId((int) pos.i, (int) pos.j, (int) pos.k);
 
 		if (blockId == Block.bedrock.blockID
 				|| blockId == Block.lavaStill.blockID
@@ -198,12 +196,12 @@ public class TileMachine extends TileEntity {
 				Position posPipe = new Position (i, j, k, o);
 				posPipe.moveForwards(1);
 				
-				if (minecraft.theWorld.getBlockId(posPipe.i, posPipe.j,
-						posPipe.k) == pipeId) {
+				if (minecraft.theWorld.getBlockId((int) posPipe.i, (int) posPipe.j,
+						(int) posPipe.k) == pipeId) {
 					added = true;
 					
 					addToPipe ((TilePipe) world.getBlockTileEntity(
-							posPipe.i, posPipe.j, posPipe.k), item, posPipe);
+							(int) posPipe.i, (int) posPipe.j, (int) posPipe.k), item, o);
 					
 					break;
 				}
@@ -231,7 +229,7 @@ public class TileMachine extends TileEntity {
 			}
 		}
 
-		world.setBlock(pos.i, pos.j, pos.k, 0);
+		world.setBlock((int) pos.i, (int) pos.j, (int) pos.k, 0);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
