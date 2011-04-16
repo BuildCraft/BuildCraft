@@ -13,14 +13,13 @@ public class TilePipe extends TileEntity implements ITickListener {
 	World world;
 	
 	class EntityData {	
-		boolean toCenter = true;
-		int orientation;
+		boolean toCenter = true;		
 		EntityItem item;
 		
 		Position position;
 		TilePipe destination;
 		
-		public EntityData (EntityItem citem, int orientation) {
+		public EntityData (EntityItem citem, Orientations orientation) {
 			item = citem;
 			
 			position = new Position (item.posX, item.posY, item.posZ, orientation);
@@ -40,7 +39,7 @@ public class TilePipe extends TileEntity implements ITickListener {
 		zCoord = ck;	
 	}
 	
-	public void entityEntering (EntityItem item, int orientation) {
+	public void entityEntering (EntityItem item, Orientations orientation) {
 		if (travelingEntities.size() == 0) {
 			mod_BuildCraft.getInstance().registerTicksListener(this, 1);
 		}
@@ -55,10 +54,10 @@ public class TilePipe extends TileEntity implements ITickListener {
 		oppositePos.reverseOrientation();
 		
 		// FIXME: This currently volontary avoid 0 and 1 (top and bottom)
-		for (int o = 2; o <= 5; ++o) {
-			if (o != oppositePos.orientation) {
+		for (int o = 0; o <= 5; ++o) {
+			if (Orientations.values()[o] != oppositePos.orientation) {
 				Position newPos = new Position (pos);
-				newPos.orientation = o;
+				newPos.orientation = Orientations.values()[o];
 				newPos.moveForwards(1.0);
 				
 				TileEntity entity = world.getBlockTileEntity((int) newPos.i, (int) newPos.j, (int) newPos.k);
@@ -112,10 +111,10 @@ public class TilePipe extends TileEntity implements ITickListener {
 					
 					data.destination = listOfPossibleMovements.get(i);										
 					
-					data.position.orientation = Utils.getOrientation(
-							new Position(xCoord, yCoord, zCoord, 0),
+					data.position.orientation = Utils.get3dOrientation(
+							new Position(xCoord, yCoord, zCoord),
 							new Position(data.destination.xCoord,
-									data.destination.yCoord, data.destination.zCoord, 0));															
+									data.destination.yCoord, data.destination.zCoord));											
 				}				
 		    } else if (!data.toCenter && endReached (data)) {
 		    	toRemove.add(data);
@@ -127,24 +126,9 @@ public class TilePipe extends TileEntity implements ITickListener {
 	}
 	
 	public boolean middleReached (EntityData entity) {
-		//  If at least two coordinates are in the middle, then that's it (the 
-		//  third one is a constant placed at + 0.4
-		
-		int nbCenter = 0;
-		
-		if (Math.abs(xCoord + 0.5 - entity.position.i) < 0.011) {
-			nbCenter++;
-		}
-		
-		if (Math.abs (yCoord + 0.5 - entity.position.j) < 0.011) {
-			nbCenter++;
-		}
-		
-		if (Math.abs (zCoord + 0.5 - entity.position.k) < 0.011) {
-			nbCenter++;
-		}
-		
-		return nbCenter >= 2;
+		return (Math.abs(xCoord + 0.5 - entity.position.i) < 0.011
+				&& Math.abs (yCoord + 0.4 - entity.position.j) < 0.011
+				&& Math.abs (zCoord + 0.5 - entity.position.k) < 0.011);
 	}
 	
 	public boolean endReached (EntityData entity) {
