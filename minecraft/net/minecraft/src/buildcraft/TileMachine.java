@@ -14,10 +14,11 @@ import net.minecraft.src.mod_BuildCraft;
 
 public class TileMachine extends TileEntity {
 
+	// TODO: use xCoord yCoord zCoord instead
 	int i, j, k;
 	int depth;
 	int step;
-	int orientation;
+	Orientations orientation;
 	
 	boolean isDigging = true;
 
@@ -29,7 +30,7 @@ public class TileMachine extends TileEntity {
 		
 	}
 
-	public TileMachine(int ci, int cj, int ck, int corientation) {
+	public TileMachine(int ci, int cj, int ck, Orientations corientation) {
 		i = ci;
 		j = cj;
 		k = ck;
@@ -38,16 +39,16 @@ public class TileMachine extends TileEntity {
 		orientation = corientation;
 	}
 	
-	public void addToPipe(TilePipe pipe, Item item, int orientation) {		
+	public void addToPipe(TilePipe pipe, Item item, Orientations orientation) {		
 		World world = ModLoader.getMinecraftInstance().theWorld;
 		
-		Position itemPos = new Position (i, j, k, 2);
+		Position itemPos = new Position (i, j, k);
 		
 		// move to the center of the machine
 		
-		itemPos.i += 0.51;
-		itemPos.j += 0.51;
-		itemPos.k += 0.51;		
+		itemPos.i += 0.50;
+		itemPos.j += 0.50;
+		itemPos.k += 0.50;		
 		
 		// move to the beginig of the pipe
 		
@@ -193,15 +194,16 @@ public class TileMachine extends TileEntity {
 			
 			//  TODO: use the same loop for finding a chest?
 			for (int o = 1; o <= 6; ++o) {
-				Position posPipe = new Position (i, j, k, o);
+				Position posPipe = new Position (i, j, k, Orientations.values()[o]);
 				posPipe.moveForwards(1);
 				
 				if (minecraft.theWorld.getBlockId((int) posPipe.i, (int) posPipe.j,
 						(int) posPipe.k) == pipeId) {
 					added = true;
 					
-					addToPipe ((TilePipe) world.getBlockTileEntity(
-							(int) posPipe.i, (int) posPipe.j, (int) posPipe.k), item, o);
+					addToPipe((TilePipe) world.getBlockTileEntity(
+							(int) posPipe.i, (int) posPipe.j, (int) posPipe.k),
+							item, Orientations.values()[o]);
 					
 					break;
 				}
@@ -239,7 +241,8 @@ public class TileMachine extends TileEntity {
 		j = nbttagcompound.getInteger("j");
 		k = nbttagcompound.getInteger("k");
 		depth = nbttagcompound.getInteger("depth");
-		orientation = nbttagcompound.getInteger("orientation");
+		orientation = Orientations.values()[nbttagcompound
+				.getInteger("orientation")];
 		step = nbttagcompound.getInteger("step");
 
 		mod_BuildCraft.getInstance().machineBlock.workingMachines.put(
@@ -253,7 +256,7 @@ public class TileMachine extends TileEntity {
 		nbttagcompound.setInteger("j", j);
 		nbttagcompound.setInteger("k", k);
 		nbttagcompound.setInteger("depth", depth);
-		nbttagcompound.setInteger("orientation", orientation);
+		nbttagcompound.setInteger("orientation", orientation.ordinal());
 		nbttagcompound.setInteger("step", step);
 	}
 

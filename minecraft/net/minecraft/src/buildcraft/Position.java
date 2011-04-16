@@ -4,9 +4,16 @@ public class Position {
 	// FIXME: double is probably not the way to go here - we may have two 
 	// versions of this, for double and for int
 	double i, j, k;
-	int orientation;
+	Orientations orientation;
 	
-	public Position (double ci, double cj, double ck, int corientation) {
+	public Position (double ci, double cj, double ck) {
+		i = ci;
+		j = cj;
+		k = ck;
+		orientation = Orientations.Unknown;
+	}
+	
+	public Position (double ci, double cj, double ck, Orientations corientation) {
 		i = ci;
 		j = cj;
 		k = ck;
@@ -22,16 +29,16 @@ public class Position {
 	
 	public void moveRight (double step) {
 		switch (orientation) {
-		case 2:
+		case ZPos:
 			i = i - step;
 			break;
-		case 3:
+		case ZNeg:
 			i = i + step;    			
 			break;
-		case 4:
+		case XPos:
 			k = k + step;
 			break;
-		case 5:
+		case XNeg:
 			k = k - step;
 			break;
 		}
@@ -43,16 +50,22 @@ public class Position {
 	
 	public void moveForwards (double step) {
 		switch (orientation) {
-		case 2:
+		case YPos:
+			j = j + step;
+			break;
+		case YNeg:
+			j = j - step;
+			break;
+		case ZPos:
 			k = k + step;
 			break;
-		case 3:
+		case ZNeg:
 			k = k - step;	
 			break;
-		case 4:
+		case XPos:
 			i = i + step;
 			break;		
-		case 5:
+		case XNeg:
 			i = i - step;
 			break;
 		}
@@ -64,7 +77,7 @@ public class Position {
 	
 	public void moveUp (double step) {
 		switch (orientation) {
-		case 2: case 3: case 4: case 5:
+		case ZPos: case ZNeg: case XPos: case XNeg:
 			j = j + step;
 			break;
 		}
@@ -77,23 +90,23 @@ public class Position {
 	
 	public void reverseOrientation () {
 		switch (orientation) {
-		case 0:
-			orientation = 1;
+		case YPos:
+			orientation = Orientations.YNeg;
 			break;
-		case 1:
-			orientation = 0;
+		case YNeg:
+			orientation = Orientations.YPos;
 			break;
-		case 2:
-			orientation = 3;
+		case ZPos:
+			orientation = Orientations.ZNeg;
 			break;
-		case 3:
-			orientation = 2;
+		case ZNeg:
+			orientation = Orientations.ZPos;
 			break;
-		case 4:
-			orientation = 5;
+		case XPos:
+			orientation = Orientations.XNeg;
 			break;
-		case 5:
-			orientation = 4;
+		case XNeg:
+			orientation = Orientations.XPos;
 			break;
 		}
 	}

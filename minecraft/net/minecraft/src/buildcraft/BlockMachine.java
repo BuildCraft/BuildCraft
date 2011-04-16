@@ -48,18 +48,17 @@ public class BlockMachine extends BlockContainer implements ITickListener {
     
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
     {
-		int orientation = Utils.getOrientation(new Position(entityliving.posX,
-				entityliving.posY, entityliving.posZ, 0), new Position(i, j, k,
-				0));    	
+		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX,
+				entityliving.posY, entityliving.posZ), new Position(i, j, k));    	
     	
-    	world.setBlockMetadataWithNotify(i, j, k, orientation);    	
+    	world.setBlockMetadataWithNotify(i, j, k, orientation.ordinal());    	
     	
     	registerMachine(world, i, j, k, orientation);
     }
     
     
     
-    public void registerMachine (World world, int i, int j, int k, int orientation) {
+    public void registerMachine (World world, int i, int j, int k, Orientations orientation) {
     	
     	TileMachine newTile = new TileMachine(i, j, k, orientation);
 		workingMachines.put(new BlockIndex(i, j, k),
@@ -143,6 +142,6 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 
 	@Override
 	protected TileEntity getBlockEntity() {		
-		return new TileMachine(0, 0, 0, 0);
+		return new TileMachine(0, 0, 0, Orientations.Unknown);
 	}
 }
