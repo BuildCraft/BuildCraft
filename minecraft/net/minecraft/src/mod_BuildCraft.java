@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -26,9 +27,11 @@ public class mod_BuildCraft extends BaseMod {
 		int pace;
 	}
 	
-	public LinkedList <TickContainer> tickListeners = new LinkedList <TickContainer> ();
+	public HashMap <ITickListener, TickContainer> tickListeners = new HashMap <ITickListener, TickContainer> ();
 	
 	public LinkedList<TickContainer> tickListenersScheduledForAddition = new LinkedList<TickContainer>(); 
+	
+	public LinkedList <ITickListener> tickListenersScheduledForRemoval = new LinkedList <ITickListener> (); 
 	
 	public mod_BuildCraft () {
 		
@@ -51,7 +54,7 @@ public class mod_BuildCraft extends BaseMod {
 		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
 				"##", Character.valueOf('#'), Block.dirt });
 		
-		craftingmanager.addRecipe(new ItemStack(pipeBlock), new Object[] {
+		craftingmanager.addRecipe(new ItemStack(pipeBlock, 30), new Object[] {
 			"#", "#", Character.valueOf('#'), Block.dirt });
 		
 		ModLoader.SetInGameHook(this, true, false);		
@@ -82,14 +85,24 @@ public class mod_BuildCraft extends BaseMod {
     }
     
     public void OnTickInGame(Minecraft minecraft)
-    {    	
-    	tickListeners.addAll(tickListenersScheduledForAddition);
+    {    
+    	for (ITickListener listener : tickListenersScheduledForRemoval) {    	    		
+    		if (tickListeners.containsKey(listener)) {
+    			tickListeners.remove(listener);
+    		}
+    	}
+    	
+    	for (TickContainer container : tickListenersScheduledForAddition) {    		    		    	
+    		tickListeners.put (container.listener, container);    		
+    	}
+    	
     	tickListenersScheduledForAddition.clear ();
+    	tickListenersScheduledForRemoval.clear ();
     	
     	if (minecraft.theWorld.getWorldTime() != lastTick) {    		    		
     		lastTick = minecraft.theWorld.getWorldTime();
     		
-    		for (TickContainer container : tickListeners) {
+    		for (TickContainer container : tickListeners.values()) {
     			if (lastTick % container.pace == 0) {
     				container.listener.tick(minecraft);	
     			}				
@@ -173,4 +186,8 @@ public class mod_BuildCraft extends BaseMod {
 //    		renderblocks.renderStandardBlock(block, i, j, 0);
     	}
     }
+
+	public void unregisterTicksListener(ITickListener tilePipe) {
+		tickListenersScheduledForRemoval.add(tilePipe);
+	}
 }
