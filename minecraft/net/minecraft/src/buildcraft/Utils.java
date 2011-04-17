@@ -26,11 +26,9 @@ public class Utils {
     	double Dy = pos1.j - pos2.j;
     	double angle = Math.atan2(Dy, Dx) / Math.PI * 180 + 180;
     	
-    	System.out.println ("3D ANGLE = " + angle);
-    	
-    	if (angle <= 90) {
+    	if (angle > 45 && angle < 135) {
     		return Orientations.YPos;
-    	} else if (angle >= 270) {
+    	} else if (angle > 225 && angle < 315) {
     		return Orientations.YNeg;
     	} else {
     		return get2dOrientation(pos1, pos2);

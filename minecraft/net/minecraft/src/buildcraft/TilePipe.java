@@ -41,7 +41,7 @@ public class TilePipe extends TileEntity implements ITickListener {
 	
 	public void entityEntering (EntityItem item, Orientations orientation) {
 		if (travelingEntities.size() == 0) {
-			mod_BuildCraft.getInstance().registerTicksListener(this, 1);
+			mod_BuildCraft.getInstance().registerTicksListener(this, 1);			
 		}
 		
 		travelingEntities.add(new EntityData (item, orientation));
@@ -77,12 +77,20 @@ public class TilePipe extends TileEntity implements ITickListener {
 		LinkedList <EntityData> toRemove = new LinkedList <EntityData> ();				
 		
 		for (EntityData data : travelingEntities) {
-			count ++;		
-			data.position.moveForwards(0.01);
-						
-		    data.item.posX = data.position.i;
-			data.item.posY = data.position.j;
-			data.item.posZ = data.position.k;
+			count ++;
+			
+			Position pos = new Position (0, 0, 0, data.position.orientation);
+			pos.moveForwards(0.01);
+			
+			data.item.motionX = pos.i;
+			data.item.motionY = pos.j;
+			data.item.motionZ = pos.k;
+			
+			data.item.moveEntity(pos.i, pos.j, pos.k);
+			
+			data.position.i = data.item.posX;
+			data.position.j = data.item.posY;
+			data.position.k = data.item.posZ;
 						
 			if (data.toCenter && middleReached(data)) {
 				data.toCenter = false;
@@ -100,7 +108,7 @@ public class TilePipe extends TileEntity implements ITickListener {
 					EntityItem entityitem = new EntityItem(world, (float) data.position.i,
 							(float) data.position.j, (float) data.position.k, data.item.item);
 
-					float f3 = 0.00F;
+					float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
 					entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.i;
 					entityitem.motionY = (float) world.rand.nextGaussian() * f3
 							+ + motion.j;
@@ -122,7 +130,11 @@ public class TilePipe extends TileEntity implements ITickListener {
 		    }
 		}	
 		
-		travelingEntities.removeAll(toRemove);			
+		travelingEntities.removeAll(toRemove);		
+		
+		if (travelingEntities.size() == 0) {
+			mod_BuildCraft.getInstance().unregisterTicksListener(this);
+		}
 	}
 	
 	public boolean middleReached (EntityData entity) {

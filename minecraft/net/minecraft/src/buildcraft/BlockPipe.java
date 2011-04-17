@@ -31,7 +31,7 @@ public class BlockPipe extends BlockContainer {
     {
         return false;
     }
-
+    
     public boolean renderAsNormalBlock()
     {
         return false;

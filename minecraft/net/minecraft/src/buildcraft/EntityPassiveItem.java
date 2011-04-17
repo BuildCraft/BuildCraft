@@ -19,6 +19,7 @@ public class EntityPassiveItem extends EntityItem {
     	super (world, d, d1, d2, itemstack);
     	
     	field_804_d = 0;
+    	noClip = true;
     }
 
 	@Override
