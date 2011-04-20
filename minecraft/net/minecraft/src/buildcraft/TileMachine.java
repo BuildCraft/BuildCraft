@@ -8,7 +8,6 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
@@ -64,49 +63,6 @@ public class TileMachine extends TileEntity {
 		world.entityJoinedWorld(entityitem);
 				
 		pipe.entityEntering(entityitem, itemPos.orientation);		
-	}
-
-	/**
-	 * Attempts to add the item in parameter to the chest given in parameter.
-	 * Returns true if succeed, false otherwise.
-	 * 
-	 * @param chest
-	 * @param blockId
-	 */
-	public boolean addToChest(TileEntityChest chest, Item item) {
-		if (item == null) {
-			return false;
-		}
-
-		// First, look for a similar pile
-
-		for (int j = 0; j < chest.getSizeInventory(); ++j) {
-			ItemStack stack = chest.getStackInSlot(j);
-			if (stack != null) {
-				if (stack.getItem() == item
-						&& stack.stackSize < stack.getMaxStackSize()) {
-					stack.stackSize++;
-
-					return true;
-				}
-			}
-		}
-
-		// If none, then create a new thing
-
-		for (int j = 0; j < chest.getSizeInventory(); ++j) {
-			ItemStack stack = chest.getStackInSlot(j);
-			if (stack == null) {
-				stack = new ItemStack(item, 1);
-				chest.setInventorySlotContents(j, stack);
-
-				return true;
-			}
-		}
-
-		// If the chest if full, return false
-
-		return false;
 	}
 	
 	public void work(Minecraft minecraft) {
@@ -169,22 +125,12 @@ public class TileMachine extends TileEntity {
 
 		for (int q = 0; q < itemQuantity; ++q) {
 			boolean added = false;
+			
+			ItemStack items = new ItemStack(item, 1);
 
 			// First, try to add to a nearby chest
-			
-			for (int i_next = i - 1; i_next <= i + 1 && !added; ++i_next) {
-				for (int j_next = j - 1; j_next <= j + 1 && !added; ++j_next) {
-					for (int k_next = k - 1; k_next <= k + 1 && !added; ++k_next) {
 
-						if (minecraft.theWorld.getBlockId(i_next, j_next,
-								k_next) == Block.crate.blockID) {
-							added = addToChest(
-									(TileEntityChest) world.getBlockTileEntity(
-											i_next, j_next, k_next), item);
-						}
-					}
-				}
-			}
+			added = Utils.addToRandomChest(this, Orientations.Unknown, items);
 			
 			// Second, try to add in a nearby pipe
 			// TODO: should list all the pipes and pick up one randomly

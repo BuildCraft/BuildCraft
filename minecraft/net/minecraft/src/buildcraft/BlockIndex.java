@@ -3,7 +3,7 @@ package net.minecraft.src.buildcraft;
 public class BlockIndex implements Comparable<BlockIndex> {
 	int i;
 	int j;
-	int k;
+	int k;	
 
 	public BlockIndex (int ci, int cj, int ck) {
 		i = ci;

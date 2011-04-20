@@ -128,7 +128,7 @@ public class mod_BuildCraft extends BaseMod {
     
     private boolean isPipeConnected (int id) {
 		return id == pipeBlock.blockID || id == machineBlock.blockID
-				|| id == rooterBlock.blockID;
+				|| id == rooterBlock.blockID || id == Block.crate.blockID;
     }
     
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,

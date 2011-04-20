@@ -12,7 +12,6 @@ import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
-import net.minecraft.src.buildcraft.TilePipe.EntityData;
 
 public class TileRooter extends TileEntity implements IInventory, IPipeEntry, ITickListener {
 
