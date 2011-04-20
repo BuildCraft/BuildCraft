@@ -7,6 +7,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
@@ -34,11 +35,11 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 
 	}
 	
-	public TilePipe (int ci, int cj, int ck) {
+	public TilePipe (int i, int j, int k) {
 		this ();
-		xCoord = ci;
-		yCoord = cj;
-		zCoord = ck;	
+		xCoord = i;
+		yCoord = j;
+		zCoord = k;	
 	}
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
@@ -49,23 +50,34 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 		travelingEntities.add(new EntityData (item, orientation));
 	}
 
-	public LinkedList <Orientations> getPossibleMovements (Position pos) {
-		LinkedList <Orientations> result = new LinkedList <Orientations> ();
-		
+	/**
+	 * Returns a list of all possible movements, that is to say adjacent 
+	 * implementers of IPipeEntry or TileEntityChest.
+	 */
+	public LinkedList<Orientations> getPossibleMovements(Position pos,
+			EntityPassiveItem item) {
+		LinkedList<Orientations> result = new LinkedList<Orientations>();
+
 		for (int o = 0; o <= 5; ++o) {
 			if (Orientations.values()[o] != pos.orientation.reverse()) {
-				Position newPos = new Position (pos);
+				Position newPos = new Position(pos);
 				newPos.orientation = Orientations.values()[o];
 				newPos.moveForwards(1.0);
-				
-				TileEntity entity = world.getBlockTileEntity((int) newPos.i, (int) newPos.j, (int) newPos.k);
-				
-				if (entity != null && entity instanceof IPipeEntry) {
+
+				TileEntity entity = world.getBlockTileEntity((int) newPos.i,
+						(int) newPos.j, (int) newPos.k);
+
+				if (entity instanceof IPipeEntry) {
 					result.add(newPos.orientation);
+				} else if (entity instanceof TileEntityChest) {
+					if (Utils.checkAvailableSlot((TileEntityChest) entity,
+							item.item, false)) {
+						result.add(newPos.orientation);
+					}
 				}
 			}
 		}
-		
+
 		return result;
 	}
 	
@@ -79,7 +91,7 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 		
 		LinkedList <EntityData> toRemove = new LinkedList <EntityData> ();				
 		
-		for (EntityData data : travelingEntities) {			
+		for (EntityData data : travelingEntities) {
 			Position motion = new Position (0, 0, 0, data.orientation);
 			motion.moveForwards(0.01);
 						
@@ -89,7 +101,7 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 				data.toCenter = false;
 				
 				LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(
-						xCoord, yCoord, zCoord, data.orientation));
+						xCoord, yCoord, zCoord, data.orientation), data.item);
 				
 				if (listOfPossibleMovements.size() == 0) {					
 					toRemove.add(data);
@@ -114,6 +126,11 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 				if (tile instanceof IPipeEntry) {
 					((IPipeEntry) tile).entityEntering(data.item,
 							data.orientation);
+				} else if (tile instanceof TileEntityChest
+						&& (Utils.checkAvailableSlot((TileEntityChest) tile,
+								data.item.item, true))) {
+
+					data.item.setEntityDead();
 				} else {
 					data.item.toEntityItem(world, data.orientation, 0.1F);
 				}

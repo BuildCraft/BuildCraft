@@ -19,7 +19,7 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 	int textureTop;
 	int textureFront;
 	int textureSide;
-	
+		
 	TreeMap <BlockIndex, TileMachine> workingMachines = new TreeMap <BlockIndex, TileMachine> ();
 	
 	public BlockMachine(int i, int j) {

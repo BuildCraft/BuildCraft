@@ -40,8 +40,6 @@ public class BlockRooter extends BlockContainer {
 
 	
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		System.out.println ("ACTIVATED");
-
 		TileRooter tileRooter = null;
 		
 		if (world.getBlockTileEntity(i, j, k) == null) {
