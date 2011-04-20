@@ -11,7 +11,9 @@ public class EntityPassiveItem extends EntityItem {
 
 	public EntityPassiveItem(World world) {
 		super(world);
-		// TODO Auto-generated constructor stub
+		
+    	field_804_d = 0;
+    	noClip = true;
 	}
 	
     public EntityPassiveItem(World world, double d, double d1, double d2, 
@@ -33,14 +35,20 @@ public class EntityPassiveItem extends EntityItem {
 
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
+		super.readEntityFromNBT(nbttagcompound);
+		posX = nbttagcompound.getDouble("x");
+		posY = nbttagcompound.getDouble("y");
+		posZ = nbttagcompound.getDouble("z");		
 		
+		setPosition (posX, posY, posZ);
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
-		
+		super.writeEntityToNBT(nbttagcompound);
+		nbttagcompound.setDouble("x", posX);
+		nbttagcompound.setDouble("y", posY);
+		nbttagcompound.setDouble("z", posZ);
 	}
 	
 	@Override
@@ -57,5 +65,23 @@ public class EntityPassiveItem extends EntityItem {
 	public boolean handleWaterMovement() {
 		return false;
 	 }
+	
+	public EntityItem toEntityItem (World world, Orientations dir, float speed) {
+		setEntityDead();		
+		
+		Position motion = new Position (0, 0, 0, dir);
+		motion.moveForwards(speed);
+							
+		EntityItem entityitem = new EntityItem(world, posX, posY, posZ, item);
+
+		float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
+		entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.i;
+		entityitem.motionY = (float) world.rand.nextGaussian() * f3
+				+ + motion.j;
+		entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.k;
+		world.entityJoinedWorld(entityitem);
+		
+		return entityitem;
+	}
 
 }
