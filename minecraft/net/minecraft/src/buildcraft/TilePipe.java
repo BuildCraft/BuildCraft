@@ -3,33 +3,35 @@ package net.minecraft.src.buildcraft;
 import java.util.LinkedList;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityItem;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
-public class TilePipe extends TileEntity implements ITickListener {
+public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 	World world;
 	
 	class EntityData {	
-		boolean toCenter = true;		
-		EntityItem item;
+		boolean toCenter = true;
+		EntityPassiveItem item;
 		
-		Position position;
-		TilePipe destination;
+		Orientations orientation;
 		
-		public EntityData (EntityItem citem, Orientations orientation) {
+		public EntityData (EntityPassiveItem citem, Orientations orientation) {
 			item = citem;
 			
-			position = new Position (item.posX, item.posY, item.posZ, orientation);
+			this.orientation = orientation;
 		}
 	}
 	
-	LinkedList <EntityData> travelingEntities = new LinkedList <EntityData> ();		
+	LinkedList <EntityData> travelingEntities = new LinkedList <EntityData> ();
+	LinkedList <EntityData> entitiesToLoad = new LinkedList <EntityData> ();
 	
 	public TilePipe () {
 		world = ModLoader.getMinecraftInstance().theWorld;
+
 	}
 	
 	public TilePipe (int ci, int cj, int ck) {
@@ -39,7 +41,7 @@ public class TilePipe extends TileEntity implements ITickListener {
 		zCoord = ck;	
 	}
 	
-	public void entityEntering (EntityItem item, Orientations orientation) {
+	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
 		if (travelingEntities.size() == 0) {
 			mod_BuildCraft.getInstance().registerTicksListener(this, 1);			
 		}
@@ -47,23 +49,19 @@ public class TilePipe extends TileEntity implements ITickListener {
 		travelingEntities.add(new EntityData (item, orientation));
 	}
 
-	public LinkedList <TilePipe> getPossibleMovements (Position pos) {
-		LinkedList <TilePipe> result = new LinkedList <TilePipe> ();
+	public LinkedList <Orientations> getPossibleMovements (Position pos) {
+		LinkedList <Orientations> result = new LinkedList <Orientations> ();
 		
-		Position oppositePos = new Position (pos);
-		oppositePos.reverseOrientation();
-		
-		// FIXME: This currently volontary avoid 0 and 1 (top and bottom)
 		for (int o = 0; o <= 5; ++o) {
-			if (Orientations.values()[o] != oppositePos.orientation) {
+			if (Orientations.values()[o] != pos.orientation.reverse()) {
 				Position newPos = new Position (pos);
 				newPos.orientation = Orientations.values()[o];
 				newPos.moveForwards(1.0);
 				
 				TileEntity entity = world.getBlockTileEntity((int) newPos.i, (int) newPos.j, (int) newPos.k);
 				
-				if (entity != null && entity instanceof TilePipe) {
-					result.add((TilePipe) entity);
+				if (entity != null && entity instanceof IPipeEntry) {
+					result.add(newPos.orientation);
 				}
 			}
 		}
@@ -72,61 +70,53 @@ public class TilePipe extends TileEntity implements ITickListener {
 	}
 	
 	public void tick(Minecraft minecraft) {
-		int count = 0;
+		for (EntityData data : entitiesToLoad) {
+			world.entityJoinedWorld(data.item);
+			travelingEntities.add(data);
+		}
+		
+		entitiesToLoad.clear();
 		
 		LinkedList <EntityData> toRemove = new LinkedList <EntityData> ();				
 		
-		for (EntityData data : travelingEntities) {
-			count ++;
-			
-			Position pos = new Position (0, 0, 0, data.position.orientation);
-			pos.moveForwards(0.01);
-			
-			data.item.motionX = pos.i;
-			data.item.motionY = pos.j;
-			data.item.motionZ = pos.k;
-			
-			data.item.moveEntity(pos.i, pos.j, pos.k);
-			
-			data.position.i = data.item.posX;
-			data.position.j = data.item.posY;
-			data.position.k = data.item.posZ;
+		for (EntityData data : travelingEntities) {			
+			Position motion = new Position (0, 0, 0, data.orientation);
+			motion.moveForwards(0.01);
 						
+			data.item.moveEntity(motion.i, motion.j, motion.k);
+									
 			if (data.toCenter && middleReached(data)) {
 				data.toCenter = false;
 				
-				LinkedList<TilePipe> listOfPossibleMovements = getPossibleMovements(new Position(
-						xCoord, yCoord, zCoord, data.position.orientation));
+				LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(
+						xCoord, yCoord, zCoord, data.orientation));
 				
-				if (listOfPossibleMovements.size() == 0) {
-					data.item.setEntityDead();
+				if (listOfPossibleMovements.size() == 0) {					
 					toRemove.add(data);
 					
-					Position motion = new Position (0, 0, 0, data.position.orientation);
-					motion.moveForwards(0.1);
-										
-					EntityItem entityitem = new EntityItem(world, (float) data.position.i,
-							(float) data.position.j, (float) data.position.k, data.item.item);
-
-					float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
-					entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.i;
-					entityitem.motionY = (float) world.rand.nextGaussian() * f3
-							+ + motion.j;
-					entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.k;
-					world.entityJoinedWorld(entityitem);
+					data.item.toEntityItem(world, data.orientation, 0.1F);															
 				} else {					
 					int i = world.rand.nextInt(listOfPossibleMovements.size());
 					
-					data.destination = listOfPossibleMovements.get(i);										
-					
-					data.position.orientation = Utils.get3dOrientation(
-							new Position(xCoord, yCoord, zCoord),
-							new Position(data.destination.xCoord,
-									data.destination.yCoord, data.destination.zCoord));											
+					data.orientation = listOfPossibleMovements.get(i);															
 				}				
 		    } else if (!data.toCenter && endReached (data)) {
 		    	toRemove.add(data);
-		    	data.destination.entityEntering(data.item, data.position.orientation);
+		    	
+				Position destPos = new Position(xCoord, yCoord, zCoord,
+						data.orientation);
+		    	
+				destPos.moveForwards(1.0);
+				
+				TileEntity tile = world.getBlockTileEntity((int) destPos.i,
+						(int) destPos.j, (int) destPos.k);
+				
+				if (tile instanceof IPipeEntry) {
+					((IPipeEntry) tile).entityEntering(data.item,
+							data.orientation);
+				} else {
+					data.item.toEntityItem(world, data.orientation, 0.1F);
+				}
 		    }
 		}	
 		
@@ -138,17 +128,63 @@ public class TilePipe extends TileEntity implements ITickListener {
 	}
 	
 	public boolean middleReached (EntityData entity) {
-		return (Math.abs(xCoord + 0.5 - entity.position.i) < 0.011
-				&& Math.abs (yCoord + 0.4 - entity.position.j) < 0.011
-				&& Math.abs (zCoord + 0.5 - entity.position.k) < 0.011);
+		return (Math.abs(xCoord + 0.5 - entity.item.posX) < 0.011
+				&& Math.abs (yCoord + 0.4 - entity.item.posY) < 0.011
+				&& Math.abs (zCoord + 0.5 - entity.item.posZ) < 0.011);
 	}
 	
 	public boolean endReached (EntityData entity) {
-		return entity.position.i > xCoord + 1.0 
-		|| entity.position.i < xCoord
-		|| entity.position.j > yCoord + 1.0
-		|| entity.position.j < yCoord
-		|| entity.position.k > zCoord + 1.0
-		|| entity.position.k < zCoord;
+		return entity.item.posX > xCoord + 1.0 
+		|| entity.item.posX < xCoord
+		|| entity.item.posY > yCoord + 1.0
+		|| entity.item.posY < yCoord
+		|| entity.item.posZ > zCoord + 1.0
+		|| entity.item.posZ < zCoord;
 	}
+	
+	public Position getPosition() {
+		return new Position (xCoord, yCoord, zCoord);
+	}
+	
+	public void readFromNBT(NBTTagCompound nbttagcompound)
+    {
+		super.readFromNBT(nbttagcompound);
+		
+		NBTTagList nbttaglist = nbttagcompound.getTagList("travelingEntities");		
+		
+		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
+			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
+					.tagAt(j);			
+			
+			EntityPassiveItem entity = new EntityPassiveItem (world);
+			entity.readEntityFromNBT(nbttagcompound2);
+			
+			EntityData data = new EntityData(entity,
+					Orientations.values()[nbttagcompound2.getInteger("orientation")]);
+			data.toCenter = nbttagcompound2.getBoolean("toCenter"); 
+			
+			entitiesToLoad.add(data);
+		}
+		
+		if (entitiesToLoad.size() > 0) {
+			mod_BuildCraft.getInstance().registerTicksListener(this, 1);
+		}
+    }
+
+    public void writeToNBT(NBTTagCompound nbttagcompound) {
+    	super.writeToNBT(nbttagcompound);    	
+    
+    	NBTTagList nbttaglist = new NBTTagList();
+    	    	
+    	for (EntityData data : travelingEntities) {    		
+    		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
+    		nbttaglist.setTag(nbttagcompound2);
+    		data.item.writeEntityToNBT(nbttagcompound2);
+    		nbttagcompound2.setBoolean("toCenter", data.toCenter);
+    		nbttagcompound2.setInteger("orientation", data.orientation.ordinal());    		
+    	}
+    	
+    	nbttagcompound.setTag("travelingEntities", nbttaglist);
+    }
+
 }

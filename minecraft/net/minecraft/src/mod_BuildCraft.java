@@ -7,11 +7,13 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.BlockMachine;
 import net.minecraft.src.buildcraft.BlockPipe;
+import net.minecraft.src.buildcraft.BlockRooter;
 import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
 import net.minecraft.src.buildcraft.ItemWoodGear;
 import net.minecraft.src.buildcraft.TileMachine;
 import net.minecraft.src.buildcraft.TilePipe;
+import net.minecraft.src.buildcraft.TileRooter;
 
 public class mod_BuildCraft extends BaseMod {	
 
@@ -21,6 +23,7 @@ public class mod_BuildCraft extends BaseMod {
 	
 	public final BlockMachine machineBlock;
 	public final BlockPipe pipeBlock;
+	public final BlockRooter rooterBlock;
 	
 	private class TickContainer {
 		ITickListener listener;
@@ -44,10 +47,12 @@ public class mod_BuildCraft extends BaseMod {
 		
 		machineBlock = new BlockMachine (120, 1);
 		pipeBlock = new BlockPipe (121, 1);
+		rooterBlock = new BlockRooter (122, 1);
 		
 		ModLoader.AddName(woodGearItem, "Wood Gear");
 		ModLoader.RegisterBlock(machineBlock);
 		ModLoader.RegisterBlock(pipeBlock);
+		ModLoader.RegisterBlock(rooterBlock);
 
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
@@ -57,10 +62,14 @@ public class mod_BuildCraft extends BaseMod {
 		craftingmanager.addRecipe(new ItemStack(pipeBlock, 30), new Object[] {
 			"#", "#", Character.valueOf('#'), Block.dirt });
 		
+		craftingmanager.addRecipe(new ItemStack(rooterBlock, 1), new Object[] {
+			"# ", " #", Character.valueOf('#'), Block.dirt });
+		
 		ModLoader.SetInGameHook(this, true, false);		
 		
 		ModLoader.RegisterTileEntity(TileMachine.class, "Machine");
-		ModLoader.RegisterTileEntity(TilePipe.class, "Pipe");		
+		ModLoader.RegisterTileEntity(TilePipe.class, "Pipe");
+		ModLoader.RegisterTileEntity(TileRooter.class, "Rooter");		
 	}
 		
 	public static mod_BuildCraft getInstance () {
@@ -118,10 +127,12 @@ public class mod_BuildCraft extends BaseMod {
     }
     
     private boolean isPipeConnected (int id) {
-    	return id == pipeBlock.blockID || id == machineBlock.blockID;
+		return id == pipeBlock.blockID || id == machineBlock.blockID
+				|| id == rooterBlock.blockID;
     }
     
-    public boolean RenderWorldBlock(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l)
+	public boolean RenderWorldBlock(RenderBlocks renderblocks,
+			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l)
     {
     	if (block.getRenderType() == pipeBlock.modelID) {    		
     		block.setBlockBounds(0.3F, 0.3F, 0.3F, 0.7F, 0.7F, 0.7F);

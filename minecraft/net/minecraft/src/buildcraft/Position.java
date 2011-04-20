@@ -88,27 +88,4 @@ public class Position {
 		moveUp (-step);
 	}
 	
-	public void reverseOrientation () {
-		switch (orientation) {
-		case YPos:
-			orientation = Orientations.YNeg;
-			break;
-		case YNeg:
-			orientation = Orientations.YPos;
-			break;
-		case ZPos:
-			orientation = Orientations.ZNeg;
-			break;
-		case ZNeg:
-			orientation = Orientations.ZPos;
-			break;
-		case XPos:
-			orientation = Orientations.XNeg;
-			break;
-		case XNeg:
-			orientation = Orientations.XPos;
-			break;
-		}
-	}
-	
 }

@@ -56,7 +56,7 @@ public class TileMachine extends TileEntity {
 		itemPos.moveForwards(0.5);
 		itemPos.moveDown(0.1);
 		
-		EntityItem entityitem = new EntityPassiveItem(
+		EntityPassiveItem entityitem = new EntityPassiveItem(
 				world, (float) itemPos.i,
 				(float) itemPos.j, (float) itemPos.k,
 				new ItemStack(item, 1));

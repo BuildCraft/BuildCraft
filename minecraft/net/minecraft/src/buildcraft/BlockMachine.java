@@ -51,7 +51,7 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX,
 				entityliving.posY, entityliving.posZ), new Position(i, j, k));    	
     	
-    	world.setBlockMetadataWithNotify(i, j, k, orientation.ordinal());    	
+    	world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());    	
     	
     	registerMachine(world, i, j, k, orientation);
     }

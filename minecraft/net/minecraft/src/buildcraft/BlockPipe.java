@@ -20,6 +20,7 @@ public class BlockPipe extends BlockContainer {
 		
 		texture = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/pipe.png");
+		setResistance(3F);
 	}
 	
     public int getRenderType()
