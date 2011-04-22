@@ -11,8 +11,8 @@ public class BlockRooter extends BlockContainer {
 	
 	int textures [];
 	
-	public BlockRooter(int i, int j) {
-		super(i, j, Material.glass);
+	public BlockRooter(int i) {
+		super(i, Material.glass);
 		
 		setHardness(1.5F);
 		setResistance(10F);

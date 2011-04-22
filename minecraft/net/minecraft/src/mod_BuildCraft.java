@@ -6,12 +6,14 @@ import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.BlockMachine;
+import net.minecraft.src.buildcraft.BlockMiningWell;
 import net.minecraft.src.buildcraft.BlockPipe;
 import net.minecraft.src.buildcraft.BlockRooter;
 import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
 import net.minecraft.src.buildcraft.ItemWoodGear;
 import net.minecraft.src.buildcraft.TileMachine;
+import net.minecraft.src.buildcraft.TileMiningWell;
 import net.minecraft.src.buildcraft.TilePipe;
 import net.minecraft.src.buildcraft.TileRooter;
 
@@ -24,6 +26,7 @@ public class mod_BuildCraft extends BaseMod {
 	public final BlockMachine machineBlock;
 	public final BlockPipe pipeBlock;
 	public final BlockRooter rooterBlock;
+	public final BlockMiningWell miningWellBlock;
 	
 	private class TickContainer {
 		ITickListener listener;
@@ -36,42 +39,55 @@ public class mod_BuildCraft extends BaseMod {
 	
 	public LinkedList <ITickListener> tickListenersScheduledForRemoval = new LinkedList <ITickListener> (); 
 	
-	public mod_BuildCraft () {
-		
+	public mod_BuildCraft () {		
 		instance = this;
+		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		woodGearItem = (ItemWoodGear) (new ItemWoodGear(4001)).setIconIndex(
+		woodGearItem = (ItemWoodGear) (new ItemWoodGear(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
 						"/buildcraft_gui/wood_gear.png")).setItemName(
 				"woodGearItem");
-		
-		machineBlock = new BlockMachine (120, 1);
-		pipeBlock = new BlockPipe (121, 1);
-		rooterBlock = new BlockRooter (122, 1);
-		
 		ModLoader.AddName(woodGearItem, "Wood Gear");
+		
+		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
-		ModLoader.RegisterBlock(pipeBlock);
-		ModLoader.RegisterBlock(rooterBlock);
-
-		CraftingManager craftingmanager = CraftingManager.getInstance();
-		
 		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
-				"##", Character.valueOf('#'), Block.dirt });
+			"##", Character.valueOf('#'), Block.dirt });
 		
+		pipeBlock = new BlockPipe (getFirstFreeBlock ());
+		ModLoader.RegisterBlock(pipeBlock);
+		ModLoader.AddName(woodGearItem, "Wood Pipe");
 		craftingmanager.addRecipe(new ItemStack(pipeBlock, 30), new Object[] {
 			"#", "#", Character.valueOf('#'), Block.dirt });
 		
+		rooterBlock = new BlockRooter (getFirstFreeBlock ());
+		ModLoader.RegisterBlock(rooterBlock);
 		craftingmanager.addRecipe(new ItemStack(rooterBlock, 1), new Object[] {
 			"# ", " #", Character.valueOf('#'), Block.dirt });
 		
+		miningWellBlock = new BlockMiningWell (getFirstFreeBlock ());
+		ModLoader.RegisterBlock(miningWellBlock);
+		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
+			"##", "##", Character.valueOf('#'), Block.dirt });
+
 		ModLoader.SetInGameHook(this, true, false);		
 		
 		ModLoader.RegisterTileEntity(TileMachine.class, "Machine");
 		ModLoader.RegisterTileEntity(TilePipe.class, "Pipe");
-		ModLoader.RegisterTileEntity(TileRooter.class, "Rooter");		
+		ModLoader.RegisterTileEntity(TileRooter.class, "Rooter");
+		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");	
 	}
 		
+	private int getFirstFreeBlock() {
+		for (int i = Block.blocksList.length - 1; i >= 0; --i) {
+			if (Block.blocksList [i] == null) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+
 	public static mod_BuildCraft getInstance () {
 		return instance;
 	}
@@ -128,7 +144,8 @@ public class mod_BuildCraft extends BaseMod {
     
     private boolean isPipeConnected (int id) {
 		return id == pipeBlock.blockID || id == machineBlock.blockID
-				|| id == rooterBlock.blockID || id == Block.crate.blockID;
+				|| id == rooterBlock.blockID || id == Block.crate.blockID
+				|| id == miningWellBlock.blockID;
     }
     
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
