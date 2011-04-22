@@ -22,8 +22,8 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		
 	TreeMap <BlockIndex, TileMachine> workingMachines = new TreeMap <BlockIndex, TileMachine> ();
 	
-	public BlockMachine(int i, int j) {
-		super(i, j, Material.rock);
+	public BlockMachine(int i) {
+		super(i, Material.rock);
 		
 		setHardness(1.5F);
 		setResistance(10F);

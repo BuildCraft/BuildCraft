@@ -11,6 +11,8 @@ import net.minecraft.src.World;
 
 public class Utils {
 	
+	public static double PIPE_FLOOR = 0.4;
+	
 	public static Orientations get2dOrientation (Position pos1, Position pos2) {
 		double Dx = pos1.i - pos2.i;
     	double Dz = pos1.k - pos2.k;
@@ -39,6 +41,67 @@ public class Utils {
     	} else {
     		return get2dOrientation(pos1, pos2);
     	}    	
+	}
+	
+	/**
+	 * Look around the tile given in parameter in all 6 position, tries to
+	 * add the items to a random pipe entry around. Will make sure that the 
+	 * location from which the items are coming from (identified by the from 
+	 * parameter) isn't used again so that entities doesn't go backwards. 
+	 * Returns true if successful, false otherwise.
+	 */
+	public static boolean addToRandomPipeEntry (TileEntity tile, Orientations from, ItemStack items) {
+		World w = ModLoader.getMinecraftInstance().theWorld;
+		
+		LinkedList <Orientations> possiblePipes = new LinkedList <Orientations> ();
+		
+		for (int j = 0; j < 6; ++j) {
+			if (from.reverse().ordinal() == j) {
+				continue;
+			}
+			
+			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
+					Orientations.values()[j]);
+			
+			pos.moveForwards(1.0);
+			
+			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.i,
+					(int) pos.j, (int) pos.k);
+			
+			if (pipeEntry instanceof IPipeEntry) {
+				possiblePipes.add(Orientations.values()[j]);
+			}
+		}
+		
+		if (possiblePipes.size() > 0) {
+			int choice = w.rand.nextInt(possiblePipes.size());
+			
+			Position entityPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
+					possiblePipes.get(choice));
+			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
+					possiblePipes.get(choice));
+			
+			entityPos.i += 0.5;
+			entityPos.j += PIPE_FLOOR;
+			entityPos.k += 0.5;
+			
+			entityPos.moveForwards(0.5);
+			
+			pipePos.moveForwards(1.0);
+			
+			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity(
+					(int) pipePos.i, (int) pipePos.j, (int) pipePos.k);
+			
+			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.i,
+					entityPos.j, entityPos.k, items);
+			
+			w.entityJoinedWorld(entity);
+			pipeEntry.entityEntering(entity, entityPos.orientation);
+			
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**

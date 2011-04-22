@@ -12,8 +12,8 @@ public class BlockPipe extends BlockContainer {
 	public int modelID;
 	public int texture;
 	
-	public BlockPipe(int i, int j) {
-		super(i, j, Material.ground);
+	public BlockPipe(int i) {
+		super(i, Material.ground);
 
 		modelID = ModLoader.getUniqueBlockModelID(mod_BuildCraft.getInstance(),
 				true);
