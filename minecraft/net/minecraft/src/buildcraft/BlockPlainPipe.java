@@ -14,26 +14,18 @@ public class BlockPlainPipe extends Block {
 	
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
-
-//		modelID = ModLoader.getUniqueBlockModelID(mod_BuildCraft.getInstance(),
-//				true);
 		
 		texture = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/plain_pipe.png");
 		
-		minX = 0.3;
+		minX = Utils.pipeMinSize;
 		minY = 0.0;
-		minZ = 0.3;
+		minZ = Utils.pipeMinSize;
 		
-		maxX = 0.7;
+		maxX = Utils.pipeMaxSize;
 		maxY = 1.0;
-		maxZ = 0.7;
+		maxZ = Utils.pipeMaxSize;
 	}
-//	
-//    public int getRenderType()
-//    {
-//        return modelID;
-//    }
     
     public boolean isOpaqueCube()
     {

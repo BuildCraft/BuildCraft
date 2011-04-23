@@ -7,30 +7,38 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.buildcraft.BlockCheat;
+import net.minecraft.src.buildcraft.BlockExtractor;
 import net.minecraft.src.buildcraft.BlockMachine;
 import net.minecraft.src.buildcraft.BlockMiningWell;
 import net.minecraft.src.buildcraft.BlockPipe;
 import net.minecraft.src.buildcraft.BlockPlainPipe;
-import net.minecraft.src.buildcraft.BlockRooter;
+import net.minecraft.src.buildcraft.BlockFilter;
 import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
-import net.minecraft.src.buildcraft.ItemWoodGear;
+import net.minecraft.src.buildcraft.TileExtractor;
 import net.minecraft.src.buildcraft.TileMachine;
 import net.minecraft.src.buildcraft.TileMiningWell;
 import net.minecraft.src.buildcraft.TilePipe;
 import net.minecraft.src.buildcraft.TileRooter;
+import net.minecraft.src.buildcraft.Utils;
 
 public class mod_BuildCraft extends BaseMod {	
 
 	private static mod_BuildCraft instance;
 
-	public final ItemWoodGear woodGearItem;
+	public final Item woodenGearItem;
+	public final Item ironGearItem;
 	
 	public final BlockMachine machineBlock;
 	public final BlockPipe pipeBlock;
-	public final BlockRooter rooterBlock;
+	public final BlockFilter filterBlock;
 	public final BlockMiningWell miningWellBlock;
 	public final BlockPlainPipe plainPipeBlock;
+	public final BlockExtractor extractorBlock;
+	public final BlockCheat cheatBlock;
+	
+	public final int pipeModel;
 	
 	private class TickContainer {
 		ITickListener listener;
@@ -45,44 +53,78 @@ public class mod_BuildCraft extends BaseMod {
 	
 	public mod_BuildCraft () {		
 		instance = this;
+		
+		pipeModel = ModLoader.getUniqueBlockModelID(this, true);
+		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		woodGearItem = (ItemWoodGear) (new ItemWoodGear(ModLoader.getUniqueEntityId())).setIconIndex(
+		woodenGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
-						"/buildcraft_gui/wood_gear.png")).setItemName(
-				"woodGearItem");
-		ModLoader.AddName(woodGearItem, "Wood Gear");
+						"/buildcraft_gui/wooden_gear.png")).setItemName(
+				"woodenGearItem");
+		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
+		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
+		ModLoader.AddName(woodenGearItem, "Wooden Gear");
+		
+		ironGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+				ModLoader.addOverride("/gui/items.png",
+						"/buildcraft_gui/iron_gear.png")).setItemName(
+				"ironGearItem");
+		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
+				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
+				Character.valueOf('G'), woodenGearItem });
+		ModLoader.AddName(ironGearItem, "Iron Gear");
 		
 		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
-		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
-			"##", Character.valueOf('#'), Block.dirt });
 		
-		pipeBlock = new BlockPipe (getFirstFreeBlock ());
-		ModLoader.RegisterBlock(pipeBlock);
-		ModLoader.AddName(woodGearItem, "Wood Pipe");
-		craftingmanager.addRecipe(new ItemStack(pipeBlock, 30), new Object[] {
-			"#", "#", Character.valueOf('#'), Block.dirt });
+		pipeBlock = new BlockPipe(getFirstFreeBlock());
+		ModLoader.AddName(pipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
+		ModLoader.RegisterBlock(pipeBlock);		
+		craftingmanager.addRecipe(new ItemStack(pipeBlock, 8), new Object[] {
+				"   ", "PGP", "   ", Character.valueOf('P'), Block.planks,
+				Character.valueOf('G'), Block.glass});
 		
-		rooterBlock = new BlockRooter (getFirstFreeBlock ());
-		ModLoader.RegisterBlock(rooterBlock);
-		craftingmanager.addRecipe(new ItemStack(rooterBlock, 1), new Object[] {
-			"# ", " #", Character.valueOf('#'), Block.dirt });
+		filterBlock = new BlockFilter (getFirstFreeBlock ());
+		ModLoader.RegisterBlock(filterBlock);
+		ModLoader.AddName(filterBlock.setBlockName("filerBlock"), "Filter");
+		craftingmanager.addRecipe(new ItemStack(filterBlock, 1), new Object[] {
+				"ppp", "igi", "ppp", Character.valueOf('p'), pipeBlock,
+				Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'),
+				ironGearItem });		
 		
 		miningWellBlock = new BlockMiningWell (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(miningWellBlock);
+		ModLoader.AddName(miningWellBlock.setBlockName("miningWellBlock"), "Iron Mining Well");
 		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
-			"##", "##", Character.valueOf('#'), Block.dirt });
+			"ipi", "igi", "iPi", Character.valueOf('p'), pipeBlock,
+			Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'),
+			ironGearItem, Character.valueOf('P'),
+			Item.pickaxeSteel });	
 		
 		plainPipeBlock = new BlockPlainPipe (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(plainPipeBlock);
-
+		ModLoader.AddName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
+		
+		extractorBlock = new BlockExtractor(getFirstFreeBlock ());
+		ModLoader.RegisterBlock(extractorBlock);
+		ModLoader.AddName(extractorBlock.setBlockName("extractor"), "Chest Extractor");
+		craftingmanager.addRecipe(new ItemStack(extractorBlock, 1), new Object[] {
+			"  ", "pg ", "  ", Character.valueOf('p'), pipeBlock,
+			Character.valueOf('g'), woodenGearItem });	
+		
+		cheatBlock = new BlockCheat (getFirstFreeBlock());
+		ModLoader.RegisterBlock(cheatBlock);
+		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
+			"# ", "  ", Character.valueOf('#'), Block.dirt });
+		
 		ModLoader.SetInGameHook(this, true, false);		
 		
 		ModLoader.RegisterTileEntity(TileMachine.class, "Machine");
 		ModLoader.RegisterTileEntity(TilePipe.class, "Pipe");
 		ModLoader.RegisterTileEntity(TileRooter.class, "Rooter");
-		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");	
+		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
+		ModLoader.RegisterTileEntity(TileExtractor.class, "Extractor");
 	}
 		
 	private int getFirstFreeBlock() {
@@ -149,46 +191,44 @@ public class mod_BuildCraft extends BaseMod {
     	map.put (EntityPassiveItem.class, new RenderItem());
     }
     
-    private boolean isPipeConnected (int id) {
-		return id == pipeBlock.blockID || id == machineBlock.blockID
-				|| id == rooterBlock.blockID || id == Block.crate.blockID
-				|| id == miningWellBlock.blockID;
-    }
-    
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l)
     {
-    	if (block.getRenderType() == pipeBlock.modelID) {    		
-    		block.setBlockBounds(0.3F, 0.3F, 0.3F, 0.7F, 0.7F, 0.7F);
+		
+    	if (block.getRenderType() == pipeModel) {
+    		float minSize = Utils.pipeMinSize;
+    		float maxSize = Utils.pipeMaxSize;
+    		
+    		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
     		renderblocks.renderStandardBlock(block, i, j, k);
     		
-    		if (isPipeConnected (iblockaccess.getBlockId(i - 1, j, k))) {
-    			block.setBlockBounds(0.0F, 0.3F, 0.3F, 0.3F, 0.7F, 0.7F);
+    		if (Utils.isPipeConnected (iblockaccess.getBlockId(i - 1, j, k))) {
+    			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
     		}
     		
-    		if (isPipeConnected (iblockaccess.getBlockId(i + 1, j, k))) {
-    			block.setBlockBounds(0.7F, 0.3F, 0.3F, 1.0F, 0.7F, 0.7F);
+    		if (Utils.isPipeConnected (iblockaccess.getBlockId(i + 1, j, k))) {
+    			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
     		}
     		
-    		if (isPipeConnected (iblockaccess.getBlockId(i, j - 1, k))) {
-    			block.setBlockBounds(0.3F, 0.0F, 0.3F, 0.7F, 0.3F, 0.7F);
+    		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j - 1, k))) {
+    			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
     		}
     		
-    		if (isPipeConnected (iblockaccess.getBlockId(i, j + 1, k))) {
-    			block.setBlockBounds(0.3F, 0.7F, 0.3F, 0.7F, 1.0F, 0.7F);
+    		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j + 1, k))) {
+    			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
     		}
     		
-    		if (isPipeConnected (iblockaccess.getBlockId(i, j, k - 1))) {
-    			block.setBlockBounds(0.3F, 0.3F, 0.0F, 0.7F, 0.7F, 0.3F);
+    		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j, k - 1))) {
+    			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
     		}
     		
-    		if (isPipeConnected (iblockaccess.getBlockId(i, j, k + 1))) {
-    			block.setBlockBounds(0.3F, 0.3F, 0.7F, 0.7F, 0.7F, 1.0F);
+    		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j, k + 1))) {
+    			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
         		renderblocks.renderStandardBlock(block, i, j, k);
     		}
     		
@@ -202,10 +242,10 @@ public class mod_BuildCraft extends BaseMod {
     
     public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i, int j)
     {
-		if (block.getRenderType() == pipeBlock.modelID) {    
+		if (block.getRenderType() == pipeModel) {			
     		Tessellator tessellator = Tessellator.instance;    		
 
-    		block.setBlockBounds(0.3F, 0.0F, 0.3F, 0.7F, 1.0F, 0.7F);
+    		block.setBlockBounds(Utils.pipeMinSize, 0.0F, Utils.pipeMinSize, Utils.pipeMaxSize, 1.0F, Utils.pipeMaxSize);
             block.setBlockBoundsForItemRender();
             GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
             tessellator.startDrawingQuads();
