@@ -11,7 +11,6 @@ import net.minecraft.src.mod_BuildCraft;
 
 public class TileMiningWell extends TileEntity {
 	
-	boolean done = false;
 	long lastMining = 0;
 	boolean lastPower = false;
 	
@@ -33,11 +32,7 @@ public class TileMiningWell extends TileEntity {
 	/** Dig the next available piece of land if not done. As soon as it 
 	 * reaches bedrock, lava or goes below 0, it's considered done.
 	 */
-	public void dig () {
-		if (done) {
-			return;
-		}
-						
+	public void dig () {						
 		World w = ModLoader.getMinecraftInstance().theWorld;
 		
 		if (w.getWorldTime() - lastMining < 50) {
@@ -57,7 +52,6 @@ public class TileMiningWell extends TileEntity {
 			|| w.getBlockId(xCoord, depth, zCoord) == Block.bedrock.blockID
 			|| w.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
 			||w.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
-				done = true;
 				return;
 			}
 		

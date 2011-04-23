@@ -55,7 +55,7 @@ public class TileRooter extends TileEntity implements IInventory, IPipeEntry, IT
 
 	@Override
 	public String getInvName() {		
-		return null;
+		return "Filters";
 	}
 
 	@Override
