@@ -7,11 +7,11 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraft;
 
 public class TileMiningWell extends TileEntity {
 	
 	boolean done = false;
-	int depth = -1;
 	long lastMining = 0;
 	boolean lastPower = false;
 	
@@ -46,13 +46,10 @@ public class TileMiningWell extends TileEntity {
 		
 		lastMining = w.getWorldTime();
 		
-		if (depth == -1) {
-			depth = yCoord;
-		}
+		int depth = yCoord - 1;
 		
-		depth = depth - 1;
-		
-		while (w.getBlockId(xCoord, depth, zCoord) == 0) {
+		while (w.getBlockId(xCoord, depth, zCoord) == mod_BuildCraft
+						.getInstance().plainPipeBlock.blockID) {
 			depth = depth - 1;
 		}
 		
@@ -65,6 +62,13 @@ public class TileMiningWell extends TileEntity {
 			}
 		
 		int blockId = w.getBlockId(xCoord, depth, zCoord);
+		
+		w.setBlockWithNotify((int) xCoord, (int) depth, (int) zCoord,
+				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
+		
+		if (blockId == 0) {
+			return;
+		}
 		
 		int idDropped = Block.blocksList[blockId]
 				.idDropped(blockId, w.rand);
@@ -79,9 +83,7 @@ public class TileMiningWell extends TileEntity {
 				.quantityDropped(w.rand);
 		
 		ItemStack stack = new ItemStack(item, itemQuantity);
-		
-		w.setBlockWithNotify((int)xCoord, (int) depth, (int) zCoord, 0);
-		
+				
 		if (Utils.addToRandomChest(this, Orientations.Unknown, stack)) {
 			//  The object has been added to a nearby chest.
 			return;

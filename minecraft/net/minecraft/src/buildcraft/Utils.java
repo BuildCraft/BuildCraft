@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
@@ -11,7 +12,17 @@ import net.minecraft.src.World;
 
 public class Utils {
 	
-	public static double PIPE_FLOOR = 0.4;
+	/**
+	 * Depending on the kind of item in the pipe, set the floor at a different
+	 * level to optimize graphical aspect.
+	 */
+	public static float getPipeFloorOf (ItemStack item) {
+		if (item.itemID < Block.blocksList.length) {
+			return 0.4F;
+		} else {
+			return 0.3F;
+		}
+	}
 	
 	public static Orientations get2dOrientation (Position pos1, Position pos2) {
 		double Dx = pos1.i - pos2.i;
@@ -82,7 +93,7 @@ public class Utils {
 					possiblePipes.get(choice));
 			
 			entityPos.i += 0.5;
-			entityPos.j += PIPE_FLOOR;
+			entityPos.j += getPipeFloorOf(items);
 			entityPos.k += 0.5;
 			
 			entityPos.moveForwards(0.5);

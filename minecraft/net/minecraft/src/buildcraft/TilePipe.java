@@ -48,6 +48,12 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 		}
 		
 		travelingEntities.add(new EntityData (item, orientation));
+		
+		// Reajusting Ypos to make sure the object looks like sitting on the
+		// pipe.
+		if (orientation != Orientations.YPos && orientation != Orientations.YNeg) {
+			item.setPosition(item.posX, yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
+		}
 	}
 
 	/**
@@ -100,6 +106,14 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 			if (data.toCenter && middleReached(data)) {
 				data.toCenter = false;
 				
+				// Reajusting Ypos to make sure the object looks like sitting on the
+				// pipe.
+				if (data.orientation == Orientations.YPos && data.orientation == Orientations.YNeg) {
+					data.item.setPosition(data.item.posX,
+							yCoord + Utils.getPipeFloorOf(data.item.item),
+							data.item.posZ);
+				}
+				
 				LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(
 						xCoord, yCoord, zCoord, data.orientation), data.item);
 				
@@ -144,10 +158,11 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 		}
 	}
 	
-	public boolean middleReached (EntityData entity) {
+	public boolean middleReached(EntityData entity) {
 		return (Math.abs(xCoord + 0.5 - entity.item.posX) < 0.011
-				&& Math.abs (yCoord + 0.4 - entity.item.posY) < 0.011
-				&& Math.abs (zCoord + 0.5 - entity.item.posZ) < 0.011);
+				&& Math.abs(yCoord + Utils.getPipeFloorOf(entity.item.item)
+						- entity.item.posY) < 0.011 && Math.abs(zCoord + 0.5
+				- entity.item.posZ) < 0.011);
 	}
 	
 	public boolean endReached (EntityData entity) {
