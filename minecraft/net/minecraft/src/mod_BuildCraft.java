@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.BlockMachine;
 import net.minecraft.src.buildcraft.BlockMiningWell;
 import net.minecraft.src.buildcraft.BlockPipe;
+import net.minecraft.src.buildcraft.BlockPlainPipe;
 import net.minecraft.src.buildcraft.BlockRooter;
 import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
@@ -27,6 +30,7 @@ public class mod_BuildCraft extends BaseMod {
 	public final BlockPipe pipeBlock;
 	public final BlockRooter rooterBlock;
 	public final BlockMiningWell miningWellBlock;
+	public final BlockPlainPipe plainPipeBlock;
 	
 	private class TickContainer {
 		ITickListener listener;
@@ -69,6 +73,9 @@ public class mod_BuildCraft extends BaseMod {
 		ModLoader.RegisterBlock(miningWellBlock);
 		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
 			"##", "##", Character.valueOf('#'), Block.dirt });
+		
+		plainPipeBlock = new BlockPlainPipe (getFirstFreeBlock ());
+		ModLoader.RegisterBlock(plainPipeBlock);
 
 		ModLoader.SetInGameHook(this, true, false);		
 		
@@ -185,33 +192,48 @@ public class mod_BuildCraft extends BaseMod {
         		renderblocks.renderStandardBlock(block, i, j, k);
     		}
     		
-
-    		
-//    		RenderManager.instance.renderEntity(null, 0);
-    		
-//    		renderblocks.renderS
-//    		block.setBlockBounds(0.3F, 0.3F, 0.0F, 0.7F, 0.7F, 1.0F);
-//    		renderblocks.renderStandardBlock(block, i, j, k);
-    		
-//    		block.setBlockBounds(0.0F, 0.3F, 0.3F, 1.0F, 0.7F, 0.7F);
-//    		renderblocks.renderStandardBlock(block, i, j, k);
-    		
     		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     		
     		return true;
-    	}
+    	} 
     	
         return false;
     }
     
     public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i, int j)
     {
-    	if (block.getRenderType() == pipeBlock.modelID) {
-    		renderblocks.renderBlockOnInventory(Block.blockSnow, 1);
-//    		 Tessellator tessellator = Tessellator.instance;
-//    		 
-//    		block.setBlockBounds(0.0F, 0.0F, 0.0F, 0.5F, 0.5F, 1.0F);
-//    		renderblocks.renderStandardBlock(block, i, j, 0);
+		if (block.getRenderType() == pipeBlock.modelID) {    
+    		Tessellator tessellator = Tessellator.instance;    		
+
+    		block.setBlockBounds(0.3F, 0.0F, 0.3F, 0.7F, 1.0F, 0.7F);
+            block.setBlockBoundsForItemRender();
+            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, -1F, 0.0F);
+            renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 1.0F, 0.0F);
+            renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 0.0F, -1F);
+            renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 0.0F, 1.0F);
+            renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(-1F, 0.0F, 0.0F);
+            renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(1.0F, 0.0F, 0.0F);
+            renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, i));
+            tessellator.draw();
+            GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+            block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     	}
     }
 

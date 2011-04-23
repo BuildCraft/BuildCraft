@@ -81,7 +81,8 @@ public class TileRooter extends TileEntity implements IInventory, IPipeEntry, IT
 		
 		newItem.exitDate = w.getWorldTime() + 50;
 		newItem.item = item;			
-		newItem.item.setPosition(xCoord + 0.5, yCoord + 0.4, zCoord + 0.5);
+		newItem.item.setPosition(xCoord + 0.5,
+				yCoord + Utils.getPipeFloorOf(item.item), zCoord + 0.5);
 		newItem.orientation = orientation;
 		
 		itemsInTransit.add(newItem);		
@@ -151,8 +152,9 @@ public class TileRooter extends TileEntity implements IInventory, IPipeEntry, IT
 								
 				itemsToRemove.add(data);
 								
-				Position itemPos = new Position(xCoord + 0.5, yCoord + 0.4,
-						zCoord + 0.5, exit);
+				Position itemPos = new Position(xCoord + 0.5, yCoord
+						+ Utils.getPipeFloorOf(data.item.item), zCoord + 0.5,
+						exit);
 				itemPos.moveForwards(0.61);
 				data.item.setPosition(itemPos.i, itemPos.j, itemPos.k);				
 				
