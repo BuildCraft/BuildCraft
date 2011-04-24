@@ -1,5 +1,7 @@
 package net.minecraft.src.buildcraft;
 
+import java.util.Random;
+
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.Material;
@@ -7,15 +9,12 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraft;
 
-public class BlockPlainPipe extends Block {
-	
-//	public int modelID;
-	public int texture;
+public class BlockPlainPipe extends Block {	
 	
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
 		
-		texture = ModLoader.addOverride("/terrain.png",
+		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/plain_pipe.png");
 		
 		minX = Utils.pipeMinSize;
@@ -36,9 +35,10 @@ public class BlockPlainPipe extends Block {
     {
         return false;
     }
-
-    public int getBlockTextureFromSide(int i) {
-    	return texture;
+    
+    public int idDropped(int i, Random random)
+    {
+        return 0;
     }
     
 }

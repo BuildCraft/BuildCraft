@@ -21,7 +21,8 @@ public class Utils {
 	 * pipe, for e.g. display purpose
 	 */
 	public static boolean isPipeConnected(int id) {
-		return id == mod_BuildCraft.getInstance().pipeBlock.blockID
+		return id == mod_BuildCraft.getInstance().woodenPipeBlock.blockID
+		        || id == mod_BuildCraft.getInstance().ironPipeBlock.blockID
 				|| id == mod_BuildCraft.getInstance().machineBlock.blockID
 				|| id == mod_BuildCraft.getInstance().filterBlock.blockID
 				|| id == Block.crate.blockID

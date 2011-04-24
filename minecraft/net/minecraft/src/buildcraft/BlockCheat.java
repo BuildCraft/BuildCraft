@@ -8,6 +8,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraft;
 
 public class BlockCheat extends Block {
 	
@@ -22,13 +23,29 @@ public class BlockCheat extends Block {
 				
 		createItems (i, j, k, new ItemStack (Item.redstone, 64));
 		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
-		createItems (i, j, k, new ItemStack (Item.ingotGold, 64));
+		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
+		createItems (i, j, k, new ItemStack (Item.ingotGold, 64));		
 		createItems (i, j, k, new ItemStack (Item.paper, 64));
-		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));	
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.redstoneRepeater, 64));
+		createItems (i, j, k, new ItemStack (Item.stick, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironGearItem, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenGearItem, 64));
 		
 		createItems (i, j, k, new ItemStack (Block.glass, 64));
 		createItems (i, j, k, new ItemStack (Block.planks, 64));
 		createItems (i, j, k, new ItemStack (Block.stone, 64));
+		createItems (i, j, k, new ItemStack (Block.crate, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().filterBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().extractorBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().miningWellBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironPipeBlock, 64));
+
+		
 
 		return false;
 		

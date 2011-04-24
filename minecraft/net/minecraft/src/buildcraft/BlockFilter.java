@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -10,12 +11,13 @@ import net.minecraft.src.World;
 public class BlockFilter extends BlockContainer {
 	
 	int textures [];
-	
+
 	public BlockFilter(int i) {
-		super(i, Material.glass);
+		super(i, Material.ground);
 		
 		setHardness(1.5F);
 		setResistance(10F);
+		setLightValue(0.9375F);
 		textures = new int [6];
 		
 		textures [0] = ModLoader.addOverride("/terrain.png",
@@ -32,6 +34,11 @@ public class BlockFilter extends BlockContainer {
 		"/buildcraft_gui/filter_5.png");
 
 	}
+	
+	public float getBlockBrightness	(IBlockAccess iblockaccess, int i, int j, int k)
+    {
+        return 10;
+    }
 	
 	@Override
 	public int getBlockTextureFromSide (int i) {

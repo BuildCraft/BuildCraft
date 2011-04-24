@@ -136,7 +136,7 @@ public class TileMachine extends TileEntity {
 			// TODO: should list all the pipes and pick up one randomly
 			// factorize that code somewhere (needed for the pipes too).
 			
-			int pipeId = mod_BuildCraft.getInstance().pipeBlock.blockID;
+			int pipeId = mod_BuildCraft.getInstance().woodenPipeBlock.blockID;
 			
 			//  TODO: use the same loop for finding a chest?
 			for (int o = 1; o <= 6; ++o) {
