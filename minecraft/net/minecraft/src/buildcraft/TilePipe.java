@@ -35,13 +35,6 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 
 	}
 	
-	public TilePipe (int i, int j, int k) {
-		this ();
-		xCoord = i;
-		yCoord = j;
-		zCoord = k;	
-	}
-	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
 		if (travelingEntities.size() == 0) {
 			mod_BuildCraft.getInstance().registerTicksListener(this, 1);			
@@ -114,18 +107,17 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 							data.item.posZ);
 				}
 				
-				LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(
-						xCoord, yCoord, zCoord, data.orientation), data.item);
+				Orientations nextOrientation = resolveDestination (data);
 				
-				if (listOfPossibleMovements.size() == 0) {					
+				if (nextOrientation == Orientations.Unknown) {
 					toRemove.add(data);
-					
-					data.item.toEntityItem(world, data.orientation, 0.1F);															
-				} else {					
-					int i = world.rand.nextInt(listOfPossibleMovements.size());
-					
-					data.orientation = listOfPossibleMovements.get(i);															
-				}				
+
+					data.item.toEntityItem(world, data.orientation, 0.1F);
+				} else {
+					data.orientation = nextOrientation;
+				}
+				
+				
 		    } else if (!data.toCenter && endReached (data)) {
 		    	toRemove.add(data);
 		    	
@@ -217,6 +209,19 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
     	}
     	
     	nbttagcompound.setTag("travelingEntities", nbttaglist);
+    }
+    
+    protected Orientations resolveDestination (EntityData data) {
+    	LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(
+				xCoord, yCoord, zCoord, data.orientation), data.item);
+		
+		if (listOfPossibleMovements.size() == 0) {					
+			return Orientations.Unknown;													
+		} else {					
+			int i = world.rand.nextInt(listOfPossibleMovements.size());
+			
+			return listOfPossibleMovements.get(i);															
+		}				
     }
 
 }
