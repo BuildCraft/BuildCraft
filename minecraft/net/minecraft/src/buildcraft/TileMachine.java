@@ -132,30 +132,9 @@ public class TileMachine extends TileEntity {
 
 			added = Utils.addToRandomChest(this, Orientations.Unknown, items);
 			
-			// Second, try to add in a nearby pipe
-			// TODO: should list all the pipes and pick up one randomly
-			// factorize that code somewhere (needed for the pipes too).
-			
-			int pipeId = mod_BuildCraft.getInstance().woodenPipeBlock.blockID;
-			
-			//  TODO: use the same loop for finding a chest?
-			for (int o = 1; o <= 6; ++o) {
-				Position posPipe = new Position (i, j, k, Orientations.values()[o]);
-				posPipe.moveForwards(1);
-				
-				if (minecraft.theWorld.getBlockId((int) posPipe.i, (int) posPipe.j,
-						(int) posPipe.k) == pipeId) {
-					added = true;
-					
-					addToPipe((TilePipe) world.getBlockTileEntity(
-							(int) posPipe.i, (int) posPipe.j, (int) posPipe.k),
-							item, Orientations.values()[o]);
-					
-					break;
-				}
-			}
-			
-			
+			if (!added) {
+				added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, items);
+			}			
 			
 			// Last, throw the object away
 

@@ -20,8 +20,7 @@ public class TileMiningWell extends TileEntity {
 	
 	public void checkPower () {
 		World w = ModLoader.getMinecraftInstance().theWorld;
-		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-		System.out.println (w.isBlockGettingPowered(xCoord, yCoord, zCoord));
+		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);		
 		if (lastPower != currentPower) {
 			dig ();
 		}

@@ -44,7 +44,6 @@ public class BlockMiningWell extends BlockContainer {
     	World w = ModLoader.getMinecraftInstance().theWorld;
     	Boolean b1 = w.isBlockGettingPowered(i, j, k);
     	Boolean b2 = w.isBlockIndirectlyGettingPowered(i, j, k);
-    	System.out.println ("CHANGE " + i + ", " + j + ", " + k + ", " + l + ", " + b1 + ", " + b2);
     	TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
     	
     	if (tile == null) {
