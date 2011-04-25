@@ -11,7 +11,7 @@ import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
-public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
+public abstract class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 	World world;
 	
 	class EntityData {	
@@ -46,6 +46,16 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 		// pipe.
 		if (orientation != Orientations.YPos && orientation != Orientations.YNeg) {
 			item.setPosition(item.posX, yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
+		}
+		
+		// Readjust the speed
+		
+		if (item.speed > Utils.pipeNormalSpeed) {
+			item.speed = item.speed - Utils.pipeNormalSpeed;
+		}
+		
+		if (item.speed < Utils.pipeNormalSpeed) {
+			item.speed = Utils.pipeNormalSpeed;
 		}
 	}
 
@@ -92,27 +102,25 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 		
 		for (EntityData data : travelingEntities) {
 			Position motion = new Position (0, 0, 0, data.orientation);
-			motion.moveForwards(0.01);
+			motion.moveForwards(data.item.speed);			
 						
 			data.item.moveEntity(motion.i, motion.j, motion.k);
 									
 			if (data.toCenter && middleReached(data)) {
 				data.toCenter = false;
 				
-				// Reajusting Ypos to make sure the object looks like sitting on the
-				// pipe.
-				if (data.orientation == Orientations.YPos && data.orientation == Orientations.YNeg) {
-					data.item.setPosition(data.item.posX,
-							yCoord + Utils.getPipeFloorOf(data.item.item),
-							data.item.posZ);
-				}
-				
+				// Reajusting to the middle 
+
+				data.item.setPosition(xCoord + 0.5,
+						yCoord + Utils.getPipeFloorOf(data.item.item),
+						zCoord + + 0.5);
+
 				Orientations nextOrientation = resolveDestination (data);
 				
 				if (nextOrientation == Orientations.Unknown) {
 					toRemove.add(data);
 
-					data.item.toEntityItem(world, data.orientation, 0.1F);
+					data.item.toEntityItem(world, data.orientation);
 				} else {
 					data.orientation = nextOrientation;
 				}
@@ -138,7 +146,7 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 
 					data.item.setEntityDead();
 				} else {
-					data.item.toEntityItem(world, data.orientation, 0.1F);
+					data.item.toEntityItem(world, data.orientation);
 				}
 		    }
 		}	
@@ -151,10 +159,11 @@ public class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
 	}
 	
 	public boolean middleReached(EntityData entity) {
-		return (Math.abs(xCoord + 0.5 - entity.item.posX) < 0.011
+		float middleLimit = entity.item.speed * 1.01F;
+		return (Math.abs(xCoord + 0.5 - entity.item.posX) < middleLimit
 				&& Math.abs(yCoord + Utils.getPipeFloorOf(entity.item.item)
-						- entity.item.posY) < 0.011 && Math.abs(zCoord + 0.5
-				- entity.item.posZ) < 0.011);
+						- entity.item.posY) < middleLimit && Math.abs(zCoord + 0.5
+				- entity.item.posZ) < middleLimit);
 	}
 	
 	public boolean endReached (EntityData entity) {

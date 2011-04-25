@@ -165,7 +165,7 @@ public class TileRooter extends TileEntity implements IInventory, IPipeEntry, IT
 				if (tile instanceof IPipeEntry) {														
 					((IPipeEntry) tile).entityEntering(data.item, exit);					
 				} else {
-					data.item.toEntityItem(w, exit, 0.1F);
+					data.item.toEntityItem(w, exit);
 				}
 			}
 		}
