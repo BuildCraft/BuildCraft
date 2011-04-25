@@ -15,19 +15,17 @@ public class Utils {
 	
 	public static final float pipeMinSize = 0.25F;
 	public static final float pipeMaxSize = 0.75F;
+	public static float pipeNormalSpeed = 0.01F;
 	
 	/**
 	 * Return True if the item id is supposed to be connected to the
 	 * pipe, for e.g. display purpose
 	 */
 	public static boolean isPipeConnected(int id) {
-		return id == mod_BuildCraft.getInstance().woodenPipeBlock.blockID
-		        || id == mod_BuildCraft.getInstance().ironPipeBlock.blockID
+		return Block.blocksList [id] instanceof BlockPipe		        
 				|| id == mod_BuildCraft.getInstance().machineBlock.blockID
-				|| id == mod_BuildCraft.getInstance().filterBlock.blockID
 				|| id == Block.crate.blockID
-				|| id == mod_BuildCraft.getInstance().miningWellBlock.blockID
-				|| id == mod_BuildCraft.getInstance().extractorBlock.blockID;
+				|| id == mod_BuildCraft.getInstance().miningWellBlock.blockID;
 	}
 
 	

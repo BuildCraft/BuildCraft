@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
@@ -10,7 +11,7 @@ public class BlockIronPipe extends BlockPipe {
 	
 	
 	public BlockIronPipe(int i) {
-		super(i);
+		super(i, Material.iron);
 
 		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/iron_pipe.png");

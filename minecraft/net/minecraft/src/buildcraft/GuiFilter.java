@@ -18,9 +18,9 @@ public class GuiFilter extends GuiContainer {
 		public CraftingInv (IInventory playerInventory, IInventory filterInventory) {
 			for(int k = 0; k < 6; k++)
 	        {
-	            for(int j1 = 0; j1 < 8; j1++)
+	            for(int j1 = 0; j1 < 9; j1++)
 	            {
-	                addSlot(new Slot(filterInventory, j1 + k * 8, 8 + 18 + j1 * 18, 18 + k * 18));
+	                addSlot(new Slot(filterInventory, j1 + k * 9, 8 + j1 * 18, 18 + k * 18));
 	            }
 
 	        }
@@ -58,12 +58,7 @@ public class GuiFilter extends GuiContainer {
     protected void drawGuiContainerForegroundLayer()
     {
         fontRenderer.drawString(filterInventory.getInvName(), 8, 6, 0x404040);
-        fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97, 0x404040);
-        
-        for(int k = 0; k < 6; k++)
-        {
-			fontRenderer.drawString(k + "", 16, 24 + k * 18, 0x404040);
-        }
+        fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97, 0x404040);        
     }
 	
 	@Override

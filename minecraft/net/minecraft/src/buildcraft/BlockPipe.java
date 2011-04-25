@@ -7,9 +7,9 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
-public class BlockPipe extends BlockContainer {
+public abstract class BlockPipe extends BlockContainer {
 	
-	public BlockPipe(int i) {
+	public BlockPipe(int i, Material material) {
 		super(i, Material.ground);
 
 		setResistance(3F);
@@ -38,10 +38,8 @@ public class BlockPipe extends BlockContainer {
     }
 
 	@Override
-	protected TileEntity getBlockEntity() {
-		return new TilePipe ();
-	}
-
+	protected abstract TileEntity getBlockEntity();
+	
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
  {
 		float xMin = Utils.pipeMinSize, xMax = Utils.pipeMaxSize, 

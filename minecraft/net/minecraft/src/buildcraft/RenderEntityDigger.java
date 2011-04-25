@@ -21,15 +21,15 @@ public class RenderEntityDigger extends Render {
 	public void doRender(Entity entity, double d, double d1, double d2,
 			float f, float f1) {
 		
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float)d, (float)d1, (float)d2);
-        loadTexture("/terrain.png");
-        Block block = Block.blocksList[entityfallingsand.blockID];
-        World world = entityfallingsand.func_465_i();
-        GL11.glDisable(2896 /*GL_LIGHTING*/);
-        blockRender.renderBlockFallingSand(block, world, MathHelper.floor_double(entityfallingsand.posX), MathHelper.floor_double(entityfallingsand.posY), MathHelper.floor_double(entityfallingsand.posZ));
-        GL11.glEnable(2896 /*GL_LIGHTING*/);
-        GL11.glPopMatrix();
+//        GL11.glPushMatrix();
+//        GL11.glTranslatef((float)d, (float)d1, (float)d2);
+//        loadTexture("/terrain.png");
+//        Block block = Block.blocksList[entityfallingsand.blockID];
+//        World world = entityfallingsand.func_465_i();
+//        GL11.glDisable(2896 /*GL_LIGHTING*/);
+//        blockRender.renderBlockFallingSand(block, world, MathHelper.floor_double(entityfallingsand.posX), MathHelper.floor_double(entityfallingsand.posY), MathHelper.floor_double(entityfallingsand.posZ));
+//        GL11.glEnable(2896 /*GL_LIGHTING*/);
+//        GL11.glPopMatrix();
 
 	}
 

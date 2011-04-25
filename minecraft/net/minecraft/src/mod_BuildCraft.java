@@ -8,25 +8,29 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.BlockCheat;
-import net.minecraft.src.buildcraft.BlockExtractor;
+import net.minecraft.src.buildcraft.BlockDiamondPipe;
+import net.minecraft.src.buildcraft.BlockGoldenPipe;
 import net.minecraft.src.buildcraft.BlockIronPipe;
 import net.minecraft.src.buildcraft.BlockMachine;
 import net.minecraft.src.buildcraft.BlockMiningWell;
 import net.minecraft.src.buildcraft.BlockPipe;
 import net.minecraft.src.buildcraft.BlockPlainPipe;
-import net.minecraft.src.buildcraft.BlockFilter;
+import net.minecraft.src.buildcraft.BlockStonePipe;
 import net.minecraft.src.buildcraft.BlockWoodenPipe;
 import net.minecraft.src.buildcraft.EntityDigger;
 import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
 import net.minecraft.src.buildcraft.Orientations;
 import net.minecraft.src.buildcraft.RenderEntityDigger;
-import net.minecraft.src.buildcraft.TileExtractor;
+import net.minecraft.src.buildcraft.TileDiamondPipe;
+import net.minecraft.src.buildcraft.TileGoldenPipe;
 import net.minecraft.src.buildcraft.TileIronPipe;
 import net.minecraft.src.buildcraft.TileMachine;
 import net.minecraft.src.buildcraft.TileMiningWell;
 import net.minecraft.src.buildcraft.TilePipe;
 import net.minecraft.src.buildcraft.TileRooter;
+import net.minecraft.src.buildcraft.TileStonePipe;
+import net.minecraft.src.buildcraft.TileWoodenPipe;
 import net.minecraft.src.buildcraft.Utils;
 
 public class mod_BuildCraft extends BaseMod {	
@@ -37,17 +41,22 @@ public class mod_BuildCraft extends BaseMod {
 	public final Item ironGearItem;
 	
 	public final BlockMachine machineBlock;
-	public final BlockWoodenPipe woodenPipeBlock;
-	public final BlockIronPipe ironPipeBlock;
-	public final BlockFilter filterBlock;
+	
 	public final BlockMiningWell miningWellBlock;
+	
+	public final BlockWoodenPipe woodenPipeBlock;
+	public final BlockStonePipe stonePipeBlock;
+	public final BlockIronPipe ironPipeBlock;
+	public final BlockGoldenPipe goldenPipeBlock;
+	public final BlockDiamondPipe diamondPipeBlock;
 	public final BlockPlainPipe plainPipeBlock;
-	public final BlockExtractor extractorBlock;
+	
 	public final BlockCheat cheatBlock;
 	
 	public final int pipeModel;
-	public final int plainIronTexture;
 	
+	public final int plainIronTexture;
+	public final int [] diamondTextures = new int [6];
 	
 	private class TickContainer {
 		ITickListener listener;
@@ -82,18 +91,20 @@ public class mod_BuildCraft extends BaseMod {
 		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
 				Character.valueOf('G'), woodenGearItem });
-		ModLoader.AddName(ironGearItem, "Iron Gear");
-		
-		machineBlock = new BlockMachine (getFirstFreeBlock ());
-		ModLoader.RegisterBlock(machineBlock);
-		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
-			"ss", "  ", Character.valueOf('s'), Block.dirt });
+		ModLoader.AddName(ironGearItem, "Iron Gear");		
 		
 		woodenPipeBlock = new BlockWoodenPipe(getFirstFreeBlock());
 		ModLoader.AddName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
 		ModLoader.RegisterBlock(woodenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(woodenPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.planks,
+				Character.valueOf('G'), Block.glass});
+		
+		stonePipeBlock = new BlockStonePipe(getFirstFreeBlock());
+		ModLoader.AddName(stonePipeBlock.setBlockName("stonePipe"), "Stone Pipe");
+		ModLoader.RegisterBlock(stonePipeBlock);		
+		craftingmanager.addRecipe(new ItemStack(stonePipeBlock, 8), new Object[] {
+				"   ", "PGP", "   ", Character.valueOf('P'), Block.cobblestone,
 				Character.valueOf('G'), Block.glass});
 		
 		ironPipeBlock = new BlockIronPipe(getFirstFreeBlock());
@@ -103,13 +114,20 @@ public class mod_BuildCraft extends BaseMod {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotIron,
 				Character.valueOf('G'), Block.glass});
 		
-		filterBlock = new BlockFilter (getFirstFreeBlock ());
-		ModLoader.RegisterBlock(filterBlock);
-		ModLoader.AddName(filterBlock.setBlockName("filerBlock"), "Filter");
-		craftingmanager.addRecipe(new ItemStack(filterBlock, 1), new Object[] {
-				"ppp", "igi", "ppp", Character.valueOf('p'), ironPipeBlock,
-				Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'),
-				ironGearItem });		
+		goldenPipeBlock = new BlockGoldenPipe(getFirstFreeBlock());
+		ModLoader.AddName(goldenPipeBlock.setBlockName("goldenPipe"), "Golden Pipe");
+		ModLoader.RegisterBlock(goldenPipeBlock);		
+		craftingmanager.addRecipe(new ItemStack(goldenPipeBlock, 8), new Object[] {
+				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotGold,
+				Character.valueOf('G'), Block.glass});
+		
+		diamondPipeBlock = new BlockDiamondPipe(getFirstFreeBlock());
+		ModLoader.AddName(diamondPipeBlock.setBlockName("diamondPipe"), "Diamond Pipe");
+		ModLoader.RegisterBlock(diamondPipeBlock);		
+		craftingmanager.addRecipe(new ItemStack(diamondPipeBlock, 8), new Object[] {
+				"   ", "PGP", "   ", Character.valueOf('P'), Item.diamond,
+				Character.valueOf('G'), Block.glass});
+		
 		
 		miningWellBlock = new BlockMiningWell (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(miningWellBlock);
@@ -124,12 +142,10 @@ public class mod_BuildCraft extends BaseMod {
 		ModLoader.RegisterBlock(plainPipeBlock);
 		ModLoader.AddName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
 		
-		extractorBlock = new BlockExtractor(getFirstFreeBlock ());
-		ModLoader.RegisterBlock(extractorBlock);
-		ModLoader.AddName(extractorBlock.setBlockName("extractor"), "Chest Extractor");
-		craftingmanager.addRecipe(new ItemStack(extractorBlock, 1), new Object[] {
-			"  ", "pg ", "  ", Character.valueOf('p'), woodenPipeBlock,
-			Character.valueOf('g'), woodenGearItem });	
+		machineBlock = new BlockMachine (getFirstFreeBlock ());
+		ModLoader.RegisterBlock(machineBlock);
+		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
+			"ss", "  ", Character.valueOf('s'), Block.dirt });
 		
 		cheatBlock = new BlockCheat (getFirstFreeBlock());
 		ModLoader.RegisterBlock(cheatBlock);
@@ -138,15 +154,23 @@ public class mod_BuildCraft extends BaseMod {
 		
 		ModLoader.SetInGameHook(this, true, false);		
 		
-		ModLoader.RegisterTileEntity(TileMachine.class, "Machine");
-		ModLoader.RegisterTileEntity(TilePipe.class, "Pipe");
+		ModLoader.RegisterTileEntity(TileMachine.class, "Machine");		
 		ModLoader.RegisterTileEntity(TileRooter.class, "Rooter");
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
-		ModLoader.RegisterTileEntity(TileExtractor.class, "Extractor");
-		ModLoader.RegisterTileEntity(TileIronPipe.class, "IronPipe");		
+		ModLoader.RegisterTileEntity(TileWoodenPipe.class, "WoodenPipe");
+		ModLoader.RegisterTileEntity(TileStonePipe.class, "StonePipe");
+		ModLoader.RegisterTileEntity(TileIronPipe.class, "IronPipe");
+		ModLoader.RegisterTileEntity(TileGoldenPipe.class, "GoldenPipe");
+		ModLoader.RegisterTileEntity(TileDiamondPipe.class, "DiamondPipe");
+			
 		
 		plainIronTexture = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/plain_iron_pipe.png");
+		
+		for (int j = 0; j < 6; ++j) {
+			diamondTextures [j] = ModLoader.addOverride("/terrain.png",
+					"/buildcraft_gui/diamond_pipe_" + j + ".png");
+		}
 	}
 		
 	private int getFirstFreeBlock() {
@@ -231,6 +255,8 @@ public class mod_BuildCraft extends BaseMod {
     		if (Utils.isPipeConnected (iblockaccess.getBlockId(i - 1, j, k))) {
     			if (block == ironPipeBlock && metadata != Orientations.XNeg.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
+    			} else if (block == diamondPipeBlock) {
+    				block.blockIndexInTexture = diamondTextures [Orientations.XNeg.ordinal()];
     			}
     			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
@@ -240,6 +266,8 @@ public class mod_BuildCraft extends BaseMod {
     		if (Utils.isPipeConnected (iblockaccess.getBlockId(i + 1, j, k))) {
     			if (block == ironPipeBlock && metadata != Orientations.XPos.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
+    			} else if (block == diamondPipeBlock) {
+    				block.blockIndexInTexture = diamondTextures [Orientations.XPos.ordinal()];
     			}
     			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
@@ -249,6 +277,8 @@ public class mod_BuildCraft extends BaseMod {
     		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j - 1, k))) {
     			if (block == ironPipeBlock && metadata != Orientations.YNeg.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
+    			} else if (block == diamondPipeBlock) {
+    				block.blockIndexInTexture = diamondTextures [Orientations.YNeg.ordinal()];
     			}
     			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
@@ -258,6 +288,8 @@ public class mod_BuildCraft extends BaseMod {
     		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j + 1, k))) {
     			if (block == ironPipeBlock && metadata != Orientations.YPos.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
+    			} else if (block == diamondPipeBlock) {
+    				block.blockIndexInTexture = diamondTextures [Orientations.YPos.ordinal()];
     			}
     			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
@@ -267,6 +299,8 @@ public class mod_BuildCraft extends BaseMod {
     		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j, k - 1))) {
     			if (block == ironPipeBlock && metadata != Orientations.ZNeg.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
+    			} else if (block == diamondPipeBlock) {
+    				block.blockIndexInTexture = diamondTextures [Orientations.ZNeg.ordinal()];
     			}
     			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
         		renderblocks.renderStandardBlock(block, i, j, k);
@@ -276,6 +310,8 @@ public class mod_BuildCraft extends BaseMod {
     		if (Utils.isPipeConnected (iblockaccess.getBlockId(i, j, k + 1))) {
     			if (block == ironPipeBlock && metadata != Orientations.ZPos.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
+    			} else if (block == diamondPipeBlock) {
+    				block.blockIndexInTexture = diamondTextures [Orientations.ZPos.ordinal()];
     			}
     			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
         		renderblocks.renderStandardBlock(block, i, j, k);

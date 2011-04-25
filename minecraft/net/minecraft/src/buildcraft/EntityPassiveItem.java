@@ -9,6 +9,8 @@ import net.minecraft.src.World;
 
 public class EntityPassiveItem extends EntityItem {
 
+	public float speed = 0.01F;
+	
 	public EntityPassiveItem(World world) {
 		super(world);
 		
@@ -39,6 +41,7 @@ public class EntityPassiveItem extends EntityItem {
 		posX = nbttagcompound.getDouble("x");
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");		
+		speed = nbttagcompound.getFloat("speed");
 		
 		setPosition (posX, posY, posZ);
 	}
@@ -49,6 +52,7 @@ public class EntityPassiveItem extends EntityItem {
 		nbttagcompound.setDouble("x", posX);
 		nbttagcompound.setDouble("y", posY);
 		nbttagcompound.setDouble("z", posZ);
+		nbttagcompound.setFloat("speed", speed);
 	}
 	
 	@Override
@@ -66,11 +70,11 @@ public class EntityPassiveItem extends EntityItem {
 		return false;
 	 }
 	
-	public EntityItem toEntityItem (World world, Orientations dir, float speed) {
+	public EntityItem toEntityItem (World world, Orientations dir) {
 		setEntityDead();		
 		
 		Position motion = new Position (0, 0, 0, dir);
-		motion.moveForwards(speed);
+		motion.moveForwards(0.1 + speed * 2F);
 							
 		EntityItem entityitem = new EntityItem(world, posX, posY, posZ, item);
 

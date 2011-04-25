@@ -30,9 +30,9 @@ public class EntityDigger extends Entity {
 
 	}
 
-	@Override
-	public AxisAlignedBB getCollisionBox(Entity entity)
-    {
-        return null;
-    }
+//	@Override
+//	public AxisAlignedBB getCollisionBox(Entity entity)
+//    {
+//        return null;
+//    }
 }
