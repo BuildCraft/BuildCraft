@@ -37,7 +37,7 @@ public class Utils {
 		if (item.itemID < Block.blocksList.length) {
 			return 0.4F;
 		} else {
-			return 0.3F;
+			return 0.27F;
 		}
 	}
 	

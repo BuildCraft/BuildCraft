@@ -141,13 +141,13 @@ public class mod_BuildCraft extends BaseMod {
 		
 		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
-		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
-			"ss", "  ", Character.valueOf('s'), Block.dirt });
+//		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
+//			"ss", "  ", Character.valueOf('s'), Block.dirt });
 		
 		cheatBlock = new BlockCheat (getFirstFreeBlock());
 		ModLoader.RegisterBlock(cheatBlock);
-		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
-			"# ", "  ", Character.valueOf('#'), Block.dirt });
+//		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
+//			"# ", "  ", Character.valueOf('#'), Block.dirt });
 		
 		ModLoader.SetInGameHook(this, true, false);		
 		
@@ -186,7 +186,7 @@ public class mod_BuildCraft extends BaseMod {
 	
 	@Override
 	public String Version() {
-		return "0.1";
+		return "1.4.1";
 	}
 	    
     long lastTick = 0;
@@ -231,7 +231,6 @@ public class mod_BuildCraft extends BaseMod {
 	@Override
     public void AddRenderer(Map map) {
     	map.put (EntityPassiveItem.class, new RenderItem());
-    	map.put (EntityDigger.class, new RenderEntityDigger());
     }
     
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
