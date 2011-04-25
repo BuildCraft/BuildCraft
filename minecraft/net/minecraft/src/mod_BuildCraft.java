@@ -26,7 +26,6 @@ import net.minecraft.src.buildcraft.TileGoldenPipe;
 import net.minecraft.src.buildcraft.TileIronPipe;
 import net.minecraft.src.buildcraft.TileMachine;
 import net.minecraft.src.buildcraft.TileMiningWell;
-import net.minecraft.src.buildcraft.TileRooter;
 import net.minecraft.src.buildcraft.TileStonePipe;
 import net.minecraft.src.buildcraft.TileWoodenPipe;
 import net.minecraft.src.buildcraft.Utils;
@@ -153,7 +152,6 @@ public class mod_BuildCraft extends BaseMod {
 		ModLoader.SetInGameHook(this, true, false);		
 		
 		ModLoader.RegisterTileEntity(TileMachine.class, "Machine");		
-		ModLoader.RegisterTileEntity(TileRooter.class, "Rooter");
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
 		ModLoader.RegisterTileEntity(TileWoodenPipe.class, "WoodenPipe");
 		ModLoader.RegisterTileEntity(TileStonePipe.class, "StonePipe");
