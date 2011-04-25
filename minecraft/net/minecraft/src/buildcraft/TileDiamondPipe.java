@@ -13,24 +13,8 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
-import net.minecraft.src.buildcraft.TileRooter.ItemInTransit;
 
 public class TileDiamondPipe extends TilePipe implements IInventory {
-
-//    protected Orientations resolveDestination (EntityData data) {
-//    	LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(
-//				xCoord, yCoord, zCoord, data.orientation), data.item);
-//		
-//		if (listOfPossibleMovements.size() == 0) {					
-//			return Orientations.Unknown;													
-//		} else {					
-//			int i = world.rand.nextInt(listOfPossibleMovements.size());
-//			
-//			return listOfPossibleMovements.get(i);															
-//		}				
-//    }
-    
-	LinkedList<ItemInTransit> itemsToLoad = new LinkedList<ItemInTransit>();
 	
 	ItemStack [] items = new ItemStack [54];
 	
@@ -75,28 +59,9 @@ public class TileDiamondPipe extends TilePipe implements IInventory {
 		// TODO Auto-generated method stub
 		return true;
 	}
-//
-//	@Override
-//	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
-//		if (itemsInTransit.size() == 0) {
-//			mod_BuildCraft.getInstance().registerTicksListener(this, 1);			
-//		}
-//		
-//		ItemInTransit newItem = new ItemInTransit();
-//		
-//		World w = ModLoader.getMinecraftInstance().theWorld;		
-//		
-//		newItem.exitDate = w.getWorldTime() + 50;
-//		newItem.item = item;			
-//		newItem.item.setPosition(xCoord + 0.5,
-//				yCoord + Utils.getPipeFloorOf(item.item), zCoord + 0.5);
-//		newItem.orientation = orientation;
-//		
-//		itemsInTransit.add(newItem);		
-//	}
 
 	@Override
-  protected Orientations resolveDestination (EntityData data) {
+	protected Orientations resolveDestination(EntityData data) {
 		Orientations lastLeakOrientation = Orientations.Unknown;
 		Orientations exit = Orientations.Unknown;
 				
