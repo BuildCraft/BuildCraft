@@ -16,9 +16,11 @@ import net.minecraft.src.buildcraft.BlockPipe;
 import net.minecraft.src.buildcraft.BlockPlainPipe;
 import net.minecraft.src.buildcraft.BlockFilter;
 import net.minecraft.src.buildcraft.BlockWoodenPipe;
+import net.minecraft.src.buildcraft.EntityDigger;
 import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
 import net.minecraft.src.buildcraft.Orientations;
+import net.minecraft.src.buildcraft.RenderEntityDigger;
 import net.minecraft.src.buildcraft.TileExtractor;
 import net.minecraft.src.buildcraft.TileIronPipe;
 import net.minecraft.src.buildcraft.TileMachine;
@@ -84,6 +86,8 @@ public class mod_BuildCraft extends BaseMod {
 		
 		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
+		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
+			"ss", "  ", Character.valueOf('s'), Block.dirt });
 		
 		woodenPipeBlock = new BlockWoodenPipe(getFirstFreeBlock());
 		ModLoader.AddName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
@@ -139,7 +143,7 @@ public class mod_BuildCraft extends BaseMod {
 		ModLoader.RegisterTileEntity(TileRooter.class, "Rooter");
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
 		ModLoader.RegisterTileEntity(TileExtractor.class, "Extractor");
-		ModLoader.RegisterTileEntity(TileIronPipe.class, "IronPipe");
+		ModLoader.RegisterTileEntity(TileIronPipe.class, "IronPipe");		
 		
 		plainIronTexture = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/plain_iron_pipe.png");
@@ -207,6 +211,7 @@ public class mod_BuildCraft extends BaseMod {
 	@Override
     public void AddRenderer(Map map) {
     	map.put (EntityPassiveItem.class, new RenderItem());
+    	map.put (EntityDigger.class, new RenderEntityDigger());
     }
     
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
