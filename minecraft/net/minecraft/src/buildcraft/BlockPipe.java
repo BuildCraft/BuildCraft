@@ -10,9 +10,9 @@ import net.minecraft.src.mod_BuildCraft;
 public abstract class BlockPipe extends BlockContainer {
 	
 	public BlockPipe(int i, Material material) {
-		super(i, Material.ground);
+		super(i, material);
 
-		setResistance(3F);
+		setHardness(0.5F);
 	}
 	
     public int getRenderType()
