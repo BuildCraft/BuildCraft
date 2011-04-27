@@ -33,7 +33,6 @@ public class BlockIronPipe extends BlockPipe {
 	}
 
 	private void moveOrientation(World world, int i, int j, int k) {
-		System.out.println ("MOVE");
 		int metadata = world.getBlockMetadata(i, j, k);
 		
 		int nextMetadata = metadata;
@@ -53,7 +52,6 @@ public class BlockIronPipe extends BlockPipe {
 					(int) pos.j, (int) pos.k);
 			
 			if (tile instanceof IPipeEntry || tile instanceof TileEntityChest) {
-				System.out.println ("SET TO " + nextMetadata);
 				world.setBlockMetadata(i, j, k, nextMetadata);
 				return;
 			}
@@ -62,7 +60,6 @@ public class BlockIronPipe extends BlockPipe {
 	
 	@Override
 	protected TileEntity getBlockEntity() {
-		System.out.println ("GET BLOCK PIPE");
 		return new TileIronPipe ();
 	}
 	
