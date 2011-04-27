@@ -2,7 +2,7 @@ package net.minecraft.src.buildcraft;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.CraftingInventoryCB;
+import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
@@ -13,7 +13,7 @@ public class GuiFilter extends GuiContainer {
 	IInventory playerInventory;
 	IInventory filterInventory;
 	
-	static class CraftingInv extends CraftingInventoryCB {
+	static class CraftingInv extends Container {
 		
 		public CraftingInv (IInventory playerInventory, IInventory filterInventory) {
 			for(int k = 0; k < 6; k++)

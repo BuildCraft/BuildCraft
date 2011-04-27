@@ -1,7 +1,5 @@
 package net.minecraft.src.buildcraft;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.MathHelper;

@@ -146,8 +146,8 @@ public class mod_BuildCraft extends BaseMod {
 		
 		cheatBlock = new BlockCheat (getFirstFreeBlock());
 		ModLoader.RegisterBlock(cheatBlock);
-		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
-			"# ", "  ", Character.valueOf('#'), Block.dirt });
+//		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
+//			"# ", "  ", Character.valueOf('#'), Block.dirt });
 		
 		ModLoader.SetInGameHook(this, true, false);		
 		
