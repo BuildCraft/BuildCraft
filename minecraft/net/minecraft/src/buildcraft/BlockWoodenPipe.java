@@ -25,7 +25,8 @@ public class BlockWoodenPipe extends BlockPipe {
 	
     
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i, j, k);
+		TileWoodenPipe tile = Utils.getSafeTile(world, i, j, k,
+				TileWoodenPipe.class);
     	
     	if (tile == null) {
     		tile = new TileWoodenPipe();
