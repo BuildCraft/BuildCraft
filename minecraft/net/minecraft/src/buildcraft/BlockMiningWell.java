@@ -28,7 +28,8 @@ public class BlockMiningWell extends BlockContainer {
     }
 	
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
+		TileMiningWell tile = Utils.getSafeTile(world, i, j, k,
+				TileMiningWell.class);
     	
     	if (tile == null) {
     		tile = new TileMiningWell();
@@ -40,11 +41,9 @@ public class BlockMiningWell extends BlockContainer {
         return false;
     }
     
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-    	World w = ModLoader.getMinecraftInstance().theWorld;
-    	Boolean b1 = w.isBlockGettingPowered(i, j, k);
-    	Boolean b2 = w.isBlockIndirectlyGettingPowered(i, j, k);
-    	TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
+    	TileMiningWell tile = Utils.getSafeTile(world, i, j, k,
+    			TileMiningWell.class);
     	
     	if (tile == null) {
     		tile = new TileMiningWell();

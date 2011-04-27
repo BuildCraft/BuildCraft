@@ -30,12 +30,12 @@ public abstract class BlockPipe extends BlockContainer {
         return false;
     }
 
-    @Override
-    public void onBlockPlaced(World world, int i, int j, int k, int l)
-    {
-		TileEntity tile = getBlockEntity();
-		world.setBlockTileEntity(i, j, k, tile);
-    }
+//    @Override
+//    public void onBlockPlaced(World world, int i, int j, int k, int l)
+//    {
+//		TileEntity tile = getBlockEntity();
+//		world.setBlockTileEntity(i, j, k, tile);
+//    }
 
 	@Override
 	protected abstract TileEntity getBlockEntity();

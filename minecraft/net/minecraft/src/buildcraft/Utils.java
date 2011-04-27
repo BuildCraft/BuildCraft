@@ -217,4 +217,26 @@ public class Utils {
 
 		return false;
 	}
+	
+	/**
+	 * Returns the tile only if it is of the proper type. Null otherwise.
+	 */
+	public static <T extends TileEntity> T getSafeTile (World w, int i, int j, int k, Class tileClass) {
+		// TODO: Check if it's normal that the tile doesn't correspond...
+    	TileEntity tileTest = w.getBlockTileEntity(i, j, k);
+
+    	if (!(tileTest.getClass().isAssignableFrom(tileClass))) {
+			System.out.println("   ERROR: Type of type is "
+					+ tileTest.getClass() + " INSTEAD OF "
+					+ tileClass);
+    		
+    		for (StackTraceElement e :  Thread.currentThread().getStackTrace()) {
+    			System.out.println (e);
+    		}
+    		
+    		return null;
+    	}
+    	
+		return (T) tileTest;
+	}
 }

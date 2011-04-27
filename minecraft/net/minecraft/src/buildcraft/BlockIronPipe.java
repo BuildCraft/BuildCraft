@@ -62,6 +62,7 @@ public class BlockIronPipe extends BlockPipe {
 	
 	@Override
 	protected TileEntity getBlockEntity() {
+		System.out.println ("GET BLOCK PIPE");
 		return new TileIronPipe ();
 	}
 	
