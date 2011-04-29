@@ -15,12 +15,14 @@ import net.minecraft.src.buildcraft.BlockMachine;
 import net.minecraft.src.buildcraft.BlockMiningWell;
 import net.minecraft.src.buildcraft.BlockPlainPipe;
 import net.minecraft.src.buildcraft.BlockStonePipe;
+import net.minecraft.src.buildcraft.BlockUtil;
 import net.minecraft.src.buildcraft.BlockWoodenPipe;
-import net.minecraft.src.buildcraft.EntityDigger;
+import net.minecraft.src.buildcraft.EntityBlock;
+import net.minecraft.src.buildcraft.EntityMechanicalArm;
 import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
 import net.minecraft.src.buildcraft.Orientations;
-import net.minecraft.src.buildcraft.RenderEntityDigger;
+import net.minecraft.src.buildcraft.RenderEntityBlock;
 import net.minecraft.src.buildcraft.TileDiamondPipe;
 import net.minecraft.src.buildcraft.TileGoldenPipe;
 import net.minecraft.src.buildcraft.TileIronPipe;
@@ -29,6 +31,7 @@ import net.minecraft.src.buildcraft.TileMiningWell;
 import net.minecraft.src.buildcraft.TileStonePipe;
 import net.minecraft.src.buildcraft.TileWoodenPipe;
 import net.minecraft.src.buildcraft.Utils;
+import net.minecraft.src.buildcraft.VoidRender;
 
 public class mod_BuildCraft extends BaseMod {	
 
@@ -47,6 +50,7 @@ public class mod_BuildCraft extends BaseMod {
 	public final BlockGoldenPipe goldenPipeBlock;
 	public final BlockDiamondPipe diamondPipeBlock;
 	public final BlockPlainPipe plainPipeBlock;
+    public final BlockUtil blockUtil;
 	
 	public final BlockCheat cheatBlock;
 	
@@ -141,13 +145,15 @@ public class mod_BuildCraft extends BaseMod {
 		
 		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
-//		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
-//			"ss", "  ", Character.valueOf('s'), Block.dirt });
+		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
+			"ss", "  ", Character.valueOf('s'), Block.dirt });
 		
 		cheatBlock = new BlockCheat (getFirstFreeBlock());
 		ModLoader.RegisterBlock(cheatBlock);
-//		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
-//			"# ", "  ", Character.valueOf('#'), Block.dirt });
+		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
+			"# ", "  ", Character.valueOf('#'), Block.dirt });
+		
+		 blockUtil = new BlockUtil (getFirstFreeBlock());
 		
 		ModLoader.SetInGameHook(this, true, false);		
 		
@@ -186,7 +192,7 @@ public class mod_BuildCraft extends BaseMod {
 	
 	@Override
 	public String Version() {
-		return "1.4.1";
+		return "1.5_01.2";
 	}
 	    
     long lastTick = 0;
@@ -231,6 +237,8 @@ public class mod_BuildCraft extends BaseMod {
 	@Override
     public void AddRenderer(Map map) {
     	map.put (EntityPassiveItem.class, new RenderItem());
+    	map.put (EntityBlock.class, new RenderEntityBlock());
+    	map.put (EntityMechanicalArm.class, new VoidRender());
     }
     
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
