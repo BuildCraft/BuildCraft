@@ -54,6 +54,9 @@ public class BlockMachine extends BlockContainer implements ITickListener {
     	world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());    	
     	
     	registerMachine(world, i, j, k, orientation);
+    	
+    	EntityMechanicalArm entity = new EntityMechanicalArm(world, i, j + 4, k, 3, 3);
+    	world.entityJoinedWorld(entity);
     }
     
     
