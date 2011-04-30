@@ -31,7 +31,7 @@ import net.minecraft.src.buildcraft.TileMiningWell;
 import net.minecraft.src.buildcraft.TileStonePipe;
 import net.minecraft.src.buildcraft.TileWoodenPipe;
 import net.minecraft.src.buildcraft.Utils;
-import net.minecraft.src.buildcraft.VoidRender;
+import net.minecraft.src.buildcraft.RenderVoid;
 
 public class mod_BuildCraft extends BaseMod {	
 
@@ -236,9 +236,9 @@ public class mod_BuildCraft extends BaseMod {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
     public void AddRenderer(Map map) {
-    	map.put (EntityPassiveItem.class, new RenderItem());
+    	map.put (EntityPassiveItem.class, new RenderItem());    	
     	map.put (EntityBlock.class, new RenderEntityBlock());
-    	map.put (EntityMechanicalArm.class, new VoidRender());
+    	map.put (EntityMechanicalArm.class, new RenderVoid());
     }
     
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,

@@ -20,12 +20,18 @@ public class BlockCheat extends Block {
 		    	
 	}
 	
+	EntityMechanicalArm entity;
+	
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 				
 		System.out.println ("ACTIVATED");
 		
-    	EntityMechanicalArm entity = new EntityMechanicalArm(world, i, j + 1, k, 3, 3);
-    	world.entityJoinedWorld(entity);
+		if (entity == null) {
+			entity = new EntityMechanicalArm(world, i, j + 3, k, 10, 10);
+			world.entityJoinedWorld(entity);
+		} else {
+			entity.setTarget(entity.headPosX + 1, entity.headPosY, entity.headPosZ + 1);
+		}
 		
 //		createItems (i, j, k, new ItemStack (Item.redstone, 64));
 //		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));

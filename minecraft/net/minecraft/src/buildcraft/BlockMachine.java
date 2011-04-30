@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.IBlockAccess;
@@ -61,42 +60,81 @@ public class BlockMachine extends BlockContainer implements ITickListener {
     
     
     
-    public void registerMachine (World world, int i, int j, int k, Orientations orientation) {
-    	
-    	TileMachine newTile = new TileMachine(i, j, k, orientation);
-		workingMachines.put(new BlockIndex(i, j, k),
-				newTile);
-		
-    	world.setBlockTileEntity(i, j, k, newTile);
-		
+    public void registerMachine (World world, int i, int j, int k, Orientations orientation) {    	
 		Position p = new Position (i, j, k, orientation);
 		
 		p.moveForwards(1);
 		p.moveLeft(2);
 		
-		for (int h = 0; h < 2; ++h) {
+		double xMin = Integer.MAX_VALUE, zMin = Integer.MAX_VALUE;
+		
+		for (int h = 0; h < 1; ++h) {
 			for (int s = 0; s < 4; ++s) {
 				p.moveRight(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+				
+				if (p.i  < xMin) {
+					xMin = p.i;
+				}
+				
+				if (p.k  < zMin) {
+					zMin = p.i;
+				}
 			}
 
 			for (int s = 0; s < 4; ++s) {
 				p.moveForwards(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+				
+				if (p.i  < xMin) {
+					xMin = p.i;
+				}
+				
+				if (p.k  < zMin) {
+					zMin = p.k;
+				}
 			}
 
 			for (int s = 0; s < 4; ++s) {
 				p.moveLeft(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+				
+				if (p.i  < xMin) {
+					xMin = p.i;
+				}
+				
+				if (p.k  < zMin) {
+					zMin = p.k;
+				}
 			}
 
 			for (int s = 0; s < 4; ++s) {
 				p.moveBackwards(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k, Block.fence.blockID);
+				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+				
+				if (p.i  < xMin) {
+					xMin = p.i;
+				}
+				
+				if (p.k  < zMin) {
+					zMin = p.k;
+				}				
 			}
 			
 			p.j++;
 		}
+		
+		xMin++;
+		zMin++;
+		TileMachine newTile = new TileMachine(i, j, k, orientation, (int) xMin, (int) zMin);
+		workingMachines.put(new BlockIndex(i, j, k),
+				newTile);
+		
+    	world.setBlockTileEntity(i, j, k, newTile);
     }
 
 	@Override
@@ -145,6 +183,6 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 
 	@Override
 	protected TileEntity getBlockEntity() {		
-		return new TileMachine(0, 0, 0, Orientations.Unknown);
+		return new TileMachine(0, 0, 0, Orientations.Unknown, 0, 0);
 	}
 }
