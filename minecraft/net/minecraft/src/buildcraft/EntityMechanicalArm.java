@@ -10,10 +10,21 @@ public class EntityMechanicalArm extends Entity {
 	int sizeX, sizeZ;
 	EntityBlock xArm, yArm, zArm, head;
 	
-	public EntityMechanicalArm(World world, int i, int j, int k, int width, int height) {
+	double targetX, targetY, targetZ;
+	double angle;
+	
+	double headPosX, headPosY, headPosZ;
+	double baseY;
+	double speed = 0.01;
+	
+	IArmListener listener;
+	boolean inProgression = false;	
+	
+	public EntityMechanicalArm(World world, double i, double j, double k, int width, int height) {
 		super(world);
 		
 		setPosition(i, j, k);
+		
         motionX = 0.0D;
         motionY = 0.0D;
         motionZ = 0.0D;
@@ -22,18 +33,29 @@ public class EntityMechanicalArm extends Entity {
         prevPosZ = k;
         sizeX = height;
         sizeZ = width;
-        yOffset = height / 2.0F;
         noClip = true;
+        baseY = j;
+        
+        headPosX = i;
+        headPosY = j - 2;
+        headPosZ = k;
 
-		xArm = new EntityBlock(world, i, j + 1.0, k, 2.0, 0.5, 0.5,
+        setTarget (headPosX, headPosY, headPosZ);
+        inProgression = false;
+
+		xArm = new EntityBlock(world, i, j, k, width, 0.5, 0.5,
 				Block.cobblestone.blockID);
-		xArm.setVelocity(0.0, 0.0, 0.05);
 		world.entityJoinedWorld(xArm);
 		
-		zArm = new EntityBlock(world, i, j + 1.0, k, 0.5, 0.5, height,
-				Block.cobblestone.blockID);
-		zArm.setVelocity(0.03, 0.0, 0.0);
+		yArm = new EntityBlock(world, i, j, k, 0.5, 1, 0.5,
+				Block.sand.blockID);
+		world.entityJoinedWorld(yArm);
+		
+		zArm = new EntityBlock(world, i, j, k, 0.5, 0.5, height,
+				Block.brick.blockID);
 		world.entityJoinedWorld(zArm);
+		
+		updatePosition();
 	}
 
 	@Override
@@ -54,23 +76,49 @@ public class EntityMechanicalArm extends Entity {
 		
 	}
 	
+	public void setTarget (double x, double y, double z) {
+		targetX = x;
+		targetY = y;
+		targetZ = z;
+		
+		double dX = targetX - headPosX;
+		double dZ = targetZ - headPosZ;
+		
+		angle = Math.atan2(dZ, dX);
+		
+		inProgression = true;
+	}
+	
     public void onUpdate() {
     	super.onUpdate ();
     	
-    	if (xArm.posZ > posZ + sizeZ) {
-    		xArm.setVelocity(0.0, 0.0, -0.05);
-    	} else if (xArm.posZ < posZ) {
-    		xArm.setVelocity(0.0, 0.0, 0.05);
+    	if (inProgression) {
+			System.out.println(Math.abs(targetX - headPosX) + ", "
+					+ Math.abs(targetZ - headPosZ));
+			if (Math.abs(targetX - headPosX) < speed * 2
+					&& Math.abs(targetZ - headPosZ) < speed * 2) {
+				headPosX = targetX;
+				headPosY = targetY;
+
+				inProgression = false;
+
+				if (listener != null) {
+					listener.positionReached(headPosX, headPosY, headPosZ);
+				}
+			} else {
+				headPosX += Math.cos(angle) * speed;
+				headPosZ += Math.sin(angle) * speed;				
+			}
+    		
+    		updatePosition();
     	}
-    	
-    	if (zArm.posX > posX + sizeX) {
-    		zArm.setVelocity(-0.03, 0.0, 0.0);
-    	} else if (zArm.posX < posX) {
-    		zArm.setVelocity(+0.03, 0.0, 0.0);
-    	}
-    	
-    	xArm.moveEntity(xArm.motionX, xArm.motionY, xArm.motionZ);
-    	zArm.moveEntity(zArm.motionX, zArm.motionY, zArm.motionZ);
+    }
+    
+    public void updatePosition () {
+		xArm.setPosition(xArm.posX, xArm.posY, headPosZ);
+    	yArm.jSize = baseY - headPosY;
+		yArm.setPosition(headPosX, headPosY, headPosZ);
+		zArm.setPosition(headPosX, zArm.posY, zArm.posZ);
     }
 
 }

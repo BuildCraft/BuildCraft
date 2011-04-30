@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
-import net.minecraft.src.EntityItem;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
@@ -11,9 +10,9 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
-public class TileMachine extends TileEntity {
+public class TileMachine extends TileEntity implements IArmListener {
 
-	// TODO: use xCoord yCoord zCoord instead
+	// TODO: use xCoord yCoord zCoord instead???
 	int i, j, k;
 	int depth;
 	int step;
@@ -25,17 +24,26 @@ public class TileMachine extends TileEntity {
 	static final int fieldSizeZ = 3;
 	static final int fieldSize = fieldSizeX * fieldSizeZ;
 	
+	boolean inProcess = false;
+	
+	EntityMechanicalArm arm;
+	
+	int xMin, zMin;
+	
 	public TileMachine() {
 		
 	}
 
-	public TileMachine(int ci, int cj, int ck, Orientations corientation) {
+	public TileMachine(int ci, int cj, int ck, Orientations corientation, int xMin, int zMin) {
 		i = ci;
 		j = cj;
 		k = ck;
 		depth = 0;
 		step = 0;
 		orientation = corientation;
+		
+		this.xMin = xMin;
+		this.zMin = zMin;
 	}
 	
 	public void addToPipe(TilePipe pipe, Item item, Orientations orientation) {		
@@ -66,11 +74,25 @@ public class TileMachine extends TileEntity {
 	}
 	
 	public void work(Minecraft minecraft) {
-		if (!isDigging) {
+		if (inProcess) {
 			return;
 		}
-
+		
+		if (!isDigging) {
+			return;
+		}		
+		
 		World world = minecraft.theWorld;
+		
+		if (arm == null) {
+			System.out.println ("CREATE FROM " + xCoord + ", " + yCoord + ", " + zCoord);
+			arm = new EntityMechanicalArm(world, xMin,
+					yCoord + 3, zMin, fieldSizeX, fieldSizeZ);
+			
+			
+			arm.listener = this;
+			minecraft.theWorld.entityJoinedWorld(arm);
+		}
 
 		int diffX = step % fieldSizeX;
 		int diffZ = step / fieldSizeZ;
@@ -96,67 +118,75 @@ public class TileMachine extends TileEntity {
 		}
 
 		int blockId = world.getBlockId((int) pos.i, (int) pos.j, (int) pos.k);
-
-		if (blockId == Block.bedrock.blockID
-				|| blockId == Block.lavaStill.blockID
-				|| blockId == Block.lavaMoving.blockID) {
-
-			isDigging = false;
-
-			return;
-		}
-
-		if (blockId == 0 || blockId >= Block.blocksList.length
-				|| Block.blocksList[blockId] == null) {
-			return;
-		}
-
-		int idDropped = Block.blocksList[blockId]
-				.idDropped(blockId, world.rand);
-
-		if (idDropped >= Item.itemsList.length
-				|| Item.itemsList[idDropped] == null) {
-			return;
-		}
-
-		Item item = Item.itemsList[idDropped];
-		int itemQuantity = Block.blocksList[blockId]
-				.quantityDropped(world.rand);
-
-		for (int q = 0; q < itemQuantity; ++q) {
-			boolean added = false;
-			
-			ItemStack items = new ItemStack(item, 1);
-
-			// First, try to add to a nearby chest
-
-			added = Utils.addToRandomChest(this, Orientations.Unknown, items);
-			
-			if (!added) {
-				added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, items);
-			}			
-			
-			// Last, throw the object away
-
-			if (!added) {
-				float f = world.rand.nextFloat() * 0.8F + 0.1F;
-				float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-				float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
-
-				EntityItem entityitem = new EntityItem(world, (float) i + f,
-						(float) j + f1 + 0.5F, (float) k + f2, new ItemStack(
-								item, 1));
-
-				float f3 = 0.05F;
-				entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-				entityitem.motionY = (float) world.rand.nextGaussian() * f3
-						+ 1.0F;
-				entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-				world.entityJoinedWorld(entityitem);
-			}
-		}
-
-		world.setBlock((int) pos.i, (int) pos.j, (int) pos.k, 0);
+		
+		arm.setTarget(pos.i, pos.j, pos.k);
+		
+		world.setBlockWithNotify((int) pos.i, (int) pos.j, (int) pos.k, Block.glass.blockID);
+		
+		inProcess = true;
+		
+		System.out.println ("AIMED");
+		
+//		if (blockId == Block.bedrock.blockID
+//				|| blockId == Block.lavaStill.blockID
+//				|| blockId == Block.lavaMoving.blockID) {
+//
+//			isDigging = false;
+//
+//			return;
+//		}
+//
+//		if (blockId == 0 || blockId >= Block.blocksList.length
+//				|| Block.blocksList[blockId] == null) {
+//			return;
+//		}
+//
+//		int idDropped = Block.blocksList[blockId]
+//				.idDropped(blockId, world.rand);
+//
+//		if (idDropped >= Item.itemsList.length
+//				|| Item.itemsList[idDropped] == null) {
+//			return;
+//		}
+//
+//		Item item = Item.itemsList[idDropped];
+//		int itemQuantity = Block.blocksList[blockId]
+//				.quantityDropped(world.rand);
+//
+//		for (int q = 0; q < itemQuantity; ++q) {
+//			boolean added = false;
+//			
+//			ItemStack items = new ItemStack(item, 1);
+//
+//			// First, try to add to a nearby chest
+//
+//			added = Utils.addToRandomChest(this, Orientations.Unknown, items);
+//			
+//			if (!added) {
+//				added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, items);
+//			}			
+//			
+//			// Last, throw the object away
+//
+//			if (!added) {
+//				float f = world.rand.nextFloat() * 0.8F + 0.1F;
+//				float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
+//				float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
+//
+//				EntityItem entityitem = new EntityItem(world, (float) i + f,
+//						(float) j + f1 + 0.5F, (float) k + f2, new ItemStack(
+//								item, 1));
+//
+//				float f3 = 0.05F;
+//				entityitem.motionX = (float) world.rand.nextGaussian() * f3;
+//				entityitem.motionY = (float) world.rand.nextGaussian() * f3
+//						+ 1.0F;
+//				entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
+//				world.entityJoinedWorld(entityitem);
+//			}
+//		}
+//
+//		world.setBlock((int) pos.i, (int) pos.j, (int) pos.k, 0);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -169,6 +199,11 @@ public class TileMachine extends TileEntity {
 		orientation = Orientations.values()[nbttagcompound
 				.getInteger("orientation")];
 		step = nbttagcompound.getInteger("step");
+		xMin = nbttagcompound.getInteger("xMin");
+		zMin = nbttagcompound.getInteger("zMin");
+		
+		step = 1;
+		depth = 0;
 
 		mod_BuildCraft.getInstance().machineBlock.workingMachines.put(
 				new BlockIndex(i, j, k), this);
@@ -183,6 +218,16 @@ public class TileMachine extends TileEntity {
 		nbttagcompound.setInteger("depth", depth);
 		nbttagcompound.setInteger("orientation", orientation.ordinal());
 		nbttagcompound.setInteger("step", step);
+		nbttagcompound.setInteger("xMin", xMin);
+		nbttagcompound.setInteger("zMin", zMin);
+	}
+	
+	
+	@Override
+	public void positionReached(double i, double j, double k) {
+		System.out.println ("REACHED");
+		inProcess = false;
+		
 	}
 
 }

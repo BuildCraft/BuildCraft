@@ -24,7 +24,7 @@ public class RenderEntityBlock extends Render {
     
     public RenderEntityBlock () {
     	blockRender = new RenderBlocks();
-    	shadowSize = 0.5F;
+    	shadowSize = 1.0F;
     }
 	
 	@Override
@@ -36,44 +36,33 @@ public class RenderEntityBlock extends Render {
 	public void doRenderBlock(EntityBlock entity, double i, double j, double k) {		
 		World world = entity.worldObj;
 		blockRender.blockAccess = ModLoader.getMinecraftInstance().theWorld;
-		BlockUtil util = mod_BuildCraft.getInstance().blockUtil;
-		
-		// TODO: draw the block n time in each direction respecting isize, jsize and ksize (by jumps of 1);
+		BlockUtil util = mod_BuildCraft.getInstance().blockUtil; 
 		
 		for (int iBase = 0; iBase <= entity.iSize; ++iBase)
 			for (int jBase = 0; jBase <= entity.jSize; ++jBase)
 				for (int kBase = 0; kBase <= entity.kSize; ++kBase) 
 		{					
-			util.minX = iBase;
-			util.minY = jBase;
-			util.minZ = kBase;
-			
+			util.minX = 0;
+			util.minY = 0;
+			util.minZ = 0;
+					
 			double remainX = entity.iSize - iBase;
 			double remainY = entity.jSize - jBase;
 			double remainZ = entity.kSize - kBase;
 			
-			util.maxX = iBase + (remainX > 1.0 ? 1.0 : remainX);
-			util.maxY = jBase + (remainY > 1.0 ? 1.0 : remainY);
-			util.maxZ = kBase + (remainZ > 1.0 ? 1.0 : remainZ);
+			util.maxX = (remainX > 1.0 ? 1.0 : remainX);
+			util.maxY = (remainY > 1.0 ? 1.0 : remainY);
+			util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);
 			
-			
-//		util.minX = 0;
-//		util.minY = 0;
-//		util.minZ = 0;
-//		
-//		util.maxX = 1;
-//		util.maxY = 1;
-//		util.maxZ = 1;
-		
 			GL11.glPushMatrix();
-			GL11.glTranslatef((float)i, (float)j, (float)k);
+			GL11.glTranslatef((float)i + iBase + 1, (float)j + jBase + 1, (float)k + kBase + 1);
 			loadTexture("/terrain.png");		
 			util.baseBlock = Block.blocksList [entity.blockID];
 			GL11.glDisable(2896 /*GL_LIGHTING*/);
 					blockRender.renderBlockFallingSand(util, world,
-							MathHelper.floor_double(entity.posX),
-							MathHelper.floor_double(entity.posY),
-							MathHelper.floor_double(entity.posZ));
+							(int) entity.posX,
+							(int) entity.posY,
+							(int) entity.posZ);
 			GL11.glEnable(2896 /*GL_LIGHTING*/);
 			GL11.glPopMatrix();
 
