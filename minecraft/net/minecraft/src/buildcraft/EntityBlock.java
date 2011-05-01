@@ -1,6 +1,5 @@
 package net.minecraft.src.buildcraft;
 
-import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
@@ -12,9 +11,7 @@ public class EntityBlock extends Entity {
 	public double iSize, jSize, kSize;
 	
 	public EntityBlock(World world) {
-		super(world);
-//		setSize((float) iSize, (float) jSize);
-		
+		super(world);		
 		preventEntitySpawning = true;      
 		noClip = true;
 	}
@@ -64,14 +61,18 @@ public class EntityBlock extends Entity {
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
-
+		blockID = nbttagcompound.getInteger("blockID");
+		iSize = nbttagcompound.getDouble("iSize");
+		jSize = nbttagcompound.getDouble("jSize");
+		kSize = nbttagcompound.getDouble("kSize");
 	}
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
-
+		nbttagcompound.setInteger("blockID", blockID);
+		nbttagcompound.setDouble("iSize", iSize);
+		nbttagcompound.setDouble("jSize", jSize);
+		nbttagcompound.setDouble("kSize", kSize);		
 	}
 
     public boolean canBeCollidedWith()

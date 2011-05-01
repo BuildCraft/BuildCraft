@@ -3,11 +3,9 @@ package net.minecraft.src.buildcraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class TileDiamondPipe extends TilePipe implements IInventory {
 	
@@ -103,9 +101,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory {
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
-		
-		World w = ModLoader.getMinecraftInstance().theWorld;		
+		super.readFromNBT(nbttagcompound);	
 		
 		NBTTagList nbttaglist = nbttagcompound.getTagList("items");
     	

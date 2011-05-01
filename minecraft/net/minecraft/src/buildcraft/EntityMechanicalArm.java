@@ -16,11 +16,15 @@ public class EntityMechanicalArm extends Entity {
 	
 	double headPosX, headPosY, headPosZ;
 	double baseY;
-	double speed = 0.01;
+	double speed = 0.03;
 	
 	IArmListener listener;
 	boolean inProgressionXZ = false;
 	boolean inProgressionY = false;
+	
+	public EntityMechanicalArm(World world) {
+		super (world);
+	}
 	
 	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height) {
 		super(world);
@@ -73,14 +77,78 @@ public class EntityMechanicalArm extends Entity {
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
+		sizeX = nbttagcompound.getDouble("sizeX");
+		sizeZ = nbttagcompound.getDouble("sizeZ");
 		
+		targetX = nbttagcompound.getDouble("targetX");
+		targetY = nbttagcompound.getDouble("targetY");
+		targetZ = nbttagcompound.getDouble("targetZ");
+		angle = nbttagcompound.getDouble("angle");
+		
+		headPosX = nbttagcompound.getDouble("headPosX");
+		headPosY = nbttagcompound.getDouble("headPosY");
+		headPosZ = nbttagcompound.getDouble("headPosZ");
+
+		baseY = nbttagcompound.getDouble("baseY");
+		speed = nbttagcompound.getDouble("speed");
+		
+		inProgressionXZ = nbttagcompound.getBoolean("progressionXY");
+		inProgressionY = nbttagcompound.getBoolean("progressionY");
+		
+		NBTTagCompound xArmStore, yArmStore, zArmStore, headStore;
+		
+		xArmStore = nbttagcompound.getCompoundTag("xArm");
+		yArmStore = nbttagcompound.getCompoundTag("yArm");
+		zArmStore = nbttagcompound.getCompoundTag("zArm");
+		headStore = nbttagcompound.getCompoundTag("head");
+		
+		xArm = new EntityBlock(worldObj);
+		yArm = new EntityBlock(worldObj);
+		zArm = new EntityBlock(worldObj);
+		head = new EntityBlock(worldObj);
+		
+		xArm.readFromNBT(xArmStore);
+		yArm.readFromNBT(yArmStore);
+		zArm.readFromNBT(zArmStore);
+		head.readFromNBT(headStore);			
 	}
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
+		nbttagcompound.setDouble("sizeX", sizeX);
+		nbttagcompound.setDouble("sizeZ", sizeZ);
 		
+		nbttagcompound.setDouble("targetX", targetX);
+		nbttagcompound.setDouble("targetY", targetY);
+		nbttagcompound.setDouble("targetZ", targetZ);
+		nbttagcompound.setDouble("angle", angle);
+		
+		nbttagcompound.setDouble("headPosX", headPosX);
+		nbttagcompound.setDouble("headPosY", headPosY);
+		nbttagcompound.setDouble("headPosZ", headPosZ);
+
+		nbttagcompound.setDouble("baseY", baseY);
+		nbttagcompound.setDouble("speed", speed);
+		
+		nbttagcompound.setBoolean("progressionXY", inProgressionXZ);
+		nbttagcompound.setBoolean("progressionY", inProgressionY);
+		
+		NBTTagCompound xArmStore, yArmStore, zArmStore, headStore;
+		
+		xArmStore = new NBTTagCompound();
+		yArmStore = new NBTTagCompound();
+		zArmStore = new NBTTagCompound();
+		headStore = new NBTTagCompound();
+		
+		nbttagcompound.setTag("xArm", xArmStore);
+		nbttagcompound.setTag("yArm", yArmStore);
+		nbttagcompound.setTag("zArm", zArmStore);
+		nbttagcompound.setTag("head", headStore);
+		
+		xArm.writeToNBT(xArmStore);
+		yArm.writeToNBT(yArmStore);
+		zArm.writeToNBT(zArmStore);
+		head.writeToNBT(headStore);			
 	}
 	
 	public void setTarget (double x, double y, double z) {
@@ -104,12 +172,12 @@ public class EntityMechanicalArm extends Entity {
 			if (Math.abs(targetX - headPosX) < speed * 2
 					&& Math.abs(targetZ - headPosZ) < speed * 2) {
 				headPosX = targetX;
-				headPosY = targetY;
+				headPosZ = targetZ;
 
 				inProgressionXZ = false;
 				
 				if (listener != null && !inProgressionY) {
-					listener.positionReached(headPosX, headPosY, headPosZ);
+					listener.positionReached(this);
 				}
 			} else {
 				headPosX += Math.cos(angle) * speed;
@@ -125,7 +193,7 @@ public class EntityMechanicalArm extends Entity {
     			inProgressionY = false;
     			
     			if (listener != null && !inProgressionXZ) {
-					listener.positionReached(headPosX, headPosY, headPosZ);
+					listener.positionReached(this);
 				}
     		} else {
     			if (targetY > headPosY) {
@@ -151,4 +219,18 @@ public class EntityMechanicalArm extends Entity {
 		head.setPosition(headPosX + 0.4, headPosY, headPosZ + 0.4);
     }
 
+    public void joinToWorld (World w) {
+    	super.setWorld(w);    		    		
+
+    	xArm.setWorld(w);
+    	yArm.setWorld(w);
+    	zArm.setWorld(w);
+    	head.setWorld(w);
+
+    	w.entityJoinedWorld(this);
+    	w.entityJoinedWorld(xArm);
+    	w.entityJoinedWorld(yArm);
+    	w.entityJoinedWorld(zArm);
+    	w.entityJoinedWorld(head);
+    }
 }
