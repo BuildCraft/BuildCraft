@@ -20,9 +20,8 @@ public class TileMachine extends TileEntity implements IArmListener {
 	
 	boolean isDigging = true;
 
-	static final int fieldSizeX = 3;
-	static final int fieldSizeZ = 3;
-	static final int fieldSize = fieldSizeX * fieldSizeZ;
+	static final int fieldSize = BlockMachine.MINING_FIELD_SIZE
+			* BlockMachine.MINING_FIELD_SIZE;
 	
 	boolean inProcess = false;
 	
@@ -85,20 +84,20 @@ public class TileMachine extends TileEntity implements IArmListener {
 		World world = minecraft.theWorld;
 		
 		if (arm == null) {
-			System.out.println ("CREATE FROM " + xCoord + ", " + yCoord + ", " + zCoord);
-			arm = new EntityMechanicalArm(world, xMin,
-					yCoord + 3, zMin, fieldSizeX, fieldSizeZ);
-			
+			arm = new EntityMechanicalArm(world, xMin + Utils.pipeMaxSize,
+					yCoord + 4 + Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
+					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
+					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2);
 			
 			arm.listener = this;
 			minecraft.theWorld.entityJoinedWorld(arm);
 		}
 
-		int diffX = step % fieldSizeX;
-		int diffZ = step / fieldSizeZ;
+		int diffX = step % BlockMachine.MINING_FIELD_SIZE;
+		int diffZ = step / BlockMachine.MINING_FIELD_SIZE;
 		Position pos = new Position(i, j - depth, k, orientation);
 
-		pos.moveRight(fieldSizeX / 2);
+		pos.moveRight(BlockMachine.MINING_FIELD_SIZE / 2);
 		pos.moveForwards(2);
 
 		pos.moveLeft(diffX);
@@ -119,13 +118,11 @@ public class TileMachine extends TileEntity implements IArmListener {
 
 		int blockId = world.getBlockId((int) pos.i, (int) pos.j, (int) pos.k);
 		
-		arm.setTarget(pos.i, pos.j, pos.k);
+		arm.setTarget(pos.i, pos.j + 1, pos.k);
 		
 		world.setBlockWithNotify((int) pos.i, (int) pos.j, (int) pos.k, Block.glass.blockID);
 		
-		inProcess = true;
-		
-		System.out.println ("AIMED");
+		inProcess = true;		
 		
 //		if (blockId == Block.bedrock.blockID
 //				|| blockId == Block.lavaStill.blockID
@@ -225,9 +222,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 	
 	@Override
 	public void positionReached(double i, double j, double k) {
-		System.out.println ("REACHED");
-		inProcess = false;
-		
+		inProcess = false;	
 	}
 
 }

@@ -4,10 +4,11 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraft;
 
 public class EntityMechanicalArm extends Entity {
 
-	int sizeX, sizeZ;
+	double sizeX, sizeZ;
 	EntityBlock xArm, yArm, zArm, head;
 	
 	double targetX, targetY, targetZ;
@@ -18,9 +19,10 @@ public class EntityMechanicalArm extends Entity {
 	double speed = 0.01;
 	
 	IArmListener listener;
-	boolean inProgression = false;	
+	boolean inProgressionXZ = false;
+	boolean inProgressionY = false;
 	
-	public EntityMechanicalArm(World world, double i, double j, double k, int width, int height) {
+	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height) {
 		super(world);
 		
 		setPosition(i, j, k);
@@ -41,20 +43,25 @@ public class EntityMechanicalArm extends Entity {
         headPosZ = k;
 
         setTarget (headPosX, headPosY, headPosZ);
-        inProgression = false;
+        inProgressionXZ = false;
+        inProgressionY = false;
 
 		xArm = new EntityBlock(world, i, j, k, width, 0.5, 0.5,
-				Block.cobblestone.blockID);
+				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
 		world.entityJoinedWorld(xArm);
 		
 		yArm = new EntityBlock(world, i, j, k, 0.5, 1, 0.5,
-				Block.sand.blockID);
+				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
 		world.entityJoinedWorld(yArm);
 		
 		zArm = new EntityBlock(world, i, j, k, 0.5, 0.5, height,
-				Block.brick.blockID);
+				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
 		world.entityJoinedWorld(zArm);
 		
+		head = new EntityBlock(world, i, j, k, 0.2, 1, 0.2,
+				Block.blockDiamond.blockID);
+		world.entityJoinedWorld(head);
+        		
 		updatePosition();
 	}
 
@@ -86,39 +93,62 @@ public class EntityMechanicalArm extends Entity {
 		
 		angle = Math.atan2(dZ, dX);
 		
-		inProgression = true;
+		inProgressionXZ = true;
+		inProgressionY = true;
 	}
 	
     public void onUpdate() {
     	super.onUpdate ();
     	
-    	if (inProgression) {
-			System.out.println(Math.abs(targetX - headPosX) + ", "
-					+ Math.abs(targetZ - headPosZ));
+    	if (inProgressionXZ) {
 			if (Math.abs(targetX - headPosX) < speed * 2
 					&& Math.abs(targetZ - headPosZ) < speed * 2) {
 				headPosX = targetX;
 				headPosY = targetY;
 
-				inProgression = false;
-
-				if (listener != null) {
+				inProgressionXZ = false;
+				
+				if (listener != null && !inProgressionY) {
 					listener.positionReached(headPosX, headPosY, headPosZ);
 				}
 			} else {
 				headPosX += Math.cos(angle) * speed;
 				headPosZ += Math.sin(angle) * speed;				
-			}
-    		
+			}    		
     		updatePosition();
     	}
+    	
+    	if (inProgressionY) {
+    		if (Math.abs(targetY - headPosY) < speed * 2) {
+    			headPosY = targetY;
+    			
+    			inProgressionY = false;
+    			
+    			if (listener != null && !inProgressionXZ) {
+					listener.positionReached(headPosX, headPosY, headPosZ);
+				}
+    		} else {
+    			if (targetY > headPosY) {
+    				headPosY += speed / 2;
+    			} else {
+    				headPosY -= speed / 2;
+    			}
+    			
+    			updatePosition();
+    		}
+    			
+    	}
+    	
+    	updatePosition();
     }
     
-    public void updatePosition () {
-		xArm.setPosition(xArm.posX, xArm.posY, headPosZ);
-    	yArm.jSize = baseY - headPosY;
-		yArm.setPosition(headPosX, headPosY, headPosZ);
-		zArm.setPosition(headPosX, zArm.posY, zArm.posZ);
+    public void updatePosition () {		
+		xArm.setPosition(xArm.posX, xArm.posY, headPosZ + 0.25);
+    	yArm.jSize = baseY - headPosY - 1;
+		yArm.setPosition(headPosX + 0.25, headPosY + 1, headPosZ + 0.25);		
+		zArm.setPosition(headPosX + 0.25, zArm.posY, zArm.posZ);
+		
+		head.setPosition(headPosX + 0.4, headPosY, headPosZ + 0.4);
     }
 
 }

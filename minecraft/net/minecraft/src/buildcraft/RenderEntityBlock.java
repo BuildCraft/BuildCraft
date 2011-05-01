@@ -55,7 +55,7 @@ public class RenderEntityBlock extends Render {
 			util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);
 			
 			GL11.glPushMatrix();
-			GL11.glTranslatef((float)i + iBase + 1, (float)j + jBase + 1, (float)k + kBase + 1);
+			GL11.glTranslatef((float)i + iBase + 0.5F, (float)j + jBase + 0.5F, (float)k + kBase + 0.5F);
 			loadTexture("/terrain.png");		
 			util.baseBlock = Block.blocksList [entity.blockID];
 			GL11.glDisable(2896 /*GL_LIGHTING*/);
