@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
@@ -10,14 +11,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
-public class TileMachine extends TileEntity implements IArmListener {
-
-	// TODO: use xCoord yCoord zCoord instead???
-	int i, j, k;
-	int depth;
-	int step;
-	Orientations orientation;
-	
+public class TileMachine extends TileEntity implements IArmListener {		
 	boolean isDigging = true;
 
 	static final int fieldSize = BlockMachine.MINING_FIELD_SIZE
@@ -29,18 +23,15 @@ public class TileMachine extends TileEntity implements IArmListener {
 	
 	int xMin, zMin;
 	
+	boolean loadArm = false;
+	
+	int targetX, targetY, targetZ;
+	
 	public TileMachine() {
 		
 	}
 
-	public TileMachine(int ci, int cj, int ck, Orientations corientation, int xMin, int zMin) {
-		i = ci;
-		j = cj;
-		k = ck;
-		depth = 0;
-		step = 0;
-		orientation = corientation;
-		
+	public TileMachine(int xMin, int zMin) {
 		this.xMin = xMin;
 		this.zMin = zMin;
 	}
@@ -48,7 +39,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 	public void addToPipe(TilePipe pipe, Item item, Orientations orientation) {		
 		World world = ModLoader.getMinecraftInstance().theWorld;
 		
-		Position itemPos = new Position (i, j, k);
+		Position itemPos = new Position (xCoord, yCoord, zCoord);
 		
 		// move to the center of the machine
 		
@@ -90,139 +81,170 @@ public class TileMachine extends TileEntity implements IArmListener {
 					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2);
 			
 			arm.listener = this;
-			minecraft.theWorld.entityJoinedWorld(arm);
+			loadArm = true;
+		}
+		
+		if (loadArm) {
+			arm.joinToWorld(worldObj);
+			loadArm = false;
+		}
+		
+		boolean[][] blockedColumns = new boolean[BlockMachine.MINING_FIELD_SIZE][BlockMachine.MINING_FIELD_SIZE];
+		
+		for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE; ++searchX) {
+			for (int searchZ = 0; searchZ < BlockMachine.MINING_FIELD_SIZE; ++searchZ) {
+				blockedColumns [searchX][searchZ] = false;
+			}
+		}
+		
+		boolean found = false;
+		//  look for the next block to dig
+		
+		for (int searchY = yCoord + 3; searchY >= 0 && !found; --searchY) {
+			for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE && !found; ++searchX) {
+				for (int searchZ = 0; searchZ < BlockMachine.MINING_FIELD_SIZE && !found; ++searchZ) {
+					if (!blockedColumns [searchX][searchZ]) {
+						int bx = xMin + searchX + 1, by = searchY, bz = zMin + searchZ + 1;
+						
+						int blockId = world.getBlockId(bx, by, bz);
+						
+						if (blockDig (blockId)) {		
+							blockedColumns [searchX][searchZ] = true;						
+						} else if (canDig(blockId)) {
+							arm.setTarget (bx, by + 1, bz);
+							
+							targetX = bx;
+							targetY = by;
+							targetZ = bz;
+							
+							found = true;
+						}
+					}
+				}
+			}
 		}
 
-		int diffX = step % BlockMachine.MINING_FIELD_SIZE;
-		int diffZ = step / BlockMachine.MINING_FIELD_SIZE;
-		Position pos = new Position(i, j - depth, k, orientation);
-
-		pos.moveRight(BlockMachine.MINING_FIELD_SIZE / 2);
-		pos.moveForwards(2);
-
-		pos.moveLeft(diffX);
-		pos.moveForwards(diffZ);
-
-		step++;
-
-		if (step >= fieldSize) {
-			depth++;
-			step = 0;
-		}
-
-		if (j - depth <= 0) {
+		if (!found) {
 			isDigging = false;
-
-			return;
 		}
-
-		int blockId = world.getBlockId((int) pos.i, (int) pos.j, (int) pos.k);
-		
-		arm.setTarget(pos.i, pos.j + 1, pos.k);
-		
-		world.setBlockWithNotify((int) pos.i, (int) pos.j, (int) pos.k, Block.glass.blockID);
 		
 		inProcess = true;		
-		
-//		if (blockId == Block.bedrock.blockID
-//				|| blockId == Block.lavaStill.blockID
-//				|| blockId == Block.lavaMoving.blockID) {
-//
-//			isDigging = false;
-//
-//			return;
-//		}
-//
-//		if (blockId == 0 || blockId >= Block.blocksList.length
-//				|| Block.blocksList[blockId] == null) {
-//			return;
-//		}
-//
-//		int idDropped = Block.blocksList[blockId]
-//				.idDropped(blockId, world.rand);
-//
-//		if (idDropped >= Item.itemsList.length
-//				|| Item.itemsList[idDropped] == null) {
-//			return;
-//		}
-//
-//		Item item = Item.itemsList[idDropped];
-//		int itemQuantity = Block.blocksList[blockId]
-//				.quantityDropped(world.rand);
-//
-//		for (int q = 0; q < itemQuantity; ++q) {
-//			boolean added = false;
-//			
-//			ItemStack items = new ItemStack(item, 1);
-//
-//			// First, try to add to a nearby chest
-//
-//			added = Utils.addToRandomChest(this, Orientations.Unknown, items);
-//			
-//			if (!added) {
-//				added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, items);
-//			}			
-//			
-//			// Last, throw the object away
-//
-//			if (!added) {
-//				float f = world.rand.nextFloat() * 0.8F + 0.1F;
-//				float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-//				float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
-//
-//				EntityItem entityitem = new EntityItem(world, (float) i + f,
-//						(float) j + f1 + 0.5F, (float) k + f2, new ItemStack(
-//								item, 1));
-//
-//				float f3 = 0.05F;
-//				entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-//				entityitem.motionY = (float) world.rand.nextGaussian() * f3
-//						+ 1.0F;
-//				entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-//				world.entityJoinedWorld(entityitem);
-//			}
-//		}
-//
-//		world.setBlock((int) pos.i, (int) pos.j, (int) pos.k, 0);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);		
 
-		i = nbttagcompound.getInteger("i");
-		j = nbttagcompound.getInteger("j");
-		k = nbttagcompound.getInteger("k");
-		depth = nbttagcompound.getInteger("depth");
-		orientation = Orientations.values()[nbttagcompound
-				.getInteger("orientation")];
-		step = nbttagcompound.getInteger("step");
 		xMin = nbttagcompound.getInteger("xMin");
 		zMin = nbttagcompound.getInteger("zMin");
+		targetX = nbttagcompound.getInteger("targetX");
+		targetY = nbttagcompound.getInteger("targetY");
+		targetZ = nbttagcompound.getInteger("targetZ");
 		
-		step = 1;
-		depth = 0;
-
 		mod_BuildCraft.getInstance().machineBlock.workingMachines.put(
-				new BlockIndex(i, j, k), this);
+				new BlockIndex(xCoord, yCoord, zCoord), this);
+		
+		NBTTagCompound armStore = nbttagcompound.getCompoundTag("arm");
+		arm = new EntityMechanicalArm(worldObj);
+		arm.readFromNBT(armStore);
+		arm.listener = this;
+		
+		loadArm = true;
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);		
-
-		nbttagcompound.setInteger("i", i);
-		nbttagcompound.setInteger("j", j);
-		nbttagcompound.setInteger("k", k);
-		nbttagcompound.setInteger("depth", depth);
-		nbttagcompound.setInteger("orientation", orientation.ordinal());
-		nbttagcompound.setInteger("step", step);
+		
 		nbttagcompound.setInteger("xMin", xMin);
 		nbttagcompound.setInteger("zMin", zMin);
+		nbttagcompound.setInteger("targetX", targetX);
+		nbttagcompound.setInteger("targetY", targetY);
+		nbttagcompound.setInteger("targetZ", targetZ);
+		
+		if (arm != null) {
+			NBTTagCompound armStore = new NBTTagCompound();
+			nbttagcompound.setTag("arm", armStore);
+			arm.writeToNBT(armStore);
+		}
 	}
 	
 	
 	@Override
-	public void positionReached(double i, double j, double k) {
-		inProcess = false;	
+	public void positionReached(EntityMechanicalArm arm) {
+		int i = targetX;
+		int j = targetY;
+		int k = targetZ;
+		
+		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
+		
+		if (canDig(blockId)) {			
+			// Share this with mining well!			
+			
+			int idDropped = Block.blocksList[blockId].idDropped(blockId,
+					worldObj.rand);
+
+			if (idDropped >= Item.itemsList.length
+					|| Item.itemsList[idDropped] == null) {
+				return;
+			}
+
+			Item item = Item.itemsList[idDropped];
+			int itemQuantity = Block.blocksList[blockId]
+					.quantityDropped(worldObj.rand);
+
+			for (int q = 0; q < itemQuantity; ++q) {
+				boolean added = false;
+
+				ItemStack items = new ItemStack(item, 1);
+
+				// First, try to add to a nearby chest
+
+				added = Utils.addToRandomChest(this, Orientations.Unknown,
+						items);
+
+				if (!added) {
+					added = Utils.addToRandomPipeEntry(this,
+							Orientations.Unknown, items);
+				}
+
+				// Last, throw the object away
+
+				if (!added) {
+					float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+					float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+					float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+
+					EntityItem entityitem = new EntityItem(worldObj,
+							(float) i + f, (float) j + f1 + 0.5F, (float) k
+									+ f2, new ItemStack(item, 1));
+
+					float f3 = 0.05F;
+					entityitem.motionX = (float) worldObj.rand.nextGaussian()
+							* f3;
+					entityitem.motionY = (float) worldObj.rand.nextGaussian()
+							* f3 + 1.0F;
+					entityitem.motionZ = (float) worldObj.rand.nextGaussian()
+							* f3;
+					worldObj.entityJoinedWorld(entityitem);
+				}
+			}
+			
+			worldObj.setBlockWithNotify((int) i, (int) j, (int) k, 0);
+		}
+
+		inProcess = false;
+	}
+	
+	boolean blockDig (int blockID) {
+		return blockID == Block.bedrock.blockID
+				&& blockID == Block.lavaStill.blockID
+				&& blockID == Block.lavaMoving.blockID;
+	}
+	
+	boolean canDig(int blockID) {
+		return !blockDig(blockID) && blockID != 0
+				&& blockID != Block.waterMoving.blockID
+				&& blockID != Block.waterStill.blockID
+				&& Block.blocksList [blockID] != null;
 	}
 
 }

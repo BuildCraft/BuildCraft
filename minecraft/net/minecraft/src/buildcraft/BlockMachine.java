@@ -145,7 +145,7 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 					mod_BuildCraft.getInstance().stonePipeBlock.blockID);
 		}
 		
-		TileMachine newTile = new TileMachine(i, j, k, orientation, (int) xMin, (int) zMin);
+		TileMachine newTile = new TileMachine((int) xMin, (int) zMin);
 		workingMachines.put(new BlockIndex(i, j, k),
 				newTile);
 		
@@ -166,7 +166,7 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		}
 		
 		for (TileMachine w : toRemove) {
-			workingMachines.remove(new BlockIndex (w.i, w.j, w.k));
+			workingMachines.remove(new BlockIndex (w.xCoord, w.yCoord, w.zCoord));
 		}				
 	}	   
 
@@ -198,6 +198,6 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 
 	@Override
 	protected TileEntity getBlockEntity() {		
-		return new TileMachine(0, 0, 0, Orientations.Unknown, 0, 0);
+		return new TileMachine(0, 0);
 	}
 }

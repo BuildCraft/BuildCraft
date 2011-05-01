@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;

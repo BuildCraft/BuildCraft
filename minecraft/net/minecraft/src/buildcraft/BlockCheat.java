@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.EntityFallingSand;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
@@ -23,42 +22,33 @@ public class BlockCheat extends Block {
 	EntityMechanicalArm entity;
 	
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-				
-		System.out.println ("ACTIVATED");
+						
+		createItems (i, j, k, new ItemStack (Item.redstone, 64));
+		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
+		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
+		createItems (i, j, k, new ItemStack (Item.ingotGold, 64));
+		createItems (i, j, k, new ItemStack (Item.diamond, 64));		
+		createItems (i, j, k, new ItemStack (Item.paper, 64));
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
+		createItems (i, j, k, new ItemStack (Item.redstoneRepeater, 64));
+		createItems (i, j, k, new ItemStack (Item.stick, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironGearItem, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenGearItem, 64));
 		
-		if (entity == null) {
-			entity = new EntityMechanicalArm(world, i, j + 3, k, 10, 10);
-			world.entityJoinedWorld(entity);
-		} else {
-			entity.setTarget(entity.headPosX + 1, entity.headPosY, entity.headPosZ + 1);
-		}
-		
-//		createItems (i, j, k, new ItemStack (Item.redstone, 64));
-//		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
-//		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
-//		createItems (i, j, k, new ItemStack (Item.ingotGold, 64));
-//		createItems (i, j, k, new ItemStack (Item.diamond, 64));		
-//		createItems (i, j, k, new ItemStack (Item.paper, 64));
-//		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-//		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-//		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-//		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-//		createItems (i, j, k, new ItemStack (Item.redstoneRepeater, 64));
-//		createItems (i, j, k, new ItemStack (Item.stick, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironGearItem, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenGearItem, 64));
-//		
-//		createItems (i, j, k, new ItemStack (Block.glass, 64));
-//		createItems (i, j, k, new ItemStack (Block.planks, 64));
-//		createItems (i, j, k, new ItemStack (Block.stone, 64));
-//		createItems (i, j, k, new ItemStack (Block.cobblestone, 64));
-//		createItems (i, j, k, new ItemStack (Block.crate, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().miningWellBlock, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenPipeBlock, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().stonePipeBlock, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironPipeBlock, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().goldenPipeBlock, 64));
-//		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().diamondPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (Block.glass, 64));
+		createItems (i, j, k, new ItemStack (Block.planks, 64));
+		createItems (i, j, k, new ItemStack (Block.stone, 64));
+		createItems (i, j, k, new ItemStack (Block.cobblestone, 64));
+		createItems (i, j, k, new ItemStack (Block.crate, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().miningWellBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().stonePipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().goldenPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().diamondPipeBlock, 64));
 		
 		
 		return false;
