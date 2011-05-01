@@ -27,11 +27,15 @@ public class TileMachine extends TileEntity implements IArmListener {
 	
 	int targetX, targetY, targetZ;
 	
+	BluePrintBuilder bluePrintBuilder;
+	
 	public TileMachine() {
 		
 	}
 
 	public TileMachine(int xMin, int zMin) {
+		this ();
+		
 		this.xMin = xMin;
 		this.zMin = zMin;
 	}
@@ -64,6 +68,21 @@ public class TileMachine extends TileEntity implements IArmListener {
 	}
 	
 	public void work(Minecraft minecraft) {
+		if (bluePrintBuilder == null) {
+			bluePrintBuilder = new BluePrintBuilder(worldObj, BlockMachine.bluePrint, xMin, yCoord, zMin);
+		}
+		
+		if (!bluePrintBuilder.done) {
+			BlockContents contents = bluePrintBuilder.findNextBlock();
+			
+			if (contents != null) {
+				worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
+						contents.blockId);
+			}
+			
+			return;
+		}
+		
 		if (inProcess) {
 			return;
 		}
@@ -143,12 +162,14 @@ public class TileMachine extends TileEntity implements IArmListener {
 		mod_BuildCraft.getInstance().machineBlock.workingMachines.put(
 				new BlockIndex(xCoord, yCoord, zCoord), this);
 		
-		NBTTagCompound armStore = nbttagcompound.getCompoundTag("arm");
-		arm = new EntityMechanicalArm(worldObj);
-		arm.readFromNBT(armStore);
-		arm.listener = this;
-		
-		loadArm = true;
+		if (nbttagcompound.getBoolean("hasArm")) {
+			NBTTagCompound armStore = nbttagcompound.getCompoundTag("arm");
+			arm = new EntityMechanicalArm(worldObj);
+			arm.readFromNBT(armStore);
+			arm.listener = this;
+
+			loadArm = true;
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -159,6 +180,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);
 		nbttagcompound.setInteger("targetZ", targetZ);
+		nbttagcompound.setBoolean("hasArm", arm != null);
 		
 		if (arm != null) {
 			NBTTagCompound armStore = new NBTTagCompound();

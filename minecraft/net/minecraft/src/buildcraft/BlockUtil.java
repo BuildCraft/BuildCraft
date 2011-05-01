@@ -27,5 +27,15 @@ public class BlockUtil extends Block {
     {
         return baseBlock.getBlockTextureFromSide (i);
     }
+    
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
+    
+    public boolean renderAsNormalBlock()
+    {
+        return false;
+    }
 
 }

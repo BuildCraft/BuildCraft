@@ -15,6 +15,8 @@ import net.minecraft.src.mod_BuildCraft;
 
 public class BlockMachine extends BlockContainer implements ITickListener {
 	
+	public static final BluePrint bluePrint;
+	
 	public static final int MINING_FIELD_SIZE = 9; 
 	
 	int textureTop;
@@ -38,7 +40,6 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		textureTop = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/mining_machine_top.png");
 		mod_BuildCraft.getInstance().registerTicksListener(this, 40);	
-		
 		
 	}
 	
@@ -67,82 +68,52 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		
 		double xMin = Integer.MAX_VALUE, zMin = Integer.MAX_VALUE;
 
-		for (int h = 0; h < 2; h++) {
-			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
-				p.moveRight(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
-						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+		for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
+			p.moveRight(1);
 
-				if (p.i < xMin) {
-					xMin = p.i;
-				}
-
-				if (p.k < zMin) {
-					zMin = p.k;
-				}
+			if (p.i < xMin) {
+				xMin = p.i;
 			}
 
-			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
-				p.moveForwards(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
-						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
-
-				if (p.i < xMin) {
-					xMin = p.i;
-				}
-
-				if (p.k < zMin) {
-					zMin = p.k;
-				}
+			if (p.k < zMin) {
+				zMin = p.k;
 			}
-
-			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
-				p.moveLeft(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
-						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
-
-				if (p.i < xMin) {
-					xMin = p.i;
-				}
-
-				if (p.k < zMin) {
-					zMin = p.k;
-				}
-			}
-
-			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
-				p.moveBackwards(1);
-				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
-						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
-
-				if (p.i < xMin) {
-					xMin = p.i;
-				}
-
-				if (p.k < zMin) {
-					zMin = p.k;
-				}
-			}
-			
-			p.j += 4;
 		}
-		
-		System.out.println ("i, k = " + i + ", " + k);
-		
-		for (int h = j + 1; h < j + 4; ++h) {
-			System.out.println (xMin + "," + h + ", " + zMin);
-			
-			world.setBlockWithNotify((int) xMin, h, (int) zMin,
-					mod_BuildCraft.getInstance().stonePipeBlock.blockID);			
-			world.setBlockWithNotify((int) xMin + MINING_FIELD_SIZE + 1, h,
-					(int) zMin,
-					mod_BuildCraft.getInstance().stonePipeBlock.blockID);			
-			world.setBlockWithNotify((int) xMin, h, (int) zMin
-					+ MINING_FIELD_SIZE + 1,
-					mod_BuildCraft.getInstance().stonePipeBlock.blockID);		
-			world.setBlockWithNotify((int) xMin + MINING_FIELD_SIZE + 1, h,
-					(int) zMin + MINING_FIELD_SIZE + 1,
-					mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+
+		for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
+			p.moveForwards(1);
+
+			if (p.i < xMin) {
+				xMin = p.i;
+			}
+
+			if (p.k < zMin) {
+				zMin = p.k;
+			}
+		}
+
+		for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
+			p.moveLeft(1);
+
+			if (p.i < xMin) {
+				xMin = p.i;
+			}
+
+			if (p.k < zMin) {
+				zMin = p.k;
+			}
+		}
+
+		for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
+			p.moveBackwards(1);
+
+			if (p.i < xMin) {
+				xMin = p.i;
+			}
+
+			if (p.k < zMin) {
+				zMin = p.k;
+			}
 		}
 		
 		TileMachine newTile = new TileMachine((int) xMin, (int) zMin);
@@ -199,5 +170,45 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 	@Override
 	protected TileEntity getBlockEntity() {		
 		return new TileMachine(0, 0);
+	}
+	
+	static {
+		bluePrint = new BluePrint (MINING_FIELD_SIZE + 2, 5, MINING_FIELD_SIZE + 2);
+		
+		for (int i = 0; i < MINING_FIELD_SIZE + 2; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				for (int k = 0; k < MINING_FIELD_SIZE + 2; ++k) {
+					bluePrint.setBlockId(i, j, k, 0);
+				}
+			}
+		}
+		
+		for (int j = 0; j < 5; j += 4) {
+			for (int i = 0; i < MINING_FIELD_SIZE + 2; ++i) {
+				bluePrint.setBlockId(i, j, 0,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+				bluePrint.setBlockId(i, j, MINING_FIELD_SIZE + 1,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+			}
+			
+			for (int k = 0; k < MINING_FIELD_SIZE + 2; ++k) {
+				bluePrint.setBlockId(0, j, k,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+				bluePrint.setBlockId(MINING_FIELD_SIZE + 1, j, k,
+						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+
+			}
+		}
+		
+		for (int h = 1; h < 4; ++h) {
+			bluePrint.setBlockId(0, h, 0,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+			bluePrint.setBlockId(0, h, MINING_FIELD_SIZE + 1,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+			bluePrint.setBlockId(MINING_FIELD_SIZE + 1, h, 0,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+			bluePrint.setBlockId(MINING_FIELD_SIZE + 1, h, MINING_FIELD_SIZE + 1,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+		}
 	}
 }
