@@ -15,6 +15,8 @@ import net.minecraft.src.mod_BuildCraft;
 
 public class BlockMachine extends BlockContainer implements ITickListener {
 	
+	public static final int MINING_FIELD_SIZE = 9; 
+	
 	int textureTop;
 	int textureFront;
 	int textureSide;
@@ -52,84 +54,97 @@ public class BlockMachine extends BlockContainer implements ITickListener {
     	
     	world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());    	
     	
-    	registerMachine(world, i, j, k, orientation);
-    	
-    	EntityMechanicalArm entity = new EntityMechanicalArm(world, i, j + 4, k, 3, 3);
-    	world.entityJoinedWorld(entity);
+    	registerMachine(world, i, j, k, orientation);    	
     }
     
     
     
     public void registerMachine (World world, int i, int j, int k, Orientations orientation) {    	
 		Position p = new Position (i, j, k, orientation);
-		
+				
 		p.moveForwards(1);
-		p.moveLeft(2);
+		p.moveLeft((MINING_FIELD_SIZE - 1) / 2 + 1);
 		
 		double xMin = Integer.MAX_VALUE, zMin = Integer.MAX_VALUE;
-		
-		for (int h = 0; h < 1; ++h) {
-			for (int s = 0; s < 4; ++s) {
+
+		for (int h = 0; h < 2; h++) {
+			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
 				p.moveRight(1);
 				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
 						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
-				
-				if (p.i  < xMin) {
+
+				if (p.i < xMin) {
 					xMin = p.i;
 				}
-				
-				if (p.k  < zMin) {
-					zMin = p.i;
+
+				if (p.k < zMin) {
+					zMin = p.k;
 				}
 			}
 
-			for (int s = 0; s < 4; ++s) {
+			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
 				p.moveForwards(1);
 				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
 						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
-				
-				if (p.i  < xMin) {
+
+				if (p.i < xMin) {
 					xMin = p.i;
 				}
-				
-				if (p.k  < zMin) {
+
+				if (p.k < zMin) {
 					zMin = p.k;
 				}
 			}
 
-			for (int s = 0; s < 4; ++s) {
+			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
 				p.moveLeft(1);
 				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
 						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
-				
-				if (p.i  < xMin) {
+
+				if (p.i < xMin) {
 					xMin = p.i;
 				}
-				
-				if (p.k  < zMin) {
+
+				if (p.k < zMin) {
 					zMin = p.k;
 				}
 			}
 
-			for (int s = 0; s < 4; ++s) {
+			for (int s = 0; s < MINING_FIELD_SIZE + 1; ++s) {
 				p.moveBackwards(1);
 				world.setBlockWithNotify((int) p.i, (int) p.j, (int) p.k,
 						mod_BuildCraft.getInstance().stonePipeBlock.blockID);
-				
-				if (p.i  < xMin) {
+
+				if (p.i < xMin) {
 					xMin = p.i;
 				}
-				
-				if (p.k  < zMin) {
+
+				if (p.k < zMin) {
 					zMin = p.k;
-				}				
+				}
 			}
 			
-			p.j++;
+			p.j += 4;
 		}
 		
-		xMin++;
-		zMin++;
+		System.out.println ("i, k = " + i + ", " + k);
+		
+		for (int h = j + 1; h < j + 4; ++h) {
+			System.out.println (xMin + "," + h + ", " + zMin);
+			
+			world.setBlockWithNotify((int) xMin, h, (int) zMin,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);			
+			world.setBlockWithNotify((int) xMin + MINING_FIELD_SIZE + 1, h,
+					(int) zMin,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);			
+			world.setBlockWithNotify((int) xMin, h, (int) zMin
+					+ MINING_FIELD_SIZE + 1,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);		
+			world.setBlockWithNotify((int) xMin + MINING_FIELD_SIZE + 1, h,
+					(int) zMin + MINING_FIELD_SIZE + 1,
+					mod_BuildCraft.getInstance().stonePipeBlock.blockID);
+		}
+		
 		TileMachine newTile = new TileMachine(i, j, k, orientation, (int) xMin, (int) zMin);
 		workingMachines.put(new BlockIndex(i, j, k),
 				newTile);
