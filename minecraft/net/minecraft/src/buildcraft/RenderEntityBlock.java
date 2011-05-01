@@ -15,6 +15,7 @@ public class RenderEntityBlock extends Render {
     private RenderBlocks blockRender;
 
     
+    
     public RenderEntityBlock () {
     	blockRender = new RenderBlocks();
     	shadowSize = 1.0F;
@@ -45,17 +46,24 @@ public class RenderEntityBlock extends Render {
 			
 			util.maxX = (remainX > 1.0 ? 1.0 : remainX);
 			util.maxY = (remainY > 1.0 ? 1.0 : remainY);
-			util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);
-			
+			util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);			
+						
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float)i + iBase + 0.5F, (float)j + jBase + 0.5F, (float)k + kBase + 0.5F);
 			loadTexture("/terrain.png");		
-			util.baseBlock = Block.blocksList [entity.blockID];
+			util.baseBlock = Block.blocksList [entity.blockID];			
+			
+			int lightX, lightY, lightZ;
+			
+			lightX = (int) (entity.posX + iBase);
+			lightY = (int) (entity.posY + jBase);
+			lightZ = (int) (entity.posZ + kBase);
+			
 			GL11.glDisable(2896 /*GL_LIGHTING*/);
 					blockRender.renderBlockFallingSand(util, world,
-							(int) entity.posX,
-							(int) entity.posY,
-							(int) entity.posZ);
+							lightX,
+							lightY,
+							lightZ);
 			GL11.glEnable(2896 /*GL_LIGHTING*/);
 			GL11.glPopMatrix();
 
