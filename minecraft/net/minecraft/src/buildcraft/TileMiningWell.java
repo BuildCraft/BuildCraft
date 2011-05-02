@@ -77,7 +77,7 @@ public class TileMiningWell extends TileEntity {
 		
 		ItemStack stack = new ItemStack(item, itemQuantity);
 				
-		if (Utils.addToRandomChest(this, Orientations.Unknown, stack)) {
+		if (Utils.addToRandomInventory(this, Orientations.Unknown, stack)) {
 			//  The object has been added to a nearby chest.
 			return;
 		}

@@ -3,11 +3,11 @@ package net.minecraft.src.buildcraft;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
@@ -21,10 +21,13 @@ public class Utils {
 	 * Return True if the item id is supposed to be connected to the
 	 * pipe, for e.g. display purpose
 	 */
-	public static boolean isPipeConnected(int id) {
-		return Block.blocksList [id] instanceof BlockPipe		        
-				|| id == mod_BuildCraft.getInstance().machineBlock.blockID
-				|| id == Block.crate.blockID
+	public static boolean isPipeConnected(IBlockAccess blockAccess, int i, int j, int k) {
+		int id = blockAccess.getBlockId(i, j, k);
+		TileEntity tileEntity = blockAccess.getBlockTileEntity(i, j, k);
+		
+		return tileEntity instanceof IPipeEntry 
+				|| tileEntity instanceof IInventory 				        
+				|| id == mod_BuildCraft.getInstance().machineBlock.blockID				
 				|| id == mod_BuildCraft.getInstance().miningWellBlock.blockID;
 	}
 
@@ -134,15 +137,15 @@ public class Utils {
 	
 	/**
 	 * Look around the tile given in parameter in all 6 position, tries to
-	 * add the items to a random chest around. Will make sure that the location
+	 * add the items to a random inventory around. Will make sure that the location
 	 * from which the items are coming from (identified by the from parameter)
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static boolean addToRandomChest (TileEntity tile, Orientations from, ItemStack items) {
+	public static boolean addToRandomInventory (TileEntity tile, Orientations from, ItemStack items) {
 		World w = ModLoader.getMinecraftInstance().theWorld;
 		
-		LinkedList <TileEntityChest> possibleChests = new LinkedList <TileEntityChest> ();
+		LinkedList <Orientations> possibleInventories = new LinkedList <Orientations> ();
 		
 		for (int j = 0; j < 6; ++j) {
 			if (from.reverse().ordinal() == j) {
@@ -154,20 +157,32 @@ public class Utils {
 			
 			pos.moveForwards(1.0);
 			
-			TileEntity tileChest = w.getBlockTileEntity((int) pos.i,
+			TileEntity tileInventory = w.getBlockTileEntity((int) pos.i,
 					(int) pos.j, (int) pos.k);
 			
-			if (tileChest instanceof TileEntityChest) {
-				if (checkAvailableSlot ((TileEntityChest) tileChest, items, false)) {
-					possibleChests.add((TileEntityChest) tileChest);
+			if (tileInventory instanceof IInventory) {
+				if (checkAvailableSlot((IInventory) tileInventory, items,
+						false, pos.orientation.reverse())) {
+					possibleInventories.add(pos.orientation);
 				}
 			}
 		}
 		
-		if (possibleChests.size() > 0) {
-			int choice = w.rand.nextInt(possibleChests.size());
+		System.out.println ("ADD..." + possibleInventories.size());
+		
+		if (possibleInventories.size() > 0) {
+			int choice = w.rand.nextInt(possibleInventories.size());
 			
-			checkAvailableSlot(possibleChests.get(choice), items, true);
+			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
+					possibleInventories.get(choice));
+			
+			pos.moveForwards(1.0);
+			
+			TileEntity tileInventory = w.getBlockTileEntity((int) pos.i,
+					(int) pos.j, (int) pos.k);
+			
+			checkAvailableSlot((IInventory) tileInventory, items, true,
+					pos.orientation.reverse());
 			
 			return true;
 		} else {
@@ -177,22 +192,35 @@ public class Utils {
 
 	/**
 	 * Checks if all the items can be added to the inventory. If add is
-	 * true, they will be effectively added.
+	 * true, they will be effectively added. Orientations is the direction to
+	 * look to find the item, e.g. if the item is coming from the top, it
+	 * will be YPos.
 	 */
 	public static boolean checkAvailableSlot(IInventory inventory,
-			ItemStack items, boolean add) {
+			ItemStack items, boolean add, Orientations from) {
 		// First, look for a similar pile
 
-		for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-			ItemStack stack = inventory.getStackInSlot(j);
-			if (stack != null) {
-				if (stack.getItem() == items.getItem()
-						&& stack.stackSize + items.stackSize <= stack.getMaxStackSize()) {
-					
-					if (add) {
-						stack.stackSize += items.stackSize;
-					}
-
+		System.out.println(inventory.getClass() + " SIZE INVENTORY = "
+				+ inventory.getSizeInventory());
+		
+		if (inventory.getSizeInventory() == 3) {
+			//  This is a furnace-like inventory
+			
+			if (from == Orientations.YPos) {
+				if (tryAdding (items, inventory, 0, add, false)) {
+					return true;
+				}
+			} else if (from == Orientations.YNeg) {
+				if (tryAdding (items, inventory, 1, add, false)) {
+					return true;
+				}
+			}
+			
+		} else {
+			//  This is a generic inventory
+			
+			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+				if (tryAdding (items, inventory, j, add, false)) {
 					return true;
 				}
 			}
@@ -200,21 +228,70 @@ public class Utils {
 
 		// If none, then create a new thing
 
-		for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-			ItemStack stack = inventory.getStackInSlot(j);
+		
+		if (inventory.getSizeInventory() == 3) {
+			//  This is a furnace-like inventory
+			
+			if (from == Orientations.YPos) {
+				if (tryAdding (items, inventory, 0, add, true)) {
+					return true;
+				}
+			} else if (from == Orientations.YNeg) {
+				if (tryAdding (items, inventory, 1, add, true)) {
+					return true;
+				}
+			}
+			
+		} else {
+			//  This is a generic inventory
+			
+			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+				if (tryAdding (items, inventory, j, add, true)) {
+					return true;
+				}
+			}
+		}
+
+		// If the inventory if full, return false
+
+		return false;
+	}
+	
+	/**
+	 * Try adding the items given in parameter in the inventory, at the given
+	 * stackIndex. If doAdd is false, then no item will actually get added. If
+	 * addInEmpty is true, then items will be added in empty slots only,
+	 * otherwise in slot containing the same item only.
+	 */
+	public static boolean tryAdding(ItemStack items, IInventory inventory,
+			int stackIndex, boolean doAdd, boolean addInEmpty)
+	{
+		ItemStack stack = inventory.getStackInSlot(stackIndex);
+
+		if (!addInEmpty) {
+			if (stack != null) {
+				if (stack.getItem() == items.getItem()
+						&& stack.stackSize + items.stackSize <= stack
+						.getMaxStackSize()) {
+
+					if (doAdd) {
+						stack.stackSize += items.stackSize;
+					}					
+
+					return true;
+				}
+			}
+		} else {
 			if (stack == null) {
-				
-				if (add) {
+				if (doAdd) {
 					stack = new ItemStack(items.getItem(), items.stackSize);
-					inventory.setInventorySlotContents(j, stack);
+					inventory.setInventorySlotContents(stackIndex, stack);
 				}
 
 				return true;
 			}
 		}
-
-		// If the chest if full, return false
-
+		
 		return false;
 	}
 	

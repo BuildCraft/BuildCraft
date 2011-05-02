@@ -3,11 +3,11 @@ package net.minecraft.src.buildcraft;
 import java.util.LinkedList;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
@@ -78,9 +78,9 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 
 				if (entity instanceof IPipeEntry) {
 					result.add(newPos.orientation);
-				} else if (entity instanceof TileEntityChest) {
-					if (Utils.checkAvailableSlot((TileEntityChest) entity,
-							item.item, false)) {
+				} else if (entity instanceof IInventory) {
+					if (Utils.checkAvailableSlot((IInventory) entity,
+							item.item, false, newPos.orientation.reverse())) {
 						result.add(newPos.orientation);
 					}
 				}
@@ -140,9 +140,9 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 				if (tile instanceof IPipeEntry) {
 					((IPipeEntry) tile).entityEntering(data.item,
 							data.orientation);
-				} else if (tile instanceof TileEntityChest
-						&& (Utils.checkAvailableSlot((TileEntityChest) tile,
-								data.item.item, true))) {
+				} else if (tile instanceof IInventory
+						&& (Utils.checkAvailableSlot((IInventory) tile,
+								data.item.item, true, destPos.orientation.reverse()))) {
 
 					data.item.setEntityDead();
 				} else {
