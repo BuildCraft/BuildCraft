@@ -219,8 +219,6 @@ public class TileMachine extends TileEntity implements IArmListener {
 				ItemStack items = new ItemStack(item, 1);
 
 				// First, try to add to a nearby chest
-				
-				System.out.println ("ADD TO RANDOM INVENTORY");
 
 				added = Utils.addToRandomInventory(this, Orientations.Unknown,
 						items);
