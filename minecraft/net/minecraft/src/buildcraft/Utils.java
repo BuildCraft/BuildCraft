@@ -168,8 +168,6 @@ public class Utils {
 			}
 		}
 		
-		System.out.println ("ADD..." + possibleInventories.size());
-		
 		if (possibleInventories.size() > 0) {
 			int choice = w.rand.nextInt(possibleInventories.size());
 			

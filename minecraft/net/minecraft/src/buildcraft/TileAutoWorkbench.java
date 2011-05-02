@@ -6,7 +6,6 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.TilePipe.EntityData;
 
 public class TileAutoWorkbench extends TileEntity implements IInventory {
 
