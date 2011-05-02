@@ -7,6 +7,7 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.buildcraft.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.BlockCheat;
 import net.minecraft.src.buildcraft.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.BlockGoldenPipe;
@@ -23,6 +24,7 @@ import net.minecraft.src.buildcraft.EntityPassiveItem;
 import net.minecraft.src.buildcraft.ITickListener;
 import net.minecraft.src.buildcraft.Orientations;
 import net.minecraft.src.buildcraft.RenderEntityBlock;
+import net.minecraft.src.buildcraft.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.TileDiamondPipe;
 import net.minecraft.src.buildcraft.TileGoldenPipe;
 import net.minecraft.src.buildcraft.TileIronPipe;
@@ -50,6 +52,8 @@ public class mod_BuildCraft extends BaseMod {
 	public final BlockGoldenPipe goldenPipeBlock;
 	public final BlockDiamondPipe diamondPipeBlock;
 	public final BlockPlainPipe plainPipeBlock;
+	public final BlockAutoWorkbench autoWorkbenchBlock;
+	
     public final BlockUtil blockUtil;
 	
 	public final BlockCheat cheatBlock;
@@ -143,6 +147,13 @@ public class mod_BuildCraft extends BaseMod {
 		ModLoader.RegisterBlock(plainPipeBlock);
 		ModLoader.AddName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
 		
+		autoWorkbenchBlock = new BlockAutoWorkbench (getFirstFreeBlock());
+		ModLoader.RegisterBlock(autoWorkbenchBlock);
+		craftingmanager.addRecipe(new ItemStack(autoWorkbenchBlock), new Object[] {
+			"s ", "s ", Character.valueOf('s'), Block.dirt });
+		ModLoader.AddName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
+				"Automatic Workbench");
+		
 		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
 		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
@@ -164,6 +175,7 @@ public class mod_BuildCraft extends BaseMod {
 		ModLoader.RegisterTileEntity(TileIronPipe.class, "IronPipe");
 		ModLoader.RegisterTileEntity(TileGoldenPipe.class, "GoldenPipe");
 		ModLoader.RegisterTileEntity(TileDiamondPipe.class, "DiamondPipe");
+		ModLoader.RegisterTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 			
 		
 		plainIronTexture = ModLoader.addOverride("/terrain.png",
