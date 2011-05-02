@@ -164,7 +164,8 @@ public class TileWoodenPipe extends TilePipe {
 					ItemStack slot = inventory.getStackInSlot(k);
 
 					if (slot != null && slot.stackSize > 0) {
-						ItemStack stack = new ItemStack(slot.getItem(), 1);
+						ItemStack stack = slot.copy ();
+						slot.stackSize = 1;
 
 						if (doRemove) {
 							inventory.decrStackSize(k, 1);

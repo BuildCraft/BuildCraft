@@ -36,6 +36,10 @@ public class BlockCheat extends Block {
 		createItems (i, j, k, new ItemStack (Item.redstoneRepeater, 64));
 		createItems (i, j, k, new ItemStack (Item.stick, 64));
 		createItems (i, j, k, new ItemStack (Item.coal, 64));
+		
+		
+		
+		createItems (i, j, k, new ItemStack (Item.dyePowder, 9, 4));
 		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironGearItem, 64));
 		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenGearItem, 64));
 		

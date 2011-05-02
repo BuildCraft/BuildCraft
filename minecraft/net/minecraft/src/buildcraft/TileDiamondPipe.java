@@ -26,10 +26,17 @@ public class TileDiamondPipe extends TilePipe implements IInventory {
 	}
 
 	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		items [i].stackSize -= j;		
+	public ItemStack decrStackSize(int i, int j) {		
+		ItemStack stack = items [i].copy();
+		stack.stackSize = j;
 		
-		return new ItemStack(items [i].getItem(), j);
+		items [i].stackSize -= j;
+		
+		if (items [i].stackSize == 0) {
+			items [i] = null;
+		}
+		
+		return stack;
 	}
 
 	@Override
