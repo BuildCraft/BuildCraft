@@ -2,11 +2,14 @@ package net.minecraft.src.buildcraft;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.Container;
+import net.minecraft.src.CraftingManager;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 
 public class TileWoodenPipe extends TilePipe {
@@ -32,7 +35,7 @@ public class TileWoodenPipe extends TilePipe {
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
-	public void extract () {						
+	public void extract () {		
 		World w = ModLoader.getMinecraftInstance().theWorld;
 		
 		if (w.getWorldTime() - lastMining < 50) {
@@ -113,27 +116,62 @@ public class TileWoodenPipe extends TilePipe {
 				}				
 			
 				return stack;
-			}			
+			}	
+		} if (inventory.getSizeInventory() == 9) {
+			// This is a workbench inventory
+			
+			// Do only craft if there's at least two items of each, to keep
+			// the template.
+			
+
+			InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
+				@Override
+				public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+					return false;
+				}}, 3, 3);	
+			
+			for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+				ItemStack stack = inventory.getStackInSlot(i);
+				
+				if (stack != null && stack.stackSize == 1) {
+					return null;
+				}
+				
+				craftMatrix.setInventorySlotContents(i, stack);
+			}
+			
+			ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(
+					craftMatrix);
+			
+			if (resultStack != null && doRemove) {
+				for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+					ItemStack stack = inventory.getStackInSlot(i);
+					
+					if (stack != null) {
+						inventory.decrStackSize(i, 1);
+					}
+				}
+			}
+			
+			return resultStack;
 		} else {
 			// This is a generic inventory
 			
 			for (int k = 0; k < inventory.getSizeInventory(); ++k) {
 				if (inventory.getStackInSlot(k) != null
 						&& inventory.getStackInSlot(k).stackSize > 0) {
-					
-					if (doRemove) {
-						ItemStack slot = inventory.getStackInSlot(k);
-						
-						if (slot != null && slot.stackSize > 0) {
-							ItemStack stack = new ItemStack(slot.getItem(), 1);
-							
-							if (doRemove) {
-								inventory.decrStackSize(k, 1);
-							}
-							
-							return stack;
+										
+					ItemStack slot = inventory.getStackInSlot(k);
+
+					if (slot != null && slot.stackSize > 0) {
+						ItemStack stack = new ItemStack(slot.getItem(), 1);
+
+						if (doRemove) {
+							inventory.decrStackSize(k, 1);
 						}
-					}					
+
+						return stack;
+					}				
 				}
 			}
 		}

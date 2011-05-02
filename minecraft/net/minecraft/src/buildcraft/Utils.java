@@ -199,9 +199,6 @@ public class Utils {
 	public static boolean checkAvailableSlot(IInventory inventory,
 			ItemStack items, boolean add, Orientations from) {
 		// First, look for a similar pile
-
-		System.out.println(inventory.getClass() + " SIZE INVENTORY = "
-				+ inventory.getSizeInventory());
 		
 		if (inventory.getSizeInventory() == 3) {
 			//  This is a furnace-like inventory
@@ -216,6 +213,27 @@ public class Utils {
 				}
 			}
 			
+		} else if (inventory.getSizeInventory() == 9) {
+			//  This is a workbench inventory. Try to add to the smallest slot
+			//  that contains the expected item.
+			
+			int minSimilar = Integer.MAX_VALUE;
+			int minSlot = 0;
+			
+			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+				ItemStack stack = inventory.getStackInSlot(j);
+				
+				if (stack != null && stack.stackSize > 0
+						&& stack.itemID == items.itemID
+						&& stack.stackSize < minSimilar) {
+					minSimilar = stack.stackSize;
+					minSlot = j;
+				}								
+			}
+			
+			if (tryAdding (items, inventory, minSlot, add, false)) {
+				return true;
+			}
 		} else {
 			//  This is a generic inventory
 			
@@ -228,7 +246,6 @@ public class Utils {
 
 		// If none, then create a new thing
 
-		
 		if (inventory.getSizeInventory() == 3) {
 			//  This is a furnace-like inventory
 			
@@ -242,6 +259,10 @@ public class Utils {
 				}
 			}
 			
+		} else if (inventory.getSizeInventory() == 9) { 
+			//  In the case of a workbench inventory, don't do anything
+			
+			return false;
 		} else {
 			//  This is a generic inventory
 			

@@ -190,7 +190,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 					.tagAt(j);			
 			
 			EntityPassiveItem entity = new EntityPassiveItem (world);
-			entity.readEntityFromNBT(nbttagcompound2);
+			entity.readFromNBT(nbttagcompound2);
 			
 			EntityData data = new EntityData(entity,
 					Orientations.values()[nbttagcompound2.getInteger("orientation")]);
@@ -212,7 +212,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
     	for (EntityData data : travelingEntities) {    		
     		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
     		nbttaglist.setTag(nbttagcompound2);
-    		data.item.writeEntityToNBT(nbttagcompound2);
+    		data.item.writeToNBT(nbttagcompound2);
     		nbttagcompound2.setBoolean("toCenter", data.toCenter);
     		nbttagcompound2.setInteger("orientation", data.orientation.ordinal());    		
     	}
