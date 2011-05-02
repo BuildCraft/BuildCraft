@@ -8,9 +8,12 @@ public class TileIronPipe extends TilePipe {
 	protected Orientations resolveDestination (EntityData data) {
 		int metadata = world.getBlockMetadata(xCoord, yCoord, zCoord);
 		
-		if (metadata != 0) {
+		if (metadata != -1) {
 			Position pos = new Position(xCoord, yCoord, zCoord,
 					Orientations.values()[metadata]);
+			
+			
+			
 			pos.moveForwards(1.0);
 			
 			TileEntity tile = world.getBlockTileEntity((int) pos.i,
