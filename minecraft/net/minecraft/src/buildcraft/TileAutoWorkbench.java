@@ -30,7 +30,8 @@ public class TileAutoWorkbench extends TileEntity implements IInventory {
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
 
-		ItemStack newStack = new ItemStack(stackList[i].getItem(), j);
+		ItemStack newStack = stackList[i].copy();
+		newStack.stackSize = j;
 		
 		stackList [i].stackSize -= j;
 		
