@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -40,7 +41,7 @@ public class TileWoodenPipe extends TilePipe {
 		
 		lastMining = w.getWorldTime();
 		
-		LinkedList<Position> chests = new LinkedList<Position>();
+		LinkedList<Position> inventories = new LinkedList<Position>();
 		
 		for (int j = 0; j < 6; ++j) {
 			Position pos = new Position(xCoord, yCoord, zCoord,
@@ -50,37 +51,25 @@ public class TileWoodenPipe extends TilePipe {
 			TileEntity tile = w.getBlockTileEntity((int) pos.i, (int) pos.j,
 					(int) pos.k);
 			
-			if (tile instanceof TileEntityChest) {
-				TileEntityChest chest = (TileEntityChest) tile;
+			if (tile instanceof IInventory) {
+				IInventory inventory = (IInventory) tile;
 				
-				for (int k = 0; k < chest.getSizeInventory(); ++k) {
-					if (chest.getStackInSlot(k) != null
-							&& chest.getStackInSlot(k).stackSize > 0) {
-						chests.add(pos);
-					}
+				if (checkExtract(inventory, false, pos.orientation.reverse()) != null) {
+					inventories.add(pos);
 				}
 			}
 		}
 		
-		if (chests.size() == 0) {
+		if (inventories.size() == 0) {
 			return;
 		}
 		
-		Position chestPos = chests.get(w.rand.nextInt(chests.size()));
-		TileEntityChest chest = (TileEntityChest) w.getBlockTileEntity(
+		Position chestPos = inventories.get(w.rand.nextInt(inventories.size()));
+		IInventory inventory = (IInventory) w.getBlockTileEntity(
 				(int) chestPos.i, (int) chestPos.j, (int) chestPos.k);
 		
-		ItemStack stack = null;
-		
-		for (int k = 0; k < chest.getSizeInventory(); ++k) {
-			ItemStack slot = chest.getStackInSlot(k);
-			if (slot != null && slot.stackSize > 0) {
-				stack = new ItemStack (slot.getItem (), 1);
-				
-				chest.decrStackSize(k, 1);
-				break;
-			}
-		}					
+		ItemStack stack = checkExtract(inventory, true,
+				chestPos.orientation.reverse());								
 		
 		Position entityPos = new Position(chestPos.i + 0.5, chestPos.j
 				+ Utils.getPipeFloorOf(stack), chestPos.k + 0.5,
@@ -93,6 +82,63 @@ public class TileWoodenPipe extends TilePipe {
 		
 		w.entityJoinedWorld(entity);
 		entityEntering(entity, entityPos.orientation);		
+	}
+	
+	/**
+	 * Return the itemstack that can be if something can be extracted from this
+	 * inventory, null if none. On certain cases, the extractable slot depends
+	 * on the position of the pipe.
+	 */
+	public ItemStack checkExtract (IInventory inventory, boolean doRemove, Orientations from) {
+		if (inventory.getSizeInventory() == 3) {
+			//  This is a furnace-like inventory
+			
+			int slotIndex = 0;
+			
+			if (from == Orientations.YPos) {
+				slotIndex = 0;
+			} else if (from == Orientations.YNeg) {
+				slotIndex = 1;
+			} else {
+				slotIndex = 2;
+			}
+			
+			ItemStack slot = inventory.getStackInSlot(slotIndex);
+			
+			if (slot != null && slot.stackSize > 0) {
+				ItemStack stack = new ItemStack(slot.getItem(), 1);
+			
+				if (doRemove) {
+					inventory.decrStackSize(slotIndex, 1);
+				}				
+			
+				return stack;
+			}			
+		} else {
+			// This is a generic inventory
+			
+			for (int k = 0; k < inventory.getSizeInventory(); ++k) {
+				if (inventory.getStackInSlot(k) != null
+						&& inventory.getStackInSlot(k).stackSize > 0) {
+					
+					if (doRemove) {
+						ItemStack slot = inventory.getStackInSlot(k);
+						
+						if (slot != null && slot.stackSize > 0) {
+							ItemStack stack = new ItemStack(slot.getItem(), 1);
+							
+							if (doRemove) {
+								inventory.decrStackSize(k, 1);
+							}
+							
+							return stack;
+						}
+					}					
+				}
+			}
+		}
+		
+		return null;
 	}
 
 }

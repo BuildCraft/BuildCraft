@@ -39,27 +39,27 @@ public abstract class BlockPipe extends BlockContainer {
 		yMin = Utils.pipeMinSize, yMax = Utils.pipeMaxSize, 
 		zMin = Utils.pipeMinSize, zMax = Utils.pipeMaxSize;
 
-		if (Utils.isPipeConnected (world.getBlockId(i - 1, j, k))) {
+		if (Utils.isPipeConnected (world, i - 1, j, k)) {
 			xMin = 0.0F;
 		}
 
-		if (Utils.isPipeConnected (world.getBlockId(i + 1, j, k))) {
+		if (Utils.isPipeConnected (world, i + 1, j, k)) {
 			xMax = 1.0F;
 		}
 
-		if (Utils.isPipeConnected (world.getBlockId(i, j - 1, k))) {
+		if (Utils.isPipeConnected (world, i, j - 1, k)) {
 			yMin = 0.0F;
 		}
 
-		if (Utils.isPipeConnected (world.getBlockId(i, j + 1, k))) {
+		if (Utils.isPipeConnected (world, i, j + 1, k)) {
 			yMax = 1.0F;
 		}
 
-		if (Utils.isPipeConnected (world.getBlockId(i, j, k - 1))) {
+		if (Utils.isPipeConnected (world, i, j, k - 1)) {
 			zMin = 0.0F;
 		}
 
-		if (Utils.isPipeConnected (world.getBlockId(i, j, k + 1))) {
+		if (Utils.isPipeConnected (world, i, j, k + 1)) {
 			zMax = 1.0F;
 		}
     	
