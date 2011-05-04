@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="E:/MCP-2.12/jars/bin/jinput.jar"/>
+	<classpathentry kind="lib" path="E:/MCP-2.12/jars/bin/lwjgl.jar"/>
+	<classpathentry kind="lib" path="E:/MCP-2.12/jars/bin/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="E:/MCP-2.12/jars/bin/minecraft.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
