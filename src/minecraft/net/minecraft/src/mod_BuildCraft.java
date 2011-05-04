@@ -40,7 +40,10 @@ public class mod_BuildCraft extends BaseMod {
 	private static mod_BuildCraft instance;
 
 	public final Item woodenGearItem;
+	public final Item stoneGearItem;
 	public final Item ironGearItem;
+	public final Item goldGearItem;
+	public final Item diamondGearItem;
 	
 	public final BlockMachine machineBlock;
 	
@@ -84,10 +87,19 @@ public class mod_BuildCraft extends BaseMod {
 		woodenGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
 						"/buildcraft_gui/wooden_gear.png")).setItemName(
-				"woodenGearItem");
+				"woodenGearItem");				
 		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
 		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
 		ModLoader.AddName(woodenGearItem, "Wooden Gear");
+		
+		stoneGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+				ModLoader.addOverride("/gui/items.png",
+						"/buildcraft_gui/stone_gear.png")).setItemName(
+				"stoneGearItem");
+		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
+				" I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone,
+				Character.valueOf('G'), woodenGearItem });
+		ModLoader.AddName(stoneGearItem, "Stone Gear");
 		
 		ironGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
@@ -95,8 +107,26 @@ public class mod_BuildCraft extends BaseMod {
 				"ironGearItem");
 		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
-				Character.valueOf('G'), woodenGearItem });
+				Character.valueOf('G'), stoneGearItem });
 		ModLoader.AddName(ironGearItem, "Iron Gear");		
+		
+		goldGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+				ModLoader.addOverride("/gui/items.png",
+						"/buildcraft_gui/golden_gear.png")).setItemName(
+				"goldGearItem");
+		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
+				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold,
+				Character.valueOf('G'), ironGearItem });
+		ModLoader.AddName(goldGearItem, "Gold Gear");
+		
+		diamondGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+				ModLoader.addOverride("/gui/items.png",
+						"/buildcraft_gui/diamond_gear.png")).setItemName(
+				"diamondGearItem");
+		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
+				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
+				Character.valueOf('G'), goldGearItem });
+		ModLoader.AddName(diamondGearItem, "Diamond Gear");
 		
 		woodenPipeBlock = new BlockWoodenPipe(getFirstFreeBlock());
 		ModLoader.AddName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
