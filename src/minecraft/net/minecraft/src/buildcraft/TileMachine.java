@@ -258,8 +258,8 @@ public class TileMachine extends TileEntity implements IArmListener {
 	
 	boolean blockDig (int blockID) {
 		return blockID == Block.bedrock.blockID
-				&& blockID == Block.lavaStill.blockID
-				&& blockID == Block.lavaMoving.blockID;
+				|| blockID == Block.lavaStill.blockID
+				|| blockID == Block.lavaMoving.blockID;
 	}
 	
 	boolean canDig(int blockID) {
