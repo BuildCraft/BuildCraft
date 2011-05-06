@@ -80,7 +80,10 @@ public class TileDiamondPipe extends TilePipe implements IInventory {
 					foundFilter = true;
 				}
 
-				if (stack != null && stack.itemID == data.item.item.itemID) {					
+				if (stack != null
+						&& stack.itemID == data.item.item.itemID
+						&& stack.getItemDamage() == data.item.item
+								.getItemDamage()) {					
 					exit = Orientations.values() [dir];
 				}
 			}

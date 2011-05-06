@@ -233,6 +233,7 @@ public class Utils {
 				
 				if (stack != null && stack.stackSize > 0
 						&& stack.itemID == items.itemID
+						&& stack.getItemDamage() == items.getItemDamage()
 						&& stack.stackSize < minSimilar) {
 					minSimilar = stack.stackSize;
 					minSlot = j;
