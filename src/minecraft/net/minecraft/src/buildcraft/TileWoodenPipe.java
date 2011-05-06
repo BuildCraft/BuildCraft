@@ -108,14 +108,12 @@ public class TileWoodenPipe extends TilePipe {
 			
 			ItemStack slot = inventory.getStackInSlot(slotIndex);
 			
-			if (slot != null && slot.stackSize > 0) {
-				ItemStack stack = new ItemStack(slot.getItem(), 1);
-			
+			if (slot != null && slot.stackSize > 0) {			
 				if (doRemove) {
-					inventory.decrStackSize(slotIndex, 1);
-				}				
-			
-				return stack;
+					return inventory.decrStackSize(slotIndex, 1);
+				} else {
+					return slot;
+				}			
 			}	
 		} if (inventory.getSizeInventory() == 9) {
 			// This is a workbench inventory
@@ -161,17 +159,14 @@ public class TileWoodenPipe extends TilePipe {
 				if (inventory.getStackInSlot(k) != null
 						&& inventory.getStackInSlot(k).stackSize > 0) {
 										
-					ItemStack slot = inventory.getStackInSlot(k);
-
+					ItemStack slot = inventory.getStackInSlot(k);				
+					
 					if (slot != null && slot.stackSize > 0) {
-						ItemStack stack = slot.copy ();
-						slot.stackSize = 1;
-
 						if (doRemove) {
-							inventory.decrStackSize(k, 1);
+							return inventory.decrStackSize(k, 1);
+						} else {
+							return slot;
 						}
-
-						return stack;
 					}				
 				}
 			}

@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -10,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.BlockCheat;
 import net.minecraft.src.buildcraft.BlockDiamondPipe;
+import net.minecraft.src.buildcraft.BlockFrame;
 import net.minecraft.src.buildcraft.BlockGoldenPipe;
 import net.minecraft.src.buildcraft.BlockIronPipe;
 import net.minecraft.src.buildcraft.BlockMachine;
@@ -56,7 +58,8 @@ public class mod_BuildCraft extends BaseMod {
 	public final BlockDiamondPipe diamondPipeBlock;
 	public final BlockPlainPipe plainPipeBlock;
 	public final BlockAutoWorkbench autoWorkbenchBlock;
-	
+	public final BlockFrame frameBlock;
+
     public final BlockUtil blockUtil;
 	
 	public final BlockCheat cheatBlock;
@@ -183,6 +186,9 @@ public class mod_BuildCraft extends BaseMod {
 			"s ", "s ", Character.valueOf('s'), Block.dirt });
 		ModLoader.AddName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
 				"Automatic Workbench");
+				
+		frameBlock = new BlockFrame (getFirstFreeBlock ());
+		ModLoader.RegisterBlock(frameBlock);
 		
 		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
@@ -214,7 +220,8 @@ public class mod_BuildCraft extends BaseMod {
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = ModLoader.addOverride("/terrain.png",
 					"/buildcraft_gui/diamond_pipe_" + j + ".png");
-		}
+		}				
+		
 	}
 		
 	private int getFirstFreeBlock() {
@@ -297,7 +304,7 @@ public class mod_BuildCraft extends BaseMod {
     		
     		int metadata = iblockaccess.getBlockMetadata(i, j, k);
     		
-    		if (Utils.isPipeConnected (iblockaccess, i - 1, j, k)) {
+    		if (Utils.isPipeConnected (iblockaccess, i - 1, j, k, block.blockID)) {
     			if (block == ironPipeBlock && metadata != Orientations.XNeg.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
     			} else if (block == diamondPipeBlock) {
@@ -308,7 +315,7 @@ public class mod_BuildCraft extends BaseMod {
         		block.blockIndexInTexture = initialTexture;
     		}
     		
-    		if (Utils.isPipeConnected (iblockaccess, i + 1, j, k)) {
+    		if (Utils.isPipeConnected (iblockaccess, i + 1, j, k, block.blockID)) {
     			if (block == ironPipeBlock && metadata != Orientations.XPos.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
     			} else if (block == diamondPipeBlock) {
@@ -319,7 +326,7 @@ public class mod_BuildCraft extends BaseMod {
         		block.blockIndexInTexture = initialTexture;
     		}
     		
-    		if (Utils.isPipeConnected (iblockaccess, i, j - 1, k)) {
+    		if (Utils.isPipeConnected (iblockaccess, i, j - 1, k, block.blockID)) {
     			if (block == ironPipeBlock && metadata != Orientations.YNeg.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
     			} else if (block == diamondPipeBlock) {
@@ -330,7 +337,7 @@ public class mod_BuildCraft extends BaseMod {
         		block.blockIndexInTexture = initialTexture;
     		}
     		
-    		if (Utils.isPipeConnected (iblockaccess, i, j + 1, k)) {
+    		if (Utils.isPipeConnected (iblockaccess, i, j + 1, k, block.blockID)) {
     			if (block == ironPipeBlock && metadata != Orientations.YPos.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
     			} else if (block == diamondPipeBlock) {
@@ -341,7 +348,7 @@ public class mod_BuildCraft extends BaseMod {
         		block.blockIndexInTexture = initialTexture;
     		}
     		
-    		if (Utils.isPipeConnected (iblockaccess, i, j, k - 1)) {
+    		if (Utils.isPipeConnected (iblockaccess, i, j, k - 1, block.blockID)) {
     			if (block == ironPipeBlock && metadata != Orientations.ZNeg.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
     			} else if (block == diamondPipeBlock) {
@@ -352,7 +359,7 @@ public class mod_BuildCraft extends BaseMod {
         		block.blockIndexInTexture = initialTexture;
     		}
     		
-    		if (Utils.isPipeConnected (iblockaccess, i, j, k + 1)) {
+    		if (Utils.isPipeConnected (iblockaccess, i, j, k + 1, block.blockID)) {
     			if (block == ironPipeBlock && metadata != Orientations.ZPos.ordinal()) {
     				block.blockIndexInTexture = plainIronTexture;
     			} else if (block == diamondPipeBlock) {
