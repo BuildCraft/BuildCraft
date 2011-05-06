@@ -1,5 +1,10 @@
 package net.minecraft.src.buildcraft;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
@@ -201,7 +206,9 @@ public class TileMachine extends TileEntity implements IArmListener {
 		if (canDig(blockId)) {			
 			// Share this with mining well!			
 			
-			int idDropped = Block.blocksList[blockId].idDropped(blockId,
+			Block block = Block.blocksList[blockId];
+			
+			int idDropped = block.idDropped(blockId,
 					worldObj.rand);
 
 			if (idDropped >= Item.itemsList.length
@@ -209,14 +216,14 @@ public class TileMachine extends TileEntity implements IArmListener {
 				return;
 			}
 
-			Item item = Item.itemsList[idDropped];
 			int itemQuantity = Block.blocksList[blockId]
 					.quantityDropped(worldObj.rand);
 
 			for (int q = 0; q < itemQuantity; ++q) {
 				boolean added = false;
 
-				ItemStack items = new ItemStack(item, 1);
+				ItemStack items = new ItemStack(idDropped, 1,
+						Utils.damageDropped(blockId));
 
 				// First, try to add to a nearby chest
 
@@ -233,11 +240,18 @@ public class TileMachine extends TileEntity implements IArmListener {
 				if (!added) {
 					float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 					float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-					float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+					float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;										
+										
 
-					EntityItem entityitem = new EntityItem(worldObj,
-							(float) i + f, (float) j + f1 + 0.5F, (float) k
-									+ f2, new ItemStack(item, 1));
+					EntityItem entityitem = new EntityItem(
+							worldObj,
+							(float) i + f,
+							(float) j + f1 + 0.5F,
+							(float) k + f2,
+							new ItemStack(
+									idDropped,
+									1,
+									Utils.damageDropped(blockId)));
 
 					float f3 = 0.05F;
 					entityitem.motionX = (float) worldObj.rand.nextGaussian()
@@ -268,5 +282,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 				&& blockID != Block.waterStill.blockID
 				&& Block.blocksList [blockID] != null;
 	}
+	
+
 
 }

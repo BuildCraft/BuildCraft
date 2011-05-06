@@ -3,6 +3,12 @@ package net.minecraft.src.buildcraft;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockCloth;
+import net.minecraft.src.BlockLeaves;
+import net.minecraft.src.BlockLog;
+import net.minecraft.src.BlockOre;
+import net.minecraft.src.BlockSapling;
+import net.minecraft.src.BlockStep;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -19,16 +25,20 @@ public class Utils {
 	
 	/**
 	 * Return True if the item id is supposed to be connected to the
-	 * pipe, for e.g. display purpose
+	 * blockId given in parameter, for e.g. display purpose
 	 */
-	public static boolean isPipeConnected(IBlockAccess blockAccess, int i, int j, int k) {
+	public static boolean isPipeConnected(IBlockAccess blockAccess, int i, int j, int k, int toBlockId) {
 		int id = blockAccess.getBlockId(i, j, k);
 		TileEntity tileEntity = blockAccess.getBlockTileEntity(i, j, k);
 		
-		return tileEntity instanceof IPipeEntry 
-				|| tileEntity instanceof IInventory 				        
-				|| id == mod_BuildCraft.getInstance().machineBlock.blockID				
-				|| id == mod_BuildCraft.getInstance().miningWellBlock.blockID;
+		if (toBlockId == mod_BuildCraft.getInstance().frameBlock.blockID) {
+			 return id == mod_BuildCraft.getInstance().frameBlock.blockID;
+		} else {
+			return tileEntity instanceof IPipeEntry 
+			|| tileEntity instanceof IInventory 				        
+			|| id == mod_BuildCraft.getInstance().machineBlock.blockID				
+			|| id == mod_BuildCraft.getInstance().miningWellBlock.blockID;
+		}
 	}
 
 	
@@ -334,5 +344,24 @@ public class Utils {
     	}
     	
 		return (T) tileTest;
+	}
+	
+	public static int damageDropped (int blockId) {
+		if (Block.blocksList [blockId] instanceof BlockCloth) {
+			return blockId;
+		} else if (Block.blocksList [blockId] instanceof BlockSapling) {
+			return blockId & 3;
+		} else if (Block.blocksList [blockId] instanceof BlockStep) {
+			return blockId;
+		} else if (Block.blocksList [blockId] instanceof BlockLeaves) {
+			return blockId & 3;
+		} else if (Block.blocksList [blockId] instanceof BlockLog) {
+			return blockId;
+		} else if (Block.blocksList [blockId] instanceof BlockOre) {
+			return blockId != Block.oreLapis.blockID ? 0 : 4;
+		}
+			
+		
+		return 0;
 	}
 }

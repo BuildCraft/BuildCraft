@@ -55,9 +55,9 @@ public class RenderEntityBlock extends Render {
 			
 			int lightX, lightY, lightZ;
 			
-			lightX = (int) (entity.posX + iBase);
+			lightX = (int) (entity.posX + iBase - 1);
 			lightY = (int) (entity.posY + jBase);
-			lightZ = (int) (entity.posZ + kBase);
+			lightZ = (int) (entity.posZ + kBase - 1);
 			
 			GL11.glDisable(2896 /*GL_LIGHTING*/);
 					blockRender.renderBlockFallingSand(util, world,
