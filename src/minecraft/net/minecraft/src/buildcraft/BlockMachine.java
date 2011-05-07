@@ -124,7 +124,15 @@ public class BlockMachine extends BlockContainer {
     }
     
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
-    	blockActivated(world, i, j, k, null);
+    	TileMachine tile = Utils.getSafeTile(world, i, j, k,
+    			TileMachine.class);
+    	
+    	if (tile == null) {
+    		tile = new TileMachine();
+    		world.setBlockTileEntity(i, j, k, tile);
+    	}
+    	
+		tile.checkPower();    	        
     }
 
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
@@ -136,7 +144,7 @@ public class BlockMachine extends BlockContainer {
     		world.setBlockTileEntity(i, j, k, tile);
     	}
     	
-		tile.checkPower();
+		tile.work();
     	
         return false;
     }
@@ -176,7 +184,7 @@ public class BlockMachine extends BlockContainer {
 		bluePrint = new BluePrint (MINING_FIELD_SIZE + 2, 5, MINING_FIELD_SIZE + 2);
 		
 		for (int i = 0; i < MINING_FIELD_SIZE + 2; ++i) {
-			for (int j = 0; j < 4; ++j) {
+			for (int j = 0; j < 5; ++j) {
 				for (int k = 0; k < MINING_FIELD_SIZE + 2; ++k) {
 					bluePrint.setBlockId(i, j, k, 0);
 				}
