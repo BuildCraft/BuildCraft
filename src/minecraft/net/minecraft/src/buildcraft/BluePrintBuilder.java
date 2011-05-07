@@ -16,6 +16,8 @@ public class BluePrintBuilder {
 		this.y = y;
 		this.z = z;
 		done = false;
+		
+		findNextBlock();
 	}
 	
 	public BlockContents findNextBlock () {

@@ -32,12 +32,56 @@ public class TileMachine extends TileEntity implements IArmListener {
 	public TileMachine() {
 		
 	}
+	
+    public void updateEntity()
+    {
+    	createUtilsIfNeeded ();    	
+    }
+    
+    public void createUtilsIfNeeded () {
+    	if (bluePrintBuilder == null) {
+			bluePrintBuilder = new BluePrintBuilder(worldObj, BlockMachine.bluePrint, xMin, yCoord, zMin);
+		}
+    	
+    	if (bluePrintBuilder.done) {
+    		if (arm == null) {
+    			arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxSize,
+    					yCoord + 4 + Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
+    					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
+    					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2);
+
+    			arm.listener = this;
+    			loadArm = true;
+    		}
+
+    		if (loadArm) {
+    			arm.joinToWorld(worldObj);
+    			loadArm = false;
+    		}
+    	}
+    }
 
 	public TileMachine(int xMin, int zMin) {
 		this ();
 		
 		this.xMin = xMin;
 		this.zMin = zMin;
+	}
+	
+	boolean lastPower;
+	long lastWork = 0;
+	
+	public void checkPower() {
+		if (worldObj.getWorldTime() - lastWork > 20) {
+			boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+			
+			if (currentPower != lastPower) {
+				lastPower = currentPower;
+				
+				work ();
+			}
+		}
+		
 	}
 	
 	public void addToPipe(TilePipe pipe, Item item, Orientations orientation) {		
@@ -67,17 +111,24 @@ public class TileMachine extends TileEntity implements IArmListener {
 		pipe.entityEntering(entityitem, itemPos.orientation);		
 	}
 	
-	public void work(Minecraft minecraft) {
-		if (bluePrintBuilder == null) {
-			bluePrintBuilder = new BluePrintBuilder(worldObj, BlockMachine.bluePrint, xMin, yCoord, zMin);
-		}
-		
+	private void work() {		
+	    createUtilsIfNeeded();
+	    
 		if (!bluePrintBuilder.done) {
+			lastWork = worldObj.getWorldTime();
 			BlockContents contents = bluePrintBuilder.findNextBlock();
 			
-			if (contents != null) {
+			if (contents != null) {		
+				int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
+				
 				worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
 						contents.blockId);
+				
+				if (blockId != 0) {
+					Block.blocksList[blockId].dropBlockAsItem(
+							worldObj,
+							contents.x, contents.y, contents.z, blockId);
+				}				
 			}
 			
 			return;
@@ -90,24 +141,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 		if (!isDigging) {
 			return;
 		}		
-		
-		World world = minecraft.theWorld;
-		
-		if (arm == null) {
-			arm = new EntityMechanicalArm(world, xMin + Utils.pipeMaxSize,
-					yCoord + 4 + Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
-					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
-					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2);
-			
-			arm.listener = this;
-			loadArm = true;
-		}
-		
-		if (loadArm) {
-			arm.joinToWorld(worldObj);
-			loadArm = false;
-		}
-		
+				
 		boolean[][] blockedColumns = new boolean[BlockMachine.MINING_FIELD_SIZE][BlockMachine.MINING_FIELD_SIZE];
 		
 		for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE; ++searchX) {
@@ -125,7 +159,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 					if (!blockedColumns [searchX][searchZ]) {
 						int bx = xMin + searchX + 1, by = searchY, bz = zMin + searchZ + 1;
 						
-						int blockId = world.getBlockId(bx, by, bz);
+						int blockId = worldObj.getBlockId(bx, by, bz);
 						
 						if (blockDig (blockId)) {		
 							blockedColumns [searchX][searchZ] = true;						
@@ -199,6 +233,8 @@ public class TileMachine extends TileEntity implements IArmListener {
 		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
 		
 		if (canDig(blockId)) {			
+			lastWork = worldObj.getWorldTime();
+			
 			// Share this with mining well!			
 			
 			Block block = Block.blocksList[blockId];
@@ -240,9 +276,9 @@ public class TileMachine extends TileEntity implements IArmListener {
 
 					EntityItem entityitem = new EntityItem(
 							worldObj,
-							(float) i + f,
-							(float) j + f1 + 0.5F,
-							(float) k + f2,
+							(float) xCoord + f,
+							(float) yCoord + f1 + 0.5F,
+							(float) zCoord + f2,
 							new ItemStack(
 									idDropped,
 									1,
@@ -277,7 +313,5 @@ public class TileMachine extends TileEntity implements IArmListener {
 				&& blockID != Block.waterStill.blockID
 				&& Block.blocksList [blockID] != null;
 	}
-	
-
 
 }

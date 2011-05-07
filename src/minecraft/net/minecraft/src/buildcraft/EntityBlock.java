@@ -7,6 +7,7 @@ import net.minecraft.src.World;
 public class EntityBlock extends Entity {
 
 	public int blockID;
+	public int texture = -1;
 	
 	public double iSize, jSize, kSize;
 	
