@@ -72,16 +72,15 @@ public class TileMachine extends TileEntity implements IArmListener {
 	long lastWork = 0;
 	
 	public void checkPower() {
-		if (worldObj.getWorldTime() - lastWork > 20) {
-			boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-			
-			if (currentPower != lastPower) {
-				lastPower = currentPower;
-				
-				work ();
-			}
-		}
-		
+
+		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord,
+				yCoord, zCoord);
+
+		if (currentPower != lastPower) {
+			lastPower = currentPower;
+
+			work();
+		}		
 	}
 	
 	public void addToPipe(TilePipe pipe, Item item, Orientations orientation) {		
@@ -111,8 +110,12 @@ public class TileMachine extends TileEntity implements IArmListener {
 		pipe.entityEntering(entityitem, itemPos.orientation);		
 	}
 	
-	private void work() {		
+	public void work() {		
 	    createUtilsIfNeeded();
+	    
+	    if (worldObj.getWorldTime() - lastWork < 20) {
+	    	return;
+	    }
 	    
 		if (!bluePrintBuilder.done) {
 			lastWork = worldObj.getWorldTime();
