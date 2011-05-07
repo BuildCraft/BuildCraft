@@ -1,9 +1,7 @@
 package net.minecraft.src.buildcraft;
 
-import java.util.LinkedList;
 import java.util.TreeMap;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;

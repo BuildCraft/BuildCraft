@@ -1,6 +1,5 @@
 package net.minecraft.src.buildcraft;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.Item;
