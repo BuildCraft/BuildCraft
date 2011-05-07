@@ -27,27 +27,13 @@ public class BlockCheat extends Block {
 		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
 		createItems (i, j, k, new ItemStack (Item.ingotIron, 64));
 		createItems (i, j, k, new ItemStack (Item.ingotGold, 64));
-		createItems (i, j, k, new ItemStack (Item.diamond, 64));		
-		createItems (i, j, k, new ItemStack (Item.paper, 64));
-		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-		createItems (i, j, k, new ItemStack (Item.pickaxeSteel, 1));
-		createItems (i, j, k, new ItemStack (Item.redstoneRepeater, 64));
-		createItems (i, j, k, new ItemStack (Item.stick, 64));
-		createItems (i, j, k, new ItemStack (Item.coal, 64));
-		
-		
-		
-		createItems (i, j, k, new ItemStack (Item.dyePowder, 64, 4));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironGearItem, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenGearItem, 64));
+		createItems (i, j, k, new ItemStack (Item.diamond, 64));
+		createItems (i, j, k, new ItemStack (Item.coal, 64));						
 		
 		createItems (i, j, k, new ItemStack (Block.glass, 64));
 		createItems (i, j, k, new ItemStack (Block.planks, 64));
-		createItems (i, j, k, new ItemStack (Block.stone, 64));
-		createItems (i, j, k, new ItemStack (Block.cobblestone, 64));
-		createItems (i, j, k, new ItemStack (Block.crate, 64));
+		createItems (i, j, k, new ItemStack (Block.oreGold, 64));
+		createItems (i, j, k, new ItemStack (Block.oreIron, 64));
 		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().miningWellBlock, 64));
 		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().machineBlock, 64));
 		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenPipeBlock, 64));

@@ -83,9 +83,9 @@ public class RenderEntityBlock extends Render {
 			
 			int lightX, lightY, lightZ;
 			
-			lightX = (int) (entity.posX + iBase - 1);
-			lightY = (int) (entity.posY + jBase);
-			lightZ = (int) (entity.posZ + kBase - 1);
+			lightX = (int) (Math.floor(entity.posX) + iBase);
+			lightY = (int) (Math.floor(entity.posY) + jBase);
+			lightZ = (int) (Math.floor(entity.posZ) + kBase);
 			
 			GL11.glDisable(2896 /*GL_LIGHTING*/);
 					renderBlockFallingSand(util, world,
@@ -107,42 +107,42 @@ public class RenderEntityBlock extends Render {
 	        Tessellator tessellator = Tessellator.instance;
 	        tessellator.startDrawingQuads();
 	        float f4 = block.getBlockBrightness(world, i, j, k);
-	        float f5 = block.getBlockBrightness(world, i, j - 1, k);
+	        float f5 = block.getBlockBrightness(world, i, j, k);
 	        if(f5 < f4)
 	        {
 	            f5 = f4;
 	        }
 	        tessellator.setColorOpaque_F(f * f5, f * f5, f * f5);
 	        renderBottomFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(0));
-	        f5 = block.getBlockBrightness(world, i, j + 1, k);
+	        f5 = block.getBlockBrightness(world, i, j, k);
 	        if(f5 < f4)
 	        {
 	            f5 = f4;
 	        }
 	        tessellator.setColorOpaque_F(f1 * f5, f1 * f5, f1 * f5);
 	        renderTopFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(1));
-	        f5 = block.getBlockBrightness(world, i, j, k - 1);
+	        f5 = block.getBlockBrightness(world, i, j, k);
 	        if(f5 < f4)
 	        {
 	            f5 = f4;
 	        }
 	        tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
 	        renderEastFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(2));
-	        f5 = block.getBlockBrightness(world, i, j, k + 1);
+	        f5 = block.getBlockBrightness(world, i, j, k);
 	        if(f5 < f4)
 	        {
 	            f5 = f4;
 	        }
 	        tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
 	        renderWestFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(3));
-	        f5 = block.getBlockBrightness(world, i - 1, j, k);
+	        f5 = block.getBlockBrightness(world, i, j, k);
 	        if(f5 < f4)
 	        {
 	            f5 = f4;
 	        }
 	        tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
 	        renderNorthFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(4));
-	        f5 = block.getBlockBrightness(world, i + 1, j, k);
+	        f5 = block.getBlockBrightness(world, i, j, k);
 	        if(f5 < f4)
 	        {
 	            f5 = f4;
