@@ -186,17 +186,22 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 		NBTTagList nbttaglist = nbttagcompound.getTagList("travelingEntities");		
 		
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
-			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
-					.tagAt(j);			
-			
-			EntityPassiveItem entity = new EntityPassiveItem (world);
-			entity.readFromNBT(nbttagcompound2);
-			
-			EntityData data = new EntityData(entity,
-					Orientations.values()[nbttagcompound2.getInteger("orientation")]);
-			data.toCenter = nbttagcompound2.getBoolean("toCenter"); 
-			
-			entitiesToLoad.add(data);
+			try {
+				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
+				.tagAt(j);			
+
+				EntityPassiveItem entity = new EntityPassiveItem (world);
+				entity.readFromNBT(nbttagcompound2);
+
+				EntityData data = new EntityData(entity,
+						Orientations.values()[nbttagcompound2.getInteger("orientation")]);
+				data.toCenter = nbttagcompound2.getBoolean("toCenter"); 
+
+				entitiesToLoad.add(data);
+			} catch (Throwable t) {
+				//  It may be the case that entities cannot be reloaded between
+				//  two versions - ignore these errors.
+			}
 		}
 		
 		if (entitiesToLoad.size() > 0) {
