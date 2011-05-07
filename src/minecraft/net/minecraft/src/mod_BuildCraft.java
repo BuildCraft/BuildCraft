@@ -17,7 +17,6 @@ import net.minecraft.src.buildcraft.BlockMachine;
 import net.minecraft.src.buildcraft.BlockMiningWell;
 import net.minecraft.src.buildcraft.BlockPlainPipe;
 import net.minecraft.src.buildcraft.BlockStonePipe;
-import net.minecraft.src.buildcraft.BlockUtil;
 import net.minecraft.src.buildcraft.BlockWoodenPipe;
 import net.minecraft.src.buildcraft.EntityBlock;
 import net.minecraft.src.buildcraft.EntityMechanicalArm;
@@ -58,8 +57,6 @@ public class mod_BuildCraft extends BaseMod {
 	public final BlockPlainPipe plainPipeBlock;
 	public final BlockAutoWorkbench autoWorkbenchBlock;
 	public final BlockFrame frameBlock;
-
-    public final BlockUtil blockUtil;
 	
 	public final BlockCheat cheatBlock;
 	
@@ -67,6 +64,7 @@ public class mod_BuildCraft extends BaseMod {
 	
 	public final int plainIronTexture;
 	public final int [] diamondTextures = new int [6];
+	public final int drillTexture;
 	
 	private class TickContainer {
 		ITickListener listener;
@@ -181,25 +179,35 @@ public class mod_BuildCraft extends BaseMod {
 		
 		autoWorkbenchBlock = new BlockAutoWorkbench (getFirstFreeBlock());
 		ModLoader.RegisterBlock(autoWorkbenchBlock);
-		craftingmanager.addRecipe(new ItemStack(autoWorkbenchBlock), new Object[] {
-			"s ", "s ", Character.valueOf('s'), Block.dirt });
+		craftingmanager.addRecipe(
+				new ItemStack(autoWorkbenchBlock),
+				new Object[] { " g ", "gwg", " g ", Character.valueOf('w'),
+						Block.workbench, Character.valueOf('g'),
+						mod_BuildCraft.getInstance().woodenGearItem });
 		ModLoader.AddName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
-				"Automatic Workbench");
+				"Automatic Crafting Table");
 				
 		frameBlock = new BlockFrame (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(frameBlock);
 		
 		machineBlock = new BlockMachine (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(machineBlock);
-		craftingmanager.addRecipe(new ItemStack(machineBlock), new Object[] {
-			"ss", "  ", Character.valueOf('s'), Block.dirt });
+		craftingmanager.addRecipe(
+				new ItemStack(machineBlock),
+				new Object[] { "ipi", "gdg", "dDd", 
+					Character.valueOf('i'),	mod_BuildCraft.getInstance().ironGearItem,
+					Character.valueOf('p'),	mod_BuildCraft.getInstance().diamondPipeBlock,
+					Character.valueOf('g'),	mod_BuildCraft.getInstance().goldGearItem,
+					Character.valueOf('d'),	mod_BuildCraft.getInstance().diamondGearItem,
+					Character.valueOf('D'),	Item.pickaxeDiamond,
+					});
+		ModLoader.AddName(machineBlock.setBlockName("machineBlock"),
+		"Quarry");
 		
 		cheatBlock = new BlockCheat (getFirstFreeBlock());
 		ModLoader.RegisterBlock(cheatBlock);
 		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
 			"# ", "  ", Character.valueOf('#'), Block.dirt });
-		
-		 blockUtil = new BlockUtil (getFirstFreeBlock());
 		
 		ModLoader.SetInGameHook(this, true, false);		
 		
@@ -220,6 +228,9 @@ public class mod_BuildCraft extends BaseMod {
 			diamondTextures [j] = ModLoader.addOverride("/terrain.png",
 					"/buildcraft_gui/diamond_pipe_" + j + ".png");
 		}				
+		
+		drillTexture = ModLoader.addOverride("/terrain.png",
+		"/buildcraft_gui/drill.png");
 		
 	}
 		

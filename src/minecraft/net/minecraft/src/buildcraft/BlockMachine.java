@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
@@ -13,7 +14,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
-public class BlockMachine extends BlockContainer implements ITickListener {
+public class BlockMachine extends BlockContainer {
 	
 	public static final BluePrint bluePrint;
 	
@@ -38,8 +39,7 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		textureFront = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/machine_front.png");
 		textureTop = ModLoader.addOverride("/terrain.png",
-		"/buildcraft_gui/mining_machine_top.png");
-		mod_BuildCraft.getInstance().registerTicksListener(this, 40);	
+		"/buildcraft_gui/mining_machine_top.png");	
 		
 	}
 	
@@ -122,24 +122,24 @@ public class BlockMachine extends BlockContainer implements ITickListener {
 		
     	world.setBlockTileEntity(i, j, k, newTile);
     }
+    
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
+    	blockActivated(world, i, j, k, null);
+    }
 
-	@Override
-	// TODO: move that in the tile
-	public void tick(Minecraft minecraft) {
-		LinkedList<TileMachine> toRemove = new LinkedList<TileMachine>();
-		
-		for (TileMachine w : workingMachines.values()) {
-			w.work (minecraft);
-			
-			if (!w.isDigging) {
-				toRemove.add(w);
-			}
-		}
-		
-		for (TileMachine w : toRemove) {
-			workingMachines.remove(new BlockIndex (w.xCoord, w.yCoord, w.zCoord));
-		}				
-	}	   
+    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+    	TileMachine tile = Utils.getSafeTile(world, i, j, k,
+    			TileMachine.class);
+    	
+    	if (tile == null) {
+    		tile = new TileMachine();
+    		world.setBlockTileEntity(i, j, k, tile);
+    	}
+    	
+		tile.checkPower();
+    	
+        return false;
+    }
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {

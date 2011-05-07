@@ -52,18 +52,21 @@ public class EntityMechanicalArm extends Entity {
 
 		xArm = new EntityBlock(world, i, j, k, width, 0.5, 0.5,
 				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
+		xArm.texture = mod_BuildCraft.getInstance().drillTexture;
 		world.entityJoinedWorld(xArm);
 		
 		yArm = new EntityBlock(world, i, j, k, 0.5, 1, 0.5,
 				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
+		yArm.texture = mod_BuildCraft.getInstance().drillTexture;
 		world.entityJoinedWorld(yArm);
 		
 		zArm = new EntityBlock(world, i, j, k, 0.5, 0.5, height,
 				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
+		zArm.texture = mod_BuildCraft.getInstance().drillTexture;
 		world.entityJoinedWorld(zArm);
 		
 		head = new EntityBlock(world, i, j, k, 0.2, 1, 0.2,
-				Block.blockDiamond.blockID);
+				Block.blockDiamond.blockID);		
 		world.entityJoinedWorld(head);
         		
 		updatePosition();
@@ -106,6 +109,10 @@ public class EntityMechanicalArm extends Entity {
 		yArm = new EntityBlock(worldObj);
 		zArm = new EntityBlock(worldObj);
 		head = new EntityBlock(worldObj);
+		
+		xArm.texture = mod_BuildCraft.getInstance().drillTexture;
+		yArm.texture = mod_BuildCraft.getInstance().drillTexture;
+		zArm.texture = mod_BuildCraft.getInstance().drillTexture;
 		
 		xArm.readFromNBT(xArmStore);
 		yArm.readFromNBT(yArmStore);
