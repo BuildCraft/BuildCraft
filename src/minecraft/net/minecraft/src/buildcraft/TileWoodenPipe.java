@@ -115,7 +115,7 @@ public class TileWoodenPipe extends TilePipe {
 					return slot;
 				}			
 			}	
-		} if (inventory.getSizeInventory() == 9) {
+		} else if (inventory.getSizeInventory() == 9) {
 			// This is a workbench inventory
 			
 			// Do only craft if there's at least two items of each, to keep

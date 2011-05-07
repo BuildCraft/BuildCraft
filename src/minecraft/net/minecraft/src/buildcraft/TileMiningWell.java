@@ -71,11 +71,10 @@ public class TileMiningWell extends TileEntity {
 			return;
 		}
 
-		Item item = Item.itemsList[idDropped];
 		int itemQuantity = Block.blocksList[blockId]
 				.quantityDropped(w.rand);
 		
-		ItemStack stack = new ItemStack(item, itemQuantity);
+		ItemStack stack = new ItemStack(idDropped, itemQuantity, Utils.damageDropped(blockId));
 				
 		if (Utils.addToRandomInventory(this, Orientations.Unknown, stack)) {
 			//  The object has been added to a nearby chest.
@@ -95,8 +94,7 @@ public class TileMiningWell extends TileEntity {
 		float f2 = w.rand.nextFloat() * 0.8F + 0.1F;
 
 		EntityItem entityitem = new EntityItem(w, (float) xCoord + f,
-				(float) yCoord + f1 + 0.5F, (float) zCoord + f2, new ItemStack(
-						item, 1));
+				(float) yCoord + f1 + 0.5F, (float) zCoord + f2, stack);
 
 		float f3 = 0.05F;
 		entityitem.motionX = (float) w.rand.nextGaussian() * f3;
