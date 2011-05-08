@@ -314,7 +314,8 @@ public class Utils {
 		} else {
 			if (stack == null) {
 				if (doAdd) {
-					stack = new ItemStack(items.getItem(), items.stackSize);
+					stack = new ItemStack(items.itemID, items.stackSize,
+							items.getItemDamage());
 					inventory.setInventorySlotContents(stackIndex, stack);
 				}
 
