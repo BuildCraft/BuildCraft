@@ -82,33 +82,6 @@ public class TileMachine extends TileEntity implements IArmListener {
 		}		
 	}
 	
-	public void addToPipe(TilePipe pipe, Item item, Orientations orientation) {		
-		World world = ModLoader.getMinecraftInstance().theWorld;
-		
-		Position itemPos = new Position (xCoord, yCoord, zCoord);
-		
-		// move to the center of the machine
-		
-		itemPos.i += 0.50;
-		itemPos.j += 0.50;
-		itemPos.k += 0.50;		
-		
-		// move to the beginig of the pipe
-		
-		itemPos.orientation = orientation;
-		itemPos.moveForwards(0.5);
-		itemPos.moveDown(0.1);
-		
-		EntityPassiveItem entityitem = new EntityPassiveItem(
-				world, (float) itemPos.i,
-				(float) itemPos.j, (float) itemPos.k,
-				new ItemStack(item, 1));
-		
-		world.entityJoinedWorld(entityitem);
-				
-		pipe.entityEntering(entityitem, itemPos.orientation);		
-	}
-	
 	public void work() {		
 	    createUtilsIfNeeded();
 	    
