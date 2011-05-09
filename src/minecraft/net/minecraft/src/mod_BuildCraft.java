@@ -166,7 +166,7 @@ public class mod_BuildCraft extends BaseMod {
 		
 		miningWellBlock = new BlockMiningWell (getFirstFreeBlock ());
 		ModLoader.RegisterBlock(miningWellBlock);
-		ModLoader.AddName(miningWellBlock.setBlockName("miningWellBlock"), "Iron Mining Well");
+		ModLoader.AddName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");
 		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
 			"ipi", "igi", "iPi", Character.valueOf('p'), ironPipeBlock,
 			Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'),

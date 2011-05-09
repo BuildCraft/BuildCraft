@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
@@ -10,6 +11,8 @@ import net.minecraft.src.World;
 
 public class BlockMiningWell extends BlockContainer {
 
+	int textureFront, textureSides, textureBack, textureTop;
+	
 	public BlockMiningWell(int i) {
 		super(i, Material.ground);
 		
@@ -17,9 +20,18 @@ public class BlockMiningWell extends BlockContainer {
 		setResistance(10F);
 		setLightValue(0.9375F);
 		setStepSound(soundStoneFootstep);
+	
 		
-		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
-		"/buildcraft_gui/mining_machine.png");
+		
+		textureFront = ModLoader.addOverride("/terrain.png",
+		"/buildcraft_gui/mining_machine_front.png");
+		textureSides = ModLoader.addOverride("/terrain.png",
+		"/buildcraft_gui/mining_machine_side.png");
+		textureBack = ModLoader.addOverride("/terrain.png",
+		"/buildcraft_gui/mining_machine_back.png");
+		textureTop = ModLoader.addOverride("/terrain.png",
+		"/buildcraft_gui/mining_machine_top.png");
+
 	}
 	
 	public float getBlockBrightness	(IBlockAccess iblockaccess, int i, int j, int k)
@@ -52,6 +64,34 @@ public class BlockMiningWell extends BlockContainer {
     	
 		tile.checkPower();
     }
+    
+    public int getBlockTextureFromSideAndMetadata(int i, int j)
+    {
+    	if (j == 0 && i == 3) {
+    		return textureFront;
+    	}
+    	
+    	if (i == 1) {
+    		return textureTop;
+    	} else if (i == 0) {
+    		return textureBack;
+    	} else if (i == j) {
+    		return textureFront;
+    	} else if (Orientations.values()[j].reverse().ordinal() == i) {
+    		return textureBack;
+    	} else {
+    		return textureSides;
+    	}
+    }
+    
+    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
+    {
+		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX,
+				entityliving.posY, entityliving.posZ), new Position(i, j, k));    	
+    	
+    	world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal()); 	
+    }
+    
 
 	@Override
 	protected TileEntity getBlockEntity() {		
