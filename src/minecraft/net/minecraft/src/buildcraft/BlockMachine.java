@@ -33,11 +33,11 @@ public class BlockMachine extends BlockContainer {
 		setStepSound(soundStoneFootstep);
 		
 		textureSide = ModLoader.addOverride("/terrain.png",
-		"/buildcraft_gui/machine_side.png");
+		"/buildcraft_gui/quary_side.png");
 		textureFront = ModLoader.addOverride("/terrain.png",
-		"/buildcraft_gui/machine_front.png");
+		"/buildcraft_gui/quary_front.png");
 		textureTop = ModLoader.addOverride("/terrain.png",
-		"/buildcraft_gui/mining_machine_top.png");	
+		"/buildcraft_gui/quary_top.png");	
 		
 	}
 	
