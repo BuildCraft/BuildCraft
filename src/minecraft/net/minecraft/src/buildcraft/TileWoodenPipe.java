@@ -93,6 +93,10 @@ public class TileWoodenPipe extends TilePipe {
 	 * on the position of the pipe.
 	 */
 	public ItemStack checkExtract (IInventory inventory, boolean doRemove, Orientations from) {
+		if (inventory instanceof TileDiamondPipe) {
+			return null;
+		}
+		
 		if (inventory.getSizeInventory() == 3) {
 			//  This is a furnace-like inventory
 			
