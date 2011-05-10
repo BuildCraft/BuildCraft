@@ -345,7 +345,6 @@ public class Utils {
 	}
 	
 	public static void dropItems (World world, ItemStack stack, int i, int j, int k) {
-		System.out.println ("DROP " + stack.stackSize + ", " + stack.itemID);
 		float f1 = 0.7F;
 		double d = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
 		double d1 = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
@@ -353,12 +352,6 @@ public class Utils {
 		EntityItem entityitem = new EntityItem(world, (double) i + d,
 				(double) j + d1, (double) k + d2, stack);
 		entityitem.delayBeforeCanPickup = 10;
-//		
-//		float f3 = 0.05F;
-//		entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-//		entityitem.motionY = (float) world.rand.nextGaussian() * f3
-//				+ 0.3F;
-//		entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
 		
 		world.entityJoinedWorld(entityitem);
 	}
