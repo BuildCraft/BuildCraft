@@ -36,4 +36,10 @@ public class BlockDiamondPipe extends BlockPipe {
 		
 		return true;
 	}	
+	
+    public void onBlockRemoval(World world, int i, int j, int k) {    	
+    	Utils.dropItems(world, (TileAutoWorkbench) world.getBlockTileEntity(i, j, k), i, j, k);
+    	
+        super.onBlockRemoval(world, i, j, k);        
+    }
 }

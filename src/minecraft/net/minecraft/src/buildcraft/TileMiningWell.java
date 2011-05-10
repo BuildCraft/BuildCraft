@@ -1,8 +1,8 @@
 package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -61,20 +61,9 @@ public class TileMiningWell extends TileEntity {
 		
 		if (blockId == 0) {
 			return;
-		}
+		}			
 		
-		int idDropped = Block.blocksList[blockId]
-				.idDropped(blockId, w.rand);
-
-		if (idDropped >= Item.itemsList.length
-				|| Item.itemsList[idDropped] == null) {
-			return;
-		}
-
-		int itemQuantity = Block.blocksList[blockId]
-				.quantityDropped(w.rand);
-		
-		ItemStack stack = new ItemStack(idDropped, itemQuantity, Utils.damageDropped(blockId));
+		ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(w, xCoord, depth, zCoord);
 				
 		if (Utils.addToRandomInventory(this, Orientations.Unknown, stack)) {
 			//  The object has been added to a nearby chest.

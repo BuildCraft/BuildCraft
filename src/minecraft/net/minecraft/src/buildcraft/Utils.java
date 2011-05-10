@@ -3,14 +3,10 @@ package net.minecraft.src.buildcraft;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BlockCloth;
-import net.minecraft.src.BlockLeaves;
-import net.minecraft.src.BlockLog;
-import net.minecraft.src.BlockOre;
-import net.minecraft.src.BlockSapling;
-import net.minecraft.src.BlockStep;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -348,22 +344,32 @@ public class Utils {
 		return (T) tileTest;
 	}
 	
-	public static int damageDropped (int blockId) {
-		if (Block.blocksList [blockId] instanceof BlockCloth) {
-			return blockId;
-		} else if (Block.blocksList [blockId] instanceof BlockSapling) {
-			return blockId & 3;
-		} else if (Block.blocksList [blockId] instanceof BlockStep) {
-			return blockId;
-		} else if (Block.blocksList [blockId] instanceof BlockLeaves) {
-			return blockId & 3;
-		} else if (Block.blocksList [blockId] instanceof BlockLog) {
-			return blockId;
-		} else if (Block.blocksList [blockId] instanceof BlockOre) {
-			return blockId != Block.oreLapis.blockID ? 0 : 4;
-		}
-			
+	public static void dropItems (World world, ItemStack stack, int i, int j, int k) {
+		System.out.println ("DROP " + stack.stackSize + ", " + stack.itemID);
+		float f1 = 0.7F;
+		double d = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
+		double d1 = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
+		double d2 = (double)(world.rand.nextFloat() * f1) + (double)(1.0F - f1) * 0.5D;
+		EntityItem entityitem = new EntityItem(world, (double) i + d,
+				(double) j + d1, (double) k + d2, stack);
+		entityitem.delayBeforeCanPickup = 10;
+//		
+//		float f3 = 0.05F;
+//		entityitem.motionX = (float) world.rand.nextGaussian() * f3;
+//		entityitem.motionY = (float) world.rand.nextGaussian() * f3
+//				+ 0.3F;
+//		entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
 		
-		return 0;
+		world.entityJoinedWorld(entityitem);
+	}
+	
+	public static void dropItems (World world, IInventory inventory, int i, int j, int k) {
+		for (int l = 0; l < inventory.getSizeInventory(); ++l) {
+			ItemStack items = inventory.getStackInSlot(l);
+			
+			if (items != null && items.stackSize > 0) {
+				dropItems (world, inventory.getStackInSlot(l).copy(), i, j, k);
+			}
+    	}
 	}
 }

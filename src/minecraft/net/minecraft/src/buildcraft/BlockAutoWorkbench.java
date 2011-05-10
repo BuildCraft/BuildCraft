@@ -1,8 +1,12 @@
 package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -11,11 +15,14 @@ import net.minecraft.src.mod_BuildCraft;
 
 public class BlockAutoWorkbench extends BlockContainer
 {
+	
+	BuildCraftBlockUtil p;
 
     public BlockAutoWorkbench(int i)
     {
-        super(i, Material.iron);
+        super(i, Material.wood);
         blockIndexInTexture = 59;
+        setHardness(1.0F);
     }
 
     public int getBlockTextureFromSide(int i)
@@ -39,6 +46,8 @@ public class BlockAutoWorkbench extends BlockContainer
 
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
     {
+    	super.blockActivated(world, i, j, k, entityplayer);
+    	
         if(world.multiplayerWorld)
         {
             return true;
@@ -49,8 +58,16 @@ public class BlockAutoWorkbench extends BlockContainer
         }
     }
 
+    
 	@Override
 	protected TileEntity getBlockEntity() {
 		return new TileAutoWorkbench ();
 	}
+	
+    public void onBlockRemoval(World world, int i, int j, int k) {   
+		Utils.dropItems(world,
+				(TileAutoWorkbench) world.getBlockTileEntity(i, j, k), i, j, k);
+    	
+        super.onBlockRemoval(world, i, j, k);        
+    }
 }
