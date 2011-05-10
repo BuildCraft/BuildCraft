@@ -1,13 +1,12 @@
 package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraft;
 
 public class TileMachine extends TileEntity implements IArmListener {		
@@ -229,7 +228,8 @@ public class TileMachine extends TileEntity implements IArmListener {
 				boolean added = false;
 
 				ItemStack items = new ItemStack(idDropped, 1,
-						Utils.damageDropped(blockId));
+						BuildCraftBlockUtil.damageDropped(worldObj, (int) i,
+								(int) j, (int) k));
 
 				// First, try to add to a nearby chest
 
@@ -257,7 +257,8 @@ public class TileMachine extends TileEntity implements IArmListener {
 							new ItemStack(
 									idDropped,
 									1,
-									Utils.damageDropped(blockId)));
+									BuildCraftBlockUtil.damageDropped(worldObj,
+											(int) i, (int) j, (int) k)));
 
 					float f3 = 0.05F;
 					entityitem.motionX = (float) worldObj.rand.nextGaussian()
