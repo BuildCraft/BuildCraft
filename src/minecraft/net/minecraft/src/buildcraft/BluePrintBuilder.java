@@ -6,21 +6,17 @@ public class BluePrintBuilder {
 	
 	BluePrint bluePrint;
 	int x, y, z;
-	World world;
 	boolean done;
 	
-	public BluePrintBuilder (World world, BluePrint bluePrint, int x, int y, int z) {
+	public BluePrintBuilder (BluePrint bluePrint, int x, int y, int z) {
 		this.bluePrint = bluePrint;
-		this.world = world;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		done = false;
-		
-		findNextBlock();
 	}
 	
-	public BlockContents findNextBlock () {
+	public BlockContents findNextBlock (World world) {
 		for (int j = 0; j < bluePrint.sizeY; ++j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
