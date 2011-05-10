@@ -251,7 +251,7 @@ public class mod_BuildCraft extends BaseMod {
 	
 	@Override
 	public String Version() {
-		return "1.5_01.3";
+		return "1.5_01.4";
 	}
 	    
     long lastTick = 0;
