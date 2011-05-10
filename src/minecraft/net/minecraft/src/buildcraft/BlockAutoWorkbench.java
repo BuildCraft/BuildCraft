@@ -3,10 +3,8 @@ package net.minecraft.src.buildcraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -66,7 +64,7 @@ public class BlockAutoWorkbench extends BlockContainer
 	
     public void onBlockRemoval(World world, int i, int j, int k) {   
 		Utils.dropItems(world,
-				(TileAutoWorkbench) world.getBlockTileEntity(i, j, k), i, j, k);
+				(IInventory) world.getBlockTileEntity(i, j, k), i, j, k);
     	
         super.onBlockRemoval(world, i, j, k);        
     }

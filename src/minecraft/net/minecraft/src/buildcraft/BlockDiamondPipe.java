@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft;
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -38,7 +39,8 @@ public class BlockDiamondPipe extends BlockPipe {
 	}	
 	
     public void onBlockRemoval(World world, int i, int j, int k) {    	
-    	Utils.dropItems(world, (TileAutoWorkbench) world.getBlockTileEntity(i, j, k), i, j, k);
+		Utils.dropItems(world,
+				(IInventory) world.getBlockTileEntity(i, j, k), i, j, k);
     	
         super.onBlockRemoval(world, i, j, k);        
     }
