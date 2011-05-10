@@ -240,4 +240,13 @@ public class EntityMechanicalArm extends Entity {
     	w.entityJoinedWorld(zArm);
     	w.entityJoinedWorld(head);
     }
+
+	public void setEntityDead() {
+		xArm.setEntityDead ();
+		yArm.setEntityDead ();
+		zArm.setEntityDead ();
+		head.setEntityDead ();
+		super.setEntityDead ();
+		
+	}
 }

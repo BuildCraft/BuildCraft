@@ -1,9 +1,5 @@
 package net.minecraft.src.buildcraft;
 
-import java.util.TreeMap;
-
-import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
-
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
@@ -23,8 +19,6 @@ public class BlockMachine extends BlockContainer {
 	int textureTop;
 	int textureFront;
 	int textureSide;
-		
-	TreeMap <BlockIndex, TileMachine> workingMachines = new TreeMap <BlockIndex, TileMachine> ();
 	
 	public BlockMachine(int i) {
 		super(i, Material.iron);
@@ -50,7 +44,7 @@ public class BlockMachine extends BlockContainer {
 					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);		
 					
 					if (tile instanceof TileMachine && ((TileMachine)tile).isDigging) {
-						return 0.5F;
+						return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
 					} 
 				}
 		
@@ -64,14 +58,8 @@ public class BlockMachine extends BlockContainer {
 		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX,
 				entityliving.posY, entityliving.posZ), new Position(i, j, k));    	
     	
-    	world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());    	
+    	world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());    	  	
     	
-    	registerMachine(world, i, j, k, orientation);    	
-    }
-    
-    
-    
-    public void registerMachine (World world, int i, int j, int k, Orientations orientation) {    	
 		Position p = new Position (i, j, k, orientation);
 				
 		p.moveForwards(1);
@@ -127,11 +115,8 @@ public class BlockMachine extends BlockContainer {
 			}
 		}
 		
-		TileMachine newTile = new TileMachine((int) xMin, (int) zMin);
-		workingMachines.put(new BlockIndex(i, j, k),
-				newTile);
-		
-    	world.setBlockTileEntity(i, j, k, newTile);
+		((TileMachine) world.getBlockTileEntity(i, j, k)).setMinPos((int) xMin,
+				(int) zMin);
     }
     
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
@@ -178,17 +163,17 @@ public class BlockMachine extends BlockContainer {
 			return textureSide;
 		}
 	}
-	
-    public void onBlockDestroyedByPlayer(World world, int i, int j, int k, int l)
-    {
-    	if (workingMachines.containsKey(new BlockIndex (i, j, k))) {
-    		workingMachines.remove(new BlockIndex (i, j, k));
-    	}
-    }
-
+    
 	@Override
 	protected TileEntity getBlockEntity() {		
-		return new TileMachine(0, 0);
+		return new TileMachine();
+	}
+	
+
+	public void onBlockRemoval(World world, int i, int j, int k) {
+		((TileMachine) world.getBlockTileEntity(i, j, k)).delete();
+		
+		super.onBlockRemoval(world, i, j, k);
 	}
 	
 	static {
@@ -229,5 +214,5 @@ public class BlockMachine extends BlockContainer {
 			bluePrint.setBlockId(MINING_FIELD_SIZE + 1, h, MINING_FIELD_SIZE + 1,
 					mod_BuildCraft.getInstance().frameBlock.blockID);
 		}
-	}	
+	}		
 }

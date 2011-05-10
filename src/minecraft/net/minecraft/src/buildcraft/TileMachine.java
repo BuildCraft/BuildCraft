@@ -10,7 +10,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraft;
 
 public class TileMachine extends TileEntity implements IArmListener {		
-	boolean isDigging = true;
+	boolean isDigging = false;
 
 	static final int fieldSize = BlockMachine.MINING_FIELD_SIZE
 			* BlockMachine.MINING_FIELD_SIZE;
@@ -19,7 +19,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 	
 	EntityMechanicalArm arm;
 	
-	int xMin, zMin;
+	private int xMin, zMin;
 	
 	boolean loadArm = false;
 	
@@ -33,16 +33,19 @@ public class TileMachine extends TileEntity implements IArmListener {
 	
     public void updateEntity()
     {
-    	createUtilsIfNeeded ();    	
+    	createUtilsIfNeeded ();    	    	
     }
     
     public void createUtilsIfNeeded () {
     	if (bluePrintBuilder == null) {
-			bluePrintBuilder = new BluePrintBuilder(worldObj, BlockMachine.bluePrint, xMin, yCoord, zMin);
-		}
+    		return;
+    	}
+    	
+    	bluePrintBuilder.findNextBlock(worldObj);
     	
     	if (bluePrintBuilder.done) {
     		if (arm == null) {
+    			System.out.println ("BP CREATED: " + xMin + ", " + yCoord + ", " + zMin);
     			arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxSize,
     					yCoord + 4 + Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
     					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
@@ -55,16 +58,15 @@ public class TileMachine extends TileEntity implements IArmListener {
     		if (loadArm) {
     			arm.joinToWorld(worldObj);
     			loadArm = false;
+    			
+    			if (findTarget(false)) {    				
+    	    		isDigging = true;
+    	    	}
     		}
+    	} else {
+    		isDigging = true;
     	}
     }
-
-	public TileMachine(int xMin, int zMin) {
-		this ();
-		
-		this.xMin = xMin;
-		this.zMin = zMin;
-	}
 	
 	boolean lastPower;
 	long lastWork = 0;
@@ -81,19 +83,27 @@ public class TileMachine extends TileEntity implements IArmListener {
 		}		
 	}
 	
-	public void work() {		
-	    createUtilsIfNeeded();
-	    
+	public void work() {				
 	    if (worldObj.getWorldTime() - lastWork < 20) {
 	    	return;
 	    }
 	    
+	    System.out.println ("WORK " + isDigging);
+	    createUtilsIfNeeded();
+	    
+	    if (bluePrintBuilder == null) {
+	    	return;
+	    }
+	    
 		if (!bluePrintBuilder.done) {
+			System.out.println ("BP");
 			lastWork = worldObj.getWorldTime();
-			BlockContents contents = bluePrintBuilder.findNextBlock();
+			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
 			if (contents != null) {		
 				int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
+				
+				System.out.println ("SET: " + contents.x + ", " + contents.y + ", " + contents.z);
 				
 				worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
 						contents.blockId);
@@ -108,6 +118,8 @@ public class TileMachine extends TileEntity implements IArmListener {
 			return;
 		}
 		
+		System.out.println ("WORK");	    	   
+		
 		if (inProcess) {
 			return;
 		}
@@ -116,6 +128,16 @@ public class TileMachine extends TileEntity implements IArmListener {
 			return;
 		}		
 				
+		
+		if (!findTarget(true)) {
+			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
+			isDigging = false;			
+		}
+		
+		inProcess = true;		
+	}
+
+	public boolean findTarget (boolean doSet) {
 		boolean[][] blockedColumns = new boolean[BlockMachine.MINING_FIELD_SIZE][BlockMachine.MINING_FIELD_SIZE];
 		
 		for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE; ++searchX) {
@@ -124,12 +146,9 @@ public class TileMachine extends TileEntity implements IArmListener {
 			}
 		}
 		
-		boolean found = false;
-		//  look for the next block to dig
-		
-		for (int searchY = yCoord + 3; searchY >= 0 && !found; --searchY) {
-			for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE && !found; ++searchX) {
-				for (int searchZ = 0; searchZ < BlockMachine.MINING_FIELD_SIZE && !found; ++searchZ) {
+		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
+			for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE; ++searchX) {
+				for (int searchZ = 0; searchZ < BlockMachine.MINING_FIELD_SIZE; ++searchZ) {
 					if (!blockedColumns [searchX][searchZ]) {
 						int bx = xMin + searchX + 1, by = searchY, bz = zMin + searchZ + 1;
 						
@@ -138,27 +157,24 @@ public class TileMachine extends TileEntity implements IArmListener {
 						if (blockDig (blockId)) {		
 							blockedColumns [searchX][searchZ] = true;						
 						} else if (canDig(blockId)) {
-							arm.setTarget (bx, by + 1, bz);
+							if (doSet) {
+								arm.setTarget (bx, by + 1, bz);
+
+								targetX = bx;
+								targetY = by;
+								targetZ = bz;
+							}
 							
-							targetX = bx;
-							targetY = by;
-							targetZ = bz;
-							
-							found = true;
+							return true;
 						}
 					}
 				}
 			}
 		}
 
-		if (!found) {
-			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
-			isDigging = false;			
-		}
-		
-		inProcess = true;		
+		return false;
 	}
-
+	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);		
 
@@ -168,9 +184,6 @@ public class TileMachine extends TileEntity implements IArmListener {
 		targetY = nbttagcompound.getInteger("targetY");
 		targetZ = nbttagcompound.getInteger("targetZ");
 		
-		mod_BuildCraft.getInstance().machineBlock.workingMachines.put(
-				new BlockIndex(xCoord, yCoord, zCoord), this);
-		
 		if (nbttagcompound.getBoolean("hasArm")) {
 			NBTTagCompound armStore = nbttagcompound.getCompoundTag("arm");
 			arm = new EntityMechanicalArm(worldObj);
@@ -179,6 +192,9 @@ public class TileMachine extends TileEntity implements IArmListener {
 
 			loadArm = true;
 		}
+		
+		bluePrintBuilder = new BluePrintBuilder(BlockMachine.bluePrint, xMin,
+				yCoord, zMin);
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -289,6 +305,20 @@ public class TileMachine extends TileEntity implements IArmListener {
 				&& blockID != Block.waterMoving.blockID
 				&& blockID != Block.waterStill.blockID
 				&& Block.blocksList [blockID] != null;
+	}
+	
+	public void delete () {
+		if (arm != null) {
+			arm.setEntityDead ();
+		}
+	}
+	
+	public void setMinPos (int xMin, int zMin) {
+		this.xMin = xMin;
+		this.zMin = zMin;
+		
+		bluePrintBuilder = new BluePrintBuilder(BlockMachine.bluePrint, xMin,
+				yCoord, zMin);
 	}
 
 }

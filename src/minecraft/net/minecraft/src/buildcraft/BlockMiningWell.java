@@ -39,7 +39,7 @@ public class BlockMiningWell extends BlockContainer {
 					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);		
 					
 					if (tile instanceof TileMiningWell && ((TileMiningWell)tile).isDigging) {
-						return 0.5F;
+						return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
 					} 
 				}
 		
