@@ -13,6 +13,7 @@ public class TileMiningWell extends TileEntity {
 	
 	long lastMining = 0;
 	boolean lastPower = false;
+	boolean isDigging = true;
 	
 	public TileMiningWell () {
 		
@@ -51,6 +52,9 @@ public class TileMiningWell extends TileEntity {
 			|| w.getBlockId(xCoord, depth, zCoord) == Block.bedrock.blockID
 			|| w.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
 			||w.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
+			
+			    isDigging = false;
+			    
 				return;
 			}
 		
