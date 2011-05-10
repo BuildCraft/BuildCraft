@@ -2,6 +2,8 @@ package net.minecraft.src.buildcraft;
 
 import java.util.TreeMap;
 
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
@@ -25,11 +27,10 @@ public class BlockMachine extends BlockContainer {
 	TreeMap <BlockIndex, TileMachine> workingMachines = new TreeMap <BlockIndex, TileMachine> ();
 	
 	public BlockMachine(int i) {
-		super(i, Material.rock);
+		super(i, Material.iron);
 		
 		setHardness(1.5F);
 		setResistance(10F);
-		setLightValue(0.9375F);
 		setStepSound(soundStoneFootstep);
 		
 		textureSide = ModLoader.addOverride("/terrain.png",
@@ -42,12 +43,24 @@ public class BlockMachine extends BlockContainer {
 	}
 	
 	public float getBlockBrightness	(IBlockAccess iblockaccess, int i, int j, int k)
-    {
-        return 10;
+    {	
+		for (int x = i - 1; x <= i + 1; ++x)
+			for (int y = j - 1; y <= j + 1; ++y)
+				for (int z = k - 1; z <= k + 1; ++z) {
+					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);		
+					
+					if (tile instanceof TileMachine && ((TileMachine)tile).isDigging) {
+						return 0.5F;
+					} 
+				}
+		
+		return super.getBlockBrightness(iblockaccess, i, j, k);
     }
     
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
     {
+    	super.onBlockPlacedBy(world, i, j, k, entityliving);
+    	
 		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX,
 				entityliving.posY, entityliving.posZ), new Position(i, j, k));    	
     	

@@ -15,6 +15,7 @@ public class EntityBlock extends Entity {
 		super(world);		
 		preventEntitySpawning = true;      
 		noClip = true;
+		isImmuneToFire = true;
 	}
 	
     public EntityBlock (World world, double i, double j, double k, double iSize, double jSize, double kSize, int blockID) {

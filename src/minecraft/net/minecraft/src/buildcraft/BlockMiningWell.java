@@ -18,10 +18,7 @@ public class BlockMiningWell extends BlockContainer {
 		
 		setHardness(1.5F);
 		setResistance(10F);
-		setLightValue(0.9375F);
 		setStepSound(soundStoneFootstep);
-	
-		
 		
 		textureFront = ModLoader.addOverride("/terrain.png",
 		"/buildcraft_gui/mining_machine_front.png");
@@ -35,8 +32,18 @@ public class BlockMiningWell extends BlockContainer {
 	}
 	
 	public float getBlockBrightness	(IBlockAccess iblockaccess, int i, int j, int k)
-    {
-        return 10;
+    {	
+		for (int x = i - 1; x <= i + 1; ++x)
+			for (int y = j - 1; y <= j + 1; ++y)
+				for (int z = k - 1; z <= k + 1; ++z) {
+					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);		
+					
+					if (tile instanceof TileMiningWell && ((TileMiningWell)tile).isDigging) {
+						return 0.5F;
+					} 
+				}
+		
+		return super.getBlockBrightness(iblockaccess, i, j, k);
     }
 	
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {

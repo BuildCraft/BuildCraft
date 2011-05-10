@@ -152,7 +152,8 @@ public class TileMachine extends TileEntity implements IArmListener {
 		}
 
 		if (!found) {
-			isDigging = false;
+			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
+			isDigging = false;			
 		}
 		
 		inProcess = true;		
