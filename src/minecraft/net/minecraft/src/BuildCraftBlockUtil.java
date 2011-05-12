@@ -17,9 +17,20 @@ public class BuildCraftBlockUtil extends Block
     public static ItemStack getItemStackFromBlock(World world, int i, int j, int k)
     {
     	Block block = Block.blocksList[world.getBlockId(i, j, k)];
-    			        
-		return new ItemStack(block.idDropped(block.blockID, world.rand),
-				block.quantityDropped(world.rand),
-				block.damageDropped(block.blockID));
+    
+    	if (block == null) {
+    		return null;
+    	}
+    	
+    	int meta = world.getBlockMetadata(i, j, k);
+    	int id = block.idDropped(meta, world.rand);
+    	int qty = block.quantityDropped(world.rand);
+    	int dmg = block.damageDropped(meta);
+    	
+    	if (id == 0 || qty == 0) {
+    		return null;
+    	} else {    	
+    		return new ItemStack(id, qty, dmg);
+    	}
     }
 }

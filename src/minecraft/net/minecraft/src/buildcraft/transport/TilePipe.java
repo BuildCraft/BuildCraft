@@ -11,6 +11,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.ITickListener;
 import net.minecraft.src.buildcraft.core.Orientations;

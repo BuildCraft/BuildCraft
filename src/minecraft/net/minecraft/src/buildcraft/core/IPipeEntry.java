@@ -1,6 +1,6 @@
 package net.minecraft.src.buildcraft.core;
 
-public interface IPipeEntry extends IPipeConnection {
+public interface IPipeEntry {
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation);
 	

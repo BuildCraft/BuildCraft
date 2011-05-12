@@ -3,11 +3,13 @@ package net.minecraft.src.buildcraft.factory;
 import java.util.Random;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.buildcraft.core.IPipeConnection;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockPlainPipe extends Block {	
+public class BlockPlainPipe extends Block implements IPipeConnection {	
 	
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
@@ -38,5 +40,12 @@ public class BlockPlainPipe extends Block {
     {
         return 0;
     }
+
+	@Override
+	public boolean isPipeConnected(IBlockAccess iBlockAccess, int x, int y,
+			int z) {
+
+		return false;
+	}
     
 }

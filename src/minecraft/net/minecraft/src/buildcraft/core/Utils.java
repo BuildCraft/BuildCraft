@@ -6,34 +6,16 @@ import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftCore;
 
 public class Utils {
 	
 	public static final float pipeMinSize = 0.25F;
 	public static final float pipeMaxSize = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
-	
-	/**
-	 * Return True if the item id is supposed to be connected to the
-	 * blockId given in parameter, for e.g. display purpose
-	 */
-	public static boolean isPipeConnected(IBlockAccess blockAccess, int i, int j, int k, int toBlockId) {
-		int id = blockAccess.getBlockId(i, j, k);
-		TileEntity tileEntity = blockAccess.getBlockTileEntity(i, j, k);
-		
-		if (toBlockId == mod_BuildCraftCore.frameBlock.blockID) {
-			 return id == mod_BuildCraftCore.getInstance().frameBlock.blockID;
-		} else {
-			return tileEntity instanceof IPipeConnection
-			|| tileEntity instanceof IInventory;			
-		}
-	}
 
 	
 	/**
