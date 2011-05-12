@@ -9,7 +9,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockAutoWorkbench extends BlockContainer
@@ -28,7 +28,7 @@ public class BlockAutoWorkbench extends BlockContainer
     {
         if(i == 1)
         {
-			return mod_BuildCraft.getInstance().machineBlock.textureSide;
+			return mod_BuildCraftFactory.machineBlock.textureSide;
         }
         if(i == 0)
         {

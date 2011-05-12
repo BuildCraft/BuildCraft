@@ -8,7 +8,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftFactory;
+import net.minecraft.src.mod_BuildCraftTransport;
 
 public class BlockCheat extends Block {
 	
@@ -32,13 +33,13 @@ public class BlockCheat extends Block {
 		createItems (i, j, k, new ItemStack (Block.planks, 64));
 		createItems (i, j, k, new ItemStack (Block.oreGold, 64));
 		createItems (i, j, k, new ItemStack (Block.oreIron, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().miningWellBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().machineBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().woodenPipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().stonePipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().ironPipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().goldenPipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraft.getInstance().diamondPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraftFactory.miningWellBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraftFactory.machineBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.woodenPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.stonePipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.ironPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.goldenPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.diamondPipeBlock, 64));
 		
 		
 		return false;

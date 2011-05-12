@@ -5,7 +5,7 @@ import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public abstract class BlockPipe extends BlockContainer {
@@ -18,7 +18,7 @@ public abstract class BlockPipe extends BlockContainer {
 	
     public int getRenderType()
     {
-        return mod_BuildCraft.getInstance().pipeModel;
+        return mod_BuildCraftTransport.pipeModel;
     }
     
     public boolean isOpaqueCube()

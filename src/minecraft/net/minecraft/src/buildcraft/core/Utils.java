@@ -11,7 +11,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftCore;
 
 public class Utils {
 	
@@ -27,13 +27,11 @@ public class Utils {
 		int id = blockAccess.getBlockId(i, j, k);
 		TileEntity tileEntity = blockAccess.getBlockTileEntity(i, j, k);
 		
-		if (toBlockId == mod_BuildCraft.getInstance().frameBlock.blockID) {
-			 return id == mod_BuildCraft.getInstance().frameBlock.blockID;
+		if (toBlockId == mod_BuildCraftCore.frameBlock.blockID) {
+			 return id == mod_BuildCraftCore.getInstance().frameBlock.blockID;
 		} else {
-			return tileEntity instanceof IPipeEntry 
-			|| tileEntity instanceof IInventory 				        
-			|| id == mod_BuildCraft.getInstance().machineBlock.blockID				
-			|| id == mod_BuildCraft.getInstance().miningWellBlock.blockID;
+			return tileEntity instanceof IPipeConnection
+			|| tileEntity instanceof IInventory;			
 		}
 	}
 
@@ -368,5 +366,15 @@ public class Utils {
 				dropItems (world, inventory.getStackInSlot(l).copy(), i, j, k);
 			}
     	}
+	}
+	
+	public static int getFirstFreeBlock() {
+		for (int i = Block.blocksList.length - 1; i >= 0; --i) {
+			if (Block.blocksList [i] == null) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 }

@@ -7,7 +7,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockFrame extends Block {	
@@ -36,7 +36,7 @@ public class BlockFrame extends Block {
     
     public int getRenderType()
     {
-        return mod_BuildCraft.getInstance().pipeModel;
+        return mod_BuildCraftTransport.pipeModel;
     }
     
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
