@@ -4,7 +4,9 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.mod_BuildCraftFactory;
+import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
@@ -52,18 +54,18 @@ public class EntityMechanicalArm extends Entity {
         inProgressionY = false;
 
 		xArm = new EntityBlock(world, i, j, k, width, 0.5, 0.5,
-				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
-		xArm.texture = mod_BuildCraft.getInstance().drillTexture;
+				mod_BuildCraftFactory.plainPipeBlock.blockID);
+		xArm.texture = mod_BuildCraftFactory.drillTexture;
 		world.entityJoinedWorld(xArm);
 		
 		yArm = new EntityBlock(world, i, j, k, 0.5, 1, 0.5,
-				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
-		yArm.texture = mod_BuildCraft.getInstance().drillTexture;
+				mod_BuildCraftFactory.plainPipeBlock.blockID);
+		yArm.texture = mod_BuildCraftFactory.drillTexture;
 		world.entityJoinedWorld(yArm);
 		
 		zArm = new EntityBlock(world, i, j, k, 0.5, 0.5, height,
-				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
-		zArm.texture = mod_BuildCraft.getInstance().drillTexture;
+				mod_BuildCraftFactory.plainPipeBlock.blockID);
+		zArm.texture = mod_BuildCraftFactory.drillTexture;
 		world.entityJoinedWorld(zArm);
 		
 		head = new EntityBlock(world, i, j, k, 0.2, 1, 0.2,
@@ -111,9 +113,9 @@ public class EntityMechanicalArm extends Entity {
 		zArm = new EntityBlock(worldObj);
 		head = new EntityBlock(worldObj);
 		
-		xArm.texture = mod_BuildCraft.getInstance().drillTexture;
-		yArm.texture = mod_BuildCraft.getInstance().drillTexture;
-		zArm.texture = mod_BuildCraft.getInstance().drillTexture;
+		xArm.texture = mod_BuildCraftFactory.drillTexture;
+		yArm.texture = mod_BuildCraftFactory.drillTexture;
+		zArm.texture = mod_BuildCraftFactory.drillTexture;
 		
 		xArm.readFromNBT(xArmStore);
 		yArm.readFromNBT(yArmStore);

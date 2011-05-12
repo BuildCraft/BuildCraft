@@ -9,7 +9,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.ITickListener;
@@ -43,7 +43,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
 		if (travelingEntities.size() == 0) {
-			mod_BuildCraft.getInstance().registerTicksListener(this, 1);			
+			mod_BuildCraftCore.registerTicksListener(this, 1);			
 		}
 		
 		travelingEntities.add(new EntityData (item, orientation));
@@ -160,7 +160,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 		travelingEntities.removeAll(toRemove);		
 		
 		if (travelingEntities.size() == 0) {
-			mod_BuildCraft.getInstance().unregisterTicksListener(this);
+			mod_BuildCraftCore.unregisterTicksListener(this);
 		}
 	}
 	
@@ -211,7 +211,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 		}
 		
 		if (entitiesToLoad.size() > 0) {
-			mod_BuildCraft.getInstance().registerTicksListener(this, 1);
+			mod_BuildCraftCore.registerTicksListener(this, 1);
 		}
     }
 

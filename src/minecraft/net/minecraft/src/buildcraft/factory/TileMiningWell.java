@@ -7,7 +7,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -45,8 +46,7 @@ public class TileMiningWell extends TileEntity {
 		
 		int depth = yCoord - 1;
 		
-		while (w.getBlockId(xCoord, depth, zCoord) == mod_BuildCraft
-						.getInstance().plainPipeBlock.blockID) {
+		while (w.getBlockId(xCoord, depth, zCoord) == mod_BuildCraftFactory.plainPipeBlock.blockID) {
 			depth = depth - 1;
 		}
 		
@@ -63,7 +63,7 @@ public class TileMiningWell extends TileEntity {
 		int blockId = w.getBlockId(xCoord, depth, zCoord);
 		
 		w.setBlockWithNotify((int) xCoord, (int) depth, (int) zCoord,
-				mod_BuildCraft.getInstance().plainPipeBlock.blockID);
+				mod_BuildCraftFactory.plainPipeBlock.blockID);
 		
 		if (blockId == 0) {
 			return;

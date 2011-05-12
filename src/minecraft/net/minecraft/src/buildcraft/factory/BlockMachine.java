@@ -8,7 +8,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraft;
+import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
@@ -194,29 +194,29 @@ public class BlockMachine extends BlockContainer {
 		for (int j = 0; j < 5; j += 4) {
 			for (int i = 0; i < MINING_FIELD_SIZE + 2; ++i) {
 				bluePrint.setBlockId(i, j, 0,
-						mod_BuildCraft.getInstance().frameBlock.blockID);
+						mod_BuildCraftFactory.frameBlock.blockID);
 				bluePrint.setBlockId(i, j, MINING_FIELD_SIZE + 1,
-						mod_BuildCraft.getInstance().frameBlock.blockID);
+						mod_BuildCraftFactory.frameBlock.blockID);
 			}
 			
 			for (int k = 0; k < MINING_FIELD_SIZE + 2; ++k) {
 				bluePrint.setBlockId(0, j, k,
-						mod_BuildCraft.getInstance().frameBlock.blockID);
+						mod_BuildCraftFactory.frameBlock.blockID);
 				bluePrint.setBlockId(MINING_FIELD_SIZE + 1, j, k,
-						mod_BuildCraft.getInstance().frameBlock.blockID);
+						mod_BuildCraftFactory.frameBlock.blockID);
 
 			}
 		}
 		
 		for (int h = 1; h < 4; ++h) {
 			bluePrint.setBlockId(0, h, 0,
-					mod_BuildCraft.getInstance().frameBlock.blockID);
+					mod_BuildCraftFactory.frameBlock.blockID);
 			bluePrint.setBlockId(0, h, MINING_FIELD_SIZE + 1,
-					mod_BuildCraft.getInstance().frameBlock.blockID);
+					mod_BuildCraftFactory.frameBlock.blockID);
 			bluePrint.setBlockId(MINING_FIELD_SIZE + 1, h, 0,
-					mod_BuildCraft.getInstance().frameBlock.blockID);
+					mod_BuildCraftFactory.frameBlock.blockID);
 			bluePrint.setBlockId(MINING_FIELD_SIZE + 1, h, MINING_FIELD_SIZE + 1,
-					mod_BuildCraft.getInstance().frameBlock.blockID);
+					mod_BuildCraftFactory.frameBlock.blockID);
 		}
 	}		
 }
