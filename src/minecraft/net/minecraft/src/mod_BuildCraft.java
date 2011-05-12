@@ -7,33 +7,11 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.buildcraft.BlockAutoWorkbench;
-import net.minecraft.src.buildcraft.BlockCheat;
-import net.minecraft.src.buildcraft.BlockDiamondPipe;
-import net.minecraft.src.buildcraft.BlockFrame;
-import net.minecraft.src.buildcraft.BlockGoldenPipe;
-import net.minecraft.src.buildcraft.BlockIronPipe;
-import net.minecraft.src.buildcraft.BlockMachine;
-import net.minecraft.src.buildcraft.BlockMiningWell;
-import net.minecraft.src.buildcraft.BlockPlainPipe;
-import net.minecraft.src.buildcraft.BlockStonePipe;
-import net.minecraft.src.buildcraft.BlockWoodenPipe;
-import net.minecraft.src.buildcraft.EntityBlock;
-import net.minecraft.src.buildcraft.EntityMechanicalArm;
-import net.minecraft.src.buildcraft.EntityPassiveItem;
-import net.minecraft.src.buildcraft.ITickListener;
-import net.minecraft.src.buildcraft.Orientations;
-import net.minecraft.src.buildcraft.RenderEntityBlock;
-import net.minecraft.src.buildcraft.TileAutoWorkbench;
-import net.minecraft.src.buildcraft.TileDiamondPipe;
-import net.minecraft.src.buildcraft.TileGoldenPipe;
-import net.minecraft.src.buildcraft.TileIronPipe;
-import net.minecraft.src.buildcraft.TileMachine;
-import net.minecraft.src.buildcraft.TileMiningWell;
-import net.minecraft.src.buildcraft.TileStonePipe;
-import net.minecraft.src.buildcraft.TileWoodenPipe;
-import net.minecraft.src.buildcraft.Utils;
-import net.minecraft.src.buildcraft.RenderVoid;
+
+import net.minecraft.src.buildcraft.core.*;
+import net.minecraft.src.buildcraft.transport.*;
+import net.minecraft.src.buildcraft.factory.*;
+import net.minecraft.src.buildcraft.devel.*;
 
 public class mod_BuildCraft extends BaseMod {	
 
@@ -86,7 +64,7 @@ public class mod_BuildCraft extends BaseMod {
 		
 		woodenGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
-						"/buildcraft_gui/wooden_gear.png")).setItemName(
+						"/net/minecraft/src/buildcraft/core/gui/wooden_gear.png")).setItemName(
 				"woodenGearItem");				
 		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
 		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
@@ -94,7 +72,7 @@ public class mod_BuildCraft extends BaseMod {
 		
 		stoneGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
-						"/buildcraft_gui/stone_gear.png")).setItemName(
+						"/net/minecraft/src/buildcraft/core/gui/stone_gear.png")).setItemName(
 				"stoneGearItem");
 		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone,
@@ -103,7 +81,7 @@ public class mod_BuildCraft extends BaseMod {
 		
 		ironGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
-						"/buildcraft_gui/iron_gear.png")).setItemName(
+						"/net/minecraft/src/buildcraft/core/gui/iron_gear.png")).setItemName(
 				"ironGearItem");
 		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
@@ -112,7 +90,7 @@ public class mod_BuildCraft extends BaseMod {
 		
 		goldGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
-						"/buildcraft_gui/golden_gear.png")).setItemName(
+						"/net/minecraft/src/buildcraft/core/gui/golden_gear.png")).setItemName(
 				"goldGearItem");
 		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold,
@@ -121,7 +99,7 @@ public class mod_BuildCraft extends BaseMod {
 		
 		diamondGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
-						"/buildcraft_gui/diamond_gear.png")).setItemName(
+						"/net/minecraft/src/buildcraft/core/gui/diamond_gear.png")).setItemName(
 				"diamondGearItem");
 		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
@@ -222,15 +200,15 @@ public class mod_BuildCraft extends BaseMod {
 			
 		
 		plainIronTexture = ModLoader.addOverride("/terrain.png",
-		"/buildcraft_gui/plain_iron_pipe.png");
+		"/net/minecraft/src/buildcraft/factory/gui/plain_pipe.png");
 		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = ModLoader.addOverride("/terrain.png",
-					"/buildcraft_gui/diamond_pipe_" + j + ".png");
+					"/net/minecraft/src/buildcraft/transport/gui/diamond_pipe_" + j + ".png");
 		}				
 		
 		drillTexture = ModLoader.addOverride("/terrain.png",
-		"/buildcraft_gui/drill.png");
+			"/net/minecraft/src/buildcraft/factory/gui/drill.png");
 		
 	}
 		
