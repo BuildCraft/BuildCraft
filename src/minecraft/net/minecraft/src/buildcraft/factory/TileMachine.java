@@ -9,10 +9,11 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMachine extends TileEntity implements IArmListener {		
+public class TileMachine extends TileEntity implements IArmListener, IMachine {		
 	boolean isDigging = false;
 
 	static final int fieldSize = BlockMachine.MINING_FIELD_SIZE
@@ -48,7 +49,6 @@ public class TileMachine extends TileEntity implements IArmListener {
     	
     	if (bluePrintBuilder.done) {
     		if (arm == null) {
-    			System.out.println ("BP CREATED: " + xMin + ", " + yCoord + ", " + zMin);
     			arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxSize,
     					yCoord + 4 + Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
     					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
@@ -91,7 +91,6 @@ public class TileMachine extends TileEntity implements IArmListener {
 	    	return;
 	    }
 	    
-	    System.out.println ("WORK " + isDigging);
 	    createUtilsIfNeeded();
 	    
 	    if (bluePrintBuilder == null) {
@@ -99,14 +98,11 @@ public class TileMachine extends TileEntity implements IArmListener {
 	    }
 	    
 		if (!bluePrintBuilder.done) {
-			System.out.println ("BP");
 			lastWork = worldObj.getWorldTime();
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
 			if (contents != null) {		
 				int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
-				
-				System.out.println ("SET: " + contents.x + ", " + contents.y + ", " + contents.z);
 				
 				worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
 						contents.blockId);
@@ -119,9 +115,7 @@ public class TileMachine extends TileEntity implements IArmListener {
 			}
 			
 			return;
-		}
-		
-		System.out.println ("WORK");	    	   
+		} 	   
 		
 		if (inProcess) {
 			return;

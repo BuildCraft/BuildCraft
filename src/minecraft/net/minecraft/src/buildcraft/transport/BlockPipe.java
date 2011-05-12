@@ -2,13 +2,18 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftTransport;
+import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.IPipeConnection;
+import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public abstract class BlockPipe extends BlockContainer {
+public abstract class BlockPipe extends BlockContainer implements IPipeConnection {
 	
 	public BlockPipe(int i, Material material) {
 		super(i, material);
@@ -34,33 +39,32 @@ public abstract class BlockPipe extends BlockContainer {
 	@Override
 	protected abstract TileEntity getBlockEntity();
 	
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
- {
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
 		float xMin = Utils.pipeMinSize, xMax = Utils.pipeMaxSize, 
 		yMin = Utils.pipeMinSize, yMax = Utils.pipeMaxSize, 
 		zMin = Utils.pipeMinSize, zMax = Utils.pipeMaxSize;
 
-		if (Utils.isPipeConnected (world, i - 1, j, k, blockID)) {
+		if (isPipeConnected (world, i - 1, j, k)) {
 			xMin = 0.0F;
 		}
 
-		if (Utils.isPipeConnected (world, i + 1, j, k, blockID)) {
+		if (isPipeConnected (world, i + 1, j, k)) {
 			xMax = 1.0F;
 		}
 
-		if (Utils.isPipeConnected (world, i, j - 1, k, blockID)) {
+		if (isPipeConnected (world,i, j - 1, k)) {
 			yMin = 0.0F;
 		}
 
-		if (Utils.isPipeConnected (world, i, j + 1, k, blockID)) {
+		if (isPipeConnected (world, i, j + 1, k)) {
 			yMax = 1.0F;
 		}
 
-		if (Utils.isPipeConnected (world, i, j, k - 1, blockID)) {
+		if (isPipeConnected (world, i, j, k - 1)) {
 			zMin = 0.0F;
 		}
 
-		if (Utils.isPipeConnected (world, i, j, k + 1, blockID)) {
+		if (isPipeConnected (world, i, j, k + 1)) {
 			zMax = 1.0F;
 		}
     	
@@ -73,5 +77,13 @@ public abstract class BlockPipe extends BlockContainer {
     public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k)
     {
         return getCollisionBoundingBoxFromPool (world, i, j, k);
+    }
+    
+    public boolean isPipeConnected (IBlockAccess blockAccess, int x, int y, int z) {
+    	TileEntity tile = blockAccess.getBlockTileEntity(x, y, z);
+    	
+    	return tile instanceof IPipeEntry
+			|| tile instanceof IInventory
+			|| tile instanceof IMachine;
     }
 }

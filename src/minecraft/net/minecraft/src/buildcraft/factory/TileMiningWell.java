@@ -9,10 +9,11 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.mod_BuildCraftFactory;
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMiningWell extends TileEntity {
+public class TileMiningWell extends TileEntity implements IMachine {
 	
 	long lastMining = 0;
 	boolean lastPower = false;
@@ -62,15 +63,19 @@ public class TileMiningWell extends TileEntity {
 		
 		int blockId = w.getBlockId(xCoord, depth, zCoord);
 		
+		ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(w, xCoord, depth, zCoord);
+		
 		w.setBlockWithNotify((int) xCoord, (int) depth, (int) zCoord,
 				mod_BuildCraftFactory.plainPipeBlock.blockID);
 		
 		if (blockId == 0) {
 			return;
-		}			
+		}							
 		
-		ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(w, xCoord, depth, zCoord);
-				
+		if (stack == null) {
+			return;
+		}
+		
 		if (Utils.addToRandomInventory(this, Orientations.Unknown, stack)) {
 			//  The object has been added to a nearby chest.
 			return;

@@ -4,13 +4,15 @@ import java.util.Random;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftTransport;
+import net.minecraft.src.buildcraft.core.IPipeConnection;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockFrame extends Block {	
+public class BlockFrame extends Block implements IPipeConnection {	
 	
 	public BlockFrame(int i) {
 		super(i, Material.glass);
@@ -45,27 +47,27 @@ public class BlockFrame extends Block {
    		yMin = Utils.pipeMinSize, yMax = Utils.pipeMaxSize, 
    		zMin = Utils.pipeMinSize, zMax = Utils.pipeMaxSize;
 
-   		if (Utils.isPipeConnected (world, i - 1, j, k, blockID)) {
+   		if (isPipeConnected (world, i - 1, j, k)) {
    			xMin = 0.0F;
    		}
 
-   		if (Utils.isPipeConnected (world, i + 1, j, k, blockID)) {
+   		if (isPipeConnected (world, i + 1, j, k)) {
    			xMax = 1.0F;
    		}
 
-   		if (Utils.isPipeConnected (world, i, j - 1, k, blockID)) {
+   		if (isPipeConnected (world, i, j - 1, k)) {
    			yMin = 0.0F;
    		}
 
-   		if (Utils.isPipeConnected (world, i, j + 1, k, blockID)) {
+   		if (isPipeConnected (world, i, j + 1, k)) {
    			yMax = 1.0F;
    		}
 
-   		if (Utils.isPipeConnected (world, i, j, k - 1, blockID)) {
+   		if (isPipeConnected (world, i, j, k - 1)) {
    			zMin = 0.0F;
    		}
 
-   		if (Utils.isPipeConnected (world, i, j, k + 1, blockID)) {
+   		if (isPipeConnected (world, i, j, k + 1)) {
    			zMax = 1.0F;
    		}
        	
@@ -79,5 +81,10 @@ public class BlockFrame extends Block {
        {
            return getCollisionBoundingBoxFromPool (world, i, j, k);
        }
+
+	@Override
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
+		return blockAccess.getBlockId(x, y, z) == blockID;
+	}
     
 }
