@@ -22,6 +22,6 @@ public class mod_BuildCraftDevel extends BaseMod {
 	
 	@Override
 	public String Version() {
-		return Core.version;
+		return "1.5_01.4";
 	}
 }
