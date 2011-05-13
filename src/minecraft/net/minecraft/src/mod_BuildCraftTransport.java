@@ -105,7 +105,7 @@ public class mod_BuildCraftTransport extends BaseMod {
 		
 	@Override
 	public String Version() {
-		return Core.version;
+		return "1.5_01.4";
 	}
 	
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
