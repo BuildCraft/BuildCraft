@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.buildcraft.core.Core;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.ITickListener;

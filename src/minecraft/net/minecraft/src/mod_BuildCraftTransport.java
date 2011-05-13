@@ -2,7 +2,6 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.buildcraft.core.Core;
 import net.minecraft.src.buildcraft.core.IPipeConnection;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -96,7 +95,7 @@ public class mod_BuildCraftTransport extends BaseMod {
 	}
 	
 
-	public mod_BuildCraftTransport () {
+	public void ModsLoaded () {
 		initialize ();
 		
 		pipeModel = ModLoader.getUniqueBlockModelID(this, true);

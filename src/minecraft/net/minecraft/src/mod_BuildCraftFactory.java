@@ -2,7 +2,6 @@ package net.minecraft.src;
 
 import java.util.Map;
 
-import net.minecraft.src.buildcraft.core.Core;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
@@ -28,7 +27,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 	
 	public static int drillTexture;
 	
-	public mod_BuildCraftFactory () {		
+	public void ModsLoaded () {		
 		mod_BuildCraftCore.initialize();
 		mod_BuildCraftTransport.initialize();
 		
