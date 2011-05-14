@@ -1,7 +1,13 @@
 package net.minecraft.src.buildcraft.core;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Properties;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IBlockAccess;
@@ -13,10 +19,14 @@ import net.minecraft.src.World;
 
 public class Utils {
 	
+	private static Properties props = new Properties();
+	
 	public static final float pipeMinSize = 0.25F;
 	public static final float pipeMaxSize = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
-
+	
+	private static final File cfgfile = new File(Minecraft.getMinecraftDir(),
+			"/config/BuildCraft.cfg");
 	
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different
@@ -350,13 +360,48 @@ public class Utils {
     	}
 	}
 	
-	public static int getFirstFreeBlock() {
-		for (int i = Block.blocksList.length - 1; i >= 0; --i) {
-			if (Block.blocksList [i] == null) {
-				return i;
+	public static void loadProperties () {
+		try {
+			cfgfile.getParentFile().mkdirs();
+
+			if (!cfgfile.exists() && !cfgfile.createNewFile()) {
+				return;
 			}
+			if (cfgfile.canRead()) {
+				FileInputStream fileinputstream = new FileInputStream(cfgfile);
+				props.load(fileinputstream);
+				fileinputstream.close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		return -1;
 	}
+	
+
+    public static void saveProperties() {
+		try {
+			cfgfile.getParentFile().mkdirs();
+			if (!cfgfile.exists() && !cfgfile.createNewFile()) {
+				return;
+			}
+			if (cfgfile.canWrite()) {
+				FileOutputStream fileoutputstream = new FileOutputStream(
+						cfgfile);
+				props.store(fileoutputstream, "BuildCraft Config");
+				fileoutputstream.close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public static String getProperty (String name, String defaultValue) {
+    	if (props.getProperty(name, "deadbeef").equals("deadbeef")) {
+    		props.setProperty(name, defaultValue);
+    	}
+    	
+    	return props.getProperty(name);
+    }
 }

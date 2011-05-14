@@ -38,39 +38,43 @@ public class mod_BuildCraftTransport extends BaseMod {
 		
 		initialized = true;
 		
-		mod_BuildCraftCore.initialize();			
+		mod_BuildCraftCore.initialize();						
 			
-		CraftingManager craftingmanager = CraftingManager.getInstance();
-		
-		woodenPipeBlock = new BlockWoodenPipe(Utils.getFirstFreeBlock());
+		CraftingManager craftingmanager = CraftingManager.getInstance();		
+		woodenPipeBlock = new BlockWoodenPipe(Integer.parseInt(Utils
+				.getProperty("woodenPipe.blockId", "255")));
 		ModLoader.AddName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
 		ModLoader.RegisterBlock(woodenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(woodenPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.planks,
 				Character.valueOf('G'), Block.glass});
 		
-		stonePipeBlock = new BlockStonePipe(Utils.getFirstFreeBlock());
+		stonePipeBlock = new BlockStonePipe(Integer.parseInt(Utils.getProperty(
+				"stonePipe.blockId", "254")));
 		ModLoader.AddName(stonePipeBlock.setBlockName("stonePipe"), "Stone Pipe");
 		ModLoader.RegisterBlock(stonePipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(stonePipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.cobblestone,
 				Character.valueOf('G'), Block.glass});
 		
-		ironPipeBlock = new BlockIronPipe(Utils.getFirstFreeBlock());
+		ironPipeBlock = new BlockIronPipe(Integer.parseInt(Utils.getProperty(
+				"ironPipe.blockId", "253")));
 		ModLoader.AddName(ironPipeBlock.setBlockName("ironPipe"), "Iron Pipe");
 		ModLoader.RegisterBlock(ironPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(ironPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotIron,
 				Character.valueOf('G'), Block.glass});
 		
-		goldenPipeBlock = new BlockGoldenPipe(Utils.getFirstFreeBlock());
+		goldenPipeBlock = new BlockGoldenPipe(Integer.parseInt(Utils
+				.getProperty("goldenPipe.blockId", "252")));
 		ModLoader.AddName(goldenPipeBlock.setBlockName("goldenPipe"), "Golden Pipe");
 		ModLoader.RegisterBlock(goldenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(goldenPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotGold,
 				Character.valueOf('G'), Block.glass});
 		
-		diamondPipeBlock = new BlockDiamondPipe(Utils.getFirstFreeBlock());
+		diamondPipeBlock = new BlockDiamondPipe(Integer.parseInt(Utils
+				.getProperty("diamondPipe.blockId", "251")));
 		ModLoader.AddName(diamondPipeBlock.setBlockName("diamondPipe"), "Diamond Pipe");
 		ModLoader.RegisterBlock(diamondPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(diamondPipeBlock, 8), new Object[] {
@@ -85,12 +89,14 @@ public class mod_BuildCraftTransport extends BaseMod {
 		ModLoader.RegisterTileEntity(TileDiamondPipe.class, "DiamondPipe");
 		
 		plainIronTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/factory/gui/plain_pipe.png");
+		"/net/minecraft/src/buildcraft/transport/gui/plain_iron_pipe.png");
 		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = ModLoader.addOverride("/terrain.png",
 					"/net/minecraft/src/buildcraft/transport/gui/diamond_pipe_" + j + ".png");
 		}				
+		
+		Utils.saveProperties();
 
 	}
 	

@@ -12,10 +12,13 @@ public class mod_BuildCraftDevel extends BaseMod {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		cheatBlock = new BlockCheat (Utils.getFirstFreeBlock());
+		cheatBlock = new BlockCheat(Integer.parseInt(Utils.getProperty(
+				"cheatBlock.blockId", "150")));
 		ModLoader.RegisterBlock(cheatBlock);
 		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
 			"# ", "  ", Character.valueOf('#'), Block.dirt });
+		
+		Utils.saveProperties();
 	}
 	
 	@Override

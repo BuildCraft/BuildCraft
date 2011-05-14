@@ -33,7 +33,8 @@ public class mod_BuildCraftFactory extends BaseMod {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		miningWellBlock = new BlockMiningWell (Utils.getFirstFreeBlock ());
+		miningWellBlock = new BlockMiningWell(Integer.parseInt(Utils
+				.getProperty("miningWell.blockId", "250")));
 		ModLoader.RegisterBlock(miningWellBlock);
 		ModLoader.AddName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");
 		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
@@ -42,11 +43,13 @@ public class mod_BuildCraftFactory extends BaseMod {
 			 mod_BuildCraftCore.ironGearItem, Character.valueOf('P'),
 			Item.pickaxeSteel });	
 		
-		plainPipeBlock = new BlockPlainPipe (Utils.getFirstFreeBlock ());
+		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(Utils.getProperty(
+				"drill.blockId", "249")));
 		ModLoader.RegisterBlock(plainPipeBlock);
 		ModLoader.AddName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
 		
-		autoWorkbenchBlock = new BlockAutoWorkbench (Utils.getFirstFreeBlock());
+		autoWorkbenchBlock = new BlockAutoWorkbench(Integer.parseInt(Utils
+				.getProperty("autoWorkbench.blockId", "248")));
 		ModLoader.RegisterBlock(autoWorkbenchBlock);
 		craftingmanager.addRecipe(
 				new ItemStack(autoWorkbenchBlock),
@@ -56,10 +59,12 @@ public class mod_BuildCraftFactory extends BaseMod {
 		ModLoader.AddName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
 				"Automatic Crafting Table");
 				
-		frameBlock = new BlockFrame (Utils.getFirstFreeBlock ());
+		frameBlock = new BlockFrame(Integer.parseInt(Utils.getProperty(
+				"frame.blockId", "247")));
 		ModLoader.RegisterBlock(frameBlock);
 		
-		machineBlock = new BlockMachine (Utils.getFirstFreeBlock ());
+		machineBlock = new BlockMachine(Integer.parseInt(Utils.getProperty(
+				"quarry.blockId", "246")));
 		ModLoader.RegisterBlock(machineBlock);
 		craftingmanager.addRecipe(
 				new ItemStack(machineBlock),
@@ -79,7 +84,8 @@ public class mod_BuildCraftFactory extends BaseMod {
 
 		drillTexture = ModLoader.addOverride("/terrain.png",
 			"/net/minecraft/src/buildcraft/factory/gui/drill.png");
-
+		
+		Utils.saveProperties();
 	}
 		
 	@Override
