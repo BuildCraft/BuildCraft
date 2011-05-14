@@ -7,7 +7,7 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
-public class Core {
+public class CoreProxy {
 	public static void addName(Object obj, String s) {
 		
 	}

@@ -77,7 +77,7 @@ public class Utils {
 	 * Returns true if successful, false otherwise.
 	 */
 	public static boolean addToRandomPipeEntry (TileEntity tile, Orientations from, ItemStack items) {
-		World w = Core.getWorld();
+		World w = CoreProxy.getWorld();
 		
 		LinkedList <Orientations> possiblePipes = new LinkedList <Orientations> ();
 		
@@ -138,7 +138,7 @@ public class Utils {
 	 * successful, false otherwise.
 	 */
 	public static boolean addToRandomInventory (TileEntity tile, Orientations from, ItemStack items) {
-		World w = Core.getWorld();
+		World w = CoreProxy.getWorld();
 		
 		LinkedList <Orientations> possibleInventories = new LinkedList <Orientations> ();
 		

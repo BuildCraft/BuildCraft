@@ -1,9 +1,7 @@
 package net.minecraft.src.buildcraft.factory;
 
-import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -14,7 +12,7 @@ import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockMachine extends BlockContainer {
+public class BlockQuarry extends BlockMachineRoot {
 	
 	public static final BluePrint bluePrint;
 	
@@ -24,7 +22,7 @@ public class BlockMachine extends BlockContainer {
 	int textureFront;
 	int textureSide;
 	
-	public BlockMachine(int i) {
+	public BlockQuarry(int i) {
 		super(i, Material.iron);
 		
 		setHardness(1.5F);
@@ -39,21 +37,6 @@ public class BlockMachine extends BlockContainer {
 		"/net/minecraft/src/buildcraft/factory/gui/quarry_top.png");	
 		
 	}
-	
-	public float getBlockBrightness	(IBlockAccess iblockaccess, int i, int j, int k)
-    {	
-		for (int x = i - 1; x <= i + 1; ++x)
-			for (int y = j - 1; y <= j + 1; ++y)
-				for (int z = k - 1; z <= k + 1; ++z) {
-					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);		
-					
-					if (tile instanceof TileMachine && ((TileMachine)tile).isDigging) {
-						return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
-					} 
-				}
-		
-		return super.getBlockBrightness(iblockaccess, i, j, k);
-    }
     
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
     {

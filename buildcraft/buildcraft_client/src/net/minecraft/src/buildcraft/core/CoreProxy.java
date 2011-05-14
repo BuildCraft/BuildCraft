@@ -4,10 +4,11 @@ import java.io.File;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
-public class Core {
+public class CoreProxy {
 	public static void addName(Object obj, String s) {
 		ModLoader.AddName(obj, "Wooden Gear");
 	}	
@@ -23,4 +24,5 @@ public class Core {
 	public static File getMinecraftDir() {
 		return Minecraft.getMinecraftDir();
 	}
+
 }

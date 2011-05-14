@@ -1,9 +1,7 @@
 package net.minecraft.src.buildcraft.factory;
 
-import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
@@ -12,7 +10,7 @@ import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockMiningWell extends BlockContainer {
+public class BlockMiningWell extends BlockMachineRoot {
 
 	int textureFront, textureSides, textureBack, textureTop;
 	
@@ -33,21 +31,6 @@ public class BlockMiningWell extends BlockContainer {
 		"/net/minecraft/src/buildcraft/factory/gui/mining_machine_top.png");
 
 	}
-	
-	public float getBlockBrightness	(IBlockAccess iblockaccess, int i, int j, int k)
-    {	
-		for (int x = i - 1; x <= i + 1; ++x)
-			for (int y = j - 1; y <= j + 1; ++y)
-				for (int z = k - 1; z <= k + 1; ++z) {
-					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);		
-					
-					if (tile instanceof TileMiningWell && ((TileMiningWell)tile).isDigging) {
-						return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
-					} 
-				}
-		
-		return super.getBlockBrightness(iblockaccess, i, j, k);
-    }
 	
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);

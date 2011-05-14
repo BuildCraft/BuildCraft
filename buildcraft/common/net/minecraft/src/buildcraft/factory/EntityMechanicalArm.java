@@ -228,12 +228,12 @@ public class EntityMechanicalArm extends Entity {
     }
 
     public void joinToWorld (World w) {
-    	super.setWorld(w);    		    		
+    	super.worldObj = w;    		    		
 
-    	xArm.setWorld(w);
-    	yArm.setWorld(w);
-    	zArm.setWorld(w);
-    	head.setWorld(w);
+    	xArm.worldObj = w;
+    	yArm.worldObj = w;
+    	zArm.worldObj = w;
+    	head.worldObj = w;
 
     	w.entityJoinedWorld(this);
     	w.entityJoinedWorld(xArm);

@@ -16,8 +16,8 @@ import net.minecraft.src.buildcraft.core.Utils;
 public class TileMachine extends TileEntity implements IArmListener, IMachine {		
 	boolean isDigging = false;
 
-	static final int fieldSize = BlockMachine.MINING_FIELD_SIZE
-			* BlockMachine.MINING_FIELD_SIZE;
+	static final int fieldSize = BlockQuarry.MINING_FIELD_SIZE
+			* BlockQuarry.MINING_FIELD_SIZE;
 	
 	boolean inProcess = false;
 	
@@ -51,8 +51,8 @@ public class TileMachine extends TileEntity implements IArmListener, IMachine {
     		if (arm == null) {
     			arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxSize,
     					yCoord + 4 + Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
-    					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
-    					BlockMachine.MINING_FIELD_SIZE + Utils.pipeMinSize * 2);
+    					BlockQuarry.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
+    					BlockQuarry.MINING_FIELD_SIZE + Utils.pipeMinSize * 2);
 
     			arm.listener = this;
     			loadArm = true;
@@ -135,17 +135,17 @@ public class TileMachine extends TileEntity implements IArmListener, IMachine {
 	}
 
 	public boolean findTarget (boolean doSet) {
-		boolean[][] blockedColumns = new boolean[BlockMachine.MINING_FIELD_SIZE][BlockMachine.MINING_FIELD_SIZE];
+		boolean[][] blockedColumns = new boolean[BlockQuarry.MINING_FIELD_SIZE][BlockQuarry.MINING_FIELD_SIZE];
 		
-		for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE; ++searchX) {
-			for (int searchZ = 0; searchZ < BlockMachine.MINING_FIELD_SIZE; ++searchZ) {
+		for (int searchX = 0; searchX < BlockQuarry.MINING_FIELD_SIZE; ++searchX) {
+			for (int searchZ = 0; searchZ < BlockQuarry.MINING_FIELD_SIZE; ++searchZ) {
 				blockedColumns [searchX][searchZ] = false;
 			}
 		}
 		
 		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
-			for (int searchX = 0; searchX < BlockMachine.MINING_FIELD_SIZE; ++searchX) {
-				for (int searchZ = 0; searchZ < BlockMachine.MINING_FIELD_SIZE; ++searchZ) {
+			for (int searchX = 0; searchX < BlockQuarry.MINING_FIELD_SIZE; ++searchX) {
+				for (int searchZ = 0; searchZ < BlockQuarry.MINING_FIELD_SIZE; ++searchZ) {
 					if (!blockedColumns [searchX][searchZ]) {
 						int bx = xMin + searchX + 1, by = searchY, bz = zMin + searchZ + 1;
 						
@@ -190,7 +190,7 @@ public class TileMachine extends TileEntity implements IArmListener, IMachine {
 			loadArm = true;
 		}
 		
-		bluePrintBuilder = new BluePrintBuilder(BlockMachine.bluePrint, xMin,
+		bluePrintBuilder = new BluePrintBuilder(BlockQuarry.bluePrint, xMin,
 				yCoord, zMin);
 	}
 
@@ -314,7 +314,7 @@ public class TileMachine extends TileEntity implements IArmListener, IMachine {
 		this.xMin = xMin;
 		this.zMin = zMin;
 		
-		bluePrintBuilder = new BluePrintBuilder(BlockMachine.bluePrint, xMin,
+		bluePrintBuilder = new BluePrintBuilder(BlockQuarry.bluePrint, xMin,
 				yCoord, zMin);
 	}
 

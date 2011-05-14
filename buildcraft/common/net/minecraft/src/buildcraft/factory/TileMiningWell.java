@@ -7,7 +7,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftFactory;
-import net.minecraft.src.buildcraft.core.Core;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -23,7 +23,7 @@ public class TileMiningWell extends TileEntity implements IMachine {
 	}
 	
 	public void checkPower () {
-		World w = Core.getWorld();
+		World w = CoreProxy.getWorld();
 		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);		
 		if (lastPower != currentPower) {
 			dig ();
@@ -36,7 +36,7 @@ public class TileMiningWell extends TileEntity implements IMachine {
 	 * reaches bedrock, lava or goes below 0, it's considered done.
 	 */
 	public void dig () {						
-		World w = Core.getWorld();
+		World w = CoreProxy.getWorld();
 		
 		if (w.getWorldTime() - lastMining < 50) {
 			return;

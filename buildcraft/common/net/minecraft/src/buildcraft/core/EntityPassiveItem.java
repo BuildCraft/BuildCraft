@@ -14,7 +14,7 @@ public class EntityPassiveItem extends EntityItem {
 	public EntityPassiveItem(World world) {
 		super(world);
 		
-    	Core.setField804(this, 0);
+    	CoreProxy.setField804(this, 0);
     	noClip = true;
 	}
 	
@@ -22,7 +22,7 @@ public class EntityPassiveItem extends EntityItem {
             ItemStack itemstack) {
     	super (world, d, d1, d2, itemstack);
     	
-    	Core.setField804(this, 0);
+    	CoreProxy.setField804(this, 0);
     	noClip = true;
     }
 

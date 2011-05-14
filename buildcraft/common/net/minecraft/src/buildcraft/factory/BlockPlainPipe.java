@@ -6,6 +6,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.IPipeConnection;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -42,7 +43,7 @@ public class BlockPlainPipe extends Block implements IPipeConnection {
     }
 
 	@Override
-	public boolean isPipeConnected(IBlockAccess iBlockAccess, int x, int y,
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y,
 			int z) {
 
 		return false;

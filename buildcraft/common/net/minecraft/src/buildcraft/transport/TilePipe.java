@@ -8,7 +8,7 @@ import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftCore;
-import net.minecraft.src.buildcraft.core.Core;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.ITickListener;
@@ -36,7 +36,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 	LinkedList <EntityData> entitiesToLoad = new LinkedList <EntityData> ();
 	
 	public TilePipe () {
-		world = Core.getWorld();
+		world = CoreProxy.getWorld();
 
 	}
 	
