@@ -2,13 +2,9 @@ cd ..
 
 cmd /C recompile.bat
 
-mkdir src\minecraft\net\minecraft\src\buildcraft\core\gui
-mkdir src\minecraft\net\minecraft\src\buildcraft\factory\gui
-mkdir src\minecraft\net\minecraft\src\buildcraft\transport\gui
+xcopy /Y /E buildcraft\buildcraft_client\bin\* bin\minecraft
+xcopy /Y /E buildcraft\buildcraft_server\bin\* bin\minecraft_server
 
-copy src\minecraft\net\minecraft\src\buildcraft\core\gui\* bin\minecraft\net\minecraft\src\buildcraft\core\gui
-copy src\minecraft\net\minecraft\src\buildcraft\core\gui\* bin\minecraft\net\minecraft\src\buildcraft\core\gui
-copy src\minecraft\net\minecraft\src\buildcraft\core\gui\* bin\minecraft\net\minecraft\src\buildcraft\core\gui
 
 rmdir /S /Q bin\minecraft\net\minecraft\src\buildcraft\core\gui\.svn
 rmdir /S /Q bin\minecraft\net\minecraft\src\buildcraft\factory\gui\.svn
