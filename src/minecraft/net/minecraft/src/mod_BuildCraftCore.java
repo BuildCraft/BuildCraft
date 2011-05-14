@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
@@ -42,15 +44,19 @@ public class mod_BuildCraftCore extends BaseMod {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		woodenGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
-				ModLoader.addOverride("/gui/items.png",
-						"/net/minecraft/src/buildcraft/core/gui/wooden_gear.png")).setItemName(
-				"woodenGearItem");				
+		woodenGearItem = (new Item(Integer.parseInt(Utils.getProperty(
+				"woodenGearItem.id", "3800"))))
+				.setIconIndex(
+						ModLoader
+								.addOverride("/gui/items.png",
+										"/net/minecraft/src/buildcraft/core/gui/wooden_gear.png"))
+				.setItemName("woodenGearItem");
 		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
 		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
 		ModLoader.AddName(woodenGearItem, "Wooden Gear");
 		
-		stoneGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+		stoneGearItem = (new Item(Integer.parseInt(Utils.getProperty(
+				"stoneGearItem.id", "3801")))).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
 						"/net/minecraft/src/buildcraft/core/gui/stone_gear.png")).setItemName(
 				"stoneGearItem");
@@ -59,7 +65,8 @@ public class mod_BuildCraftCore extends BaseMod {
 				Character.valueOf('G'), woodenGearItem });
 		ModLoader.AddName(stoneGearItem, "Stone Gear");
 		
-		ironGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+		ironGearItem = (new Item(Integer.parseInt(Utils.getProperty(
+				"ironGearItem.id", "3802")))).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
 						"/net/minecraft/src/buildcraft/core/gui/iron_gear.png")).setItemName(
 				"ironGearItem");
@@ -68,7 +75,8 @@ public class mod_BuildCraftCore extends BaseMod {
 				Character.valueOf('G'), stoneGearItem });
 		ModLoader.AddName(ironGearItem, "Iron Gear");		
 		
-		goldGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+		goldGearItem = (new Item(Integer.parseInt(Utils.getProperty(
+				"goldGearItem.id", "3803")))).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
 						"/net/minecraft/src/buildcraft/core/gui/golden_gear.png")).setItemName(
 				"goldGearItem");
@@ -77,7 +85,8 @@ public class mod_BuildCraftCore extends BaseMod {
 				Character.valueOf('G'), ironGearItem });
 		ModLoader.AddName(goldGearItem, "Gold Gear");
 		
-		diamondGearItem = (new Item(ModLoader.getUniqueEntityId())).setIconIndex(
+		diamondGearItem = (new Item(Integer.parseInt(Utils.getProperty(
+				"diamondGearItem.id", "3804")))).setIconIndex(
 				ModLoader.addOverride("/gui/items.png",
 						"/net/minecraft/src/buildcraft/core/gui/diamond_gear.png")).setItemName(
 				"diamondGearItem");
