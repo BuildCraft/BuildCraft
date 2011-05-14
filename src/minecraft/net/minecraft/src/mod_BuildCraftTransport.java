@@ -102,6 +102,8 @@ public class mod_BuildCraftTransport extends BaseMod {
 	
 
 	public void ModsLoaded () {
+		super.ModsLoaded();
+		
 		initialize ();
 		
 		pipeModel = ModLoader.getUniqueBlockModelID(this, true);
