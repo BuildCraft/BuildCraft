@@ -23,18 +23,10 @@ public class BlockDiamondPipe extends BlockPipe {
 		return new TileDiamondPipe ();
 	}
 
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		TileDiamondPipe tileRooter = null;
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {		
+		TileDiamondPipe	tileRooter = (TileDiamondPipe) world.getBlockTileEntity(i, j, k);
 		
-		if (world.getBlockTileEntity(i, j, k) == null) {
-			tileRooter = new TileDiamondPipe();
-			world.setBlockTileEntity(i, j, k, tileRooter);
-		} else {
-			tileRooter = (TileDiamondPipe) world.getBlockTileEntity(i, j, k); 
-		}
-		
-		ModLoader.getMinecraftInstance().displayGuiScreen(
-				new GuiFilter(entityplayer.inventory, tileRooter));
+		TransportProxy.displayGUIFilter(entityplayer, tileRooter);
 		
 		return true;
 	}	

@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.core.Core;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.transport.BlockGoldenPipe;
@@ -40,7 +40,7 @@ public class BuildCraftTransport {
 		CraftingManager craftingmanager = CraftingManager.getInstance();		
 		woodenPipeBlock = new BlockWoodenPipe(Integer.parseInt(Utils
 				.getProperty("woodenPipe.blockId", "255")));
-		Core.addName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
+		CoreProxy.addName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
 		ModLoader.RegisterBlock(woodenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(woodenPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.planks,
@@ -48,7 +48,7 @@ public class BuildCraftTransport {
 		
 		stonePipeBlock = new BlockStonePipe(Integer.parseInt(Utils.getProperty(
 				"stonePipe.blockId", "254")));
-		Core.addName(stonePipeBlock.setBlockName("stonePipe"), "Stone Pipe");
+		CoreProxy.addName(stonePipeBlock.setBlockName("stonePipe"), "Stone Pipe");
 		ModLoader.RegisterBlock(stonePipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(stonePipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.cobblestone,
@@ -56,7 +56,7 @@ public class BuildCraftTransport {
 		
 		ironPipeBlock = new BlockIronPipe(Integer.parseInt(Utils.getProperty(
 				"ironPipe.blockId", "253")));
-		Core.addName(ironPipeBlock.setBlockName("ironPipe"), "Iron Pipe");
+		CoreProxy.addName(ironPipeBlock.setBlockName("ironPipe"), "Iron Pipe");
 		ModLoader.RegisterBlock(ironPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(ironPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotIron,
@@ -64,7 +64,7 @@ public class BuildCraftTransport {
 		
 		goldenPipeBlock = new BlockGoldenPipe(Integer.parseInt(Utils
 				.getProperty("goldenPipe.blockId", "252")));
-		Core.addName(goldenPipeBlock.setBlockName("goldenPipe"), "Golden Pipe");
+		CoreProxy.addName(goldenPipeBlock.setBlockName("goldenPipe"), "Golden Pipe");
 		ModLoader.RegisterBlock(goldenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(goldenPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotGold,
@@ -72,7 +72,7 @@ public class BuildCraftTransport {
 		
 		diamondPipeBlock = new BlockDiamondPipe(Integer.parseInt(Utils
 				.getProperty("diamondPipe.blockId", "251")));
-		Core.addName(diamondPipeBlock.setBlockName("diamondPipe"), "Diamond Pipe");
+		CoreProxy.addName(diamondPipeBlock.setBlockName("diamondPipe"), "Diamond Pipe");
 		ModLoader.RegisterBlock(diamondPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(diamondPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.diamond,

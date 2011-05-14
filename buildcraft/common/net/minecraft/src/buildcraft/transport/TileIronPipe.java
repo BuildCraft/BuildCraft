@@ -3,7 +3,7 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.Core;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
@@ -13,7 +13,7 @@ public class TileIronPipe extends TilePipe {
 	boolean lastPower = false;
 	
 	public void checkPower () {
-		World w = Core.getWorld();
+		World w = CoreProxy.getWorld();
 		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		
 		if (lastPower != currentPower) {

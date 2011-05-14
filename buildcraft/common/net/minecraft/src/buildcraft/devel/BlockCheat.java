@@ -9,7 +9,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftFactory;
-import net.minecraft.src.buildcraft.core.Core;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 
 public class BlockCheat extends Block {
 	
@@ -47,7 +47,7 @@ public class BlockCheat extends Block {
 	}
 	
 	public void createItems (int i, int j, int k, ItemStack items) {				
-		World w = Core.getWorld();		
+		World w = CoreProxy.getWorld();		
 		
 		float f = w.rand.nextFloat() * 0.8F + 0.1F;
 		float f1 = w.rand.nextFloat() * 0.8F + 0.1F;

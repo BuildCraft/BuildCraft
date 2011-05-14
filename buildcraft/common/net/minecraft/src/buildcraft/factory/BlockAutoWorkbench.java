@@ -47,14 +47,9 @@ public class BlockAutoWorkbench extends BlockContainer
     {
     	super.blockActivated(world, i, j, k, entityplayer);
     	
-        if(world.multiplayerWorld)
-        {
-            return true;
-        } else {
-        	ModLoader.getMinecraftInstance().displayGuiScreen(
-					new GuiAutoCrafting(entityplayer.inventory, world, i, j, k));
-            return true;
-        }
+        FactoryProxy.displayGUIAutoCrafting(world, entityplayer, i, j, k);
+        
+        return true;
     }
 
     

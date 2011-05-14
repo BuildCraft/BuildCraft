@@ -8,7 +8,7 @@ import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.buildcraft.core.Core;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ITickListener;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -51,7 +51,7 @@ public class BuildCraftCore {
 				.setItemName("woodenGearItem");
 		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
 		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
-		Core.addName(woodenGearItem, "Wooden Gear");
+		CoreProxy.addName(woodenGearItem, "Wooden Gear");
 		
 		stoneGearItem = (new Item(Integer.parseInt(Utils.getProperty(
 				"stoneGearItem.id", "3801")))).setIconIndex(
@@ -61,7 +61,7 @@ public class BuildCraftCore {
 		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone,
 				Character.valueOf('G'), woodenGearItem });
-		Core.addName(stoneGearItem, "Stone Gear");
+		CoreProxy.addName(stoneGearItem, "Stone Gear");
 		
 		ironGearItem = (new Item(Integer.parseInt(Utils.getProperty(
 				"ironGearItem.id", "3802")))).setIconIndex(
@@ -71,7 +71,7 @@ public class BuildCraftCore {
 		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
 				Character.valueOf('G'), stoneGearItem });
-		Core.addName(ironGearItem, "Iron Gear");		
+		CoreProxy.addName(ironGearItem, "Iron Gear");		
 		
 		goldGearItem = (new Item(Integer.parseInt(Utils.getProperty(
 				"goldGearItem.id", "3803")))).setIconIndex(
@@ -81,7 +81,7 @@ public class BuildCraftCore {
 		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold,
 				Character.valueOf('G'), ironGearItem });
-		Core.addName(goldGearItem, "Gold Gear");
+		CoreProxy.addName(goldGearItem, "Gold Gear");
 		
 		diamondGearItem = (new Item(Integer.parseInt(Utils.getProperty(
 				"diamondGearItem.id", "3804")))).setIconIndex(
@@ -91,7 +91,7 @@ public class BuildCraftCore {
 		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
-		Core.addName(diamondGearItem, "Diamond Gear");
+		CoreProxy.addName(diamondGearItem, "Diamond Gear");
 		
 		Utils.saveProperties();
 	}
@@ -122,8 +122,8 @@ public class BuildCraftCore {
     	tickListenersScheduledForAddition.clear ();
     	tickListenersScheduledForRemoval.clear ();
     	
-    	if (Core.getWorld().getWorldTime() != lastTick) {    		    		
-    		lastTick = Core.getWorld().getWorldTime();
+    	if (CoreProxy.getWorld().getWorldTime() != lastTick) {    		    		
+    		lastTick = CoreProxy.getWorld().getWorldTime();
     		
     		for (TickContainer container : tickListeners.values()) {
     			if (lastTick % container.pace == 0) {
