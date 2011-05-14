@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;

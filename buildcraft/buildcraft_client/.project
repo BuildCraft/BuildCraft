@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>buildcraft_client</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>common</name>
+			<type>2</type>
+			<locationURI>WORKSPACE_LOC/common</locationURI>
+		</link>
+		<link>
+			<name>minecraft</name>
+			<type>2</type>
+			<locationURI>PARENT-1-WORKSPACE_LOC/src/minecraft</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>
