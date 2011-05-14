@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Properties;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IBlockAccess;
@@ -24,8 +23,7 @@ public class Utils {
 	public static final float pipeMaxSize = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
 	
-	private static final File cfgfile = new File(Minecraft.getMinecraftDir(),
-			"/config/BuildCraft.cfg");
+	private static final File cfgfile = CoreProxy.getPropertyFile();
 	
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different

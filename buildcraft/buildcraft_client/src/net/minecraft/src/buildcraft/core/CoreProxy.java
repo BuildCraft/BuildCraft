@@ -21,8 +21,9 @@ public class CoreProxy {
 		item.field_804_d = value;
 	}
 	
-	public static File getMinecraftDir() {
-		return Minecraft.getMinecraftDir();
+	public static File getPropertyFile() {
+		return new File(Minecraft.getMinecraftDir(),
+				"/config/BuildCraft.cfg");
 	}
 
 }
