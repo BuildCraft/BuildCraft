@@ -124,20 +124,13 @@ public class BlockMachine extends BlockContainer {
     }
     
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
-    	TileMachine tile = Utils.getSafeTile(world, i, j, k,
-    			TileMachine.class);
-    	
-    	if (tile == null) {
-    		tile = new TileMachine();
-    		world.setBlockTileEntity(i, j, k, tile);
-    	}
-    	
+    	TileMachine tile = (TileMachine) world.getBlockTileEntity(i, j, k);
+    	    	
 		tile.checkPower();    	        
     }
 
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	TileMachine tile = Utils.getSafeTile(world, i, j, k,
-    			TileMachine.class);
+    	TileMachine tile = (TileMachine) world.getBlockTileEntity(i, j, k);
     	
     	if (tile == null) {
     		tile = new TileMachine();

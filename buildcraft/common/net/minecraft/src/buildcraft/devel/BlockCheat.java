@@ -1,15 +1,15 @@
 package net.minecraft.src.buildcraft.devel;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftFactory;
-import net.minecraft.src.mod_BuildCraftTransport;
+import net.minecraft.src.buildcraft.core.Core;
 
 public class BlockCheat extends Block {
 	
@@ -35,11 +35,11 @@ public class BlockCheat extends Block {
 		createItems (i, j, k, new ItemStack (Block.oreIron, 64));
 		createItems (i, j, k, new ItemStack (mod_BuildCraftFactory.miningWellBlock, 64));
 		createItems (i, j, k, new ItemStack (mod_BuildCraftFactory.machineBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.woodenPipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.stonePipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.ironPipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.goldenPipeBlock, 64));
-		createItems (i, j, k, new ItemStack (mod_BuildCraftTransport.diamondPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (BuildCraftTransport.woodenPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (BuildCraftTransport.stonePipeBlock, 64));
+		createItems (i, j, k, new ItemStack (BuildCraftTransport.ironPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (BuildCraftTransport.goldenPipeBlock, 64));
+		createItems (i, j, k, new ItemStack (BuildCraftTransport.diamondPipeBlock, 64));
 		
 		
 		return false;
@@ -47,7 +47,7 @@ public class BlockCheat extends Block {
 	}
 	
 	public void createItems (int i, int j, int k, ItemStack items) {				
-		World w = ModLoader.getMinecraftInstance().theWorld;		
+		World w = Core.getWorld();		
 		
 		float f = w.rand.nextFloat() * 0.8F + 0.1F;
 		float f1 = w.rand.nextFloat() * 0.8F + 0.1F;

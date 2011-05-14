@@ -5,7 +5,6 @@ import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockIronPipe extends BlockPipe {
 	
@@ -22,27 +21,14 @@ public class BlockIronPipe extends BlockPipe {
     {		
 		super.onBlockPlaced(world, i, j, j, l);
 		
-		TileIronPipe tile = Utils.getSafeTile(world, i, j, k,
-				TileIronPipe.class);
-		
-		if (tile == null) {
-			tile = new TileIronPipe();
-			world.setBlockTileEntity(i, j, k, tile);
-		}
-		
+		TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
 		world.setBlockMetadata(i, j, k, 1);
 		tile.moveOrientation ();
     }
 	
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		TileIronPipe tile = Utils.getSafeTile(world, i, j, k,
-				TileIronPipe.class);
-		
-		if (tile == null) {
-			tile = new TileIronPipe();
-			world.setBlockTileEntity(i, j, k, tile);
-		}
+		TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
 		
 		tile.moveOrientation ();
 		world.markBlockNeedsUpdate(i, j, k);
@@ -52,13 +38,7 @@ public class BlockIronPipe extends BlockPipe {
 
 	@Override
 	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-		TileIronPipe tile = Utils.getSafeTile(world, i, j, k,
-				TileIronPipe.class);
-
-		if (tile == null) {
-			tile = new TileIronPipe();
-			world.setBlockTileEntity(i, j, k, tile);
-		}
+		TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
 
 		tile.checkPower();
 	}

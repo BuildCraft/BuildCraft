@@ -4,7 +4,6 @@ import net.minecraft.src.ContainerWorkbench;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.mod_BuildCraftFactory;
 
 public class ContainerAutoWorkbench extends ContainerWorkbench {

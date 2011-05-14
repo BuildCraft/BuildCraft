@@ -50,13 +50,7 @@ public class BlockMiningWell extends BlockContainer {
     }
 	
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		TileMiningWell tile = Utils.getSafeTile(world, i, j, k,
-				TileMiningWell.class);
-    	
-    	if (tile == null) {
-    		tile = new TileMiningWell();
-    		world.setBlockTileEntity(i, j, k, tile);
-    	}
+		TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
     	
     	tile.dig();
     	
@@ -64,13 +58,7 @@ public class BlockMiningWell extends BlockContainer {
     }
     
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
-    	TileMiningWell tile = Utils.getSafeTile(world, i, j, k,
-    			TileMiningWell.class);
-    	
-    	if (tile == null) {
-    		tile = new TileMiningWell();
-    		world.setBlockTileEntity(i, j, k, tile);
-    	}
+    	TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
     	
 		tile.checkPower();
     }
