@@ -9,6 +9,7 @@ import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.ITickListener;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class mod_BuildCraftCore extends BaseMod {	
 
@@ -37,6 +38,7 @@ public class mod_BuildCraftCore extends BaseMod {
 		}
 		
 		initialized = true;
+		Utils.loadProperties();
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
@@ -83,6 +85,8 @@ public class mod_BuildCraftCore extends BaseMod {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
 		ModLoader.AddName(diamondGearItem, "Diamond Gear");
+		
+		Utils.saveProperties();
 	}
 	
 	
