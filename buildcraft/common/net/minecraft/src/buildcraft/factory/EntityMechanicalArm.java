@@ -4,9 +4,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.mod_BuildCraftFactory;
-import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {

@@ -13,7 +13,6 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
@@ -78,7 +77,7 @@ public class Utils {
 	 * Returns true if successful, false otherwise.
 	 */
 	public static boolean addToRandomPipeEntry (TileEntity tile, Orientations from, ItemStack items) {
-		World w = ModLoader.getMinecraftInstance().theWorld;
+		World w = Core.getWorld();
 		
 		LinkedList <Orientations> possiblePipes = new LinkedList <Orientations> ();
 		
@@ -139,7 +138,7 @@ public class Utils {
 	 * successful, false otherwise.
 	 */
 	public static boolean addToRandomInventory (TileEntity tile, Orientations from, ItemStack items) {
-		World w = ModLoader.getMinecraftInstance().theWorld;
+		World w = Core.getWorld();
 		
 		LinkedList <Orientations> possibleInventories = new LinkedList <Orientations> ();
 		
@@ -310,32 +309,6 @@ public class Utils {
 		}
 		
 		return false;
-	}
-	
-	/**
-	 * Returns the tile only if it is of the proper type. Null otherwise.
-	 */
-	public static <T extends TileEntity> T getSafeTile (IBlockAccess w, int i, int j, int k, Class tileClass) {
-		// TODO: Check if it's normal that the tile doesn't correspond...
-    	TileEntity tileTest = w.getBlockTileEntity(i, j, k);
-
-    	if (tileTest == null) {
-    		return null;
-    	}
-    	
-    	if (!(tileTest.getClass().isAssignableFrom(tileClass))) {
-			System.out.println("   ERROR: Type of type is "
-					+ tileTest.getClass() + " INSTEAD OF "
-					+ tileClass);
-    		
-    		for (StackTraceElement e :  Thread.currentThread().getStackTrace()) {
-    			System.out.println (e);
-    		}
-    		
-    		return null;
-    	}
-    	
-		return (T) tileTest;
 	}
 	
 	public static void dropItems (World world, ItemStack stack, int i, int j, int k) {

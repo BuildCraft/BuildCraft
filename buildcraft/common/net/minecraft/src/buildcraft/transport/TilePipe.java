@@ -2,16 +2,14 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.core.Core;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
-import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.ITickListener;
 import net.minecraft.src.buildcraft.core.Orientations;
@@ -38,7 +36,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 	LinkedList <EntityData> entitiesToLoad = new LinkedList <EntityData> ();
 	
 	public TilePipe () {
-		world = ModLoader.getMinecraftInstance().theWorld;
+		world = Core.getWorld();
 
 	}
 	
@@ -97,7 +95,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 		return result;
 	}
 	
-	public void tick(Minecraft minecraft) {
+	public void tick() {
 		for (EntityData data : entitiesToLoad) {
 			world.entityJoinedWorld(data.item);
 			travelingEntities.add(data);

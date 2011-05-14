@@ -8,9 +8,9 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.Core;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
@@ -26,7 +26,7 @@ public class TileWoodenPipe extends TilePipe {
 	}
 	
 	public void checkPower () {
-		World w = ModLoader.getMinecraftInstance().theWorld;
+		World w = Core.getWorld();
 		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		
 		if (lastPower != currentPower) {
@@ -40,7 +40,7 @@ public class TileWoodenPipe extends TilePipe {
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
 	public void extract () {		
-		World w = ModLoader.getMinecraftInstance().theWorld;
+		World w = Core.getWorld();
 		
 		if (w.getWorldTime() - lastMining < 50) {
 			return;

@@ -5,7 +5,6 @@ import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockWoodenPipe extends BlockPipe {
 	
@@ -24,13 +23,7 @@ public class BlockWoodenPipe extends BlockPipe {
 	
     
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		TileWoodenPipe tile = Utils.getSafeTile(world, i, j, k,
-				TileWoodenPipe.class);
-    	
-    	if (tile == null) {
-    		tile = new TileWoodenPipe();
-    		world.setBlockTileEntity(i, j, k, tile);
-    	}
+    	TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i, j, k);
     	
     	tile.extract();
     	
