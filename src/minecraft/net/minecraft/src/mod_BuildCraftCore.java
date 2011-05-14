@@ -13,7 +13,7 @@ import net.minecraft.src.buildcraft.core.ITickListener;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class mod_BuildCraftCore extends BaseMod {	
+public class mod_BuildCraftCore extends BaseModMp {	
 
 	private static boolean initialized = false;
 	

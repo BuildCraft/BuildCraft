@@ -14,7 +14,7 @@ import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMachine;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
 
-public class mod_BuildCraftFactory extends BaseMod {	
+public class mod_BuildCraftFactory extends BaseModMp {	
 	
 	public static BlockMachine machineBlock;
 	
@@ -28,6 +28,8 @@ public class mod_BuildCraftFactory extends BaseMod {
 	public static int drillTexture;
 	
 	public void ModsLoaded () {		
+		super.ModsLoaded();
+		
 		mod_BuildCraftCore.initialize();
 		mod_BuildCraftTransport.initialize();
 		
