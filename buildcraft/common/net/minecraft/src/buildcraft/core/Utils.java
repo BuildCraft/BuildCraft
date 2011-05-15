@@ -9,7 +9,6 @@ import java.util.Properties;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
@@ -332,8 +331,10 @@ public class Utils {
 	}
 	
 	public static void loadProperties () {
-		try {
-			cfgfile.getParentFile().mkdirs();
+		try {			
+			if (cfgfile.getParentFile() != null) {
+				cfgfile.getParentFile().mkdirs();
+			}
 
 			if (!cfgfile.exists() && !cfgfile.createNewFile()) {
 				return;
@@ -352,7 +353,10 @@ public class Utils {
 
     public static void saveProperties() {
 		try {
-			cfgfile.getParentFile().mkdirs();
+			if (cfgfile.getParentFile() != null) {
+				cfgfile.getParentFile().mkdirs();
+			}
+			
 			if (!cfgfile.exists() && !cfgfile.createNewFile()) {
 				return;
 			}
