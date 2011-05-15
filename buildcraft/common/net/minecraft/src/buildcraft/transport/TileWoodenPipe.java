@@ -84,6 +84,8 @@ public class TileWoodenPipe extends TilePipe {
 				
 		entityPos.moveForwards(0.5);
 				
+		System.out.println ("CREATING PASSIVE ENTITY");
+		
 		EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.i,
 				entityPos.j, entityPos.k, stack);
 		

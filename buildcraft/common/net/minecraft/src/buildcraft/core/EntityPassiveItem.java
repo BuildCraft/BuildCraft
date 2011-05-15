@@ -71,6 +71,7 @@ public class EntityPassiveItem extends EntityItem {
 	 }
 	
 	public EntityItem toEntityItem (World world, Orientations dir) {
+		System.out.println ("TO ENTITY ITEM");
 		setEntityDead();		
 		
 		Position motion = new Position (0, 0, 0, dir);

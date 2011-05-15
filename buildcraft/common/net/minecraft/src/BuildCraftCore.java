@@ -1,15 +1,11 @@
 package net.minecraft.src;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
 import net.minecraft.src.Block;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.ITickListener;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class BuildCraftCore {
@@ -21,17 +17,6 @@ public class BuildCraftCore {
 	public static Item goldGearItem;
 	public static Item diamondGearItem;
 
-	private static class TickContainer {
-		ITickListener listener;
-		int pace;
-	}
-	
-	public static HashMap <ITickListener, TickContainer> tickListeners = new HashMap <ITickListener, TickContainer> ();
-	
-	public static LinkedList<TickContainer> tickListenersScheduledForAddition = new LinkedList<TickContainer>(); 
-	
-	public static LinkedList <ITickListener> tickListenersScheduledForRemoval = new LinkedList <ITickListener> (); 
-	
 	public static void initialize () {
 		if (initialized) {
 			return;
@@ -94,47 +79,5 @@ public class BuildCraftCore {
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");
 		
 		Utils.saveProperties();
-	}
-	    
-    long lastTick = 0;
-    
-    public static void registerTicksListener (ITickListener listener, int pace) {
-    	//  TODO: move registers on tiles and use the date to select when to
-    	//  make the call.
-    	TickContainer container = new TickContainer();
-    	container.listener = listener;
-    	container.pace = pace;    	    	
-    	tickListenersScheduledForAddition.add(container);
-    }
-    
-    public void OnTickInGame()
-    {    
-    	for (ITickListener listener : tickListenersScheduledForRemoval) {    	    		
-    		if (tickListeners.containsKey(listener)) {
-    			tickListeners.remove(listener);
-    		}
-    	}
-    	
-    	for (TickContainer container : tickListenersScheduledForAddition) {    		    		    	
-    		tickListeners.put (container.listener, container);    		
-    	}
-    	
-    	tickListenersScheduledForAddition.clear ();
-    	tickListenersScheduledForRemoval.clear ();
-    	
-    	if (CoreProxy.getWorld().getWorldTime() != lastTick) {    		    		
-    		lastTick = CoreProxy.getWorld().getWorldTime();
-    		
-    		for (TickContainer container : tickListeners.values()) {
-    			if (lastTick % container.pace == 0) {
-    				container.listener.tick();	
-    			}				
-			}    		
-    	}
-    	
-    }        
-
-	public static void unregisterTicksListener(ITickListener tilePipe) {
-		tickListenersScheduledForRemoval.add(tilePipe);
 	}
 }
