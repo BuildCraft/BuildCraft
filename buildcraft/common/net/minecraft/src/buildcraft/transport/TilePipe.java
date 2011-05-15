@@ -7,16 +7,14 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
-import net.minecraft.src.buildcraft.core.ITickListener;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public abstract class TilePipe extends TileEntity implements ITickListener, IPipeEntry {
+public abstract class TilePipe extends TileEntity implements IPipeEntry {
 	World world;
 	
 	class EntityData {	
@@ -41,9 +39,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 	}
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
-		if (travelingEntities.size() == 0) {
-			mod_BuildCraftCore.registerTicksListener(this, 1);			
-		}
+		System.out.println ("ENTERING IN PIPE");
 		
 		travelingEntities.add(new EntityData (item, orientation));
 		
@@ -95,7 +91,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 		return result;
 	}
 	
-	public void tick() {
+	public void updateEntity() {		
 		for (EntityData data : entitiesToLoad) {
 			world.entityJoinedWorld(data.item);
 			travelingEntities.add(data);
@@ -106,6 +102,7 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 		LinkedList <EntityData> toRemove = new LinkedList <EntityData> ();				
 		
 		for (EntityData data : travelingEntities) {
+			System.out.println ("TRAVELING...");
 			Position motion = new Position (0, 0, 0, data.orientation);
 			motion.moveForwards(data.item.speed);			
 						
@@ -157,10 +154,6 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 		}	
 		
 		travelingEntities.removeAll(toRemove);		
-		
-		if (travelingEntities.size() == 0) {
-			mod_BuildCraftCore.unregisterTicksListener(this);
-		}
 	}
 	
 	public boolean middleReached(EntityData entity) {
@@ -208,10 +201,6 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 				//  two versions - ignore these errors.
 			}
 		}
-		
-		if (entitiesToLoad.size() > 0) {
-			mod_BuildCraftCore.registerTicksListener(this, 1);
-		}
     }
 
     public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -242,5 +231,5 @@ public abstract class TilePipe extends TileEntity implements ITickListener, IPip
 			return listOfPossibleMovements.get(i);															
 		}				
     }
-
+    
 }
