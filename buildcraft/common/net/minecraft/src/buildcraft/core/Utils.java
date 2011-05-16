@@ -12,6 +12,7 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 
 public class Utils {
@@ -233,6 +234,19 @@ public class Utils {
 					return true;
 				}
 			}
+			
+			if (inventory instanceof TileEntityChest) {				
+				TileEntityChest chest = Utils
+						.getNearbyChest((TileEntityChest) inventory);
+				
+				if (chest != null) {
+					for (int j = 0; j < chest.getSizeInventory(); ++j) {
+						if (tryAdding (items, chest, j, add, false)) {
+							return true;
+						}
+					}
+				}
+			}
 		}
 
 		// If none, then create a new thing
@@ -260,6 +274,19 @@ public class Utils {
 			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
 				if (tryAdding (items, inventory, j, add, true)) {
 					return true;
+				}
+			}
+			
+			if (inventory instanceof TileEntityChest) {			
+				TileEntityChest chest = Utils
+						.getNearbyChest((TileEntityChest) inventory);
+				
+				if (chest != null) {
+					for (int j = 0; j < chest.getSizeInventory(); ++j) {
+						if (tryAdding (items, chest, j, add, true)) {
+							return true;
+						}
+					}
 				}
 			}
 		}
@@ -378,5 +405,37 @@ public class Utils {
     	}
     	
     	return props.getProperty(name);
+    }
+    
+    public static TileEntity getTile (World world, Position pos, Orientations step) {
+    	Position tmp = new Position (pos);
+    	tmp.orientation = step;
+    	tmp.moveForwards(1.0);
+    	
+		return world.getBlockTileEntity((int) tmp.i, (int) tmp.j, (int) tmp.k);    	
+    }
+    
+    public static TileEntityChest getNearbyChest (TileEntityChest chest) {
+    	Position pos = new Position (chest.xCoord, chest.yCoord, chest.zCoord);
+    	TileEntity tile;
+		
+		tile = Utils.getTile(chest.worldObj, pos, Orientations.XNeg);
+		if (tile instanceof TileEntityChest) {
+			return (TileEntityChest) tile;
+		}
+		tile = Utils.getTile(chest.worldObj, pos, Orientations.XPos);
+		if (tile instanceof TileEntityChest) {
+			return (TileEntityChest) tile;
+		}
+		tile = Utils.getTile(chest.worldObj, pos, Orientations.ZNeg);
+		if (tile instanceof TileEntityChest) {
+			return (TileEntityChest) tile;
+		}
+		tile = Utils.getTile(chest.worldObj, pos, Orientations.ZPos);
+		if (tile instanceof TileEntityChest) {
+			return (TileEntityChest) tile;
+		}
+		
+		return null;
     }
 }

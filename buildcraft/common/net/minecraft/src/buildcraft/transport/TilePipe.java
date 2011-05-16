@@ -6,6 +6,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
@@ -39,8 +40,6 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 	}
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
-		System.out.println ("ENTERING IN PIPE");
-		
 		travelingEntities.add(new EntityData (item, orientation));
 		
 		// Reajusting Ypos to make sure the object looks like sitting on the
@@ -102,7 +101,6 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 		LinkedList <EntityData> toRemove = new LinkedList <EntityData> ();				
 		
 		for (EntityData data : travelingEntities) {
-			System.out.println ("TRAVELING...");
 			Position motion = new Position (0, 0, 0, data.orientation);
 			motion.moveForwards(data.item.speed);			
 						
@@ -145,7 +143,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 				} else if (tile instanceof IInventory
 						&& (Utils.checkAvailableSlot((IInventory) tile,
 								data.item.item, true, destPos.orientation.reverse()))) {
-
+					
 					data.item.setEntityDead();
 				} else {
 					data.item.toEntityItem(world, data.orientation);

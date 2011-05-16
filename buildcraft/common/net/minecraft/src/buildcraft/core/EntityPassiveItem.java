@@ -7,22 +7,31 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 
-public class EntityPassiveItem extends EntityItem {
+public class EntityPassiveItem extends Entity {
 
 	public float speed = 0.01F;
+	public ItemStack item;
 	
 	public EntityPassiveItem(World world) {
-		super(world);
-		
-    	CoreProxy.setField804(this, 0);
+		super(world);				
+    	
     	noClip = true;
+	}
+	
+	public EntityPassiveItem(World world, double d, double d1, double d2) {
+		super (world);
 	}
 	
     public EntityPassiveItem(World world, double d, double d1, double d2, 
             ItemStack itemstack) {
-    	super (world, d, d1, d2, itemstack);
+    	super (world);
+    	this.item = itemstack;
+    	posX = d;
+    	posY = d1;
+    	posZ = d2;
+    	//  super (world, d, d1, d2, itemstack);
     	
-    	CoreProxy.setField804(this, 0);
+    	//  CoreProxy.setField804(this, 0);
     	noClip = true;
     }
 
@@ -32,27 +41,37 @@ public class EntityPassiveItem extends EntityItem {
 		
 	}
 	
-	public void onUpdate() {		
+	public void onUpdate() {
+		super.onUpdate();
 	}
 
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		super.readEntityFromNBT(nbttagcompound);
+		// super.readEntityFromNBT(nbttagcompound);
+		
+		System.out.println ("READ...");
 		posX = nbttagcompound.getDouble("x");
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");		
 		speed = nbttagcompound.getFloat("speed");
+		item = new ItemStack(nbttagcompound.getCompoundTag("itemStack"));
 		
 		setPosition (posX, posY, posZ);
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		super.writeEntityToNBT(nbttagcompound);
+	public void writeEntityToNBT(NBTTagCompound nbttagcompound) {		
+		// super.writeEntityToNBT(nbttagcompound);
+		
+		System.out.println ("WRITE...");
+		
 		nbttagcompound.setDouble("x", posX);
 		nbttagcompound.setDouble("y", posY);
 		nbttagcompound.setDouble("z", posZ);
 		nbttagcompound.setFloat("speed", speed);
+		NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+		item.writeToNBT(nbttagcompound2);
+		nbttagcompound.setCompoundTag("itemStack", nbttagcompound2);
 	}
 	
 	@Override
@@ -71,13 +90,13 @@ public class EntityPassiveItem extends EntityItem {
 	 }
 	
 	public EntityItem toEntityItem (World world, Orientations dir) {
-		System.out.println ("TO ENTITY ITEM");
 		setEntityDead();		
 		
 		Position motion = new Position (0, 0, 0, dir);
 		motion.moveForwards(0.1 + speed * 2F);
 							
-		EntityItem entityitem = new EntityItem(world, posX, posY, posZ, item);
+		EntityItem entityitem = new EntityItem(world, posX, posY, posZ,
+				item);
 
 		float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
 		entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.i;

@@ -9,7 +9,7 @@ import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
 
-public class mod_BuildCraftCore extends BaseModMp {	
+public class mod_BuildCraftCore extends BaseMod {	
 	
 	BuildCraftCore proxy = new BuildCraftCore();
 		
@@ -18,7 +18,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 		
 	public void ModsLoaded () {
-		mod_BuildCraftCore.initialize();												
+		mod_BuildCraftCore.initialize();						
 	}
 	
 	@Override
@@ -29,8 +29,9 @@ public class mod_BuildCraftCore extends BaseModMp {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
     public void AddRenderer(Map map) {
-    	map.put (EntityPassiveItem.class, new RenderItem());    	
+    	// map.put (EntityPassiveItem.class, new RenderItem());
+    	map.put (EntityPassiveItem.class, new RenderPassiveItem());    	
     	map.put (EntityBlock.class, new RenderEntityBlock());
-    	map.put (EntityMechanicalArm.class, new RenderVoid());
+    	map.put (EntityMechanicalArm.class, new RenderVoid());    	
     }
 }
