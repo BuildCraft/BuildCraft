@@ -3,7 +3,7 @@ package net.minecraft.src;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.devel.BlockCheat;
 
-public class mod_BuildCraftDevel extends BaseModMp {	
+public class mod_BuildCraftDevel extends BaseMod {	
 
 	public static BlockCheat cheatBlock;
 	

@@ -6,7 +6,7 @@ import net.minecraft.src.buildcraft.core.IPipeConnection;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class mod_BuildCraftTransport extends BaseModMp {
+public class mod_BuildCraftTransport extends BaseMod {
 	
 	public void ModsLoaded () {
 		super.ModsLoaded();

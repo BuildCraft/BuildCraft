@@ -11,7 +11,7 @@ import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMachine;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
 
-public class mod_BuildCraftFactory extends BaseModMp {	
+public class mod_BuildCraftFactory extends BaseMod {	
 	
 	public static BlockQuarry machineBlock;
 	

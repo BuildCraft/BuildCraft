@@ -2,6 +2,8 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
+import javax.crypto.spec.IvParameterSpec;
+
 import net.minecraft.src.Container;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
@@ -9,6 +11,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
@@ -83,8 +86,6 @@ public class TileWoodenPipe extends TilePipe {
 				chestPos.orientation.reverse());
 				
 		entityPos.moveForwards(0.5);
-				
-		System.out.println ("CREATING PASSIVE ENTITY");
 		
 		EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.i,
 				entityPos.j, entityPos.k, stack);
@@ -171,23 +172,48 @@ public class TileWoodenPipe extends TilePipe {
 		} else {
 			// This is a generic inventory
 			
-			for (int k = 0; k < inventory.getSizeInventory(); ++k) {
-				if (inventory.getStackInSlot(k) != null
-						&& inventory.getStackInSlot(k).stackSize > 0) {
-										
-					ItemStack slot = inventory.getStackInSlot(k);				
-					
-					if (slot != null && slot.stackSize > 0) {
-						if (doRemove) {
-							return inventory.decrStackSize(k, 1);
-						} else {
-							return slot;
-						}
-					}				
+			ItemStack result = checkExtractGeneric(inventory, doRemove, from);
+			
+			if (result != null) {
+				return result;
+			}
+			
+			if (inventory instanceof TileEntityChest) {
+				// If we're on a entity chest, check if there's an other chest
+				// around
+								
+				TileEntityChest chest = Utils
+						.getNearbyChest((TileEntityChest) inventory);
+				
+				if (chest != null) {
+					return checkExtractGeneric((IInventory) chest, doRemove,
+							from);
+				}
+			}
+			
+		}		
+		
+		return null;
+	}
+	
+	public ItemStack checkExtractGeneric(IInventory inventory,
+			boolean doRemove, Orientations from) {
+		for (int k = 0; k < inventory.getSizeInventory(); ++k) {
+			if (inventory.getStackInSlot(k) != null
+					&& inventory.getStackInSlot(k).stackSize > 0) {
+
+				ItemStack slot = inventory.getStackInSlot(k);
+
+				if (slot != null && slot.stackSize > 0) {
+					if (doRemove) {
+						return inventory.decrStackSize(k, 1);
+					} else {
+						return slot;
+					}
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
