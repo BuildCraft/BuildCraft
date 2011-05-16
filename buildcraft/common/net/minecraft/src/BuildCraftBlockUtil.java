@@ -11,7 +11,7 @@ public class BuildCraftBlockUtil extends Block
     public static int damageDropped(World world, int i, int j, int k) {		
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
-		return block.damageDropped(block.blockID);
+		return block.damageDropped(world.getBlockMetadata(i, j, k));
     }
     
     public static ItemStack getItemStackFromBlock(World world, int i, int j, int k)
