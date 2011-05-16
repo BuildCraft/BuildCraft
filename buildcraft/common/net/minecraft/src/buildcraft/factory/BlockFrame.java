@@ -19,6 +19,8 @@ public class BlockFrame extends Block implements IPipeConnection {
 		
 		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
 		"/net/minecraft/src/buildcraft/factory/gui/frame.png");
+		
+		setHardness(0.5F);
 	}
     
     public boolean isOpaqueCube()
