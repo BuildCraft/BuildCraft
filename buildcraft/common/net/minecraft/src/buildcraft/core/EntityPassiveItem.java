@@ -49,7 +49,6 @@ public class EntityPassiveItem extends Entity {
 	public void readEntityFromNBT(NBTTagCompound nbttagcompound) {
 		// super.readEntityFromNBT(nbttagcompound);
 		
-		System.out.println ("READ...");
 		posX = nbttagcompound.getDouble("x");
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");		
@@ -62,8 +61,6 @@ public class EntityPassiveItem extends Entity {
 	@Override
 	public void writeEntityToNBT(NBTTagCompound nbttagcompound) {		
 		// super.writeEntityToNBT(nbttagcompound);
-		
-		System.out.println ("WRITE...");
 		
 		nbttagcompound.setDouble("x", posX);
 		nbttagcompound.setDouble("y", posY);
