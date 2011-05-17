@@ -2,8 +2,6 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
-import javax.crypto.spec.IvParameterSpec;
-
 import net.minecraft.src.Container;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
@@ -12,6 +10,7 @@ import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
+import net.minecraft.src.TileEntityDispenser;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
@@ -126,7 +125,8 @@ public class TileWoodenPipe extends TilePipe {
 					return slot;
 				}			
 			}	
-		} else if (inventory.getSizeInventory() == 9) {
+		} else if (inventory.getSizeInventory() == 9
+				&& !(inventory instanceof TileEntityDispenser)) {
 			// This is a workbench inventory
 			
 			// Do only craft if there's at least two items of each, to keep
