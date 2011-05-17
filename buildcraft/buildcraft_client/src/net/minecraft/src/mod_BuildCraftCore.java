@@ -7,7 +7,6 @@ import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderVoid;
-import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
 
 public class mod_BuildCraftCore extends BaseMod {	
 	
@@ -31,7 +30,6 @@ public class mod_BuildCraftCore extends BaseMod {
     public void AddRenderer(Map map) {
     	// map.put (EntityPassiveItem.class, new RenderItem());
     	map.put (EntityPassiveItem.class, new RenderPassiveItem());    	
-    	map.put (EntityBlock.class, new RenderEntityBlock());
-    	map.put (EntityMechanicalArm.class, new RenderVoid());    	
+    	map.put (EntityBlock.class, new RenderEntityBlock());	
     }
 }

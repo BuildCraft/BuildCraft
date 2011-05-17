@@ -1,6 +1,12 @@
 package net.minecraft.src;
 
+import java.util.Map;
+
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.EntityPassiveItem;
+import net.minecraft.src.buildcraft.core.RenderEntityBlock;
+import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.BlockFrame;
@@ -10,6 +16,7 @@ import net.minecraft.src.buildcraft.factory.BlockPlainPipe;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
+import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
 
 public class mod_BuildCraftFactory extends BaseMod {	
 	
@@ -92,4 +99,9 @@ public class mod_BuildCraftFactory extends BaseMod {
 		return "1.5_01.4";
 	}
 	    
+	
+	public void AddRenderer(Map map) {
+    	// map.put (EntityPassiveItem.class, new RenderItem());
+    	map.put (EntityMechanicalArm.class, new RenderVoid());    	
+    }
 }
