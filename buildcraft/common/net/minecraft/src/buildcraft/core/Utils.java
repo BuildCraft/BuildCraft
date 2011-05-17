@@ -13,6 +13,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
+import net.minecraft.src.TileEntityDispenser;
 import net.minecraft.src.World;
 
 public class Utils {
@@ -205,7 +206,8 @@ public class Utils {
 				}
 			}
 			
-		} else if (inventory.getSizeInventory() == 9) {
+		} else if (inventory.getSizeInventory() == 9
+				&& !(inventory instanceof TileEntityDispenser)) {
 			//  This is a workbench inventory. Try to add to the smallest slot
 			//  that contains the expected item.
 			
@@ -265,7 +267,8 @@ public class Utils {
 				}
 			}
 			
-		} else if (inventory.getSizeInventory() == 9) { 
+		} else if (inventory.getSizeInventory() == 9
+				&& !(inventory instanceof TileEntityDispenser)) {
 			//  In the case of a workbench inventory, don't do anything
 			
 			return false;
