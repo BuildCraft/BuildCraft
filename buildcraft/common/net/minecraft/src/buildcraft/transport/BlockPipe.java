@@ -87,4 +87,8 @@ public abstract class BlockPipe extends BlockContainer implements IPipeConnectio
 			|| tile instanceof IInventory
 			|| tile instanceof IMachine;
     }
+    
+    public void onBlockRemoval(World world, int i, int j, int k) {
+		((TilePipe) CoreProxy.getWorld().getBlockTileEntity(i, j, k)).destroy();    
+    }
 }

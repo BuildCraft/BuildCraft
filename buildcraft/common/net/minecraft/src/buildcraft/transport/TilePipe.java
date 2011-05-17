@@ -230,4 +230,12 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 		}				
     }
     
+    public void destroy () {
+    	for (EntityData data : travelingEntities) {
+    		data.item.toEntityItem(worldObj, data.orientation);
+    	}
+    	
+    	travelingEntities.clear();
+    }
+    
 }

@@ -10,6 +10,7 @@ import net.minecraft.src.buildcraft.core.IExcludedInventory;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileDiamondPipe extends TilePipe implements IInventory,
 		IExcludedInventory {
@@ -142,5 +143,11 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
     	}
     	
     	nbttagcompound.setTag("items", nbttaglist);    	
+    }
+    
+    public void destroy () {
+    	super.destroy();
+    	
+		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
     }
 }
