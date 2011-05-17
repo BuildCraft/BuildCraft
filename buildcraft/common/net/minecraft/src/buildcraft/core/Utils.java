@@ -153,7 +153,8 @@ public class Utils {
 			TileEntity tileInventory = w.getBlockTileEntity((int) pos.i,
 					(int) pos.j, (int) pos.k);
 			
-			if (tileInventory instanceof IInventory) {
+			if (tileInventory instanceof IInventory
+					&& !(tileInventory instanceof IExcludedInventory)) {
 				if (checkAvailableSlot((IInventory) tileInventory, items,
 						false, pos.orientation.reverse())) {
 					possibleInventories.add(pos.orientation);

@@ -63,13 +63,14 @@ public class GuiFilter extends GuiContainer {
 	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f) {
-	        int i = mc.renderEngine.getTexture("/buildcraft_gui/filter.png");
-	        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-	        mc.renderEngine.bindTexture(i);
-	        int j = (width - xSize) / 2;
-	        int k = (height - ySize) / 2;
-	        drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-	    }
+		int i = mc.renderEngine
+				.getTexture("/net/minecraft/src/buildcraft/transport/gui/filter.png");
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(i);
+		int j = (width - xSize) / 2;
+		int k = (height - ySize) / 2;
+		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+	}
 
 	int inventoryRows = 6;
 }

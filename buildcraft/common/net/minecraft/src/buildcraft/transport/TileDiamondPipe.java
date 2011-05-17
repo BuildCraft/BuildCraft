@@ -6,11 +6,13 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.core.IExcludedInventory;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
 
-public class TileDiamondPipe extends TilePipe implements IInventory {
+public class TileDiamondPipe extends TilePipe implements IInventory,
+		IExcludedInventory {
 	
 	ItemStack [] items = new ItemStack [54];
 	

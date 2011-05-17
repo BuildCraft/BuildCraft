@@ -40,7 +40,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 	}
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
-		travelingEntities.add(new EntityData (item, orientation));
+		travelingEntities.add(new EntityData (item, orientation));		
 		
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
