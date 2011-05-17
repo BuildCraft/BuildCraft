@@ -1,9 +1,11 @@
 package net.minecraft.src.buildcraft.factory;
 
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
+
 
 public abstract class BlockMachineRoot extends BlockContainer {
 
@@ -19,7 +21,7 @@ public abstract class BlockMachineRoot extends BlockContainer {
 				for (int z = k - 1; z <= k + 1; ++z) {
 					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);		
 					
-					if (tile instanceof TileMiningWell && ((TileMiningWell)tile).isDigging) {
+					if (tile instanceof IMachine && ((IMachine)tile).isActive()) {
 						return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
 					} 
 				}

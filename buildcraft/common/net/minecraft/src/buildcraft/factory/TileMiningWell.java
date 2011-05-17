@@ -103,4 +103,9 @@ public class TileMiningWell extends TileEntity implements IMachine {
 		w.entityJoinedWorld(entityitem);
 	}
 
+	@Override
+	public boolean isActive() {
+		return isDigging;
+	}
+
 }

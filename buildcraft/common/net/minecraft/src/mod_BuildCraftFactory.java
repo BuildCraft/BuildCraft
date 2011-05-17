@@ -8,7 +8,7 @@ import net.minecraft.src.buildcraft.factory.BlockQuarry;
 import net.minecraft.src.buildcraft.factory.BlockMiningWell;
 import net.minecraft.src.buildcraft.factory.BlockPlainPipe;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
-import net.minecraft.src.buildcraft.factory.TileMachine;
+import net.minecraft.src.buildcraft.factory.TileQuarry;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
 
 public class mod_BuildCraftFactory extends BaseMod {	
@@ -77,7 +77,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		CoreProxy.addName(machineBlock.setBlockName("machineBlock"),
 		"Quarry");
 		
-		ModLoader.RegisterTileEntity(TileMachine.class, "Machine");		
+		ModLoader.RegisterTileEntity(TileQuarry.class, "Machine");		
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
 		ModLoader.RegisterTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 
