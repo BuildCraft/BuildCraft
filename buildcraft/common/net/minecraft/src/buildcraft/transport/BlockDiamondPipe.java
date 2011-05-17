@@ -37,4 +37,6 @@ public class BlockDiamondPipe extends BlockPipe {
     	
         super.onBlockRemoval(world, i, j, k);        
     }
+    
+    
 }
