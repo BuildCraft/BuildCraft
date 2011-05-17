@@ -4,6 +4,25 @@ cd minecraft
 
 version=$1
 
+function removesvn () {
+  (
+  cd $1
+
+  if [ -d .svn ]; then
+     rm -rf .svn
+  fi
+
+  for j in `ls`
+  do
+     if [ -d $j ]; then
+        removesvn $j
+     fi
+  done
+  )
+}
+
+removesvn .
+
 dir=../../release-$version
 
 rm -rf $dir
