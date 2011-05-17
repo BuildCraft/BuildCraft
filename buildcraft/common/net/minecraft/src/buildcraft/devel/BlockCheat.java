@@ -35,7 +35,7 @@ public class BlockCheat extends Block {
 		createItems (i, j, k, new ItemStack (Block.oreIron, 64));
 		createItems (i, j, k, new ItemStack (Block.cloth, 64, 1));
 		createItems (i, j, k, new ItemStack (Block.cloth, 64, 2));
-		createItems (i, j, k, new ItemStack (Block.cloth, 64, 3));
+		createItems (i, j, k, new ItemStack (Item.redstoneRepeater, 64));
 		createItems (i, j, k, new ItemStack (Block.dispenser, 64, 3));
 		createItems (i, j, k, new ItemStack (mod_BuildCraftFactory.miningWellBlock, 64));
 		createItems (i, j, k, new ItemStack (mod_BuildCraftFactory.machineBlock, 64));
