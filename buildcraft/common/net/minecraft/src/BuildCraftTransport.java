@@ -103,6 +103,7 @@ public class BuildCraftTransport {
 	
 
 	public static void ModsLoaded () {
+		mod_BuildCraftCore.initialize();
 		initialize ();
 	}
 }

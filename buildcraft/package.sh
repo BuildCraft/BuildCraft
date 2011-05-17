@@ -4,14 +4,17 @@ cd minecraft
 
 version=$1
 
-rm *.zip
+dir=../../release-$version
 
-zip -r buildcraft-ssp-core-$version.zip mod_BuildCraftCore* BuildCraftBlockUtil.class buildcraft/core net/minecraft/src/buildcraft/core
+rm -rf $dir
+mkdir $dir
 
-zip -r buildcraft-ssp-factory-$version.zip mod_BuildCraftFactory.class buildcraft/factory net/minecraft/src/buildcraft/factory
+zip -r $dir/buildcraft-core-$version.zip mod_BuildCraftCore* BuildCraftCore.class RenderPassiveItem.class BuildCraftBlockUtil.class buildcraft/core net/minecraft/src/buildcraft/core
 
-zip -r buildcraft-ssp-transport-$version.zip mod_BuildCraftTransport.class buildcraft/transport net/minecraft/src/buildcraft/transport
+zip -r $dir/buildcraft-transport-$version.zip mod_BuildCraftTransport.class BuildCraftTransport.class buildcraft/transport net/minecraft/src/buildcraft/transport
 
-zip -r buildcraft-ssp-devel-$version.zip mod_BuildCraftDevel.class buildcraft/devel
+zip -r $dir/buildcraft-factory-$version.zip mod_BuildCraftFactory.class buildcraft/factory net/minecraft/src/buildcraft/factory
+
+zip -r $dir/buildcraft-devel-$version.zip mod_BuildCraftDevel.class buildcraft/devel
 
 

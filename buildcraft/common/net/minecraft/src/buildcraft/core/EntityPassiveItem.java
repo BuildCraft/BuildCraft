@@ -24,11 +24,12 @@ public class EntityPassiveItem extends Entity {
 	
     public EntityPassiveItem(World world, double d, double d1, double d2, 
             ItemStack itemstack) {
-    	super (world);
+    	this (world);
     	this.item = itemstack;
-    	posX = d;
-    	posY = d1;
-    	posZ = d2;
+    	
+		 setSize(0.25F, 0.25F);
+		 setPosition(d, d1, d2);
+
     	//  super (world, d, d1, d2, itemstack);
     	
     	//  CoreProxy.setField804(this, 0);
@@ -42,18 +43,18 @@ public class EntityPassiveItem extends Entity {
 	}
 	
 	public void onUpdate() {
-		super.onUpdate();
+		//super.onUpdate();
 	}
 
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		// super.readEntityFromNBT(nbttagcompound);
+		//= super.readEntityFromNBT(nbttagcompound);
 		
 		posX = nbttagcompound.getDouble("x");
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");		
 		speed = nbttagcompound.getFloat("speed");
-		item = new ItemStack(nbttagcompound.getCompoundTag("itemStack"));
+		item = new ItemStack(nbttagcompound.getCompoundTag("Item"));
 		
 		setPosition (posX, posY, posZ);
 	}
@@ -68,7 +69,7 @@ public class EntityPassiveItem extends Entity {
 		nbttagcompound.setFloat("speed", speed);
 		NBTTagCompound nbttagcompound2 = new NBTTagCompound();
 		item.writeToNBT(nbttagcompound2);
-		nbttagcompound.setCompoundTag("itemStack", nbttagcompound2);
+		nbttagcompound.setCompoundTag("Item", nbttagcompound2);
 	}
 	
 	@Override
