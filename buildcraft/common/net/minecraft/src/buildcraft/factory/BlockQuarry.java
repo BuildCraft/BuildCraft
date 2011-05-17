@@ -102,21 +102,21 @@ public class BlockQuarry extends BlockMachineRoot {
 			}
 		}
 		
-		((TileMachine) world.getBlockTileEntity(i, j, k)).setMinPos((int) xMin,
+		((TileQuarry) world.getBlockTileEntity(i, j, k)).setMinPos((int) xMin,
 				(int) zMin);
     }
     
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
-    	TileMachine tile = (TileMachine) world.getBlockTileEntity(i, j, k);
+    	TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
     	    	
 		tile.checkPower();    	        
     }
 
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	TileMachine tile = (TileMachine) world.getBlockTileEntity(i, j, k);
+    	TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
     	
     	if (tile == null) {
-    		tile = new TileMachine();
+    		tile = new TileQuarry();
     		world.setBlockTileEntity(i, j, k, tile);
     	}
     	
@@ -146,12 +146,12 @@ public class BlockQuarry extends BlockMachineRoot {
     
 	@Override
 	protected TileEntity getBlockEntity() {		
-		return new TileMachine();
+		return new TileQuarry();
 	}
 	
 
 	public void onBlockRemoval(World world, int i, int j, int k) {
-		((TileMachine) world.getBlockTileEntity(i, j, k)).delete();
+		((TileQuarry) world.getBlockTileEntity(i, j, k)).delete();
 		
 		super.onBlockRemoval(world, i, j, k);
 	}
