@@ -1,0 +1,53 @@
+package net.minecraft.src.buildcraft.builders;
+
+import net.minecraft.src.Block;
+import net.minecraft.src.BlockContainer;
+import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.Material;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.IPipeConnection;
+
+public class BlockMarker extends BlockContainer implements IPipeConnection {
+
+	public BlockMarker(int i) {
+		super(i, Material.iron);
+		
+		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
+		"/net/minecraft/src/buildcraft/builders/gui/marker.png");
+	}
+	
+    public int getRenderType()
+    {
+        return BuildCraftTransport.pipeModel;
+    }
+    
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
+    
+    public boolean renderAsNormalBlock()
+    {
+        return false;
+    }
+
+	@Override
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
+		return true;
+	}
+
+	@Override
+	protected TileEntity getBlockEntity() {
+		return new TileMarker();
+	}
+
+    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
+    {
+		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
+        return false;
+    }
+}
