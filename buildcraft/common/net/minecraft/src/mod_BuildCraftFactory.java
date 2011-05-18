@@ -40,7 +40,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(Utils
-				.getProperty("miningWell.blockId", "250")));
+				.getProperty("miningWell.blockId", "150")));
 		ModLoader.RegisterBlock(miningWellBlock);
 		CoreProxy.addName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");
 		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
@@ -50,12 +50,12 @@ public class mod_BuildCraftFactory extends BaseMod {
 			Item.pickaxeSteel });	
 		
 		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(Utils.getProperty(
-				"drill.blockId", "249")));
+				"drill.blockId", "151")));
 		ModLoader.RegisterBlock(plainPipeBlock);
 		CoreProxy.addName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
 		
 		autoWorkbenchBlock = new BlockAutoWorkbench(Integer.parseInt(Utils
-				.getProperty("autoWorkbench.blockId", "248")));
+				.getProperty("autoWorkbench.blockId", "152")));
 		ModLoader.RegisterBlock(autoWorkbenchBlock);
 		craftingmanager.addRecipe(
 				new ItemStack(autoWorkbenchBlock),
@@ -70,7 +70,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		ModLoader.RegisterBlock(frameBlock);
 		
 		machineBlock = new BlockQuarry(Integer.parseInt(Utils.getProperty(
-				"quarry.blockId", "246")));
+				"quarry.blockId", "153")));
 		ModLoader.RegisterBlock(machineBlock);
 		craftingmanager.addRecipe(
 				new ItemStack(machineBlock),
