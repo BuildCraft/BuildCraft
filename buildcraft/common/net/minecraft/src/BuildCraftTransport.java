@@ -39,7 +39,7 @@ public class BuildCraftTransport {
 			
 		CraftingManager craftingmanager = CraftingManager.getInstance();		
 		woodenPipeBlock = new BlockWoodenPipe(Integer.parseInt(Utils
-				.getProperty("woodenPipe.blockId", "255")));
+				.getProperty("woodenPipe.blockId", "145")));
 		CoreProxy.addName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
 		ModLoader.RegisterBlock(woodenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(woodenPipeBlock, 8), new Object[] {
@@ -47,7 +47,7 @@ public class BuildCraftTransport {
 				Character.valueOf('G'), Block.glass});
 		
 		stonePipeBlock = new BlockStonePipe(Integer.parseInt(Utils.getProperty(
-				"stonePipe.blockId", "254")));
+				"stonePipe.blockId", "146")));
 		CoreProxy.addName(stonePipeBlock.setBlockName("stonePipe"), "Stone Pipe");
 		ModLoader.RegisterBlock(stonePipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(stonePipeBlock, 8), new Object[] {
@@ -55,7 +55,7 @@ public class BuildCraftTransport {
 				Character.valueOf('G'), Block.glass});
 		
 		ironPipeBlock = new BlockIronPipe(Integer.parseInt(Utils.getProperty(
-				"ironPipe.blockId", "253")));
+				"ironPipe.blockId", "147")));
 		CoreProxy.addName(ironPipeBlock.setBlockName("ironPipe"), "Iron Pipe");
 		ModLoader.RegisterBlock(ironPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(ironPipeBlock, 8), new Object[] {
@@ -63,7 +63,7 @@ public class BuildCraftTransport {
 				Character.valueOf('G'), Block.glass});
 		
 		goldenPipeBlock = new BlockGoldenPipe(Integer.parseInt(Utils
-				.getProperty("goldenPipe.blockId", "252")));
+				.getProperty("goldenPipe.blockId", "148")));
 		CoreProxy.addName(goldenPipeBlock.setBlockName("goldenPipe"), "Golden Pipe");
 		ModLoader.RegisterBlock(goldenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(goldenPipeBlock, 8), new Object[] {
@@ -71,7 +71,7 @@ public class BuildCraftTransport {
 				Character.valueOf('G'), Block.glass});
 		
 		diamondPipeBlock = new BlockDiamondPipe(Integer.parseInt(Utils
-				.getProperty("diamondPipe.blockId", "251")));
+				.getProperty("diamondPipe.blockId", "149")));
 		CoreProxy.addName(diamondPipeBlock.setBlockName("diamondPipe"), "Diamond Pipe");
 		ModLoader.RegisterBlock(diamondPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(diamondPipeBlock, 8), new Object[] {
