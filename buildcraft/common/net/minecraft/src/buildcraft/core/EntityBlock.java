@@ -35,6 +35,13 @@ public class EntityBlock extends Entity {
         setPosition(i, j, k);
     }
     
+	public EntityBlock(World world, double i, double j, double k, double iSize,
+			double jSize, double kSize, int blockID, int textureID) {
+    	this (world, i, j, k, iSize, jSize, kSize, blockID);
+    	
+    	texture = textureID;        
+    }
+    
     @Override
     public void setPosition(double d, double d1, double d2) {
     	posX = d;
