@@ -66,7 +66,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 				"Automatic Crafting Table");
 				
 		frameBlock = new BlockFrame(Integer.parseInt(Utils.getProperty(
-				"frame.blockId", "247")));
+				"frame.blockId", "152")));
 		ModLoader.RegisterBlock(frameBlock);
 		
 		machineBlock = new BlockQuarry(Integer.parseInt(Utils.getProperty(
