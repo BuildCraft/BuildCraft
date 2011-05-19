@@ -134,12 +134,12 @@ public class TileWoodenPipe extends TilePipe {
 			
 
 			InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
-				@SuppressWarnings("unused")
+				@SuppressWarnings("all")
 				public boolean isUsableByPlayer(EntityPlayer entityplayer) {
 					return false;
 				}
 
-				@SuppressWarnings("unused")
+				@SuppressWarnings("all")
 				public boolean canInteractWith(EntityPlayer entityplayer) {
 					// TODO Auto-generated method stub
 					return false;

@@ -4,7 +4,7 @@ import net.minecraft.src.World;
 
 public class BluePrintBuilder {
 	
-	BluePrint bluePrint;
+	public BluePrint bluePrint;
 	int x, y, z;
 	public boolean done;
 	
