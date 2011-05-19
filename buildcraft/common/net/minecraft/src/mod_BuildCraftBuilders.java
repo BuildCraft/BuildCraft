@@ -9,7 +9,8 @@ public class mod_BuildCraftBuilders extends BaseMod {
 
 	public static BlockMarker markerBlock;
 	
-	public static int laserTexture;
+	public static int redLaserTexture;
+	public static int blueLaserTexture;
 	
 	public void ModsLoaded () {		
 		super.ModsLoaded();
@@ -28,8 +29,11 @@ public class mod_BuildCraftBuilders extends BaseMod {
 		
 		ModLoader.RegisterTileEntity(TileMarker.class, "Marker");
 		
-		laserTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/builders/gui/laser.png");
+		redLaserTexture = ModLoader.addOverride("/terrain.png",
+		"/net/minecraft/src/buildcraft/builders/gui/red_laser.png");
+		blueLaserTexture = ModLoader.addOverride("/terrain.png",
+		"/net/minecraft/src/buildcraft/builders/gui/blue_laser.png");
+
 	}
 	
 	@Override

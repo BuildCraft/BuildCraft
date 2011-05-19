@@ -7,23 +7,27 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.core.BlockContents;
+import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
+import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
+import net.minecraft.src.buildcraft.core.IAreaProvider;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileEntity implements IArmListener, IMachine {		
 	boolean isDigging = false;
-
-	static final int fieldSize = BlockQuarry.MINING_FIELD_SIZE
-			* BlockQuarry.MINING_FIELD_SIZE;
+	
+	private static int latency = 20;
 	
 	boolean inProcess = false;
 	
 	EntityMechanicalArm arm;
 	
 	private int xMin, zMin;
+	private int xSize, ySize, zSize;
 	
 	boolean loadArm = false;
 	
@@ -42,17 +46,21 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     
     public void createUtilsIfNeeded () {
     	if (bluePrintBuilder == null) {
-    		return;
+    		setBoundaries();
+    		initializeBluePrintBuilder();
     	}
     	
     	bluePrintBuilder.findNextBlock(worldObj);
     	
     	if (bluePrintBuilder.done) {
     		if (arm == null) {
-    			arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxSize,
-    					yCoord + 4 + Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
-    					BlockQuarry.MINING_FIELD_SIZE + Utils.pipeMinSize * 2,
-    					BlockQuarry.MINING_FIELD_SIZE + Utils.pipeMinSize * 2);
+				arm = new EntityMechanicalArm
+				(worldObj,
+				xMin + Utils.pipeMaxSize,
+				yCoord + bluePrintBuilder.bluePrint.sizeY - 1 + Utils.pipeMinSize,
+				zMin + Utils.pipeMaxSize,
+				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinSize * 2,
+				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinSize * 2);
 
     			arm.listener = this;
     			loadArm = true;
@@ -87,7 +95,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	}
 	
 	public void work() {				
-	    if (worldObj.getWorldTime() - lastWork < 20) {
+	    if (worldObj.getWorldTime() - lastWork < latency) {
 	    	return;
 	    }
 	    
@@ -135,17 +143,17 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	}
 
 	public boolean findTarget (boolean doSet) {
-		boolean[][] blockedColumns = new boolean[BlockQuarry.MINING_FIELD_SIZE][BlockQuarry.MINING_FIELD_SIZE];
+		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
 		
-		for (int searchX = 0; searchX < BlockQuarry.MINING_FIELD_SIZE; ++searchX) {
-			for (int searchZ = 0; searchZ < BlockQuarry.MINING_FIELD_SIZE; ++searchZ) {
+		for (int searchX = 0; searchX < bluePrintBuilder.bluePrint.sizeX - 2; ++searchX) {
+			for (int searchZ = 0; searchZ < bluePrintBuilder.bluePrint.sizeZ - 2; ++searchZ) {
 				blockedColumns [searchX][searchZ] = false;
 			}
 		}
 		
 		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
-			for (int searchX = 0; searchX < BlockQuarry.MINING_FIELD_SIZE; ++searchX) {
-				for (int searchZ = 0; searchZ < BlockQuarry.MINING_FIELD_SIZE; ++searchZ) {
+			for (int searchX = 0; searchX < bluePrintBuilder.bluePrint.sizeX - 2; ++searchX) {
+				for (int searchZ = 0; searchZ < bluePrintBuilder.bluePrint.sizeZ - 2; ++searchZ) {
 					if (!blockedColumns [searchX][searchZ]) {
 						int bx = xMin + searchX + 1, by = searchY, bz = zMin + searchZ + 1;
 						
@@ -175,8 +183,21 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);		
 
-		xMin = nbttagcompound.getInteger("xMin");
-		zMin = nbttagcompound.getInteger("zMin");
+		if (nbttagcompound.hasKey("xSize")) {
+			xMin = nbttagcompound.getInteger("xMin");
+			zMin = nbttagcompound.getInteger("zMin");
+
+			xSize = nbttagcompound.getInteger("xSize");
+			ySize = nbttagcompound.getInteger("ySize");
+			zSize = nbttagcompound.getInteger("zSize");
+		} else {
+			// This is a legacy save, compute boundaries
+			
+			setBoundaries();
+		}
+		
+		initializeBluePrintBuilder();
+		
 		targetX = nbttagcompound.getInteger("targetX");
 		targetY = nbttagcompound.getInteger("targetY");
 		targetZ = nbttagcompound.getInteger("targetZ");
@@ -189,9 +210,6 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 
 			loadArm = true;
 		}
-		
-		bluePrintBuilder = new BluePrintBuilder(BlockQuarry.bluePrint, xMin,
-				yCoord, zMin);
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -199,6 +217,11 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		
 		nbttagcompound.setInteger("xMin", xMin);
 		nbttagcompound.setInteger("zMin", zMin);
+		
+		nbttagcompound.setInteger("xSize", xSize);
+		nbttagcompound.setInteger("ySize", ySize);
+		nbttagcompound.setInteger("zSize", zSize);
+		
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);
 		nbttagcompound.setInteger("targetZ", targetZ);
@@ -310,18 +333,113 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			arm.setEntityDead ();
 		}
 	}
-	
-	public void setMinPos (int xMin, int zMin) {
-		this.xMin = xMin;
-		this.zMin = zMin;
-		
-		bluePrintBuilder = new BluePrintBuilder(BlockQuarry.bluePrint, xMin,
-				yCoord, zMin);
-	}
 
 	@Override
 	public boolean isActive() {
 		return isDigging;
+	}
+	
+	private void setBoundaries () {
+		boolean useDefault = false;
+		
+		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
+				zCoord);	
+		
+		if (a == null) {
+			a = new DefaultAreaProvider (1, 1, 1, 11, 5, 11);
+			
+			useDefault = true;
+		}
+		
+		xSize = a.xMax() - a.xMin() + 1;
+		ySize = a.yMax() - a.yMin() + 1;
+		zSize = a.zMax() - a.zMin() + 1;
+		
+		if (xSize < 3 || zSize < 3) {
+			a = new DefaultAreaProvider (1, 1, 1, 11, 5, 11);
+			
+			useDefault = true;
+		}
+		
+		xSize = a.xMax() - a.xMin() + 1;
+		ySize = a.yMax() - a.yMin() + 1;
+		zSize = a.zMax() - a.zMin() + 1;
+		
+		if (ySize < 5) {
+			ySize = 5;
+		}
+		
+		if (useDefault) {
+			Orientations o = Orientations.values()[worldObj.getBlockMetadata(
+					xCoord, yCoord, zCoord)].reverse();
+
+			if (xMin == -1) {
+				switch (o) {
+				case XPos:
+					xMin = xCoord + 1;
+					zMin = zCoord - 4 - 1;
+					break;
+				case XNeg:
+					xMin = xCoord - 9 - 2;
+					zMin = zCoord - 4 - 1;
+					break;
+				case ZPos:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord + 1;
+					break;
+				case ZNeg:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord - 9 - 2;
+					break;
+				}
+			}
+		} else {
+			xMin = a.xMin();
+			zMin = a.zMin();
+		}
+	}
+	
+	private void initializeBluePrintBuilder () {
+		BluePrint bluePrint = new BluePrint(xSize, ySize, zSize);	
+	
+		for (int i = 0; i < bluePrint.sizeX; ++i) {
+			for (int j = 0; j < bluePrint.sizeY; ++j) {
+				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+					bluePrint.setBlockId(i, j, k, 0);
+				}
+			}
+		}
+
+		for (int it = 0; it < 2; it++) {
+			for (int i = 0; i < bluePrint.sizeX; ++i) {
+				bluePrint.setBlockId(i, it * (ySize - 1), 0,
+						mod_BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlockId(i, it * (ySize - 1), bluePrint.sizeZ - 1,
+						mod_BuildCraftFactory.frameBlock.blockID);
+			}
+
+			for (int k = 0; k < bluePrint.sizeZ; ++k) {
+				bluePrint.setBlockId(0, it * (ySize - 1), k,
+						mod_BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlockId(bluePrint.sizeX - 1, it * (ySize - 1), k,
+						mod_BuildCraftFactory.frameBlock.blockID);
+
+			}
+		}
+
+		for (int h = 1; h < ySize; ++h) {
+			bluePrint.setBlockId(0, h, 0,
+					mod_BuildCraftFactory.frameBlock.blockID);
+			bluePrint.setBlockId(0, h, bluePrint.sizeZ - 1,
+					mod_BuildCraftFactory.frameBlock.blockID);
+			bluePrint.setBlockId(bluePrint.sizeX - 1, h, 0,
+					mod_BuildCraftFactory.frameBlock.blockID);
+			bluePrint.setBlockId(bluePrint.sizeX - 1, h,
+					bluePrint.sizeZ - 1,
+					mod_BuildCraftFactory.frameBlock.blockID);
+		}
+		
+		bluePrintBuilder = new BluePrintBuilder(bluePrint, xMin, yCoord, zMin);
 	}
 
 }

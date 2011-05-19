@@ -1,6 +1,5 @@
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
@@ -49,5 +48,16 @@ public class BlockMarker extends BlockContainer implements IPipeConnection {
     {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
         return false;
+    }
+    
+    public void onBlockRemoval(World world, int i, int j, int k)
+    {
+    	((TileMarker) world.getBlockTileEntity(i, j, k)).destroy();
+        super.onBlockRemoval(world, i, j, k);       
+    }
+    
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+    {
+    	((TileMarker) world.getBlockTileEntity(i, j, k)).switchSignals();
     }
 }

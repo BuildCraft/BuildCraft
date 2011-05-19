@@ -442,4 +442,29 @@ public class Utils {
 		
 		return null;
     }
+    
+    public static IAreaProvider getNearbyAreaProvider (World world, int i, int j, int k) {
+    	TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
+    	TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);
+    	TileEntity a3 = world.getBlockTileEntity(i, j, k + 1);
+    	TileEntity a4 = world.getBlockTileEntity(i, j, k - 1);
+    	
+    	if (a1 instanceof IAreaProvider) {
+    		return (IAreaProvider) a1;
+    	}
+    	
+    	if (a2 instanceof IAreaProvider) {
+    		return (IAreaProvider) a2;
+    	}
+
+    	if (a3 instanceof IAreaProvider) {
+    		return (IAreaProvider) a3;
+    	}
+
+    	if (a4 instanceof IAreaProvider) {
+    		return (IAreaProvider) a4;
+    	}
+
+    	return null;
+    }
 }
