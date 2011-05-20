@@ -9,6 +9,8 @@ public interface IAreaProvider {
 	public int xMax ();
 	public int yMax ();
 	public int zMax ();
+	
+	public void removeFromWorld ();
 
 	
 }

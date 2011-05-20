@@ -45,4 +45,7 @@ public class DefaultAreaProvider implements IAreaProvider {
 		return zMax;
 	}
 
+	public void removeFromWorld () {
+		
+	}
 }

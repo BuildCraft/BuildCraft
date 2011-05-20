@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -495,4 +496,97 @@ public class Utils {
     		return Integer.parseInt(val);
     	}    	
     }
+    
+	public static EntityBlock createLaser(World world, Position p1, Position p2,
+			int color) {
+		if (p1.equals(p2)) {
+			return null;
+		}
+		
+		double iSize = p2.i - p1.i;
+		double jSize = p2.j - p1.j;
+		double kSize = p2.k - p1.k;
+		
+		double i = p1.i;
+		double j = p1.j;
+		double k = p1.k;
+		
+		if (iSize != 0) {
+			i += 0.5;
+			j += 0.45;
+			k += 0.45;
+			
+			jSize = 0.10;
+			kSize = 0.10;
+		} else if (jSize != 0) {			
+			i += 0.45;
+			j += 0.5;
+			k += 0.45;
+			
+			iSize = 0.10;
+			kSize = 0.10;
+		} else if (kSize != 0) {
+			i += 0.45;
+			j += 0.45;
+			k += 0.5;
+			
+			iSize = 0.10;
+			jSize = 0.10;
+		}
+		
+		int texture;
+		
+		switch (color) {
+			case 1:
+				texture = BuildCraftCore.blueLaserTexture;
+				break;
+			
+			case 2:
+				texture = BuildCraftCore.stripesLaserTexture;
+				break;
+				
+			default:
+				texture = BuildCraftCore.redLaserTexture;
+				break;
+		}
+		
+		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize,
+				kSize, Block.bedrock.blockID,
+				texture);
+		
+		world.entityJoinedWorld(block);
+		
+		return block;
+	}
+	
+	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin,
+			double zMin, double xMax, double yMax, double zMax, int color) {
+		EntityBlock lasers [] = new EntityBlock [12];
+		Position [] p = new Position [8];
+		
+		p [0] = new Position(xMin, yMin, zMin);
+		p [1] = new Position(xMax, yMin, zMin);
+		p [2] = new Position(xMin, yMax, zMin);
+		p [3] = new Position(xMax, yMax, zMin);
+		p [4] = new Position(xMin, yMin, zMax);
+		p [5] = new Position(xMax, yMin, zMax);
+		p [6] = new Position(xMin, yMax, zMax);
+		p [7] = new Position(xMax, yMax, zMax);
+		
+		lasers [0] = Utils.createLaser(world, p [0], p [1], color);
+		lasers [1] = Utils.createLaser(world, p [0], p [2], color);
+		lasers [2] = Utils.createLaser(world, p [2], p [3], color);
+		lasers [3] = Utils.createLaser(world, p [1], p [3], color);
+		lasers [4] = Utils.createLaser(world, p [4], p [5], color);
+		lasers [5] = Utils.createLaser(world, p [4], p [6], color);
+		lasers [6] = Utils.createLaser(world, p [5], p [7], color);
+		lasers [7] = Utils.createLaser(world, p [6], p [7], color);
+		lasers [8] = Utils.createLaser(world, p [0], p [4], color);
+		lasers [9] = Utils.createLaser(world, p [1], p [5], color);
+		lasers [10] = Utils.createLaser(world, p [2], p [6], color);
+		lasers [11] = Utils.createLaser(world, p [3], p [7], color);
+		
+		return lasers;
+	}
+
 }

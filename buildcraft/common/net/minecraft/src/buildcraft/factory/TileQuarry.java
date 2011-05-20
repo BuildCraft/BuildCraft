@@ -12,6 +12,7 @@ import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
+import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IAreaProvider;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Orientations;
@@ -32,6 +33,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	boolean loadArm = false;
 	
 	int targetX, targetY, targetZ;
+	EntityBlock [] lasers;
 	
 	BluePrintBuilder bluePrintBuilder;
 	
@@ -46,13 +48,15 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     
     public void createUtilsIfNeeded () {
     	if (bluePrintBuilder == null) {
-    		setBoundaries();
+    		setBoundaries();	    	
     		initializeBluePrintBuilder();
     	}
     	
-    	bluePrintBuilder.findNextBlock(worldObj);
+    	bluePrintBuilder.findNextBlock(worldObj);    	    	
     	
     	if (bluePrintBuilder.done) {
+    		deleteLasers ();
+    		
     		if (arm == null) {
 				arm = new EntityMechanicalArm
 				(worldObj,
@@ -75,6 +79,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     	    	}
     		}
     	} else {
+    		createLasers();	
     		isDigging = true;
     	}
     }
@@ -94,6 +99,24 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		}		
 	}
 	
+	private void createLasers () {
+		if (lasers == null) {
+			lasers = Utils.createLaserBox(worldObj, xMin, yCoord, zMin,
+					xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1,
+					2);
+		}
+	}
+	
+	private void deleteLasers () {
+		if (lasers != null) {
+			for (EntityBlock l : lasers) {
+				l.setEntityDead();
+			}
+			
+			lasers = null;
+		}
+	}
+	
 	public void work() {				
 	    if (worldObj.getWorldTime() - lastWork < latency) {
 	    	return;
@@ -105,7 +128,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	    	return;
 	    }
 	    
-		if (!bluePrintBuilder.done) {
+		if (!bluePrintBuilder.done) {			
 			lastWork = worldObj.getWorldTime();
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
@@ -332,6 +355,8 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		if (arm != null) {
 			arm.setEntityDead ();
 		}
+		
+		deleteLasers();
 	}
 
 	@Override
@@ -373,30 +398,30 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			Orientations o = Orientations.values()[worldObj.getBlockMetadata(
 					xCoord, yCoord, zCoord)].reverse();
 
-			if (xMin == -1) {
-				switch (o) {
-				case XPos:
-					xMin = xCoord + 1;
-					zMin = zCoord - 4 - 1;
-					break;
-				case XNeg:
-					xMin = xCoord - 9 - 2;
-					zMin = zCoord - 4 - 1;
-					break;
-				case ZPos:
-					xMin = xCoord - 4 - 1;
-					zMin = zCoord + 1;
-					break;
-				case ZNeg:
-					xMin = xCoord - 4 - 1;
-					zMin = zCoord - 9 - 2;
-					break;
-				}
+			switch (o) {
+			case XPos:
+				xMin = xCoord + 1;
+				zMin = zCoord - 4 - 1;
+				break;
+			case XNeg:
+				xMin = xCoord - 9 - 2;
+				zMin = zCoord - 4 - 1;
+				break;
+			case ZPos:
+				xMin = xCoord - 4 - 1;
+				zMin = zCoord + 1;
+				break;
+			case ZNeg:
+				xMin = xCoord - 4 - 1;
+				zMin = zCoord - 9 - 2;
+				break;
 			}
 		} else {
 			xMin = a.xMin();
 			zMin = a.zMin();
 		}
+		
+		a.removeFromWorld();
 	}
 	
 	private void initializeBluePrintBuilder () {
@@ -439,7 +464,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 					mod_BuildCraftFactory.frameBlock.blockID);
 		}
 		
-		bluePrintBuilder = new BluePrintBuilder(bluePrint, xMin, yCoord, zMin);
+		bluePrintBuilder = new BluePrintBuilder(bluePrint, xMin, yCoord, zMin);		
 	}
 
 }

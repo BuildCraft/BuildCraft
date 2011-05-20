@@ -16,6 +16,10 @@ public class BuildCraftCore {
 	public static Item ironGearItem;
 	public static Item goldGearItem;
 	public static Item diamondGearItem;
+	
+	public static int redLaserTexture;
+	public static int blueLaserTexture;
+	public static int stripesLaserTexture;
 
 	public static void initialize () {
 		if (initialized) {
@@ -77,6 +81,15 @@ public class BuildCraftCore {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");
+		
+		redLaserTexture = ModLoader.addOverride("/terrain.png",
+		"/net/minecraft/src/buildcraft/core/gui/red_laser.png");
+		blueLaserTexture = ModLoader.addOverride("/terrain.png",
+		"/net/minecraft/src/buildcraft/core/gui/blue_laser.png");
+		stripesLaserTexture = ModLoader.addOverride("/terrain.png",
+		"/net/minecraft/src/buildcraft/core/gui/stripes.png");
+
+
 		
 		Utils.saveProperties();
 	}
