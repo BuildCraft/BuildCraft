@@ -1,10 +1,11 @@
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IAreaProvider;
+import net.minecraft.src.buildcraft.core.Position;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileMarker extends TileEntity implements IAreaProvider {
 	
@@ -38,18 +39,30 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
 			signals = new EntityBlock [6];
 			if (origin == null || origin.vect [0] == null) {
-				signals [0] = createLaser(new Coord(xCoord, yCoord, zCoord), new Coord(xCoord + maxSize - 1, yCoord, zCoord), 1);
-				signals [1] = createLaser(new Coord(xCoord - maxSize + 1, yCoord, zCoord), new Coord(xCoord, yCoord, zCoord), 1);
+				signals[0] = Utils.createLaser(worldObj, new Position(xCoord,
+						yCoord, zCoord), new Position(xCoord + maxSize - 1,
+						yCoord, zCoord), 1);
+				signals[1] = Utils.createLaser(worldObj, new Position(xCoord
+						- maxSize + 1, yCoord, zCoord), new Position(xCoord,
+						yCoord, zCoord), 1);
 			}
 			
 			if (origin == null || origin.vect [1] == null) {
-				signals [2] = createLaser(new Coord(xCoord, yCoord, zCoord), new Coord(xCoord, yCoord + maxSize - 1, zCoord), 1);
-				signals [3] = createLaser(new Coord(xCoord, yCoord - maxSize + 1, zCoord), new Coord(xCoord, yCoord, zCoord), 1);
+				signals[2] = Utils.createLaser(worldObj, new Position(xCoord,
+						yCoord, zCoord), new Position(xCoord, yCoord + maxSize
+						- 1, zCoord), 1);
+				signals[3] = Utils.createLaser(worldObj, new Position(xCoord,
+						yCoord - maxSize + 1, zCoord), new Position(xCoord,
+						yCoord, zCoord), 1);
 			}
 			
 			if (origin == null || origin.vect [2] == null) {
-				signals [4] = createLaser(new Coord(xCoord, yCoord, zCoord), new Coord(xCoord, yCoord, zCoord + maxSize - 1), 1);
-				signals [5] = createLaser(new Coord(xCoord, yCoord, zCoord - maxSize + 1), new Coord(xCoord, yCoord, zCoord), 1);
+				signals[4] = Utils.createLaser(worldObj, new Position(xCoord,
+						yCoord, zCoord), new Position(xCoord, yCoord, zCoord
+						+ maxSize - 1), 1);
+				signals[5] = Utils.createLaser(worldObj, new Position(xCoord,
+						yCoord, zCoord - maxSize + 1), new Position(xCoord,
+						yCoord, zCoord), 1);
 			}
 		}
 	}
@@ -137,22 +150,7 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 
 		return true;
 	}
-	
-	class Coord {
-		double x, y, z;
 		
-		public Coord (double x, double y, double z) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-		
-		public boolean equals (Object o) {
-			return ((Coord) o).x == x && ((Coord) o).y == y
-					&& ((Coord) o).z == z;
-		}
-	}
-	
 	private void createLasers () {
 		if (lasers != null) {
 			for (EntityBlock entity : lasers) {
@@ -198,84 +196,10 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			o.zMax = origin.vect [2].zCoord;
 		}
 		
-		Coord [] p = new Coord [8];
-		
-		p [0] = new Coord(o.xMin, o.yMin, o.zMin);
-		p [1] = new Coord(o.xMax, o.yMin, o.zMin);
-		p [2] = new Coord(o.xMin, o.yMax, o.zMin);
-		p [3] = new Coord(o.xMax, o.yMax, o.zMin);
-		p [4] = new Coord(o.xMin, o.yMin, o.zMax);
-		p [5] = new Coord(o.xMax, o.yMin, o.zMax);
-		p [6] = new Coord(o.xMin, o.yMax, o.zMax);
-		p [7] = new Coord(o.xMax, o.yMax, o.zMax);
-		
-		lasers [0] = createLaser (p [0], p [1], 0);
-		lasers [1] = createLaser (p [0], p [2], 0);
-		lasers [2] = createLaser (p [2], p [3], 0);
-		lasers [3] = createLaser (p [1], p [3], 0);
-		lasers [4] = createLaser (p [4], p [5], 0);
-		lasers [5] = createLaser (p [4], p [6], 0);
-		lasers [6] = createLaser (p [5], p [7], 0);
-		lasers [7] = createLaser (p [6], p [7], 0);
-		lasers [8] = createLaser (p [0], p [4], 0);
-		lasers [9] = createLaser (p [1], p [5], 0);
-		lasers [10] = createLaser (p [2], p [6], 0);
-		lasers [11] = createLaser (p [3], p [7], 0);		
+		lasers = Utils.createLaserBox(worldObj, o.xMin, o.yMin, o.zMin, o.xMax,
+				o.yMax, o.zMax, 0);
 	}
 	
-	private EntityBlock createLaser (Coord p1, Coord p2, int color) {
-		if (p1.equals(p2)) {
-			return null;
-		}
-		
-		double iSize = p2.x - p1.x;
-		double jSize = p2.y - p1.y;
-		double kSize = p2.z - p1.z;
-		
-		double i = p1.x;
-		double j = p1.y;
-		double k = p1.z;
-		
-		if (iSize != 0) {
-			i += 0.5;
-			j += 0.45;
-			k += 0.45;
-			
-			jSize = 0.10;
-			kSize = 0.10;
-		} else if (jSize != 0) {			
-			i += 0.45;
-			j += 0.5;
-			k += 0.45;
-			
-			iSize = 0.10;
-			kSize = 0.10;
-		} else if (kSize != 0) {
-			i += 0.45;
-			j += 0.45;
-			k += 0.5;
-			
-			iSize = 0.10;
-			jSize = 0.10;
-		}
-		
-		int texture;
-		
-		if (color == 0) {
-			texture = mod_BuildCraftBuilders.redLaserTexture;
-		} else {
-			texture = mod_BuildCraftBuilders.blueLaserTexture;
-		}
-		
-		EntityBlock block = new EntityBlock(worldObj, i, j, k, iSize, jSize,
-				kSize, Block.bedrock.blockID,
-				texture);
-		
-		worldObj.entityJoinedWorld(block);
-		
-		return block;
-	}
-
 	@Override
 	public int xMin() {
 		if (origin != null) {
@@ -352,5 +276,18 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			
 			o.vectO.switchSignals();
 		}
+	}
+	
+	public void removeFromWorld () {
+		Origin o = origin;
+		
+		for (TileMarker m : o.vect) {
+			if (m != null) {
+				worldObj.setBlockWithNotify(m.xCoord, m.yCoord, m.zCoord, 0);
+			}
+		}
+		
+		worldObj.setBlockWithNotify(o.vectO.xCoord, o.vectO.yCoord,
+				o.vectO.zCoord, 0);
 	}
 }
