@@ -19,8 +19,8 @@ public class mod_BuildCraftBuilders extends BaseMod {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		markerBlock = new BlockMarker(Integer.parseInt(Utils
-				.getProperty("marker.blockId", "154")));
+		markerBlock = new BlockMarker(Utils.getSafeBlockId("marker.blockId",
+				154));
 		
 		ModLoader.RegisterBlock(markerBlock);
 		CoreProxy.addName(markerBlock.setBlockName("markerBlock"), "Marker");
