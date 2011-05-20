@@ -34,6 +34,8 @@ zip -r $dir/buildcraft-transport-$version.zip mod_BuildCraftTransport.class Buil
 
 zip -r $dir/buildcraft-factory-$version.zip mod_BuildCraftFactory.class buildcraft/factory net/minecraft/src/buildcraft/factory
 
+zip -r $dir/buildcraft-buiders-$version.zip mod_BuildCraftBuilders.class buildcraft/builders net/minecraft/src/buildcraft/builders
+
 zip -r $dir/buildcraft-devel-$version.zip mod_BuildCraftDevel.class buildcraft/devel
 
 
