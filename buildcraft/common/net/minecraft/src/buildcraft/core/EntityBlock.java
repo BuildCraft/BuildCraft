@@ -8,6 +8,7 @@ public class EntityBlock extends Entity {
 
 	public int blockID;
 	public int texture = -1;
+	public float shadowSize = 0;
 	
 	public double iSize, jSize, kSize;
 	
