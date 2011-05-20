@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
@@ -42,7 +43,7 @@ public class TileIronPipe extends TilePipe {
 			TileEntity tile = world.getBlockTileEntity((int) pos.i,
 					(int) pos.j, (int) pos.k);
 			
-			if (tile instanceof IPipeEntry || tile instanceof TileEntityChest) {
+			if (tile instanceof IPipeEntry || tile instanceof IInventory) {
 				world.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
 				return;
 			}
@@ -63,7 +64,7 @@ public class TileIronPipe extends TilePipe {
 			TileEntity tile = world.getBlockTileEntity((int) pos.i,
 					(int) pos.j, (int) pos.k);
 			
-			if (tile instanceof IPipeEntry || tile instanceof TileEntityChest) {
+			if (tile instanceof IPipeEntry || tile instanceof IInventory) {
 				return pos.orientation;
 			}
 		}
