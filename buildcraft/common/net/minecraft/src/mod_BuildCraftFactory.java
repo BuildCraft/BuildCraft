@@ -70,7 +70,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		ModLoader.RegisterBlock(machineBlock);
 		craftingmanager.addRecipe(
 				new ItemStack(machineBlock),
-				new Object[] { "ipi", "gdg", "dDd", 
+				new Object[] { "ipi", "gig", "dDd", 
 					Character.valueOf('i'), BuildCraftCore.ironGearItem,
 					Character.valueOf('p'),	BuildCraftTransport.diamondPipeBlock,
 					Character.valueOf('g'),	BuildCraftCore.goldGearItem,

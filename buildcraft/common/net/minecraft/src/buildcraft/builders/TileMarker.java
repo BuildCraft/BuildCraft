@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.core.EntityBlock;
@@ -67,8 +68,13 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 		}
 	}
 	
+	boolean init = false;
+	
 	public void updateEntity() {
-		
+		if (!init) {
+			switchSignals ();
+			init = true;
+		}
 	}
 	
 	public void tryConnection () {		
@@ -276,6 +282,14 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			
 			o.vectO.switchSignals();
 		}
+		
+		if (signals != null) {
+			for (EntityBlock b : signals) {
+				b.setEntityDead();
+			}
+		}
+		
+		signals = null;
 	}
 	
 	public void removeFromWorld () {
@@ -290,4 +304,17 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 		worldObj.setBlockWithNotify(o.vectO.xCoord, o.vectO.yCoord,
 				o.vectO.zCoord, 0);
 	}
+	
+	 public void readFromNBT(NBTTagCompound nbttagcompound) {
+		 super.readFromNBT(nbttagcompound);
+		 		 
+	 }
+
+	 public void writeToNBT(NBTTagCompound nbttagcompound) {
+		 super.writeToNBT(nbttagcompound);
+		 
+		 if (origin != null && origin.vectO == this) {
+			 
+		 }
+	 }
 }

@@ -175,8 +175,32 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		}
 		
 		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
-			for (int searchX = 0; searchX < bluePrintBuilder.bluePrint.sizeX - 2; ++searchX) {
-				for (int searchZ = 0; searchZ < bluePrintBuilder.bluePrint.sizeZ - 2; ++searchZ) {
+			int startX, endX, incX;
+			
+			if (searchY % 2 == 0) {
+				startX = 0;
+				endX = bluePrintBuilder.bluePrint.sizeX - 2;
+				incX = 1;
+			} else {
+				startX = bluePrintBuilder.bluePrint.sizeX - 3;
+				endX = -1;
+				incX = -1;
+			}
+			
+			for (int searchX = startX; searchX != endX; searchX += incX) {
+				int startZ, endZ, incZ;
+				
+				if (searchX % 2 == searchY % 2) {
+					startZ = 0;
+					endZ = bluePrintBuilder.bluePrint.sizeZ - 2;
+					incZ = 1;
+				} else {
+					startZ = bluePrintBuilder.bluePrint.sizeZ - 3;
+					endZ = -1;
+					incZ = -1;
+				}
+								
+				for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
 					if (!blockedColumns [searchX][searchZ]) {
 						int bx = xMin + searchX + 1, by = searchY, bz = zMin + searchZ + 1;
 						

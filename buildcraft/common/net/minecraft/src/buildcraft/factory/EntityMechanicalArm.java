@@ -69,6 +69,7 @@ public class EntityMechanicalArm extends Entity {
 		head = new EntityBlock(world, i, j, k, 0.2, 1, 0.2,
 				Block.blockDiamond.blockID);		
 		world.entityJoinedWorld(head);
+		head.shadowSize = 1.0F;
         		
 		updatePosition();
 	}
