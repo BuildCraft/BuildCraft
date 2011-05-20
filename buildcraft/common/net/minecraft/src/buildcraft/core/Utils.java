@@ -467,4 +467,32 @@ public class Utils {
 
     	return null;
     }
+    
+    /**
+     * Gets and id from the property file. If the id is not defined, will use
+     * the default, except is the default is already taken, in which case a
+     * free block id will be used.
+     */
+    public static int getSafeBlockId (String name, int defaultValue) {
+    	String val = props.getProperty(name, "deadbeef");
+    	
+    	if (val.equals("deadbeef")) {
+    		if (Block.blocksList [defaultValue] == null) {    			
+    			props.setProperty(name, Integer.toString(defaultValue));
+    			return defaultValue;
+    		} else {
+    			for (int j = Block.blocksList.length - 1; j >= 0; --j) {
+    				if (Block.blocksList [j] == null) {
+    					props.setProperty(name, Integer.toString(j));
+    					return j;
+    				}
+    			}
+    			
+				throw new RuntimeException("No more block ids available for "
+						+ name);
+    		}
+    	} else {
+    		return Integer.parseInt(val);
+    	}    	
+    }
 }
