@@ -32,7 +32,7 @@ public class mod_BuildCraftBuilders extends BaseMod {
 	@Override
 	public String Version() {
 		// TODO Auto-generated method stub
-		return "";
+		return "1.5_01.5";
 	}
 
 }
