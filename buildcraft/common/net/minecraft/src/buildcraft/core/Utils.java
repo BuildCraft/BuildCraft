@@ -315,6 +315,7 @@ public class Utils {
 		if (!addInEmpty) {
 			if (stack != null) {
 				if (stack.getItem() == items.getItem()
+						&& stack.getItemDamage() == items.getItemDamage()
 						&& stack.stackSize + items.stackSize <= stack
 						.getMaxStackSize()) {
 
