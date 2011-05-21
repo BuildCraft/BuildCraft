@@ -65,8 +65,6 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 	public LinkedList<Orientations> getPossibleMovements(Position pos,
 			EntityPassiveItem item) {
 		LinkedList<Orientations> result = new LinkedList<Orientations>();
-
-		boolean isIInventoryConnected = false;
 		
 		for (int o = 0; o <= 5; ++o) {
 			if (Orientations.values()[o] != pos.orientation.reverse()) {
@@ -79,19 +77,13 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 
 				if (entity instanceof IPipeEntry) {
 					result.add(newPos.orientation);
-				} else if (entity instanceof IInventory) {
-					isIInventoryConnected = true;
-					
+				} else if (entity instanceof IInventory) {			
 					if (Utils.checkAvailableSlot((IInventory) entity,
 							item.item, false, newPos.orientation.reverse())) {
 						result.add(newPos.orientation);
 					}
 				}
 			}
-		}
-		
-		if (isIInventoryConnected && result.size() == 0) {
-			result.add(pos.orientation.reverse());
 		}
 
 		return result;
