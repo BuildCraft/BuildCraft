@@ -55,8 +55,7 @@ public class TileIronPipe extends TilePipe {
 		
 		if (metadata != -1) {
 			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[metadata]);
-			
+					Orientations.values()[metadata]);			
 			
 			
 			pos.moveForwards(1.0);

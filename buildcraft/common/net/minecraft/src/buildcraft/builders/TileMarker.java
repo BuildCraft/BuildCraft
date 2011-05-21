@@ -12,7 +12,7 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	
 	private static int maxSize = 64;
 	
-	public class Origin {
+	private class Origin {
 		TileMarker vectO;
 		TileMarker [] vect = new TileMarker [3];
 		
@@ -70,9 +70,28 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	
 	boolean init = false;
 	
+	private Position initVectO, initVect []; 
+	
 	public void updateEntity() {
 		if (!init) {
 			switchSignals ();
+			
+			if (initVectO != null) {
+				origin = new Origin();
+				
+				origin.vectO = (TileMarker) worldObj
+						.getBlockTileEntity((int) initVectO.i,
+								(int) initVectO.j, (int) initVectO.k);
+				
+				for (int i = 0; i < 3; ++i) {
+					if (initVect [i] != null) {
+						linkTo((TileMarker) worldObj
+						.getBlockTileEntity((int) initVect [i].i,
+								(int) initVect [i].j, (int) initVect [i].k), i);
+					}
+				}
+			}
+			
 			init = true;
 		}
 	}
@@ -308,12 +327,35 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	 public void readFromNBT(NBTTagCompound nbttagcompound) {
 		 super.readFromNBT(nbttagcompound);
 		 		 
+		 if (nbttagcompound.hasKey("vectO")) {
+			 initVectO = new Position(nbttagcompound.getCompoundTag("vectO"));
+			 initVect = new Position [3];
+			 
+			 for (int i = 0; i < 3; ++i) {
+				 if (nbttagcompound.hasKey("vect" + i)) {
+					initVect[i] = new Position(
+							nbttagcompound.getCompoundTag("vect" + i));
+				 }
+			 }			  
+		 }
 	 }
 
 	 public void writeToNBT(NBTTagCompound nbttagcompound) {
 		 super.writeToNBT(nbttagcompound);
 		 
 		 if (origin != null && origin.vectO == this) {
+			 NBTTagCompound vectO = new NBTTagCompound();
+			 
+			 new Position (origin.vectO).writeToNBT(vectO);
+			 nbttagcompound.setTag("vectO", vectO);
+			 
+			 for (int i = 0; i < 3; ++i) {
+				 if (origin.vect [i] != null) {
+					 NBTTagCompound vect = new NBTTagCompound();
+					 new Position (origin.vect [i]).writeToNBT(vect);
+					 nbttagcompound.setTag("vect" + i, vect);
+				 }
+			 }			 
 			 
 		 }
 	 }

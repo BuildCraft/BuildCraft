@@ -1,5 +1,8 @@
 package net.minecraft.src.buildcraft.core;
 
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
+
 public class Position {
 	// FIXME: double is probably not the way to go here - we may have two 
 	// versions of this, for double and for int
@@ -25,6 +28,20 @@ public class Position {
 		j = p.j;
 		k = p.k;
 		orientation = p.orientation;
+	}
+	
+	public Position (NBTTagCompound nbttagcompound) {
+		i = nbttagcompound.getDouble("i");
+		j = nbttagcompound.getDouble("j");
+		k = nbttagcompound.getDouble("k");
+		
+		orientation = Orientations.Unknown;
+	}
+	
+	public Position (TileEntity tile) {
+		i = tile.xCoord;
+		j = tile.yCoord;
+		k = tile.zCoord;
 	}
 	
 	public void moveRight (double step) {
@@ -86,6 +103,12 @@ public class Position {
 	
 	public void moveDown (double step) {
 		moveUp (-step);
+	}
+	
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		nbttagcompound.setDouble("i", i);
+		nbttagcompound.setDouble("j", j);
+		nbttagcompound.setDouble("k", k);
 	}
 	
 }
