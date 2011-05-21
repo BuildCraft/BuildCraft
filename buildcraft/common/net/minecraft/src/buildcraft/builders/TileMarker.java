@@ -312,16 +312,28 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	}
 	
 	public void removeFromWorld () {
+		if (origin == null) {
+			return;
+		}
+		
 		Origin o = origin;
 		
 		for (TileMarker m : o.vect) {
 			if (m != null) {
 				worldObj.setBlockWithNotify(m.xCoord, m.yCoord, m.zCoord, 0);
+				
+				mod_BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
+						m.xCoord, m.yCoord, m.zCoord,
+						mod_BuildCraftBuilders.markerBlock.blockID);
 			}
 		}
 		
 		worldObj.setBlockWithNotify(o.vectO.xCoord, o.vectO.yCoord,
 				o.vectO.zCoord, 0);
+		
+		mod_BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
+				o.vectO.xCoord, o.vectO.yCoord, o.vectO.zCoord,
+				mod_BuildCraftBuilders.markerBlock.blockID);
 	}
 	
 	 public void readFromNBT(NBTTagCompound nbttagcompound) {

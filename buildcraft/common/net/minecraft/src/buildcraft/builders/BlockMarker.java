@@ -15,6 +15,8 @@ public class BlockMarker extends BlockContainer implements IPipeConnection {
 	public BlockMarker(int i) {
 		super(i, Material.iron);
 		
+		setHardness(0.5F);
+		
 		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
 		"/net/minecraft/src/buildcraft/builders/gui/marker.png");
 	}

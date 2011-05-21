@@ -450,6 +450,8 @@ public class Utils {
     	TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);
     	TileEntity a3 = world.getBlockTileEntity(i, j, k + 1);
     	TileEntity a4 = world.getBlockTileEntity(i, j, k - 1);
+    	TileEntity a5 = world.getBlockTileEntity(i, j + 1, k);
+    	TileEntity a6 = world.getBlockTileEntity(i, j - 1, k);
     	
     	if (a1 instanceof IAreaProvider) {
     		return (IAreaProvider) a1;
@@ -465,6 +467,14 @@ public class Utils {
 
     	if (a4 instanceof IAreaProvider) {
     		return (IAreaProvider) a4;
+    	}
+    	
+    	if (a5 instanceof IAreaProvider) {
+    		return (IAreaProvider) a5;
+    	}
+    	
+    	if (a6 instanceof IAreaProvider) {
+    		return (IAreaProvider) a6;
     	}
 
     	return null;
