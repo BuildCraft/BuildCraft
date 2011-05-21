@@ -1,7 +1,5 @@
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemBlock;
@@ -10,7 +8,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.core.Box;
-import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IAreaProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -25,27 +22,46 @@ public class TileFiller extends TileEntity implements IInventory {
     
     boolean init = false;
     
-    int lastTick = 0;
+    long lastTick = 0;
+    boolean lastPower = false;
     
 	public void updateEntity () {
-		if (worldObj.getWorldTime() - lastTick >= 20) { 
-			if (!init) {
-				init = true;
+		if (!init) {
+			init = true;
 
-				IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-						zCoord);
+			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
+					zCoord);
 
-				if (a != null) {
-					box = new Box (a);				
+			if (a != null) {
+				box = new Box (a);				
 
-					if (a instanceof TileMarker) {
-						((TileMarker) a).removeFromWorld();
-					}
-				}			
-			}
+				if (a instanceof TileMarker) {
+					((TileMarker) a).removeFromWorld();
+				}
+			}			
+		}
 
+		if (box != null) {
+			box.createLasers(worldObj, 2);
+		}
+	}
+	
+	public void checkPower () {
+		boolean power = worldObj.isBlockIndirectlyGettingPowered(xCoord,
+				yCoord, zCoord);
+		
+		if (power != lastPower) {
+			lastPower = power;
+			
+			work();
+		}
+	}
+	
+	private void work () {		
+		if (worldObj.getWorldTime() - lastTick >= 10) {
+			lastTick = worldObj.getWorldTime();
+			
 			if (box != null) {
-				box.createLasers(worldObj, 2);
 				
 				boolean found = false;
 				int xSlot = 0, ySlot = 0, zSlot = 0;
@@ -196,5 +212,13 @@ public class TileFiller extends TileEntity implements IInventory {
     }
     
     private ItemStack contents[];
+    
+    public void destroy () {
+    	if (box != null) {
+    		box.deleteLasers();    		
+    	}
+    	
+    	Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
+    }
 
 }

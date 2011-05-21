@@ -13,6 +13,8 @@ public class BlockFiller extends BlockContainer {
 	public BlockFiller(int i) {
 		super(i, Material.iron);
 		
+		setHardness(0.5F);
+		
 		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
 		"/net/minecraft/src/buildcraft/builders/gui/filler.png");
 	}
@@ -29,6 +31,19 @@ public class BlockFiller extends BlockContainer {
 	@Override
 	protected TileEntity getBlockEntity() {
 		return new TileFiller();
+	}
+	
+
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+    {
+    	((TileFiller) world.getBlockTileEntity(i, j, k)).checkPower();
+    }
+	
+	public void onBlockRemoval(World world, int i, int j, int k) {
+		
+		((TileFiller) world.getBlockTileEntity(i, j, k)).destroy();
+		
+		super.onBlockRemoval(world, i, j, k);
 	}
 
 }
