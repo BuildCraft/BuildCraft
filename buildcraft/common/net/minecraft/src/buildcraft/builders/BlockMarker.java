@@ -47,7 +47,7 @@ public class BlockMarker extends BlockContainer implements IPipeConnection {
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
     {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
-        return false;
+        return true;
     }
     
     public void onBlockRemoval(World world, int i, int j, int k)
