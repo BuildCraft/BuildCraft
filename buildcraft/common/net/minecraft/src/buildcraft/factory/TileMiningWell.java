@@ -10,6 +10,7 @@ import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Orientations;
+import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileMiningWell extends TileEntity implements IMachine {
@@ -75,7 +76,9 @@ public class TileMiningWell extends TileEntity implements IMachine {
 			return;
 		}
 		
-		if (Utils.addToRandomInventory(this, Orientations.Unknown, stack)) {
+		StackUtil stackUtil = new StackUtil(stack);
+		
+		if (stackUtil.addToRandomInventory(this, Orientations.Unknown)) {
 			//  The object has been added to a nearby chest.
 			return;
 		}

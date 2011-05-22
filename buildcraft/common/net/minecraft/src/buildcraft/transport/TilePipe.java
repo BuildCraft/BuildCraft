@@ -12,6 +12,7 @@ import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.Position;
+import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public abstract class TilePipe extends TileEntity implements IPipeEntry {
@@ -89,8 +90,8 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 		if (entity instanceof IPipeEntry) {
 			return true;
 		} else if (entity instanceof IInventory) {			
-			if (Utils.checkAvailableSlot((IInventory) entity,
-					item.item, false, p.orientation.reverse())) {
+			if (new StackUtil(item.item).checkAvailableSlot((IInventory) entity,
+					 false, p.orientation.reverse())) {
 				return true;
 			}
 		}
@@ -149,8 +150,9 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 					((IPipeEntry) tile).entityEntering(data.item,
 							data.orientation);
 				} else if (tile instanceof IInventory
-						&& (Utils.checkAvailableSlot((IInventory) tile,
-								data.item.item, true, destPos.orientation.reverse()))) {
+						&& (new StackUtil(data.item.item).checkAvailableSlot(
+								(IInventory) tile, true,
+								destPos.orientation.reverse()))) {
 					
 					data.item.setEntityDead();
 				} else {

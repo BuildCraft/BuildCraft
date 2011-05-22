@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.factory;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -16,6 +15,7 @@ import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IAreaProvider;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Orientations;
+import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileEntity implements IArmListener, IMachine {		
@@ -301,56 +301,44 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			
 			Block block = Block.blocksList[blockId];
 			
-			int idDropped = block.idDropped(worldObj.getBlockMetadata(i, j, k),
-					worldObj.rand);
+			ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(
+					worldObj, i, j, k);
 
-			if (idDropped <= Item.itemsList.length
-					&& Item.itemsList[idDropped] != null) {
+			if (stack != null) {
+				boolean added = false;
 
-				int itemQuantity = Block.blocksList[blockId]
-						.quantityDropped(worldObj.rand);
+				// First, try to add to a nearby chest
 
-				for (int q = 0; q < itemQuantity; ++q) {
-					boolean added = false;
+				StackUtil stackUtils = new StackUtil(stack);
+				
+				added = stackUtils.addToRandomInventory(this,
+						Orientations.Unknown);
 
-					ItemStack items = new ItemStack(idDropped, 1,
-							BuildCraftBlockUtil.damageDropped(worldObj,
-									(int) i, (int) j, (int) k));
-
-					// First, try to add to a nearby chest
-
-					added = Utils.addToRandomInventory(this,
-							Orientations.Unknown, items);
-
-					if (!added) {
-						added = Utils.addToRandomPipeEntry(this,
-								Orientations.Unknown, items);
-					}
-
-					// Last, throw the object away
-
-					if (!added) {
-						float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-						float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-						float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-
-						EntityItem entityitem = new EntityItem(worldObj,
-								(float) xCoord + f, (float) yCoord + f1 + 0.5F,
-								(float) zCoord + f2, new ItemStack(idDropped,
-										1, BuildCraftBlockUtil.damageDropped(
-												worldObj, (int) i, (int) j,
-												(int) k)));
-
-						float f3 = 0.05F;
-						entityitem.motionX = (float) worldObj.rand
-								.nextGaussian() * f3;
-						entityitem.motionY = (float) worldObj.rand
-								.nextGaussian() * f3 + 1.0F;
-						entityitem.motionZ = (float) worldObj.rand
-								.nextGaussian() * f3;
-						worldObj.entityJoinedWorld(entityitem);
-					}
+				if (!added) {
+					added = Utils.addToRandomPipeEntry(this,
+							Orientations.Unknown, stack);
 				}
+
+				// Last, throw the object away
+
+				if (!added) {
+					float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+					float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+					float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+
+					EntityItem entityitem = new EntityItem(worldObj,
+							(float) xCoord + f, (float) yCoord + f1 + 0.5F,
+							(float) zCoord + f2, stack);
+
+					float f3 = 0.05F;
+					entityitem.motionX = (float) worldObj.rand
+					.nextGaussian() * f3;
+					entityitem.motionY = (float) worldObj.rand
+					.nextGaussian() * f3 + 1.0F;
+					entityitem.motionZ = (float) worldObj.rand
+					.nextGaussian() * f3;
+					worldObj.entityJoinedWorld(entityitem);
+				}				
 			}
 					
 			worldObj.setBlockWithNotify((int) i, (int) j, (int) k, 0);
