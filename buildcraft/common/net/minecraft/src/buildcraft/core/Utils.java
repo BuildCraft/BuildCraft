@@ -345,11 +345,11 @@ public class Utils {
 				break;
 			
 			case Red:
-				texture = BuildCraftCore.stripesLaserTexture;
+				texture = BuildCraftCore.redLaserTexture;
 				break;
 				
 			case Stripes:
-				texture = BuildCraftCore.redLaserTexture;
+				texture = BuildCraftCore.stripesLaserTexture;
 				break;
 		}
 		
