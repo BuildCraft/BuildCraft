@@ -8,13 +8,14 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.LaserKind;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.Orientations;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -104,7 +105,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		if (lasers == null) {
 			lasers = Utils.createLaserBox(worldObj, xMin, yCoord, zMin,
 					xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1,
-					2);
+					LaserKind.Stripes);
 		}
 	}
 	

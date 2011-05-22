@@ -1,4 +1,4 @@
-package net.minecraft.src.buildcraft.core;
+package net.minecraft.src.buildcraft.api;
 
 public enum Orientations {
 	YNeg, // 0

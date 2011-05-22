@@ -1,11 +1,9 @@
-package net.minecraft.src.buildcraft.core;
+package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
 public class Position {
-	// FIXME: double is probably not the way to go here - we may have two 
-	// versions of this, for double and for int
 	public double i, j, k;
 	public Orientations orientation;
 	

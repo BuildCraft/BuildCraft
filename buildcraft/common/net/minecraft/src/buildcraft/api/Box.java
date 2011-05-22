@@ -1,15 +1,16 @@
-package net.minecraft.src.buildcraft.core;
+package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class Box {
 
 	public int xMin, yMin, zMin;
 	public int xMax, yMax, zMax;
 	
-	EntityBlock lasers [];
+	private EntityBlock lasers [];
 	
 	public Box (IAreaProvider area) {
 		xMin = area.xMin();
@@ -37,10 +38,10 @@ public class Box {
 		return new Position (xMax, yMax, zMax);
 	}
 	
-	public void createLasers (World world, int color) {
+	public void createLasers (World world, LaserKind kind) {
 		if (lasers == null) {
 			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax,
-					zMax, color);
+					zMax, kind);
 		}
 	}
 	

@@ -12,10 +12,10 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.TileEntityDispenser;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityPassiveItem;
-import net.minecraft.src.buildcraft.core.Orientations;
-import net.minecraft.src.buildcraft.core.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe {
