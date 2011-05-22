@@ -57,8 +57,8 @@ public class TileWoodenPipe extends TilePipe {
 					Orientations.values()[j]);
 			pos.moveForwards(1.0);
 			
-			TileEntity tile = w.getBlockTileEntity((int) pos.i, (int) pos.j,
-					(int) pos.k);
+			TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
+					(int) pos.z);
 			
 			if (tile instanceof IInventory) {
 				IInventory inventory = (IInventory) tile;
@@ -75,19 +75,19 @@ public class TileWoodenPipe extends TilePipe {
 		
 		Position chestPos = inventories.get(w.rand.nextInt(inventories.size()));
 		IInventory inventory = (IInventory) w.getBlockTileEntity(
-				(int) chestPos.i, (int) chestPos.j, (int) chestPos.k);
+				(int) chestPos.x, (int) chestPos.y, (int) chestPos.z);
 		
 		ItemStack stack = checkExtract(inventory, true,
 				chestPos.orientation.reverse());								
 		
-		Position entityPos = new Position(chestPos.i + 0.5, chestPos.j
-				+ Utils.getPipeFloorOf(stack), chestPos.k + 0.5,
+		Position entityPos = new Position(chestPos.x + 0.5, chestPos.y
+				+ Utils.getPipeFloorOf(stack), chestPos.z + 0.5,
 				chestPos.orientation.reverse());
 				
 		entityPos.moveForwards(0.5);
 		
-		EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.i,
-				entityPos.j, entityPos.k, stack);
+		EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
+				entityPos.y, entityPos.z, stack);
 		
 		w.entityJoinedWorld(entity);
 		entityEntering(entity, entityPos.orientation);		

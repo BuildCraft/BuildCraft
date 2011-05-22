@@ -84,8 +84,8 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 	
 	public boolean canReceivePipeObjects(Position p,
 			EntityPassiveItem item) {
-		TileEntity entity = world.getBlockTileEntity((int) p.i, (int) p.j,
-				(int) p.k);
+		TileEntity entity = world.getBlockTileEntity((int) p.x, (int) p.y,
+				(int) p.z);
 		
 		if (entity instanceof IPipeEntry) {
 			return true;
@@ -113,7 +113,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 			Position motion = new Position (0, 0, 0, data.orientation);
 			motion.moveForwards(data.item.speed);			
 						
-			data.item.moveEntity(motion.i, motion.j, motion.k);
+			data.item.moveEntity(motion.x, motion.y, motion.z);
 									
 			if (data.toCenter && middleReached(data)) {
 				data.toCenter = false;
@@ -143,8 +143,8 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 		    	
 				destPos.moveForwards(1.0);
 				
-				TileEntity tile = world.getBlockTileEntity((int) destPos.i,
-						(int) destPos.j, (int) destPos.k);
+				TileEntity tile = world.getBlockTileEntity((int) destPos.x,
+						(int) destPos.y, (int) destPos.z);
 				
 				if (tile instanceof IPipeEntry) {
 					((IPipeEntry) tile).entityEntering(data.item,
