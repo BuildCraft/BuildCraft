@@ -1,5 +1,7 @@
 package net.minecraft.src.buildcraft.core;
 
+import net.minecraft.src.buildcraft.api.IAreaProvider;
+
 public class DefaultAreaProvider implements IAreaProvider {
 
 	int xMin, yMin, zMin, xMax, yMax, zMax;

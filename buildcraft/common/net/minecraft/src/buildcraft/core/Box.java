@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IAreaProvider;
 
 public class Box {
 

@@ -7,8 +7,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.core.Box;
-import net.minecraft.src.buildcraft.core.IAreaProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileFiller extends TileEntity implements IInventory {
