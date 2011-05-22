@@ -1,5 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
+import java.util.LinkedList;
+
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -68,19 +70,17 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 
 	@Override
 	protected Orientations resolveDestination(EntityData data) {
-		Orientations lastLeakOrientation = Orientations.Unknown;
-		Orientations exit = Orientations.Unknown;
-				
-		for (int dir = 0; dir <= 5; ++dir) {
-			if (dir == data.orientation.reverse().ordinal()) {
-				//  Do noot root to origin
-				continue;
-			}
-
+		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
+		LinkedList<Orientations> exitOrientations = new LinkedList<Orientations>();
+		
+		LinkedList<Orientations> mvts = getPossibleMovements(new Position(
+				xCoord, yCoord, zCoord, data.orientation), data.item);
+						
+		for (Orientations dir : mvts) {
 			boolean foundFilter = false;
 
 			for (int slot = 0; slot < 9; ++slot) {
-				ItemStack stack = getStackInSlot(dir * 9 + slot);
+				ItemStack stack = getStackInSlot(dir.ordinal() * 9 + slot);
 
 				if (stack != null) {
 					foundFilter = true;
@@ -89,31 +89,30 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 				if (stack != null
 						&& stack.itemID == data.item.item.itemID
 						&& stack.getItemDamage() == data.item.item
-								.getItemDamage()) {					
-					exit = Orientations.values() [dir];
-				}
-			}
+								.getItemDamage()) {
 					
-			if (exit == Orientations.Unknown && !foundFilter) {								
-				Position pos = new Position (xCoord, yCoord, zCoord, Orientations.values() [dir]);
-				pos.moveForwards(1);
+					// NB: if there's several of the same match, the probability
+					// to use that filter is higher, this is why there's no
+					// break here.
+					exitOrientations.add(dir);
 
-				TileEntity tile = world.getBlockTileEntity((int) pos.i, (int) pos.j, (int) pos.k);
-
-				if (tile instanceof IPipeEntry) {
-					exit = pos.orientation;
-				} else if (world.getBlockId((int) pos.i, (int) pos.j, (int) pos.k) == 0) {
-					lastLeakOrientation = pos.orientation;
-				}
+				} 
 			}
-
-		}
-				
-		if (exit == Orientations.Unknown) {
-			exit = lastLeakOrientation;
-		}
+			
+			if (!foundFilter) {				
+				defaultOrientations.add(dir);
+			}
+		} 
 		
-		return exit;													
+		if (exitOrientations.size() != 0) {
+			return exitOrientations.get(world.rand.nextInt(exitOrientations
+					.size()));
+		} else if (defaultOrientations.size() != 0) {
+			return defaultOrientations.get(world.rand
+					.nextInt(defaultOrientations.size()));
+		} else {
+			return Orientations.Unknown; 
+		}
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

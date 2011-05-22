@@ -72,21 +72,30 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 				newPos.orientation = Orientations.values()[o];
 				newPos.moveForwards(1.0);
 
-				TileEntity entity = world.getBlockTileEntity((int) newPos.i,
-						(int) newPos.j, (int) newPos.k);
-
-				if (entity instanceof IPipeEntry) {
+				if (canReceivePipeObjects(newPos, item)) {
 					result.add(newPos.orientation);
-				} else if (entity instanceof IInventory) {			
-					if (Utils.checkAvailableSlot((IInventory) entity,
-							item.item, false, newPos.orientation.reverse())) {
-						result.add(newPos.orientation);
-					}
 				}
 			}
 		}
 
 		return result;
+	}
+	
+	public boolean canReceivePipeObjects(Position p,
+			EntityPassiveItem item) {
+		TileEntity entity = world.getBlockTileEntity((int) p.i, (int) p.j,
+				(int) p.k);
+		
+		if (entity instanceof IPipeEntry) {
+			return true;
+		} else if (entity instanceof IInventory) {			
+			if (Utils.checkAvailableSlot((IInventory) entity,
+					item.item, false, p.orientation.reverse())) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public void updateEntity() {		

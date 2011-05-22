@@ -37,7 +37,7 @@ public class mod_BuildCraftBuilders extends BaseMod {
 		ModLoader.RegisterTileEntity(TileMarker.class, "Marker");
 		ModLoader.RegisterTileEntity(TileFiller.class, "Filler");
 		
-
+		Utils.saveProperties();
 	}
 	
 	@Override
