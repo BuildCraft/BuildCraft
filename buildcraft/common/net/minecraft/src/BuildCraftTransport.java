@@ -6,10 +6,12 @@ import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.transport.BlockGoldenPipe;
 import net.minecraft.src.buildcraft.transport.BlockIronPipe;
 import net.minecraft.src.buildcraft.transport.BlockStonePipe;
+import net.minecraft.src.buildcraft.transport.BlockObsidianPipe;
 import net.minecraft.src.buildcraft.transport.BlockWoodenPipe;
 import net.minecraft.src.buildcraft.transport.TileDiamondPipe;
 import net.minecraft.src.buildcraft.transport.TileGoldenPipe;
 import net.minecraft.src.buildcraft.transport.TileIronPipe;
+import net.minecraft.src.buildcraft.transport.TileObsidianPipe;
 import net.minecraft.src.buildcraft.transport.TileStonePipe;
 import net.minecraft.src.buildcraft.transport.TileWoodenPipe;
 
@@ -22,6 +24,7 @@ public class BuildCraftTransport {
 	public static BlockIronPipe ironPipeBlock;
 	public static BlockGoldenPipe goldenPipeBlock;
 	public static BlockDiamondPipe diamondPipeBlock;
+	public static BlockObsidianPipe obsidianPipeBlock;
 	
 	public static int pipeModel;
 		
@@ -78,11 +81,20 @@ public class BuildCraftTransport {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.diamond,
 				Character.valueOf('G'), Block.glass});
 		
+		obsidianPipeBlock = new BlockObsidianPipe(Utils.getSafeBlockId(
+				"obsidianPipeBlock.blockId", 156));
+		CoreProxy.addName(obsidianPipeBlock.setBlockName("obsidianPipe"), "Obsidian Pipe");
+		ModLoader.RegisterBlock(obsidianPipeBlock);		
+		craftingmanager.addRecipe(new ItemStack(obsidianPipeBlock, 8), new Object[] {
+				"   ", "PGP", "   ", Character.valueOf('P'), Block.obsidian,
+				Character.valueOf('G'), Block.glass});
+		
 		ModLoader.RegisterTileEntity(TileWoodenPipe.class, "WoodenPipe");
 		ModLoader.RegisterTileEntity(TileStonePipe.class, "StonePipe");
 		ModLoader.RegisterTileEntity(TileIronPipe.class, "IronPipe");
 		ModLoader.RegisterTileEntity(TileGoldenPipe.class, "GoldenPipe");
 		ModLoader.RegisterTileEntity(TileDiamondPipe.class, "DiamondPipe");
+		ModLoader.RegisterTileEntity(TileObsidianPipe.class, "ObsidianPipe");
 		
 		plainIronTexture = ModLoader.addOverride("/terrain.png",
 		"/net/minecraft/src/buildcraft/transport/gui/plain_iron_pipe.png");

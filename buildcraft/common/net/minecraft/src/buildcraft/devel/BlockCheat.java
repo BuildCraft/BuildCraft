@@ -51,6 +51,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.planks, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreIron, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Block.obsidian, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.redstoneRepeater, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.torchRedstoneActive, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftFactory.miningWellBlock, 64));
@@ -59,6 +60,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.stonePipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.ironPipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.goldenPipeBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.obsidianPipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.diamondPipeBlock, 64));
 		}
 		
