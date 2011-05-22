@@ -48,8 +48,9 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     
     public void createUtilsIfNeeded () {
     	if (bluePrintBuilder == null) {
-    		setBoundaries();	    	
+    		setBoundaries(loadDefaultBoundaries);	    	
     		initializeBluePrintBuilder();
+    		bluePrintBuilder.findNextBlock(worldObj);
     	}
     	
     	if (bluePrintBuilder.done) {
@@ -84,6 +85,8 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	
 	boolean lastPower;
 	long lastWork = 0;
+
+	private boolean loadDefaultBoundaries = false;
 	
 	public void checkPower() {
 
@@ -241,13 +244,13 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			xSize = nbttagcompound.getInteger("xSize");
 			ySize = nbttagcompound.getInteger("ySize");
 			zSize = nbttagcompound.getInteger("zSize");
+			
+			loadDefaultBoundaries  = false;
 		} else {
 			// This is a legacy save, compute boundaries
 			
-			setBoundaries();
-		}
-		
-		initializeBluePrintBuilder();
+			loadDefaultBoundaries = true;
+		}				
 		
 		targetX = nbttagcompound.getInteger("targetX");
 		targetY = nbttagcompound.getInteger("targetY");
@@ -298,8 +301,6 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			lastWork = worldObj.getWorldTime();
 			
 			// Share this with mining well!			
-			
-			Block block = Block.blocksList[blockId];
 			
 			ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(
 					worldObj, i, j, k);
@@ -374,11 +375,13 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		return isDigging;
 	}
 	
-	private void setBoundaries () {
-		boolean useDefault = false;
+	private void setBoundaries (boolean useDefault) {
+		IAreaProvider a = null;
 		
-		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-				zCoord);	
+		if (!useDefault) {
+			a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
+				zCoord);
+		}
 		
 		if (a == null) {
 			a = new DefaultAreaProvider (1, 1, 1, 11, 5, 11);
