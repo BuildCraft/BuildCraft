@@ -29,14 +29,5 @@ public class BlockDiamondPipe extends BlockPipe {
 		TransportProxy.displayGUIFilter(entityplayer, tileRooter);
 		
 		return true;
-	}	
-	
-    public void onBlockRemoval(World world, int i, int j, int k) {    	
-		Utils.dropItems(world,
-				(IInventory) world.getBlockTileEntity(i, j, k), i, j, k);
-    	
-        super.onBlockRemoval(world, i, j, k);        
-    }
-    
-    
+	}	    
 }
