@@ -64,40 +64,70 @@ public class TileObsidianPipe extends TileStonePipe {
 	}
 	
 	private AxisAlignedBB getSuckingBox(int i, int j, int k, Orientations orientation)
-	{
-		int x = 0;
-		int y = 0;
-		int z = 0;
-		
-		if(orientation != Orientations.Unknown)
+	{		
+		if(orientation == Orientations.Unknown)
 		{
-			if(orientation == Orientations.XPos)
-			{
-				x = -1;
-			}
-			if(orientation == Orientations.XNeg)
-			{
-				x = 1;
-			}
-			if(orientation == Orientations.YPos)
-			{
-				y = -1;
-			}
-			if(orientation == Orientations.YNeg)
-			{
-				y = 1;
-			}
-			if(orientation == Orientations.ZPos)
-			{
-				z = -1;
-			}
-			if(orientation == Orientations.ZNeg)
-			{
-				z = 1;
-			}
-			return AxisAlignedBB.getBoundingBoxFromPool(i - x, j - y, k - z, (i - x) + 1, (j - y) + 1, (float)((k - z) + 1));
+			return null;
 		}
-		return null;
+		Position p1 = new Position(i, j, k, orientation);
+		Position p2 = new Position(i, j, k, orientation);
+
+		switch (orientation) {
+		case XPos:
+			p1.x += 1;
+			p2.x += 2;
+			break;
+		case XNeg:
+			p1.x += 0;
+			p2.x -= 1;
+			break;
+		case YPos:
+		case YNeg:
+			p1.x += 2;
+			p2.x -= 1;
+			p1.z += 2;
+			p2.z -= 1;
+			break;
+		case ZPos:
+			p1.z += 1;
+			p2.z += 2;
+			break;
+		case ZNeg:
+			p1.z += 0;
+			p2.z -= 1;
+			break;
+		}
+
+		switch (orientation) {
+		case XPos:
+		case XNeg:
+			p1.y += 2;
+			p2.y -= 1;
+			p1.z += 2;
+			p2.z -= 1;
+			break;
+		case YPos:
+			p1.y += 2;
+			p2.y += 1;
+			break;
+		case YNeg:
+			p1.y += 0;
+			p2.y -= 1;
+			break;
+		case ZPos:
+		case ZNeg:
+			p1.y += 2;
+			p2.y -= 1;
+			p1.x += 2;
+			p2.x -= 1;
+			break;
+		}
+
+		Position min = p1.min(p2);
+		Position max = p1.max(p2);
+
+		return AxisAlignedBB.getBoundingBoxFromPool(min.x, min.y, min.z, max.x,
+				max.y, max.z);	
 	}
 	
 	public void suckItems(World world, int i, int j, int k)
