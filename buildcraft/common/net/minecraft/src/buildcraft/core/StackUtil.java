@@ -41,8 +41,8 @@ public class StackUtil {
 			
 			pos.moveForwards(1.0);
 			
-			TileEntity tileInventory = w.getBlockTileEntity((int) pos.i,
-					(int) pos.j, (int) pos.k);
+			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x,
+					(int) pos.y, (int) pos.z);
 			
 			if (tileInventory instanceof IInventory
 					&& !(tileInventory instanceof IExcludedInventory)) {
@@ -61,8 +61,8 @@ public class StackUtil {
 			
 			pos.moveForwards(1.0);
 			
-			TileEntity tileInventory = w.getBlockTileEntity((int) pos.i,
-					(int) pos.j, (int) pos.k);
+			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x,
+					(int) pos.y, (int) pos.z);
 			
 			checkAvailableSlot((IInventory) tileInventory, true,
 					pos.orientation.reverse());

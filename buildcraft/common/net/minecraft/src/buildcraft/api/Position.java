@@ -4,57 +4,57 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
 public class Position {
-	public double i, j, k;
+	public double x, y, z;
 	public Orientations orientation;
 	
 	public Position (double ci, double cj, double ck) {
-		i = ci;
-		j = cj;
-		k = ck;
+		x = ci;
+		y = cj;
+		z = ck;
 		orientation = Orientations.Unknown;
 	}
 	
 	public Position (double ci, double cj, double ck, Orientations corientation) {
-		i = ci;
-		j = cj;
-		k = ck;
+		x = ci;
+		y = cj;
+		z = ck;
 		orientation = corientation;
 	}
 	
 	public Position (Position p) {
-		i = p.i;
-		j = p.j;
-		k = p.k;
+		x = p.x;
+		y = p.y;
+		z = p.z;
 		orientation = p.orientation;
 	}
 	
 	public Position (NBTTagCompound nbttagcompound) {
-		i = nbttagcompound.getDouble("i");
-		j = nbttagcompound.getDouble("j");
-		k = nbttagcompound.getDouble("k");
+		x = nbttagcompound.getDouble("i");
+		y = nbttagcompound.getDouble("j");
+		z = nbttagcompound.getDouble("k");
 		
 		orientation = Orientations.Unknown;
 	}
 	
 	public Position (TileEntity tile) {
-		i = tile.xCoord;
-		j = tile.yCoord;
-		k = tile.zCoord;
+		x = tile.xCoord;
+		y = tile.yCoord;
+		z = tile.zCoord;
 	}
 	
 	public void moveRight (double step) {
 		switch (orientation) {
 		case ZPos:
-			i = i - step;
+			x = x - step;
 			break;
 		case ZNeg:
-			i = i + step;    			
+			x = x + step;    			
 			break;
 		case XPos:
-			k = k + step;
+			z = z + step;
 			break;
 		case XNeg:
-			k = k - step;
+			z = z - step;
 			break;
 		}
 	}
@@ -66,22 +66,22 @@ public class Position {
 	public void moveForwards (double step) {
 		switch (orientation) {
 		case YPos:
-			j = j + step;
+			y = y + step;
 			break;
 		case YNeg:
-			j = j - step;
+			y = y - step;
 			break;
 		case ZPos:
-			k = k + step;
+			z = z + step;
 			break;
 		case ZNeg:
-			k = k - step;	
+			z = z - step;	
 			break;
 		case XPos:
-			i = i + step;
+			x = x + step;
 			break;		
 		case XNeg:
-			i = i - step;
+			x = x - step;
 			break;
 		}
 	}	
@@ -93,7 +93,7 @@ public class Position {
 	public void moveUp (double step) {
 		switch (orientation) {
 		case ZPos: case ZNeg: case XPos: case XNeg:
-			j = j + step;
+			y = y + step;
 			break;
 		}
 		
@@ -104,9 +104,9 @@ public class Position {
 	}
 	
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setDouble("i", i);
-		nbttagcompound.setDouble("j", j);
-		nbttagcompound.setDouble("k", k);
+		nbttagcompound.setDouble("i", x);
+		nbttagcompound.setDouble("j", y);
+		nbttagcompound.setDouble("k", z);
 	}
 	
 }

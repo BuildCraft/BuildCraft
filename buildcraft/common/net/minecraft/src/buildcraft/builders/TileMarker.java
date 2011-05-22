@@ -81,14 +81,14 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 				origin = new Origin();
 				
 				origin.vectO = (TileMarker) worldObj
-						.getBlockTileEntity((int) initVectO.i,
-								(int) initVectO.j, (int) initVectO.k);
+						.getBlockTileEntity((int) initVectO.x,
+								(int) initVectO.y, (int) initVectO.z);
 				
 				for (int i = 0; i < 3; ++i) {
 					if (initVect [i] != null) {
 						linkTo((TileMarker) worldObj
-						.getBlockTileEntity((int) initVect [i].i,
-								(int) initVect [i].j, (int) initVect [i].k), i);
+						.getBlockTileEntity((int) initVect [i].x,
+								(int) initVect [i].y, (int) initVect [i].z), i);
 					}
 				}
 			}

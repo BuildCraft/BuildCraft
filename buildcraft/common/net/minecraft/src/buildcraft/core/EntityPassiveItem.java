@@ -99,10 +99,10 @@ public class EntityPassiveItem extends Entity {
 				item);
 
 		float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
-		entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.i;
+		entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.x;
 		entityitem.motionY = (float) world.rand.nextGaussian() * f3
-				+ + motion.j;
-		entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.k;
+				+ + motion.y;
+		entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.z;
 		world.entityJoinedWorld(entityitem);
 		
 		return entityitem;

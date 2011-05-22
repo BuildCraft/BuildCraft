@@ -40,8 +40,8 @@ public class TileIronPipe extends TilePipe {
 					Orientations.values()[nextMetadata]);
 			pos.moveForwards(1.0);
 			
-			TileEntity tile = world.getBlockTileEntity((int) pos.i,
-					(int) pos.j, (int) pos.k);
+			TileEntity tile = world.getBlockTileEntity((int) pos.x,
+					(int) pos.y, (int) pos.z);
 			
 			if (tile instanceof IPipeEntry || tile instanceof IInventory) {
 				world.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
@@ -60,8 +60,8 @@ public class TileIronPipe extends TilePipe {
 			
 			pos.moveForwards(1.0);
 			
-			TileEntity tile = world.getBlockTileEntity((int) pos.i,
-					(int) pos.j, (int) pos.k);
+			TileEntity tile = world.getBlockTileEntity((int) pos.x,
+					(int) pos.y, (int) pos.z);
 			
 			if (tile instanceof IPipeEntry || tile instanceof IInventory) {
 				return pos.orientation;

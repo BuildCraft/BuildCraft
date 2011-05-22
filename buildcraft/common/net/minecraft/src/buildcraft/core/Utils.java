@@ -43,8 +43,8 @@ public class Utils {
 	}
 	
 	public static Orientations get2dOrientation (Position pos1, Position pos2) {
-		double Dx = pos1.i - pos2.i;
-    	double Dz = pos1.k - pos2.k;
+		double Dx = pos1.x - pos2.x;
+    	double Dz = pos1.z - pos2.z;
     	double angle = Math.atan2(Dz, Dx) / Math.PI * 180 + 180;    	
     	
     	if (angle < 45 || angle > 315) {
@@ -59,8 +59,8 @@ public class Utils {
 	}	
 	
 	public static Orientations get3dOrientation (Position pos1, Position pos2) {
-		double Dx = pos1.i - pos2.i;
-    	double Dy = pos1.j - pos2.j;
+		double Dx = pos1.x - pos2.x;
+    	double Dy = pos1.y - pos2.y;
     	double angle = Math.atan2(Dy, Dx) / Math.PI * 180 + 180;
     	
     	if (angle > 45 && angle < 135) {
@@ -94,8 +94,8 @@ public class Utils {
 			
 			pos.moveForwards(1.0);
 			
-			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.i,
-					(int) pos.j, (int) pos.k);
+			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x,
+					(int) pos.y, (int) pos.z);
 			
 			if (pipeEntry instanceof IPipeEntry) {
 				possiblePipes.add(Orientations.values()[j]);
@@ -110,19 +110,19 @@ public class Utils {
 			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
 					possiblePipes.get(choice));
 			
-			entityPos.i += 0.5;
-			entityPos.j += getPipeFloorOf(items);
-			entityPos.k += 0.5;
+			entityPos.x += 0.5;
+			entityPos.y += getPipeFloorOf(items);
+			entityPos.z += 0.5;
 			
 			entityPos.moveForwards(0.5);
 			
 			pipePos.moveForwards(1.0);
 			
 			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity(
-					(int) pipePos.i, (int) pipePos.j, (int) pipePos.k);
+					(int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
 			
-			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.i,
-					entityPos.j, entityPos.k, items);
+			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
+					entityPos.y, entityPos.z, items);
 			
 			w.entityJoinedWorld(entity);
 			pipeEntry.entityEntering(entity, entityPos.orientation);
@@ -210,7 +210,7 @@ public class Utils {
     	tmp.orientation = step;
     	tmp.moveForwards(1.0);
     	
-		return world.getBlockTileEntity((int) tmp.i, (int) tmp.j, (int) tmp.k);    	
+		return world.getBlockTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);    	
     }
     
     public static TileEntityChest getNearbyChest (TileEntityChest chest) {
@@ -306,13 +306,13 @@ public class Utils {
 			return null;
 		}
 		
-		double iSize = p2.i - p1.i;
-		double jSize = p2.j - p1.j;
-		double kSize = p2.k - p1.k;
+		double iSize = p2.x - p1.x;
+		double jSize = p2.y - p1.y;
+		double kSize = p2.z - p1.z;
 		
-		double i = p1.i;
-		double j = p1.j;
-		double k = p1.k;
+		double i = p1.x;
+		double j = p1.y;
+		double k = p1.z;
 		
 		if (iSize != 0) {
 			i += 0.5;
