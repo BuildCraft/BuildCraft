@@ -109,4 +109,18 @@ public class Position {
 		nbttagcompound.setDouble("k", z);
 	}
 	
+	public String toString () {
+		return "{" + x + ", " + y + ", " + z + "}";
+	}
+	
+	public Position min (Position p) {
+		return new Position(p.x > x ? x : p.x, p.y > y ? y : p.y, p.z > z ? z
+				: p.z);
+	}
+	
+	public Position max (Position p) {
+		return new Position(p.x < x ? x : p.x, p.y < y ? y : p.y, p.z < z ? z
+				: p.z);
+	}
+	
 }
