@@ -14,7 +14,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
-import net.minecraft.src.TileEntityDispenser;
 import net.minecraft.src.World;
 
 public class Utils {
