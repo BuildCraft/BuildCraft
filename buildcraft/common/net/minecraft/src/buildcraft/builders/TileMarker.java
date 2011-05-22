@@ -4,8 +4,9 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.LaserKind;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.EntityBlock;
-import net.minecraft.src.buildcraft.core.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileMarker extends TileEntity implements IAreaProvider {
@@ -42,28 +43,28 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			if (origin == null || origin.vect [0] == null) {
 				signals[0] = Utils.createLaser(worldObj, new Position(xCoord,
 						yCoord, zCoord), new Position(xCoord + maxSize - 1,
-						yCoord, zCoord), 1);
+						yCoord, zCoord), LaserKind.Blue);
 				signals[1] = Utils.createLaser(worldObj, new Position(xCoord
 						- maxSize + 1, yCoord, zCoord), new Position(xCoord,
-						yCoord, zCoord), 1);
+						yCoord, zCoord), LaserKind.Blue);
 			}
 			
 			if (origin == null || origin.vect [1] == null) {
 				signals[2] = Utils.createLaser(worldObj, new Position(xCoord,
 						yCoord, zCoord), new Position(xCoord, yCoord + maxSize
-						- 1, zCoord), 1);
+						- 1, zCoord), LaserKind.Blue);
 				signals[3] = Utils.createLaser(worldObj, new Position(xCoord,
 						yCoord - maxSize + 1, zCoord), new Position(xCoord,
-						yCoord, zCoord), 1);
+						yCoord, zCoord), LaserKind.Blue);
 			}
 			
 			if (origin == null || origin.vect [2] == null) {
 				signals[4] = Utils.createLaser(worldObj, new Position(xCoord,
 						yCoord, zCoord), new Position(xCoord, yCoord, zCoord
-						+ maxSize - 1), 1);
+						+ maxSize - 1), LaserKind.Blue);
 				signals[5] = Utils.createLaser(worldObj, new Position(xCoord,
 						yCoord, zCoord - maxSize + 1), new Position(xCoord,
-						yCoord, zCoord), 1);
+						yCoord, zCoord), LaserKind.Blue);
 			}
 		}
 	}
@@ -222,7 +223,7 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 		}
 		
 		lasers = Utils.createLaserBox(worldObj, o.xMin, o.yMin, o.zMin, o.xMax,
-				o.yMax, o.zMax, 0);
+				o.yMax, o.zMax, LaserKind.Red);
 	}
 	
 	@Override

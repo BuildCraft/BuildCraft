@@ -2,8 +2,8 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.buildcraft.core.Orientations;
-import net.minecraft.src.buildcraft.core.Position;
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 
 public class TileStonePipe extends TilePipe {
 	
