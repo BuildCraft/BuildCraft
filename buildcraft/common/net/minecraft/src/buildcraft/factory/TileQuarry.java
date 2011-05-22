@@ -52,8 +52,6 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     		initializeBluePrintBuilder();
     	}
     	
-    	bluePrintBuilder.findNextBlock(worldObj);    	    	
-    	
     	if (bluePrintBuilder.done) {
     		deleteLasers ();
     		
@@ -127,6 +125,12 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	    if (bluePrintBuilder == null) {
 	    	return;
 	    }
+	    
+    	if (bluePrintBuilder.done && bluePrintBuilder.findNextBlock(worldObj) != null) {
+    		// In this case, the Quarry has been broken. Repair it.
+    		bluePrintBuilder.done = false;
+    		createLasers();
+    	}
 	    
 		if (!bluePrintBuilder.done) {			
 			lastWork = worldObj.getWorldTime();
@@ -290,8 +294,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		
 		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
 		
-		if (canDig(blockId)) {			
-			System.out.println ("CAN DIG");
+		if (canDig(blockId)) {
 			lastWork = worldObj.getWorldTime();
 			
 			// Share this with mining well!			
