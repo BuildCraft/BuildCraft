@@ -298,7 +298,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			
 			Block block = Block.blocksList[blockId];
 			
-			int idDropped = block.idDropped(blockId,
+			int idDropped = block.idDropped(worldObj.getBlockMetadata(i, j, k),
 					worldObj.rand);
 
 			if (idDropped <= Item.itemsList.length

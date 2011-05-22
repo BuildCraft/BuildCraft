@@ -32,7 +32,6 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.glass, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.chest, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.workbench, 64));
-			
 		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.redstone, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotIron, 64));
