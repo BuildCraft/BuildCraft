@@ -8,10 +8,10 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IPipeConnection;
+import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.IPipeConnection;
-import net.minecraft.src.buildcraft.core.IPipeEntry;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public abstract class BlockPipe extends BlockContainer implements IPipeConnection {

@@ -8,6 +8,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IAutomaticWorkbench;
+import net.minecraft.src.buildcraft.api.IPipeIgnoreInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 
@@ -45,7 +46,7 @@ public class StackUtil {
 					(int) pos.y, (int) pos.z);
 			
 			if (tileInventory instanceof IInventory
-					&& !(tileInventory instanceof IExcludedInventory)) {
+					&& !(tileInventory instanceof IPipeIgnoreInventory)) {
 				if (checkAvailableSlot((IInventory) tileInventory,
 						false, pos.orientation.reverse())) {
 					possibleInventories.add(pos.orientation);

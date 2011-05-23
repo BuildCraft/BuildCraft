@@ -2,8 +2,8 @@ package net.minecraft.src;
 
 import java.util.Map;
 
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.EntityBlock;
-import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 
 public class mod_BuildCraftCore extends BaseMod {	
