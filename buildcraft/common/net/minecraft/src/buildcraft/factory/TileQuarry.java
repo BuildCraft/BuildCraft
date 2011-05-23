@@ -28,8 +28,8 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	
 	EntityMechanicalArm arm;
 	
-	private int xMin, zMin;
-	private int xSize, ySize, zSize;
+	private int xMin = -1, zMin = -1;
+	private int xSize = -1, ySize = -1, zSize = -1;
 	
 	boolean loadArm = false;
 	
@@ -49,7 +49,10 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     
     public void createUtilsIfNeeded () {
     	if (bluePrintBuilder == null) {
-    		setBoundaries(loadDefaultBoundaries);	    	
+    		if (xSize == -1) {
+    			setBoundaries(loadDefaultBoundaries);
+    		}
+    		
     		initializeBluePrintBuilder();
     		bluePrintBuilder.findNextBlock(worldObj);
     	}
@@ -246,7 +249,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			ySize = nbttagcompound.getInteger("ySize");
 			zSize = nbttagcompound.getInteger("zSize");
 			
-			loadDefaultBoundaries  = false;
+			loadDefaultBoundaries = false;
 		} else {
 			// This is a legacy save, compute boundaries
 			
