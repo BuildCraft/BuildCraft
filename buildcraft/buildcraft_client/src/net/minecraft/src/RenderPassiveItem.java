@@ -8,7 +8,7 @@ import java.util.Random;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.Render;
-import net.minecraft.src.buildcraft.core.EntityPassiveItem;
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 
 import org.lwjgl.opengl.GL11;
 

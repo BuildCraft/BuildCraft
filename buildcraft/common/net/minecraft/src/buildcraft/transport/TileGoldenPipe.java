@@ -1,7 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileGoldenPipe extends TileStonePipe {

@@ -1,4 +1,4 @@
-package net.minecraft.src.buildcraft.core;
+package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -6,8 +6,6 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
 
 public class EntityPassiveItem extends Entity {
 
@@ -24,18 +22,15 @@ public class EntityPassiveItem extends Entity {
 		super (world);
 	}
 	
-    public EntityPassiveItem(World world, double d, double d1, double d2, 
-            ItemStack itemstack) {
-    	this (world);
-    	this.item = itemstack;
-    	
-		 setSize(0.25F, 0.25F);
-		 setPosition(d, d1, d2);
+	public EntityPassiveItem(World world, double d, double d1, double d2, 
+			ItemStack itemstack) {
+		this (world);
+		this.item = itemstack;
 
-    	//  super (world, d, d1, d2, itemstack);
-    	
-    	//  CoreProxy.setField804(this, 0);
-    	noClip = true;
+		setSize(0.25F, 0.25F);
+		setPosition(d, d1, d2);
+
+		noClip = true;
     }
 
 	@Override

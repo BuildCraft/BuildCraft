@@ -2,8 +2,8 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.IPipeConnection;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class mod_BuildCraftTransport extends BaseMod {

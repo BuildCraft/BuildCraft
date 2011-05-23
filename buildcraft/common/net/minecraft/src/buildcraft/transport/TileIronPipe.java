@@ -3,10 +3,10 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.IPipeEntry;
 
 public class TileIronPipe extends TilePipe {
 

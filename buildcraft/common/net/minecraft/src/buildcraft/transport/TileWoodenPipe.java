@@ -12,10 +12,11 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.TileEntityDispenser;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
+import net.minecraft.src.buildcraft.api.IPipeIgnoreInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe {
@@ -99,7 +100,7 @@ public class TileWoodenPipe extends TilePipe {
 	 * on the position of the pipe.
 	 */
 	public ItemStack checkExtract (IInventory inventory, boolean doRemove, Orientations from) {
-		if (inventory instanceof TileDiamondPipe) {
+		if (inventory instanceof IPipeIgnoreInventory) {
 			return null;
 		}
 		
