@@ -7,13 +7,13 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.buildcraft.api.IPipeIgnoreInventory;
+import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileDiamondPipe extends TilePipe implements IInventory,
-		IPipeIgnoreInventory {
+		ISpecialInventory {
 	
 	ItemStack [] items = new ItemStack [54];
 	
@@ -147,4 +147,14 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
     	
 		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
     }
+
+	@Override
+	public boolean addItemFromPipe(ItemStack stack, boolean doAdd) {
+		return false;
+	}
+
+	@Override
+	public ItemStack extractItemToPipe(boolean doRemove) {
+		return null;
+	}
 }

@@ -1,15 +1,18 @@
 package net.minecraft.src.buildcraft.factory;
 
+import net.minecraft.src.Container;
+import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
+import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.IAutomaticWorkbench;
+import net.minecraft.src.buildcraft.api.ISpecialInventory;
+import net.minecraft.src.buildcraft.core.StackUtil;
 
-public class TileAutoWorkbench extends TileEntity implements IInventory,
-		IAutomaticWorkbench {
+public class TileAutoWorkbench extends TileEntity implements
+		ISpecialInventory {
 
 	private ItemStack stackList[];
 	
@@ -103,5 +106,79 @@ public class TileAutoWorkbench extends TileEntity implements IInventory,
     	}
     	
     	nbttagcompound.setTag("stackList", nbttaglist);
+	}
+
+	@Override
+	public boolean addItemFromPipe(ItemStack stack, boolean doAdd) {
+		StackUtil stackUtils = new StackUtil(stack);
+		
+		int minSimilar = Integer.MAX_VALUE;
+		int minSlot = -1;
+		
+		for (int j = 0; j < getSizeInventory(); ++j) {
+			ItemStack stackItem = getStackInSlot(j);
+			
+			if (stackItem != null && stackItem.stackSize > 0
+					&& stackItem.itemID == stackItem.itemID
+					&& stackItem.getItemDamage() == stackItem.getItemDamage()
+					&& stackItem.stackSize < minSimilar) {
+				minSimilar = stackItem.stackSize;
+				minSlot = j;
+			}								
+		}
+		
+		if (minSlot != 0) {
+			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
+				if (doAdd && stack.stackSize != 0) {
+					addItemFromPipe(stack, doAdd);
+				}
+				
+				return true;				
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public ItemStack extractItemToPipe(boolean doRemove) {
+		InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
+			@SuppressWarnings("all")
+			public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+				return false;
+			}
+
+			@SuppressWarnings("all")
+			public boolean canInteractWith(EntityPlayer entityplayer) {
+				// TODO Auto-generated method stub
+				return false;
+			}}, 3, 3);	
+
+		for (int i = 0; i < getSizeInventory(); ++i) {
+			ItemStack stack = getStackInSlot(i);
+
+			if (stack != null && stack.stackSize == 1) {
+				return null;
+			}
+
+			craftMatrix.setInventorySlotContents(i, stack);
+		}
+
+		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(
+				craftMatrix);
+
+		if (resultStack != null && doRemove) {
+			for (int i = 0; i < getSizeInventory(); ++i) {
+				ItemStack stack = getStackInSlot(i);
+
+				if (stack != null) {
+					decrStackSize(i, 1);
+				}
+			}
+		}
+
+		return resultStack;
 	}
 }
