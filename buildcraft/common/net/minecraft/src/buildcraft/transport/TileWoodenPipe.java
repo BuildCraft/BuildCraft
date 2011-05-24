@@ -13,10 +13,11 @@ import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.TileEntityDispenser;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
-import net.minecraft.src.buildcraft.api.IPipeIgnoreInventory;
+import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe {
@@ -100,8 +101,8 @@ public class TileWoodenPipe extends TilePipe {
 	 * on the position of the pipe.
 	 */
 	public ItemStack checkExtract (IInventory inventory, boolean doRemove, Orientations from) {
-		if (inventory instanceof IPipeIgnoreInventory) {
-			return null;
+		if (inventory instanceof ISpecialInventory) {
+			return ((ISpecialInventory) inventory).extractItemToPipe(doRemove);
 		}
 		
 		if (inventory.getSizeInventory() == 3) {
@@ -126,50 +127,6 @@ public class TileWoodenPipe extends TilePipe {
 					return slot;
 				}			
 			}	
-		} else if (inventory.getSizeInventory() == 9
-				&& !(inventory instanceof TileEntityDispenser)) {
-			// This is a workbench inventory
-			
-			// Do only craft if there's at least two items of each, to keep
-			// the template.
-			
-
-			InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
-				@SuppressWarnings("all")
-				public boolean isUsableByPlayer(EntityPlayer entityplayer) {
-					return false;
-				}
-
-				@SuppressWarnings("all")
-				public boolean canInteractWith(EntityPlayer entityplayer) {
-					// TODO Auto-generated method stub
-					return false;
-				}}, 3, 3);	
-			
-			for (int i = 0; i < inventory.getSizeInventory(); ++i) {
-				ItemStack stack = inventory.getStackInSlot(i);
-				
-				if (stack != null && stack.stackSize == 1) {
-					return null;
-				}
-				
-				craftMatrix.setInventorySlotContents(i, stack);
-			}
-			
-			ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(
-					craftMatrix);
-			
-			if (resultStack != null && doRemove) {
-				for (int i = 0; i < inventory.getSizeInventory(); ++i) {
-					ItemStack stack = inventory.getStackInSlot(i);
-					
-					if (stack != null) {
-						inventory.decrStackSize(i, 1);
-					}
-				}
-			}
-			
-			return resultStack;
 		} else {
 			// This is a generic inventory
 			

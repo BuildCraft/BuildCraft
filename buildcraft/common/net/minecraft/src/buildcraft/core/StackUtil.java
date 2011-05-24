@@ -7,8 +7,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IAutomaticWorkbench;
-import net.minecraft.src.buildcraft.api.IPipeIgnoreInventory;
+import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 
@@ -45,8 +44,13 @@ public class StackUtil {
 			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x,
 					(int) pos.y, (int) pos.z);
 			
-			if (tileInventory instanceof IInventory
-					&& !(tileInventory instanceof IPipeIgnoreInventory)) {
+			if (tileInventory instanceof ISpecialInventory) {
+				if (((ISpecialInventory) tileInventory).addItemFromPipe(items,
+						false)) {
+					possibleInventories.add(pos.orientation);
+				}
+			}
+			if (tileInventory instanceof IInventory) {
 				if (checkAvailableSlot((IInventory) tileInventory,
 						false, pos.orientation.reverse())) {
 					possibleInventories.add(pos.orientation);
@@ -88,6 +92,10 @@ public class StackUtil {
 			Orientations from) {
 		// First, look for a similar pile
 		
+		if (inventory instanceof ISpecialInventory) {
+			return ((ISpecialInventory) inventory).addItemFromPipe(items, add);
+		}
+		
 		boolean added = false;
 		
 		if (inventory.getSizeInventory() == 3) {
@@ -103,28 +111,6 @@ public class StackUtil {
 				}
 			}
 			
-		} else if (inventory instanceof IAutomaticWorkbench) {
-			//  This is a workbench inventory. Try to add to the smallest slot
-			//  that contains the expected item.
-			
-			int minSimilar = Integer.MAX_VALUE;
-			int minSlot = 0;
-			
-			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-				ItemStack stack = inventory.getStackInSlot(j);
-				
-				if (stack != null && stack.stackSize > 0
-						&& stack.itemID == items.itemID
-						&& stack.getItemDamage() == items.getItemDamage()
-						&& stack.stackSize < minSimilar) {
-					minSimilar = stack.stackSize;
-					minSlot = j;
-				}								
-			}
-			
-			if (tryAdding (inventory, minSlot, add, false)) {
-				added = true;
-			}
 		} else {
 			//  This is a generic inventory
 			
@@ -156,7 +142,9 @@ public class StackUtil {
 			} else if (items.stackSize == 0) {
 				return true;
 			} else {
-				return checkAvailableSlot(inventory, added, from);
+				checkAvailableSlot(inventory, added, from);
+				
+				return true;
 			}
 		}
 		
@@ -175,10 +163,6 @@ public class StackUtil {
 				}
 			}
 			
-		} else if (inventory instanceof IAutomaticWorkbench) {
-			//  In the case of a workbench inventory, don't do anything
-			
-			return false;
 		} else {
 			//  This is a generic inventory
 			
@@ -212,7 +196,8 @@ public class StackUtil {
 			} else if (items.stackSize == 0) {
 				return true;
 			} else {
-				return checkAvailableSlot(inventory, added, from);
+				checkAvailableSlot(inventory, added, from);
+				return true;
 			}
 		} else {
 			return false;
@@ -227,7 +212,7 @@ public class StackUtil {
 	 * 
 	 * This will add one item at a time, and decrease the items member.
 	 */
-	private boolean tryAdding(IInventory inventory,
+	public boolean tryAdding(IInventory inventory,
 			int stackIndex, boolean doAdd, boolean addInEmpty)
 	{
 		ItemStack stack = inventory.getStackInSlot(stackIndex);
