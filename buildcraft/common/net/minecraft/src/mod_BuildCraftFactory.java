@@ -10,6 +10,8 @@ import net.minecraft.src.buildcraft.factory.BlockFrame;
 import net.minecraft.src.buildcraft.factory.BlockQuarry;
 import net.minecraft.src.buildcraft.factory.BlockMiningWell;
 import net.minecraft.src.buildcraft.factory.BlockPlainPipe;
+import net.minecraft.src.buildcraft.factory.EntityModel;
+import net.minecraft.src.buildcraft.factory.RenderMiningWell;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
@@ -87,7 +89,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		drillTexture = ModLoader.addOverride("/terrain.png",
 			"/net/minecraft/src/buildcraft/factory/gui/drill.png");
 		
-		Utils.saveProperties();
+		Utils.saveProperties();	
 	}
 		
 	@Override
@@ -95,9 +97,14 @@ public class mod_BuildCraftFactory extends BaseMod {
 		return "1.5_01.5";
 	}
 	    
+	RenderMiningWell renderMiningWell = new RenderMiningWell();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void AddRenderer(Map map) {
-    	map.put (EntityMechanicalArm.class, new RenderVoid());    	
+    	map.put (EntityMechanicalArm.class, new RenderVoid());    
+    	
+    	map.put (EntityModel.class, renderMiningWell);
+		mod_BuildCraftCore.blockByEntityRenders.put(miningWellBlock,
+				renderMiningWell);
     }
 }

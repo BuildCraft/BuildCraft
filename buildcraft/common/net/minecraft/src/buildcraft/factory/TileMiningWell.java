@@ -19,8 +19,22 @@ public class TileMiningWell extends TileEntity implements IMachine {
 	boolean lastPower = false;
 	boolean isDigging = true;
 	
+	EntityModel model = null;
+	
 	public TileMiningWell () {
 		
+	}
+	
+	boolean init = false;
+	
+	public void updateEntity() {
+		if (!init) {
+			 model = new EntityModel(worldObj, xCoord, yCoord,
+					zCoord);
+			worldObj.entityJoinedWorld(model);
+			
+			init = true;
+		}
 	}
 	
 	public void checkPower () {
@@ -109,6 +123,12 @@ public class TileMiningWell extends TileEntity implements IMachine {
 	@Override
 	public boolean isActive() {
 		return isDigging;
+	}
+	
+	public void destroy () {
+		if (model != null) {
+			model.setEntityDead();
+		}
 	}
 
 }
