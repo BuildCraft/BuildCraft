@@ -5,6 +5,11 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
+/**
+ * TO BE REMOVED FROM THE API!!! Dependencies on core. Provide an IBox interface
+ * instead, created from an area provider.
+ *
+ */
 public class Box {
 
 	public int xMin, yMin, zMin;

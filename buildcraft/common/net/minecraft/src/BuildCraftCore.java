@@ -20,7 +20,10 @@ public class BuildCraftCore {
 	public static int redLaserTexture;
 	public static int blueLaserTexture;
 	public static int stripesLaserTexture;
-
+	public static int transparentTexture;
+	
+	public static int blockByEntityModel;
+	
 	public static void initialize () {
 		if (initialized) {
 			return;
@@ -88,9 +91,16 @@ public class BuildCraftCore {
 		"/net/minecraft/src/buildcraft/core/gui/blue_laser.png");
 		stripesLaserTexture = ModLoader.addOverride("/terrain.png",
 		"/net/minecraft/src/buildcraft/core/gui/stripes.png");
-
+		transparentTexture = ModLoader.addOverride("/terrain.png",
+		"/net/minecraft/src/buildcraft/core/gui/transparent.png");
 
 		
 		Utils.saveProperties();
 	}
+	
+	
+	public static void initializeModel (BaseMod mod) {
+		 blockByEntityModel = ModLoader.getUniqueBlockModelID(mod, true);
+	}
+	
 }
