@@ -25,8 +25,6 @@ public class BuildCraftTransport {
 	public static BlockGoldenPipe goldenPipeBlock;
 	public static BlockDiamondPipe diamondPipeBlock;
 	public static BlockObsidianPipe obsidianPipeBlock;
-	
-	public static int pipeModel;
 		
 	public static int plainIronTexture;
 	public static int [] diamondTextures = new int [6];
@@ -104,12 +102,7 @@ public class BuildCraftTransport {
 		
 		Utils.saveProperties();
 
-	}
-	
-	public static void initializeModel (BaseMod mod) {
-		pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
-	}
-	
+	}	
 
 	public static void ModsLoaded () {
 		mod_BuildCraftCore.initialize();

@@ -4,7 +4,7 @@ import java.util.Random;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
@@ -38,7 +38,7 @@ public class BlockFrame extends Block implements IPipeConnection {
     
     public int getRenderType()
     {
-        return BuildCraftTransport.pipeModel;
+        return BuildCraftCore.pipeModel;
     }
     
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)

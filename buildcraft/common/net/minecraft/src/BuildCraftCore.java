@@ -10,6 +10,7 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class BuildCraftCore {
 	private static boolean initialized = false;
+	private static boolean gearsInitialized = false;
 	
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
@@ -24,6 +25,7 @@ public class BuildCraftCore {
 	
 	public static int customTextureModel;
 	public static int blockByEntityModel;
+	public static int pipeModel;
 	
 	public static void initialize () {
 		if (initialized) {
@@ -32,6 +34,21 @@ public class BuildCraftCore {
 		
 		initialized = true;
 		Utils.loadProperties();
+		
+		redLaserTexture = 0 * 16 + 2;
+		blueLaserTexture = 0 * 16 + 1;
+		stripesLaserTexture = 0 * 16 + 3;
+		transparentTexture = 0 * 16 + 0;
+
+		
+	}
+	
+	public static void initializeGears () {
+		if (gearsInitialized) {
+			return;
+		}
+		
+		gearsInitialized = true;
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
@@ -85,13 +102,7 @@ public class BuildCraftCore {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");
-		
-		redLaserTexture = 0 * 16 + 2;
-		blueLaserTexture = 0 * 16 + 1;
-		stripesLaserTexture = 0 * 16 + 3;
-		transparentTexture = 0 * 16 + 0;
 
-		
 		Utils.saveProperties();
 	}
 	
@@ -99,6 +110,7 @@ public class BuildCraftCore {
 	public static void initializeModel (BaseMod mod) {
 		 blockByEntityModel = ModLoader.getUniqueBlockModelID(mod, true);
 		 customTextureModel = ModLoader.getUniqueBlockModelID(mod, true);
+		 pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 	}
 	
 }

@@ -2,7 +2,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
@@ -24,7 +24,7 @@ public abstract class BlockPipe extends BlockContainer implements IPipeConnectio
 	
     public int getRenderType()
     {
-        return BuildCraftTransport.pipeModel;
+        return BuildCraftCore.pipeModel;
     }
     
     public boolean isOpaqueCube()

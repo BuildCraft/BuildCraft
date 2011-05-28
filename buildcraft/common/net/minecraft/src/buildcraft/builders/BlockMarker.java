@@ -1,7 +1,7 @@
 package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
@@ -21,7 +21,7 @@ public class BlockMarker extends BlockContainer implements IPipeConnection {
 	
     public int getRenderType()
     {
-        return BuildCraftTransport.pipeModel;
+        return BuildCraftCore.pipeModel;
     }
     
     public boolean isOpaqueCube()

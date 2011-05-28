@@ -30,6 +30,7 @@ public class BlockCheat extends BlockChest {
 				|| world.getBlockId(i, j, k + 1) == blockID) {
 
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.pickaxeDiamond, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.pickaxeSteel, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.torchWood, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.glass, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.chest, 64));
@@ -40,9 +41,11 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.ironGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.stoneGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.woodenGearItem, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.diamondGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreIron, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.obsidian, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.dyePowder, 64, 4));
 		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.redstone, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotIron, 64));
