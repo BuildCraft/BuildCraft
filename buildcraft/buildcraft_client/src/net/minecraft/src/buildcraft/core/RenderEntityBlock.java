@@ -3,19 +3,13 @@ package net.minecraft.src.buildcraft.core;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BlockStationary;
-import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.Render;
-import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.World;
 
 public class RenderEntityBlock extends Render {
-
-    private RenderBlocks blockRender;
 
     private class BlockInterface {
         public double minX;
@@ -46,7 +40,6 @@ public class RenderEntityBlock extends Render {
     
     
     public RenderEntityBlock () {
-    	blockRender = new RenderBlocks();    
     }
 	
 	@Override
@@ -58,7 +51,7 @@ public class RenderEntityBlock extends Render {
 	public void doRenderBlock(EntityBlock entity, double i, double j, double k) {		
 		shadowSize = entity.shadowSize;
 		World world = entity.worldObj;
-		blockRender.blockAccess = ModLoader.getMinecraftInstance().theWorld;
+//		blockRender.blockAccess = ModLoader.getMinecraftInstance().theWorld;
 		BlockInterface util = new BlockInterface(); 
 		util.texture = entity.texture;
 		
@@ -160,10 +153,7 @@ public class RenderEntityBlock extends Render {
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
-	        if(blockRender.overrideBlockTexture >= 0)
-	        {
-	            i = blockRender.overrideBlockTexture;
-	        }
+
 	        int j = (i & 0xf) << 4;
 	        int k = i & 0xf0;
 	        double d3 = ((double)j + block.minX * 16D) / 256D;
@@ -185,33 +175,18 @@ public class RenderEntityBlock extends Render {
 	        double d9 = d1 + block.minY;
 	        double d10 = d2 + block.minZ;
 	        double d11 = d2 + block.maxZ;
-	        if(blockRender.enableAO)
-	        {
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopLeft, blockRender.colorGreenTopLeft, blockRender.colorBlueTopLeft);
-	            tessellator.addVertexWithUV(d7, d9, d11, d3, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomLeft, blockRender.colorGreenBottomLeft, blockRender.colorBlueBottomLeft);
-	            tessellator.addVertexWithUV(d7, d9, d10, d3, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomRight, blockRender.colorGreenBottomRight, blockRender.colorBlueBottomRight);
-	            tessellator.addVertexWithUV(d8, d9, d10, d4, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopRight, blockRender.colorGreenTopRight, blockRender.colorBlueTopRight);
-	            tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
-	        } else
-	        {
-	            tessellator.addVertexWithUV(d7, d9, d11, d3, d6);
-	            tessellator.addVertexWithUV(d7, d9, d10, d3, d5);
-	            tessellator.addVertexWithUV(d8, d9, d10, d4, d5);
-	            tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
-	        }
+
+	        tessellator.addVertexWithUV(d7, d9, d11, d3, d6);
+	        tessellator.addVertexWithUV(d7, d9, d10, d3, d5);
+	        tessellator.addVertexWithUV(d8, d9, d10, d4, d5);
+	        tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
 	    }
 
 	    public void renderTopFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
-	        if(blockRender.overrideBlockTexture >= 0)
-	        {
-	            i = blockRender.overrideBlockTexture;
-	        }
+
 	        int j = (i & 0xf) << 4;
 	        int k = i & 0xf0;
 	        double d3 = ((double)j + block.minX * 16D) / 256D;
@@ -233,23 +208,11 @@ public class RenderEntityBlock extends Render {
 	        double d9 = d1 + block.maxY;
 	        double d10 = d2 + block.minZ;
 	        double d11 = d2 + block.maxZ;
-	        if(blockRender.enableAO)
-	        {
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopLeft, blockRender.colorGreenTopLeft, blockRender.colorBlueTopLeft);
-	            tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomLeft, blockRender.colorGreenBottomLeft, blockRender.colorBlueBottomLeft);
-	            tessellator.addVertexWithUV(d8, d9, d10, d4, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomRight, blockRender.colorGreenBottomRight, blockRender.colorBlueBottomRight);
-	            tessellator.addVertexWithUV(d7, d9, d10, d3, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopRight, blockRender.colorGreenTopRight, blockRender.colorBlueTopRight);
-	            tessellator.addVertexWithUV(d7, d9, d11, d3, d6);
-	        } else
-	        {
-	            tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
-	            tessellator.addVertexWithUV(d8, d9, d10, d4, d5);
-	            tessellator.addVertexWithUV(d7, d9, d10, d3, d5);
-	            tessellator.addVertexWithUV(d7, d9, d11, d3, d6);
-	        }
+
+	        tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
+	        tessellator.addVertexWithUV(d8, d9, d10, d4, d5);
+	        tessellator.addVertexWithUV(d7, d9, d10, d3, d5);
+	        tessellator.addVertexWithUV(d7, d9, d11, d3, d6);
 	    }
 
 	    
@@ -257,22 +220,14 @@ public class RenderEntityBlock extends Render {
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
-	        if(blockRender.overrideBlockTexture >= 0)
-	        {
-	            i = blockRender.overrideBlockTexture;
-	        }
+
 	        int j = (i & 0xf) << 4;
 	        int k = i & 0xf0;
 	        double d3 = ((double)j + block.minX * 16D) / 256D;
 	        double d4 = (((double)j + block.maxX * 16D) - 0.01D) / 256D;
 	        double d5 = ((double)k + block.minY * 16D) / 256D;
 	        double d6 = (((double)k + block.maxY * 16D) - 0.01D) / 256D;
-	        if(blockRender.flipTexture)
-	        {
-	            double d7 = d3;
-	            d3 = d4;
-	            d4 = d7;
-	        }
+
 	        if(block.minX < 0.0D || block.maxX > 1.0D)
 	        {
 	            d3 = ((float)j + 0.0F) / 256F;
@@ -288,45 +243,25 @@ public class RenderEntityBlock extends Render {
 	        double d10 = d1 + block.minY;
 	        double d11 = d1 + block.maxY;
 	        double d12 = d2 + block.minZ;
-	        if(blockRender.enableAO)
-	        {
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopLeft, blockRender.colorGreenTopLeft, blockRender.colorBlueTopLeft);
-	            tessellator.addVertexWithUV(d8, d11, d12, d4, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomLeft, blockRender.colorGreenBottomLeft, blockRender.colorBlueBottomLeft);
-	            tessellator.addVertexWithUV(d9, d11, d12, d3, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomRight, blockRender.colorGreenBottomRight, blockRender.colorBlueBottomRight);
-	            tessellator.addVertexWithUV(d9, d10, d12, d3, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopRight, blockRender.colorGreenTopRight, blockRender.colorBlueTopRight);
-	            tessellator.addVertexWithUV(d8, d10, d12, d4, d6);
-	        } else
-	        {
-	            tessellator.addVertexWithUV(d8, d11, d12, d4, d5);
-	            tessellator.addVertexWithUV(d9, d11, d12, d3, d5);
-	            tessellator.addVertexWithUV(d9, d10, d12, d3, d6);
-	            tessellator.addVertexWithUV(d8, d10, d12, d4, d6);
-	        }
+
+	        tessellator.addVertexWithUV(d8, d11, d12, d4, d5);
+	        tessellator.addVertexWithUV(d9, d11, d12, d3, d5);
+	        tessellator.addVertexWithUV(d9, d10, d12, d3, d6);
+	        tessellator.addVertexWithUV(d8, d10, d12, d4, d6);
 	    }
 
 	    public void renderWestFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
-	        if(blockRender.overrideBlockTexture >= 0)
-	        {
-	            i = blockRender.overrideBlockTexture;
-	        }
+
 	        int j = (i & 0xf) << 4;
 	        int k = i & 0xf0;
 	        double d3 = ((double)j + block.minX * 16D) / 256D;
 	        double d4 = (((double)j + block.maxX * 16D) - 0.01D) / 256D;
 	        double d5 = ((double)k + block.minY * 16D) / 256D;
 	        double d6 = (((double)k + block.maxY * 16D) - 0.01D) / 256D;
-	        if(blockRender.flipTexture)
-	        {
-	            double d7 = d3;
-	            d3 = d4;
-	            d4 = d7;
-	        }
+
 	        if(block.minX < 0.0D || block.maxX > 1.0D)
 	        {
 	            d3 = ((float)j + 0.0F) / 256F;
@@ -342,45 +277,25 @@ public class RenderEntityBlock extends Render {
 	        double d10 = d1 + block.minY;
 	        double d11 = d1 + block.maxY;
 	        double d12 = d2 + block.maxZ;
-	        if(blockRender.enableAO)
-	        {
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopLeft, blockRender.colorGreenTopLeft, blockRender.colorBlueTopLeft);
-	            tessellator.addVertexWithUV(d8, d11, d12, d3, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomLeft, blockRender.colorGreenBottomLeft, blockRender.colorBlueBottomLeft);
-	            tessellator.addVertexWithUV(d8, d10, d12, d3, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomRight, blockRender.colorGreenBottomRight, blockRender.colorBlueBottomRight);
-	            tessellator.addVertexWithUV(d9, d10, d12, d4, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopRight, blockRender.colorGreenTopRight, blockRender.colorBlueTopRight);
-	            tessellator.addVertexWithUV(d9, d11, d12, d4, d5);
-	        } else
-	        {
-	            tessellator.addVertexWithUV(d8, d11, d12, d3, d5);
-	            tessellator.addVertexWithUV(d8, d10, d12, d3, d6);
-	            tessellator.addVertexWithUV(d9, d10, d12, d4, d6);
-	            tessellator.addVertexWithUV(d9, d11, d12, d4, d5);
-	        }
+
+	        tessellator.addVertexWithUV(d8, d11, d12, d3, d5);
+	        tessellator.addVertexWithUV(d8, d10, d12, d3, d6);
+	        tessellator.addVertexWithUV(d9, d10, d12, d4, d6);
+	        tessellator.addVertexWithUV(d9, d11, d12, d4, d5);
 	    }
 
 	    public void renderNorthFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
-	        if(blockRender.overrideBlockTexture >= 0)
-	        {
-	            i = blockRender.overrideBlockTexture;
-	        }
+
 	        int j = (i & 0xf) << 4;
 	        int k = i & 0xf0;
 	        double d3 = ((double)j + block.minZ * 16D) / 256D;
 	        double d4 = (((double)j + block.maxZ * 16D) - 0.01D) / 256D;
 	        double d5 = ((double)k + block.minY * 16D) / 256D;
 	        double d6 = (((double)k + block.maxY * 16D) - 0.01D) / 256D;
-	        if(blockRender.flipTexture)
-	        {
-	            double d7 = d3;
-	            d3 = d4;
-	            d4 = d7;
-	        }
+
 	        if(block.minZ < 0.0D || block.maxZ > 1.0D)
 	        {
 	            d3 = ((float)j + 0.0F) / 256F;
@@ -396,45 +311,25 @@ public class RenderEntityBlock extends Render {
 	        double d10 = d1 + block.maxY;
 	        double d11 = d2 + block.minZ;
 	        double d12 = d2 + block.maxZ;
-	        if(blockRender.enableAO)
-	        {
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopLeft, blockRender.colorGreenTopLeft, blockRender.colorBlueTopLeft);
-	            tessellator.addVertexWithUV(d8, d10, d12, d4, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomLeft, blockRender.colorGreenBottomLeft, blockRender.colorBlueBottomLeft);
-	            tessellator.addVertexWithUV(d8, d10, d11, d3, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomRight, blockRender.colorGreenBottomRight, blockRender.colorBlueBottomRight);
-	            tessellator.addVertexWithUV(d8, d9, d11, d3, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopRight, blockRender.colorGreenTopRight, blockRender.colorBlueTopRight);
-	            tessellator.addVertexWithUV(d8, d9, d12, d4, d6);
-	        } else
-	        {
-	            tessellator.addVertexWithUV(d8, d10, d12, d4, d5);
-	            tessellator.addVertexWithUV(d8, d10, d11, d3, d5);
-	            tessellator.addVertexWithUV(d8, d9, d11, d3, d6);
-	            tessellator.addVertexWithUV(d8, d9, d12, d4, d6);
-	        }
+	       
+	        tessellator.addVertexWithUV(d8, d10, d12, d4, d5);
+	        tessellator.addVertexWithUV(d8, d10, d11, d3, d5);
+	        tessellator.addVertexWithUV(d8, d9, d11, d3, d6);
+	        tessellator.addVertexWithUV(d8, d9, d12, d4, d6);	        
 	    }
 
 	    public void renderSouthFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
-	        if(blockRender.overrideBlockTexture >= 0)
-	        {
-	            i = blockRender.overrideBlockTexture;
-	        }
+
 	        int j = (i & 0xf) << 4;
 	        int k = i & 0xf0;
 	        double d3 = ((double)j + block.minZ * 16D) / 256D;
 	        double d4 = (((double)j + block.maxZ * 16D) - 0.01D) / 256D;
 	        double d5 = ((double)k + block.minY * 16D) / 256D;
 	        double d6 = (((double)k + block.maxY * 16D) - 0.01D) / 256D;
-	        if(blockRender.flipTexture)
-	        {
-	            double d7 = d3;
-	            d3 = d4;
-	            d4 = d7;
-	        }
+
 	        if(block.minZ < 0.0D || block.maxZ > 1.0D)
 	        {
 	            d3 = ((float)j + 0.0F) / 256F;
@@ -450,23 +345,11 @@ public class RenderEntityBlock extends Render {
 	        double d10 = d1 + block.maxY;
 	        double d11 = d2 + block.minZ;
 	        double d12 = d2 + block.maxZ;
-	        if(blockRender.enableAO)
-	        {
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopLeft, blockRender.colorGreenTopLeft, blockRender.colorBlueTopLeft);
-	            tessellator.addVertexWithUV(d8, d9, d12, d3, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomLeft, blockRender.colorGreenBottomLeft, blockRender.colorBlueBottomLeft);
-	            tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
-	            tessellator.setColorOpaque_F(blockRender.colorRedBottomRight, blockRender.colorGreenBottomRight, blockRender.colorBlueBottomRight);
-	            tessellator.addVertexWithUV(d8, d10, d11, d4, d5);
-	            tessellator.setColorOpaque_F(blockRender.colorRedTopRight, blockRender.colorGreenTopRight, blockRender.colorBlueTopRight);
-	            tessellator.addVertexWithUV(d8, d10, d12, d3, d5);
-	        } else
-	        {
-	            tessellator.addVertexWithUV(d8, d9, d12, d3, d6);
-	            tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
-	            tessellator.addVertexWithUV(d8, d10, d11, d4, d5);
-	            tessellator.addVertexWithUV(d8, d10, d12, d3, d5);
-	        }
+
+	        tessellator.addVertexWithUV(d8, d9, d12, d3, d6);
+	        tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
+	        tessellator.addVertexWithUV(d8, d10, d11, d4, d5);
+	        tessellator.addVertexWithUV(d8, d10, d12, d3, d5);
 	    }
 
 }
