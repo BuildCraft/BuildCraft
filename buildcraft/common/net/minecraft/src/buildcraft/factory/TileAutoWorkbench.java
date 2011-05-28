@@ -127,13 +127,13 @@ public class TileAutoWorkbench extends TileEntity implements
 			}								
 		}
 		
-		if (minSlot != 0) {
-			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
+		if (minSlot != -1) {
+			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {			
 				if (doAdd && stack.stackSize != 0) {
 					addItemFromPipe(stack, doAdd);
 				}
 				
-				return true;				
+				return true;
 			} else {
 				return false;
 			}

@@ -54,7 +54,7 @@ public class BlockQuarry extends BlockMachineRoot {
     		world.setBlockTileEntity(i, j, k, tile);
     	}
     	
-		tile.work();
+		tile.tryWork();
     	
         return false;
     }

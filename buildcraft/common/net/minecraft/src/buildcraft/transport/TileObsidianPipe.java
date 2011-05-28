@@ -36,7 +36,7 @@ public class TileObsidianPipe extends TileStonePipe {
 			newPos.orientation = Orientations.values()[o];
 			newPos.moveForwards(1.0);
 			
-			TileEntity entity = world.getBlockTileEntity((int) newPos.x,
+			TileEntity entity = worldObj.getBlockTileEntity((int) newPos.x,
 						(int) newPos.y, (int) newPos.z);
 						
 			if(entity instanceof IPipeEntry || entity instanceof IInventory)

@@ -4,60 +4,28 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
+import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMiningWell extends TileEntity implements IMachine {
-	
-	long lastMining = 0;
-	boolean lastPower = false;
+public class TileMiningWell extends TileCurrentPowered implements IMachine {
 	boolean isDigging = true;
 	
 	EntityModel model = null;
 	
 	public TileMiningWell () {
-		
-	}
-	
-	boolean init = false;
-	
-	public void updateEntity() {
-		if (!init) {
-//			 model = new EntityModel(worldObj, xCoord, yCoord,
-//					zCoord);
-//			worldObj.entityJoinedWorld(model);
-			
-			init = true;
-		}
-	}
-	
-	public void checkPower () {
-		World w = CoreProxy.getWorld();
-		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);		
-		if (lastPower != currentPower) {
-			dig ();
-		}
-		
-		lastPower = currentPower;
+		latency = 50;
 	}
 	
 	/** Dig the next available piece of land if not done. As soon as it 
 	 * reaches bedrock, lava or goes below 0, it's considered done.
 	 */
-	public void dig () {						
-		World w = CoreProxy.getWorld();
-		
-		if (w.getWorldTime() - lastMining < 50) {
-			return;
-		}
-		
-		lastMining = w.getWorldTime();
+	public void doWork () {						
+		World w = worldObj;
 		
 		int depth = yCoord - 1;
 		

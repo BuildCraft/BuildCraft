@@ -6,102 +6,82 @@ import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileFiller extends TileEntity implements IInventory {
+public class TileFiller extends TileCurrentPowered implements IInventory {
 
-	Box box;
+	private Box box;
 
-    public TileFiller()
-    {
+    public TileFiller() {
+    	latency = 10;
+    	
         contents = new ItemStack[36];
     }
     
-    boolean init = false;
+    public void initialize () {
+    	IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
+				zCoord);
+
+		if (a != null) {
+			box = new Box (a);				
+
+			if (a instanceof TileMarker) {
+				((TileMarker) a).removeFromWorld();
+			}
+		}			
+    }
     
-    long lastTick = 0;
-    boolean lastPower = false;
-    
-	public void updateEntity () {
-		if (!init) {
-			init = true;
-
-			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-					zCoord);
-
-			if (a != null) {
-				box = new Box (a);				
-
-				if (a instanceof TileMarker) {
-					((TileMarker) a).removeFromWorld();
-				}
-			}			
-		}
-
+	public void updateEntity () {		
+		super.updateEntity();
+		
 		if (box != null) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 	}
 	
-	public void checkPower () {
-		boolean power = worldObj.isBlockIndirectlyGettingPowered(xCoord,
-				yCoord, zCoord);
-		
-		if (power != lastPower) {
-			lastPower = power;
-			
-			work();
-		}
-	}
-	
-	private void work () {		
-		if (worldObj.getWorldTime() - lastTick >= 10) {
-			lastTick = worldObj.getWorldTime();
-			
-			if (box != null) {
-				
-				boolean found = false;
-				int xSlot = 0, ySlot = 0, zSlot = 0;
-				
-				for (int y = box.yMin; y <= box.yMax && !found; ++y) {
-					for (int x = box.xMin; x <= box.xMax && !found; ++x) {
-						for (int z = box.zMin; z <= box.zMax && !found; ++z) {
-							if (worldObj.getBlockId(x, y, z) == 0) {
-								xSlot = x;
-								ySlot = y;
-								zSlot = z;
-								
-								found = true;
-							}
-						}
-					}
-				}
-				
-				if (found) {
-					for (int s = 0; s < getSizeInventory(); ++s) {
-						if (getStackInSlot(s) != null
-								&& getStackInSlot(s).stackSize > 0
-								&& getStackInSlot(s).getItem() instanceof ItemBlock) {
-							
-							ItemStack stack = decrStackSize(s, 1);
-							stack.getItem().onItemUse(stack, null, worldObj,
-									xSlot, ySlot + 1, zSlot, 0);
+	protected void doWork () {					
+		if (box != null) {
 
-													
-							break;
+			boolean found = false;
+			int xSlot = 0, ySlot = 0, zSlot = 0;
+
+			for (int y = box.yMin; y <= box.yMax && !found; ++y) {
+				for (int x = box.xMin; x <= box.xMax && !found; ++x) {
+					for (int z = box.zMin; z <= box.zMax && !found; ++z) {
+						if (worldObj.getBlockId(x, y, z) == 0) {
+							xSlot = x;
+							ySlot = y;
+							zSlot = z;
+
+							found = true;
 						}
 					}
-				} else {
-					box.deleteLasers();
-					box = null;
 				}
 			}
+
+			if (found) {
+				for (int s = 0; s < getSizeInventory(); ++s) {
+					if (getStackInSlot(s) != null
+							&& getStackInSlot(s).stackSize > 0
+							&& getStackInSlot(s).getItem() instanceof ItemBlock) {
+
+						ItemStack stack = decrStackSize(s, 1);
+						stack.getItem().onItemUse(stack, null, worldObj,
+								xSlot, ySlot + 1, zSlot, 0);
+
+
+						break;
+					}
+				}
+			} else {
+				box.deleteLasers();
+				box = null;
+			}
 		}
-		
 	}	
 
     public int getSizeInventory()

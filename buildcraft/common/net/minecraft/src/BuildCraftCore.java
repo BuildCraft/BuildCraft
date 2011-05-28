@@ -9,6 +9,9 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class BuildCraftCore {
+	
+	public static boolean continuousCurrentModel;
+	
 	private static boolean initialized = false;
 	private static boolean gearsInitialized = false;
 	
@@ -102,6 +105,9 @@ public class BuildCraftCore {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");
+		
+		continuousCurrentModel = Boolean.parseBoolean(Utils.getProperty(
+				"current.continous", "false"));
 
 		Utils.saveProperties();
 	}

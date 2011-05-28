@@ -5,7 +5,6 @@ import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -17,12 +16,11 @@ import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
+import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileQuarry extends TileEntity implements IArmListener, IMachine {		
+public class TileQuarry extends TileCurrentPowered implements IArmListener, IMachine {		
 	boolean isDigging = false;
-	
-	private static int latency = 20;
 	
 	boolean inProcess = false;
 	
@@ -39,12 +37,14 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 	BluePrintBuilder bluePrintBuilder;
 	
 	public TileQuarry() {
-		
+		latency = 20;
 	}
 	
     public void updateEntity()
     {
-    	createUtilsIfNeeded ();    	    	
+    	createUtilsIfNeeded ();    	
+    	
+    	super.updateEntity();
     }
     
     public void createUtilsIfNeeded () {
@@ -87,22 +87,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     	}
     }
 	
-	boolean lastPower;
-	long lastWork = 0;
-
 	private boolean loadDefaultBoundaries = false;
-	
-	public void checkPower() {
-
-		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord,
-				yCoord, zCoord);
-
-		if (currentPower != lastPower) {
-			lastPower = currentPower;
-
-			work();
-		}		
-	}
 	
 	private void createLasers () {
 		if (lasers == null) {
@@ -122,11 +107,15 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		}
 	}
 	
-	public void work() {				
-	    if (worldObj.getWorldTime() - lastWork < latency) {
-	    	return;
-	    }
-	    
+	public void doWork() {
+		if (inProcess) {
+			return;
+		}
+		
+		if (!isDigging) {
+			return;
+		}	
+		
 	    createUtilsIfNeeded();
 	    
 	    if (bluePrintBuilder == null) {
@@ -140,7 +129,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
     	}
 	    
 		if (!bluePrintBuilder.done) {			
-			lastWork = worldObj.getWorldTime();
+			lastWorkTime = worldObj.getWorldTime();
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
 			if (contents != null) {		
@@ -157,17 +146,8 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 			}
 			
 			return;
-		} 	   
-		
-		if (inProcess) {
-			return;
-		}
-		
-		if (!isDigging) {
-			return;
-		}		
-				
-		
+		} 	  	
+						
 		if (!findTarget(true)) {
 			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
 			isDigging = false;			
@@ -302,7 +282,7 @@ public class TileQuarry extends TileEntity implements IArmListener, IMachine {
 		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
 		
 		if (canDig(blockId)) {
-			lastWork = worldObj.getWorldTime();
+			lastWorkTime = worldObj.getWorldTime();
 			
 			// Share this with mining well!			
 			
