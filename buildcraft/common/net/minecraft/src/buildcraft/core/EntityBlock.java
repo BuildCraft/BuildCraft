@@ -6,7 +6,6 @@ import net.minecraft.src.World;
 
 public class EntityBlock extends Entity {
 
-	public int blockID;
 	public int texture = -1;
 	public float shadowSize = 0;
 	
@@ -19,7 +18,7 @@ public class EntityBlock extends Entity {
 		isImmuneToFire = true;
 	}
 	
-    public EntityBlock (World world, double i, double j, double k, double iSize, double jSize, double kSize, int blockID) {
+    public EntityBlock (World world, double i, double j, double k, double iSize, double jSize, double kSize) {
     	this (world);
         
         motionX = 0.0D;
@@ -28,7 +27,6 @@ public class EntityBlock extends Entity {
         prevPosX = i;
         prevPosY = j;
         prevPosZ = k;
-        this.blockID = blockID;
         this.iSize = iSize;
         this.jSize = jSize;
         this.kSize = kSize;    
@@ -37,8 +35,8 @@ public class EntityBlock extends Entity {
     }
     
 	public EntityBlock(World world, double i, double j, double k, double iSize,
-			double jSize, double kSize, int blockID, int textureID) {
-    	this (world, i, j, k, iSize, jSize, kSize, blockID);
+			double jSize, double kSize, int textureID) {
+    	this (world, i, j, k, iSize, jSize, kSize);
     	
     	texture = textureID;        
     }
@@ -71,7 +69,6 @@ public class EntityBlock extends Entity {
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		blockID = nbttagcompound.getInteger("blockID");
 		iSize = nbttagcompound.getDouble("iSize");
 		jSize = nbttagcompound.getDouble("jSize");
 		kSize = nbttagcompound.getDouble("kSize");
@@ -79,7 +76,6 @@ public class EntityBlock extends Entity {
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setInteger("blockID", blockID);
 		nbttagcompound.setDouble("iSize", iSize);
 		nbttagcompound.setDouble("jSize", jSize);
 		nbttagcompound.setDouble("kSize", kSize);		

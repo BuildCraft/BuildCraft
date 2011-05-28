@@ -10,7 +10,6 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftBuilders;
-import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.mod_BuildCraftFactory;
 
 public class BlockCheat extends BlockChest {

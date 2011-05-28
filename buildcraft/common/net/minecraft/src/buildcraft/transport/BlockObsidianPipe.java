@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 
 import net.minecraft.src.Entity;
@@ -14,8 +13,7 @@ public class BlockObsidianPipe extends BlockPipe {
 	public BlockObsidianPipe(int i) {
 		super(i, Material.iron);
 
-		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/transport/gui/obsidian_pipe.png");
+		blockIndexInTexture = 1 * 16 + 12;
 	}
 	
 	@Override

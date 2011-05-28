@@ -356,8 +356,7 @@ public class Utils {
 		}
 		
 		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize,
-				kSize, Block.bedrock.blockID,
-				texture);
+				kSize, texture);
 		
 		world.entityJoinedWorld(block);
 		

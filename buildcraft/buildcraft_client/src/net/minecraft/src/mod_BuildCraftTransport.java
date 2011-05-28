@@ -25,6 +25,15 @@ public class mod_BuildCraftTransport extends BaseMod {
     {
 		
     	if (block.getRenderType() == BuildCraftTransport.pipeModel) {
+    		Tessellator tessellator = Tessellator.instance;    		
+    		tessellator.draw();
+    		tessellator.startDrawingQuads();
+    		
+			GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png"));
+            
     		float minSize = Utils.pipeMinSize;
     		float maxSize = Utils.pipeMaxSize;
     		int initialTexture = block.blockIndexInTexture;
@@ -122,6 +131,15 @@ public class mod_BuildCraftTransport extends BaseMod {
     		
     		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     		
+    		
+    		tessellator.draw();
+    		tessellator.startDrawingQuads();
+    		
+    		GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/terrain.png"));
+    		
     		return true;
     	} 
     	
@@ -130,7 +148,12 @@ public class mod_BuildCraftTransport extends BaseMod {
     
     public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i, int j)
     {
-		if (block.getRenderType() == BuildCraftTransport.pipeModel) {			
+		if (block.getRenderType() == BuildCraftTransport.pipeModel) {
+			GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png"));
+			
     		Tessellator tessellator = Tessellator.instance;    		
 
     		block.setBlockBounds(Utils.pipeMinSize, 0.0F, Utils.pipeMinSize, Utils.pipeMaxSize, 1.0F, Utils.pipeMaxSize);
@@ -162,6 +185,11 @@ public class mod_BuildCraftTransport extends BaseMod {
             tessellator.draw();
             GL11.glTranslatef(0.5F, 0.5F, 0.5F);
             block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+            
+    		GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/terrain.png"));
     	}
     }
 	    

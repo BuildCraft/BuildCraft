@@ -49,7 +49,12 @@ public class TileEntityPickupFX extends EntityFX
         d7 -= interpPosY;
         d8 -= interpPosZ;
         GL11.glColor4f(f7, f7, f7, 1.0F);
-        RenderManager.instance.renderEntityWithPosYaw(field_675_a, (float)d6, (float)d7, (float)d8, field_675_a.rotationYaw, f);
+        
+		if (RenderManager.instance.renderEngine != null) {
+			RenderManager.instance.renderEntityWithPosYaw(field_675_a,
+					(float) d6, (float) d7, (float) d8,
+					field_675_a.rotationYaw, f);
+		}
     }
 
     public void onUpdate()

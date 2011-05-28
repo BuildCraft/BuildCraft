@@ -5,7 +5,6 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
@@ -17,8 +16,7 @@ public class BlockMarker extends BlockContainer implements IPipeConnection {
 		
 		setHardness(0.5F);
 		
-		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/builders/gui/marker.png");
+		blockIndexInTexture = 3 * 16 + 1; 
 	}
 	
     public int getRenderType()

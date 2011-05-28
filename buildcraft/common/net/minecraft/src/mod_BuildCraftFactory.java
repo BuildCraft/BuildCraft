@@ -86,8 +86,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
 		ModLoader.RegisterTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 
-		drillTexture = ModLoader.addOverride("/terrain.png",
-			"/net/minecraft/src/buildcraft/factory/gui/drill.png");
+		drillTexture = 2 * 16 + 1;
 		
 		Utils.saveProperties();	
 	}
