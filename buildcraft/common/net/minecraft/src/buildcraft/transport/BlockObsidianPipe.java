@@ -28,7 +28,7 @@ public class BlockObsidianPipe extends BlockPipe {
     		tile = new TileObsidianPipe();
     		world.setBlockTileEntity(i, j, k, tile);
     	}
-    	tile.suckItems(world, i, j, k);
+    	tile.tryWork();
     	
         return false;
     }
@@ -41,7 +41,7 @@ public class BlockObsidianPipe extends BlockPipe {
     		world.setBlockTileEntity(i, j, k, tile);
     	}
     	
-		tile.checkPower(i, j, k);
+		tile.checkPower();
     }
 	
     public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity)
@@ -53,7 +53,7 @@ public class BlockObsidianPipe extends BlockPipe {
     	}
 		if(entity instanceof EntityItem)
 		{
-			tile.pullItemIntoPipe(world, i, j, k, (EntityItem)entity, tile);					
+			tile.pullItemIntoPipe((EntityItem)entity);					
 		}
     }
 }

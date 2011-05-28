@@ -5,9 +5,7 @@ import java.util.List;
 import net.minecraft.src.ModLoader;
 
 import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.World;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.IInventory;
 
@@ -20,8 +18,10 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileObsidianPipe extends TileStonePipe {
 
-	long lastSucking = 0;
-	boolean lastPower = false;
+	public TileObsidianPipe () {
+		super ();
+		latency = 25;
+	}
 	
 	//Vacuum pipe can be connected only to ONE other Pipe or IInventory. Otherwise it won't do anything
 	public Orientations getSuckingOrientation() {	
@@ -52,25 +52,14 @@ public class TileObsidianPipe extends TileStonePipe {
 		return target_pos.orientation.reverse();
 	}
 	
-	public void checkPower (int i, int j, int k) {
-		World w = CoreProxy.getWorld();
-		boolean currentPower = w.isBlockIndirectlyGettingPowered(i, j, k);
-		
-		if (lastPower != currentPower) {
-			suckItems(w, i, j, k);
-		}
-		
-		lastPower = currentPower;
-	}
-	
-	private AxisAlignedBB getSuckingBox(int i, int j, int k, Orientations orientation)
+	private AxisAlignedBB getSuckingBox(Orientations orientation)
 	{		
 		if(orientation == Orientations.Unknown)
 		{
 			return null;
 		}
-		Position p1 = new Position(i, j, k, orientation);
-		Position p2 = new Position(i, j, k, orientation);
+		Position p1 = new Position(xCoord, yCoord, zCoord, orientation);
+		Position p2 = new Position(xCoord, yCoord, zCoord, orientation);
 
 		switch (orientation) {
 		case XPos:
@@ -130,21 +119,12 @@ public class TileObsidianPipe extends TileStonePipe {
 				max.y, max.z);	
 	}
 	
-	public void suckItems(World world, int i, int j, int k)
-	{
-		World w = CoreProxy.getWorld();
-		
-		if (w.getWorldTime() - lastSucking < 25) {
-			return;
-		}
-		
-		TileObsidianPipe pipe = (TileObsidianPipe)world.getBlockTileEntity(i, j, k);	
-			
-		AxisAlignedBB box = getSuckingBox(i, j, k, pipe.getSuckingOrientation());
+	protected void doWork () {		
+		AxisAlignedBB box = getSuckingBox(getSuckingOrientation());
 		if(box != null)
 		{
 			@SuppressWarnings("rawtypes")
-			List list = world.getEntitiesWithinAABB(net.minecraft.src.EntityItem.class, box);
+			List list = worldObj.getEntitiesWithinAABB(net.minecraft.src.EntityItem.class, box);
 			
 			for(int g = 0; g < list.size(); g++)
 			{
@@ -153,8 +133,7 @@ public class TileObsidianPipe extends TileStonePipe {
 					EntityItem entityitem = (EntityItem)list.get(g);
 					if(!entityitem.isDead)
 					{
-						pullItemIntoPipe(world, i, j, k, entityitem, pipe);
-						lastSucking = w.getWorldTime();
+						pullItemIntoPipe(entityitem);
 						return;
 					}
 				}
@@ -162,23 +141,23 @@ public class TileObsidianPipe extends TileStonePipe {
 		}
 	}
 	
-	public void pullItemIntoPipe(World world, int i, int j, int k, EntityItem item, TileObsidianPipe pipe)
+	public void pullItemIntoPipe(EntityItem item)
 	{
-		Orientations orientation = pipe.getSuckingOrientation();
+		Orientations orientation = getSuckingOrientation();
 		if(orientation != Orientations.Unknown)
 		{
-			world.playSoundAtEntity(
+			worldObj.playSoundAtEntity(
 					item,
 					"random.pop",
 					0.2F,
-					((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+					((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 			ModLoader.getMinecraftInstance().effectRenderer
-					.addEffect(new TileEntityPickupFX(world, item, pipe));
+					.addEffect(new TileEntityPickupFX(worldObj, item, this));
 			item.setEntityDead();
-			EntityPassiveItem passive = new EntityPassiveItem(world, i + 0.5, j
-					+ Utils.getPipeFloorOf(item.item), k + 0.5, item.item);
-			world.entityJoinedWorld(passive);
-			pipe.entityEntering(passive, orientation.reverse());
+			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
+					+ Utils.getPipeFloorOf(item.item), zCoord + 0.5, item.item);
+			worldObj.entityJoinedWorld(passive);
+			entityEntering(passive, orientation.reverse());
 		}
 	}
 }
