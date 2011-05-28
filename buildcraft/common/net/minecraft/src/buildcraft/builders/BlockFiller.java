@@ -1,10 +1,10 @@
 package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
@@ -15,8 +15,7 @@ public class BlockFiller extends BlockContainer {
 		
 		setHardness(0.5F);
 		
-		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/builders/gui/filler.png");
+		blockIndexInTexture = 3 * 16 + 0;
 	}
 	
 	public boolean blockActivated(World world, int i, int j, int k,
@@ -45,5 +44,10 @@ public class BlockFiller extends BlockContainer {
 		
 		super.onBlockRemoval(world, i, j, k);
 	}
+	
+    public int getRenderType() {
+        return BuildCraftCore.customTextureModel;
+    }
+
 
 }

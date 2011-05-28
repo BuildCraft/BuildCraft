@@ -58,8 +58,7 @@ public class BlockAutoWorkbench extends BlockContainer
         super.onBlockRemoval(world, i, j, k);        
     }
     
-    public int getRenderType()
-    {
+    public int getRenderType() {
         return BuildCraftCore.customTextureModel;
     }
 }
