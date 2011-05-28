@@ -102,7 +102,7 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
             {
                 ItemStack itemstack = contents[i];
                 contents[i] = null;
-                onInventoryChanged();
+//                onInventoryChanged();
                 return itemstack;
             }
             ItemStack itemstack1 = contents[i].splitStack(j);
@@ -110,7 +110,7 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
             {
                 contents[i] = null;
             }
-            onInventoryChanged();
+//            onInventoryChanged();
             return itemstack1;
         } else
         {
