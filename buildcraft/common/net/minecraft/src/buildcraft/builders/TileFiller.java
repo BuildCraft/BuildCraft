@@ -125,7 +125,7 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
         {
             itemstack.stackSize = getInventoryStackLimit();
         }
-        onInventoryChanged();
+//        onInventoryChanged();
     }
 
     public String getInvName()
