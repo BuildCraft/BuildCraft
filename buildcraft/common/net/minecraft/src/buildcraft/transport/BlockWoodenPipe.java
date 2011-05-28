@@ -23,7 +23,7 @@ public class BlockWoodenPipe extends BlockPipe {
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
     	TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i, j, k);
     	
-    	tile.extract();
+    	tile.tryWork();
     	
         return false;
     }

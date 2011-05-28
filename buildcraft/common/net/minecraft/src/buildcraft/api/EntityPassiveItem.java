@@ -16,10 +16,20 @@ public class EntityPassiveItem extends Entity {
 		super(world);				
     	
     	noClip = true;
+    	
+    	
+    	
+		if (world == null) {
+			System.out.println ("BLA 0");
+		}
 	}
 	
 	public EntityPassiveItem(World world, double d, double d1, double d2) {
 		super (world);
+		
+		if (world == null) {
+			System.out.println ("BLA 1");
+		}
 	}
 	
 	public EntityPassiveItem(World world, double d, double d1, double d2, 
@@ -31,6 +41,10 @@ public class EntityPassiveItem extends Entity {
 		setPosition(d, d1, d2);
 
 		noClip = true;
+		
+		if (world == null) {
+			System.out.println ("BLA 2");
+		}
     }
 
 	@Override

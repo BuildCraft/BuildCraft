@@ -11,7 +11,6 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe {
@@ -20,32 +19,15 @@ public class TileWoodenPipe extends TilePipe {
 	boolean lastPower = false;
 	
 	public TileWoodenPipe () {
-		
-	}
-	
-	public void checkPower () {
-		World w = CoreProxy.getWorld();
-		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-		
-		if (lastPower != currentPower) {
-			extract ();
-		}
-		
-		lastPower = currentPower;
+		latency = 50;
 	}
 	
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
-	public void extract () {		
-		World w = CoreProxy.getWorld();
-		
-		if (w.getWorldTime() - lastMining < 50) {
-			return;
-		}
-		
-		lastMining = w.getWorldTime();
-		
+	public void doWork () {		
+		World w = worldObj;
+			
 		LinkedList<Position> inventories = new LinkedList<Position>();
 		
 		for (int j = 0; j < 6; ++j) {

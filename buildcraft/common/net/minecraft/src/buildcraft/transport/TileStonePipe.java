@@ -14,7 +14,7 @@ public class TileStonePipe extends TilePipe {
 		if (listOfPossibleMovements.size() == 0) {					
 			return Orientations.Unknown;													
 		} else {					
-			int i = world.rand.nextInt(listOfPossibleMovements.size());
+			int i = worldObj.rand.nextInt(listOfPossibleMovements.size());
 			
 			return listOfPossibleMovements.get(i);															
 		}				

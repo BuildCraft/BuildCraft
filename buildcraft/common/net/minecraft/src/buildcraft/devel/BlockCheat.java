@@ -58,6 +58,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.torchRedstoneActive, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftFactory.machineBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftFactory.autoWorkbenchBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.woodenPipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.stonePipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.ironPipeBlock, 64));

@@ -30,7 +30,7 @@ public class BlockMiningWell extends BlockMachineRoot {
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
     	
-    	tile.dig();
+    	tile.tryWork();
     	
         return false;
     }

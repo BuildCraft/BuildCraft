@@ -6,18 +6,16 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.StackUtil;
+import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public abstract class TilePipe extends TileEntity implements IPipeEntry {
-	World world;
-	
+public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry {
 	class EntityData {	
 		boolean toCenter = true;
 		EntityPassiveItem item;
@@ -35,7 +33,6 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 	LinkedList <EntityData> entitiesToLoad = new LinkedList <EntityData> ();
 	
 	public TilePipe () {
-		world = CoreProxy.getWorld();
 
 	}
 	
@@ -84,7 +81,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 	
 	public boolean canReceivePipeObjects(Position p,
 			EntityPassiveItem item) {
-		TileEntity entity = world.getBlockTileEntity((int) p.x, (int) p.y,
+		TileEntity entity = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
 				(int) p.z);
 		
 		if (entity instanceof IPipeEntry) {
@@ -99,9 +96,11 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 		return false;
 	}
 	
-	public void updateEntity() {		
+	public void updateEntity() {
+		super.updateEntity();
+		
 		for (EntityData data : entitiesToLoad) {
-			world.entityJoinedWorld(data.item);
+			worldObj.entityJoinedWorld(data.item);
 			travelingEntities.add(data);
 		}
 		
@@ -129,7 +128,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 				if (nextOrientation == Orientations.Unknown) {
 					toRemove.add(data);
 
-					data.item.toEntityItem(world, data.orientation);
+					data.item.toEntityItem(worldObj, data.orientation);
 				} else {
 					data.orientation = nextOrientation;
 				}
@@ -143,7 +142,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 		    	
 				destPos.moveForwards(1.0);
 				
-				TileEntity tile = world.getBlockTileEntity((int) destPos.x,
+				TileEntity tile = worldObj.getBlockTileEntity((int) destPos.x,
 						(int) destPos.y, (int) destPos.z);
 				
 				if (tile instanceof IPipeEntry) {
@@ -156,7 +155,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 					
 					data.item.setEntityDead();
 				} else {
-					data.item.toEntityItem(world, data.orientation);
+					data.item.toEntityItem(worldObj, data.orientation);
 				}
 		    }
 		}	
@@ -196,7 +195,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
 				.tagAt(j);			
 
-				EntityPassiveItem entity = new EntityPassiveItem (world);
+				EntityPassiveItem entity = new EntityPassiveItem (CoreProxy.getWorld());
 				entity.readFromNBT(nbttagcompound2);
 
 				EntityData data = new EntityData(entity,
@@ -234,7 +233,7 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
 		if (listOfPossibleMovements.size() == 0) {					
 			return Orientations.Unknown;													
 		} else {					
-			int i = world.rand.nextInt(listOfPossibleMovements.size());
+			int i = worldObj.rand.nextInt(listOfPossibleMovements.size());
 			
 			return listOfPossibleMovements.get(i);															
 		}				
@@ -248,4 +247,5 @@ public abstract class TilePipe extends TileEntity implements IPipeEntry {
     	travelingEntities.clear();
     }
     
+    protected void doWork () {}
 }

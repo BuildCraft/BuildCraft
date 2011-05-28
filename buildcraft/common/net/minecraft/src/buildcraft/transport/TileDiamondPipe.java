@@ -103,10 +103,10 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 		} 
 		
 		if (exitOrientations.size() != 0) {
-			return exitOrientations.get(world.rand.nextInt(exitOrientations
+			return exitOrientations.get(worldObj.rand.nextInt(exitOrientations
 					.size()));
 		} else if (defaultOrientations.size() != 0) {
-			return defaultOrientations.get(world.rand
+			return defaultOrientations.get(worldObj.rand
 					.nextInt(defaultOrientations.size()));
 		} else {
 			return Orientations.Unknown; 

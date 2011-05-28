@@ -21,14 +21,14 @@ public class BlockIronPipe extends BlockPipe {
 		
 		TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
 		world.setBlockMetadata(i, j, k, 1);
-		tile.moveOrientation ();
+		tile.tryWork();
     }
 	
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
 		
-		tile.moveOrientation ();
+		tile.tryWork();
 		world.markBlockNeedsUpdate(i, j, k);
 		
 		return false;

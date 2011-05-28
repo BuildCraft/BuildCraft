@@ -2,29 +2,20 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 
 public class TileIronPipe extends TilePipe {
 
-	boolean lastPower = false;
-	
-	public void checkPower () {
-		World w = CoreProxy.getWorld();
-		boolean currentPower = w.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+	public TileIronPipe() {
+		super();
 		
-		if (lastPower != currentPower) {
-			moveOrientation();
-		}
-		
-		lastPower = currentPower;
+		continuousCurrentModel = false;
 	}
-	
-	public void moveOrientation() {
-		int metadata = world.getBlockMetadata(xCoord, yCoord, zCoord);
+
+	public void doWork() {
+		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
 		int nextMetadata = metadata;
 		
@@ -39,19 +30,19 @@ public class TileIronPipe extends TilePipe {
 					Orientations.values()[nextMetadata]);
 			pos.moveForwards(1.0);
 			
-			TileEntity tile = world.getBlockTileEntity((int) pos.x,
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
 					(int) pos.y, (int) pos.z);
 			
 			if ((tile instanceof IPipeEntry && !(tile instanceof TileWoodenPipe))
 					|| tile instanceof IInventory) {
-				world.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
+				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
 				return;
 			}
 		}
 	}
 	
 	protected Orientations resolveDestination (EntityData data) {
-		int metadata = world.getBlockMetadata(xCoord, yCoord, zCoord);
+		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
 		if (metadata != -1) {
 			Position pos = new Position(xCoord, yCoord, zCoord,
@@ -60,7 +51,7 @@ public class TileIronPipe extends TilePipe {
 			
 			pos.moveForwards(1.0);
 			
-			TileEntity tile = world.getBlockTileEntity((int) pos.x,
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
 					(int) pos.y, (int) pos.z);
 			
 			if (tile instanceof IPipeEntry || tile instanceof IInventory) {
