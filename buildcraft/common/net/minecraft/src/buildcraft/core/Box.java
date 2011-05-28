@@ -3,20 +3,25 @@ package net.minecraft.src.buildcraft.core;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Position;
 
-/**
- * TO BE REMOVED FROM THE API!!! Dependencies on core. Provide an IBox interface
- * instead, created from an area provider.
- *
- */
-public class Box {
+public class Box implements IBox {
 
 	public int xMin, yMin, zMin;
 	public int xMax, yMax, zMax;
 	
 	private EntityBlock lasers [];
+	
+	public Box (int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
+		this.xMin = xMin;
+		this.yMin = yMin;
+		this.zMin = zMin;
+		this.xMax = xMax;
+		this.yMax = yMax;
+		this.zMax = zMax;
+	}
 	
 	public Box (IAreaProvider area) {
 		xMin = area.xMin();

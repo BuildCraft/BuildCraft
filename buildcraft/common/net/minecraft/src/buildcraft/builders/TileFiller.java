@@ -27,7 +27,7 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
 				zCoord);
 
 		if (a != null) {
-			box = new Box (a);				
+			box = (Box) a.getBox();				
 
 			if (a instanceof TileMarker) {
 				((TileMarker) a).removeFromWorld();
