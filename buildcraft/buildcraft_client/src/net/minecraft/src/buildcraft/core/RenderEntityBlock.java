@@ -3,6 +3,8 @@ package net.minecraft.src.buildcraft.core;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockStationary;
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
@@ -58,12 +60,13 @@ public class RenderEntityBlock extends Render {
 		World world = entity.worldObj;
 		blockRender.blockAccess = ModLoader.getMinecraftInstance().theWorld;
 		BlockInterface util = new BlockInterface(); 
-		util.texture = entity.texture;				
+		util.texture = entity.texture;
 		
 		for (int iBase = 0; iBase <= entity.iSize; ++iBase)
 			for (int jBase = 0; jBase <= entity.jSize; ++jBase)
 				for (int kBase = 0; kBase <= entity.kSize; ++kBase) 
-		{					
+		{			
+					
 			util.minX = 0;
 			util.minY = 0;
 			util.minZ = 0;
@@ -75,11 +78,12 @@ public class RenderEntityBlock extends Render {
 			util.maxX = (remainX > 1.0 ? 1.0 : remainX);
 			util.maxY = (remainY > 1.0 ? 1.0 : remainY);
 			util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);			
-						
+			
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float)i + iBase + 0.5F, (float)j + jBase + 0.5F, (float)k + kBase + 0.5F);
-			loadTexture("/terrain.png");		
-			util.baseBlock = Block.blocksList [entity.blockID];			
+			
+			loadTexture ("/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png");
+//			util.baseBlock = Block.blocksList [entity.blockID];			
 			
 			int lightX, lightY, lightZ;
 			

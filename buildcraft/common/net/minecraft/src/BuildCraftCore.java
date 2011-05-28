@@ -22,6 +22,7 @@ public class BuildCraftCore {
 	public static int stripesLaserTexture;
 	public static int transparentTexture;
 	
+	public static int customTextureModel;
 	public static int blockByEntityModel;
 	
 	public static void initialize () {
@@ -85,14 +86,10 @@ public class BuildCraftCore {
 				Character.valueOf('G'), goldGearItem });
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");
 		
-		redLaserTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/core/gui/red_laser.png");
-		blueLaserTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/core/gui/blue_laser.png");
-		stripesLaserTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/core/gui/stripes.png");
-		transparentTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/core/gui/transparent.png");
+		redLaserTexture = 0 * 16 + 2;
+		blueLaserTexture = 0 * 16 + 1;
+		stripesLaserTexture = 0 * 16 + 3;
+		transparentTexture = 0 * 16 + 0;
 
 		
 		Utils.saveProperties();
@@ -101,6 +98,7 @@ public class BuildCraftCore {
 	
 	public static void initializeModel (BaseMod mod) {
 		 blockByEntityModel = ModLoader.getUniqueBlockModelID(mod, true);
+		 customTextureModel = ModLoader.getUniqueBlockModelID(mod, true);
 	}
 	
 }

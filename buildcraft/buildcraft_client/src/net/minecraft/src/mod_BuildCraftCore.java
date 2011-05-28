@@ -3,6 +3,8 @@ package net.minecraft.src;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
@@ -43,6 +45,25 @@ public class mod_BuildCraftCore extends BaseMod {
 			renderblocks.renderStandardBlock(block, i, j, k);
 			
 			return true;
+		} else if (block.getRenderType() == BuildCraftCore.customTextureModel) {
+			Tessellator tessellator = Tessellator.instance;    		
+    		tessellator.draw();
+    		tessellator.startDrawingQuads();
+    		
+			GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png"));
+			
+			renderblocks.renderStandardBlock(block, i, j, k);
+			
+    		tessellator.draw();
+    		tessellator.startDrawingQuads();
+    		
+    		GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/terrain.png"));
 		}
 		
 		return false;
@@ -54,6 +75,45 @@ public class mod_BuildCraftCore extends BaseMod {
     		//  ??? GET THE ENTITY FROM THE TILE
 			blockByEntityRenders.get(block).doRender(null, -0.5, -0.5, -0.5, 0,
 					0);
+		} else if (block.getRenderType() == BuildCraftCore.customTextureModel) {    		
+			GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png"));
+			
+			Tessellator tessellator = Tessellator.instance;    		
+			block.setBlockBoundsForItemRender();
+            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, -1F, 0.0F);
+            renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 1.0F, 0.0F);
+            renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 0.0F, -1F);
+            renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 0.0F, 1.0F);
+            renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(-1F, 0.0F, 0.0F);
+            renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, i));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(1.0F, 0.0F, 0.0F);
+            renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, i));
+            tessellator.draw();
+            GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+    		
+    		GL11.glBindTexture(
+					3553 /* GL_TEXTURE_2D */,
+					ModLoader.getMinecraftInstance().renderEngine
+							.getTexture("/terrain.png"));
 		}
     }
 }

@@ -29,9 +29,9 @@ public class TileMiningWell extends TileEntity implements IMachine {
 	
 	public void updateEntity() {
 		if (!init) {
-			 model = new EntityModel(worldObj, xCoord, yCoord,
-					zCoord);
-			worldObj.entityJoinedWorld(model);
+//			 model = new EntityModel(worldObj, xCoord, yCoord,
+//					zCoord);
+//			worldObj.entityJoinedWorld(model);
 			
 			init = true;
 		}

@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.factory;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -23,12 +22,9 @@ public class BlockQuarry extends BlockMachineRoot {
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
 		
-		textureSide = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/factory/gui/quarry_side.png");
-		textureFront = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/factory/gui/quarry_front.png");
-		textureTop = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/factory/gui/quarry_top.png");	
+		textureSide = 2 * 16 + 9;
+		textureFront = 2 * 16 + 7;
+		textureTop = 2 * 16 + 8;	
 		
 	}
     

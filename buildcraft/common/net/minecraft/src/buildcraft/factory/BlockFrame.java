@@ -7,7 +7,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -17,8 +16,7 @@ public class BlockFrame extends Block implements IPipeConnection {
 	public BlockFrame(int i) {
 		super(i, Material.glass);
 		
-		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/factory/gui/frame.png");
+		blockIndexInTexture = 16 * 2 + 2; 
 		
 		setHardness(0.5F);
 	}

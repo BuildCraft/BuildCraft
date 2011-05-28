@@ -2,22 +2,16 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.Container;
-import net.minecraft.src.CraftingManager;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
-import net.minecraft.src.TileEntityDispenser;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe {

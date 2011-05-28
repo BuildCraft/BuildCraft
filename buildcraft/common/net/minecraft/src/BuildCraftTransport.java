@@ -96,12 +96,10 @@ public class BuildCraftTransport {
 		ModLoader.RegisterTileEntity(TileDiamondPipe.class, "DiamondPipe");
 		ModLoader.RegisterTileEntity(TileObsidianPipe.class, "ObsidianPipe");
 		
-		plainIronTexture = ModLoader.addOverride("/terrain.png",
-		"/net/minecraft/src/buildcraft/transport/gui/plain_iron_pipe.png");
+		plainIronTexture = 1 * 16 + 3;
 		
 		for (int j = 0; j < 6; ++j) {
-			diamondTextures [j] = ModLoader.addOverride("/terrain.png",
-					"/net/minecraft/src/buildcraft/transport/gui/diamond_pipe_" + j + ".png");
+			diamondTextures [j] = 1 * 16 + 6 + j;
 		}				
 		
 		Utils.saveProperties();

@@ -143,6 +143,7 @@ public class TileObsidianPipe extends TileStonePipe {
 		AxisAlignedBB box = getSuckingBox(i, j, k, pipe.getSuckingOrientation());
 		if(box != null)
 		{
+			@SuppressWarnings("rawtypes")
 			List list = world.getEntitiesWithinAABB(net.minecraft.src.EntityItem.class, box);
 			
 			for(int g = 0; g < list.size(); g++)
