@@ -40,4 +40,6 @@ zip -r $dir/buildcraft-C-devel-$version.zip mod_BuildCraftDevel.class buildcraft
 
 zip -r $dir/buildcraft-api-$version.zip buildcraft/api
 
+cd ../..
 
+rm -rf reobf

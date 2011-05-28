@@ -35,7 +35,6 @@ public class mod_BuildCraftFactory extends BaseMod {
 		
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeGears();
-		BuildCraftTransport.initialize();
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
