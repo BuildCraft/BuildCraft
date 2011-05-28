@@ -24,9 +24,7 @@ public class RenderPassiveItem extends Render
     {
         renderBlocks = new RenderBlocks();
         random = new Random();
-        field_27004_a = true;
         shadowSize = 0.15F;
-        field_194_c = 0.75F;
     }
 
     public void doRenderItem(EntityPassiveItem entityitem, double d, double d1, double d2, 
@@ -121,123 +119,6 @@ public class RenderPassiveItem extends Render
         GL11.glPopMatrix();
     }
 
-    public void func_27003_a(FontRenderer fontrenderer, RenderEngine renderengine, int i, int j, int k, int l, int i1)
-    {
-        if(i < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[i].getRenderType()))
-        {
-            int j1 = i;
-            renderengine.bindTexture(renderengine.getTexture("/terrain.png"));
-            Block block = Block.blocksList[j1];
-            GL11.glPushMatrix();
-            GL11.glTranslatef(l - 2, i1 + 3, -3F);
-            GL11.glScalef(10F, 10F, 10F);
-            GL11.glTranslatef(1.0F, 0.5F, 8F);
-            GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
-            GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
-            if(field_27004_a)
-            {
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            }
-            GL11.glScalef(1.0F, 1.0F, 1.0F);
-            renderBlocks.renderBlockOnInventory(block, j);
-            GL11.glPopMatrix();
-        } else
-        if(k >= 0)
-        {
-            GL11.glDisable(2896 /*GL_LIGHTING*/);
-            if(i < 256)
-            {
-                renderengine.bindTexture(renderengine.getTexture("/terrain.png"));
-            } else
-            {
-                renderengine.bindTexture(renderengine.getTexture("/gui/items.png"));
-            }
-            int k1 = Item.itemsList[i].func_27010_f(j);
-            float f = (float)(k1 >> 16 & 0xff) / 255F;
-            float f1 = (float)(k1 >> 8 & 0xff) / 255F;
-            float f2 = (float)(k1 & 0xff) / 255F;
-            if(field_27004_a)
-            {
-                GL11.glColor4f(f, f1, f2, 1.0F);
-            }
-            renderTexturedQuad(l, i1, (k % 16) * 16, (k / 16) * 16, 16, 16);
-            GL11.glEnable(2896 /*GL_LIGHTING*/);
-        }
-        GL11.glEnable(2884 /*GL_CULL_FACE*/);
-    }
-
-    public void renderItemIntoGUI(FontRenderer fontrenderer, RenderEngine renderengine, ItemStack itemstack, int i, int j)
-    {
-        if(itemstack == null)
-        {
-            return;
-        } else
-        {
-            func_27003_a(fontrenderer, renderengine, itemstack.itemID, itemstack.getItemDamage(), itemstack.getIconIndex(), i, j);
-            return;
-        }
-    }
-
-    public void renderItemOverlayIntoGUI(FontRenderer fontrenderer, RenderEngine renderengine, ItemStack itemstack, int i, int j)
-    {
-        if(itemstack == null)
-        {
-            return;
-        }
-        if(itemstack.stackSize > 1)
-        {
-            String s = (new StringBuilder()).append("").append(itemstack.stackSize).toString();
-            GL11.glDisable(2896 /*GL_LIGHTING*/);
-            GL11.glDisable(2929 /*GL_DEPTH_TEST*/);
-            fontrenderer.drawStringWithShadow(s, (i + 19) - 2 - fontrenderer.getStringWidth(s), j + 6 + 3, 0xffffff);
-            GL11.glEnable(2896 /*GL_LIGHTING*/);
-            GL11.glEnable(2929 /*GL_DEPTH_TEST*/);
-        }
-        if(itemstack.isItemDamaged())
-        {
-            int k = (int)Math.round(13D - ((double)itemstack.getItemDamageForDisplay() * 13D) / (double)itemstack.getMaxDamage());
-            int l = (int)Math.round(255D - ((double)itemstack.getItemDamageForDisplay() * 255D) / (double)itemstack.getMaxDamage());
-            GL11.glDisable(2896 /*GL_LIGHTING*/);
-            GL11.glDisable(2929 /*GL_DEPTH_TEST*/);
-            GL11.glDisable(3553 /*GL_TEXTURE_2D*/);
-            Tessellator tessellator = Tessellator.instance;
-            int i1 = 255 - l << 16 | l << 8;
-            int j1 = (255 - l) / 4 << 16 | 0x3f00;
-            renderQuad(tessellator, i + 2, j + 13, 13, 2, 0);
-            renderQuad(tessellator, i + 2, j + 13, 12, 1, j1);
-            renderQuad(tessellator, i + 2, j + 13, k, 1, i1);
-            GL11.glEnable(3553 /*GL_TEXTURE_2D*/);
-            GL11.glEnable(2896 /*GL_LIGHTING*/);
-            GL11.glEnable(2929 /*GL_DEPTH_TEST*/);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        }
-    }
-
-    private void renderQuad(Tessellator tessellator, int i, int j, int k, int l, int i1)
-    {
-        tessellator.startDrawingQuads();
-        tessellator.setColorOpaque_I(i1);
-        tessellator.addVertex(i + 0, j + 0, 0.0D);
-        tessellator.addVertex(i + 0, j + l, 0.0D);
-        tessellator.addVertex(i + k, j + l, 0.0D);
-        tessellator.addVertex(i + k, j + 0, 0.0D);
-        tessellator.draw();
-    }
-
-    public void renderTexturedQuad(int i, int j, int k, int l, int i1, int j1)
-    {
-        float f = 0.0F;
-        float f1 = 0.00390625F;
-        float f2 = 0.00390625F;
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(i + 0, j + j1, f, (float)(k + 0) * f1, (float)(l + j1) * f2);
-        tessellator.addVertexWithUV(i + i1, j + j1, f, (float)(k + i1) * f1, (float)(l + j1) * f2);
-        tessellator.addVertexWithUV(i + i1, j + 0, f, (float)(k + i1) * f1, (float)(l + 0) * f2);
-        tessellator.addVertexWithUV(i + 0, j + 0, f, (float)(k + 0) * f1, (float)(l + 0) * f2);
-        tessellator.draw();
-    }
-
     public void doRender(Entity entity, double d, double d1, double d2, 
             float f, float f1)
     {
@@ -246,5 +127,4 @@ public class RenderPassiveItem extends Render
 
     private RenderBlocks renderBlocks;
     private Random random;
-    public boolean field_27004_a;
 }

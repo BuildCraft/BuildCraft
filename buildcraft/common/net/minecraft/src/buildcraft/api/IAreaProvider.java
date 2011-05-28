@@ -18,6 +18,8 @@ public interface IAreaProvider {
 	 * Remove from the world all objects used to define the area.
 	 */
 	public void removeFromWorld ();
+	
+	public IBox getBox ();
 
 	
 }

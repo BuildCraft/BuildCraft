@@ -4,8 +4,10 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -372,4 +374,9 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			 
 		 }
 	 }
+
+	@Override
+	public IBox getBox() {
+		return new Box (this);
+	}
 }
