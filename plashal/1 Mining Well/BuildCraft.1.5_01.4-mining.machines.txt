@@ -1,0 +1,48 @@
+//variables init:
+public CustomModelRenderer keyboard;
+public CustomModelRenderer lcd;
+public CustomModelRenderer leg1;
+public CustomModelRenderer leg2;
+public CustomModelRenderer leg3;
+public CustomModelRenderer leg4;
+public CustomModelRenderer miningWell;
+
+//constructor:
+keyboard = new CustomModelRenderer(20, 10, 64, 65);
+keyboard.addBox(0F, 0F, 0F, 12, 6, 2);
+keyboard.setPosition(0F, 3F, 0F);
+keyboard.rotateAngleX = 5.427973973702365F;
+
+lcd = new CustomModelRenderer(-1, 51, 64, 65);
+lcd.addBox(10F, 9F, -1F, 14, 10, 3);
+lcd.setPosition(0F, 0F, 9F);
+lcd.rotateAngleY = 5.811946409141117F;
+
+leg1 = new CustomModelRenderer(0, 0, 64, 65);
+leg1.addBox(0F, 0F, 0F, 5, 15, 5);
+leg1.setPosition(1F, 0F, 7F);
+
+leg2 = new CustomModelRenderer(0, 0, 64, 65);
+leg2.addBox(0F, 0F, 0F, 5, 15, 5);
+leg2.setPosition(10F, 0F, 7F);
+
+leg3 = new CustomModelRenderer(0, 0, 64, 65);
+leg3.addBox(0F, 0F, 0F, 5, 15, 5);
+leg3.setPosition(10F, 0F, 16F);
+
+leg4 = new CustomModelRenderer(0, 0, 64, 65);
+leg4.addBox(0F, 0F, 0F, 5, 15, 5);
+leg4.setPosition(1F, 0F, 16F);
+
+miningWell = new CustomModelRenderer(0, 20, 64, 65);
+miningWell.addBox(0F, 0F, 0F, 16, 16, 16);
+miningWell.setPosition(0F, 5F, 6F);
+
+//render:
+keyboard.render(f5);
+lcd.render(f5);
+leg1.render(f5);
+leg2.render(f5);
+leg3.render(f5);
+leg4.render(f5);
+miningWell.render(f5);
