@@ -42,7 +42,8 @@ public class TileIronPipe extends TilePipe {
 			TileEntity tile = world.getBlockTileEntity((int) pos.x,
 					(int) pos.y, (int) pos.z);
 			
-			if (tile instanceof IPipeEntry || tile instanceof IInventory) {
+			if ((tile instanceof IPipeEntry && !(tile instanceof TileWoodenPipe))
+					|| tile instanceof IInventory) {
 				world.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
 				return;
 			}
