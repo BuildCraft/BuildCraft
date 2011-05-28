@@ -1,9 +1,10 @@
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.EntityBlock;
-import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.LaserKind;
+import net.minecraft.src.buildcraft.api.Position;
 
 /**
  * TO BE REMOVED FROM THE API!!! Dependencies on core. Provide an IBox interface
