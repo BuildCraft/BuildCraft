@@ -34,6 +34,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		super.ModsLoaded();
 		
 		mod_BuildCraftCore.initialize();
+		BuildCraftCore.initializeGears();
 		BuildCraftTransport.initialize();
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
@@ -43,7 +44,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		ModLoader.RegisterBlock(miningWellBlock);
 		CoreProxy.addName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");
 		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
-			"ipi", "igi", "iPi", Character.valueOf('p'), BuildCraftTransport.ironPipeBlock,
+			"ipi", "igi", "iPi", Character.valueOf('p'), Item.redstone,
 			Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'),
 			 BuildCraftCore.ironGearItem, Character.valueOf('P'),
 			Item.pickaxeSteel });	
@@ -74,7 +75,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 				new ItemStack(machineBlock),
 				new Object[] { "ipi", "gig", "dDd", 
 					Character.valueOf('i'), BuildCraftCore.ironGearItem,
-					Character.valueOf('p'),	BuildCraftTransport.diamondPipeBlock,
+					Character.valueOf('p'), Item.redstone,
 					Character.valueOf('g'),	BuildCraftCore.goldGearItem,
 					Character.valueOf('d'),	BuildCraftCore.diamondGearItem,
 					Character.valueOf('D'),	Item.pickaxeDiamond,
@@ -93,7 +94,7 @@ public class mod_BuildCraftFactory extends BaseMod {
 		
 	@Override
 	public String Version() {
-		return "1.5_01.5";
+		return "1.6.4.1";
 	}
 	    
 	RenderMiningWell renderMiningWell = new RenderMiningWell();
