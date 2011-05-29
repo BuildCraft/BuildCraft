@@ -9,6 +9,6 @@ public class mod_BuildCraftTransport extends BaseMod {
 	
 	@Override
 	public String Version() {
-		return "1.6.4.1";
+		return "1.6.5.1";
 	}
 }
