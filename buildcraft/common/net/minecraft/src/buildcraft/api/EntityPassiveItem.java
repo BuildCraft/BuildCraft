@@ -16,15 +16,11 @@ public class EntityPassiveItem extends Entity implements ITrackedEntity {
 	public EntityPassiveItem(World world) {
 		super(world);		
 		
-		System.out.println ("A");
-    	
     	noClip = true;    	
 	}
 	
 	public EntityPassiveItem(World world, double d, double d1, double d2) {
 		super (world);
-		
-		System.out.println ("B");
 		
 		setSize(0.25F, 0.25F);
 		setPosition(d, d1, d2);
