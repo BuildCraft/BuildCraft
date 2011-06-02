@@ -21,20 +21,15 @@ public class Packet121PassiveItemSpawn extends Packet {
 	private EntityPassiveItem item;
 	
 	public Packet121PassiveItemSpawn () {
-		System.out.println ("CREATE CLIENT");
 	}
 	
 	public Packet121PassiveItemSpawn (EntityPassiveItem item) {
 		this.item = item;
-		
-		System.out.println ("CREATE SERVER");
 	}
 
 	@Override
 	public void readPacketData(DataInputStream datainputstream)
 			throws IOException {
-		
-		System.out.println ("READ");
 		
 		entityId = datainputstream.readInt();
 		posX = datainputstream.readDouble();
@@ -50,8 +45,6 @@ public class Packet121PassiveItemSpawn extends Packet {
 	@Override
 	public void writePacketData(DataOutputStream dataoutputstream)
 			throws IOException {
-		
-		System.out.println ("WRITE");
 		
 		dataoutputstream.writeInt(item.entityId);
 		dataoutputstream.writeDouble(item.posX);
