@@ -78,7 +78,7 @@ public class TileWoodenPipe extends TilePipe {
 	 */
 	public ItemStack checkExtract (IInventory inventory, boolean doRemove, Orientations from) {
 		if (inventory instanceof ISpecialInventory) {
-			return ((ISpecialInventory) inventory).extractItemToPipe(doRemove);
+			return ((ISpecialInventory) inventory).extractItemToPipe(doRemove, from);
 		}
 		
 		if (inventory.getSizeInventory() == 3) {

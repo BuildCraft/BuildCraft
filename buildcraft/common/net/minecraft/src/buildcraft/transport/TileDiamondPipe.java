@@ -149,12 +149,12 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
     }
 
 	@Override
-	public boolean addItemFromPipe(ItemStack stack, boolean doAdd) {
+	public boolean addItemFromPipe(ItemStack stack, boolean doAdd, Orientations from) {
 		return false;
 	}
 
 	@Override
-	public ItemStack extractItemToPipe(boolean doRemove) {
+	public ItemStack extractItemToPipe(boolean doRemove, Orientations from) {
 		return null;
 	}
 }

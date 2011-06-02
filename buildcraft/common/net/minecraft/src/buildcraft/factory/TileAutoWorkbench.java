@@ -9,6 +9,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.StackUtil;
 
 public class TileAutoWorkbench extends TileEntity implements
@@ -109,7 +110,7 @@ public class TileAutoWorkbench extends TileEntity implements
 	}
 
 	@Override
-	public boolean addItemFromPipe(ItemStack stack, boolean doAdd) {
+	public boolean addItemFromPipe(ItemStack stack, boolean doAdd, Orientations from) {
 		StackUtil stackUtils = new StackUtil(stack);
 		
 		int minSimilar = Integer.MAX_VALUE;
@@ -130,7 +131,7 @@ public class TileAutoWorkbench extends TileEntity implements
 		if (minSlot != -1) {
 			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {			
 				if (doAdd && stack.stackSize != 0) {
-					addItemFromPipe(stack, doAdd);
+					addItemFromPipe(stack, doAdd, from);
 				}
 				
 				return true;
@@ -143,7 +144,7 @@ public class TileAutoWorkbench extends TileEntity implements
 	}
 
 	@Override
-	public ItemStack extractItemToPipe(boolean doRemove) {
+	public ItemStack extractItemToPipe(boolean doRemove, Orientations from) {
 		InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
 			@SuppressWarnings("all")
 			public boolean isUsableByPlayer(EntityPlayer entityplayer) {
