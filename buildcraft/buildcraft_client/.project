@@ -23,7 +23,7 @@
 		<link>
 			<name>minecraft</name>
 			<type>2</type>
-			<locationURI>PARENT-1-WORKSPACE_LOC/src/minecraft</locationURI>
+			<locationURI>PARENT-1-WORKSPACE_LOC/src_work/minecraft</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
