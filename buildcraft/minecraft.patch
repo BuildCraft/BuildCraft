@@ -1,6 +1,6 @@
 diff -u -r ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java ../src/minecraft_server/net/minecraft/server/MinecraftServer.java
---- ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-02 22:57:22.784870100 +0200
-+++ ../src/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-02 23:02:29.479412000 +0200
+--- ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-02 23:10:29.443864400 +0200
++++ ../src/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-02 23:10:33.043070300 +0200
 @@ -330,41 +330,22 @@
              }
              finally
@@ -58,52 +58,48 @@ diff -u -r ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.jav
      private void doTick()
      {
 diff -u -r ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java ../src/minecraft_server/net/minecraft/src/EntityTracker.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-02 22:57:22.910877300 +0200
-+++ ../src/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-02 23:05:40.897360500 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-02 23:10:29.586872600 +0200
++++ ../src/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-02 23:27:02.121642300 +0200
 @@ -6,6 +6,7 @@
  
  import java.util.*;
  import net.minecraft.server.MinecraftServer;
-+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
++import net.minecraft.src.buildcraft.api.ITrackedEntity;
  
  // Referenced classes of package net.minecraft.src:
  //            MCHash, ServerConfigurationManager, EntityPlayerMP, EntityTrackerEntry, 
-@@ -70,6 +71,10 @@
-         if(entity instanceof EntityItem)
+@@ -98,6 +99,12 @@
+         if(entity instanceof EntityPainting)
          {
-             trackEntity(entity, 64, 20, true);
-+        } 
-+        if(entity instanceof EntityPassiveItem)
-+        {
-+            trackEntity(entity, 64, 1, true);
-         } else
-         if(entity instanceof EntityMinecart)
-         {
+             trackEntity(entity, 160, 0x7fffffff, false);
++        } else 
++        if (entity instanceof ITrackedEntity) {
++        	ITrackedEntity tracked = (ITrackedEntity) entity;
++        	
++			trackEntity(entity, tracked.getUpdateFrequency(),
++					tracked.getMaximumDistance(), false);
+         }
+         ModLoaderMp.HandleEntityTrackers(this, entity);
+     }
 diff -u -r ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java ../src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-02 22:57:22.918877800 +0200
-+++ ../src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-02 23:05:40.906361000 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-02 23:10:29.587872700 +0200
++++ ../src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-02 23:31:00.973303900 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.*;
  
-+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
++import net.minecraft.src.buildcraft.api.ITrackedEntity;
 +
  // Referenced classes of package net.minecraft.src:
  //            Entity, MathHelper, Packet34EntityTeleport, Packet33RelEntityMoveLook, 
  //            Packet31RelEntityMove, Packet32EntityLook, Packet28EntityVelocity, Packet, 
-@@ -69,6 +71,19 @@
+@@ -69,6 +71,13 @@
          field_28165_t++;
          if(++updateCounter % field_9234_e == 0)
          {
-+        	boolean log = false;
-+            // Maybe use other packets for that???
-+            if (trackedEntity instanceof EntityPassiveItem) {
-+            	System.out.println ("UPDATE PASSIVE ITEM!!!");
-+            	
-+				sendPacketToTrackedPlayers(new Packet122PassiveItemUpdate(
-+						(EntityPassiveItem) trackedEntity));
-+            	
-+            	log = true;
++            if (trackedEntity instanceof ITrackedEntity) {            	           	
++				sendPacketToTrackedPlayers(((ITrackedEntity) trackedEntity)
++						.getUpdatePacket());
 +            	
 +            	return;
 +            }
@@ -111,86 +107,13 @@ diff -u -r ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.jav
              int i = MathHelper.floor_double(trackedEntity.posX * 32D);
              int j = MathHelper.floor_double(trackedEntity.posY * 32D);
              int k = MathHelper.floor_double(trackedEntity.posZ * 32D);
-@@ -82,6 +97,7 @@
-             boolean flag1 = Math.abs(l - encodedRotationYaw) >= 8 || Math.abs(i1 - encodedRotationPitch) >= 8;
-             if(j1 < -128 || j1 >= 128 || k1 < -128 || k1 >= 128 || l1 < -128 || l1 >= 128 || field_28165_t > 400)
-             {
-+            	if (log) System.out.println ("A");
-                 field_28165_t = 0;
-                 trackedEntity.posX = (double)i / 32D;
-                 trackedEntity.posY = (double)j / 32D;
-@@ -90,18 +106,22 @@
-             } else
-             if(flag && flag1)
-             {
-+            	if (log) System.out.println ("B");
-                 obj = new Packet33RelEntityMoveLook(trackedEntity.entityId, (byte)j1, (byte)k1, (byte)l1, (byte)l, (byte)i1);
-             } else
-             if(flag)
-             {
-+            	if (log) System.out.println ("C"); /* HIT */
-                 obj = new Packet31RelEntityMove(trackedEntity.entityId, (byte)j1, (byte)k1, (byte)l1);
-             } else
-             if(flag1)
-             {
-+            	if (log) System.out.println ("D");
-                 obj = new Packet32EntityLook(trackedEntity.entityId, (byte)l, (byte)i1);
-             }
-             if(shouldSendMotionUpdates)
-             {
-+            	if (log) System.out.println ("E"); /* HIT */
-                 double d = trackedEntity.motionX - lastTrackedEntityMotionX;
-                 double d1 = trackedEntity.motionY - lastTrackedEntityMotionY;
-                 double d2 = trackedEntity.motionZ - lastTrackedEntityMotionZ;
-@@ -109,6 +129,7 @@
-                 double d4 = d * d + d1 * d1 + d2 * d2;
-                 if(d4 > d3 * d3 || d4 > 0.0D && trackedEntity.motionX == 0.0D && trackedEntity.motionY == 0.0D && trackedEntity.motionZ == 0.0D)
-                 {
-+                	if (log) System.out.println ("F");
-                     lastTrackedEntityMotionX = trackedEntity.motionX;
-                     lastTrackedEntityMotionY = trackedEntity.motionY;
-                     lastTrackedEntityMotionZ = trackedEntity.motionZ;
-@@ -117,24 +138,31 @@
-             }
-             if(obj != null)
-             {
-+            	if (log) System.out.println ("G"); /* HIT */
-                 sendPacketToTrackedPlayers((Packet)obj);
-             }
-             DataWatcher datawatcher = trackedEntity.getDataWatcher();
-             if(datawatcher.hasObjectChanged())
-             {
-+            	if (log) System.out.println ("H");
-                 sendPacketToTrackedPlayersAndTrackedEntity(new Packet40EntityMetadata(trackedEntity.entityId, datawatcher));
-             }
-+            
-             if(flag)
-             {
-+            	if (log) System.out.println ("I"); /* HIT */
-                 encodedPosX = i;
-                 encodedPosY = j;
-                 encodedPosZ = k;
-             }
-             if(flag1)
-             {
-+            	if (log) System.out.println ("J");
-                 encodedRotationYaw = l;
-                 encodedRotationPitch = i1;
-             }
-+            
-+            if (log) System.out.println ("K"); /* HIT */
-         }
-         if(trackedEntity.beenAttacked)
+@@ -227,6 +236,9 @@
          {
-@@ -236,6 +264,11 @@
-             entityitem.posZ = (double)packet21pickupspawn.zPosition / 32D;
-             return packet21pickupspawn;
+             return new Packet23VehicleSpawn(trackedEntity, i);
          }
-+        if (trackedEntity instanceof EntityPassiveItem) {
-+        	EntityPassiveItem entityitem = (EntityPassiveItem)trackedEntity;
-+        	
-+        	return new Packet121PassiveItemSpawn(entityitem);
++        if (trackedEntity instanceof ITrackedEntity) {
++        	return ((ITrackedEntity) trackedEntity).getSpawnPacket();
 +        }
-         if(trackedEntity instanceof EntityPlayerMP)
+         if(trackedEntity instanceof EntityItem)
          {
-             return new Packet20NamedEntitySpawn((EntityPlayer)trackedEntity);
+             EntityItem entityitem = (EntityItem)trackedEntity;

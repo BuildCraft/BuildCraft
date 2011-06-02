@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-public class mod_BuildCraftFactory extends BaseMod {		
+public class mod_BuildCraftFactory extends BaseModMp {		
 	
 	public void ModsLoaded () {		
 		super.ModsLoaded();

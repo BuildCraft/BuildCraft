@@ -8,6 +8,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -84,7 +85,7 @@ public abstract class BlockPipe extends BlockContainer implements
     }
     
     public boolean isPipeConnected (IBlockAccess blockAccess, int x, int y, int z) {
-    	TileEntity tile = CoreProxy.getWorld().getBlockTileEntity(x, y, z);
+    	TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
     	
     	return tile instanceof IPipeEntry
 			|| tile instanceof IInventory

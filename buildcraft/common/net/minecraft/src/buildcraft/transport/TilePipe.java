@@ -6,11 +6,11 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -112,6 +112,10 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 			Position motion = new Position (0, 0, 0, data.orientation);
 			motion.moveForwards(data.item.speed);			
 						
+			data.item.motionX = motion.x;
+			data.item.motionY = motion.y;
+			data.item.motionZ = motion.z;
+			
 			data.item.moveEntity(motion.x, motion.y, motion.z);
 									
 			if (data.toCenter && middleReached(data)) {
@@ -195,7 +199,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
 				.tagAt(j);			
 
-				EntityPassiveItem entity = new EntityPassiveItem (CoreProxy.getWorld());
+				EntityPassiveItem entity = new EntityPassiveItem (APIProxy.getWorld());
 				entity.readFromNBT(nbttagcompound2);
 
 				EntityData data = new EntityData(entity,
