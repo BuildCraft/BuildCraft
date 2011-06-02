@@ -30,7 +30,7 @@ public class mod_BuildCraftCore extends BaseMod {
 	
 	@Override
 	public String Version() {
-		return "1.6.5.1";
+		return "1.6.6.1";
 	}
     
     @SuppressWarnings({ "rawtypes", "unchecked" })

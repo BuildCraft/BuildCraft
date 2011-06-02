@@ -20,33 +20,33 @@ public class RenderMiningWell extends RenderBoat {
 		//constructor:
 		keyboard = new ModelRenderer(20, 10);
 		keyboard.addBox(0F, 0F, 0F, 12, 6, 2);
-		keyboard.setPosition(0F, 3F, 0F);
+		//keyboard.setPosition(0F, 3F, 0F);
 		keyboard.rotateAngleX = 5.427973973702365F;
 
 		lcd = new ModelRenderer(-1, 51);
-		lcd.addBox(10F, 9F, -1F, 14, 10, 3);
-		lcd.setPosition(0F, 0F, 9F);
+		//ld.addBox(10F, 9F, -1F, 14, 10, 3);
+		///lcd.setPosition(0F, 0F, 9F);
 		lcd.rotateAngleY = 5.811946409141117F;
 
 		leg1 = new ModelRenderer(0, 0);
 		leg1.addBox(0F, 0F, 0F, 5, 15, 5);
-		leg1.setPosition(1F, 0F, 7F);
+		//leg1.setPosition(1F, 0F, 7F);
 
 		leg2 = new ModelRenderer(0, 0);
 		leg2.addBox(0F, 0F, 0F, 5, 15, 5);
-		leg2.setPosition(10F, 0F, 7F);
+		//leg2.setPosition(10F, 0F, 7F);
 
 		leg3 = new ModelRenderer(0, 0);
 		leg3.addBox(0F, 0F, 0F, 5, 15, 5);
-		leg3.setPosition(10F, 0F, 16F);
+		//leg3.setPosition(10F, 0F, 16F);
 
 		leg4 = new ModelRenderer(0, 0);
 		leg4.addBox(0F, 0F, 0F, 5, 15, 5);
-		leg4.setPosition(1F, 0F, 16F);
+		//leg4.setPosition(1F, 0F, 16F);
 
 		miningWell = new ModelRenderer(0, 20);
 		miningWell.addBox(0F, 0F, 0F, 16, 16, 16);
-		miningWell.setPosition(0F, 5F, 6F);
+		//miningWell.setPosition(0F, 5F, 6F);
 
 	}
 
