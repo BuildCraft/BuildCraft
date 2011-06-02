@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemBlock;
@@ -52,7 +53,9 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
 			for (int y = box.yMin; y <= box.yMax && !found; ++y) {
 				for (int x = box.xMin; x <= box.xMax && !found; ++x) {
 					for (int z = box.zMin; z <= box.zMax && !found; ++z) {
-						if (worldObj.getBlockId(x, y, z) == 0) {
+						if (worldObj.getBlockId(x, y, z) == 0
+								|| worldObj.getBlockId(x, y, z) == Block.waterMoving.blockID
+								|| worldObj.getBlockId(x, y, z) == Block.waterStill.blockID) {
 							xSlot = x;
 							ySlot = y;
 							zSlot = z;
