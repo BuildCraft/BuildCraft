@@ -99,7 +99,19 @@ public class StackUtil {
 		
 		boolean added = false;
 		
-		if (inventory.getSizeInventory() == 3) {
+		if (inventory.getSizeInventory() == 2) {
+   		   //  This is an input / output inventory
+			
+			if (from == Orientations.YNeg || from == Orientations.YPos) {
+				if (tryAdding (inventory, 0, add, false)) {
+					added = true;
+				}
+			} else {
+				if (tryAdding (inventory, 1, add, false)) {
+					added = true;
+				}
+			}  
+		} else if (inventory.getSizeInventory() == 3) {
 			//  This is a furnace-like inventory
 			
 			if (from == Orientations.YPos) {
@@ -151,9 +163,21 @@ public class StackUtil {
 		
 		// If none, then create a new thing
 
-		if (inventory.getSizeInventory() == 3) {
+		if (inventory.getSizeInventory() == 2) {
+			//  This is an input / output inventory
+
+			if (from == Orientations.YNeg || from == Orientations.YPos) {
+				if (tryAdding (inventory, 0, add, true)) {
+					added = true;
+				}
+			} else {
+				if (tryAdding (inventory, 1, add, true)) {
+					added = true;
+				}
+			}  
+		} else if (inventory.getSizeInventory() == 3) {
 			//  This is a furnace-like inventory
-			
+
 			if (from == Orientations.YPos) {
 				if (tryAdding (inventory, 0, add, true)) {
 					added = true;
