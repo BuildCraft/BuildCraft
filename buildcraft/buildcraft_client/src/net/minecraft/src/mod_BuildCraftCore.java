@@ -6,6 +6,7 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
+import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.EntityBlock;
@@ -89,13 +90,8 @@ public class mod_BuildCraftCore extends BaseMod {
     		IPipeConnection connect = (IPipeConnection) block;
     		
 			if (connect.isPipeConnected(iblockaccess, i - 1, j, k)) {
-				if (block == BuildCraftTransport.ironPipeBlock
-						&& metadata != Orientations.XNeg.ordinal()) {
-					block.blockIndexInTexture = BuildCraftTransport.plainIronTexture;
-				} else if (block == BuildCraftTransport.diamondPipeBlock) {
-					block.blockIndexInTexture = BuildCraftTransport.diamondTextures[Orientations.XNeg
-							.ordinal()];
-				}
+				block.blockIndexInTexture = ((IBlockPipe) block)
+						.getTextureForConnection(Orientations.XNeg, metadata);
 				block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
@@ -103,13 +99,8 @@ public class mod_BuildCraftCore extends BaseMod {
 			}
     		
 			if (connect.isPipeConnected(iblockaccess, i + 1, j, k)) {
-				if (block == BuildCraftTransport.ironPipeBlock
-						&& metadata != Orientations.XPos.ordinal()) {
-					block.blockIndexInTexture = BuildCraftTransport.plainIronTexture;
-				} else if (block == BuildCraftTransport.diamondPipeBlock) {
-					block.blockIndexInTexture = BuildCraftTransport.diamondTextures[Orientations.XPos
-							.ordinal()];
-				}
+				block.blockIndexInTexture = ((IBlockPipe) block)
+				.getTextureForConnection(Orientations.XPos, metadata);
 				block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
@@ -117,13 +108,8 @@ public class mod_BuildCraftCore extends BaseMod {
 			}
     		
 			if (connect.isPipeConnected(iblockaccess, i, j - 1, k)) {
-				if (block == BuildCraftTransport.ironPipeBlock
-						&& metadata != Orientations.YNeg.ordinal()) {
-					block.blockIndexInTexture = BuildCraftTransport.plainIronTexture;
-				} else if (block == BuildCraftTransport.diamondPipeBlock) {
-					block.blockIndexInTexture = BuildCraftTransport.diamondTextures[Orientations.YNeg
-							.ordinal()];
-				}
+				block.blockIndexInTexture = ((IBlockPipe) block)
+				.getTextureForConnection(Orientations.YNeg, metadata);
 				block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
@@ -131,13 +117,8 @@ public class mod_BuildCraftCore extends BaseMod {
 			}
     		
 			if (connect.isPipeConnected(iblockaccess, i, j + 1, k)) {
-				if (block == BuildCraftTransport.ironPipeBlock
-						&& metadata != Orientations.YPos.ordinal()) {
-					block.blockIndexInTexture = BuildCraftTransport.plainIronTexture;
-				} else if (block == BuildCraftTransport.diamondPipeBlock) {
-					block.blockIndexInTexture = BuildCraftTransport.diamondTextures[Orientations.YPos
-							.ordinal()];
-				}
+				block.blockIndexInTexture = ((IBlockPipe) block)
+				.getTextureForConnection(Orientations.XPos, metadata);
 				block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
@@ -145,13 +126,8 @@ public class mod_BuildCraftCore extends BaseMod {
 			}
     		
 			if (connect.isPipeConnected(iblockaccess, i, j, k - 1)) {
-				if (block == BuildCraftTransport.ironPipeBlock
-						&& metadata != Orientations.ZNeg.ordinal()) {
-					block.blockIndexInTexture = BuildCraftTransport.plainIronTexture;
-				} else if (block == BuildCraftTransport.diamondPipeBlock) {
-					block.blockIndexInTexture = BuildCraftTransport.diamondTextures[Orientations.ZNeg
-							.ordinal()];
-				}
+				block.blockIndexInTexture = ((IBlockPipe) block)
+				.getTextureForConnection(Orientations.ZNeg, metadata);
 				block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
 						minSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
@@ -159,13 +135,8 @@ public class mod_BuildCraftCore extends BaseMod {
 			}
     		
 			if (connect.isPipeConnected(iblockaccess, i, j, k + 1)) {
-				if (block == BuildCraftTransport.ironPipeBlock
-						&& metadata != Orientations.ZPos.ordinal()) {
-					block.blockIndexInTexture = BuildCraftTransport.plainIronTexture;
-				} else if (block == BuildCraftTransport.diamondPipeBlock) {
-					block.blockIndexInTexture = BuildCraftTransport.diamondTextures[Orientations.ZPos
-							.ordinal()];
-				}
+				block.blockIndexInTexture = ((IBlockPipe) block)
+				.getTextureForConnection(Orientations.ZPos, metadata);
 				block.setBlockBounds(minSize, minSize, maxSize, maxSize,
 						maxSize, 1.0F);
 				renderblocks.renderStandardBlock(block, i, j, k);

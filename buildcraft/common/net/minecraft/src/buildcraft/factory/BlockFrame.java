@@ -8,10 +8,12 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockFrame extends Block implements IPipeConnection {	
+public class BlockFrame extends Block implements IPipeConnection, IBlockPipe {	
 	
 	public BlockFrame(int i) {
 		super(i, Material.glass);
@@ -85,6 +87,11 @@ public class BlockFrame extends Block implements IPipeConnection {
 	@Override
 	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
 		return blockAccess.getBlockId(x, y, z) == blockID;
+	}
+
+	@Override
+	public int getTextureForConnection(Orientations connection, int metadata) {		
+		return blockIndexInTexture;
 	}
     
 }

@@ -7,9 +7,11 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
+import net.minecraft.src.buildcraft.api.Orientations;
 
-public class BlockMarker extends BlockContainer implements IPipeConnection {
+public class BlockMarker extends BlockContainer implements IPipeConnection, IBlockPipe {
 
 	public BlockMarker(int i) {
 		super(i, Material.iron);
@@ -60,4 +62,9 @@ public class BlockMarker extends BlockContainer implements IPipeConnection {
     {
     	((TileMarker) world.getBlockTileEntity(i, j, k)).switchSignals();
     }
+
+	@Override
+	public int getTextureForConnection(Orientations connection, int metadata) {	
+		return blockIndexInTexture;
+	}
 }
