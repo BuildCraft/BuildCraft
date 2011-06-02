@@ -6,10 +6,12 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
+import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockPlainPipe extends Block implements IPipeConnection {	
+public class BlockPlainPipe extends Block implements IPipeConnection, IBlockPipe {	
 	
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
@@ -52,5 +54,10 @@ public class BlockPlainPipe extends Block implements IPipeConnection {
     {
         return BuildCraftCore.customTextureModel;
     }
+
+	@Override
+	public int getTextureForConnection(Orientations connection, int metadata) {		
+		return blockIndexInTexture;
+	}
     
 }

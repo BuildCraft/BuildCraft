@@ -1,9 +1,11 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.Orientations;
 
 public class BlockIronPipe extends BlockPipe {
 	
@@ -45,5 +47,14 @@ public class BlockIronPipe extends BlockPipe {
 	protected TileEntity getBlockEntity() {
 		return new TileIronPipe ();
 	}
+		
+    public int getTextureForConnection (Orientations connection, int metadata) {
+    	if (metadata != connection.ordinal()) {
+			return BuildCraftTransport.plainIronTexture;
+    	} else {
+    		return blockIndexInTexture;
+    	}
+				
+    }
 	
 }
