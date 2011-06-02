@@ -46,7 +46,7 @@ public class StackUtil {
 			
 			if (tileInventory instanceof ISpecialInventory) {
 				if (((ISpecialInventory) tileInventory).addItemFromPipe(items,
-						false)) {
+						false, from)) {
 					possibleInventories.add(pos.orientation);
 				}
 			}
@@ -93,7 +93,8 @@ public class StackUtil {
 		// First, look for a similar pile
 		
 		if (inventory instanceof ISpecialInventory) {
-			return ((ISpecialInventory) inventory).addItemFromPipe(items, add);
+			return ((ISpecialInventory) inventory).addItemFromPipe(items, add,
+					from);
 		}
 		
 		boolean added = false;
