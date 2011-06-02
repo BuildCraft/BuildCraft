@@ -81,7 +81,27 @@ public class TileWoodenPipe extends TilePipe {
 			return ((ISpecialInventory) inventory).extractItemToPipe(doRemove, from);
 		}
 		
-		if (inventory.getSizeInventory() == 3) {
+		if (inventory.getSizeInventory() == 2) {
+			//  This is an input-output inventory
+			
+		    int slotIndex = 0;
+
+		    if (from == Orientations.YNeg || from == Orientations.YPos) {
+		        slotIndex = 0;
+		    } else {
+		        slotIndex = 1;
+		    }
+
+		    ItemStack slot = inventory.getStackInSlot(slotIndex);
+
+		    if (slot != null && slot.stackSize > 0) {                       
+		        if (doRemove) {
+		            return inventory.decrStackSize(slotIndex, 1);
+		        } else {
+		            return slot;
+		        }                   
+		    }       
+		} else if (inventory.getSizeInventory() == 3) {
 			//  This is a furnace-like inventory
 			
 			int slotIndex = 0;
