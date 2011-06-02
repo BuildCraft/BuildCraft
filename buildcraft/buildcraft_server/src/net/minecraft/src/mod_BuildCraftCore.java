@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.core.EntityPassiveItem;
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 
 public class mod_BuildCraftCore extends BaseModMp {	
 	
@@ -12,6 +12,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 		
 	public void ModsLoaded () {
 		mod_BuildCraftCore.initialize();
+		BuildCraftCore.initializeModel(this);
 		
 		ModLoaderMp.RegisterEntityTracker(EntityPassiveItem.class, 160, 1);
 		ModLoaderMp.RegisterEntityTrackerEntry(EntityPassiveItem.class, 156);

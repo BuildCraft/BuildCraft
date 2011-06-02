@@ -1,9 +1,9 @@
 package net.minecraft.src.buildcraft.factory;
 
+import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
@@ -51,15 +51,15 @@ public class EntityMechanicalArm extends Entity {
         inProgressionY = false;
 
 		xArm = new EntityBlock(world, i, j, k, width, 0.5, 0.5);
-		xArm.texture = mod_BuildCraftFactory.drillTexture;
+		xArm.texture = BuildCraftFactory.drillTexture;
 		world.entityJoinedWorld(xArm);
 		
 		yArm = new EntityBlock(world, i, j, k, 0.5, 1, 0.5);
-		yArm.texture = mod_BuildCraftFactory.drillTexture;
+		yArm.texture = BuildCraftFactory.drillTexture;
 		world.entityJoinedWorld(yArm);
 		
 		zArm = new EntityBlock(world, i, j, k, 0.5, 0.5, height);
-		zArm.texture = mod_BuildCraftFactory.drillTexture;
+		zArm.texture = BuildCraftFactory.drillTexture;
 		world.entityJoinedWorld(zArm);
 		
 		head = new EntityBlock(world, i, j, k, 0.2, 1, 0.2);
@@ -108,9 +108,9 @@ public class EntityMechanicalArm extends Entity {
 		zArm = new EntityBlock(worldObj);
 		head = new EntityBlock(worldObj);
 		
-		xArm.texture = mod_BuildCraftFactory.drillTexture;
-		yArm.texture = mod_BuildCraftFactory.drillTexture;
-		zArm.texture = mod_BuildCraftFactory.drillTexture;
+		xArm.texture = BuildCraftFactory.drillTexture;
+		yArm.texture = BuildCraftFactory.drillTexture;
+		zArm.texture = BuildCraftFactory.drillTexture;
 		head.texture = 2 * 16 + 10;
 		
 		xArm.readFromNBT(xArmStore);

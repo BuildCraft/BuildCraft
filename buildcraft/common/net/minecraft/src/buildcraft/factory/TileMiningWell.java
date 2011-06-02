@@ -2,10 +2,10 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
+import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
@@ -29,7 +29,7 @@ public class TileMiningWell extends TileCurrentPowered implements IMachine {
 		
 		int depth = yCoord - 1;
 		
-		while (w.getBlockId(xCoord, depth, zCoord) == mod_BuildCraftFactory.plainPipeBlock.blockID) {
+		while (w.getBlockId(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock.blockID) {
 			depth = depth - 1;
 		}
 		
@@ -48,7 +48,7 @@ public class TileMiningWell extends TileCurrentPowered implements IMachine {
 		ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(w, xCoord, depth, zCoord);
 		
 		w.setBlockWithNotify((int) xCoord, (int) depth, (int) zCoord,
-				mod_BuildCraftFactory.plainPipeBlock.blockID);
+				BuildCraftFactory.plainPipeBlock.blockID);
 		
 		if (blockId == 0) {
 			return;

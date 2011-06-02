@@ -2,8 +2,6 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.List;
 
-import net.minecraft.src.ModLoader;
-
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.TileEntity;
@@ -13,7 +11,6 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.TileEntityPickupFX;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileObsidianPipe extends TileStonePipe {
@@ -151,8 +148,7 @@ public class TileObsidianPipe extends TileStonePipe {
 					"random.pop",
 					0.2F,
 					((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-			ModLoader.getMinecraftInstance().effectRenderer
-					.addEffect(new TileEntityPickupFX(worldObj, item, this));
+			TransportProxy.obsidianPipePickup(worldObj, item, this);
 			item.setEntityDead();
 			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
 					+ Utils.getPipeFloorOf(item.item), zCoord + 0.5, item.item);
