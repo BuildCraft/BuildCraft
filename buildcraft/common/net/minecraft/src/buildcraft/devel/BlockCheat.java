@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.devel;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockChest;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -10,7 +11,6 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftBuilders;
-import net.minecraft.src.mod_BuildCraftFactory;
 
 public class BlockCheat extends BlockChest {
 	
@@ -58,9 +58,9 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.planks, 64));			
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.redstoneRepeater, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.torchRedstoneActive, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftFactory.miningWellBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftFactory.machineBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftFactory.autoWorkbenchBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.machineBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.autoWorkbenchBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.woodenPipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.stonePipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.ironPipeBlock, 64));

@@ -2,10 +2,10 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
+import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -435,30 +435,30 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				bluePrint.setBlockId(i, it * (ySize - 1), 0,
-						mod_BuildCraftFactory.frameBlock.blockID);
+						BuildCraftFactory.frameBlock.blockID);
 				bluePrint.setBlockId(i, it * (ySize - 1), bluePrint.sizeZ - 1,
-						mod_BuildCraftFactory.frameBlock.blockID);
+						BuildCraftFactory.frameBlock.blockID);
 			}
 
 			for (int k = 0; k < bluePrint.sizeZ; ++k) {
 				bluePrint.setBlockId(0, it * (ySize - 1), k,
-						mod_BuildCraftFactory.frameBlock.blockID);
+						BuildCraftFactory.frameBlock.blockID);
 				bluePrint.setBlockId(bluePrint.sizeX - 1, it * (ySize - 1), k,
-						mod_BuildCraftFactory.frameBlock.blockID);
+						BuildCraftFactory.frameBlock.blockID);
 
 			}
 		}
 
 		for (int h = 1; h < ySize; ++h) {
 			bluePrint.setBlockId(0, h, 0,
-					mod_BuildCraftFactory.frameBlock.blockID);
+					BuildCraftFactory.frameBlock.blockID);
 			bluePrint.setBlockId(0, h, bluePrint.sizeZ - 1,
-					mod_BuildCraftFactory.frameBlock.blockID);
+					BuildCraftFactory.frameBlock.blockID);
 			bluePrint.setBlockId(bluePrint.sizeX - 1, h, 0,
-					mod_BuildCraftFactory.frameBlock.blockID);
+					BuildCraftFactory.frameBlock.blockID);
 			bluePrint.setBlockId(bluePrint.sizeX - 1, h,
 					bluePrint.sizeZ - 1,
-					mod_BuildCraftFactory.frameBlock.blockID);
+					BuildCraftFactory.frameBlock.blockID);
 		}
 		
 		bluePrintBuilder = new BluePrintBuilder(bluePrint, xMin, yCoord, zMin);		

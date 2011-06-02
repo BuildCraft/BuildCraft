@@ -12,7 +12,7 @@ public class CoreProxy {
 	}
 	
 	public static World getWorld () {
-		return ModLoader.getMinecraftServerInstance().worldMngr;
+		return ModLoader.getMinecraftServerInstance().getWorldManager(0);
 	}
 	
 	public static void setField804 (EntityItem item, float value) {

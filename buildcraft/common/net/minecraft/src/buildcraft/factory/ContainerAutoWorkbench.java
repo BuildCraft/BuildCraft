@@ -1,10 +1,10 @@
 package net.minecraft.src.buildcraft.factory;
 
+import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.ContainerWorkbench;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftFactory;
 
 public class ContainerAutoWorkbench extends ContainerWorkbench {
 
@@ -49,7 +49,7 @@ public class ContainerAutoWorkbench extends ContainerWorkbench {
     }
 	
 	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
-		if (world.getBlockId(i, j, k) != mod_BuildCraftFactory.autoWorkbenchBlock.blockID) {
+		if (world.getBlockId(i, j, k) != BuildCraftFactory.autoWorkbenchBlock.blockID) {
 			return false;
 		}
 		return entityplayer.getDistanceSq((double) i + 0.5D, (double) j + 0.5D,
