@@ -32,6 +32,7 @@ public class RenderPassiveItem extends Render
     {        
         random.setSeed(187L);
         ItemStack itemstack = entityitem.item;
+        
         GL11.glPushMatrix();
         float f2 = MathHelper.sin(f1 / 10F) * 0.1F + 0.1F;
         //  float f3 = (((float)entityitem.age + f1) / 20F + entityitem.field_804_d) * 57.29578F;
@@ -50,7 +51,11 @@ public class RenderPassiveItem extends Render
         }
         GL11.glTranslatef((float)d, (float)d1 + f2, (float)d2);
         GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
-        if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
+		if (itemstack.itemID < Block.blocksList.length
+				&& itemstack.itemID >= 0
+				&& RenderBlocks
+						.renderItemIn3d(Block.blocksList[itemstack.itemID]
+								.getRenderType()))
         {
             //  GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
             loadTexture("/terrain.png");
