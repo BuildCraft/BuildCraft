@@ -15,6 +15,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -82,7 +83,7 @@ public class Utils {
 	 * Returns true if successful, false otherwise.
 	 */
 	public static boolean addToRandomPipeEntry (TileEntity tile, Orientations from, ItemStack items) {
-		World w = CoreProxy.getWorld();
+		World w = APIProxy.getWorld();
 		
 		LinkedList <Orientations> possiblePipes = new LinkedList <Orientations> ();
 		

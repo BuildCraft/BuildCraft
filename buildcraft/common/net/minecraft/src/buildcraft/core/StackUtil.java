@@ -7,6 +7,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -27,7 +28,7 @@ public class StackUtil {
 	 * successful, false otherwise.
 	 */
 	public boolean addToRandomInventory (TileEntity tile, Orientations from) {
-		World w = CoreProxy.getWorld();
+		World w = APIProxy.getWorld();
 		
 		LinkedList <Orientations> possibleInventories = new LinkedList <Orientations> ();
 		

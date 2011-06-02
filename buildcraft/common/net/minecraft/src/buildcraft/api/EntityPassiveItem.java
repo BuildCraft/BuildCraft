@@ -5,32 +5,36 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 
-public class EntityPassiveItem extends Entity {
+public class EntityPassiveItem extends Entity implements ITrackedEntity {
 
 	public float speed = 0.01F;
 	public ItemStack item;
 	
 	public EntityPassiveItem(World world) {
-		super(world);				
+		super(world);		
+		
+		System.out.println ("A");
     	
     	noClip = true;    	
 	}
 	
 	public EntityPassiveItem(World world, double d, double d1, double d2) {
-		super (world);		
+		super (world);
+		
+		System.out.println ("B");
+		
+		setSize(0.25F, 0.25F);
+		setPosition(d, d1, d2);
+		noClip = true;
 	}
 	
 	public EntityPassiveItem(World world, double d, double d1, double d2, 
 			ItemStack itemstack) {
-		this (world);
+		this (world, d, d1, d2);
 		this.item = itemstack;
-
-		setSize(0.25F, 0.25F);
-		setPosition(d, d1, d2);
-
-		noClip = true;
     }
 
 	@Override
@@ -41,6 +45,10 @@ public class EntityPassiveItem extends Entity {
 	
 	public void onUpdate() {
 		//super.onUpdate();
+		
+		if (APIProxy.isClient(worldObj)) {
+			moveEntity(motionX, motionY, motionZ);
+		}
 	}
 
 	@Override
@@ -101,6 +109,26 @@ public class EntityPassiveItem extends Entity {
 		world.entityJoinedWorld(entityitem);
 		
 		return entityitem;
+	}
+
+	@Override
+	public Packet getSpawnPacket() {
+		return new Packet121PassiveItemSpawn(this);
+	}
+
+	@Override
+	public Packet getUpdatePacket() {		
+		return new Packet122PassiveItemUpdate(this);
+	}
+
+	@Override
+	public int getUpdateFrequency() {
+		return 5;
+	}
+
+	@Override
+	public int getMaximumDistance() {
+		return 64;
 	}
 
 }

@@ -5,14 +5,12 @@ import java.io.File;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.Packet121PassiveItemSpawn;
+import net.minecraft.src.buildcraft.api.Packet122PassiveItemUpdate;
 
 public class CoreProxy {
 	public static void addName(Object obj, String s) {
 		
-	}
-	
-	public static World getWorld () {
-		return ModLoader.getMinecraftServerInstance().getWorldManager(0);
 	}
 	
 	public static void setField804 (EntityItem item, float value) {
@@ -22,6 +20,5 @@ public class CoreProxy {
 	public static File getPropertyFile() {
 		return new File("BuildCraft.cfg");
 	}
-
 	
 }

@@ -13,7 +13,7 @@ import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class mod_BuildCraftCore extends BaseMod {	
+public class mod_BuildCraftCore extends BaseModMp {	
 	
 	BuildCraftCore proxy = new BuildCraftCore();
 	
@@ -22,6 +22,9 @@ public class mod_BuildCraftCore extends BaseMod {
 		
 	public static void initialize () {
 		BuildCraftCore.initialize ();	
+		
+		ModLoaderMp.RegisterNetClientHandlerEntity(EntityPassiveItem.class,
+				BuildCraftCore.trackedPassiveEntityId);
 	}
 		
 	public void ModsLoaded () {
