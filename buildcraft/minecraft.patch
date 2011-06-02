@@ -1,6 +1,17 @@
-diff -u -r ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java ../src/minecraft_server/net/minecraft/server/MinecraftServer.java
---- ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-02 23:10:29.443864400 +0200
-+++ ../src/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-02 23:10:33.043070300 +0200
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Packet102WindowClick.java ../src_work/minecraft/net/minecraft/src/Packet102WindowClick.java
+--- ../src_base/minecraft/net/minecraft/src/Packet102WindowClick.java	2011-06-03 00:17:37.656265000 +0200
++++ ../src_work/minecraft/net/minecraft/src/Packet102WindowClick.java	2011-06-03 00:35:46.527544900 +0200
+@@ -18,6 +18,7 @@
+ 
+     public Packet102WindowClick(int i, int j, int k, boolean flag, ItemStack itemstack, short word0)
+     {
++    	System.out.println ("INVENTORY SLOT = " + j);
+         window_Id = i;
+         inventorySlot = j;
+         mouseClick = k;
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java ../src_work/minecraft_server/net/minecraft/server/MinecraftServer.java
+--- ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-03 00:17:37.854276300 +0200
++++ ../src_work/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-06-03 00:17:41.627492100 +0200
 @@ -330,41 +330,22 @@
              }
              finally
@@ -57,9 +68,9 @@ diff -u -r ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.jav
  
      private void doTick()
      {
-diff -u -r ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java ../src/minecraft_server/net/minecraft/src/EntityTracker.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-02 23:10:29.586872600 +0200
-+++ ../src/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-02 23:27:02.121642300 +0200
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java ../src_work/minecraft_server/net/minecraft/src/EntityTracker.java
+--- ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-03 00:17:37.979283500 +0200
++++ ../src_work/minecraft_server/net/minecraft/src/EntityTracker.java	2011-06-03 00:17:41.755499500 +0200
 @@ -6,6 +6,7 @@
  
  import java.util.*;
@@ -81,9 +92,9 @@ diff -u -r ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java ../
          }
          ModLoaderMp.HandleEntityTrackers(this, entity);
      }
-diff -u -r ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java ../src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-02 23:10:29.587872700 +0200
-+++ ../src/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-02 23:31:00.973303900 +0200
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java ../src_work/minecraft_server/net/minecraft/src/EntityTrackerEntry.java
+--- ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-03 00:17:37.980283500 +0200
++++ ../src_work/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	2011-06-03 00:17:41.756499500 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.*;
