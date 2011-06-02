@@ -1,5 +1,9 @@
 cd ..
 
+rmdir /S /Q src
+mkdir src
+xcopy  /Y /E src_work\* src\
+
 xcopy /Y /E buildcraft\buildcraft_client\src\net\* src\minecraft\net
 xcopy /Y /E buildcraft\buildcraft_server\src\net\* src\minecraft_server\net
 
