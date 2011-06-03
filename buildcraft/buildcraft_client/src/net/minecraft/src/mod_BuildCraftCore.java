@@ -117,7 +117,7 @@ public class mod_BuildCraftCore extends BaseModMp {
     		
 			if (connect.isPipeConnected(iblockaccess, i, j + 1, k)) {
 				block.blockIndexInTexture = ((IBlockPipe) block)
-				.getTextureForConnection(Orientations.XPos, metadata);
+				.getTextureForConnection(Orientations.YPos, metadata);
 				block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
