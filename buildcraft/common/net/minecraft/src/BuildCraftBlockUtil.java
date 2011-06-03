@@ -21,7 +21,7 @@ public class BuildCraftBlockUtil {
     	int qty = block.quantityDropped(world.rand);
     	int dmg = block.damageDropped(meta);
     	
-    	if (id == 0 || qty == 0) {
+    	if (id == -1 || qty == 0) {
     		return null;
     	} else {    	
     		return new ItemStack(id, qty, dmg);
