@@ -5,13 +5,13 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 
-public class GuiFilter extends GuiContainer {
+public class GuiDiamondPipe extends GuiContainer {
 	
 	IInventory playerInventory;
 	IInventory filterInventory;
 	
-	public GuiFilter(IInventory playerInventory, IInventory filterInventory) {
-		super(new CraftingInv(playerInventory, filterInventory));
+	public GuiDiamondPipe(IInventory playerInventory, IInventory filterInventory) {
+		super(new CraftingDiamondPipe(playerInventory, filterInventory));
 		this.playerInventory = playerInventory;
 		this.filterInventory = filterInventory;
 		xSize = 175;

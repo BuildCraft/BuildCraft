@@ -23,8 +23,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public static void initialize () {
 		BuildCraftCore.initialize ();	
 		
-		ModLoaderMp.RegisterNetClientHandlerEntity(EntityPassiveItem.class,
-				BuildCraftCore.trackedPassiveEntityId);
+//		ModLoaderMp.RegisterNetClientHandlerEntity(EntityPassiveItem.class,
+//				BuildCraftCore.trackedPassiveEntityId);				
 	}
 		
 	public void ModsLoaded () {
