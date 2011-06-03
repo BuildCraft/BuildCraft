@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.api;
 
+import net.minecraft.src.Entity;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
@@ -11,25 +12,6 @@ public class APIProxy {
 		return ModLoader.getMinecraftInstance().theWorld;
 	}
 	
-	public static void handlePassiveEntitySpawn (Packet121PassiveItemSpawn packet) {
-		EntityPassiveItem entityitem = new EntityPassiveItem(getWorld());
-		
-		entityitem.setPosition(packet.posX, packet.posY, packet.posZ);
-		entityitem.item = new ItemStack(packet.itemID, packet.stackSize,
-				packet.damage);
-		
-		((WorldClient) getWorld()).func_712_a(packet.entityId, entityitem);
-	}
-	
-	public static void handlePassiveEntityUpdate (Packet122PassiveItemUpdate packet) {
-		EntityPassiveItem entityitem = (EntityPassiveItem) ((WorldClient) getWorld())
-				.func_709_b(packet.entityId);
-		
-		entityitem.setPosition(packet.posX, packet.posY, packet.posZ);
-		entityitem.setVelocity(packet.motionX, packet.motionY, packet.motionZ);
-		
-	}
-	
 	public static boolean isClient (World world) {
 		return world instanceof WorldClient;
 	}
@@ -37,5 +19,29 @@ public class APIProxy {
 	public static boolean isServerSide () {
 		return false;
 	}
+	
+	public static Entity getEntity (World world, int entityId) {
+		if (world instanceof WorldClient) {
+			return ((WorldClient) getWorld()).func_709_b(entityId);
+		} else {
+			return null;
+		}
+	}
+	
+	public static void storeEntity (World world, Entity entity) {
+		if (world instanceof WorldClient) {
+			((WorldClient) getWorld()).func_712_a(entity.entityId, entity);
+		} else {
+			world.entityJoinedWorld(entity);
+		}
+	}
 
+	public static void removeEntity (World world, Entity entity) {
+		if (world instanceof WorldClient) {
+			((WorldClient) getWorld()).removeEntityFromWorld(entity.entityId);
+		} else {
+			entity.setEntityDead();
+		}
+	}
+	
 }

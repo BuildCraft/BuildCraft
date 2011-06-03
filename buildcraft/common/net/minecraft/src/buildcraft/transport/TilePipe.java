@@ -2,15 +2,20 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -37,6 +42,12 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 	}
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
+		if (!APIProxy.isClient(worldObj)) {
+			realEntityEntering(item, orientation);
+		}
+	}
+	
+	public void realEntityEntering (EntityPassiveItem item, Orientations orientation) {
 		travelingEntities.add(new EntityData (item, orientation));		
 		
 		// Reajusting Ypos to make sure the object looks like sitting on the
@@ -53,6 +64,11 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		
 		if (item.speed < Utils.pipeNormalSpeed) {
 			item.speed = Utils.pipeNormalSpeed;
+		}
+		
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(createItemPacket(item, orientation),
+					xCoord, yCoord, zCoord, 50);
 		}
 	}
 
@@ -164,6 +180,12 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		    }
 		}	
 		
+//		if (APIProxy.isClient(worldObj)) {
+//			for (EntityData item : toRemove) {
+//				item.item.setEntityDead();
+//			}
+//		}
+		
 		travelingEntities.removeAll(toRemove);		
 	}
 	
@@ -237,7 +259,8 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		if (listOfPossibleMovements.size() == 0) {					
 			return Orientations.Unknown;													
 		} else {					
-			int i = worldObj.rand.nextInt(listOfPossibleMovements.size());
+			int i = (data.item.entityId + xCoord + yCoord + zCoord)
+					% listOfPossibleMovements.size();
 			
 			return listOfPossibleMovements.get(i);															
 		}				
@@ -252,4 +275,57 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
     }
     
     protected void doWork () {}
+
+	public void handleItemPacket(Packet230ModLoader packet) {
+		EntityPassiveItem item = (EntityPassiveItem) APIProxy.getEntity(
+				worldObj, packet.dataInt[3]);
+		
+		if (item == null) {
+			item = new EntityPassiveItem(worldObj);
+			item.entityId = packet.dataInt [3];
+			
+			int itemId = packet.dataInt [5];
+			int stackSize = packet.dataInt [6];
+			int dmg = packet.dataInt [7];
+			
+			item.item = new ItemStack(itemId, stackSize, dmg);		
+
+			APIProxy.storeEntity(worldObj, item);
+		}		
+		
+		Orientations orientation;						
+		orientation = Orientations.values()[packet.dataInt [4]];
+		
+		item.setPosition(packet.dataFloat[0], packet.dataFloat[1],
+				packet.dataFloat[2]);
+		item.speed = packet.dataFloat [3];
+		
+		realEntityEntering(item, orientation);
+	}
+	
+	public Packet230ModLoader createItemPacket (EntityPassiveItem item, Orientations orientation) {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftTransport.instance.getId();
+		packet.packetType = BuildCraftTransport.tilePipeItemPacket;
+		
+		packet.dataInt = new int [8];
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		packet.dataInt [3] = item.entityId;
+		packet.dataInt [4] = orientation.ordinal();
+		packet.dataInt [5] = item.item.itemID;
+		packet.dataInt [6] = item.item.stackSize;
+		packet.dataInt [7] = item.item.getItemDamage();
+		
+		packet.dataFloat = new float [4];
+		packet.dataFloat [0] = (float) item.posX;
+		packet.dataFloat [1] = (float) item.posY;
+		packet.dataFloat [2] = (float) item.posZ;
+		packet.dataFloat [3] = (float) item.speed;
+		
+		return packet;		
+	}
+	
 }

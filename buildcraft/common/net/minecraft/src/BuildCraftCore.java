@@ -1,6 +1,5 @@
 package net.minecraft.src;
 
-import java.util.HashMap;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -8,8 +7,6 @@ import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.buildcraft.api.Packet121PassiveItemSpawn;
-import net.minecraft.src.buildcraft.api.Packet122PassiveItemUpdate;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -120,9 +117,6 @@ public class BuildCraftCore {
 				"current.continous", "false"));
 
 		Utils.saveProperties();
-		
-		Packet.addIdClassMapping(121, true, true, Packet121PassiveItemSpawn.class);
-		Packet.addIdClassMapping(122, true, true, Packet122PassiveItemUpdate.class);
 	}
 	
 	
