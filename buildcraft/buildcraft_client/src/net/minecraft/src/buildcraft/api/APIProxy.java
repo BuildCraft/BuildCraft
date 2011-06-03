@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.Entity;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
