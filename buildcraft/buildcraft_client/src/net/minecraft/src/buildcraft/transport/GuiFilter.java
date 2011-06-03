@@ -2,12 +2,8 @@ package net.minecraft.src.buildcraft.transport;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Slot;
 
 public class GuiFilter extends GuiContainer {
 	
