@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -59,7 +60,7 @@ public class Box implements IBox {
 	public void deleteLasers () {
 		if (lasers != null) {
 			for (EntityBlock b : lasers) {
-				b.setEntityDead();
+				APIProxy.removeEntity(b);
 			}
 			
 			lasers = null;

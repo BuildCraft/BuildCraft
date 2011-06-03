@@ -150,7 +150,7 @@ public class TileObsidianPipe extends TileStonePipe {
 					0.2F,
 					((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 			TransportProxy.obsidianPipePickup(worldObj, item, this);
-			APIProxy.removeEntity(worldObj, item);
+			APIProxy.removeEntity(item);
 			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
 					+ Utils.getPipeFloorOf(item.item), zCoord + 0.5, item.item);
 			worldObj.entityJoinedWorld(passive);

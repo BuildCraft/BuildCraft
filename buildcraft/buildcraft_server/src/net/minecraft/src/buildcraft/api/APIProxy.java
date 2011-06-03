@@ -26,7 +26,7 @@ public class APIProxy {
 		world.entityJoinedWorld(entity);
 	}
 
-	public static void removeEntity (World world, Entity entity) {
+	public static void removeEntity (Entity entity) {
 		entity.setEntityDead();		
 	}
 }

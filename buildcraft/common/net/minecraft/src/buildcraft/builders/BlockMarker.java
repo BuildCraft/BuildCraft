@@ -46,20 +46,17 @@ public class BlockMarker extends BlockContainer implements IPipeConnection, IBlo
 		return new TileMarker();
 	}
 
-    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
-    {
+    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
         return true;
     }
     
-    public void onBlockRemoval(World world, int i, int j, int k)
-    {
+    public void onBlockRemoval(World world, int i, int j, int k) {
     	((TileMarker) world.getBlockTileEntity(i, j, k)).destroy();
         super.onBlockRemoval(world, i, j, k);       
     }
     
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
-    {
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
     	((TileMarker) world.getBlockTileEntity(i, j, k)).switchSignals();
     }
 

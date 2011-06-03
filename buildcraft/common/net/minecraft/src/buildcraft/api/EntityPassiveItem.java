@@ -5,12 +5,15 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 public class EntityPassiveItem extends Entity {
 
 	public float speed = 0.01F;
 	public ItemStack item;
+	
+	public TileEntity container;
 	
 	public double lastSynchronizationDate = 0;
 	
@@ -95,15 +98,14 @@ public class EntityPassiveItem extends Entity {
 
 			float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
 			entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.x;
-			entityitem.motionY = (float) world.rand.nextGaussian() * f3
-			+ + motion.y;
+			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + motion.y;
 			entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.z;
 			world.entityJoinedWorld(entityitem);
 			
-			APIProxy.removeEntity(world, this);
+			APIProxy.removeEntity(this);
 			return entityitem;
 		} else {			
-			APIProxy.removeEntity(world, this);
+			APIProxy.removeEntity(this);
 			return null;
 		}
 	}
