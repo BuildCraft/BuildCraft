@@ -49,6 +49,10 @@ public class RenderEntityBlock extends Render {
 	}
 	
 	public void doRenderBlock(EntityBlock entity, double i, double j, double k) {		
+		if (entity.isDead) {
+			return;
+		}
+		
 		shadowSize = entity.shadowSize;
 		World world = entity.worldObj;
 //		blockRender.blockAccess = ModLoader.getMinecraftInstance().theWorld;

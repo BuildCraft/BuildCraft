@@ -88,8 +88,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     	    	}
     		}
     	} else {    		
-    		createLasers();
-    		System.out.println ("CREATE [1] " + this + ", " + lasers);
+    		createLasers();    		
     		isDigging = true;
     	}
     }
@@ -98,7 +97,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	
 	private void createLasers () {
 		if (!APIProxy.isServerSide()) {
-			if (lasers == null) {
+			if (lasers == null) {				
 				lasers = Utils.createLaserBox(worldObj, xMin, yCoord, zMin,
 						xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1,
 						LaserKind.Stripes);
@@ -108,9 +107,8 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	
 	private void deleteLasers () {
 		if (lasers != null) {
-			System.out.println ("DELETE");
 			for (EntityBlock l : lasers) {
-				l.setEntityDead();
+				APIProxy.removeEntity(worldObj, l);
 			}
 			
 			lasers = null;
@@ -136,7 +134,6 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     		// In this case, the Quarry has been broken. Repair it.
     		bluePrintBuilder.done = false;
     		
-    		System.out.println ("CREATE [2]");
     		createLasers();
     	}
 	    
@@ -477,8 +474,6 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	}
 	
 	public Packet getDescriptionPacket() {
-		System.out.println ("GET DESCRIPTION PACKET");
-		
 		Packet230ModLoader packet = new Packet230ModLoader();
 
 		packet.modId = mod_BuildCraftFactory.instance.getId();
@@ -512,8 +507,6 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     }
 	
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
-		System.out.println ("HANDLE DESCRIPTION PACKET");
-		
 		if (packet.packetType != BuildCraftFactory.tileQuarryDescriptionPacket) {
 			return;
 		}
@@ -527,17 +520,10 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		if (init) {
 			init = false;
 			
-			System.out.println ("RE-INIT " + this + ", " + lasers);
-			
 			deleteLasers();				
 			bluePrintBuilder = null;
 			
-			System.out.println(xMin + ", " + ", " + zMin + ", " + xSize + ", "
-					+ ySize + ", " + zSize);
-			
 			createUtilsIfNeeded();
-			
-			System.out.println (arm);
 			
 			if (arm != null) {
 				arm.setHeadPosition(packet.dataFloat[0], packet.dataFloat[1],
