@@ -259,7 +259,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		if (listOfPossibleMovements.size() == 0) {					
 			return Orientations.Unknown;													
 		} else {					
-			int i = (data.item.entityId + xCoord + yCoord + zCoord)
+			int i = Math.abs(data.item.entityId + xCoord + yCoord + zCoord)
 					% listOfPossibleMovements.size();
 			
 			return listOfPossibleMovements.get(i);															
