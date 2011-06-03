@@ -248,4 +248,14 @@ public class EntityMechanicalArm extends Entity {
 		super.setEntityDead ();
 		
 	}
+	
+	public double [] getHeadPosition () {
+		return new double [] {headPosX, headPosY, headPosZ};
+	}
+	
+	public void setHeadPosition (double x, double y, double z) {
+		headPosX = x;
+		headPosY = y;
+		headPosZ = z;
+	}
 }

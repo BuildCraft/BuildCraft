@@ -20,4 +20,8 @@ public class APIProxy {
 	public static boolean isClient (World world) {
 		return false;
 	}
+	
+	public static boolean isServerSide () {
+		return true;
+	}
 }
