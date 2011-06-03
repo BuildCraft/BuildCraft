@@ -30,6 +30,10 @@ public class RenderPassiveItem extends Render
     public void doRenderItem(EntityPassiveItem entityitem, double d, double d1, double d2, 
             float f, float f1)
     {        
+    	if (entityitem.isDead) {
+    		return;
+    	}
+    	
         random.setSeed(187L);
         ItemStack itemstack = entityitem.item;
         
