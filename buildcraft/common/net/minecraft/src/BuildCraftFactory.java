@@ -24,6 +24,8 @@ public class BuildCraftFactory {
 	public static int drillTexture;
 
 	public static int tileQuarryDescriptionPacket = 120;
+
+	public static final int craftingGUI = 123;
 	
 	public static void initialize () {		
 		

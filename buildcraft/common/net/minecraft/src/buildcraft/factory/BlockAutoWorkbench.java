@@ -36,14 +36,14 @@ public class BlockAutoWorkbench extends BlockContainer
         }
     }
 
-    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
-    {
-    	super.blockActivated(world, i, j, k, entityplayer);
-    	
-        FactoryProxy.displayGUIAutoCrafting(world, entityplayer, i, j, k);
-        
-        return true;
-    }
+	public boolean blockActivated(World world, int i, int j, int k,
+			EntityPlayer entityplayer) {
+		super.blockActivated(world, i, j, k, entityplayer);
+
+		FactoryProxy.displayGUIAutoCrafting(world, entityplayer, i, j, k);
+
+		return true;
+	}
 
     
 	@Override

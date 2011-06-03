@@ -9,8 +9,7 @@ import net.minecraft.src.World;
 
 public class TransportProxy {
 
-	public static void displayGUIFilter(EntityPlayer entityplayer, TileDiamondPipe tileRooter) {
-		
+	public static void displayGUIFilter(EntityPlayer entityplayer, TileDiamondPipe tileRooter) {		
 		ModLoader.OpenGUI(entityplayer, BuildCraftTransport.diamondGUI,
 				tileRooter, new CraftingDiamondPipe(entityplayer.inventory, tileRooter));
 	}

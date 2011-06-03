@@ -5,7 +5,6 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class BlockDiamondPipe extends BlockPipe {
@@ -23,14 +22,9 @@ public class BlockDiamondPipe extends BlockPipe {
 	}
 
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {		
-		TileDiamondPipe	tileRooter = (TileDiamondPipe) world.getBlockTileEntity(i, j, k);
-		
-		if (APIProxy.isClient(world)) {
-			return true;
-		} else {
-			TransportProxy.displayGUIFilter(entityplayer, tileRooter);
-			return true;
-		}		
+		TileDiamondPipe	tileRooter = (TileDiamondPipe) world.getBlockTileEntity(i, j, k);				
+		TransportProxy.displayGUIFilter(entityplayer, tileRooter);
+		return true;		
 	}	    
 	
     public int getTextureForConnection (Orientations connection, int metadata) {

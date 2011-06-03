@@ -22,9 +22,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 		
 	public static void initialize () {
 		BuildCraftCore.initialize ();	
-		
-//		ModLoaderMp.RegisterNetClientHandlerEntity(EntityPassiveItem.class,
-//				BuildCraftCore.trackedPassiveEntityId);				
 	}
 		
 	public void ModsLoaded () {
@@ -40,7 +37,6 @@ public class mod_BuildCraftCore extends BaseModMp {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
     public void AddRenderer(Map map) {
-    	// map.put (EntityPassiveItem.class, new RenderItem());
     	map.put (EntityPassiveItem.class, new RenderPassiveItem());    	
     	map.put (EntityBlock.class, new RenderEntityBlock());
     }
