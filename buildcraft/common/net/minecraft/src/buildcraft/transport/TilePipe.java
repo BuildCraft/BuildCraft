@@ -41,21 +41,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 
 	}
 	
-	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
-		if (!APIProxy.isClient(worldObj)) {
-			realEntityEntering(item, orientation);
-		}
-	}
-	
-	public void realEntityEntering (EntityPassiveItem item, Orientations orientation) {
-		travelingEntities.add(new EntityData (item, orientation));		
-		
-		// Reajusting Ypos to make sure the object looks like sitting on the
-		// pipe.
-		if (orientation != Orientations.YPos && orientation != Orientations.YNeg) {
-			item.setPosition(item.posX, yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
-		}
-		
+	public final void entityEntering (EntityPassiveItem item, Orientations orientation) {
 		// Readjust the speed
 		
 		if (item.speed > Utils.pipeNormalSpeed) {
@@ -66,9 +52,26 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 			item.speed = Utils.pipeNormalSpeed;
 		}
 		
+		if (!APIProxy.isClient(worldObj)) {
+			concreteEntityEntering(item, orientation);
+		}
+	}
+	
+	public void concreteEntityEntering (EntityPassiveItem item, Orientations orientation) {
+		travelingEntities.add(new EntityData (item, orientation));		
+		
+		// Reajusting Ypos to make sure the object looks like sitting on the
+		// pipe.
+		if (orientation != Orientations.YPos && orientation != Orientations.YNeg) {
+			item.setPosition(item.posX, yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
+		}				
+		
 		if (APIProxy.isServerSide()) {
-			CoreProxy.sendToPlayers(createItemPacket(item, orientation),
-					xCoord, yCoord, zCoord, 50);
+			if (worldObj.getWorldTime() - item.lastSynchronizationDate > 20) {
+				item.lastSynchronizationDate = worldObj.getWorldTime(); 
+				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
+						xCoord, yCoord, zCoord, 50);
+			}
 		}
 	}
 
@@ -173,18 +176,12 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 								(IInventory) tile, true,
 								destPos.orientation.reverse()))) {
 					
-					data.item.setEntityDead();
+					APIProxy.removeEntity(worldObj, data.item);
 				} else {
 					data.item.toEntityItem(worldObj, data.orientation);
 				}
 		    }
 		}	
-		
-//		if (APIProxy.isClient(worldObj)) {
-//			for (EntityData item : toRemove) {
-//				item.item.setEntityDead();
-//			}
-//		}
 		
 		travelingEntities.removeAll(toRemove);		
 	}
@@ -300,7 +297,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 				packet.dataFloat[2]);
 		item.speed = packet.dataFloat [3];
 		
-		realEntityEntering(item, orientation);
+		concreteEntityEntering(item, orientation);
 	}
 	
 	public Packet230ModLoader createItemPacket (EntityPassiveItem item, Orientations orientation) {

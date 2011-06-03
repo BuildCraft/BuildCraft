@@ -12,6 +12,8 @@ public class EntityPassiveItem extends Entity {
 	public float speed = 0.01F;
 	public ItemStack item;
 	
+	public double lastSynchronizationDate = 0;
+	
 	public EntityPassiveItem(World world) {
 		super(world);		
 		
