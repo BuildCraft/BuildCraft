@@ -3,6 +3,12 @@ package net.minecraft.src.buildcraft.core;
 import java.io.File;
 
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.ModLoaderMp;
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.mod_BuildCraftTransport;
+import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.EntityPlayerMP;
 
 public class CoreProxy {
 	public static void addName(Object obj, String s) {
@@ -15,6 +21,28 @@ public class CoreProxy {
 	
 	public static File getPropertyFile() {
 		return new File("BuildCraft.cfg");
+	}
+
+	public static void sendToPlayers (Packet230ModLoader packet, int x, int y, int z, int maxDistance) {
+		if (APIProxy.isServerSide()) {
+			 for(int i = 0; i < ModLoader.getMinecraftServerInstance().worldMngr.length; i++)
+		        {
+		            for(int j = 0; j < ModLoader.getMinecraftServerInstance().worldMngr[i].playerEntities.size(); j++)
+		            {
+		            	EntityPlayerMP player = (EntityPlayerMP) ModLoader
+						.getMinecraftServerInstance().worldMngr[i].playerEntities
+						.get(j);
+		            	
+		            	if (Math.abs(player.posX - x) <= maxDistance
+		            		&& Math.abs(player.posY - y) <= maxDistance
+		            		&& Math.abs(player.posZ - z) <= maxDistance) {		            	
+		            		ModLoaderMp.SendPacketTo(mod_BuildCraftTransport.instance,
+		            				player, packet);
+		            	}
+		            }
+
+		        }
+		}
 	}
 	
 }

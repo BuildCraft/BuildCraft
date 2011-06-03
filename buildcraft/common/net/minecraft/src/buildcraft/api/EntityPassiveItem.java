@@ -5,10 +5,9 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 
-public class EntityPassiveItem extends Entity implements ITrackedEntity {
+public class EntityPassiveItem extends Entity {
 
 	public float speed = 0.01F;
 	public ItemStack item;
@@ -41,10 +40,6 @@ public class EntityPassiveItem extends Entity implements ITrackedEntity {
 	
 	public void onUpdate() {
 		//super.onUpdate();
-		
-		if (APIProxy.isClient(worldObj)) {
-			moveEntity(motionX, motionY, motionZ);
-		}
 	}
 
 	@Override
@@ -88,43 +83,27 @@ public class EntityPassiveItem extends Entity implements ITrackedEntity {
 		return false;
 	 }
 	
-	public EntityItem toEntityItem (World world, Orientations dir) {
-		setEntityDead();		
-		
-		Position motion = new Position (0, 0, 0, dir);
-		motion.moveForwards(0.1 + speed * 2F);
-							
-		EntityItem entityitem = new EntityItem(world, posX, posY, posZ,
-				item);
+	public EntityItem toEntityItem (World world, Orientations dir) {		
+		if (!APIProxy.isClient(worldObj)) {
+			Position motion = new Position (0, 0, 0, dir);
+			motion.moveForwards(0.1 + speed * 2F);
 
-		float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
-		entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.x;
-		entityitem.motionY = (float) world.rand.nextGaussian() * f3
-				+ + motion.y;
-		entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.z;
-		world.entityJoinedWorld(entityitem);
-		
-		return entityitem;
-	}
+			EntityItem entityitem = new EntityItem(world, posX, posY, posZ,
+					item);
 
-	@Override
-	public Packet getSpawnPacket() {
-		return new Packet121PassiveItemSpawn(this);
-	}
-
-	@Override
-	public Packet getUpdatePacket() {		
-		return new Packet122PassiveItemUpdate(this);
-	}
-
-	@Override
-	public int getUpdateFrequency() {
-		return 5;
-	}
-
-	@Override
-	public int getMaximumDistance() {
-		return 64;
+			float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
+			entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.x;
+			entityitem.motionY = (float) world.rand.nextGaussian() * f3
+			+ + motion.y;
+			entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.z;
+			world.entityJoinedWorld(entityitem);
+			
+			APIProxy.removeEntity(world, this);
+			return entityitem;
+		} else {			
+			APIProxy.removeEntity(world, this);
+			return null;
+		}
 	}
 
 }

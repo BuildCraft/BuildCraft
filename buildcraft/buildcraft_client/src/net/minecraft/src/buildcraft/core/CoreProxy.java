@@ -5,6 +5,7 @@ import java.io.File;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.Packet230ModLoader;
 
 public class CoreProxy {
 	public static void addName(Object obj, String s) {
@@ -18,6 +19,11 @@ public class CoreProxy {
 	public static File getPropertyFile() {
 		return new File(Minecraft.getMinecraftDir(),
 				"/config/BuildCraft.cfg");
+	}
+	
+	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
+			int z, int maxDistance) {
+
 	}
 
 }

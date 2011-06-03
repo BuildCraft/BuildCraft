@@ -38,16 +38,12 @@ public class mod_BuildCraftFactory extends BaseModMp {
 				renderMiningWell);
     }
 	
-	public void HandlePacket(Packet230ModLoader packet)
-    {
-		System.out.println ("HANDLE PACKET");
+	public void HandlePacket(Packet230ModLoader packet) {
 		int x = packet.dataInt [0];
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];
 		
-		if (packet.packetType == BuildCraftFactory.tileQuarryDescriptionPacket) {
-			System.out.println ("HANDLE FACTORY PACKET");
-						
+		if (packet.packetType == BuildCraftFactory.tileQuarryDescriptionPacket) {						
 			if (APIProxy.getWorld().blockExists(x, y, z)) {
 				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 				
