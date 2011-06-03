@@ -2,14 +2,19 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BlockContents;
+import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
@@ -462,6 +467,62 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		}
 		
 		bluePrintBuilder = new BluePrintBuilder(bluePrint, xMin, yCoord, zMin);		
+	}
+	
+	public Packet getDescriptionPacket() {
+		System.out.println ("GET DESCRIPTION PACKET");
+		
+		Packet230ModLoader packet = new Packet230ModLoader();
+
+		packet.modId = mod_BuildCraftFactory.instance.getId();
+		packet.packetType = BuildCraftFactory.tileQuarryDescriptionPacket;
+
+		packet.dataInt = new int [8];
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		packet.dataInt [3] = xMin;
+		packet.dataInt [4] = zMin;
+		packet.dataInt [5] = xSize;
+		packet.dataInt [6] = ySize;
+		packet.dataInt [7] = zSize;
+
+		return packet;
+    }
+	
+	public void handleDescriptionPacket (Packet230ModLoader packet) {
+		System.out.println ("HANDLE DESCRIPTION PACKET");
+		
+		if (packet.packetType != BuildCraftFactory.tileQuarryDescriptionPacket) {
+			return;
+		}
+		
+		xMin = packet.dataInt [3];
+		zMin = packet.dataInt [4];
+		xSize = packet.dataInt [5];
+		ySize = packet.dataInt [6];
+		zSize = packet.dataInt [7];
+		
+		if (init) {
+			init = false;
+			
+			if (lasers != null) {
+				deleteLasers();
+			}
+		}
+	}
+	
+	public void initialize () {
+		super.initialize();
+		
+		BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);
+		
+		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+			Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
+			BuildCraftCore.bufferedDescriptions.remove(index);
+			
+			handleDescriptionPacket(packet);
+		}
 	}
 
 }
