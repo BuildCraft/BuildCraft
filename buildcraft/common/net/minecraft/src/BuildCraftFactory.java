@@ -22,6 +22,8 @@ public class BuildCraftFactory {
 	public static BlockPlainPipe plainPipeBlock;
 	
 	public static int drillTexture;
+
+	public static int tileQuarryDescriptionPacket = 120;
 	
 	public static void initialize () {		
 		

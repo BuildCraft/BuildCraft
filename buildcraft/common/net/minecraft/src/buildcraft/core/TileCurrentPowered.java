@@ -9,7 +9,7 @@ public abstract class TileCurrentPowered extends TileEntity {
 	
 	public double latency = 1;	
 	boolean lastPower;
-	boolean init = false;
+	protected boolean init = false;
 	
 	public double lastWorkTime = 0;
 	
