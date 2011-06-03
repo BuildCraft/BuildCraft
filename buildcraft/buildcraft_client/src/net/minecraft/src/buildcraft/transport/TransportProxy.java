@@ -5,12 +5,15 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 
 public class TransportProxy {
 
 	public static void displayGUIFilter(EntityPlayer entityplayer, TileDiamondPipe tileRooter) {
-		ModLoader.getMinecraftInstance().displayGuiScreen(
-				new GuiDiamondPipe(entityplayer.inventory, tileRooter));
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(
+					new GuiDiamondPipe(entityplayer.inventory, tileRooter));
+		}
 	}
 	
 	static void obsidianPipePickup (World world, EntityItem item, TileEntity tile) {

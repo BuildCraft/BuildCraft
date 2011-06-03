@@ -6,8 +6,10 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.factory.EntityModel;
+import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
 import net.minecraft.src.buildcraft.factory.RenderMiningWell;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
+import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
 
 public class mod_BuildCraftFactory extends BaseModMp {		
@@ -19,6 +21,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 		BuildCraftFactory.initialize();
 		
+		ModLoaderMp.RegisterGUI(this, BuildCraftFactory.craftingGUI);
 		instance = this;
 	}
 		
@@ -63,4 +66,16 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 		BuildCraftCore.bufferedDescriptions.put(index, packet);
     }
+	
+    public GuiScreen HandleGUI(int i) {    	
+    	if (i == BuildCraftFactory.craftingGUI) {
+			return new GuiAutoCrafting(
+					ModLoader.getMinecraftInstance().thePlayer.inventory,
+					APIProxy.getWorld(),
+					new TileAutoWorkbench());
+    	} else {
+    		return null;
+    	}
+    }
+
 }

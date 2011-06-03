@@ -1,6 +1,5 @@
 package net.minecraft.src.buildcraft.factory;
 
-import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.ContainerWorkbench;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
@@ -8,20 +7,13 @@ import net.minecraft.src.World;
 
 public class ContainerAutoWorkbench extends ContainerWorkbench {
 
-	public int i, j, k;
-	public World world;
+	TileAutoWorkbench tile;
 	
 	public ContainerAutoWorkbench(InventoryPlayer inventoryplayer, World world,
-			int i, int j, int k) {
-		super(inventoryplayer, world, i, j, k);
-		
-		this.i = i;
-		this.j = j;
-		this.k = k;
-		this.world = world;
-		
-		TileAutoWorkbench tile = (TileAutoWorkbench) world.getBlockTileEntity(
-				i, j, k);
+			TileAutoWorkbench tile) {
+		super(inventoryplayer, world, 0, 0, 0);
+					
+		this.tile = tile;
 		
 		for (int l = 0; l < craftMatrix.getSizeInventory(); ++l) {		
 			craftMatrix.setInventorySlotContents(l, tile.getStackInSlot(l));
@@ -39,9 +31,6 @@ public class ContainerAutoWorkbench extends ContainerWorkbench {
             inventoryplayer.setItemStack(null);
         }
         
-    	TileAutoWorkbench tile = (TileAutoWorkbench) world.getBlockTileEntity(
-				i, j, k);
-        
 		for (int l = 0; l < craftMatrix.getSizeInventory(); ++l) {		
 			tile.setInventorySlotContents(l, craftMatrix.getStackInSlot(l));
 		}
@@ -49,11 +38,10 @@ public class ContainerAutoWorkbench extends ContainerWorkbench {
     }
 	
 	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
-		if (world.getBlockId(i, j, k) != BuildCraftFactory.autoWorkbenchBlock.blockID) {
-			return false;
-		}
-		return entityplayer.getDistanceSq((double) i + 0.5D, (double) j + 0.5D,
-				(double) k + 0.5D) <= 64D;
+		return true;
 	}
-
+	
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return true;
+	}
 }

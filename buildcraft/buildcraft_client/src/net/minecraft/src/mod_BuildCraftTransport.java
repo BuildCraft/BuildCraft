@@ -23,8 +23,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 		return "1.6.6.1";
 	}
 	
-    public GuiScreen HandleGUI(int i)
-    {    	
+    public GuiScreen HandleGUI(int i) {    	
     	if (i == BuildCraftTransport.diamondGUI) {
 			return new GuiDiamondPipe(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
