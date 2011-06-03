@@ -11,6 +11,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.InventoryLargeChest;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
@@ -215,30 +216,34 @@ public class Utils {
     	
 		return world.getBlockTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);    	
     }
-    
-    public static TileEntityChest getNearbyChest (TileEntityChest chest) {
-    	Position pos = new Position (chest.xCoord, chest.yCoord, chest.zCoord);
-    	TileEntity tile;
-		
-		tile = Utils.getTile(chest.worldObj, pos, Orientations.XNeg);
-		if (tile instanceof TileEntityChest) {
-			return (TileEntityChest) tile;
+	
+	public static IInventory getInventory(IInventory inv) {
+		if(inv instanceof TileEntityChest)
+		{
+			TileEntityChest chest = (TileEntityChest)inv;
+			Position pos = new Position (chest.xCoord, chest.yCoord, chest.zCoord);
+			TileEntity tile;
+			IInventory chest2 = null;
+			tile = Utils.getTile(chest.worldObj, pos, Orientations.XNeg);
+			if (tile instanceof TileEntityChest) {
+				chest2 = (IInventory)tile;
+			}
+			tile = Utils.getTile(chest.worldObj, pos, Orientations.XPos);
+			if (tile instanceof TileEntityChest) {
+				chest2 = (IInventory)tile;
+			}
+			tile = Utils.getTile(chest.worldObj, pos, Orientations.ZNeg);
+			if (tile instanceof TileEntityChest) {
+				chest2 = (IInventory)tile;
+			}
+			tile = Utils.getTile(chest.worldObj, pos, Orientations.ZPos);
+			if (tile instanceof TileEntityChest) {
+				chest2 = (IInventory)tile;
+			}
+			if(chest2 != null) return new InventoryLargeChest("", inv, chest2);
 		}
-		tile = Utils.getTile(chest.worldObj, pos, Orientations.XPos);
-		if (tile instanceof TileEntityChest) {
-			return (TileEntityChest) tile;
-		}
-		tile = Utils.getTile(chest.worldObj, pos, Orientations.ZNeg);
-		if (tile instanceof TileEntityChest) {
-			return (TileEntityChest) tile;
-		}
-		tile = Utils.getTile(chest.worldObj, pos, Orientations.ZPos);
-		if (tile instanceof TileEntityChest) {
-			return (TileEntityChest) tile;
-		}
-		
-		return null;
-    }
+		return inv;
+	}
     
     public static IAreaProvider getNearbyAreaProvider (World world, int i, int j, int k) {
     	TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
