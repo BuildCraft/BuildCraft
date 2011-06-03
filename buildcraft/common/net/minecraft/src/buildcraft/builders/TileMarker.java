@@ -66,7 +66,6 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			}
 			
 			if (origin == null || origin.vect [2] == null) {
-				System.out.println ("D");
 				signals[4] = Utils.createLaser(worldObj, new Position(xCoord,
 						yCoord, zCoord), new Position(xCoord, yCoord, zCoord
 						+ maxSize - 1), LaserKind.Blue);
