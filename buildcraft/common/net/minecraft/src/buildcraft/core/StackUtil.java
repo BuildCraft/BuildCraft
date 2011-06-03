@@ -127,25 +127,12 @@ public class StackUtil {
 			
 		} else {
 			//  This is a generic inventory
+			IInventory inv = Utils.getInventory(inventory);
 			
-			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-				if (tryAdding (inventory, j, add, false)) {
+			for (int j = 0; j < inv.getSizeInventory(); ++j) {
+				if (tryAdding (inv, j, add, false)) {
 					added = true;
 					break;
-				}
-			}
-			
-			if (!added && inventory instanceof TileEntityChest) {				
-				TileEntityChest chest = Utils
-						.getNearbyChest((TileEntityChest) inventory);
-				
-				if (chest != null) {
-					for (int j = 0; j < chest.getSizeInventory(); ++j) {
-						if (tryAdding (chest, j, add, false)) {
-							added = true;
-							break;
-						}
-					}
 				}
 			}
 		}
@@ -191,25 +178,12 @@ public class StackUtil {
 			
 		} else {
 			//  This is a generic inventory
+			IInventory inv = Utils.getInventory(inventory);
 			
-			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-				if (tryAdding (inventory, j, add, true)) {
+			for (int j = 0; j < inv.getSizeInventory(); ++j) {
+				if (tryAdding (inv, j, add, true)) {
 					added = true;
 					break;
-				}
-			}
-			
-			if (!added && inventory instanceof TileEntityChest) {			
-				TileEntityChest chest = Utils
-						.getNearbyChest((TileEntityChest) inventory);
-				
-				if (chest != null) {
-					for (int j = 0; j < chest.getSizeInventory(); ++j) {
-						if (tryAdding (chest, j, add, true)) {
-							added = true;
-							break;
-						}
-					}
 				}
 			}
 		}

@@ -125,26 +125,13 @@ public class TileWoodenPipe extends TilePipe {
 			}	
 		} else {
 			// This is a generic inventory
+			IInventory inv = Utils.getInventory(inventory);
 			
-			ItemStack result = checkExtractGeneric(inventory, doRemove, from);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 			
 			if (result != null) {
 				return result;
-			}
-			
-			if (inventory instanceof TileEntityChest) {
-				// If we're on a entity chest, check if there's an other chest
-				// around
-								
-				TileEntityChest chest = Utils
-						.getNearbyChest((TileEntityChest) inventory);
-				
-				if (chest != null) {
-					return checkExtractGeneric((IInventory) chest, doRemove,
-							from);
-				}
-			}
-			
+			}	
 		}		
 		
 		return null;
