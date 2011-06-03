@@ -258,8 +258,16 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		if (listOfPossibleMovements.size() == 0) {					
 			return Orientations.Unknown;													
 		} else {
-			int i = Math.abs(data.item.entityId + xCoord + yCoord + zCoord)
-					% listOfPossibleMovements.size();
+			int i;
+			
+			if (APIProxy.isClient(worldObj) || APIProxy.isServerSide()) {
+				i = Math.abs(data.item.entityId + xCoord + yCoord + zCoord
+						+ data.item.deterministicRandomization)
+						% listOfPossibleMovements.size();
+			} else {
+				i = worldObj.rand.nextInt(listOfPossibleMovements.size());
+			}
+					
 			
 			return listOfPossibleMovements.get(i);															
 		}				
@@ -306,6 +314,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		item.setPosition(packet.dataFloat[0], packet.dataFloat[1],
 				packet.dataFloat[2]);
 		item.speed = packet.dataFloat [3];
+		item.deterministicRandomization = packet.dataInt [8];
 		
 		if (item.container == null) {
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
@@ -319,10 +328,12 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 	public Packet230ModLoader createItemPacket (EntityPassiveItem item, Orientations orientation) {
 		Packet230ModLoader packet = new Packet230ModLoader();
 		
+		item.deterministicRandomization += worldObj.rand.nextInt(9);
+		
 		packet.modId = mod_BuildCraftTransport.instance.getId();
 		packet.packetType = BuildCraftTransport.tilePipeItemPacket;
 		
-		packet.dataInt = new int [8];
+		packet.dataInt = new int [9];
 		packet.dataInt [0] = xCoord;
 		packet.dataInt [1] = yCoord;
 		packet.dataInt [2] = zCoord;
@@ -331,6 +342,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		packet.dataInt [5] = item.item.itemID;
 		packet.dataInt [6] = item.item.stackSize;
 		packet.dataInt [7] = item.item.getItemDamage();
+		packet.dataInt [8] = item.deterministicRandomization;
 		
 		packet.dataFloat = new float [4];
 		packet.dataFloat [0] = (float) item.posX;
