@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.IInventory;
@@ -34,14 +35,14 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		}
 	}
 	
-	LinkedList <EntityData> travelingEntities = new LinkedList <EntityData> ();
+	TreeMap<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData> ();
 	LinkedList <EntityData> entitiesToLoad = new LinkedList <EntityData> ();
 	
 	public TilePipe () {
 
 	}
 	
-	public final void entityEntering (EntityPassiveItem item, Orientations orientation) {
+	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
 		// Readjust the speed
 		
 		if (item.speed > Utils.pipeNormalSpeed) {
@@ -52,13 +53,12 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 			item.speed = Utils.pipeNormalSpeed;
 		}
 		
-		if (!APIProxy.isClient(worldObj)) {
-			concreteEntityEntering(item, orientation);
+		if (!travelingEntities.containsKey(new Integer(item.entityId))) {
+			travelingEntities.put(new Integer(item.entityId), new EntityData(
+					item, orientation));
+			
+			item.container = this;
 		}
-	}
-	
-	public void concreteEntityEntering (EntityPassiveItem item, Orientations orientation) {
-		travelingEntities.add(new EntityData (item, orientation));		
 		
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
@@ -120,14 +120,14 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		
 		for (EntityData data : entitiesToLoad) {
 			worldObj.entityJoinedWorld(data.item);
-			travelingEntities.add(data);
+			travelingEntities.put(new Integer(data.item.entityId), data);
 		}
 		
 		entitiesToLoad.clear();
 		
 		LinkedList <EntityData> toRemove = new LinkedList <EntityData> ();				
 		
-		for (EntityData data : travelingEntities) {
+		for (EntityData data : travelingEntities.values()) {
 			Position motion = new Position (0, 0, 0, data.orientation);
 			motion.moveForwards(data.item.speed);			
 						
@@ -173,17 +173,18 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 							data.orientation);
 				} else if (tile instanceof IInventory
 						&& (new StackUtil(data.item.item).checkAvailableSlot(
-								(IInventory) tile, true,
+								(IInventory) tile,
+								!APIProxy.isClient(worldObj),
 								destPos.orientation.reverse()))) {
 					
-					APIProxy.removeEntity(worldObj, data.item);
+					APIProxy.removeEntity(data.item);
 				} else {
 					data.item.toEntityItem(worldObj, data.orientation);
 				}
 		    }
 		}	
 		
-		travelingEntities.removeAll(toRemove);		
+		travelingEntities.values().removeAll(toRemove);		
 	}
 	
 	public boolean middleReached(EntityData entity) {
@@ -220,6 +221,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 
 				EntityPassiveItem entity = new EntityPassiveItem (APIProxy.getWorld());
 				entity.readFromNBT(nbttagcompound2);
+				entity.container = this;
 
 				EntityData data = new EntityData(entity,
 						Orientations.values()[nbttagcompound2.getInteger("orientation")]);
@@ -238,7 +240,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
     
     	NBTTagList nbttaglist = new NBTTagList();
     	    	
-    	for (EntityData data : travelingEntities) {    		
+    	for (EntityData data : travelingEntities.values()) {    		
     		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
     		nbttaglist.setTag(nbttagcompound2);
     		data.item.writeToNBT(nbttagcompound2);
@@ -255,7 +257,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		
 		if (listOfPossibleMovements.size() == 0) {					
 			return Orientations.Unknown;													
-		} else {					
+		} else {
 			int i = Math.abs(data.item.entityId + xCoord + yCoord + zCoord)
 					% listOfPossibleMovements.size();
 			
@@ -264,7 +266,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
     }
     
     public void destroy () {
-    	for (EntityData data : travelingEntities) {
+    	for (EntityData data : travelingEntities.values()) {
     		data.item.toEntityItem(worldObj, data.orientation);
     	}
     	
@@ -288,7 +290,15 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 			item.item = new ItemStack(itemId, stackSize, dmg);		
 
 			APIProxy.storeEntity(worldObj, item);
-		}		
+		} else {
+			if (item.container != this) {
+				if (item.container != null) {
+					((TilePipe) item.container).travelingEntities
+							.remove(item.entityId);
+					item.container = null;
+				}
+			}
+		}
 		
 		Orientations orientation;						
 		orientation = Orientations.values()[packet.dataInt [4]];
@@ -297,7 +307,13 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 				packet.dataFloat[2]);
 		item.speed = packet.dataFloat [3];
 		
-		concreteEntityEntering(item, orientation);
+		if (item.container == null) {
+			travelingEntities.put(new Integer(item.entityId), new EntityData(
+					item, orientation));
+			item.container = this;
+		} else {
+			travelingEntities.get(new Integer(item.entityId)).orientation = orientation;
+		}
 	}
 	
 	public Packet230ModLoader createItemPacket (EntityPassiveItem item, Orientations orientation) {

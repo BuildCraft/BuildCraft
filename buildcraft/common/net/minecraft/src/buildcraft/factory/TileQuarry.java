@@ -108,7 +108,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	private void deleteLasers () {
 		if (lasers != null) {
 			for (EntityBlock l : lasers) {
-				APIProxy.removeEntity(worldObj, l);
+				APIProxy.removeEntity(l);
 			}
 			
 			lasers = null;

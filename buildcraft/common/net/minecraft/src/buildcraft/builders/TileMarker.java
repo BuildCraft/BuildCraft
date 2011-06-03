@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.builders;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -30,17 +31,21 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	EntityBlock signals [];
 	
 	public void switchSignals () {
+		if (APIProxy.isServerSide()) {
+			return;
+		}
+		
 		if (signals != null) {
 			for (EntityBlock b : signals) {
 				if (b != null) {
-					b.setEntityDead();
+					APIProxy.removeEntity(b);
 				}
 			}
 			
 			signals = null;
-		}
+		}			
 		
-		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
+		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {			
 			signals = new EntityBlock [6];
 			if (origin == null || origin.vect [0] == null) {
 				signals[0] = Utils.createLaser(worldObj, new Position(xCoord,
@@ -61,6 +66,7 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			}
 			
 			if (origin == null || origin.vect [2] == null) {
+				System.out.println ("D");
 				signals[4] = Utils.createLaser(worldObj, new Position(xCoord,
 						yCoord, zCoord), new Position(xCoord, yCoord, zCoord
 						+ maxSize - 1), LaserKind.Blue);
@@ -183,7 +189,7 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 		if (lasers != null) {
 			for (EntityBlock entity : lasers) {
 				if (entity != null) {
-					entity.isDead = true;
+					APIProxy.removeEntity(entity);
 				}
 			}
 		}

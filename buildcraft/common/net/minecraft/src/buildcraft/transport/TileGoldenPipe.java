@@ -6,12 +6,12 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileGoldenPipe extends TileStonePipe {
 
-	public void concreteEntityEntering (EntityPassiveItem item, Orientations orientation) {
-		super.concreteEntityEntering(item, orientation);
-		
+	public void entityEntering (EntityPassiveItem item, Orientations orientation) {		
 		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
 			item.speed = Utils.pipeNormalSpeed * 20F;
 		}
+		
+		super.entityEntering(item, orientation);
 	}
 
 }

@@ -35,11 +35,11 @@ public class APIProxy {
 		}
 	}
 
-	public static void removeEntity (World world, Entity entity) {
+	public static void removeEntity (Entity entity) {
 		entity.setEntityDead();
 		
-		if (world instanceof WorldClient) {
-			((WorldClient) getWorld()).removeEntityFromWorld(entity.entityId);
+		if (entity.worldObj instanceof WorldClient) {
+			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
 		}
 	}
 	
