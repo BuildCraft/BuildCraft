@@ -17,6 +17,8 @@ public class EntityPassiveItem extends Entity {
 	
 	public double lastSynchronizationDate = 0;
 	
+	public int deterministicRandomization = 0;
+	
 	public EntityPassiveItem(World world) {
 		super(world);		
 		
