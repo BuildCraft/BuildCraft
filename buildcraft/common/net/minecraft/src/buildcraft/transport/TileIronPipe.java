@@ -1,7 +1,10 @@
 package net.minecraft.src.buildcraft.transport;
 
+import java.util.LinkedList;
+
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -41,25 +44,28 @@ public class TileIronPipe extends TilePipe {
 		}
 	}
 	
-	protected Orientations resolveDestination (EntityData data) {
+	@Override
+	public LinkedList<Orientations> getPossibleMovements(Position pos,
+			EntityPassiveItem item) {
+		LinkedList<Orientations> result = new LinkedList<Orientations>();
+
 		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
 		if (metadata != -1) {
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[metadata]);			
 			
+			Position newPos = new Position(pos);
+			newPos.orientation = Orientations.values()[metadata];				
+			newPos.moveForwards(1.0);
 			
-			pos.moveForwards(1.0);
-			
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity tile = worldObj.getBlockTileEntity((int) newPos.x,
+					(int) newPos.y, (int) newPos.z);
 			
 			if (tile instanceof IPipeEntry || tile instanceof IInventory) {
-				return pos.orientation;
+				result.add(newPos.orientation);
 			}
 		}
 		
-		return Orientations.Unknown;
+		return result;
 	}
 	
 }
