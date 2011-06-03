@@ -17,6 +17,8 @@ import net.minecraft.src.buildcraft.transport.TileWoodenPipe;
 
 public class BuildCraftTransport {
 	
+	public static final int diamondGUI = 122;
+	
 	private static boolean initialized = false;
 	
 	public static BlockWoodenPipe woodenPipeBlock;

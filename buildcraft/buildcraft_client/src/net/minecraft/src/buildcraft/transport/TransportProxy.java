@@ -10,7 +10,7 @@ public class TransportProxy {
 
 	public static void displayGUIFilter(EntityPlayer entityplayer, TileDiamondPipe tileRooter) {
 		ModLoader.getMinecraftInstance().displayGuiScreen(
-				new GuiFilter(entityplayer.inventory, tileRooter));
+				new GuiDiamondPipe(entityplayer.inventory, tileRooter));
 	}
 	
 	static void obsidianPipePickup (World world, EntityItem item, TileEntity tile) {
