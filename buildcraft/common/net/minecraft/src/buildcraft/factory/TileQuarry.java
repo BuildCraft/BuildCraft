@@ -10,6 +10,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_BuildCraftFactory;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -62,7 +63,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     		bluePrintBuilder.findNextBlock(worldObj);
     	}
     	
-    	if (bluePrintBuilder.done) {
+    	if (bluePrintBuilder.done) {    
     		deleteLasers ();
     		
     		if (arm == null) {
@@ -86,8 +87,9 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     	    		isDigging = true;
     	    	}
     		}
-    	} else {
-    		createLasers();	
+    	} else {    		
+    		createLasers();
+    		System.out.println ("CREATE [1] " + this + ", " + lasers);
     		isDigging = true;
     	}
     }
@@ -95,15 +97,18 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	private boolean loadDefaultBoundaries = false;
 	
 	private void createLasers () {
-		if (lasers == null) {
-			lasers = Utils.createLaserBox(worldObj, xMin, yCoord, zMin,
-					xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1,
-					LaserKind.Stripes);
+		if (!APIProxy.isServerSide()) {
+			if (lasers == null) {
+				lasers = Utils.createLaserBox(worldObj, xMin, yCoord, zMin,
+						xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1,
+						LaserKind.Stripes);
+			}
 		}
 	}
 	
 	private void deleteLasers () {
 		if (lasers != null) {
+			System.out.println ("DELETE");
 			for (EntityBlock l : lasers) {
 				l.setEntityDead();
 			}
@@ -130,6 +135,8 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     	if (bluePrintBuilder.done && bluePrintBuilder.findNextBlock(worldObj) != null) {
     		// In this case, the Quarry has been broken. Repair it.
     		bluePrintBuilder.done = false;
+    		
+    		System.out.println ("CREATE [2]");
     		createLasers();
     	}
 	    
@@ -486,6 +493,20 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		packet.dataInt [5] = xSize;
 		packet.dataInt [6] = ySize;
 		packet.dataInt [7] = zSize;
+		
+		packet.dataFloat = new float [3];
+		
+		if (arm != null) {
+			double [] headPos = arm.getHeadPosition();
+			
+			packet.dataFloat [0] = (float) headPos [0];
+			packet.dataFloat [1] = (float) headPos [1];
+			packet.dataFloat [2] = (float) headPos [2];
+		} else {
+			packet.dataFloat [0] = 0;
+			packet.dataFloat [1] = 0;
+			packet.dataFloat [2] = 0;
+		}
 
 		return packet;
     }
@@ -506,8 +527,21 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		if (init) {
 			init = false;
 			
-			if (lasers != null) {
-				deleteLasers();
+			System.out.println ("RE-INIT " + this + ", " + lasers);
+			
+			deleteLasers();				
+			bluePrintBuilder = null;
+			
+			System.out.println(xMin + ", " + ", " + zMin + ", " + xSize + ", "
+					+ ySize + ", " + zSize);
+			
+			createUtilsIfNeeded();
+			
+			System.out.println (arm);
+			
+			if (arm != null) {
+				arm.setHeadPosition(packet.dataFloat[0], packet.dataFloat[1],
+						packet.dataFloat[2]);
 			}
 		}
 	}

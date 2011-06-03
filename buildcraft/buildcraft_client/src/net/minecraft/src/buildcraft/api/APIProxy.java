@@ -33,5 +33,9 @@ public class APIProxy {
 	public static boolean isClient (World world) {
 		return world instanceof WorldClient;
 	}
+	
+	public static boolean isServerSide () {
+		return false;
+	}
 
 }
