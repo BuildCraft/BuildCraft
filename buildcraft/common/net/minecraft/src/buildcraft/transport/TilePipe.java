@@ -252,7 +252,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
     	nbttagcompound.setTag("travelingEntities", nbttaglist);
     }
     
-    protected Orientations resolveDestination (EntityData data) {
+    public Orientations resolveDestination (EntityData data) {
     	LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(
 				xCoord, yCoord, zCoord, data.orientation), data.item);
 		

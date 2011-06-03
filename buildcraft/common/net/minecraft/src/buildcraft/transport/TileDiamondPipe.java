@@ -7,6 +7,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -67,14 +68,18 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 	}
 
 	@Override
-	protected Orientations resolveDestination(EntityData data) {
+	public LinkedList<Orientations> getPossibleMovements(Position pos,
+			EntityPassiveItem item) {
+		LinkedList<Orientations> filteredOrientations = new LinkedList<Orientations>();
 		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
-		LinkedList<Orientations> exitOrientations = new LinkedList<Orientations>();
+		LinkedList<Orientations> possibilities = super.getPossibleMovements(new Position(
+				xCoord, yCoord, zCoord, pos.orientation), item);
 		
-		LinkedList<Orientations> mvts = getPossibleMovements(new Position(
-				xCoord, yCoord, zCoord, data.orientation), data.item);
-						
-		for (Orientations dir : mvts) {
+		possibilities.add(pos.orientation.reverse()); //So item will move backward if filtered here?
+		
+		
+		//Filtered outputs
+		for (Orientations dir : possibilities) {
 			boolean foundFilter = false;
 
 			for (int slot = 0; slot < 9; ++slot) {
@@ -85,32 +90,23 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 				}
 
 				if (stack != null
-						&& stack.itemID == data.item.item.itemID
-						&& stack.getItemDamage() == data.item.item
+						&& stack.itemID == item.item.itemID
+						&& stack.getItemDamage() == item.item
 								.getItemDamage()) {
 					
 					// NB: if there's several of the same match, the probability
 					// to use that filter is higher, this is why there's no
 					// break here.
-					exitOrientations.add(dir);
+					filteredOrientations.add(dir);
 
 				} 
 			}
-			
 			if (!foundFilter) {				
 				defaultOrientations.add(dir);
 			}
-		} 
-		
-		if (exitOrientations.size() != 0) {
-			return exitOrientations.get(worldObj.rand.nextInt(exitOrientations
-					.size()));
-		} else if (defaultOrientations.size() != 0) {
-			return defaultOrientations.get(worldObj.rand
-					.nextInt(defaultOrientations.size()));
-		} else {
-			return Orientations.Unknown; 
 		}
+		if(filteredOrientations.size() != 0) return filteredOrientations;
+		return defaultOrientations;
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
