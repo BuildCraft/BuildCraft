@@ -155,6 +155,8 @@ public class TileObsidianPipe extends TileStonePipe {
 					+ Utils.getPipeFloorOf(item.item), zCoord + 0.5, item.item);
 			worldObj.entityJoinedWorld(passive);
 			entityEntering(passive, orientation.reverse());
+			
+			item.setEntityDead();
 		}
 	}
 }
