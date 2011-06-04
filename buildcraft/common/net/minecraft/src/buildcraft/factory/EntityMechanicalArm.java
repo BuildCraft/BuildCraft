@@ -171,6 +171,10 @@ public class EntityMechanicalArm extends Entity {
 		inProgressionY = true;
 	}
 	
+	public double [] getTarget () {
+		return new double [] {targetX, targetY, targetZ};
+	}
+	
     public void onUpdate() {
     	super.onUpdate ();
     	

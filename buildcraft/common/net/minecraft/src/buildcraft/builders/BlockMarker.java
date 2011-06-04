@@ -68,4 +68,8 @@ public class BlockMarker extends BlockContainer implements IPipeConnection, IBlo
 	public int getTextureForConnection(Orientations connection, int metadata) {	
 		return blockIndexInTexture;
 	}
+	
+    public float getHeightInPipe () {
+    	return 0.4F;
+    }
 }

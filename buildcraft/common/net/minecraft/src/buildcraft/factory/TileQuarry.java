@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
@@ -46,37 +47,22 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		latency = 20;
 	}
 	
-    public void updateEntity()
-    {
-    	createUtilsIfNeeded ();    	
-    	
-    	super.updateEntity();
-    }
-    
     public void createUtilsIfNeeded () {
     	if (bluePrintBuilder == null) {
     		if (xSize == -1) {
     			setBoundaries(loadDefaultBoundaries);
     		}
-    		
+    		    
     		initializeBluePrintBuilder();
-    		bluePrintBuilder.findNextBlock(worldObj);
-    	}
+    	}    	
     	
-    	if (bluePrintBuilder.done) {    
+		bluePrintBuilder.findNextBlock(worldObj);
+    	
+    	if (bluePrintBuilder.done) {    	
     		deleteLasers ();
     		
     		if (arm == null) {
-				arm = new EntityMechanicalArm
-				(worldObj,
-				xMin + Utils.pipeMaxSize,
-				yCoord + bluePrintBuilder.bluePrint.sizeY - 1 + Utils.pipeMinSize,
-				zMin + Utils.pipeMaxSize,
-				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinSize * 2,
-				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinSize * 2);
-
-    			arm.listener = this;
-    			loadArm = true;
+    			createArm ();
     		}
 
     		if (loadArm) {
@@ -94,6 +80,17 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     }
 	
 	private boolean loadDefaultBoundaries = false;
+	
+	private void createArm () {
+		arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxSize,
+				yCoord + bluePrintBuilder.bluePrint.sizeY - 1
+						+ Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
+				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinSize * 2,
+				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinSize * 2);
+
+		arm.listener = this;
+		loadArm = true;
+	}
 	
 	private void createLasers () {
 		if (!APIProxy.isServerSide()) {
@@ -137,7 +134,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     		createLasers();
     	}
 	    
-		if (!bluePrintBuilder.done) {			
+		if (!bluePrintBuilder.done) {
 			lastWorkTime = worldObj.getWorldTime();
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
@@ -155,14 +152,20 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 			}
 			
 			return;
-		} 	  	
-						
+		} 	  					
+		
 		if (!findTarget(true)) {
 			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
+						
 			isDigging = false;			
 		}
 		
-		inProcess = true;		
+		inProcess = true;
+		
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+					50, mod_BuildCraftFactory.instance);
+		}
 	}
 
 	public boolean findTarget (boolean doSet) {
@@ -284,9 +287,15 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	
 	@Override
 	public void positionReached(EntityMechanicalArm arm) {
+		inProcess = false;
+		
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		int i = targetX;
 		int j = targetY;
-		int k = targetZ;
+		int k = targetZ;				
 		
 		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
 		
@@ -336,9 +345,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 			}
 					
 			worldObj.setBlockWithNotify((int) i, (int) j, (int) k, 0);
-		}
-
-		inProcess = false;
+		}		
 	}
 	
 	boolean blockDig (int blockID) {
@@ -488,7 +495,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		packet.dataInt [5] = xSize;
 		packet.dataInt [6] = ySize;
 		packet.dataInt [7] = zSize;
-		
+
 		packet.dataFloat = new float [3];
 		
 		if (arm != null) {
@@ -502,30 +509,100 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 			packet.dataFloat [1] = 0;
 			packet.dataFloat [2] = 0;
 		}
+		
+		return packet;
+    }
+	
+	public Packet230ModLoader getUpdatePacket() {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftFactory.instance.getId();
+		packet.packetType = BuildCraftFactory.tileQuarryUpdatePacket;
+		
+		packet.dataInt = new int [3];
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		
+		packet.dataFloat = new float [6];
+		
+		if (arm != null) {
+			double [] headPos = arm.getHeadPosition();
+			double [] target = arm.getTarget();
+			
+			packet.dataFloat [0] = (float) headPos [0];
+			packet.dataFloat [1] = (float) headPos [1];
+			packet.dataFloat [2] = (float) headPos [2];
+			
+			packet.dataFloat [3] = (float) target [0];
+			packet.dataFloat [4] = (float) target [1];
+			packet.dataFloat [5] = (float) target [2];
+		} else {
+			packet.dataFloat [0] = 0;
+			packet.dataFloat [1] = 0;
+			packet.dataFloat [2] = 0;
+			
+			packet.dataFloat [3] = 0;
+			packet.dataFloat [4] = 0;
+			packet.dataFloat [5] = 0;
+
+		}
 
 		return packet;
     }
+	
+	public void handleUpdatePacket (Packet230ModLoader packet) {
+		if (packet.packetType != BuildCraftFactory.tileQuarryUpdatePacket) {
+			return;
+		}
+		
+		if (packet.dataFloat[0] == 0 && packet.dataFloat[1] == 0
+				&& packet.dataFloat[2] == 0) {
+			return;
+		}
+		
+		createUtilsIfNeeded();
+		
+		if (arm != null) {
+			arm.setHeadPosition(packet.dataFloat[0], packet.dataFloat[1],
+					packet.dataFloat[2]);
+			
+			arm.setTarget(packet.dataFloat[3], packet.dataFloat[4],
+					packet.dataFloat[5]);
+		}
+	}
 	
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
 		if (packet.packetType != BuildCraftFactory.tileQuarryDescriptionPacket) {
 			return;
 		}
 		
-		xMin = packet.dataInt [3];
-		zMin = packet.dataInt [4];
-		xSize = packet.dataInt [5];
-		ySize = packet.dataInt [6];
-		zSize = packet.dataInt [7];
+		int xMin = packet.dataInt [3];
+		int zMin = packet.dataInt [4];
+		int xSize = packet.dataInt [5];
+		int ySize = packet.dataInt [6];
+		int zSize = packet.dataInt [7];
 		
-		if (init) {
+		if (init && 
+				(xMin != this.xMin
+				|| zMin != this.zMin
+				|| xSize != this.xSize
+				|| ySize != this.ySize
+				|| zSize != this.zSize)) {
 			init = false;
+			
+			this.xMin = xMin;
+			this.zMin = zMin;
+			this.xSize = xSize;
+			this.ySize = ySize;
+			this.zSize = zSize;
 			
 			deleteLasers();				
 			bluePrintBuilder = null;
 			
 			createUtilsIfNeeded();
 			
-			if (arm != null) {
+			if (arm != null) {			
 				arm.setHeadPosition(packet.dataFloat[0], packet.dataFloat[1],
 						packet.dataFloat[2]);
 			}
@@ -534,6 +611,8 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	
 	public void initialize () {
 		super.initialize();
+		
+		createUtilsIfNeeded ();
 		
 		BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);
 		

@@ -106,4 +106,8 @@ public abstract class BlockPipe extends BlockContainer implements
     public int getTextureForConnection (Orientations connection, int metadata) {
     	return blockIndexInTexture;
     }
+    
+    public float getHeightInPipe () {
+    	return 0.4F;
+    }
 }
