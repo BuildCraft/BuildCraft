@@ -7,7 +7,7 @@ import net.minecraft.src.buildcraft.builders.BlockMarker;
 import net.minecraft.src.buildcraft.builders.TileFiller;
 import net.minecraft.src.buildcraft.builders.TileMarker;
 
-public class mod_BuildCraftBuilders extends BaseMod {
+public class mod_BuildCraftBuilders extends BaseModMp {
 
 	public static BlockMarker markerBlock;
 	public static BlockFiller fillerBlock;
