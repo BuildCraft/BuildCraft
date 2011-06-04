@@ -328,7 +328,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 	public Packet230ModLoader createItemPacket (EntityPassiveItem item, Orientations orientation) {
 		Packet230ModLoader packet = new Packet230ModLoader();
 		
-		item.deterministicRandomization += worldObj.rand.nextInt(9);
+		item.deterministicRandomization += worldObj.rand.nextInt(6);
 		
 		packet.modId = mod_BuildCraftTransport.instance.getId();
 		packet.packetType = BuildCraftTransport.tilePipeItemPacket;
