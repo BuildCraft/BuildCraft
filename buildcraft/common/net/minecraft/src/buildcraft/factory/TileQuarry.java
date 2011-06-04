@@ -26,7 +26,8 @@ import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileQuarry extends TileCurrentPowered implements IArmListener, IMachine {		
+public class TileQuarry extends TileCurrentPowered implements IArmListener, IMachine {
+	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
 	boolean inProcess = false;
@@ -56,7 +57,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     		initializeBluePrintBuilder();
     	}    	
     	
-		bluePrintBuilder.findNextBlock(worldObj);
+    	nextBlockForBluePrint = bluePrintBuilder.findNextBlock(worldObj);
     	
     	if (bluePrintBuilder.done) {    	
     		deleteLasers ();
@@ -127,7 +128,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	    	return;
 	    }
 	    
-    	if (bluePrintBuilder.done && bluePrintBuilder.findNextBlock(worldObj) != null) {
+    	if (bluePrintBuilder.done && nextBlockForBluePrint != null) {
     		// In this case, the Quarry has been broken. Repair it.
     		bluePrintBuilder.done = false;
     		
