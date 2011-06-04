@@ -35,6 +35,10 @@ public class BlockMarker extends BlockContainer implements IPipeConnection, IBlo
     {
         return false;
     }
+    
+    public boolean func_28025_b () {
+    	return false;
+    }    
 
 	@Override
 	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
