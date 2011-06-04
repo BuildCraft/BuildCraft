@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.core;
 import java.io.File;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet230ModLoader;
@@ -24,6 +25,10 @@ public class CoreProxy {
 	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
 			int z, int maxDistance) {
 
+	}
+	
+	public static boolean isPlainBlock (Block block) {
+		return block.renderAsNormalBlock();
 	}
 
 }
