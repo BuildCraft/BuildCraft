@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.core;
 
 import java.io.File;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
@@ -43,6 +44,10 @@ public class CoreProxy {
 
 		        }
 		}
+	}
+	
+	public static boolean isPlainBlock (Block block) {
+		return block.func_28025_b();
 	}
 	
 }

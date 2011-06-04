@@ -43,6 +43,7 @@ public abstract class BlockPipe extends BlockContainer implements
 	@Override
 	protected abstract TileEntity getBlockEntity();
 	
+	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
 		float xMin = Utils.pipeMinSize, xMax = Utils.pipeMaxSize, 
 		yMin = Utils.pipeMinSize, yMax = Utils.pipeMaxSize, 

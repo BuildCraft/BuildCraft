@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockCactus;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
@@ -34,30 +35,19 @@ public class Utils {
 	
 	private static final File cfgfile = CoreProxy.getPropertyFile();
 	
-	private static float blockModelsFloor [];
-	
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different
 	 * level to optimize graphical aspect.
 	 */
-	public static float getPipeFloorOf (ItemStack item) {
-		if (blockModelsFloor == null) {
-			blockModelsFloor = new float [256];
-			
-			for (int j = 0; j < 256; ++j) {
-				blockModelsFloor [j] = 0.27F;
-			}
-			
-			blockModelsFloor [Block.dirt.getRenderType()] = 0.4F;
-			blockModelsFloor [Block.waterStill.getRenderType()] = 0.4F;
-			blockModelsFloor [Block.cactus.getRenderType()] = 0.4F;
-		}
-		
-		
+	public static float getPipeFloorOf (ItemStack item) {		
 		if (item.itemID < Block.blocksList.length) {
-			Block block = Block.blocksList [item.itemID];
+			Block block = Block.blocksList[item.itemID];
 			
-			return blockModelsFloor [block.getRenderType()];
+			if (CoreProxy.isPlainBlock(block) && !(block instanceof BlockCactus)) {
+				return 0.4F;
+			} else {
+				return 0.27F;
+			}
 		} else {		
 			return 0.27F;
 		}
