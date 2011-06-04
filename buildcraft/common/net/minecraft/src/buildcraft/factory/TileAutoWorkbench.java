@@ -117,13 +117,13 @@ public class TileAutoWorkbench extends TileEntity implements
 		int minSlot = -1;
 		
 		for (int j = 0; j < getSizeInventory(); ++j) {
-			ItemStack stackItem = getStackInSlot(j);
+			ItemStack stackInInventory = getStackInSlot(j);
 			
-			if (stackItem != null && stackItem.stackSize > 0
-					&& stackItem.itemID == stackItem.itemID
-					&& stackItem.getItemDamage() == stackItem.getItemDamage()
-					&& stackItem.stackSize < minSimilar) {
-				minSimilar = stackItem.stackSize;
+			if (stackInInventory != null && stackInInventory.stackSize > 0
+					&& stackInInventory.itemID == stack.itemID
+					&& stackInInventory.getItemDamage() == stack.getItemDamage()
+					&& stackInInventory.stackSize < minSimilar) {
+				minSimilar = stackInInventory.stackSize;
 				minSlot = j;
 			}								
 		}
