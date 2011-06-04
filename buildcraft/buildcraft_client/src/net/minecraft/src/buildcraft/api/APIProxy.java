@@ -21,7 +21,7 @@ public class APIProxy {
 	
 	public static Entity getEntity (World world, int entityId) {
 		if (world instanceof WorldClient) {
-			return ((WorldClient) getWorld()).func_709_b(entityId);
+			return ((WorldClient) world).func_709_b(entityId);
 		} else {
 			return null;
 		}
@@ -29,7 +29,7 @@ public class APIProxy {
 	
 	public static void storeEntity (World world, Entity entity) {
 		if (world instanceof WorldClient) {
-			((WorldClient) getWorld()).func_712_a(entity.entityId, entity);
+			((WorldClient) world).func_712_a(entity.entityId, entity);
 		} else {
 			world.entityJoinedWorld(entity);
 		}
