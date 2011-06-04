@@ -4,8 +4,10 @@ import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
 
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
@@ -122,7 +124,7 @@ public class TileObsidianPipe extends TileStonePipe {
 		if(box != null)
 		{
 			@SuppressWarnings("rawtypes")
-			List list = worldObj.getEntitiesWithinAABB(net.minecraft.src.EntityItem.class, box);
+			List list = worldObj.getEntitiesWithinAABB(net.minecraft.src.Entity.class, box);
 			
 			for(int g = 0; g < list.size(); g++)
 			{
@@ -135,8 +137,44 @@ public class TileObsidianPipe extends TileStonePipe {
 						return;
 					}
 				}
+				else if(list.get(g) instanceof EntityMinecart)
+				{
+					EntityMinecart cart = (EntityMinecart)list.get(g);
+					if(!cart.isDead && cart.minecartType == 1)
+					{
+						ItemStack stack = checkExtractGeneric((IInventory) cart, true, getSuckingOrientation().reverse());
+						if(stack != null)
+						{
+							EntityItem entityitem = new EntityItem(worldObj, cart.posX, cart.posY+0.3F, cart.posZ, stack);
+							entityitem.delayBeforeCanPickup = 10;
+							worldObj.entityJoinedWorld(entityitem);
+							pullItemIntoPipe(entityitem);
+						}
+					}
+				}
 			}
 		}
+	}
+	
+	public ItemStack checkExtractGeneric(IInventory inventory,
+			boolean doRemove, Orientations from) {
+		for (int k = 0; k < inventory.getSizeInventory(); ++k) {
+			if (inventory.getStackInSlot(k) != null
+					&& inventory.getStackInSlot(k).stackSize > 0) {
+
+				ItemStack slot = inventory.getStackInSlot(k);
+
+				if (slot != null && slot.stackSize > 0) {
+					if (doRemove) {
+						return inventory.decrStackSize(k, 1);
+					} else {
+						return slot;
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 	
 	public void pullItemIntoPipe(EntityItem item)
