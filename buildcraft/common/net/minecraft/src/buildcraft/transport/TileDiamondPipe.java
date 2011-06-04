@@ -2,15 +2,23 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.mod_BuildCraftTransport;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileDiamondPipe extends TilePipe implements IInventory,
@@ -43,12 +51,25 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 			items [i] = null;
 		}
 		
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(
+					(Packet230ModLoader) getDescriptionPacket(), xCoord,
+					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+		}
+		
 		return stack;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		items [i] = itemstack;
+		
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(
+					(Packet230ModLoader) getDescriptionPacket(), xCoord,
+					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+		}
+
 	}
 
 	@Override
@@ -103,10 +124,8 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 			}
 		}
 		if(filteredOrientations.size() != 0) {
-			System.out.println ("FILTER A" + filteredOrientations.size());
 			return filteredOrientations;
 		} else {
-			System.out.println ("FILTER B ");			
 			return defaultOrientations;
 		}
 	}
@@ -154,5 +173,59 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 	@Override
 	public ItemStack extractItemToPipe(boolean doRemove, Orientations from) {
 		return null;
+	}
+	
+	public void initialize () {
+		super.initialize();
+		
+		BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);
+		
+		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+			Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
+			BuildCraftCore.bufferedDescriptions.remove(index);
+			
+			handlePacket(packet);
+		}
+	}
+	
+	public Packet getDescriptionPacket() {
+		Packet230ModLoader packet = new Packet230ModLoader();
+
+		packet.modId = mod_BuildCraftTransport.instance.getId();
+		packet.packetType = BuildCraftTransport.tileDiamondPipeContents;
+
+		packet.dataInt = new int [3 + items.length * 2];
+		
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		
+		for (int j = 0; j < items.length; ++j) {
+			if (items [j] == null) {
+				packet.dataInt [3 + j * 2 + 0] = -1;
+				packet.dataInt [3 + j * 2 + 1] = -1;
+			} else {
+				packet.dataInt [3 + j * 2 + 0] = items [j].itemID;
+				packet.dataInt [3 + j * 2 + 1] = items [j].getItemDamage();
+			}
+			 
+		}
+		
+		return packet;
+    }
+	
+	public void handlePacket (Packet230ModLoader packet) {
+		if (packet.packetType != BuildCraftTransport.tileDiamondPipeContents) {
+			return;
+		}
+		
+		for (int j = 0; j < items.length; ++j) {
+			if (packet.dataInt [3 + j * 2 + 0] == -1) {
+				items [j] = null;
+			} else {
+				items[j] = new ItemStack(packet.dataInt[3 + j * 2 + 0], 1,
+						packet.dataInt[3 + j * 2 + 1]);
+			}			 
+		}
 	}
 }

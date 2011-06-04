@@ -32,6 +32,7 @@ public class BuildCraftTransport {
 	public static int [] diamondTextures = new int [6];
 
 	public static int tilePipeItemPacket = 1;
+	public static int tileDiamondPipeContents = 2;
 	
 	public static void initialize () {
 		if (initialized) {
