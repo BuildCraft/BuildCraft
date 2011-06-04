@@ -1,6 +1,6 @@
 package net.minecraft.src.buildcraft.api;
 
-public interface IBlockPipe {
+public interface IBlockPipe extends ICustomHeightInPipe {
 
 	/**
 	 * With special kind of pipes, connectors texture has to vary (e.g. 

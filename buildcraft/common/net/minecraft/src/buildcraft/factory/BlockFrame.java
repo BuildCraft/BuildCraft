@@ -97,5 +97,8 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe {
 	public int getTextureForConnection(Orientations connection, int metadata) {		
 		return blockIndexInTexture;
 	}
-    
+	
+    public float getHeightInPipe () {
+    	return 0.4F;
+    }    
 }

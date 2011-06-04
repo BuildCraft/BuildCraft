@@ -70,7 +70,8 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 			if (worldObj.getWorldTime() - item.lastSynchronizationDate > 20) {
 				item.lastSynchronizationDate = worldObj.getWorldTime(); 
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
-						xCoord, yCoord, zCoord, 50);
+						xCoord, yCoord, zCoord, 50,
+						mod_BuildCraftTransport.instance);
 			}
 		}
 	}
@@ -284,6 +285,10 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
     protected void doWork () {}
 
 	public void handleItemPacket(Packet230ModLoader packet) {
+		if (packet.packetType != BuildCraftTransport.tilePipeItemPacket) {
+			return;
+		}
+		
 		EntityPassiveItem item = (EntityPassiveItem) APIProxy.getEntity(
 				worldObj, packet.dataInt[3]);
 		

@@ -72,12 +72,10 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 			EntityPassiveItem item) {
 		LinkedList<Orientations> filteredOrientations = new LinkedList<Orientations>();
 		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
+		
 		LinkedList<Orientations> possibilities = super.getPossibleMovements(new Position(
 				xCoord, yCoord, zCoord, pos.orientation), item);
-		
-		possibilities.add(pos.orientation.reverse()); //So item will move backward if filtered here?
-		
-		
+								
 		//Filtered outputs
 		for (Orientations dir : possibilities) {
 			boolean foundFilter = false;
@@ -98,15 +96,19 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 					// to use that filter is higher, this is why there's no
 					// break here.
 					filteredOrientations.add(dir);
-
 				} 
 			}
 			if (!foundFilter) {				
 				defaultOrientations.add(dir);
 			}
 		}
-		if(filteredOrientations.size() != 0) return filteredOrientations;
-		return defaultOrientations;
+		if(filteredOrientations.size() != 0) {
+			System.out.println ("FILTER A" + filteredOrientations.size());
+			return filteredOrientations;
+		} else {
+			System.out.println ("FILTER B ");			
+			return defaultOrientations;
+		}
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

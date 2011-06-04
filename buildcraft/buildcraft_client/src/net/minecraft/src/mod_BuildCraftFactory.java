@@ -56,15 +56,25 @@ public class mod_BuildCraftFactory extends BaseModMp {
 					return;
 				}
 			}
-		}
-		
-		BlockIndex index = new BlockIndex(x, y, z);
-		
-		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
-			BuildCraftCore.bufferedDescriptions.remove(index);
-		}
-		
-		BuildCraftCore.bufferedDescriptions.put(index, packet);
+			
+			BlockIndex index = new BlockIndex(x, y, z);
+			
+			if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+				BuildCraftCore.bufferedDescriptions.remove(index);
+			}
+			
+			BuildCraftCore.bufferedDescriptions.put(index, packet);
+		} else if (packet.packetType == BuildCraftFactory.tileQuarryUpdatePacket) {
+			if (APIProxy.getWorld().blockExists(x, y, z)) {
+				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+				
+				if (tile instanceof TileQuarry) {
+					((TileQuarry) tile).handleUpdatePacket(packet);	
+					
+					return;
+				}
+			}
+		}			
     }
 	
     public GuiScreen HandleGUI(int i) {    	
@@ -77,5 +87,4 @@ public class mod_BuildCraftFactory extends BaseModMp {
     		return null;
     	}
     }
-
 }

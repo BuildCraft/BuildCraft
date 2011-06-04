@@ -20,6 +20,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.ICustomHeightInPipe;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -43,8 +44,10 @@ public class Utils {
 		if (item.itemID < Block.blocksList.length) {
 			Block block = Block.blocksList[item.itemID];
 			
-			if (CoreProxy.isPlainBlock(block) && !(block instanceof BlockCactus)) {
+			if (CoreProxy.isPlainBlock(block) || block instanceof BlockCactus) {
 				return 0.4F;
+			} else if (block instanceof ICustomHeightInPipe) {
+				return ((ICustomHeightInPipe) block).getHeightInPipe();
 			} else {
 				return 0.27F;
 			}
