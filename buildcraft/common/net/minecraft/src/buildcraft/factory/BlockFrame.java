@@ -33,6 +33,10 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe {
         return false;
     }
     
+    public boolean func_28025_b () {
+    	return false;
+    }    
+    
     public int idDropped(int i, Random random)
     {
         return 0;
