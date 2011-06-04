@@ -21,7 +21,7 @@ function remove_svn () {
 function package_all () {
    qual=$1
 
-   zip -r $dir/buildcraft-A-core-$qual$version.zip \
+   zip -r $dir/buildcraft$qual-A-core-$version.zip \
       mod_BuildCraftCore* \
       BuildCraftCore.class \
       RenderPassiveItem.class \
@@ -30,31 +30,32 @@ function package_all () {
       net/minecraft/src/buildcraft/core \
       buildcraft/api
 
-   zip -r $dir/buildcraft-B-transport-$qual$version.zip \
+   zip -r $dir/buildcraft$qual-B-transport-$version.zip \
       mod_BuildCraftTransport.class \
       BuildCraftTransport.class \
       buildcraft/transport \
       net/minecraft/src/buildcraft/transport \
       buildcraft/api
 
-   zip -r $dir/buildcraft-B-factory-$qual$version.zip \
+   zip -r $dir/buildcraft$qual-B-factory-$version.zip \
       mod_BuildCraftFactory.class \
+      BuildCraftFactory.class \
       buildcraft/factory \
       net/minecraft/src/buildcraft/factory \
       buildcraft/api
 
-   zip -r $dir/buildcraft-B-builders-$qual$version.zip \
+   zip -r $dir/buildcraft$qual-B-builders-$version.zip \
       mod_BuildCraftBuilders.class \
       buildcraft/builders \
       net/minecraft/src/buildcraft/builders \
       buildcraft/api
 
-   zip -r $dir/buildcraft-C-devel-$qual$version.zip \
+   zip -r $dir/buildcraft$qual-C-devel-$version.zip \
       mod_BuildCraftDevel.class \
       buildcraft/devel \
       buildcraft/api
 
-   zip -r $dir/buildcraft-api-$qual$version.zip \
+   zip -r $dir/buildcraft$qual-api-$version.zip \
       buildcraft/api
 
 }
@@ -67,10 +68,10 @@ rm -rf $dir
 mkdir $dir
 
 cd minecraft
-package_all "client-"
+package_all "-client"
 
 cd ../minecraft_server
-package_all "server-"
+package_all "-server"
 
 cd ../..
 
