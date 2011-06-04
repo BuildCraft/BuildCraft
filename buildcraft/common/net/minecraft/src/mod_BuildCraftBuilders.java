@@ -47,7 +47,7 @@ public class mod_BuildCraftBuilders extends BaseMod {
 	
 	@Override
 	public String Version() {
-		return "1.6.6.1";
+		return "1.6.6.2";
 	}
 
 }
