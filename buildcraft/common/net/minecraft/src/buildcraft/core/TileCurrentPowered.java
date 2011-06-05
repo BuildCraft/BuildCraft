@@ -40,7 +40,7 @@ public abstract class TileCurrentPowered extends TileEntity {
 		if (power != lastPower) {
 			lastPower = power;
 			
-			tryWork();
+			if(power) tryWork();
 		}
 	}
 	
