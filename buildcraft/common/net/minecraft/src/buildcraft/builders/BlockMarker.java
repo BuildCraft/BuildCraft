@@ -72,4 +72,9 @@ public class BlockMarker extends BlockContainer implements IPipeConnection, IBlo
     public float getHeightInPipe () {
     	return 0.4F;
     }
+    
+    @Override
+	public String getTextureFile() {	
+		return BuildCraftCore.customBuildCraftTexture;
+	}
 }

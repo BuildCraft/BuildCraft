@@ -8,10 +8,11 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockAutoWorkbench extends BlockContainer
-{
+public class BlockAutoWorkbench extends BlockContainer implements
+		ICustomTextureBlock {
 	
 	BuildCraftBlockUtil p;
 
@@ -61,4 +62,9 @@ public class BlockAutoWorkbench extends BlockContainer
     public int getRenderType() {
         return BuildCraftCore.customTextureModel;
     }
+    
+    @Override
+	public String getTextureFile() {	
+		return BuildCraftCore.customBuildCraftTexture;
+	}
 }

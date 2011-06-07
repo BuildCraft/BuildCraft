@@ -37,6 +37,9 @@ public class BuildCraftCore {
 	public static int blockByEntityModel;
 	public static int pipeModel;
 	
+	public static String customBuildCraftTexture =
+		"/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png";
+	
 	public static void initialize () {
 		if (initialized) {
 			return;

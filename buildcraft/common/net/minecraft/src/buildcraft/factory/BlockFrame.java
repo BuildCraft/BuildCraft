@@ -101,4 +101,9 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe {
     public float getHeightInPipe () {
     	return 0.4F;
     }    
+    
+    @Override
+	public String getTextureFile() {	
+		return BuildCraftCore.customBuildCraftTexture;
+	}
 }
