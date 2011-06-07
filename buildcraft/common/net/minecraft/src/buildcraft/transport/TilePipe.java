@@ -357,5 +357,8 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		
 		return packet;		
 	}
-	
+
+	public int getNumberOfItems () {
+		return travelingEntities.size();
+	}
 }
