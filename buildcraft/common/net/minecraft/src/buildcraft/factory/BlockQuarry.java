@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.factory;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
@@ -7,9 +8,11 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockQuarry extends BlockMachineRoot {
+public class BlockQuarry extends BlockMachineRoot implements
+		ICustomTextureBlock {
 	
 	int textureTop;
 	int textureFront;
@@ -88,5 +91,10 @@ public class BlockQuarry extends BlockMachineRoot {
 		((TileQuarry) world.getBlockTileEntity(i, j, k)).delete();
 		
 		super.onBlockRemoval(world, i, j, k);
+	}
+	
+	@Override
+	public String getTextureFile() {	
+		return BuildCraftCore.customBuildCraftTexture;
 	}
 }

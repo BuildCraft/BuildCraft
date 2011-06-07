@@ -110,4 +110,9 @@ public abstract class BlockPipe extends BlockContainer implements
     public float getHeightInPipe () {
     	return 0.4F;
     }
+    
+	@Override
+	public String getTextureFile() {	
+		return BuildCraftCore.customBuildCraftTexture;
+	}
 }

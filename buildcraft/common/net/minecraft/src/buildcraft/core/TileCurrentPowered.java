@@ -56,6 +56,6 @@ public abstract class TileCurrentPowered extends TileEntity {
 	
 	public void initialize () {
 		
-	}
+	}	
 	
 }

@@ -30,4 +30,5 @@ public class BlockDiamondPipe extends BlockPipe {
     public int getTextureForConnection (Orientations connection, int metadata) {
     	return BuildCraftTransport.diamondTextures[connection.ordinal()];
     }
+
 }

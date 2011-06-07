@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.factory;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
@@ -7,9 +8,10 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockMiningWell extends BlockMachineRoot {
+public class BlockMiningWell extends BlockMachineRoot implements ICustomTextureBlock {
 
 	int textureFront, textureSides, textureBack, textureTop;
 	
@@ -72,6 +74,11 @@ public class BlockMiningWell extends BlockMachineRoot {
 	@Override
 	protected TileEntity getBlockEntity() {		
 		return new TileMiningWell();
+	}
+	
+	@Override
+	public String getTextureFile() {	
+		return BuildCraftCore.customBuildCraftTexture;
 	}
 	
 }
