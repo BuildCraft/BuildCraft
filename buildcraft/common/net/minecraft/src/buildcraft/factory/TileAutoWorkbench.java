@@ -1,8 +1,11 @@
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.LinkedList;
+
 import net.minecraft.src.Container;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -10,7 +13,9 @@ import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.StackUtil;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileAutoWorkbench extends TileEntity implements
 		ISpecialInventory {
@@ -110,7 +115,7 @@ public class TileAutoWorkbench extends TileEntity implements
 	}
 
 	@Override
-	public boolean addItemFromPipe(ItemStack stack, boolean doAdd, Orientations from) {
+	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
 		StackUtil stackUtils = new StackUtil(stack);
 		
 		int minSimilar = Integer.MAX_VALUE;
@@ -131,7 +136,7 @@ public class TileAutoWorkbench extends TileEntity implements
 		if (minSlot != -1) {
 			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {			
 				if (doAdd && stack.stackSize != 0) {
-					addItemFromPipe(stack, doAdd, from);
+					addItem(stack, doAdd, from);
 				}
 				
 				return true;
@@ -143,8 +148,14 @@ public class TileAutoWorkbench extends TileEntity implements
 		}
 	}
 
+	class StackPointer {
+		IInventory inventory;
+		int index;
+		ItemStack item;
+	}
+	
 	@Override
-	public ItemStack extractItemToPipe(boolean doRemove, Orientations from) {
+	public ItemStack extractItem(boolean doRemove, Orientations from) {
 		InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
 			@SuppressWarnings("all")
 			public boolean isUsableByPlayer(EntityPlayer entityplayer) {
@@ -157,11 +168,35 @@ public class TileAutoWorkbench extends TileEntity implements
 				return false;
 			}}, 3, 3);	
 
+		LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
+		
 		for (int i = 0; i < getSizeInventory(); ++i) {
 			ItemStack stack = getStackInSlot(i);
+			
+			if (stack != null) {
+				System.out.println (stack.stackSize);
+			}
+			
+			if (stack != null) {				
+				if (stack.stackSize <= 1) {
+					StackPointer pointer = getNearbyItem(stack.itemID,
+							stack.getItemDamage());
 
-			if (stack != null && stack.stackSize == 1) {
-				return null;
+					if (pointer == null) {
+						resetPointers(pointerList);
+
+						return null;
+					} else {
+						pointerList.add(pointer);
+					}					
+				} else {
+					StackPointer pointer = new StackPointer();
+					pointer.inventory = this;
+					pointer.item = this.decrStackSize(i, 1);
+					pointer.index = i;
+					
+					pointerList.add(pointer);
+				}
 			}
 
 			craftMatrix.setInventorySlotContents(i, stack);
@@ -170,16 +205,79 @@ public class TileAutoWorkbench extends TileEntity implements
 		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(
 				craftMatrix);
 
-		if (resultStack != null && doRemove) {
-			for (int i = 0; i < getSizeInventory(); ++i) {
-				ItemStack stack = getStackInSlot(i);
-
-				if (stack != null) {
-					decrStackSize(i, 1);
-				}
-			}
+		if (resultStack == null || !doRemove) {
+			resetPointers(pointerList);
 		}
 
 		return resultStack;
+	}
+	
+	public void resetPointers (LinkedList <StackPointer> pointers) {
+		for (StackPointer p : pointers) {
+			ItemStack item = p.inventory.getStackInSlot(p.index);
+			
+			if (item == null) {
+				p.inventory.setInventorySlotContents(p.index, p.item);
+			} else {
+				p.inventory.getStackInSlot(p.index).stackSize++;
+			}
+		}
+	}
+	
+	public StackPointer getNearbyItem (int itemId, int damage) {
+		StackPointer pointer = null;
+
+		pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.XNeg);
+		
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.XPos);	
+		}
+		
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YNeg);	
+		}
+		
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YPos);	
+		}
+		
+		System.out.println (pointer);
+		
+		return pointer;
+	}
+	
+	public StackPointer getNearbyItemFromOrientation (int itemId, int damage, Orientations orientation) {
+		Position p = new Position (xCoord, yCoord, zCoord, orientation);
+		p.moveForwards(1.0);
+		
+		TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
+				(int) p.z);
+		
+		if (tile instanceof ISpecialInventory) {
+			// Don't get stuff out of ISpecialInventory for now / we wouldn't
+			// know how to put it back... And it's not clear if we want to
+			// have workbenches automatically getting things from one another.
+		} else if (tile instanceof IInventory) {
+			IInventory inventory = Utils.getInventory((IInventory) tile);
+			
+			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+				ItemStack stack = inventory.getStackInSlot(j);
+				
+				if (stack != null && stack.stackSize > 0
+						&& stack.itemID == itemId
+						&& stack.getItemDamage() == damage) {
+					inventory.decrStackSize(j, 1);
+					
+					StackPointer result = new StackPointer();
+					result.inventory = inventory;
+					result.index = j;
+					result.item = stack;
+					
+					return result;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

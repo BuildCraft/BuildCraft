@@ -55,7 +55,11 @@ public class TileWoodenPipe extends TilePipe {
 				(int) chestPos.x, (int) chestPos.y, (int) chestPos.z);
 		
 		ItemStack stack = checkExtract(inventory, true,
-				chestPos.orientation.reverse());								
+				chestPos.orientation.reverse());	
+		
+		if (stack == null || stack.stackSize == 0) {
+			return;
+		}
 		
 		Position entityPos = new Position(chestPos.x + 0.5, chestPos.y
 				+ Utils.getPipeFloorOf(stack), chestPos.z + 0.5,
@@ -77,7 +81,7 @@ public class TileWoodenPipe extends TilePipe {
 	 */
 	public ItemStack checkExtract (IInventory inventory, boolean doRemove, Orientations from) {
 		if (inventory instanceof ISpecialInventory) {
-			return ((ISpecialInventory) inventory).extractItemToPipe(doRemove, from);
+			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
 		}
 		
 		if (inventory.getSizeInventory() == 2) {
