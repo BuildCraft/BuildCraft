@@ -9,6 +9,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -573,55 +574,53 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		}
 	}
 	
+	boolean hasReceivedDescription = false;
+	
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
-		if (packet.packetType != BuildCraftFactory.tileQuarryDescriptionPacket) {
-			return;
-		}
-		
-		int xMin = packet.dataInt [3];
-		int zMin = packet.dataInt [4];
-		int xSize = packet.dataInt [5];
-		int ySize = packet.dataInt [6];
-		int zSize = packet.dataInt [7];
-		
-		if (init && 
-				(xMin != this.xMin
-				|| zMin != this.zMin
-				|| xSize != this.xSize
-				|| ySize != this.ySize
-				|| zSize != this.zSize)) {
-			init = false;
-			
-			this.xMin = xMin;
-			this.zMin = zMin;
-			this.xSize = xSize;
-			this.ySize = ySize;
-			this.zSize = zSize;
-			
-			deleteLasers();				
+		if (!hasReceivedDescription) {
+			if (packet.packetType != BuildCraftFactory.tileQuarryDescriptionPacket) {
+				return;
+			}		
+
+			this.xMin = packet.dataInt [3];
+			this.zMin = packet.dataInt [4];
+			this.xSize = packet.dataInt [5];
+			this.ySize = packet.dataInt [6];
+			this.zSize = packet.dataInt [7];
+
 			bluePrintBuilder = null;
-			
+
 			createUtilsIfNeeded();
-			
-			if (arm != null) {			
+
+			if (packet.dataFloat [0] != 0) {
+				if (arm == null) {
+					createArm();
+					arm.joinToWorld(worldObj);
+				}				
+				
+				deleteLasers();
+				
 				arm.setHeadPosition(packet.dataFloat[0], packet.dataFloat[1],
 						packet.dataFloat[2]);
 			}
+			
+			hasReceivedDescription = true;
 		}
 	}
 	
 	public void initialize () {
 		super.initialize();
-		
-		createUtilsIfNeeded ();
-		
-		BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);
+	
+		BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);		
 		
 		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+			
 			Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
 			BuildCraftCore.bufferedDescriptions.remove(index);
 			
 			handleDescriptionPacket(packet);
+		} else if (!APIProxy.isClient(worldObj)) {
+			createUtilsIfNeeded ();			
 		}
 	}
 
