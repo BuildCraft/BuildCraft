@@ -27,7 +27,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 	@Override
 	public String Version() {
-		return "1.6.6.2";
+		return "1.6.6.3";
 	}
 	    
 	RenderMiningWell renderMiningWell = new RenderMiningWell();
