@@ -17,7 +17,20 @@ public class TileIronPipe extends TilePipe {
 		continuousCurrentModel = false;
 	}
 
-	public void doWork() {
+	boolean lastPower = false;
+	
+	public void switchPower() {
+		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord,
+				yCoord, zCoord);
+		
+		if (currentPower != lastPower) {
+			switchPosition();
+			
+			lastPower = currentPower;
+		}
+	}
+	
+	public void switchPosition() {
 		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
 		int nextMetadata = metadata;
@@ -66,6 +79,14 @@ public class TileIronPipe extends TilePipe {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public void initialize () {
+		super.initialize();
+		
+		lastPower = worldObj.isBlockIndirectlyGettingPowered(xCoord,
+				yCoord, zCoord);
 	}
 	
 }
