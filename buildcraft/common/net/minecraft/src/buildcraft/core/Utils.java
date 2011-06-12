@@ -44,7 +44,9 @@ public class Utils {
 		if (item.itemID < Block.blocksList.length) {
 			Block block = Block.blocksList[item.itemID];
 			
-			if (CoreProxy.isPlainBlock(block) || block instanceof BlockCactus) {
+			if (block == null) {
+				return 0.27F;
+			} else if (CoreProxy.isPlainBlock(block) || block instanceof BlockCactus) {
 				return 0.4F;
 			} else if (block instanceof ICustomHeightInPipe) {
 				return ((ICustomHeightInPipe) block).getHeightInPipe();
