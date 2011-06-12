@@ -12,7 +12,7 @@ import net.minecraft.src.buildcraft.factory.TileMiningWell;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
 
 public class BuildCraftFactory {
-	public static BlockQuarry machineBlock;
+	public static BlockQuarry quarryBlock;
 	
 	public static BlockMiningWell miningWellBlock;
 
@@ -35,15 +35,20 @@ public class BuildCraftFactory {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
+		boolean allowMining = new Boolean (Utils.getProperty("mining.enabled", "true"));
+		
 		miningWellBlock = new BlockMiningWell(Utils.getSafeBlockId(
 				"miningWell.blockId", 150));
 		ModLoader.RegisterBlock(miningWellBlock);
 		CoreProxy.addName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");
-		craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
-			"ipi", "igi", "iPi", Character.valueOf('p'), Item.redstone,
-			Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'),
-			 BuildCraftCore.ironGearItem, Character.valueOf('P'),
-			Item.pickaxeSteel });	
+		
+		if (allowMining) {
+			craftingmanager.addRecipe(new ItemStack(miningWellBlock, 1), new Object[] {
+				"ipi", "igi", "iPi", Character.valueOf('p'), Item.redstone,
+				Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'),
+				BuildCraftCore.ironGearItem, Character.valueOf('P'),
+				Item.pickaxeSteel });
+		}
 		
 		plainPipeBlock = new BlockPlainPipe(Utils.getSafeBlockId(
 				"drill.blockId", 151));
@@ -64,19 +69,25 @@ public class BuildCraftFactory {
 		frameBlock = new BlockFrame(Utils.getSafeBlockId("frame.blockId", 152));
 		ModLoader.RegisterBlock(frameBlock);
 		
-		machineBlock = new BlockQuarry(Utils.getSafeBlockId("quarry.blockId",
+		quarryBlock = new BlockQuarry(Utils.getSafeBlockId("quarry.blockId",
 				153));
-		ModLoader.RegisterBlock(machineBlock);
-		craftingmanager.addRecipe(
-				new ItemStack(machineBlock),
-				new Object[] { "ipi", "gig", "dDd", 
-					Character.valueOf('i'), BuildCraftCore.ironGearItem,
-					Character.valueOf('p'), Item.redstone,
-					Character.valueOf('g'),	BuildCraftCore.goldGearItem,
-					Character.valueOf('d'),	BuildCraftCore.diamondGearItem,
-					Character.valueOf('D'),	Item.pickaxeDiamond,
+		ModLoader.RegisterBlock(quarryBlock);
+		
+		
+		
+		if (allowMining) {
+			craftingmanager.addRecipe(
+					new ItemStack(quarryBlock),
+					new Object[] { "ipi", "gig", "dDd", 
+						Character.valueOf('i'), BuildCraftCore.ironGearItem,
+						Character.valueOf('p'), Item.redstone,
+						Character.valueOf('g'),	BuildCraftCore.goldGearItem,
+						Character.valueOf('d'),	BuildCraftCore.diamondGearItem,
+						Character.valueOf('D'),	Item.pickaxeDiamond,
 					});
-		CoreProxy.addName(machineBlock.setBlockName("machineBlock"),
+		}
+		
+		CoreProxy.addName(quarryBlock.setBlockName("machineBlock"),
 		"Quarry");
 		
 		ModLoader.RegisterTileEntity(TileQuarry.class, "Machine");		
