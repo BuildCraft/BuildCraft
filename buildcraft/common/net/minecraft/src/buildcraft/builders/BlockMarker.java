@@ -1,49 +1,35 @@
 package net.minecraft.src.buildcraft.builders;
 
+import java.util.Random;
+
+import net.minecraft.src.AxisAlignedBB;
+import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IBlockPipe;
-import net.minecraft.src.buildcraft.api.IPipeConnection;
-import net.minecraft.src.buildcraft.api.Orientations;
 
-public class BlockMarker extends BlockContainer implements IPipeConnection, IBlockPipe {
+public class BlockMarker extends BlockContainer {
 
 	public BlockMarker(int i) {
-		super(i, Material.iron);
+		super(i, Material.circuits);		
 		
-		setHardness(0.5F);
-		
-		blockIndexInTexture = 3 * 16 + 1; 
+		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
+				"/net/minecraft/src/buildcraft/builders/gui/marker.png");
 	}
 	
-    public int getRenderType()
-    {
-        return BuildCraftCore.pipeModel;
-    }
-    
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
-    
-    public boolean renderAsNormalBlock()
-    {
-        return false;
+    public int getRenderType() {
+        return BuildCraftCore.markerModel;
     }
     
     public boolean func_28025_b () {
     	return false;
     }    
-
-	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
-		return true;
-	}
 
 	@Override
 	protected TileEntity getBlockEntity() {
@@ -60,21 +46,44 @@ public class BlockMarker extends BlockContainer implements IPipeConnection, IBlo
         super.onBlockRemoval(world, i, j, k);       
     }
     
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-    	((TileMarker) world.getBlockTileEntity(i, j, k)).switchSignals();
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
+        return Block.torchWood.getCollisionBoundingBoxFromPool(world, i, j, k);
     }
 
-	@Override
-	public int getTextureForConnection(Orientations connection, int metadata) {	
-		return blockIndexInTexture;
-	}
-	
-    public float getHeightInPipe () {
-    	return 0.4F;
+    public boolean isOpaqueCube() {
+        return Block.torchWood.isOpaqueCube ();
+    }
+
+    public boolean renderAsNormalBlock() {
+        return false;
     }
     
-    @Override
-	public String getTextureFile() {	
-		return BuildCraftCore.customBuildCraftTexture;
-	}
+    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
+    	((TileMarker) world.getBlockTileEntity(i, j, k)).switchSignals();
+    	
+    	Block.torchWood.onNeighborBlockChange(world, i, j, k, l);
+    }
+
+    public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
+    	return Block.torchWood.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
+    }
+    
+    public boolean canPlaceBlockAt(World world, int i, int j, int k) {
+    	return Block.torchWood.canPlaceBlockAt(world, i, j, k);
+    }
+
+    public void onBlockPlaced(World world, int i, int j, int k, int l) {
+    	super.onBlockPlaced(world, i, j, k, l);
+    	Block.torchWood.onBlockPlaced(world, i, j, k, l);
+    }
+    
+
+    public void onBlockAdded(World world, int i, int j, int k) {
+    	super.onBlockAdded(world, i, j, k);
+    	Block.torchWood.onBlockAdded(world, i, j, k);
+    }
+    
+    public void dropBlockAsItem(World world, int i, int j, int k, int l) {
+    	super.dropBlockAsItem(world, i, j, k, blockID);
+    }
 }
