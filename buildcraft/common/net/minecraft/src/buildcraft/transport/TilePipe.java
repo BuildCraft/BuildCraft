@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -103,6 +104,14 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 			EntityPassiveItem item) {
 		TileEntity entity = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
 				(int) p.z);
+		Block block = Block.blocksList[worldObj.getBlockId((int) p.x,
+				(int) p.y, (int) p.z)];
+		
+		if (block instanceof BlockPipe
+				&& !((BlockPipe) block).isPipeConnected(worldObj, xCoord,
+						yCoord, zCoord)) {
+			return false;
+		}
 		
 		if (entity instanceof IPipeEntry) {
 			return true;
