@@ -59,8 +59,8 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 				
 				if (builder.done) {
 					break;
-				}
-								
+				}										
+				
 				if (contents.blockId == 0) {
 					worldObj.setBlockWithNotify(contents.x, contents.y,
 							contents.z, Block.stone.blockID);

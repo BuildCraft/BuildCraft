@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import java.io.File;
+
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -70,6 +72,8 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 				"net.minecraft.src.builders.TileTemplate");
 		
 		Utils.saveProperties();
+		
+		loadBluePrints();
 	}
 	
 	@Override
@@ -83,6 +87,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		for (int i = 0; i < bluePrints.length; ++i) {
 			if (bluePrints [i] == null) {
 				bluePrints [i] = bluePrint;
+				bluePrint.save(i);
 				
 				return i;
 			}
@@ -91,4 +96,30 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		throw new RuntimeException("No more blueprint slot available.");
 	}
 
+	
+	public void loadBluePrints () {
+		File baseDir = CoreProxy.getBuildCraftBase();
+		
+		baseDir.mkdir();
+		
+		String files [] = baseDir.list();
+		
+		for (String file : files) {
+			String [] parts = file.split("[.]");
+
+			if (parts.length == 2) {
+				if (parts[1].equals("bpt")) {
+					int bptNumber = Integer.parseInt(parts[0]);
+					
+					bluePrints[bptNumber] = new BluePrint(
+							new File(CoreProxy.getBuildCraftBase(), file));
+					
+					ItemStack tmpStack = new ItemStack(
+							mod_BuildCraftBuilders.templateItem, 1, bptNumber);
+					
+					CoreProxy.addName(tmpStack, "Template #" + parts [0]);
+				}
+			}
+		}
+	}
 }

@@ -1,5 +1,18 @@
 package net.minecraft.src.buildcraft.core;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+
+import net.minecraft.src.mod_BuildCraftCore;
+
 public class BluePrint {
 	
 	BlockContents contents [][][];
@@ -7,6 +20,10 @@ public class BluePrint {
 	
 	public int anchorX, anchorY, anchorZ;
 	public int sizeX, sizeY, sizeZ;
+	
+	public BluePrint (File file) {
+		load(file);
+	}
 	
 	public BluePrint (BluePrint src) {
 		anchorX = src.anchorX;
@@ -76,6 +93,137 @@ public class BluePrint {
 		anchorX = newAnchorX;
 		anchorY = newAnchorY;
 		anchorZ = newAnchorZ;
+	}
+	
+	public void save (int number) {
+		try {
+			File baseDir = CoreProxy.getBuildCraftBase();
+			
+			baseDir.mkdir();
+			
+			File file = new File (CoreProxy.getBuildCraftBase(), number + ".bpt");
+			
+			if (!file.exists()) {			
+				file.createNewFile();
+			}
+			
+			FileOutputStream output = new FileOutputStream(file);
+			
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+					output, "8859_1"));
+			
+			writer.write("version:" + mod_BuildCraftCore.version());
+			writer.newLine();
+			writer.write("kind:template");
+			writer.newLine();
+			writer.write("sizeX:" + sizeX);
+			writer.newLine();
+			writer.write("sizeY:" + sizeY);
+			writer.newLine();
+			writer.write("sizeZ:" + sizeZ);
+			writer.newLine();
+			writer.write("anchorX:" + anchorX);
+			writer.newLine();
+			writer.write("anchorY:" + anchorY);
+			writer.newLine();
+			writer.write("anchorZ:" + anchorZ);
+			writer.newLine();
+			
+			writer.write ("mask:");
+			
+			boolean first = true;
+			
+			for (int x = 0; x < sizeX; ++x) {
+				for (int y = 0; y < sizeY; ++y) {
+					for (int z = 0; z < sizeZ; ++z) {
+						if (first) {
+							first = false;
+						} else {
+							writer.write(",");	
+						}
+						
+						writer.write(contents[x][y][z].blockId + "");
+					}
+				}
+			}
+			
+			writer.newLine();			
+			writer.flush();
+			output.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void load (File file) {
+		try {
+			FileInputStream input = new FileInputStream(file);
+				
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					input, "8859_1"));
+			
+			while (true) {
+				String line = reader.readLine();
+				
+				if (line == null) {
+					break;
+				}
+				
+				String[] cpts = line.split(":");
+				String name = cpts [0];
+				
+				if (name.equals("sizeX")) {
+					sizeX = Integer.parseInt(cpts [1]);
+				} else if (name.equals("sizeY")) {
+					sizeY = Integer.parseInt(cpts [1]);
+				} else if (name.equals("sizeZ")) {
+					sizeZ = Integer.parseInt(cpts [1]);
+				} else if (name.equals("anchorX")) {
+					anchorX = Integer.parseInt(cpts [1]);
+				} else if (name.equals("anchorY")) {
+					anchorY = Integer.parseInt(cpts [1]);
+				} else if (name.equals("anchorZ")) {
+					anchorZ = Integer.parseInt(cpts [1]);
+				} else if (name.equals("mask")) {
+					contents = new BlockContents [sizeX][sizeY][sizeZ];
+					
+					String [] mask = cpts [1].split(",");
+					int maskIndex = 0;
+					
+					for (int x = 0; x < sizeX; ++x) {
+						for (int y = 0; y < sizeY; ++y) {
+							for (int z = 0; z < sizeZ; ++z) {
+								contents[x][y][z] = new BlockContents();
+								contents[x][y][z].x = x;
+								contents[x][y][z].y = y;
+								contents[x][y][z].z = z;
+								contents[x][y][z].blockId = Integer
+										.parseInt(mask[maskIndex]);
+								
+								maskIndex++;
+							}
+						}
+					}
+				}								
+			}
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

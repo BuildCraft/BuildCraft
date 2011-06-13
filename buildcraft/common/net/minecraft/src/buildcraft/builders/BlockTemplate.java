@@ -2,9 +2,11 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.ChunkCache;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
@@ -20,12 +22,16 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 
 	int blockTextureSides;
 	int blockTextureFront;
+	int blockTextureTopPos;
+	int blockTextureTopNeg;
 	
 	
 	public BlockTemplate(int i) {
 		super(i, Material.iron);
-		blockTextureSides = 3 * 16 + 3;
-		blockTextureFront = 3 * 16 + 4;
+		blockTextureSides = 3 * 16 + 2;
+		blockTextureTopNeg = 3 * 16 + 3;
+		blockTextureTopPos = 3 * 16 + 4;
+		blockTextureFront = 3 * 16 + 5;
 	}
 
 	@Override
@@ -52,7 +58,7 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 
 		int bptNumber = tile.getBluePrintNumber ();
 		
-		if (bptNumber != -1) {		
+		if (bptNumber != -1) {
 			EntityItem entityitem = new EntityItem(world, (float) i + f, (float) j
 					+ f1 + 0.5F, (float) k + f2, new ItemStack(
 							mod_BuildCraftBuilders.templateItem, 1, bptNumber));
@@ -87,10 +93,35 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 				.ordinal());
 	}
 	
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+		int m = iblockaccess.getBlockMetadata(i, j, k);
+					    	
+    	if (l == 1) {
+    		boolean isPowered = false;
+    		
+    		if (iblockaccess instanceof ChunkCache) {
+    			isPowered = ((ChunkCache) iblockaccess).getBlockTileEntity(i, j, k).worldObj
+    					.isBlockIndirectlyGettingPowered(i, j, k);
+    		}
+    		
+    		if (!isPowered) {
+    			return blockTextureTopPos;
+    		} else {
+    			return blockTextureTopNeg;
+    		}
+    	}
+
+    	return getBlockTextureFromSideAndMetadata(l, m);
+	}	
+	
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
     	if (j == 0 && i == 3) {
 			return blockTextureFront;
 		}
+    	
+    	if (i == 1) {
+    		return blockTextureTopPos;
+    	}
 		
 		if (i == j) {
 			return blockTextureFront;
@@ -98,5 +129,4 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 		
 		return blockTextureSides;		
     }
-
 }

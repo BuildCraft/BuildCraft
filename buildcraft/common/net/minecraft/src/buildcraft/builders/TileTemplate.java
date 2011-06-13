@@ -46,6 +46,15 @@ public class TileTemplate extends TileEntity implements IInventory {
     		return null;
     	}
     	
+    	int mask1 = 1;
+    	int mask0 = 0;
+    	
+		if (worldObj.isBlockIndirectlyGettingPowered(xCoord,
+				yCoord, zCoord)) {
+			mask1 = 0;
+			mask0 = 1;
+		}
+    	
     	BluePrint result = new BluePrint(box.sizeX(), box.sizeY(), box.sizeZ());
     	
     	for (int x = box.xMin; x <= box.xMax; ++x) {
@@ -53,10 +62,10 @@ public class TileTemplate extends TileEntity implements IInventory {
     			for (int z = box.zMin; z <= box.zMax; ++z) {
     				if (worldObj.getBlockId(x, y, z) != 0) {    					
 						result.setBlockId(x - box.xMin, y - box.yMin, z
-								- box.zMin, 1);
+								- box.zMin, mask1);
     				} else {
     					result.setBlockId(x - box.xMin, y - box.yMin, z
-								- box.zMin, 0);
+								- box.zMin, mask0);
     				}
     			}
     		}
