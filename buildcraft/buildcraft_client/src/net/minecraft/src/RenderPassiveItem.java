@@ -30,7 +30,7 @@ public class RenderPassiveItem extends Render
     public void doRenderItem(EntityPassiveItem entityitem, double d, double d1, double d2, 
             float f, float f1)
     {        
-    	if (entityitem.isDead) {
+    	if (entityitem == null || entityitem.item == null || entityitem.isDead) {
     		return;
     	}
     	

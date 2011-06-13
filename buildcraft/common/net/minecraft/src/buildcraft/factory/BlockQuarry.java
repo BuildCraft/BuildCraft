@@ -31,8 +31,7 @@ public class BlockQuarry extends BlockMachineRoot implements
 		
 	}
     
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
-    {
+    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
     	super.onBlockPlacedBy(world, i, j, k, entityliving);
     	
 		Orientations orientation = Utils.get2dOrientation(new Position(
