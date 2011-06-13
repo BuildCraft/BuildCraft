@@ -173,10 +173,6 @@ public class TileAutoWorkbench extends TileEntity implements
 		for (int i = 0; i < getSizeInventory(); ++i) {
 			ItemStack stack = getStackInSlot(i);
 			
-			if (stack != null) {
-				System.out.println (stack.stackSize);
-			}
-			
 			if (stack != null) {				
 				if (stack.stackSize <= 1) {
 					StackPointer pointer = getNearbyItem(stack.itemID,
@@ -240,8 +236,6 @@ public class TileAutoWorkbench extends TileEntity implements
 		if (pointer == null) {
 			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YPos);	
 		}
-		
-		System.out.println (pointer);
 		
 		return pointer;
 	}

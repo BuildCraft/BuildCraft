@@ -78,4 +78,16 @@ public class Box implements IBox {
 		
 	}
 	
+	public int sizeX () {
+		return xMax - xMin + 1;
+	}
+	
+	public int sizeY () {
+		return yMax - yMin + 1;
+	}
+
+	public int sizeZ () {
+		return zMax - zMin + 1;
+	}
+
 }

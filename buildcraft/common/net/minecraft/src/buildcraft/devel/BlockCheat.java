@@ -72,6 +72,9 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.diamondPipeBlock, 64));			
 			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.fillerBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.markerBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.builderBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.templateBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.templateItem, 1));
 		}
 		
 		super.blockActivated(world, i, j, k, entityplayer);
