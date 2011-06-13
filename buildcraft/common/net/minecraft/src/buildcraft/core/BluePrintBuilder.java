@@ -1,8 +1,10 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.IBox;
 
-public class BluePrintBuilder {
+public class BluePrintBuilder implements IAreaProvider {
 	
 	public static enum Mode {Simple, Template}
 	
@@ -68,6 +70,46 @@ public class BluePrintBuilder {
 		done = true;
 		
 		return null;
+	}
+
+	@Override
+	public int xMin() {
+		return x - bluePrint.anchorX;
+	}
+
+	@Override
+	public int yMin() {
+		return y - bluePrint.anchorY;
+	}
+
+	@Override
+	public int zMin() {
+		return z - bluePrint.anchorZ;
+	}
+
+	@Override
+	public int xMax() {
+		return x + bluePrint.sizeX - bluePrint.anchorX;
+	}
+
+	@Override
+	public int yMax() {
+		return y + bluePrint.sizeY - bluePrint.anchorY;
+	}
+
+	@Override
+	public int zMax() {
+		return z + bluePrint.sizeZ - bluePrint.anchorZ;
+	}
+
+	@Override
+	public void removeFromWorld() {
+		
+	}
+
+	@Override
+	public IBox getBox() {
+		return new Box(this);
 	}
 
 }

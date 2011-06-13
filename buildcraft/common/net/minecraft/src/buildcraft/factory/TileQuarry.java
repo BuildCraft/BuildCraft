@@ -146,9 +146,11 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 						contents.blockId);
 				
 				if (blockId != 0) {
-					Block.blocksList[blockId].dropBlockAsItem(
-							worldObj,
-							contents.x, contents.y, contents.z, blockId);
+					Block.blocksList[blockId].dropBlockAsItem(worldObj,
+							contents.x, contents.y, contents.z, worldObj
+									.getBlockMetadata(contents.x, contents.y,
+											contents.z));
+
 				}				
 			}
 			
