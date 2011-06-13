@@ -48,5 +48,9 @@ public class CoreProxy {
 	public static boolean isPlainBlock (Block block) {
 		return block.func_28025_b();
 	}
+
+	public static File getBuildCraftBase() {
+		return new File("buildcraft/");
+	}
 	
 }

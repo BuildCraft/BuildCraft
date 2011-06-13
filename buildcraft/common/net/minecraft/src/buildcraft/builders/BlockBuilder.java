@@ -20,9 +20,9 @@ public class BlockBuilder extends BlockContainer implements ICustomTextureBlock 
 	
 	public BlockBuilder(int i) {
 		super(i, Material.iron);
-		blockTextureSide = 3 * 16 + 7;
-		blockTextureTop = 3 * 16 + 5;
-		blockTextureFront = 3 * 16 + 6;
+		blockTextureSide = 3 * 16 + 8;
+		blockTextureTop = 3 * 16 + 6;
+		blockTextureFront = 3 * 16 + 7;
 	}
 
 	@Override

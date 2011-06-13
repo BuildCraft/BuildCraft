@@ -23,6 +23,10 @@ public class CoreProxy {
 				"/config/BuildCraft.cfg");
 	}
 	
+	public static File getBuildCraftBase () {
+		return new File(Minecraft.getMinecraftDir(), "/buildcraft/");
+	}
+	
 	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
 			int z, int maxDistance, BaseModMp mod) {
 
