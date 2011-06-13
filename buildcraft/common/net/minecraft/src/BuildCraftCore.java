@@ -36,6 +36,7 @@ public class BuildCraftCore {
 	public static int customTextureModel;
 	public static int blockByEntityModel;
 	public static int pipeModel;
+	public static int markerModel;
 	
 	public static String customBuildCraftTexture =
 		"/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png";
@@ -127,6 +128,7 @@ public class BuildCraftCore {
 		 blockByEntityModel = ModLoader.getUniqueBlockModelID(mod, true);
 		 customTextureModel = ModLoader.getUniqueBlockModelID(mod, true);
 		 pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
+		 markerModel = ModLoader.getUniqueBlockModelID(mod, false);
 	}
 	
 }
