@@ -16,7 +16,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileObsidianPipe extends TileStonePipe {
+public class TileObsidianPipe extends TilePipe {
 
 	public TileObsidianPipe () {
 		super ();
