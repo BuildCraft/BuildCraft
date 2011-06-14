@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Matrix2f;
 
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
@@ -21,8 +20,15 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public static HashMap<Block, Render> blockByEntityRenders = new HashMap<Block, Render>();
 
+	public static boolean initialized = false;
+	
 	public static void initialize() {
 		BuildCraftCore.initialize();
+		
+		if (!initialized) {
+			initializeMarkerMatrix();
+			initialized = true;
+		}
 	}
 
 	public void ModsLoaded() {
@@ -260,12 +266,78 @@ public class mod_BuildCraftCore extends BaseModMp {
 					.getTexture("/terrain.png"));
 		}
 	}
+	
+	public static double frontX [][][] = new double [6][3][4];
+	public static double frontZ [][][] = new double [6][3][4];
+	public static double frontY [][][] = new double [6][3][4];
+	
+	public static double [][] safeClone (double [][] d) {
+		double ret [][] = new double [d.length][d [0].length];
+		
+		for (int i = 0; i < d.length; ++i) {
+			for (int j = 0; j < d [0].length; ++j) {
+				ret [i][j] = d [i][j];
+			}
+		}
+		
+		return ret;
+	}
+	
+	public static void initializeMarkerMatrix () {
+		double frontXBase [][] = {{-0.0625, -0.0625, -0.0625, -0.0625},
+      	      {1, 0, 0, 1},       
+              {-0.5, -0.5, 0.5, 0.5}};
+					
+		frontX [3] = safeClone (frontXBase);
+		rotateFace(frontX [3]);
+		rotateFace(frontX [3]);
+		rotateFace(frontX [3]);
+		
+		frontX [4] = safeClone (frontXBase);
+		rotateFace(frontX [4]);
+		
+		frontX [5] = safeClone (frontXBase);
+		
+		double frontZBase [][] = {{-0.5, -0.5, 0.5, 0.5},
+	              {1, 0, 0, 1},
+	              {0.0625, 0.0625, 0.0625, 0.0625}};
+		
+		frontZ [5] = safeClone (frontZBase);
+		
+		frontZ [1] = safeClone (frontZBase);
+		rotateFace(frontZ [1]);
+		rotateFace(frontZ [1]);
+		rotateFace(frontZ [1]);
+		
+		frontZ [2] = safeClone (frontZBase);
+		rotateFace(frontZ [2]);
+		
+		double frontYBase [][] = {{-0.5, -0.5, 0.5, 0.5},
+				{-0.0625, -0.0625, -0.0625, -0.0625},
+				{0.5, -0.5, -0.5, 0.5}};
+		
+		frontY [4] = safeClone (frontYBase);
+		rotateFace(frontY [4]);
+		rotateFace(frontY [4]);
+		
+		frontY [3] = safeClone (frontYBase);
+		
+		frontY [2] = safeClone (frontYBase);
+		rotateFace(frontY [2]);
+		
+		frontY [1] = safeClone (frontYBase);
+		rotateFace(frontY [1]);
+		rotateFace(frontY [1]);
+		rotateFace(frontY [1]);
+
+	}
 
 	public void renderMarkerWithMeta(Block block, double x, double y, double z,
 			int meta) {
 		Tessellator tessellator = Tessellator.instance;
 		int i = block.getBlockTextureFromSide(0);
 
+		int m = meta;
 		int j = (i & 0xf) << 4;
 		int k = i & 0xf0;
 		float f = (float) j / 256F;
@@ -274,44 +346,82 @@ public class mod_BuildCraftCore extends BaseModMp {
 		float f3 = ((float) k + 15.99F) / 256F;
 		double d5 = (double) f + 0.02734375D;
 		double d6 = (double) f2 + 0.0234375D;
-		double d7 = (double) f + 0.03515625D;
-		double d8 = (double) f2 + 0.03125D;
+		double d7 = (double) f + 0.02734375D;
+		double d8 = (double) f2 + 0.0234375D;
+
+//		double d7 = (double) f + 0.03515625D;
+//		double d8 = (double) f2 + 0.03125D;
 		x += 0.5D;
 		z += 0.5D;
-		double d9 = x - 0.5D;
-		double d10 = x + 0.5D;
-		double d11 = z - 0.5D;
-		double d12 = z + 0.5D;
-		double d13 = 0.0625D;
-		double d14 = 0.625D;
-		tessellator.addVertexWithUV(x - d13, y + d14, z - d13, d5, d6);
-		tessellator.addVertexWithUV(x - d13, y + d14, z + d13, d5, d8);
-		tessellator.addVertexWithUV(x + d13, y + d14, z + d13, d7, d8);
-		tessellator.addVertexWithUV(x + d13, y + d14, z - d13, d7, d6);
-		
-		double frontX [][] = {{-0.1, -0.1, -0.1, -0.1},
-		            	      {1, 0, 0, 1},       
-		                      {-0.5, -0.5, 0.5, 0.5}};				
+
+		double s = 0.0625D;
+		double d14 = 0.1D;
 		
 		if (meta == 5) {
-			
+			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z - s, d5, d6);
+			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, d5, d8);
+			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z + s, d7, d8);
+			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z - s, d7, d6);
+		} else if (meta == 2) {
+			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, d5, d6);
+			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z + s, d5, d8);
+			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, d7, d8);
+			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z - s, d7, d6);
+		} else if (meta == 1) {
+			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z - s, d7, d6);
+			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z + s, d7, d8);
+			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z + s, d5, d8);
+			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z - s, d5, d6);
 		} else if (meta == 3) {
-			rotateFace (frontX);
-			rotateFace (frontX);
-			rotateFace (frontX);
+			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z + s, d5, d6);
+			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z + s, d5, d8);
+			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z + s, d7, d8);
+			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, d7, d6);			
 		} else if (meta == 4) {
-			rotateFace (frontX);
+			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z - s, d7, d6);
+			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z - s, d7, d8);
+			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z - s, d5, d8);
+			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, d5, d6);
 		}
 		
 		if (meta == 5 || meta == 4 || meta == 3) {			
-			tessellator.addVertexWithUV(x + frontX [0][0], y + frontX [1][0], z + frontX [2][0], f, f2);
-			tessellator.addVertexWithUV(x + frontX [0][0], y + frontX [1][1], z + frontX [2][1], f, f3);
-			tessellator.addVertexWithUV(x + frontX [0][0], y + frontX [1][2], z + frontX [2][2], f1, f3);
-			tessellator.addVertexWithUV(x + frontX [0][0], y + frontX [1][3], z + frontX [2][3], f1, f2);
+			tessellator.addVertexWithUV(x + frontX [m][0][0], y + frontX [m][1][0], z + frontX [m][2][0], f, f2);
+			tessellator.addVertexWithUV(x + frontX [m][0][1], y + frontX [m][1][1], z + frontX [m][2][1], f, f3);
+			tessellator.addVertexWithUV(x + frontX [m][0][2], y + frontX [m][1][2], z + frontX [m][2][2], f1, f3);
+			tessellator.addVertexWithUV(x + frontX [m][0][3], y + frontX [m][1][3], z + frontX [m][2][3], f1, f2);
+			
+			tessellator.addVertexWithUV(x - frontX [m][0][3], y + frontX [m][1][3], z + frontX [m][2][3], f1, f2);
+			tessellator.addVertexWithUV(x - frontX [m][0][2], y + frontX [m][1][2], z + frontX [m][2][2], f1, f3);
+			tessellator.addVertexWithUV(x - frontX [m][0][1], y + frontX [m][1][1], z + frontX [m][2][1], f, f3);					
+			tessellator.addVertexWithUV(x - frontX [m][0][0], y + frontX [m][1][0], z + frontX [m][2][0], f, f2);									
+		}
+		
+		if (meta == 5 || meta == 2 || meta == 1) {
+			tessellator.addVertexWithUV(x + frontZ [m][0][0], y + frontZ [m][1][0], z + frontZ [m][2][0], f, f2);
+			tessellator.addVertexWithUV(x + frontZ [m][0][1], y + frontZ [m][1][1], z + frontZ [m][2][1], f, f3);
+			tessellator.addVertexWithUV(x + frontZ [m][0][2], y + frontZ [m][1][2], z + frontZ [m][2][2], f1, f3);
+			tessellator.addVertexWithUV(x + frontZ [m][0][3], y + frontZ [m][1][3], z + frontZ [m][2][3], f1, f2);
+			
+			tessellator.addVertexWithUV(x + frontZ [m][0][3], y + frontZ [m][1][3], z - frontZ [m][2][3], f1, f2);
+			tessellator.addVertexWithUV(x + frontZ [m][0][2], y + frontZ [m][1][2], z - frontZ [m][2][2], f1, f3);
+			tessellator.addVertexWithUV(x + frontZ [m][0][1], y + frontZ [m][1][1], z - frontZ [m][2][1], f, f3);
+			tessellator.addVertexWithUV(x + frontZ [m][0][0], y + frontZ [m][1][0], z - frontZ [m][2][0], f, f2);
+		}
+		
+		if (meta == 4 || meta == 3 || meta == 2 || meta == 1) {
+			tessellator.addVertexWithUV(x + frontY [m][0][0], y + 0.5 + frontY [m][1][0], z + frontY [m][2][0], f, f2);
+			tessellator.addVertexWithUV(x + frontY [m][0][1], y + 0.5 + frontY [m][1][1], z + frontY [m][2][1], f, f3);
+			tessellator.addVertexWithUV(x + frontY [m][0][2], y + 0.5 + frontY [m][1][2], z + frontY [m][2][2], f1, f3);
+			tessellator.addVertexWithUV(x + frontY [m][0][3], y + 0.5 + frontY [m][1][3], z + frontY [m][2][3], f1, f2);
+			
+			tessellator.addVertexWithUV(x + frontY [m][0][3], y + 0.5 - frontY [m][1][3], z + frontY [m][2][3], f1, f2);
+			tessellator.addVertexWithUV(x + frontY [m][0][2], y + 0.5 - frontY [m][1][2], z + frontY [m][2][2], f1, f3);
+			tessellator.addVertexWithUV(x + frontY [m][0][1], y + 0.5 - frontY [m][1][1], z + frontY [m][2][1], f, f3);
+			tessellator.addVertexWithUV(x + frontY [m][0][0], y + 0.5 - frontY [m][1][0], z + frontY [m][2][0], f, f2);
 		}
 	}
 	
-	private void rotateFace (double [][] face) {		
+	private static void rotateFace (double [][] face) {		
 		for (int j = 0; j < 3; ++j) {
 			double tmp = face [j][0];
 			face [j][0] = face [j][1];
