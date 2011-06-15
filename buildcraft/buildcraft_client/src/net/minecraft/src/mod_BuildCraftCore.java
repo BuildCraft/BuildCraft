@@ -298,6 +298,10 @@ public class mod_BuildCraftCore extends BaseModMp {
 		
 		frontX [5] = safeClone (frontXBase);
 		
+		frontX [0] = safeClone (frontXBase);
+		rotateFace(frontX [0]);
+		rotateFace(frontX [0]);
+		
 		double frontZBase [][] = {{-0.5, -0.5, 0.5, 0.5},
 	              {1, 0, 0, 1},
 	              {0.0625, 0.0625, 0.0625, 0.0625}};
@@ -311,6 +315,10 @@ public class mod_BuildCraftCore extends BaseModMp {
 		
 		frontZ [2] = safeClone (frontZBase);
 		rotateFace(frontZ [2]);
+		
+		frontZ [0] = safeClone (frontZBase);
+		rotateFace(frontZ [0]);
+		rotateFace(frontZ [0]);
 		
 		double frontYBase [][] = {{-0.5, -0.5, 0.5, 0.5},
 				{-0.0625, -0.0625, -0.0625, -0.0625},
@@ -348,21 +356,22 @@ public class mod_BuildCraftCore extends BaseModMp {
 		double d6 = (double) f2 + 0.0234375D;
 		double d7 = (double) f + 0.02734375D;
 		double d8 = (double) f2 + 0.0234375D;
-
-//		double d7 = (double) f + 0.03515625D;
-//		double d8 = (double) f2 + 0.03125D;
 		x += 0.5D;
 		z += 0.5D;
 
 		double s = 0.0625D;
-		double d14 = 0.1D;
 		
 		if (meta == 5) {
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z - s, d5, d6);
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, d5, d8);
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z + s, d7, d8);
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z - s, d7, d6);
-		} else if (meta == 2) {
+		} else if (meta == 0) {
+			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z - s, d7, d6);
+			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z + s, d7, d8);
+			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z + s, d5, d8);
+			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, d5, d6);
+		} else if (meta == 2) {		
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, d5, d6);
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z + s, d5, d8);
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, d7, d8);
@@ -384,7 +393,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, d5, d6);
 		}
 		
-		if (meta == 5 || meta == 4 || meta == 3) {			
+		if (meta == 5 || meta == 4 || meta == 3 || meta == 0) {			
 			tessellator.addVertexWithUV(x + frontX [m][0][0], y + frontX [m][1][0], z + frontX [m][2][0], f, f2);
 			tessellator.addVertexWithUV(x + frontX [m][0][1], y + frontX [m][1][1], z + frontX [m][2][1], f, f3);
 			tessellator.addVertexWithUV(x + frontX [m][0][2], y + frontX [m][1][2], z + frontX [m][2][2], f1, f3);
@@ -396,7 +405,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 			tessellator.addVertexWithUV(x - frontX [m][0][0], y + frontX [m][1][0], z + frontX [m][2][0], f, f2);									
 		}
 		
-		if (meta == 5 || meta == 2 || meta == 1) {
+		if (meta == 5 || meta == 2 || meta == 1 || meta == 0) {
 			tessellator.addVertexWithUV(x + frontZ [m][0][0], y + frontZ [m][1][0], z + frontZ [m][2][0], f, f2);
 			tessellator.addVertexWithUV(x + frontZ [m][0][1], y + frontZ [m][1][1], z + frontZ [m][2][1], f, f3);
 			tessellator.addVertexWithUV(x + frontZ [m][0][2], y + frontZ [m][1][2], z + frontZ [m][2][2], f1, f3);
