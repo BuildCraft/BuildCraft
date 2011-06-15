@@ -22,7 +22,7 @@ public class EntityPassiveItem extends Entity {
 	public EntityPassiveItem(World world) {
 		super(world);		
 		
-    	noClip = true;    	
+    	noClip = true;
 	}
 	
 	public EntityPassiveItem(World world, double d, double d1, double d2) {
@@ -37,6 +37,11 @@ public class EntityPassiveItem extends Entity {
 			ItemStack itemstack) {
 		this (world, d, d1, d2);
 		this.item = itemstack;
+		
+		if (itemstack.itemID == 0) {
+			// Defensive code, in case of item corruption.
+			setEntityDead();
+		}
     }
 
 	@Override
@@ -46,7 +51,10 @@ public class EntityPassiveItem extends Entity {
 	}
 	
 	public void onUpdate() {
-		//super.onUpdate();
+		if (item.itemID == 0) {
+			// Defensive code, in case of item corruption.
+			setEntityDead();
+		}
 	}
 
 	@Override
@@ -60,6 +68,11 @@ public class EntityPassiveItem extends Entity {
 		item = new ItemStack(nbttagcompound.getCompoundTag("Item"));
 		
 		setPosition (posX, posY, posZ);
+		
+		if (item.itemID == 0) {
+			// Defensive code, in case of item corruption.
+			setEntityDead();
+		}
 	}
 
 	@Override
@@ -91,7 +104,7 @@ public class EntityPassiveItem extends Entity {
 	 }
 	
 	public EntityItem toEntityItem (World world, Orientations dir) {		
-		if (!APIProxy.isClient(worldObj)) {
+		if (!APIProxy.isClient(worldObj) && isEntityAlive()) {
 			Position motion = new Position (0, 0, 0, dir);
 			motion.moveForwards(0.1 + speed * 2F);
 

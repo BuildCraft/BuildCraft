@@ -66,14 +66,13 @@ public class BuildCraftFactory {
 		CoreProxy.addName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
 				"Automatic Crafting Table");
 				
-		frameBlock = new BlockFrame(Utils.getSafeBlockId("frame.blockId", 152));
+		frameBlock = new BlockFrame(Utils.getSafeBlockId("frame.blockId", 160));
 		ModLoader.RegisterBlock(frameBlock);
+		CoreProxy.addName(frameBlock.setBlockName("frameBlock"), "Frame");
 		
 		quarryBlock = new BlockQuarry(Utils.getSafeBlockId("quarry.blockId",
 				153));
-		ModLoader.RegisterBlock(quarryBlock);
-		
-		
+		ModLoader.RegisterBlock(quarryBlock);				
 		
 		if (allowMining) {
 			craftingmanager.addRecipe(

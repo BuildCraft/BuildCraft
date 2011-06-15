@@ -96,7 +96,7 @@ public class BuildCraftTransport {
 				Character.valueOf('G'), Block.glass});
 		
 		cobblestonePipeBlock = new BlockCobblestonePipe(Utils.getSafeBlockId(
-				"cobblestonePipeBlock.blockId", 156));
+				"cobblestonePipeBlock.blockId", 159));
 		CoreProxy.addName(cobblestonePipeBlock.setBlockName("cobblestonePipe"),
 				"Cobblestone Pipe");
 		ModLoader.RegisterBlock(cobblestonePipeBlock);		
