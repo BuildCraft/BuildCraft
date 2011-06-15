@@ -317,6 +317,7 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 		}
 		
 		signals = null;
+		origin = null;
 	}
 	
 	public void removeFromWorld () {
