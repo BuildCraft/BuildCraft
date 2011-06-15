@@ -7,6 +7,8 @@ import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryCrafting;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
@@ -203,6 +205,16 @@ public class TileAutoWorkbench extends TileEntity implements
 
 		if (resultStack == null || !doRemove) {
 			resetPointers(pointerList);
+		} else {
+			for (StackPointer p : pointerList) {
+				// place an empty bucket back when used in the recipe
+				
+				if (p.item.getItem() instanceof ItemBucket) {
+					ItemStack newStack = new ItemStack(Item.bucketEmpty, 1);
+
+					p.inventory.setInventorySlotContents(p.index, newStack);					
+				}
+			}
 		}
 
 		return resultStack;
