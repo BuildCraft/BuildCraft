@@ -54,9 +54,14 @@ public class RenderPassiveItem extends Render
             byte0 = 4;
         }
         GL11.glTranslatef((float)d, (float)d1 + f2, (float)d2);
-        GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
+        GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);   
+        
+//        System.out.println ("ITEM " + itemstack);
+        
+        System.out.println (itemstack.itemID);
+        
 		if (itemstack.itemID < Block.blocksList.length
-				&& itemstack.itemID >= 0
+				&& itemstack.itemID > 0				
 				&& RenderBlocks
 						.renderItemIn3d(Block.blocksList[itemstack.itemID]
 								.getRenderType()))

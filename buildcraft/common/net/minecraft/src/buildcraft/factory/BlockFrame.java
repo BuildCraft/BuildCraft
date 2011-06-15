@@ -39,7 +39,7 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe {
     
     public int idDropped(int i, Random random)
     {
-        return 0;
+        return -1;
     }
     
     public int getRenderType()
