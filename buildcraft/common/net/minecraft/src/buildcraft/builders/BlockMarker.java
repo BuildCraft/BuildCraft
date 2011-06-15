@@ -1,7 +1,5 @@
 package net.minecraft.src.buildcraft.builders;
 
-import java.util.Random;
-
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;

@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;

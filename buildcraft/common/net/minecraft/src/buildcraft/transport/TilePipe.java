@@ -43,9 +43,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 
 	}
 	
-	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
-		// Readjust the speed
-		
+	public void readjustSpeed (EntityPassiveItem item) {
 		if (item.speed > Utils.pipeNormalSpeed) {
 			item.speed = item.speed - Utils.pipeNormalSpeed;
 		}
@@ -53,6 +51,10 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		if (item.speed < Utils.pipeNormalSpeed) {
 			item.speed = Utils.pipeNormalSpeed;
 		}
+	}
+	
+	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
+		readjustSpeed(item);				
 		
 		if (!travelingEntities.containsKey(new Integer(item.entityId))) {
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
@@ -124,10 +126,10 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		
 		return false;
 	}
-	
+		
 	public void updateEntity() {
 		super.updateEntity();
-		
+				
 		for (EntityData data : entitiesToLoad) {
 			worldObj.entityJoinedWorld(data.item);
 			travelingEntities.put(new Integer(data.item.entityId), data);
