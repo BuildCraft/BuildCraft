@@ -103,7 +103,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 						Block.brick });
 		
 		FillerRegistry.addRecipe(new FillerFillStairs(),
-				new Object[] { "b  ", "bb ", "bbb", Character.valueOf('b'),
+				new Object[] { "  b", " bb", "bbb", Character.valueOf('b'),
 						Block.brick });
 
 		
