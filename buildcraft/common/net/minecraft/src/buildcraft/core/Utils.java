@@ -411,4 +411,16 @@ public class Utils {
 		return lasers;
 	}
 
+	public static void breakBlock(World world, int x, int y, int z) {
+		int blockId = world.getBlockId(x, y, z);
+		
+		world.setBlockWithNotify(x, y, z, 0);
+		
+		if (blockId != 0) {
+			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z,
+					world.getBlockMetadata(x, y, z));
+		}				
+
+	}
+
 }

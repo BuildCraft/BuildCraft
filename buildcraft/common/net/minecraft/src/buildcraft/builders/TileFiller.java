@@ -1,26 +1,33 @@
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.buildcraft.api.FillerRegistry;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.FillerPattern;
+import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LaserKind;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileFiller extends TileCurrentPowered implements IInventory {
+public class TileFiller extends TileCurrentPowered implements ISpecialInventory {
 
 	private Box box;
+	FillerPattern currentPattern;
+	boolean done = true;
+	boolean forceDone = false;
+    private ItemStack contents[];
 
     public TileFiller() {
     	latency = 10;
     	
-        contents = new ItemStack[36];
+        contents = new ItemStack[getSizeInventory()];
     }
     
     public void initialize () {
@@ -33,7 +40,9 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
 			if (a instanceof TileMarker) {
 				((TileMarker) a).removeFromWorld();
 			}
-		}			
+		}		
+		
+		computeRecipe ();
     }
     
 	public void updateEntity () {		
@@ -41,55 +50,44 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
 		
 		if (box != null) {
 			box.createLasers(worldObj, LaserKind.Stripes);
+		} else {
+			done = true;
 		}
 	}
+
 	
 	protected void doWork () {					
-		if (box != null) {
+		if (box != null && currentPattern != null && !done) {
+			ItemStack stack = null;
+			int stackId = 0;
+			
+			for (int s = 9; s < getSizeInventory(); ++s) {
+				if (getStackInSlot(s) != null
+						&& getStackInSlot(s).stackSize > 0
+						&& getStackInSlot(s).getItem() instanceof ItemBlock) {
 
-			boolean found = false;
-			int xSlot = 0, ySlot = 0, zSlot = 0;
+					stack = contents [s];
+					stackId = s;
 
-			for (int y = box.yMin; y <= box.yMax && !found; ++y) {
-				for (int x = box.xMin; x <= box.xMax && !found; ++x) {
-					for (int z = box.zMin; z <= box.zMax && !found; ++z) {
-						if (worldObj.getBlockId(x, y, z) == 0
-								|| worldObj.getBlockId(x, y, z) == Block.waterMoving.blockID
-								|| worldObj.getBlockId(x, y, z) == Block.waterStill.blockID) {
-							xSlot = x;
-							ySlot = y;
-							zSlot = z;
-
-							found = true;
-						}
-					}
+					break;
 				}
 			}
-
-			if (found) {
-				for (int s = 0; s < getSizeInventory(); ++s) {
-					if (getStackInSlot(s) != null
-							&& getStackInSlot(s).stackSize > 0
-							&& getStackInSlot(s).getItem() instanceof ItemBlock) {
-
-						ItemStack stack = decrStackSize(s, 1);
-						stack.getItem().onItemUse(stack, null, worldObj,
-								xSlot, ySlot + 1, zSlot, 0);
-
-
-						break;
-					}
-				}
-			} else {
-				box.deleteLasers();
-				box = null;
+			
+			done = currentPattern.iteratePattern(this, box, stack);
+			
+			if (stack != null && stack.stackSize == 0) {
+				contents [stackId] = null;
+			}
+			
+			if (done) {
+				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 			}
 		}
 	}	
 
     public int getSizeInventory()
     {
-        return 27;
+        return 36;
     }
 
     public ItemStack getStackInSlot(int i)
@@ -97,23 +95,47 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
         return contents[i];
     }
 
+    public void computeRecipe () {
+    	FillerPattern newPattern = FillerRegistry.findMatchingRecipe(this);
+    	
+    	if (newPattern == currentPattern) {
+    		return;
+    	}
+    	
+    	currentPattern = newPattern;
+    	
+    	if (currentPattern == null || forceDone) {
+    		done = true;
+    		forceDone = false;
+    	} else {
+    		done = false;
+    	}
+    	
+    	worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+    }
+    
     public ItemStack decrStackSize(int i, int j)
     {
-        if(contents[i] != null)
-        {
-            if(contents[i].stackSize <= j)
-            {
+        if(contents[i] != null) {
+            if(contents[i].stackSize <= j) {
                 ItemStack itemstack = contents[i];
                 contents[i] = null;
 //                onInventoryChanged();
+                
+                computeRecipe ();
+                                
                 return itemstack;
             }
+            
             ItemStack itemstack1 = contents[i].splitStack(j);
-            if(contents[i].stackSize == 0)
-            {
+            
+            if(contents[i].stackSize == 0) {
                 contents[i] = null;
             }
 //            onInventoryChanged();
+            
+            computeRecipe ();
+            
             return itemstack1;
         } else
         {
@@ -128,6 +150,8 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
         {
             itemstack.stackSize = getInventoryStackLimit();
         }
+        
+        computeRecipe ();     
 //        onInventoryChanged();
     }
 
@@ -153,8 +177,11 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
         
         if (nbttagcompound.hasKey("box")) {
         	box = new Box (nbttagcompound.getCompoundTag("box"));
-        }
-
+        }        
+        
+        done = nbttagcompound.getBoolean("done");
+        
+        forceDone = done;
     }
 
     public void writeToNBT(NBTTagCompound nbttagcompound)
@@ -179,6 +206,8 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
         	box.writeToNBT(boxStore);
         	nbttagcompound.setTag("box", boxStore);
         }
+        
+        nbttagcompound.setBoolean("done", done);
     }
 
     public int getInventoryStackLimit()
@@ -195,8 +224,6 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
         return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
     }
     
-    private ItemStack contents[];
-    
     public void destroy () {
     	if (box != null) {
     		box.deleteLasers();    		
@@ -204,5 +231,69 @@ public class TileFiller extends TileCurrentPowered implements IInventory {
     	
     	Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
     }
+
+	@Override
+	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		StackUtil stackUtil = new StackUtil(stack);
+		
+		boolean added = false;
+		
+		for (int i = 9; i < contents.length;++i) {
+			if (stackUtil.tryAdding(this, i, doAdd, false)) {
+				added = true;
+				break;
+			}
+		}
+		
+		if (added) {
+			if (!doAdd) {
+				return true;
+			} else if (stack.stackSize == 0) {
+				return true;
+			} else {
+				addItem(stack, added, from);
+				
+				return true;
+			}
+		}
+		
+		if (!added) {
+			for (int i = 9; i < contents.length;++i) {
+				if (stackUtil.tryAdding(this, i, doAdd, true)) {
+					added = true;
+					break;
+				}
+			}
+		}
+		
+		if (added) {
+			if (!doAdd) {
+				return true;
+			} else if (stack.stackSize == 0) {
+				return true;
+			} else {
+				addItem(stack, added, from);
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public ItemStack extractItem(boolean doRemove, Orientations from) {
+		for (int i = 9; i < contents.length; ++i) {
+			if (contents [i] != null) {
+				if (doRemove) {
+					return decrStackSize(i, 1);
+				} else {
+					return contents [i];
+				}
+			}
+		}
+		
+		return null;
+	}
 
 }

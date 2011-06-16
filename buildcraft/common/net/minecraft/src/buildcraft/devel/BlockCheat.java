@@ -30,11 +30,10 @@ public class BlockCheat extends BlockChest {
 				|| world.getBlockId(i, j, k + 1) == blockID) {
 
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.pickaxeDiamond, 1));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.torchWood, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Block.brick, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.glass, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.chest, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.workbench, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.tnt, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64));			
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreIron, 64));
@@ -43,7 +42,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.paper, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.lever, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.railPowered, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Item.minecartCrate, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.minecartCrate, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.lavaStill, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.stone, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.bucketMilk, 1));

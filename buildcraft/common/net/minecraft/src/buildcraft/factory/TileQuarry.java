@@ -139,18 +139,14 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 			lastWorkTime = worldObj.getWorldTime();
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
-			if (contents != null) {		
-				int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
-				
-				worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
-						contents.blockId);
-				
+			int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
+						
+			if (contents != null) {
 				if (blockId != 0) {
-					Block.blocksList[blockId].dropBlockAsItem(worldObj,
-							contents.x, contents.y, contents.z, worldObj
-									.getBlockMetadata(contents.x, contents.y,
-											contents.z));
-
+					Utils.breakBlock (worldObj, contents.x, contents.y, contents.z);
+				} else if (contents.blockId != 0) {
+					worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
+							contents.blockId);
 				}				
 			}
 			
