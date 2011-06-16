@@ -5,10 +5,17 @@ import java.io.File;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.api.FillerRegistry;
 import net.minecraft.src.buildcraft.builders.BlockBuilder;
 import net.minecraft.src.buildcraft.builders.BlockFiller;
 import net.minecraft.src.buildcraft.builders.BlockMarker;
 import net.minecraft.src.buildcraft.builders.BlockTemplate;
+import net.minecraft.src.buildcraft.builders.FillerFillAll;
+import net.minecraft.src.buildcraft.builders.FillerFillPyramid;
+import net.minecraft.src.buildcraft.builders.FillerFillStairs;
+import net.minecraft.src.buildcraft.builders.FillerFillWalls;
+import net.minecraft.src.buildcraft.builders.FillerFlattener;
+import net.minecraft.src.buildcraft.builders.FillerRemover;
 import net.minecraft.src.buildcraft.builders.ItemTemplate;
 import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
@@ -70,6 +77,35 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 				"net.minecraft.src.builders.TileBuilder");
 		ModLoader.RegisterTileEntity(TileTemplate.class,
 				"net.minecraft.src.builders.TileTemplate");
+		
+		FillerRegistry.addRecipe(new FillerFillAll(), new Object[] { "bbb",
+				"bbb", "bbb", Character.valueOf('b'),
+				new ItemStack(Block.brick, 1) });
+		
+		FillerRegistry.addRecipe(new FillerFlattener(),
+				new Object[] { "   ", "ggg", "bbb", Character.valueOf('g'),
+						Block.glass, Character.valueOf('b'), Block.brick });
+		
+		FillerRegistry.addRecipe(new FillerRemover(),
+				new Object[] { "ggg", "ggg", "ggg", Character.valueOf('g'),
+						Block.glass });
+		
+		FillerRegistry.addRecipe(new FillerFillWalls(),
+				new Object[] { "bbb", "b b", "bbb", Character.valueOf('b'),
+						Block.brick });
+		
+		FillerRegistry.addRecipe(new FillerFillPyramid(1),
+				new Object[] { "   ", " b ", "bbb", Character.valueOf('b'),
+						Block.brick });
+		
+		FillerRegistry.addRecipe(new FillerFillPyramid(-1),
+				new Object[] { "bbb", " b ", "   ", Character.valueOf('b'),
+						Block.brick });
+		
+		FillerRegistry.addRecipe(new FillerFillStairs(),
+				new Object[] { "b  ", "bb ", "bbb", Character.valueOf('b'),
+						Block.brick });
+
 		
 		Utils.saveProperties();
 		

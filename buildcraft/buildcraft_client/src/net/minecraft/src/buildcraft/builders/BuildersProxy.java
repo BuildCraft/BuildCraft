@@ -24,6 +24,14 @@ public class BuildersProxy {
 		}
 	}
 	
+	public static void displayGUIFiller(EntityPlayer entityplayer,
+			TileFiller tile) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(
+					new GuiFiller(entityplayer.inventory, tile));
+		}
+	}
+	
 	public static boolean canPlaceTorch (World w, int i, int j, int k) {
 		Block block = Block.blocksList [w.getBlockId(i, j, k)];
 		
