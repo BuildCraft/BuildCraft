@@ -110,7 +110,7 @@ public class FillerRegistry {
                 s = (new StringBuilder()).append(s).append(s1).toString();
             }
         }
-        HashMap hashmap = new HashMap();
+        HashMap <Character, ItemStack> hashmap = new HashMap<Character, ItemStack>();
         for(; i < aobj.length; i += 2)
         {
             Character character = (Character)aobj[i];
