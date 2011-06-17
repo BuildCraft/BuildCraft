@@ -249,6 +249,14 @@ public class TileAutoWorkbench extends TileEntity implements
 			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YPos);	
 		}
 		
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.ZNeg);	
+		}
+		
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.ZPos);	
+		}
+		
 		return pointer;
 	}
 	
@@ -277,12 +285,12 @@ public class TileAutoWorkbench extends TileEntity implements
 					StackPointer result = new StackPointer();
 					result.inventory = inventory;
 					result.index = j;
-					result.item = stack;
+					result.item = stack;					
 					
 					return result;
 				}
 			}
-		}
+		}		
 		
 		return null;
 	}
