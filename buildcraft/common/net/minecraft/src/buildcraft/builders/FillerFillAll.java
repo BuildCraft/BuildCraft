@@ -18,7 +18,7 @@ public class FillerFillAll extends FillerPattern {
 		int yMax = (int) box.p2().y;
 		int zMax = (int) box.p2().z;
 
-		return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
+		return fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
 	}
 
 	@Override
