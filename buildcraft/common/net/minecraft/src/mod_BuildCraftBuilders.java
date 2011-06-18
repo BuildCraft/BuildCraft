@@ -94,12 +94,8 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 				new Object[] { "bbb", "b b", "bbb", Character.valueOf('b'),
 						Block.brick });
 		
-		FillerRegistry.addRecipe(new FillerFillPyramid(1),
+		FillerRegistry.addRecipe(new FillerFillPyramid(),
 				new Object[] { "   ", " b ", "bbb", Character.valueOf('b'),
-						Block.brick });
-		
-		FillerRegistry.addRecipe(new FillerFillPyramid(-1),
-				new Object[] { "bbb", " b ", "   ", Character.valueOf('b'),
 						Block.brick });
 		
 		FillerRegistry.addRecipe(new FillerFillStairs(),

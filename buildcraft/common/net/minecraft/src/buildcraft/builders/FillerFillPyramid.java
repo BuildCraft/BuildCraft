@@ -7,11 +7,8 @@ import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.FillerPattern;
 
 public class FillerFillPyramid extends FillerPattern {
-
-	public int stepY;
 	
-	public FillerFillPyramid (int step) {
-		stepY = step;
+	public FillerFillPyramid () {
 	}
 	
 	@Override
@@ -29,6 +26,14 @@ public class FillerFillPyramid extends FillerPattern {
 		
 		int step = 0;
 		int height;
+		
+		int stepY;
+		
+		if (tile.yCoord <= yMin) {
+			stepY = 1;
+		} else {
+			stepY = -1;
+		}
 		
 		if (stepY == 1) {
 			height = yMin;
@@ -58,11 +63,7 @@ public class FillerFillPyramid extends FillerPattern {
 
 	@Override
 	public int getTextureIndex() {
-		if (stepY == 1) {
-			return 4 * 16 + 7;
-		} else {
-			return 4 * 16 + 8;
-		}
+		return 4 * 16 + 7;		
 	}
 
 }
