@@ -8,18 +8,18 @@ import net.minecraft.src.IInventory;
 public class GuiTemplate extends GuiContainer {
 	
 	IInventory playerInventory;
-	IInventory filterInventory;
+	TileTemplate template;
 	
-	public GuiTemplate(IInventory playerInventory, IInventory filterInventory) {
-		super(new CraftingTemplate(playerInventory, filterInventory));
+	public GuiTemplate(IInventory playerInventory, TileTemplate template) {
+		super(new CraftingTemplate(playerInventory, template));
 		this.playerInventory = playerInventory;
-		this.filterInventory = filterInventory;
+		this.template = template;
 		xSize = 175;
 		ySize = 225;
 	}
 	
     protected void drawGuiContainerForegroundLayer() {
-        fontRenderer.drawString(filterInventory.getInvName(), 8, 6, 0x404040);
+        fontRenderer.drawString(template.getInvName(), 8, 6, 0x404040);
         fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 152, 0x404040);        
     }
 	
@@ -32,7 +32,7 @@ public class GuiTemplate extends GuiContainer {
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+		int i1 = template.getComputingProgressScaled(24);
+		drawTexturedModalRect(j + 79, k + 34, 176, 14, i1 + 1, 16);
 	}
-
-	int inventoryRows = 6;
 }

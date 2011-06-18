@@ -18,7 +18,11 @@ public class ItemTemplate extends Item {
 	}
 
     public String getItemNameIS(ItemStack itemstack) {
-        return getItemName() + "#" + itemstack.getItemDamage();
+    	if (itemstack.getItemDamage() == 0) {
+    		return getItemName();
+    	} else {
+    		return getItemName() + "#" + itemstack.getItemDamage();
+    	}
     }
     
     public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {

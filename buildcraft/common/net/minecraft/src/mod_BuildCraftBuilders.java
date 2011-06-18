@@ -69,7 +69,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		templateItem = new ItemTemplate (Integer.parseInt(Utils.getProperty(
 				"templateItem.id", "3805")));
 		templateItem.setItemName("templateItem");
-		CoreProxy.addName(templateItem, "Template");
+		CoreProxy.addName(templateItem, "Blank Template");
 		
 		ModLoader.RegisterTileEntity(TileMarker.class, "Marker");
 		ModLoader.RegisterTileEntity(TileFiller.class, "Filler");
@@ -120,7 +120,8 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	public static BluePrint bluePrints [] = new BluePrint [65025];
 	
 	public static int storeBluePrint (BluePrint bluePrint) {
-		for (int i = 0; i < bluePrints.length; ++i) {
+		// Position 0 is "no blueprint yet"
+		for (int i = 1; i < bluePrints.length; ++i) {
 			if (bluePrints [i] == null) {
 				bluePrints [i] = bluePrint;
 				bluePrint.save(i);
@@ -146,6 +147,10 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 			if (parts.length == 2) {
 				if (parts[1].equals("bpt")) {
 					int bptNumber = Integer.parseInt(parts[0]);
+					
+					if (bptNumber == 0) {
+						continue;
+					}
 					
 					bluePrints[bptNumber] = new BluePrint(
 							new File(CoreProxy.getBuildCraftBase(), file));
