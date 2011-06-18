@@ -37,6 +37,8 @@ public class BuildCraftTransport {
 	public static int tilePipeItemPacket = 1;
 	public static int tileDiamondPipeContents = 2;
 	
+	public static boolean alwaysConnectPipes;
+	
 	public static void initialize () {
 		if (initialized) {
 			return;
@@ -110,13 +112,16 @@ public class BuildCraftTransport {
 		ModLoader.RegisterTileEntity(TileGoldenPipe.class, "GoldenPipe");
 		ModLoader.RegisterTileEntity(TileDiamondPipe.class, "DiamondPipe");
 		ModLoader.RegisterTileEntity(TileObsidianPipe.class, "ObsidianPipe");
-		ModLoader.RegisterTileEntity(TileCobblestonePipe.class, "CobblestonePipe");
+		ModLoader.RegisterTileEntity(TileCobblestonePipe.class, "CobblestonePipe");			
 		
 		plainIronTexture = 1 * 16 + 3;
 		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = 1 * 16 + 6 + j;
 		}				
+		
+		alwaysConnectPipes = Boolean.parseBoolean(Utils.getProperty(
+				"pipes.alwaysConnect", "false"));
 		
 		Utils.saveProperties();
 
