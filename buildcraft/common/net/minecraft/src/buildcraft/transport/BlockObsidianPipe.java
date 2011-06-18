@@ -4,9 +4,11 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 
 import net.minecraft.src.Entity;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.World;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.buildcraft.api.APIProxy;
 
 public class BlockObsidianPipe extends BlockPipe {
 	
@@ -41,8 +43,15 @@ public class BlockObsidianPipe extends BlockPipe {
     	
 		TileObsidianPipe tile = (TileObsidianPipe)world.getBlockTileEntity(i, j, k);
 		
-		if(entity instanceof EntityItem) {
-			tile.pullItemIntoPipe((EntityItem)entity);					
+		if (entity instanceof EntityItem && tile.canSuck((EntityItem) entity)) {
+			tile.pullItemIntoPipe((EntityItem) entity);
 		}
     }
+    
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
+		TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+
+		return !(tile instanceof TileObsidianPipe)
+				&& super.isPipeConnected(blockAccess, x, y, z);
+	}
 }

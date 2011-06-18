@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -163,7 +164,8 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 				if (nextOrientation == Orientations.Unknown) {
 					toRemove.add(data);
 
-					data.item.toEntityItem(worldObj, data.orientation);
+					onDropped(data.item
+							.toEntityItem(worldObj, data.orientation));
 				} else {
 					data.orientation = nextOrientation;
 				}
@@ -191,7 +193,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 					
 					APIProxy.removeEntity(data.item);
 				} else {
-					data.item.toEntityItem(worldObj, data.orientation);
+					onDropped (data.item.toEntityItem(worldObj, data.orientation));
 				}
 		    }
 		}	
@@ -371,5 +373,9 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 
 	public int getNumberOfItems () {
 		return travelingEntities.size();
+	}
+	
+	public void onDropped (EntityItem item) {
+		
 	}
 }
