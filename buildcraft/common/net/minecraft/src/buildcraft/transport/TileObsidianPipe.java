@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.TileEntity;
@@ -18,10 +19,21 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileObsidianPipe extends TilePipe {
 
+//	TreeMap <Integer, Boolean> recentlyThrownItems
+	
 	public TileObsidianPipe () {
 		super ();
 		latency = 25;
+		
+		entitiesDropped = new int [32];
+		
+		for (int i = 0; i < entitiesDropped.length; ++i) {
+			entitiesDropped [i] = -1;
+		}
 	}
+	
+	private int [] entitiesDropped;
+	private int entitiesDroppedIndex = 0;
 	
 	//Vacuum pipe can be connected only to ONE other Pipe or IInventory. Otherwise it won't do anything
 	public Orientations getSuckingOrientation() {	
@@ -38,17 +50,28 @@ public class TileObsidianPipe extends TilePipe {
 			
 			TileEntity entity = worldObj.getBlockTileEntity((int) newPos.x,
 						(int) newPos.y, (int) newPos.z);
-						
-			if(entity instanceof IPipeEntry || entity instanceof IInventory)
-			{
+			
+			Block block = Block.blocksList[worldObj.getBlockId((int) newPos.x,
+					(int) newPos.y, (int) newPos.z)];
+			
+			if (block instanceof BlockPipe
+					&& ((BlockPipe) block).isPipeConnected(worldObj, xCoord,
+							yCoord, zCoord) 
+					|| (entity instanceof IPipeEntry && !(block instanceof BlockPipe))
+					|| entity instanceof IInventory) {
+				
 				Connections_num++;
-				if(Connections_num == 1) target_pos = new Position(newPos);
+				
+				if (Connections_num == 1) {
+					target_pos = new Position(newPos);
+				}
 			}
 		}
-		if(Connections_num > 1 || Connections_num == 0)
-		{
+		
+		if(Connections_num > 1 || Connections_num == 0) {
 			return Orientations.Unknown;
 		}
+			
 		return target_pos.orientation.reverse();
 	}
 	
@@ -196,5 +219,25 @@ public class TileObsidianPipe extends TilePipe {
 			
 			item.setEntityDead();
 		}
+	}
+	
+	public void onDropped (EntityItem item) {
+		if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
+			entitiesDroppedIndex = 0;
+		} else {
+			entitiesDroppedIndex++;
+		}
+		
+		entitiesDropped [entitiesDroppedIndex] = item.entityId;
+	}
+	
+	public boolean canSuck (EntityItem item) {
+		for (int i = 0; i < entitiesDropped.length; ++i) {
+			if (item.entityId == entitiesDropped [i]) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

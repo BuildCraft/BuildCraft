@@ -118,6 +118,7 @@ public class EntityPassiveItem extends Entity {
 			world.entityJoinedWorld(entityitem);
 			
 			APIProxy.removeEntity(this);
+			entityitem.delayBeforeCanPickup = 20;
 			return entityitem;
 		} else {			
 			APIProxy.removeEntity(this);
