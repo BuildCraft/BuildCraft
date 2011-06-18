@@ -31,6 +31,12 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 		latency = 10;
 	}
 	
+	public void initialize () {
+		super.initialize();
+		
+		initalizeBluePrint();
+	}
+	
 	public void initalizeBluePrint () {
 		if (items[0] == null
 				|| items[0].getItem().shiftedIndex != mod_BuildCraftBuilders.templateItem.shiftedIndex) {
@@ -141,20 +147,31 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
+		ItemStack result;
 		if (items [i] == null) {
-			return null;
+			result = null;
 		} else if (items [i].stackSize > j) {
-			return items [i].splitStack(j);
+			result = items [i].splitStack(j);
 		} else {
 			ItemStack tmp = items [i];
 			items [i] = null;
-			return tmp;
+			result = tmp;
 		}
+		
+		if (i == 0) {
+			initalizeBluePrint();
+		}
+		
+		return result;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		items [i] = itemstack;
+		
+		if (i == 0) {
+			initalizeBluePrint();
+		}
 		
 	}
 

@@ -226,4 +226,41 @@ public class BluePrint {
 		}
 	}
 	
+	@Override
+	public boolean equals (Object o) {
+		if (!(o instanceof BluePrint)) {
+			return false;
+		}
+		
+		BluePrint bpt = (BluePrint) o;
+		
+		if (sizeX != bpt.sizeX
+				|| sizeY != bpt.sizeY
+				|| sizeZ != bpt.sizeZ
+				|| anchorX != bpt.anchorX
+				|| anchorY != bpt.anchorY
+				|| anchorZ != bpt.anchorZ) {
+			return false;
+		}
+		
+		for (int x = 0; x < contents.length; ++x) {
+			for (int y = 0; y < contents [0].length; ++y) {
+				for (int z = 0; z < contents [0][0].length; ++z) {
+					if (contents [x][y][z] != null && bpt.contents [x][y][z] == null) {
+						return false;
+					}
+					
+					if (contents [x][y][z] == null && bpt.contents [x][y][z] != null) {
+						return false;
+					}
+					
+					if (contents [x][y][z].blockId != bpt.contents [x][y][z].blockId) {
+						return false;
+					}
+				}
+			}
+		}
+				
+		return true;
+	}
 }

@@ -89,17 +89,17 @@ public class BluePrintBuilder implements IAreaProvider {
 
 	@Override
 	public int xMax() {
-		return x + bluePrint.sizeX - bluePrint.anchorX;
+		return x + bluePrint.sizeX - bluePrint.anchorX - 1;
 	}
 
 	@Override
 	public int yMax() {
-		return y + bluePrint.sizeY - bluePrint.anchorY;
+		return y + bluePrint.sizeY - bluePrint.anchorY - 1;
 	}
 
 	@Override
 	public int zMax() {
-		return z + bluePrint.sizeZ - bluePrint.anchorZ;
+		return z + bluePrint.sizeZ - bluePrint.anchorZ - 1;
 	}
 
 	@Override

@@ -9,20 +9,14 @@ import net.minecraft.src.Slot;
 class CraftingTemplate extends Container {
 	
 	IInventory playerIInventory;
-	IInventory filterIInventory;
+	TileTemplate template;
 	
-	public CraftingTemplate (IInventory playerInventory, IInventory filterInventory) {		
+	public CraftingTemplate (IInventory playerInventory, TileTemplate template) {		
 		this.playerIInventory = playerInventory;
-		this.filterIInventory = filterInventory;
+		this.template = template;
 		
-//		for(int k = 0; k < 6; k++)
-//        {
-//            for(int j1 = 0; j1 < 9; j1++)
-//            {
-//                addSlot(new Slot(filterInventory, j1 + k * 9, 8 + j1 * 18, 18 + k * 18));
-//            }
-//
-//        }
+		addSlot(new Slot(template, 0, 55, 35));
+		addSlot(new Slot(template, 1, 114, 35));
 
         for(int l = 0; l < 3; l++)
         {
@@ -41,11 +35,11 @@ class CraftingTemplate extends Container {
 	
 	public ItemStack getStackInSlot(int i)
     {	
-		if (i < filterIInventory.getSizeInventory()) {
-			return filterIInventory.getStackInSlot(i);
+		if (i < template.getSizeInventory()) {
+			return template.getStackInSlot(i);
 		} else {
 			return playerIInventory.getStackInSlot(i
-					- filterIInventory.getSizeInventory());
+					- template.getSizeInventory());
 		}		
     }
 	

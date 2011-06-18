@@ -4,6 +4,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -11,13 +12,23 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileTemplate extends TileEntity implements IInventory {
 
 	private Box box;
 	
+	private ItemStack items [] = new ItemStack [2];
+	
 	boolean initialized = false;
+	
+	private boolean isComputing = false;
+	private int computingTime = 0;
+	
+	//  Use that field to avoid creating several times the same template if 
+	//  they're the same!
+	private int lastTemplateId = 0;
 	
 	public void updateEntity () {
 		if (!initialized) {
@@ -29,6 +40,14 @@ public class TileTemplate extends TileEntity implements IInventory {
 		if (box != null) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
+		
+		if (isComputing) {
+			if (computingTime < 200) {
+				computingTime++;
+			} else {
+				createBluePrint();
+			}
+		}		
 	}	
 	
     public void initialize () {
@@ -41,9 +60,9 @@ public class TileTemplate extends TileEntity implements IInventory {
 		}			
     }
     
-    public BluePrint createBluePrint () {
-    	if (box == null) {
-    		return null;
+    public void createBluePrint () {
+    	if (box == null && items [1] != null) {
+    		return;
     	}
     	
     	int mask1 = 1;
@@ -90,81 +109,124 @@ public class TileTemplate extends TileEntity implements IInventory {
 		} else if (o == Orientations.ZNeg) {
 			result.rotateLeft();
 		}
+    
+		ItemStack stack = new ItemStack(mod_BuildCraftBuilders.templateItem);
+		
+		if (result.equals(mod_BuildCraftBuilders.bluePrints[lastTemplateId])) {
+			result = mod_BuildCraftBuilders.bluePrints[lastTemplateId];
+			stack.setItemDamage(lastTemplateId);
+		} else {
+			int bptId = mod_BuildCraftBuilders.storeBluePrint(result);
+			stack.setItemDamage(bptId);
+			CoreProxy.addName(stack, "Template #" + bptId);
+			lastTemplateId = bptId;
+		}
     	
-		return result;
-    	
+    	setInventorySlotContents(0, null);
+    	setInventorySlotContents(1, stack);
     }
 
 	@Override
 	public int getSizeInventory() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 2;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		// TODO Auto-generated method stub
-		return null;
+		return items [i];
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		// TODO Auto-generated method stub
-		return null;
+		ItemStack result;
+		if (items [i] == null) {
+			result = null;
+		} else if (items [i].stackSize > j) {
+			result = items [i].splitStack(j);
+		} else {
+			ItemStack tmp = items [i];
+			items [i] = null;
+			result = tmp;
+		}
+		
+		initializeComputing();
+		
+		return result;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
+		items [i] = itemstack;
+		
+		initializeComputing();
 		
 	}
 
 	@Override
 	public String getInvName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Template";
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public int getBluePrintNumber() {
-		BluePrint bpt = createBluePrint();
-		
-		if (bpt != null) {
-			return mod_BuildCraftBuilders.storeBluePrint(bpt);
-		} else {
-			return -1;
-		}
-				
+		return true;
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-
+		
+		lastTemplateId = nbttagcompound.getInteger("lastTemplateId");
+		computingTime = nbttagcompound.getInteger("computingTime");
+		isComputing = nbttagcompound.getBoolean("isComputing");
+		
 		if (nbttagcompound.hasKey("box")) {
 			box = new Box(nbttagcompound.getCompoundTag("box"));
 		}
-
+		
+        NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+        items = new ItemStack[getSizeInventory()];
+        for(int i = 0; i < nbttaglist.tagCount(); i++)
+        {
+            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+            int j = nbttagcompound1.getByte("Slot") & 0xff;
+            if(j >= 0 && j < items.length)
+            {
+                items[j] = new ItemStack(nbttagcompound1);
+            }
+        }
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
+		nbttagcompound.setInteger("lastTemplateId", lastTemplateId);
+		nbttagcompound.setInteger("computingTime", computingTime);
+		nbttagcompound.setBoolean("isComputing", isComputing);
+		
 		if (box != null) {
 			NBTTagCompound boxStore = new NBTTagCompound();
 			box.writeToNBT(boxStore);
 			nbttagcompound.setTag("box", boxStore);
 		}
+		
+        NBTTagList nbttaglist = new NBTTagList();
+        for(int i = 0; i < items.length; i++)
+        {
+            if(items[i] != null)
+            {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte)i);
+                items[i].writeToNBT(nbttagcompound1);
+                nbttaglist.setTag(nbttagcompound1);
+            }
+        }
+
+        nbttagcompound.setTag("Items", nbttaglist);
 	}
 	
     public void destroy () {
@@ -174,5 +236,26 @@ public class TileTemplate extends TileEntity implements IInventory {
     	
     	Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
     }
+    
+    private void initializeComputing () {
+    	if (!isComputing) {
+			if (items[0] != null && items[0].getItem() instanceof ItemTemplate
+					&& items[1] == null) {
+    			isComputing = true;
+    			computingTime = 0;
+    		} else {
+    			isComputing = false;
+    			computingTime = 0;
+    		}
+    	} else {
+    		if (items [0] == null || !(items [0].getItem() instanceof ItemTemplate)) {
+    			isComputing = false;
+    			computingTime = 0;
+    		}
+    	}
+    }
 
+    public int getComputingProgressScaled(int i) {
+        return (computingTime * i) / 200;
+    }
 }
