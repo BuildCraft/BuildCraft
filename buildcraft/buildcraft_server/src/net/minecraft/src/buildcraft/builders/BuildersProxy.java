@@ -2,7 +2,9 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.PacketIds;
 
 public class BuildersProxy {
 
@@ -18,6 +20,9 @@ public class BuildersProxy {
 
 	public static void displayGUIFiller(EntityPlayer entityplayer,
 			TileFiller tile) {		
+		
+		ModLoader.OpenGUI(entityplayer, PacketIds.FillerGUI.ordinal(),
+				tile, new CraftingFiller(entityplayer.inventory, tile));
 	}
 
 	public static boolean canPlaceTorch(World world, int i, int j, int k) {

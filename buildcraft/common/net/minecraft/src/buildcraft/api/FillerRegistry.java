@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.api;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
@@ -158,6 +159,36 @@ public class FillerRegistry {
         }
 
         return null;
+    }
+    
+    public static int getPatternNumber (FillerPattern pattern) {
+    	int i = 0;
+    	
+    	for (ShapedPatternRecipe recipe : recipes) {
+			if (recipe.recipeOutput == pattern) {
+				
+				return i;
+			}
+			
+			i++;					
+		}
+    	
+    	return -1;
+    }
+    
+    public static FillerPattern getPattern (int n) {
+    	if (n < 0) {
+    		return null;
+    	}
+    	
+    	Iterator<ShapedPatternRecipe> it = recipes.iterator();
+    	ShapedPatternRecipe r = null;
+    	
+    	for (int i = 0; i <= n; ++i) {
+    		r = it.next();
+    	}
+    	
+    	return r.recipeOutput;
     }
 	
 }

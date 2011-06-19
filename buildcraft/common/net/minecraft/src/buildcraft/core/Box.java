@@ -15,6 +15,15 @@ public class Box implements IBox {
 	
 	private EntityBlock lasers [];
 	
+	public Box (int [] data, int firstIndex) {
+		this.xMin = data [firstIndex];
+		this.yMin = data [firstIndex + 1];
+		this.zMin = data [firstIndex + 2];
+		this.xMax = data [firstIndex + 3];
+		this.yMax = data [firstIndex + 4];
+		this.zMax = data [firstIndex + 5];
+	}
+	
 	public Box (int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 		this.xMin = xMin;
 		this.yMin = yMin;
@@ -40,6 +49,19 @@ public class Box implements IBox {
 		xMax = nbttagcompound.getInteger("xMax");
 		yMax = nbttagcompound.getInteger("yMax");
 		zMax = nbttagcompound.getInteger("zMax");
+	}
+	
+	public static int packetSize () {
+		return 6;
+	}
+	
+	public void setData (int [] data, int firstIndex) {
+		data [firstIndex] = this.xMin;
+		data [firstIndex + 1] = this.yMin;
+		data [firstIndex + 2] = this.zMin; 
+		data [firstIndex + 3] = this.xMax;
+		data [firstIndex + 4] = this.yMax;
+		data [firstIndex + 5] = this.zMax;
 	}
 	
 	public Position p1 () {
