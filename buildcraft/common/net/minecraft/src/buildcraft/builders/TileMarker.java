@@ -14,6 +14,7 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
@@ -37,11 +38,7 @@ public class TileMarker extends TileEntity implements IAreaProvider, ISynchroniz
 		
 	EntityBlock signals [];
 	
-	public void switchSignals () {
-		if (APIProxy.isServerSide()) {
-			return;
-		}
-		
+	public void switchSignals () {		
 		if (signals != null) {
 			for (EntityBlock b : signals) {
 				if (b != null) {
@@ -80,6 +77,11 @@ public class TileMarker extends TileEntity implements IAreaProvider, ISynchroniz
 						yCoord, zCoord - maxSize + 1), new Position(xCoord,
 						yCoord, zCoord), LaserKind.Blue);
 			}
+		}
+		
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+					50, mod_BuildCraftBuilders.instance);
 		}
 	}
 	
@@ -461,6 +463,20 @@ public class TileMarker extends TileEntity implements IAreaProvider, ISynchroniz
 		}		
 	}
 	
+	public Packet230ModLoader getUpdatePacket () {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftBuilders.instance.getId();
+		packet.packetType = PacketIds.MarkerUpdate.ordinal();
+		
+		packet.dataInt = new int [3];
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;	
+		
+		return packet;
+	}
+	
 	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {		
 		if (packet.packetType != PacketIds.MarkerDescription.ordinal()) {
@@ -499,14 +515,14 @@ public class TileMarker extends TileEntity implements IAreaProvider, ISynchroniz
 		origin.zMin = packet.dataInt [16];
 		origin.zMax = packet.dataInt [17];
 		
+		switchSignals();
+		
 		createLasers();
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		// TODO Auto-generated method stub
-		
+		switchSignals();		
 	}
-
 	
 }

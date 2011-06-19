@@ -26,6 +26,8 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 			switch (PacketIds.values() [packet.packetType]) {
 			case MarkerDescription:
 				Utils.handleDescriptionPacket(packet);
+			case MarkerUpdate:
+				Utils.handleUpdatePacket(packet);
 			}		
 	 }
 
