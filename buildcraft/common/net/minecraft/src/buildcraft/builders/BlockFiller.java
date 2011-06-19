@@ -7,6 +7,7 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.FillerPattern;
 import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 
@@ -39,7 +40,8 @@ public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 			
-		TileFiller tile = (TileFiller) iblockaccess.getBlockTileEntity(i, j, k);
+		TileFiller tile = (TileFiller) APIProxy.getWorld().getBlockTileEntity(
+				i, j, k);
 		
 		if (tile != null) {
 			if (l == 1 || l == 0) {

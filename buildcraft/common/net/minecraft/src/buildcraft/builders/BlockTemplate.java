@@ -2,13 +2,13 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.ChunkCache;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
@@ -97,10 +97,8 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
     	if (l == 1) {
     		boolean isPowered = false;
     		
-    		if (iblockaccess instanceof ChunkCache) {
-    			isPowered = ((ChunkCache) iblockaccess).getBlockTileEntity(i, j, k).worldObj
-    					.isBlockIndirectlyGettingPowered(i, j, k);
-    		}
+			isPowered = APIProxy.getWorld().getBlockTileEntity(i, j, k).worldObj
+					.isBlockIndirectlyGettingPowered(i, j, k);
     		
     		if (!isPowered) {
     			return blockTextureTopPos;

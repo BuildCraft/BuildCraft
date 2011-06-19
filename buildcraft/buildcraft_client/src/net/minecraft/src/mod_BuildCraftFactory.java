@@ -4,6 +4,7 @@ import java.util.Map;
 
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.factory.EntityModel;
 import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
@@ -21,7 +22,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 		BuildCraftFactory.initialize();
 		
-		ModLoaderMp.RegisterGUI(this, BuildCraftFactory.craftingGUI);
+		ModLoaderMp.RegisterGUI(this, PacketIds.AutoCraftingGUI.ordinal());
 		instance = this;
 	}
 		
@@ -46,7 +47,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];
 		
-		if (packet.packetType == BuildCraftFactory.tileQuarryDescriptionPacket) {						
+		if (packet.packetType == PacketIds.QuarryDescription.ordinal()) {						
 			if (APIProxy.getWorld().blockExists(x, y, z)) {
 				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 				
@@ -64,7 +65,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 			}
 			
 			BuildCraftCore.bufferedDescriptions.put(index, packet);
-		} else if (packet.packetType == BuildCraftFactory.tileQuarryUpdatePacket) {
+		} else if (packet.packetType == PacketIds.QuarryUpdate.ordinal()) {
 			if (APIProxy.getWorld().blockExists(x, y, z)) {
 				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 				
@@ -78,7 +79,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
     }
 	
     public GuiScreen HandleGUI(int i) {    	
-    	if (i == BuildCraftFactory.craftingGUI) {
+    	if (i == PacketIds.AutoCraftingGUI.ordinal()) {
 			return new GuiAutoCrafting(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
 					APIProxy.getWorld(),

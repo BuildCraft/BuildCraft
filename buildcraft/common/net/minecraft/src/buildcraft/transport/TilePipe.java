@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -19,6 +18,7 @@ import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -298,7 +298,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
     protected void doWork () {}
 
 	public void handleItemPacket(Packet230ModLoader packet) {
-		if (packet.packetType != BuildCraftTransport.tilePipeItemPacket) {
+		if (packet.packetType != PacketIds.TilePipeItem.ordinal()) {
 			return;
 		}
 		
@@ -349,7 +349,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		item.deterministicRandomization += worldObj.rand.nextInt(6);
 		
 		packet.modId = mod_BuildCraftTransport.instance.getId();
-		packet.packetType = BuildCraftTransport.tilePipeItemPacket;
+		packet.packetType = PacketIds.TilePipeItem.ordinal();
 		
 		packet.dataInt = new int [9];
 		packet.dataInt [0] = xCoord;

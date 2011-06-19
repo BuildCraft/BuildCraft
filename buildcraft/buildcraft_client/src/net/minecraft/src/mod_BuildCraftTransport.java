@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
 import net.minecraft.src.buildcraft.transport.TileDiamondPipe;
 import net.minecraft.src.buildcraft.transport.TilePipe;
@@ -39,7 +40,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];
 		
-		if (packet.packetType == BuildCraftTransport.tilePipeItemPacket) {						
+		if (packet.packetType == PacketIds.TilePipeItem.ordinal()) {						
 			if (APIProxy.getWorld().blockExists(x, y, z)) {
 				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 				
@@ -49,7 +50,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 					return;
 				}
 			}
-		} else if (packet.packetType == BuildCraftTransport.tileDiamondPipeContents) {	
+		} else if (packet.packetType == PacketIds.TileDiamondPipeContents.ordinal()) {	
 			if (APIProxy.getWorld().blockExists(x, y, z)) {
 				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 				

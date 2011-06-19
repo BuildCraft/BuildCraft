@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.BuildCraftTransport;
-import net.minecraft.src.ChunkCache;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
@@ -29,10 +28,8 @@ public class BlockGoldenPipe extends BlockPipe {
     {
     	boolean isPowered = false;
 		
-		if (iblockaccess instanceof ChunkCache) {
-			isPowered = ((ChunkCache) iblockaccess).getBlockTileEntity(i, j, k).worldObj
-					.isBlockIndirectlyGettingPowered(i, j, k);
-		}
+		isPowered = APIProxy.getWorld().getBlockTileEntity(i, j, k).worldObj
+				.isBlockIndirectlyGettingPowered(i, j, k);
 		
 		if (isPowered) {
 			return activeTexture;

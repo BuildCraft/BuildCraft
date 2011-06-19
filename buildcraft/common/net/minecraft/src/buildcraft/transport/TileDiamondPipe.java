@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.LinkedList;
 
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -19,6 +18,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileDiamondPipe extends TilePipe implements IInventory,
@@ -192,7 +192,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 		Packet230ModLoader packet = new Packet230ModLoader();
 
 		packet.modId = mod_BuildCraftTransport.instance.getId();
-		packet.packetType = BuildCraftTransport.tileDiamondPipeContents;
+		packet.packetType = PacketIds.TileDiamondPipeContents.ordinal();
 
 		packet.dataInt = new int [3 + items.length * 2];
 		
@@ -215,7 +215,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
     }
 	
 	public void handlePacket (Packet230ModLoader packet) {
-		if (packet.packetType != BuildCraftTransport.tileDiamondPipeContents) {
+		if (packet.packetType != PacketIds.TileDiamondPipeContents.ordinal()) {
 			return;
 		}
 		

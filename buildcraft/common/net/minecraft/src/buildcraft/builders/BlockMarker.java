@@ -52,13 +52,11 @@ public class BlockMarker extends BlockContainer {
         	   return AxisAlignedBB.getBoundingBoxFromPool
         	   (i    , j + 0.5 - w, k + 0.5 - w,
         	    i + h, j + 0.5 + w, k + 0.5 + w);
-           case 2:
+           default:
         	   return AxisAlignedBB.getBoundingBoxFromPool
         	   (i + 1 - h, j + 0.5 - w, k + 0.5 - w,
         	    i + 1    , j + 0.5 + w, k + 0.5 + w);
-        }
-        
-        return super.getSelectedBoundingBoxFromPool(world, i, j, k);
+        }        
     }
 	
     public int getRenderType() {
