@@ -22,12 +22,14 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileQuarry extends TileCurrentPowered implements IArmListener, IMachine {
+public class TileQuarry extends TileCurrentPowered implements IArmListener,
+		IMachine, ISynchronizedTile {
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
@@ -551,6 +553,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		return packet;
     }
 	
+	@Override
 	public void handleUpdatePacket (Packet230ModLoader packet) {
 		if (packet.packetType != PacketIds.QuarryUpdate.ordinal()) {
 			return;
@@ -574,6 +577,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	
 	boolean hasReceivedDescription = false;
 	
+	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
 		if (!hasReceivedDescription) {
 			if (packet.packetType != PacketIds.QuarryDescription.ordinal()) {

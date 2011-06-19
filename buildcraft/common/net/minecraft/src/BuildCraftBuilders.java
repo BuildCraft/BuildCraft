@@ -2,9 +2,6 @@ package net.minecraft.src;
 
 import java.io.File;
 
-import net.minecraft.src.buildcraft.core.BluePrint;
-import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.api.FillerRegistry;
 import net.minecraft.src.buildcraft.builders.BlockBuilder;
 import net.minecraft.src.buildcraft.builders.BlockFiller;
@@ -21,18 +18,18 @@ import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
 import net.minecraft.src.buildcraft.builders.TileMarker;
 import net.minecraft.src.buildcraft.builders.TileTemplate;
+import net.minecraft.src.buildcraft.core.BluePrint;
+import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.Utils;
 
-public class mod_BuildCraftBuilders extends BaseModMp {
-
+public class BuildCraftBuilders {
 	public static BlockMarker markerBlock;
 	public static BlockFiller fillerBlock;
 	public static BlockBuilder builderBlock;
 	public static BlockTemplate templateBlock;
 	public static ItemTemplate templateItem;
 	
-	public void ModsLoaded () {		
-		super.ModsLoaded();
-		
+	public static void initialize () {		
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeGears();
 		
@@ -107,12 +104,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		
 		loadBluePrints();
 	}
-	
-	@Override
-	public String Version() {
-		return "1.6.6.3";
-	}
-	
+		
 	public static BluePrint bluePrints [] = new BluePrint [65025];
 	
 	public static int storeBluePrint (BluePrint bluePrint) {
@@ -130,7 +122,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	}
 
 	
-	public void loadBluePrints () {
+	public static void loadBluePrints () {
 		File baseDir = CoreProxy.getBuildCraftBase();
 		
 		baseDir.mkdir();
@@ -152,11 +144,12 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 							new File(CoreProxy.getBuildCraftBase(), file));
 					
 					ItemStack tmpStack = new ItemStack(
-							mod_BuildCraftBuilders.templateItem, 1, bptNumber);
+							templateItem, 1, bptNumber);
 					
 					CoreProxy.addName(tmpStack, "Template #" + parts [0]);
 				}
 			}
 		}
 	}
+
 }

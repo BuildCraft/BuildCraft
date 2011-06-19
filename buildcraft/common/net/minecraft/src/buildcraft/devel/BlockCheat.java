@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.devel;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockChest;
+import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.BuildCraftTransport;
@@ -10,7 +11,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftBuilders;
 
 public class BlockCheat extends BlockChest {
 	
@@ -69,11 +69,11 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.goldenPipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.obsidianPipeBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.diamondPipeBlock, 64));			
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.fillerBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.markerBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.builderBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.templateBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (mod_BuildCraftBuilders.templateItem, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.fillerBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.markerBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.builderBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateItem, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.goldGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.ironGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.stoneGearItem, 64));

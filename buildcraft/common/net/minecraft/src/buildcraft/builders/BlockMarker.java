@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.builders;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
@@ -11,7 +12,6 @@ import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftBuilders;
 
 public class BlockMarker extends BlockContainer {
 
@@ -128,7 +128,7 @@ public class BlockMarker extends BlockContainer {
     		if(flag)
     		{
 				dropBlockAsItem(world, i, j, k,
-						mod_BuildCraftBuilders.markerBlock.blockID);
+						BuildCraftBuilders.markerBlock.blockID);
     			world.setBlockWithNotify(i, j, k, 0);
     		}
     	}
@@ -215,7 +215,7 @@ public class BlockMarker extends BlockContainer {
         if(!canPlaceBlockAt(world, i, j, k))
         {
 			dropBlockAsItem(world, i, j, k,
-					mod_BuildCraftBuilders.markerBlock.blockID);
+					BuildCraftBuilders.markerBlock.blockID);
             world.setBlockWithNotify(i, j, k, 0);
             return false;
         } else
