@@ -14,6 +14,7 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryLargeChest;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
@@ -420,7 +421,45 @@ public class Utils {
 			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z,
 					world.getBlockMetadata(x, y, z));
 		}				
-
 	}
+	
+	public static void handleDescriptionPacket (Packet230ModLoader packet) {
+		int x = packet.dataInt[0];
+		int y = packet.dataInt[1];
+		int z = packet.dataInt[2];
 
+		if (APIProxy.getWorld().blockExists(x, y, z)) {
+			TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+
+			if (tile instanceof ISynchronizedTile) {
+				((ISynchronizedTile) tile).handleDescriptionPacket(packet);
+
+				return;
+			}
+		}
+
+		BlockIndex index = new BlockIndex(x, y, z);
+
+		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+			BuildCraftCore.bufferedDescriptions.remove(index);
+		}
+
+		BuildCraftCore.bufferedDescriptions.put(index, packet);
+	}
+	
+	public static void handleUpdatePacket (Packet230ModLoader packet) {
+		int x = packet.dataInt[0];
+		int y = packet.dataInt[1];
+		int z = packet.dataInt[2];
+		
+		if (APIProxy.getWorld().blockExists(x, y, z)) {
+			TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+			
+			if (tile instanceof ISynchronizedTile) {
+				((ISynchronizedTile) tile).handleUpdatePacket(packet);	
+				
+				return;
+			}
+		}
+	}
 }

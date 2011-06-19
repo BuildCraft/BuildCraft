@@ -1,12 +1,12 @@
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -110,13 +110,13 @@ public class TileTemplate extends TileEntity implements IInventory {
 			result.rotateLeft();
 		}
     
-		ItemStack stack = new ItemStack(mod_BuildCraftBuilders.templateItem);
+		ItemStack stack = new ItemStack(BuildCraftBuilders.templateItem);
 		
-		if (result.equals(mod_BuildCraftBuilders.bluePrints[lastTemplateId])) {
-			result = mod_BuildCraftBuilders.bluePrints[lastTemplateId];
+		if (result.equals(BuildCraftBuilders.bluePrints[lastTemplateId])) {
+			result = BuildCraftBuilders.bluePrints[lastTemplateId];
 			stack.setItemDamage(lastTemplateId);
 		} else {
-			int bptId = mod_BuildCraftBuilders.storeBluePrint(result);
+			int bptId = BuildCraftBuilders.storeBluePrint(result);
 			stack.setItemDamage(bptId);
 			CoreProxy.addName(stack, "Template #" + bptId);
 			lastTemplateId = bptId;

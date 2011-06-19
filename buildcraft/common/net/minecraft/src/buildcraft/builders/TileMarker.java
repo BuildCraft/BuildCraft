@@ -1,6 +1,10 @@
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.BuildCraftBuilders;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -8,11 +12,14 @@ import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMarker extends TileEntity implements IAreaProvider {
+public class TileMarker extends TileEntity implements IAreaProvider, ISynchronizedTile {
 	
 	private static int maxSize = 64;
 	
@@ -82,6 +89,16 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	
 	public void updateEntity() {
 		if (!init) {
+			BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);		
+			
+			if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+				
+				Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
+				BuildCraftCore.bufferedDescriptions.remove(index);
+				
+				handleDescriptionPacket(packet);
+			}
+			
 			switchSignals ();
 			
 			if (initVectO != null) {
@@ -100,6 +117,8 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 				}
 			}
 			
+			
+			
 			init = true;
 		}
 	}
@@ -113,7 +132,7 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	}
 	
 	void setVect (int n) {
-		int markerId = mod_BuildCraftBuilders.markerBlock.blockID;
+		int markerId = BuildCraftBuilders.markerBlock.blockID;
 		
 		int [] coords = new int [3];
 		
@@ -331,18 +350,18 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 			if (m != null) {
 				worldObj.setBlockWithNotify(m.xCoord, m.yCoord, m.zCoord, 0);
 				
-				mod_BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
+				BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
 						m.xCoord, m.yCoord, m.zCoord,
-						mod_BuildCraftBuilders.markerBlock.blockID);
+						BuildCraftBuilders.markerBlock.blockID);
 			}
 		}
 		
 		worldObj.setBlockWithNotify(o.vectO.xCoord, o.vectO.yCoord,
 				o.vectO.zCoord, 0);
 		
-		mod_BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
+		BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
 				o.vectO.xCoord, o.vectO.yCoord, o.vectO.zCoord,
-				mod_BuildCraftBuilders.markerBlock.blockID);
+				BuildCraftBuilders.markerBlock.blockID);
 	}
 	
 	 public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -385,4 +404,109 @@ public class TileMarker extends TileEntity implements IAreaProvider {
 	public IBox getBox() {
 		return new Box (this);
 	}
+	
+	public Packet getDescriptionPacket() {		
+		if (origin != null && origin.vectO == this) {
+			Packet230ModLoader packet = new Packet230ModLoader();
+
+			packet.modId = mod_BuildCraftBuilders.instance.getId();
+			packet.packetType = PacketIds.MarkerDescription.ordinal();
+
+			packet.dataInt = new int [18];
+			
+			packet.dataInt [0] = xCoord;
+			packet.dataInt [1] = yCoord;
+			packet.dataInt [2] = zCoord;
+			
+			if (origin.vect[0] != null) {
+				packet.dataInt [3] = origin.vect [0].xCoord;
+				packet.dataInt [4] = origin.vect [0].yCoord;
+				packet.dataInt [5] = origin.vect [0].zCoord;
+			} else {
+				packet.dataInt [3] = Integer.MAX_VALUE;
+				packet.dataInt [4] = Integer.MAX_VALUE;
+				packet.dataInt [5] = Integer.MAX_VALUE;				
+			}
+			
+			if (origin.vect[1] != null) {
+				packet.dataInt [6] = origin.vect [1].xCoord;
+				packet.dataInt [7] = origin.vect [1].yCoord;
+				packet.dataInt [8] = origin.vect [1].zCoord;
+			} else {
+				packet.dataInt [6] = Integer.MAX_VALUE;
+				packet.dataInt [7] = Integer.MAX_VALUE;
+				packet.dataInt [8] = Integer.MAX_VALUE;				
+			}
+			
+			if (origin.vect[2] != null) {
+				packet.dataInt [9] = origin.vect [2].xCoord;
+				packet.dataInt [10] = origin.vect [2].yCoord;
+				packet.dataInt [11] = origin.vect [2].zCoord;
+			} else {
+				packet.dataInt [9] = Integer.MAX_VALUE;
+				packet.dataInt [10] = Integer.MAX_VALUE;
+				packet.dataInt [11] = Integer.MAX_VALUE;				
+			}
+			
+			packet.dataInt [12] = origin.xMin;
+			packet.dataInt [13] = origin.xMax;
+			packet.dataInt [14] = origin.yMin;
+			packet.dataInt [15] = origin.yMax;
+			packet.dataInt [16] = origin.zMin;
+			packet.dataInt [17] = origin.zMax;
+						
+			return packet;
+		} else {
+			return null;
+		}		
+	}
+	
+	@Override
+	public void handleDescriptionPacket (Packet230ModLoader packet) {		
+		if (packet.packetType != PacketIds.MarkerDescription.ordinal()) {
+			return;
+		}		
+		
+		origin = new Origin();
+		
+		origin.vectO = this;
+		
+		if (packet.dataInt[3] != Integer.MAX_VALUE) {
+			origin.vect [0] = (TileMarker) worldObj.getBlockTileEntity(
+					packet.dataInt[3], packet.dataInt[4], packet.dataInt[5]);
+			
+			origin.vect [0].origin = origin;
+		}
+		
+		if (packet.dataInt[6] != Integer.MAX_VALUE) {
+			origin.vect [1] = (TileMarker) worldObj.getBlockTileEntity(
+					packet.dataInt[6], packet.dataInt[7], packet.dataInt[8]);
+			
+			origin.vect [1].origin = origin;
+		}
+		
+		if (packet.dataInt[9] != Integer.MAX_VALUE) {
+			origin.vect [2] = (TileMarker) worldObj.getBlockTileEntity(
+					packet.dataInt[9], packet.dataInt[10], packet.dataInt[11]);
+			
+			origin.vect [2].origin = origin;
+		}
+		
+		origin.xMin = packet.dataInt [12];
+		origin.xMax = packet.dataInt [13];
+		origin.yMin = packet.dataInt [14];
+		origin.yMax = packet.dataInt [15];
+		origin.zMin = packet.dataInt [16];
+		origin.zMax = packet.dataInt [17];
+		
+		createLasers();
+	}
+
+	@Override
+	public void handleUpdatePacket(Packet230ModLoader packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

@@ -1,13 +1,13 @@
 package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -39,15 +39,15 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 	
 	public void initalizeBluePrint () {
 		if (items[0] == null
-				|| items[0].getItem().shiftedIndex != mod_BuildCraftBuilders.templateItem.shiftedIndex) {
+				|| items[0].getItem().shiftedIndex != BuildCraftBuilders.templateItem.shiftedIndex) {
 			currentBluePrintId = -1;
 			bluePrintBuilder = null;
-			
+
 			if (box != null) {
 				box.deleteLasers();
 				box = null;
 			}
-			
+
 			return;
 		}
 		
@@ -62,7 +62,7 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 			box = null;
 		}
 		
-		BluePrint bpt = mod_BuildCraftBuilders.bluePrints[items[0]
+		BluePrint bpt = BuildCraftBuilders.bluePrints[items[0]
 				.getItemDamage()];
 
 		if (bpt == null) {
