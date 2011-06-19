@@ -462,4 +462,17 @@ public class Utils {
 			}
 		}
 	}
+	
+	public static void handleBufferedDescription (ISynchronizedTile tileSynch) {
+		TileEntity tile = (TileEntity) tileSynch;
+		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);		
+		
+		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+			
+			Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
+			BuildCraftCore.bufferedDescriptions.remove(index);
+			
+			tileSynch.handleDescriptionPacket(packet);
+		}
+	}
 }

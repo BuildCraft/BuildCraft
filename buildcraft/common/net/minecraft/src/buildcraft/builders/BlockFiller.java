@@ -60,8 +60,7 @@ public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
     	return getBlockTextureFromSideAndMetadata(l, m);
 	}	
 
-    public int getBlockTextureFromSide(int i)
-    {
+    public int getBlockTextureFromSide(int i) {
         if (i == 0 || i == 1) {
         	return textureTopOn;
         } else {

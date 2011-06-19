@@ -9,8 +9,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 public abstract class FillerPattern {
 	
 	/**
-	 * [blablabla]
-	 * 
 	 * stackToPlace contains the next item that can be place in the world. Null
 	 * if there is none. IteratePattern is responsible to decrementing the 
 	 * stack size if needed.

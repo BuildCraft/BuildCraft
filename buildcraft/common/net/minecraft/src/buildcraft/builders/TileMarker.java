@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.BuildCraftBuilders;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
@@ -12,7 +11,6 @@ import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityBlock;
@@ -91,15 +89,7 @@ public class TileMarker extends TileEntity implements IAreaProvider, ISynchroniz
 	
 	public void updateEntity() {
 		if (!init) {
-			BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);		
-			
-			if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
-				
-				Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
-				BuildCraftCore.bufferedDescriptions.remove(index);
-				
-				handleDescriptionPacket(packet);
-			}
+			Utils.handleBufferedDescription(this);
 			
 			switchSignals ();
 			
