@@ -16,6 +16,7 @@ public enum PacketIds {
 	
 	// Builders packets
 	
-	MarkerDescription
+	MarkerDescription,
+	MarkerUpdate
 
 }
