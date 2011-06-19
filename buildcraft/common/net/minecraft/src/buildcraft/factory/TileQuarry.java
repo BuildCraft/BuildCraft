@@ -22,6 +22,7 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -483,7 +484,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		Packet230ModLoader packet = new Packet230ModLoader();
 
 		packet.modId = mod_BuildCraftFactory.instance.getId();
-		packet.packetType = BuildCraftFactory.tileQuarryDescriptionPacket;
+		packet.packetType = PacketIds.QuarryDescription.ordinal();
 
 		packet.dataInt = new int [8];
 		packet.dataInt [0] = xCoord;
@@ -516,7 +517,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 		Packet230ModLoader packet = new Packet230ModLoader();
 		
 		packet.modId = mod_BuildCraftFactory.instance.getId();
-		packet.packetType = BuildCraftFactory.tileQuarryUpdatePacket;
+		packet.packetType = PacketIds.QuarryUpdate.ordinal();
 		
 		packet.dataInt = new int [3];
 		packet.dataInt [0] = xCoord;
@@ -551,7 +552,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
     }
 	
 	public void handleUpdatePacket (Packet230ModLoader packet) {
-		if (packet.packetType != BuildCraftFactory.tileQuarryUpdatePacket) {
+		if (packet.packetType != PacketIds.QuarryUpdate.ordinal()) {
 			return;
 		}
 		
@@ -575,7 +576,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener, IMac
 	
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
 		if (!hasReceivedDescription) {
-			if (packet.packetType != BuildCraftFactory.tileQuarryDescriptionPacket) {
+			if (packet.packetType != PacketIds.QuarryDescription.ordinal()) {
 				return;
 			}		
 
