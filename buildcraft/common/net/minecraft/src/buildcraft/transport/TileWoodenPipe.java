@@ -26,44 +26,26 @@ public class TileWoodenPipe extends TilePipe {
 	 */
 	public void doWork () {		
 		World w = worldObj;
-			
-		LinkedList<Position> inventories = new LinkedList<Position>();
 		
-		for (int j = 0; j < 6; ++j) {
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[j]);
-			pos.moveForwards(1.0);
-			
-			TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
-					(int) pos.z);
-			
-			if (tile instanceof IInventory) {
-				IInventory inventory = (IInventory) tile;
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		Position pos = new Position(xCoord, yCoord, zCoord,
+				Orientations.values()[meta]);		
+		pos.moveForwards(1);
+		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
+				(int) pos.z);
 				
-				if (checkExtract(inventory, false, pos.orientation.reverse()) != null) {
-					inventories.add(pos);
-				}
-			}
-		}
-		
-		if (inventories.size() == 0) {
-			return;
-		}
-		
-		Position chestPos = inventories.get(w.rand.nextInt(inventories.size()));
-		IInventory inventory = (IInventory) w.getBlockTileEntity(
-				(int) chestPos.x, (int) chestPos.y, (int) chestPos.z);
+		IInventory inventory = (IInventory) tile;
 		
 		ItemStack stack = checkExtract(inventory, true,
-				chestPos.orientation.reverse());	
+				pos.orientation.reverse());	
 		
 		if (stack == null || stack.stackSize == 0) {
 			return;
 		}
 		
-		Position entityPos = new Position(chestPos.x + 0.5, chestPos.y
-				+ Utils.getPipeFloorOf(stack), chestPos.z + 0.5,
-				chestPos.orientation.reverse());
+		Position entityPos = new Position(pos.x + 0.5, pos.y
+				+ Utils.getPipeFloorOf(stack), pos.z + 0.5,
+				pos.orientation.reverse());
 				
 		entityPos.moveForwards(0.5);
 		
@@ -159,6 +141,45 @@ public class TileWoodenPipe extends TilePipe {
 		}
 
 		return null;
+	}
+	
+	public void switchSource () {
+		int lastSource = -1;
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		
+		for (int i = meta + 1; i < meta + 6; ++i) {
+			Orientations o = Orientations.values() [i % 6];
+			
+			Position pos = new Position (xCoord, yCoord, zCoord, o);
+			
+			pos.moveForwards(1);
+			
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
+					(int) pos.z);
+			
+			if (tile instanceof IInventory) {
+				lastSource = o.ordinal();
+			}
+		}
+		
+		if (lastSource != -1) {
+			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, lastSource);
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+	}
+	
+	public void setSourceIfNeeded () {
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		Position pos = new Position(xCoord, yCoord, zCoord,
+				Orientations.values()[meta]);		
+		pos.moveForwards(1);
+		
+		if (!(worldObj
+				.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z) instanceof IInventory)) {
+
+			switchSource();
+		}
+		
 	}
 
 }
