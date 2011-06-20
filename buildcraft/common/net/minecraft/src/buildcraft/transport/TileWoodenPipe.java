@@ -183,10 +183,10 @@ public class TileWoodenPipe extends TilePipe {
 		
 	}
 	
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
+
+	public void initialize () {
+		super.initialize();
 		
 		setSourceIfNeeded();
 	}
-
 }
