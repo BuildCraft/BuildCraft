@@ -48,29 +48,7 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 		TileTemplate tile = (TileTemplate) world.getBlockTileEntity(i, j, k);				
 		BuildersProxy.displayGUITemplate(entityplayer, tile);
 		
-		return true;
-//		
-//		float f = world.rand.nextFloat() * 0.8F + 0.1F;
-//		float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-//		float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
-//
-//		int bptNumber = tile.getBluePrintNumber ();
-//		
-//		if (bptNumber != -1) {
-//			EntityItem entityitem = new EntityItem(world, (float) i + f, (float) j
-//					+ f1 + 0.5F, (float) k + f2, new ItemStack(
-//							mod_BuildCraftBuilders.templateItem, 1, bptNumber));
-//			
-//			CoreProxy.addName(entityitem.item, "Template #" + bptNumber);
-//
-//			float f3 = 0.05F;
-//			entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-//			entityitem.motionY = (float) world.rand.nextGaussian() * f3;
-//			entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-//			world.entityJoinedWorld(entityitem);
-//		}
-//		
-//		return true;		
+		return true;	
 	}	
 	
 	public void onBlockRemoval(World world, int i, int j, int k) {		

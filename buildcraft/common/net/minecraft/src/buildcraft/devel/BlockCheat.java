@@ -33,32 +33,24 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.brick, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.glass, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.chest, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.workbench, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64));			
+			inv.setInventorySlotContents(ind++, new ItemStack (Block.workbench, 64));	
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreGold, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.oreIron, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.obsidian, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.dyePowder, 64, 0));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.dyePowder, 64, 4));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.dyePowder, 64, 11));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.paper, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.lever, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.railPowered, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Item.minecartCrate, 1));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.lavaStill, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.stone, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Item.bucketMilk, 1));
-			inv.setInventorySlotContents(ind++, new ItemStack (Item.wheat, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Item.sugar, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Item.egg, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.coal, 64));			
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.glass, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.planks, 64));			
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.redstoneRepeater, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.torchRedstoneActive, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.redstone, 64));
-		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotIron, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.diamond, 64));		
+		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.quarryBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.autoWorkbenchBlock, 64));
