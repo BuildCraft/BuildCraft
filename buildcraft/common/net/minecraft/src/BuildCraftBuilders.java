@@ -35,6 +35,15 @@ public class BuildCraftBuilders {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
+		templateItem = new ItemTemplate (Integer.parseInt(Utils.getProperty(
+				"templateItem.id", "3805")));
+		templateItem.setItemName("templateItem");
+		CoreProxy.addName(templateItem, "Blank Template");
+		craftingmanager.addRecipe(new ItemStack(templateItem, 1), new Object[] {
+			"ppp", "pip", "ppp", 
+			Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('p'), Item.paper });	
+		
 		markerBlock = new BlockMarker(Utils.getSafeBlockId("marker.blockId",
 				154));		
 		ModLoader.RegisterBlock(markerBlock);
@@ -49,24 +58,39 @@ public class BuildCraftBuilders {
 		ModLoader.RegisterBlock(fillerBlock);
 		CoreProxy.addName(fillerBlock.setBlockName("fillerBlock"), "Filler");
 		craftingmanager.addRecipe(new ItemStack(fillerBlock, 1), new Object[] {
-			"lll", "lcl", "ggg", Character.valueOf('l'), new ItemStack(Item.dyePowder, 1, 4),
-			Character.valueOf('c'), Block.chest,
-			Character.valueOf('g'), BuildCraftCore.stoneGearItem});	
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.goldGearItem,
+			Character.valueOf('C'), Block.chest	});	
 		
 		builderBlock = new BlockBuilder(Utils.getSafeBlockId("builder.blockId",
 				157));
 		ModLoader.RegisterBlock(builderBlock);
 		CoreProxy.addName(builderBlock.setBlockName("builderBlock"), "Builder");
+		craftingmanager.addRecipe(new ItemStack(builderBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
+			Character.valueOf('C'), Block.chest	});	
 		
 		templateBlock = new BlockTemplate(Utils.getSafeBlockId("template.blockId",
 				158));
 		ModLoader.RegisterBlock(templateBlock);
 		CoreProxy.addName(templateBlock.setBlockName("templateBlock"), "Template Drawing Table");
-		
-		templateItem = new ItemTemplate (Integer.parseInt(Utils.getProperty(
-				"templateItem.id", "3805")));
-		templateItem.setItemName("templateItem");
-		CoreProxy.addName(templateItem, "Blank Template");
+		craftingmanager.addRecipe(new ItemStack(templateBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
+			Character.valueOf('C'), new ItemStack (templateItem, 1) });	
 		
 		ModLoader.RegisterTileEntity(TileMarker.class, "Marker");
 		ModLoader.RegisterTileEntity(TileFiller.class, "Filler");
