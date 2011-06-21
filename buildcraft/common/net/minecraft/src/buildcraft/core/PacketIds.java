@@ -21,6 +21,16 @@ public enum PacketIds {
 	
 	FillerDescription,
 	FillerUpdate,
-	FillerGUI
+	FillerGUI,
+	
+	TemplateDescription,
+	TemplateUpdate,
+	TemplateGUI,
+	
+	BuilderDescription,
+	BuilderUpdate,
+	BuilderGUI
+	
+	
 
 }

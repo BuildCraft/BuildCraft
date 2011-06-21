@@ -10,12 +10,14 @@ public class BuildersProxy {
 
 	public static void displayGUITemplate(EntityPlayer entityplayer,
 			TileTemplate tile) {
-
+		ModLoader.OpenGUI(entityplayer, PacketIds.TemplateGUI.ordinal(),
+				tile, new CraftingTemplate(entityplayer.inventory, tile));
 	}
 	
 	public static void displayGUIBuilder(EntityPlayer entityplayer,
 			TileBuilder tile) {
-	
+		ModLoader.OpenGUI(entityplayer, PacketIds.BuilderGUI.ordinal(),
+				tile, new CraftingFiller(entityplayer.inventory, tile));
 	}
 
 	public static void displayGUIFiller(EntityPlayer entityplayer,

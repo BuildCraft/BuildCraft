@@ -165,12 +165,7 @@ public class BuildCraftBuilders {
 					}
 					
 					bluePrints[bptNumber] = new BluePrint(
-							new File(CoreProxy.getBuildCraftBase(), file));
-					
-					ItemStack tmpStack = new ItemStack(
-							templateItem, 1, bptNumber);
-					
-					CoreProxy.addName(tmpStack, "Template #" + parts [0]);
+							new File(CoreProxy.getBuildCraftBase(), file));					
 				}
 			}
 		}

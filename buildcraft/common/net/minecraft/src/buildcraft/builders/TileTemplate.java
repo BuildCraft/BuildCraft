@@ -6,16 +6,22 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftBuilders;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileTemplate extends TileEntity implements IInventory {
+public class TileTemplate extends TileEntity implements IInventory, ISynchronizedTile {
 
 	private Box box;
 	
@@ -24,7 +30,7 @@ public class TileTemplate extends TileEntity implements IInventory {
 	boolean initialized = false;
 	
 	private boolean isComputing = false;
-	private int computingTime = 0;
+	public int computingTime = 0;
 	
 	//  Use that field to avoid creating several times the same template if 
 	//  they're the same!
@@ -58,6 +64,10 @@ public class TileTemplate extends TileEntity implements IInventory {
 			box = (Box) a.getBox();			
 			a.removeFromWorld();
 		}			
+		
+		if (APIProxy.isClient(worldObj)) {
+			Utils.handleBufferedDescription(this);
+		}
     }
     
     public void createBluePrint () {
@@ -258,4 +268,45 @@ public class TileTemplate extends TileEntity implements IInventory {
     public int getComputingProgressScaled(int i) {
         return (computingTime * i) / 200;
     }
+
+	@Override
+	public void handleDescriptionPacket(Packet230ModLoader packet) {
+		if (packet.packetType != PacketIds.FillerDescription.ordinal()) {
+			return;
+		}			
+				
+		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+		
+		if (packet.dataInt [3] != Integer.MAX_VALUE) {	
+			box = new Box(packet.dataInt, 3);
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}				
+	}
+
+	@Override
+	public void handleUpdatePacket(Packet230ModLoader packet) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public Packet getDescriptionPacket () {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftBuilders.instance.getId();
+		packet.packetType = PacketIds.FillerDescription.ordinal();
+		
+		packet.dataInt = new int [3 + Box.packetSize()];
+		
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		
+		if (box == null) {
+			packet.dataInt [5] = Integer.MAX_VALUE;
+		} else {
+			box.setData(packet.dataInt, 3);
+		}
+		
+		return packet;
+	}
 }
