@@ -1,10 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
-import java.util.LinkedList;
-
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;

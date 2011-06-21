@@ -17,6 +17,7 @@ import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileBuilder extends TileCurrentPowered implements IInventory {
 
@@ -234,6 +235,10 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
         	nbttagcompound.setTag("box", boxStore);
         }
     }
+
+	public void delete() {
+		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);		
+	}
 
 	
 }

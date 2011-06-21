@@ -23,6 +23,7 @@ public class BlockBuilder extends BlockContainer implements ICustomTextureBlock 
 		blockTextureSide = 3 * 16 + 5;
 		blockTextureTop = 3 * 16 + 6;
 		blockTextureFront = 3 * 16 + 7;
+		setHardness(0.7F);
 	}
 
 	@Override
@@ -76,6 +77,14 @@ public class BlockBuilder extends BlockContainer implements ICustomTextureBlock 
     	
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
 				.ordinal());
+    }
+    
+
+    public void onBlockRemoval(World world, int i, int j, int k) {
+    	TileBuilder tile = (TileBuilder) world.getBlockTileEntity(i, j, k);
+    	
+    	tile.delete ();
+    	super.onBlockRemoval(world, i, j, k);
     }
 
 }
