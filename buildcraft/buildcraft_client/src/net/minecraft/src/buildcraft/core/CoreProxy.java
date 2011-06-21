@@ -36,4 +36,9 @@ public class CoreProxy {
 		return block.renderAsNormalBlock();
 	}
 
+	public static void addLocalization(String s1, String string) {
+		ModLoader.AddLocalization(s1, string);
+		
+	}
+
 }

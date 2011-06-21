@@ -52,5 +52,10 @@ public class CoreProxy {
 	public static File getBuildCraftBase() {
 		return new File("buildcraft/");
 	}
+
+	public static void addLocalization(String s1, String string) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
