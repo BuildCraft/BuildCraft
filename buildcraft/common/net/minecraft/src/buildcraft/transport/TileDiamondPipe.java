@@ -193,6 +193,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 
 		packet.modId = mod_BuildCraftTransport.instance.getId();
 		packet.packetType = PacketIds.TileDiamondPipeContents.ordinal();
+		packet.isChunkDataPacket = true;
 
 		packet.dataInt = new int [3 + items.length * 2];
 		

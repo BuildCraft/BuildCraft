@@ -351,6 +351,7 @@ public class TileFiller extends TileCurrentPowered implements ISpecialInventory,
 		
 		packet.modId = mod_BuildCraftBuilders.instance.getId();
 		packet.packetType = PacketIds.FillerDescription.ordinal();
+		packet.isChunkDataPacket = true;
 		
 		packet.dataInt = new int [5 + Box.packetSize()];
 		
@@ -376,6 +377,7 @@ public class TileFiller extends TileCurrentPowered implements ISpecialInventory,
 		
 		packet.modId = mod_BuildCraftBuilders.instance.getId();
 		packet.packetType = PacketIds.FillerUpdate.ordinal();
+		packet.isChunkDataPacket = true;
 		
 		packet.dataInt = new int [5];
 		
