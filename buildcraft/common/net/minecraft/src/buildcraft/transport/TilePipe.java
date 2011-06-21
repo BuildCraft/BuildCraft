@@ -350,6 +350,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		
 		packet.modId = mod_BuildCraftTransport.instance.getId();
 		packet.packetType = PacketIds.TilePipeItem.ordinal();
+		packet.isChunkDataPacket = true;
 		
 		packet.dataInt = new int [9];
 		packet.dataInt [0] = xCoord;

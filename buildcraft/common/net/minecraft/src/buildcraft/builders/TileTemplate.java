@@ -294,6 +294,7 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
 		
 		packet.modId = mod_BuildCraftBuilders.instance.getId();
 		packet.packetType = PacketIds.FillerDescription.ordinal();
+		packet.isChunkDataPacket = true;
 		
 		packet.dataInt = new int [3 + Box.packetSize()];
 		

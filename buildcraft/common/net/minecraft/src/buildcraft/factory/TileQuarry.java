@@ -487,6 +487,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 
 		packet.modId = mod_BuildCraftFactory.instance.getId();
 		packet.packetType = PacketIds.QuarryDescription.ordinal();
+		packet.isChunkDataPacket = true;
 
 		packet.dataInt = new int [8];
 		packet.dataInt [0] = xCoord;
@@ -520,6 +521,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 		
 		packet.modId = mod_BuildCraftFactory.instance.getId();
 		packet.packetType = PacketIds.QuarryUpdate.ordinal();
+		packet.isChunkDataPacket = true;
 		
 		packet.dataInt = new int [3];
 		packet.dataInt [0] = xCoord;
