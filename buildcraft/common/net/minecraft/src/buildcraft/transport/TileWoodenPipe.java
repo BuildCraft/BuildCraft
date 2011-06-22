@@ -142,10 +142,10 @@ public class TileWoodenPipe extends TilePipe {
 	}
 	
 	public void switchSource () {
-		int lastSource = -1;
+		int lastSource = 6;
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
-		for (int i = meta + 1; i < meta + 6; ++i) {
+		for (int i = meta + 1; i <= meta + 6; ++i) {
 			Orientations o = Orientations.values() [i % 6];
 			
 			Position pos = new Position (xCoord, yCoord, zCoord, o);
@@ -160,22 +160,25 @@ public class TileWoodenPipe extends TilePipe {
 			}
 		}
 		
-		if (lastSource != -1) {
-			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, lastSource);
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
+		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, lastSource);
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	public void setSourceIfNeeded () {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-		Position pos = new Position(xCoord, yCoord, zCoord,
-				Orientations.values()[meta]);		
-		pos.moveForwards(1);
 		
-		if (!(worldObj
-				.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z) instanceof IInventory)) {
-
+		if (meta > 5) {
 			switchSource();
+		} else {
+			Position pos = new Position(xCoord, yCoord, zCoord,
+					Orientations.values()[meta]);		
+			pos.moveForwards(1);
+
+			if (!(worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
+					(int) pos.z) instanceof IInventory)) {
+
+				switchSource();
+			}
 		}
 		
 	}

@@ -271,7 +271,7 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.FillerDescription.ordinal()) {
+		if (packet.packetType != PacketIds.TemplateDescription.ordinal()) {
 			return;
 		}			
 				
@@ -293,7 +293,7 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
 		Packet230ModLoader packet = new Packet230ModLoader();
 		
 		packet.modId = mod_BuildCraftBuilders.instance.getId();
-		packet.packetType = PacketIds.FillerDescription.ordinal();
+		packet.packetType = PacketIds.TemplateDescription.ordinal();
 		packet.isChunkDataPacket = true;
 		
 		packet.dataInt = new int [3 + Box.packetSize()];
