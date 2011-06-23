@@ -443,7 +443,7 @@ public class Utils {
 		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
 			BuildCraftCore.bufferedDescriptions.remove(index);
 		}
-
+		
 		BuildCraftCore.bufferedDescriptions.put(index, packet);
 	}
 	
