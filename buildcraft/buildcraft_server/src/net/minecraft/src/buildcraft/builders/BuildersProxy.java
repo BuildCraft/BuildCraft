@@ -17,7 +17,7 @@ public class BuildersProxy {
 	public static void displayGUIBuilder(EntityPlayer entityplayer,
 			TileBuilder tile) {
 		ModLoader.OpenGUI(entityplayer, PacketIds.BuilderGUI.ordinal(),
-				tile, new CraftingFiller(entityplayer.inventory, tile));
+				tile, new CraftingBuilder(entityplayer.inventory, tile));
 	}
 
 	public static void displayGUIFiller(EntityPlayer entityplayer,

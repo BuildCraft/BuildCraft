@@ -8,24 +8,30 @@ import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.buildcraft.api.IBox;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.mod_BuildCraftBuilders;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
+import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileBuilder extends TileCurrentPowered implements IInventory {
+public class TileBuilder extends TileCurrentPowered implements IInventory, ISynchronizedTile {
 
 	ItemStack items [] = new ItemStack [28];
 	
 	BluePrintBuilder bluePrintBuilder;
 	int currentBluePrintId = -1;
-	IBox box;
+	Box box;
 	
 	public TileBuilder () {
 		super ();
@@ -39,6 +45,10 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 	}
 	
 	public void initalizeBluePrint () {
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		if (items[0] == null
 				|| items[0].getItem().shiftedIndex != BuildCraftBuilders.templateItem.shiftedIndex) {
 			currentBluePrintId = -1;
@@ -47,6 +57,11 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 			if (box != null) {
 				box.deleteLasers();
 				box = null;
+			}
+			
+			if (APIProxy.isServerSide()) {
+				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+						50, mod_BuildCraftBuilders.instance);
 			}
 
 			return;
@@ -67,6 +82,11 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 				.getItemDamage()];
 
 		if (bpt == null) {
+			if (APIProxy.isServerSide()) {
+				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+						50, mod_BuildCraftBuilders.instance);
+			}
+			
 			return;
 		}
 
@@ -91,13 +111,18 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 		bluePrintBuilder = new BluePrintBuilder(bpt, xCoord, yCoord,
 				zCoord);
 		
-		box = bluePrintBuilder.getBox();
+		box = (Box) bluePrintBuilder.getBox();
 		box.createLasers(worldObj, LaserKind.Stripes);
 		currentBluePrintId = items[0].getItemDamage();
+		
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+					50, mod_BuildCraftBuilders.instance);
+		}
 	}
 	
 	@Override
-	protected void doWork() {		
+	protected void doWork() {
 		initalizeBluePrint();
 		
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
@@ -107,6 +132,12 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 			if (contents == null) {
 				box.deleteLasers();
 				box = null;
+				
+				if (APIProxy.isServerSide()) {
+					CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+							50, mod_BuildCraftBuilders.instance);
+				}
+				
 				return;
 			}
 			
@@ -238,6 +269,87 @@ public class TileBuilder extends TileCurrentPowered implements IInventory {
 
 	public void delete() {
 		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);		
+	}
+
+	@Override
+	public void handleDescriptionPacket(Packet230ModLoader packet) {
+		if (packet.packetType != PacketIds.BuilderDescription.ordinal()) {
+			return;
+		}			
+				
+		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+		
+		if (packet.dataInt [3] != Integer.MAX_VALUE) {	
+			box = new Box(packet.dataInt, 3);
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}					
+	}
+
+	@Override
+	public void handleUpdatePacket(Packet230ModLoader packet) {
+		if (packet.packetType != PacketIds.BuilderUpdate.ordinal()) {
+			return;
+		}
+				
+		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+		
+		if (packet.dataInt [3] != Integer.MAX_VALUE) {
+			if (box != null) {
+				box.deleteLasers();
+			}
+			
+			box = new Box(packet.dataInt, 3);
+			box.createLasers(worldObj, LaserKind.Stripes);
+		} else {
+			if (box != null) {
+				box.deleteLasers();
+				box = null;
+			}
+		}
+	}
+	
+	public Packet230ModLoader getUpdatePacket () {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftBuilders.instance.getId();
+		packet.packetType = PacketIds.BuilderUpdate.ordinal();
+		packet.isChunkDataPacket = true;
+		
+		packet.dataInt = new int [3 + Box.packetSize()];
+		
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		
+		if (box == null) {
+			packet.dataInt [5] = Integer.MAX_VALUE;
+		} else {
+			box.setData(packet.dataInt, 3);
+		}
+		
+		return packet;
+	}
+	
+	public Packet getDescriptionPacket () {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftBuilders.instance.getId();
+		packet.packetType = PacketIds.BuilderDescription.ordinal();
+		packet.isChunkDataPacket = true;
+		
+		packet.dataInt = new int [3 + Box.packetSize()];
+		
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		
+		if (box == null) {
+			packet.dataInt [5] = Integer.MAX_VALUE;
+		} else {
+			box.setData(packet.dataInt, 3);
+		}
+		
+		return packet;
 	}
 
 	
