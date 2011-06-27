@@ -52,8 +52,7 @@ public class BuildCraftCore {
 		initialized = true;
 				
 		mainConfiguration = new Configuration(new File(
-				CoreProxy.getBuildCraftBase(), "config/buildcraft.cfg"));
-		mainConfiguration.loadLegacyProperties();
+				CoreProxy.getBuildCraftBase(), "config/buildcraft.cfg"), true);
 		
 		redLaserTexture = 0 * 16 + 2;
 		blueLaserTexture = 0 * 16 + 1;
