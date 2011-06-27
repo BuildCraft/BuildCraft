@@ -172,7 +172,7 @@ public class BuildCraftBuilders {
 					}
 					
 					bluePrints[bptNumber] = new BluePrint(
-							new File(CoreProxy.getBuildCraftBase(), file));					
+							new File(baseDir, file));					
 				}
 			}
 		}
