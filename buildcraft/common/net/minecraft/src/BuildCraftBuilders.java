@@ -20,7 +20,7 @@ import net.minecraft.src.buildcraft.builders.TileMarker;
 import net.minecraft.src.buildcraft.builders.TileTemplate;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.Configuration.Property;
 
 public class BuildCraftBuilders {
 	public static BlockMarker markerBlock;
@@ -33,10 +33,21 @@ public class BuildCraftBuilders {
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeGears();
 		
+		Property templateItemId = BuildCraftCore.mainConfiguration
+		.getOrCreateItemProperty("templateItem.id", "3805");
+		Property markerId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("marker.id", 154);
+		Property fillerId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("filler.id", 155);
+		Property builderId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("builder.id", 157);
+		Property templateId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("template.id", 158);
+
+		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		templateItem = new ItemTemplate (Integer.parseInt(Utils.getProperty(
-				"templateItem.id", "3805")));
+		templateItem = new ItemTemplate (Integer.parseInt(templateItemId.value));
 		templateItem.setItemName("templateItem");
 		CoreProxy.addName(templateItem, "Blank Template");
 		craftingmanager.addRecipe(new ItemStack(templateItem, 1), new Object[] {
@@ -44,8 +55,7 @@ public class BuildCraftBuilders {
 			Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 0),
 			Character.valueOf('p'), Item.paper });	
 		
-		markerBlock = new BlockMarker(Utils.getSafeBlockId("marker.blockId",
-				154));		
+		markerBlock = new BlockMarker(Integer.parseInt(markerId.value));		
 		ModLoader.RegisterBlock(markerBlock);
 		CoreProxy.addName(markerBlock.setBlockName("markerBlock"), "Land Mark");
 		craftingmanager.addRecipe(new ItemStack(markerBlock, 1), new Object[] {
@@ -53,8 +63,7 @@ public class BuildCraftBuilders {
 				new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'),
 				Block.torchRedstoneActive });	
 		
-		fillerBlock = new BlockFiller(Utils.getSafeBlockId("filler.blockId",
-				155));		
+		fillerBlock = new BlockFiller(Integer.parseInt(fillerId.value));		
 		ModLoader.RegisterBlock(fillerBlock);
 		CoreProxy.addName(fillerBlock.setBlockName("fillerBlock"), "Filler");
 		craftingmanager.addRecipe(new ItemStack(fillerBlock, 1), new Object[] {
@@ -66,8 +75,7 @@ public class BuildCraftBuilders {
 			Character.valueOf('g'), BuildCraftCore.goldGearItem,
 			Character.valueOf('C'), Block.chest	});	
 		
-		builderBlock = new BlockBuilder(Utils.getSafeBlockId("builder.blockId",
-				157));
+		builderBlock = new BlockBuilder(Integer.parseInt(builderId.value));
 		ModLoader.RegisterBlock(builderBlock);
 		CoreProxy.addName(builderBlock.setBlockName("builderBlock"), "Builder");
 		craftingmanager.addRecipe(new ItemStack(builderBlock, 1), new Object[] {
@@ -79,8 +87,7 @@ public class BuildCraftBuilders {
 			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
 			Character.valueOf('C'), Block.chest	});	
 		
-		templateBlock = new BlockTemplate(Utils.getSafeBlockId("template.blockId",
-				158));
+		templateBlock = new BlockTemplate(Integer.parseInt(templateId.value));
 		ModLoader.RegisterBlock(templateBlock);
 		CoreProxy.addName(templateBlock.setBlockName("templateBlock"), "Template Drawing Table");
 		craftingmanager.addRecipe(new ItemStack(templateBlock, 1), new Object[] {
@@ -124,7 +131,7 @@ public class BuildCraftBuilders {
 						Block.brick });
 
 		
-		Utils.saveProperties();
+		BuildCraftCore.mainConfiguration.save();
 		
 		loadBluePrints();
 	}
@@ -147,7 +154,7 @@ public class BuildCraftBuilders {
 
 	
 	public static void loadBluePrints () {
-		File baseDir = CoreProxy.getBuildCraftBase();
+		File baseDir = new File (CoreProxy.getBuildCraftBase(), "blueprints/");
 		
 		baseDir.mkdir();
 		

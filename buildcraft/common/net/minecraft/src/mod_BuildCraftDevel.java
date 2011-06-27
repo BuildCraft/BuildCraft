@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.devel.BlockCheat;
 
 public class mod_BuildCraftDevel extends BaseModMp {	
@@ -12,15 +12,17 @@ public class mod_BuildCraftDevel extends BaseModMp {
     	
 		mod_BuildCraftCore.initialize();
 		
+		Property cheatId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("cheat.id", 255);
+		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		cheatBlock = new BlockCheat(Utils.getSafeBlockId("cheatBlock.blockId",
-				255));
+		cheatBlock = new BlockCheat(Integer.parseInt(cheatId.value));
 		ModLoader.RegisterBlock(cheatBlock);
 		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
 			"# ", "  ", Character.valueOf('#'), Block.dirt });
 		
-		Utils.saveProperties();
+		BuildCraftCore.mainConfiguration.save();
 	}
 	
 	@Override

@@ -1,11 +1,6 @@
 package net.minecraft.src.buildcraft.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.LinkedList;
-import java.util.Properties;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockCactus;
@@ -27,15 +22,11 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 
-public class Utils {
-	
-	private static Properties props = new Properties();
+public class Utils {	
 	
 	public static final float pipeMinSize = 0.25F;
 	public static final float pipeMaxSize = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
-	
-	private static final File cfgfile = CoreProxy.getPropertyFile();
 	
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different
@@ -172,55 +163,6 @@ public class Utils {
     	}
 	}
 	
-	public static void loadProperties () {
-		try {			
-			if (cfgfile.getParentFile() != null) {
-				cfgfile.getParentFile().mkdirs();
-			}
-
-			if (!cfgfile.exists() && !cfgfile.createNewFile()) {
-				return;
-			}
-			if (cfgfile.canRead()) {
-				FileInputStream fileinputstream = new FileInputStream(cfgfile);
-				props.load(fileinputstream);
-				fileinputstream.close();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-
-    public static void saveProperties() {
-		try {
-			if (cfgfile.getParentFile() != null) {
-				cfgfile.getParentFile().mkdirs();
-			}
-			
-			if (!cfgfile.exists() && !cfgfile.createNewFile()) {
-				return;
-			}
-			if (cfgfile.canWrite()) {
-				FileOutputStream fileoutputstream = new FileOutputStream(
-						cfgfile);
-				props.store(fileoutputstream, "BuildCraft Config");
-				fileoutputstream.close();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-    
-    public static String getProperty (String name, String defaultValue) {
-    	if (props.getProperty(name, "deadbeef").equals("deadbeef")) {
-    		props.setProperty(name, defaultValue);
-    	}
-    	
-    	return props.getProperty(name);
-    }
     
     public static TileEntity getTile (World world, Position pos, Orientations step) {
     	Position tmp = new Position (pos);
@@ -292,35 +234,7 @@ public class Utils {
 
     	return null;
     }
-    
-    /**
-     * Gets and id from the property file. If the id is not defined, will use
-     * the default, except is the default is already taken, in which case a
-     * free block id will be used.
-     */
-    public static int getSafeBlockId (String name, int defaultValue) {
-    	String val = props.getProperty(name, "deadbeef");
-    	
-    	if (val.equals("deadbeef")) {
-    		if (Block.blocksList [defaultValue] == null) {    			
-    			props.setProperty(name, Integer.toString(defaultValue));
-    			return defaultValue;
-    		} else {
-    			for (int j = Block.blocksList.length - 1; j >= 0; --j) {
-    				if (Block.blocksList [j] == null) {
-    					props.setProperty(name, Integer.toString(j));
-    					return j;
-    				}
-    			}
-    			
-				throw new RuntimeException("No more block ids available for "
-						+ name);
-    		}
-    	} else {
-    		return Integer.parseInt(val);
-    	}    	
-    }
-    
+     
 	public static EntityBlock createLaser(World world, Position p1, Position p2,
 			LaserKind kind) {
 		if (p1.equals(p2)) {

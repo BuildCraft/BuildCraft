@@ -1,7 +1,7 @@
 package net.minecraft.src;
 
+import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.BlockCobblestonePipe;
 import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.transport.BlockGoldenPipe;
@@ -45,57 +45,71 @@ public class BuildCraftTransport {
 		
 		mod_BuildCraftCore.initialize();						
 			
+		Property woodenPipeId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("woodenPipe.id", 145);
+		Property stonePipeId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("stonePipe.id", 146);
+		Property ironPipeId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("ironPipe.id", 147);
+		Property goldenPipeId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("goldenPipe.id", 148);
+		Property diamondPipeId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("diamondPipe.id", 149);
+		Property obsidianPipeId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("obsidianPipe.id", 156);
+		Property cobblestonePipeId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("cobblestonePipe.id", 159);
+		
+		Property alwaysConnect = BuildCraftCore.mainConfiguration
+				.getOrCreateGeneralProperty("pipes.alwaysConnect", "false");
+		alwaysConnect.comment = 
+			"set to false to deactivate pipe connection rules, true by default";
+		
 		CraftingManager craftingmanager = CraftingManager.getInstance();		
-		woodenPipeBlock = new BlockWoodenPipe(Utils.getSafeBlockId(
-				"woodenPipe.blockId", 145));
+		woodenPipeBlock = new BlockWoodenPipe(Integer.parseInt(woodenPipeId.value));
 		CoreProxy.addName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
 		ModLoader.RegisterBlock(woodenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(woodenPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.planks,
 				Character.valueOf('G'), Block.glass});
 		
-		stonePipeBlock = new BlockStonePipe(Utils.getSafeBlockId(
-				"stonePipe.blockId", 146));
+		stonePipeBlock = new BlockStonePipe(Integer.parseInt(stonePipeId.value));
 		CoreProxy.addName(stonePipeBlock.setBlockName("stonePipe"), "Stone Pipe");
 		ModLoader.RegisterBlock(stonePipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(stonePipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.stone,
 				Character.valueOf('G'), Block.glass});
 		
-		ironPipeBlock = new BlockIronPipe(Utils.getSafeBlockId(
-				"ironPipe.blockId", 147));
+		ironPipeBlock = new BlockIronPipe(Integer.parseInt(ironPipeId.value));
 		CoreProxy.addName(ironPipeBlock.setBlockName("ironPipe"), "Iron Pipe");
 		ModLoader.RegisterBlock(ironPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(ironPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotIron,
 				Character.valueOf('G'), Block.glass});
 		
-		goldenPipeBlock = new BlockGoldenPipe(Utils.getSafeBlockId(
-				"goldenPipe.blockId", 148));
+		goldenPipeBlock = new BlockGoldenPipe(Integer.parseInt(goldenPipeId.value));
 		CoreProxy.addName(goldenPipeBlock.setBlockName("goldenPipe"), "Golden Pipe");
 		ModLoader.RegisterBlock(goldenPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(goldenPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotGold,
 				Character.valueOf('G'), Block.glass});
 		
-		diamondPipeBlock = new BlockDiamondPipe(Utils.getSafeBlockId(
-				"diamondPipe.blockId", 149));
+		diamondPipeBlock = new BlockDiamondPipe(Integer.parseInt(diamondPipeId.value));
 		CoreProxy.addName(diamondPipeBlock.setBlockName("diamondPipe"), "Diamond Pipe");
 		ModLoader.RegisterBlock(diamondPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(diamondPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Item.diamond,
 				Character.valueOf('G'), Block.glass});
 		
-		obsidianPipeBlock = new BlockObsidianPipe(Utils.getSafeBlockId(
-				"obsidianPipeBlock.blockId", 156));
+		obsidianPipeBlock = new BlockObsidianPipe(Integer.parseInt(obsidianPipeId.value));
 		CoreProxy.addName(obsidianPipeBlock.setBlockName("obsidianPipe"), "Obsidian Pipe");
 		ModLoader.RegisterBlock(obsidianPipeBlock);		
 		craftingmanager.addRecipe(new ItemStack(obsidianPipeBlock, 8), new Object[] {
 				"   ", "PGP", "   ", Character.valueOf('P'), Block.obsidian,
 				Character.valueOf('G'), Block.glass});
 		
-		cobblestonePipeBlock = new BlockCobblestonePipe(Utils.getSafeBlockId(
-				"cobblestonePipeBlock.blockId", 159));
+		cobblestonePipeBlock = new BlockCobblestonePipe(
+				Integer.parseInt(cobblestonePipeId.value));
 		CoreProxy.addName(cobblestonePipeBlock.setBlockName("cobblestonePipe"),
 				"Cobblestone Pipe");
 		ModLoader.RegisterBlock(cobblestonePipeBlock);		
@@ -117,10 +131,9 @@ public class BuildCraftTransport {
 			diamondTextures [j] = 1 * 16 + 6 + j;
 		}				
 		
-		alwaysConnectPipes = Boolean.parseBoolean(Utils.getProperty(
-				"pipes.alwaysConnect", "false"));
+		alwaysConnectPipes = Boolean.parseBoolean(alwaysConnect.value);
 		
-		Utils.saveProperties();
+		BuildCraftCore.mainConfiguration.save();
 
 	}	
 

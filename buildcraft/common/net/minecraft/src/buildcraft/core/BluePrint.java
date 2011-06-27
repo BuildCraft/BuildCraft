@@ -101,7 +101,8 @@ public class BluePrint {
 			
 			baseDir.mkdir();
 			
-			File file = new File (CoreProxy.getBuildCraftBase(), number + ".bpt");
+			File file = new File(CoreProxy.getBuildCraftBase(), "blueprints/"
+					+ number + ".bpt");
 			
 			if (!file.exists()) {			
 				file.createNewFile();

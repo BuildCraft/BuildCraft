@@ -1,7 +1,7 @@
 package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.BlockFrame;
 import net.minecraft.src.buildcraft.factory.BlockMiningWell;
@@ -30,10 +30,22 @@ public class BuildCraftFactory {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		boolean allowMining = new Boolean (Utils.getProperty("mining.enabled", "true"));
+		boolean allowMining = Boolean
+				.parseBoolean(BuildCraftCore.mainConfiguration
+						.getOrCreateGeneralProperty("mining.enabled", "true").value);
 		
-		miningWellBlock = new BlockMiningWell(Utils.getSafeBlockId(
-				"miningWell.blockId", 150));
+		Property minigWellId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("miningWell.id", 150);
+		Property plainPipeId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("drill.id", 151);
+		Property autoWorkbenchId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("autoWorkbench.id", 152);
+		Property frameId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("frame.id", 160);
+		Property quarryId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("quarry.id", 153);
+		
+		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
 		ModLoader.RegisterBlock(miningWellBlock);
 		CoreProxy.addName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");
 		
@@ -45,13 +57,12 @@ public class BuildCraftFactory {
 				Item.pickaxeSteel });
 		}
 		
-		plainPipeBlock = new BlockPlainPipe(Utils.getSafeBlockId(
-				"drill.blockId", 151));
+		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(plainPipeId.value));
 		ModLoader.RegisterBlock(plainPipeBlock);
 		CoreProxy.addName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
 		
-		autoWorkbenchBlock = new BlockAutoWorkbench(Utils.getSafeBlockId(
-				"autoWorkbench.blockId", 152));
+		autoWorkbenchBlock = new BlockAutoWorkbench(
+				Integer.parseInt(autoWorkbenchId.value));
 		ModLoader.RegisterBlock(autoWorkbenchBlock);
 		craftingmanager.addRecipe(
 				new ItemStack(autoWorkbenchBlock),
@@ -61,12 +72,11 @@ public class BuildCraftFactory {
 		CoreProxy.addName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
 				"Automatic Crafting Table");
 				
-		frameBlock = new BlockFrame(Utils.getSafeBlockId("frame.blockId", 160));
+		frameBlock = new BlockFrame(Integer.parseInt(frameId.value));
 		ModLoader.RegisterBlock(frameBlock);
 		CoreProxy.addName(frameBlock.setBlockName("frameBlock"), "Frame");
 		
-		quarryBlock = new BlockQuarry(Utils.getSafeBlockId("quarry.blockId",
-				153));
+		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
 		ModLoader.RegisterBlock(quarryBlock);				
 		
 		if (allowMining) {
@@ -90,6 +100,6 @@ public class BuildCraftFactory {
 
 		drillTexture = 2 * 16 + 1;
 		
-		Utils.saveProperties();	
+		BuildCraftCore.mainConfiguration.save();	
 	}
 }

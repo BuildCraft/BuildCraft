@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import java.io.File;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -8,10 +9,12 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.Configuration;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.Configuration.Property;
 
 public class BuildCraftCore {
+	public static Configuration mainConfiguration;
 	
 	public static TreeMap<BlockIndex, Packet230ModLoader> bufferedDescriptions = new TreeMap<BlockIndex, Packet230ModLoader>();
 	
@@ -47,14 +50,17 @@ public class BuildCraftCore {
 		}
 		
 		initialized = true;
-		Utils.loadProperties();
+				
+		mainConfiguration = new Configuration(new File(
+				CoreProxy.getBuildCraftBase(), "config/buildcraft.cfg"));
+		mainConfiguration.loadLegacyProperties();
 		
 		redLaserTexture = 0 * 16 + 2;
 		blueLaserTexture = 0 * 16 + 1;
 		stripesLaserTexture = 0 * 16 + 3;
 		transparentTexture = 0 * 16 + 0;
 
-		
+		mainConfiguration.save();
 	}
 	
 	public static void initializeGears () {
@@ -62,12 +68,23 @@ public class BuildCraftCore {
 			return;
 		}
 		
+		Property woodenGearId = BuildCraftCore.mainConfiguration
+		.getOrCreateItemProperty("woodenGearItem.id", "3800");
+		Property stoneGearId = BuildCraftCore.mainConfiguration
+		.getOrCreateItemProperty("stoneGearItem.id", "3801");
+		Property ironGearId = BuildCraftCore.mainConfiguration
+		.getOrCreateItemProperty("ironGearItem.id", "3802");
+		Property goldenGearId = BuildCraftCore.mainConfiguration
+		.getOrCreateItemProperty("goldenGearItem.id", "3803");
+		Property diamondGearId = BuildCraftCore.mainConfiguration
+		.getOrCreateItemProperty("diamondGearItem.id", "3804");
+
+		
 		gearsInitialized = true;
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		woodenGearItem = (new Item(Integer.parseInt(Utils.getProperty(
-				"woodenGearItem.id", "3800"))))
+		woodenGearItem = (new Item(Integer.parseInt(woodenGearId.value)))
 				.setIconIndex(
 						ModLoader
 								.addOverride("/gui/items.png",
@@ -77,50 +94,57 @@ public class BuildCraftCore {
 		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
 		CoreProxy.addName(woodenGearItem, "Wooden Gear");
 		
-		stoneGearItem = (new Item(Integer.parseInt(Utils.getProperty(
-				"stoneGearItem.id", "3801")))).setIconIndex(
-				ModLoader.addOverride("/gui/items.png",
-						"/net/minecraft/src/buildcraft/core/gui/stone_gear.png")).setItemName(
-				"stoneGearItem");
+		stoneGearItem = (new Item(Integer.parseInt(stoneGearId.value)))
+				.setIconIndex(
+						ModLoader
+								.addOverride("/gui/items.png",
+										"/net/minecraft/src/buildcraft/core/gui/stone_gear.png"))
+				.setItemName("stoneGearItem");
 		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone,
 				Character.valueOf('G'), woodenGearItem });
 		CoreProxy.addName(stoneGearItem, "Stone Gear");
 		
-		ironGearItem = (new Item(Integer.parseInt(Utils.getProperty(
-				"ironGearItem.id", "3802")))).setIconIndex(
-				ModLoader.addOverride("/gui/items.png",
-						"/net/minecraft/src/buildcraft/core/gui/iron_gear.png")).setItemName(
-				"ironGearItem");
+		ironGearItem = (new Item(Integer.parseInt(ironGearId.value)))
+				.setIconIndex(
+						ModLoader
+								.addOverride("/gui/items.png",
+										"/net/minecraft/src/buildcraft/core/gui/iron_gear.png"))
+				.setItemName("ironGearItem");
 		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
 				Character.valueOf('G'), stoneGearItem });
 		CoreProxy.addName(ironGearItem, "Iron Gear");		
 		
-		goldGearItem = (new Item(Integer.parseInt(Utils.getProperty(
-				"goldGearItem.id", "3803")))).setIconIndex(
-				ModLoader.addOverride("/gui/items.png",
-						"/net/minecraft/src/buildcraft/core/gui/golden_gear.png")).setItemName(
-				"goldGearItem");
+		goldGearItem = (new Item(Integer.parseInt(goldenGearId.value)))
+				.setIconIndex(
+						ModLoader
+								.addOverride("/gui/items.png",
+										"/net/minecraft/src/buildcraft/core/gui/golden_gear.png"))
+				.setItemName("goldGearItem");
 		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold,
 				Character.valueOf('G'), ironGearItem });
 		CoreProxy.addName(goldGearItem, "Gold Gear");
 		
-		diamondGearItem = (new Item(Integer.parseInt(Utils.getProperty(
-				"diamondGearItem.id", "3804")))).setIconIndex(
-				ModLoader.addOverride("/gui/items.png",
-						"/net/minecraft/src/buildcraft/core/gui/diamond_gear.png")).setItemName(
-				"diamondGearItem");
+		diamondGearItem = (new Item(Integer.parseInt(diamondGearId.value)))
+				.setIconIndex(
+						ModLoader
+								.addOverride("/gui/items.png",
+										"/net/minecraft/src/buildcraft/core/gui/diamond_gear.png"))
+				.setItemName("diamondGearItem");
 		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");
 		
-		continuousCurrentModel = Boolean.parseBoolean(Utils.getProperty(
-				"current.continous", "false"));
+		Property continuousCurrent = BuildCraftCore.mainConfiguration
+		.getOrCreateGeneralProperty("current.continuous", "false");
+		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
+		
+		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
 
-		Utils.saveProperties();
+		BuildCraftCore.mainConfiguration.save();
 	}
 	
 	
