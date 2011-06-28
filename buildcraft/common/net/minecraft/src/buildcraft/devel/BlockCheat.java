@@ -50,7 +50,8 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotIron, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.diamond, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64));		
+			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64, 2));
 		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.quarryBlock, 64));
