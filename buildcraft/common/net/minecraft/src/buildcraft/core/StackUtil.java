@@ -13,7 +13,7 @@ import net.minecraft.src.buildcraft.api.Position;
 
 public class StackUtil {
 
-	private ItemStack items;
+	public ItemStack items;
 
 	public StackUtil (ItemStack stack) {
 		this.items = stack;

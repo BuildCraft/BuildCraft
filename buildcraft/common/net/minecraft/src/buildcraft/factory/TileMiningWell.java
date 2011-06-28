@@ -60,12 +60,14 @@ public class TileMiningWell extends TileCurrentPowered implements IMachine {
 		
 		StackUtil stackUtil = new StackUtil(stack);
 		
-		if (stackUtil.addToRandomInventory(this, Orientations.Unknown)) {
+		if (stackUtil.addToRandomInventory(this, Orientations.Unknown)
+				&& stackUtil.items.stackSize == 0) {
 			//  The object has been added to a nearby chest.
 			return;
 		}
 		
-		if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, stack)) {
+		if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, stack)
+				&& stackUtil.items.stackSize == 0) {
 			//  The object has been added to a nearby pipe.
 			return;
 		}
@@ -78,7 +80,8 @@ public class TileMiningWell extends TileCurrentPowered implements IMachine {
 		float f2 = w.rand.nextFloat() * 0.8F + 0.1F;
 
 		EntityItem entityitem = new EntityItem(w, (float) xCoord + f,
-				(float) yCoord + f1 + 0.5F, (float) zCoord + f2, stack);
+				(float) yCoord + f1 + 0.5F, (float) zCoord + f2,
+				stackUtil.items);
 
 		float f3 = 0.05F;
 		entityitem.motionX = (float) w.rand.nextGaussian() * f3;

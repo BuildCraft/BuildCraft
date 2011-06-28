@@ -319,9 +319,9 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 				added = stackUtils.addToRandomInventory(this,
 						Orientations.Unknown);
 
-				if (!added) {
+				if (!added || stackUtils.items.stackSize > 0) {
 					added = Utils.addToRandomPipeEntry(this,
-							Orientations.Unknown, stack);
+							Orientations.Unknown, stackUtils.items);
 				}
 
 				// Last, throw the object away
@@ -333,7 +333,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 
 					EntityItem entityitem = new EntityItem(worldObj,
 							(float) xCoord + f, (float) yCoord + f1 + 0.5F,
-							(float) zCoord + f2, stack);
+							(float) zCoord + f2, stackUtils.items);
 
 					float f3 = 0.05F;
 					entityitem.motionX = (float) worldObj.rand
