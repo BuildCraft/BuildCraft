@@ -71,8 +71,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		}				
 		
 		if (APIProxy.isServerSide()) {
-			if (worldObj.getWorldTime() - item.lastSynchronizationDate > 20) {
-				item.lastSynchronizationDate = worldObj.getWorldTime(); 
+			if (item.synchroTracker.markTimeIfDelay(worldObj, 20)) {				
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
 						xCoord, yCoord, zCoord, 50,
 						mod_BuildCraftTransport.instance);

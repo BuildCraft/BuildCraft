@@ -7,11 +7,11 @@ public abstract class TileCurrentPowered extends TileEntity {
 
 	public boolean continuousCurrentModel = BuildCraftCore.continuousCurrentModel;
 	
-	public double latency = 1;	
+	public long latency = 1;	
 	boolean lastPower;
 	protected boolean init = false;
 	
-	public double lastWorkTime = 0;
+	public SafeTimeTracker workTracker = new SafeTimeTracker();
 	
 	public TileCurrentPowered () {
 
@@ -47,9 +47,7 @@ public abstract class TileCurrentPowered extends TileEntity {
 	}
 	
 	public void tryWork () {
-		if (worldObj.getWorldTime() - lastWorkTime > latency) {
-			lastWorkTime = worldObj.getWorldTime();
-			
+		if (workTracker.markTimeIfDelay(worldObj, latency)) {			
 			doWork ();
 		}
 	}
