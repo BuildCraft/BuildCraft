@@ -139,7 +139,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
     	}
 	    
 		if (!bluePrintBuilder.done) {
-			lastWorkTime = worldObj.getWorldTime();
+			workTracker.markTime(worldObj);
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
 			int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
@@ -302,7 +302,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
 		
 		if (canDig(blockId)) {
-			lastWorkTime = worldObj.getWorldTime();
+			workTracker.markTime(worldObj);
 			
 			// Share this with mining well!			
 			

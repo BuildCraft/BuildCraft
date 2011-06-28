@@ -7,6 +7,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.SafeTimeTracker;
 
 public class EntityPassiveItem extends Entity {
 
@@ -15,7 +16,7 @@ public class EntityPassiveItem extends Entity {
 	
 	public TileEntity container;
 	
-	public double lastSynchronizationDate = 0;
+	public SafeTimeTracker synchroTracker = new SafeTimeTracker();
 	
 	public int deterministicRandomization = 0;
 	
