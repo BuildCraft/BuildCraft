@@ -22,16 +22,21 @@ public class TileWoodenPipe extends TilePipe {
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
-	public void doWork () {		
+	public void doWork () {
 		World w = worldObj;
 		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		
+		if (meta > 5) {
+			return;
+		}
+		
 		Position pos = new Position(xCoord, yCoord, zCoord,
 				Orientations.values()[meta]);		
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
-				(int) pos.z);
-				
+				(int) pos.z);						
+		
 		IInventory inventory = (IInventory) tile;
 		
 		ItemStack stack = checkExtract(inventory, true,

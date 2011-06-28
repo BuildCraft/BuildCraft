@@ -141,7 +141,7 @@ public class TileBuilder extends TileCurrentPowered implements IInventory, ISync
 				return;
 			}
 			
-			if (contents.blockId != 0) {
+			if (!Utils.softBlock(contents.blockId)) {
 				Block.blocksList[contents.blockId].dropBlockAsItem(worldObj,
 						contents.x, contents.y, contents.z, worldObj
 								.getBlockMetadata(contents.x, contents.y,

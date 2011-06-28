@@ -30,7 +30,11 @@ public class BluePrintBuilder implements IAreaProvider {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {										
 					int xCoord = i + x - bluePrint.anchorX;
 					int yCoord = j + y - bluePrint.anchorY;
-					int zCoord = k + z - bluePrint.anchorZ;		
+					int zCoord = k + z - bluePrint.anchorZ;
+					
+					if (yCoord <= 0) {
+						continue;
+					}
 					
 					int blockId = world.getBlockId (xCoord, yCoord, zCoord);
 						
@@ -40,18 +44,32 @@ public class BluePrintBuilder implements IAreaProvider {
 						continue;
 					}
 					
-					if (mode == Mode.Simple) {						
-						if (blockId != content.blockId) {
-							content = content.clone ();
-							content.x = xCoord;
-							content.y = yCoord;
-							content.z = zCoord;
-
-							return content;
+					if (mode == Mode.Simple) {	
+						content = content.clone ();
+						content.x = xCoord;
+						content.y = yCoord;
+						content.z = zCoord;
+						
+						if (Utils.softBlock(content.blockId)) {
+							if (Utils.softBlock(blockId)) {
+								// don't do anything, we got only soft blocks 
+								// here
+							} else if (!Utils.unbreakableBlock(blockId)) {
+								return content;
+							}
+						} else {
+							if (blockId == content.blockId) {
+								// don't do anything, we're already on the 
+								// proper block
+							} else if (!Utils.unbreakableBlock(blockId)) {
+								return content;
+							}
 						}
 					} else if (mode == Mode.Template) {
-						if ((content.blockId != 0 && blockId == 0)
-								|| (content.blockId == 0 && blockId != 0)) {
+						if ((content.blockId != 0 && Utils.softBlock(blockId))
+								|| (content.blockId == 0 
+										&& !Utils.softBlock(blockId))
+										&& !Utils.unbreakableBlock(blockId)) {
 							
 							content = new BlockContents();
 							content.x = xCoord;

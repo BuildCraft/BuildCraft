@@ -1,11 +1,11 @@
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.FillerPattern;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class FillerFlattener extends FillerPattern {
 
@@ -38,9 +38,7 @@ public class FillerFlattener extends FillerPattern {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (!blockedColumns [x - xMin][z - zMin]) {
-						if (tile.worldObj.getBlockId(x, y, z) != 0 
-								&& tile.worldObj.getBlockId(x, y, z) != Block.waterMoving.blockID
-								&& tile.worldObj.getBlockId(x, y, z) != Block.waterStill.blockID) {
+						if (!Utils.softBlock(tile.worldObj.getBlockId(x, y, z))) {
 							blockedColumns [x - xMin][z - zMin] = true;
 						} else {
 							found = true;
