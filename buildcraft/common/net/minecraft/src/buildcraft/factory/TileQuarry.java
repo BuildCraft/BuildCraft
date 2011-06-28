@@ -145,7 +145,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 			int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
 						
 			if (contents != null) {
-				if (blockId != 0) {
+				if (!Utils.softBlock(blockId)) {
 					Utils.breakBlock (worldObj, contents.x, contents.y, contents.z);
 				} else if (contents.blockId != 0) {
 					worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
@@ -357,11 +357,9 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	}
 	
 	boolean canDig(int blockID) {
-		return !blockDig(blockID) && blockID != 0
-				&& blockID != Block.waterMoving.blockID
-				&& blockID != Block.waterStill.blockID
-				&& blockID != Block.snow.blockID
-				&& Block.blocksList [blockID] != null;
+		return !blockDig(blockID) 
+				&& !Utils.softBlock(blockID)
+				&& blockID != Block.snow.blockID;
 	}
 	
 	public void delete () {

@@ -1,6 +1,5 @@
 package net.minecraft.src.buildcraft.api;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -27,10 +26,8 @@ public abstract class FillerPattern {
 
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
-				for (int z = zMin; z <= zMax && !found; ++z) {
-					if (world.getBlockId(x, y, z) == 0
-							|| world.getBlockId(x, y, z) == Block.waterMoving.blockID
-							|| world.getBlockId(x, y, z) == Block.waterStill.blockID) {
+				for (int z = zMin; z <= zMax && !found; ++z) {					
+					if (Utils.softBlock(world.getBlockId(x, y, z))) {
 						xSlot = x;
 						ySlot = y;
 						zSlot = z;
@@ -58,9 +55,8 @@ public abstract class FillerPattern {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if (world.getBlockId(x, y, z) != 0
-							&& world.getBlockId(x, y, z) != Block.waterMoving.blockID
-							&& world.getBlockId(x, y, z) != Block.waterStill.blockID) {
+					if (!Utils.softBlock(world.getBlockId(x, y, z))
+						&& !Utils.unbreakableBlock(world.getBlockId(x, y, z))) {
 						found = true;
 						lastX = x;
 						lastY = y;
