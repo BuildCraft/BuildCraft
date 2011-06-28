@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
+import java.util.Stack;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -184,16 +185,26 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 				if (tile instanceof IPipeEntry) {
 					((IPipeEntry) tile).entityEntering(data.item,
 							data.orientation);
-				} else if (tile instanceof IInventory
-						&& (new StackUtil(data.item.item).checkAvailableSlot(
-								(IInventory) tile,
-								!APIProxy.isClient(worldObj),
-								destPos.orientation.reverse()))) {
+				} else if (tile instanceof IInventory) {
+					StackUtil utils = new StackUtil(data.item.item);
+					
+					if (!APIProxy.isClient(worldObj)) {
+						if (utils.checkAvailableSlot((IInventory) tile, true,
+								destPos.orientation.reverse())
+								&& utils.items.stackSize == 0) {
+							
+							// Do nothing, all objects have been added
+
+						} else {
+							data.item.item = utils.items;
+							onDropped(data.item.toEntityItem(worldObj,
+									data.orientation));
+						}
+					}
 					
 					APIProxy.removeEntity(data.item);
-				} else {
-					onDropped (data.item.toEntityItem(worldObj, data.orientation));
 				}
+
 		    }
 		}	
 		
