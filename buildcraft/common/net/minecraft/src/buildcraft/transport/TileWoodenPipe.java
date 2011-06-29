@@ -147,8 +147,8 @@ public class TileWoodenPipe extends TilePipe {
 	}
 	
 	public void switchSource () {
-		int lastSource = 6;
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		int newMeta = 6;
 		
 		for (int i = meta + 1; i <= meta + 6; ++i) {
 			Orientations o = Orientations.values() [i % 6];
@@ -161,11 +161,12 @@ public class TileWoodenPipe extends TilePipe {
 					(int) pos.z);
 			
 			if (tile instanceof IInventory) {
-				lastSource = o.ordinal();
+				newMeta = o.ordinal();
+				break;
 			}
 		}
 		
-		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, lastSource);
+		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 	
