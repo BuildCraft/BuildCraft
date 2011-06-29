@@ -213,6 +213,19 @@ public class Configuration {
 			if (!file.exists() && !file.createNewFile()) {
 				return;
 			}
+			
+			Property versionProp = null;
+			
+			if (!generalProperties.containsKey("version")) {
+				versionProp = new Property();
+				versionProp.name = "version";				
+				generalProperties.put("version", versionProp);
+			} else {
+				versionProp = generalProperties.get("version");
+			}
+			
+			versionProp.value = mod_BuildCraftCore.version();	
+			
 			if (file.canWrite()) {
 				FileOutputStream fileoutputstream = new FileOutputStream(
 						file);
@@ -228,7 +241,6 @@ public class Configuration {
 				buffer.write("###########\n\n");
 				
 				buffer.write("general {\n");
-				buffer.write("   version=" + mod_BuildCraftCore.version() + "\n");
 				writeProperties(buffer, generalProperties.values());
 				buffer.write("}\n\n");
 				
