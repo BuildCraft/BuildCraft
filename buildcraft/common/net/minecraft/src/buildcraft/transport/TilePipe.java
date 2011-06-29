@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -193,16 +192,16 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 								destPos.orientation.reverse())
 								&& utils.items.stackSize == 0) {
 							
-							// Do nothing, all objects have been added
-
+							APIProxy.removeEntity(data.item);
 						} else {
 							data.item.item = utils.items;
 							onDropped(data.item.toEntityItem(worldObj,
 									data.orientation));
 						}
-					}
-					
-					APIProxy.removeEntity(data.item);
+					}										
+				} else {
+					onDropped(data.item.toEntityItem(worldObj,
+							data.orientation));					
 				}
 
 		    }
