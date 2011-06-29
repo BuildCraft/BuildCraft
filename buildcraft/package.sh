@@ -46,6 +46,7 @@ function package_all () {
 
    zip -r $dir/buildcraft$qual-B-builders-$version.zip \
       mod_BuildCraftBuilders.class \
+      BuildCraftBuilders.class \
       buildcraft/builders \
       net/minecraft/src/buildcraft/builders \
       buildcraft/api
