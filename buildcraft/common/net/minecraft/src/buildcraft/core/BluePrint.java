@@ -15,14 +15,15 @@ import net.minecraft.src.mod_BuildCraftCore;
 
 public class BluePrint {
 	
-	BlockContents contents [][][];
 	
+	File file;
+	BlockContents contents [][][];	
 	
 	public int anchorX, anchorY, anchorZ;
 	public int sizeX, sizeY, sizeZ;
 	
 	public BluePrint (File file) {
-		load(file);
+		this.file = file;
 	}
 	
 	public BluePrint (BluePrint src) {
@@ -69,6 +70,7 @@ public class BluePrint {
 	}
 	
 	public void rotateLeft () {
+		loadIfNeeded();
 		BlockContents newContents [][][] = new BlockContents [sizeZ][sizeY][sizeX];
 		
 		for (int x = 0; x < sizeZ; ++x) {
@@ -96,6 +98,7 @@ public class BluePrint {
 	}
 	
 	public void save (int number) {
+		loadIfNeeded();
 		try {
 			File baseDir = CoreProxy.getBuildCraftBase();
 			
@@ -163,7 +166,11 @@ public class BluePrint {
 		}
 	}
 	
-	public void load (File file) {
+	public void loadIfNeeded () {
+		if (file == null) {
+			return;
+		}
+		
 		try {
 			FileInputStream input = new FileInputStream(file);
 				
@@ -225,10 +232,13 @@ public class BluePrint {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		file = null;
 	}
 	
 	@Override
 	public boolean equals (Object o) {
+		loadIfNeeded();
 		if (!(o instanceof BluePrint)) {
 			return false;
 		}

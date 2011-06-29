@@ -25,6 +25,8 @@ public class BluePrintBuilder implements IAreaProvider {
 	}
 	
 	public BlockContents findNextBlock (World world, Mode mode) {
+		bluePrint.loadIfNeeded();
+		
 		for (int j = 0; j < bluePrint.sizeY; ++j) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {										
@@ -92,31 +94,37 @@ public class BluePrintBuilder implements IAreaProvider {
 
 	@Override
 	public int xMin() {
+		bluePrint.loadIfNeeded();
 		return x - bluePrint.anchorX;
 	}
 
 	@Override
 	public int yMin() {
+		bluePrint.loadIfNeeded();
 		return y - bluePrint.anchorY;
 	}
 
 	@Override
 	public int zMin() {
+		bluePrint.loadIfNeeded();
 		return z - bluePrint.anchorZ;
 	}
 
 	@Override
 	public int xMax() {
+		bluePrint.loadIfNeeded();
 		return x + bluePrint.sizeX - bluePrint.anchorX - 1;
 	}
 
 	@Override
 	public int yMax() {
+		bluePrint.loadIfNeeded();
 		return y + bluePrint.sizeY - bluePrint.anchorY - 1;
 	}
 
 	@Override
 	public int zMax() {
+		bluePrint.loadIfNeeded();
 		return z + bluePrint.sizeZ - bluePrint.anchorZ - 1;
 	}
 
