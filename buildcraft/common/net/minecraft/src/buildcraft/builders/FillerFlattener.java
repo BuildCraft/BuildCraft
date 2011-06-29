@@ -31,7 +31,7 @@ public class FillerFlattener extends FillerPattern {
 		}
 
 		boolean found = false;
-		int lastX = -1, lastY = -1, lastZ = -1;
+		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 		
 		for (int y = yMin - 1; y >= 0; --y) {
 			found = false;
@@ -55,12 +55,12 @@ public class FillerFlattener extends FillerPattern {
 			}
 		}
 		
-		if (lastX != -1 && stackToPlace != null) {
+		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
 			stackToPlace.getItem().onItemUse(stackToPlace, null, tile.worldObj,
 				lastX, lastY + 1, lastZ, 0);
 		}
 		
-		if (lastX != -1) {
+		if (lastX != Integer.MAX_VALUE) {
 			return false;
 		}
 		

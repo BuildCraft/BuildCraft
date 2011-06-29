@@ -49,7 +49,7 @@ public abstract class FillerPattern {
 	public boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax,
 			int zMax, World world) {
 		boolean found = false;
-		int lastX = -1, lastY = -1, lastZ = -1;
+		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 		
 		for (int y = yMin; y <= yMax; ++y) {
 			found = false;
@@ -70,12 +70,12 @@ public abstract class FillerPattern {
 			}
 		}
 		
-		if (lastX != -1) {
+		if (lastX != Integer.MAX_VALUE) {
 			Utils.breakBlock(world, lastX, lastY, lastZ);
 		}
 				
 		
-		return lastX == -1;
+		return lastX == Integer.MAX_VALUE;
 	}
 
 }
