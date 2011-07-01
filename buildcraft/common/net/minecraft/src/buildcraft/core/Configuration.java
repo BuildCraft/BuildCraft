@@ -70,7 +70,7 @@ public class Configuration {
 	public Property getOrCreateBlockProperty (String key, String defaultValue) {
 		if (blockProperties.containsKey(key)) {
 			return blockProperties.get(key);
-		} else {
+		} else if (defaultValue != null) {
 			Property property = new Property();
 
 			blockProperties.put(key, property);
@@ -78,13 +78,15 @@ public class Configuration {
 			
 			property.value = defaultValue;
     		return property;    		
+		} else {
+			return null;
 		}
 	}
 	
 	public Property getOrCreateItemProperty (String key, String defaultValue) {
 		if (itemProperties.containsKey(key)) {
 			return itemProperties.get(key);
-		} else {
+		} else if (defaultValue != null) {
 			Property property = new Property();
 
 			itemProperties.put(key, property);
@@ -92,13 +94,15 @@ public class Configuration {
 			
 			property.value = defaultValue;
     		return property;    		
+		} else {
+			return null;
 		}
 	}
 	
 	public Property getOrCreateGeneralProperty (String key, String defaultValue) {
 		if (generalProperties.containsKey(key)) {
 			return generalProperties.get(key);
-		} else {
+		} else if (defaultValue != null) {
 			Property property = new Property();
 
 			generalProperties.put(key, property);
@@ -106,6 +110,8 @@ public class Configuration {
 			
 			property.value = defaultValue;
     		return property;    		
+		} else {
+			return null;
 		}
 	}
 	
@@ -297,9 +303,8 @@ public class Configuration {
 
 			getOrCreateBlockProperty("stonePipe.id",
 					props.getProperty("stonePipe.blockId"));
-			System.out.println ("LOAD WOODEN PIPE");
-			System.out.println (getOrCreateBlockProperty("woodenPipe.id",
-					props.getProperty("woodenPipe.blockId")).value);
+			getOrCreateBlockProperty("woodenPipe.id",
+					props.getProperty("woodenPipe.blockId"));
 			getOrCreateBlockProperty("ironPipe.id",
 					props.getProperty("ironPipe.blockId"));
 			getOrCreateBlockProperty("goldenPipe.id",
@@ -334,7 +339,6 @@ public class Configuration {
 			getOrCreateItemProperty("diamondGearItem.id",
 					props.getProperty("diamondGearItem.id"));
 
-			
 			getOrCreateGeneralProperty("mining.enabled",
 					props.getProperty("mining.enabled"));
 			getOrCreateGeneralProperty("current.continuous",

@@ -22,8 +22,8 @@ function package_all () {
    qual=$1
 
    zip -r $dir/buildcraft$qual-A-core-$version.zip \
-      mod_BuildCraftCore* \
-      BuildCraftCore.class \
+      mod_BuildCraftCore*.class \
+      BuildCraftCore*.class \
       RenderPassiveItem.class \
       BuildCraftBlockUtil.class \
       buildcraft/core \
@@ -31,28 +31,28 @@ function package_all () {
       buildcraft/api
 
    zip -r $dir/buildcraft$qual-B-transport-$version.zip \
-      mod_BuildCraftTransport.class \
-      BuildCraftTransport.class \
+      mod_BuildCraftTransport*.class \
+      BuildCraftTransport*.class \
       buildcraft/transport \
       net/minecraft/src/buildcraft/transport \
       buildcraft/api
 
    zip -r $dir/buildcraft$qual-B-factory-$version.zip \
-      mod_BuildCraftFactory.class \
-      BuildCraftFactory.class \
+      mod_BuildCraftFactory*.class \
+      BuildCraftFactory*.class \
       buildcraft/factory \
       net/minecraft/src/buildcraft/factory \
       buildcraft/api
 
    zip -r $dir/buildcraft$qual-B-builders-$version.zip \
-      mod_BuildCraftBuilders.class \
-      BuildCraftBuilders.class \
+      mod_BuildCraftBuilders*.class \
+      BuildCraftBuilders*.class \
       buildcraft/builders \
       net/minecraft/src/buildcraft/builders \
       buildcraft/api
 
    zip -r $dir/buildcraft$qual-C-devel-$version.zip \
-      mod_BuildCraftDevel.class \
+      mod_BuildCraftDevel*.class \
       buildcraft/devel \
       buildcraft/api
 
