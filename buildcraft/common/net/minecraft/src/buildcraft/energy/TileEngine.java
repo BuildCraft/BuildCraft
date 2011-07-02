@@ -1,15 +1,20 @@
 package net.minecraft.src.buildcraft.energy;
 
+import net.minecraft.src.Block;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 
-public class TileEngine extends TileEntity implements IPowerReceptor {
+public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialInventory {
 
 	boolean init = false;
 	
@@ -20,6 +25,10 @@ public class TileEngine extends TileEntity implements IPowerReceptor {
 	int progressPart = 0;
 
 	public int orientation;
+	
+	private ItemStack itemInInventory;
+	public int burnTime;
+	public int totalBurnTime;
 	
 	public void switchPower () {
 		boolean power = worldObj.isBlockGettingPowered(xCoord, yCoord, zCoord);
@@ -61,13 +70,13 @@ public class TileEngine extends TileEntity implements IPowerReceptor {
 				entity.progress += 0.01;
 				break;
 			case Green:
-				entity.progress += 0.02;
-				break;
-			case Yellow:
 				entity.progress += 0.04;
 				break;
+			case Yellow:
+				entity.progress += 0.08;
+				break;
 			case Red:
-				entity.progress += 0.1;
+				entity.progress += 0.16;
 				break;
 			}
 			
@@ -116,6 +125,18 @@ public class TileEngine extends TileEntity implements IPowerReceptor {
 				}
 			}
 		}
+		
+		 if(burnTime > 0) {
+			 burnTime--;
+			 entity.addEnergy(1);
+	     }
+		 
+		if (burnTime == 0) {
+			burnTime = totalBurnTime = getItemBurnTime(itemInInventory);
+			if (burnTime > 0) {
+				decrStackSize(1, 1);				
+			}
+		}
 	}
 	
 	public void switchOrientation () {						
@@ -159,6 +180,13 @@ public class TileEngine extends TileEntity implements IPowerReceptor {
     	entity.progress = nbttagcompound.getFloat("progress");
     	entity.energy = nbttagcompound.getInteger("energy");
     	entity.orientation = Orientations.values()[orientation];
+    	totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
+    	burnTime = nbttagcompound.getInteger("burnTime");
+    	
+    	if (nbttagcompound.hasKey("itemInInventory")) {
+    		NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
+    		itemInInventory = new ItemStack(cpt);
+    	}
     }
     
 
@@ -170,6 +198,15 @@ public class TileEngine extends TileEntity implements IPowerReceptor {
 		nbttagcompound.setInteger("orientation", orientation);
     	nbttagcompound.setFloat("progress", entity.progress);
     	nbttagcompound.setInteger("energy", entity.energy);
+    	nbttagcompound.setInteger("totalBurnTime", burnTime);
+    	nbttagcompound.setInteger("burnTime", totalBurnTime);
+    	
+    	if (itemInInventory != null) {
+    		NBTTagCompound cpt = new NBTTagCompound();
+    		itemInInventory.writeToNBT(cpt);
+    		nbttagcompound.setTag("itemInInventory", cpt);
+    	}
+    	 
     }
 
 	@Override
@@ -185,6 +222,94 @@ public class TileEngine extends TileEntity implements IPowerReceptor {
 	@Override
 	public void receiveEnergy(int energy) {
 		entity.addEnergy((int) (energy * 0.9));		
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return 1;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return itemInInventory;
+	}
+
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		ItemStack newStack = itemInInventory.splitStack(j);
+		
+		if (itemInInventory.stackSize == 0) {
+			itemInInventory = null;
+		}
+		
+		return newStack;
+	}
+
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		itemInInventory = itemstack;		
+	}
+
+	@Override
+	public String getInvName() {
+		return null;
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return true;
+	}
+	
+    private int getItemBurnTime(ItemStack itemstack)
+    {
+        if(itemstack == null)
+        {
+            return 0;
+        }
+        int i = itemstack.getItem().shiftedIndex;
+        if(i < 256 && Block.blocksList[i].blockMaterial == Material.wood)
+        {
+            return 300;
+        }
+        if(i == Item.stick.shiftedIndex)
+        {
+            return 100;
+        }
+        if(i == Item.coal.shiftedIndex)
+        {
+            return 1600;
+        }
+        if(i == Item.bucketLava.shiftedIndex)
+        {
+            return 20000;
+        } else
+        {
+            return i == Block.sapling.blockID ? 100 : ModLoader.AddAllFuel(i);
+        }
+    }
+    
+    public boolean isBurning()
+    {
+        return burnTime > 0;
+    }
+    
+    public int getBurnTimeRemainingScaled(int i) {
+        return (burnTime * i) / totalBurnTime;
+    }
+
+	@Override
+	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		return false;
+	}
+
+	@Override
+	public ItemStack extractItem(boolean doRemove, Orientations from) {
+		return null;
 	}
 	
 }
