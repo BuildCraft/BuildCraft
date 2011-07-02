@@ -4,6 +4,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockChest;
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
@@ -50,8 +51,8 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotIron, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.diamond, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64, 0));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64, 1));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64, 2));
 		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.quarryBlock, 64));
@@ -73,6 +74,8 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.stoneGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.woodenGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.diamondGearItem, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 0));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 1));
 		}
 		
 		super.blockActivated(world, i, j, k, entityplayer);

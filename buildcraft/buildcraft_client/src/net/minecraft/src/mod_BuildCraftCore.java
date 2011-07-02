@@ -11,14 +11,41 @@ import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
+import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.energy.EntityEngine;
+import net.minecraft.src.buildcraft.energy.RenderEngine;
 
 public class mod_BuildCraftCore extends BaseModMp {
 
 	BuildCraftCore proxy = new BuildCraftCore();
 
-	public static HashMap<Block, Render> blockByEntityRenders = new HashMap<Block, Render>();
+	public static class EntityRenderIndex {
+		public EntityRenderIndex (Block block, int damage) {
+			this.block = block;
+			this.damage = damage;
+		}
+		
+		public int hashCode () {
+			return block.hashCode() + damage;
+		}
+		
+		public boolean equals (Object o) {
+			if (!(o instanceof EntityRenderIndex)) {
+				return false;
+			}
+			
+			EntityRenderIndex i = (EntityRenderIndex) o;
+			
+			return i.block == block && i.damage == damage; 
+		}
+		
+		Block block;
+		int damage;
+	}
+	
+	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 
 	public static boolean initialized = false;
 	
@@ -50,6 +77,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public void AddRenderer(Map map) {
 		map.put(EntityPassiveItem.class, new RenderPassiveItem());
 		map.put(EntityBlock.class, new RenderEntityBlock());
+		map.put(EntityEngine.class, new RenderEngine());
 	}
 
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
@@ -67,9 +95,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 		}
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
-			renderblocks.renderStandardBlock(block, i, j, k);
+			//renderblocks.renderStandardBlock(block, i, j, k);
 
-			return true;
 		} else if (block.getRenderType() == BuildCraftCore.markerModel) {
 			Tessellator tessellator = Tessellator.instance;
 			float f = block.getBlockBrightness(iblockaccess, i, j, k);
@@ -167,7 +194,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	RenderItem itemRenderer = new RenderItem();
-
+	
 	public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i,
 			int j) {
 		if (block instanceof ICustomTextureBlock) {
@@ -176,12 +203,18 @@ public class mod_BuildCraftCore extends BaseModMp {
 					.getTexture(((ICustomTextureBlock) (block))
 							.getTextureFile()));
 		}
+		
+		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
+			
 
-		if (block.getRenderType() == BuildCraftCore.blockByEntityModel
-				&& blockByEntityRenders.containsKey(block)) {
-			// ??? GET THE ENTITY FROM THE TILE
-			blockByEntityRenders.get(block).doRender(null, -0.5, -0.5, -0.5, 0,
-					0);
+			EntityRenderIndex index = new EntityRenderIndex(block, i);
+			
+//			System.out.println (index.hashCode());
+
+			if (blockByEntityRenders.containsKey(index)) {
+				blockByEntityRenders.get(index).inventoryRender(-0.5, -0.5,
+						-0.5, 0, 0);
+			}
 		} else if (block.getRenderType() == BuildCraftCore.markerModel) {
 			// Do nothing here...
 		} else if (block.getRenderType() == BuildCraftCore.customTextureModel) {

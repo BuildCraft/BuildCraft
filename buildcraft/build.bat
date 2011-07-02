@@ -16,8 +16,10 @@ mkdir bin\minecraft\net\minecraft\src\buildcraft\core\gui
 mkdir bin\minecraft\net\minecraft\src\buildcraft\factory\gui
 mkdir bin\minecraft\net\minecraft\src\buildcraft\transport\gui
 mkdir bin\minecraft\net\minecraft\src\buildcraft\builders\gui
+mkdir bin\minecraft\net\minecraft\src\buildcraft\energy\gui
 
 xcopy /Y /E buildcraft\common\net\minecraft\src\buildcraft\core\gui\*.png bin\minecraft\net\minecraft\src\buildcraft\core\gui
 xcopy /Y /E buildcraft\common\net\minecraft\src\buildcraft\factory\gui\*.png bin\minecraft\net\minecraft\src\buildcraft\factory\gui
 xcopy /Y /E buildcraft\common\net\minecraft\src\buildcraft\transport\gui\*.png bin\minecraft\net\minecraft\src\buildcraft\transport\gui
 xcopy /Y /E buildcraft\common\net\minecraft\src\buildcraft\builders\gui\*.png bin\minecraft\net\minecraft\src\buildcraft\builders\gui
+xcopy /Y /E buildcraft\common\net\minecraft\src\buildcraft\energy\gui\*.png bin\minecraft\net\minecraft\src\buildcraft\energy\gui

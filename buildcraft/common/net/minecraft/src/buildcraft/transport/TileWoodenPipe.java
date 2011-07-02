@@ -8,9 +8,10 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileWoodenPipe extends TilePipe {
+public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	
 	long lastMining = 0;
 	boolean lastPower = false;
@@ -194,5 +195,20 @@ public class TileWoodenPipe extends TilePipe {
 		super.initialize();
 		
 		setSourceIfNeeded();
+	}
+
+	@Override
+	public int minEnergyExpected() {		
+		return 1;
+	}
+
+	@Override
+	public int maxEnergyExpected() {
+		return 1;
+	}
+
+	@Override
+	public void receiveEnergy(int energy) {
+		doWork();
 	}
 }

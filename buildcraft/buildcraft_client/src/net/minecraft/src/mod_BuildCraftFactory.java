@@ -6,7 +6,6 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.factory.EntityModel;
 import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
 import net.minecraft.src.buildcraft.factory.RenderMiningWell;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
@@ -34,11 +33,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void AddRenderer(Map map) {
-    	map.put (EntityMechanicalArm.class, new RenderVoid());    
-    	
-    	map.put (EntityModel.class, renderMiningWell);
-		mod_BuildCraftCore.blockByEntityRenders.put(BuildCraftFactory.miningWellBlock,
-				renderMiningWell);
+    	map.put (EntityMechanicalArm.class, new RenderVoid());
     }
 	
 	public void HandlePacket(Packet230ModLoader packet) {
