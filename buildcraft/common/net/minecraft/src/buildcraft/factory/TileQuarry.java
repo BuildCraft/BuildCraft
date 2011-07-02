@@ -22,6 +22,7 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
@@ -29,7 +30,7 @@ import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileCurrentPowered implements IArmListener,
-		IMachine, ISynchronizedTile {
+		IMachine, ISynchronizedTile, IPowerReceptor {
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
@@ -624,6 +625,43 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 		} else if (!APIProxy.isClient(worldObj)) {
 			createUtilsIfNeeded ();			
 		}
+	}
+
+	@Override
+	public int minEnergyExpected() {
+		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
+			return 10;
+		} else if (!inProcess) {
+			return 50;
+		}  else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int maxEnergyExpected() {
+		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
+			return 10;
+		} else if (!inProcess){
+			return 200;
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public void receiveEnergy(int energy) {
+		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
+			if (energy >= 10) {
+				doWork();
+			}			
+		} else {
+			if (energy >= 50) {
+				arm.speed = 0.03 + ((energy - 50) / 150) * 0.03;
+				doWork();
+			}
+		}
+		
 	}
 
 }
