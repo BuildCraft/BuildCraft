@@ -630,7 +630,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	@Override
 	public int minEnergyExpected() {
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			return 10;
+			return 25;
 		} else if (!inProcess) {
 			return 50;
 		}  else {
@@ -641,7 +641,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	@Override
 	public int maxEnergyExpected() {
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			return 10;
+			return 25;
 		} else if (!inProcess){
 			return 200;
 		} else {
@@ -652,7 +652,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	@Override
 	public void receiveEnergy(int energy) {
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			if (energy >= 10) {
+			if (energy >= 25) {
 				doWork();
 			}			
 		} else {

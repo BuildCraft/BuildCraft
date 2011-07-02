@@ -1,5 +1,7 @@
 package net.minecraft.src.buildcraft.energy;
 
+import java.util.Random;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
@@ -48,7 +50,13 @@ public class BlockEngine extends BlockContainer {
 	 
 	public boolean blockActivated(World world, int i, int j, int k,
 			EntityPlayer entityplayer) {
-		((TileEngine) world.getBlockTileEntity(i, j, k)).switchOrientation();
+		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
+		
+		if (tile.entity instanceof EntityEngineStone) {
+			EnergyProxy.displayGUISteamEngine(entityplayer, tile);
+		} else {
+			tile.switchOrientation();
+		}
 
 		return false;
 	}
@@ -67,4 +75,25 @@ public class BlockEngine extends BlockContainer {
 	protected int damageDropped(int i) {
 		return i;
 	}
+	
+	public void randomDisplayTick(World world, int i, int j, int k, Random random)
+    {
+
+		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
+		
+		if (!tile.isBurning()) {
+			return;
+		}
+		
+        float f = (float)i + 0.5F;
+        float f1 = (float)j + 0.0F + (random.nextFloat() * 6F) / 16F;
+        float f2 = (float)k + 0.5F;
+        float f3 = 0.52F;
+        float f4 = random.nextFloat() * 0.6F - 0.3F;
+        
+        world.spawnParticle("reddust", f - f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
+        world.spawnParticle("reddust", f + f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
+        world.spawnParticle("reddust", f + f4, f1, f2 - f3, 0.0D, 0.0D, 0.0D);
+        world.spawnParticle("reddust", f + f4, f1, f2 + f3, 0.0D, 0.0D, 0.0D);
+    }
 }
