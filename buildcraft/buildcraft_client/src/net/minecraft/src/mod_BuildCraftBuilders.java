@@ -24,7 +24,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		BuildCraftBuilders.initialize();
 		ModLoaderMp.RegisterGUI(this, PacketIds.FillerGUI.ordinal());
 		ModLoaderMp.RegisterGUI(this, PacketIds.TemplateGUI.ordinal());
-		ModLoaderMp.RegisterGUI(this, PacketIds.BuilderGUI.ordinal());		
+		ModLoaderMp.RegisterGUI(this, PacketIds.BuilderGUI.ordinal());				
 	}
 	
 	@Override
@@ -32,20 +32,20 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		return "1.6.6.4";
 	}
 	
-	 public void HandlePacket(Packet230ModLoader packet) {    			 
-			switch (PacketIds.values() [packet.packetType]) {
-			case MarkerDescription:
-			case FillerDescription:
-			case BuilderDescription:
-			case TemplateDescription:
-				Utils.handleDescriptionPacket(packet);
-			case MarkerUpdate:
-			case FillerUpdate:
-			case BuilderUpdate:
-			case TemplateUpdate:
-				Utils.handleUpdatePacket(packet);
-			
-			}		
+	 public void HandlePacket(Packet230ModLoader packet) {
+		switch (PacketIds.values()[packet.packetType]) {
+		case MarkerDescription:
+		case FillerDescription:
+		case BuilderDescription:
+		case TemplateDescription:
+			Utils.handleDescriptionPacket(packet);
+		case MarkerUpdate:
+		case FillerUpdate:
+		case BuilderUpdate:
+		case TemplateUpdate:
+			Utils.handleUpdatePacket(packet);
+
+		}		
 	 }
 	 
 	public GuiScreen HandleGUI(int i) {		

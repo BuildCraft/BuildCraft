@@ -52,9 +52,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.ingotGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.diamond, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64, 0));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.wood, 64, 1));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.dispenser, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Item.arrow, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.bucketEmpty, 64));
 		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.quarryBlock, 64));
@@ -76,8 +74,10 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.stoneGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.woodenGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.diamondGearItem, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 0));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 0));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.oilMoving, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.bucketOil, 1));
 		}
 		
 		super.blockActivated(world, i, j, k, entityplayer);
