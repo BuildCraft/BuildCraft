@@ -33,5 +33,20 @@ public class EntityEngineStone extends EntityEngine {
 	public int maxEnergyReceived () {
 		return 200;
 	}
+	
+	public float getPistonSpeed () {
+		switch (getEnergyStage()) {
+		case Blue:
+			return 0.02F;
+		case Green:
+			return 0.04F;
+		case Yellow:
+			return 0.08F;
+		case Red:
+			return 0.16F;
+		}
+		
+		return 0;
+	}
 
 }

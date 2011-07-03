@@ -34,4 +34,18 @@ public class EntityEngineIron extends EntityEngine {
 		return 2000;
 	}
 
+	public float getPistonSpeed () {
+		switch (getEnergyStage()) {
+		case Blue:
+			return 0.04F;
+		case Green:
+			return 0.08F;
+		case Yellow:
+			return 0.16F;
+		case Red:
+			return 0.32F;
+		}
+		
+		return 0;
+	}
 }

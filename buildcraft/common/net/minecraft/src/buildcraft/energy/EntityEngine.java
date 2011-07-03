@@ -49,6 +49,8 @@ public abstract class EntityEngine extends Entity {
 	public abstract int explosionRange ();
 	
 	public abstract int maxEnergyReceived ();
+	
+	public abstract float getPistonSpeed ();
 
 	public void addEnergy (int addition) {
 		energy += addition;
