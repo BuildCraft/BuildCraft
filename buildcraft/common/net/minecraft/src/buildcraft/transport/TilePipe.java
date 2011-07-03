@@ -162,9 +162,14 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 				
 				if (nextOrientation == Orientations.Unknown) {
 					toRemove.add(data);
-
-					onDropped(data.item
-							.toEntityItem(worldObj, data.orientation));
+					EntityItem dropped = data.item.toEntityItem(worldObj,
+							data.orientation);
+					
+					if (dropped != null) {
+						// On SMP, the client side doesn't actually drops 
+						// items
+						onDropped(dropped);
+					}
 				} else {
 					data.orientation = nextOrientation;
 				}
@@ -195,13 +200,26 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 							APIProxy.removeEntity(data.item);
 						} else {
 							data.item.item = utils.items;
-							onDropped(data.item.toEntityItem(worldObj,
-									data.orientation));
+							EntityItem dropped = data.item.toEntityItem(
+									worldObj, data.orientation);
+							
+							if (dropped != null) {
+								// On SMP, the client side doesn't actually drops 
+								// items
+								onDropped(dropped);
+							}
 						}
 					}										
 				} else {
-					onDropped(data.item.toEntityItem(worldObj,
-							data.orientation));					
+					EntityItem dropped = data.item.toEntityItem(worldObj,
+							data.orientation);
+					
+					if (dropped != null) {
+						// On SMP, the client side doesn't actually drops 
+						// items
+						onDropped(dropped);
+					}
+										
 				}
 
 		    }
