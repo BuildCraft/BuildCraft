@@ -5,12 +5,9 @@ import net.minecraft.src.TileEntity;
 
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
-import net.minecraft.src.EntityArrow;
-import net.minecraft.src.EntityRainFX;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.World;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityItem;
 import net.minecraft.src.buildcraft.api.APIProxy;
 
 public class BlockObsidianPipe extends BlockPipe {
