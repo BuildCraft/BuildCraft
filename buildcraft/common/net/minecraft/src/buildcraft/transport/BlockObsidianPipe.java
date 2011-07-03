@@ -5,6 +5,8 @@ import net.minecraft.src.TileEntity;
 
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityArrow;
+import net.minecraft.src.EntityRainFX;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.World;
 import net.minecraft.src.EntityPlayer;
@@ -36,16 +38,15 @@ public class BlockObsidianPipe extends BlockPipe {
 		tile.checkPower();
     }
 	
-    public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity)
-    {
+    public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {    		
     	if (entity.isDead) {
     		return;
     	}
     	
 		TileObsidianPipe tile = (TileObsidianPipe)world.getBlockTileEntity(i, j, k);
 		
-		if (entity instanceof EntityItem && tile.canSuck((EntityItem) entity)) {
-			tile.pullItemIntoPipe((EntityItem) entity);
+		if (tile.canSuck(entity)) {
+			tile.pullItemIntoPipe(entity);
 		}
     }
     
