@@ -14,4 +14,12 @@ public class EnergyProxy {
 		}
 	}
 	
+	public static void displayGUICombustionEngine(EntityPlayer entityplayer,
+			TileEngine tile) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(
+					new GuiCombustionEngine(entityplayer.inventory, tile));
+		}
+	}
+	
 }

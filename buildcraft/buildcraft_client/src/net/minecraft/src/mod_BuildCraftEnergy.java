@@ -17,6 +17,9 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
 				BuildCraftEnergy.engineBlock, 1), new RenderEngine(
 				"/net/minecraft/src/buildcraft/energy/gui/base_stone.png"));
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
+				BuildCraftEnergy.engineBlock, 2), new RenderEngine(
+				"/net/minecraft/src/buildcraft/energy/gui/base_iron.png"));
 		
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());

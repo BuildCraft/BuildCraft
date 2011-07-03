@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -27,8 +28,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialIn
 	public int orientation;
 	
 	private ItemStack itemInInventory;
-	public int burnTime;
-	public int totalBurnTime;
+	public int burnTime = 0;
+	public int totalBurnTime = 0;
 	
 	public void switchPower () {
 		boolean power = worldObj.isBlockGettingPowered(xCoord, yCoord, zCoord);
@@ -52,6 +53,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialIn
 					entity = new EntityEngineWood(worldObj);
 				} else if (kind == 1) {
 					entity = new EntityEngineStone(worldObj);
+				} else if (kind == 2) {
+					entity = new EntityEngineIron(worldObj);
 				}
 			}
 			
@@ -125,16 +128,35 @@ public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialIn
 				}
 			}
 		}
-		
-		 if(burnTime > 0) {
-			 burnTime--;
-			 entity.addEnergy(1);
-	     }
-		 
-		if (burnTime == 0) {
-			burnTime = totalBurnTime = getItemBurnTime(itemInInventory);
-			if (burnTime > 0) {
-				decrStackSize(1, 1);				
+
+		if (entity instanceof EntityEngineStone) {
+			if(burnTime > 0) {
+				burnTime--;
+				entity.addEnergy(1);
+			}
+
+			if (burnTime == 0) {
+				burnTime = totalBurnTime = getItemBurnTime(itemInInventory);
+				if (burnTime > 0) {
+					decrStackSize(1, 1);				
+				}
+			}
+		} else if (entity instanceof EntityEngineIron) {
+			if(burnTime > 0) {
+				burnTime--;
+				entity.addEnergy(2);
+			}
+			
+			if (itemInInventory != null
+					&& itemInInventory.itemID == BuildCraftEnergy.bucketOil.shiftedIndex) {
+
+				totalBurnTime = 100000;
+				int stepTime = totalBurnTime / 10;
+				
+				if (burnTime + stepTime <= totalBurnTime) {
+					itemInInventory = new ItemStack(Item.bucketEmpty, 1);
+					burnTime = burnTime + stepTime;
+				}
 			}
 		}
 	}
@@ -174,6 +196,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialIn
 			entity = new EntityEngineWood(APIProxy.getWorld());
 		} else if (kind == 1) {
 			entity = new EntityEngineStone(APIProxy.getWorld());
+		} else if (kind == 2) {
+			entity = new EntityEngineIron(APIProxy.getWorld());
 		}
 		
 		orientation = nbttagcompound.getInteger("orientation");
@@ -198,8 +222,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialIn
 		nbttagcompound.setInteger("orientation", orientation);
     	nbttagcompound.setFloat("progress", entity.progress);
     	nbttagcompound.setInteger("energy", entity.energy);
-    	nbttagcompound.setInteger("totalBurnTime", burnTime);
-    	nbttagcompound.setInteger("burnTime", totalBurnTime);
+    	nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
+    	nbttagcompound.setInteger("burnTime", burnTime);
     	
     	if (itemInInventory != null) {
     		NBTTagCompound cpt = new NBTTagCompound();
