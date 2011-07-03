@@ -29,8 +29,13 @@ public enum PacketIds {
 	
 	BuilderDescription,
 	BuilderUpdate,
-	BuilderGUI
+	BuilderGUI,
 	
+	// Energy packets
 	
+	EngineDescription,
+	EngineUpdate,
+	EngineSteamGUI,
+	EngineCombustionGUI
 
 }
