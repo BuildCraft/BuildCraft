@@ -27,6 +27,8 @@ public class BluePrint {
 	}
 	
 	public BluePrint (BluePrint src) {
+		src.loadIfNeeded();
+		
 		anchorX = src.anchorX;
 		anchorY = src.anchorY;
 		anchorZ = src.anchorZ;
@@ -244,6 +246,7 @@ public class BluePrint {
 		}
 		
 		BluePrint bpt = (BluePrint) o;
+		bpt.loadIfNeeded();
 		
 		if (sizeX != bpt.sizeX
 				|| sizeY != bpt.sizeY
