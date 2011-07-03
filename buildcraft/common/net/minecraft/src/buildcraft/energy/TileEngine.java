@@ -68,20 +68,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialIn
 		}
 		
 		if (progressPart != 0) {
-			switch (entity.getEnergyStage()) {
-			case Blue:
-				entity.progress += 0.01;
-				break;
-			case Green:
-				entity.progress += 0.04;
-				break;
-			case Yellow:
-				entity.progress += 0.08;
-				break;
-			case Red:
-				entity.progress += 0.16;
-				break;
-			}
+			entity.progress += entity.getPistonSpeed();
 			
 			if (entity.progress > 0.5 && progressPart == 1) {
 				progressPart = 2;
