@@ -8,14 +8,22 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftBuilders;
+import net.minecraft.src.mod_BuildCraftEnergy;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
+import net.minecraft.src.buildcraft.core.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.PacketIds;
 
-public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialInventory {
+public class TileEngine extends TileEntity implements IPowerReceptor,
+		ISpecialInventory, ISynchronizedTile {
 
 	boolean init = false;
 	
@@ -321,6 +329,76 @@ public class TileEngine extends TileEntity implements IPowerReceptor, ISpecialIn
 	@Override
 	public ItemStack extractItem(boolean doRemove, Orientations from) {
 		return null;
+	}
+	
+	public Packet getDescriptionPacket () {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftEnergy.instance.getId();
+		packet.packetType = PacketIds.EngineDescription.ordinal();
+		packet.isChunkDataPacket = true;
+		
+		packet.dataInt = new int [5];
+		
+		packet.dataFloat = new float [1];
+		
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		packet.dataInt [3] = entity.orientation.ordinal();
+		packet.dataInt [4] = entity.energy;
+		
+		packet.dataFloat [0] = entity.progress;
+		
+		
+		
+		return packet;
+	}
+	
+	public Packet230ModLoader getUpdatePacket () {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		
+		packet.modId = mod_BuildCraftEnergy.instance.getId();
+		packet.packetType = PacketIds.EngineUpdate.ordinal();
+		packet.isChunkDataPacket = true;
+		
+		packet.dataInt = new int [5];
+		
+		packet.dataFloat = new float [1];
+		
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;		
+		packet.dataInt [3] = entity.orientation.ordinal();
+		packet.dataInt [4] = entity.energy;		
+		
+		packet.dataFloat [0] = entity.progress;
+						
+		return packet;
+	}
+
+	@Override
+	public void handleDescriptionPacket(Packet230ModLoader packet) {
+		if (entity == null) {
+			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			
+			if (kind == 0) {
+				entity = new EntityEngineWood(worldObj);
+			} else if (kind == 1) {
+				entity = new EntityEngineStone(worldObj);
+			} else if (kind == 2) {
+				entity = new EntityEngineIron(worldObj);
+			}
+		}
+		
+		entity.orientation = Orientations.values() [packet.dataInt[3]];
+		entity.progress = packet.dataFloat [0];		
+	}
+
+	@Override
+	public void handleUpdatePacket(Packet230ModLoader packet) {
+		entity.orientation = Orientations.values() [packet.dataInt[3]];
+		entity.progress = packet.dataFloat [0];		
 	}
 	
 }

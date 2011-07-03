@@ -5,13 +5,13 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
 
-public class ContainerCombustionEngine extends Container
+public class ContainerCombustionEngineRoot extends Container
 {
 
-    public ContainerCombustionEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine)
+    public ContainerCombustionEngineRoot(InventoryPlayer inventoryplayer, TileEngine tileEngine)
     {
         burnTime = 0;
-        itemBurnTime = 0;
+        totalBurnTime = 0;
         engine = tileEngine;
         addSlot(new Slot(tileEngine, 0, 52, 41));
         
@@ -31,26 +31,6 @@ public class ContainerCombustionEngine extends Container
 
     }
 
-//    public void updateCraftingResults()
-//    {
-//        super.updateCraftingResults();
-//        for(int i = 0; i < field_20121_g.size(); i++)
-//        {
-//            ICrafting icrafting = (ICrafting)field_20121_g.get(i);
-//            if(burnTime != engine.burnTime)
-//            {
-//                icrafting.func_20158_a(this, 0, engine.burnTime);
-//            }
-//            if(itemBurnTime != engine.totalBurnTime)
-//            {
-//                icrafting.func_20158_a(this, 1, engine.totalBurnTime);
-//            }
-//        }
-//
-//        burnTime = engine.burnTime;
-//        itemBurnTime = engine.totalBurnTime;
-//    }
-
     public void func_20112_a(int i, int j)
     {
         if(i == 0)
@@ -69,9 +49,9 @@ public class ContainerCombustionEngine extends Container
         return engine.canInteractWith(entityplayer);
     }
 
-    private TileEngine engine;
-    private int burnTime;
-    private int itemBurnTime;
+    protected TileEngine engine;
+    protected int burnTime;
+    protected int totalBurnTime;
 
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
