@@ -4,8 +4,11 @@ import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
+import net.minecraft.src.EntityArrow;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityMinecart;
+import net.minecraft.src.Item;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -144,31 +147,32 @@ public class TileObsidianPipe extends TilePipe {
 	
 	protected void doWork () {		
 		AxisAlignedBB box = getSuckingBox(getSuckingOrientation());
-		if(box != null)
-		{
-			@SuppressWarnings("rawtypes")
-			List list = worldObj.getEntitiesWithinAABB(net.minecraft.src.Entity.class, box);
-			
-			for(int g = 0; g < list.size(); g++)
-			{
-				if(list.get(g) instanceof EntityItem)
-				{
-					EntityItem entityitem = (EntityItem)list.get(g);
-					if(!entityitem.isDead)
-					{
-						pullItemIntoPipe(entityitem);
-						return;
-					}
+		if(box == null) {
+			return;			
+		}
+		@SuppressWarnings("rawtypes")
+		List list = worldObj.getEntitiesWithinAABB(
+				net.minecraft.src.Entity.class, box);
+
+		for (int g = 0; g < list.size(); g++) {
+			if (list.get(g) instanceof Entity) {
+				Entity entity = (Entity) list.get(g);
+
+				if (canSuck(entity)) {
+					pullItemIntoPipe(entity);
+					return;
 				}
-				else if(list.get(g) instanceof EntityMinecart)
-				{
-					EntityMinecart cart = (EntityMinecart)list.get(g);
-					if(!cart.isDead && cart.minecartType == 1)
-					{
-						ItemStack stack = checkExtractGeneric((IInventory) cart, true, getSuckingOrientation().reverse());
-						if(stack != null)
-						{
-							EntityItem entityitem = new EntityItem(worldObj, cart.posX, cart.posY+0.3F, cart.posZ, stack);
+
+				if (list.get(g) instanceof EntityMinecart) {
+					EntityMinecart cart = (EntityMinecart) list.get(g);
+					if (!cart.isDead && cart.minecartType == 1) {
+						ItemStack stack = checkExtractGeneric(
+								(IInventory) cart, true,
+								getSuckingOrientation().reverse());
+						if (stack != null) {
+							EntityItem entityitem = new EntityItem(worldObj,
+									cart.posX, cart.posY + 0.3F, cart.posZ,
+									stack);
 							entityitem.delayBeforeCanPickup = 10;
 							worldObj.entityJoinedWorld(entityitem);
 							pullItemIntoPipe(entityitem);
@@ -200,7 +204,7 @@ public class TileObsidianPipe extends TilePipe {
 		return null;
 	}
 	
-	public void pullItemIntoPipe(EntityItem item) {
+	public void pullItemIntoPipe(Entity entity) {
 		if (APIProxy.isClient(worldObj)) {
 			return;
 		}
@@ -209,18 +213,26 @@ public class TileObsidianPipe extends TilePipe {
 		
 		if(orientation != Orientations.Unknown) {
 			worldObj.playSoundAtEntity(
-					item,
+					entity,
 					"random.pop",
 					0.2F,
 					((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-			TransportProxy.obsidianPipePickup(worldObj, item, this);
-			APIProxy.removeEntity(item);
+			
+			ItemStack stack = null;
+			
+			if (entity instanceof EntityItem) {
+				EntityItem item = (EntityItem) entity;
+				TransportProxy.obsidianPipePickup(worldObj, item, this);
+				stack = item.item;
+			} else if (entity instanceof EntityArrow) {
+				stack = new ItemStack(Item.arrow, 1);
+			}
+			
+			APIProxy.removeEntity(entity);
 			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
-					+ Utils.getPipeFloorOf(item.item), zCoord + 0.5, item.item);
+					+ Utils.getPipeFloorOf(stack), zCoord + 0.5, stack);
 			worldObj.entityJoinedWorld(passive);
 			entityEntering(passive, orientation.reverse());
-			
-			item.setEntityDead();
 		}
 	}
 	
@@ -234,13 +246,23 @@ public class TileObsidianPipe extends TilePipe {
 		entitiesDropped [entitiesDroppedIndex] = item.entityId;
 	}
 	
-	public boolean canSuck (EntityItem item) {
-		for (int i = 0; i < entitiesDropped.length; ++i) {
-			if (item.entityId == entitiesDropped [i]) {
-				return false;
-			}
-		}
+	public boolean canSuck (Entity entity) {
+		if (entity.isDead) {
+			return false;
+		} if (entity instanceof EntityItem) {
+			EntityItem item = (EntityItem) entity;
 		
-		return true;
+			for (int i = 0; i < entitiesDropped.length; ++i) {
+				if (item.entityId == entitiesDropped [i]) {
+					return false;
+				}
+			}
+			
+			return true;
+		} else if (entity instanceof EntityArrow) {			
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
