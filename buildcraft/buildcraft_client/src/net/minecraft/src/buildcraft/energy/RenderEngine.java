@@ -6,11 +6,13 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.Render;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
-import net.minecraft.src.buildcraft.energy.EntityEngine.EnergyStage;
+import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;
 
-public class RenderEngine extends Render implements IInventoryRenderer {
+public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
 	private ModelRenderer box;
 	private ModelRenderer trunk;
@@ -50,11 +52,12 @@ public class RenderEngine extends Render implements IInventoryRenderer {
 				baseTexture, x, y, z);
 	}
 	
-	@Override
-	public void doRender(Entity entity, double x, double y, double z,
-			float f, float f1) {				
 
-		EntityEngine engine = (EntityEngine) entity;
+	@Override
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
+			double z, float f) {
+	
+		Engine engine = ((TileEngine) tileentity).entity;
 		
 		render(engine.getEnergyStage(), engine.progress, engine.orientation,
 				engine.getTextureFile(), x, y, z);
@@ -153,5 +156,5 @@ public class RenderEngine extends Render implements IInventoryRenderer {
 		trunk.render(factor);
 		
 		GL11.glPopMatrix();
-	}
+	}	
 }

@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.minecraft.src.buildcraft.energy.TileEngine;
+
 public class mod_BuildCraftEnergy extends BaseModMp {
 
 	public static mod_BuildCraftEnergy instance;
@@ -7,6 +9,9 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	public void ModsLoaded () {
 		super.ModsLoaded();
 		BuildCraftEnergy.ModsLoaded();	
+		
+		ModLoader.RegisterTileEntity(TileEngine.class,
+				"net.minecraft.src.buildcraft.energy.Engine");
 		
 		instance = this;
 	}

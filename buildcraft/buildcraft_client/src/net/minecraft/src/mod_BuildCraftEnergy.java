@@ -30,6 +30,9 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
 		
+		ModLoader.RegisterTileEntity(TileEngine.class,
+				"net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
+		
 		instance = this;
 	}
 	

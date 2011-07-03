@@ -11,13 +11,10 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.mod_BuildCraftEnergy;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
@@ -27,7 +24,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 
 	boolean init = false;
 	
-	EntityEngine entity;
+	Engine entity;
 	
 	boolean lastPower = false;
 	
@@ -58,19 +55,15 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 				int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 				
 				if (kind == 0) {
-					entity = new EntityEngineWood(worldObj);
+					entity = new EngineWood(this);
 				} else if (kind == 1) {
-					entity = new EntityEngineStone(worldObj);
+					entity = new EngineStone(this);
 				} else if (kind == 2) {
-					entity = new EntityEngineIron(worldObj);
+					entity = new EngineIron(this);
 				}
 			}
 			
-			entity.orientation = Orientations.values()[orientation];
-			
-			entity.setPosition(xCoord, yCoord, zCoord);
-			
-			worldObj.entityJoinedWorld(entity);
+			entity.orientation = Orientations.values()[orientation];			
 			
 			init = true;
 		}
@@ -124,7 +117,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 			}
 		}
 
-		if (entity instanceof EntityEngineStone) {
+		if (entity instanceof EngineStone) {
 			if(burnTime > 0) {
 				burnTime--;
 				entity.addEnergy(1);
@@ -136,7 +129,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 					decrStackSize(1, 1);				
 				}
 			}
-		} else if (entity instanceof EntityEngineIron) {
+		} else if (entity instanceof EngineIron) {
 			if(burnTime > 0) {
 				burnTime--;
 				entity.addEnergy(2);
@@ -178,7 +171,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	}
 	
 	public void delete () {
-		entity.setEntityDead();
+	
 	}
 	
     public void readFromNBT(NBTTagCompound nbttagcompound)
@@ -188,11 +181,11 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 		int kind = nbttagcompound.getInteger("kind");
 		
 		if (kind == 0) {
-			entity = new EntityEngineWood(APIProxy.getWorld());
+			entity = new EngineWood(this);
 		} else if (kind == 1) {
-			entity = new EntityEngineStone(APIProxy.getWorld());
+			entity = new EngineStone(this);
 		} else if (kind == 2) {
-			entity = new EntityEngineIron(APIProxy.getWorld());
+			entity = new EngineIron(this);
 		}
 		
 		orientation = nbttagcompound.getInteger("orientation");
@@ -383,11 +376,11 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			
 			if (kind == 0) {
-				entity = new EntityEngineWood(worldObj);
+				entity = new EngineWood(this);
 			} else if (kind == 1) {
-				entity = new EntityEngineStone(worldObj);
+				entity = new EngineStone(this);
 			} else if (kind == 2) {
-				entity = new EntityEngineIron(worldObj);
+				entity = new EngineIron(this);
 			}
 		}
 		

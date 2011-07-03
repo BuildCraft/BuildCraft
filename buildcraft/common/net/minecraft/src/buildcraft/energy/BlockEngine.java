@@ -52,10 +52,10 @@ public class BlockEngine extends BlockContainer {
 			EntityPlayer entityplayer) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 		
-		if (tile.entity instanceof EntityEngineStone) {
+		if (tile.entity instanceof EngineStone) {
 			EnergyProxy.displayGUISteamEngine(entityplayer, tile);
 			return true;
-		} else if (tile.entity instanceof EntityEngineIron) {
+		} else if (tile.entity instanceof EngineIron) {
 			EnergyProxy.displayGUICombustionEngine(entityplayer, tile);
 			return true;
 		} else {

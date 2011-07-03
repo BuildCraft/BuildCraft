@@ -2,10 +2,11 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.World;
 
-public class EntityEngineWood extends EntityEngine {
-	
-	public EntityEngineWood(World world) {
-		super(world);
+public class EngineWood extends Engine {
+
+	public EngineWood(TileEngine engine) {
+		super(engine);
+		// TODO Auto-generated constructor stub
 	}
 
 	public EnergyStage getEnergyStage () {
