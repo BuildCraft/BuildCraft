@@ -200,11 +200,14 @@ public class TileObsidianPipe extends TilePipe {
 		return null;
 	}
 	
-	public void pullItemIntoPipe(EntityItem item)
-	{
+	public void pullItemIntoPipe(EntityItem item) {
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+				
 		Orientations orientation = getSuckingOrientation();
-		if(orientation != Orientations.Unknown)
-		{
+		
+		if(orientation != Orientations.Unknown) {
 			worldObj.playSoundAtEntity(
 					item,
 					"random.pop",
@@ -221,7 +224,7 @@ public class TileObsidianPipe extends TilePipe {
 		}
 	}
 	
-	public void onDropped (EntityItem item) {
+	public void onDropped (EntityItem item) {		
 		if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
 			entitiesDroppedIndex = 0;
 		} else {
