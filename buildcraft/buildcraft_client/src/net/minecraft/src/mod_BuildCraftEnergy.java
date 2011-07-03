@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 import net.minecraft.src.buildcraft.energy.RenderEngine;
+import net.minecraft.src.buildcraft.energy.TextureOilFX;
+import net.minecraft.src.buildcraft.energy.TextureOilFlowFX;
 
 public class mod_BuildCraftEnergy extends BaseModMp {
 
@@ -11,10 +13,14 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
 				BuildCraftEnergy.engineBlock, 0), new RenderEngine(
-				"/net/minecraft/src/buildcraft/energy/gui/base_wood.png"));
+				"/net/minecraft/src/buildcraft/energy/gui/base_wood.png"));		
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
 				BuildCraftEnergy.engineBlock, 1), new RenderEngine(
 				"/net/minecraft/src/buildcraft/energy/gui/base_stone.png"));
+		
+		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
+		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
+
 	}
 	
 	@Override

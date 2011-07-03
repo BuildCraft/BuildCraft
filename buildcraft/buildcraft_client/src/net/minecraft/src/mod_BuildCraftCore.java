@@ -176,6 +176,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 			}
 
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		} else if (block.getRenderType() == BuildCraftCore.oilModel) {
+			renderblocks.renderBlockFluids(block, i, j, k);
 		}
 
 		if (block instanceof ICustomTextureBlock) {
@@ -186,11 +188,9 @@ public class mod_BuildCraftCore extends BaseModMp {
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 					.getMinecraftInstance().renderEngine
 					.getTexture("/terrain.png"));
-
-			return true;
 		}
 
-		return false;
+		return true;
 	}
 
 	RenderItem itemRenderer = new RenderItem();
