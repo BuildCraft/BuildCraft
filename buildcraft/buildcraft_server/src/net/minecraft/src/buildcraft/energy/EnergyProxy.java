@@ -8,5 +8,10 @@ public class EnergyProxy {
 			TileEngine tile) {
 
 	}
+
+	public static void displayGUICombustionEngine(EntityPlayer entityplayer,
+			TileEngine tile) {
+		
+	}
 	
 }

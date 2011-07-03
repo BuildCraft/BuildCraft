@@ -54,6 +54,10 @@ public class BlockEngine extends BlockContainer {
 		
 		if (tile.entity instanceof EntityEngineStone) {
 			EnergyProxy.displayGUISteamEngine(entityplayer, tile);
+			return true;
+		} else if (tile.entity instanceof EntityEngineIron) {
+			EnergyProxy.displayGUICombustionEngine(entityplayer, tile);
+			return true;
 		} else {
 			tile.switchOrientation();
 		}

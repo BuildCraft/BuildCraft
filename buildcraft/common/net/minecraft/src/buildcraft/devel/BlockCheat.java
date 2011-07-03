@@ -76,6 +76,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.diamondGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 0));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 2));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.oilMoving, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.bucketOil, 1));
 		}
