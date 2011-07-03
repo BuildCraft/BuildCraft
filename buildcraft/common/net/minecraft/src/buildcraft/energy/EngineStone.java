@@ -2,20 +2,21 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.World;
 
-public class EntityEngineIron extends EntityEngine {
+public class EngineStone extends Engine {
 
-	public EntityEngineIron(World world) {
-		super(world);
+	public EngineStone(TileEngine engine) {
+		super(engine);
+		// TODO Auto-generated constructor stub
 	}
 
 	public EnergyStage getEnergyStage () {
-		if (energy <= 2500) {
+		if (energy <= 250) {
 			return EnergyStage.Blue;
-		} else if (energy <= 5000) {
+		} else if (energy <= 500) {
 			return EnergyStage.Green;
-		} else if (energy <= 7500) {
+		} else if (energy <= 750) {
 			return EnergyStage.Yellow;
-		} else if (energy <= 10000) {
+		} else if (energy <= 1000) {
 			return EnergyStage.Red;
 		} else {
 			return EnergyStage.Explosion;
@@ -23,29 +24,30 @@ public class EntityEngineIron extends EntityEngine {
 	}
 	
 	public String getTextureFile () {
-		return "/net/minecraft/src/buildcraft/energy/gui/base_iron.png";
+		return "/net/minecraft/src/buildcraft/energy/gui/base_stone.png";
 	}
 	
 	public int explosionRange () {
-		return 8;
+		return 4;
 	}
 	
 	public int maxEnergyReceived () {
-		return 2000;
+		return 200;
 	}
-
+	
 	public float getPistonSpeed () {
 		switch (getEnergyStage()) {
 		case Blue:
-			return 0.04F;
+			return 0.02F;
 		case Green:
-			return 0.08F;
+			return 0.04F;
 		case Yellow:
-			return 0.16F;
+			return 0.08F;
 		case Red:
-			return 0.32F;
+			return 0.16F;
 		}
 		
 		return 0;
 	}
+
 }

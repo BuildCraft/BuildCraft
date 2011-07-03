@@ -18,8 +18,7 @@ public class BuildCraftEnergy {
 	public static void ModsLoaded () {		
 		engineBlock = new BlockEngine(200);
 		ModLoader.RegisterBlock(engineBlock);
-		ModLoader.RegisterTileEntity(TileEngine.class,
-		"net.minecraft.src.buildcraft.energy.Engine");
+		
 		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
 				engineBlock.blockID - 256));
 		
