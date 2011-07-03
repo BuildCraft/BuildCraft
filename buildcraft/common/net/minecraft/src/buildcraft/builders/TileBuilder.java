@@ -268,7 +268,11 @@ public class TileBuilder extends TileCurrentPowered implements IInventory, ISync
     }
 
 	public void delete() {
-		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);		
+		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
+		
+		if (box != null) {
+			box.deleteLasers();
+		}
 	}
 
 	@Override
