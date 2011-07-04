@@ -22,9 +22,9 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		super.ModsLoaded();
 		
 		BuildCraftBuilders.initialize();
-		ModLoaderMp.RegisterGUI(this, PacketIds.FillerGUI.ordinal());
-		ModLoaderMp.RegisterGUI(this, PacketIds.TemplateGUI.ordinal());
-		ModLoaderMp.RegisterGUI(this, PacketIds.BuilderGUI.ordinal());				
+		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
+		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
+		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	 }
 	 
 	public GuiScreen HandleGUI(int i) {		
-		switch (PacketIds.values() [i]) {
+		switch (Utils.intToPacketId(i)) {
 		case FillerGUI: 
 			return new GuiFiller(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,

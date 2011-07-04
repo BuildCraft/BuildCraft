@@ -14,8 +14,6 @@ import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.energy.Engine;
-import net.minecraft.src.buildcraft.energy.RenderEngine;
 
 public class mod_BuildCraftCore extends BaseModMp {
 

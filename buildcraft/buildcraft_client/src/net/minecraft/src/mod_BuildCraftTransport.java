@@ -3,6 +3,7 @@ package net.minecraft.src;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
 import net.minecraft.src.buildcraft.transport.TileDiamondPipe;
 import net.minecraft.src.buildcraft.transport.TilePipe;
@@ -15,7 +16,8 @@ public class mod_BuildCraftTransport extends BaseModMp {
 		super.ModsLoaded();
 		BuildCraftTransport.ModsLoaded();
 		
-		ModLoaderMp.RegisterGUI(this, BuildCraftTransport.diamondGUI);
+		ModLoaderMp.RegisterGUI(this,
+				Utils.packetIdToInt(PacketIds.DiamondPipeGUI));
 		
 		instance = this;
 	}
@@ -26,7 +28,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 	}
 	
     public GuiScreen HandleGUI(int i) {    	
-    	if (i == BuildCraftTransport.diamondGUI) {
+    	if (Utils.intToPacketId(i) == PacketIds.DiamondPipeGUI) {
 			return new GuiDiamondPipe(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
 					new TileDiamondPipe());
@@ -40,7 +42,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];
 		
-		if (packet.packetType == PacketIds.TilePipeItem.ordinal()) {						
+		if (packet.packetType == PacketIds.PipeItem.ordinal()) {						
 			if (APIProxy.getWorld().blockExists(x, y, z)) {
 				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 				
@@ -50,7 +52,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 					return;
 				}
 			}
-		} else if (packet.packetType == PacketIds.TileDiamondPipeContents.ordinal()) {	
+		} else if (packet.packetType == PacketIds.DiamondPipeContents.ordinal()) {	
 			if (APIProxy.getWorld().blockExists(x, y, z)) {
 				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 				

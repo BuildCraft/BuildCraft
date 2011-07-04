@@ -20,7 +20,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 		BuildCraftFactory.initialize();
 		
-		ModLoaderMp.RegisterGUI(this, PacketIds.AutoCraftingGUI.ordinal());
+		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
 		instance = this;
 	}
 		
@@ -46,7 +46,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
     }
 	
     public GuiScreen HandleGUI(int i) {    	
-    	if (i == PacketIds.AutoCraftingGUI.ordinal()) {
+    	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
 			return new GuiAutoCrafting(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
 					APIProxy.getWorld(),

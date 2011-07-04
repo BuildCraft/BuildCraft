@@ -409,4 +409,46 @@ public class Utils {
 			|| blockId == Block.lavaStill.blockID
 			|| blockId == Block.lavaMoving.blockID;
 	}
+	
+	public static int packetIdToInt (PacketIds id) {
+		switch (id) {
+		case DiamondPipeGUI:
+			return 70;
+		case AutoCraftingGUI:
+			return 71;
+		case FillerGUI:
+			return 72;
+		case TemplateGUI:
+			return 73;
+		case BuilderGUI:
+			return 74;
+		case EngineSteamGUI:
+			return 75;
+		case EngineCombustionGUI:
+			return 76;
+		default:
+			throw new RuntimeException("Invalid GUI id: " + id);
+		}
+	}
+	
+	public static PacketIds intToPacketId (int id) {
+		switch (id) {
+		case 70:
+			return PacketIds.DiamondPipeGUI;
+		case 71:
+			return PacketIds.AutoCraftingGUI;
+		case 72:
+			return PacketIds.FillerGUI;
+		case 73:
+			return PacketIds.TemplateGUI;
+		case 74:
+			return PacketIds.BuilderGUI;
+		case 75:
+			return PacketIds.EngineSteamGUI;
+		case 76:
+			return PacketIds.EngineCombustionGUI;
+		default:
+			throw new RuntimeException("Invalid GUI number: " + id);
+		}
+	}
 }

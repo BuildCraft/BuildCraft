@@ -192,7 +192,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 		Packet230ModLoader packet = new Packet230ModLoader();
 
 		packet.modId = mod_BuildCraftTransport.instance.getId();
-		packet.packetType = PacketIds.TileDiamondPipeContents.ordinal();
+		packet.packetType = PacketIds.DiamondPipeContents.ordinal();
 		packet.isChunkDataPacket = true;
 
 		packet.dataInt = new int [3 + items.length * 2];
@@ -216,7 +216,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
     }
 	
 	public void handlePacket (Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.TileDiamondPipeContents.ordinal()) {
+		if (packet.packetType != PacketIds.DiamondPipeContents.ordinal()) {
 			return;
 		}
 		

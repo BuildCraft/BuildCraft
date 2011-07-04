@@ -325,7 +325,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
     protected void doWork () {}
 
 	public void handleItemPacket(Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.TilePipeItem.ordinal()) {
+		if (packet.packetType != PacketIds.PipeItem.ordinal()) {
 			return;
 		}
 		
@@ -376,7 +376,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 		item.deterministicRandomization += worldObj.rand.nextInt(6);
 		
 		packet.modId = mod_BuildCraftTransport.instance.getId();
-		packet.packetType = PacketIds.TilePipeItem.ordinal();
+		packet.packetType = PacketIds.PipeItem.ordinal();
 		packet.isChunkDataPacket = true;
 		
 		packet.dataInt = new int [9];
