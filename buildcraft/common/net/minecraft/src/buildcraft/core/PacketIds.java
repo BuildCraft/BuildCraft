@@ -4,8 +4,9 @@ public enum PacketIds {
 
 	// Transport packets
 	
-	TilePipeItem,
-	TileDiamondPipeContents,
+	PipeItem,
+	DiamondPipeContents,
+	DiamondPipeGUI,
 	
 	// Factory packets
 	

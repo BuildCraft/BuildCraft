@@ -2,10 +2,8 @@ package net.minecraft.src.buildcraft.energy;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.Render;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.buildcraft.api.Orientations;

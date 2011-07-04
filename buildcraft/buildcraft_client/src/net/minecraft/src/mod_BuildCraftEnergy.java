@@ -33,6 +33,9 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		ModLoader.RegisterTileEntity(TileEngine.class,
 				"net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
 		
+		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.EngineSteamGUI));
+		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.EngineCombustionGUI));	
+		
 		instance = this;
 	}
 	
@@ -52,7 +55,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		 }
 		 
 		public GuiScreen HandleGUI(int i) {		
-			switch (PacketIds.values() [i]) {
+			switch (Utils.intToPacketId(i)) {
 			case EngineCombustionGUI: 
 				return new GuiCombustionEngine(
 						ModLoader.getMinecraftInstance().thePlayer.inventory,
