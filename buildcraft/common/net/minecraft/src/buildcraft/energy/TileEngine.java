@@ -36,18 +36,6 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	public int burnTime = 0;
 	public int totalBurnTime = 0;
 	
-	public void switchPower () {
-		boolean power = worldObj.isBlockGettingPowered(xCoord, yCoord, zCoord);
-	
-		if (power != lastPower)	{
-			lastPower = power;
-			
-			if (power) {
-				entity.addEnergy(1);
-			}
-		}
-	}
-	
 	@Override
 	public void updateEntity () {
 		if (!init) {
@@ -67,6 +55,11 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 			
 			init = true;
 		}
+		
+		entity.update();
+		
+		boolean isPowered = worldObj.isBlockIndirectlyGettingPowered(xCoord,
+				yCoord, zCoord);
 		
 		if (progressPart != 0) {
 			entity.progress += entity.getPistonSpeed();
@@ -100,7 +93,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 				entity.progress = 0;
 				progressPart = 0;
 			}
-		} else {
+		} else if (isPowered) {
 			Position pos = new Position(xCoord, yCoord, zCoord,
 					entity.orientation);
 			pos.moveForwards(1.0);
@@ -123,29 +116,31 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 				entity.addEnergy(1);
 			}
 
-			if (burnTime == 0) {
+			if (burnTime == 0 && isPowered) {
 				burnTime = totalBurnTime = getItemBurnTime(itemInInventory);
 				if (burnTime > 0) {
 					decrStackSize(1, 1);				
 				}
 			}
 		} else if (entity instanceof EngineIron) {
-			if(burnTime > 0) {
-				burnTime--;
-				entity.addEnergy(2);
+			if (isPowered) {
+				if(burnTime > 0) {
+					burnTime--;
+					entity.addEnergy(2);					
+				}
 			}
-			
+
 			if (itemInInventory != null
 					&& itemInInventory.itemID == BuildCraftEnergy.bucketOil.shiftedIndex) {
 
 				totalBurnTime = 100000;
 				int stepTime = totalBurnTime / 10;
-				
+
 				if (burnTime + stepTime <= totalBurnTime) {
 					itemInInventory = new ItemStack(Item.bucketEmpty, 1);
 					burnTime = burnTime + stepTime;
 				}
-			}
+			}		
 		}
 	}
 	
@@ -307,7 +302,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
     
     public boolean isBurning()
     {
-        return burnTime > 0;
+        return entity.isBurning();
     }
     
     public int getBurnTimeRemainingScaled(int i) {

@@ -1,26 +1,11 @@
 package net.minecraft.src.buildcraft.energy;
 
-import net.minecraft.src.World;
-
 public class EngineStone extends Engine {
 
 	public EngineStone(TileEngine engine) {
 		super(engine);
-		// TODO Auto-generated constructor stub
-	}
-
-	public EnergyStage getEnergyStage () {
-		if (energy <= 250) {
-			return EnergyStage.Blue;
-		} else if (energy <= 500) {
-			return EnergyStage.Green;
-		} else if (energy <= 750) {
-			return EnergyStage.Yellow;
-		} else if (energy <= 1000) {
-			return EnergyStage.Red;
-		} else {
-			return EnergyStage.Explosion;
-		}
+		
+		maxEnergy = 10000;
 	}
 	
 	public String getTextureFile () {
@@ -48,6 +33,10 @@ public class EngineStone extends Engine {
 		}
 		
 		return 0;
+	}
+	
+	public boolean isBurning () {
+		return tile.burnTime > 0;
 	}
 
 }
