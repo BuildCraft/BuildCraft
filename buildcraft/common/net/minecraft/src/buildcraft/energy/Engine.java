@@ -4,7 +4,12 @@ import net.minecraft.src.buildcraft.api.Orientations;
 
 public abstract class Engine {
 
-	private TileEngine tile;
+	public int maxEnergy;
+	public float progress;
+	public Orientations orientation;
+	int energy;	
+
+	protected TileEngine tile;
 	
 	enum EnergyStage {
 		Blue,
@@ -17,12 +22,24 @@ public abstract class Engine {
 	public Engine (TileEngine tile) {
 		this.tile = tile;
 	}
+			
+	public EnergyStage getEnergyStage () {
+		if (energy / (double) maxEnergy * 100.0 <= 25.0) {
+			return EnergyStage.Blue;
+		} else if (energy / (double) maxEnergy * 100.0 <= 50.0) {
+		 	return EnergyStage.Green;
+		}  else if (energy / (double) maxEnergy * 100.0 <= 75.0) {
+			return EnergyStage.Yellow;
+		} else if (energy / (double) maxEnergy * 100.0 <= 100.0) {
+			return EnergyStage.Red;
+		} else {
+			return EnergyStage.Explosion;
+		}
+	}	
 	
-	public float progress;
-	public Orientations orientation;
-	int energy;	
+	public void update () {
 		
-	public abstract EnergyStage getEnergyStage ();
+	}
 	
 	public abstract String getTextureFile ();
 	
@@ -31,6 +48,8 @@ public abstract class Engine {
 	public abstract int maxEnergyReceived ();
 	
 	public abstract float getPistonSpeed ();
+	
+	public abstract boolean isBurning ();
 
 	public void addEnergy (int addition) {
 		energy += addition;

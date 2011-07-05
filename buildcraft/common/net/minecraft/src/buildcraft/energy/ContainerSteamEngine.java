@@ -31,26 +31,6 @@ public class ContainerSteamEngine extends Container
 
     }
 
-//    public void updateCraftingResults()
-//    {
-//        super.updateCraftingResults();
-//        for(int i = 0; i < field_20121_g.size(); i++)
-//        {
-//            ICrafting icrafting = (ICrafting)field_20121_g.get(i);
-//            if(burnTime != engine.burnTime)
-//            {
-//                icrafting.func_20158_a(this, 0, engine.burnTime);
-//            }
-//            if(itemBurnTime != engine.totalBurnTime)
-//            {
-//                icrafting.func_20158_a(this, 1, engine.totalBurnTime);
-//            }
-//        }
-//
-//        burnTime = engine.burnTime;
-//        itemBurnTime = engine.totalBurnTime;
-//    }
-
     public void func_20112_a(int i, int j)
     {
         if(i == 0)
