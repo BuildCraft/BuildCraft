@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
@@ -32,7 +33,8 @@ public class BuildCraftFactory {
 		
 		boolean allowMining = Boolean
 				.parseBoolean(BuildCraftCore.mainConfiguration
-						.getOrCreateGeneralProperty("mining.enabled", "true").value);
+						.getOrCreateBooleanProperty("mining.enabled",
+								PropertyKind.General, true).value);
 		
 		Property minigWellId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("miningWell.id", 150);
@@ -44,6 +46,8 @@ public class BuildCraftFactory {
 		.getOrCreateBlockIdProperty("frame.id", 160);
 		Property quarryId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("quarry.id", 153);
+		
+		BuildCraftCore.mainConfiguration.save();
 		
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
 		ModLoader.RegisterBlock(miningWellBlock);

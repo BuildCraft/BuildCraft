@@ -12,6 +12,7 @@ import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.Configuration;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Configuration.Property;
+import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 
 public class BuildCraftCore {
 	public static Configuration mainConfiguration;
@@ -69,16 +70,22 @@ public class BuildCraftCore {
 		}
 		
 		Property woodenGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateItemProperty("woodenGearItem.id", "3800");
+		.getOrCreateIntProperty("woodenGearItem.id", PropertyKind.Item, 3800);
 		Property stoneGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateItemProperty("stoneGearItem.id", "3801");
+		.getOrCreateIntProperty("stoneGearItem.id", PropertyKind.Item, 3801);
 		Property ironGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateItemProperty("ironGearItem.id", "3802");
+		.getOrCreateIntProperty("ironGearItem.id", PropertyKind.Item, 3802);
 		Property goldenGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateItemProperty("goldenGearItem.id", "3803");
+		.getOrCreateIntProperty("goldenGearItem.id", PropertyKind.Item, 3803);
 		Property diamondGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateItemProperty("diamondGearItem.id", "3804");
-
+		.getOrCreateIntProperty("diamondGearItem.id", PropertyKind.Item, 3804);
+		Property continuousCurrent = BuildCraftCore.mainConfiguration
+		.getOrCreateBooleanProperty("current.continuous", PropertyKind.General, false);
+		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
+		
+		BuildCraftCore.mainConfiguration.save();
+		
+		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
 		
 		gearsInitialized = true;
 		
@@ -136,13 +143,7 @@ public class BuildCraftCore {
 		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
-		CoreProxy.addName(diamondGearItem, "Diamond Gear");
-		
-		Property continuousCurrent = BuildCraftCore.mainConfiguration
-		.getOrCreateGeneralProperty("current.continuous", "false");
-		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
-		
-		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
+		CoreProxy.addName(diamondGearItem, "Diamond Gear");				
 
 		BuildCraftCore.mainConfiguration.save();
 	}

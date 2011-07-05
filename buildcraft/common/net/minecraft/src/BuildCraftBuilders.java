@@ -21,6 +21,7 @@ import net.minecraft.src.buildcraft.builders.TileTemplate;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Configuration.Property;
+import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 
 public class BuildCraftBuilders {
 	public static BlockMarker markerBlock;
@@ -34,7 +35,7 @@ public class BuildCraftBuilders {
 		BuildCraftCore.initializeGears();
 		
 		Property templateItemId = BuildCraftCore.mainConfiguration
-		.getOrCreateItemProperty("templateItem.id", "3805");
+		.getOrCreateIntProperty("templateItem.id", PropertyKind.Item, 3805);
 		Property markerId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("marker.id", 154);
 		Property fillerId = BuildCraftCore.mainConfiguration
@@ -43,6 +44,8 @@ public class BuildCraftBuilders {
 		.getOrCreateBlockIdProperty("builder.id", 157);
 		Property templateId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("template.id", 158);
+		
+		BuildCraftCore.mainConfiguration.save();
 
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
