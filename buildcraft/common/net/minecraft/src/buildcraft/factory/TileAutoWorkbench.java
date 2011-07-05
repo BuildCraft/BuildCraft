@@ -7,8 +7,6 @@ import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryCrafting;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
@@ -199,7 +197,7 @@ public class TileAutoWorkbench extends TileEntity implements
 
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
-
+		
 		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(
 				craftMatrix);
 
@@ -207,10 +205,11 @@ public class TileAutoWorkbench extends TileEntity implements
 			resetPointers(pointerList);
 		} else {
 			for (StackPointer p : pointerList) {
-				// place an empty bucket back when used in the recipe
+				// replace with the container where appropriate
 				
-				if (p.item.getItem() instanceof ItemBucket) {
-					ItemStack newStack = new ItemStack(Item.bucketEmpty, 1);
+				if (p.item.getItem().getContainerItem() != null) {
+					ItemStack newStack = new ItemStack(p.item.getItem()
+							.getContainerItem(), 1);
 
 					p.inventory.setInventorySlotContents(p.index, newStack);					
 				}
