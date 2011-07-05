@@ -252,33 +252,33 @@ public class Configuration {
 				
 				BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fileoutputstream, "8859_1"));
 				
-				buffer.write("# BuildCraft configuration file\n");
+				buffer.write("# BuildCraft configuration file\r\n");
 				buffer.write("# Generated on "
-						+ DateFormat.getInstance().format(new Date()) + "\n");
-				buffer.write("\n");
-				buffer.write("###########\n");
-				buffer.write("# General #\n");
-				buffer.write("###########\n\n");
+						+ DateFormat.getInstance().format(new Date()) + "\r\n");
+				buffer.write("\r\n");
+				buffer.write("###########\r\n");
+				buffer.write("# General #\r\n");
+				buffer.write("###########\r\n\r\n");
 				
-				buffer.write("general {\n");
+				buffer.write("general {\r\n");
 				writeProperties(buffer, generalProperties.values());
-				buffer.write("}\n\n");
+				buffer.write("}\r\n\r\n");
 				
-				buffer.write("#########\n");
-				buffer.write("# Block #\n");
-				buffer.write("#########\n\n");				
+				buffer.write("#########\r\n");
+				buffer.write("# Block #\r\n");
+				buffer.write("#########\r\n\r\n");				
 				
-				buffer.write("block {\n");
+				buffer.write("block {\r\n");
 				writeProperties(buffer, blockProperties.values());
-				buffer.write("}\n\n");
+				buffer.write("}\r\n\r\n");
 				
-				buffer.write("########\n");
-				buffer.write("# Item #\n");
-				buffer.write("########\n\n");		
+				buffer.write("########\r\n");
+				buffer.write("# Item #\r\n");
+				buffer.write("########\r\n\r\n");		
 															
-				buffer.write("item {\n");
+				buffer.write("item {\r\n");
 				writeProperties(buffer, itemProperties.values());
-				buffer.write("}\n\n");
+				buffer.write("}\r\n\r\n");
 				
 				buffer.close();				
 				fileoutputstream.close();
@@ -293,11 +293,11 @@ public class Configuration {
 			Collection<Property> props) throws IOException {
 		for (Property property : props) {
 			if (property.comment != null) {
-				buffer.write("   # " + property.comment + "\n");
+				buffer.write("   # " + property.comment + "\r\n");
 			}
 
 			buffer.write("   " + property.name + "=" + property.value);
-			buffer.write("\n");
+			buffer.write("\r\n");
 		}
 	}
 	
