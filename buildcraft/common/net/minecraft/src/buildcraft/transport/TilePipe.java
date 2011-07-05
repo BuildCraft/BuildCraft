@@ -197,7 +197,7 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 								destPos.orientation.reverse())
 								&& utils.items.stackSize == 0) {
 							
-							APIProxy.removeEntity(data.item);
+							// Do nothing, we're adding the object to the world							
 						} else {
 							data.item.item = utils.items;
 							EntityItem dropped = data.item.toEntityItem(
@@ -209,7 +209,9 @@ public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry 
 								onDropped(dropped);
 							}
 						}
-					}										
+					}
+					
+					APIProxy.removeEntity(data.item);
 				} else {
 					EntityItem dropped = data.item.toEntityItem(worldObj,
 							data.orientation);
