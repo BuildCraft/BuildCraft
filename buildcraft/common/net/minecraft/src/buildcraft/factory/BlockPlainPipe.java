@@ -9,9 +9,11 @@ import net.minecraft.src.Material;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class BlockPlainPipe extends Block implements IPipeConnection, IBlockPipe {	
+public class BlockPlainPipe extends Block implements IPipeConnection,
+		IBlockPipe, ICustomTextureBlock {	
 	
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);

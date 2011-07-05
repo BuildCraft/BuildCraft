@@ -13,11 +13,12 @@ import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public abstract class BlockPipe extends BlockContainer implements
-		IPipeConnection, IBlockPipe {
+		IPipeConnection, IBlockPipe, ICustomTextureBlock {
 	
 	public BlockPipe(int i, Material material) {
 		super(i, material);
