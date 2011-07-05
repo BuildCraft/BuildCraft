@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.core;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Render;
@@ -79,7 +80,7 @@ public class RenderEntityBlock extends Render {
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float)i + iBase + 0.5F, (float)j + jBase + 0.5F, (float)k + kBase + 0.5F);
 			
-			loadTexture ("/net/minecraft/src/buildcraft/core/gui/buildcraft_terrain.png");
+			loadTexture (BuildCraftCore.customBuildCraftTexture);
 //			util.baseBlock = Block.blocksList [entity.blockID];			
 			
 			int lightX, lightY, lightZ;
