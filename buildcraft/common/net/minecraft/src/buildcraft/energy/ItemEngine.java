@@ -11,6 +11,11 @@ public class ItemEngine extends ItemBlock
         setMaxDamage(0);
         setHasSubtypes(true);
     }
+    
+    public int getMetadata(int i)
+    {
+        return getPlacedBlockMetadata(i);
+    }
 
     public int getPlacedBlockMetadata(int i)
     {
