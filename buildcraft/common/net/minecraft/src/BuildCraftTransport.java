@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.core.Configuration.Property;
+import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.transport.BlockCobblestonePipe;
 import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
@@ -59,9 +60,12 @@ public class BuildCraftTransport {
 				.getOrCreateBlockIdProperty("cobblestonePipe.id", 159);
 		
 		Property alwaysConnect = BuildCraftCore.mainConfiguration
-				.getOrCreateGeneralProperty("pipes.alwaysConnect", "false");
+				.getOrCreateBooleanProperty("pipes.alwaysConnect",
+						PropertyKind.General, false);
 		alwaysConnect.comment = 
 			"set to false to deactivate pipe connection rules, true by default";
+		
+		BuildCraftCore.mainConfiguration.save();
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();		
 		woodenPipeBlock = new BlockWoodenPipe(Integer.parseInt(woodenPipeId.value));

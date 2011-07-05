@@ -6,7 +6,6 @@ import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
 import net.minecraft.src.buildcraft.energy.ItemBuildCraftBucket;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
-import net.minecraft.src.buildcraft.energy.TileEngine;
 
 public class BuildCraftEnergy {
 	public static BlockEngine engineBlock;

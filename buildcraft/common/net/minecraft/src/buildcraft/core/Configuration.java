@@ -19,6 +19,12 @@ import net.minecraft.src.mod_BuildCraftCore;
 
 public class Configuration {
 	
+	public enum PropertyKind {
+		General,
+		Block,
+		Item
+	}
+	
 	File file;
 	
 	public static class Property {
@@ -41,9 +47,9 @@ public class Configuration {
 		load ();
 	}
 	
-	public Property getOrCreateBlockIdProperty (String key, int defaultId) {
+	public Property getOrCreateBlockIdProperty (String key, int defaultId) {			
 		if (blockProperties.containsKey(key)) {			
-			return blockProperties.get(key);
+			return getOrCreateIntProperty(key, PropertyKind.Block, defaultId);
 		} else {
 			Property property = new Property();
 
@@ -67,45 +73,53 @@ public class Configuration {
 		}
 	}
 	
-	public Property getOrCreateBlockProperty (String key, String defaultValue) {
-		if (blockProperties.containsKey(key)) {
-			return blockProperties.get(key);
-		} else if (defaultValue != null) {
-			Property property = new Property();
-
-			blockProperties.put(key, property);
-			property.name = key;
+	public Property getOrCreateIntProperty (String key, PropertyKind kind, int defaultValue) {
+		Property prop = getOrCreateProperty(key, kind, Integer.toString(defaultValue));
+		
+		try {
+			Integer.parseInt(prop.value);
 			
-			property.value = defaultValue;
-    		return property;    		
-		} else {
-			return null;
+			return prop;
+		} catch (NumberFormatException e) {
+			prop.value = Integer.toString(defaultValue);
+			return prop;
 		}
 	}
 	
-	public Property getOrCreateItemProperty (String key, String defaultValue) {
-		if (itemProperties.containsKey(key)) {
-			return itemProperties.get(key);
-		} else if (defaultValue != null) {
-			Property property = new Property();
+	public Property getOrCreateBooleanProperty (String key, PropertyKind kind, boolean defaultValue) {
+		Property prop = getOrCreateProperty(key, kind,
+				Boolean.toString(defaultValue));
 
-			itemProperties.put(key, property);
-			property.name = key;
-			
-			property.value = defaultValue;
-    		return property;    		
+		if ("true".equals(prop.value.toLowerCase())
+				|| "false".equals(prop.value.toLowerCase())) {
+			return prop;
 		} else {
-			return null;
+			prop.value = Boolean.toString(defaultValue);
+			return prop;
 		}
 	}
 	
-	public Property getOrCreateGeneralProperty (String key, String defaultValue) {
-		if (generalProperties.containsKey(key)) {
-			return generalProperties.get(key);
+	public Property getOrCreateProperty (String key, PropertyKind kind, String defaultValue) {
+		TreeMap<String, Property> source = null;
+		
+		switch (kind) {
+		case General:
+			source = generalProperties;
+			break;
+		case Block:
+			source = blockProperties;
+			break;
+		case Item:
+			source = itemProperties;
+			break;
+		}
+		
+		if (source.containsKey(key)) {
+			return source.get(key);
 		} else if (defaultValue != null) {
 			Property property = new Property();
 
-			generalProperties.put(key, property);
+			source.put(key, property);
 			property.name = key;
 			
 			property.value = defaultValue;
@@ -301,47 +315,47 @@ public class Configuration {
 				fileinputstream.close();
 			}
 
-			getOrCreateBlockProperty("stonePipe.id",
+			getOrCreateProperty("stonePipe.id", PropertyKind.Block,
 					props.getProperty("stonePipe.blockId"));
-			getOrCreateBlockProperty("woodenPipe.id",
+			getOrCreateProperty("woodenPipe.id", PropertyKind.Block,
 					props.getProperty("woodenPipe.blockId"));
-			getOrCreateBlockProperty("ironPipe.id",
+			getOrCreateProperty("ironPipe.id", PropertyKind.Block,
 					props.getProperty("ironPipe.blockId"));
-			getOrCreateBlockProperty("goldenPipe.id",
+			getOrCreateProperty("goldenPipe.id", PropertyKind.Block,
 					props.getProperty("goldenPipe.blockId"));
-			getOrCreateBlockProperty("diamondPipe.id",
+			getOrCreateProperty("diamondPipe.id", PropertyKind.Block,
 					props.getProperty("diamondPipe.blockId"));
-			getOrCreateBlockProperty("obsidianPipe.id",
+			getOrCreateProperty("obsidianPipe.id", PropertyKind.Block,
 					props.getProperty("obsidianPipeBlock.blockId"));
-			getOrCreateBlockProperty("autoWorkbench.id",
+			getOrCreateProperty("autoWorkbench.id", PropertyKind.Block,
 					props.getProperty("autoWorkbench.blockId"));
-			getOrCreateBlockProperty("miningWell.id",
+			getOrCreateProperty("miningWell.id", PropertyKind.Block,
 					props.getProperty("miningWell.blockId"));
-			getOrCreateBlockProperty("quarry.id",
+			getOrCreateProperty("quarry.id", PropertyKind.Block,
 					props.getProperty("quarry.blockId"));
-			getOrCreateBlockProperty("drill.id",
+			getOrCreateProperty("drill.id", PropertyKind.Block,
 					props.getProperty("drill.blockId"));
-			getOrCreateBlockProperty("frame.id",
+			getOrCreateProperty("frame.id", PropertyKind.Block,
 					props.getProperty("frame.blockId"));
-			getOrCreateBlockProperty("marker.id",
+			getOrCreateProperty("marker.id", PropertyKind.Block,
 					props.getProperty("marker.blockId"));
-			getOrCreateBlockProperty("filler.id",
+			getOrCreateProperty("filler.id", PropertyKind.Block,
 					props.getProperty("filler.blockId"));
 			
-			getOrCreateItemProperty("woodenGearItem.id",
+			getOrCreateProperty("woodenGearItem.id", PropertyKind.Item,
 					props.getProperty("woodenGearItem.id"));
-			getOrCreateItemProperty("stoneGearItem.id",
+			getOrCreateProperty("stoneGearItem.id", PropertyKind.Item,
 					props.getProperty("stoneGearItem.id"));
-			getOrCreateItemProperty("ironGearItem.id",
+			getOrCreateProperty("ironGearItem.id", PropertyKind.Item,
 					props.getProperty("ironGearItem.id"));
-			getOrCreateItemProperty("goldenGearItem.id",
+			getOrCreateProperty("goldenGearItem.id", PropertyKind.Item,
 					props.getProperty("goldGearItem.id"));
-			getOrCreateItemProperty("diamondGearItem.id",
+			getOrCreateProperty("diamondGearItem.id", PropertyKind.Item,
 					props.getProperty("diamondGearItem.id"));
 
-			getOrCreateGeneralProperty("mining.enabled",
+			getOrCreateProperty("mining.enabled", PropertyKind.General,
 					props.getProperty("mining.enabled"));
-			getOrCreateGeneralProperty("current.continuous",
+			getOrCreateProperty("current.continuous", PropertyKind.General,
 					props.getProperty("current.continous"));
 			
 			cfgfile.delete();
