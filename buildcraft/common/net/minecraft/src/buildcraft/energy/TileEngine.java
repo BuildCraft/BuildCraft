@@ -12,6 +12,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftEnergy;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -38,22 +39,20 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	
 	@Override
 	public void updateEntity () {
-		if (!init) {
-			if (entity == null) {
-				int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-				
-				if (kind == 0) {
-					entity = new EngineWood(this);
-				} else if (kind == 1) {
-					entity = new EngineStone(this);
-				} else if (kind == 2) {
-					entity = new EngineIron(this);
+		if (!APIProxy.isClient(worldObj)) {
+			if (!init) {
+				if (entity == null) {
+					createEngineIfNeeded ();
 				}
+
+				entity.orientation = Orientations.values()[orientation];			
+
+				init = true;
 			}
-			
-			entity.orientation = Orientations.values()[orientation];			
-			
-			init = true;
+		} else {
+			if (entity == null) {
+				return;
+			}
 		}
 		
 		entity.update();
@@ -144,6 +143,22 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 		}
 	}
 	
+	private void createEngineIfNeeded() {
+		if (entity == null) {
+			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+			if (kind == 0) {
+				entity = new EngineWood(this);
+			} else if (kind == 1) {
+				entity = new EngineStone(this);
+			} else if (kind == 2) {
+				entity = new EngineIron(this);
+			}
+
+			entity.orientation = Orientations.values()[orientation];
+		}
+	}
+
 	public void switchOrientation () {						
 		for (int i = orientation + 1; i <= orientation + 6; ++i) {
 			Orientations o = Orientations.values() [i % 6];
@@ -302,7 +317,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
     
     public boolean isBurning()
     {
-        return entity.isBurning();
+        return entity != null && entity.isBurning();
     }
     
     public int getBurnTimeRemainingScaled(int i) {
@@ -320,6 +335,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	}
 	
 	public Packet getDescriptionPacket () {
+		createEngineIfNeeded ();
+		
 		Packet230ModLoader packet = new Packet230ModLoader();
 		
 		packet.modId = mod_BuildCraftEnergy.instance.getId();
