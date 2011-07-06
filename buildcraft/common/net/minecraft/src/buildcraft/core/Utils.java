@@ -8,6 +8,7 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryLargeChest;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;

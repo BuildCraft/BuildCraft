@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.Item;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet230ModLoader;
 
@@ -39,6 +40,10 @@ public class CoreProxy {
 	public static void addLocalization(String s1, String string) {
 		ModLoader.AddLocalization(s1, string);
 		
+	}
+	
+	public static boolean isDamageable (Item item) {
+		return item.isDamagable();
 	}
 
 }
