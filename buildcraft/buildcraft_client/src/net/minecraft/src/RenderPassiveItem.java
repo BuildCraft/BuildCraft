@@ -80,7 +80,7 @@ public class RenderPassiveItem extends Render
                     float f9 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
                     GL11.glTranslatef(f5, f7, f9);
                 }
-                renderBlocks.renderBlockOnInventory(Block.blocksList[itemstack.itemID], itemstack.getItemDamage());
+                renderBlocks.renderBlockOnInventory(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), 1);
                 GL11.glPopMatrix();
             }
 

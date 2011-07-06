@@ -224,7 +224,8 @@ public class BlockMarker extends BlockContainer {
         }
     }
     
-    public void dropBlockAsItem(World world, int i, int j, int k, int l) {
-    	super.dropBlockAsItem(world, i, j, k, blockID);
-    }
+//    protected int damageDropped(int i)
+//    {
+//        return blockID;
+//    }
 }
