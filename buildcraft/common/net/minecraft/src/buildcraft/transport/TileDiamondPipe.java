@@ -114,13 +114,10 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 
 				if (stack != null && stack.itemID == item.item.itemID)
 				{
-					if(item.item.itemID > 255)
-					{
-						if(Item.itemsList[item.item.itemID].isDamagable())
-						{
-							filteredOrientations.add(dir);
-						}
-					} else if(stack.getItemDamage() == item.item.getItemDamage()) {
+					if (Item.itemsList[item.item.itemID].isDamagable()) {
+						filteredOrientations.add(dir);
+					} else if (stack.getItemDamage() == item.item
+							.getItemDamage()) {
 						filteredOrientations.add(dir);
 					}
 				} 
