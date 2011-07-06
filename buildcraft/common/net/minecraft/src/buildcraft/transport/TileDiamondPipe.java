@@ -10,6 +10,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.Item;
 import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
@@ -101,6 +102,9 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 		for (Orientations dir : possibilities) {
 			boolean foundFilter = false;
 
+			// NB: if there's several of the same match, the probability
+			// to use that filter is higher, this is why there are
+			// no breaks here.
 			for (int slot = 0; slot < 9; ++slot) {
 				ItemStack stack = getStackInSlot(dir.ordinal() * 9 + slot);
 
@@ -108,15 +112,17 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 					foundFilter = true;
 				}
 
-				if (stack != null
-						&& stack.itemID == item.item.itemID
-						&& stack.getItemDamage() == item.item
-								.getItemDamage()) {
-					
-					// NB: if there's several of the same match, the probability
-					// to use that filter is higher, this is why there's no
-					// break here.
-					filteredOrientations.add(dir);
+				if (stack != null && stack.itemID == item.item.itemID)
+				{
+					if(item.item.itemID > 255)
+					{
+						if(Item.itemsList[item.item.itemID].isDamagable())
+						{
+							filteredOrientations.add(dir);
+						}
+					} else if(stack.getItemDamage() == item.item.getItemDamage()) {
+						filteredOrientations.add(dir);
+					}
 				} 
 			}
 			if (!foundFilter) {				
