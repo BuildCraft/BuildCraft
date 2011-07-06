@@ -5,6 +5,7 @@ import java.io.File;
 import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.Item;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
 import net.minecraft.src.Packet230ModLoader;
@@ -56,6 +57,10 @@ public class CoreProxy {
 	public static void addLocalization(String s1, String string) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public static boolean isDamageable (Item item) {
+		return item.func_25005_e();
 	}
 	
 }
