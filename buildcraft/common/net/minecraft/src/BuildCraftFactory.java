@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.BlockFrame;
@@ -37,15 +38,17 @@ public class BuildCraftFactory {
 								PropertyKind.General, true).value);
 		
 		Property minigWellId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("miningWell.id", 150);
+				.getOrCreateBlockIdProperty("miningWell.id",
+						DefaultProps.MINING_WELL_ID);
 		Property plainPipeId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("drill.id", 151);
+				.getOrCreateBlockIdProperty("drill.id", DefaultProps.DRILL_ID);
 		Property autoWorkbenchId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("autoWorkbench.id", 152);
+				.getOrCreateBlockIdProperty("autoWorkbench.id",
+						DefaultProps.AUTO_WORKBENCH_ID);
 		Property frameId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("frame.id", 160);
+				.getOrCreateBlockIdProperty("frame.id", DefaultProps.FRAME_ID);
 		Property quarryId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("quarry.id", 153);
+				.getOrCreateBlockIdProperty("quarry.id", DefaultProps.QUARRY_ID);
 		
 		BuildCraftCore.mainConfiguration.save();
 		
