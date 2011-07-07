@@ -1,7 +1,5 @@
 package net.minecraft.src.buildcraft.api;
 
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
-
 public interface IBlockPipe extends ICustomHeightInPipe {
 
 	/**
