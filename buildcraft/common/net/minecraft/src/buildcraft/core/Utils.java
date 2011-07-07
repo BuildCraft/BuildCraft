@@ -8,7 +8,6 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryLargeChest;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
@@ -135,7 +134,7 @@ public class Utils {
 			
 			w.entityJoinedWorld(entity);
 			pipeEntry.entityEntering(entity, entityPos.orientation);
-			
+			items.stackSize = 0;
 			return true;
 		} else {
 			return false;
