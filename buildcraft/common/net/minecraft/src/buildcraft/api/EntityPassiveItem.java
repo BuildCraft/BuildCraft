@@ -37,7 +37,7 @@ public class EntityPassiveItem extends Entity {
 	public EntityPassiveItem(World world, double d, double d1, double d2, 
 			ItemStack itemstack) {
 		this (world, d, d1, d2);
-		this.item = itemstack;
+		this.item = itemstack.copy();
 		
 		if (itemstack.itemID == 0) {
 			// Defensive code, in case of item corruption.

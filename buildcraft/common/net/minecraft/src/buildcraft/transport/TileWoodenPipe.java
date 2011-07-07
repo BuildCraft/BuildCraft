@@ -17,7 +17,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	boolean lastPower = false;
 	
 	public TileWoodenPipe () {
-		latency = 50;
+		latency = 50;		
 	}
 	
 	/** 
