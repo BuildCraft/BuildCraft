@@ -3,6 +3,7 @@ package net.minecraft.src;
 import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.BlockCobblestonePipe;
 import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.transport.BlockGoldenPipe;
@@ -45,23 +46,30 @@ public class BuildCraftTransport {
 		mod_BuildCraftCore.initialize();						
 			
 		Property woodenPipeId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("woodenPipe.id", 145);
+				.getOrCreateBlockIdProperty("woodenPipe.id",
+						DefaultProps.WOODEN_PIPE_ID);
 		Property stonePipeId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("stonePipe.id", 146);
+				.getOrCreateBlockIdProperty("stonePipe.id",
+						DefaultProps.STONE_PIPE_ID);
 		Property ironPipeId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("ironPipe.id", 147);
+				.getOrCreateBlockIdProperty("ironPipe.id",
+						DefaultProps.IRON_PIPE_ID);
 		Property goldenPipeId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("goldenPipe.id", 148);
+				.getOrCreateBlockIdProperty("goldenPipe.id",
+						DefaultProps.GOLDEN_PIPE_ID);
 		Property diamondPipeId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("diamondPipe.id", 149);
+				.getOrCreateBlockIdProperty("diamondPipe.id",
+						DefaultProps.DIAMOND_PIPE_ID);
 		Property obsidianPipeId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("obsidianPipe.id", 156);
+				.getOrCreateBlockIdProperty("obsidianPipe.id",
+						DefaultProps.OBSIDIAN_PIPE_ID);
 		Property cobblestonePipeId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("cobblestonePipe.id", 159);
+				.getOrCreateBlockIdProperty("cobblestonePipe.id",
+						DefaultProps.COBBLESTONE_PIPE_ID);
 		
 		Property alwaysConnect = BuildCraftCore.mainConfiguration
 				.getOrCreateBooleanProperty("pipes.alwaysConnect",
-						PropertyKind.General, false);
+						PropertyKind.General, DefaultProps.PIPES_ALWAYS_CONNECT);
 		alwaysConnect.comment = 
 			"set to false to deactivate pipe connection rules, true by default";
 		

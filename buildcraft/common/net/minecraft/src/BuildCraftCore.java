@@ -13,6 +13,7 @@ import net.minecraft.src.buildcraft.core.Configuration;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class BuildCraftCore {
 	public static Configuration mainConfiguration;
@@ -70,17 +71,23 @@ public class BuildCraftCore {
 		}
 		
 		Property woodenGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateIntProperty("woodenGearItem.id", PropertyKind.Item, 3800);
+				.getOrCreateIntProperty("woodenGearItem.id", PropertyKind.Item,
+						DefaultProps.WOODEN_GEAR_ID);
 		Property stoneGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateIntProperty("stoneGearItem.id", PropertyKind.Item, 3801);
+				.getOrCreateIntProperty("stoneGearItem.id", PropertyKind.Item,
+						DefaultProps.STONE_GEAR_ID);
 		Property ironGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateIntProperty("ironGearItem.id", PropertyKind.Item, 3802);
+				.getOrCreateIntProperty("ironGearItem.id", PropertyKind.Item,
+						DefaultProps.IRON_GEAR_ID);
 		Property goldenGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateIntProperty("goldenGearItem.id", PropertyKind.Item, 3803);
+				.getOrCreateIntProperty("goldenGearItem.id", PropertyKind.Item,
+						DefaultProps.GOLDEN_GEAR_ID);
 		Property diamondGearId = BuildCraftCore.mainConfiguration
-		.getOrCreateIntProperty("diamondGearItem.id", PropertyKind.Item, 3804);
+				.getOrCreateIntProperty("diamondGearItem.id",
+						PropertyKind.Item, DefaultProps.DIAMOND_GEAR_ID);
 		Property continuousCurrent = BuildCraftCore.mainConfiguration
-		.getOrCreateBooleanProperty("current.continuous", PropertyKind.General, false);
+				.getOrCreateBooleanProperty("current.continuous",
+						PropertyKind.General, DefaultProps.CURRENT_CONTINUOUS);
 		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 		
 		BuildCraftCore.mainConfiguration.save();
