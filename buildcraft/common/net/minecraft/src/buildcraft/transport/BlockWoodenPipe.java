@@ -1,10 +1,13 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.APIProxy;
 
 public class BlockWoodenPipe extends BlockPipe {
 	
@@ -52,4 +55,15 @@ public class BlockWoodenPipe extends BlockPipe {
     	}
 				
     }
+	
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
+		TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+
+		if (BuildCraftTransport.alwaysConnectPipes) {
+			return super.isPipeConnected(blockAccess, x, y, z);
+		} else {
+			return !(tile instanceof TileWoodenPipe)
+			&& super.isPipeConnected(blockAccess, x, y, z);
+		}
+	}
 }

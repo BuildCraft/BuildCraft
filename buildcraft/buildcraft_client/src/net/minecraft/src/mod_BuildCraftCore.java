@@ -79,7 +79,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
-		if (block instanceof ICustomTextureBlock) {
+		if (block instanceof ICustomTextureBlock && renderblocks.overrideBlockTexture == -1) {
 			Tessellator tessellator = Tessellator.instance;
 			tessellator.draw();
 			tessellator.startDrawingQuads();
@@ -177,7 +177,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 			renderblocks.renderBlockFluids(block, i, j, k);
 		}
 
-		if (block instanceof ICustomTextureBlock) {
+		if (block instanceof ICustomTextureBlock  && renderblocks.overrideBlockTexture == -1) {
 			Tessellator tessellator = Tessellator.instance;
 			tessellator.draw();
 			tessellator.startDrawingQuads();
