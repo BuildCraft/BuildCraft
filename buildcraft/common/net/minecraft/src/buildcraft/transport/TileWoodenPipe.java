@@ -173,7 +173,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		}
 	}
 	
-	boolean inSetSource = false;
+	private boolean inSetSource = false;
 	
 	public void setSourceIfNeeded () {
 		if (inSetSource) {
