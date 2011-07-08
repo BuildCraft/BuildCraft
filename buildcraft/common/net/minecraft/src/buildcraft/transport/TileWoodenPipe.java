@@ -167,12 +167,24 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			}
 		}
 		
-		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		if (newMeta != meta) {
+			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
 	}
 	
+	boolean inSetSource = false;
+	
 	public void setSourceIfNeeded () {
+		if (inSetSource) {
+			//  This is needed to protect against corner recursive cases
+			return;
+		}
+		
+		inSetSource = true;
+		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		
 		
 		if (meta > 5) {
 			switchSource();
@@ -187,7 +199,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 				switchSource();
 			}
 		}
-		
+				
+		inSetSource = false;		
 	}
 	
 
