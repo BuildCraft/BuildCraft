@@ -14,6 +14,7 @@ import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.BuildCraftEffectRenderer;
 
 public class mod_BuildCraftCore extends BaseModMp {
 
@@ -47,6 +48,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public static boolean initialized = false;
 	
+	public static BuildCraftEffectRenderer eff_rend = null;
+	
 	public static void initialize() {
 		BuildCraftCore.initialize();
 		
@@ -79,6 +82,11 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
+			
+			if(eff_rend == null) eff_rend = new BuildCraftEffectRenderer(ModLoader.getMinecraftInstance().theWorld, ModLoader.getMinecraftInstance().renderEngine);
+	
+		if(ModLoader.getMinecraftInstance().effectRenderer != eff_rend) ModLoader.getMinecraftInstance().effectRenderer = eff_rend;
+			
 		if (block instanceof ICustomTextureBlock && renderblocks.overrideBlockTexture == -1) {
 			Tessellator tessellator = Tessellator.instance;
 			tessellator.draw();
