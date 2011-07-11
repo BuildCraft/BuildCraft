@@ -19,6 +19,8 @@ import net.minecraft.src.mod_BuildCraftCore;
 
 public class Configuration {
 	
+	private boolean buildCraftBlocks [] = null;
+	
 	public enum PropertyKind {
 		General,
 		Block,
@@ -47,7 +49,15 @@ public class Configuration {
 		load ();
 	}
 	
-	public Property getOrCreateBlockIdProperty (String key, int defaultId) {			
+	public Property getOrCreateBlockIdProperty (String key, int defaultId) {
+		if (buildCraftBlocks == null) {
+			buildCraftBlocks = new boolean [Block.blocksList.length];
+			
+			for (int i = 0; i < buildCraftBlocks.length; ++i) {
+				buildCraftBlocks [i] = false;
+			}
+		}
+		
 		if (blockProperties.containsKey(key)) {			
 			return getOrCreateIntProperty(key, PropertyKind.Block, defaultId);
 		} else {
@@ -56,13 +66,16 @@ public class Configuration {
 			blockProperties.put(key, property);
 			property.name = key;
 			
-			if (Block.blocksList [defaultId] == null) {
+			if (Block.blocksList [defaultId] == null
+					&& !buildCraftBlocks [defaultId]) {
 				property.value = Integer.toString(defaultId);
+				buildCraftBlocks [defaultId] = true;
 				return property;
 			} else {
     			for (int j = Block.blocksList.length - 1; j >= 0; --j) {
-    				if (Block.blocksList [j] == null) {
+    				if (Block.blocksList [j] == null && !buildCraftBlocks [j]) {
     					property.value = Integer.toString(j);
+    					buildCraftBlocks [j] = true;
     					return property;
     				}
     			}
