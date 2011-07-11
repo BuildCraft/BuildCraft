@@ -41,7 +41,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	
 	@Override
 	public String Version() {
-		return "1.7.2.1";
+		return "1.7.3.1";
 	}
 	
 	 public void HandlePacket(Packet230ModLoader packet) {
