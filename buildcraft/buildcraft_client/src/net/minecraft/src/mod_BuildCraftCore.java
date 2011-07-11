@@ -49,6 +49,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public static boolean initialized = false;
 	
 	public static BuildCraftEffectRenderer eff_rend = null;
+	public static World current_world = null;
 	
 	public static void initialize() {
 		BuildCraftCore.initialize();
@@ -83,13 +84,12 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 			
-		if (eff_rend == null) {
-			eff_rend = new BuildCraftEffectRenderer(
-					ModLoader.getMinecraftInstance().theWorld,
-					ModLoader.getMinecraftInstance().renderEngine);
-		}
-	
-		if (ModLoader.getMinecraftInstance().effectRenderer != eff_rend) {
+		if(ModLoader.getMinecraftInstance().theWorld != current_world || 
+		   ModLoader.getMinecraftInstance().effectRenderer != eff_rend || 
+		   eff_rend == null) {
+		
+			current_world = ModLoader.getMinecraftInstance().theWorld;
+			eff_rend = new BuildCraftEffectRenderer(current_world, ModLoader.getMinecraftInstance().renderEngine);
 			ModLoader.getMinecraftInstance().effectRenderer = eff_rend;
 		}
 			
