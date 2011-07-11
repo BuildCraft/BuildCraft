@@ -3,15 +3,16 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
+import net.minecraft.src.buildcraft.core.BuildCraftContainer;
 
-class CraftingDiamondPipe extends Container {
+class CraftingDiamondPipe extends BuildCraftContainer {
 	
 	IInventory playerIInventory;
 	IInventory filterIInventory;
 	
 	public CraftingDiamondPipe (IInventory playerInventory, IInventory filterInventory) {		
+		super (filterInventory.getSizeInventory());		
 		this.playerIInventory = playerInventory;
 		this.filterIInventory = filterInventory;
 		
@@ -37,24 +38,6 @@ class CraftingDiamondPipe extends Container {
         {
             addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 198));
         }
-	}
-	
-	public ItemStack getStackInSlot(int i)
-    {	
-		if (i < filterIInventory.getSizeInventory()) {
-			return filterIInventory.getStackInSlot(i);
-		} else {
-			return playerIInventory.getStackInSlot(i
-					- filterIInventory.getSizeInventory());
-		}		
-    }
-	
-	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
-		return true;
-	}
-
-	public boolean canInteractWith(EntityPlayer entityplayer) {		
-		return isUsableByPlayer(entityplayer);
 	}
 	
 }

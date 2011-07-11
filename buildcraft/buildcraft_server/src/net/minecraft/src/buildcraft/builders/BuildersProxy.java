@@ -31,7 +31,7 @@ public class BuildersProxy {
 	public static boolean canPlaceTorch(World world, int i, int j, int k) {
 		Block block = Block.blocksList [world.getBlockId(i, j, k)];
 		
-		if (block == null || !block.func_28025_b()) {
+		if (block == null || !block.isACube()) {
 			return false;
 		} else {
 			return true;

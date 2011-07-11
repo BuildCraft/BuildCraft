@@ -30,7 +30,7 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe {
 		return false;
 	}
 
-	public boolean func_28025_b () {
+	public boolean isACube () {
 		return false;
 	}
 
