@@ -125,36 +125,32 @@ public class BuildCraftEffectRenderer extends EffectRenderer
             {
                 j = renderer.getTexture("/gui/items.png");
             }
-			if(i == 0 || i == 2)
+			GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, j);
+			Tessellator tessellator = Tessellator.instance;
+			tessellator.startDrawingQuads();
+			for(int k = 0; k < fxLayers[i].size(); k++)
 			{
-				GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, j);
-				Tessellator tessellator = Tessellator.instance;
-				tessellator.startDrawingQuads();
-				for(int k = 0; k < fxLayers[i].size(); k++)
-				{
-					EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
-					entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
-				}
-				tessellator.draw();
+				EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
+				if(entityfx instanceof EntityDiggingFX) continue;
+				entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
 			}
-			else
-			{
-				Tessellator tessellator = Tessellator.instance;
-				
-				for(int x = 0; x < effectList.size(); x++)
-				{
-					BlockTextureParticles entry = (BlockTextureParticles)effectList.get(x);
-					GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, renderer.getTexture(entry.texture));
-					tessellator.startDrawingQuads();
-					for(int y =0; y < entry.effects.size(); y++)
-					{
-						EntityFX entityfx = (EntityFX)entry.effects.get(y);
-						entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
-					}
-					tessellator.draw();
-				}
-			}
+			tessellator.draw();
         }
+		
+		Tessellator tessellator = Tessellator.instance;
+				
+		for(int x = 0; x < effectList.size(); x++)
+		{
+			BlockTextureParticles entry = (BlockTextureParticles)effectList.get(x);
+			GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, renderer.getTexture(entry.texture));
+			tessellator.startDrawingQuads();
+			for(int y =0; y < entry.effects.size(); y++)
+			{
+				EntityFX entityfx = (EntityFX)entry.effects.get(y);
+				entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
+			}
+			tessellator.draw();
+		}
 
     }
 	
