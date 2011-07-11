@@ -41,7 +41,7 @@ public abstract class BlockPipe extends BlockContainer implements
         return false;
     }
 
-    public boolean func_28025_b () {
+    public boolean isACube () {
     	return false;
     }
     

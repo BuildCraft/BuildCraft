@@ -63,7 +63,7 @@ public class BlockMarker extends BlockContainer {
         return BuildCraftCore.markerModel;
     }
     
-    public boolean func_28025_b () {
+    public boolean isACube () {
     	return false;
     }    
 

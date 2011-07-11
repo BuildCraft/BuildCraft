@@ -34,7 +34,7 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IC
         return false;
     }
     
-    public boolean func_28025_b () {
+    public boolean isACube () {
     	return false;
     }    
     

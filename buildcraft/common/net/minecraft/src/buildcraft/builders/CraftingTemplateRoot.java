@@ -1,18 +1,17 @@
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
+import net.minecraft.src.buildcraft.core.BuildCraftContainer;
 
-class CraftingTemplateRoot extends Container {
+class CraftingTemplateRoot extends BuildCraftContainer {
 	
 	IInventory playerIInventory;
 	TileTemplate template;
 	int computingTime = 0;
 	
-	public CraftingTemplateRoot (IInventory playerInventory, TileTemplate template) {		
+	public CraftingTemplateRoot (IInventory playerInventory, TileTemplate template) {
+		super (2);
 		this.playerIInventory = playerInventory;
 		this.template = template;
 		
@@ -30,22 +29,5 @@ class CraftingTemplateRoot extends Container {
             addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
         }
 	}
-	
-	public ItemStack getStackInSlot(int i)
-    {	
-		if (i < template.getSizeInventory()) {
-			return template.getStackInSlot(i);
-		} else {
-			return playerIInventory.getStackInSlot(i
-					- template.getSizeInventory());
-		}		
-    }
-	
-	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
-		return true;
-	}
 
-	public boolean canInteractWith(EntityPlayer entityplayer) {		
-		return isUsableByPlayer(entityplayer);
-	}	
 }
