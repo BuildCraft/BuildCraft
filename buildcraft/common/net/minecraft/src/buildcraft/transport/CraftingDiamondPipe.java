@@ -1,7 +1,5 @@
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 import net.minecraft.src.buildcraft.core.BuildCraftContainer;

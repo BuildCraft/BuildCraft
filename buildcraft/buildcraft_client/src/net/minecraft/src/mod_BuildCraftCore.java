@@ -83,9 +83,15 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 			
-			if(eff_rend == null) eff_rend = new BuildCraftEffectRenderer(ModLoader.getMinecraftInstance().theWorld, ModLoader.getMinecraftInstance().renderEngine);
+		if (eff_rend == null) {
+			eff_rend = new BuildCraftEffectRenderer(
+					ModLoader.getMinecraftInstance().theWorld,
+					ModLoader.getMinecraftInstance().renderEngine);
+		}
 	
-		if(ModLoader.getMinecraftInstance().effectRenderer != eff_rend) ModLoader.getMinecraftInstance().effectRenderer = eff_rend;
+		if (ModLoader.getMinecraftInstance().effectRenderer != eff_rend) {
+			ModLoader.getMinecraftInstance().effectRenderer = eff_rend;
+		}
 			
 		if (block instanceof ICustomTextureBlock && renderblocks.overrideBlockTexture == -1) {
 			Tessellator tessellator = Tessellator.instance;
