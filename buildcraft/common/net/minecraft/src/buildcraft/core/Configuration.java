@@ -58,8 +58,11 @@ public class Configuration {
 			}
 		}
 		
-		if (blockProperties.containsKey(key)) {			
-			return getOrCreateIntProperty(key, PropertyKind.Block, defaultId);
+		if (blockProperties.containsKey(key)) {						
+			Property property = getOrCreateIntProperty(key, PropertyKind.Block,
+					defaultId);
+			buildCraftBlocks [Integer.parseInt(property.value)] = true;
+			return property;
 		} else {
 			Property property = new Property();
 
