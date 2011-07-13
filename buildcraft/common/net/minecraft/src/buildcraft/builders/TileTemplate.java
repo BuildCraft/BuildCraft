@@ -71,7 +71,7 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
     }
     
     public void createBluePrint () {
-    	if (box == null && items [1] != null) {
+    	if (box == null || items [1] != null) {
     		return;
     	}
     	
@@ -247,8 +247,10 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
     	Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
     }
     
-    private void initializeComputing () {
-    	if (!isComputing) {
+    private void initializeComputing () {    	
+    	if (box == null) {
+    		return;
+    	} else if (!isComputing) {
 			if (items[0] != null && items[0].getItem() instanceof ItemTemplate
 					&& items[1] == null) {
     			isComputing = true;
