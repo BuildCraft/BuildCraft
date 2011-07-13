@@ -15,6 +15,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	private ModelRenderer box;
 	private ModelRenderer trunk;
 	private ModelRenderer movingBox;
+	private ModelRenderer chamber;
 	private String baseTexture;	
 
 	public RenderEngine () {
@@ -37,6 +38,12 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.rotationPointX = 8F;
 		movingBox.rotationPointY = 8F;
 		movingBox.rotationPointZ = 8F;
+		
+		chamber = new ModelRenderer(0, 0);
+		chamber.addBox(-5F, -4, -5F, 10, 2, 10);
+		chamber.rotationPointX = 8F;
+		chamber.rotationPointY = 8F;
+		chamber.rotationPointZ = 8F;
 	}
 	
 	public RenderEngine (String baseTexture) {
@@ -80,30 +87,31 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		
 		float [] angle = {0, 0, 0};
 		float [] translate = {0, 0, 0};
+		float translatefact = step / 16;
 
 		switch (orientation) {
 		case XPos:
 			angle [2] = (float) -Math.PI / 2;
-			translate [0] = step / 16;
+			translate [0] = 1;
 			break;
 		case XNeg:
 			angle [2] = (float) Math.PI / 2;
-			translate [0] = -step / 16;
+			translate [0] = -1;
 			break;
 		case YPos:
-			translate [1] = step / 16;
+			translate [1] = 1;
 			break;
 		case YNeg:
 			angle [2] = (float) Math.PI;
-			translate [1] = -step / 16;
+			translate [1] = -1;
 			break;
 		case ZPos:
 			angle [0] = (float) Math.PI / 2;
-			translate [2] = step / 16;
+			translate [2] = 1;
 			break;
 		case ZNeg:
 			angle [0] = (float) -Math.PI / 2;
-			translate [2] = -step / 16;
+			translate [2] = -1;
 			break;
 		}
 		
@@ -119,6 +127,10 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.rotateAngleY = angle [1];
 		movingBox.rotateAngleZ = angle [2];
 		
+		chamber.rotateAngleX = angle [0];
+		chamber.rotateAngleY = angle [1];
+		chamber.rotateAngleZ = angle [2];
+		
 		float factor = (float) (1.0 / 16.0);
 				
 		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
@@ -127,11 +139,27 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		box.render(factor);
 		
-		GL11.glTranslatef(translate[0], translate[1], translate[2]);		
+		GL11.glTranslatef(translate[0] * translatefact, translate[1]
+				* translatefact, translate[2] * translatefact);		
 		movingBox.render(factor);
-		GL11.glTranslatef(-translate[0], -translate[1], -translate[2]);
+		GL11.glTranslatef(-translate[0] * translatefact, -translate[1]
+				* translatefact, -translate[2] * translatefact);
 		
-
+		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
+				.getMinecraftInstance().renderEngine
+				.getTexture("/net/minecraft/src/buildcraft/energy/gui/chamber.png"));
+		
+		float chamberf = 2F / 16F;
+		
+		for (int i = 0; i <= step + 2; i += 2) {
+			chamber.render(factor);
+			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf, translate[2] * chamberf);
+		}
+		
+		for (int i = 0; i <= step + 2; i += 2) {
+			GL11.glTranslatef(-translate[0] * chamberf, -translate[1] * chamberf, -translate[2] * chamberf);
+		}
+		
 		String texture = "";
 
 		switch (energy) {
