@@ -36,7 +36,11 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 				Orientations.values()[meta]);		
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
-				(int) pos.z);						
+				(int) pos.z);					
+		
+		if (tile == null || !(tile instanceof IInventory)) {
+			return;
+		}
 		
 		IInventory inventory = (IInventory) tile;
 		
