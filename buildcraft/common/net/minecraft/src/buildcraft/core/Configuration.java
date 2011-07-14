@@ -221,6 +221,7 @@ public class Configuration {
 								Property prop = new Property();
 								prop.name = propertyName;
 								prop.value = line.substring(i + 1);
+								i = line.length();
 								
 								currentMap.put(propertyName, prop);
 								

@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.EntityPlayer;
@@ -10,6 +11,8 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.APIProxy;
 
 public class BlockWoodenPipe extends BlockPipe {
+	
+	public static String [] excludedBlocks;
 	
 	int plainWoodenPipeTexture;
 	
@@ -65,5 +68,20 @@ public class BlockWoodenPipe extends BlockPipe {
 			return !(tile instanceof TileWoodenPipe)
 			&& super.isPipeConnected(blockAccess, x, y, z);
 		}
+	}
+	
+	public static boolean isExcludedFromExtraction (Block block) {
+		if (block == null) {
+			return true;
+		}
+		
+		for (String excluded : excludedBlocks) {			
+			if (excluded.equals (block.getBlockName())
+					|| excluded.equals (Integer.toString(block.blockID))) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
