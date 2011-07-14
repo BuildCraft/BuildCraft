@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
@@ -35,10 +36,15 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		Position pos = new Position(xCoord, yCoord, zCoord,
 				Orientations.values()[meta]);		
 		pos.moveForwards(1);
+		int blockId = w.getBlockId((int) pos.x, (int) pos.y,
+				(int) pos.z);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
 				(int) pos.z);					
 		
-		if (tile == null || !(tile instanceof IInventory)) {
+		if (tile == null
+				|| !(tile instanceof IInventory)
+				|| BlockWoodenPipe
+						.isExcludedFromExtraction(Block.blocksList[blockId])) {
 			return;
 		}
 		
@@ -162,12 +168,16 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			
 			pos.moveForwards(1);
 			
+			Block block = Block.blocksList[worldObj.getBlockId((int) pos.x,
+					(int) pos.y, (int) pos.z)];
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 			
 			if (tile instanceof IInventory) {
-				newMeta = o.ordinal();
-				break;
+				if (!BlockWoodenPipe.isExcludedFromExtraction(block)) {
+					newMeta = o.ordinal();
+					break;
+				}
 			}
 		}
 		

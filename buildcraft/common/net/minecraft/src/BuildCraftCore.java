@@ -91,7 +91,7 @@ public class BuildCraftCore {
 						DefaultProps.GOLDEN_GEAR_ID);
 		Property diamondGearId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("diamondGearItem.id",
-						PropertyKind.Item, DefaultProps.DIAMOND_GEAR_ID);
+						PropertyKind.Item, DefaultProps.DIAMOND_GEAR_ID);		
 		
 		BuildCraftCore.mainConfiguration.save();
 		
@@ -151,7 +151,7 @@ public class BuildCraftCore {
 		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
 				Character.valueOf('G'), goldGearItem });
-		CoreProxy.addName(diamondGearItem, "Diamond Gear");				
+		CoreProxy.addName(diamondGearItem, "Diamond Gear");
 
 		BuildCraftCore.mainConfiguration.save();
 	}

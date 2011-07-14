@@ -72,6 +72,17 @@ public class BuildCraftTransport {
 						PropertyKind.General, DefaultProps.PIPES_ALWAYS_CONNECT);
 		alwaysConnect.comment = 
 			"set to false to deactivate pipe connection rules, true by default";
+
+		Property exclusionList = BuildCraftCore.mainConfiguration
+				.getOrCreateProperty("woodenPipe.exclusion",
+						PropertyKind.Block, "");
+
+		BlockWoodenPipe.excludedBlocks = exclusionList.value.split(",");
+		
+		for (int j = 0; j < BlockWoodenPipe.excludedBlocks.length; ++j) {
+			BlockWoodenPipe.excludedBlocks[j] = BlockWoodenPipe.excludedBlocks[j]
+					.trim();
+		}
 		
 		BuildCraftCore.mainConfiguration.save();
 		
