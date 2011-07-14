@@ -24,11 +24,10 @@ public class BlockGoldenPipe extends BlockPipe {
 		return new TileGoldenPipe ();
 	}
 	
-    public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l)
-    {
+    public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
     	boolean isPowered = false;
 		
-		isPowered = APIProxy.getWorld().getBlockTileEntity(i, j, k).worldObj
+		isPowered = APIProxy.getWorld()
 				.isBlockIndirectlyGettingPowered(i, j, k);
 		
 		if (isPowered) {
