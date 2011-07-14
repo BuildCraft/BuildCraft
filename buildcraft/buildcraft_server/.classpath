@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="../../jars/bin/lwjgl.jar"/>
 	<classpathentry kind="lib" path="../../jars/bin/lwjgl_util.jar"/>
 	<classpathentry kind="lib" path="../../jars/minecraft_server.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/forge_server"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
