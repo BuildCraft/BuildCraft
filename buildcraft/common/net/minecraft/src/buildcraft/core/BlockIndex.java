@@ -5,9 +5,9 @@ package net.minecraft.src.buildcraft.core;
  * TODO: should this be merged with position?
  */
 public class BlockIndex implements Comparable<BlockIndex> {
-	int i;
-	int j;
-	int k;	
+	public int i;
+	public int j;
+	public int k;	
 
 	/**
 	 * Creates an index for a block located on i, j. k

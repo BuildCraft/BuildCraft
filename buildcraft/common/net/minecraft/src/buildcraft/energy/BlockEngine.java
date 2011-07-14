@@ -76,9 +76,7 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe {
 		return i;
 	}
 	
-	public void randomDisplayTick(World world, int i, int j, int k, Random random)
-    {
-
+	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 		
 		if (!tile.isBurning()) {
