@@ -61,7 +61,14 @@ public class BuildCraftCore {
 		blueLaserTexture = 0 * 16 + 1;
 		stripesLaserTexture = 0 * 16 + 3;
 		transparentTexture = 0 * 16 + 0;
+		
+		Property continuousCurrent = BuildCraftCore.mainConfiguration
+				.getOrCreateBooleanProperty("current.continuous",
+						PropertyKind.General, DefaultProps.CURRENT_CONTINUOUS);
+		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 
+		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
+		
 		mainConfiguration.save();
 	}
 	
@@ -85,14 +92,8 @@ public class BuildCraftCore {
 		Property diamondGearId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("diamondGearItem.id",
 						PropertyKind.Item, DefaultProps.DIAMOND_GEAR_ID);
-		Property continuousCurrent = BuildCraftCore.mainConfiguration
-				.getOrCreateBooleanProperty("current.continuous",
-						PropertyKind.General, DefaultProps.CURRENT_CONTINUOUS);
-		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 		
 		BuildCraftCore.mainConfiguration.save();
-		
-		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
 		
 		gearsInitialized = true;
 		
