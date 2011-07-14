@@ -24,6 +24,7 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 	
 	public BlockTemplate(int i) {
 		super(i, Material.iron);
+		setHardness(0.5F);
 		blockTextureSides = 3 * 16 + 0;
 		blockTextureTopNeg = 3 * 16 + 1;
 		blockTextureTopPos = 3 * 16 + 2;
