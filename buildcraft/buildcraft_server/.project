@@ -18,12 +18,12 @@
 		<link>
 			<name>common</name>
 			<type>2</type>
-			<location>WORKSPACE_LOC/common</location>
+			<locationURI>WORKSPACE_LOC/common</locationURI>
 		</link>
 		<link>
 			<name>minecraft_server</name>
 			<type>2</type>
-			<location>PARENT-1-WORKSPACE_LOC/src_work/minecraft_server</location>
+			<locationURI>PARENT-1-WORKSPACE_LOC/src_work/minecraft_server</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
