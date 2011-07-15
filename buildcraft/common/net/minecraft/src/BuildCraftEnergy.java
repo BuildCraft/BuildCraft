@@ -12,6 +12,7 @@ import net.minecraft.src.buildcraft.energy.BlockOilStill;
 import net.minecraft.src.buildcraft.energy.BlockPollution;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
+import net.minecraft.src.buildcraft.energy.OilPopulate;
 import net.minecraft.src.buildcraft.energy.TilePollution;
 import net.minecraft.src.forge.MinecraftForge;
 
@@ -40,6 +41,7 @@ public class BuildCraftEnergy {
         ModLoader.RegisterBlock(oilStill);        
 		
         MinecraftForge.registerCustomBucketHander(new OilBucketHandler());
+        MinecraftForge.registerBiomePopulate(new OilPopulate());
          
 		bucketOil = (new ItemBucket(71, oilMoving.blockID))
 				.setIconIndex(

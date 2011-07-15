@@ -48,6 +48,8 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	
 	BluePrintBuilder bluePrintBuilder;
 	
+	long storedEnergy = 0;
+	
 	public TileQuarry() {
 		latency = 20;
 	}
@@ -631,10 +633,8 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	public int minEnergyExpected() {
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
 			return 25;
-		} else if (!inProcess) {
+		} else {
 			return 50;
-		}  else {
-			return -1;
 		}
 	}
 
@@ -642,10 +642,8 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	public int maxEnergyExpected() {
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
 			return 25;
-		} else if (!inProcess){
-			return 200;
 		} else {
-			return -1;
+			return 200;
 		}
 	}
 
@@ -656,12 +654,37 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 				doWork();
 			}			
 		} else {
+			// TODO: Put stored energy limits...
 			if (energy >= 50) {
-				arm.speed = 0.03 + ((energy - 50) / 150) * 0.03;
+				storedEnergy += energy;
+			}
+		}		
+	}
+	
+	@Override
+	public void updateEntity () {
+		super.updateEntity();
+		
+		if (storedEnergy > 0 && arm != null) {
+			if (!inProcess) {
 				doWork();
 			}
-		}
-		
-	}
+			
+			if (inProcess) {
+				if (storedEnergy > 0) {
+					arm.speed = 0;
+					int spentEnergy;
 
+					if (storedEnergy > 10000) {
+						spentEnergy = 10;
+					} else {
+						spentEnergy = (int) (storedEnergy / 100);
+					}
+
+					arm.doMove(spentEnergy / 100F);
+					storedEnergy = storedEnergy - spentEnergy;
+				}
+			}
+		}
+	}
 }

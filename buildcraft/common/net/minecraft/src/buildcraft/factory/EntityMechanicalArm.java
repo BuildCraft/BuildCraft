@@ -175,12 +175,19 @@ public class EntityMechanicalArm extends Entity {
 		return new double [] {targetX, targetY, targetZ};
 	}
 	
-    public void onUpdate() {
+	@Override
+	public void onUpdate() {
+		if (speed > 0) {
+			doMove(speed);
+		}
+	}
+	
+    public void doMove(double instantSpeed) {
     	super.onUpdate ();
     	
     	if (inProgressionXZ) {
-			if (Math.abs(targetX - headPosX) < speed * 2
-					&& Math.abs(targetZ - headPosZ) < speed * 2) {
+			if (Math.abs(targetX - headPosX) < instantSpeed * 2
+					&& Math.abs(targetZ - headPosZ) < instantSpeed * 2) {
 				headPosX = targetX;
 				headPosZ = targetZ;
 
@@ -190,14 +197,13 @@ public class EntityMechanicalArm extends Entity {
 					listener.positionReached(this);
 				}
 			} else {
-				headPosX += Math.cos(angle) * speed;
-				headPosZ += Math.sin(angle) * speed;				
-			}    		
-    		updatePosition();
+				headPosX += Math.cos(angle) * instantSpeed;
+				headPosZ += Math.sin(angle) * instantSpeed;				
+			}
     	}
     	
     	if (inProgressionY) {
-    		if (Math.abs(targetY - headPosY) < speed * 2) {
+    		if (Math.abs(targetY - headPosY) < instantSpeed * 2) {
     			headPosY = targetY;
     			
     			inProgressionY = false;
@@ -207,12 +213,10 @@ public class EntityMechanicalArm extends Entity {
 				}
     		} else {
     			if (targetY > headPosY) {
-    				headPosY += speed / 2;
+    				headPosY += instantSpeed / 2;
     			} else {
-    				headPosY -= speed / 2;
+    				headPosY -= instantSpeed / 2;
     			}
-    			
-    			updatePosition();
     		}
     			
     	}
