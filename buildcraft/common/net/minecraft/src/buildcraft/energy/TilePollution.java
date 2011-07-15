@@ -24,17 +24,18 @@ public class TilePollution extends TileEntity {
 			}
 		} else {
 			if (timeTracker.markTimeIfDelay(worldObj, 20)) {
-				int remaining = BuildCraftEnergy.createPollution(worldObj,
-						xCoord, yCoord, zCoord, saturation);
-				
-				saturation = remaining;
-				
-				if (remaining == 0) {
-					worldObj.setBlockWithNotify(xCoord, yCoord, zCoord, 0);
-				} else {
-					worldObj.setBlockMetadata(xCoord, yCoord, zCoord, saturation * 16 / 100);		
-					worldObj.markBlockNeedsUpdate(zCoord, yCoord, zCoord);
-				}
+//				int remaining = BuildCraftEnergy.createPollution(worldObj,
+//						xCoord, yCoord, zCoord, saturation);
+//
+//				saturation = remaining;
+//
+//				if (remaining == 0) {
+//					worldObj.setBlockWithNotify(xCoord, yCoord, zCoord, 0);
+//				} else {
+//					worldObj.setBlockMetadata(xCoord, yCoord, zCoord,
+//							saturation * 16 / 100);
+//					worldObj.markBlockNeedsUpdate(zCoord, yCoord, zCoord);
+//				}
 			}
 		}
 		
