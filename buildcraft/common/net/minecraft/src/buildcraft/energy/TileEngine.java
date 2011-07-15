@@ -86,10 +86,6 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 						
 						entity.energy -= energySent;
 						receptor.receiveEnergy(energySent);
-						
-						// TODO: EXPLODE WHEN NOTHIGN CAN GET CREATED
-						BuildCraftEnergy.createPollution(worldObj, xCoord,
-								yCoord, zCoord, energySent);
 					}
 				}
 			} else if (entity.progress >= 1) {
