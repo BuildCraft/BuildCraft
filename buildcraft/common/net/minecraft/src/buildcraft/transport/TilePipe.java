@@ -18,12 +18,13 @@ import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry {
+public abstract class TilePipe extends TileCurrentPowered implements IPipeEntry, IBuildCraftTile {
 	class EntityData {	
 		boolean toCenter = true;
 		EntityPassiveItem item;

@@ -10,6 +10,7 @@ import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
 import net.minecraft.src.buildcraft.energy.BlockPollution;
+import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
@@ -43,12 +44,8 @@ public class BuildCraftEnergy {
         MinecraftForge.registerCustomBucketHander(new OilBucketHandler());
         MinecraftForge.registerBiomePopulate(new OilPopulate());
          
-		bucketOil = (new ItemBucket(71, oilMoving.blockID))
-				.setIconIndex(
-						ModLoader
-								.addOverride("/gui/items.png",
-										"/net/minecraft/src/buildcraft/energy/gui/oil_bucket.png"))
-				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
+		bucketOil = (new ItemBucketOil(71)).setItemName("bucketOil")
+				.setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 	}
 	

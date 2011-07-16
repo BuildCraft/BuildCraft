@@ -12,6 +12,7 @@ import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockMarker extends BlockContainer {
 
@@ -78,7 +79,8 @@ public class BlockMarker extends BlockContainer {
     }
     
     public void onBlockRemoval(World world, int i, int j, int k) {
-    	((TileMarker) world.getBlockTileEntity(i, j, k)).destroy();
+    	Utils.preDestroyBlock(world, i, j, k);
+    	
         super.onBlockRemoval(world, i, j, k);       
     }
     

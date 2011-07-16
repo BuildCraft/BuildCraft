@@ -451,4 +451,16 @@ public class Utils {
 			throw new RuntimeException("Invalid GUI number: " + id);
 		}
 	}
+	
+	public static void preDestroyBlock (World world, int i, int j, int k) {
+		TileEntity tile = world.getBlockTileEntity(i, j, k);
+		
+		if (tile instanceof IInventory && !APIProxy.isClient(world)) {
+			dropItems(world, (IInventory) tile, i, j, k);
+		}
+		
+		if (tile instanceof IBuildCraftTile) {
+			((IBuildCraftTile) tile).destroy();
+		}
+	}
 }

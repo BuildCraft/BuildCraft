@@ -10,6 +10,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.FillerPattern;
 import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
 
@@ -79,9 +80,8 @@ public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
     	((TileFiller) world.getBlockTileEntity(i, j, k)).checkPower();
     }
 	
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		
-		((TileFiller) world.getBlockTileEntity(i, j, k)).destroy();
+	public void onBlockRemoval(World world, int i, int j, int k) {		
+		Utils.preDestroyBlock(world, i, j, k);
 		
 		super.onBlockRemoval(world, i, j, k);
 	}

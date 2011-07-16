@@ -14,11 +14,12 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMarker extends TileEntity implements IAreaProvider, ISynchronizedTile {
+public class TileMarker extends TileEntity implements IAreaProvider, ISynchronizedTile, IBuildCraftTile {
 	
 	private static int maxSize = 64;
 	
@@ -292,6 +293,7 @@ public class TileMarker extends TileEntity implements IAreaProvider, ISynchroniz
 		return zCoord;
 	}
 	
+	@Override
 	public void destroy () {
 		if (origin != null) {
 			Origin o = origin;

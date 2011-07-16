@@ -17,13 +17,14 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileFiller extends TileCurrentPowered implements ISpecialInventory, ISynchronizedTile {
+public class TileFiller extends TileCurrentPowered implements ISpecialInventory, ISynchronizedTile, IBuildCraftTile {
 
 	private Box box;
 	FillerPattern currentPattern;
@@ -246,12 +247,11 @@ public class TileFiller extends TileCurrentPowered implements ISpecialInventory,
         return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
     }
     
+    @Override
     public void destroy () {
     	if (box != null) {
     		box.deleteLasers();    		
     	}
-    	
-    	Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
     }
 
 	@Override
