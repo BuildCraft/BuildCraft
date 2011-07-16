@@ -17,11 +17,12 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileTemplate extends TileEntity implements IInventory, ISynchronizedTile {
+public class TileTemplate extends TileEntity implements IInventory, ISynchronizedTile, IBuildCraftTile {
 
 	private Box box;
 	
@@ -239,12 +240,11 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
         nbttagcompound.setTag("Items", nbttaglist);
 	}
 	
+	@Override
     public void destroy () {
     	if (box != null) {
     		box.deleteLasers();    		
-    	}
-    	
-    	Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
+    	}    	
     }
     
     private void initializeComputing () {    	

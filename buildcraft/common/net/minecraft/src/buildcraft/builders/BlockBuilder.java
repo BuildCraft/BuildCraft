@@ -81,9 +81,7 @@ public class BlockBuilder extends BlockContainer implements ICustomTextureBlock 
     
 
     public void onBlockRemoval(World world, int i, int j, int k) {
-    	TileBuilder tile = (TileBuilder) world.getBlockTileEntity(i, j, k);
-    	
-    	tile.delete ();
+    	Utils.preDestroyBlock(world, i, j, k);
     	super.onBlockRemoval(world, i, j, k);
     }
 

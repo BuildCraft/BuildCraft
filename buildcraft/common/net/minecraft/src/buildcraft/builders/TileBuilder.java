@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
@@ -25,7 +26,7 @@ import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileBuilder extends TileCurrentPowered implements IInventory, ISynchronizedTile {
+public class TileBuilder extends TileCurrentPowered implements IInventory, ISynchronizedTile, IBuildCraftTile {
 
 	ItemStack items [] = new ItemStack [28];
 	
@@ -267,9 +268,8 @@ public class TileBuilder extends TileCurrentPowered implements IInventory, ISync
         }
     }
 
-	public void delete() {
-		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
-		
+    @Override
+	public void destroy() {		
 		if (box != null) {
 			box.deleteLasers();
 		}
@@ -355,6 +355,5 @@ public class TileBuilder extends TileCurrentPowered implements IInventory, ISync
 		
 		return packet;
 	}
-
 	
 }

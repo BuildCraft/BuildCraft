@@ -52,9 +52,8 @@ public class BlockAutoWorkbench extends BlockContainer implements
 		return new TileAutoWorkbench ();
 	}
 	
-    public void onBlockRemoval(World world, int i, int j, int k) {   
-		Utils.dropItems(world,
-				(IInventory) world.getBlockTileEntity(i, j, k), i, j, k);
+    public void onBlockRemoval(World world, int i, int j, int k) {
+    	Utils.preDestroyBlock(world, i, j, k);
     	
         super.onBlockRemoval(world, i, j, k);        
     }

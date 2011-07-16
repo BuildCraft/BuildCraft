@@ -20,7 +20,6 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
-import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileDiamondPipe extends TilePipe implements IInventory,
 		ISpecialInventory {
@@ -160,12 +159,6 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
     	}
     	
     	nbttagcompound.setTag("items", nbttaglist);    	
-    }
-    
-    public void destroy () {
-    	super.destroy();
-    	
-		Utils.dropItems(worldObj, this, xCoord, yCoord, zCoord);
     }
 
 	@Override

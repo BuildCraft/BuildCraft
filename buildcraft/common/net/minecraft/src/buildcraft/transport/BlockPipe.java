@@ -98,7 +98,7 @@ public abstract class BlockPipe extends BlockContainer implements
     }
     
     public void onBlockRemoval(World world, int i, int j, int k) {    	
-		((TilePipe) world.getBlockTileEntity(i, j, k)).destroy();
+		Utils.preDestroyBlock(world, i, j, k);
 		
     	super.onBlockRemoval(world, i, j, k);
     }

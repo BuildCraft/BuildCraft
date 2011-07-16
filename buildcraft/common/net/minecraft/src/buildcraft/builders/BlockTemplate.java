@@ -53,7 +53,7 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 	}	
 	
 	public void onBlockRemoval(World world, int i, int j, int k) {		
-		((TileTemplate) world.getBlockTileEntity(i, j, k)).destroy();
+		Utils.preDestroyBlock(world, i, j, k);
 		
 		super.onBlockRemoval(world, i, j, k);
 	}

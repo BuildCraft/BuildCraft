@@ -87,7 +87,7 @@ public class BlockQuarry extends BlockMachineRoot implements
 	
 
 	public void onBlockRemoval(World world, int i, int j, int k) {
-		((TileQuarry) world.getBlockTileEntity(i, j, k)).delete();
+		Utils.preDestroyBlock(world, i, j, k);
 		
 		super.onBlockRemoval(world, i, j, k);
 	}

@@ -10,6 +10,8 @@ xcopy /Y /E buildcraft\buildcraft_server\src\net\* src\minecraft_server\net
 xcopy /Y /E buildcraft\common\net\* src\minecraft\net
 xcopy /Y /E buildcraft\common\net\* src\minecraft_server\net
 
+xcopy /Y /E forge\forge_client\src\net\* src\minecraft\net
+
 xcopy /Y /E forge\forge_common\net\* src\minecraft\net
 xcopy /Y /E forge\forge_common\net\* src\minecraft_server\net
 

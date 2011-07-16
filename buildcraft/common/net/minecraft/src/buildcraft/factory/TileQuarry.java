@@ -21,6 +21,7 @@ import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
@@ -30,7 +31,7 @@ import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileCurrentPowered implements IArmListener,
-		IMachine, ISynchronizedTile, IPowerReceptor {
+		IMachine, ISynchronizedTile, IPowerReceptor, IBuildCraftTile {
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
@@ -365,7 +366,8 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 				&& blockID != Block.snow.blockID;
 	}
 	
-	public void delete () {
+	@Override
+	public void destroy () {
 		if (arm != null) {
 			arm.setEntityDead ();
 		}

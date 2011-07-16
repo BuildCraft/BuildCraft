@@ -103,6 +103,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 					.getMinecraftInstance().renderEngine
 					.getTexture(((ICustomTextureBlock) (block))
 							.getTextureFile()));
+			
 		}
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
@@ -119,7 +120,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 					iblockaccess.getBlockMetadata(i, j, k));
 		} else if (block.getRenderType() == BuildCraftCore.customTextureModel) {
 			renderblocks.renderStandardBlock(block, i, j, k);
-		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
+		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {			
 			float minSize = Utils.pipeMinSize;
 			float maxSize = Utils.pipeMaxSize;
 			int initialTexture = block.blockIndexInTexture;
