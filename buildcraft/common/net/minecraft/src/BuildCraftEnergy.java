@@ -1,23 +1,23 @@
 package net.minecraft.src;
 
-import java.util.LinkedList;
 import java.util.TreeMap;
 
-import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
-import net.minecraft.src.buildcraft.energy.BlockPollution;
 import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
-import net.minecraft.src.buildcraft.energy.TilePollution;
 import net.minecraft.src.forge.MinecraftForge;
 
 public class BuildCraftEnergy {
+	
+	public final static int ENERGY_REMOVE_BLOCK = 25;
+	public final static int ENERGY_EXTRACT_ITEM = 2;
+		
 	public static BlockEngine engineBlock;
 	
 	public static Block oilMoving;

@@ -13,8 +13,6 @@ public class TileIronPipe extends TilePipe {
 
 	public TileIronPipe() {
 		super();
-		
-		continuousCurrentModel = false;
 	}
 
 	boolean lastPower = false;

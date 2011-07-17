@@ -5,7 +5,6 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 
 public class BlockPollution extends BlockContainer implements ICustomTextureBlock {

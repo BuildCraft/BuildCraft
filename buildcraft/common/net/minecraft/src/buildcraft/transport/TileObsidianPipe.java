@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityArrow;
 import net.minecraft.src.EntityItem;
@@ -18,21 +19,26 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.IPowerReceptor;
+import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileObsidianPipe extends TilePipe {
-
-//	TreeMap <Integer, Boolean> recentlyThrownItems
+public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
+	
+	private PowerProvider powerProvider;
+	
 	
 	public TileObsidianPipe () {
 		super ();
-		latency = 25;
 		
 		entitiesDropped = new int [32];
 		
 		for (int i = 0; i < entitiesDropped.length; ++i) {
 			entitiesDropped [i] = -1;
 		}
+		
+		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider.configure(25, 5, 5, 100);
 	}
 	
 	private int [] entitiesDropped;
@@ -145,7 +151,8 @@ public class TileObsidianPipe extends TilePipe {
 				max.y, max.z);	
 	}
 	
-	protected void doWork () {		
+	@Override
+	public void doWork () {		
 		AxisAlignedBB box = getSuckingBox(getSuckingOrientation());
 		if(box == null) {
 			return;			
@@ -264,5 +271,15 @@ public class TileObsidianPipe extends TilePipe {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public void setPowerProvider(PowerProvider provider) {
+		powerProvider = provider;
+	}
+
+	@Override
+	public PowerProvider getPowerProvider() {
+		return powerProvider;
 	}
 }

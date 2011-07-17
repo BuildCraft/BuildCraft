@@ -7,10 +7,9 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.World;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.buildcraft.api.APIProxy;
 
-public class BlockObsidianPipe extends BlockPipe {
+public class BlockObsidianPipe extends BlockPipe{
 	
 	public BlockObsidianPipe(int i) {
 		super(i, Material.iron);
@@ -22,18 +21,6 @@ public class BlockObsidianPipe extends BlockPipe {
 	protected TileEntity getBlockEntity() {
 		return new TileObsidianPipe ();
 	}
-	
-    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {	
-    	TileObsidianPipe tile = (TileObsidianPipe) world.getBlockTileEntity(i, j, k);
-    	tile.tryWork();
-    	
-        return false;
-    }
-    
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-    	TileObsidianPipe tile = (TileObsidianPipe) world.getBlockTileEntity(i, j, k);
-		tile.checkPower();
-    }
 	
     public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {    		
     	if (entity.isDead) {

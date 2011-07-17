@@ -16,6 +16,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
@@ -72,20 +73,20 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 				TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 						(int) pos.z);
 				
-				if (tile instanceof IPowerReceptor) {
+				if (isPoweredTile(tile)) {
 					IPowerReceptor receptor = (IPowerReceptor) tile;
 					
-					int minEnergy = receptor.minEnergyExpected();
+					int minEnergy = receptor.getPowerProvider().minEnergyReceived;
 					
 					if (minEnergy != -1 && minEnergy <= entity.energy) {
-						int energySent = receptor.maxEnergyExpected();
+						int energySent = receptor.getPowerProvider().maxEnergyReceived;
 						
 						if (entity.energy < energySent) {
 							energySent = entity.energy;
 						}
 						
 						entity.energy -= energySent;
-						receptor.receiveEnergy(energySent);
+						receptor.getPowerProvider().receiveEnergy(energySent);
 					}
 				}
 			} else if (entity.progress >= 1) {
@@ -99,9 +100,9 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 
-			if (tile instanceof IPowerReceptor) {
+			if (isPoweredTile(tile)) {
 				IPowerReceptor receptor = (IPowerReceptor) tile;
-				int minEnergy = receptor.minEnergyExpected();
+				int minEnergy = receptor.getPowerProvider().minEnergyReceived;
 
 				if (minEnergy != -1 && minEnergy <= entity.energy) {
 					progressPart = 1;										
@@ -170,12 +171,12 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 			
-			if (tile instanceof IPowerReceptor) {
+			if (isPoweredTile(tile)) {				
 				if (entity != null) {
 					entity.orientation = o;	
 				}				
 				orientation = o.ordinal();
-				break;
+				break;			
 			}
 		}
 	}
@@ -230,21 +231,6 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
     	}
     	 
     }
-
-	@Override
-	public int minEnergyExpected() {
-		return 5;
-	}
-
-	@Override
-	public int maxEnergyExpected() {
-		return entity.maxEnergyReceived();
-	}
-
-	@Override
-	public void receiveEnergy(int energy) {
-		entity.addEnergy((int) (energy * 0.9));		
-	}
 
 	@Override
 	public int getSizeInventory() {
@@ -404,6 +390,36 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	public void handleUpdatePacket(Packet230ModLoader packet) {
 		entity.orientation = Orientations.values() [packet.dataInt[3]];
 		entity.progress = packet.dataFloat [0];		
+	}
+
+	@Override
+	public void setPowerProvider(PowerProvider provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public PowerProvider getPowerProvider() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void doWork() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public boolean isPoweredTile (TileEntity tile) {
+		if (tile instanceof IPowerReceptor) {
+			IPowerReceptor receptor = (IPowerReceptor) tile;
+			PowerProvider provider = receptor.getPowerProvider();
+			
+			return provider != null
+					&& provider.getClass().equals(PneumaticPowerProvider.class);				
+		}
+		
+		return false;
 	}
 	
 }

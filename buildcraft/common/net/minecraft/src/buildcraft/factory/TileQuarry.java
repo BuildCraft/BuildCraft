@@ -23,6 +23,7 @@ import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
@@ -630,38 +631,6 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 			createUtilsIfNeeded ();			
 		}
 	}
-
-	@Override
-	public int minEnergyExpected() {
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			return 25;
-		} else {
-			return 50;
-		}
-	}
-
-	@Override
-	public int maxEnergyExpected() {
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			return 25;
-		} else {
-			return 200;
-		}
-	}
-
-	@Override
-	public void receiveEnergy(int energy) {
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			if (energy >= 25) {
-				doWork();
-			}			
-		} else {
-			// TODO: Put stored energy limits...
-			if (energy >= 50) {
-				storedEnergy += energy;
-			}
-		}		
-	}
 	
 	@Override
 	public void updateEntity () {
@@ -688,5 +657,17 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setPowerProvider(PowerProvider provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public PowerProvider getPowerProvider() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
