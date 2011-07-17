@@ -1,7 +1,6 @@
 package net.minecraft.src;
 
 import java.io.File;
-import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.api.FillerRegistry;
 import net.minecraft.src.buildcraft.builders.BlockBuilder;
@@ -19,7 +18,6 @@ import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
 import net.minecraft.src.buildcraft.builders.TileMarker;
 import net.minecraft.src.buildcraft.builders.TileTemplate;
-import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.Configuration.Property;

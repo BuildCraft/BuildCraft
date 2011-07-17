@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
@@ -9,6 +10,7 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -17,14 +19,20 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	long lastMining = 0;
 	boolean lastPower = false;
 	
-	public TileWoodenPipe () {
-		latency = 50;		
-	}
+	private PowerProvider powerProvider;
 	
+	public TileWoodenPipe () {
+		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider.configure(50, 1, 1, 64);
+	}	
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
 	public void doWork () {
+		if (powerProvider.useEnergy(1, 1) < 1) {
+			return;
+		}
+		
 		World w = worldObj;
 		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
@@ -225,17 +233,12 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int minEnergyExpected() {		
-		return 1;
+	public void setPowerProvider(PowerProvider provider) {
+		powerProvider = provider;		
 	}
 
 	@Override
-	public int maxEnergyExpected() {
-		return 1;
-	}
-
-	@Override
-	public void receiveEnergy(int energy) {
-		doWork();
+	public PowerProvider getPowerProvider() {
+		return powerProvider;
 	}
 }

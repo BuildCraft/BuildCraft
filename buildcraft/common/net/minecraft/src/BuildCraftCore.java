@@ -11,9 +11,11 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.Configuration;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.PowerFramework;
 import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
 
 public class BuildCraftCore {
 	public static Configuration mainConfiguration;
@@ -47,6 +49,8 @@ public class BuildCraftCore {
 	public static String customBuildCraftTexture =
 		"/net/minecraft/src/buildcraft/core/gui/block_textures.png";
 	
+	public static PowerFramework powerFramework;
+	
 	public static void initialize () {
 		if (initialized) {
 			return;
@@ -68,6 +72,19 @@ public class BuildCraftCore {
 		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 
 		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
+		
+		Property powerFrameworkClass = BuildCraftCore.mainConfiguration
+		.getOrCreateProperty("power.framework",
+				PropertyKind.General, RedstonePowerFramework.class.getName());
+		
+		try {
+			powerFramework = (PowerFramework) Class
+					.forName(powerFrameworkClass.value).getConstructor(null)
+					.newInstance(null);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			powerFramework = new RedstonePowerFramework();
+		}
 		
 		mainConfiguration.save();
 	}

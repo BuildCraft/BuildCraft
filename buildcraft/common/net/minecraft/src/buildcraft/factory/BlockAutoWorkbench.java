@@ -1,10 +1,8 @@
 package net.minecraft.src.buildcraft.factory;
 
-import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -13,8 +11,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockAutoWorkbench extends BlockContainer implements
 		ICustomTextureBlock {
-	
-	BuildCraftBlockUtil p;
 
 	int topTexture;
 	int sideTexture;
