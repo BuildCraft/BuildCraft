@@ -459,8 +459,8 @@ public class Utils {
 			dropItems(world, (IInventory) tile, i, j, k);
 		}
 		
-		if (tile instanceof IBuildCraftTile) {
-			((IBuildCraftTile) tile).destroy();
+		if (tile instanceof TileBuildCraft) {
+			((TileBuildCraft) tile).destroy();
 		}
 	}
 }

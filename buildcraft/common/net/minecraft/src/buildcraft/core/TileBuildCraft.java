@@ -24,4 +24,8 @@ public abstract class TileBuildCraft extends TileEntity {
 		
 	}
 	
+	public void destroy () {
+		
+	}
+	
 }

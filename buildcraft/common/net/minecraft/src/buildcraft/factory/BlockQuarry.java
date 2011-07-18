@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -40,25 +39,6 @@ public class BlockQuarry extends BlockMachineRoot implements
     	
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
 				.ordinal());
-    }
-    
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
-    	TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
-    	    	
-		tile.checkPower();    	        
-    }
-
-    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
-    	
-    	if (tile == null) {
-    		tile = new TileQuarry();
-    		world.setBlockTileEntity(i, j, k, tile);
-    	}
-    	
-		tile.tryWork();
-    	
-        return false;
     }
 
 	@Override

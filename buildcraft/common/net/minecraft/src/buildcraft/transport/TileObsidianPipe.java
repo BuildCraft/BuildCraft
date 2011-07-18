@@ -152,7 +152,11 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 	}
 	
 	@Override
-	public void doWork () {		
+	public void doWork () {
+		if (powerProvider.useEnergy(5, 5) < 5) {
+			return;
+		}
+		
 		AxisAlignedBB box = getSuckingBox(getSuckingOrientation());
 		if(box == null) {
 			return;			

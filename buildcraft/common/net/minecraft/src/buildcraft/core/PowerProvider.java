@@ -11,7 +11,7 @@ public abstract class PowerProvider {
 	public int maxEnergyStored;
 	
 	private int energyStored = 0;
-	private SafeTimeTracker timeTracker = new SafeTimeTracker();
+	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	
 	public void configure (int latency, int minEnergyReceived, int maxEnergyReceived, int maxStoredEnergy) {
 		this.latency = latency;

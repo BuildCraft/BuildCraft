@@ -74,12 +74,6 @@ public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
 		return new TileFiller();
 	}
 	
-
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
-    {
-    	((TileFiller) world.getBlockTileEntity(i, j, k)).checkPower();
-    }
-	
 	public void onBlockRemoval(World world, int i, int j, int k) {		
 		Utils.preDestroyBlock(world, i, j, k);
 		

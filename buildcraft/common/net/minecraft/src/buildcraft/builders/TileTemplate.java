@@ -8,7 +8,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -17,18 +16,16 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileTemplate extends TileEntity implements IInventory, ISynchronizedTile, IBuildCraftTile {
+public class TileTemplate extends TileBuildCraft implements IInventory, ISynchronizedTile {
 
 	private Box box;
 	
 	private ItemStack items [] = new ItemStack [2];
-	
-	boolean initialized = false;
 	
 	private boolean isComputing = false;
 	public int computingTime = 0;
@@ -37,13 +34,7 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
 	//  they're the same!
 	private int lastTemplateId = 0;
 	
-	public void updateEntity () {
-		if (!initialized) {
-			initialize ();
-			
-			initialized = true;
-		}
-		
+	public void updateEntity () {		
 		if (box != null) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
@@ -57,6 +48,7 @@ public class TileTemplate extends TileEntity implements IInventory, ISynchronize
 		}		
 	}	
 	
+	@Override
     public void initialize () {
     	IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
 				zCoord);
