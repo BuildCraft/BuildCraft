@@ -57,10 +57,6 @@ public class BlockBuilder extends BlockContainer implements ICustomTextureBlock 
 		}
     }
     
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-    	((TileBuilder) world.getBlockTileEntity(i, j, k)).checkPower();
-    }
-    
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {		
 		TileBuilder tile = (TileBuilder) world.getBlockTileEntity(i, j, k);				
 		BuildersProxy.displayGUIBuilder(entityplayer, tile);

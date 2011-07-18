@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -28,20 +27,6 @@ public class BlockMiningWell extends BlockMachineRoot implements ICustomTextureB
 		textureTop = 16 * 2 + 4;
 
 	}
-	
-    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
-    	
-    	tile.tryWork();
-    	
-        return false;
-    }
-    
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l) {    	    	    	
-    	TileMiningWell tile = (TileMiningWell) world.getBlockTileEntity(i, j, k);
-    	
-		tile.checkPower();
-    }
     
     public int getBlockTextureFromSideAndMetadata(int i, int j)
     {

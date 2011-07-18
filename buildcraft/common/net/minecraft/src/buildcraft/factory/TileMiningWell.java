@@ -2,29 +2,40 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.IPowerReceptor;
+import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.TileCurrentPowered;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMiningWell extends TileCurrentPowered implements IMachine {
+public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor {
 	boolean isDigging = true;
 	
-	EntityModel model = null;
+	PowerProvider powerProvider;
+
 	
-	public TileMiningWell () {
-		latency = 50;
+	public TileMiningWell () {		
+		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider.configure(50, 25, 25, 1000);
 	}
 	
-	/** Dig the next available piece of land if not done. As soon as it 
+	/** 
+	 * Dig the next available piece of land if not done. As soon as it 
 	 * reaches bedrock, lava or goes below 0, it's considered done.
 	 */
-	public void doWork () {						
+	@Override
+	public void doWork () {	
+		if (powerProvider.useEnergy(25, 25) < 25) {
+			return;
+		}
+		
 		World w = worldObj;
 		
 		int depth = yCoord - 1;
@@ -95,11 +106,16 @@ public class TileMiningWell extends TileCurrentPowered implements IMachine {
 	public boolean isActive() {
 		return isDigging;
 	}
-	
-	public void destroy () {
-		if (model != null) {
-			model.setEntityDead();
-		}
+
+	@Override
+	public void setPowerProvider(PowerProvider provider) {
+		powerProvider = provider;		
 	}
+
+	@Override
+	public PowerProvider getPowerProvider() {
+		return powerProvider;
+	}
+	
 
 }

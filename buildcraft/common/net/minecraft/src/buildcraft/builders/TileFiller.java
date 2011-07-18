@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
@@ -17,25 +18,28 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.IBuildCraftTile;
+import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.TileCurrentPowered;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileFiller extends TileCurrentPowered implements ISpecialInventory, ISynchronizedTile, IBuildCraftTile {
+public class TileFiller extends TileBuildCraft implements ISpecialInventory,
+		ISynchronizedTile, IPowerReceptor {
 
 	private Box box;
 	FillerPattern currentPattern;
 	boolean done = true;
 	boolean forceDone = false;
     private ItemStack contents[];
+    PowerProvider powerProvider;
 
     public TileFiller() {
-    	latency = 10;
-    	
         contents = new ItemStack[getSizeInventory()];
+        powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+        powerProvider.configure(10, 25, 25, 1000);
     }
     
     public void initialize () {
@@ -68,7 +72,12 @@ public class TileFiller extends TileCurrentPowered implements ISpecialInventory,
 	}
 
 	
-	protected void doWork () {		
+	@Override
+	public void doWork () {
+		if (powerProvider.useEnergy(25, 25) < 25) {
+			return;
+		}
+		
 		if (box != null && currentPattern != null && !done) {
 			ItemStack stack = null;
 			int stackId = 0;
@@ -390,6 +399,16 @@ public class TileFiller extends TileCurrentPowered implements ISpecialInventory,
 				.getPatternNumber(currentPattern));
 
 		return packet;
+	}
+
+	@Override
+	public void setPowerProvider(PowerProvider provider) {
+		powerProvider = provider;		
+	}
+
+	@Override
+	public PowerProvider getPowerProvider() {
+		return powerProvider;
 	}
 
 }

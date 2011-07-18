@@ -21,18 +21,17 @@ import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
-import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.TileCurrentPowered;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileQuarry extends TileCurrentPowered implements IArmListener,
-		IMachine, ISynchronizedTile, IPowerReceptor, IBuildCraftTile {
+public class TileQuarry extends TileBuildCraft implements IArmListener,
+		IMachine, ISynchronizedTile, IPowerReceptor {
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
@@ -52,8 +51,11 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 	
 	long storedEnergy = 0;
 	
+	PowerProvider powerProvider;
+	
 	public TileQuarry() {
-		latency = 20;
+		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider.configure(20, 50, 50, 10000);
 	}
 	
     public void createUtilsIfNeeded () {
@@ -121,18 +123,22 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 		}
 	}
 	
-	public void doWork() {
+	public void doWork() {				
 		if (inProcess) {
 			return;
 		}
 		
 		if (!isDigging) {
 			return;
-		}	
+		}
 		
 	    createUtilsIfNeeded();
 	    
 	    if (bluePrintBuilder == null) {
+	    	return;
+	    }
+	    
+	    if (powerProvider.useEnergy(50, 50) < 0) {
 	    	return;
 	    }
 	    
@@ -144,7 +150,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
     	}
 	    
 		if (!bluePrintBuilder.done) {
-			workTracker.markTime(worldObj);
+			powerProvider.timeTracker.markTime(worldObj);
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
 			int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
@@ -307,7 +313,7 @@ public class TileQuarry extends TileCurrentPowered implements IArmListener,
 		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
 		
 		if (canDig(blockId)) {
-			workTracker.markTime(worldObj);
+			powerProvider.timeTracker.markTime(worldObj);
 			
 			// Share this with mining well!			
 			

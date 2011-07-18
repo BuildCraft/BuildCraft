@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBuilders;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemBlock;
@@ -18,15 +19,17 @@ import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.IBuildCraftTile;
+import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.PowerProvider;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
 import net.minecraft.src.buildcraft.core.Box;
-import net.minecraft.src.buildcraft.core.TileCurrentPowered;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileBuilder extends TileCurrentPowered implements IInventory, ISynchronizedTile, IBuildCraftTile {
+public class TileBuilder extends TileBuildCraft implements IInventory,
+		ISynchronizedTile, IPowerReceptor {
 
 	ItemStack items [] = new ItemStack [28];
 	
@@ -34,9 +37,13 @@ public class TileBuilder extends TileCurrentPowered implements IInventory, ISync
 	int currentBluePrintId = -1;
 	Box box;
 	
+	PowerProvider powerProvider;
+	
 	public TileBuilder () {
 		super ();
-		latency = 10;
+		
+		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider.configure(10, 25, 25, 1000);
 	}
 	
 	public void initialize () {
@@ -123,7 +130,11 @@ public class TileBuilder extends TileCurrentPowered implements IInventory, ISync
 	}
 	
 	@Override
-	protected void doWork() {
+	public void doWork() {
+		if (powerProvider.useEnergy(25, 25) < 25) {
+			return;
+		}
+		
 		initalizeBluePrint();
 		
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
@@ -354,6 +365,16 @@ public class TileBuilder extends TileCurrentPowered implements IInventory, ISync
 		}
 		
 		return packet;
+	}
+
+	@Override
+	public void setPowerProvider(PowerProvider provider) {
+		powerProvider = provider;
+	}
+
+	@Override
+	public PowerProvider getPowerProvider() {
+		return powerProvider;
 	}
 	
 }

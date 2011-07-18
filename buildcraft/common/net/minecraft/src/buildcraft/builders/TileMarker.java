@@ -4,7 +4,6 @@ import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -14,12 +13,13 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityBlock;
-import net.minecraft.src.buildcraft.core.IBuildCraftTile;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMarker extends TileEntity implements IAreaProvider, ISynchronizedTile, IBuildCraftTile {
+public class TileMarker extends TileBuildCraft implements IAreaProvider,
+		ISynchronizedTile {
 	
 	private static int maxSize = 64;
 	
@@ -84,38 +84,31 @@ public class TileMarker extends TileEntity implements IAreaProvider, ISynchroniz
 		}
 	}
 	
-	boolean init = false;
-	
 	private Position initVectO, initVect []; 
 	
-	public void updateEntity() {
-		if (!init) {
-			Utils.handleBufferedDescription(this);
+	@Override
+	public void initialize () {
+		Utils.handleBufferedDescription(this);
+		
+		switchSignals ();
+		
+		if (initVectO != null) {
+			origin = new Origin();
 			
-			switchSignals ();
+			origin.vectO = (TileMarker) worldObj
+					.getBlockTileEntity((int) initVectO.x,
+							(int) initVectO.y, (int) initVectO.z);
 			
-			if (initVectO != null) {
-				origin = new Origin();
-				
-				origin.vectO = (TileMarker) worldObj
-						.getBlockTileEntity((int) initVectO.x,
-								(int) initVectO.y, (int) initVectO.z);
-				
-				for (int i = 0; i < 3; ++i) {
-					if (initVect [i] != null) {
-						linkTo((TileMarker) worldObj
-						.getBlockTileEntity((int) initVect [i].x,
-								(int) initVect [i].y, (int) initVect [i].z), i);
-					}
+			for (int i = 0; i < 3; ++i) {
+				if (initVect [i] != null) {
+					linkTo((TileMarker) worldObj
+					.getBlockTileEntity((int) initVect [i].x,
+							(int) initVect [i].y, (int) initVect [i].z), i);
 				}
 			}
-			
-			
-			
-			init = true;
 		}
 	}
-	
+		
 	public void tryConnection () {		
 		for (int j = 0; j < 3; ++j) {
 			if (origin == null || origin.vect [j] == null) {
