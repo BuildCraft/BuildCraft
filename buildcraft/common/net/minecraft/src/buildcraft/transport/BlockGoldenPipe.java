@@ -27,6 +27,11 @@ public class BlockGoldenPipe extends BlockPipe {
     public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
     	boolean isPowered = false;
 		
+		if (APIProxy.getWorld() == null) {
+			return getBlockTextureFromSideAndMetadata(i,
+					iblockaccess.getBlockMetadata(i, j, k));
+		}
+    	
 		isPowered = APIProxy.getWorld()
 				.isBlockIndirectlyGettingPowered(i, j, k);
 		

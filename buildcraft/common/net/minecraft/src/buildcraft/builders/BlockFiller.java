@@ -41,18 +41,23 @@ public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 			
-		TileFiller tile = (TileFiller) APIProxy.getWorld().getBlockTileEntity(
-				i, j, k);
+		if (APIProxy.getWorld() == null) {
+			return getBlockTextureFromSideAndMetadata(i, m);
+		}
 		
-		if (tile != null) {
+		TileEntity tile = APIProxy.getWorld().getBlockTileEntity(
+				i, j, k);				
+		
+		if (tile != null && tile instanceof TileFiller) {
+			TileFiller filler = (TileFiller) tile;
 			if (l == 1 || l == 0) {
-				if (tile.done) {
+				if (filler.done) {
 					return textureTopOff;
 				} else {
 					return textureTopOn;
 				}
-			} else if (tile.currentPattern != null) {
-				return tile.currentPattern.getTextureIndex();
+			} else if (filler.currentPattern != null) {
+				return filler.currentPattern.getTextureIndex();
 			} else {
 				return textureSides;
 			}

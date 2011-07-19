@@ -76,7 +76,11 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
     	if (l == 1) {
     		boolean isPowered = false;
     		
-			isPowered = APIProxy.getWorld().getBlockTileEntity(i, j, k).worldObj
+    		if (APIProxy.getWorld() == null) {
+    			return getBlockTextureFromSideAndMetadata(l, m);
+    		}
+    		
+			isPowered = APIProxy.getWorld()
 					.isBlockIndirectlyGettingPowered(i, j, k);
     		
     		if (!isPowered) {
