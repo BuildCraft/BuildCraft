@@ -6,6 +6,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockCactus;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryLargeChest;
 import net.minecraft.src.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.ICustomHeightInPipe;
+import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -462,5 +464,31 @@ public class Utils {
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
 		}
+	}
+	
+	public static boolean checkPipesConnections(IBlockAccess blockAccess, int x1,
+			int y1, int z1, int x2, int y2, int z2) {
+
+		Block b1 = Block.blocksList [blockAccess.getBlockId(x1, y1, z1)];
+		Block b2 = Block.blocksList [blockAccess.getBlockId(x2, y2, z2)];
+		
+		if (!(b1 instanceof IPipeConnection) && !(b2 instanceof IPipeConnection)) {
+			return false;
+		}
+		
+		if (b1 instanceof IPipeConnection
+				&& !((IPipeConnection) b1).isPipeConnected(blockAccess, x2, y2,
+						z2)) {
+			return false;
+		}
+		
+		if (b2 instanceof IPipeConnection
+				&& !((IPipeConnection) b2).isPipeConnected(blockAccess, x1, y1,
+						z1)) {
+			return false;
+		}
+
+		return true;
+		
 	}
 }

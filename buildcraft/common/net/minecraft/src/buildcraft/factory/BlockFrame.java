@@ -54,27 +54,27 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IC
    		yMin = Utils.pipeMinSize, yMax = Utils.pipeMaxSize, 
    		zMin = Utils.pipeMinSize, zMax = Utils.pipeMaxSize;
 
-   		if (isPipeConnected (world, i - 1, j, k)) {
+   		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
    			xMin = 0.0F;
    		}
 
-   		if (isPipeConnected (world, i + 1, j, k)) {
+   		if (Utils.checkPipesConnections(world, i, j, k, i + 1, j, k)) {
    			xMax = 1.0F;
    		}
 
-   		if (isPipeConnected (world, i, j - 1, k)) {
+   		if (Utils.checkPipesConnections(world, i, j, k, i, j - 1, k)) {
    			yMin = 0.0F;
    		}
 
-   		if (isPipeConnected (world, i, j + 1, k)) {
+   		if (Utils.checkPipesConnections(world, i, j, k, i, j + 1, k)) {
    			yMax = 1.0F;
    		}
 
-   		if (isPipeConnected (world, i, j, k - 1)) {
+   		if (Utils.checkPipesConnections(world, i, j, k, i, j, k - 1)) {
    			zMin = 0.0F;
    		}
 
-   		if (isPipeConnected (world, i, j, k + 1)) {
+   		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
    			zMax = 1.0F;
    		}
        	

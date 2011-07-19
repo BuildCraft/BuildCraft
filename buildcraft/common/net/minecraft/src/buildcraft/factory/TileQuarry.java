@@ -55,7 +55,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	
 	public TileQuarry() {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(20, 50, 50, 10000);
+		powerProvider.configure(20, 50, 50, 50, 10000);
 	}
 	
     public void createUtilsIfNeeded () {

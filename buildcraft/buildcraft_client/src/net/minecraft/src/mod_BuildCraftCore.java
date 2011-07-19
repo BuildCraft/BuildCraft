@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
-import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
@@ -131,9 +130,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 			int metadata = iblockaccess.getBlockMetadata(i, j, k);
 
-			IPipeConnection connect = (IPipeConnection) block;
-
-			if (connect.isPipeConnected(iblockaccess, i - 1, j, k)) {
+			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
 				block.blockIndexInTexture = ((IBlockPipe) block)
 						.getTextureForConnection(Orientations.XNeg, metadata);
 				block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
@@ -142,7 +139,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 				block.blockIndexInTexture = initialTexture;
 			}
 
-			if (connect.isPipeConnected(iblockaccess, i + 1, j, k)) {
+			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
 				block.blockIndexInTexture = ((IBlockPipe) block)
 						.getTextureForConnection(Orientations.XPos, metadata);
 				block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
@@ -151,7 +148,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 				block.blockIndexInTexture = initialTexture;
 			}
 
-			if (connect.isPipeConnected(iblockaccess, i, j - 1, k)) {
+			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
 				block.blockIndexInTexture = ((IBlockPipe) block)
 						.getTextureForConnection(Orientations.YNeg, metadata);
 				block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
@@ -160,7 +157,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 				block.blockIndexInTexture = initialTexture;
 			}
 
-			if (connect.isPipeConnected(iblockaccess, i, j + 1, k)) {
+			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
 				block.blockIndexInTexture = ((IBlockPipe) block)
 						.getTextureForConnection(Orientations.YPos, metadata);
 				block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
@@ -169,7 +166,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 				block.blockIndexInTexture = initialTexture;
 			}
 
-			if (connect.isPipeConnected(iblockaccess, i, j, k - 1)) {
+			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
 				block.blockIndexInTexture = ((IBlockPipe) block)
 						.getTextureForConnection(Orientations.ZNeg, metadata);
 				block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
@@ -178,7 +175,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 				block.blockIndexInTexture = initialTexture;
 			}
 
-			if (connect.isPipeConnected(iblockaccess, i, j, k + 1)) {
+			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
 				block.blockIndexInTexture = ((IBlockPipe) block)
 						.getTextureForConnection(Orientations.ZPos, metadata);
 				block.setBlockBounds(minSize, minSize, maxSize, maxSize,
