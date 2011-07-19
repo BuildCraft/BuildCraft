@@ -476,21 +476,27 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 			origin.vect [0] = (TileMarker) worldObj.getBlockTileEntity(
 					packet.dataInt[3], packet.dataInt[4], packet.dataInt[5]);
 			
-			origin.vect [0].origin = origin;
+			if (origin.vect [0] != null) {
+				origin.vect [0].origin = origin;
+			}
 		}
 		
 		if (packet.dataInt[6] != Integer.MAX_VALUE) {
 			origin.vect [1] = (TileMarker) worldObj.getBlockTileEntity(
 					packet.dataInt[6], packet.dataInt[7], packet.dataInt[8]);
 			
-			origin.vect [1].origin = origin;
+			if (origin.vect [1] != null) {
+				origin.vect [1].origin = origin;
+			}
 		}
 		
 		if (packet.dataInt[9] != Integer.MAX_VALUE) {
 			origin.vect [2] = (TileMarker) worldObj.getBlockTileEntity(
 					packet.dataInt[9], packet.dataInt[10], packet.dataInt[11]);
 			
-			origin.vect [2].origin = origin;
+			if (origin.vect [2] != null) {
+				origin.vect [2].origin = origin;
+			}
 		}
 		
 		origin.xMin = packet.dataInt [12];
