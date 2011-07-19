@@ -9,37 +9,42 @@ public abstract class PowerProvider {
 	public int minEnergyReceived;
 	public int maxEnergyReceived;
 	public int maxEnergyStored;
+	public int minActivationEnergy;
 	
 	private int energyStored = 0;
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	
-	public void configure (int latency, int minEnergyReceived, int maxEnergyReceived, int maxStoredEnergy) {
+	public void configure(int latency, int minEnergyReceived,
+			int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
 		this.latency = latency;
 		this.minEnergyReceived = minEnergyReceived;
 		this.maxEnergyReceived = maxEnergyReceived;
 		this.maxEnergyStored = maxStoredEnergy;
+		this.minActivationEnergy = minActivationEnergy;
 	}
 	
-	public final boolean workIfDelay (IPowerReceptor receptor) {
-		if (latency == 0) {
-			receptor.doWork();
-			return true;
-		} else {
-			TileEntity tile = (TileEntity) receptor;
-			
-			if (timeTracker.markTimeIfDelay(tile.worldObj, latency)) {
+	public final boolean workIfCondition (IPowerReceptor receptor) {
+		if (energyStored >= minActivationEnergy) {
+			if (latency == 0) {
 				receptor.doWork();
 				return true;
+			} else {
+				TileEntity tile = (TileEntity) receptor;
+
+				if (timeTracker.markTimeIfDelay(tile.worldObj, latency)) {
+					receptor.doWork();
+					return true;
+				}
 			}
 		}
 		
-		return false;
+		return false;		
 	}
 	
 	public abstract void update (IPowerReceptor receptor);
 	
 	public int useEnergy (int min, int max) {
-		int result = 0;
+		int result = 0;				
 		
 		if (energyStored >= min) {
 			if (energyStored <= max) {
@@ -60,6 +65,7 @@ public abstract class PowerProvider {
 		minEnergyReceived = nbttagcompound.getInteger("minEnergyReceived");
 		maxEnergyReceived = nbttagcompound.getInteger("maxEnergyReceived");
 		maxEnergyStored = nbttagcompound.getInteger("maxStoreEnergy");
+		minActivationEnergy = nbttagcompound.getInteger("minActivationEnergy");	
 		energyStored = nbttagcompound.getInteger("storedEnergy");		
 	}
 	
@@ -68,6 +74,7 @@ public abstract class PowerProvider {
 		nbttagcompound.setInteger("minEnergyReceived", minEnergyReceived);
 		nbttagcompound.setInteger("maxEnergyReceived", maxEnergyReceived);
 		nbttagcompound.setInteger("maxStoreEnergy", maxEnergyStored);
+		nbttagcompound.setInteger("minActivationEnergy", minActivationEnergy);
 		nbttagcompound.setInteger("storedEnergy", energyStored);
 	}
 	

@@ -38,7 +38,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 		}
 		
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(25, 5, 5, 100);
+		powerProvider.configure(25, 1, 64, 1, 64);
 	}
 	
 	private int [] entitiesDropped;
@@ -56,21 +56,12 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 			Position newPos = new Position(pos);
 			newPos.orientation = Orientations.values()[o];
 			newPos.moveForwards(1.0);
-			
-			TileEntity entity = worldObj.getBlockTileEntity((int) newPos.x,
-						(int) newPos.y, (int) newPos.z);
-			
-			Block block = Block.blocksList[worldObj.getBlockId((int) newPos.x,
-					(int) newPos.y, (int) newPos.z)];
-			
-			if (block instanceof BlockPipe
-					&& ((BlockPipe) block).isPipeConnected(worldObj, xCoord,
-							yCoord, zCoord) 
-					|| (entity instanceof IPipeEntry && !(block instanceof BlockPipe))
-					|| entity instanceof IInventory) {
-				
+						
+			if (Utils.checkPipesConnections(worldObj, (int) newPos.x,
+					(int) newPos.y, (int) newPos.z, xCoord, yCoord, zCoord)) {
+
 				Connections_num++;
-				
+
 				if (Connections_num == 1) {
 					target_pos = new Position(newPos);
 				}
@@ -152,15 +143,12 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 	}
 	
 	@Override
-	public void doWork () {
-		if (powerProvider.useEnergy(5, 5) < 5) {
-			return;
-		}
-		
+	public void doWork () {		
 		AxisAlignedBB box = getSuckingBox(getSuckingOrientation());
 		if(box == null) {
 			return;			
 		}
+				
 		@SuppressWarnings("rawtypes")
 		List list = worldObj.getEntitiesWithinAABB(
 				net.minecraft.src.Entity.class, box);
@@ -169,7 +157,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 			if (list.get(g) instanceof Entity) {
 				Entity entity = (Entity) list.get(g);
 
-				if (canSuck(entity)) {
+				if (canSuck(entity) && powerProvider.useEnergy(1, 1) == 1) {
 					pullItemIntoPipe(entity);
 					return;
 				}
@@ -180,7 +168,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 						ItemStack stack = checkExtractGeneric(
 								(IInventory) cart, true,
 								getSuckingOrientation().reverse());
-						if (stack != null) {
+						if (stack != null && powerProvider.useEnergy(1, 1) == 1) {
 							EntityItem entityitem = new EntityItem(worldObj,
 									cart.posX, cart.posY + 0.3F, cart.posZ,
 									stack);

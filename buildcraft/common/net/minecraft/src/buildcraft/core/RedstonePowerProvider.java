@@ -17,14 +17,14 @@ public class RedstonePowerProvider extends PowerProvider {
 		
 		if (BuildCraftCore.continuousCurrentModel) {
 			if (currentPower) {
-				workIfDelay(receptor);
+				workIfCondition(receptor);
 			}
 		} else {			
 			if (currentPower != lastPower) {
 				lastPower = currentPower;
 
 				if (currentPower) {
-					workIfDelay(receptor);
+					workIfCondition(receptor);
 				}
 			}
 		}
@@ -46,4 +46,11 @@ public class RedstonePowerProvider extends PowerProvider {
 		nbttagcompound.setBoolean("lastPower", lastPower);
 	}
 
+	public void configure(int latency, int minEnergyReceived,
+			int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
+		super.configure(latency, minEnergyReceived, maxEnergyReceived,
+				minActivationEnergy, maxStoredEnergy);
+
+		this.minActivationEnergy = 0;
+	}
 }

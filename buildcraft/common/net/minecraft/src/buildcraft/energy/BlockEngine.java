@@ -5,13 +5,16 @@ import java.util.Random;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.ICustomHeightInPipe;
+import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 
-public class BlockEngine extends BlockContainer implements ICustomHeightInPipe {
+public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
+		IPipeConnection {
 	
 	public BlockEngine(int i) {
 		super(i, Material.wood);
@@ -98,5 +101,10 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe {
 	@Override
 	public float getHeightInPipe() {		
 		return 0.4F;
+	}
+
+	@Override
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
+		return false;
 	}
 }

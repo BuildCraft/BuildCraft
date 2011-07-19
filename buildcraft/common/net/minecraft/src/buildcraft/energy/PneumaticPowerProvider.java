@@ -14,18 +14,18 @@ public class PneumaticPowerProvider extends PowerProvider {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 	}
 	
+	@Override
 	public void configure(int latency, int minEnergyReceived,
-			int maxEnergyReceived, int maxStoredEnergy) {
+			int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
 		super.configure(latency, minEnergyReceived, maxEnergyReceived,
-				maxStoredEnergy);
+				minActivationEnergy, maxStoredEnergy);
 
-		latency = 0;
+		this.latency = 0;
 	}
 
 	@Override
 	public void update(IPowerReceptor receptor) {
-		// We don't delay here...
-		receptor.doWork();		
+		workIfCondition(receptor);	
 	}
 
 }

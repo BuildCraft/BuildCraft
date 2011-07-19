@@ -23,7 +23,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	
 	public TileWoodenPipe () {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 1, 64);
+		powerProvider.configure(50, 1, 1, 1, 64);
 	}	
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.

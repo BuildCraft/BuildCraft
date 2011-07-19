@@ -110,8 +110,8 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 				(int) p.y, (int) p.z)];
 		
 		if (block instanceof BlockPipe
-				&& !((BlockPipe) block).isPipeConnected(worldObj, xCoord,
-						yCoord, zCoord)) {
+				&& !Utils.checkPipesConnections(worldObj, (int) p.x, (int) p.y,
+						(int) p.z, xCoord, yCoord, zCoord)) {
 			return false;
 		}
 		
