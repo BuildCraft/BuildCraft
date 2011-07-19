@@ -36,14 +36,7 @@ public class BlockWoodenPipe extends BlockPipe {
     	
         return false;
     }
-    
-    public void onBlockAdded(World world, int i, int j, int k) {
-    	super.onBlockAdded(world, i, j, k);
-    	
-    	TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i, j, k);
-    	tile.setSourceIfNeeded();
-    }
-    
+        
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
     	TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i, j, k);
     	tile.setSourceIfNeeded();    	
