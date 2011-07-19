@@ -667,13 +667,12 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {
-		// TODO Auto-generated method stub
+		provider = powerProvider;
 		
 	}
 
 	@Override
 	public PowerProvider getPowerProvider() {
-		// TODO Auto-generated method stub
-		return null;
+		return powerProvider;
 	}
 }

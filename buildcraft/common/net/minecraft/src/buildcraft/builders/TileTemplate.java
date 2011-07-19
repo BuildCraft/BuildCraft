@@ -34,10 +34,8 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
 	//  they're the same!
 	private int lastTemplateId = 0;
 	
-	public void updateEntity () {		
-		if (box != null) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
+	public void updateEntity () {
+		super.updateEntity();
 		
 		if (isComputing) {
 			if (computingTime < 200) {
@@ -50,13 +48,20 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
 	
 	@Override
     public void initialize () {
-    	IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-				zCoord);
+		if (box == null) {
+			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
+					yCoord, zCoord);
 
-		if (a != null) {
-			box = (Box) a.getBox();			
-			a.removeFromWorld();
-		}			
+			if (a != null) {
+				box = (Box) a.getBox();
+				a.removeFromWorld();
+
+			}
+		}
+		
+		if (box != null) {
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}
 		
 		if (APIProxy.isClient(worldObj)) {
 			Utils.handleBufferedDescription(this);
