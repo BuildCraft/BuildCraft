@@ -20,9 +20,9 @@ import net.minecraft.src.buildcraft.builders.TileMarker;
 import net.minecraft.src.buildcraft.builders.TileTemplate;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.Configuration.Property;
-import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.forge.Configuration.Property;
+import net.minecraft.src.forge.Configuration.PropertyKind;
 
 public class BuildCraftBuilders {
 	public static BlockMarker markerBlock;

@@ -1,7 +1,7 @@
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.devel.BlockCheat;
+import net.minecraft.src.forge.Configuration.Property;
 
 public class mod_BuildCraftDevel extends BaseModMp {	
 
