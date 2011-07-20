@@ -2,15 +2,17 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider {
+public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider, IPipeConnection {
 
 	int textureFront, textureSides, textureBack, textureTop;
 	
@@ -64,6 +66,12 @@ public class BlockMiningWell extends BlockMachineRoot implements ITextureProvide
 	@Override
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
+	}
+
+	@Override
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
+			int z1, int x2, int y2, int z2) {
+		return true;
 	}
 	
 }

@@ -50,12 +50,16 @@ public class StackUtil {
 					possibleInventories.add(pos.orientation);
 				}
 			}
+			
 			if (tileInventory instanceof IInventory) {
-				if (checkAvailableSlot((IInventory) tileInventory,
-						false, pos.orientation.reverse())) {
+				if (Utils.checkPipesConnections(tile.worldObj, tile.xCoord,
+						tile.yCoord, tile.zCoord, tileInventory.xCoord,
+						tileInventory.yCoord, tileInventory.zCoord)
+						&& checkAvailableSlot((IInventory) tileInventory,
+								false, pos.orientation.reverse())) {
 					possibleInventories.add(pos.orientation);
 				}
-			}
+	}
 		}
 		
 		if (possibleInventories.size() > 0) {

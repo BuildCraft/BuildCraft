@@ -56,7 +56,8 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 		
 		int blockId = w.getBlockId(xCoord, depth, zCoord);
 		
-		ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(w, xCoord, depth, zCoord);
+		ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(w, xCoord,
+				depth, zCoord);
 		
 		w.setBlockWithNotify((int) xCoord, (int) depth, (int) zCoord,
 				BuildCraftFactory.plainPipeBlock.blockID);

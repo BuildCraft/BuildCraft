@@ -89,8 +89,10 @@ public abstract class BlockPipe extends BlockContainer implements
         return getCollisionBoundingBoxFromPool (world, i, j, k);
     }
     
-    public boolean isPipeConnected (IBlockAccess blockAccess, int x, int y, int z) {
-    	TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+    @Override
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
+			int z1, int x2, int y2, int z2) {
+    	TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x2, y2, z2);
     	
     	return tile instanceof IPipeEntry
 			|| tile instanceof IInventory
