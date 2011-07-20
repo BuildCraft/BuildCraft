@@ -106,12 +106,9 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 			EntityPassiveItem item) {
 		TileEntity entity = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
 				(int) p.z);
-		Block block = Block.blocksList[worldObj.getBlockId((int) p.x,
-				(int) p.y, (int) p.z)];
 		
-		if (block instanceof BlockPipe
-				&& !Utils.checkPipesConnections(worldObj, (int) p.x, (int) p.y,
-						(int) p.z, xCoord, yCoord, zCoord)) {
+		if (!Utils.checkPipesConnections(worldObj, (int) p.x, (int) p.y,
+				(int) p.z, xCoord, yCoord, zCoord)) {
 			return false;
 		}
 		

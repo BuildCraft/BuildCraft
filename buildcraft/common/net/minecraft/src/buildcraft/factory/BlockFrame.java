@@ -90,8 +90,9 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IT
        }
 
 	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
-		return blockAccess.getBlockId(x, y, z) == blockID;
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
+			int z1, int x2, int y2, int z2) {
+		return blockAccess.getBlockId(x2, y2, z2) == blockID;
 	}
 
 	@Override

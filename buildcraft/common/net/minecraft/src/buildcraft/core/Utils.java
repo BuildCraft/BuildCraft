@@ -477,14 +477,14 @@ public class Utils {
 		}
 		
 		if (b1 instanceof IPipeConnection
-				&& !((IPipeConnection) b1).isPipeConnected(blockAccess, x2, y2,
-						z2)) {
+				&& !((IPipeConnection) b1).isPipeConnected(blockAccess, x1, y1,
+						z1, x2, y2, z2)) {
 			return false;
 		}
 		
 		if (b2 instanceof IPipeConnection
-				&& !((IPipeConnection) b2).isPipeConnected(blockAccess, x1, y1,
-						z1)) {
+				&& !((IPipeConnection) b2).isPipeConnected(blockAccess, x2, y2,
+						z2, x1, y1, z1)) {
 			return false;
 		}
 

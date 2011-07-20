@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -13,7 +14,6 @@ import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftEnergy;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.PowerProvider;
@@ -22,7 +22,7 @@ import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 
 public class TileEngine extends TileEntity implements IPowerReceptor,
-		ISpecialInventory, ISynchronizedTile {
+		IInventory, ISynchronizedTile {
 
 	boolean init = false;
 	
@@ -309,16 +309,6 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
     public int getBurnTimeRemainingScaled(int i) {
         return (burnTime * i) / totalBurnTime;
     }
-
-	@Override
-	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		return false;
-	}
-
-	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		return null;
-	}
 	
 	public Packet getDescriptionPacket () {
 		createEngineIfNeeded ();

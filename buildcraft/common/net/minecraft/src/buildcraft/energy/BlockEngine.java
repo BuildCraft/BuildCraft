@@ -104,7 +104,25 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 	}
 
 	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x, int y, int z) {
-		return false;
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
+			int z1, int x2, int y2, int z2) {
+		TileEngine tile = (TileEngine) blockAccess.getBlockTileEntity(x1, y1, z1);
+		
+		switch (tile.entity.orientation) {
+		case YPos:
+			return y1 - y2 != -1;
+		case YNeg:
+			return y1 - y2 != 1;
+		case ZPos:
+			return z1 - z2 != -1;
+		case ZNeg:
+			return z1 - z2 != 1;
+		case XPos:
+			return x1 - x2 != -1;
+		case XNeg:
+			return x1 - x2 != 1;
+		}
+		
+		return true;
 	}
 }
