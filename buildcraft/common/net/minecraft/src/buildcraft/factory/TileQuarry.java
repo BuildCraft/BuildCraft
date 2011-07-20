@@ -49,13 +49,13 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	
 	BluePrintBuilder bluePrintBuilder;
 	
-	long storedEnergy = 0;
-	
 	PowerProvider powerProvider;
+	
+	public static int MAX_ENERGY = 7000;
 	
 	public TileQuarry() {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(20, 25, 25, 25, 10000);
+		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 	}
 	
     public void createUtilsIfNeeded () {
@@ -122,14 +122,30 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			lasers = null;
 		}
 	}
-	
-	public void doWork() {				
+
+	@Override
+	public void updateEntity () {
+		super.updateEntity();
+		
 		if (inProcess) {
 			arm.speed = 0;
-			int maxEnergyToUse = 3 + powerProvider.energyStored / 25000;
+			int energyToUse = 2 + powerProvider.energyStored / 1000;
+			System.out.println(powerProvider.energyStored + " => "
+					+ energyToUse + " => " + (0.015 + energyToUse / 200F));
 			
-			arm.doMove((float) powerProvider
-					.useEnergy(3, maxEnergyToUse) / 100F);
+			int energy = powerProvider
+			.useEnergy(energyToUse, energyToUse);
+			
+			if (energy > 0) {
+				arm.doMove(0.015 + (float) energy / 200F);
+				return;
+			}
+		}		
+		
+	}
+	
+	public void doWork() {				
+		if (inProcess) {			
 			return;
 		}		
 		
@@ -152,7 +168,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	    
 		if (!bluePrintBuilder.done) {
 			// configuration for building phase
-			powerProvider.configure(20, 25, 25, 25, 10000);
+			powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 			
 			if (powerProvider.useEnergy(25, 25) != 25) {
 		    	return;
@@ -176,7 +192,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		} 	  	
 		
 		// configuration for digging phase
-		powerProvider.configure(20, 30, 200, 50, 10000);
+		powerProvider.configure(20, 30, 200, 50, MAX_ENERGY);
 		
 		if (!findTarget(true)) {
 			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
@@ -646,33 +662,6 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			handleDescriptionPacket(packet);
 		} else if (!APIProxy.isClient(worldObj)) {
 			createUtilsIfNeeded ();			
-		}
-	}
-	
-	@Override
-	public void updateEntity () {
-		super.updateEntity();
-		
-		if (storedEnergy > 0 && arm != null) {
-			if (!inProcess) {
-				doWork();
-			}
-			
-			if (inProcess) {
-				if (storedEnergy > 0) {
-					arm.speed = 0;
-					int spentEnergy;
-
-					if (storedEnergy > 10000) {
-						spentEnergy = 10;
-					} else {
-						spentEnergy = (int) (storedEnergy / 100);
-					}
-
-					arm.doMove(spentEnergy / 100F);
-					storedEnergy = storedEnergy - spentEnergy;
-				}
-			}
 		}
 	}
 
