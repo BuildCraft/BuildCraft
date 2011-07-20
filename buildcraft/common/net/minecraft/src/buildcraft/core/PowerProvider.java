@@ -9,9 +9,9 @@ public abstract class PowerProvider {
 	public int minEnergyReceived;
 	public int maxEnergyReceived;
 	public int maxEnergyStored;
-	public int minActivationEnergy;
+	public int minActivationEnergy;	
+	public int energyStored = 0;
 	
-	private int energyStored = 0;
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	
 	public void configure(int latency, int minEnergyReceived,
