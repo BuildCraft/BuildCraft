@@ -7,11 +7,11 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockQuarry extends BlockMachineRoot implements
-		ICustomTextureBlock {
+		ITextureProvider {
 	
 	int textureTop;
 	int textureFront;

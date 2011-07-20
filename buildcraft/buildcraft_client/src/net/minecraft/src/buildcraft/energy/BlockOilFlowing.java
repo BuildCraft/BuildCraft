@@ -5,15 +5,11 @@ import java.util.Random;
 import net.minecraft.src.Block;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Vec3D;
-import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Entity;
 import net.minecraft.src.BlockFluid;
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
+import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockOilFlowing extends BlockFluid implements ICustomTextureBlock {
+public class BlockOilFlowing extends BlockFluid implements ITextureProvider {
 
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);

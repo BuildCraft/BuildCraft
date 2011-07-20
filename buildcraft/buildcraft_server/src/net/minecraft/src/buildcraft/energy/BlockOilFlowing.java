@@ -7,9 +7,8 @@ import net.minecraft.src.BlockFluid;
 import net.minecraft.src.World;
 import net.minecraft.src.Material;
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock; 
 
-public class BlockOilFlowing extends BlockFluid implements ICustomTextureBlock
+public class BlockOilFlowing extends BlockFluid 
 {
 
     public BlockOilFlowing(int i, Material material)
@@ -23,11 +22,6 @@ public class BlockOilFlowing extends BlockFluid implements ICustomTextureBlock
     public int getRenderType() {
         return BuildCraftCore.oilModel;
     }
-    
-    @Override
-	public String getTextureFile() {	
-		return BuildCraftCore.customBuildCraftTexture;
-	}
 
     private void func_30005_i(World world, int i, int j, int k)
     {

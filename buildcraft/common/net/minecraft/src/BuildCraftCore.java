@@ -40,7 +40,6 @@ public class BuildCraftCore {
 	public static int stripesLaserTexture;
 	public static int transparentTexture;
 	
-	public static int customTextureModel;
 	public static int blockByEntityModel;
 	public static int pipeModel;
 	public static int markerModel;
@@ -176,7 +175,6 @@ public class BuildCraftCore {
 	
 	public static void initializeModel (BaseMod mod) {
 		 blockByEntityModel = ModLoader.getUniqueBlockModelID(mod, true);
-		 customTextureModel = ModLoader.getUniqueBlockModelID(mod, true);
 		 pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 		 markerModel = ModLoader.getUniqueBlockModelID(mod, false);
 		 oilModel = ModLoader.getUniqueBlockModelID(mod, false);

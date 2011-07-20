@@ -9,10 +9,10 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockBuilder extends BlockContainer implements ICustomTextureBlock {
+public class BlockBuilder extends BlockContainer implements ITextureProvider {
 
 	int blockTextureTop;
 	int blockTextureSide;
@@ -35,10 +35,6 @@ public class BlockBuilder extends BlockContainer implements ICustomTextureBlock 
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-	
-    public int getRenderType() {
-        return BuildCraftCore.customTextureModel;
-    }
 
     public int getBlockTextureFromSideAndMetadata(int i, int j) {
     	if (j == 0 && i == 3) {
