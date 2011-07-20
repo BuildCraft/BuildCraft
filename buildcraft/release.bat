@@ -8,6 +8,6 @@ set PATH=E:\cygwin\bin;%PATH%
 
 cd buildcraft
 
-sh package.sh 1.7.3.2
+sh package.sh 1.7.3.3
 
 pause
