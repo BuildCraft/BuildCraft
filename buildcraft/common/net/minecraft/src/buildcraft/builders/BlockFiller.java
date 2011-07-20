@@ -9,10 +9,10 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.FillerPattern;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
+public class BlockFiller extends BlockContainer implements ITextureProvider {
 
 	int textureSides;
 	int textureTopOn;
@@ -84,10 +84,6 @@ public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
 		
 		super.onBlockRemoval(world, i, j, k);
 	}
-	
-    public int getRenderType() {
-        return BuildCraftCore.customTextureModel;
-    }
 
     @Override
 	public String getTextureFile() {	

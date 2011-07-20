@@ -11,10 +11,10 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockTemplate extends BlockContainer implements ICustomTextureBlock {
+public class BlockTemplate extends BlockContainer implements ITextureProvider {
 
 	int blockTextureSides;
 	int blockTextureFront;
@@ -35,10 +35,6 @@ public class BlockTemplate extends BlockContainer implements ICustomTextureBlock
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-	
-    public int getRenderType() {
-        return BuildCraftCore.customTextureModel;
-    }
 
 	@Override
 	protected TileEntity getBlockEntity() {

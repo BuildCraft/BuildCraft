@@ -9,11 +9,9 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.EntityBlock;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.core.BuildCraftEffectRenderer;
 
 public class mod_BuildCraftCore extends BaseModMp {
 
@@ -47,9 +45,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public static boolean initialized = false;
 	
-	public static BuildCraftEffectRenderer eff_rend = null;
-	public static World current_world = null;
-	
 	public static void initialize() {
 		BuildCraftCore.initialize();
 		
@@ -82,28 +77,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public boolean RenderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
-			
-		if(ModLoader.getMinecraftInstance().theWorld != current_world || 
-		   ModLoader.getMinecraftInstance().effectRenderer != eff_rend || 
-		   eff_rend == null) {
-		
-			current_world = ModLoader.getMinecraftInstance().theWorld;
-			eff_rend = new BuildCraftEffectRenderer(current_world, ModLoader.getMinecraftInstance().renderEngine);
-			ModLoader.getMinecraftInstance().effectRenderer = eff_rend;
-		}
-			
-		if (block instanceof ICustomTextureBlock && renderblocks.overrideBlockTexture == -1) {
-			Tessellator tessellator = Tessellator.instance;
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-			tessellator.setNormal(0.0F, -1F, 0.0F);
-
-			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-					.getMinecraftInstance().renderEngine
-					.getTexture(((ICustomTextureBlock) (block))
-							.getTextureFile()));
-			
-		}
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 			//renderblocks.renderStandardBlock(block, i, j, k);
@@ -117,8 +90,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 			tessellator.setColorOpaque_F(f, f, f);
 			renderMarkerWithMeta(block, i, j, k,
 					iblockaccess.getBlockMetadata(i, j, k));
-		} else if (block.getRenderType() == BuildCraftCore.customTextureModel) {
-			renderblocks.renderStandardBlock(block, i, j, k);
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {			
 			float minSize = Utils.pipeMinSize;
 			float maxSize = Utils.pipeMaxSize;
@@ -189,16 +160,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 			renderblocks.renderBlockFluids(block, i, j, k);
 		}
 
-		if (block instanceof ICustomTextureBlock  && renderblocks.overrideBlockTexture == -1) {
-			Tessellator tessellator = Tessellator.instance;
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-
-			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-					.getMinecraftInstance().renderEngine
-					.getTexture("/terrain.png"));
-		}
-
 		return true;
 	}
 
@@ -206,19 +167,10 @@ public class mod_BuildCraftCore extends BaseModMp {
 	
 	public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i,
 			int j) {
-		if (block instanceof ICustomTextureBlock) {
-			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-					.getMinecraftInstance().renderEngine
-					.getTexture(((ICustomTextureBlock) (block))
-							.getTextureFile()));
-		}
-		
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 			
 
 			EntityRenderIndex index = new EntityRenderIndex(block, i);
-			
-//			System.out.println (index.hashCode());
 
 			if (blockByEntityRenders.containsKey(index)) {
 				blockByEntityRenders.get(index).inventoryRender(-0.5, -0.5,
@@ -226,41 +178,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 			}
 		} else if (block.getRenderType() == BuildCraftCore.markerModel) {
 			// Do nothing here...
-		} else if (block.getRenderType() == BuildCraftCore.customTextureModel) {
-			Tessellator tessellator = Tessellator.instance;
-			block.setBlockBoundsForItemRender();
-			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-			tessellator.startDrawingQuads();
-			tessellator.setNormal(0.0F, -1F, 0.0F);
-			renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D,
-					block.getBlockTextureFromSideAndMetadata(0, i));
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-			tessellator.setNormal(0.0F, 1.0F, 0.0F);
-			renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D,
-					block.getBlockTextureFromSideAndMetadata(1, i));
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-			tessellator.setNormal(0.0F, 0.0F, -1F);
-			renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D,
-					block.getBlockTextureFromSideAndMetadata(2, i));
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-			tessellator.setNormal(0.0F, 0.0F, 1.0F);
-			renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D,
-					block.getBlockTextureFromSideAndMetadata(3, i));
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-			tessellator.setNormal(-1F, 0.0F, 0.0F);
-			renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D,
-					block.getBlockTextureFromSideAndMetadata(4, i));
-			tessellator.draw();
-			tessellator.startDrawingQuads();
-			tessellator.setNormal(1.0F, 0.0F, 0.0F);
-			renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D,
-					block.getBlockTextureFromSideAndMetadata(5, i));
-			tessellator.draw();
-			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
 			Tessellator tessellator = Tessellator.instance;
 
@@ -300,12 +217,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 			tessellator.draw();
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-		}
-
-		if (block instanceof ICustomTextureBlock) {
-			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-					.getMinecraftInstance().renderEngine
-					.getTexture("/terrain.png"));
 		}
 	}
 	

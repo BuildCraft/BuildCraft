@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.TextureFX;
 

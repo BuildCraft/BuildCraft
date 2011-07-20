@@ -3,20 +3,17 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityArrow;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.Item;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
-import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;

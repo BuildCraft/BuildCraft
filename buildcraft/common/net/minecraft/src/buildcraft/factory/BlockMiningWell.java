@@ -7,10 +7,10 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockMiningWell extends BlockMachineRoot implements ICustomTextureBlock {
+public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider {
 
 	int textureFront, textureSides, textureBack, textureTop;
 	

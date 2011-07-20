@@ -11,10 +11,10 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, ICustomTextureBlock {	
+public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, ITextureProvider {	
 	
 	public BlockFrame(int i) {
 		super(i, Material.glass);

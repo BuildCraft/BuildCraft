@@ -5,9 +5,10 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 
-public class BlockPollution extends BlockContainer implements ICustomTextureBlock {
+import net.minecraft.src.forge.ITextureProvider;
+
+public class BlockPollution extends BlockContainer implements ITextureProvider {
 
 	public BlockPollution(int i) {
 		super(i, Material.air);	
@@ -27,11 +28,7 @@ public class BlockPollution extends BlockContainer implements ICustomTextureBloc
     public boolean isOpaqueCube() {
         return false;
     }
-    
-    public int getRenderType() {
-        return BuildCraftCore.customTextureModel;
-    }
-
+   
 	@Override
 	protected TileEntity getBlockEntity() {
 		return new TilePollution();

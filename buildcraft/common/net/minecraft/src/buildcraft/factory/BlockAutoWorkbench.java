@@ -6,11 +6,11 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.ICustomTextureBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockAutoWorkbench extends BlockContainer implements
-		ICustomTextureBlock {
+		ITextureProvider {
 
 	int topTexture;
 	int sideTexture;
@@ -52,10 +52,6 @@ public class BlockAutoWorkbench extends BlockContainer implements
     	Utils.preDestroyBlock(world, i, j, k);
     	
         super.onBlockRemoval(world, i, j, k);        
-    }
-    
-    public int getRenderType() {
-        return BuildCraftCore.customTextureModel;
     }
     
     @Override
