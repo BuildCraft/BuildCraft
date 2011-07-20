@@ -1,9 +1,7 @@
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.Configuration.Property;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.BlockFrame;
 import net.minecraft.src.buildcraft.factory.BlockMiningWell;
@@ -12,6 +10,8 @@ import net.minecraft.src.buildcraft.factory.BlockQuarry;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
+import net.minecraft.src.forge.Configuration.Property;
+import net.minecraft.src.forge.Configuration.PropertyKind;
 
 public class BuildCraftFactory {
 	public static BlockQuarry quarryBlock;

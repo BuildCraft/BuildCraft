@@ -1,7 +1,5 @@
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.core.Configuration.Property;
-import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.BlockCobblestonePipe;
@@ -18,6 +16,8 @@ import net.minecraft.src.buildcraft.transport.TileIronPipe;
 import net.minecraft.src.buildcraft.transport.TileObsidianPipe;
 import net.minecraft.src.buildcraft.transport.TileStonePipe;
 import net.minecraft.src.buildcraft.transport.TileWoodenPipe;
+import net.minecraft.src.forge.Configuration.Property;
+import net.minecraft.src.forge.Configuration.PropertyKind;
 
 public class BuildCraftTransport {
 	

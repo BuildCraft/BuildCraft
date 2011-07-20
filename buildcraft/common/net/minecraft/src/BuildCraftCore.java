@@ -9,16 +9,16 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BlockIndex;
-import net.minecraft.src.buildcraft.core.Configuration;
+import net.minecraft.src.buildcraft.core.BuildCraftConfiguration;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PowerFramework;
-import net.minecraft.src.buildcraft.core.Configuration.Property;
-import net.minecraft.src.buildcraft.core.Configuration.PropertyKind;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
+import net.minecraft.src.forge.Configuration.Property;
+import net.minecraft.src.forge.Configuration.PropertyKind;
 
 public class BuildCraftCore {
-	public static Configuration mainConfiguration;
+	public static BuildCraftConfiguration mainConfiguration;
 	
 	public static TreeMap<BlockIndex, Packet230ModLoader> bufferedDescriptions = new TreeMap<BlockIndex, Packet230ModLoader>();
 	
@@ -57,8 +57,9 @@ public class BuildCraftCore {
 		
 		initialized = true;
 				
-		mainConfiguration = new Configuration(new File(
+		mainConfiguration = new BuildCraftConfiguration(new File(
 				CoreProxy.getBuildCraftBase(), "config/buildcraft.cfg"), true);
+		mainConfiguration.load();
 		
 		redLaserTexture = 0 * 16 + 2;
 		blueLaserTexture = 0 * 16 + 1;
