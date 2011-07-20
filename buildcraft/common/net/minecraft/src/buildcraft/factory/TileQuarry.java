@@ -55,7 +55,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	
 	public TileQuarry() {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(20, 50, 50, 50, 10000);
+		powerProvider.configure(20, 25, 25, 25, 10000);
 	}
 	
     public void createUtilsIfNeeded () {
@@ -125,8 +125,13 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	
 	public void doWork() {				
 		if (inProcess) {
+			arm.speed = 0;
+			int maxEnergyToUse = 3 + powerProvider.energyStored / 25000;
+			
+			arm.doMove((float) powerProvider
+					.useEnergy(3, maxEnergyToUse) / 100F);
 			return;
-		}
+		}		
 		
 		if (!isDigging) {
 			return;
@@ -136,11 +141,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	    
 	    if (bluePrintBuilder == null) {
 	    	return;
-	    }
-	    
-	    if (powerProvider.useEnergy(50, 50) < 0) {
-	    	return;
-	    }
+	    }	    	    
 	    
     	if (bluePrintBuilder.done && nextBlockForBluePrint != null) {
     		// In this case, the Quarry has been broken. Repair it.
@@ -150,6 +151,13 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
     	}
 	    
 		if (!bluePrintBuilder.done) {
+			// configuration for building phase
+			powerProvider.configure(20, 25, 25, 25, 10000);
+			
+			if (powerProvider.useEnergy(25, 25) != 25) {
+		    	return;
+		    }
+			
 			powerProvider.timeTracker.markTime(worldObj);
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj);
 			
@@ -165,7 +173,10 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			}
 			
 			return;
-		} 	  					
+		} 	  	
+		
+		// configuration for digging phase
+		powerProvider.configure(20, 30, 200, 50, 10000);
 		
 		if (!findTarget(true)) {
 			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
