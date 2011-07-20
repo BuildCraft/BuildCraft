@@ -29,7 +29,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	
 	@Override
 	public String Version() {
-		return "1.7.3.2";
+		return "1.7.3.3";
 	}
 	
 	 public void HandlePacket(Packet230ModLoader packet) {
