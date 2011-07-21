@@ -10,6 +10,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BuildCraftConfiguration;
+import net.minecraft.src.buildcraft.core.BuildCraftItem;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PowerFramework;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -47,6 +48,10 @@ public class BuildCraftCore {
 	
 	public static String customBuildCraftTexture =
 		"/net/minecraft/src/buildcraft/core/gui/block_textures.png";
+	
+	public static String customBuildCraftSprites =
+		"/net/minecraft/src/buildcraft/core/gui/item_textures.png";
+
 	
 	public static PowerFramework powerFramework;
 	
@@ -116,54 +121,39 @@ public class BuildCraftCore {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		woodenGearItem = (new Item(Integer.parseInt(woodenGearId.value)))
-				.setIconIndex(
-						ModLoader
-								.addOverride("/gui/items.png",
-										"/net/minecraft/src/buildcraft/core/gui/wooden_gear.png"))
+		woodenGearItem = (new BuildCraftItem(Integer.parseInt(woodenGearId.value)))
+				.setIconIndex(1 * 16 + 0)
 				.setItemName("woodenGearItem");
 		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
 		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
 		CoreProxy.addName(woodenGearItem, "Wooden Gear");
 		
-		stoneGearItem = (new Item(Integer.parseInt(stoneGearId.value)))
-				.setIconIndex(
-						ModLoader
-								.addOverride("/gui/items.png",
-										"/net/minecraft/src/buildcraft/core/gui/stone_gear.png"))
+		stoneGearItem = (new BuildCraftItem(Integer.parseInt(stoneGearId.value)))
+				.setIconIndex(1 * 16 + 1)
 				.setItemName("stoneGearItem");
 		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone,
 				Character.valueOf('G'), woodenGearItem });
 		CoreProxy.addName(stoneGearItem, "Stone Gear");
 		
-		ironGearItem = (new Item(Integer.parseInt(ironGearId.value)))
-				.setIconIndex(
-						ModLoader
-								.addOverride("/gui/items.png",
-										"/net/minecraft/src/buildcraft/core/gui/iron_gear.png"))
+		ironGearItem = (new BuildCraftItem(Integer.parseInt(ironGearId.value)))
+				.setIconIndex(1 * 16 + 2)
 				.setItemName("ironGearItem");
 		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
 				Character.valueOf('G'), stoneGearItem });
 		CoreProxy.addName(ironGearItem, "Iron Gear");		
 		
-		goldGearItem = (new Item(Integer.parseInt(goldenGearId.value)))
-				.setIconIndex(
-						ModLoader
-								.addOverride("/gui/items.png",
-										"/net/minecraft/src/buildcraft/core/gui/golden_gear.png"))
+		goldGearItem = (new BuildCraftItem(Integer.parseInt(goldenGearId.value)))
+				.setIconIndex(1 * 16 + 3)
 				.setItemName("goldGearItem");
 		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold,
 				Character.valueOf('G'), ironGearItem });
 		CoreProxy.addName(goldGearItem, "Gold Gear");
 		
-		diamondGearItem = (new Item(Integer.parseInt(diamondGearId.value)))
-				.setIconIndex(
-						ModLoader
-								.addOverride("/gui/items.png",
-										"/net/minecraft/src/buildcraft/core/gui/diamond_gear.png"))
+		diamondGearItem = (new BuildCraftItem(Integer.parseInt(diamondGearId.value)))
+				.setIconIndex(1 * 16 + 4)
 				.setItemName("diamondGearItem");
 		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
 				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,

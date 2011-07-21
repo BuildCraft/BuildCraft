@@ -7,20 +7,19 @@ import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockMarker extends BlockContainer {
+public class BlockMarker extends BlockContainer implements ITextureProvider {
 
 	public BlockMarker(int i) {
 		super(i, Material.circuits);		
 		
-		blockIndexInTexture = ModLoader.addOverride("/terrain.png",
-				"/net/minecraft/src/buildcraft/builders/gui/marker.png");
+		blockIndexInTexture = 3 * 16 + 9;
 		
 		setLightValue(0.5F);
 	}
@@ -225,9 +224,9 @@ public class BlockMarker extends BlockContainer {
             return true;
         }
     }
-    
-//    protected int damageDropped(int i)
-//    {
-//        return blockID;
-//    }
+
+	@Override
+	public String getTextureFile() {
+		return BuildCraftCore.customBuildCraftTexture;
+	}
 }
