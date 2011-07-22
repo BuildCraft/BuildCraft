@@ -12,7 +12,11 @@ public abstract class PowerProvider {
 	public int minActivationEnergy;	
 	public int energyStored = 0;
 	
+    private int powerLoss = 1;
+	private int powerLossRegularity = 80;
+	
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
+	public SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 	
 	public void configure(int latency, int minEnergyReceived,
 			int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
@@ -23,28 +27,48 @@ public abstract class PowerProvider {
 		this.minActivationEnergy = minActivationEnergy;
 	}
 	
-	public final boolean workIfCondition (IPowerReceptor receptor) {
+	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
+		this.powerLoss = powerLoss;
+		this.powerLossRegularity = powerLossRegularity;
+	}
+	
+	public final boolean update (IPowerReceptor receptor) {
+		if (!preConditions(receptor)) {
+			return false;			
+		}
+		
+		TileEntity tile = (TileEntity) receptor;
+		boolean result = false;
+		
 		if (energyStored >= minActivationEnergy) {
 			if (latency == 0) {
 				receptor.doWork();
-				return true;
-			} else {
-				TileEntity tile = (TileEntity) receptor;
-
+				result = true;
+			} else {		
 				if (timeTracker.markTimeIfDelay(tile.worldObj, latency)) {
 					receptor.doWork();
-					return true;
+					result = true;
 				}
 			}
 		}
 		
-		return false;		
+		if (energyLossTracker.markTimeIfDelay(tile.worldObj,
+				powerLossRegularity)) {
+			energyStored -= powerLoss;
+			if (energyStored < 0) {
+				energyStored = 0;
+			}
+		}		
+		
+		return result;		
 	}
 	
-	public abstract void update (IPowerReceptor receptor);
+	public boolean preConditions (IPowerReceptor receptor) {
+		return true;
+	}
 	
 	public int useEnergy (int min, int max) {
-		int result = 0;				
+		int result = 0;
 		
 		if (energyStored >= min) {
 			if (energyStored <= max) {
