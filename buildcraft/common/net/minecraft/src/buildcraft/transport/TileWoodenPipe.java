@@ -23,13 +23,14 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	
 	public TileWoodenPipe () {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 1, 1, 64);
+		powerProvider.configure(50, 1, 64, 1, 64);
+		powerProvider.configurePowerPerdition(64, 1);
 	}	
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
 	public void doWork () {
-		if (powerProvider.useEnergy(1, 1) < 1) {
+		if (powerProvider.energyStored <= 0) {
 			return;
 		}
 		
@@ -84,7 +85,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	 * on the position of the pipe.
 	 */
 	public ItemStack checkExtract (IInventory inventory, boolean doRemove, Orientations from) {
-		if (inventory instanceof ISpecialInventory) {
+		if (inventory instanceof ISpecialInventory) {			
+			// TAKE INTO ACCOUNT SPECIAL INVENTORIES!!!
 			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
 		}
 		
@@ -103,7 +105,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 
 		    if (slot != null && slot.stackSize > 0) {                       
 		        if (doRemove) {
-		            return inventory.decrStackSize(slotIndex, 1);
+					return inventory.decrStackSize(slotIndex,
+							powerProvider.useEnergy(1, slot.stackSize));
 		        } else {
 		            return slot;
 		        }                   
@@ -125,7 +128,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			
 			if (slot != null && slot.stackSize > 0) {			
 				if (doRemove) {
-					return inventory.decrStackSize(slotIndex, 1);
+					return inventory.decrStackSize(slotIndex,
+							powerProvider.useEnergy(1, slot.stackSize));
 				} else {
 					return slot;
 				}			
@@ -151,10 +155,11 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 					&& inventory.getStackInSlot(k).stackSize > 0) {
 
 				ItemStack slot = inventory.getStackInSlot(k);
-
+				
 				if (slot != null && slot.stackSize > 0) {
 					if (doRemove) {
-						return inventory.decrStackSize(k, 1);
+						return inventory.decrStackSize(k,
+								powerProvider.useEnergy(1, slot.stackSize));
 					} else {
 						return slot;
 					}

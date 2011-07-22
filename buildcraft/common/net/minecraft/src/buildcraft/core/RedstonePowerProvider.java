@@ -9,7 +9,7 @@ public class RedstonePowerProvider extends PowerProvider {
 	private boolean lastPower = false;
 		
 	@Override
-	public void update(IPowerReceptor receptor) {
+	public boolean preConditions(IPowerReceptor receptor) {
 		TileEntity tile = (TileEntity) receptor;
 		
 		boolean currentPower = tile.worldObj.isBlockIndirectlyGettingPowered(
@@ -17,17 +17,19 @@ public class RedstonePowerProvider extends PowerProvider {
 		
 		if (BuildCraftCore.continuousCurrentModel) {
 			if (currentPower) {
-				workIfCondition(receptor);
+				return true;
 			}
 		} else {			
 			if (currentPower != lastPower) {
 				lastPower = currentPower;
 
 				if (currentPower) {
-					workIfCondition(receptor);
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 
 	public int useEnergy (int min, int max) {		

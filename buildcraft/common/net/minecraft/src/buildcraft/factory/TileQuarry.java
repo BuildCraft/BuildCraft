@@ -130,8 +130,6 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		if (inProcess) {
 			arm.speed = 0;
 			int energyToUse = 2 + powerProvider.energyStored / 1000;
-			System.out.println(powerProvider.energyStored + " => "
-					+ energyToUse + " => " + (0.015 + energyToUse / 200F));
 			
 			int energy = powerProvider
 			.useEnergy(energyToUse, energyToUse);
