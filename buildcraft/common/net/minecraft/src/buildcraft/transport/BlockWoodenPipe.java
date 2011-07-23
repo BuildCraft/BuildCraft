@@ -31,7 +31,8 @@ public class BlockWoodenPipe extends BlockPipe {
 	
     
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+		if (entityplayer.getCurrentEquippedItem() != null 
+				&& entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
 			TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i,
 					j, k);
 
