@@ -56,17 +56,20 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 			EntityPlayer entityplayer) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 		
-		if (tile.entity instanceof EngineStone) {
-			EnergyProxy.displayGUISteamEngine(entityplayer, tile);
-			return true;
-		} else if (tile.entity instanceof EngineIron) {
-			EnergyProxy.displayGUICombustionEngine(entityplayer, tile);
+		if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+			tile.switchOrientation();
 			return true;
 		} else {
-			tile.switchOrientation();
+			if (tile.entity instanceof EngineStone) {
+				EnergyProxy.displayGUISteamEngine(entityplayer, tile);
+				return true;
+			} else if (tile.entity instanceof EngineIron) {
+				EnergyProxy.displayGUICombustionEngine(entityplayer, tile);
+				return true;
+			}
 		}
-
-		return false;
+		
+		return true;
 	}
 	
 	public void onBlockPlaced(World world, int i, int j, int k, int l) {

@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.EntityPlayer;
@@ -30,9 +31,14 @@ public class BlockWoodenPipe extends BlockPipe {
 	
     
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i, j, k);
-    	
-    	tile.switchSource();
+		if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+			TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i,
+					j, k);
+
+			tile.switchSource();
+
+			return true;
+		}
     	
         return false;
     }
