@@ -17,8 +17,6 @@ public class OilPopulate implements IBiomePopulator {
 		if (biomegenbase == BiomeGenBase.desert && world.rand.nextFloat() > 0.95) {
 			// Generate a small desert deposit
 			
-			System.out.println ("SMALL DEPOSIT ON " + x + ", " + z);
-			
 			int startX = world.rand.nextInt(10) + 2;
 			int startZ = world.rand.nextInt(10) + 2;
 			
@@ -42,10 +40,8 @@ public class OilPopulate implements IBiomePopulator {
 			}			
 		}
 		
-		if (world.rand.nextFloat() > 0.998) {
+		if (world.rand.nextFloat() > 0.999) {
 			// Generate a large cave deposit
-			
-			System.out.println ("LARGE DEPOSIT ON " + x + ", " + z);
 			
 			int cx = x, cy = 5 + world.rand.nextInt(10), cz = z;
 			int r = 10 + world.rand.nextInt(5);
@@ -67,19 +63,27 @@ public class OilPopulate implements IBiomePopulator {
 			boolean started = false;
 			
 			for (int y = 128; y >= cy; --y) {
-				if (world.getBlockId(cx, y, cz) != 0
+				if (!started
+						&& world.getBlockId(cx, y, cz) != 0
 						&& world.getBlockId(cx, y, cz) != Block.leaves.blockID
 						&& world.getBlockId(cx, y, cz) != Block.wood.blockID
 						&& world.getBlockId(cx, y, cz) != Block.grass.blockID) {
 					
 					started = true;
 					
-					if (world.getBlockId(cx, y, cz) != Block.waterStill.blockID
-							&& world.getBlockId(cx, y, cz) != Block.waterStill.blockID) {
-						world.setBlockWithNotify(cx, y, cz, 0);
-					} else {
-						world.setBlockWithNotify(cx, y, cz,
-								BuildCraftEnergy.oilStill.blockID);
+					for (int ox = cx - 2; ox <= cx + 2; ++ox) {
+						for (int oz = cz - 2; oz <= cz + 2; ++oz) {
+							if (world.getBlockId(ox, y, oz) != Block.waterStill.blockID
+									&& world.getBlockId(ox, y, oz) != Block.waterStill.blockID) {
+								world.setBlockWithNotify(ox, y, oz, 0);
+							} else {
+								world.setBlockWithNotify(ox, y, oz,
+										BuildCraftEnergy.oilStill.blockID);
+							}
+							
+							world.setBlockWithNotify(ox, y - 1, oz,
+									BuildCraftEnergy.oilStill.blockID);
+						}
 					}
 				} else if (started) {
 					world.setBlockWithNotify(cx, y, cz,
