@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
@@ -28,10 +29,15 @@ public class BlockIronPipe extends BlockPipe {
 	
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
 		
-		tile.switchPosition();
-		world.markBlockNeedsUpdate(i, j, k);
+		if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+			TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
+
+			tile.switchPosition();
+			world.markBlockNeedsUpdate(i, j, k);
+			
+			return true;
+		}
 		
 		return false;
 	}

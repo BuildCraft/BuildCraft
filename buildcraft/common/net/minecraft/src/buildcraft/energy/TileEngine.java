@@ -176,6 +176,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 					entity.orientation = o;	
 				}				
 				orientation = o.ordinal();
+				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+				
 				break;			
 			}
 		}

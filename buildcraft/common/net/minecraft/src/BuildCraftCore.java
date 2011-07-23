@@ -35,6 +35,7 @@ public class BuildCraftCore {
 	public static Item ironGearItem;
 	public static Item goldGearItem;
 	public static Item diamondGearItem;
+	public static Item wrenchItem;
 	
 	public static int redLaserTexture;
 	public static int blueLaserTexture;
@@ -90,6 +91,21 @@ public class BuildCraftCore {
 			e.printStackTrace();
 			powerFramework = new RedstonePowerFramework();
 		}
+		
+		Property wrenchId = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("wrench.id",
+				PropertyKind.Item, DefaultProps.WRENCH_ID);
+		
+		mainConfiguration.save();
+		
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
+		wrenchItem = (new BuildCraftItem(Integer.parseInt(wrenchId.value)))
+		.setIconIndex(0 * 16 + 2)
+		.setItemName("wrenchItem");
+		craftingmanager.addRecipe(new ItemStack(wrenchItem), new Object[] {
+			"I I", " I ", " I ", Character.valueOf('I'), Item.ingotIron});
+		CoreProxy.addName(wrenchItem, "Wrench");
 		
 		mainConfiguration.save();
 	}
