@@ -17,9 +17,10 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 		IPipeConnection {
 	
 	public BlockEngine(int i) {
-		super(i, Material.wood);
+		super(i, Material.iron);
 		
 		setLightValue(0.6F);
+		setHardness(0.5F);
 
 	}
 	
@@ -56,7 +57,8 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 			EntityPlayer entityplayer) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 		
-		if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+		if (entityplayer.getCurrentEquippedItem() != null 
+				&& entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
 			tile.switchOrientation();
 			return true;
 		} else {

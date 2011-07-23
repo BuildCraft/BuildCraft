@@ -30,7 +30,8 @@ public class BlockIronPipe extends BlockPipe {
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		
-		if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+		if (entityplayer.getCurrentEquippedItem() != null 
+				&& entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
 			TileIronPipe tile = (TileIronPipe) world.getBlockTileEntity(i, j, k);
 
 			tile.switchPosition();
