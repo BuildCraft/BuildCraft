@@ -6,6 +6,7 @@ public class EngineStone extends Engine {
 		super(engine);
 		
 		maxEnergy = 10000;
+		maxEnergyExtracted = 100;
 	}
 	
 	public String getTextureFile () {

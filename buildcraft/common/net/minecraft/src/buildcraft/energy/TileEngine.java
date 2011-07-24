@@ -26,7 +26,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 
 	boolean init = false;
 	
-	Engine entity;
+	private Engine engine;
 	
 	boolean lastPower = false;
 	
@@ -38,37 +38,45 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	public int burnTime = 0;
 	public int totalBurnTime = 0;
 	
+	public Engine getEngine () {
+		if (engine == null) {
+			createEngineIfNeeded();						
+		}
+		
+		return engine;
+	}
+	
 	@Override
 	public void updateEntity () {
 		if (!APIProxy.isClient(worldObj)) {
 			if (!init) {
-				if (entity == null) {
+				if (engine == null) {
 					createEngineIfNeeded ();
 				}
 
-				entity.orientation = Orientations.values()[orientation];			
+				engine.orientation = Orientations.values()[orientation];			
 
 				init = true;
 			}
 		} else {
-			if (entity == null) {
+			if (engine == null) {
 				return;
 			}
 		}
 		
-		entity.update();
+		engine.update();
 		
 		boolean isPowered = worldObj.isBlockIndirectlyGettingPowered(xCoord,
 				yCoord, zCoord);
 		
 		if (progressPart != 0) {
-			entity.progress += entity.getPistonSpeed();
+			engine.progress += engine.getPistonSpeed();
 			
-			if (entity.progress > 0.5 && progressPart == 1) {
+			if (engine.progress > 0.5 && progressPart == 1) {
 				progressPart = 2;
 				
 				Position pos = new Position(xCoord, yCoord, zCoord,
-						entity.orientation);
+						engine.orientation);
 				pos.moveForwards(1.0);
 				TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 						(int) pos.z);
@@ -76,44 +84,40 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 				if (isPoweredTile(tile)) {
 					IPowerReceptor receptor = (IPowerReceptor) tile;
 					
-					int minEnergy = receptor.getPowerProvider().minEnergyReceived;
+					int extracted = engine.extractEnergy(
+							receptor.getPowerProvider().minEnergyReceived,
+							receptor.getPowerProvider().maxEnergyReceived, true);
 					
-					if (minEnergy != -1 && minEnergy <= entity.energy) {
-						int energySent = receptor.getPowerProvider().maxEnergyReceived;
-						
-						if (entity.energy < energySent) {
-							energySent = entity.energy;
-						}
-						
-						entity.energy -= energySent;
-						receptor.getPowerProvider().receiveEnergy(energySent);
+					if (extracted > 0) {
+						receptor.getPowerProvider().receiveEnergy(extracted);
 					}
 				}
-			} else if (entity.progress >= 1) {
-				entity.progress = 0;
+			} else if (engine.progress >= 1) {
+				engine.progress = 0;
 				progressPart = 0;
 			}
 		} else if (isPowered) {
 			Position pos = new Position(xCoord, yCoord, zCoord,
-					entity.orientation);
+					engine.orientation);
 			pos.moveForwards(1.0);
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 
 			if (isPoweredTile(tile)) {
 				IPowerReceptor receptor = (IPowerReceptor) tile;
-				int minEnergy = receptor.getPowerProvider().minEnergyReceived;
 
-				if (minEnergy != -1 && minEnergy <= entity.energy) {
-					progressPart = 1;										
+				if (engine.extractEnergy(
+						receptor.getPowerProvider().minEnergyReceived,
+						receptor.getPowerProvider().maxEnergyReceived, false) > 0) {
+					progressPart = 1;
 				}
 			}
 		}
 
-		if (entity instanceof EngineStone) {
+		if (engine instanceof EngineStone) {
 			if(burnTime > 0) {
 				burnTime--;
-				entity.addEnergy(1);
+				engine.addEnergy(1);
 			}
 
 			if (burnTime == 0 && isPowered) {
@@ -122,11 +126,11 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 					decrStackSize(1, 1);				
 				}
 			}
-		} else if (entity instanceof EngineIron) {
+		} else if (engine instanceof EngineIron) {
 			if (isPowered) {
 				if(burnTime > 0) {
 					burnTime--;
-					entity.addEnergy(2);					
+					engine.addEnergy(2);					
 				}
 			}
 
@@ -145,18 +149,18 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	}
 	
 	private void createEngineIfNeeded() {
-		if (entity == null) {
+		if (engine == null) {
 			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 			if (kind == 0) {
-				entity = new EngineWood(this);
+				engine = new EngineWood(this);
 			} else if (kind == 1) {
-				entity = new EngineStone(this);
+				engine = new EngineStone(this);
 			} else if (kind == 2) {
-				entity = new EngineIron(this);
+				engine = new EngineIron(this);
 			}
 
-			entity.orientation = Orientations.values()[orientation];
+			engine.orientation = Orientations.values()[orientation];
 		}
 	}
 
@@ -172,8 +176,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 					(int) pos.z);
 			
 			if (isPoweredTile(tile)) {				
-				if (entity != null) {
-					entity.orientation = o;	
+				if (engine != null) {
+					engine.orientation = o;	
 				}				
 				orientation = o.ordinal();
 				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
@@ -194,17 +198,17 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 		int kind = nbttagcompound.getInteger("kind");
 		
 		if (kind == 0) {
-			entity = new EngineWood(this);
+			engine = new EngineWood(this);
 		} else if (kind == 1) {
-			entity = new EngineStone(this);
+			engine = new EngineStone(this);
 		} else if (kind == 2) {
-			entity = new EngineIron(this);
+			engine = new EngineIron(this);
 		}
 		
 		orientation = nbttagcompound.getInteger("orientation");
-    	entity.progress = nbttagcompound.getFloat("progress");
-    	entity.energy = nbttagcompound.getInteger("energy");
-    	entity.orientation = Orientations.values()[orientation];
+    	engine.progress = nbttagcompound.getFloat("progress");
+    	engine.energy = nbttagcompound.getInteger("energy");
+    	engine.orientation = Orientations.values()[orientation];
     	totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
     	burnTime = nbttagcompound.getInteger("burnTime");
     	
@@ -221,8 +225,8 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 		nbttagcompound.setInteger("kind",
 				worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
 		nbttagcompound.setInteger("orientation", orientation);
-    	nbttagcompound.setFloat("progress", entity.progress);
-    	nbttagcompound.setInteger("energy", entity.energy);
+    	nbttagcompound.setFloat("progress", engine.progress);
+    	nbttagcompound.setInteger("energy", engine.energy);
     	nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
     	nbttagcompound.setInteger("burnTime", burnTime);
     	
@@ -305,7 +309,7 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
     
     public boolean isBurning()
     {
-        return entity != null && entity.isBurning();
+        return engine != null && engine.isBurning();
     }
     
     public int getBurnTimeRemainingScaled(int i) {
@@ -328,10 +332,10 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 		packet.dataInt [0] = xCoord;
 		packet.dataInt [1] = yCoord;
 		packet.dataInt [2] = zCoord;
-		packet.dataInt [3] = entity.orientation.ordinal();
-		packet.dataInt [4] = entity.energy;
+		packet.dataInt [3] = engine.orientation.ordinal();
+		packet.dataInt [4] = engine.energy;
 		
-		packet.dataFloat [0] = entity.progress;
+		packet.dataFloat [0] = engine.progress;
 		
 		
 		
@@ -352,36 +356,36 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 		packet.dataInt [0] = xCoord;
 		packet.dataInt [1] = yCoord;
 		packet.dataInt [2] = zCoord;		
-		packet.dataInt [3] = entity.orientation.ordinal();
-		packet.dataInt [4] = entity.energy;		
+		packet.dataInt [3] = engine.orientation.ordinal();
+		packet.dataInt [4] = engine.energy;		
 		
-		packet.dataFloat [0] = entity.progress;
+		packet.dataFloat [0] = engine.progress;
 						
 		return packet;
 	}
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		if (entity == null) {
+		if (engine == null) {
 			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			
 			if (kind == 0) {
-				entity = new EngineWood(this);
+				engine = new EngineWood(this);
 			} else if (kind == 1) {
-				entity = new EngineStone(this);
+				engine = new EngineStone(this);
 			} else if (kind == 2) {
-				entity = new EngineIron(this);
+				engine = new EngineIron(this);
 			}
 		}
 		
-		entity.orientation = Orientations.values() [packet.dataInt[3]];
-		entity.progress = packet.dataFloat [0];		
+		engine.orientation = Orientations.values() [packet.dataInt[3]];
+		engine.progress = packet.dataFloat [0];		
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		entity.orientation = Orientations.values() [packet.dataInt[3]];
-		entity.progress = packet.dataFloat [0];		
+		engine.orientation = Orientations.values() [packet.dataInt[3]];
+		engine.progress = packet.dataFloat [0];		
 	}
 
 	@Override

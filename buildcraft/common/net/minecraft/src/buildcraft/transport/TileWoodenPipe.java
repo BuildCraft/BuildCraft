@@ -106,7 +106,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		    if (slot != null && slot.stackSize > 0) {                       
 		        if (doRemove) {
 					return inventory.decrStackSize(slotIndex,
-							powerProvider.useEnergy(1, slot.stackSize));
+							powerProvider.useEnergy(1, slot.stackSize, true));
 		        } else {
 		            return slot;
 		        }                   
@@ -129,7 +129,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			if (slot != null && slot.stackSize > 0) {			
 				if (doRemove) {
 					return inventory.decrStackSize(slotIndex,
-							powerProvider.useEnergy(1, slot.stackSize));
+							powerProvider.useEnergy(1, slot.stackSize, true));
 				} else {
 					return slot;
 				}			
@@ -159,7 +159,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 				if (slot != null && slot.stackSize > 0) {
 					if (doRemove) {
 						return inventory.decrStackSize(k,
-								powerProvider.useEnergy(1, slot.stackSize));
+								powerProvider.useEnergy(1, slot.stackSize, true));
 					} else {
 						return slot;
 					}
@@ -186,7 +186,9 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 			
-			if (tile instanceof IInventory) {
+			if (tile instanceof IInventory
+					&& Utils.checkPipesConnections(worldObj, xCoord, yCoord,
+							zCoord, tile.xCoord, tile.yCoord, tile.zCoord)) {
 				if (!BlockWoodenPipe.isExcludedFromExtraction(block)) {
 					newMeta = o.ordinal();
 					break;

@@ -74,7 +74,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 	
 	@Override
 	public void doWork () {
-		if (powerProvider.useEnergy(25, 25) < 25) {
+		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
 		

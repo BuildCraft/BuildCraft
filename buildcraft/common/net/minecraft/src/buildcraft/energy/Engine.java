@@ -8,6 +8,7 @@ public abstract class Engine {
 	public float progress;
 	public Orientations orientation;
 	int energy;	
+	public int maxEnergyExtracted = 1;
 
 	protected TileEngine tile;
 	
@@ -58,5 +59,35 @@ public abstract class Engine {
 			tile.worldObj.createExplosion(null, tile.xCoord, tile.yCoord,
 					tile.zCoord, explosionRange());
 		}
+	}
+	
+	public int extractEnergy (int min, int max, boolean doExtract) {				
+		if (energy < min) {
+			return 0;
+		}
+		
+		int actualMax;
+		
+		if (max > maxEnergyExtracted) {
+			actualMax = maxEnergyExtracted;
+		} else {
+			actualMax = max;
+		}
+		
+		int extracted;
+		
+		if (energy >= actualMax) {
+			extracted = actualMax;
+			if (doExtract) {
+				energy -= actualMax; 
+			}
+		} else {
+			extracted = energy;
+			if (doExtract) {
+				energy = 0; 
+			}
+		}
+		
+		return extracted;
 	}
 }

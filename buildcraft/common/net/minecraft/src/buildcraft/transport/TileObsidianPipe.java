@@ -35,7 +35,8 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 		}
 		
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(25, 1, 64, 1, 64);
+		powerProvider.configure(25, 1, 64, 1, 256);
+		powerProvider.configurePowerPerdition(64, 1);
 	}
 	
 	private int [] entitiesDropped;
@@ -72,7 +73,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 		return target_pos.orientation.reverse();
 	}
 	
-	private AxisAlignedBB getSuckingBox(Orientations orientation)
+	private AxisAlignedBB getSuckingBox(Orientations orientation, int distance)
 	{		
 		if(orientation == Orientations.Unknown)
 		{
@@ -83,52 +84,52 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 
 		switch (orientation) {
 		case XPos:
-			p1.x += 1;
-			p2.x += 2;
+			p1.x += distance;
+			p2.x += 1 + distance;
 			break;
 		case XNeg:
-			p1.x += 0;
-			p2.x -= 1;
+			p1.x -= (distance - 1);
+			p2.x -= distance;
 			break;
 		case YPos:
 		case YNeg:
-			p1.x += 2;
-			p2.x -= 1;
-			p1.z += 2;
-			p2.z -= 1;
+			p1.x += distance + 1;
+			p2.x -= distance;
+			p1.z += distance + 1;
+			p2.z -= distance;
 			break;
 		case ZPos:
-			p1.z += 1;
-			p2.z += 2;
+			p1.z += distance;
+			p2.z += distance + 1;
 			break;
 		case ZNeg:
-			p1.z += 0;
-			p2.z -= 1;
+			p1.z -= (distance - 1);
+			p2.z -= distance;
 			break;
 		}
 
 		switch (orientation) {
 		case XPos:
 		case XNeg:
-			p1.y += 2;
-			p2.y -= 1;
-			p1.z += 2;
-			p2.z -= 1;
+			p1.y += distance + 1;
+			p2.y -= distance;
+			p1.z += distance + 1;
+			p2.z -= distance;
 			break;
 		case YPos:
-			p1.y += 2;
-			p2.y += 1;
+			p1.y += distance + 1;
+			p2.y += distance;
 			break;
 		case YNeg:
-			p1.y += 0;
-			p2.y -= 1;
+			p1.y -= (distance - 1);
+			p2.y -= distance;
 			break;
 		case ZPos:
 		case ZNeg:
-			p1.y += 2;
-			p2.y -= 1;
-			p1.x += 2;
-			p2.x -= 1;
+			p1.y += distance + 1;
+			p2.y -= distance;
+			p1.x += distance + 1;
+			p2.x -= distance;
 			break;
 		}
 
@@ -139,11 +140,19 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 				max.y, max.z);	
 	}
 	
+
 	@Override
-	public void doWork () {		
-		AxisAlignedBB box = getSuckingBox(getSuckingOrientation());
+	public void doWork () {
+		for (int j = 1; j < 5; ++j) {
+			trySucc(j);
+		}
+	}
+	
+	private boolean trySucc (int distance) {		
+		AxisAlignedBB box = getSuckingBox(getSuckingOrientation(), distance);
+		
 		if(box == null) {
-			return;			
+			return false;			
 		}
 				
 		@SuppressWarnings("rawtypes")
@@ -154,29 +163,32 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 			if (list.get(g) instanceof Entity) {
 				Entity entity = (Entity) list.get(g);
 
-				if (canSuck(entity) && powerProvider.useEnergy(1, 1) == 1) {
-					pullItemIntoPipe(entity);
-					return;
+				if (canSuck(entity, distance)) {
+					pullItemIntoPipe(entity, distance);
+					return true;
 				}
 
-				if (list.get(g) instanceof EntityMinecart) {
+				if (distance == 1 && list.get(g) instanceof EntityMinecart) {
 					EntityMinecart cart = (EntityMinecart) list.get(g);
 					if (!cart.isDead && cart.minecartType == 1) {
 						ItemStack stack = checkExtractGeneric(
 								(IInventory) cart, true,
 								getSuckingOrientation().reverse());
-						if (stack != null && powerProvider.useEnergy(1, 1) == 1) {
+						if (stack != null && powerProvider.useEnergy(1, 1, true) == 1) {
 							EntityItem entityitem = new EntityItem(worldObj,
 									cart.posX, cart.posY + 0.3F, cart.posZ,
 									stack);
 							entityitem.delayBeforeCanPickup = 10;
 							worldObj.entityJoinedWorld(entityitem);
-							pullItemIntoPipe(entityitem);
+							pullItemIntoPipe(entityitem, 1);
+							return true;
 						}
 					}
 				}
 			}
 		}
+		
+		return false;
 	}
 	
 	public ItemStack checkExtractGeneric(IInventory inventory,
@@ -200,7 +212,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 		return null;
 	}
 	
-	public void pullItemIntoPipe(Entity entity) {
+	public void pullItemIntoPipe(Entity entity, int distance) {
 		if (APIProxy.isClient(worldObj)) {
 			return;
 		}
@@ -219,12 +231,24 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 			if (entity instanceof EntityItem) {
 				EntityItem item = (EntityItem) entity;
 				TransportProxy.obsidianPipePickup(worldObj, item, this);
-				stack = item.item;
+				
+				int energyUsed = powerProvider.useEnergy(distance,
+						item.item.stackSize * distance, true);
+				
+				if (distance == 0
+						|| energyUsed / distance == item.item.stackSize) {
+					stack = item.item;
+					APIProxy.removeEntity(entity);
+				} else {
+					stack = item.item.splitStack(energyUsed / distance);
+				}
+				
 			} else if (entity instanceof EntityArrow) {
+				powerProvider.useEnergy(distance, distance, true);
 				stack = new ItemStack(Item.arrow, 1);
+				APIProxy.removeEntity(entity);
 			}
 			
-			APIProxy.removeEntity(entity);
 			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
 					+ Utils.getPipeFloorOf(stack), zCoord + 0.5, stack);
 			worldObj.entityJoinedWorld(passive);
@@ -242,7 +266,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 		entitiesDropped [entitiesDroppedIndex] = item.entityId;
 	}
 	
-	public boolean canSuck (Entity entity) {
+	public boolean canSuck (Entity entity, int distance) {
 		if (entity.isDead) {
 			return false;
 		} if (entity instanceof EntityItem) {
@@ -254,9 +278,9 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 				}
 			}
 			
-			return true;
-		} else if (entity instanceof EntityArrow) {			
-			return true;
+			return powerProvider.useEnergy(distance, distance, false) >= distance;
+		} else if (entity instanceof EntityArrow) {
+			return powerProvider.useEnergy(distance, distance, false) >= distance;
 		} else {
 			return false;
 		}

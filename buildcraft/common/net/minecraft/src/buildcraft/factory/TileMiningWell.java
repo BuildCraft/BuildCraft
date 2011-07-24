@@ -32,7 +32,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	 */
 	@Override
 	public void doWork () {	
-		if (powerProvider.useEnergy(25, 25) < 25) {
+		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
 		

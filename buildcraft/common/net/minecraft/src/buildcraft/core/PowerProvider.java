@@ -67,16 +67,20 @@ public abstract class PowerProvider {
 		return true;
 	}
 	
-	public int useEnergy (int min, int max) {
+	public int useEnergy (int min, int max, boolean doUse) {
 		int result = 0;
 		
 		if (energyStored >= min) {
 			if (energyStored <= max) {
 				result = energyStored;
-				energyStored = 0;
+				if (doUse) {
+					energyStored = 0;
+				}
 			} else {
 				result = max;
-				energyStored -= max;
+				if (doUse) {
+					energyStored -= max;
+				}
 			}
 		}
 		
