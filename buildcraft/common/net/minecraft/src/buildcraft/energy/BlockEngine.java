@@ -62,10 +62,10 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 			tile.switchOrientation();
 			return true;
 		} else {
-			if (tile.getEngine() instanceof EngineStone) {
+			if (tile.engine instanceof EngineStone) {
 				EnergyProxy.displayGUISteamEngine(entityplayer, tile);
 				return true;
-			} else if (tile.getEngine() instanceof EngineIron) {
+			} else if (tile.engine instanceof EngineIron) {
 				EnergyProxy.displayGUICombustionEngine(entityplayer, tile);
 				return true;
 			}

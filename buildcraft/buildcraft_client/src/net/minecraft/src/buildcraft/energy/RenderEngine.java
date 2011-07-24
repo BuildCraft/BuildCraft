@@ -62,7 +62,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
 			double z, float f) {
 	
-		Engine engine = ((TileEngine) tileentity).getEngine();
+		Engine engine = ((TileEngine) tileentity).engine;
 		
 		if (engine != null) {
 			render(engine.getEnergyStage(), engine.progress, engine.orientation,
