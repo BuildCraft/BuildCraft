@@ -98,13 +98,16 @@ public class BuildCraftCore {
 		
 		mainConfiguration.save();
 		
+		initializeGears ();
+		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
 		wrenchItem = (new BuildCraftItem(Integer.parseInt(wrenchId.value)))
 		.setIconIndex(0 * 16 + 2)
 		.setItemName("wrenchItem");
 		craftingmanager.addRecipe(new ItemStack(wrenchItem), new Object[] {
-			"I I", " I ", " I ", Character.valueOf('I'), Item.ingotIron});
+				"I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron,
+				Character.valueOf('G'), stoneGearItem });
 		CoreProxy.addName(wrenchItem, "Wrench");
 		
 		mainConfiguration.save();

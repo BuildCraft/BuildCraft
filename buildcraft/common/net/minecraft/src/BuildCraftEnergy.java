@@ -4,6 +4,7 @@ import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
@@ -12,6 +13,7 @@ import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
 import net.minecraft.src.forge.MinecraftForge;
+import net.minecraft.src.forge.Configuration.Property;
 
 public class BuildCraftEnergy {
 	
@@ -26,20 +28,61 @@ public class BuildCraftEnergy {
 	
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	
-	public static void ModsLoaded () {		
-		engineBlock = new BlockEngine(200);
+	public static void ModsLoaded () {
+		Property engineId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("engine.id",
+				DefaultProps.ENGINE_ID);
+		Property oilStillId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("oilStill.id", DefaultProps.OIL_STILL_ID);
+		Property oilMovingId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("oilMoving.id", DefaultProps.OIL_MOVING_ID);
+
+		BuildCraftCore.mainConfiguration.save();
+		
+		CraftingManager craftingmanager = CraftingManager.getInstance();		
+		
+		engineBlock = new BlockEngine(Integer.parseInt(engineId.value));
+		craftingmanager.addRecipe(
+				new ItemStack(engineBlock, 1, 0),
+				new Object[] { "www", " g ", "GpG", 
+					Character.valueOf('w'),	Block.planks,
+					Character.valueOf('g'), Block.glass,
+					Character.valueOf('G'), BuildCraftCore.woodenGearItem,
+					Character.valueOf('p'), Block.pistonBase});
+		craftingmanager.addRecipe(
+				new ItemStack(engineBlock, 1, 1),
+				new Object[] { "www", " g ", "GpG", 
+					Character.valueOf('w'),	Block.cobblestone,
+					Character.valueOf('g'), Block.glass,
+					Character.valueOf('G'), BuildCraftCore.stoneGearItem,
+					Character.valueOf('p'), Block.pistonBase});
+		craftingmanager.addRecipe(
+				new ItemStack(engineBlock, 1, 2),
+				new Object[] { "www", " g ", "GpG", 
+					Character.valueOf('w'),	Item.ingotIron,
+					Character.valueOf('g'), Block.glass,
+					Character.valueOf('G'), BuildCraftCore.ironGearItem,
+					Character.valueOf('p'), Block.pistonBase});
 		ModLoader.RegisterBlock(engineBlock);
 		
 		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
 				engineBlock.blockID - 256));
 		
-		oilMoving = (new BlockOilFlowing(201, Material.water)).setHardness(100F).setLightOpacity(3).setBlockName("oil");
+		CoreProxy.addName(new ItemStack (engineBlock, 1, 0), "Redstone Engine");
+		CoreProxy.addName(new ItemStack (engineBlock, 1, 1), "Steam Engine");
+		CoreProxy.addName(new ItemStack (engineBlock, 1, 2), "Compression Engine");
+		        
+		oilStill = (new BlockOilStill(Integer.parseInt(oilStillId.value),
+				Material.water)).setHardness(100F).setLightOpacity(3)
+				.setBlockName("oil");
+		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
+		ModLoader.RegisterBlock(oilStill);
+
+		oilMoving = (new BlockOilFlowing(Integer.parseInt(oilMovingId.value),
+				Material.water)).setHardness(100F).setLightOpacity(3)
+				.setBlockName("oil");
 		CoreProxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
 		ModLoader.RegisterBlock(oilMoving);
-        
-		oilStill = (new BlockOilStill(202, Material.water)).setHardness(100F).setLightOpacity(3).setBlockName("oil");
-        CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
-        ModLoader.RegisterBlock(oilStill);        
 		
         MinecraftForge.registerCustomBucketHander(new OilBucketHandler());
         MinecraftForge.registerBiomePopulate(new OilPopulate());
