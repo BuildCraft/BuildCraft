@@ -26,6 +26,9 @@ public class DefaultProps {
     public static int TEMPLATE_ID         = 158;
     public static int COBBLESTONE_PIPE_ID = 159;
     public static int FRAME_ID            = 160;
+    public static int ENGINE_ID           = 161;
+    public static int OIL_STILL_ID        = 162;
+    public static int OIL_MOVING_ID       = 163;
 	
 	public static boolean CURRENT_CONTINUOUS   = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;

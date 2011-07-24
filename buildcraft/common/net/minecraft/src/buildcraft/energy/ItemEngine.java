@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.ItemBlock;
+import net.minecraft.src.ItemStack;
 
 public class ItemEngine extends ItemBlock
 {
@@ -22,13 +23,14 @@ public class ItemEngine extends ItemBlock
         return i;
     }
 
-//    public String getItemNameIS(ItemStack itemstack)
-//    {
-//    	if (itemstack.getItemDamage() == 0) {
-//    		return "tile.engineWood";
-//    	} else {
-//    		return "tile.engineStone";
-//    	}
-////        return (new StringBuilder()).append(super.getItemName()).append(".").append(ItemDye.dyeColors[BlockCloth.func_21034_c(itemstack.getItemDamage())]).toString();
-//    }
+    public String getItemNameIS(ItemStack itemstack)
+    {
+    	if (itemstack.getItemDamage() == 0) {
+    		return "tile.engineWood";
+    	} else if (itemstack.getItemDamage() == 1) {
+    		return "tile.engineStone";
+    	} else {
+    		return "tile.engineIron";
+    	}
+    }
 }

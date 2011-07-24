@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
