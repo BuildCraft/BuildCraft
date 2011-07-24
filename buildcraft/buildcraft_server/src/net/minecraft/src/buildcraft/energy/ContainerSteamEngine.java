@@ -3,9 +3,9 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.InventoryPlayer;
 
-public class ContainerCombustionEngine extends ContainerCombustionEngineRoot {
+public class ContainerSteamEngine extends ContainerSteamEngineRoot {
 
-    public ContainerCombustionEngine(InventoryPlayer inventoryplayer,
+    public ContainerSteamEngine(InventoryPlayer inventoryplayer,
 			TileEngine tileEngine) {
 		super(inventoryplayer, tileEngine);
 		// TODO Auto-generated constructor stub

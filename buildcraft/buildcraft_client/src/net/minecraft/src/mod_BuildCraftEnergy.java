@@ -4,6 +4,7 @@ import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.energy.GuiCombustionEngine;
+import net.minecraft.src.buildcraft.energy.GuiSteamEngine;
 import net.minecraft.src.buildcraft.energy.RenderEngine;
 import net.minecraft.src.buildcraft.energy.TextureOilFX;
 import net.minecraft.src.buildcraft.energy.TextureOilFlowFX;
@@ -56,6 +57,10 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		 
 		public GuiScreen HandleGUI(int i) {		
 			switch (Utils.intToPacketId(i)) {
+			case EngineSteamGUI:
+				return new GuiSteamEngine(
+						ModLoader.getMinecraftInstance().thePlayer.inventory,
+						new TileEngine());
 			case EngineCombustionGUI: 
 				return new GuiCombustionEngine(
 						ModLoader.getMinecraftInstance().thePlayer.inventory,

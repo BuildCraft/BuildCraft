@@ -84,7 +84,6 @@ public class TextureOilFlowFX extends TextureFX
             int l1 = (int)(10F + f2 * 22F);
             int j2 = (int)(50F + f2 * 64F);
             int k2 = 255;
-            int l2 = (int)(176F + f2 * 20F);
             if(anaglyphEnabled)
             {
                 int i3 = (l1 * 30 + j2 * 59 + k2 * 11) / 100;

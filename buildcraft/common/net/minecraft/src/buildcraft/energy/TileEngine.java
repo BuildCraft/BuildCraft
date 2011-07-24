@@ -269,7 +269,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 
 	@Override
 	public String getInvName() {
-		return null;
+		return "Engine";
 	}
 
 	@Override
@@ -403,6 +403,10 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 
 	@Override
 	public void doWork() {
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		engine.addEnergy((int) (provider.useEnergy(1,
 				engine.maxEnergyReceived(), true) * 0.9F));
 	}
