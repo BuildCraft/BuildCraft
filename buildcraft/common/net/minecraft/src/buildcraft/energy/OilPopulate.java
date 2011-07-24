@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftEnergy;
+import net.minecraft.src.NextTickListEntry;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.IBiomePopulator;
 
@@ -40,7 +41,7 @@ public class OilPopulate implements IBiomePopulator {
 			}			
 		}
 		
-		if (world.rand.nextFloat() > 0.999) {
+		if (world.rand.nextFloat() > 0.99) {
 			// Generate a large cave deposit
 			
 			System.out.println ("LARGE DEPOSIT ON " + x + ", " + z);
@@ -71,20 +72,21 @@ public class OilPopulate implements IBiomePopulator {
 						&& world.getBlockId(cx, y, cz) != Block.wood.blockID
 						&& world.getBlockId(cx, y, cz) != Block.grass.blockID) {
 					
-					started = true;
+					started = true;										
 					
-					for (int ox = cx - 5; ox <= cx + 5; ++ox) {
-						for (int oz = cz - 5; oz <= cz + 5; ++oz) {
-							if (world.getBlockId(ox, y, oz) != Block.waterStill.blockID
-									&& world.getBlockId(ox, y, oz) != Block.waterStill.blockID) {
-								world.setBlockWithNotify(ox, y, oz, 0);
-							} else {
-								world.setBlockWithNotify(ox, y, oz,
-										BuildCraftEnergy.oilStill.blockID);
-							}
-							
-							world.setBlockWithNotify(ox, y - 1, oz,
-									BuildCraftEnergy.oilStill.blockID);
+					setOilWithProba(world, 1, cx, y, cz, true);
+					
+					int radius = 8;
+					
+					for (int w = 1; w <= radius; ++w) {
+						float proba = (float) (radius - w + 4)
+								/ (float) (radius + 4);
+						
+						for (int d = -w; d <= w; ++d) {			
+							setOilWithProba(world, proba, cx + d, y, cz + w, false);
+							setOilWithProba(world, proba, cx + d, y, cz - w, false);
+							setOilWithProba(world, proba, cx + w, y, cz + d, false);
+							setOilWithProba(world, proba, cx - w, y, cz + d, false);							
 						}
 					}
 				} else if (started) {
@@ -93,6 +95,34 @@ public class OilPopulate implements IBiomePopulator {
 				}
 			}
 			
+		}
+	}
+	
+	public void setOilWithProba (World world, float proba, int x, int y, int z, boolean force) {
+		if (world.rand.nextFloat() <= proba || force) {
+			boolean adjacentOil = false;
+			
+			for (int dx = x - 1; dx <= x + 1; ++dx) {
+				for (int dz = z - 1; dz <= z + 1; ++dz) {
+					if (world.getBlockId(dx, y - 1, dz) == BuildCraftEnergy.oilStill.blockID) {
+						adjacentOil = true;
+					}
+				}
+			}			
+			
+			if (adjacentOil || force) {
+				if (world.getBlockId(x, y, z) == Block.waterMoving.blockID
+						|| world.getBlockId(x, y, z) == Block.waterStill.blockID) {
+					
+					world.setBlockWithNotify(x, y, z,
+							BuildCraftEnergy.oilStill.blockID);					
+				} else {
+					world.setBlockWithNotify(x, y, z, 0);
+				}
+						
+				world.setBlockWithNotify(x, y - 1, z,
+						BuildCraftEnergy.oilStill.blockID);
+			}
 		}
 	}
 

@@ -12,6 +12,7 @@ import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
+import net.minecraft.src.forge.Configuration.PropertyKind;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Configuration.Property;
 
@@ -32,10 +33,12 @@ public class BuildCraftEnergy {
 		Property engineId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("engine.id",
 				DefaultProps.ENGINE_ID);
-		Property oilStillId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("oilStill.id", DefaultProps.OIL_STILL_ID);
 		Property oilMovingId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("oilMoving.id", DefaultProps.OIL_MOVING_ID);
+		Property oilStillId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("oilStill.id", DefaultProps.OIL_STILL_ID);
+		Property bucketOilId = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("bucketOil.id", PropertyKind.Item, DefaultProps.BUCKET_OIL_ID);
 
 		BuildCraftCore.mainConfiguration.save();
 		
@@ -65,6 +68,7 @@ public class BuildCraftEnergy {
 					Character.valueOf('p'), Block.pistonBase});
 		ModLoader.RegisterBlock(engineBlock);
 		
+		Item.itemsList[engineBlock.blockID] = null;
 		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
 				engineBlock.blockID - 256));
 		
@@ -72,23 +76,27 @@ public class BuildCraftEnergy {
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 1), "Steam Engine");
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 2), "Compression Engine");
 		        
-		oilStill = (new BlockOilStill(Integer.parseInt(oilStillId.value),
-				Material.water)).setHardness(100F).setLightOpacity(3)
-				.setBlockName("oil");
-		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
-		ModLoader.RegisterBlock(oilStill);
-
 		oilMoving = (new BlockOilFlowing(Integer.parseInt(oilMovingId.value),
 				Material.water)).setHardness(100F).setLightOpacity(3)
 				.setBlockName("oil");
 		CoreProxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
 		ModLoader.RegisterBlock(oilMoving);
 		
+		oilStill = (new BlockOilStill(Integer.parseInt(oilStillId.value),
+				Material.water)).setHardness(100F).setLightOpacity(3)
+				.setBlockName("oil");
+		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
+		ModLoader.RegisterBlock(oilStill);
+		
+		if (oilMoving.blockID + 1 != oilStill.blockID) {
+			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
+		}
+		
         MinecraftForge.registerCustomBucketHander(new OilBucketHandler());
         MinecraftForge.registerBiomePopulate(new OilPopulate());
          
-		bucketOil = (new ItemBucketOil(71)).setItemName("bucketOil")
-				.setContainerItem(Item.bucketEmpty);
+		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value)))
+				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 	}
 	
