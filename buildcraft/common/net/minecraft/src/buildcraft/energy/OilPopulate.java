@@ -41,7 +41,7 @@ public class OilPopulate implements IBiomePopulator {
 			}			
 		}
 		
-		if (world.rand.nextFloat() > 0.99) {
+		if (world.rand.nextFloat() > 0.999) {
 			// Generate a large cave deposit
 			
 			System.out.println ("LARGE DEPOSIT ON " + x + ", " + z);
