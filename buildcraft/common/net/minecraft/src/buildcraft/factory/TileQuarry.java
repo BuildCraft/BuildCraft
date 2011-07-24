@@ -132,7 +132,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			int energyToUse = 2 + powerProvider.energyStored / 1000;
 			
 			int energy = powerProvider
-			.useEnergy(energyToUse, energyToUse);
+			.useEnergy(energyToUse, energyToUse, true);
 			
 			if (energy > 0) {
 				arm.doMove(0.015 + (float) energy / 200F);
@@ -168,7 +168,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			// configuration for building phase
 			powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 			
-			if (powerProvider.useEnergy(25, 25) != 25) {
+			if (powerProvider.useEnergy(25, 25, true) != 25) {
 		    	return;
 		    }
 			

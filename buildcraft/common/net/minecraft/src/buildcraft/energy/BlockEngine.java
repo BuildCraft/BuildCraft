@@ -62,10 +62,10 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 			tile.switchOrientation();
 			return true;
 		} else {
-			if (tile.entity instanceof EngineStone) {
+			if (tile.getEngine() instanceof EngineStone) {
 				EnergyProxy.displayGUISteamEngine(entityplayer, tile);
 				return true;
-			} else if (tile.entity instanceof EngineIron) {
+			} else if (tile.getEngine() instanceof EngineIron) {
 				EnergyProxy.displayGUICombustionEngine(entityplayer, tile);
 				return true;
 			}
@@ -113,7 +113,7 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 			int z1, int x2, int y2, int z2) {
 		TileEngine tile = (TileEngine) blockAccess.getBlockTileEntity(x1, y1, z1);
 		
-		switch (tile.entity.orientation) {
+		switch (Orientations.values()[tile.orientation]) {
 		case YPos:
 			return y1 - y2 != -1;
 		case YNeg:
@@ -128,6 +128,6 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 			return x1 - x2 != 1;
 		}
 		
-		return true;
+		return true;		
 	}
 }

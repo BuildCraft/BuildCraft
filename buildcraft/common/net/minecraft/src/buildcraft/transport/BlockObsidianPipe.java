@@ -29,8 +29,8 @@ public class BlockObsidianPipe extends BlockPipe {
     	
 		TileObsidianPipe tile = (TileObsidianPipe)world.getBlockTileEntity(i, j, k);
 		
-		if (tile.canSuck(entity)) {
-			tile.pullItemIntoPipe(entity);
+		if (tile.canSuck(entity, 0)) {
+			tile.pullItemIntoPipe(entity, 0);
 		}
     }
     

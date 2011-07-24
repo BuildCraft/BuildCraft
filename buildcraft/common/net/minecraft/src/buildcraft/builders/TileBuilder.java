@@ -131,7 +131,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 	
 	@Override
 	public void doWork() {
-		if (powerProvider.useEnergy(25, 25) < 25) {
+		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
 		
