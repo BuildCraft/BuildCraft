@@ -113,6 +113,10 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
 			int z1, int x2, int y2, int z2) {
 		TileEngine tile = (TileEngine) blockAccess.getBlockTileEntity(x1, y1, z1);
 		
+		if (tile.engine instanceof EngineWood) {
+			return false;
+		}
+		
 		switch (Orientations.values()[tile.orientation]) {
 		case YPos:
 			return y1 - y2 != -1;

@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftEnergy;
-import net.minecraft.src.NextTickListEntry;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.IBiomePopulator;
 
@@ -15,7 +14,7 @@ public class OilPopulate implements IBiomePopulator {
 	public void populate(World world, BiomeGenBase biomegenbase, int x, int z) {
 		total++;
 		
-		if (biomegenbase == BiomeGenBase.desert && world.rand.nextFloat() > 0.95) {
+		if (biomegenbase == BiomeGenBase.desert && world.rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
 			
 			int startX = world.rand.nextInt(10) + 2;
@@ -26,14 +25,10 @@ public class OilPopulate implements IBiomePopulator {
 				int k = startZ + z;
 
 				if (world.getBlockId(i, j, k) != 0) {
-					if (world.getBlockId(i, j, k) == Block.sand.blockID) {						
-						for (int dx = -1; dx <= 1; dx++) {
-							for (int dz = -1; dz <= 1; dz++) {
-								world.setBlockWithNotify(i + dx, j, k + dz, 0);
-								world.setBlockWithNotify(i + dx, j - 1, k + dz,
-										BuildCraftEnergy.oilStill.blockID);
-							}
-						}
+					if (world.getBlockId(i, j, k) == Block.sand.blockID) {
+						System.out.println ("SMALL DEPOSIT ON " + x + ", " + z);
+						
+						generateSurfaceDeposit(world, i, j, k, 4);						
 					}
 					
 					break;
@@ -74,27 +69,31 @@ public class OilPopulate implements IBiomePopulator {
 					
 					started = true;										
 					
-					setOilWithProba(world, 1, cx, y, cz, true);
+					generateSurfaceDeposit(world, cx, y, cz, 8);
 					
-					int radius = 8;
-					
-					for (int w = 1; w <= radius; ++w) {
-						float proba = (float) (radius - w + 4)
-								/ (float) (radius + 4);
-						
-						for (int d = -w; d <= w; ++d) {			
-							setOilWithProba(world, proba, cx + d, y, cz + w, false);
-							setOilWithProba(world, proba, cx + d, y, cz - w, false);
-							setOilWithProba(world, proba, cx + w, y, cz + d, false);
-							setOilWithProba(world, proba, cx - w, y, cz + d, false);							
-						}
-					}
 				} else if (started) {
 					world.setBlockWithNotify(cx, y, cz,
 							BuildCraftEnergy.oilStill.blockID);												
 				}
 			}
 			
+		}
+	}
+	
+	public void generateSurfaceDeposit(World world, int x, int y, int z,
+			int radius) {
+		setOilWithProba(world, 1, x, y, z, true);
+		
+		for (int w = 1; w <= radius; ++w) {
+			float proba = (float) (radius - w + 4)
+					/ (float) (radius + 4);
+			
+			for (int d = -w; d <= w; ++d) {			
+				setOilWithProba(world, proba, x + d, y, z + w, false);
+				setOilWithProba(world, proba, x + d, y, z - w, false);
+				setOilWithProba(world, proba, x + w, y, z + d, false);
+				setOilWithProba(world, proba, x - w, y, z + d, false);							
+			}
 		}
 	}
 	
