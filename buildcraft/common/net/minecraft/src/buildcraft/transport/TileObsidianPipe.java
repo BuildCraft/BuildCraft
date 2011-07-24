@@ -278,9 +278,9 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 				}
 			}
 			
-			return powerProvider.useEnergy(distance, distance, false) >= distance;
+			return powerProvider.useEnergy(1, distance, false) >= distance;
 		} else if (entity instanceof EntityArrow) {
-			return powerProvider.useEnergy(distance, distance, false) >= distance;
+			return powerProvider.useEnergy(1, distance, false) >= distance;
 		} else {
 			return false;
 		}
