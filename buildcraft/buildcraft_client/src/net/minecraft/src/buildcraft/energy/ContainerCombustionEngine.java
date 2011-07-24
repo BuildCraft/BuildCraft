@@ -11,6 +11,7 @@ public class ContainerCombustionEngine extends ContainerCombustionEngineRoot {
 		// TODO Auto-generated constructor stub
 	}
 
+    @Override
 	public void updateCraftingResults()
     {
         super.updateCraftingResults();
@@ -31,4 +32,14 @@ public class ContainerCombustionEngine extends ContainerCombustionEngineRoot {
         totalBurnTime = engine.totalBurnTime;
     }
 	
+	@Override
+	public void func_20112_a(int i, int j) {		
+		if (i == 0) {
+			engine.burnTime = j;
+		}
+		
+		if (i == 1) {
+			engine.totalBurnTime = j;
+		}
+	}
 }

@@ -9,7 +9,8 @@ public class EnergyProxy {
 
 	public static void displayGUISteamEngine(EntityPlayer entityplayer,
 			TileEngine tile) {
-
+		ModLoader.OpenGUI(entityplayer, Utils.packetIdToInt(PacketIds.EngineSteamGUI),
+				tile, new ContainerSteamEngine(entityplayer.inventory, tile));
 	}
 
 	public static void displayGUICombustionEngine(EntityPlayer entityplayer,

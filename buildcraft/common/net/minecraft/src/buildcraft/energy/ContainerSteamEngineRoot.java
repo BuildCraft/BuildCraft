@@ -5,13 +5,13 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
 
-public class ContainerSteamEngine extends Container
+public class ContainerSteamEngineRoot extends Container
 {
 
-    public ContainerSteamEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine)
+    public ContainerSteamEngineRoot(InventoryPlayer inventoryplayer, TileEngine tileEngine)
     {
         burnTime = 0;
-        itemBurnTime = 0;
+        totalBurnTime = 0;
         engine = tileEngine;
         addSlot(new Slot(tileEngine, 0, 80, 41));
         
@@ -49,9 +49,9 @@ public class ContainerSteamEngine extends Container
         return engine.canInteractWith(entityplayer);
     }
 
-    private TileEngine engine;
-    private int burnTime;
-    private int itemBurnTime;
+    protected TileEngine engine;
+    protected int burnTime;
+    protected int totalBurnTime;
 
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
