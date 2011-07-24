@@ -171,6 +171,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	}
 	
 	public void switchSource () {
+		System.out.println ("SWITCH SOURCE");
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		int newMeta = 6;
 		
@@ -186,10 +187,18 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 			
+			if (block != null) {
+				System.out.println ("BLOCK FOUND: " + block.getClass());
+			}
+			if (tile != null) {
+				System.out.println ("TILE FOUND: " + tile.getClass());
+			}
+			
 			if (tile instanceof IInventory
 					&& Utils.checkPipesConnections(worldObj, xCoord, yCoord,
 							zCoord, tile.xCoord, tile.yCoord, tile.zCoord)) {
 				if (!BlockWoodenPipe.isExcludedFromExtraction(block)) {
+					System.out.println ("FOUND " + o.ordinal());
 					newMeta = o.ordinal();
 					break;
 				}
@@ -197,23 +206,35 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		}
 		
 		if (newMeta != meta) {
+			System.out.println ("CHANGE META TO " + meta);
 			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 	
 	private boolean inSetSource = false;
+	private boolean scheduleSourceSet = false;
 	
-	public void setSourceIfNeeded () {
+	public void scheduleSourceSet () {
+		scheduleSourceSet  = true;
+	}
+	
+	private void setSourceIfNeeded () {			
 		if (inSetSource) {
 			//  This is needed to protect against corner recursive cases
+			
+			System.out.println ("REC");
 			return;
-		}
+		}		
+		
+		System.out.println ("");
+		System.out.println ("SET SOURCE IF NEEDED");
 		
 		inSetSource = true;
 		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
+		System.out.println ("META = " + meta);
 		
 		if (meta > 5) {
 			switchSource();
@@ -247,5 +268,15 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	@Override
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
+	}
+	
+	@Override
+	public void updateEntity () {
+		super.updateEntity();
+		
+		if (scheduleSourceSet) {
+			setSourceIfNeeded();
+			scheduleSourceSet = false;
+		}
 	}
 }
