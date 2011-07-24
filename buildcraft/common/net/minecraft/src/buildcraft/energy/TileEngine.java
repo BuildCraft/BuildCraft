@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -20,13 +21,14 @@ import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
-public class TileEngine extends TileEntity implements IPowerReceptor,
+public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		IInventory, ISynchronizedTile {
 
 	boolean init = false;
 	
-	private Engine engine;
+	public Engine engine;
 	
 	boolean lastPower = false;
 	
@@ -37,31 +39,32 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 	private ItemStack itemInInventory;
 	public int burnTime = 0;
 	public int totalBurnTime = 0;
+	PowerProvider provider;
+
 	
-	public Engine getEngine () {
-		if (engine == null) {
-			createEngineIfNeeded();						
+	public TileEngine () {
+		provider = BuildCraftCore.powerFramework.createPowerProvider();		
+	}
+	
+	@Override
+	public void initialize() {
+		if (!APIProxy.isClient(worldObj)) {
+			if (engine == null) {
+				createEngineIfNeeded();
+			}
+
+			engine.orientation = Orientations.values()[orientation];
+			provider.configure(0, 1, engine.maxEnergyReceived(), 1,
+					engine.maxEnergy);
 		}
-		
-		return engine;
 	}
 	
 	@Override
 	public void updateEntity () {
-		if (!APIProxy.isClient(worldObj)) {
-			if (!init) {
-				if (engine == null) {
-					createEngineIfNeeded ();
-				}
-
-				engine.orientation = Orientations.values()[orientation];			
-
-				init = true;
-			}
-		} else {
-			if (engine == null) {
-				return;
-			}
+		super.updateEntity();
+		
+		if (engine == null) {
+			return;
 		}
 		
 		engine.update();
@@ -390,20 +393,18 @@ public class TileEngine extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {
-		// TODO Auto-generated method stub
-		
+		this.provider = provider;		
 	}
 
 	@Override
 	public PowerProvider getPowerProvider() {
-		// TODO Auto-generated method stub
-		return null;
+		return provider;
 	}
 
 	@Override
 	public void doWork() {
-		// TODO Auto-generated method stub
-		
+		engine.addEnergy((int) (provider.useEnergy(1,
+				engine.maxEnergyReceived(), true) * 0.9F));
 	}
 	
 	public boolean isPoweredTile (TileEntity tile) {
