@@ -65,7 +65,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	public static String version() {
-		return "1.7.3.3";
+		return "2.0.0";
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
