@@ -49,9 +49,10 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 			switch (PacketIds.values()[packet.packetType]) {
 			case EngineDescription:
 				Utils.handleDescriptionPacket(packet);
+				break;
 			case EngineUpdate:
 				Utils.handleUpdatePacket(packet);
-
+				break;
 			}		
 		 }
 		 
