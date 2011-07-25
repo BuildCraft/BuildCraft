@@ -17,6 +17,7 @@ import net.minecraft.src.mod_BuildCraftEnergy;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PowerProvider;
 import net.minecraft.src.buildcraft.core.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
@@ -41,6 +42,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	public int totalBurnTime = 0;
 	PowerProvider provider;
 
+	public float serverPistonSpeed = 0;
 	
 	public TileEngine () {
 		provider = BuildCraftCore.powerFramework.createPowerProvider();		
@@ -64,6 +66,18 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		super.updateEntity();
 		
 		if (engine == null) {
+			return;
+		}
+		
+		if (APIProxy.isClient(worldObj)) {
+			if (progressPart != 0) {
+				engine.progress += serverPistonSpeed;
+				
+				if (engine.progress > 1) {
+					progressPart = 0;
+				}
+			}
+			
 			return;
 		}
 		
@@ -113,7 +127,18 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 						receptor.getPowerProvider().minEnergyReceived,
 						receptor.getPowerProvider().maxEnergyReceived, false) > 0) {
 					progressPart = 1;
+					
+					CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+							50, mod_BuildCraftEnergy.instance);
 				}
+			}
+		} else {
+			// If we're not in an active movement process, update the client
+			// from time to time in order to e.g. display proper color.
+			
+			if (worldObj.getWorldTime() % 20 * 10 == 0) {
+				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
+						50, mod_BuildCraftEnergy.instance);
 			}
 		}
 
@@ -328,7 +353,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		packet.packetType = PacketIds.EngineDescription.ordinal();
 		packet.isChunkDataPacket = true;
 		
-		packet.dataInt = new int [5];
+		packet.dataInt = new int [6];
 		
 		packet.dataFloat = new float [1];
 		
@@ -337,10 +362,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		packet.dataInt [2] = zCoord;
 		packet.dataInt [3] = engine.orientation.ordinal();
 		packet.dataInt [4] = engine.energy;
+		packet.dataInt [5] = burnTime;
 		
-		packet.dataFloat [0] = engine.progress;
-		
-		
+		packet.dataFloat [0] = engine.progress;		
 		
 		return packet;
 	}
@@ -352,18 +376,20 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		packet.packetType = PacketIds.EngineUpdate.ordinal();
 		packet.isChunkDataPacket = true;
 		
-		packet.dataInt = new int [5];
-		
-		packet.dataFloat = new float [1];
+		packet.dataInt = new int [7];		
+		packet.dataFloat = new float [2];
 		
 		packet.dataInt [0] = xCoord;
 		packet.dataInt [1] = yCoord;
 		packet.dataInt [2] = zCoord;		
 		packet.dataInt [3] = engine.orientation.ordinal();
-		packet.dataInt [4] = engine.energy;		
+		packet.dataInt [4] = engine.energy;	
+		packet.dataInt [5] = progressPart;
+		packet.dataInt [6] = burnTime;
 		
 		packet.dataFloat [0] = engine.progress;
-						
+		packet.dataFloat [1] = engine.getPistonSpeed();
+		
 		return packet;
 	}
 
@@ -382,13 +408,19 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		}
 		
 		engine.orientation = Orientations.values() [packet.dataInt[3]];
-		engine.progress = packet.dataFloat [0];		
+		engine.progress = packet.dataFloat [0];			
+		engine.energy = packet.dataInt [4];
+		burnTime = packet.dataInt [5];
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
 		engine.orientation = Orientations.values() [packet.dataInt[3]];
-		engine.progress = packet.dataFloat [0];		
+		engine.progress = packet.dataFloat [0];	
+		engine.energy = packet.dataInt [4];
+		serverPistonSpeed = packet.dataFloat [1];
+		progressPart = packet.dataInt [5];
+		burnTime = packet.dataInt [6];
 	}
 
 	@Override
