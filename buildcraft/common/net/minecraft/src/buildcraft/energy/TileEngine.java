@@ -38,8 +38,13 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	public int orientation;
 	
 	private ItemStack itemInInventory;
+	
 	public int burnTime = 0;
 	public int totalBurnTime = 0;
+	
+	// Burn time scaled from 1 to 1000, needs for transmission over the GUI
+	public short scaledBurnTime = 0;
+	
 	PowerProvider provider;
 
 	public float serverPistonSpeed = 0;
@@ -172,7 +177,13 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 					itemInInventory = new ItemStack(Item.bucketEmpty, 1);
 					burnTime = burnTime + stepTime;
 				}
-			}		
+			}				
+		}
+		
+		if (totalBurnTime != 0) {
+			scaledBurnTime = (short) (burnTime * 1000 / totalBurnTime);
+		} else {
+			scaledBurnTime = 0;
 		}
 	}
 	
@@ -341,7 +352,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
     }
     
     public int getBurnTimeRemainingScaled(int i) {
-        return (burnTime * i) / totalBurnTime;
+        return (((int) scaledBurnTime) * i) / 1000;
     }
 	
 	public Packet getDescriptionPacket () {

@@ -11,7 +11,7 @@ public class GuiCombustionEngine extends GuiContainer {
 
 	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine)
     {
-        super(new ContainerCombustionEngine(inventoryplayer, tileEngine));
+        super(new ContainerEngine(inventoryplayer, tileEngine));
         this.tileEngine = tileEngine;
     }
 
@@ -30,7 +30,7 @@ public class GuiCombustionEngine extends GuiContainer {
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-        if(tileEngine.burnTime > 0)
+        if(tileEngine.scaledBurnTime > 0)
         {
             int l = tileEngine.getBurnTimeRemainingScaled(58);
             drawTexturedModalRect(j + 104, (k + 19 + 58) - l, 176, 58 - l, 16, l + 2);
