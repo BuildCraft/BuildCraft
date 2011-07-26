@@ -29,7 +29,6 @@ public class ContainerEngine extends ContainerEngineRoot {
 	
 	@Override
 	public void func_20112_a(int i, int j) {	
-		System.out.println ("F " + i + " = " + j);
 		if (i == 0) {			
 			engine.scaledBurnTime = (short) j;
 		}

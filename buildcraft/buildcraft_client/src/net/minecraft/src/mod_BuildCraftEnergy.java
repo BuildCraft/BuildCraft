@@ -3,6 +3,8 @@ package net.minecraft.src;
 import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.energy.EngineIron;
+import net.minecraft.src.buildcraft.energy.EngineStone;
 import net.minecraft.src.buildcraft.energy.GuiCombustionEngine;
 import net.minecraft.src.buildcraft.energy.GuiSteamEngine;
 import net.minecraft.src.buildcraft.energy.RenderEngine;
@@ -56,16 +58,20 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 			}		
 		 }
 		 
-		public GuiScreen HandleGUI(int i) {		
+		public GuiScreen HandleGUI(int i) {
+			TileEngine tile = new TileEngine();
+			
 			switch (Utils.intToPacketId(i)) {
 			case EngineSteamGUI:
+				tile.engine = new EngineStone(tile);
 				return new GuiSteamEngine(
 						ModLoader.getMinecraftInstance().thePlayer.inventory,
-						new TileEngine());
-			case EngineCombustionGUI: 
+						tile);
+			case EngineCombustionGUI:
+				tile.engine = new EngineIron(tile);
 				return new GuiCombustionEngine(
 						ModLoader.getMinecraftInstance().thePlayer.inventory,
-						new TileEngine());
+						tile);
 			default:
 				return null;
 			}
