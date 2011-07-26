@@ -11,7 +11,7 @@ public class GuiSteamEngine extends GuiContainer {
 
 	public GuiSteamEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine)
     {
-        super(new ContainerSteamEngine(inventoryplayer, tileEngine));
+        super(new ContainerEngine(inventoryplayer, tileEngine));
         this.tileEngine = tileEngine;
     }
 

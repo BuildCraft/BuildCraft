@@ -3,38 +3,33 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.InventoryPlayer;
 
-public class ContainerCombustionEngine extends ContainerCombustionEngineRoot {
+public class ContainerEngine extends ContainerEngineRoot {
 
-    public ContainerCombustionEngine(InventoryPlayer inventoryplayer,
+    public ContainerEngine(InventoryPlayer inventoryplayer,
 			TileEngine tileEngine) {
 		super(inventoryplayer, tileEngine);
 		// TODO Auto-generated constructor stub
 	}
 
+    @Override
 	public void onCraftGuiOpened(ICrafting icrafting) {
         super.onCraftGuiOpened(icrafting);
-        icrafting.updateCraftingInventoryInfo(this, 0, engine.burnTime);
-        icrafting.updateCraftingInventoryInfo(this, 1, engine.totalBurnTime);
+        icrafting.updateCraftingInventoryInfo(this, 0, engine.scaledBurnTime);
     }
 	
+	@Override
 	public void updateCraftingMatrix() {
         super.updateCraftingMatrix();
         for(int i = 0; i < crafters.size(); i++) {
             ICrafting icrafting = (ICrafting)crafters.get(i);
-            if(burnTime != engine.burnTime) {
+            if(scaledBurnTime != engine.scaledBurnTime) {
 				icrafting.updateCraftingInventoryInfo(this, 0,
-						engine.burnTime);
+						engine.scaledBurnTime);
             }
-            
-            if(totalBurnTime != engine.totalBurnTime) {
-				icrafting.updateCraftingInventoryInfo(this, 1,
-						engine.totalBurnTime);
-            }
-
         }
 
-        burnTime = engine.burnTime;
-        totalBurnTime = engine.totalBurnTime;
+        
+        scaledBurnTime = engine.scaledBurnTime;
     }
 	
 }

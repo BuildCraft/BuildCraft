@@ -5,15 +5,19 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
 
-public class ContainerSteamEngineRoot extends Container
+public class ContainerEngineRoot extends Container
 {
 
-    public ContainerSteamEngineRoot(InventoryPlayer inventoryplayer, TileEngine tileEngine)
+    public ContainerEngineRoot(InventoryPlayer inventoryplayer, TileEngine tileEngine)
     {
-        burnTime = 0;
-        totalBurnTime = 0;
+        scaledBurnTime = 0;
         engine = tileEngine;
-        addSlot(new Slot(tileEngine, 0, 80, 41));
+        
+        if (tileEngine.engine instanceof EngineStone) {
+        	addSlot(new Slot(tileEngine, 0, 80, 41)); 
+        } else {
+        	addSlot(new Slot(tileEngine, 0, 52, 41));
+        }
         
         for(int i = 0; i < 3; i++)
         {
@@ -27,19 +31,15 @@ public class ContainerSteamEngineRoot extends Container
         for(int j = 0; j < 9; j++)
         {
             addSlot(new Slot(inventoryplayer, j, 8 + j * 18, 142));
-        }
-
+        } 
     }
 
     public void func_20112_a(int i, int j)
     {
         if(i == 0)
         {
-            engine.burnTime = j;
-        }
-        if(i == 1)
-        {
-        	engine.totalBurnTime = j;
+        	System.out.println ("RECEIVED " + j);
+            engine.scaledBurnTime = (short) j;
         }
        
     }
@@ -50,8 +50,7 @@ public class ContainerSteamEngineRoot extends Container
     }
 
     protected TileEngine engine;
-    protected int burnTime;
-    protected int totalBurnTime;
+    protected int scaledBurnTime;
 
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
