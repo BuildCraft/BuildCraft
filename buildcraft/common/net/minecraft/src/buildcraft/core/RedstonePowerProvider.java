@@ -7,7 +7,12 @@ import net.minecraft.src.TileEntity;
 public class RedstonePowerProvider extends PowerProvider {
 	
 	private boolean lastPower = false;
-		
+	
+	public RedstonePowerProvider () {
+		this.powerLoss = 0;
+		this.powerLossRegularity = 0;
+	}
+	
 	@Override
 	public boolean preConditions(IPowerReceptor receptor) {
 		TileEntity tile = (TileEntity) receptor;
@@ -32,7 +37,8 @@ public class RedstonePowerProvider extends PowerProvider {
 		return false;
 	}
 
-	public int useEnergy (int min, int max) {		
+	@Override
+	public int useEnergy (int min, int max, boolean doUse) {		
 		return min;
 	}
 	
@@ -54,5 +60,11 @@ public class RedstonePowerProvider extends PowerProvider {
 				minActivationEnergy, maxStoredEnergy);
 
 		this.minActivationEnergy = 0;
+		this.energyStored = 1;
+	}
+	
+	@Override
+	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
+		
 	}
 }

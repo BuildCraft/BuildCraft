@@ -48,7 +48,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		int blockId = w.getBlockId((int) pos.x, (int) pos.y,
 				(int) pos.z);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
-				(int) pos.z);					
+				(int) pos.z);				
 		
 		if (tile == null
 				|| !(tile instanceof IInventory)
@@ -65,6 +65,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		if (stack == null || stack.stackSize == 0) {
 			return;
 		}
+		
 		
 		Position entityPos = new Position(pos.x + 0.5, pos.y
 				+ Utils.getPipeFloorOf(stack), pos.z + 0.5,
