@@ -132,6 +132,10 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 	
 	@Override
 	public void doWork() {
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
@@ -142,7 +146,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj,
 					Mode.Template);
 			
-			if (contents == null) {
+			if (contents == null && box != null) {
 				box.deleteLasers();
 				box = null;
 				
