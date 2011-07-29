@@ -43,7 +43,8 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 		super ();
 		
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-		powerProvider.configure(10, 25, 25, 25, 1000);
+		powerProvider.configure(10, 25, 25, 25, 25);
+		powerProvider.configurePowerPerdition(25, 1);
 	}
 	
 	public void initialize () {

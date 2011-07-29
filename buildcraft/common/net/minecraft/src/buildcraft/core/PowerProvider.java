@@ -13,7 +13,7 @@ public abstract class PowerProvider {
 	public int energyStored = 0;
 	
     private int powerLoss = 1;
-	private int powerLossRegularity = 80;
+	private int powerLossRegularity = 100;
 	
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	public SafeTimeTracker energyLossTracker = new SafeTimeTracker();
