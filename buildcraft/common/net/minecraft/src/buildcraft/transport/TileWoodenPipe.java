@@ -7,11 +7,11 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
+import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.PowerProvider;
-import net.minecraft.src.buildcraft.core.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe implements IPowerReceptor {

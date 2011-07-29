@@ -2,8 +2,8 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.core.BlockIndex;
-import net.minecraft.src.buildcraft.core.SafeTimeTracker;
 
 public class TilePollution extends TileEntity {
 
