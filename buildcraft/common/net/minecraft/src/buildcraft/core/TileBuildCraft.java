@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.IPowerReceptor;
 
 public abstract class TileBuildCraft extends TileEntity {
 
