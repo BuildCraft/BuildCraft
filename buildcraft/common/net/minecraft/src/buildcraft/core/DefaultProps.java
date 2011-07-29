@@ -2,12 +2,12 @@ package net.minecraft.src.buildcraft.core;
 
 public class DefaultProps {
 
-	public static int WOODEN_GEAR_ID   = 3000;
-	public static int STONE_GEAR_ID    = 3001;
-	public static int IRON_GEAR_ID     = 3002;
-	public static int GOLDEN_GEAR_ID   = 3003;
-	public static int DIAMOND_GEAR_ID  = 3004;
-	public static int TEMPLATE_ITEM_ID = 3005;
+	public static int WOODEN_GEAR_ID   = 3800;
+	public static int STONE_GEAR_ID    = 3801;
+	public static int IRON_GEAR_ID     = 3802;
+	public static int GOLDEN_GEAR_ID   = 3803;
+	public static int DIAMOND_GEAR_ID  = 3804;
+	public static int TEMPLATE_ITEM_ID = 3805;
 	
 	public static int WOODEN_PIPE_ID      = 145;
 	public static int STONE_PIPE_ID       = 146;
