@@ -124,6 +124,10 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	}
 	
 	public void doWork() {				
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		if (inProcess) {
 			return;
 		}
