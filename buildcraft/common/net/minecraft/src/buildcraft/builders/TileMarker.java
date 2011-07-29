@@ -165,6 +165,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	}
 	
 	private boolean linkTo (TileMarker marker, int n) {
+		if (marker == null) {
+			return false;
+		}
+		
 		if (origin != null && marker.origin != null) {
 			return false;
 		}
