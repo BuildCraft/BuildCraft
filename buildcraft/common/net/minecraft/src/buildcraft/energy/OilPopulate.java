@@ -25,9 +25,7 @@ public class OilPopulate implements IBiomePopulator {
 				int k = startZ + z;
 
 				if (world.getBlockId(i, j, k) != 0) {
-					if (world.getBlockId(i, j, k) == Block.sand.blockID) {
-						System.out.println ("SMALL DEPOSIT ON " + x + ", " + z);
-						
+					if (world.getBlockId(i, j, k) == Block.sand.blockID) {						
 						generateSurfaceDeposit(world, i, j, k, 4);						
 					}
 					
@@ -36,13 +34,11 @@ public class OilPopulate implements IBiomePopulator {
 			}			
 		}
 		
-		if (world.rand.nextFloat() > 0.999) {
+		if (world.rand.nextFloat() > 0.9995) {
 			// Generate a large cave deposit
 			
-			System.out.println ("LARGE DEPOSIT ON " + x + ", " + z);
-			
-			int cx = x, cy = 5 + world.rand.nextInt(10), cz = z;
-			int r = 10 + world.rand.nextInt(5);
+			int cx = x, cy = 20 + world.rand.nextInt(10), cz = z;
+			int r = 8 + world.rand.nextInt(9);
 			int r2 = r * r;
 			
 			for (int bx = -r; bx <= r; bx++) {
@@ -69,7 +65,8 @@ public class OilPopulate implements IBiomePopulator {
 					
 					started = true;										
 					
-					generateSurfaceDeposit(world, cx, y, cz, 8);
+					generateSurfaceDeposit(world, cx, y, cz,
+							10 + world.rand.nextInt(10));
 					
 				} else if (started) {
 					world.setBlockWithNotify(cx, y, cz,
