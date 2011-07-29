@@ -273,7 +273,9 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);		
+		super.readFromNBT(nbttagcompound);
+		
+		BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
 
 		if (nbttagcompound.hasKey("xSize")) {
 			xMin = nbttagcompound.getInteger("xMin");
@@ -306,6 +308,8 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);		
+		
+		BuildCraftCore.powerFramework.savePowerProvider(this, nbttagcompound);
 		
 		nbttagcompound.setInteger("xMin", xMin);
 		nbttagcompound.setInteger("zMin", zMin);
