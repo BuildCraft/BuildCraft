@@ -36,7 +36,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 		
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
 		powerProvider.configure(25, 1, 64, 1, 256);
-		powerProvider.configurePowerPerdition(64, 1);
+		powerProvider.configurePowerPerdition(1, 1);
 	}
 	
 	private int [] entitiesDropped;
