@@ -12,8 +12,8 @@ public abstract class PowerProvider {
 	public int minActivationEnergy;	
 	public int energyStored = 0;
 	
-    private int powerLoss = 1;
-	private int powerLossRegularity = 100;
+    protected int powerLoss = 1;
+	protected int powerLossRegularity = 100;
 	
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	public SafeTimeTracker energyLossTracker = new SafeTimeTracker();
@@ -52,13 +52,14 @@ public abstract class PowerProvider {
 			}
 		}
 		
-		if (energyLossTracker.markTimeIfDelay(tile.worldObj,
-				powerLossRegularity)) {
+		if (powerLoss > 0
+				&& energyLossTracker.markTimeIfDelay(tile.worldObj,
+						powerLossRegularity)) {
 			energyStored -= powerLoss;
 			if (energyStored < 0) {
 				energyStored = 0;
 			}
-		}		
+		}
 		
 		return result;		
 	}
