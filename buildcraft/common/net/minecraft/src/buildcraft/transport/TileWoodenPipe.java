@@ -196,8 +196,13 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	}
 	
 	private boolean inSetSource = false;
+	private boolean scheduleSourceSet = false;
 	
-	public void setSourceIfNeeded () {
+	public void scheduleSourceSet () {
+		scheduleSourceSet  = true;
+	}
+	
+	private void setSourceIfNeeded () {
 		if (inSetSource) {
 			//  This is needed to protect against corner recursive cases
 			return;
@@ -240,5 +245,15 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	@Override
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
+	}
+	
+	@Override
+	public void updateEntity () {
+		super.updateEntity();
+		
+		if (scheduleSourceSet) {
+			setSourceIfNeeded();
+			scheduleSourceSet = false;
+		}
 	}
 }
