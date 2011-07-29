@@ -53,11 +53,36 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 		}
     }
     
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {		
-		TileBuilder tile = (TileBuilder) world.getBlockTileEntity(i, j, k);				
-		BuildersProxy.displayGUIBuilder(entityplayer, tile);
-		
-		return true;
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {	
+		if (entityplayer.getCurrentEquippedItem() != null 
+				&& entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+			
+			int meta = world.getBlockMetadata(i, j, k);
+
+			switch (Orientations.values()[meta]) {
+			case XNeg:
+				world.setBlockMetadata(i, j, k, Orientations.ZPos.ordinal());
+				break;
+			case XPos:
+				world.setBlockMetadata(i, j, k, Orientations.ZNeg.ordinal());
+				break;
+			case ZNeg:
+				world.setBlockMetadata(i, j, k, Orientations.XNeg.ordinal());
+				break;
+			case ZPos:
+				world.setBlockMetadata(i, j, k, Orientations.XPos.ordinal());
+				break;
+			}
+			
+			world.markBlockNeedsUpdate(i, j, k);
+			
+			return true;
+		} else {
+			TileBuilder tile = (TileBuilder) world.getBlockTileEntity(i, j, k);				
+			BuildersProxy.displayGUIBuilder(entityplayer, tile);
+
+			return true;
+		}
 	}
 	
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
