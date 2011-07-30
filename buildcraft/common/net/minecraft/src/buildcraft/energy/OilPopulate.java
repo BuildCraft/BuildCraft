@@ -40,7 +40,7 @@ public class OilPopulate implements IBiomePopulator {
 			int r = 0;
 			
 			if (mediumDeposit) {
-				r = 4 + world.rand.nextInt(5);
+				r = 3 + world.rand.nextInt(4);
 			} else if (largeDeposit) {
 				r = 8 + world.rand.nextInt(9);
 			}
