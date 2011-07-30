@@ -57,6 +57,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.pistonBase, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.stoneOvenIdle, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.bed, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.boat, 1));
 		} else {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.quarryBlock, 64));
