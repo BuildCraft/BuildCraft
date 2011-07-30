@@ -7,13 +7,9 @@ import net.minecraft.src.World;
 import net.minecraft.src.forge.IBiomePopulator;
 
 public class OilPopulate implements IBiomePopulator {
-
-	int total = 0;
 	
 	@Override
 	public void populate(World world, BiomeGenBase biomegenbase, int x, int z) {
-		total++;
-		
 		if (biomegenbase == BiomeGenBase.desert && world.rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
 			
@@ -34,11 +30,21 @@ public class OilPopulate implements IBiomePopulator {
 			}			
 		}
 		
-		if (world.rand.nextFloat() > 0.9995) {
+		boolean mediumDeposit = world.rand.nextDouble() <= (0.1 / 100.0);
+		boolean largeDeposit = world.rand.nextDouble() <= (0.005 / 100.0);
+		
+		if (mediumDeposit || largeDeposit) {
 			// Generate a large cave deposit
-			
+						
 			int cx = x, cy = 20 + world.rand.nextInt(10), cz = z;
-			int r = 8 + world.rand.nextInt(9);
+			int r = 0;
+			
+			if (mediumDeposit) {
+				r = 4 + world.rand.nextInt(5);
+			} else if (largeDeposit) {
+				r = 8 + world.rand.nextInt(9);
+			}
+			
 			int r2 = r * r;
 			
 			for (int bx = -r; bx <= r; bx++) {
@@ -65,8 +71,26 @@ public class OilPopulate implements IBiomePopulator {
 					
 					started = true;										
 					
-					generateSurfaceDeposit(world, cx, y, cz,
-							10 + world.rand.nextInt(10));
+					if (mediumDeposit) {
+						generateSurfaceDeposit(world, cx, y, cz,
+								10 + world.rand.nextInt(10));
+					} else if (largeDeposit) {
+						generateSurfaceDeposit(world, cx, y, cz,
+								20 + world.rand.nextInt(20));
+					}
+				
+					int ymax = 0;
+					
+					if (mediumDeposit) {
+						ymax = (y + 4 < 128 ? y + 4 : 128);
+					} else if (largeDeposit) {
+						ymax = (y + 30 < 128 ? y + 30 : 128);
+					}
+					
+					for (int h = y + 1; h <= ymax; ++h) {
+						world.setBlockWithNotify(cx, h, cz,
+								BuildCraftEnergy.oilStill.blockID);
+					}
 					
 				} else if (started) {
 					world.setBlockWithNotify(cx, y, cz,
