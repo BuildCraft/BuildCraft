@@ -16,8 +16,8 @@ import net.minecraft.src.buildcraft.transport.TileIronPipe;
 import net.minecraft.src.buildcraft.transport.TileObsidianPipe;
 import net.minecraft.src.buildcraft.transport.TileStonePipe;
 import net.minecraft.src.buildcraft.transport.TileWoodenPipe;
-import net.minecraft.src.forge.Configuration.Property;
-import net.minecraft.src.forge.Configuration.PropertyKind;
+import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.Property;
 
 public class BuildCraftTransport {
 	
@@ -69,13 +69,14 @@ public class BuildCraftTransport {
 		
 		Property alwaysConnect = BuildCraftCore.mainConfiguration
 				.getOrCreateBooleanProperty("pipes.alwaysConnect",
-						PropertyKind.General, DefaultProps.PIPES_ALWAYS_CONNECT);
+						Configuration.GENERAL_PROPERTY,
+						DefaultProps.PIPES_ALWAYS_CONNECT);
 		alwaysConnect.comment = 
 			"set to false to deactivate pipe connection rules, true by default";
 
 		Property exclusionList = BuildCraftCore.mainConfiguration
 				.getOrCreateProperty("woodenPipe.exclusion",
-						PropertyKind.Block, "");
+						Configuration.BLOCK_PROPERTY, "");
 
 		BlockWoodenPipe.excludedBlocks = exclusionList.value.split(",");
 		

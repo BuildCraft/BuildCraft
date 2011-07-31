@@ -21,8 +21,8 @@ import net.minecraft.src.buildcraft.builders.TileTemplate;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.forge.Configuration.Property;
-import net.minecraft.src.forge.Configuration.PropertyKind;
+import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.Property;
 
 public class BuildCraftBuilders {
 	public static BlockMarker markerBlock;
@@ -36,7 +36,7 @@ public class BuildCraftBuilders {
 		BuildCraftCore.initializeGears();
 		
 		Property templateItemId = BuildCraftCore.mainConfiguration
-				.getOrCreateIntProperty("templateItem.id", PropertyKind.Item,
+				.getOrCreateIntProperty("templateItem.id", Configuration.ITEM_PROPERTY,
 						DefaultProps.TEMPLATE_ITEM_ID);
 		Property markerId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("marker.id", DefaultProps.MARKER_ID);

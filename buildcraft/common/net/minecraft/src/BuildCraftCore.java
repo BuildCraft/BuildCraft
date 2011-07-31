@@ -15,8 +15,8 @@ import net.minecraft.src.buildcraft.core.BuildCraftItem;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
-import net.minecraft.src.forge.Configuration.Property;
-import net.minecraft.src.forge.Configuration.PropertyKind;
+import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.Property;
 
 public class BuildCraftCore {
 	public static BuildCraftConfiguration mainConfiguration;
@@ -74,14 +74,16 @@ public class BuildCraftCore {
 		
 		Property continuousCurrent = BuildCraftCore.mainConfiguration
 				.getOrCreateBooleanProperty("current.continuous",
-						PropertyKind.General, DefaultProps.CURRENT_CONTINUOUS);
+						Configuration.GENERAL_PROPERTY,
+						DefaultProps.CURRENT_CONTINUOUS);
 		continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 
 		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
 		
 		Property powerFrameworkClass = BuildCraftCore.mainConfiguration
-		.getOrCreateProperty("power.framework",
-				PropertyKind.General, RedstonePowerFramework.class.getName());
+				.getOrCreateProperty("power.framework",
+						Configuration.GENERAL_PROPERTY,
+						RedstonePowerFramework.class.getName());
 		
 		try {
 			powerFramework = (PowerFramework) Class
@@ -94,7 +96,7 @@ public class BuildCraftCore {
 		
 		Property wrenchId = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("wrench.id",
-				PropertyKind.Item, DefaultProps.WRENCH_ID);
+				Configuration.ITEM_PROPERTY, DefaultProps.WRENCH_ID);
 		
 		mainConfiguration.save();
 		
@@ -119,20 +121,23 @@ public class BuildCraftCore {
 		}
 		
 		Property woodenGearId = BuildCraftCore.mainConfiguration
-				.getOrCreateIntProperty("woodenGearItem.id", PropertyKind.Item,
+				.getOrCreateIntProperty("woodenGearItem.id",
+						Configuration.ITEM_PROPERTY,
 						DefaultProps.WOODEN_GEAR_ID);
 		Property stoneGearId = BuildCraftCore.mainConfiguration
-				.getOrCreateIntProperty("stoneGearItem.id", PropertyKind.Item,
-						DefaultProps.STONE_GEAR_ID);
+				.getOrCreateIntProperty("stoneGearItem.id",
+						Configuration.ITEM_PROPERTY, DefaultProps.STONE_GEAR_ID);
 		Property ironGearId = BuildCraftCore.mainConfiguration
-				.getOrCreateIntProperty("ironGearItem.id", PropertyKind.Item,
-						DefaultProps.IRON_GEAR_ID);
+				.getOrCreateIntProperty("ironGearItem.id",
+						Configuration.ITEM_PROPERTY, DefaultProps.IRON_GEAR_ID);
 		Property goldenGearId = BuildCraftCore.mainConfiguration
-				.getOrCreateIntProperty("goldenGearItem.id", PropertyKind.Item,
+				.getOrCreateIntProperty("goldenGearItem.id",
+						Configuration.ITEM_PROPERTY,
 						DefaultProps.GOLDEN_GEAR_ID);
 		Property diamondGearId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("diamondGearItem.id",
-						PropertyKind.Item, DefaultProps.DIAMOND_GEAR_ID);		
+						Configuration.ITEM_PROPERTY,
+						DefaultProps.DIAMOND_GEAR_ID);
 		
 		BuildCraftCore.mainConfiguration.save();
 		

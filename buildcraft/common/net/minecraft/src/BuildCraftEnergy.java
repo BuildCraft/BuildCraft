@@ -13,9 +13,9 @@ import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
-import net.minecraft.src.forge.Configuration.PropertyKind;
+import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
-import net.minecraft.src.forge.Configuration.Property;
+import net.minecraft.src.forge.Property;
 
 public class BuildCraftEnergy {
 	
@@ -39,7 +39,8 @@ public class BuildCraftEnergy {
 		Property oilStillId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("oilStill.id", DefaultProps.OIL_STILL_ID);
 		Property bucketOilId = BuildCraftCore.mainConfiguration
-		.getOrCreateIntProperty("bucketOil.id", PropertyKind.Item, DefaultProps.BUCKET_OIL_ID);
+				.getOrCreateIntProperty("bucketOil.id",
+						Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_OIL_ID);
 
 		BuildCraftCore.mainConfiguration.save();
 		
@@ -94,7 +95,6 @@ public class BuildCraftEnergy {
 		}
 		
         MinecraftForge.registerCustomBucketHander(new OilBucketHandler());
-        MinecraftForge.registerBiomePopulate(new OilPopulate());
          
 		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value)))
 				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
