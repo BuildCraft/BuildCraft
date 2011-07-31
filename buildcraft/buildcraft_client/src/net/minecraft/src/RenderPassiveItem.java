@@ -9,6 +9,7 @@ import java.util.Random;
 import net.minecraft.src.Entity;
 import net.minecraft.src.Render;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
+import net.minecraft.src.forge.ITextureProvider;
 
 import org.lwjgl.opengl.GL11;
 
@@ -88,11 +89,12 @@ public class RenderPassiveItem extends Render
         {
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             int i = itemstack.getIconIndex();
-            if(itemstack.itemID < 256)
-            {
+            if (itemstack.getItem() instanceof ITextureProvider) {
+				loadTexture(((ITextureProvider) itemstack.getItem())
+						.getTextureFile());
+            } else if(itemstack.itemID < 256) {
                 loadTexture("/terrain.png");
-            } else
-            {
+            } else {
                 loadTexture("/gui/items.png");
             }
             Tessellator tessellator = Tessellator.instance;
