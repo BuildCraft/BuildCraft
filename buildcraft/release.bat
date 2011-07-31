@@ -8,6 +8,6 @@ cd %BCDIR%
 
 set PATH=E:\cygwin\bin;%PATH%
 
-sh package.sh 1.7.3.4
+sh package.sh 2.0.0
 
 pause

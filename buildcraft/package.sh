@@ -51,6 +51,13 @@ function package_all () {
       net/minecraft/src/buildcraft/builders \
       buildcraft/api
 
+   zip -r $dir/buildcraft$qual-B-energy-$version.zip \
+      mod_BuildCraftEnergy*.class \
+      BuildCraftEnergy*.class \
+      buildcraft/energy \
+      net/minecraft/src/buildcraft/energy \
+      buildcraft/api
+
    zip -r $dir/buildcraft$qual-C-devel-$version.zip \
       mod_BuildCraftDevel*.class \
       buildcraft/devel \

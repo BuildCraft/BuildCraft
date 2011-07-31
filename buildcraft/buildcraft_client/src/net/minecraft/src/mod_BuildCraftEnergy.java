@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import java.util.Random;
+
 import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -47,34 +49,36 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		return "2.0.0";
 	}
 	
-	 public void HandlePacket(Packet230ModLoader packet) {
-			switch (PacketIds.values()[packet.packetType]) {
-			case EngineDescription:
-				Utils.handleDescriptionPacket(packet);
-				break;
-			case EngineUpdate:
-				Utils.handleUpdatePacket(packet);
-				break;
-			}		
-		 }
-		 
-		public GuiScreen HandleGUI(int i) {
-			TileEngine tile = new TileEngine();
-			
-			switch (Utils.intToPacketId(i)) {
-			case EngineSteamGUI:
-				tile.engine = new EngineStone(tile);
-				return new GuiSteamEngine(
-						ModLoader.getMinecraftInstance().thePlayer.inventory,
-						tile);
-			case EngineCombustionGUI:
-				tile.engine = new EngineIron(tile);
-				return new GuiCombustionEngine(
-						ModLoader.getMinecraftInstance().thePlayer.inventory,
-						tile);
-			default:
-				return null;
-			}
+	public void HandlePacket(Packet230ModLoader packet) {
+		switch (PacketIds.values()[packet.packetType]) {
+		case EngineDescription:
+			Utils.handleDescriptionPacket(packet);
+			break;
+		case EngineUpdate:
+			Utils.handleUpdatePacket(packet);
+			break;
 		}
+	}
+
+	public GuiScreen HandleGUI(int i) {
+		TileEngine tile = new TileEngine();
+
+		switch (Utils.intToPacketId(i)) {
+		case EngineSteamGUI:
+			tile.engine = new EngineStone(tile);
+			return new GuiSteamEngine(
+					ModLoader.getMinecraftInstance().thePlayer.inventory, tile);
+		case EngineCombustionGUI:
+			tile.engine = new EngineIron(tile);
+			return new GuiCombustionEngine(
+					ModLoader.getMinecraftInstance().thePlayer.inventory, tile);
+		default:
+			return null;
+		}
+	}
+	
+    public void GenerateSurface(World world, Random random, int i, int j) {
+    	BuildCraftEnergy.generateSurface (world, random, i, j);
+    }
 
 }

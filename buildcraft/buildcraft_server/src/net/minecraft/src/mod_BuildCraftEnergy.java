@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import java.util.Random;
+
 import net.minecraft.src.buildcraft.energy.TileEngine;
 
 public class mod_BuildCraftEnergy extends BaseModMp {
@@ -20,4 +22,8 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	public String Version() {
 		return "2.0.0";
 	}
+	
+    public void GenerateSurface(World world, Random random, int i, int j) {
+    	BuildCraftEnergy.generateSurface (world, random, i, j);
+    }
 }
