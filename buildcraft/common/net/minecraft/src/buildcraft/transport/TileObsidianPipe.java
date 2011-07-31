@@ -144,8 +144,12 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 	@Override
 	public void doWork () {
 		for (int j = 1; j < 5; ++j) {
-			trySucc(j);
+			if (trySucc(j)) {
+				return;
+			}					
 		}
+		
+		powerProvider.useEnergy(1, 1, true);
 	}
 	
 	private boolean trySucc (int distance) {		

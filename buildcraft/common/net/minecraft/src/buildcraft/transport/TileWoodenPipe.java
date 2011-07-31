@@ -62,7 +62,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		ItemStack stack = checkExtract(inventory, true,
 				pos.orientation.reverse());	
 		
-		if (stack == null || stack.stackSize == 0) {
+		if (stack == null || stack.stackSize == 0) {			
+			powerProvider.useEnergy(1, 1, false);
 			return;
 		}
 		
