@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import java.util.Random;
 import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.core.BlockIndex;
@@ -98,6 +99,11 @@ public class BuildCraftEnergy {
 		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value)))
 				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketOil, "Oil Bucket");
+	}
+
+	public static void generateSurface(World world, Random random, int i, int j) {
+		OilPopulate.doPopulate(world, i, j);
+		
 	}
 	
 //	public static int createPollution (World world, int i, int j, int k, int saturation) {

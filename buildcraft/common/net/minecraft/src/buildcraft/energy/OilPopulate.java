@@ -10,6 +10,13 @@ public class OilPopulate implements IBiomePopulator {
 	
 	@Override
 	public void populate(World world, BiomeGenBase biomegenbase, int x, int z) {
+		
+	}
+	
+	public static void doPopulate(World world, int x, int z) {
+		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(
+				x, z);
+		
 		if (biomegenbase == BiomeGenBase.desert && world.rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
 			
@@ -22,7 +29,7 @@ public class OilPopulate implements IBiomePopulator {
 
 				if (world.getBlockId(i, j, k) != 0) {
 					if (world.getBlockId(i, j, k) == Block.sand.blockID) {						
-						generateSurfaceDeposit(world, i, j, k, 4);						
+						generateSurfaceDeposit(world, i, j, k, 3);						
 					}
 					
 					break;
@@ -37,12 +44,13 @@ public class OilPopulate implements IBiomePopulator {
 			// Generate a large cave deposit
 						
 			int cx = x, cy = 20 + world.rand.nextInt(10), cz = z;
+			
 			int r = 0;
 			
-			if (mediumDeposit) {
-				r = 3 + world.rand.nextInt(4);
-			} else if (largeDeposit) {
+			if (largeDeposit) {
 				r = 8 + world.rand.nextInt(9);
+			} else if (mediumDeposit) {
+				r = 3 + world.rand.nextInt(4);
 			}
 			
 			int r2 = r * r;
@@ -71,20 +79,20 @@ public class OilPopulate implements IBiomePopulator {
 					
 					started = true;										
 					
-					if (mediumDeposit) {
-						generateSurfaceDeposit(world, cx, y, cz,
-								10 + world.rand.nextInt(10));
-					} else if (largeDeposit) {
+					if (largeDeposit) {
 						generateSurfaceDeposit(world, cx, y, cz,
 								20 + world.rand.nextInt(20));
+					} else if (mediumDeposit) {
+						generateSurfaceDeposit(world, cx, y, cz,
+								5 + world.rand.nextInt(5));
 					}
 				
 					int ymax = 0;
 					
-					if (mediumDeposit) {
+					if (largeDeposit) {
+						ymax = (y + 30 < 128 ? y + 30 : 128);						
+					} else if (mediumDeposit) {
 						ymax = (y + 4 < 128 ? y + 4 : 128);
-					} else if (largeDeposit) {
-						ymax = (y + 30 < 128 ? y + 30 : 128);
 					}
 					
 					for (int h = y + 1; h <= ymax; ++h) {
@@ -101,7 +109,7 @@ public class OilPopulate implements IBiomePopulator {
 		}
 	}
 	
-	public void generateSurfaceDeposit(World world, int x, int y, int z,
+	public static void generateSurfaceDeposit(World world, int x, int y, int z,
 			int radius) {
 		setOilWithProba(world, 1, x, y, z, true);
 		
@@ -116,23 +124,45 @@ public class OilPopulate implements IBiomePopulator {
 				setOilWithProba(world, proba, x - w, y, z + d, false);							
 			}
 		}
-	}
-	
-	public void setOilWithProba (World world, float proba, int x, int y, int z, boolean force) {
-		if (world.rand.nextFloat() <= proba || force) {
-			boolean adjacentOil = false;
-			
-			for (int dx = x - 1; dx <= x + 1; ++dx) {
-				for (int dz = z - 1; dz <= z + 1; ++dz) {
-					if (world.getBlockId(dx, y - 1, dz) == BuildCraftEnergy.oilStill.blockID) {
-						adjacentOil = true;
+		
+		for (int dx = x - radius; dx <= x + radius; ++dx) {
+			for (int dz = z - radius; dz <= z + radius; ++dz) {
+
+				if (world.getBlockId(dx, y - 1, dz) != BuildCraftEnergy.oilStill.blockID) {
+					if (isOil(world, dx + 1, y - 1, dz)
+							&& isOil(world, dx - 1, y - 1, dz)
+							&& isOil(world, dx, y - 1, dz + 1)
+							&& isOil(world, dx, y - 1, dz - 1)) {
+						setOilWithProba(world, 1.0F, dx, y, dz, true);
 					}
 				}
-			}			
+			}
+		}
+	}
+	
+	private static boolean isOil (World world, int x, int y, int z) {
+		return (world.getBlockId(x, y, z) == BuildCraftEnergy.oilStill.blockID
+				|| world.getBlockId(x, y, z) == BuildCraftEnergy.oilMoving.blockID);
+	}
+	
+	public static void setOilWithProba (World world, float proba, int x, int y, int z, boolean force) {
+		if ((world.rand.nextFloat() <= proba && world.getBlockId(x, y - 2, z) != 0)
+				|| force) {
+			boolean adjacentOil = false;
+			
+			for (int d = -1; d <= 1; ++d) {
+				if (isOil(world, x + d, y - 1, z)
+						|| isOil(world, x - d, y - 1, z) 
+						|| isOil(world, x, y - 1, z + d)
+						|| isOil(world, x, y - 1, z - d)) {
+					adjacentOil = true;
+				}
+			}
 			
 			if (adjacentOil || force) {
 				if (world.getBlockId(x, y, z) == Block.waterMoving.blockID
-						|| world.getBlockId(x, y, z) == Block.waterStill.blockID) {
+						|| world.getBlockId(x, y, z) == Block.waterStill.blockID
+						|| isOil (world, x, y, z)) {
 					
 					world.setBlockWithNotify(x, y, z,
 							BuildCraftEnergy.oilStill.blockID);					
