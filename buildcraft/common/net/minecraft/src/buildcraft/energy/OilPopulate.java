@@ -4,14 +4,8 @@ import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.IBiomePopulator;
 
-public class OilPopulate implements IBiomePopulator {
-	
-	@Override
-	public void populate(World world, BiomeGenBase biomegenbase, int x, int z) {
-		
-	}
+public class OilPopulate {
 	
 	public static void doPopulate(World world, int x, int z) {
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(
@@ -41,8 +35,8 @@ public class OilPopulate implements IBiomePopulator {
 		boolean largeDeposit = world.rand.nextDouble() <= (0.005 / 100.0);
 		
 		if (mediumDeposit || largeDeposit) {
-			// Generate a large cave deposit
-						
+			// Generate a large cave deposit						
+			
 			int cx = x, cy = 20 + world.rand.nextInt(10), cz = z;
 			
 			int r = 0;

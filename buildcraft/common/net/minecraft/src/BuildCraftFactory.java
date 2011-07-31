@@ -10,8 +10,8 @@ import net.minecraft.src.buildcraft.factory.BlockQuarry;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
-import net.minecraft.src.forge.Configuration.Property;
-import net.minecraft.src.forge.Configuration.PropertyKind;
+import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.Property;
 
 public class BuildCraftFactory {
 	public static BlockQuarry quarryBlock;
@@ -35,7 +35,7 @@ public class BuildCraftFactory {
 		boolean allowMining = Boolean
 				.parseBoolean(BuildCraftCore.mainConfiguration
 						.getOrCreateBooleanProperty("mining.enabled",
-								PropertyKind.General, true).value);
+								Configuration.GENERAL_PROPERTY, true).value);
 		
 		Property minigWellId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("miningWell.id",

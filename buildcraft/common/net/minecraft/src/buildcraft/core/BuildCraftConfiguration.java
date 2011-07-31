@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.Property;
 
 public class BuildCraftConfiguration extends Configuration {
 
@@ -32,47 +33,47 @@ public class BuildCraftConfiguration extends Configuration {
 				fileinputstream.close();
 			}
 
-			getOrCreateProperty("stonePipe.id", PropertyKind.Block,
+			getOrCreateProperty("stonePipe.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("stonePipe.blockId"));
-			getOrCreateProperty("woodenPipe.id", PropertyKind.Block,
+			getOrCreateProperty("woodenPipe.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("woodenPipe.blockId"));
-			getOrCreateProperty("ironPipe.id", PropertyKind.Block,
+			getOrCreateProperty("ironPipe.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("ironPipe.blockId"));
-			getOrCreateProperty("goldenPipe.id", PropertyKind.Block,
+			getOrCreateProperty("goldenPipe.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("goldenPipe.blockId"));
-			getOrCreateProperty("diamondPipe.id", PropertyKind.Block,
+			getOrCreateProperty("diamondPipe.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("diamondPipe.blockId"));
-			getOrCreateProperty("obsidianPipe.id", PropertyKind.Block,
+			getOrCreateProperty("obsidianPipe.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("obsidianPipeBlock.blockId"));
-			getOrCreateProperty("autoWorkbench.id", PropertyKind.Block,
+			getOrCreateProperty("autoWorkbench.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("autoWorkbench.blockId"));
-			getOrCreateProperty("miningWell.id", PropertyKind.Block,
+			getOrCreateProperty("miningWell.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("miningWell.blockId"));
-			getOrCreateProperty("quarry.id", PropertyKind.Block,
+			getOrCreateProperty("quarry.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("quarry.blockId"));
-			getOrCreateProperty("drill.id", PropertyKind.Block,
+			getOrCreateProperty("drill.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("drill.blockId"));
-			getOrCreateProperty("frame.id", PropertyKind.Block,
+			getOrCreateProperty("frame.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("frame.blockId"));
-			getOrCreateProperty("marker.id", PropertyKind.Block,
+			getOrCreateProperty("marker.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("marker.blockId"));
-			getOrCreateProperty("filler.id", PropertyKind.Block,
+			getOrCreateProperty("filler.id", Configuration.BLOCK_PROPERTY,
 					props.getProperty("filler.blockId"));
 			
-			getOrCreateProperty("woodenGearItem.id", PropertyKind.Item,
+			getOrCreateProperty("woodenGearItem.id", Configuration.ITEM_PROPERTY,
 					props.getProperty("woodenGearItem.id"));
-			getOrCreateProperty("stoneGearItem.id", PropertyKind.Item,
+			getOrCreateProperty("stoneGearItem.id", Configuration.ITEM_PROPERTY,
 					props.getProperty("stoneGearItem.id"));
-			getOrCreateProperty("ironGearItem.id", PropertyKind.Item,
+			getOrCreateProperty("ironGearItem.id", Configuration.ITEM_PROPERTY,
 					props.getProperty("ironGearItem.id"));
-			getOrCreateProperty("goldenGearItem.id", PropertyKind.Item,
+			getOrCreateProperty("goldenGearItem.id", Configuration.ITEM_PROPERTY,
 					props.getProperty("goldGearItem.id"));
-			getOrCreateProperty("diamondGearItem.id", PropertyKind.Item,
+			getOrCreateProperty("diamondGearItem.id", Configuration.ITEM_PROPERTY,
 					props.getProperty("diamondGearItem.id"));
 
-			getOrCreateProperty("mining.enabled", PropertyKind.General,
+			getOrCreateProperty("mining.enabled", Configuration.GENERAL_PROPERTY,
 					props.getProperty("mining.enabled"));
-			getOrCreateProperty("current.continuous", PropertyKind.General,
+			getOrCreateProperty("current.continuous", Configuration.GENERAL_PROPERTY,
 					props.getProperty("current.continous"));
 			
 			cfgfile.delete();
