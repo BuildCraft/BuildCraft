@@ -31,6 +31,8 @@ public class BuildCraftEnergy {
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	
 	public static void ModsLoaded () {
+		BuildCraftCore.initialize();
+		
 		Property engineId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("engine.id",
 				DefaultProps.ENGINE_ID);
