@@ -1,5 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
@@ -47,6 +49,51 @@ public abstract class BlockPipe extends BlockContainer implements
     
 	@Override
 	protected abstract TileEntity getBlockEntity();
+	
+	@Override
+	public void getCollidingBoundingBoxes(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
+		setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
+				Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);
+		super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+		
+		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
+			setBlockBounds(0.0F, Utils.pipeMinSize, Utils.pipeMinSize,
+					Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);
+			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i + 1, j, k)) {
+			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
+					1.0F, Utils.pipeMaxSize, Utils.pipeMaxSize);			
+			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j - 1, k)) {
+			setBlockBounds(Utils.pipeMinSize, 0.0F, Utils.pipeMinSize,
+					Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);			
+			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j + 1, k)) {
+			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
+					Utils.pipeMaxSize, 1.0F, Utils.pipeMaxSize);			
+			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j, k - 1)) {
+			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, 0.0F,
+					Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);
+			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
+			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
+					Utils.pipeMaxSize, Utils.pipeMaxSize, 1.0F);			
+			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
+		}
+		
+		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+	}	 
 	
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
