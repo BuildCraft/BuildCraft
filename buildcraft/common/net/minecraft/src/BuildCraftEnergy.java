@@ -78,7 +78,7 @@ public class BuildCraftEnergy {
 		
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 0), "Redstone Engine");
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 1), "Steam Engine");
-		CoreProxy.addName(new ItemStack (engineBlock, 1, 2), "Compression Engine");
+		CoreProxy.addName(new ItemStack (engineBlock, 1, 2), "Combustion Engine");
 		        
 		oilMoving = (new BlockOilFlowing(Integer.parseInt(oilMovingId.value),
 				Material.water)).setHardness(100F).setLightOpacity(3)
