@@ -13,7 +13,7 @@ public class ItemBucketOil extends ItemBucket implements ITextureProvider {
 
 	@Override
 	public String getTextureFile() {
-		return "/net/minecraft/src/buildcraft/energy/gui/item_textures.png";
+		return "/net/minecraft/src/buildcraft/core/gui/item_textures.png";
 	}
 
 }
