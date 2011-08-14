@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -17,13 +18,28 @@ import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
-	class EntityData {	
+public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILiquidContainer {
+		
+	public static int flowRate = 20;
+	
+	private int [] sideToCenter = new int [6];
+	private int [] centerToSide = new int [6];
+	private int centerIn = 0;
+	private int centerOut = 0;
+	
+	public boolean [] isInput = new boolean [6];
+	
+	public Orientations lastFromOrientation = Orientations.XPos;
+	public Orientations lastToOrientation = Orientations.XPos;
+	
+	public class EntityData {	
+		// TODO: Move passive data here too, like position, speed and all?
 		boolean toCenter = true;
 		EntityPassiveItem item;
 		
@@ -36,11 +52,15 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 		}
 	}
 	
-	TreeMap<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData> ();
+	public TreeMap<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData> ();
 	LinkedList <EntityData> entitiesToLoad = new LinkedList <EntityData> ();
 	
 	public TilePipe () {
-
+		for (int j = 0; j < 6; ++j) {
+			sideToCenter [j] = 0;
+			centerToSide [j] = 0;
+			isInput [j] = false;
+		}
 	}
 	
 	public void readjustSpeed (EntityPassiveItem item) {
@@ -54,8 +74,8 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 	}
 	
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
-		readjustSpeed(item);				
-		
+		readjustSpeed(item);			
+				
 		if (!travelingEntities.containsKey(new Integer(item.entityId))) {
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
 					item, orientation));
@@ -67,10 +87,11 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 		// pipe.
 		if (orientation != Orientations.YPos && orientation != Orientations.YNeg) {
 			item.setPosition(item.posX, yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
-		}				
+		}
 		
 		if (APIProxy.isServerSide()) {
-			if (item.synchroTracker.markTimeIfDelay(worldObj, 20)) {				
+			if (item.synchroTracker.markTimeIfDelay(worldObj, 20)) {
+				// FIXME: what about the other items???
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
 						xCoord, yCoord, zCoord, 50,
 						mod_BuildCraftTransport.instance);
@@ -122,12 +143,36 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 		
 		return false;
 	}
+	
+	public boolean canReceiveLiquid(Position p) {
+		TileEntity entity = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
+				(int) p.z);
+		
+		if (isInput [p.orientation.ordinal()]) {
+			return false;
+		}
+		
+		if (!Utils.checkPipesConnections(worldObj, (int) p.x, (int) p.y,
+				(int) p.z, xCoord, yCoord, zCoord)) {
+			return false;
+		}
+		
+		if (entity instanceof IPipeEntry || entity instanceof ILiquidContainer) {
+			return true;
+		}
+		
+		return false;
+	}
 		
 	public void updateEntity() {
 		super.updateEntity();
-				
+		
+		moveSolids();				
+		moveLiquids();
+	}
+	
+	private void moveSolids () {
 		for (EntityData data : entitiesToLoad) {
-			worldObj.entityJoinedWorld(data.item);
 			travelingEntities.put(new Integer(data.item.entityId), data);
 		}
 		
@@ -137,15 +182,12 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 		
 		for (EntityData data : travelingEntities.values()) {
 			Position motion = new Position (0, 0, 0, data.orientation);
-			motion.moveForwards(data.item.speed);			
-						
-			data.item.motionX = motion.x;
-			data.item.motionY = motion.y;
-			data.item.motionZ = motion.z;
+			motion.moveForwards(data.item.speed);												
 			
-			data.item.moveEntity(motion.x, motion.y, motion.z);
+			data.item.setPosition(data.item.posX + motion.x, data.item.posY
+					+ motion.y, data.item.posZ + motion.z);
 									
-			if (data.toCenter && middleReached(data)) {
+			if ((data.toCenter && middleReached(data)) || outOfBounds(data)) {
 				data.toCenter = false;
 				
 				// Reajusting to the middle 
@@ -206,8 +248,6 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 							}
 						}
 					}
-					
-					APIProxy.removeEntity(data.item);
 				} else {
 					EntityItem dropped = data.item.toEntityItem(worldObj,
 							data.orientation);
@@ -223,7 +263,7 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 		    }
 		}	
 		
-		travelingEntities.values().removeAll(toRemove);		
+		travelingEntities.values().removeAll(toRemove);
 	}
 	
 	public boolean middleReached(EntityData entity) {
@@ -241,6 +281,15 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 		|| entity.item.posY < yCoord
 		|| entity.item.posZ > zCoord + 1.0
 		|| entity.item.posZ < zCoord;
+	}
+	
+	public boolean outOfBounds (EntityData entity) {
+		return entity.item.posX > xCoord + 2.0 
+		|| entity.item.posX < xCoord - 1.0
+		|| entity.item.posY > yCoord + 2.0
+		|| entity.item.posY < yCoord - 1.0
+		|| entity.item.posZ > zCoord + 2.0
+		|| entity.item.posZ < zCoord - 1.0;
 	}
 	
 	public Position getPosition() {
@@ -272,6 +321,17 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 				//  two versions - ignore these errors.
 			}
 		}
+		
+    	for (int i = 0; i < 6; ++i) {
+    		sideToCenter [i] = nbttagcompound.getInteger("sideToCenter[" + i + "]");
+    		centerToSide [i] = nbttagcompound.getInteger("centerToSide[" + i + "]");
+    		isInput [i] = nbttagcompound.getBoolean("isInput[" + i + "]");
+    	}
+    	
+    	centerIn = nbttagcompound.getInteger("centerIn");
+    	centerOut = nbttagcompound.getInteger("centerOut");
+    	lastFromOrientation = Orientations.values()[nbttagcompound.getInteger("lastFromOrientation")];
+    	lastToOrientation = Orientations.values()[nbttagcompound.getInteger("lastToOrientation")];
     }
 
     public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -288,6 +348,17 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
     	}
     	
     	nbttagcompound.setTag("travelingEntities", nbttaglist);
+
+    	for (int i = 0; i < 6; ++i) {
+    		nbttagcompound.setInteger("sideToCenter[" + i + "]", sideToCenter [i]);
+    		nbttagcompound.setInteger("centerToSide[" + i + "]", centerToSide [i]);
+    		nbttagcompound.setBoolean ("isInput[" + i + "]", isInput [i]);
+    	}
+    	
+    	nbttagcompound.setInteger("centerIn", centerIn);
+    	nbttagcompound.setInteger("centerOut", centerOut);    	
+    	nbttagcompound.setInteger("lastFromOrientation", lastFromOrientation.ordinal());
+    	nbttagcompound.setInteger("lastToOrientation", lastToOrientation.ordinal());
     }
     
     public Orientations resolveDestination (EntityData data) {
@@ -327,11 +398,11 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 			return;
 		}
 		
-		EntityPassiveItem item = (EntityPassiveItem) APIProxy.getEntity(
-				worldObj, packet.dataInt[3]);
+//		EntityPassiveItem item = (EntityPassiveItem) APIProxy.getEntity(
+//				worldObj, packet.dataInt[3]);
 		
-		if (item == null) {
-			item = new EntityPassiveItem(worldObj);
+//		if (item == null) {
+			EntityPassiveItem item = new EntityPassiveItem(worldObj);
 			item.entityId = packet.dataInt [3];
 			
 			int itemId = packet.dataInt [5];
@@ -339,17 +410,15 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 			int dmg = packet.dataInt [7];
 			
 			item.item = new ItemStack(itemId, stackSize, dmg);		
-
-			APIProxy.storeEntity(worldObj, item);
-		} else {
-			if (item.container != this) {
-				if (item.container != null) {
-					((TilePipe) item.container).travelingEntities
-							.remove(item.entityId);
-					item.container = null;
-				}
-			}
-		}
+//		} else {
+//			if (item.container != this) {
+//				if (item.container != null) {
+//					((TilePipe) item.container).travelingEntities
+//							.remove(item.entityId);
+//					item.container = null;
+//				}
+//			}
+//		}
 		
 		Orientations orientation;						
 		orientation = Orientations.values()[packet.dataInt [4]];
@@ -404,4 +473,157 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry {
 	public void onDropped (EntityItem item) {
 		
 	}
+	
+	/** 
+	 * Fills the pipe, and return the amount of liquid that has been used.
+	 */
+	public int fill (Orientations from, int quantity) {		
+		int space = BuildCraftCore.OIL_BUCKET_QUANTITY / 4
+				- sideToCenter[from.ordinal()] - centerToSide[from.ordinal()]
+				+ flowRate;
+		
+		isInput [from.ordinal()] = true;
+		
+		if (space <= 0) {
+			return 0;
+		} if (space > quantity) {
+			sideToCenter [from.ordinal()] += quantity;
+			return quantity;
+		} else {
+			sideToCenter [from.ordinal()] += space;
+			
+			return space;
+		}		
+	}
+	
+	private void moveLiquids () {					
+		float centerSpace = BuildCraftCore.OIL_BUCKET_QUANTITY / 2 - centerIn
+				- centerOut + flowRate;
+		
+		boolean moved = false;
+		
+		// computes the various inputs of liquids
+		
+		for (int i = 0; i < 6; ++i) {
+			if (isInput [i]) {
+				if (centerToSide [i] > 0 && centerSpace >= flowRate) {
+					lastFromOrientation = Orientations.values()[i];
+					centerToSide [i] -= flowRate;
+					centerIn += flowRate;
+					moved = true;
+				}
+				
+				if (sideToCenter[i] + centerToSide[i] >= BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+					centerToSide[i] = sideToCenter[i] + centerToSide[i];
+					sideToCenter[i] = 0;
+				}
+			}
+		}
+		
+		// computes the move from the center
+
+		if (centerIn + centerOut >= BuildCraftCore.OIL_BUCKET_QUANTITY / 2) {
+			centerOut = centerIn + centerOut;
+			centerIn = 0;
+		} 
+		
+		// computes the output of liquid
+		for (int i = 0; i < 6; ++i) {		
+			Position p = new Position (xCoord, yCoord, zCoord, Orientations.values() [i]);
+			p.moveForwards(1);
+
+			if (canReceiveLiquid(p)) {				
+				if (sideToCenter [i] > 0) {
+					ILiquidContainer pipe = (ILiquidContainer) Utils.getTile(worldObj, p,
+							Orientations.Unknown);
+					
+					sideToCenter [i] -= pipe
+							.fill(p.orientation.reverse(), flowRate);
+					
+					moved = true;
+				}
+				
+				if (centerOut > 0 && sideToCenter [i] + centerToSide [i] <= BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+					lastToOrientation = p.orientation;
+					centerToSide [i] += flowRate;
+					centerOut -= flowRate;
+					
+					moved = true;
+				}
+				
+				if (centerToSide [i] + sideToCenter [i] >= BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+					sideToCenter [i] = centerToSide [i] + sideToCenter [i];
+					centerToSide [i] = 0;
+				}			
+			}
+		}
+		
+		if (!moved) {
+			for (int i = 0; i < 6; ++i) {
+				Position p = new Position (xCoord, yCoord, zCoord, Orientations.values() [i]);
+				p.moveForwards(1);
+
+				if (canReceiveLiquid(p)) {	
+					return;
+				}
+			}
+			
+			// If we can't find a direction where to potentially send liquid,
+			// reset all input markers
+			for (int i = 0; i < 6; ++i) {
+				isInput [i] = false;
+			}
+		}
+		
+	}
+	
+	public int getSideToCenter (int orientation) {
+		if (sideToCenter [orientation] > BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+			return BuildCraftCore.OIL_BUCKET_QUANTITY / 4;
+		} else {
+			return sideToCenter [orientation];
+		}
+	}
+	
+	public int getCenterToSide (int orientation) {
+		if (centerToSide [orientation] > BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+			return BuildCraftCore.OIL_BUCKET_QUANTITY / 4;
+		} else {
+			return centerToSide [orientation];
+		}
+	}
+	
+	public int getCenterIn () {
+		if (centerIn > BuildCraftCore.OIL_BUCKET_QUANTITY / 2) {
+			return BuildCraftCore.OIL_BUCKET_QUANTITY / 2;
+		} else {
+			return centerIn;
+		}
+	}
+	
+	public int getCenterOut () {
+		if (centerOut > BuildCraftCore.OIL_BUCKET_QUANTITY / 2) {
+			return BuildCraftCore.OIL_BUCKET_QUANTITY / 2;
+		} else {
+			return centerOut;
+		}
+	}
+	
+
+	@Override
+	public int getLiquidQuantity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getCapacity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int empty (int quantityMax, boolean doEmpty) {
+		return 0;
+	}
+	
 }

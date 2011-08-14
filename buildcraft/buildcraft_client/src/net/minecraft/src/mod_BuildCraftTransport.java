@@ -5,6 +5,7 @@ import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
+import net.minecraft.src.buildcraft.transport.RenderPipe;
 import net.minecraft.src.buildcraft.transport.TileDiamondPipe;
 import net.minecraft.src.buildcraft.transport.TilePipe;
 
@@ -18,6 +19,11 @@ public class mod_BuildCraftTransport extends BaseModMp {
 		
 		ModLoaderMp.RegisterGUI(this,
 				Utils.packetIdToInt(PacketIds.DiamondPipeGUI));
+		
+		ModLoader
+				.RegisterTileEntity(TilePipe.class,
+						"net.minecraft.src.buildcraft.Pipe",
+						new RenderPipe());
 		
 		instance = this;
 	}

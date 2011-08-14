@@ -15,6 +15,7 @@ import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
@@ -52,43 +53,43 @@ public abstract class BlockPipe extends BlockContainer implements
 	
 	@Override
 	public void getCollidingBoundingBoxes(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
-		setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
-				Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);
+		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos,
+				Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 		super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
 		
 		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
-			setBlockBounds(0.0F, Utils.pipeMinSize, Utils.pipeMinSize,
-					Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);
+			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos,
+					Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
 		}
 
 		if (Utils.checkPipesConnections(world, i, j, k, i + 1, j, k)) {
-			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
-					1.0F, Utils.pipeMaxSize, Utils.pipeMaxSize);			
+			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos,
+					1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);			
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
 		}
 
 		if (Utils.checkPipesConnections(world, i, j, k, i, j - 1, k)) {
-			setBlockBounds(Utils.pipeMinSize, 0.0F, Utils.pipeMinSize,
-					Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);			
+			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
+					Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);			
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
 		}
 
 		if (Utils.checkPipesConnections(world, i, j, k, i, j + 1, k)) {
-			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
-					Utils.pipeMaxSize, 1.0F, Utils.pipeMaxSize);			
+			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos,
+					Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);			
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
 		}
 
 		if (Utils.checkPipesConnections(world, i, j, k, i, j, k - 1)) {
-			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, 0.0F,
-					Utils.pipeMaxSize, Utils.pipeMaxSize, Utils.pipeMaxSize);
+			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F,
+					Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
 		}
 
 		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
-			setBlockBounds(Utils.pipeMinSize, Utils.pipeMinSize, Utils.pipeMinSize,
-					Utils.pipeMaxSize, Utils.pipeMaxSize, 1.0F);			
+			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos,
+					Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);			
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);	
 		}
 		
@@ -97,9 +98,9 @@ public abstract class BlockPipe extends BlockContainer implements
 	
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
-		float xMin = Utils.pipeMinSize, xMax = Utils.pipeMaxSize, 
-		yMin = Utils.pipeMinSize, yMax = Utils.pipeMaxSize, 
-		zMin = Utils.pipeMinSize, zMax = Utils.pipeMaxSize;
+		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, 
+		yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, 
+		zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
 			xMin = 0.0F;
@@ -143,7 +144,8 @@ public abstract class BlockPipe extends BlockContainer implements
     	
     	return tile instanceof IPipeEntry
 			|| tile instanceof IInventory
-			|| tile instanceof IMachine;
+			|| tile instanceof IMachine
+			|| tile instanceof ILiquidContainer;
     }
     
     public void onBlockRemoval(World world, int i, int j, int k) {    	
@@ -158,7 +160,7 @@ public abstract class BlockPipe extends BlockContainer implements
     }
     
     public float getHeightInPipe () {
-    	return 0.4F;
+    	return 0.5F;
     }
     
 	@Override

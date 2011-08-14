@@ -9,7 +9,9 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
 import net.minecraft.src.buildcraft.factory.RenderMiningWell;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
+import net.minecraft.src.buildcraft.factory.RenderTank;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
+import net.minecraft.src.buildcraft.factory.TileTank;
 
 public class mod_BuildCraftFactory extends BaseModMp {		
 	
@@ -21,6 +23,12 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		BuildCraftFactory.initialize();
 		
 		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
+		
+		ModLoader
+		.RegisterTileEntity(TileTank.class,
+				"net.minecraft.src.buildcraft.factory.TileTank",
+				new RenderTank());
+		
 		instance = this;
 	}
 		

@@ -12,6 +12,7 @@ import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
@@ -20,6 +21,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	boolean lastPower = false;
 	
 	private PowerProvider powerProvider;
+	
+	private int liquidToExtract;
 	
 	public TileWoodenPipe () {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
@@ -51,34 +54,41 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 				(int) pos.z);				
 		
 		if (tile == null
-				|| !(tile instanceof IInventory)
+				|| !(tile instanceof IInventory || tile instanceof ILiquidContainer)
 				|| BlockWoodenPipe
 						.isExcludedFromExtraction(Block.blocksList[blockId])) {
 			return;
 		}
 		
-		IInventory inventory = (IInventory) tile;
 		
-		ItemStack stack = checkExtract(inventory, true,
-				pos.orientation.reverse());	
-		
-		if (stack == null || stack.stackSize == 0) {			
-			powerProvider.useEnergy(1, 1, false);
-			return;
+		if (tile instanceof IInventory) {
+			IInventory inventory = (IInventory) tile;
+
+			ItemStack stack = checkExtract(inventory, true,
+					pos.orientation.reverse());	
+
+			if (stack == null || stack.stackSize == 0) {			
+				powerProvider.useEnergy(1, 1, false);
+				return;
+			}
+
+
+			Position entityPos = new Position(pos.x + 0.5, pos.y
+					+ Utils.getPipeFloorOf(stack), pos.z + 0.5,
+					pos.orientation.reverse());
+
+			entityPos.moveForwards(0.5);
+
+			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
+					entityPos.y, entityPos.z, stack);
+
+			entityEntering(entity, entityPos.orientation);
+		} else if (tile instanceof ILiquidContainer) {
+			if (liquidToExtract <= BuildCraftCore.OIL_BUCKET_QUANTITY) {
+				liquidToExtract += powerProvider.useEnergy(1, 1, true)
+						* BuildCraftCore.OIL_BUCKET_QUANTITY;
+			}
 		}
-		
-		
-		Position entityPos = new Position(pos.x + 0.5, pos.y
-				+ Utils.getPipeFloorOf(stack), pos.z + 0.5,
-				pos.orientation.reverse());
-				
-		entityPos.moveForwards(0.5);
-		
-		EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
-				entityPos.y, entityPos.z, stack);
-		
-		w.entityJoinedWorld(entity);
-		entityEntering(entity, entityPos.orientation);		
 	}
 	
 	/**
@@ -188,7 +198,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 			
-			if (tile instanceof IInventory
+			if ((tile instanceof IInventory || tile instanceof ILiquidContainer
+					&& !(tile instanceof TilePipe))
 					&& Utils.checkPipesConnections(worldObj, xCoord, yCoord,
 							zCoord, tile.xCoord, tile.yCoord, tile.zCoord)) {
 				if (!BlockWoodenPipe.isExcludedFromExtraction(block)) {
@@ -263,6 +274,30 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		if (scheduleSourceSet) {
 			setSourceIfNeeded();
 			scheduleSourceSet = false;
+		}
+		
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		
+		if (liquidToExtract > 0 && meta < 6) {
+			Position pos = new Position(xCoord, yCoord, zCoord,
+					Orientations.values()[meta]);		
+			pos.moveForwards(1);
+
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
+					(int) pos.z);			
+			
+			if (tile instanceof ILiquidContainer) {
+				ILiquidContainer container = (ILiquidContainer) tile;
+				
+				int extracted = container.empty(liquidToExtract > flowRate ? flowRate
+						: liquidToExtract, false); 
+				
+				extracted = fill(pos.orientation, extracted);
+				
+				container.empty(extracted, true);
+				
+				liquidToExtract -= extracted;
+			}
 		}
 	}
 }

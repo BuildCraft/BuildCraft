@@ -12,7 +12,7 @@ import net.minecraft.src.World;
 
 public class RenderEntityBlock extends Render {
 
-    private class BlockInterface {
+    public static class BlockInterface {
         public double minX;
         public double minY;
         public double minZ;
@@ -56,7 +56,6 @@ public class RenderEntityBlock extends Render {
 		
 		shadowSize = entity.shadowSize;
 		World world = entity.worldObj;
-//		blockRender.blockAccess = ModLoader.getMinecraftInstance().theWorld;
 		BlockInterface util = new BlockInterface(); 
 		util.texture = entity.texture;
 		
@@ -81,8 +80,7 @@ public class RenderEntityBlock extends Render {
 			GL11.glTranslatef((float)i + iBase + 0.5F, (float)j + jBase + 0.5F, (float)k + kBase + 0.5F);
 			
 			loadTexture (BuildCraftCore.customBuildCraftTexture);
-//			util.baseBlock = Block.blocksList [entity.blockID];			
-			
+
 			int lightX, lightY, lightZ;
 			
 			lightX = (int) (Math.floor(entity.posX) + iBase);
@@ -90,17 +88,18 @@ public class RenderEntityBlock extends Render {
 			lightZ = (int) (Math.floor(entity.posZ) + kBase);
 			
 			GL11.glDisable(2896 /*GL_LIGHTING*/);
-					renderBlockFallingSand(util, world,
+					renderBlock(util, world,
 							lightX,
 							lightY,
-							lightZ);
+							lightZ,
+							true);
 			GL11.glEnable(2896 /*GL_LIGHTING*/);
 			GL11.glPopMatrix();
 
 		}		
 	}
 	
-	 public void renderBlockFallingSand(BlockInterface block, World world, int i, int j, int k)
+	 public static void renderBlock(BlockInterface block, World world, int i, int j, int k, boolean doLight)
 	    {
 	        float f = 0.5F;
 	        float f1 = 1.0F;
@@ -108,53 +107,79 @@ public class RenderEntityBlock extends Render {
 	        float f3 = 0.6F;
 	        Tessellator tessellator = Tessellator.instance;
 	        tessellator.startDrawingQuads();
-	        float f4 = block.getBlockBrightness(world, i, j, k);
-	        float f5 = block.getBlockBrightness(world, i, j, k);
-	        if(f5 < f4)
-	        {
-	            f5 = f4;
+	        
+	        float f4 = 0, f5 = 0;
+	        
+	        if (doLight) {
+	        	f4 = block.getBlockBrightness(world, i, j, k);
+	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	if(f5 < f4)
+	        	{
+	        		f5 = f4;
+	        	}
+	        	tessellator.setColorOpaque_F(f * f5, f * f5, f * f5);
 	        }
-	        tessellator.setColorOpaque_F(f * f5, f * f5, f * f5);
+	        
 	        renderBottomFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(0));
-	        f5 = block.getBlockBrightness(world, i, j, k);
-	        if(f5 < f4)
-	        {
-	            f5 = f4;
+	        
+	        if (doLight) {
+	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	if(f5 < f4)
+	        	{
+	        		f5 = f4;
+	        	}
+	        	tessellator.setColorOpaque_F(f1 * f5, f1 * f5, f1 * f5);
 	        }
-	        tessellator.setColorOpaque_F(f1 * f5, f1 * f5, f1 * f5);
+	        
 	        renderTopFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(1));
-	        f5 = block.getBlockBrightness(world, i, j, k);
-	        if(f5 < f4)
-	        {
-	            f5 = f4;
+	        
+	        if (doLight) {
+	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	if(f5 < f4)
+	        	{
+	        		f5 = f4;
+	        	}
+	        	tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
 	        }
-	        tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
+	        
 	        renderEastFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(2));
-	        f5 = block.getBlockBrightness(world, i, j, k);
-	        if(f5 < f4)
-	        {
-	            f5 = f4;
+	        
+	        if (doLight) {
+	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	if(f5 < f4)
+	        	{
+	        		f5 = f4;
+	        	}	        
+	        	tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
 	        }
-	        tessellator.setColorOpaque_F(f2 * f5, f2 * f5, f2 * f5);
+	        
 	        renderWestFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(3));
-	        f5 = block.getBlockBrightness(world, i, j, k);
-	        if(f5 < f4)
-	        {
-	            f5 = f4;
+	        
+	        if (doLight) {
+	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	if(f5 < f4)
+	        	{
+	        		f5 = f4;
+	        	}
+	        	tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
 	        }
-	        tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
+	        
 	        renderNorthFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(4));
-	        f5 = block.getBlockBrightness(world, i, j, k);
-	        if(f5 < f4)
-	        {
-	            f5 = f4;
+	        
+	        if (doLight) {
+	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	if(f5 < f4)
+	        	{
+	        		f5 = f4;
+	        	}
+	        	tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
 	        }
-	        tessellator.setColorOpaque_F(f3 * f5, f3 * f5, f3 * f5);
+	        
 	        renderSouthFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(5));
 	        tessellator.draw();
 	    }
 	 
-	 public void renderBottomFace(BlockInterface block, double d, double d1, double d2, 
+	 public static void renderBottomFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
@@ -187,7 +212,7 @@ public class RenderEntityBlock extends Render {
 	        tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
 	    }
 
-	    public void renderTopFace(BlockInterface block, double d, double d1, double d2, 
+	    public static void renderTopFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
@@ -221,7 +246,7 @@ public class RenderEntityBlock extends Render {
 	    }
 
 	    
-	    public void renderEastFace(BlockInterface block, double d, double d1, double d2, 
+	    public static void renderEastFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
@@ -255,7 +280,7 @@ public class RenderEntityBlock extends Render {
 	        tessellator.addVertexWithUV(d8, d10, d12, d4, d6);
 	    }
 
-	    public void renderWestFace(BlockInterface block, double d, double d1, double d2, 
+	    public static void renderWestFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
@@ -289,7 +314,7 @@ public class RenderEntityBlock extends Render {
 	        tessellator.addVertexWithUV(d9, d11, d12, d4, d5);
 	    }
 
-	    public void renderNorthFace(BlockInterface block, double d, double d1, double d2, 
+	    public static void renderNorthFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;
@@ -323,7 +348,7 @@ public class RenderEntityBlock extends Render {
 	        tessellator.addVertexWithUV(d8, d9, d12, d4, d6);	        
 	    }
 
-	    public void renderSouthFace(BlockInterface block, double d, double d1, double d2, 
+	    public static void renderSouthFace(BlockInterface block, double d, double d1, double d2, 
 	            int i)
 	    {
 	        Tessellator tessellator = Tessellator.instance;

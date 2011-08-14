@@ -12,6 +12,8 @@ import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.MinecraftForge;
+import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class mod_BuildCraftCore extends BaseModMp {
 
@@ -57,6 +59,10 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public void ModsLoaded() {
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeModel(this);
+		MinecraftForgeClient
+				.preloadTexture(BuildCraftCore.customBuildCraftTexture);
+		MinecraftForgeClient
+				.preloadTexture(BuildCraftCore.customBuildCraftSprites);
 	}
 
 	@Override
@@ -71,7 +77,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void AddRenderer(Map map) {
-		map.put(EntityPassiveItem.class, new RenderPassiveItem());
 		map.put(EntityBlock.class, new RenderEntityBlock());
 	}
 
@@ -90,9 +95,9 @@ public class mod_BuildCraftCore extends BaseModMp {
 			tessellator.setColorOpaque_F(f, f, f);
 			renderMarkerWithMeta(block, i, j, k,
 					iblockaccess.getBlockMetadata(i, j, k));
-		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {			
-			float minSize = Utils.pipeMinSize;
-			float maxSize = Utils.pipeMaxSize;
+		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {						
+			float minSize = Utils.pipeMinPos;
+			float maxSize = Utils.pipeMaxPos;
 			int initialTexture = block.blockIndexInTexture;
 
 			block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize,
@@ -181,8 +186,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
 			Tessellator tessellator = Tessellator.instance;
 
-			block.setBlockBounds(Utils.pipeMinSize, 0.0F, Utils.pipeMinSize,
-					Utils.pipeMaxSize, 1.0F, Utils.pipeMaxSize);
+			block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
+					Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 			block.setBlockBoundsForItemRender();
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 			tessellator.startDrawingQuads();

@@ -255,7 +255,7 @@ public class TileObsidianPipe extends TilePipe implements IPowerReceptor {
 			
 			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
 					+ Utils.getPipeFloorOf(stack), zCoord + 0.5, stack);
-			worldObj.entityJoinedWorld(passive);
+			
 			entityEntering(passive, orientation.reverse());
 		}
 	}

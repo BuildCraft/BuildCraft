@@ -50,9 +50,9 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IT
     
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
     {
-   		float xMin = Utils.pipeMinSize, xMax = Utils.pipeMaxSize, 
-   		yMin = Utils.pipeMinSize, yMax = Utils.pipeMaxSize, 
-   		zMin = Utils.pipeMinSize, zMax = Utils.pipeMaxSize;
+   		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, 
+   		yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, 
+   		zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
    		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
    			xMin = 0.0F;
@@ -101,7 +101,7 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IT
 	}
 	
     public float getHeightInPipe () {
-    	return 0.4F;
+    	return 0.5F;
     }    
     
     @Override

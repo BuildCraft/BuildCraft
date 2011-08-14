@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.core;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BlockCactus;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IBlockAccess;
@@ -17,7 +16,6 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.ICustomHeightInPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -26,30 +24,16 @@ import net.minecraft.src.buildcraft.api.Position;
 
 public class Utils {	
 	
-	public static final float pipeMinSize = 0.25F;
-	public static final float pipeMaxSize = 0.75F;
+	public static final float pipeMinPos = 0.25F;
+	public static final float pipeMaxPos = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
 	
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different
 	 * level to optimize graphical aspect.
 	 */
-	public static float getPipeFloorOf (ItemStack item) {		
-		if (item.itemID < Block.blocksList.length) {
-			Block block = Block.blocksList[item.itemID];
-			
-			if (block == null) {
-				return 0.27F;
-			} else if (CoreProxy.isPlainBlock(block) || block instanceof BlockCactus) {
-				return 0.4F;
-			} else if (block instanceof ICustomHeightInPipe) {
-				return ((ICustomHeightInPipe) block).getHeightInPipe();
-			} else {
-				return 0.27F;
-			}
-		} else {		
-			return 0.27F;
-		}
+	public static float getPipeFloorOf (ItemStack item) {				
+		return pipeMinPos;
 	}
 	
 	public static Orientations get2dOrientation (Position pos1, Position pos2) {
@@ -134,7 +118,6 @@ public class Utils {
 			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
 					entityPos.y, entityPos.z, items);
 			
-			w.entityJoinedWorld(entity);
 			pipeEntry.entityEntering(entity, entityPos.orientation);
 			items.stackSize = 0;
 			return true;

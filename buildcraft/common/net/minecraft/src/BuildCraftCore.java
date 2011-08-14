@@ -52,9 +52,10 @@ public class BuildCraftCore {
 	
 	public static String customBuildCraftSprites =
 		"/net/minecraft/src/buildcraft/core/gui/item_textures.png";
-
 	
 	public static PowerFramework powerFramework;
+	
+	public static final int OIL_BUCKET_QUANTITY = 1000;
 	
 	public static void initialize () {
 		if (initialized) {
