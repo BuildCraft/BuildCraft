@@ -20,13 +20,13 @@ public class BlockPlainPipe extends Block implements IPipeConnection,
 		
 		blockIndexInTexture = 16 * 2 + 0;
 		
-		minX = Utils.pipeMinSize;
+		minX = Utils.pipeMinPos;
 		minY = 0.0;
-		minZ = Utils.pipeMinSize;
+		minZ = Utils.pipeMinPos;
 		
-		maxX = Utils.pipeMaxSize;
+		maxX = Utils.pipeMaxPos;
 		maxY = 1.0;
-		maxZ = Utils.pipeMaxSize;
+		maxZ = Utils.pipeMaxPos;
 	}
     
     public boolean isOpaqueCube()
@@ -66,6 +66,6 @@ public class BlockPlainPipe extends Block implements IPipeConnection,
 	}
 	
     public float getHeightInPipe () {
-    	return 0.4F;
+    	return 0.5F;
     }    
 }

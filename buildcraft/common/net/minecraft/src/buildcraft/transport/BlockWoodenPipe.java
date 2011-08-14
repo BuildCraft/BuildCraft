@@ -27,8 +27,7 @@ public class BlockWoodenPipe extends BlockPipe {
 	@Override
 	protected TileEntity getBlockEntity() {
 		return new TileWoodenPipe ();
-	}
-	
+	}	
     
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		if (entityplayer.getCurrentEquippedItem() != null 

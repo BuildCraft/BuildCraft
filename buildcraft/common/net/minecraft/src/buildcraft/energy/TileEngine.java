@@ -20,12 +20,13 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
-		IInventory, ISynchronizedTile {
+		IInventory, ISynchronizedTile, ILiquidContainer {
 
 	boolean init = false;
 	
@@ -48,6 +49,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	PowerProvider provider;
 
 	public float serverPistonSpeed = 0;
+	
+	public static int OIL_BUCKET_TIME = 10000;
 	
 	public TileEngine () {
 		provider = BuildCraftCore.powerFramework.createPowerProvider();		
@@ -170,8 +173,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			if (itemInInventory != null
 					&& itemInInventory.itemID == BuildCraftEnergy.bucketOil.shiftedIndex) {
 
-				totalBurnTime = 100000;
-				int stepTime = totalBurnTime / 10;
+				totalBurnTime = OIL_BUCKET_TIME * 10;
+				int stepTime = OIL_BUCKET_TIME;
 
 				if (burnTime + stepTime <= totalBurnTime) {
 					itemInInventory = new ItemStack(Item.bucketEmpty, 1);
@@ -464,6 +467,48 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		}
 		
 		return false;
+	}
+
+	@Override
+	public int fill(Orientations from, int quantity) {
+
+		if (engine instanceof EngineIron) {
+			totalBurnTime = OIL_BUCKET_TIME * 10;
+			int addedTime = (int) (quantity * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.OIL_BUCKET_QUANTITY);
+			
+			if (addedTime + burnTime <= OIL_BUCKET_TIME * 10) {
+				burnTime = burnTime + addedTime;
+				return quantity;
+			} else {
+				addedTime = OIL_BUCKET_TIME * 10 - burnTime;
+				
+				int quantityUsed = (int) (addedTime * (float) BuildCraftCore.OIL_BUCKET_QUANTITY / (float) OIL_BUCKET_TIME);
+				
+				// Recomputed in order to limit rounding errors
+				burnTime += (int) (quantityUsed * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.OIL_BUCKET_QUANTITY);
+				
+				return quantityUsed;
+			}
+			
+			
+		}
+		
+		return 0;		
+	}
+
+	@Override
+	public int empty(int quantityMax, boolean doEmpty) {
+		return 0;
+	}
+
+	@Override
+	public int getLiquidQuantity() {
+		return 0;
+	}
+
+	@Override
+	public int getCapacity() {
+		return BuildCraftCore.OIL_BUCKET_QUANTITY * 10;
 	}
 	
 }

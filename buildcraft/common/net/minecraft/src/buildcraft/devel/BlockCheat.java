@@ -84,6 +84,8 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 2));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.bucketOil, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.wrenchItem, 1));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.pumpBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.tankBlock, 64));	
 		}
 		
 		super.blockActivated(world, i, j, k, entityplayer);

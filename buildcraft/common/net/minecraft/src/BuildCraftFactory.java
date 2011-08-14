@@ -6,22 +6,25 @@ import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.BlockFrame;
 import net.minecraft.src.buildcraft.factory.BlockMiningWell;
 import net.minecraft.src.buildcraft.factory.BlockPlainPipe;
+import net.minecraft.src.buildcraft.factory.BlockPump;
 import net.minecraft.src.buildcraft.factory.BlockQuarry;
+import net.minecraft.src.buildcraft.factory.BlockTank;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
+import net.minecraft.src.buildcraft.factory.TilePump;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
+import net.minecraft.src.buildcraft.factory.TileTank;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
 public class BuildCraftFactory {
-	public static BlockQuarry quarryBlock;
-	
+	public static BlockQuarry quarryBlock;	
 	public static BlockMiningWell miningWellBlock;
-
 	public static BlockAutoWorkbench autoWorkbenchBlock;
-	public static BlockFrame frameBlock;
-	
+	public static BlockFrame frameBlock;	
 	public static BlockPlainPipe plainPipeBlock;
+	public static BlockPump pumpBlock;
+	public static BlockTank tankBlock;
 	
 	public static int drillTexture;
 	
@@ -49,6 +52,10 @@ public class BuildCraftFactory {
 				.getOrCreateBlockIdProperty("frame.id", DefaultProps.FRAME_ID);
 		Property quarryId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("quarry.id", DefaultProps.QUARRY_ID);
+		Property pumpId = BuildCraftCore.mainConfiguration
+		   .getOrCreateBlockIdProperty("pump.id", DefaultProps.PUMP_ID);
+		Property tankId = BuildCraftCore.mainConfiguration
+		   .getOrCreateBlockIdProperty("tank.id", DefaultProps.TANK_ID);
 		
 		BuildCraftCore.mainConfiguration.save();
 		
@@ -84,7 +91,7 @@ public class BuildCraftFactory {
 		CoreProxy.addName(frameBlock.setBlockName("frameBlock"), "Frame");
 		
 		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
-		ModLoader.RegisterBlock(quarryBlock);				
+		ModLoader.RegisterBlock(quarryBlock);			
 		
 		if (allowMining) {
 			craftingmanager.addRecipe(
@@ -101,9 +108,24 @@ public class BuildCraftFactory {
 		CoreProxy.addName(quarryBlock.setBlockName("machineBlock"),
 		"Quarry");
 		
+		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
+		CoreProxy.addName(pumpBlock.setBlockName("pumpBlock"),
+		"Pump");
+		ModLoader.RegisterBlock(pumpBlock);			
+		
+		tankBlock = new BlockTank(Integer.parseInt(tankId.value));
+		CoreProxy.addName(tankBlock.setBlockName("tankBlock"),
+		"Tank");
+		ModLoader.RegisterBlock(tankBlock);			
+		
+		
 		ModLoader.RegisterTileEntity(TileQuarry.class, "Machine");		
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
 		ModLoader.RegisterTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
+		ModLoader.RegisterTileEntity(TilePump.class,
+				"net.minecraft.src.buildcraft.factory.TilePump");
+		ModLoader.RegisterTileEntity(TileTank.class,
+		"net.minecraft.src.buildcraft.factory.TileTank");
 
 		drillTexture = 2 * 16 + 1;
 		

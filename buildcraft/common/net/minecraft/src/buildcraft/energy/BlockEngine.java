@@ -9,12 +9,10 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.ICustomHeightInPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 
-public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
-		IPipeConnection {
+public class BlockEngine extends BlockContainer implements IPipeConnection {
 	
 	public BlockEngine(int i) {
 		super(i, Material.iron);
@@ -102,11 +100,6 @@ public class BlockEngine extends BlockContainer implements ICustomHeightInPipe,
         world.spawnParticle("reddust", f + f4, f1, f2 - f3, 0.0D, 0.0D, 0.0D);
         world.spawnParticle("reddust", f + f4, f1, f2 + f3, 0.0D, 0.0D, 0.0D);
     }
-
-	@Override
-	public float getHeightInPipe() {		
-		return 0.4F;
-	}
 
 	@Override
 	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,

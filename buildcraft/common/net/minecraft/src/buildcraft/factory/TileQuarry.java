@@ -93,11 +93,11 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	private boolean loadDefaultBoundaries = false;
 	
 	private void createArm () {
-		arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxSize,
+		arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxPos,
 				yCoord + bluePrintBuilder.bluePrint.sizeY - 1
-						+ Utils.pipeMinSize, zMin + Utils.pipeMaxSize,
-				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinSize * 2,
-				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinSize * 2);
+						+ Utils.pipeMinPos, zMin + Utils.pipeMaxPos,
+				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
+				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2);
 
 		arm.listener = this;
 		loadArm = true;

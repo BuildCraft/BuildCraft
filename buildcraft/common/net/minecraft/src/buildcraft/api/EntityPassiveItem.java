@@ -1,14 +1,12 @@
 package net.minecraft.src.buildcraft.api;
 
-import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
-public class EntityPassiveItem extends Entity {
+public class EntityPassiveItem {
 
 	public float speed = 0.01F;
 	public ItemStack item;
@@ -20,65 +18,50 @@ public class EntityPassiveItem extends Entity {
 	public int deterministicRandomization = 0;
 	
 	public EntityPassiveItem(World world) {
-		super(world);		
+		entityId = maxId;
 		
-    	noClip = true;
+		maxId = maxId + 1;
+		
+		if (maxId > Integer.MAX_VALUE) {
+			maxId = 0;
+		}
 	}
 	
-	public EntityPassiveItem(World world, double d, double d1, double d2) {
-		super (world);
-		
-		setSize(0.25F, 0.25F);
-		setPosition(d, d1, d2);
-		noClip = true;
+	World worldObj;
+	public double posX, posY, posZ;
+	public int entityId;
+	
+	private static int maxId = 0;
+	
+	public EntityPassiveItem(World world, double d, double d1, double d2) {	
+		this (world);
+		posX = d;
+		posY = d1;
+		posZ = d2;
+		worldObj = world;
 	}
 	
+	public void setPosition (double x, double y, double z) {
+		posX = x;
+		posY = y;
+		posZ = z;
+	}
+
 	public EntityPassiveItem(World world, double d, double d1, double d2, 
 			ItemStack itemstack) {
 		this (world, d, d1, d2);
-		this.item = itemstack.copy();
-		
-		if (itemstack.itemID == 0) {
-			// Defensive code, in case of item corruption.
-			setEntityDead();
-		}
+		this.item = itemstack.copy();		
     }
 
-	@Override
-	protected void entityInit() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void onUpdate() {
-		if (item.itemID == 0) {
-			// Defensive code, in case of item corruption.
-			setEntityDead();
-		}
-	}
-
-	@Override
-	public void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		//= super.readEntityFromNBT(nbttagcompound);
-		
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		posX = nbttagcompound.getDouble("x");
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");		
 		speed = nbttagcompound.getFloat("speed");
 		item = new ItemStack(nbttagcompound.getCompoundTag("Item"));
-		
-		setPosition (posX, posY, posZ);
-		
-		if (item.itemID == 0) {
-			// Defensive code, in case of item corruption.
-			setEntityDead();
-		}
 	}
 
-	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound) {		
-		// super.writeEntityToNBT(nbttagcompound);
-		
+	public void writeToNBT(NBTTagCompound nbttagcompound) {		
 		nbttagcompound.setDouble("x", posX);
 		nbttagcompound.setDouble("y", posY);
 		nbttagcompound.setDouble("z", posZ);
@@ -87,24 +70,9 @@ public class EntityPassiveItem extends Entity {
 		item.writeToNBT(nbttagcompound2);
 		nbttagcompound.setCompoundTag("Item", nbttagcompound2);
 	}
-	
-	@Override
-	public void onCollideWithPlayer(EntityPlayer entityplayer) {
 		
-	}
-	
-	@Override
-	public boolean attackEntityFrom(Entity entity, int i) {
-	   return false;
-	}
-	
-	@Override
-	public boolean handleWaterMovement() {
-		return false;
-	 }
-	
 	public EntityItem toEntityItem (World world, Orientations dir) {		
-		if (!APIProxy.isClient(worldObj) && isEntityAlive()) {
+		if (!APIProxy.isClient(worldObj)) {
 			Position motion = new Position (0, 0, 0, dir);
 			motion.moveForwards(0.1 + speed * 2F);
 
@@ -116,12 +84,10 @@ public class EntityPassiveItem extends Entity {
 			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + motion.y;
 			entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.z;
 			world.entityJoinedWorld(entityitem);
-			
-			APIProxy.removeEntity(this);
+
 			entityitem.delayBeforeCanPickup = 20;
 			return entityitem;
 		} else {			
-			APIProxy.removeEntity(this);
 			return null;
 		}
 	}
