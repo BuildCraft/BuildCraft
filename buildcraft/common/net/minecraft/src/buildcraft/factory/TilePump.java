@@ -9,15 +9,18 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.TilePipe;
 
-public class TilePump extends TileBuildCraft {
+public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor {
 	
 	EntityBlock tube;
 	
@@ -28,16 +31,19 @@ public class TilePump extends TileBuildCraft {
 	private TreeMap<Integer, LinkedList<BlockIndex>> blocksToPump = new TreeMap<Integer, LinkedList<BlockIndex>> ();
 
 	private float tubeY = 0.0F;
+
+	private PowerProvider powerProvider;
+	
+	public TilePump () {
+		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider.configure(20, 10, 10, 10, 100);
+	}
 	
 	// TODO, manage this by different levels (pump what's above first...)
 
 	@Override
 	public void updateEntity () {
 		super.updateEntity();
-		
-		if (!worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
-			return;
-		}
 		
 		if (tube.posY - aimY > 0.01) {
 			tube.iSize = Utils.pipeMaxPos - Utils.pipeMinPos;
@@ -50,11 +56,14 @@ public class TilePump extends TileBuildCraft {
 		}
 		
 		if (internalLiquid <= TilePipe.flowRate) {
-			BlockIndex index = getNextIndexToPump(true);
+			BlockIndex index = getNextIndexToPump(false);
 			
 			if (isPumpableOil(index)) {
-				worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
-				internalLiquid = internalLiquid += BuildCraftCore.OIL_BUCKET_QUANTITY;
+				if (powerProvider.useEnergy(10, 10, true) == 10) {
+					index = getNextIndexToPump(true);
+					worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+					internalLiquid = internalLiquid += BuildCraftCore.OIL_BUCKET_QUANTITY;
+				}
 			} else {
 				if (worldObj.getWorldTime() % 100 == 0) {
 					// TODO: improve that decision
@@ -215,12 +224,17 @@ public class TilePump extends TileBuildCraft {
     	aimY = nbttagcompound.getInteger("aimY");
     	
     	tubeY = nbttagcompound.getFloat("tubeY");
+    	
+    	BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
+    	powerProvider.configure(20, 10, 10, 10, 100);
 		
     }
 
 	@Override
     public void writeToNBT(NBTTagCompound nbttagcompound) {
     	super.writeToNBT(nbttagcompound);
+    	
+    	BuildCraftCore.powerFramework.savePowerProvider(this, nbttagcompound);
     	
     	nbttagcompound.setInteger("internalLiquid", internalLiquid);
     	nbttagcompound.setInteger("aimY", aimY);
@@ -231,4 +245,25 @@ public class TilePump extends TileBuildCraft {
     		nbttagcompound.setFloat("tubeY", (float) yCoord);
     	}
     }
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void setPowerProvider(PowerProvider provider) {
+		powerProvider = provider;
+	}
+
+	@Override
+	public PowerProvider getPowerProvider() {
+		return powerProvider;
+	}
+
+	@Override
+	public void doWork() {
+		// TODO Auto-generated method stub
+		
+	}
 }

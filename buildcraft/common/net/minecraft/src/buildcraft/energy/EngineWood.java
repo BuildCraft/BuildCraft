@@ -36,6 +36,8 @@ public class EngineWood extends Engine {
 	}
 
 	public void update () {
+		super.update();
+		
 		if (tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord)) {
 			if ((tile.worldObj.getWorldTime() % 20) == 0) {
 				energy++;

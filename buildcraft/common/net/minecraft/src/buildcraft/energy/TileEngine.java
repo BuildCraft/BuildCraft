@@ -122,6 +122,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 				progressPart = 0;
 			}
 		} else if (isPowered) {
+			if (engine instanceof EngineStone) System.out.println ("A");
 			Position pos = new Position(xCoord, yCoord, zCoord,
 					engine.orientation);
 			pos.moveForwards(1.0);
@@ -129,12 +130,15 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 					(int) pos.z);
 
 			if (isPoweredTile(tile)) {
+				if (engine instanceof EngineStone) System.out.println ("B " + engine.energy);
 				IPowerReceptor receptor = (IPowerReceptor) tile;
 
 				if (engine.extractEnergy(
 						receptor.getPowerProvider().minEnergyReceived,
 						receptor.getPowerProvider().maxEnergyReceived, false) > 0) {
 					progressPart = 1;
+					
+					if (engine instanceof EngineStone) System.out.println ("C");
 					
 					CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
 							50, mod_BuildCraftEnergy.instance);
