@@ -39,7 +39,12 @@ public abstract class Engine {
 	}	
 	
 	public void update () {
-		
+		if (!tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
+				tile.yCoord, tile.zCoord)) {
+			if (energy > 1) {
+				energy -= 1;
+			}
+		}
 	}
 	
 	public abstract String getTextureFile ();
