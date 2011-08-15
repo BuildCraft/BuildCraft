@@ -13,11 +13,6 @@ public class OilBucketHandler implements IBucketHandler {
 				.getBlockId(i, j, k) == BuildCraftEnergy.oilMoving.blockID)
 				&& w.getBlockMetadata(i, j, k) == 0) {
 			
-			System.out.println("BUCKET..." + i + ", " + j + ", " + k
-					+ " = " + w.getBlockId(i, j, k)
-					+ ", "
-					+ w.getBlockMetadata(i, j, k));
-			
 			w.setBlockWithNotify(i, j, k, 0);
 			
 			return new ItemStack(BuildCraftEnergy.bucketOil);

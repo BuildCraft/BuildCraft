@@ -9,6 +9,7 @@ import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;
+import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
@@ -133,9 +134,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		
 		float factor = (float) (1.0 / 16.0);
 				
-		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-				.getMinecraftInstance().renderEngine
-				.getTexture(baseTexture));		
+		MinecraftForgeClient.bindTexture(baseTexture);
 
 		box.render(factor);
 		
@@ -145,9 +144,8 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1]
 				* translatefact, -translate[2] * translatefact);
 		
-		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-				.getMinecraftInstance().renderEngine
-				.getTexture("/net/minecraft/src/buildcraft/energy/gui/chamber.png"));
+		MinecraftForgeClient
+				.bindTexture("/net/minecraft/src/buildcraft/energy/gui/chamber.png");
 		
 		float chamberf = 2F / 16F;
 		
@@ -177,9 +175,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			break;
 		}
 
-		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-				.getMinecraftInstance().renderEngine
-				.getTexture(texture));
+		MinecraftForgeClient.bindTexture(texture);
 		
 		trunk.render(factor);
 		
