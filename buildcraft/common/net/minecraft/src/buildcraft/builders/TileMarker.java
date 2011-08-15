@@ -4,33 +4,62 @@ import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.mod_BuildCraftBuilders;
+import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.Box;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		ISynchronizedTile {
 	
+	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
+			TileMarker.class, PacketIds.TileUpdate);
+	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
+			TileMarker.class, PacketIds.TileDescription);
+	
 	private static int maxSize = 64;
 	
-	private class Origin {
-		TileMarker vectO;
-		TileMarker [] vect = new TileMarker [3];
+	private static class TileWrapper {
+		@TileNetworkData
+		public int x, y, z;
 		
-		int xMin, yMin, zMin;
-		int xMax, yMax, zMax;		
+		public TileWrapper (int x, int y, int z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+		
+		private TileMarker marker;
+		
+		public TileMarker getMarker (World world) {
+			if (marker == null) {
+				marker = (TileMarker) world.getBlockTileEntity(x, y, z);
+			}
+			
+			return marker;
+		}
 	}
 	
+	private class Origin {
+		@TileNetworkData
+		TileWrapper vectO;
+		
+		@TileNetworkData
+		TileWrapper [] vect = new TileWrapper [3];
+	
+		@TileNetworkData
+		int xMin, yMin, zMin, xMax, yMax, zMax;		
+	}
+	
+	@TileNetworkData
 	Origin origin;
 	
 	EntityBlock [] lasers;
@@ -79,8 +108,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		}
 		
 		if (APIProxy.isServerSide()) {
-			CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
-					50, mod_BuildCraftBuilders.instance);
+			sendNetworkUpdate();
 		}
 	}
 	
@@ -95,9 +123,8 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		if (initVectO != null) {
 			origin = new Origin();
 			
-			origin.vectO = (TileMarker) worldObj
-					.getBlockTileEntity((int) initVectO.x,
-							(int) initVectO.y, (int) initVectO.z);
+			origin.vectO = new TileWrapper((int) initVectO.x,
+					(int) initVectO.y, (int) initVectO.z);
 			
 			for (int i = 0; i < 3; ++i) {
 				if (initVect [i] != null) {
@@ -176,17 +203,19 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		if (origin == null && marker.origin == null) {
 			origin = new Origin();
 			marker.origin = origin;
-			origin.vectO = this;
-			origin.vect [n] = marker;
+			origin.vectO = new TileWrapper(xCoord, yCoord, zCoord);
+			origin.vect[n] = new TileWrapper(marker.xCoord, marker.yCoord,
+					marker.zCoord);
 		} else if (origin == null) {
 			origin = marker.origin;
-			origin.vect [n] = this;
+			origin.vect [n] = new TileWrapper(xCoord, yCoord, zCoord);
 		} else {						
 			marker.origin = origin;
-			origin.vect [n] = marker;
+			origin.vect[n] = new TileWrapper(marker.xCoord, marker.yCoord,
+					marker.zCoord);
 		}
 	
-		origin.vectO.createLasers ();
+		origin.vectO.getMarker(worldObj).createLasers();
 		switchSignals ();
 		marker.switchSignals();
 
@@ -206,36 +235,36 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		Origin o = origin;
 		
 		if (origin.vect [0] == null) {
-			o.xMin = origin.vectO.xCoord;
-			o.xMax = origin.vectO.xCoord;
-		} else if (origin.vect [0].xCoord < xCoord){
-			o.xMin = origin.vect [0].xCoord;
+			o.xMin = origin.vectO.x;
+			o.xMax = origin.vectO.x;
+		} else if (origin.vect [0].x < xCoord){
+			o.xMin = origin.vect [0].x;
 			o.xMax = xCoord;
 		} else {
 			o.xMin = xCoord;
-			o.xMax = origin.vect [0].xCoord;
+			o.xMax = origin.vect [0].x;
 		}
 		
 		if (origin.vect [1] == null) {
-			o.yMin = origin.vectO.yCoord;
-			o.yMax = origin.vectO.yCoord;
-		} else if (origin.vect [1].yCoord < yCoord){
-			o.yMin = origin.vect [1].yCoord;
+			o.yMin = origin.vectO.y;
+			o.yMax = origin.vectO.y;
+		} else if (origin.vect [1].y < yCoord){
+			o.yMin = origin.vect [1].y;
 			o.yMax = yCoord;
 		} else {
 			o.yMin = yCoord;
-			o.yMax = origin.vect [1].yCoord;
+			o.yMax = origin.vect [1].y;
 		}
 		
 		if (origin.vect [2] == null) {
-			o.zMin = origin.vectO.zCoord;
-			o.zMax = origin.vectO.zCoord;
-		} else if (origin.vect [2].zCoord < zCoord){
-			o.zMin = origin.vect [2].zCoord;
+			o.zMin = origin.vectO.z;
+			o.zMax = origin.vectO.z;
+		} else if (origin.vect [2].z < zCoord){
+			o.zMin = origin.vect [2].z;
 			o.zMax = zCoord;
 		} else {
 			o.zMin = zCoord;
-			o.zMax = origin.vect [2].zCoord;
+			o.zMax = origin.vect [2].z;
 		}
 		
 		lasers = Utils.createLaserBox(worldObj, o.xMin, o.yMin, o.zMin, o.xMax,
@@ -295,29 +324,29 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		if (origin != null) {
 			Origin o = origin;
 			
-			for (EntityBlock e : o.vectO.lasers) {
+			for (EntityBlock e : o.vectO.getMarker(worldObj).lasers) {
 				if (e != null) {
 					e.setEntityDead();
 				}
 			}			
 						
-			for (TileMarker m : o.vect) {
+			for (TileWrapper m : o.vect) {
 				if (m != null) {
-					m.lasers = null;
-					m.origin = null;
+					m.getMarker(worldObj).lasers = null;
+					m.getMarker(worldObj).origin = null;
 				}
 			}
 						
-			o.vectO.lasers = null;
-			o.vectO.origin = null;
+			o.vectO.getMarker(worldObj).lasers = null;
+			o.vectO.getMarker(worldObj).origin = null;
 			
-			for (TileMarker m : o.vect) {
+			for (TileWrapper m : o.vect) {
 				if (m != null) {
-					m.switchSignals();
+					m.getMarker(worldObj).switchSignals();
 				}
 			}
 			
-			o.vectO.switchSignals();
+			o.vectO.getMarker(worldObj).switchSignals();
 		}
 		
 		if (signals != null) {
@@ -337,21 +366,21 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		
 		Origin o = origin;
 		
-		for (TileMarker m : o.vect) {
+		for (TileWrapper m : o.vect) {
 			if (m != null) {
-				worldObj.setBlockWithNotify(m.xCoord, m.yCoord, m.zCoord, 0);
+				worldObj.setBlockWithNotify(m.x, m.y, m.z, 0);
 				
 				BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
-						m.xCoord, m.yCoord, m.zCoord,
+						m.x, m.y, m.z,
 						BuildCraftBuilders.markerBlock.blockID);
 			}
 		}
 		
-		worldObj.setBlockWithNotify(o.vectO.xCoord, o.vectO.yCoord,
-				o.vectO.zCoord, 0);
+		worldObj.setBlockWithNotify(o.vectO.x, o.vectO.y,
+				o.vectO.z, 0);
 		
 		BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
-				o.vectO.xCoord, o.vectO.yCoord, o.vectO.zCoord,
+				o.vectO.x, o.vectO.y, o.vectO.z,
 				BuildCraftBuilders.markerBlock.blockID);
 	}
 	
@@ -371,153 +400,49 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		 }
 	 }
 
-	 public void writeToNBT(NBTTagCompound nbttagcompound) {
-		 super.writeToNBT(nbttagcompound);
-		 
-		 if (origin != null && origin.vectO == this) {
-			 NBTTagCompound vectO = new NBTTagCompound();
-			 
-			 new Position (origin.vectO).writeToNBT(vectO);
-			 nbttagcompound.setTag("vectO", vectO);
-			 
-			 for (int i = 0; i < 3; ++i) {
-				 if (origin.vect [i] != null) {
-					 NBTTagCompound vect = new NBTTagCompound();
-					 new Position (origin.vect [i]).writeToNBT(vect);
-					 nbttagcompound.setTag("vect" + i, vect);
-				 }
-			 }			 
-			 
-		 }
-	 }
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
 
-	@Override
-	public IBox getBox() {
-		return new Box (this);
+		if (origin != null && origin.vectO.getMarker(worldObj) == this) {
+			NBTTagCompound vectO = new NBTTagCompound();
+
+			new Position(origin.vectO.getMarker(worldObj)).writeToNBT(vectO);
+			nbttagcompound.setTag("vectO", vectO);
+
+			for (int i = 0; i < 3; ++i) {
+				if (origin.vect[i] != null) {
+					NBTTagCompound vect = new NBTTagCompound();
+					new Position(origin.vect[i].getMarker(worldObj))
+							.writeToNBT(vect);
+					nbttagcompound.setTag("vect" + i, vect);
+				}
+			}
+
+		}
 	}
 	
 	public Packet getDescriptionPacket() {		
-		if (origin != null && origin.vectO == this) {
-			Packet230ModLoader packet = new Packet230ModLoader();
-
-			packet.modId = mod_BuildCraftBuilders.instance.getId();
-			packet.packetType = PacketIds.MarkerDescription.ordinal();
-
-			packet.dataInt = new int [18];
-			
-			packet.dataInt [0] = xCoord;
-			packet.dataInt [1] = yCoord;
-			packet.dataInt [2] = zCoord;
-			
-			if (origin.vect[0] != null) {
-				packet.dataInt [3] = origin.vect [0].xCoord;
-				packet.dataInt [4] = origin.vect [0].yCoord;
-				packet.dataInt [5] = origin.vect [0].zCoord;
-			} else {
-				packet.dataInt [3] = Integer.MAX_VALUE;
-				packet.dataInt [4] = Integer.MAX_VALUE;
-				packet.dataInt [5] = Integer.MAX_VALUE;				
-			}
-			
-			if (origin.vect[1] != null) {
-				packet.dataInt [6] = origin.vect [1].xCoord;
-				packet.dataInt [7] = origin.vect [1].yCoord;
-				packet.dataInt [8] = origin.vect [1].zCoord;
-			} else {
-				packet.dataInt [6] = Integer.MAX_VALUE;
-				packet.dataInt [7] = Integer.MAX_VALUE;
-				packet.dataInt [8] = Integer.MAX_VALUE;				
-			}
-			
-			if (origin.vect[2] != null) {
-				packet.dataInt [9] = origin.vect [2].xCoord;
-				packet.dataInt [10] = origin.vect [2].yCoord;
-				packet.dataInt [11] = origin.vect [2].zCoord;
-			} else {
-				packet.dataInt [9] = Integer.MAX_VALUE;
-				packet.dataInt [10] = Integer.MAX_VALUE;
-				packet.dataInt [11] = Integer.MAX_VALUE;				
-			}
-			
-			packet.dataInt [12] = origin.xMin;
-			packet.dataInt [13] = origin.xMax;
-			packet.dataInt [14] = origin.yMin;
-			packet.dataInt [15] = origin.yMax;
-			packet.dataInt [16] = origin.zMin;
-			packet.dataInt [17] = origin.zMax;
-						
-			return packet;
-		} else {
-			return null;
-		}		
+		return desciptionPacket.toPacket(this);
 	}
 	
-	public Packet230ModLoader getUpdatePacket () {
-		Packet230ModLoader packet = new Packet230ModLoader();
-		
-		packet.modId = mod_BuildCraftBuilders.instance.getId();
-		packet.packetType = PacketIds.MarkerUpdate.ordinal();
-		
-		packet.dataInt = new int [3];
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;	
-		
-		return packet;
+	public Packet230ModLoader getUpdatePacket () {				
+		return updatePacket.toPacket(this);
 	}
 	
 	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {		
-		if (packet.packetType != PacketIds.MarkerDescription.ordinal()) {
-			return;
-		}		
+		desciptionPacket.updateFromPacket(this, packet);
 		
-		origin = new Origin();
-		
-		origin.vectO = this;
-		
-		if (packet.dataInt[3] != Integer.MAX_VALUE) {
-			origin.vect [0] = (TileMarker) worldObj.getBlockTileEntity(
-					packet.dataInt[3], packet.dataInt[4], packet.dataInt[5]);
-			
-			if (origin.vect [0] != null) {
-				origin.vect [0].origin = origin;
-			}
-		}
-		
-		if (packet.dataInt[6] != Integer.MAX_VALUE) {
-			origin.vect [1] = (TileMarker) worldObj.getBlockTileEntity(
-					packet.dataInt[6], packet.dataInt[7], packet.dataInt[8]);
-			
-			if (origin.vect [1] != null) {
-				origin.vect [1].origin = origin;
-			}
-		}
-		
-		if (packet.dataInt[9] != Integer.MAX_VALUE) {
-			origin.vect [2] = (TileMarker) worldObj.getBlockTileEntity(
-					packet.dataInt[9], packet.dataInt[10], packet.dataInt[11]);
-			
-			if (origin.vect [2] != null) {
-				origin.vect [2].origin = origin;
-			}
-		}
-		
-		origin.xMin = packet.dataInt [12];
-		origin.xMax = packet.dataInt [13];
-		origin.yMin = packet.dataInt [14];
-		origin.yMax = packet.dataInt [15];
-		origin.zMin = packet.dataInt [16];
-		origin.zMax = packet.dataInt [17];
-		
-		switchSignals();
-		
+		switchSignals();		
 		createLasers();
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		switchSignals();		
+		updatePacket.updateFromPacket(this, packet);
+				
+		switchSignals();
+		createLasers();
 	}
 	
 }

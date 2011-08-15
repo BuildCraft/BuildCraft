@@ -51,6 +51,7 @@ public abstract class BlockPipe extends BlockContainer implements
 	@Override
 	protected abstract TileEntity getBlockEntity();
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void getCollidingBoundingBoxes(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
 		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos,

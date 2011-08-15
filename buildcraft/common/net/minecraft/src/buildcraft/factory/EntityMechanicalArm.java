@@ -5,6 +5,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public class EntityMechanicalArm extends Entity {
 
@@ -14,7 +15,9 @@ public class EntityMechanicalArm extends Entity {
 	double targetX, targetY, targetZ;
 	double angle;
 	
+	@TileNetworkData
 	double headPosX, headPosY, headPosZ;
+	
 	double baseY;
 	double speed = 0.03;
 	

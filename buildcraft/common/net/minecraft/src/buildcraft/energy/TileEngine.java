@@ -13,34 +13,43 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.mod_BuildCraftEnergy;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerProvider;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		IInventory, ISynchronizedTile, ILiquidContainer {
 
+	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
+			TileEngine.class, PacketIds.TileUpdate);
+	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
+			TileEngine.class, PacketIds.TileDescription);
+	
 	boolean init = false;
 	
+	@TileNetworkData
 	public Engine engine;
 	
 	boolean lastPower = false;
 	
+	@TileNetworkData (packetFilter = {PacketIds.TileUpdate})
 	int progressPart = 0;
 
 	public int orientation;
 	
 	private ItemStack itemInInventory;
 	
+	@TileNetworkData
 	public int burnTime = 0;
+	
 	public int totalBurnTime = 0;
 	
 	// Burn time scaled from 1 to 1000, needs for transmission over the GUI
@@ -48,6 +57,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	
 	PowerProvider provider;
 
+	@TileNetworkData (packetFilter = {PacketIds.TileUpdate})
 	public float serverPistonSpeed = 0;
 	
 	public static int OIL_BUCKET_TIME = 10000;
@@ -136,8 +146,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 						receptor.getPowerProvider().maxEnergyReceived, false) > 0) {
 					progressPart = 1;
 					
-					CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
-							50, mod_BuildCraftEnergy.instance);
+					sendNetworkUpdate();
 				}
 			}
 		} else {
@@ -145,8 +154,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			// from time to time in order to e.g. display proper color.
 			
 			if (worldObj.getWorldTime() % 20 * 10 == 0) {
-				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
-						50, mod_BuildCraftEnergy.instance);
+				sendNetworkUpdate ();
 			}
 		}
 
@@ -358,83 +366,33 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
         return (((int) scaledBurnTime) * i) / 1000;
     }
 	
+   
+    @Override
 	public Packet getDescriptionPacket () {
 		createEngineIfNeeded ();
-		
-		Packet230ModLoader packet = new Packet230ModLoader();
-		
-		packet.modId = mod_BuildCraftEnergy.instance.getId();
-		packet.packetType = PacketIds.EngineDescription.ordinal();
-		packet.isChunkDataPacket = true;
-		
-		packet.dataInt = new int [6];
-		
-		packet.dataFloat = new float [1];
-		
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		packet.dataInt [3] = engine.orientation.ordinal();
-		packet.dataInt [4] = engine.energy;
-		packet.dataInt [5] = burnTime;
-		
-		packet.dataFloat [0] = engine.progress;		
-		
-		return packet;
+			
+		return desciptionPacket.toPacket(this);
 	}
 	
+	@Override
 	public Packet230ModLoader getUpdatePacket () {
-		Packet230ModLoader packet = new Packet230ModLoader();
+		serverPistonSpeed = engine.getPistonSpeed();
 		
-		packet.modId = mod_BuildCraftEnergy.instance.getId();
-		packet.packetType = PacketIds.EngineUpdate.ordinal();
-		packet.isChunkDataPacket = true;
-		
-		packet.dataInt = new int [7];		
-		packet.dataFloat = new float [2];
-		
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;		
-		packet.dataInt [3] = engine.orientation.ordinal();
-		packet.dataInt [4] = engine.energy;	
-		packet.dataInt [5] = progressPart;
-		packet.dataInt [6] = burnTime;
-		
-		packet.dataFloat [0] = engine.progress;
-		packet.dataFloat [1] = engine.getPistonSpeed();
-		
-		return packet;
+		return updatePacket.toPacket(this);
 	}
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		if (engine == null) {
-			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-			
-			if (kind == 0) {
-				engine = new EngineWood(this);
-			} else if (kind == 1) {
-				engine = new EngineStone(this);
-			} else if (kind == 2) {
-				engine = new EngineIron(this);
-			}
-		}
+		createEngineIfNeeded();
 		
-		engine.orientation = Orientations.values() [packet.dataInt[3]];
-		engine.progress = packet.dataFloat [0];			
-		engine.energy = packet.dataInt [4];
-		burnTime = packet.dataInt [5];
+		desciptionPacket.updateFromPacket(this, packet);
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		engine.orientation = Orientations.values() [packet.dataInt[3]];
-		engine.progress = packet.dataFloat [0];	
-		engine.energy = packet.dataInt [4];
-		serverPistonSpeed = packet.dataFloat [1];
-		progressPart = packet.dataInt [5];
-		burnTime = packet.dataInt [6];
+		createEngineIfNeeded();
+		
+		updatePacket.updateFromPacket(this, packet);
 	}
 
 	@Override

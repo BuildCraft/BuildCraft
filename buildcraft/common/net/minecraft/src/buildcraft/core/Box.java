@@ -10,21 +10,12 @@ import net.minecraft.src.buildcraft.api.Position;
 
 public class Box implements IBox {
 
-	public int xMin, yMin, zMin;
-	public int xMax, yMax, zMax;
+	@TileNetworkData
+	public int xMin, yMin, zMin, xMax, yMax, zMax;
 	
 	private EntityBlock lasers [];
 	
-	public Box (int [] data, int firstIndex) {
-		this.xMin = data [firstIndex];
-		this.yMin = data [firstIndex + 1];
-		this.zMin = data [firstIndex + 2];
-		this.xMax = data [firstIndex + 3];
-		this.yMax = data [firstIndex + 4];
-		this.zMax = data [firstIndex + 5];
-	}
-	
-	public Box (int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
+	public void initialize (int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 		this.xMin = xMin;
 		this.yMin = yMin;
 		this.zMin = zMin;
@@ -33,7 +24,7 @@ public class Box implements IBox {
 		this.zMax = zMax;
 	}
 	
-	public Box (IAreaProvider area) {
+	public void initialize (IAreaProvider area) {
 		xMin = area.xMin();
 		yMin = area.yMin();
 		zMin = area.zMin();
@@ -42,7 +33,7 @@ public class Box implements IBox {
 		zMax = area.zMax();
 	}
 	
-	public Box (NBTTagCompound nbttagcompound) {
+	public void initialize (NBTTagCompound nbttagcompound) {
 		xMin = nbttagcompound.getInteger("xMin");
 		yMin = nbttagcompound.getInteger("yMin");
 		zMin = nbttagcompound.getInteger("zMin");
@@ -51,17 +42,25 @@ public class Box implements IBox {
 		zMax = nbttagcompound.getInteger("zMax");
 	}
 	
-	public static int packetSize () {
-		return 6;
+	public Box() {
+		reset ();
 	}
 	
-	public void setData (int [] data, int firstIndex) {
-		data [firstIndex] = this.xMin;
-		data [firstIndex + 1] = this.yMin;
-		data [firstIndex + 2] = this.zMin; 
-		data [firstIndex + 3] = this.xMax;
-		data [firstIndex + 4] = this.yMax;
-		data [firstIndex + 5] = this.zMax;
+	public boolean isInitialized () {
+		return xMin != Integer.MAX_VALUE;
+	}
+	
+	public void reset () {
+		xMin = Integer.MAX_VALUE;
+		yMin = Integer.MAX_VALUE;
+		zMin = Integer.MAX_VALUE;
+		xMax = Integer.MAX_VALUE;
+		yMax = Integer.MAX_VALUE;
+		zMax = Integer.MAX_VALUE;
+	}
+
+	public static int packetSize () {
+		return 6;
 	}
 	
 	public Position p1 () {

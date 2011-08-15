@@ -2,6 +2,12 @@ package net.minecraft.src;
 
 public class mod_BuildCraftCore extends BaseModMp {	
 	
+	public static mod_BuildCraftCore instance;
+	
+	public mod_BuildCraftCore () {
+		instance = this;
+	}
+	
 	BuildCraftCore proxy = new BuildCraftCore();
 		
 	public static void initialize () {

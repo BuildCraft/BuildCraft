@@ -398,27 +398,14 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 			return;
 		}
 		
-//		EntityPassiveItem item = (EntityPassiveItem) APIProxy.getEntity(
-//				worldObj, packet.dataInt[3]);
-		
-//		if (item == null) {
-			EntityPassiveItem item = new EntityPassiveItem(worldObj);
-			item.entityId = packet.dataInt [3];
-			
-			int itemId = packet.dataInt [5];
-			int stackSize = packet.dataInt [6];
-			int dmg = packet.dataInt [7];
-			
-			item.item = new ItemStack(itemId, stackSize, dmg);		
-//		} else {
-//			if (item.container != this) {
-//				if (item.container != null) {
-//					((TilePipe) item.container).travelingEntities
-//							.remove(item.entityId);
-//					item.container = null;
-//				}
-//			}
-//		}
+		EntityPassiveItem item = new EntityPassiveItem(worldObj);
+		item.entityId = packet.dataInt [3];
+
+		int itemId = packet.dataInt [5];
+		int stackSize = packet.dataInt [6];
+		int dmg = packet.dataInt [7];
+
+		item.item = new ItemStack(itemId, stackSize, dmg);		
 		
 		Orientations orientation;						
 		orientation = Orientations.values()[packet.dataInt [4]];

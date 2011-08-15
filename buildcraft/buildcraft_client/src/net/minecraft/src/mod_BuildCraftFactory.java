@@ -44,15 +44,6 @@ public class mod_BuildCraftFactory extends BaseModMp {
     	map.put (EntityMechanicalArm.class, new RenderVoid());
     }
 	
-	public void HandlePacket(Packet230ModLoader packet) {
-		switch (PacketIds.values() [packet.packetType]) {
-		case QuarryDescription:
-			Utils.handleDescriptionPacket(packet);
-		case QuarryUpdate:
-			Utils.handleUpdatePacket(packet);
-		}		
-    }
-	
     public GuiScreen HandleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
 			return new GuiAutoCrafting(

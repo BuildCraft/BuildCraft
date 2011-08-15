@@ -1,13 +1,21 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public abstract class Engine {
 
 	public int maxEnergy;
+	
+	@TileNetworkData
 	public float progress;
+	
+	@TileNetworkData
 	public Orientations orientation;
+	
+	@TileNetworkData
 	int energy;	
+	
 	public int maxEnergyExtracted = 1;
 
 	protected TileEngine tile;
