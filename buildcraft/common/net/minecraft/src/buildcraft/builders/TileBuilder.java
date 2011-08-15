@@ -43,8 +43,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 	private BluePrintBuilder bluePrintBuilder;
 	private int currentBluePrintId = -1;
 	
-	@TileNetworkData
-	private Box box = new Box ();
+	public @TileNetworkData Box box = new Box ();
 	
 	private PowerProvider powerProvider;
 	

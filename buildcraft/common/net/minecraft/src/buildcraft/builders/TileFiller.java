@@ -34,16 +34,11 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
 			TileFiller.class, PacketIds.TileDescription);
 	
-	@TileNetworkData (packetFilter = {PacketIds.TileDescription})
-	private Box box = new Box ();
+	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) Box box = new Box ();
+	public @TileNetworkData int currentPatternId;
+	public @TileNetworkData	boolean done = true;
 	
 	FillerPattern currentPattern;
-	
-	@TileNetworkData
-	int currentPatternId;
-	
-	@TileNetworkData
-	boolean done = true;
 	
 	boolean forceDone = false;
     private ItemStack contents[];

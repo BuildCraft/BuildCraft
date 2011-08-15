@@ -15,8 +15,7 @@ public class EntityMechanicalArm extends Entity {
 	double targetX, targetY, targetZ;
 	double angle;
 	
-	@TileNetworkData
-	double headPosX, headPosY, headPosZ;
+	public @TileNetworkData double headPosX, headPosY, headPosZ;
 	
 	double baseY;
 	double speed = 0.03;

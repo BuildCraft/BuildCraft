@@ -404,7 +404,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	 public void HandlePacket(Packet230ModLoader packet) {
-		 System.out.println ("RECEIVE PACKET!");
 			switch (PacketIds.values()[packet.packetType]) {
 			case TileDescription:
 				Utils.handleDescriptionPacket(packet);
