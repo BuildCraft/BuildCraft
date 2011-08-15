@@ -9,7 +9,6 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.EntityPlayerMP;
 
 public class CoreProxy {
@@ -27,7 +26,7 @@ public class CoreProxy {
 
 	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
 			int z, int maxDistance, BaseModMp mod) {
-		if (APIProxy.isServerSide()) {
+		if (packet != null) {
 			for (int i = 0; i < ModLoader.getMinecraftServerInstance().worldMngr.length; i++) {
 				for (int j = 0; j < ModLoader.getMinecraftServerInstance().worldMngr[i].playerEntities
 						.size(); j++) {
