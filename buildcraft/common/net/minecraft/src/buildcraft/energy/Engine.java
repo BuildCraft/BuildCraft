@@ -7,14 +7,9 @@ public abstract class Engine {
 
 	public int maxEnergy;
 	
-	@TileNetworkData
-	public float progress;
-	
-	@TileNetworkData
-	public Orientations orientation;
-	
-	@TileNetworkData
-	int energy;	
+	public @TileNetworkData float progress;	
+	public @TileNetworkData Orientations orientation;	
+	public @TileNetworkData int energy;	
 	
 	public int maxEnergyExtracted = 1;
 

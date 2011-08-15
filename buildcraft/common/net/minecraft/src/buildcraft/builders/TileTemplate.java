@@ -27,8 +27,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
 	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
 			TileTemplate.class, PacketIds.TileDescription);
 	
-	@TileNetworkData
-	private Box box = new Box ();
+	public @TileNetworkData Box box = new Box ();
 	
 	private ItemStack items [] = new ItemStack [2];
 	

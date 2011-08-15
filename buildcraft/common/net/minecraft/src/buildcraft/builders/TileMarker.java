@@ -28,8 +28,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	private static int maxSize = 64;
 	
 	private static class TileWrapper {
-		@TileNetworkData
-		public int x, y, z;
+		public @TileNetworkData int x, y, z;
 		
 		public TileWrapper (int x, int y, int z) {
 			this.x = x;
@@ -48,19 +47,13 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		}
 	}
 	
-	private class Origin {
-		@TileNetworkData
-		TileWrapper vectO;
-		
-		@TileNetworkData
-		TileWrapper [] vect = new TileWrapper [3];
-	
-		@TileNetworkData
-		int xMin, yMin, zMin, xMax, yMax, zMax;		
+	public class Origin {
+		public @TileNetworkData TileWrapper vectO;		
+		public @TileNetworkData	(staticSize = 3) TileWrapper [] vect = new TileWrapper [3];
+		public @TileNetworkData	int xMin, yMin, zMin, xMax, yMax, zMax;		
 	}
 	
-	@TileNetworkData
-	Origin origin;
+	public @TileNetworkData	Origin origin;
 	
 	EntityBlock [] lasers;
 		

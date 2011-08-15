@@ -33,22 +33,17 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
 			TileEngine.class, PacketIds.TileDescription);
 	
-	boolean init = false;
-	
-	@TileNetworkData
-	public Engine engine;
+	public @TileNetworkData Engine engine;	
+	public @TileNetworkData (packetFilter = {PacketIds.TileUpdate}) int progressPart = 0;	
+	public @TileNetworkData int burnTime = 0;
+	public @TileNetworkData (packetFilter = {PacketIds.TileUpdate}) float serverPistonSpeed = 0;
 	
 	boolean lastPower = false;
-	
-	@TileNetworkData (packetFilter = {PacketIds.TileUpdate})
-	int progressPart = 0;
 
 	public int orientation;
 	
 	private ItemStack itemInInventory;
 	
-	@TileNetworkData
-	public int burnTime = 0;
 	
 	public int totalBurnTime = 0;
 	
@@ -57,8 +52,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	
 	PowerProvider provider;
 
-	@TileNetworkData (packetFilter = {PacketIds.TileUpdate})
-	public float serverPistonSpeed = 0;
+
 	
 	public static int OIL_BUCKET_TIME = 10000;
 	
@@ -393,6 +387,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		createEngineIfNeeded();
 		
 		updatePacket.updateFromPacket(this, packet);
+		
+		System.out.println ("HANDLE UPDATE...");
+		System.out.println (engine.progress + ", " + engine.energy);
 	}
 
 	@Override
