@@ -7,24 +7,25 @@ import java.util.LinkedList;
 
 import net.minecraft.src.TileEntity;
 
-class ClassMapping {
+public class ClassMapping {
+	
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
 	private LinkedList<Field> stringFields = new LinkedList<Field>();
 	private LinkedList<Field> intFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectFields = new LinkedList<ClassMapping>();
+	
+	private LinkedList<Field> intArrayFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectArrayFields = new LinkedList<ClassMapping>();
 	
 	private int sizeInt;
 	private int sizeFloat;
 	private int sizeString;
 	
-	private boolean dynamicSize = false;
 
-	PacketIds packetType;
-	
-	Field field;
+	private PacketIds packetType;	
+	private Field field;
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ClassMapping(final Class <? extends TileEntity> c, PacketIds packetType) {
@@ -42,8 +43,11 @@ class ClassMapping {
 
 				// ??? take into account enumerations here!
 				
-				if (t instanceof Class) {
+				System.out.println (t + ", " + (t instanceof Class) + ", " + (t instanceof GenericArrayType));
+				
+				if (t instanceof Class && !((Class)t).isArray()) {
 					Class fieldClass = (Class) t;
+					
 					if (fieldClass.equals(int.class)) {
 						sizeInt++;
 						intFields.add(f);
@@ -60,6 +64,8 @@ class ClassMapping {
 						sizeFloat++;
 						floatFields.add(f);
 					} else {
+						// ADD SOME SAFETY HERE - if we're not child of Object
+						
 						ClassMapping mapping = new ClassMapping(fieldClass, packetType); 
 						mapping.field = f;
 
@@ -70,31 +76,33 @@ class ClassMapping {
 						sizeFloat += mapping.sizeFloat;
 						sizeString += mapping.sizeString;
 					}
-				} else if (t instanceof GenericArrayType) {
-					// Here, only take into account arrays with a given size,
-					// that can be handled by the generic mechanism above.
+				} if (t instanceof Class && ((Class)t).isArray()) {
+					TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 					
-					GenericArrayType array = (GenericArrayType) t;
-										
-					if (array.getGenericComponentType() instanceof Class) {
-						Class arrayClass = (Class) array.getGenericComponentType(); 
+					if (updateAnnotation.staticSize() == -1) {
+						throw new RuntimeException(
+								"arrays must be provided with an explicit size");
+					}
 					
-						if (arrayClass.equals(int.class)) {
+					Class fieldClass = (Class) t;
+					
+					Class cptClass = fieldClass.getComponentType();
 
-						} else if (arrayClass.equals(boolean.class)) {
+					if (cptClass.equals(int.class)) {
+						sizeInt += updateAnnotation.staticSize();
+						intArrayFields.add(f);
+					} else {
+						// ADD SOME SAFETY HERE - if we're not child of Object
 
-						} else if (arrayClass.equals(String.class)) {
-	
-						} else if (arrayClass.equals(float.class)) {
+						ClassMapping mapping = new ClassMapping(cptClass, packetType);
+						mapping.field = f;
+						objectArrayFields.add(mapping);
 
-						} else {
-							//  ??? complete this for the marker implementation
-							ClassMapping mapping = new ClassMapping(arrayClass, packetType); 
-							mapping.field = f;
+						sizeInt += updateAnnotation.staticSize(); // to catch null / not null.
 
-							objectArrayFields.add(mapping);
-							dynamicSize = true;
-						}
+						sizeInt += updateAnnotation.staticSize() * mapping.sizeInt;
+						sizeFloat += updateAnnotation.staticSize() * mapping.sizeFloat;
+						sizeString += updateAnnotation.staticSize() * mapping.sizeString;
 					}
 				}
 			}
@@ -170,7 +178,39 @@ class ClassMapping {
 				c.setData(cpt, intValues, floatValues, stringValues,
 						intIndex, floatIndex, stringIndex);
 			}								
-		}						
+		}
+		
+		for (Field f : intArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				intValues [intIndex] = ((int []) f.get (obj)) [i];
+				intIndex++;
+			}
+		}
+		
+		for (ClassMapping c : objectArrayFields) {
+			TileNetworkData updateAnnotation = c.field.getAnnotation(TileNetworkData.class);
+			
+			Object [] cpts = (Object []) c.field.get (obj);	
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				if (cpts [i] == null) {
+					intValues[intIndex] = 0;
+					intIndex++;
+
+					intIndex += c.sizeInt;
+					floatIndex += c.sizeFloat;
+					stringIndex += c.sizeString;
+				} else {
+					intValues[intIndex] = 1;
+					intIndex++;
+					
+					c.setData(cpts [i], intValues, floatValues, stringValues,
+							intIndex, floatIndex, stringIndex);
+				}
+			}
+		}
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -217,18 +257,43 @@ class ClassMapping {
 						intIndex, floatIndex, stringIndex);
 			}								
 		}	
+		
+		for (Field f : intArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				((int []) f.get (obj)) [i] = intValues [intIndex];
+				intIndex++;
+			}
+		}
+		
+		for (ClassMapping c : objectArrayFields) {
+			TileNetworkData updateAnnotation = c.field.getAnnotation(TileNetworkData.class);
+			
+			Object [] cpts = (Object []) c.field.get (obj);	
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				boolean isNull = intValues [intIndex] == 0;
+				intIndex++;	
+				
+				if (isNull) {		
+					intIndex += c.sizeInt;
+					floatIndex += c.sizeFloat;
+					stringIndex += c.sizeString;
+				} else {
+					c.updateFromData(cpts [i], intValues, floatValues, stringValues,
+							intIndex, floatIndex, stringIndex);
+				}
+			}
+		}
 	}
 	
 	public int [] getSize () {
 		int [] result = new int [3];
-		
-		if (!dynamicSize) {
-			result [0] = sizeInt;
-			result [1] = sizeFloat;
-			result [2] = sizeString;
-		} else {
-			
-		}
+				
+		result [0] = sizeInt;
+		result [1] = sizeFloat;
+		result [2] = sizeString;
 		
 		return result;
 	}

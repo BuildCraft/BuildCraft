@@ -387,9 +387,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		createEngineIfNeeded();
 		
 		updatePacket.updateFromPacket(this, packet);
-		
-		System.out.println ("HANDLE UPDATE...");
-		System.out.println (engine.progress + ", " + engine.energy);
 	}
 
 	@Override
