@@ -9,6 +9,7 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Render;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.World;
+import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class RenderEntityBlock extends Render {
 
@@ -79,7 +80,7 @@ public class RenderEntityBlock extends Render {
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float)i + iBase + 0.5F, (float)j + jBase + 0.5F, (float)k + kBase + 0.5F);
 			
-			loadTexture (BuildCraftCore.customBuildCraftTexture);
+			MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
 
 			int lightX, lightY, lightZ;
 			
