@@ -8,7 +8,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -19,11 +18,17 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileTemplate extends TileBuildCraft implements IInventory, ISynchronizedTile {
 
-	private Box box;
+	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
+			TileTemplate.class, PacketIds.TileDescription);
+	
+	@TileNetworkData
+	private Box box = new Box ();
 	
 	private ItemStack items [] = new ItemStack [2];
 	
@@ -53,7 +58,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
 					yCoord, zCoord);
 
 			if (a != null) {
-				box = (Box) a.getBox();
+				box.initialize(a);
 				a.removeFromWorld();
 
 			}
@@ -193,7 +198,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
 		isComputing = nbttagcompound.getBoolean("isComputing");
 		
 		if (nbttagcompound.hasKey("box")) {
-			box = new Box(nbttagcompound.getCompoundTag("box"));
+			box.initialize(nbttagcompound.getCompoundTag("box"));
 		}
 		
         NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
@@ -270,43 +275,21 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.TemplateDescription.ordinal()) {
-			return;
-		}			
-				
-		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-		
-		if (packet.dataInt [3] != Integer.MAX_VALUE) {	
-			box = new Box(packet.dataInt, 3);
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}				
+		desciptionPacket.updateFromPacket(this, packet);				
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		// TODO Auto-generated method stub
 		
 	}
 	
-	public Packet getDescriptionPacket () {
-		Packet230ModLoader packet = new Packet230ModLoader();
-		
-		packet.modId = mod_BuildCraftBuilders.instance.getId();
-		packet.packetType = PacketIds.TemplateDescription.ordinal();
-		packet.isChunkDataPacket = true;
-		
-		packet.dataInt = new int [3 + Box.packetSize()];
-		
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		
-		if (box == null) {
-			packet.dataInt [5] = Integer.MAX_VALUE;
-		} else {
-			box.setData(packet.dataInt, 3);
-		}
-		
-		return packet;
+	public Packet getDescriptionPacket () {		
+		return desciptionPacket.toPacket(this);
+	}
+
+	@Override
+	public Packet230ModLoader getUpdatePacket() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.IBox;
 
 public class DefaultAreaProvider implements IAreaProvider {
 
@@ -50,9 +49,5 @@ public class DefaultAreaProvider implements IAreaProvider {
 
 	public void removeFromWorld () {
 		
-	}
-	
-	public IBox getBox () {
-		return new Box(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 }

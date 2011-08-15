@@ -57,6 +57,7 @@ public class BuildCraftCore {
 	
 	public static final int OIL_BUCKET_QUANTITY = 1000;
 	
+	@SuppressWarnings({ "all" })
 	public static void initialize () {
 		if (initialized) {
 			return;

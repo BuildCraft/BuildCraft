@@ -5,18 +5,19 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class mod_BuildCraftCore extends BaseModMp {
 
+	public static mod_BuildCraftCore instance;
+	
 	BuildCraftCore proxy = new BuildCraftCore();
 
 	public static class EntityRenderIndex {
@@ -46,6 +47,10 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 
 	public static boolean initialized = false;
+	
+	public mod_BuildCraftCore () {
+		instance = this;
+	}
 	
 	public static void initialize() {
 		BuildCraftCore.initialize();
@@ -398,4 +403,17 @@ public class mod_BuildCraftCore extends BaseModMp {
 		}
 	}
 
+	 public void HandlePacket(Packet230ModLoader packet) {
+		 System.out.println ("RECEIVE PACKET!");
+			switch (PacketIds.values()[packet.packetType]) {
+			case TileDescription:
+				Utils.handleDescriptionPacket(packet);
+				break;
+			case TileUpdate:
+				Utils.handleUpdatePacket(packet);
+				break;
+
+			}		
+		 }
+	
 }

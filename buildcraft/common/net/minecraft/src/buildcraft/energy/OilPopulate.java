@@ -35,8 +35,8 @@ public class OilPopulate {
 		boolean largeDeposit = world.rand.nextDouble() <= (0.005 / 100.0);
 		
 		if (mediumDeposit || largeDeposit) {
-			// Generate a large cave deposit						
-			
+			// Generate a large cave deposit
+
 			int cx = x, cy = 20 + world.rand.nextInt(10), cz = z;
 			
 			int r = 0;

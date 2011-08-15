@@ -9,7 +9,6 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -20,7 +19,6 @@ import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
@@ -28,18 +26,29 @@ import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileBuildCraft implements IArmListener,
 		IMachine, ISynchronizedTile, IPowerReceptor {
+	
+	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
+			TileQuarry.class, PacketIds.TileUpdate);
+	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
+			TileQuarry.class, PacketIds.TileDescription);
+	
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
 	boolean inProcess = false;
 	
+	@TileNetworkData
 	EntityMechanicalArm arm;
 	
+	@TileNetworkData (packetFilter = {PacketIds.TileDescription})
 	private int xMin = -1, zMin = -1;
+	@TileNetworkData (packetFilter = {PacketIds.TileDescription})
 	private int xSize = -1, ySize = -1, zSize = -1;
 	
 	boolean loadArm = false;
@@ -205,8 +214,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		inProcess = true;
 		
 		if (APIProxy.isServerSide()) {
-			CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
-					50, mod_BuildCraftFactory.instance);
+			sendNetworkUpdate ();
 		}
 	}
 
@@ -526,133 +534,23 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	}
 	
 	public Packet getDescriptionPacket() {
-		Packet230ModLoader packet = new Packet230ModLoader();
-
-		packet.modId = mod_BuildCraftFactory.instance.getId();
-		packet.packetType = PacketIds.QuarryDescription.ordinal();
-		packet.isChunkDataPacket = true;
-
-		packet.dataInt = new int [8];
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		packet.dataInt [3] = xMin;
-		packet.dataInt [4] = zMin;
-		packet.dataInt [5] = xSize;
-		packet.dataInt [6] = ySize;
-		packet.dataInt [7] = zSize;
-
-		packet.dataFloat = new float [3];
-		
-		if (arm != null) {
-			double [] headPos = arm.getHeadPosition();
-			
-			packet.dataFloat [0] = (float) headPos [0];
-			packet.dataFloat [1] = (float) headPos [1];
-			packet.dataFloat [2] = (float) headPos [2];
-		} else {
-			packet.dataFloat [0] = 0;
-			packet.dataFloat [1] = 0;
-			packet.dataFloat [2] = 0;
-		}
-		
-		return packet;
+		return desciptionPacket.toPacket(this);
     }
 	
 	public Packet230ModLoader getUpdatePacket() {
-		Packet230ModLoader packet = new Packet230ModLoader();
-		
-		packet.modId = mod_BuildCraftFactory.instance.getId();
-		packet.packetType = PacketIds.QuarryUpdate.ordinal();
-		packet.isChunkDataPacket = true;
-		
-		packet.dataInt = new int [3];
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		
-		packet.dataFloat = new float [6];
-		
-		if (arm != null) {
-			double [] headPos = arm.getHeadPosition();
-			double [] target = arm.getTarget();
-			
-			packet.dataFloat [0] = (float) headPos [0];
-			packet.dataFloat [1] = (float) headPos [1];
-			packet.dataFloat [2] = (float) headPos [2];
-			
-			packet.dataFloat [3] = (float) target [0];
-			packet.dataFloat [4] = (float) target [1];
-			packet.dataFloat [5] = (float) target [2];
-		} else {
-			packet.dataFloat [0] = 0;
-			packet.dataFloat [1] = 0;
-			packet.dataFloat [2] = 0;
-			
-			packet.dataFloat [3] = 0;
-			packet.dataFloat [4] = 0;
-			packet.dataFloat [5] = 0;
-
-		}
-
-		return packet;
+		return updatePacket.toPacket(this);
     }
 	
 	@Override
 	public void handleUpdatePacket (Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.QuarryUpdate.ordinal()) {
-			return;
-		}
-		
-		if (packet.dataFloat[0] == 0 && packet.dataFloat[1] == 0
-				&& packet.dataFloat[2] == 0) {
-			return;
-		}
-		
-		createUtilsIfNeeded();
-		
-		if (arm != null) {
-			arm.setHeadPosition(packet.dataFloat[0], packet.dataFloat[1],
-					packet.dataFloat[2]);
-			
-			arm.setTarget(packet.dataFloat[3], packet.dataFloat[4],
-					packet.dataFloat[5]);
-		}
+		updatePacket.updateFromPacket(this, packet);
 	}
 	
 	boolean hasReceivedDescription = false;
 	
 	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
-		if (!hasReceivedDescription) {
-			if (packet.packetType != PacketIds.QuarryDescription.ordinal()) {
-				return;
-			}		
-
-			this.xMin = packet.dataInt [3];
-			this.zMin = packet.dataInt [4];
-			this.xSize = packet.dataInt [5];
-			this.ySize = packet.dataInt [6];
-			this.zSize = packet.dataInt [7];
-
-			bluePrintBuilder = null;
-
-			createUtilsIfNeeded();
-
-			if (packet.dataFloat [0] != 0) {
-				if (arm == null) {
-					createArm();
-					arm.joinToWorld(worldObj);
-				}				
-				
-				deleteLasers();
-				
-				arm.setHeadPosition(packet.dataFloat[0], packet.dataFloat[1],
-						packet.dataFloat[2]);
-			}
-			
-			hasReceivedDescription = true;
-		}
+		desciptionPacket.updateFromPacket(this, packet);
 	}
 	
 	public void initialize () {

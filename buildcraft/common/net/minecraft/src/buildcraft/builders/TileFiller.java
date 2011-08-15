@@ -8,7 +8,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.FillerRegistry;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -19,19 +18,33 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Box;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 		ISynchronizedTile, IPowerReceptor {
 
-	private Box box;
+	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
+			TileFiller.class, PacketIds.TileUpdate);
+	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
+			TileFiller.class, PacketIds.TileDescription);
+	
+	@TileNetworkData (packetFilter = {PacketIds.TileDescription})
+	private Box box = new Box ();
+	
 	FillerPattern currentPattern;
+	
+	@TileNetworkData
+	int currentPatternId;
+	
+	@TileNetworkData
 	boolean done = true;
+	
 	boolean forceDone = false;
     private ItemStack contents[];
     PowerProvider powerProvider;
@@ -49,7 +62,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
     				zCoord);
 
     		if (a != null) {
-    			box = (Box) a.getBox();				
+    			box.initialize(a);				
 
     			if (a instanceof TileMarker) {
     				((TileMarker) a).removeFromWorld();
@@ -146,8 +159,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
     	}
     	
 		if (APIProxy.isServerSide()) {
-			CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
-					50, mod_BuildCraftBuilders.instance);
+			sendNetworkUpdate ();
 		}
     }
     
@@ -213,7 +225,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
         }
         
         if (nbttagcompound.hasKey("box")) {
-        	box = new Box (nbttagcompound.getCompoundTag("box"));
+        	box.initialize(nbttagcompound.getCompoundTag("box"));
         }        
         
         done = nbttagcompound.getBoolean("done");
@@ -334,76 +346,30 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.FillerDescription.ordinal()) {
-			return;
-		}			
+		desciptionPacket.updateFromPacket(this, packet);		
 		
-		done = packet.dataInt [3] == 1;
-		currentPattern = FillerRegistry.getPattern(packet.dataInt[4]);
-		
+		currentPattern = FillerRegistry.getPattern(currentPatternId);		
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		
-		if (packet.dataInt [5] != Integer.MAX_VALUE) {	
-			box = new Box(packet.dataInt, 5);
+		if (box.isInitialized()) {	
 			box.createLasers(worldObj, LaserKind.Stripes);
-		}		
+		}	
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.FillerUpdate.ordinal()) {
-			return;
-		}	
+		updatePacket.updateFromPacket(this, packet);
 		
-		done = packet.dataInt [3] == 1;
-		currentPattern = FillerRegistry.getPattern(packet.dataInt[4]);
+		currentPattern = FillerRegistry.getPattern(currentPatternId);
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	public Packet getDescriptionPacket () {
-		Packet230ModLoader packet = new Packet230ModLoader();
-		
-		packet.modId = mod_BuildCraftBuilders.instance.getId();
-		packet.packetType = PacketIds.FillerDescription.ordinal();
-		packet.isChunkDataPacket = true;
-		
-		packet.dataInt = new int [5 + Box.packetSize()];
-		
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		
-		packet.dataInt [3] = (done ? 1 : 0);
-		packet.dataInt[4] = (currentPattern == null ? -1 : FillerRegistry
-				.getPatternNumber(currentPattern));
-		
-		if (box == null) {
-			packet.dataInt [5] = Integer.MAX_VALUE;
-		} else {
-			box.setData(packet.dataInt, 5);
-		}
-		
-		return packet;
+		return desciptionPacket.toPacket(this);
 	}
 	
 	public Packet230ModLoader getUpdatePacket () {
-		Packet230ModLoader packet = new Packet230ModLoader();
-		
-		packet.modId = mod_BuildCraftBuilders.instance.getId();
-		packet.packetType = PacketIds.FillerUpdate.ordinal();
-		packet.isChunkDataPacket = true;
-		
-		packet.dataInt = new int [5];
-		
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		
-		packet.dataInt [3] = (done ? 1 : 0);
-		packet.dataInt[4] = (currentPattern == null ? -1 : FillerRegistry
-				.getPatternNumber(currentPattern));
-
-		return packet;
+		return updatePacket.toPacket(this);
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.IBox;
 
 public class BluePrintBuilder implements IAreaProvider {
 	
@@ -131,11 +130,6 @@ public class BluePrintBuilder implements IAreaProvider {
 	@Override
 	public void removeFromWorld() {
 		
-	}
-
-	@Override
-	public IBox getBox() {
-		return new Box(this);
 	}
 
 }

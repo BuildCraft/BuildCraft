@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 
 public abstract class TileBuildCraft extends TileEntity {
@@ -27,6 +28,14 @@ public abstract class TileBuildCraft extends TileEntity {
 	
 	public void destroy () {
 		
+	}
+	
+	public void sendNetworkUpdate() {
+		if (this instanceof ISynchronizedTile) {
+			CoreProxy.sendToPlayers(
+					((ISynchronizedTile) this).getUpdatePacket(), xCoord,
+					yCoord, zCoord, 50, mod_BuildCraftCore.instance);
+		}
 	}
 	
 }

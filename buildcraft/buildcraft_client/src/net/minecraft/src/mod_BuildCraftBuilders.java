@@ -31,22 +31,6 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	public String Version() {
 		return "2.0.1";
 	}
-	
-	 public void HandlePacket(Packet230ModLoader packet) {
-		switch (PacketIds.values()[packet.packetType]) {
-		case MarkerDescription:
-		case FillerDescription:
-		case BuilderDescription:
-		case TemplateDescription:
-			Utils.handleDescriptionPacket(packet);
-		case MarkerUpdate:
-		case FillerUpdate:
-		case BuilderUpdate:
-		case TemplateUpdate:
-			Utils.handleUpdatePacket(packet);
-
-		}		
-	 }
 	 
 	public GuiScreen HandleGUI(int i) {		
 		switch (Utils.intToPacketId(i)) {

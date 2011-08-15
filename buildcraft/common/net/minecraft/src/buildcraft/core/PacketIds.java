@@ -2,6 +2,11 @@ package net.minecraft.src.buildcraft.core;
 
 public enum PacketIds {
 
+	// General packets
+	
+	TileDescription,
+	TileUpdate,
+	
 	// Transport packets
 	
 	PipeItem,
@@ -10,32 +15,16 @@ public enum PacketIds {
 	
 	// Factory packets
 	
-	QuarryDescription,
-	QuarryUpdate,
-
 	AutoCraftingGUI,
 	
 	// Builders packets
-	
-	MarkerDescription,
-	MarkerUpdate,
-	
-	FillerDescription,
-	FillerUpdate,
-	FillerGUI,
-	
-	TemplateDescription,
-	TemplateUpdate,
-	TemplateGUI,
-	
-	BuilderDescription,
-	BuilderUpdate,
+		
+	FillerGUI,	
+	TemplateGUI,	
 	BuilderGUI,
 	
 	// Energy packets
 	
-	EngineDescription,
-	EngineUpdate,
 	EngineSteamGUI,
 	EngineCombustionGUI
 

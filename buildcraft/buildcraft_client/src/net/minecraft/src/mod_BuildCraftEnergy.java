@@ -48,17 +48,6 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	public String Version() {
 		return "2.0.1";
 	}
-	
-	public void HandlePacket(Packet230ModLoader packet) {
-		switch (PacketIds.values()[packet.packetType]) {
-		case EngineDescription:
-			Utils.handleDescriptionPacket(packet);
-			break;
-		case EngineUpdate:
-			Utils.handleUpdatePacket(packet);
-			break;
-		}
-	}
 
 	public GuiScreen HandleGUI(int i) {
 		TileEngine tile = new TileEngine();
