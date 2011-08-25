@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.core;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.core.ClassMapping.Indexes;
 
 public class TilePacketWrapper {
 	
@@ -34,7 +35,7 @@ public class TilePacketWrapper {
 		
 		try {
 			rootMapping.setData(tile, packet.dataInt, packet.dataFloat,
-					packet.dataString, 3, 0, 0);
+					packet.dataString, new Indexes(3, 0, 0));
 			return packet;
 			
 		} catch (Exception e) {
@@ -47,7 +48,7 @@ public class TilePacketWrapper {
 	public void updateFromPacket (TileEntity tile, Packet230ModLoader packet) {
 		try {
 			rootMapping.updateFromData(tile, packet.dataInt, packet.dataFloat,
-					packet.dataString, 3, 0, 0);
+					packet.dataString, new Indexes(3, 0, 0));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

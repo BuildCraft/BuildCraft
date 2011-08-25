@@ -19,6 +19,7 @@ import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
 public class BuildCraftCore {
+	
 	public static BuildCraftConfiguration mainConfiguration;
 	
 	public static TreeMap<BlockIndex, Packet230ModLoader> bufferedDescriptions = new TreeMap<BlockIndex, Packet230ModLoader>();

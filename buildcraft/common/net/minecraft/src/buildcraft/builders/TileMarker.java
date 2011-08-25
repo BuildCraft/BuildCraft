@@ -240,7 +240,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	}
 		
 	private void createLasers () {
-		System.out.println ("L 1");
 		if (lasers != null) {
 			for (EntityBlock entity : lasers) {
 				if (entity != null) {
@@ -249,54 +248,41 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 			}
 		}
 		
-		System.out.println ("L 2");
-		
 		lasers = new EntityBlock [12];
 		Origin o = origin;
 		
 		if (!origin.vect [0].isSet()) {
-			System.out.println ("L 3");
 			o.xMin = origin.vectO.x;
 			o.xMax = origin.vectO.x;
 		} else if (origin.vect [0].x < xCoord){
-			System.out.println ("L 4");
 			o.xMin = origin.vect [0].x;
 			o.xMax = xCoord;
 		} else {
-			System.out.println ("L 5");
 			o.xMin = xCoord;
 			o.xMax = origin.vect [0].x;
 		}
 		
 		if (!origin.vect [1].isSet()) {
-			System.out.println ("L 6");
 			o.yMin = origin.vectO.y;
 			o.yMax = origin.vectO.y;
 		} else if (origin.vect [1].y < yCoord){
-			System.out.println ("L 7");
 			o.yMin = origin.vect [1].y;
 			o.yMax = yCoord;
 		} else {
-			System.out.println ("L 8");
 			o.yMin = yCoord;
 			o.yMax = origin.vect [1].y;
 		}
 		
 		if (!origin.vect [2].isSet()) {
-			System.out.println ("L 9");
 			o.zMin = origin.vectO.z;
 			o.zMax = origin.vectO.z;
 		} else if (origin.vect [2].z < zCoord){
-			System.out.println ("L 10");
 			o.zMin = origin.vect [2].z;
 			o.zMax = zCoord;
 		} else {
-			System.out.println ("L 11");
 			o.zMin = zCoord;
 			o.zMax = origin.vect [2].z;
 		}
-		
-		System.out.println ("L 12");
 		
 		lasers = Utils.createLaserBox(worldObj, o.xMin, o.yMin, o.zMin, o.xMax,
 				o.yMax, o.zMax, LaserKind.Red);
@@ -476,20 +462,16 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	
 	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {		
-		desciptionPacket.updateFromPacket(this, packet);
+		desciptionPacket.updateFromPacket(this, packet);	
 		
 		switchSignals();		
 		createLasers();
 	}
 
 	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {
-		System.out.println ("HANDLE UPDATE PACKET");
-		
+	public void handleUpdatePacket(Packet230ModLoader packet) {		
 		updatePacket.updateFromPacket(this, packet);
 		
-		System.out.println (origin.isSet());
-				
 		switchSignals();
 		createLasers();
 	}
