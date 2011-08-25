@@ -313,7 +313,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 		boolean wasInitialized = box.isInitialized();
 		
 		updatePacket.updateFromPacket(this, packet);
-				
+		
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		
 		if (!wasInitialized && box.isInitialized()) {

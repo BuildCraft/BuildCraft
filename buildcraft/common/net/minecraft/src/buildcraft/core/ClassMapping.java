@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.core;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 
@@ -27,6 +26,18 @@ public class ClassMapping {
 	private PacketIds packetType;	
 	private Field field;
 	
+	public static class Indexes {
+		public Indexes (int initInt, int initFloat, int initString) {
+			intIndex = initInt;
+			floatIndex = initFloat;
+			stringIndex = initString;
+		}
+		
+		int intIndex = 0;
+		int floatIndex = 0;
+		int stringIndex = 0;
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ClassMapping(final Class <? extends TileEntity> c, PacketIds packetType) {
 		this.packetType = packetType;
@@ -42,9 +53,7 @@ public class ClassMapping {
 				Type t = f.getGenericType();
 
 				// ??? take into account enumerations here!
-				
-				System.out.println (t + ", " + (t instanceof Class) + ", " + (t instanceof GenericArrayType));
-				
+							
 				if (t instanceof Class && !((Class)t).isArray()) {
 					Class fieldClass = (Class) t;
 					
@@ -134,49 +143,47 @@ public class ClassMapping {
 	
 	@SuppressWarnings("rawtypes")
 	public void setData(Object obj, int[] intValues, float[] floatValues,
-			String[] stringValues, Integer intIndex, Integer floatIndex,
-			Integer stringIndex) throws IllegalArgumentException, IllegalAccessException {
+			String[] stringValues, Indexes index) throws IllegalArgumentException, IllegalAccessException {				
 		
 		for (Field f : intFields) {
-			intValues [intIndex] = f.getInt(obj);
-			intIndex++;
+			intValues [index.intIndex] = f.getInt(obj);
+			index.intIndex++;
 		}
 		
 		for (Field f : booleanFields) {
-			intValues [intIndex] = f.getBoolean(obj) ? 1 : 0;
-			intIndex++;
+			intValues [index.intIndex] = f.getBoolean(obj) ? 1 : 0;
+			index.intIndex++;
 		}
 		
 		for (Field f : enumFields) {
-			intValues [intIndex] = ((Enum)f.get (obj)).ordinal();
-			intIndex++;
+			intValues [index.intIndex] = ((Enum)f.get (obj)).ordinal();
+			index.intIndex++;
 		}
 		
 		for (Field f : floatFields) {
-			floatValues [floatIndex] = f.getFloat(obj);
-			floatIndex++;
+			floatValues [index.floatIndex] = f.getFloat(obj);
+			index.floatIndex++;
 		}
 		
 		for (Field f : stringFields) {
-			stringValues [stringIndex] = (String) f.get(obj);
-			stringIndex++;
+			stringValues [index.stringIndex] = (String) f.get(obj);
+			index.stringIndex++;
 		}
 		
 		for (ClassMapping c : objectFields) {
 			Object cpt = c.field.get (obj);	
 			
 			if (cpt == null) {
-				intValues [intIndex] = 0;
-				intIndex++;
+				intValues [index.intIndex] = 0;
+				index.intIndex++;
 				
-				intIndex += c.sizeInt;
-				floatIndex += c.sizeFloat;
-				stringIndex += c.sizeString;
+				index.intIndex += c.sizeInt;
+				index.floatIndex += c.sizeFloat;
+				index.stringIndex += c.sizeString;
 			} else {
-				intValues [intIndex] = 1;
-				intIndex++;
-				c.setData(cpt, intValues, floatValues, stringValues,
-						intIndex, floatIndex, stringIndex);
+				intValues [index.intIndex] = 1;
+				index.intIndex++;
+				c.setData(cpt, intValues, floatValues, stringValues, index);
 			}								
 		}
 		
@@ -184,8 +191,8 @@ public class ClassMapping {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				intValues [intIndex] = ((int []) f.get (obj)) [i];
-				intIndex++;
+				intValues [index.intIndex] = ((int []) f.get (obj)) [i];
+				index.intIndex++;
 			}
 		}
 		
@@ -196,65 +203,65 @@ public class ClassMapping {
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				if (cpts [i] == null) {
-					intValues[intIndex] = 0;
-					intIndex++;
+					intValues[index.intIndex] = 0;
+					index.intIndex++;
 
-					intIndex += c.sizeInt;
-					floatIndex += c.sizeFloat;
-					stringIndex += c.sizeString;
+					index.intIndex += c.sizeInt;
+					index.floatIndex += c.sizeFloat;
+					index.stringIndex += c.sizeString;
 				} else {
-					intValues[intIndex] = 1;
-					intIndex++;
+					intValues[index.intIndex] = 1;
+					index.intIndex++;
 					
 					c.setData(cpts [i], intValues, floatValues, stringValues,
-							intIndex, floatIndex, stringIndex);
+							index);
 				}
 			}
 		}
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public void updateFromData (Object obj, int[] intValues, float[] floatValues,
-			String[] stringValues, Integer intIndex, Integer floatIndex,
-			Integer stringIndex) throws IllegalArgumentException, IllegalAccessException {
+	public void updateFromData(Object obj, int[] intValues,
+			float[] floatValues, String[] stringValues, Indexes index)
+			throws IllegalArgumentException, IllegalAccessException {
 		
 		for (Field f : intFields) {
-			f.setInt(obj, intValues [intIndex]);
-			intIndex++;
+			f.setInt(obj, intValues [index.intIndex]);
+			index.intIndex++;
 		}
 		
 		for (Field f : booleanFields) {
-			f.setBoolean(obj, intValues [intIndex] == 1);
-			intIndex++;
+			f.setBoolean(obj, intValues [index.intIndex] == 1);
+			index.intIndex++;
 		}
 		
 		for (Field f : enumFields) {
 			f.set(obj,
-					((Class) f.getGenericType()).getEnumConstants()[intValues[intIndex]]);
-			intIndex++;
+					((Class) f.getGenericType()).getEnumConstants()[intValues[index.intIndex]]);
+			index.intIndex++;
 		}
 		
 		for (Field f : floatFields) {
-			f.setFloat(obj, floatValues [floatIndex]);			
-			floatIndex++;
+			f.setFloat(obj, floatValues [index.floatIndex]);			
+			index.floatIndex++;
 		}
 		
 		for (Field f : stringFields) {
-			f.set(obj, stringValues [stringIndex]);
-			stringIndex++;
+			f.set(obj, stringValues [index.stringIndex]);
+			index.stringIndex++;
 		}
 		
 		for (ClassMapping c : objectFields) {
-			boolean isNull = intValues [intIndex] == 0;
-			intIndex++;	
+			boolean isNull = intValues [index.intIndex] == 0;
+			index.intIndex++;	
 			
 			if (isNull) {
-				intIndex += c.sizeInt;
-				floatIndex += c.sizeFloat;
-				stringIndex += c.sizeString;
+				index.intIndex += c.sizeInt;
+				index.floatIndex += c.sizeFloat;
+				index.stringIndex += c.sizeString;
 			} else {
 				c.updateFromData(c.field.get(obj), intValues, floatValues, stringValues,
-						intIndex, floatIndex, stringIndex);
+						index);
 			}								
 		}	
 		
@@ -262,8 +269,8 @@ public class ClassMapping {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				((int []) f.get (obj)) [i] = intValues [intIndex];
-				intIndex++;
+				((int []) f.get (obj)) [i] = intValues [index.intIndex];
+				index.intIndex++;
 			}
 		}
 		
@@ -273,16 +280,16 @@ public class ClassMapping {
 			Object [] cpts = (Object []) c.field.get (obj);	
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				boolean isNull = intValues [intIndex] == 0;
-				intIndex++;	
+				boolean isNull = intValues [index.intIndex] == 0;
+				index.intIndex++;	
 				
 				if (isNull) {		
-					intIndex += c.sizeInt;
-					floatIndex += c.sizeFloat;
-					stringIndex += c.sizeString;
+					index.intIndex += c.sizeInt;
+					index.floatIndex += c.sizeFloat;
+					index.stringIndex += c.sizeString;
 				} else {
 					c.updateFromData(cpts [i], intValues, floatValues, stringValues,
-							intIndex, floatIndex, stringIndex);
+							index);
 				}
 			}
 		}
