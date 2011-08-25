@@ -355,6 +355,7 @@ public class Utils {
 			TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
 			
 			if (tile instanceof ISynchronizedTile) {
+				
 				((ISynchronizedTile) tile).handleUpdatePacket(packet);	
 				
 				return;
