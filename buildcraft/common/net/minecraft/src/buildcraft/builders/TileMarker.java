@@ -338,7 +338,11 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	
 	@Override
 	public void destroy () {
+		TileMarker markerOrigin = null;
+		
 		if (origin.isSet()) {
+			markerOrigin = origin.vectO.getMarker(worldObj);
+			
 			Origin o = origin;
 			
 			if (o.vectO.getMarker(worldObj) != null) {
@@ -365,17 +369,21 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 				}
 			}
 			
-			o.vectO.getMarker(worldObj).switchSignals();
+			o.vectO.getMarker(worldObj).switchSignals();						
 		}
 		
 		if (signals != null) {
 			for (EntityBlock b : signals) {
 				b.setEntityDead();
 			}
-		}
+		}				
 		
 		signals = null;
 		origin = new Origin();
+		
+		if (APIProxy.isServerSide() && markerOrigin != this) {
+			markerOrigin.sendNetworkUpdate();
+		}
 	}
 	
 	public void removeFromWorld () {
@@ -451,10 +459,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	public Packet230ModLoader getUpdatePacket () {	
 		TileMarker marker = origin.vectO.getMarker(worldObj);
 			
-		if (marker == this) {
+		if (marker == this || marker == null) {
 			return updatePacket.toPacket(this);
 		} else if (marker != null) {
-			marker.sendNetworkUpdate();
+			marker.sendNetworkUpdate();			
 		}
 		
 		return null;
