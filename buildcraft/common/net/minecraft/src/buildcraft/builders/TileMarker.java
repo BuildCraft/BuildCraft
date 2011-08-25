@@ -381,7 +381,8 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		signals = null;
 		origin = new Origin();
 		
-		if (APIProxy.isServerSide() && markerOrigin != this) {
+		if (APIProxy.isServerSide() && markerOrigin != null
+				&& markerOrigin != this) {
 			markerOrigin.sendNetworkUpdate();
 		}
 	}
