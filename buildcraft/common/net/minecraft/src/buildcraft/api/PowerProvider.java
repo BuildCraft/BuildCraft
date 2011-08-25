@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public abstract class PowerProvider {
 
@@ -10,7 +11,7 @@ public abstract class PowerProvider {
 	public int maxEnergyReceived;
 	public int maxEnergyStored;
 	public int minActivationEnergy;	
-	public int energyStored = 0;
+	public @TileNetworkData int energyStored = 0;
 	
     protected int powerLoss = 1;
 	protected int powerLossRegularity = 100;

@@ -32,11 +32,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileBuilder extends TileBuildCraft implements IInventory,
 		ISynchronizedTile, IPowerReceptor {
-
-	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
-			TileBuilder.class, PacketIds.TileUpdate);
-	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
-			TileBuilder.class, PacketIds.TileDescription);
 	
 	private ItemStack items [] = new ItemStack [28];
 	
@@ -299,7 +294,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {		
-		desciptionPacket.updateFromPacket(this, packet);
+		super.handleDescriptionPacket(packet);
 		
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		
@@ -312,7 +307,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 	public void handleUpdatePacket(Packet230ModLoader packet) {
 		boolean wasInitialized = box.isInitialized();
 		
-		updatePacket.updateFromPacket(this, packet);
+		super.handleUpdatePacket(packet);
 		
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		
@@ -322,14 +317,6 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 		} else if (wasInitialized && !box.isInitialized()) {
 			box.deleteLasers();
 		}
-	}
-	
-	public Packet230ModLoader getUpdatePacket () {
-		return updatePacket.toPacket(this);
-	}
-	
-	public Packet getDescriptionPacket () {						
-		return desciptionPacket.toPacket(this);
 	}
 
 	@Override

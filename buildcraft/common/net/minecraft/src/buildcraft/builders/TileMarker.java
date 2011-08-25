@@ -11,19 +11,12 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		ISynchronizedTile {
-	
-	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
-			TileMarker.class, PacketIds.TileUpdate);
-	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
-			TileMarker.class, PacketIds.TileDescription);
 	
 	private static int maxSize = 64;
 	
@@ -451,7 +444,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	
 	public Packet getDescriptionPacket() {		
 		if (origin.vectO.getMarker(worldObj) == this) {
-			return desciptionPacket.toPacket(this);
+			return super.getDescriptionPacket();
 		} else {
 			return null;
 		}
@@ -461,7 +454,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 		TileMarker marker = origin.vectO.getMarker(worldObj);
 			
 		if (marker == this || marker == null) {
-			return updatePacket.toPacket(this);
+			return super.getUpdatePacket();
 		} else if (marker != null) {
 			marker.sendNetworkUpdate();			
 		}
@@ -471,7 +464,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 	
 	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {		
-		desciptionPacket.updateFromPacket(this, packet);	
+		super.handleDescriptionPacket(packet);
 		
 		switchSignals();		
 		createLasers();
@@ -479,7 +472,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider,
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {		
-		updatePacket.updateFromPacket(this, packet);
+		super.handleUpdatePacket(packet);
 		
 		switchSignals();
 		createLasers();

@@ -6,7 +6,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -16,16 +15,11 @@ import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileTemplate extends TileBuildCraft implements IInventory, ISynchronizedTile {
-
-	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
-			TileTemplate.class, PacketIds.TileDescription);
 	
 	public @TileNetworkData Box box = new Box ();
 	
@@ -273,22 +267,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
     }
 
 	@Override
-	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		desciptionPacket.updateFromPacket(this, packet);				
-	}
-
-	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
 		
-	}
-	
-	public Packet getDescriptionPacket () {		
-		return desciptionPacket.toPacket(this);
-	}
-
-	@Override
-	public Packet230ModLoader getUpdatePacket() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

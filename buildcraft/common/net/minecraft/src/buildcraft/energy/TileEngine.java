@@ -22,16 +22,10 @@ import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		IInventory, ISynchronizedTile, ILiquidContainer {
-
-	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
-			TileEngine.class, PacketIds.TileUpdate);
-	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
-			TileEngine.class, PacketIds.TileDescription);
 	
 	public @TileNetworkData Engine engine;	
 	public @TileNetworkData (packetFilter = {PacketIds.TileUpdate}) int progressPart = 0;	
@@ -365,28 +359,28 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	public Packet getDescriptionPacket () {
 		createEngineIfNeeded ();
 			
-		return desciptionPacket.toPacket(this);
+		return super.getDescriptionPacket();
 	}
 	
 	@Override
 	public Packet230ModLoader getUpdatePacket () {
 		serverPistonSpeed = engine.getPistonSpeed();
 		
-		return updatePacket.toPacket(this);
+		return super.getUpdatePacket();
 	}
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
 		createEngineIfNeeded();
 		
-		desciptionPacket.updateFromPacket(this, packet);
+		super.handleDescriptionPacket(packet);
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
 		createEngineIfNeeded();
 		
-		updatePacket.updateFromPacket(this, packet);
+		super.handleUpdatePacket(packet);
 	}
 
 	@Override

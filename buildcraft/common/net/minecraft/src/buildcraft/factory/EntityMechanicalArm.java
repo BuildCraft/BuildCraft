@@ -11,15 +11,15 @@ public class EntityMechanicalArm extends Entity {
 
 	double sizeX, sizeZ;
 	EntityBlock xArm, yArm, zArm, head;
-	
-	double targetX, targetY, targetZ;
+		
 	double angle;
 	
+	public @TileNetworkData double targetX, targetY, targetZ;
 	public @TileNetworkData double headPosX, headPosY, headPosZ;
+	public @TileNetworkData double speed = 0.03;
 	
 	double baseY;
-	double speed = 0.03;
-	
+		
 	IArmListener listener;
 	boolean inProgressionXZ = false;
 	boolean inProgressionY = false;
@@ -267,5 +267,10 @@ public class EntityMechanicalArm extends Entity {
 		headPosX = x;
 		headPosY = y;
 		headPosZ = z;
+	}
+
+	public void refresh() {
+		setTarget(targetX, targetY, targetZ);
+		setHeadPosition(headPosX, headPosY, headPosZ);		
 	}
 }
