@@ -1,12 +1,41 @@
 package net.minecraft.src.buildcraft.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 
-public abstract class TileBuildCraft extends TileEntity {
+public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 
+	@SuppressWarnings("rawtypes")
+	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
+	@SuppressWarnings("rawtypes")
+	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
+	
+	private TilePacketWrapper descriptionPacket;
+	private TilePacketWrapper updatePacket;
+	
 	private boolean init = false;
+	
+	public TileBuildCraft () {
+		if (!updateWrappers.containsKey(this.getClass())) {
+			updateWrappers.put(this.getClass(), new TilePacketWrapper(
+					this.getClass (), PacketIds.TileUpdate));
+		}
+		
+		if (!descriptionWrappers.containsKey(this.getClass())) {
+			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(
+					this.getClass (), PacketIds.TileDescription));
+		}
+		
+		updatePacket = updateWrappers.get(this.getClass ());
+		descriptionPacket = descriptionWrappers.get(this.getClass ());
+
+	}
 	
 	@Override
 	public void updateEntity () {
@@ -36,6 +65,22 @@ public abstract class TileBuildCraft extends TileEntity {
 					((ISynchronizedTile) this).getUpdatePacket(), xCoord,
 					yCoord, zCoord, 50, mod_BuildCraftCore.instance);
 		}
+	}
+	
+	public Packet getDescriptionPacket() {		
+		return descriptionPacket.toPacket(this);
+    }
+	
+	public Packet230ModLoader getUpdatePacket() {
+		return updatePacket.toPacket(this);
+    }
+	
+	public void handleDescriptionPacket (Packet230ModLoader packet) {
+		descriptionPacket.updateFromPacket(this, packet);
+	}
+	
+	public void handleUpdatePacket (Packet230ModLoader packet) {
+		updatePacket.updateFromPacket(this, packet);
 	}
 	
 }

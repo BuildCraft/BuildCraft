@@ -7,7 +7,6 @@ import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -26,25 +25,17 @@ import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileBuildCraft implements IArmListener,
 		IMachine, ISynchronizedTile, IPowerReceptor {
 	
-	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
-			TileQuarry.class, PacketIds.TileUpdate);
-	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
-			TileQuarry.class, PacketIds.TileDescription);
-	
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
-	boolean inProcess = false;
-	
-	public @TileNetworkData	EntityMechanicalArm arm;
-	
+	public @TileNetworkData boolean inProcess = false;	
+	public @TileNetworkData	EntityMechanicalArm arm;	
 	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xMin = -1, zMin = -1;
 	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xSize = -1, ySize = -1, zSize = -1;
 	
@@ -55,7 +46,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	
 	BluePrintBuilder bluePrintBuilder;
 	
-	PowerProvider powerProvider;
+	public @TileNetworkData PowerProvider powerProvider;
 	
 	public static int MAX_ENERGY = 7000;
 	
@@ -139,7 +130,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			
 			int energy = powerProvider
 			.useEnergy(energyToUse, energyToUse, true);
-			
+						
 			if (energy > 0) {
 				arm.doMove(0.015 + (float) energy / 200F);
 				return;
@@ -399,13 +390,13 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		}		
 	}
 	
-	boolean blockDig (int blockID) {
+	private boolean blockDig (int blockID) {
 		return blockID == Block.bedrock.blockID
 				|| blockID == Block.lavaStill.blockID
 				|| blockID == Block.lavaMoving.blockID;
 	}
 	
-	boolean canDig(int blockID) {
+	private boolean canDig(int blockID) {
 		return !blockDig(blockID) 
 				&& !Utils.softBlock(blockID)
 				&& blockID != Block.snow.blockID;
@@ -530,24 +521,26 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		bluePrintBuilder = new BluePrintBuilder(bluePrint, xMin, yCoord, zMin);		
 	}
 	
-	public Packet getDescriptionPacket() {
-		return desciptionPacket.toPacket(this);
-    }
-	
-	public Packet230ModLoader getUpdatePacket() {
-		return updatePacket.toPacket(this);
-    }
-	
 	@Override
 	public void handleUpdatePacket (Packet230ModLoader packet) {
-		updatePacket.updateFromPacket(this, packet);
+		createUtilsIfNeeded();
+		
+		super.handleUpdatePacket(packet);
+		
+		if (arm != null) {
+			arm.refresh ();
+		}
 	}
-	
-	boolean hasReceivedDescription = false;
 	
 	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
-		desciptionPacket.updateFromPacket(this, packet);
+		createUtilsIfNeeded();
+		
+		super.handleDescriptionPacket(packet);
+		
+		if (arm != null) {
+			arm.refresh ();
+		}
 	}
 	
 	public void initialize () {

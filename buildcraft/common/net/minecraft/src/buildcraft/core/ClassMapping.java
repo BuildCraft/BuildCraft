@@ -9,6 +9,7 @@ import net.minecraft.src.TileEntity;
 public class ClassMapping {
 	
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
+	private LinkedList<Field> doubleFields = new LinkedList<Field>();
 	private LinkedList<Field> stringFields = new LinkedList<Field>();
 	private LinkedList<Field> intFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
@@ -72,6 +73,9 @@ public class ClassMapping {
 					} else if (fieldClass.equals(float.class)) {
 						sizeFloat++;
 						floatFields.add(f);
+					} else if (fieldClass.equals(double.class)) {
+						sizeFloat++;
+						doubleFields.add(f);
 					} else {
 						// ADD SOME SAFETY HERE - if we're not child of Object
 						
@@ -165,6 +169,11 @@ public class ClassMapping {
 			index.floatIndex++;
 		}
 		
+		for (Field f : doubleFields) {
+			floatValues [index.floatIndex] = (float) f.getDouble(obj);
+			index.floatIndex++;
+		}
+		
 		for (Field f : stringFields) {
 			stringValues [index.stringIndex] = (String) f.get(obj);
 			index.stringIndex++;
@@ -243,6 +252,11 @@ public class ClassMapping {
 		
 		for (Field f : floatFields) {
 			f.setFloat(obj, floatValues [index.floatIndex]);			
+			index.floatIndex++;
+		}
+		
+		for (Field f : doubleFields) {
+			f.setDouble(obj, floatValues [index.floatIndex]);
 			index.floatIndex++;
 		}
 		

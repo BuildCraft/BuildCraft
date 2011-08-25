@@ -28,11 +28,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 		ISynchronizedTile, IPowerReceptor {
-
-	private static TilePacketWrapper updatePacket = new TilePacketWrapper(
-			TileFiller.class, PacketIds.TileUpdate);
-	private static TilePacketWrapper desciptionPacket = new TilePacketWrapper(
-			TileFiller.class, PacketIds.TileDescription);
 	
 	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) Box box = new Box ();
 	public @TileNetworkData int currentPatternId;
@@ -341,7 +336,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		desciptionPacket.updateFromPacket(this, packet);		
+		super.handleDescriptionPacket(packet);		
 		
 		currentPattern = FillerRegistry.getPattern(currentPatternId);		
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
@@ -353,18 +348,10 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		updatePacket.updateFromPacket(this, packet);
+		super.handleUpdatePacket(packet);
 		
 		currentPattern = FillerRegistry.getPattern(currentPatternId);
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-	}
-	
-	public Packet getDescriptionPacket () {
-		return desciptionPacket.toPacket(this);
-	}
-	
-	public Packet230ModLoader getUpdatePacket () {
-		return updatePacket.toPacket(this);
 	}
 
 	@Override
