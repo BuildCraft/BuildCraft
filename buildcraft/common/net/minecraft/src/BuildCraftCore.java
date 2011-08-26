@@ -86,7 +86,7 @@ public class BuildCraftCore {
 		Property powerFrameworkClass = BuildCraftCore.mainConfiguration
 				.getOrCreateProperty("power.framework",
 						Configuration.GENERAL_PROPERTY,
-						RedstonePowerFramework.class.getName());
+						"buildcraft.energy.PneumaticPowerFramework");
 		
 		try {
 			powerFramework = (PowerFramework) Class
