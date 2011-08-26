@@ -8,7 +8,9 @@ import java.util.TreeSet;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -16,22 +18,21 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.TilePipe;
 
-public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor, ISynchronizedTile {
+public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor {
 	
 	EntityBlock tube;
 	
-	int internalLiquid;
-	
-	int aimY = 0;
+	int internalLiquid;	
 	
 	private TreeMap<Integer, LinkedList<BlockIndex>> blocksToPump = new TreeMap<Integer, LinkedList<BlockIndex>> ();
 
-	private float tubeY = 0.0F;
+	public @TileNetworkData double tubeY = Double.NaN;
+	public @TileNetworkData int aimY = 0;
 
 	private PowerProvider powerProvider;
 	
@@ -46,12 +47,18 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void updateEntity () {
 		super.updateEntity();
 		
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		if (tube.posY - aimY > 0.01) {
-			tube.iSize = Utils.pipeMaxPos - Utils.pipeMinPos;
-			tube.kSize = Utils.pipeMaxPos - Utils.pipeMinPos;
-			tube.jSize = yCoord - tube.posY + 0.01;
-			tube.setPosition(xCoord + Utils.pipeMinPos, tube.posY - 0.01,
-					zCoord + Utils.pipeMinPos);	
+			tubeY = tube.posY - 0.01;
+			
+			setTubePosition();			
+						
+			if (APIProxy.isServerSide()) {
+				sendNetworkUpdate();
+			}
 			
 			return;
 		}
@@ -107,24 +114,25 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		tube.texture = 6 * 16 + 6;
 				
 		
-		if (tubeY != 0.0) {
+		if (!Double.isNaN(tubeY)) {
 			tube.posY = tubeY;
 		} else {
 			tube.posY = yCoord;
 		}
 		
+		tubeY = tube.posY;
+		
 		if (aimY == 0) {
 			aimY = yCoord;
 		}
 		
-		tube.iSize = Utils.pipeMaxPos - Utils.pipeMinPos;
-		tube.kSize = Utils.pipeMaxPos - Utils.pipeMinPos;
-		tube.jSize = yCoord - tube.posY + 0.01;
-		
-		tube.setPosition(xCoord + Utils.pipeMinPos, tube.posY - 0.01,
-				zCoord + Utils.pipeMinPos);	
+		setTubePosition();
 		
 		worldObj.entityJoinedWorld(tube);
+		
+		if (APIProxy.isServerSide()) {
+			sendNetworkUpdate();
+		}
 	}
 	
 	private BlockIndex getNextIndexToPump (boolean remove) {
@@ -264,7 +272,29 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	@Override
 	public void doWork() {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub		
+	}
+	
+	public void handleDescriptionPacket (Packet230ModLoader packet) {
+		super.handleDescriptionPacket(packet);
 		
+		setTubePosition();
+	}
+	
+	public void handleUpdatePacket (Packet230ModLoader packet) {
+		super.handleDescriptionPacket(packet);
+		
+		setTubePosition();		
+	}
+	
+	private void setTubePosition () {
+		if (tube != null) {
+			tube.iSize = Utils.pipeMaxPos - Utils.pipeMinPos;
+			tube.kSize = Utils.pipeMaxPos - Utils.pipeMinPos;
+			tube.jSize = yCoord - tube.posY;
+
+			tube.setPosition(xCoord + Utils.pipeMinPos, tubeY,
+					zCoord + Utils.pipeMinPos);
+		}
 	}
 }

@@ -21,7 +21,6 @@ import net.minecraft.src.buildcraft.core.BluePrintBuilder;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
@@ -29,15 +28,18 @@ import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileBuildCraft implements IArmListener,
-		IMachine, ISynchronizedTile, IPowerReceptor {
+		IMachine, IPowerReceptor {
 	
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
-	public @TileNetworkData boolean inProcess = false;	
-	public @TileNetworkData	EntityMechanicalArm arm;	
+	public @TileNetworkData boolean inProcess = false;		
 	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xMin = -1, zMin = -1;
 	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xSize = -1, ySize = -1, zSize = -1;
+	
+	// TODO instead of synchronizing the arm, which can be null, synchronize
+	// data and pass them to the arm if not null
+	public @TileNetworkData	EntityMechanicalArm arm;	
 	
 	boolean loadArm = false;
 	
@@ -124,7 +126,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	public void updateEntity () {
 		super.updateEntity();
 		
-		if (inProcess) {
+		if (inProcess && arm != null) {
 			arm.speed = 0;
 			int energyToUse = 2 + powerProvider.energyStored / 1000;
 			

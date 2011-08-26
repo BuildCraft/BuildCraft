@@ -6,7 +6,6 @@ import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.FillerRegistry;
@@ -18,18 +17,14 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Box;
-import net.minecraft.src.buildcraft.core.ISynchronizedTile;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileFiller extends TileBuildCraft implements ISpecialInventory,
-		ISynchronizedTile, IPowerReceptor {
+public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor {
 	
-	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) Box box = new Box ();
+	public @TileNetworkData Box box = new Box ();
 	public @TileNetworkData int currentPatternId;
 	public @TileNetworkData	boolean done = true;
 	
@@ -114,13 +109,11 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 		}
 	}	
 
-    public int getSizeInventory()
-    {
+    public int getSizeInventory() {
         return 36;
     }
 
-    public ItemStack getStackInSlot(int i)
-    {
+    public ItemStack getStackInSlot(int i) {
         return contents[i];
     }
 
@@ -249,15 +242,12 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
         nbttagcompound.setBoolean("done", done);
     }
 
-    public int getInventoryStackLimit()
-    {
+    public int getInventoryStackLimit() {
         return 64;
     }
 
-    public boolean canInteractWith(EntityPlayer entityplayer)
-    {
-        if(worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
-        {
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        if(worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
             return false;
         }
         return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
@@ -343,7 +333,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 		
 		if (box.isInitialized()) {	
 			box.createLasers(worldObj, LaserKind.Stripes);
-		}	
+		}
 	}
 
 	@Override

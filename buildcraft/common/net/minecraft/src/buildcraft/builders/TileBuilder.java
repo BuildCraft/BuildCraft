@@ -30,8 +30,7 @@ import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileBuilder extends TileBuildCraft implements IInventory,
-		ISynchronizedTile, IPowerReceptor {
+public class TileBuilder extends TileBuildCraft implements IInventory, IPowerReceptor {
 	
 	private ItemStack items [] = new ItemStack [28];
 	

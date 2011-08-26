@@ -171,7 +171,7 @@ public class ClassMapping {
 		
 		for (Field f : doubleFields) {
 			floatValues [index.floatIndex] = (float) f.getDouble(obj);
-			index.floatIndex++;
+			index.floatIndex++;						
 		}
 		
 		for (Field f : stringFields) {
