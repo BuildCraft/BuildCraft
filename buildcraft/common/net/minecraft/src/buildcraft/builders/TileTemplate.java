@@ -19,7 +19,7 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileTemplate extends TileBuildCraft implements IInventory, ISynchronizedTile {
+public class TileTemplate extends TileBuildCraft implements IInventory {
 	
 	public @TileNetworkData Box box = new Box ();
 	

@@ -15,8 +15,7 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMarker extends TileBuildCraft implements IAreaProvider,
-		ISynchronizedTile {
+public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	
 	private static int maxSize = 64;
 	

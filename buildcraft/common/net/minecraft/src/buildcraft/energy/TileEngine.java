@@ -19,13 +19,12 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
-import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
-		IInventory, ISynchronizedTile, ILiquidContainer {
+		IInventory, ILiquidContainer {
 	
 	public @TileNetworkData Engine engine;	
 	public @TileNetworkData (packetFilter = {PacketIds.TileUpdate}) int progressPart = 0;	
