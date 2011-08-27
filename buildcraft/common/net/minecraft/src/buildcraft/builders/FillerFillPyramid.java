@@ -8,9 +8,6 @@ import net.minecraft.src.buildcraft.api.FillerPattern;
 
 public class FillerFillPyramid extends FillerPattern {
 	
-	public FillerFillPyramid () {
-	}
-	
 	@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.p1().x;
