@@ -13,6 +13,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
@@ -22,7 +23,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	
 	private PowerProvider powerProvider;
 	
-	private int liquidToExtract;
+	public @TileNetworkData int liquidToExtract;
 	
 	public TileWoodenPipe () {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
@@ -87,6 +88,8 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 			if (liquidToExtract <= BuildCraftCore.OIL_BUCKET_QUANTITY) {
 				liquidToExtract += powerProvider.useEnergy(1, 1, true)
 						* BuildCraftCore.OIL_BUCKET_QUANTITY;
+				
+				sendNetworkUpdate();
 			}
 		}
 	}
