@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.api;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
@@ -145,6 +144,7 @@ public class FillerRegistry {
         }
 
         recipes.add(new ShapedPatternRecipe(j, k, aitemstack, pattern));
+        pattern.id = recipes.size();
     }
     
     public static FillerPattern findMatchingRecipe(IInventory inventorycrafting)
@@ -177,18 +177,11 @@ public class FillerRegistry {
     }
     
     public static FillerPattern getPattern (int n) {
-    	if (n < 0) {
+    	if (n <= 0) {
     		return null;
     	}
     	
-    	Iterator<ShapedPatternRecipe> it = recipes.iterator();
-    	ShapedPatternRecipe r = null;
-    	
-    	for (int i = 0; i <= n; ++i) {
-    		r = it.next();
-    	}
-    	
-    	return r.recipeOutput;
+    	return recipes.get(n - 1).recipeOutput;    	
     }
 	
 }

@@ -19,6 +19,8 @@ public abstract class FillerPattern {
 	
 	public abstract int getTextureIndex ();
 	
+	public int id;
+	
 	public boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax,
 			int zMax, ItemStack stackToPlace, World world) {
 		boolean found = false;

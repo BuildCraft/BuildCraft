@@ -25,7 +25,7 @@ import net.minecraft.src.buildcraft.core.Utils;
 public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor {
 	
 	public @TileNetworkData Box box = new Box ();
-	public @TileNetworkData int currentPatternId;
+	public @TileNetworkData int currentPatternId = 0;
 	public @TileNetworkData	boolean done = true;
 	
 	FillerPattern currentPattern;
@@ -52,6 +52,8 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     			if (a instanceof TileMarker) {
     				((TileMarker) a).removeFromWorld();
     			}
+    			
+    			sendNetworkUpdate();
     		}
     	} else {
     		Utils.handleBufferedDescription(this);
@@ -63,7 +65,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public void updateEntity () {		
 		super.updateEntity();
 		
-		if (box != null) {
+		if (box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		} else {
 			done = true;
@@ -81,7 +83,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			return;
 		}
 		
-		if (box != null && currentPattern != null && !done) {
+		if (box.isInitialized() && currentPattern != null && !done) {
 			ItemStack stack = null;
 			int stackId = 0;
 			
@@ -105,7 +107,8 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			
 			if (done) {
 				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-			}
+				sendNetworkUpdate();
+			}			
 		}
 	}	
 
@@ -139,6 +142,12 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     	
     	if (worldObj != null) {
     		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+    	}
+    	
+    	if (currentPattern == null) {
+    		currentPatternId = 0;
+    	} else {
+    		currentPatternId = currentPattern.id;
     	}
     	
 		if (APIProxy.isServerSide()) {
@@ -326,22 +335,30 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
+		boolean initialized = box.isInitialized();
+		
 		super.handleDescriptionPacket(packet);		
 		
 		currentPattern = FillerRegistry.getPattern(currentPatternId);		
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		
-		if (box.isInitialized()) {	
-			box.createLasers(worldObj, LaserKind.Stripes);
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);			
 		}
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
+		boolean initialized = box.isInitialized();
+		
 		super.handleUpdatePacket(packet);
 		
 		currentPattern = FillerRegistry.getPattern(currentPatternId);
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+		
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}
 	}
 
 	@Override
