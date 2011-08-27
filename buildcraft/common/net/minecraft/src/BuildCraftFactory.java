@@ -108,16 +108,26 @@ public class BuildCraftFactory {
 		CoreProxy.addName(quarryBlock.setBlockName("machineBlock"),
 		"Quarry");
 		
-		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
-		CoreProxy.addName(pumpBlock.setBlockName("pumpBlock"),
-		"Pump");
-		ModLoader.RegisterBlock(pumpBlock);			
-		
 		tankBlock = new BlockTank(Integer.parseInt(tankId.value));
+		craftingmanager.addRecipe(
+				new ItemStack(tankBlock),
+				new Object[] { "ggg", "g g", "ggg", 
+					Character.valueOf('g'), Block.glass,
+				});
 		CoreProxy.addName(tankBlock.setBlockName("tankBlock"),
 		"Tank");
 		ModLoader.RegisterBlock(tankBlock);			
 		
+		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
+		craftingmanager.addRecipe(
+				new ItemStack(pumpBlock),
+				new Object[] { "T ", "W ", 
+					Character.valueOf('T'), tankBlock,
+					Character.valueOf('W'), miningWellBlock,
+				});
+		CoreProxy.addName(pumpBlock.setBlockName("pumpBlock"),
+		"Pump");
+		ModLoader.RegisterBlock(pumpBlock);					
 		
 		ModLoader.RegisterTileEntity(TileQuarry.class, "Machine");		
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
