@@ -24,8 +24,6 @@ public class ClassMapping {
 	private int sizeFloat;
 	private int sizeString;
 	
-
-	private PacketIds packetType;	
 	private Field field;
 	
 	public static class Indexes {
@@ -41,9 +39,7 @@ public class ClassMapping {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ClassMapping(final Class <? extends TileEntity> c, PacketIds packetType) {
-		this.packetType = packetType;
-		
+	public ClassMapping(final Class <? extends TileEntity> c) {
 		Field[] fields = c.getFields();
 
 		try {
@@ -80,7 +76,7 @@ public class ClassMapping {
 					} else {
 						// ADD SOME SAFETY HERE - if we're not child of Object
 						
-						ClassMapping mapping = new ClassMapping(fieldClass, packetType); 
+						ClassMapping mapping = new ClassMapping(fieldClass); 
 						mapping.field = f;
 
 						objectFields.add(mapping);
@@ -111,7 +107,7 @@ public class ClassMapping {
 					} else {
 						// ADD SOME SAFETY HERE - if we're not child of Object
 
-						ClassMapping mapping = new ClassMapping(cptClass, packetType);
+						ClassMapping mapping = new ClassMapping(cptClass);
 						mapping.field = f;
 						objectArrayFields.add(mapping);
 
@@ -132,21 +128,7 @@ public class ClassMapping {
 	private boolean isSynchronizedField (Field f) {
 		TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 		
-		if (updateAnnotation == null) {
-			return false;
-		} else {			
-			if (updateAnnotation.packetFilter().length == 0) {
-				return true;
-			}
-				
-			for (PacketIds id : updateAnnotation.packetFilter()) {
-				if (id == packetType) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
+		return updateAnnotation != null;			
 	}
 	
 	@SuppressWarnings("rawtypes")

@@ -27,9 +27,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		IInventory, ILiquidContainer {
 	
 	public @TileNetworkData Engine engine;	
-	public @TileNetworkData (packetFilter = {PacketIds.TileUpdate}) int progressPart = 0;	
+	public @TileNetworkData int progressPart = 0;	
 	public @TileNetworkData int burnTime = 0;
-	public @TileNetworkData (packetFilter = {PacketIds.TileUpdate}) float serverPistonSpeed = 0;
+	public @TileNetworkData float serverPistonSpeed = 0;
 	
 	boolean lastPower = false;
 

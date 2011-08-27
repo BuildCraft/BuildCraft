@@ -4,6 +4,8 @@ import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockPump extends BlockContainer implements ITextureProvider {
@@ -36,4 +38,10 @@ public class BlockPump extends BlockContainer implements ITextureProvider {
 			 return 6 * 16 + 3;		 
 		 }
 	 }
+	 
+	public void onBlockRemoval(World world, int i, int j, int k) {
+		Utils.preDestroyBlock(world, i, j, k);
+
+		super.onBlockRemoval(world, i, j, k);
+	}
 }

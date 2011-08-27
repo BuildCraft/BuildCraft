@@ -622,5 +622,19 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 	public int empty (int quantityMax, boolean doEmpty) {
 		return 0;
 	}
+
+	public void neighborChange() {
+		for (int i = 0; i < 6; ++i) {
+			Position pos = new Position (xCoord, yCoord, zCoord, Orientations.values()[i]);
+		
+			pos.moveForwards(1);
+			
+			if (!canReceiveLiquid(pos)) {
+				centerToSide [i] = 0;
+				sideToCenter [i] = 0;
+			}
+		}
+		
+	}
 	
 }

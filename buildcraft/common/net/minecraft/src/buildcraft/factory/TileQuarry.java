@@ -34,8 +34,8 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	boolean isDigging = false;
 	
 	public @TileNetworkData boolean inProcess = false;		
-	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xMin = -1, zMin = -1;
-	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xSize = -1, ySize = -1, zSize = -1;
+	public @TileNetworkData int xMin = -1, zMin = -1;
+	public @TileNetworkData int xSize = -1, ySize = -1, zSize = -1;
 	
 	public EntityMechanicalArm arm;	
 	public @TileNetworkData int targetX, targetY, targetZ;

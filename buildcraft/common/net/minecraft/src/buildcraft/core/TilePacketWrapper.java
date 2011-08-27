@@ -13,7 +13,7 @@ public class TilePacketWrapper {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public TilePacketWrapper (Class c, PacketIds packetType) {
-		rootMapping = new ClassMapping(c, packetType);
+		rootMapping = new ClassMapping(c);
 		this.packetType = packetType;
 	}
 	
