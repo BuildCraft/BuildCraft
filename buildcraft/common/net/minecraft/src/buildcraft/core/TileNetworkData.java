@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 @Inherited
 public @interface TileNetworkData {
 
-	PacketIds [] packetFilter () default {};
 	int staticSize () default -1; 
 
 }

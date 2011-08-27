@@ -10,7 +10,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -141,7 +140,7 @@ public abstract class BlockPipe extends BlockContainer implements
     @Override
 	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
 			int z1, int x2, int y2, int z2) {
-    	TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x2, y2, z2);
+    	TileEntity tile = blockAccess.getBlockTileEntity(x2, y2, z2);
     	
     	return tile instanceof IPipeEntry
 			|| tile instanceof IInventory
@@ -167,5 +166,9 @@ public abstract class BlockPipe extends BlockContainer implements
 	@Override
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
+	}
+	
+	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
+		((TilePipe) world.getBlockTileEntity(i, j, k)).neighborChange ();
 	}
 }

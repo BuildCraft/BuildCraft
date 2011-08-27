@@ -302,4 +302,10 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 					zCoord + Utils.pipeMinPos);
 		}
 	}
+	
+	public void destroy () {
+		if (tube != null) {
+			APIProxy.removeEntity(tube);
+		}
+	}
 }
