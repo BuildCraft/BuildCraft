@@ -45,7 +45,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 	
 	@Override
     public void initialize () {
-		if (box == null) {
+		if (!box.isInitialized()) {
 			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
 					yCoord, zCoord);
 
@@ -56,17 +56,19 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 			}
 		}
 		
-		if (box != null) {
+		if (!APIProxy.isClient(worldObj) && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 		
 		if (APIProxy.isClient(worldObj)) {
 			Utils.handleBufferedDescription(this);
 		}
+		
+		sendNetworkUpdate();
     }
     
     public void createBluePrint () {
-    	if (box == null || items [1] != null) {
+    	if (!box.isInitialized() || items [1] != null) {
     		return;
     	}
     	
@@ -213,7 +215,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 		nbttagcompound.setInteger("computingTime", computingTime);
 		nbttagcompound.setBoolean("isComputing", isComputing);
 		
-		if (box != null) {
+		if (box.isInitialized()) {
 			NBTTagCompound boxStore = new NBTTagCompound();
 			box.writeToNBT(boxStore);
 			nbttagcompound.setTag("box", boxStore);
@@ -236,13 +238,13 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 	
 	@Override
     public void destroy () {
-    	if (box != null) {
+    	if (box.isInitialized()) {
     		box.deleteLasers();    		
     	}    	
     }
     
     private void initializeComputing () {    	
-    	if (box == null) {
+    	if (!box.isInitialized()) {
     		return;
     	} else if (!isComputing) {
 			if (items[0] != null && items[0].getItem() instanceof ItemTemplate
@@ -264,9 +266,27 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
     public int getComputingProgressScaled(int i) {
         return (computingTime * i) / 200;
     }
+    
+    @Override
+	public void handleDescriptionPacket(Packet230ModLoader packet) {
+		boolean initialized = box.isInitialized();
+		
+		super.handleDescriptionPacket(packet);		
+				
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);			
+		}
+	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
+		boolean initialized = box.isInitialized();
 		
+		super.handleUpdatePacket(packet);
+		
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}
 	}
+
 }

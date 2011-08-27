@@ -61,9 +61,9 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 			currentBluePrintId = -1;
 			bluePrintBuilder = null;
 
-			if (box != null) {
+			if (box.isInitialized()) {
 				box.deleteLasers();
-				box = null;
+				box.reset();
 			}
 			
 			if (APIProxy.isServerSide()) {
@@ -79,9 +79,9 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 		
 		bluePrintBuilder = null;
 		
-		if (box != null) {
+		if (box.isInitialized()) {
 			box.deleteLasers();
-			box = null;
+			box.reset();
 		}
 		
 		BluePrint bpt = BuildCraftBuilders.bluePrints[items[0]
@@ -122,8 +122,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 		currentBluePrintId = items[0].getItemDamage();
 		
 		if (APIProxy.isServerSide()) {
-			CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
-					50, mod_BuildCraftBuilders.instance);
+			sendNetworkUpdate();
 		}
 	}
 	
@@ -143,9 +142,9 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj,
 					Mode.Template);
 			
-			if (contents == null && box != null) {
+			if (contents == null && box.isInitialized()) {
 				box.deleteLasers();
-				box = null;
+				box.reset();
 				
 				if (APIProxy.isServerSide()) {
 					sendNetworkUpdate();
@@ -273,7 +272,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 
         nbttagcompound.setTag("Items", nbttaglist);
         
-        if (box != null) {
+        if (box.isInitialized()) {
         	NBTTagCompound boxStore = new NBTTagCompound();
         	((Box)box).writeToNBT(boxStore);
         	nbttagcompound.setTag("box", boxStore);
@@ -282,34 +281,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 
     @Override
 	public void destroy() {		
-		if (box != null) {
-			box.deleteLasers();
-		}
-	}
-
-	@Override
-	public void handleDescriptionPacket(Packet230ModLoader packet) {		
-		super.handleDescriptionPacket(packet);
-		
-		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-		
-		if (box.isInitialized()) {	
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}					
-	}
-
-	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {
-		boolean wasInitialized = box.isInitialized();
-		
-		super.handleUpdatePacket(packet);
-		
-		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-		
-		if (!wasInitialized && box.isInitialized()) {
-			box.deleteLasers();
-			box.createLasers(worldObj, LaserKind.Stripes);
-		} else if (wasInitialized && !box.isInitialized()) {
+		if (box.isInitialized()) {
 			box.deleteLasers();
 		}
 	}
@@ -322,6 +294,28 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	@Override
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
+	}
+	
+	@Override
+	public void handleDescriptionPacket(Packet230ModLoader packet) {
+		boolean initialized = box.isInitialized();
+		
+		super.handleDescriptionPacket(packet);		
+		
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);			
+		}
+	}
+
+	@Override
+	public void handleUpdatePacket(Packet230ModLoader packet) {
+		boolean initialized = box.isInitialized();
+		
+		super.handleUpdatePacket(packet);
+		
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}
 	}
 	
 }
