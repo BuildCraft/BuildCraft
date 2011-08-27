@@ -96,7 +96,7 @@ public class BuildCraftEnergy {
 			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
 		}
 		
-        MinecraftForge.registerCustomBucketHander(new OilBucketHandler());
+        MinecraftForge.registerCustomBucketHandler(new OilBucketHandler());
          
 		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value)))
 				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);

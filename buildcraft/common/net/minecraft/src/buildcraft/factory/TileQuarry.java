@@ -37,13 +37,13 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xMin = -1, zMin = -1;
 	public @TileNetworkData (packetFilter = {PacketIds.TileDescription}) int xSize = -1, ySize = -1, zSize = -1;
 	
-	// TODO instead of synchronizing the arm, which can be null, synchronize
-	// data and pass them to the arm if not null
-	public @TileNetworkData	EntityMechanicalArm arm;	
-	
+	public EntityMechanicalArm arm;	
+	public @TileNetworkData int targetX, targetY, targetZ;
+	public @TileNetworkData double headPosX, headPosY, headPosZ;
+	public @TileNetworkData double speed = 0.03;
+		
 	boolean loadArm = false;
-	
-	int targetX, targetY, targetZ;
+			
 	EntityBlock [] lasers;
 	
 	BluePrintBuilder bluePrintBuilder;
@@ -135,10 +135,16 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 						
 			if (energy > 0) {
 				arm.doMove(0.015 + (float) energy / 200F);
-				return;
 			}
-		}		
+		}
 		
+		if (arm != null) {
+			headPosX = arm.headPosX;
+			headPosY = arm.headPosY;
+			headPosZ = arm.headPosZ;
+			
+			speed = arm.speed;
+		}
 	}
 	
 	public void doWork() {				
@@ -255,9 +261,9 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 							if (doSet) {
 								arm.setTarget (bx, by + 1, bz);
 
-								targetX = bx;
-								targetY = by;
-								targetZ = bz;
+								targetX = (int) arm.targetX;
+								targetY = (int) arm.targetY;
+								targetZ = (int) arm.targetZ;
 							}
 							
 							return true;
@@ -337,11 +343,11 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			return;
 		}
 		
-		int i = targetX;
-		int j = targetY;
-		int k = targetZ;				
+		int i = (int) targetX;
+		int j = (int) targetY - 1;
+		int k = (int) targetZ;				
 		
-		int blockId = worldObj.getBlockId((int) i, (int) j, (int) k);
+		int blockId = worldObj.getBlockId(i, j, k);
 		
 		if (canDig(blockId)) {
 			powerProvider.timeTracker.markTime(worldObj);
@@ -530,7 +536,9 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		super.handleUpdatePacket(packet);
 		
 		if (arm != null) {
-			arm.refresh ();
+			arm.setHeadPosition(headPosX, headPosY, headPosZ);
+			arm.setTarget(targetX, targetY, targetZ);
+			arm.speed = speed;
 		}
 	}
 	
@@ -541,7 +549,9 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		super.handleDescriptionPacket(packet);
 		
 		if (arm != null) {
-			arm.refresh ();
+			arm.setHeadPosition(headPosX, headPosY, headPosZ);
+			arm.setTarget(targetX, targetY, targetZ);
+			arm.speed = speed;
 		}
 	}
 	
