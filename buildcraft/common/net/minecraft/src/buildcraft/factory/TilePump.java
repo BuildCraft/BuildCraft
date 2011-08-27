@@ -27,10 +27,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	
 	EntityBlock tube;
 	
-	int internalLiquid;	
-	
 	private TreeMap<Integer, LinkedList<BlockIndex>> blocksToPump = new TreeMap<Integer, LinkedList<BlockIndex>> ();
 
+	public @TileNetworkData int internalLiquid;
 	public @TileNetworkData double tubeY = Double.NaN;
 	public @TileNetworkData int aimY = 0;
 
@@ -47,48 +46,52 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void updateEntity () {
 		super.updateEntity();
 		
-		if (APIProxy.isClient(worldObj)) {
-			return;
-		}
-		
-		if (tube.posY - aimY > 0.01) {
-			tubeY = tube.posY - 0.01;
-			
-			setTubePosition();			
-						
-			if (APIProxy.isServerSide()) {
-				sendNetworkUpdate();
-			}
-			
-			return;
-		}
-		
-		if (internalLiquid <= TilePipe.flowRate) {
-			BlockIndex index = getNextIndexToPump(false);
-			
-			if (isPumpableOil(index)) {
-				if (powerProvider.useEnergy(10, 10, true) == 10) {
-					index = getNextIndexToPump(true);
-					worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
-					internalLiquid = internalLiquid += BuildCraftCore.OIL_BUCKET_QUANTITY;
+		if (!APIProxy.isClient(worldObj)) {
+			if (tube.posY - aimY > 0.01) {
+				tubeY = tube.posY - 0.01;
+
+				setTubePosition();			
+
+				if (APIProxy.isServerSide()) {
+					sendNetworkUpdate();
 				}
-			} else {
-				if (worldObj.getWorldTime() % 100 == 0) {
-					// TODO: improve that decision
-					
-					initializePumpFromPosition(xCoord, aimY, zCoord);
-					
-					if (getNextIndexToPump(false) == null) {
-						for (int y = yCoord; y > 0; --y) {
-							if (isPumpableOil(new BlockIndex (xCoord, y, zCoord))) {
-								aimY = y;
-								return;
+
+				return;
+			}
+
+			if (internalLiquid <= TilePipe.flowRate) {
+				BlockIndex index = getNextIndexToPump(false);
+
+				if (isPumpableOil(index)) {
+					if (powerProvider.useEnergy(10, 10, true) == 10) {
+						index = getNextIndexToPump(true);
+						worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+						internalLiquid = internalLiquid += BuildCraftCore.OIL_BUCKET_QUANTITY;
+
+						if (APIProxy.isServerSide()) {
+							sendNetworkUpdate();
+						}
+					}
+				} else {
+					if (worldObj.getWorldTime() % 100 == 0) {
+						// TODO: improve that decision
+
+						initializePumpFromPosition(xCoord, aimY, zCoord);
+
+						if (getNextIndexToPump(false) == null) {
+							for (int y = yCoord - 1; y > 0; --y) {
+								if (isOil(new BlockIndex (xCoord, y, zCoord))) {
+									aimY = y;
+									return;
+								} else if (worldObj.getBlockId(xCoord, y, zCoord) != 0) {
+									return;
+								}
 							}
 						}
 					}
 				}
 			}
-		} 
+		}
 		
 		if (internalLiquid >= TilePipe.flowRate) {
 			for (int i = 0; i < 6; ++i) {
@@ -103,7 +106,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 					internalLiquid -= ((TilePipe) tile).fill(
 							p.orientation.reverse(), TilePipe.flowRate);
 					
-					break;
+					if (internalLiquid < TilePipe.flowRate) {
+						break;
+					}
 				}
 			}
 		}

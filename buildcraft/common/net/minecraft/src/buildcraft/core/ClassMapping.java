@@ -17,6 +17,7 @@ public class ClassMapping {
 	private LinkedList<ClassMapping> objectFields = new LinkedList<ClassMapping>();
 	
 	private LinkedList<Field> intArrayFields = new LinkedList<Field>();
+	private LinkedList<Field> booleanArrayFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectArrayFields = new LinkedList<ClassMapping>();
 	
 	private int sizeInt;
@@ -104,6 +105,9 @@ public class ClassMapping {
 					if (cptClass.equals(int.class)) {
 						sizeInt += updateAnnotation.staticSize();
 						intArrayFields.add(f);
+					} else if (cptClass.equals(boolean.class)) {
+						sizeInt += updateAnnotation.staticSize();
+						booleanArrayFields.add(f);
 					} else {
 						// ADD SOME SAFETY HERE - if we're not child of Object
 
@@ -205,6 +209,15 @@ public class ClassMapping {
 			}
 		}
 		
+		for (Field f : booleanArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				intValues [index.intIndex] = ((boolean []) f.get (obj)) [i] ? 1 : 0;
+				index.intIndex++;
+			}
+		}
+		
 		for (ClassMapping c : objectArrayFields) {
 			TileNetworkData updateAnnotation = c.field.getAnnotation(TileNetworkData.class);
 			
@@ -284,6 +297,15 @@ public class ClassMapping {
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				((int []) f.get (obj)) [i] = intValues [index.intIndex];
+				index.intIndex++;
+			}
+		}
+		
+		for (Field f : booleanArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				((boolean []) f.get (obj)) [i] = intValues [index.intIndex] == 1;
 				index.intIndex++;
 			}
 		}

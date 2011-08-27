@@ -17,26 +17,30 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILiquidContainer {
 		
 	public static int flowRate = 20;
 	
-	private int [] sideToCenter = new int [6];
-	private int [] centerToSide = new int [6];
-	private int centerIn = 0;
-	private int centerOut = 0;
+	public @TileNetworkData (staticSize = 6) int [] sideToCenter = new int [6];
+	public @TileNetworkData (staticSize = 6) int [] centerToSide = new int [6];
+	public @TileNetworkData int centerIn = 0;
+	public @TileNetworkData int centerOut = 0;
 	
-	public boolean [] isInput = new boolean [6];
+	public @TileNetworkData (staticSize = 6) boolean [] isInput = new boolean [6];
 	
-	public Orientations lastFromOrientation = Orientations.XPos;
-	public Orientations lastToOrientation = Orientations.XPos;
+	public @TileNetworkData Orientations lastFromOrientation = Orientations.XPos;
+	public @TileNetworkData Orientations lastToOrientation = Orientations.XPos;
+	
+	private SafeTimeTracker timeTracker = new SafeTimeTracker();
 	
 	public class EntityData {	
 		// TODO: Move passive data here too, like position, speed and all?
@@ -169,6 +173,12 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 		
 		moveSolids();				
 		moveLiquids();
+		
+		if (APIProxy.isServerSide()) {
+			if (timeTracker.markTimeIfDelay(worldObj, 50)) {
+				sendNetworkUpdate();
+			}
+		}
 	}
 	
 	private void moveSolids () {

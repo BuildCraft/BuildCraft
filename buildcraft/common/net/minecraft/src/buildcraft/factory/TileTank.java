@@ -3,15 +3,15 @@ package net.minecraft.src.buildcraft.factory;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 
-public class TileTank extends TileEntity implements ILiquidContainer {
-
-	/* can be between 0 and 16 * 400 = 6 400 */
-	/* TODO review filling values for pipes / 1 bucket -> 1000? */
+public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	
-	int stored = 0;
+	public @TileNetworkData int stored = 0;
 	
 	@Override
 	public int fill(Orientations from, int quantity) {
@@ -39,6 +39,10 @@ public class TileTank extends TileEntity implements ILiquidContainer {
 		} else if (stored <= getCapacity()) {
 			used = getCapacity() - stored;			
 			stored = getCapacity();		
+		}
+		
+		if (APIProxy.isServerSide() && used > 0) {
+			sendNetworkUpdate();
 		}
 				
 		if (used < quantity && above instanceof TileTank) {
