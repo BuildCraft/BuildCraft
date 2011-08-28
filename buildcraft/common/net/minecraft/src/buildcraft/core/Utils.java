@@ -332,6 +332,7 @@ public class Utils {
 
 			if (tile instanceof ISynchronizedTile) {
 				((ISynchronizedTile) tile).handleDescriptionPacket(packet);
+				((ISynchronizedTile) tile).postPacketHandling(packet);
 
 				return;
 			}
@@ -357,6 +358,7 @@ public class Utils {
 			if (tile instanceof ISynchronizedTile) {
 				
 				((ISynchronizedTile) tile).handleUpdatePacket(packet);	
+				((ISynchronizedTile) tile).postPacketHandling(packet);	
 				
 				return;
 			}
@@ -373,6 +375,7 @@ public class Utils {
 			BuildCraftCore.bufferedDescriptions.remove(index);
 			
 			tileSynch.handleDescriptionPacket(packet);
+			tileSynch.postPacketHandling(packet);
 		}
 	}
 	

@@ -15,13 +15,11 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockContents;
-import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
+import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
-import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
@@ -33,18 +31,15 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	BlockContents nextBlockForBluePrint = null;
 	boolean isDigging = false;
 	
+	public @TileNetworkData Box box = new Box ();
 	public @TileNetworkData boolean inProcess = false;		
-	public @TileNetworkData int xMin = -1, zMin = -1;
-	public @TileNetworkData int xSize = -1, ySize = -1, zSize = -1;
-	
+
 	public EntityMechanicalArm arm;	
 	public @TileNetworkData int targetX, targetY, targetZ;
 	public @TileNetworkData double headPosX, headPosY, headPosZ;
 	public @TileNetworkData double speed = 0.03;
 		
-	boolean loadArm = false;
-			
-	EntityBlock [] lasers;
+	boolean loadArm = false;			
 	
 	BluePrintBuilder bluePrintBuilder;
 	
@@ -58,8 +53,12 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	}
 	
     public void createUtilsIfNeeded () {
+    	if (!box.isInitialized() && APIProxy.isClient(worldObj)) {
+    		return;
+    	}
+    	    	
     	if (bluePrintBuilder == null) {
-    		if (xSize == -1) {
+    		if (!box.isInitialized()) {
     			setBoundaries(loadDefaultBoundaries);
     		}
     		    
@@ -69,7 +68,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
     	nextBlockForBluePrint = bluePrintBuilder.findNextBlock(worldObj);
     	
     	if (bluePrintBuilder.done) {    	
-    		deleteLasers ();
+    		box.deleteLasers();
     		
     		if (arm == null) {
     			createArm ();
@@ -84,7 +83,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
     	    	}
     		}
     	} else {    		
-    		createLasers();    		
+    		box.createLasers(worldObj, LaserKind.Stripes);		
     		isDigging = true;
     	}
     }
@@ -92,34 +91,14 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	private boolean loadDefaultBoundaries = false;
 	
 	private void createArm () {
-		arm = new EntityMechanicalArm(worldObj, xMin + Utils.pipeMaxPos,
+		arm = new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos,
 				yCoord + bluePrintBuilder.bluePrint.sizeY - 1
-						+ Utils.pipeMinPos, zMin + Utils.pipeMaxPos,
+						+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,
 				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
 				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2);
 
 		arm.listener = this;
 		loadArm = true;
-	}
-	
-	private void createLasers () {
-		if (!APIProxy.isServerSide()) {
-			if (lasers == null) {				
-				lasers = Utils.createLaserBox(worldObj, xMin, yCoord, zMin,
-						xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1,
-						LaserKind.Stripes);
-			}
-		}
-	}
-	
-	private void deleteLasers () {
-		if (lasers != null) {
-			for (EntityBlock l : lasers) {
-				APIProxy.removeEntity(l);
-			}
-			
-			lasers = null;
-		}
 	}
 
 	@Override
@@ -170,7 +149,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
     		// In this case, the Quarry has been broken. Repair it.
     		bluePrintBuilder.done = false;
     		
-    		createLasers();
+    		box.createLasers(worldObj, LaserKind.Stripes);
     	}
 	    
 		if (!bluePrintBuilder.done) {
@@ -202,7 +181,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		powerProvider.configure(20, 30, 200, 50, MAX_ENERGY);
 		
 		if (!findTarget(true)) {
-			arm.setTarget (xMin + arm.sizeX / 2, yCoord + 2, zMin + arm.sizeX / 2);
+			arm.setTarget (box.xMin + arm.sizeX / 2, yCoord + 2, box.zMin + arm.sizeX / 2);
 						
 			isDigging = false;			
 		}
@@ -251,7 +230,8 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 								
 				for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
 					if (!blockedColumns [searchX][searchZ]) {
-						int bx = xMin + searchX + 1, by = searchY, bz = zMin + searchZ + 1;
+						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin
+								+ searchZ + 1;
 						
 						int blockId = worldObj.getBlockId(bx, by, bz);
 						
@@ -281,13 +261,22 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		
 		BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
 
-		if (nbttagcompound.hasKey("xSize")) {
-			xMin = nbttagcompound.getInteger("xMin");
-			zMin = nbttagcompound.getInteger("zMin");
+		if (nbttagcompound.hasKey("box")) {
+			box.initialize(nbttagcompound.getCompoundTag("box"));
+			
+			loadDefaultBoundaries = false;
+		} else if (nbttagcompound.hasKey("xSize")) {
+			// This is a legacy save, get old data
+			
+			int xMin = nbttagcompound.getInteger("xMin");
+			int zMin = nbttagcompound.getInteger("zMin");
 
-			xSize = nbttagcompound.getInteger("xSize");
-			ySize = nbttagcompound.getInteger("ySize");
-			zSize = nbttagcompound.getInteger("zSize");
+			int xSize = nbttagcompound.getInteger("xSize");
+			int ySize = nbttagcompound.getInteger("ySize");
+			int zSize = nbttagcompound.getInteger("zSize");
+			
+			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize
+					- 1, zMin + zSize - 1);
 			
 			loadDefaultBoundaries = false;
 		} else {
@@ -308,19 +297,14 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 
 			loadArm = true;
 		}
+		
+		
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);		
 		
 		BuildCraftCore.powerFramework.savePowerProvider(this, nbttagcompound);
-		
-		nbttagcompound.setInteger("xMin", xMin);
-		nbttagcompound.setInteger("zMin", zMin);
-		
-		nbttagcompound.setInteger("xSize", xSize);
-		nbttagcompound.setInteger("ySize", ySize);
-		nbttagcompound.setInteger("zSize", zSize);
 		
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);
@@ -332,6 +316,10 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			nbttagcompound.setTag("arm", armStore);
 			arm.writeToNBT(armStore);
 		}
+		
+		NBTTagCompound boxTag = new NBTTagCompound();	
+		box.writeToNBT(boxTag);
+		nbttagcompound.setTag("box", boxTag);		
 	}
 	
 	
@@ -416,7 +404,7 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 			arm.setEntityDead ();
 		}
 		
-		deleteLasers();
+		box.deleteLasers();
 	}
 
 	@Override
@@ -429,21 +417,23 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		
 		if (!useDefault) {
 			a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-				zCoord);
+				zCoord);						
 		}
 		
 		if (a == null) {
-			a = new DefaultAreaProvider (1, 1, 1, 11, 5, 11);
+			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10,
+					yCoord + 4, zCoord + 10);
 			
 			useDefault = true;
 		}
 		
-		xSize = a.xMax() - a.xMin() + 1;
-		ySize = a.yMax() - a.yMin() + 1;
-		zSize = a.zMax() - a.zMin() + 1;
+		int xSize = a.xMax() - a.xMin() + 1;
+		int ySize = a.yMax() - a.yMin() + 1;
+		int zSize = a.zMax() - a.zMin() + 1;
 		
 		if (xSize < 3 || zSize < 3) {
-			a = new DefaultAreaProvider (1, 1, 1, 11, 5, 11);
+			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10,
+					yCoord + 4, zCoord + 10);
 			
 			useDefault = true;
 		}
@@ -451,12 +441,17 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		xSize = a.xMax() - a.xMin() + 1;
 		ySize = a.yMax() - a.yMin() + 1;
 		zSize = a.zMax() - a.zMin() + 1;
+		
+		box.initialize(a);
 		
 		if (ySize < 5) {
 			ySize = 5;
+			box.yMax = box.yMin + ySize - 1;
 		}
 		
 		if (useDefault) {
+			int xMin = 0, zMin = 0;
+			
 			Orientations o = Orientations.values()[worldObj.getBlockMetadata(
 					xCoord, yCoord, zCoord)].reverse();
 
@@ -478,16 +473,16 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 				zMin = zCoord - 9 - 2;
 				break;
 			}
-		} else {
-			xMin = a.xMin();
-			zMin = a.zMin();
-		}
+			
+			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize
+					- 1, zMin + zSize - 1);
+		}				
 		
 		a.removeFromWorld();
 	}
 	
 	private void initializeBluePrintBuilder () {
-		BluePrint bluePrint = new BluePrint(xSize, ySize, zSize);	
+		BluePrint bluePrint = new BluePrint(box.sizeX(), box.sizeY(), box.sizeZ());	
 	
 		for (int i = 0; i < bluePrint.sizeX; ++i) {
 			for (int j = 0; j < bluePrint.sizeY; ++j) {
@@ -499,22 +494,22 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				bluePrint.setBlockId(i, it * (ySize - 1), 0,
+				bluePrint.setBlockId(i, it * (box.sizeY() - 1), 0,
 						BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(i, it * (ySize - 1), bluePrint.sizeZ - 1,
+				bluePrint.setBlockId(i, it * (box.sizeY() - 1), bluePrint.sizeZ - 1,
 						BuildCraftFactory.frameBlock.blockID);
 			}
 
 			for (int k = 0; k < bluePrint.sizeZ; ++k) {
-				bluePrint.setBlockId(0, it * (ySize - 1), k,
+				bluePrint.setBlockId(0, it * (box.sizeY() - 1), k,
 						BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(bluePrint.sizeX - 1, it * (ySize - 1), k,
+				bluePrint.setBlockId(bluePrint.sizeX - 1, it * (box.sizeY() - 1), k,
 						BuildCraftFactory.frameBlock.blockID);
 
 			}
 		}
 
-		for (int h = 1; h < ySize; ++h) {
+		for (int h = 1; h < box.sizeY(); ++h) {
 			bluePrint.setBlockId(0, h, 0,
 					BuildCraftFactory.frameBlock.blockID);
 			bluePrint.setBlockId(0, h, bluePrint.sizeZ - 1,
@@ -526,14 +521,15 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 					BuildCraftFactory.frameBlock.blockID);
 		}
 		
-		bluePrintBuilder = new BluePrintBuilder(bluePrint, xMin, yCoord, zMin);		
+		bluePrintBuilder = new BluePrintBuilder(bluePrint, box.xMin, yCoord,
+				box.zMin);
 	}
 	
 	@Override
-	public void handleUpdatePacket (Packet230ModLoader packet) {
+	public void postPacketHandling (Packet230ModLoader packet) { 		
+		super.postPacketHandling(packet);
+	
 		createUtilsIfNeeded();
-		
-		super.handleUpdatePacket(packet);
 		
 		if (arm != null) {
 			arm.setHeadPosition(headPosX, headPosY, headPosZ);
@@ -542,33 +538,14 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 		}
 	}
 	
-	@Override
-	public void handleDescriptionPacket (Packet230ModLoader packet) {
-		createUtilsIfNeeded();
-		
-		super.handleDescriptionPacket(packet);
-		
-		if (arm != null) {
-			arm.setHeadPosition(headPosX, headPosY, headPosZ);
-			arm.setTarget(targetX, targetY, targetZ);
-			arm.speed = speed;
-		}
-	}
-	
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
-	
-		BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);		
-		
-		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
-			
-			Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
-			BuildCraftCore.bufferedDescriptions.remove(index);
-			
-			handleDescriptionPacket(packet);
-		} else if (!APIProxy.isClient(worldObj)) {
-			createUtilsIfNeeded ();			
+
+		if (!APIProxy.isClient(worldObj)) {
+			createUtilsIfNeeded();
 		}
+		
+		sendNetworkUpdate();
 	}
 
 	@Override

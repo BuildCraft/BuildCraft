@@ -42,6 +42,8 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     }
     
     public void initialize () {
+    	super.initialize();
+    	
     	if (!APIProxy.isClient(worldObj)) {
     		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
     				zCoord);
@@ -55,10 +57,8 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     			
     			sendNetworkUpdate();
     		}
-    	} else {
-    		Utils.handleBufferedDescription(this);
     	}
-		
+    	
 		computeRecipe ();
     }
     

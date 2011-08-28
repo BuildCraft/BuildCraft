@@ -45,6 +45,8 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 	
 	@Override
     public void initialize () {
+		super.initialize();
+		
 		if (!box.isInitialized()) {
 			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
 					yCoord, zCoord);
@@ -59,11 +61,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 		if (!APIProxy.isClient(worldObj) && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
-		
-		if (APIProxy.isClient(worldObj)) {
-			Utils.handleBufferedDescription(this);
-		}
-		
+				
 		sendNetworkUpdate();
     }
     

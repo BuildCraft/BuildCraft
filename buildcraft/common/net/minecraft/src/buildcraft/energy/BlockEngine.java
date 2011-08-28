@@ -106,6 +106,10 @@ public class BlockEngine extends BlockContainer implements IPipeConnection {
 			int z1, int x2, int y2, int z2) {
 		TileEngine tile = (TileEngine) blockAccess.getBlockTileEntity(x1, y1, z1);
 		
+		if (tile == null) {
+			return false;
+		}
+		
 		if (tile.engine instanceof EngineWood) {
 			return false;
 		}
