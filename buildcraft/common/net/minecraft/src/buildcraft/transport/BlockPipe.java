@@ -211,6 +211,6 @@ public abstract class BlockPipe extends BlockContainer implements
 	}
 	
 	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-		((TilePipe) world.getBlockTileEntity(i, j, k)).neighborChange ();
+		((TilePipe) world.getBlockTileEntity(i, j, k)).scheduleNeighborChange();   
 	}
 }

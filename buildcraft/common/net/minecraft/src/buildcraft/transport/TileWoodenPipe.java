@@ -218,21 +218,9 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 		}
 	}
 	
-	private boolean inSetSource = false;
-	private boolean scheduleSourceSet = false;
-	
-	public void scheduleSourceSet () {
-		scheduleSourceSet  = true;
-	}
-	
-	private void setSourceIfNeeded () {			
-		if (inSetSource) {
-			//  This is needed to protect against corner recursive cases
-			
-			return;
-		}		
-		
-		inSetSource = true;
+	@Override
+	protected void neighborChange () {		
+		super.neighborChange();
 		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
@@ -248,16 +236,14 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 
 				switchSource();
 			}
-		}
-				
-		inSetSource = false;		
+		}	
 	}
 	
 
 	public void initialize () {
 		super.initialize();
 		
-		setSourceIfNeeded();
+		scheduleNeighborChange();
 	}
 
 	@Override
@@ -273,11 +259,6 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 	@Override
 	public void updateEntity () {
 		super.updateEntity();
-		
-		if (scheduleSourceSet) {
-			setSourceIfNeeded();
-			scheduleSourceSet = false;
-		}
 		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
