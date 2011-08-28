@@ -8,7 +8,9 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Material;
+import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
@@ -49,6 +51,7 @@ public abstract class BlockPipe extends BlockContainer implements
     
 	@Override
 	protected abstract TileEntity getBlockEntity();
+	
 	
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -124,8 +127,7 @@ public abstract class BlockPipe extends BlockContainer implements
 
 		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
 			zMax = 1.0F;
-		}
-    	
+		}    	
     	    
 		return AxisAlignedBB.getBoundingBoxFromPool((double) i + xMin,
 				(double) j + yMin, (double) k + zMin, (double) i + xMax,
@@ -136,6 +138,46 @@ public abstract class BlockPipe extends BlockContainer implements
     {
         return getCollisionBoundingBoxFromPool (world, i, j, k);
     }
+    
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j,
+			int k, Vec3D vec3d, Vec3D vec3d1) {
+		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, 
+		yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, 
+		zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
+
+		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
+			xMin = 0.0F;
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i + 1, j, k)) {
+			xMax = 1.0F;
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j - 1, k)) {
+			yMin = 0.0F;
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j + 1, k)) {
+			yMax = 1.0F;
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j, k - 1)) {
+			zMin = 0.0F;
+		}
+
+		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
+			zMax = 1.0F;
+		}    			
+		
+		setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
+
+		MovingObjectPosition r = super.collisionRayTrace(world, i, j, k, vec3d,
+				vec3d1);
+
+		setBlockBounds(0, 0, 0, 1, 1, 1);
+
+		return r;
+	}
     
     @Override
 	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
