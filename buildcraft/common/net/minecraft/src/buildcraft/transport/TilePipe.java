@@ -42,6 +42,8 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 	
 	private SafeTimeTracker timeTracker = new SafeTimeTracker();
 	
+	private boolean blockNeighborChange = false;
+	
 	public class EntityData {	
 		// TODO: Move passive data here too, like position, speed and all?
 		boolean toCenter = true;
@@ -173,6 +175,12 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 		
 		moveSolids();				
 		moveLiquids();
+		
+		if (blockNeighborChange) {
+			blockNeighborChange = false;
+			
+			neighborChange();
+		}
 		
 		if (APIProxy.isServerSide()) {
 			if (timeTracker.markTimeIfDelay(worldObj, 50)) {
@@ -623,7 +631,11 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 		return 0;
 	}
 
-	public void neighborChange() {
+	public void scheduleNeighborChange() {
+		blockNeighborChange = true;
+	}
+	
+	protected void neighborChange() {
 		for (int i = 0; i < 6; ++i) {
 			Position pos = new Position (xCoord, yCoord, zCoord, Orientations.values()[i]);
 		

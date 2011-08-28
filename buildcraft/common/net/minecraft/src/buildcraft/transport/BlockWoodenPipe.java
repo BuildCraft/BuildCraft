@@ -47,7 +47,7 @@ public class BlockWoodenPipe extends BlockPipe {
     	super.onNeighborBlockChange(world, i, j, k, l);
     	
     	TileWoodenPipe tile = (TileWoodenPipe) world.getBlockTileEntity(i, j, k);
-    	tile.scheduleSourceSet();    	
+    	tile.scheduleNeighborChange();   	
     }
 	
     public int getTextureForConnection (Orientations connection, int metadata) {
