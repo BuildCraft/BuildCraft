@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft.energy;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
@@ -75,7 +74,8 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			Orientations orientation, String baseTexture, double x, double y, double z) {
 			
 		GL11.glPushMatrix();
-
+		GL11.glDisable(2896 /*GL_LIGHTING*/);
+		
 		GL11.glTranslatef((float)x, (float)y, (float)z);				
 		
 		float step;		
@@ -179,6 +179,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		
 		trunk.render(factor);
 		
+		GL11.glEnable(2896 /*GL_LIGHTING*/);
 		GL11.glPopMatrix();
 	}	
 }

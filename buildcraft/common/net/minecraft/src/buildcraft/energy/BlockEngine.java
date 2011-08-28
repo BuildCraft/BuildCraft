@@ -17,7 +17,7 @@ public class BlockEngine extends BlockContainer implements IPipeConnection {
 	public BlockEngine(int i) {
 		super(i, Material.iron);
 		
-		setLightValue(0.6F);
+//		setLightValue(0.6F);
 		setHardness(0.5F);
 
 	}
