@@ -42,7 +42,8 @@ public class BlockMiningWell extends BlockMachineRoot implements ITextureProvide
     		return textureBack;
     	} else if (i == j) {
     		return textureFront;
-    	} else if (Orientations.values()[j].reverse().ordinal() == i) {
+		} else if (j >= 0 && j < 6
+				&& Orientations.values()[j].reverse().ordinal() == i) {
     		return textureBack;
     	} else {
     		return textureSides;
