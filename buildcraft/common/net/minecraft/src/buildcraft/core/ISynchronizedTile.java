@@ -8,6 +8,8 @@ public interface ISynchronizedTile {
 	
 	public void handleUpdatePacket (Packet230ModLoader packet);
 	
+	public void postPacketHandling (Packet230ModLoader packet);
+	
 	public Packet230ModLoader getUpdatePacket ();
 	
 	public Packet getDescriptionPacket ();

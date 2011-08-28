@@ -50,6 +50,12 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			
 			return marker;
 		}
+		
+		public void reset () {
+			x = Integer.MAX_VALUE;
+			y = Integer.MAX_VALUE;
+			z = Integer.MAX_VALUE;
+		}
 	}
 	
 	public static class Origin {		
@@ -118,7 +124,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	
 	@Override
 	public void initialize () {
-		Utils.handleBufferedDescription(this);
+		super.initialize();
 		
 		switchSignals ();
 		
@@ -336,8 +342,8 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			
 			Origin o = origin;
 			
-			if (o.vectO.getMarker(worldObj) != null) {
-				for (EntityBlock e : o.vectO.getMarker(worldObj).lasers) {
+			if (markerOrigin != null && markerOrigin.lasers != null) {
+				for (EntityBlock e : markerOrigin.lasers) {
 					if (e != null) {
 						e.setEntityDead();
 					}
@@ -345,22 +351,32 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 						
 			for (TileWrapper m : o.vect) {
-				if (m.isSet()) {
-					m.getMarker(worldObj).lasers = null;
-					m.getMarker(worldObj).origin = new Origin();
+				TileMarker mark = m.getMarker(worldObj);
+				
+				if (mark != null) {
+					mark.lasers = null;
+					
+					if (mark != this) {
+						mark.origin = new Origin();
+					}
 				}
 			}
 						
-			o.vectO.getMarker(worldObj).lasers = null;
-			o.vectO.getMarker(worldObj).origin = new Origin();
+			markerOrigin.lasers = null;		
+			
+			if (markerOrigin != this) {
+				markerOrigin.origin = new Origin();
+			}
 			
 			for (TileWrapper m : o.vect) {
-				if (m.isSet()) {
-					m.getMarker(worldObj).switchSignals();
+				TileMarker mark = m.getMarker(worldObj);
+				
+				if (mark != null) {
+					mark.switchSignals();
 				}
 			}
 			
-			o.vectO.getMarker(worldObj).switchSignals();						
+			markerOrigin.switchSignals();						
 		}
 		
 		if (signals != null) {
@@ -370,7 +386,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}				
 		
 		signals = null;
-		origin = new Origin();
 		
 		if (APIProxy.isServerSide() && markerOrigin != null
 				&& markerOrigin != this) {
@@ -385,7 +400,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		
 		Origin o = origin;
 		
-		for (TileWrapper m : o.vect) {
+		for (TileWrapper m : o.vect.clone()) {
 			if (m.isSet()) {
 				worldObj.setBlockWithNotify(m.x, m.y, m.z, 0);
 				

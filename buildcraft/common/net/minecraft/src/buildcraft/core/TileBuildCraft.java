@@ -52,7 +52,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 	
 	public void initialize () {
-		
+		Utils.handleBufferedDescription(this);
 	}
 	
 	public void destroy () {
@@ -81,6 +81,10 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	
 	public void handleUpdatePacket (Packet230ModLoader packet) {
 		updatePacket.updateFromPacket(this, packet);
+	}
+	
+	public void postPacketHandling (Packet230ModLoader packet) {
+		
 	}
 	
 }

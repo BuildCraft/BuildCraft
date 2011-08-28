@@ -110,4 +110,9 @@ public class Box implements IBox {
 		return zMax - zMin + 1;
 	}
 
+	@Override
+	public String toString () {
+		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {"
+		+ zMin + ", " + zMax + "}";
+	}
 }
