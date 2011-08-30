@@ -14,6 +14,6 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 	@Override
 	public String Version() {
-		return "2.1.0";
+		return "2.1.1";
 	}
 }
