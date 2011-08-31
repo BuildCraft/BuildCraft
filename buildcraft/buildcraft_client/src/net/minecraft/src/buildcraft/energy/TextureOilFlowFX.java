@@ -10,57 +10,77 @@ import net.minecraft.src.TextureFX;
 public class TextureOilFlowFX extends TextureFX
 {
 
+	private int int_numPixels = 256;
+	private int int_numPixelsMinus1 = 0xFF;
+	private int int_size = 16;
+	private int int_sizeMinus1 = 0xF;
+	
     public TextureOilFlowFX()
-    {
+    {    	    	
         super(BuildCraftEnergy.oilMoving.blockIndexInTexture + 1);
-        field_1138_g = new float[256];
-        field_1137_h = new float[256];
-        field_1136_i = new float[256];
-        field_1135_j = new float[256];
-        field_1134_k = 0;
-        tileSize = 2;
+
+		try {
+			Class sizeClass = Class
+					.forName("com.pclewis.mcpatcher.mod.TileSize");
+
+			int_numPixels = sizeClass.getDeclaredField("int_numPixels").getInt(
+					sizeClass);
+			int_numPixelsMinus1 = sizeClass.getDeclaredField(
+					"int_numPixelsMinus1").getInt(sizeClass);
+			int_size = sizeClass.getDeclaredField("int_size").getInt(sizeClass);
+			int_sizeMinus1 = sizeClass.getDeclaredField("int_sizeMinus1")
+					.getInt(sizeClass);
+		} catch (Throwable t) {
+
+		}
         
+        field_1138_g = new float[int_numPixels];
+        field_1137_h = new float[int_numPixels];
+        field_1136_i = new float[int_numPixels];
+        field_1135_j = new float[int_numPixels];
+        field_1134_k = 0;
+        tileSize = 2;        
          
     }
     
 	public void bindImage(RenderEngine renderengine) {
-		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */,
+		GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/ /* GL_TEXTURE_2D */,
 				renderengine.getTexture(BuildCraftCore.customBuildCraftTexture));
 	}
 
     public void onTick()
     {
         field_1134_k++;
-        for(int i = 0; i < 16; i++)
+        for(int i = 0; i < int_size; i++)
         {
-            for(int k = 0; k < 16; k++)
+            for(int k = 0; k < int_size; k++)
             {
                 float f = 0.0F;
                 for(int j1 = k - 2; j1 <= k; j1++)
                 {
-                    int k1 = i & 0xf;
-                    int i2 = j1 & 0xf;
-                    f += field_1138_g[k1 + i2 * 16];
+                    int k1 = i & int_sizeMinus1;
+                    int i2 = j1 & int_sizeMinus1;
+                    f += field_1138_g[k1 + i2 * int_size];
                 }
 
-                field_1137_h[i + k * 16] = f / 3.2F + field_1136_i[i + k * 16] * 0.8F;
+                field_1137_h[i + k * int_size] = f / 3.2F + field_1136_i[i + k * int_size] * 0.8F;
             }
 
         }
 
-        for(int j = 0; j < 16; j++)
+        for(int j = 0; j < int_size; j++)
         {
-            for(int l = 0; l < 16; l++)
+            for(int l = 0; l < int_size; l++)
             {
-                field_1136_i[j + l * 16] += field_1135_j[j + l * 16] * 0.05F;
-                if(field_1136_i[j + l * 16] < 0.0F)
+                field_1136_i[j + l * int_size] += field_1135_j[j + l * int_size] * 0.05F;
+                if(field_1136_i[j + l * int_size] < 0.0F)
                 {
-                    field_1136_i[j + l * 16] = 0.0F;
+                    field_1136_i[j + l * int_size] = 0.0F;
                 }
-                field_1135_j[j + l * 16] -= 0.3F;
+                field_1135_j[j + l * int_size] -= 0.3F;
                 if(Math.random() < 0.20000000000000001D)
                 {
-                    field_1135_j[j + l * 16] = 0.5F;
+                    field_1135_j[j + l * int_size] = 0.5F;
                 }
             }
 
@@ -69,9 +89,9 @@ public class TextureOilFlowFX extends TextureFX
         float af[] = field_1137_h;
         field_1137_h = field_1138_g;
         field_1138_g = af;
-        for(int i1 = 0; i1 < 256; i1++)
+        for(int i1 = 0; i1 < int_numPixels; i1++)
         {
-            float f1 = field_1138_g[i1 - field_1134_k * 16 & 0xff];
+            float f1 = field_1138_g[i1 - field_1134_k * int_size & int_numPixelsMinus1];
             if(f1 > 1.0F)
             {
                 f1 = 1.0F;
