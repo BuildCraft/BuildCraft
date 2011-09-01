@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
@@ -21,7 +22,16 @@ public class BlockDiamondPipe extends BlockPipe {
 		return new TileDiamondPipe ();
 	}
 
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {		
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+		
+		if (entityplayer.getCurrentEquippedItem() != null
+				&& entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length) {
+			
+			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockPipe) {
+				return false;
+			}
+		}
+		
 		TileDiamondPipe	tileRooter = (TileDiamondPipe) world.getBlockTileEntity(i, j, k);				
 		TransportProxy.displayGUIFilter(entityplayer, tileRooter);
 		return true;		
