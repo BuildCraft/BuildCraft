@@ -56,7 +56,7 @@ public class BuildCraftCore {
 	
 	public static PowerFramework powerFramework;
 	
-	public static final int OIL_BUCKET_QUANTITY = 1000;
+	public static final int BUCKET_VOLUME = 1000;
 	
 	@SuppressWarnings({ "all" })
 	public static void initialize () {

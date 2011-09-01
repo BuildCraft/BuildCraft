@@ -34,6 +34,7 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 	public @TileNetworkData (staticSize = 6) int [] centerToSide = new int [6];
 	public @TileNetworkData int centerIn = 0;
 	public @TileNetworkData int centerOut = 0;
+	public @TileNetworkData int liquidId = 0;
 	
 	public @TileNetworkData (staticSize = 6) boolean [] isInput = new boolean [6];
 	
@@ -350,6 +351,17 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
     	centerOut = nbttagcompound.getInteger("centerOut");
     	lastFromOrientation = Orientations.values()[nbttagcompound.getInteger("lastFromOrientation")];
     	lastToOrientation = Orientations.values()[nbttagcompound.getInteger("lastToOrientation")];
+    	liquidId = nbttagcompound.getInteger("liquidId");
+    	
+    	if (liquidId == 0) {
+    		centerIn = 0;
+    		centerOut = 0;
+    		
+    		for (int i = 0; i < 6; ++i) {
+    			centerToSide [i] = 0;
+    			sideToCenter [i] = 0;
+    		}
+    	}
     }
 
     public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -377,6 +389,7 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
     	nbttagcompound.setInteger("centerOut", centerOut);    	
     	nbttagcompound.setInteger("lastFromOrientation", lastFromOrientation.ordinal());
     	nbttagcompound.setInteger("lastToOrientation", lastToOrientation.ordinal());
+    	nbttagcompound.setInteger("liquidId", liquidId);
     }
     
     public Orientations resolveDestination (EntityData data) {
@@ -482,8 +495,14 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 	/** 
 	 * Fills the pipe, and return the amount of liquid that has been used.
 	 */
-	public int fill (Orientations from, int quantity) {		
-		int space = BuildCraftCore.OIL_BUCKET_QUANTITY / 4
+	public int fill (Orientations from, int quantity, int id) {
+		if ((getLiquidQuantity() != 0 && liquidId != id) || id == 0) {
+			return 0;
+		}
+		
+		liquidId = id;
+		
+		int space = BuildCraftCore.BUCKET_VOLUME / 4
 				- sideToCenter[from.ordinal()] - centerToSide[from.ordinal()]
 				+ flowRate;
 		
@@ -502,7 +521,7 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 	}
 	
 	private void moveLiquids () {					
-		float centerSpace = BuildCraftCore.OIL_BUCKET_QUANTITY / 2 - centerIn
+		float centerSpace = BuildCraftCore.BUCKET_VOLUME / 2 - centerIn
 				- centerOut + flowRate;
 		
 		boolean moved = false;
@@ -518,7 +537,7 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 					moved = true;
 				}
 				
-				if (sideToCenter[i] + centerToSide[i] >= BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+				if (sideToCenter[i] + centerToSide[i] >= BuildCraftCore.BUCKET_VOLUME / 4) {
 					centerToSide[i] = sideToCenter[i] + centerToSide[i];
 					sideToCenter[i] = 0;
 				}
@@ -527,7 +546,7 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 		
 		// computes the move from the center
 
-		if (centerIn + centerOut >= BuildCraftCore.OIL_BUCKET_QUANTITY / 2) {
+		if (centerIn + centerOut >= BuildCraftCore.BUCKET_VOLUME / 2) {
 			centerOut = centerIn + centerOut;
 			centerIn = 0;
 		} 
@@ -543,12 +562,12 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 							Orientations.Unknown);
 					
 					sideToCenter [i] -= pipe
-							.fill(p.orientation.reverse(), flowRate);
+							.fill(p.orientation.reverse(), flowRate, liquidId);
 					
 					moved = true;
 				}
 				
-				if (centerOut > 0 && sideToCenter [i] + centerToSide [i] <= BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+				if (centerOut > 0 && sideToCenter [i] + centerToSide [i] <= BuildCraftCore.BUCKET_VOLUME / 4) {
 					lastToOrientation = p.orientation;
 					centerToSide [i] += flowRate;
 					centerOut -= flowRate;
@@ -556,7 +575,7 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 					moved = true;
 				}
 				
-				if (centerToSide [i] + sideToCenter [i] >= BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
+				if (centerToSide [i] + sideToCenter [i] >= BuildCraftCore.BUCKET_VOLUME / 4) {
 					sideToCenter [i] = centerToSide [i] + sideToCenter [i];
 					centerToSide [i] = 0;
 				}			
@@ -613,32 +632,32 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 	}
 	
 	public int getSideToCenter (int orientation) {
-		if (sideToCenter [orientation] > BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
-			return BuildCraftCore.OIL_BUCKET_QUANTITY / 4;
+		if (sideToCenter [orientation] > BuildCraftCore.BUCKET_VOLUME / 4) {
+			return BuildCraftCore.BUCKET_VOLUME / 4;
 		} else {
 			return sideToCenter [orientation];
 		}
 	}
 	
 	public int getCenterToSide (int orientation) {
-		if (centerToSide [orientation] > BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
-			return BuildCraftCore.OIL_BUCKET_QUANTITY / 4;
+		if (centerToSide [orientation] > BuildCraftCore.BUCKET_VOLUME / 4) {
+			return BuildCraftCore.BUCKET_VOLUME / 4;
 		} else {
 			return centerToSide [orientation];
 		}
 	}
 	
 	public int getCenterIn () {
-		if (centerIn > BuildCraftCore.OIL_BUCKET_QUANTITY / 2) {
-			return BuildCraftCore.OIL_BUCKET_QUANTITY / 2;
+		if (centerIn > BuildCraftCore.BUCKET_VOLUME / 2) {
+			return BuildCraftCore.BUCKET_VOLUME / 2;
 		} else {
 			return centerIn;
 		}
 	}
 	
 	public int getCenterOut () {
-		if (centerOut > BuildCraftCore.OIL_BUCKET_QUANTITY / 2) {
-			return BuildCraftCore.OIL_BUCKET_QUANTITY / 2;
+		if (centerOut > BuildCraftCore.BUCKET_VOLUME / 2) {
+			return BuildCraftCore.BUCKET_VOLUME / 2;
 		} else {
 			return centerOut;
 		}
@@ -675,8 +694,11 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 				centerToSide [i] = 0;
 				sideToCenter [i] = 0;
 			}
-		}
-		
+		}		
+	}
+	
+	public int getLiquidId () {
+		return liquidId;
 	}
 	
 }

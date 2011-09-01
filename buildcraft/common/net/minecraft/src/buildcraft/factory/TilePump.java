@@ -6,7 +6,6 @@ import java.util.TreeSet;
 
 
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
@@ -32,7 +31,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public @TileNetworkData int internalLiquid;
 	public @TileNetworkData double tubeY = Double.NaN;
 	public @TileNetworkData int aimY = 0;
-
+    public @TileNetworkData int liquidId = 0;
+	
 	private PowerProvider powerProvider;
 	
 	public TilePump () {
@@ -62,14 +62,21 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			if (internalLiquid <= TilePipe.flowRate) {
 				BlockIndex index = getNextIndexToPump(false);
 
-				if (isPumpableOil(index)) {
-					if (powerProvider.useEnergy(10, 10, true) == 10) {
-						index = getNextIndexToPump(true);
-						worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
-						internalLiquid = internalLiquid += BuildCraftCore.OIL_BUCKET_QUANTITY;
+				if (isPumpableLiquid(index)) {
+					int liquidToPump = Utils.liquidId(worldObj.getBlockId(
+							index.i, index.j, index.k));
+					
+					if (internalLiquid == 0 || liquidId == liquidToPump) {
+						liquidId = liquidToPump;
 
-						if (APIProxy.isServerSide()) {
-							sendNetworkUpdate();
+						if (powerProvider.useEnergy(10, 10, true) == 10) {
+							index = getNextIndexToPump(true);
+							worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+							internalLiquid = internalLiquid += BuildCraftCore.BUCKET_VOLUME;
+
+							if (APIProxy.isServerSide()) {
+								sendNetworkUpdate();
+							}
 						}
 					}
 				} else {
@@ -80,7 +87,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 						if (getNextIndexToPump(false) == null) {
 							for (int y = yCoord - 1; y > 0; --y) {
-								if (isOil(new BlockIndex (xCoord, y, zCoord))) {
+								if (isLiquid(new BlockIndex (xCoord, y, zCoord))) {
 									aimY = y;
 									return;
 								} else if (worldObj.getBlockId(xCoord, y, zCoord) != 0) {
@@ -104,7 +111,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 				if (tile instanceof TilePipe) {
 					internalLiquid -= ((TilePipe) tile).fill(
-							p.orientation.reverse(), TilePipe.flowRate);
+							p.orientation.reverse(), TilePipe.flowRate, liquidId);
 					
 					if (internalLiquid < TilePipe.flowRate) {
 						break;
@@ -179,17 +186,17 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		
 		LinkedList<BlockIndex> pumpList = blocksToPump.get(y);
 		
-		addToPumpIfOil(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList);
+		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList);
 		
 		while (lastFound.size() > 0) {
 			TreeSet <BlockIndex> visitIteration = new TreeSet<BlockIndex> (lastFound);
 			lastFound.clear();
-								
+			
 			for (BlockIndex index : visitIteration) {								
-				addToPumpIfOil(new BlockIndex(index.i + 1, index.j, index.k), markedBlocks, lastFound, pumpList);
-				addToPumpIfOil(new BlockIndex(index.i - 1, index.j, index.k), markedBlocks, lastFound, pumpList);
-				addToPumpIfOil(new BlockIndex(index.i, index.j, index.k + 1), markedBlocks, lastFound, pumpList);
-				addToPumpIfOil(new BlockIndex(index.i, index.j, index.k - 1), markedBlocks, lastFound, pumpList);
+				addToPumpIfLiquid(new BlockIndex(index.i + 1, index.j, index.k), markedBlocks, lastFound, pumpList);
+				addToPumpIfLiquid(new BlockIndex(index.i - 1, index.j, index.k), markedBlocks, lastFound, pumpList);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k + 1), markedBlocks, lastFound, pumpList);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k - 1), markedBlocks, lastFound, pumpList);								
 				
 				if (!blocksToPump.containsKey(index.j + 1)) {
 					blocksToPump.put(index.j + 1, new LinkedList <BlockIndex> ());
@@ -197,37 +204,42 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				
 				pumpList = blocksToPump.get(index.j + 1);
 				
-				addToPumpIfOil(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList);
 			}
 		}
 	}
 	
-	public void addToPumpIfOil(BlockIndex index,
+	public void addToPumpIfLiquid(BlockIndex index,
 			TreeSet<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound,
-			LinkedList<BlockIndex> pumpList) {			
+			LinkedList<BlockIndex> pumpList) {						
 		
 		if (!markedBlocks.contains(index)) {
 			markedBlocks.add(index);
+			
+			if ((index.i - xCoord) * (index.i - xCoord) + (index.k - zCoord)
+					* (index.k - zCoord) > 64 * 64) {
+				return;
+			}
 					
-			if (isPumpableOil (index)) {					
+			if (isPumpableLiquid (index)) {					
 				pumpList.push(index);	
 			}
 			
-			if (isOil(index)) {
+			if (isLiquid(index)) {
 				lastFound.add(index);
 			}			
 		}
 	}
 	
-	private boolean isPumpableOil(BlockIndex index) {
-		return isOil(index)
+	private boolean isPumpableLiquid(BlockIndex index) {
+		return isLiquid(index)
 				&& worldObj.getBlockMetadata(index.i, index.j, index.k) == 0;
 	}
 	
-	private boolean isOil(BlockIndex index) {
+	private boolean isLiquid(BlockIndex index) {
 		return index != null
-				&& (worldObj.getBlockId(index.i, index.j, index.k) == BuildCraftEnergy.oilStill.blockID || worldObj
-						.getBlockId(index.i, index.j, index.k) == BuildCraftEnergy.oilMoving.blockID);
+				&& (Utils.liquidId(worldObj.getBlockId(index.i, index.j,
+						index.k)) != 0);
 	}
 	
 	@Override
@@ -238,6 +250,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
     	aimY = nbttagcompound.getInteger("aimY");
     	
     	tubeY = nbttagcompound.getFloat("tubeY");
+    	liquidId = nbttagcompound.getInteger("liquidId");
     	
     	BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
     	powerProvider.configure(20, 10, 10, 10, 100);
@@ -258,6 +271,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
     	} else {
     		nbttagcompound.setFloat("tubeY", (float) yCoord);
     	}
+    	
+    	nbttagcompound.setInteger("liquidId", liquidId);
     }
 
 	@Override
