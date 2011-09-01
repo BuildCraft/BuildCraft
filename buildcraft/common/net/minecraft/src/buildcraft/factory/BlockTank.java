@@ -10,10 +10,10 @@ import net.minecraft.src.forge.ITextureProvider;
 public class BlockTank extends BlockContainer implements ITextureProvider {
 
 	public BlockTank(int i) {
-		super(i, Material.iron);
+		super(i, Material.glass);
 		
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
-		setHardness(5F);
+		setHardness(1F);
 		
 	}
 

@@ -4,11 +4,13 @@ import java.util.Random;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockFluid;
+import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.World;
 import net.minecraft.src.Material;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.buildcraft.core.ILiquid;
 
-public class BlockOilFlowing extends BlockFluid 
+public class BlockOilFlowing extends BlockFluid implements ILiquid
 {
 
     public BlockOilFlowing(int i, Material material)
@@ -292,4 +294,10 @@ public class BlockOilFlowing extends BlockFluid
     int field_659_a;
     boolean field_658_b[];
     int field_660_c[];
+    
+    @Override
+	public int stillLiquidId() {
+		// TODO Auto-generated method stub
+		return BuildCraftEnergy.oilStill.blockID;
+	}
 }

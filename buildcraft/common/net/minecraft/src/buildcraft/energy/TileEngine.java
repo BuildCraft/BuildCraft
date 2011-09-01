@@ -414,11 +414,14 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	}
 
 	@Override
-	public int fill(Orientations from, int quantity) {
-
+	public int fill(Orientations from, int quantity, int id) {
+		if (id != BuildCraftEnergy.oilStill.blockID) {
+			return 0;
+		}
+		
 		if (engine instanceof EngineIron) {
 			totalBurnTime = OIL_BUCKET_TIME * 10;
-			int addedTime = (int) (quantity * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.OIL_BUCKET_QUANTITY);
+			int addedTime = (int) (quantity * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.BUCKET_VOLUME);
 			
 			if (addedTime + burnTime <= OIL_BUCKET_TIME * 10) {
 				burnTime = burnTime + addedTime;
@@ -426,10 +429,10 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			} else {
 				addedTime = OIL_BUCKET_TIME * 10 - burnTime;
 				
-				int quantityUsed = (int) (addedTime * (float) BuildCraftCore.OIL_BUCKET_QUANTITY / (float) OIL_BUCKET_TIME);
+				int quantityUsed = (int) (addedTime * (float) BuildCraftCore.BUCKET_VOLUME / (float) OIL_BUCKET_TIME);
 				
 				// Recomputed in order to limit rounding errors
-				burnTime += (int) (quantityUsed * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.OIL_BUCKET_QUANTITY);
+				burnTime += (int) (quantityUsed * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.BUCKET_VOLUME);
 				
 				return quantityUsed;
 			}
@@ -452,7 +455,12 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 
 	@Override
 	public int getCapacity() {
-		return BuildCraftCore.OIL_BUCKET_QUANTITY * 10;
+		return BuildCraftCore.BUCKET_VOLUME * 10;
+	}
+
+	@Override
+	public int getLiquidId() {
+		return 0;
 	}
 	
 }

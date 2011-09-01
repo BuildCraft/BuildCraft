@@ -88,11 +88,11 @@ public class TileIronPipe extends TilePipe {
 	}
 	
 	@Override
-	public int fill (Orientations from, int quantity) {		
+	public int fill (Orientations from, int quantity, int id) {		
 		if (from.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
 			return 0;
 		} else {
-			return super.fill(from, quantity);
+			return super.fill(from, quantity, id);
 		}
 	}
 	

@@ -6,7 +6,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.Tessellator;
@@ -26,32 +25,42 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	final static private int displayStages = 40;
 	
-	private int [] sideLiquidIn = new int [displayStages];	
-	private int [] centerLiquidIn = new int [displayStages * 2];
+	private class DisplayList {
+		public int [] sideLiquidIn = new int [displayStages];	
+		public int [] centerLiquidIn = new int [displayStages * 2];
+
+		public int [] sideLiquidOut = new int [displayStages];	
+		public int [] centerLiquidOut = new int [displayStages * 2];
+	}
 	
-	private int [] sideLiquidOut = new int [displayStages];	
-	private int [] centerLiquidOut = new int [displayStages * 2];
+	private DisplayList displayLists[] = new DisplayList[Block.blocksList.length];
 	
 	private final int [] angleY = {0, 0, 270, 90, 0, 180};
 	private final int [] angleZ = {90, 270, 0, 0, 0, 0};
 	
     private RenderBlocks renderBlocks;
     
-    private void compileDisplayLists() {
+    private DisplayList getDisplayLists(int liquidId) {
+    	if (displayLists [liquidId] != null) {
+    		return displayLists [liquidId];
+    	}
+    	
+    	DisplayList d = new DisplayList();
+    	displayLists [liquidId] = d;
     	
 		BlockInterface block = new BlockInterface();
-		block.texture = 12 * 16 + 13;
+		block.texture = Block.blocksList [liquidId].blockIndexInTexture;//12 * 16 + 13;
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 		
     	for (int s = 0; s < displayStages * 2; ++s) {
     		if (s < displayStages) {
-        		sideLiquidIn [s] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(sideLiquidIn [s], 4864 /*GL_COMPILE*/);    
+        		d.sideLiquidIn [s] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.sideLiquidIn [s], 4864 /*GL_COMPILE*/);    
         		
     			block.minX = 0;
     		} else {
-        		sideLiquidOut [s - displayStages] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(sideLiquidOut [s - displayStages], 4864 /*GL_COMPILE*/);    
+    			d.sideLiquidOut [s - displayStages] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.sideLiquidOut [s - displayStages], 4864 /*GL_COMPILE*/);    
     			
     			block.minX = (s - (float) displayStages) / ((float) displayStages) * size / 2F;
     		}
@@ -71,18 +80,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
     				0, 0, false);
 
-    		GL11.glEndList();
+    		GL11.glEndList();    		
     	}
         
     	for (int s = 0; s < displayStages * 4; ++s) {
     		if (s < displayStages * 2) {
-        		centerLiquidIn [s] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(centerLiquidIn [s], 4864 /*GL_COMPILE*/);
+        		d.centerLiquidIn [s] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.centerLiquidIn [s], 4864 /*GL_COMPILE*/);
         		
     			block.minX = Utils.pipeMinPos + 0.01F;
     		} else {
-        		centerLiquidOut [s - displayStages * 2] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(centerLiquidOut [s - displayStages * 2], 4864 /*GL_COMPILE*/);
+        		d.centerLiquidOut [s - displayStages * 2] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.centerLiquidOut [s - displayStages * 2], 4864 /*GL_COMPILE*/);
     			
 				block.minX = Utils.pipeMinPos + 0.01F
 						+ (s - (float) displayStages * 2F - 1) / ((float) displayStages * 2F - 1)
@@ -107,11 +116,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
     		GL11.glEndList();
     	}
+    	
+		return d;
     }
 
 	public RenderPipe () {
-		compileDisplayLists();
-		
 		renderBlocks = new RenderBlocks();
 	}
 	
@@ -127,23 +136,35 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	}	
 	
 	private void renderLiquids(TilePipe pipe, double x, double y, double z) {
+		if (pipe.getLiquidId() == 0) {
+			return;
+		}
+		
+		Block block = Block.blocksList [pipe.getLiquidId()];
+		
+		DisplayList d = getDisplayLists(pipe.getLiquidId());
+		
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /*GL_LIGHTING*/);
 				
-		MinecraftForgeClient
-				.bindTexture(BuildCraftCore.customBuildCraftTexture);		
+		if (block instanceof ITextureProvider) {
+			MinecraftForgeClient.bindTexture(((ITextureProvider) block)
+					.getTextureFile());
+		} else {
+			MinecraftForgeClient.bindTexture("/terrain.png");
+		}
 
 		GL11.glTranslatef((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);		
 				
 		for (int i = 0; i < 6; ++i) {
-			renderSide (angleY [i], angleZ [i], pipe.getSideToCenter(i), pipe.getCenterToSide(i));
+			renderSide (angleY [i], angleZ [i], pipe.getSideToCenter(i), pipe.getCenterToSide(i), d);
 		}
 				
 		// CENTER
 
 		if (pipe.getCenterIn () > 0 || pipe.getCenterOut () > 0) {
 			renderCenter(pipe.lastFromOrientation, pipe.lastToOrientation,
-					pipe.getCenterIn(), pipe.getCenterOut());
+					pipe.getCenterIn(), pipe.getCenterOut(), d);
 		}
 	
 		GL11.glEnable(2896 /*GL_LIGHTING*/);
@@ -165,7 +186,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();		
 	}
 	
-	private void renderSide(float angleY, float angleZ, float sideToCenter, float centerToSide) {
+	private void renderSide(float angleY, float angleZ, float sideToCenter, float centerToSide, DisplayList d) {
 		if (sideToCenter == 0 && centerToSide == 0) {
 			return;
 		}
@@ -175,30 +196,30 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glRotatef(angleY, 0, 1, 0);
 		GL11.glRotatef(angleZ, 0, 0, 1);
 		
-		if (sideToCenter + centerToSide >= BuildCraftCore.OIL_BUCKET_QUANTITY / 4) {
-			GL11.glCallList(sideLiquidIn[displayStages - 1]);
+		if (sideToCenter + centerToSide >= BuildCraftCore.BUCKET_VOLUME / 4) {
+			GL11.glCallList(d.sideLiquidIn[displayStages - 1]);
 		} else {
 			if (sideToCenter > 0) {
-				GL11.glCallList(sideLiquidIn[(int) (sideToCenter
-						/ (BuildCraftCore.OIL_BUCKET_QUANTITY / 4F) * (displayStages - 1))]);
+				GL11.glCallList(d.sideLiquidIn[(int) (sideToCenter
+						/ (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayStages - 1))]);
 			}
 
 			if (centerToSide > 0) {
-				GL11.glCallList(sideLiquidOut[(displayStages - 1)
-						- (int) (centerToSide / (BuildCraftCore.OIL_BUCKET_QUANTITY / 4F) * (displayStages - 1))]);
+				GL11.glCallList(d.sideLiquidOut[(displayStages - 1)
+						- (int) (centerToSide / (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayStages - 1))]);
 			}
 		}
 
 		GL11.glPopMatrix();
 	}
 	
-	private void renderCenter(Orientations lastFromOrientation, Orientations lastToOrientation, float centerIn, float centerOut) {
+	private void renderCenter(Orientations lastFromOrientation, Orientations lastToOrientation, float centerIn, float centerOut, DisplayList d) {
 		GL11.glPushMatrix();					
 
-		if (centerIn + centerOut >= BuildCraftCore.OIL_BUCKET_QUANTITY / 2) {
+		if (centerIn + centerOut >= BuildCraftCore.BUCKET_VOLUME / 2) {
 			GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
 			GL11.glRotatef(angleZ [lastFromOrientation.ordinal()], 0, 0, 1);
-			GL11.glCallList(centerLiquidIn [displayStages * 2 - 1]);
+			GL11.glCallList(d.centerLiquidIn [displayStages * 2 - 1]);
 		} else {
 			if (centerIn > 0) {
 				GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
@@ -209,13 +230,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}			
 			
 			if (centerIn > 0) {
-				GL11.glCallList(centerLiquidIn[(int) (centerIn / (BuildCraftCore.OIL_BUCKET_QUANTITY / 2F) * (displayStages * 2 - 1))]);
+				GL11.glCallList(d.centerLiquidIn[(int) (centerIn / (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayStages * 2 - 1))]);
 			}
 
 			if (centerOut > 0) {
-				GL11.glCallList(centerLiquidOut[(displayStages * 2 - 1)
+				GL11.glCallList(d.centerLiquidOut[(displayStages * 2 - 1)
 						- (int) (centerOut
-								/ (BuildCraftCore.OIL_BUCKET_QUANTITY / 2F) * (displayStages * 2 - 1))]);
+								/ (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayStages * 2 - 1))]);
 			}
 		}
 

@@ -12,9 +12,10 @@ import net.minecraft.src.buildcraft.core.TileNetworkData;
 public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	
 	public @TileNetworkData int stored = 0;
+	public @TileNetworkData int liquidId = 0;
 	
 	@Override
-	public int fill(Orientations from, int quantity) {
+	public int fill(Orientations from, int quantity, int id) {
 		TileTank lastTank = this;
 		
 		for (int j = yCoord - 1; j > 1; --j) {
@@ -25,10 +26,16 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			}
 		}
 		
-		return lastTank.actualFill(from, quantity);				
+		return lastTank.actualFill(from, quantity, id);				
 	}
 	
-	private int actualFill(Orientations from, int quantity) {
+	private int actualFill(Orientations from, int quantity, int id) {
+		if (stored != 0 && id != liquidId) {
+			return 0;
+		}
+		
+		liquidId = id;
+		
 		TileEntity above = worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord);
 	
 		int used = 0;
@@ -46,7 +53,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		}
 				
 		if (used < quantity && above instanceof TileTank) {
-			used = used + ((TileTank) above).actualFill(from, quantity - used);
+			used = used + ((TileTank) above).actualFill(from, quantity - used, id);
 		}		
 		
 		return used;
@@ -57,13 +64,18 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	}
 	
 	public int getCapacity () {
-		return BuildCraftCore.OIL_BUCKET_QUANTITY * 16;
+		return BuildCraftCore.BUCKET_VOLUME * 16;
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		
-		stored = nbttagcompound.getInteger("stored");		
+		stored = nbttagcompound.getInteger("stored");
+		liquidId = nbttagcompound.getInteger("liquidId");
+		
+		if (liquidId == 0) {
+			stored = 0;
+		}
     }
 
 	@Override
@@ -71,6 +83,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		super.writeToNBT(nbttagcompound);
 		
 		nbttagcompound.setInteger("stored", stored);
+		nbttagcompound.setInteger("liquidId", liquidId);
 	}
 	
 	@Override
@@ -113,7 +126,10 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			return result;
 		}
 	}
-	
-	
+
+	@Override
+	public int getLiquidId() {
+		return liquidId;
+	}	
 	
 }

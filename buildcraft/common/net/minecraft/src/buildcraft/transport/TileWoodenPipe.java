@@ -85,9 +85,9 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 
 			entityEntering(entity, entityPos.orientation);
 		} else if (tile instanceof ILiquidContainer) {
-			if (liquidToExtract <= BuildCraftCore.OIL_BUCKET_QUANTITY) {
+			if (liquidToExtract <= BuildCraftCore.BUCKET_VOLUME) {
 				liquidToExtract += powerProvider.useEnergy(1, 1, true)
-						* BuildCraftCore.OIL_BUCKET_QUANTITY;
+						* BuildCraftCore.BUCKET_VOLUME;
 				
 				sendNetworkUpdate();
 			}
@@ -276,7 +276,7 @@ public class TileWoodenPipe extends TilePipe implements IPowerReceptor {
 				int extracted = container.empty(liquidToExtract > flowRate ? flowRate
 						: liquidToExtract, false); 
 				
-				extracted = fill(pos.orientation, extracted);
+				extracted = fill(pos.orientation, extracted, container.getLiquidId());
 				
 				container.empty(extracted, true);
 				

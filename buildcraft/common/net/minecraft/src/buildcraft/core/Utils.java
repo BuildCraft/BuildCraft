@@ -390,6 +390,20 @@ public class Utils {
 				|| Block.blocksList [blockId] == null;
 	}
 	
+	public static int liquidId (int blockId) {
+		if (blockId == Block.waterStill.blockID
+				|| blockId == Block.waterMoving.blockID) {
+			return Block.waterStill.blockID;
+		} else if (blockId == Block.lavaStill.blockID
+				|| blockId == Block.lavaMoving.blockID) {
+			return Block.lavaStill.blockID;
+		} else if (Block.blocksList [blockId] instanceof ILiquid) {
+			return ((ILiquid) Block.blocksList [blockId]).stillLiquidId();
+		} else {
+			return 0;
+		}
+	}
+	
 	/**
 	 * Return true if the block cannot be broken, typically bedrock and lava
 	 */
