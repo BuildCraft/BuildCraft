@@ -580,6 +580,36 @@ public abstract class TilePipe extends TileBuildCraft implements IPipeEntry, ILi
 			}
 		}
 		
+		if (totalOil() > 500) {
+			int totalSystem = totalOil ();
+			
+			for (int i = 0; i < 6; ++i) {
+				Position pos = new Position(xCoord, yCoord, zCoord,
+						Orientations.values()[i]);
+				
+				TileEntity tile = Utils.getTile(worldObj, pos, Orientations.values()[i]);
+				
+				if (tile instanceof TilePipe) {
+					totalSystem += ((TilePipe) tile).totalOil(); 
+				}
+			}
+			
+//			System.out.println (totalSystem);
+		}
+	}
+	
+	public int totalOil () {
+		int total = centerOut + centerIn;
+		
+		for (int i : centerToSide) {
+			total += i;
+		}
+		
+		for (int i : sideToCenter) {
+			total += i;
+		}
+		
+		return total;
 	}
 	
 	public int getSideToCenter (int orientation) {
