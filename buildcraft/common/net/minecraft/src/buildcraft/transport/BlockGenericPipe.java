@@ -252,12 +252,12 @@ public class BlockGenericPipe extends BlockContainer implements
 	}
 	
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		super.blockActivated(world, i, j, k, entityplayer);
+		super.blockActivated(world, i, j, k, entityplayer);		
 		return getPipe (world, i, j, k).blockActivated (world, i, j, k, entityplayer);
 	}
 	
-	public int getTextureForConnection (IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		return getPipe (blockAccess, i, j, k).getTextureForConnection(blockAccess, i, j, k, connection);
+	public void prepareTextureFor (IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
+		getPipe (blockAccess, i, j, k).prepareTextureFor(connection);
 	}
 	
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
@@ -309,11 +309,6 @@ public class BlockGenericPipe extends BlockContainer implements
 		pipeBuffer.put(index, pipe);
 		
 		return pipe;
-	}
-
-	public static void associatePipeToTile(World world, int i, int j, int k) {
-		((TileGenericPipe) world.getBlockTileEntity(i, j, k)).pipe = pipeBuffer
-				.get(new BlockIndex(i, j, k));
 	}
 	
 	public static Pipe getPipe (IBlockAccess blockAccess, int i, int j, int k) {

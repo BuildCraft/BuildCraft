@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
@@ -11,13 +12,16 @@ public class PipeItemsWood extends Pipe {
 	
 	int baseTexture = 1 * 16 + 0;
 	int plainTexture = 1 * 16 + 15;
+	
+	int nextTexture = baseTexture;
 
 	public PipeItemsWood(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicWood(), itemID);
 	}
 	
+	@Override
 	public int getBlockTexture() {
-		return baseTexture;
+		return nextTexture;
 	}
 	
 	@Override
@@ -36,4 +40,16 @@ public class PipeItemsWood extends Pipe {
 		}
 	}
 
+	@Override
+    public void prepareTextureFor (Orientations connection) {
+		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		
+    	if (metadata == connection.ordinal()) {
+    		nextTexture = plainTexture;
+    	} else {
+    		nextTexture = baseTexture;
+    	}
+				
+    }
+	
 }

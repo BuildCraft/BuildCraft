@@ -62,11 +62,9 @@ public class ItemPipe extends Item implements ITextureProvider {
         }
         if(world.canBlockBePlacedAt(blockID, i, j, k, false, l))
         {
-            Block block = Block.blocksList[blockID];
             BlockGenericPipe.createPipe(i, j, k, shiftedIndex);
             if(world.setBlockAndMetadataWithNotify(i, j, k, blockID, 0))
             {            	      
-                BlockGenericPipe.associatePipeToTile(world, i, j, k);
                 Block.blocksList[blockID].onBlockPlaced(world, i, j, k, l);
                 Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
                 // To move to a proxt

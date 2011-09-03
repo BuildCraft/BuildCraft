@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -32,14 +31,13 @@ public class Pipe {
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
 		this.worldObj = worldObj;
+		
+		this.transport.initialize(xCoord, yCoord, zCoord, worldObj);
+		this.logic.initialize(xCoord, yCoord, zCoord, worldObj);
 	}
 	
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		return logic.blockActivated(world, i, j, k, entityplayer);
-	}
-	
-	public int getTextureForConnection (IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		return 0;
+		return logic.blockActivated(entityplayer);
 	}
 	
 	public void onBlockPlaced() {
@@ -60,5 +58,9 @@ public class Pipe {
 	
 	public int getBlockTexture() {
 		return 1 * 16 + 0;
+	}
+
+	public void prepareTextureFor(Orientations connection) {
+
 	}
 }

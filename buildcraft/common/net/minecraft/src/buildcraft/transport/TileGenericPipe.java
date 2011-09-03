@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.core.BlockIndex;
 
 public class TileGenericPipe extends TileEntity {
 	public Pipe pipe;
@@ -18,5 +19,16 @@ public class TileGenericPipe extends TileEntity {
 		super.readFromNBT(nbttagcompound);
 		
 		pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, nbttagcompound.getInteger("pipeId"));
+	}
+	
+	@Override
+	public void validate () {
+		super.validate();
+		
+		if (pipe == null) {
+			pipe = BlockGenericPipe.pipeBuffer.get(new BlockIndex(xCoord, yCoord, zCoord));
+		}
+		
+		pipe.initialize(xCoord, yCoord, zCoord, worldObj);
 	}
 }
