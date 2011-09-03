@@ -39,7 +39,7 @@ public abstract class PowerProvider {
 		}
 		
 		TileEntity tile = (TileEntity) receptor;
-		boolean result = false;
+		boolean result = false;		
 		
 		if (energyStored >= minActivationEnergy) {
 			if (latency == 0) {
@@ -56,6 +56,7 @@ public abstract class PowerProvider {
 		if (powerLoss > 0
 				&& energyLossTracker.markTimeIfDelay(tile.worldObj,
 						powerLossRegularity)) {
+			
 			energyStored -= powerLoss;
 			if (energyStored < 0) {
 				energyStored = 0;

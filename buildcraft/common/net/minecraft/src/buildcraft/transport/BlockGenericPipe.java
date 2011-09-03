@@ -305,6 +305,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 		
 		Pipe pipe = createPipe(key);
+		pipe.setPosition(i, j, k);
 		
 		pipeBuffer.put(index, pipe);
 		

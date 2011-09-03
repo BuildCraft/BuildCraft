@@ -8,6 +8,8 @@ import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
 import net.minecraft.src.buildcraft.transport.ItemPipe;
+import net.minecraft.src.buildcraft.transport.RenderPipe;
+import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 //import net.minecraft.src.buildcraft.transport.RenderPipe;
 //import net.minecraft.src.buildcraft.transport.TileDiamondPipe;
 //import net.minecraft.src.buildcraft.transport.TilePipe;
@@ -35,6 +37,8 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipePowerStone.shiftedIndex, this);
 		
+		ModLoader.RegisterTileEntity(TileGenericPipe.class,
+				"net.minecraft.src.buildcraft.GenericPipe", new RenderPipe());		
 		
 //		ModLoader
 //				.RegisterTileEntity(TilePipe.class,

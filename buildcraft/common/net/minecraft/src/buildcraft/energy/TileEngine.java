@@ -102,7 +102,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 				TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 						(int) pos.z);
 				
-				if (isPoweredTile(tile)) {
+				if (isPoweredTile(tile)) {					
 					IPowerReceptor receptor = (IPowerReceptor) tile;
 					
 					int extracted = engine.extractEnergy(

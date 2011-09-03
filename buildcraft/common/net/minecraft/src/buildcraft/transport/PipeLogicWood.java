@@ -74,8 +74,5 @@ public class PipeLogicWood extends PipeLogic {
 		}
     	
         return false;
-    }
-        
-
-	
+    }        
 }
