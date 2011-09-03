@@ -181,9 +181,6 @@ public class BuildCraftTransport {
 		// iron 4065
 		// gold 4066
 		// supra 4067
-		
-		ModLoader.RegisterTileEntity(TileGenericPipe.class,
-				"net.minecraft.src.buildcraft.GenericPipe");
 						
 //				Integer.parseInt(cobblestonePipeId.value));
 //		CoreProxy.addName(cobblestonePipeBlock.setBlockName("cobblestonePipe"),

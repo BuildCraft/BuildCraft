@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -15,6 +16,7 @@ public class Pipe {
 	public int yCoord;
 	public int zCoord;
 	public World worldObj;
+	public TileGenericPipe tile;
 	
 	public final PipeTransport transport;
 	public final PipeLogic logic;
@@ -26,15 +28,28 @@ public class Pipe {
 		this.itemID = itemID;
 	}
 	
-	public void initialize (int xCoord, int yCoord, int zCoord, World worldObj) {
+	public void setPosition (int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
-		this.worldObj = worldObj;
 		
-		this.transport.initialize(xCoord, yCoord, zCoord, worldObj);
-		this.logic.initialize(xCoord, yCoord, zCoord, worldObj);
+		transport.setPosition(xCoord, yCoord, zCoord);
+		logic.setPosition(xCoord, yCoord, zCoord);
 	}
+	
+	public void setWorld (World worldObj) {
+		this.worldObj = worldObj;
+		transport.setWorld(worldObj);
+		logic.setWorld(worldObj);
+	}
+	
+	public void setTile (TileGenericPipe tile) {
+		this.tile = tile;
+		
+		transport.setTile (tile);
+		logic.setTile (tile);
+	}
+
 	
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		return logic.blockActivated(entityplayer);
@@ -62,5 +77,19 @@ public class Pipe {
 
 	public void prepareTextureFor(Orientations connection) {
 
+	}
+
+	public void updateEntity() {
+		transport.updateEntity ();		
+	}
+	
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		transport.writeToNBT(nbttagcompound);
+		logic.writeToNBT(nbttagcompound);
+	}
+
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		transport.readFromNBT(nbttagcompound);
+		logic.readFromNBT(nbttagcompound);
 	}
 }
