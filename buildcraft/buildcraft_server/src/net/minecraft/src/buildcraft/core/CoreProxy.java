@@ -58,8 +58,4 @@ public class CoreProxy {
 		
 	}
 	
-	public static boolean isDamageable (Item item) {
-		return item.func_25005_e();
-	}
-	
 }

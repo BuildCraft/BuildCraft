@@ -59,13 +59,14 @@ public class BlockPlainPipe extends Block implements IPipeConnection,
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-
-	@Override
-	public int getTextureForConnection(Orientations connection, int metadata) {		
-		return blockIndexInTexture;
-	}
 	
     public float getHeightInPipe () {
     	return 0.5F;
-    }    
+    }
+
+	@Override
+	public int getTextureForConnection(IBlockAccess blockAccess, int i, int j,
+			int k, Orientations connection) {
+		return blockIndexInTexture;
+	}    
 }

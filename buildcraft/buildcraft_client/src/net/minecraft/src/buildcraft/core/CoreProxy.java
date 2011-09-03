@@ -41,9 +41,5 @@ public class CoreProxy {
 		ModLoader.AddLocalization(s1, string);
 		
 	}
-	
-	public static boolean isDamageable (Item item) {
-		return item.isDamagable();
-	}
 
 }
