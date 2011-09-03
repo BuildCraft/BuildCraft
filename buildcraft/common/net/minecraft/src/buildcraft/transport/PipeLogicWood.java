@@ -14,9 +14,7 @@ public class PipeLogicWood extends PipeLogic {
 
 	public static String [] excludedBlocks = new String [0];
 	
-	public void switchSource () {
-		System.out.println ("SWITCH SOURCE");
-		
+	public void switchSource () {		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		int newMeta = 6;
 		
@@ -36,10 +34,8 @@ public class PipeLogicWood extends PipeLogic {
 					&& !(tile instanceof TileGenericPipe))
 					&& Utils.checkPipesConnections(worldObj, xCoord, yCoord,
 							zCoord, tile.xCoord, tile.yCoord, tile.zCoord)) {
-				System.out.println ("FOUND POTENTIAL MATCH");
 				
 				if (!isExcludedFromExtraction(block)) {
-					System.out.println ("NEW META = " + o.ordinal());
 					newMeta = o.ordinal();
 					break;
 				}
@@ -47,7 +43,6 @@ public class PipeLogicWood extends PipeLogic {
 		}
 		
 		if (newMeta != meta) {
-			System.out.println ("UPDATE");
 			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
