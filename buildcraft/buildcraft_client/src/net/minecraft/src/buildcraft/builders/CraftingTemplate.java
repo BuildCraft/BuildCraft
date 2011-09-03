@@ -11,11 +11,11 @@ class CraftingTemplate extends CraftingTemplateRoot {
 	
 	public void updateCraftingResults() {
         super.updateCraftingResults();
-        for(int i = 0; i < field_20121_g.size(); i++)
+        for(int i = 0; i < crafters.size(); i++)
         {
-            ICrafting icrafting = (ICrafting)field_20121_g.get(i);
+            ICrafting icrafting = (ICrafting)crafters.get(i);
             if(computingTime != template.computingTime) {
-                icrafting.func_20158_a(this, 0, template.computingTime);
+                icrafting.updateCraftingInventoryInfo(this, 0, template.computingTime);
             }
         }
 

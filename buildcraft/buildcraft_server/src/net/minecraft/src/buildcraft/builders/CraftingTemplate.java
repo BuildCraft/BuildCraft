@@ -14,8 +14,9 @@ class CraftingTemplate extends CraftingTemplateRoot {
         icrafting.updateCraftingInventoryInfo(this, 0, template.computingTime);
     }
 	
-	public void updateCraftingMatrix() {
-        super.updateCraftingMatrix();
+	@Override
+	public void updateCraftingResults() {
+        super.updateCraftingResults();
         for(int i = 0; i < crafters.size(); i++) {
             ICrafting icrafting = (ICrafting)crafters.get(i);
             if(computingTime != template.computingTime) {

@@ -96,9 +96,10 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IT
 	}
 
 	@Override
-	public int getTextureForConnection(Orientations connection, int metadata) {		
+	public int getTextureForConnection(IBlockAccess blockAccess, int i, int j,
+			int k, Orientations connection) {
 		return blockIndexInTexture;
-	}
+	}    
 	
     public float getHeightInPipe () {
     	return 0.5F;

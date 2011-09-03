@@ -18,8 +18,8 @@ public class ContainerEngine extends ContainerEngineRoot {
     }
 	
 	@Override
-	public void updateCraftingMatrix() {
-        super.updateCraftingMatrix();
+	public void updateCraftingResults() {
+        super.updateCraftingResults();
         for(int i = 0; i < crafters.size(); i++) {
             ICrafting icrafting = (ICrafting)crafters.get(i);
             if(scaledBurnTime != engine.scaledBurnTime) {

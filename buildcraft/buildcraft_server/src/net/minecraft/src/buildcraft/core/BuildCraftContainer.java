@@ -14,11 +14,11 @@ public class BuildCraftContainer extends Container {
 	}
 	
 	@Override	
-	public final ItemStack func_27086_a(int i)
+	public final ItemStack getStackInSlot(int i)
 	{
 		ItemStack itemstack = null;
 		Slot slot = (Slot)inventorySlots.get(i);
-		if(slot != null && slot.func_27006_b())
+		if(slot != null && slot.getHasStack())
 		{
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
