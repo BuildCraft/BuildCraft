@@ -94,12 +94,6 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IT
 			int z1, int x2, int y2, int z2) {
 		return blockAccess.getBlockId(x2, y2, z2) == blockID;
 	}
-
-	@Override
-	public int getTextureForConnection(IBlockAccess blockAccess, int i, int j,
-			int k, Orientations connection) {
-		return blockIndexInTexture;
-	}    
 	
     public float getHeightInPipe () {
     	return 0.5F;
@@ -108,5 +102,12 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe, IT
     @Override
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
+	}
+
+	@Override
+	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j,
+			int k, Orientations connection) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -12,7 +12,6 @@ import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.forge.ICustomItemRenderer;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class mod_BuildCraftCore extends BaseModMp {
@@ -104,73 +103,63 @@ public class mod_BuildCraftCore extends BaseModMp {
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
 			float minSize = Utils.pipeMinPos;
 			float maxSize = Utils.pipeMaxPos;
-			int initialTexture = block.blockIndexInTexture;
 
 			block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize,
 					maxSize);
 			renderblocks.renderStandardBlock(block, i, j, k);
 
 			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
-				block.blockIndexInTexture = ((IBlockPipe) block)
-						.getTextureForConnection(iblockaccess, i, j, k,
-								Orientations.XNeg);
+				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+						Orientations.XNeg);
 				block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
-				block.blockIndexInTexture = initialTexture;
 			}
 
 			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
-				block.blockIndexInTexture = ((IBlockPipe) block)
-						.getTextureForConnection(iblockaccess, i, j, k,
-								Orientations.XPos);
+				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+						Orientations.XPos);
 				block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
-				block.blockIndexInTexture = initialTexture;
 			}
 
 			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
-				block.blockIndexInTexture = ((IBlockPipe) block)
-						.getTextureForConnection(iblockaccess, i, j, k,
-								Orientations.YNeg);
+				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+						Orientations.YNeg);
 				block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
-				block.blockIndexInTexture = initialTexture;
 			}
 
 			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
-				block.blockIndexInTexture = ((IBlockPipe) block)
-						.getTextureForConnection(iblockaccess, i, j, k,
-								Orientations.YPos);
+				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+						Orientations.YPos);
 				block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
 						maxSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
-				block.blockIndexInTexture = initialTexture;
 			}
 
 			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
-				block.blockIndexInTexture = ((IBlockPipe) block)
-						.getTextureForConnection(iblockaccess, i, j, k,
-								Orientations.ZNeg);
+				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+						Orientations.ZNeg);
 				block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
 						minSize);
 				renderblocks.renderStandardBlock(block, i, j, k);
-				block.blockIndexInTexture = initialTexture;
 			}
 
 			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
-				block.blockIndexInTexture = ((IBlockPipe) block)
-						.getTextureForConnection(iblockaccess, i, j, k,
-								Orientations.ZPos);
+				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+						Orientations.ZPos);
 				block.setBlockBounds(minSize, minSize, maxSize, maxSize,
 						maxSize, 1.0F);
 				renderblocks.renderStandardBlock(block, i, j, k);
-				block.blockIndexInTexture = initialTexture;
 			}
 
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+			
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.Unknown);
 		} else if (block.getRenderType() == BuildCraftCore.oilModel) {
 			renderblocks.renderBlockFluids(block, i, j, k);
 		}

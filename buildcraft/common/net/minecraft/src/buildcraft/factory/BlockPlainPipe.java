@@ -65,8 +65,10 @@ public class BlockPlainPipe extends Block implements IPipeConnection,
     }
 
 	@Override
-	public int getTextureForConnection(IBlockAccess blockAccess, int i, int j,
+	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j,
 			int k, Orientations connection) {
-		return blockIndexInTexture;
-	}    
+		// TODO Auto-generated method stub
+		
+	}
+
 }

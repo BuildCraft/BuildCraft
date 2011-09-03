@@ -17,8 +17,7 @@ public class PipeLogic {
 		this.worldObj = worldObj;
 	}
 
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(EntityPlayer entityplayer) {
 
 		return false;
 	}
