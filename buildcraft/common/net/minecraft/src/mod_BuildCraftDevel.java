@@ -10,6 +10,8 @@ public class mod_BuildCraftDevel extends BaseModMp {
     public void ModsLoaded() {	
     	super.ModsLoaded();
     	
+    	BuildCraftCore.debugMode = true;
+    	
 		mod_BuildCraftCore.initialize();
 		
 		Property cheatId = BuildCraftCore.mainConfiguration

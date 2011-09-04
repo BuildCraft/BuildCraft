@@ -23,57 +23,63 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
 	
-	final static private int displayStages = 40;
+	final static private int displayLiquidStages = 40;
 	
-	private class DisplayList {
-		public int [] sideLiquidIn = new int [displayStages];	
-		public int [] centerLiquidIn = new int [displayStages * 2];
+	private class DisplayLiquidList {
+		public int [] sideLiquidIn = new int [displayLiquidStages];	
+		public int [] centerLiquidIn = new int [displayLiquidStages * 2];
 
-		public int [] sideLiquidOut = new int [displayStages];	
-		public int [] centerLiquidOut = new int [displayStages * 2];
+		public int [] sideLiquidOut = new int [displayLiquidStages];	
+		public int [] centerLiquidOut = new int [displayLiquidStages * 2];
 	}
 	
-	private DisplayList displayLists[] = new DisplayList[Block.blocksList.length];
+	private DisplayLiquidList displayLiquidLists[] = new DisplayLiquidList[Block.blocksList.length];
 	
 	private final int [] angleY = {0, 0, 270, 90, 0, 180};
 	private final int [] angleZ = {90, 270, 0, 0, 0, 0};
+	
+	final static private int displayPowerStages = 80;
+	
+	public int [] displayPowerList = new int [displayPowerStages];	
 	
 	private RenderBlocks renderBlocks;
 
 	public RenderPipe() {
 		renderBlocks = new RenderBlocks();
+		
+		initializeDisplayPowerList ();
 	}
 	
-    private DisplayList getDisplayLists(int liquidId) {
-    	if (displayLists [liquidId] != null) {
-    		return displayLists [liquidId];
+    private DisplayLiquidList getDisplayLiquidLists(int liquidId) {
+    	if (displayLiquidLists [liquidId] != null) {
+    		return displayLiquidLists [liquidId];
     	}
     	
-    	DisplayList d = new DisplayList();
-    	displayLists [liquidId] = d;
+    	DisplayLiquidList d = new DisplayLiquidList();
+    	displayLiquidLists [liquidId] = d;
     	
 		BlockInterface block = new BlockInterface();
 		block.texture = Block.blocksList [liquidId].blockIndexInTexture;//12 * 16 + 13;
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 		
-    	for (int s = 0; s < displayStages * 2; ++s) {
-    		if (s < displayStages) {
+    	for (int s = 0; s < displayLiquidStages * 2; ++s) {
+    		if (s < displayLiquidStages) {
         		d.sideLiquidIn [s] = GLAllocation.generateDisplayLists(1);
         		GL11.glNewList(d.sideLiquidIn [s], 4864 /*GL_COMPILE*/);    
         		
     			block.minX = 0;
     		} else {
-    			d.sideLiquidOut [s - displayStages] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(d.sideLiquidOut [s - displayStages], 4864 /*GL_COMPILE*/);    
+    			d.sideLiquidOut [s - displayLiquidStages] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.sideLiquidOut [s - displayLiquidStages], 4864 /*GL_COMPILE*/);    
     			
-    			block.minX = (s - (float) displayStages) / ((float) displayStages) * size / 2F;
+    			block.minX = (s - (float) displayLiquidStages) / ((float) displayLiquidStages) * size / 2F;
     		}
     		
     		block.minY = Utils.pipeMinPos + 0.01;
     		block.minZ = Utils.pipeMinPos + 0.01;
 
-    		if (s < displayStages) {
-    			block.maxX = s / ((float) displayStages - 1) * size / 2F;
+    		if (s < displayLiquidStages) {
+    			block.maxX = s / ((float) displayLiquidStages - 1) * size / 2F;
     		} else {
     			block.maxX = size / 2F;
     		}
@@ -87,27 +93,27 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     		GL11.glEndList();    		
     	}
         
-    	for (int s = 0; s < displayStages * 4; ++s) {
-    		if (s < displayStages * 2) {
+    	for (int s = 0; s < displayLiquidStages * 4; ++s) {
+    		if (s < displayLiquidStages * 2) {
         		d.centerLiquidIn [s] = GLAllocation.generateDisplayLists(1);
         		GL11.glNewList(d.centerLiquidIn [s], 4864 /*GL_COMPILE*/);
         		
     			block.minX = Utils.pipeMinPos + 0.01F;
     		} else {
-        		d.centerLiquidOut [s - displayStages * 2] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(d.centerLiquidOut [s - displayStages * 2], 4864 /*GL_COMPILE*/);
+        		d.centerLiquidOut [s - displayLiquidStages * 2] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.centerLiquidOut [s - displayLiquidStages * 2], 4864 /*GL_COMPILE*/);
     			
 				block.minX = Utils.pipeMinPos + 0.01F
-						+ (s - (float) displayStages * 2F - 1) / ((float) displayStages * 2F - 1)
+						+ (s - (float) displayLiquidStages * 2F - 1) / ((float) displayLiquidStages * 2F - 1)
 						* size;
     		}
     		
     		block.minY = Utils.pipeMinPos + 0.01F;
     		block.minZ = Utils.pipeMinPos + 0.01F;
     		
-    		if (s < displayStages * 2) {
+    		if (s < displayLiquidStages * 2) {
 				block.maxX = Utils.pipeMaxPos - ((size - s
-				/ ((float) displayStages * 2F - 1) * size)) - 0.01;
+				/ ((float) displayLiquidStages * 2F - 1) * size)) - 0.01;
     		} else {
     			block.maxX = Utils.pipeMaxPos - 0.01;
     		}
@@ -123,6 +129,36 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     	
 		return d;
     }
+    
+    private void initializeDisplayPowerList () {    	
+		BlockInterface block = new BlockInterface();
+		block.texture = 0 * 16 + 4;
+		
+		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
+		
+    	for (int s = 0; s < displayPowerStages; ++s) {
+    		displayPowerList [s] = GLAllocation.generateDisplayLists(1); 
+    		GL11.glNewList(displayPowerList [s], 4864 /*GL_COMPILE*/);
+    		    			
+    		float minSize = 0.005F;
+    		
+    		float unit = (size - minSize) / 2F / (float) displayPowerStages;
+    		
+    		block.minY = 0.5 - (minSize / 2F) - unit * s;
+    		block.maxY = 0.5 + (minSize / 2F) + unit * s;
+    		
+    		block.minZ = 0.5 - (minSize / 2F) - unit * s;
+    		block.maxZ = 0.5 + (minSize / 2F) + unit * s;
+    		
+    		block.minX = 0;    
+    		block.maxX = 0.5 + (minSize / 2F) + unit * s;
+    		    		
+    		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
+    				0, 0, false);
+
+    		GL11.glEndList();    		
+    	}
+    }
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
@@ -130,17 +166,57 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		TileGenericPipe pipe = ((TileGenericPipe) tileentity);
 		
-		if (pipe.pipe.transport instanceof PipeTransportportLiquids) {
+		if (pipe.pipe.transport instanceof PipeTransportLiquids) {
 			renderLiquids(pipe.pipe, x, y, z);
 		}
 
 		if (pipe.pipe.transport instanceof PipeTransportItems) {
 			renderSolids(pipe.pipe, x, y, z);
 		}
+		
+		if (pipe.pipe.transport instanceof PipeTransportPower) {
+			renderPower(pipe.pipe, x, y, z);
+		}
 	}
 	
+	private void renderPower(Pipe pipe, double x, double y, double z) {
+		PipeTransportPower pow = (PipeTransportPower) pipe.transport;
+		
+		GL11.glPushMatrix();
+		GL11.glDisable(2896 /*GL_LIGHTING*/);
+		
+		MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
+		
+		GL11.glTranslatef((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);
+		
+		for (int i = 0; i < 6; ++i) {
+			GL11.glPushMatrix();		
+			
+			GL11.glRotatef(angleY [i], 0, 1, 0);
+			GL11.glRotatef(angleZ [i], 0, 0, 1);
+			
+			if (pow.displayPower [i] >= 1.0) {
+				int stage = 0;
+				int maxPower = 100;
+				
+				if (pow.displayPower [i] > maxPower) {
+					stage = displayPowerStages - 1;
+				} else {
+					stage = (int) ((float) pow.displayPower [i] / (float) maxPower * (float) (displayPowerStages - 1));
+				}
+				
+				GL11.glCallList(displayPowerList [stage]);
+			} 
+			
+			GL11.glPopMatrix();		
+		}
+				
+		GL11.glEnable(2896 /*GL_LIGHTING*/);
+		GL11.glPopMatrix();				
+	}
+
 	private void renderLiquids(Pipe pipe, double x, double y, double z) {
-		PipeTransportportLiquids liq = (PipeTransportportLiquids) pipe.transport;
+		PipeTransportLiquids liq = (PipeTransportLiquids) pipe.transport;
 		
 		if (liq.getLiquidId() == 0) {
 			return;
@@ -148,7 +224,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		
 		Block block = Block.blocksList [liq.getLiquidId()];
 		
-		DisplayList d = getDisplayLists(liq.getLiquidId());
+		DisplayLiquidList d = getDisplayLiquidLists(liq.getLiquidId());
 		
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /*GL_LIGHTING*/);
@@ -193,7 +269,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 	
-	private void renderSide(float angleY, float angleZ, float sideToCenter, float centerToSide, DisplayList d) {
+	private void renderSide(float angleY, float angleZ, float sideToCenter, float centerToSide, DisplayLiquidList d) {
 		if (sideToCenter == 0 && centerToSide == 0) {
 			return;
 		}
@@ -204,29 +280,29 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glRotatef(angleZ, 0, 0, 1);
 		
 		if (sideToCenter + centerToSide >= BuildCraftCore.BUCKET_VOLUME / 4) {
-			GL11.glCallList(d.sideLiquidIn[displayStages - 1]);
+			GL11.glCallList(d.sideLiquidIn[displayLiquidStages - 1]);
 		} else {
 			if (sideToCenter > 0) {
 				GL11.glCallList(d.sideLiquidIn[(int) (sideToCenter
-						/ (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayStages - 1))]);
+						/ (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayLiquidStages - 1))]);
 			}
 
 			if (centerToSide > 0) {
-				GL11.glCallList(d.sideLiquidOut[(displayStages - 1)
-						- (int) (centerToSide / (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayStages - 1))]);
+				GL11.glCallList(d.sideLiquidOut[(displayLiquidStages - 1)
+						- (int) (centerToSide / (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayLiquidStages - 1))]);
 			}
 		}
 
 		GL11.glPopMatrix();
 	}
 	
-	private void renderCenter(Orientations lastFromOrientation, Orientations lastToOrientation, float centerIn, float centerOut, DisplayList d) {
+	private void renderCenter(Orientations lastFromOrientation, Orientations lastToOrientation, float centerIn, float centerOut, DisplayLiquidList d) {
 		GL11.glPushMatrix();					
 
 		if (centerIn + centerOut >= BuildCraftCore.BUCKET_VOLUME / 2) {
 			GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
 			GL11.glRotatef(angleZ [lastFromOrientation.ordinal()], 0, 0, 1);
-			GL11.glCallList(d.centerLiquidIn [displayStages * 2 - 1]);
+			GL11.glCallList(d.centerLiquidIn [displayLiquidStages * 2 - 1]);
 		} else {
 			if (centerIn > 0) {
 				GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
@@ -237,13 +313,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}			
 			
 			if (centerIn > 0) {
-				GL11.glCallList(d.centerLiquidIn[(int) (centerIn / (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayStages * 2 - 1))]);
+				GL11.glCallList(d.centerLiquidIn[(int) (centerIn / (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayLiquidStages * 2 - 1))]);
 			}
 
 			if (centerOut > 0) {
-				GL11.glCallList(d.centerLiquidOut[(displayStages * 2 - 1)
+				GL11.glCallList(d.centerLiquidOut[(displayLiquidStages * 2 - 1)
 						- (int) (centerOut
-								/ (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayStages * 2 - 1))]);
+								/ (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayLiquidStages * 2 - 1))]);
 			}
 		}
 

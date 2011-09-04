@@ -568,4 +568,5 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	public boolean manageSolids() {
 		return true;
 	}
+
 }

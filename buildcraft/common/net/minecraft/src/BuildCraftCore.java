@@ -20,6 +20,8 @@ import net.minecraft.src.forge.Property;
 
 public class BuildCraftCore {
 	
+	public static boolean debugMode = false;
+	
 	public static BuildCraftConfiguration mainConfiguration;
 	
 	public static TreeMap<BlockIndex, Packet230ModLoader> bufferedDescriptions = new TreeMap<BlockIndex, Packet230ModLoader>();
