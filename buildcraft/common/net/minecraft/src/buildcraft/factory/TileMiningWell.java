@@ -117,6 +117,16 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
 	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return true;
+	}
 	
 
 }

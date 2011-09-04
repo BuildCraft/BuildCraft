@@ -10,7 +10,7 @@ public class PipeLogic {
 	public int yCoord;
 	public int zCoord;
 	public World worldObj;
-	public TileGenericPipe tile;
+	public TileGenericPipe container;
 	
 	public void setPosition (int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
@@ -36,7 +36,7 @@ public class PipeLogic {
 	}
 
 	public void setTile(TileGenericPipe tile) {
-		this.tile = tile;
+		this.container = tile;
 	}
 
 }

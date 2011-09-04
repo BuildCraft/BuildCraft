@@ -1,14 +1,10 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.ILiquidContainer;
-import net.minecraft.src.buildcraft.core.IMachine;
 
 public class Pipe {
 	
@@ -16,7 +12,7 @@ public class Pipe {
 	public int yCoord;
 	public int zCoord;
 	public World worldObj;
-	public TileGenericPipe tile;
+	public TileGenericPipe container;
 	
 	public final PipeTransport transport;
 	public final PipeLogic logic;
@@ -44,7 +40,7 @@ public class Pipe {
 	}
 	
 	public void setTile (TileGenericPipe tile) {
-		this.tile = tile;
+		this.container = tile;
 		
 		transport.setTile (tile);
 		logic.setTile (tile);
@@ -64,11 +60,7 @@ public class Pipe {
 	}
 	
 	public boolean isPipeConnected(TileEntity tile) {	   
-    	return tile instanceof TileGenericPipe 
-    	    || tile instanceof IPipeEntry
-			|| tile instanceof IInventory
-			|| tile instanceof IMachine
-			|| tile instanceof ILiquidContainer;
+    	return transport.isPipeConnected (tile);
 	}
 	
 	public int getBlockTexture() {

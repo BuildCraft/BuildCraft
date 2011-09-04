@@ -17,6 +17,8 @@ import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.ILiquidContainer;
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -57,7 +59,7 @@ public class PipeTransportItems extends PipeTransport {
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
 					item, orientation));
 			
-			item.container = tile;
+			item.container = container;
 		}
 		
 		// Reajusting Ypos to make sure the object looks like sitting on the
@@ -273,7 +275,7 @@ public class PipeTransportItems extends PipeTransport {
 
 				EntityPassiveItem entity = new EntityPassiveItem (APIProxy.getWorld());
 				entity.readFromNBT(nbttagcompound2);
-				entity.container = tile;
+				entity.container = container;
 
 				EntityData data = new EntityData(entity,
 						Orientations.values()[nbttagcompound2.getInteger("orientation")]);
@@ -361,7 +363,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (item.container == null) {
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
 					item, orientation));
-			item.container = tile;
+			item.container = container;
 		} else {
 			travelingEntities.get(new Integer(item.entityId)).orientation = orientation;
 		}
@@ -406,5 +408,12 @@ public class PipeTransportItems extends PipeTransport {
 	
 	protected void neighborChange() {
 			
+	}
+	
+	public boolean isPipeConnected(TileEntity tile) {
+		return tile instanceof TileGenericPipe 
+    	    || tile instanceof IPipeEntry
+			|| tile instanceof IInventory
+			|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 }
