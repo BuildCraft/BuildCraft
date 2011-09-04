@@ -7,4 +7,5 @@ public interface IPowerReceptor {
 	public PowerProvider getPowerProvider ();
 	
 	public void doWork ();
+
 }

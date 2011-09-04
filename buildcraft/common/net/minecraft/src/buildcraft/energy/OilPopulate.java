@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.World;
 
@@ -33,6 +34,10 @@ public class OilPopulate {
 		
 		boolean mediumDeposit = world.rand.nextDouble() <= (0.1 / 100.0);
 		boolean largeDeposit = world.rand.nextDouble() <= (0.005 / 100.0);
+		
+		if (BuildCraftCore.debugMode && x == 0 && z == 0) {
+			largeDeposit = true;
+		}
 		
 		if (mediumDeposit || largeDeposit) {
 			// Generate a large cave deposit

@@ -27,7 +27,7 @@ import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class PipeTransportportLiquids extends PipeTransport implements ILiquidContainer {
+public class PipeTransportLiquids extends PipeTransport implements ILiquidContainer {
 
 	public static int flowRate = 20;
 
@@ -54,7 +54,7 @@ public class PipeTransportportLiquids extends PipeTransport implements ILiquidCo
 
 	private boolean blockNeighborChange = false;
 
-	public PipeTransportportLiquids() {
+	public PipeTransportLiquids() {
 		for (int j = 0; j < 6; ++j) {
 			sideToCenter[j] = 0;
 			centerToSide[j] = 0;

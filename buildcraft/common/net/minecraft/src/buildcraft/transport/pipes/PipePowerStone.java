@@ -13,7 +13,7 @@ public class PipePowerStone extends Pipe {
 	
 	@Override
 	public int getBlockTexture() {
-		return 7 * 16 + 6;
+		return 7 * 16 + 7;
 	}
 
 
