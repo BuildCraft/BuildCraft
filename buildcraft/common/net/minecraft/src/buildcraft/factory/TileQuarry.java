@@ -558,4 +558,14 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
 	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return true;
+	}
 }

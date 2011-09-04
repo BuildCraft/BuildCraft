@@ -11,27 +11,170 @@ import net.minecraft.src.RenderManager;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.RenderEntityBlock;
+import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
+import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems.EntityData;
 import net.minecraft.src.forge.ITextureProvider;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
+	
+	final static private int displayStages = 40;
+	
+	private class DisplayList {
+		public int [] sideLiquidIn = new int [displayStages];	
+		public int [] centerLiquidIn = new int [displayStages * 2];
+
+		public int [] sideLiquidOut = new int [displayStages];	
+		public int [] centerLiquidOut = new int [displayStages * 2];
+	}
+	
+	private DisplayList displayLists[] = new DisplayList[Block.blocksList.length];
+	
+	private final int [] angleY = {0, 0, 270, 90, 0, 180};
+	private final int [] angleZ = {90, 270, 0, 0, 0, 0};
+	
 	private RenderBlocks renderBlocks;
 
 	public RenderPipe() {
 		renderBlocks = new RenderBlocks();
 	}
+	
+    private DisplayList getDisplayLists(int liquidId) {
+    	if (displayLists [liquidId] != null) {
+    		return displayLists [liquidId];
+    	}
+    	
+    	DisplayList d = new DisplayList();
+    	displayLists [liquidId] = d;
+    	
+		BlockInterface block = new BlockInterface();
+		block.texture = Block.blocksList [liquidId].blockIndexInTexture;//12 * 16 + 13;
+		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
+		
+    	for (int s = 0; s < displayStages * 2; ++s) {
+    		if (s < displayStages) {
+        		d.sideLiquidIn [s] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.sideLiquidIn [s], 4864 /*GL_COMPILE*/);    
+        		
+    			block.minX = 0;
+    		} else {
+    			d.sideLiquidOut [s - displayStages] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.sideLiquidOut [s - displayStages], 4864 /*GL_COMPILE*/);    
+    			
+    			block.minX = (s - (float) displayStages) / ((float) displayStages) * size / 2F;
+    		}
+    		
+    		block.minY = Utils.pipeMinPos + 0.01;
+    		block.minZ = Utils.pipeMinPos + 0.01;
+
+    		if (s < displayStages) {
+    			block.maxX = s / ((float) displayStages - 1) * size / 2F;
+    		} else {
+    			block.maxX = size / 2F;
+    		}
+    				
+    		block.maxY = Utils.pipeMaxPos - 0.01;
+    		block.maxZ = Utils.pipeMaxPos - 0.01;    		
+
+    		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
+    				0, 0, false);
+
+    		GL11.glEndList();    		
+    	}
+        
+    	for (int s = 0; s < displayStages * 4; ++s) {
+    		if (s < displayStages * 2) {
+        		d.centerLiquidIn [s] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.centerLiquidIn [s], 4864 /*GL_COMPILE*/);
+        		
+    			block.minX = Utils.pipeMinPos + 0.01F;
+    		} else {
+        		d.centerLiquidOut [s - displayStages * 2] = GLAllocation.generateDisplayLists(1);
+        		GL11.glNewList(d.centerLiquidOut [s - displayStages * 2], 4864 /*GL_COMPILE*/);
+    			
+				block.minX = Utils.pipeMinPos + 0.01F
+						+ (s - (float) displayStages * 2F - 1) / ((float) displayStages * 2F - 1)
+						* size;
+    		}
+    		
+    		block.minY = Utils.pipeMinPos + 0.01F;
+    		block.minZ = Utils.pipeMinPos + 0.01F;
+    		
+    		if (s < displayStages * 2) {
+				block.maxX = Utils.pipeMaxPos - ((size - s
+				/ ((float) displayStages * 2F - 1) * size)) - 0.01;
+    		} else {
+    			block.maxX = Utils.pipeMaxPos - 0.01;
+    		}
+
+    		block.maxY = Utils.pipeMaxPos - 0.01;
+    		block.maxZ = Utils.pipeMaxPos - 0.01;
+
+    		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
+    				0, 0, false);
+
+    		GL11.glEndList();
+    	}
+    	
+		return d;
+    }
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
 			double z, float f) {
 
 		TileGenericPipe pipe = ((TileGenericPipe) tileentity);
+		
+		if (pipe.pipe.transport instanceof PipeTransportportLiquids) {
+			renderLiquids(pipe.pipe, x, y, z);
+		}
 
-		if (pipe.pipe.transport instanceof PipeTransport) {
+		if (pipe.pipe.transport instanceof PipeTransportItems) {
 			renderSolids(pipe.pipe, x, y, z);
 		}
+	}
+	
+	private void renderLiquids(Pipe pipe, double x, double y, double z) {
+		PipeTransportportLiquids liq = (PipeTransportportLiquids) pipe.transport;
+		
+		if (liq.getLiquidId() == 0) {
+			return;
+		}
+		
+		Block block = Block.blocksList [liq.getLiquidId()];
+		
+		DisplayList d = getDisplayLists(liq.getLiquidId());
+		
+		GL11.glPushMatrix();
+		GL11.glDisable(2896 /*GL_LIGHTING*/);
+				
+		if (block instanceof ITextureProvider) {
+			MinecraftForgeClient.bindTexture(((ITextureProvider) block)
+					.getTextureFile());
+		} else {
+			MinecraftForgeClient.bindTexture("/terrain.png");
+		}
+
+		GL11.glTranslatef((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);		
+				
+		for (int i = 0; i < 6; ++i) {
+			renderSide (angleY [i], angleZ [i], liq.getSideToCenter(i), liq.getCenterToSide(i), d);
+		}
+				
+		// CENTER
+
+		if (liq.getCenterIn () > 0 || liq.getCenterOut () > 0) {
+			renderCenter(liq.lastFromOrientation, liq.lastToOrientation,
+					liq.getCenterIn(), liq.getCenterOut(), d);
+		}
+	
+		GL11.glEnable(2896 /*GL_LIGHTING*/);
+		GL11.glPopMatrix();		
 	}
 
 	private void renderSolids(Pipe pipe, double x, double y, double z) {
@@ -47,6 +190,63 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		}
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
+		GL11.glPopMatrix();
+	}
+	
+	private void renderSide(float angleY, float angleZ, float sideToCenter, float centerToSide, DisplayList d) {
+		if (sideToCenter == 0 && centerToSide == 0) {
+			return;
+		}
+				
+		GL11.glPushMatrix();		
+		
+		GL11.glRotatef(angleY, 0, 1, 0);
+		GL11.glRotatef(angleZ, 0, 0, 1);
+		
+		if (sideToCenter + centerToSide >= BuildCraftCore.BUCKET_VOLUME / 4) {
+			GL11.glCallList(d.sideLiquidIn[displayStages - 1]);
+		} else {
+			if (sideToCenter > 0) {
+				GL11.glCallList(d.sideLiquidIn[(int) (sideToCenter
+						/ (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayStages - 1))]);
+			}
+
+			if (centerToSide > 0) {
+				GL11.glCallList(d.sideLiquidOut[(displayStages - 1)
+						- (int) (centerToSide / (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayStages - 1))]);
+			}
+		}
+
+		GL11.glPopMatrix();
+	}
+	
+	private void renderCenter(Orientations lastFromOrientation, Orientations lastToOrientation, float centerIn, float centerOut, DisplayList d) {
+		GL11.glPushMatrix();					
+
+		if (centerIn + centerOut >= BuildCraftCore.BUCKET_VOLUME / 2) {
+			GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
+			GL11.glRotatef(angleZ [lastFromOrientation.ordinal()], 0, 0, 1);
+			GL11.glCallList(d.centerLiquidIn [displayStages * 2 - 1]);
+		} else {
+			if (centerIn > 0) {
+				GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
+				GL11.glRotatef(angleZ [lastFromOrientation.ordinal()], 0, 0, 1);
+			} else {
+				GL11.glRotatef(angleY [lastToOrientation.reverse().ordinal()], 0, 1, 0);
+				GL11.glRotatef(angleZ [lastToOrientation.reverse().ordinal()], 0, 0, 1);
+			}			
+			
+			if (centerIn > 0) {
+				GL11.glCallList(d.centerLiquidIn[(int) (centerIn / (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayStages * 2 - 1))]);
+			}
+
+			if (centerOut > 0) {
+				GL11.glCallList(d.centerLiquidOut[(displayStages * 2 - 1)
+						- (int) (centerOut
+								/ (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayStages * 2 - 1))]);
+			}
+		}
+
 		GL11.glPopMatrix();
 	}
 

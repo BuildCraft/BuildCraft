@@ -16,6 +16,7 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityBlock;
+import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
@@ -45,79 +46,79 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void updateEntity () {
 		super.updateEntity();
 		
-//		if (!APIProxy.isClient(worldObj)) {
-//			if (tube.posY - aimY > 0.01) {
-//				tubeY = tube.posY - 0.01;
-//
-//				setTubePosition();			
-//
-//				if (APIProxy.isServerSide()) {
-//					sendNetworkUpdate();
-//				}
-//
-//				return;
-//			}
-//
-//			if (internalLiquid <= TilePipe.flowRate) {
-//				BlockIndex index = getNextIndexToPump(false);
-//
-//				if (isPumpableLiquid(index)) {
-//					int liquidToPump = Utils.liquidId(worldObj.getBlockId(
-//							index.i, index.j, index.k));
-//					
-//					if (internalLiquid == 0 || liquidId == liquidToPump) {
-//						liquidId = liquidToPump;
-//
-//						if (powerProvider.useEnergy(10, 10, true) == 10) {
-//							index = getNextIndexToPump(true);
-//							worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
-//							internalLiquid = internalLiquid += BuildCraftCore.BUCKET_VOLUME;
-//
-//							if (APIProxy.isServerSide()) {
-//								sendNetworkUpdate();
-//							}
-//						}
-//					}
-//				} else {
-//					if (worldObj.getWorldTime() % 100 == 0) {
-//						// TODO: improve that decision
-//
-//						initializePumpFromPosition(xCoord, aimY, zCoord);
-//
-//						if (getNextIndexToPump(false) == null) {
-//							for (int y = yCoord - 1; y > 0; --y) {
-//								if (isLiquid(new BlockIndex (xCoord, y, zCoord))) {
-//									aimY = y;
-//									return;
-//								} else if (worldObj.getBlockId(xCoord, y, zCoord) != 0) {
-//									return;
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		
-//		if (internalLiquid >= TilePipe.flowRate) {
-//			for (int i = 0; i < 6; ++i) {
-//				Position p = new Position(xCoord, yCoord, zCoord,
-//						Orientations.values()[i]);
-//				p.moveForwards(1);
-//
-//				TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
-//						(int) p.z);
-//
-//				if (tile instanceof TilePipe) {
-//					internalLiquid -= ((TilePipe) tile).fill(
-//							p.orientation.reverse(), TilePipe.flowRate, liquidId);
-//					
-//					if (internalLiquid < TilePipe.flowRate) {
-//						break;
-//					}
-//				}
-//			}
-//		}
+		if (!APIProxy.isClient(worldObj)) {
+			if (tube.posY - aimY > 0.01) {
+				tubeY = tube.posY - 0.01;
+
+				setTubePosition();			
+
+				if (APIProxy.isServerSide()) {
+					sendNetworkUpdate();
+				}
+
+				return;
+			}
+
+			if (internalLiquid <= 0) {
+				BlockIndex index = getNextIndexToPump(false);
+
+				if (isPumpableLiquid(index)) {
+					int liquidToPump = Utils.liquidId(worldObj.getBlockId(
+							index.i, index.j, index.k));
+					
+					if (internalLiquid == 0 || liquidId == liquidToPump) {
+						liquidId = liquidToPump;
+
+						if (powerProvider.useEnergy(10, 10, true) == 10) {
+							index = getNextIndexToPump(true);
+							worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+							internalLiquid = internalLiquid += BuildCraftCore.BUCKET_VOLUME;
+
+							if (APIProxy.isServerSide()) {
+								sendNetworkUpdate();
+							}
+						}
+					}
+				} else {
+					if (worldObj.getWorldTime() % 100 == 0) {
+						// TODO: improve that decision
+
+						initializePumpFromPosition(xCoord, aimY, zCoord);
+
+						if (getNextIndexToPump(false) == null) {
+							for (int y = yCoord - 1; y > 0; --y) {
+								if (isLiquid(new BlockIndex (xCoord, y, zCoord))) {
+									aimY = y;
+									return;
+								} else if (worldObj.getBlockId(xCoord, y, zCoord) != 0) {
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (internalLiquid >= 0) {
+			for (int i = 0; i < 6; ++i) {
+				Position p = new Position(xCoord, yCoord, zCoord,
+						Orientations.values()[i]);
+				p.moveForwards(1);
+
+				TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
+						(int) p.z);
+
+				if (tile instanceof ILiquidContainer) {
+					internalLiquid -= ((ILiquidContainer) tile).fill(
+							p.orientation.reverse(), internalLiquid, liquidId);
+					
+					if (internalLiquid <= 0) {
+						break;
+					}
+				}
+			}
+		}
 	}
 	
 	public void initialize () {
@@ -321,5 +322,15 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		if (tube != null) {
 			APIProxy.removeEntity(tube);
 		}
+	}
+
+	@Override
+	public boolean manageLiquids() {
+		return true;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return false;
 	}
 }

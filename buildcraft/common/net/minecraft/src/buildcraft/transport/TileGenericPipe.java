@@ -3,10 +3,12 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.ILiquidContainer;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor {
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer {
 	public Pipe pipe;
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -70,5 +72,50 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor {
 		if (pipe instanceof IPowerReceptor) {
 			((IPowerReceptor) pipe).doWork();
 		}		
+	}
+
+	@Override
+	public int fill(Orientations from, int quantity, int id) {
+		if (pipe.transport instanceof ILiquidContainer) {
+			return ((ILiquidContainer) pipe.transport).fill(from, quantity, id);
+		} else {
+			return 0;	
+		}		
+	}
+
+	@Override
+	public int empty(int quantityMax, boolean doEmpty) {
+		if (pipe.transport instanceof ILiquidContainer) {
+			return ((ILiquidContainer) pipe.transport).empty(quantityMax, doEmpty);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getLiquidQuantity() {
+		if (pipe.transport instanceof ILiquidContainer) {
+			return ((ILiquidContainer) pipe.transport).getLiquidQuantity();
+		} else {
+			return 0;	
+		}		
+	}
+
+	@Override
+	public int getCapacity() {
+		if (pipe.transport instanceof ILiquidContainer) {
+			return ((ILiquidContainer) pipe.transport).getCapacity();
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getLiquidId() {
+		if (pipe.transport instanceof ILiquidContainer) {
+			return ((ILiquidContainer) pipe.transport).getLiquidId();
+		} else {
+			return 0;
+		}
 	}
 }
