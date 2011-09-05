@@ -59,26 +59,19 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.bed, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.boat, 1));
 		} else {
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.quarryBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.autoWorkbenchBlock, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.woodenPipeBlock, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.stonePipeBlock, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.cobblestonePipeBlock, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.ironPipeBlock, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.goldenPipeBlock, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.obsidianPipeBlock, 64));
-//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.diamondPipeBlock, 64));			
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.fillerBlock, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.autoWorkbenchBlock, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.fillerBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.markerBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.builderBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateItem, 1));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.goldGearItem, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.ironGearItem, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.stoneGearItem, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.woodenGearItem, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.diamondGearItem, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.builderBlock, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateBlock, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateItem, 1));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.goldGearItem, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.ironGearItem, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.stoneGearItem, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.woodenGearItem, 64));
+//			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.diamondGearItem, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 0));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.engineBlock, 64, 2));
@@ -86,6 +79,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftCore.wrenchItem, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.pumpBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.tankBlock, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.refineryBlock, 64));
 			
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipeItemsWood, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipeItemsStone, 64));
@@ -94,6 +88,8 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipePowerStone, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipePowerGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipePowerSnow, 64));
+			
+			
 		}
 		
 		super.blockActivated(world, i, j, k, entityplayer);

@@ -175,5 +175,5 @@ public class PipeTransportPower extends PipeTransport {
 		step ();
 		nextPowerQuery [from.ordinal()] += i;		
 	}
-	
+
 }

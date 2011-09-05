@@ -8,6 +8,7 @@ import net.minecraft.src.buildcraft.factory.BlockMiningWell;
 import net.minecraft.src.buildcraft.factory.BlockPlainPipe;
 import net.minecraft.src.buildcraft.factory.BlockPump;
 import net.minecraft.src.buildcraft.factory.BlockQuarry;
+import net.minecraft.src.buildcraft.factory.BlockRefinery;
 import net.minecraft.src.buildcraft.factory.BlockTank;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
@@ -25,6 +26,7 @@ public class BuildCraftFactory {
 	public static BlockPlainPipe plainPipeBlock;
 	public static BlockPump pumpBlock;
 	public static BlockTank tankBlock;
+	public static BlockRefinery refineryBlock;
 	
 	public static int drillTexture;
 	
@@ -127,7 +129,12 @@ public class BuildCraftFactory {
 				});
 		CoreProxy.addName(pumpBlock.setBlockName("pumpBlock"),
 		"Pump");
-		ModLoader.RegisterBlock(pumpBlock);					
+		ModLoader.RegisterBlock(pumpBlock);	
+		
+		refineryBlock = new BlockRefinery(DefaultProps.REFINERY_ID);
+		CoreProxy.addName(refineryBlock.setBlockName("refineryBlock"),
+		"Refinery");
+		ModLoader.RegisterBlock(refineryBlock);
 		
 		ModLoader.RegisterTileEntity(TileQuarry.class, "Machine");		
 		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
