@@ -23,6 +23,8 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
 	
+	final static private int maxPower = 1000;
+	
 	final static private int displayLiquidStages = 40;
 	
 	private class DisplayLiquidList {
@@ -41,6 +43,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	final static private int displayPowerStages = 80;
 	
 	public int [] displayPowerList = new int [displayPowerStages];	
+	public double [] displayPowerLimits = new double [displayPowerStages];
 	
 	private RenderBlocks renderBlocks;
 
@@ -158,6 +161,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
     		GL11.glEndList();    		
     	}
+    	
+    	for (int i = 0; i < displayPowerStages; ++i) {
+			displayPowerLimits[displayPowerStages - i - 1] = maxPower
+					- Math.sqrt(maxPower * maxPower / (displayPowerStages - 1)
+							* i);
+    	}
     }
 
 	@Override
@@ -197,12 +206,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			
 			if (pow.displayPower [i] >= 1.0) {
 				int stage = 0;
-				int maxPower = 100;
 				
-				if (pow.displayPower [i] > maxPower) {
-					stage = displayPowerStages - 1;
-				} else {
-					stage = (int) ((float) pow.displayPower [i] / (float) maxPower * (float) (displayPowerStages - 1));
+				for ( ; stage < displayPowerStages; ++stage) {
+					if (displayPowerLimits [stage] > pow.displayPower [i]) {
+						break;
+					}
 				}
 				
 				GL11.glCallList(displayPowerList [stage]);
