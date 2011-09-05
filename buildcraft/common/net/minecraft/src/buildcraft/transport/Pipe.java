@@ -83,5 +83,5 @@ public class Pipe {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		transport.readFromNBT(nbttagcompound);
 		logic.readFromNBT(nbttagcompound);
-	}
+	}	
 }

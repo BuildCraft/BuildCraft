@@ -9,9 +9,12 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
 import net.minecraft.src.buildcraft.factory.RenderMiningWell;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
+import net.minecraft.src.buildcraft.factory.RenderRefinery;
 import net.minecraft.src.buildcraft.factory.RenderTank;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
+import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.buildcraft.factory.TileTank;
+import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 
 public class mod_BuildCraftFactory extends BaseModMp {		
 	
@@ -28,6 +31,13 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		.RegisterTileEntity(TileTank.class,
 				"net.minecraft.src.buildcraft.factory.TileTank",
 				new RenderTank());
+		
+		ModLoader.RegisterTileEntity(TileRefinery.class,
+				"net.minecraft.src.buildcraft.factory.Refinery",
+				new RenderRefinery());
+		
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
+				BuildCraftFactory.refineryBlock, 0), new RenderRefinery());	
 		
 		instance = this;
 	}

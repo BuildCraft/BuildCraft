@@ -32,6 +32,8 @@ public class DefaultProps {
     public static int OIL_STILL_ID        = 163;
     public static int PUMP_ID             = 164;
     public static int TANK_ID             = 165;
+    public static int GENERIC_PIPE_ID     = 166;
+    public static int REFINERY_ID         = 167;
 	
 	public static boolean CURRENT_CONTINUOUS   = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;

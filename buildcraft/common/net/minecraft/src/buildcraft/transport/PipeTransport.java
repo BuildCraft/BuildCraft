@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.ILiquidContainer;
 
 public class PipeTransport {
 
