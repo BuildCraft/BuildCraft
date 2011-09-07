@@ -33,6 +33,8 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipeItemsStone.shiftedIndex, this);
 		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeLiquidsWood.shiftedIndex, this);
+		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipeLiquidsStone.shiftedIndex, this);
 		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipePowerWood.shiftedIndex, this);

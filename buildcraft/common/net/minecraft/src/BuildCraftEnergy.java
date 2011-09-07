@@ -11,6 +11,7 @@ import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
 import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
+import net.minecraft.src.buildcraft.energy.ItemFuel;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
 import net.minecraft.src.forge.Configuration;
@@ -27,6 +28,8 @@ public class BuildCraftEnergy {
 	public static Block oilMoving;
 	public static Block oilStill;
 	public static Item bucketOil;
+	
+	public static Item fuel;
 	
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	
@@ -101,6 +104,8 @@ public class BuildCraftEnergy {
 		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value)))
 				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketOil, "Oil Bucket");
+		
+		fuel = new ItemFuel (DefaultProps.FUEL_ID);
 	}
 
 	public static void generateSurface(World world, Random random, int i, int j) {

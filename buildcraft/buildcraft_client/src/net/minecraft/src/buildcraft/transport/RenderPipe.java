@@ -1,10 +1,13 @@
 package net.minecraft.src.buildcraft.transport;
 
+import java.util.HashMap;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.GLAllocation;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderManager;
@@ -35,7 +38,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		public int [] centerLiquidOut = new int [displayLiquidStages * 2];
 	}
 	
-	private DisplayLiquidList displayLiquidLists[] = new DisplayLiquidList[Block.blocksList.length];
+	private HashMap<Integer, DisplayLiquidList> displayLiquidLists = new HashMap<Integer, DisplayLiquidList>();
 	
 	private final int [] angleY = {0, 0, 270, 90, 0, 180};
 	private final int [] angleZ = {90, 270, 0, 0, 0, 0};
@@ -54,15 +57,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	}
 	
     private DisplayLiquidList getDisplayLiquidLists(int liquidId) {
-    	if (displayLiquidLists [liquidId] != null) {
-    		return displayLiquidLists [liquidId];
+    	if (displayLiquidLists.containsKey (liquidId)) {
+    		return displayLiquidLists.get(liquidId);
     	}
     	
     	DisplayLiquidList d = new DisplayLiquidList();
-    	displayLiquidLists [liquidId] = d;
+    	displayLiquidLists.put(liquidId, d);
     	
 		BlockInterface block = new BlockInterface();
-		block.texture = Block.blocksList [liquidId].blockIndexInTexture;//12 * 16 + 13;
+		if (liquidId < Block.blocksList.length) {
+			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
+		} else {
+			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
+		}
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 		
     	for (int s = 0; s < displayLiquidStages * 2; ++s) {
@@ -226,19 +233,27 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private void renderLiquids(Pipe pipe, double x, double y, double z) {
 		PipeTransportLiquids liq = (PipeTransportLiquids) pipe.transport;
 		
-		if (liq.getLiquidId() == 0) {
+		int liquidId = liq.getLiquidId();
+		
+		if (liquidId == 0) {
 			return;
 		}
 		
-		Block block = Block.blocksList [liq.getLiquidId()];
+		Object o = null;
+		
+		if (liquidId < Block.blocksList.length) {
+			o = Block.blocksList [liq.getLiquidId()];
+		} else {
+			o = Item.itemsList [liquidId];
+		}
 		
 		DisplayLiquidList d = getDisplayLiquidLists(liq.getLiquidId());
 		
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /*GL_LIGHTING*/);
 				
-		if (block instanceof ITextureProvider) {
-			MinecraftForgeClient.bindTexture(((ITextureProvider) block)
+		if (o instanceof ITextureProvider) {
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
 					.getTextureFile());
 		} else {
 			MinecraftForgeClient.bindTexture("/terrain.png");

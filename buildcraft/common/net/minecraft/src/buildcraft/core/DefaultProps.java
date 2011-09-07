@@ -10,6 +10,7 @@ public class DefaultProps {
 	public static int TEMPLATE_ITEM_ID = 3805;
 	public static int WRENCH_ID        = 3806;
 	public static int BUCKET_OIL_ID    = 3807;
+	public static int FUEL_ID          = 3808;
 	
 	public static int WOODEN_PIPE_ID      = 145;
 	public static int STONE_PIPE_ID       = 146;

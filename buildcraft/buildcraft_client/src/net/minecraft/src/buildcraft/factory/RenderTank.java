@@ -1,9 +1,12 @@
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.HashMap;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.GLAllocation;
+import net.minecraft.src.Item;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -16,19 +19,23 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	final static private int displayStages = 100;
 	
-	private int [][] stage = new int [Block.blocksList.length][];	
+	private HashMap<Integer, int []> stage = new HashMap<Integer, int []> ();	
 	
     private int [] getDisplayLists(int liquidId) {
     	
-    	if (stage [liquidId] != null) {
-    		return stage [liquidId];
+    	if (stage.containsKey(liquidId)) {
+    		return stage.get(liquidId);
     	}
     	
     	int [] d = new int [displayStages];
-    	stage [liquidId] = d;
-    	
+    	stage.put(liquidId, d);
+		
 		BlockInterface block = new BlockInterface();
-		block.texture = Block.blocksList [liquidId].blockIndexInTexture;
+		if (liquidId < Block.blocksList.length) {
+			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
+		} else {
+			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
+		}
 		
     	for (int s = 0; s < displayStages; ++s) {
     		d [s] = GLAllocation.generateDisplayLists(1);
@@ -57,7 +64,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		
 		TileTank tank = ((TileTank) tileentity);
 		
-		if (tank.getLiquidQuantity() == 0 || tank.getLiquidId() == 0) {
+		int liquidId = tank.getLiquidId();
+		
+		if (tank.getLiquidQuantity() == 0 || liquidId == 0) {
 			return;
 		}
 		
@@ -66,10 +75,16 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /*GL_LIGHTING*/);
 		
-		Block block = Block.blocksList [tank.getLiquidId()];
+		Object o = null;
 		
-		if (block instanceof ITextureProvider) {
-			MinecraftForgeClient.bindTexture(((ITextureProvider) block)
+		if (liquidId < Block.blocksList.length) {
+			o = Block.blocksList [liquidId];
+		} else {
+			o = Item.itemsList [liquidId];
+		}
+		
+		if (o instanceof ITextureProvider) {
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
 					.getTextureFile());
 		} else {
 			MinecraftForgeClient.bindTexture("/terrain.png");

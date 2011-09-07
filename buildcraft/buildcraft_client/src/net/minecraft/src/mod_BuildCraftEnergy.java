@@ -10,6 +10,7 @@ import net.minecraft.src.buildcraft.energy.EngineStone;
 import net.minecraft.src.buildcraft.energy.GuiCombustionEngine;
 import net.minecraft.src.buildcraft.energy.GuiSteamEngine;
 import net.minecraft.src.buildcraft.energy.RenderEngine;
+import net.minecraft.src.buildcraft.energy.TextureFuelFX;
 import net.minecraft.src.buildcraft.energy.TextureOilFX;
 import net.minecraft.src.buildcraft.energy.TextureOilFlowFX;
 import net.minecraft.src.buildcraft.energy.TileEngine;
@@ -33,6 +34,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 				"/net/minecraft/src/buildcraft/energy/gui/base_iron.png"));
 		
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
+		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureFuelFX());
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
 		
 		ModLoader.RegisterTileEntity(TileEngine.class,
