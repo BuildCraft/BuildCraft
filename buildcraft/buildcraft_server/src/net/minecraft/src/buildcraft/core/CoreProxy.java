@@ -57,9 +57,4 @@ public class CoreProxy {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	public static boolean isDamageable (Item item) {
-		return item.func_25005_e();
-	}
-	
 }

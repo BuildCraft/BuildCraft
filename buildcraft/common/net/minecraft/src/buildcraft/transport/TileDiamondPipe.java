@@ -113,7 +113,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 
 				if (stack != null && stack.itemID == item.item.itemID)
 				{
-					if (CoreProxy.isDamageable(Item.itemsList[item.item.itemID])) {
+					if (Item.itemsList[item.item.itemID].isDamageable()) {
 						filteredOrientations.add(dir);
 					} else if (stack.getItemDamage() == item.item
 							.getItemDamage()) {
