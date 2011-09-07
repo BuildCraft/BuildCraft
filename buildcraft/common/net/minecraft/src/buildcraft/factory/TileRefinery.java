@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -56,8 +57,7 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 
 	@Override
 	public int empty(int quantityMax, boolean doEmpty) {
-		// TODO Auto-generated method stub
-		return 0;
+		return quantityMax;
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 
 	@Override
 	public int getLiquidId() {
-		return 0;
+		return BuildCraftEnergy.fuel.shiftedIndex;
 	}
 
 	@Override

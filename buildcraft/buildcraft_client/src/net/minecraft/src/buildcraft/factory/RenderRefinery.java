@@ -1,11 +1,15 @@
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.HashMap;
+
 import javax.rmi.CORBA.Tie;
 
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.GLAllocation;
+import net.minecraft.src.Item;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
@@ -44,19 +48,24 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	
 final static private int displayStages = 100;
 	
-	private int [][] stage = new int [Block.blocksList.length][];	
+	private HashMap <Integer, int []> stage = new HashMap <Integer, int []> ();	
 	
     private int [] getDisplayLists(int liquidId) {
     	
-    	if (stage [liquidId] != null) {
-    		return stage [liquidId];
+    	if (stage.containsKey(liquidId)) {
+    		return stage.get(liquidId);
     	}
     	
     	int [] d = new int [displayStages];
-    	stage [liquidId] = d;
+    	stage.put(liquidId, d);
     	
 		BlockInterface block = new BlockInterface();
-		block.texture = Block.blocksList [liquidId].blockIndexInTexture;
+		
+		if (liquidId < Block.blocksList.length) {
+			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
+		} else {
+			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
+		}
 		
     	for (int s = 0; s < displayStages; ++s) {
     		d [s] = GLAllocation.generateDisplayLists(1);
@@ -132,8 +141,6 @@ final static private int displayStages = 100;
 		magnet.render(factor);
 		GL11.glTranslatef(0, 0, -12F * factor);
 		
-		
-		
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
@@ -151,9 +158,10 @@ final static private int displayStages = 100;
 					/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);	
 		}
 		GL11.glTranslatef(4F * factor, 0, -4F * factor);
-		
-		GL11.glTranslatef(4F * factor, 0, 0);
 
+		GL11.glTranslatef(4F * factor, 0, 0);
+		setTextureFor(BuildCraftEnergy.fuel.shiftedIndex);
+		GL11.glCallList(getDisplayLists(BuildCraftEnergy.fuel.shiftedIndex)[20]);
 		GL11.glTranslatef(-4F * factor, 0, 0);
 		
 		
@@ -163,10 +171,16 @@ final static private int displayStages = 100;
 	}	
 	
 	public void setTextureFor(int liquidId) {
-		Block block = Block.blocksList [liquidId];
+		Object o = null;
+		
+		if (liquidId < Block.blocksList.length) {
+			o = Block.blocksList [liquidId];
+		} else {
+			o = Item.itemsList [liquidId];
+		}
 
-		if (block instanceof ITextureProvider) {
-			MinecraftForgeClient.bindTexture(((ITextureProvider) block)
+		if (o instanceof ITextureProvider) {
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
 					.getTextureFile());
 		} else {
 			MinecraftForgeClient.bindTexture("/terrain.png");

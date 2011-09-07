@@ -6,16 +6,16 @@ import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.TextureFX;
 
-public class TextureOilFX extends TextureFX
+public class TextureFuelFX extends TextureFX
 {
 	
 	private int int_numPixels = 256;
 	private int int_size = 16;
 	private int int_sizeMinus1 = 0xF;
 	
-    public TextureOilFX()
+    public TextureFuelFX()
     {
-        super(BuildCraftEnergy.oilMoving.blockIndexInTexture);
+        super(BuildCraftEnergy.fuel.getIconFromDamage(0));
         
 		try {
 			Class sizeClass = Class
@@ -38,11 +38,8 @@ public class TextureOilFX extends TextureFX
     }
     
 	public void bindImage(RenderEngine renderengine) {
-		GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/ /* GL_TEXTURE_2D */,
-//				 ModLoader
-//					.getMinecraftInstance().renderEngine.getTexture(BuildCraftCore.customBuildCraftTexture)
-				renderengine.getTexture(BuildCraftCore.customBuildCraftTexture)
-				);
+		GL11.glBindTexture(3553 /* GL_TEXTURE_2D *//* GL_TEXTURE_2D */,
+				renderengine.getTexture(BuildCraftCore.customBuildCraftSprites));
 	}
 
     public void onTick()
@@ -98,22 +95,22 @@ public class TextureOilFX extends TextureFX
                 f1 = 0.0F;
             }
             float f2 = f1 * f1;
-            int l1 = (int)(10F + f2 * 21F);
-            int j2 = (int)(50F + f2 * 64F);
-            int k2 = 255;
+            int r = (int)(150F + f2 * 100F);
+            int g = (int)(150F + f2 * 100F);
+            int b = (int)(0F + f2 * 10F);
             if(anaglyphEnabled)
             {
-                int i3 = (l1 * 30 + j2 * 59 + k2 * 11) / 100;
-                int j3 = (l1 * 30 + j2 * 70) / 100;
-                int k3 = (l1 * 30 + k2 * 70) / 100;
-                l1 = i3;
-                j2 = j3;
-                k2 = k3;
+                int i3 = (r * 30 + g * 59 + b * 11) / 100;
+                int j3 = (r * 30 + g * 70) / 100;
+                int k3 = (r * 30 + b * 70) / 100;
+                r = i3;
+                g = j3;
+                b = k3;
             }
             
-            imageData[i1 * 4 + 0] = (byte)l1;
-            imageData[i1 * 4 + 1] = (byte)l1;
-            imageData[i1 * 4 + 2] = (byte)l1;
+            imageData[i1 * 4 + 0] = (byte)r;
+            imageData[i1 * 4 + 1] = (byte)g;
+            imageData[i1 * 4 + 2] = (byte)b;
             imageData[i1 * 4 + 3] = /*(byte)l2*/(byte)255;
         }
 
