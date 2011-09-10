@@ -60,7 +60,7 @@ public class Pipe {
 	}
 	
 	public boolean isPipeConnected(TileEntity tile) {	   
-    	return transport.isPipeConnected (tile);
+    	return logic.isPipeConnected(tile) && transport.isPipeConnected (tile);
 	}
 	
 	public int getBlockTexture() {

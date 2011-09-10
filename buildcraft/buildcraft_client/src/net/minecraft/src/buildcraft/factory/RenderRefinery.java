@@ -109,6 +109,7 @@ final static private int displayStages = 100;
 			
 		int liquid1 = 0, liquid2 = 0, liquid3 = 0;
 		int qty1 = 0, qty2 = 0, qty3 = 0;
+		float anim = 0;
 		
 		if (tile != null) {
 			liquid1 = tile.slot1.liquidId;
@@ -116,6 +117,11 @@ final static private int displayStages = 100;
 			
 			liquid2 = tile.slot2.liquidId;
 			qty2 = tile.slot2.quantity;
+			
+			liquid3 = tile.result.liquidId;
+			qty3 = tile.result.quantity;
+			
+			anim = tile.getAnimationStage();
 		}
 		
 		GL11.glPushMatrix();
@@ -135,11 +141,27 @@ final static private int displayStages = 100;
 		GL11.glTranslatef(4F * factor, 0, 0);
 		tank.render(factor);
 		GL11.glTranslatef(-4F * factor, 0, 0);
+			
+		float trans1, trans2;
 		
+		if (anim <= 100) {
+			trans1 = 12F * factor * anim / 100F;
+			trans2 = 0;
+		} else if (anim <= 200) {
+			trans1 = 12F * factor - (12F * factor * (anim - 100F) / 100F);
+			trans2 = 12F * factor * (anim - 100F) / 100F;
+		} else {
+			trans1 = 12F * factor * (anim - 200F) / 100F;
+			trans2 = 12F * factor - (12F * factor * (anim - 200F) / 100F);			
+		}
+		
+		GL11.glTranslatef(0, trans1, 0);	
 		magnet.render(factor);
-		GL11.glTranslatef(0, 0, 12F * factor);
+		GL11.glTranslatef(0, -trans1, 0);
+		
+		GL11.glTranslatef(0, trans2, 12F * factor);		
 		magnet.render(factor);
-		GL11.glTranslatef(0, 0, -12F * factor);
+		GL11.glTranslatef(0, -trans2, -12F * factor);
 		
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		
@@ -160,8 +182,11 @@ final static private int displayStages = 100;
 		GL11.glTranslatef(4F * factor, 0, -4F * factor);
 
 		GL11.glTranslatef(4F * factor, 0, 0);
-		setTextureFor(BuildCraftEnergy.fuel.shiftedIndex);
-		GL11.glCallList(getDisplayLists(BuildCraftEnergy.fuel.shiftedIndex)[20]);
+		if (qty3 > 0) {
+			setTextureFor(liquid3);
+			GL11.glCallList(getDisplayLists(liquid3)[(int) ((float) qty3
+					/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);	
+		}
 		GL11.glTranslatef(-4F * factor, 0, 0);
 		
 		

@@ -134,6 +134,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 				ILiquidContainer container = (ILiquidContainer) tile;
 				
 				int flowRate = ((PipeTransportLiquids) transport).flowRate;
+				
 				int extracted = container.empty(liquidToExtract > flowRate ? flowRate
 						: liquidToExtract, false); 
 				
@@ -142,9 +143,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 				
 				((PipeTransportLiquids) transport).liquidId = container.getLiquidId();
 				
-				container.empty(extracted, true);
-				
-				
+				container.empty(extracted, true);								
 				
 				liquidToExtract -= extracted;
 			}
