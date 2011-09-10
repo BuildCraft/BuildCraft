@@ -177,6 +177,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 	
 	private void initializePumpFromPosition (int x, int y, int z) {
+		int liquidId = 0;
+		
 		TreeSet <BlockIndex> markedBlocks = new TreeSet <BlockIndex> ();
 		TreeSet <BlockIndex> lastFound = new TreeSet <BlockIndex> ();
 		
@@ -186,17 +188,23 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 		
 		LinkedList<BlockIndex> pumpList = blocksToPump.get(y);
 		
-		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList);
+		liquidId = worldObj.getBlockId(x, y, z);
+		
+		if (!isLiquid(new BlockIndex(x, y, z))) {
+			return;
+		}
+		
+		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList, liquidId);
 		
 		while (lastFound.size() > 0) {
 			TreeSet <BlockIndex> visitIteration = new TreeSet<BlockIndex> (lastFound);
 			lastFound.clear();
 			
 			for (BlockIndex index : visitIteration) {								
-				addToPumpIfLiquid(new BlockIndex(index.i + 1, index.j, index.k), markedBlocks, lastFound, pumpList);
-				addToPumpIfLiquid(new BlockIndex(index.i - 1, index.j, index.k), markedBlocks, lastFound, pumpList);
-				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k + 1), markedBlocks, lastFound, pumpList);
-				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k - 1), markedBlocks, lastFound, pumpList);								
+				addToPumpIfLiquid(new BlockIndex(index.i + 1, index.j, index.k), markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i - 1, index.j, index.k), markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k + 1), markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k - 1), markedBlocks, lastFound, pumpList, liquidId);								
 				
 				if (!blocksToPump.containsKey(index.j + 1)) {
 					blocksToPump.put(index.j + 1, new LinkedList <BlockIndex> ());
@@ -204,14 +212,18 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				
 				pumpList = blocksToPump.get(index.j + 1);
 				
-				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList, liquidId);
 			}
 		}
 	}
 	
 	public void addToPumpIfLiquid(BlockIndex index,
 			TreeSet<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound,
-			LinkedList<BlockIndex> pumpList) {						
+			LinkedList<BlockIndex> pumpList, int liquidId) {						
+		
+		if (liquidId != worldObj.getBlockId(index.i, index.j, index.k)) {
+			return;
+		}
 		
 		if (!markedBlocks.contains(index)) {
 			markedBlocks.add(index);

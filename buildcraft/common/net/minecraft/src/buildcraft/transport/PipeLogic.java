@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 public class PipeLogic {
@@ -37,6 +38,10 @@ public class PipeLogic {
 
 	public void setTile(TileGenericPipe tile) {
 		this.container = tile;
+	}
+
+	public boolean isPipeConnected(TileEntity tile) {
+		return true;
 	}
 
 }

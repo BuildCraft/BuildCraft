@@ -14,6 +14,8 @@ import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.ItemFuel;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
+import net.minecraft.src.buildcraft.factory.RefineryRecipe;
+import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
@@ -106,6 +108,9 @@ public class BuildCraftEnergy {
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 		
 		fuel = new ItemFuel (DefaultProps.FUEL_ID);
+		
+		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
+				10, fuel.shiftedIndex, 1, 1));
 	}
 
 	public static void generateSurface(World world, Random random, int i, int j) {
