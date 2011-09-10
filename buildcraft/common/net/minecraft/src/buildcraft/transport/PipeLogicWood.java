@@ -92,4 +92,32 @@ public class PipeLogicWood extends PipeLogic {
 					&& super.isPipeConnected(tile);
 		}
 	}
+	
+	@Override
+	public void initialize () {
+		super.initialize();
+		
+		switchSource();
+	}
+	
+	@Override
+	public void onNeighborBlockChange () {		
+		super.onNeighborBlockChange();
+		
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		
+		if (meta > 5) {
+			switchSource();
+		} else {
+			Position pos = new Position(xCoord, yCoord, zCoord,
+					Orientations.values()[meta]);		
+			pos.moveForwards(1);
+
+			if (!(worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
+					(int) pos.z) instanceof IInventory)) {
+
+				switchSource();
+			}
+		}	
+	}
 }

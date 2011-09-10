@@ -260,10 +260,12 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 			slot2.readFromNBT(nbttagcompound.getCompoundTag("slot2"));
 			result.readFromNBT(nbttagcompound.getCompoundTag("result"));
 		}
-		
-		
+				
 		animationStage = nbttagcompound.getInteger("animationStage");	
 		animationSpeed = nbttagcompound.getFloat("animationSpeed");
+		
+		BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
+		powerProvider.configure(20, 25, 25, 25, 1000);
     }
 
 	@Override
@@ -284,16 +286,17 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 		
 		nbttagcompound.setInteger("animationStage", animationStage);
 		nbttagcompound.setFloat("animationSpeed", animationSpeed);
+		BuildCraftCore.powerFramework.savePowerProvider(this, nbttagcompound);
 	}
 	
 	public int getAnimationStage () {
 		return animationStage ;
 	}
 	
-	private float animationSpeed = 1;
+	public float animationSpeed = 1;
 	
 	public void increaseAnimation () {
-		if (animationSpeed <= 2) {
+		if (animationSpeed < 2) {
 			animationSpeed = 2;
 		} else if (animationSpeed <= 5) {
 			animationSpeed += 0.1;

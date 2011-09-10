@@ -1,9 +1,7 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.buildcraft.transport.Pipe;
-import net.minecraft.src.buildcraft.transport.PipeLogic;
 import net.minecraft.src.buildcraft.transport.PipeLogicGold;
-import net.minecraft.src.buildcraft.transport.PipeTransport;
 import net.minecraft.src.buildcraft.transport.PipeTransportPower;
 
 public class PipePowerGold extends Pipe {

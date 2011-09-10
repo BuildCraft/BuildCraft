@@ -104,6 +104,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 			float minSize = Utils.pipeMinPos;
 			float maxSize = Utils.pipeMaxPos;
 
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.Unknown);
 			block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize,
 					maxSize);
 			renderblocks.renderStandardBlock(block, i, j, k);

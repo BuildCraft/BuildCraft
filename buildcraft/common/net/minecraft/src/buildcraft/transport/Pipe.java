@@ -52,11 +52,13 @@ public class Pipe {
 	}
 	
 	public void onBlockPlaced() {
-		
+		logic.onBlockPlaced();
+		transport.onBlockPlaced ();
 	}
 	
 	public void onNeighborBlockChange() {
-		
+		logic.onNeighborBlockChange ();
+		transport.onNeighborBlockChange ();
 	}
 	
 	public boolean isPipeConnected(TileEntity tile) {	   
@@ -83,5 +85,18 @@ public class Pipe {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		transport.readFromNBT(nbttagcompound);
 		logic.readFromNBT(nbttagcompound);
-	}	
+	}
+
+	public void initialize () {
+		transport.initialize ();
+		logic.initialize ();
+	}
+
+	public boolean inputOpen(Orientations from) {
+		return transport.inputOpen (from) && logic.inputOpen (from);
+	}
+
+	public boolean outputOpen(Orientations to) {
+		return transport.outputOpen (to) && logic.outputOpen (to);
+	}
 }

@@ -10,6 +10,8 @@ import net.minecraft.src.buildcraft.core.ILiquidContainer;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer {
 	public Pipe pipe;
+	private boolean blockNeighborChange = false;
+	private boolean initialized = false;
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
@@ -24,6 +26,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		super.readFromNBT(nbttagcompound);
 		
 		pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, nbttagcompound.getInteger("pipeId"));
+		pipe.setTile(this);
 		pipe.readFromNBT(nbttagcompound);	
 	}
 		
@@ -33,6 +36,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		
 		if (pipe == null) {
 			pipe = BlockGenericPipe.pipeBuffer.get(new BlockIndex(xCoord, yCoord, zCoord));
+			pipe.setTile(this);
 		}
 		
 		pipe.setWorld(worldObj);
@@ -40,6 +44,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	
 	@Override
 	public void updateEntity () {
+		if (!initialized) {
+			pipe.initialize();
+		}
+		
+		if (blockNeighborChange) {
+			pipe.onNeighborBlockChange();
+			blockNeighborChange = false;
+		}
+		
 		PowerProvider provider = getPowerProvider();
 		
 		if (provider != null) {			
@@ -118,4 +131,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			return 0;
 		}
 	}
+	
+	public void scheduleNeighborChange() {
+		blockNeighborChange  = true;
+	}
+
 }
