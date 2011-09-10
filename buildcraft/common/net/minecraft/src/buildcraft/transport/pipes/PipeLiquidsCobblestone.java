@@ -4,17 +4,14 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicStone;
 import net.minecraft.src.buildcraft.transport.PipeTransportLiquids;
 
-public class PipeLiquidsStone extends Pipe {
+public class PipeLiquidsCobblestone extends Pipe {
 
-	public PipeLiquidsStone(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicStone(), itemID);
-		
-		((PipeTransportLiquids) transport).flowRate = 40;
-
+	public PipeLiquidsCobblestone(int itemID) {
+		super(new PipeTransportLiquids(), new PipeLogicStone(), itemID);		
 	}
 
 	@Override
 	public int getBlockTexture() {
-		return 7 * 16 + 2;
+		return 7 * 16 + 1;
 	}
 }

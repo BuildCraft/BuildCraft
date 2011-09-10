@@ -14,7 +14,7 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class PipeTransportLiquids extends PipeTransport implements ILiquidContainer {
 
-	public static int flowRate = 20;
+	public int flowRate = 20;
 
 	public @TileNetworkData(staticSize = 6)
 	int[] sideToCenter = new int[6];

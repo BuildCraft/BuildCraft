@@ -12,6 +12,8 @@ import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsWood;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsCobblestone;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsIron;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
@@ -51,8 +53,10 @@ public class BuildCraftTransport {
 	public static Item pipeItemsStone;
 	
 	public static Item pipeLiquidsWood;
+	public static Item pipeLiquidsCobblestone;
 	public static Item pipeLiquidsStone;
 	public static Item pipeLiquidsIron;
+	public static Item pipeLiquidsGold;
 		
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
@@ -180,10 +184,10 @@ public class BuildCraftTransport {
 		// obsidian 4056
 		
 		pipeLiquidsWood = BlockGenericPipe.registerPipe (4057, PipeLiquidsWood.class);
-		// cobblestone 4058
+		pipeLiquidsCobblestone = BlockGenericPipe.registerPipe (4058, PipeLiquidsCobblestone.class);
 		pipeLiquidsStone = BlockGenericPipe.registerPipe (4059, PipeLiquidsStone.class);
 		pipeLiquidsIron = BlockGenericPipe.registerPipe (4060, PipeLiquidsIron.class);
-		// gold 4061
+		pipeLiquidsGold = BlockGenericPipe.registerPipe (4061, PipeLiquidsGold.class);
 		// diamond 4062
 		
 		pipePowerWood = BlockGenericPipe.registerPipe (4063, PipePowerWood.class);
