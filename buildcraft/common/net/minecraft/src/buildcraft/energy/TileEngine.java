@@ -2,14 +2,10 @@ package net.minecraft.src.buildcraft.energy;
 
 import java.util.HashMap;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;

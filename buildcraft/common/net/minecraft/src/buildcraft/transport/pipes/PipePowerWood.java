@@ -1,7 +1,6 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;

@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
@@ -18,7 +17,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
-import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
@@ -43,12 +41,16 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public void prepareTextureFor(Orientations connection) {
-		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		if (metadata == connection.ordinal()) {
-			nextTexture = plainTexture;
-		} else {
+		if (connection == Orientations.Unknown) {
 			nextTexture = baseTexture;
+		} else {
+			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+			if (metadata == connection.ordinal()) {
+				nextTexture = plainTexture;
+			} else {
+				nextTexture = baseTexture;
+			}
 		}
 
 	}

@@ -7,7 +7,6 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
@@ -35,10 +34,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	Orientations lastFromOrientation = Orientations.XPos;
 	public @TileNetworkData
 	Orientations lastToOrientation = Orientations.XPos;
-
-	private SafeTimeTracker timeTracker = new SafeTimeTracker();
-
-	private boolean blockNeighborChange = false;
 
 	public PipeTransportLiquids() {
 		for (int j = 0; j < 6; ++j) {
@@ -205,7 +200,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 					Orientations.values()[i]);
 			p.moveForwards(1);
 
-			if (canReceiveLiquid(p)) {
+			if (container.pipe.outputOpen (p.orientation) && canReceiveLiquid(p)) {
 				if (sideToCenter[i] > 0) {
 					ILiquidContainer pipe = (ILiquidContainer) Utils.getTile(
 							worldObj, p, Orientations.Unknown);
@@ -331,11 +326,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		return 0;
 	}
 
-	public void scheduleNeighborChange() {
-		blockNeighborChange = true;
-	}
-
-	protected void neighborChange() {
+	@Override
+	public void onNeighborBlockChange() {
+		super.onNeighborBlockChange();
+		
 		for (int i = 0; i < 6; ++i) {
 			Position pos = new Position(xCoord, yCoord, zCoord,
 					Orientations.values()[i]);

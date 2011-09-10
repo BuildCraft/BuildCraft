@@ -2,8 +2,14 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockRefinery extends BlockContainer {
 
@@ -35,6 +41,44 @@ public class BlockRefinery extends BlockContainer {
 	@Override
 	protected TileEntity getBlockEntity() {
 		return new TileRefinery();
+	}
+	
+    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
+    	super.onBlockPlacedBy(world, i, j, k, entityliving);
+    	
+		Orientations orientation = Utils.get2dOrientation(new Position(
+				entityliving.posX, entityliving.posY, entityliving.posZ),
+				new Position(i, j, k));
+    	
+		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
+				.ordinal());
+    }
+    
+    public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {	
+		if (entityplayer.getCurrentEquippedItem() != null 
+				&& entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
+			
+			int meta = world.getBlockMetadata(i, j, k);
+
+			switch (Orientations.values()[meta]) {
+			case XNeg:
+				world.setBlockMetadata(i, j, k, Orientations.ZPos.ordinal());
+				break;
+			case XPos:
+				world.setBlockMetadata(i, j, k, Orientations.ZNeg.ordinal());
+				break;
+			case ZNeg:
+				world.setBlockMetadata(i, j, k, Orientations.XNeg.ordinal());
+				break;
+			case ZPos:
+				world.setBlockMetadata(i, j, k, Orientations.XPos.ordinal());
+				break;
+			}
+			
+			world.markBlockNeedsUpdate(i, j, k);
+		}
+				
+		return false;
 	}
 	
 }

@@ -35,57 +35,66 @@ public class GuiCombustionEngine extends GuiContainer {
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
         
-        if(tileEngine.getScaledBurnTime(58) > 0)
-        {
-            int l = tileEngine.getScaledBurnTime(58);
-            
-            EngineIron engineIron = ((EngineIron) tileEngine.engine);
-            int liquidId = engineIron.liquidId;
-            
-            Object o = null;
-            int liquidImgIndex = 0;
-    		
-    		if (liquidId < Block.blocksList.length) {
-    			o = Block.blocksList [liquidId];
-    			liquidImgIndex = Block.blocksList [liquidId].blockIndexInTexture;
-    		} else {
-    			o = Item.itemsList [liquidId];
-    			liquidImgIndex = Item.itemsList [liquidId].getIconFromDamage(0);
-    		}
+        EngineIron engineIron = ((EngineIron) tileEngine.engine);
+        
+        if (tileEngine.getScaledBurnTime(58) > 0) {
+        	displayGauge(j, k, 19, 104, tileEngine.getScaledBurnTime(58), engineIron.liquidId);
+        }
+        
+        if (engineIron.getScaledCoolant(58) > 0) {
+        	displayGauge(j, k, 19, 122, engineIron.getScaledCoolant(58), engineIron.coolantId);
+        }
+    }
+    
+	private void displayGauge(int j, int k, int line, int col, int squaled,
+			int liquidId) {
+		Object o = null;
+		int liquidImgIndex = 0;
 
-    		if (o instanceof ITextureProvider) {
-    			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
-    					.getTextureFile());
-    		} else {
-    			MinecraftForgeClient.bindTexture("/terrain.png");
-    		}
-    		
-    		int imgLine = liquidImgIndex / 16;
-    		int imgColumn = liquidImgIndex - imgLine * 16;
-            
-    		int start = 0;
-    		    		
-    		while (true) {
-    			int x = 0;	
-    			
-    			if (l > 16) {
-    				x = 16;
-    				l -= 16;
-    			} else {
-    				x = l;
-    				l = 0;
-    			}
-    			
-    			drawTexturedModalRect(j + 104, k + 19 + 58 - x - start, imgColumn * 16, imgLine * 16, 16, 16 - (16 - x));
-    			start = start + 16;
-    			
-    			if (x == 0 || l == 0) {
-    				break;
-    			}
-    		}
-        }    
-        		
+		if (liquidId < Block.blocksList.length) {
+			o = Block.blocksList[liquidId];
+			liquidImgIndex = Block.blocksList[liquidId].blockIndexInTexture;
+		} else {
+			o = Item.itemsList[liquidId];
+			liquidImgIndex = Item.itemsList[liquidId].getIconFromDamage(0);
+		}
+
+		if (o instanceof ITextureProvider) {
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
+					.getTextureFile());
+		} else {
+			MinecraftForgeClient.bindTexture("/terrain.png");
+		}
+
+		int imgLine = liquidImgIndex / 16;
+		int imgColumn = liquidImgIndex - imgLine * 16;
+
+		int start = 0;
+
+		while (true) {
+			int x = 0;
+
+			if (squaled > 16) {
+				x = 16;
+				squaled -= 16;
+			} else {
+				x = squaled;
+				squaled = 0;
+			}
+
+			drawTexturedModalRect(j + col, k + line + 58 - x - start,
+					imgColumn * 16, imgLine * 16, 16, 16 - (16 - x));
+			start = start + 16;
+
+			if (x == 0 || squaled == 0) {
+				break;
+			}
+		}
+
+		int i = mc.renderEngine
+				.getTexture("/net/minecraft/src/buildcraft/energy/gui/combustion_engine_gui.png");
+
 		mc.renderEngine.bindTexture(i);
-		drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
+		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);
     }
 }

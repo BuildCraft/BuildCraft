@@ -4,6 +4,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.Orientations;
 
 public class PipeLogic {
 
@@ -41,6 +42,26 @@ public class PipeLogic {
 	}
 
 	public boolean isPipeConnected(TileEntity tile) {
+		return true;
+	}
+
+	public void onNeighborBlockChange() {
+		
+	}
+
+	public void onBlockPlaced() {
+		
+	}
+
+	public void initialize() {
+		
+	}
+
+	public boolean inputOpen(Orientations from) {
+		return true;
+	}
+
+	public boolean outputOpen(Orientations to) {
 		return true;
 	}
 
