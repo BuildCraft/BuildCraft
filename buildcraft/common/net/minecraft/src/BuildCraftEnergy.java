@@ -9,11 +9,13 @@ import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
+import net.minecraft.src.buildcraft.energy.EngineFuel;
 import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.ItemFuel;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
+import net.minecraft.src.buildcraft.energy.TileEngine;
 import net.minecraft.src.buildcraft.factory.RefineryRecipe;
 import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.forge.Configuration;
@@ -111,6 +113,11 @@ public class BuildCraftEnergy {
 		
 		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
 				10, fuel.shiftedIndex, 1, 1));
+		
+		TileEngine.possibleFuels.put(oilStill.blockID, new EngineFuel(
+				oilStill.blockID, 2, 10000));
+		TileEngine.possibleFuels.put(fuel.shiftedIndex, new EngineFuel(
+				fuel.shiftedIndex, 5, 50000));
 	}
 
 	public static void generateSurface(World world, Random random, int i, int j) {

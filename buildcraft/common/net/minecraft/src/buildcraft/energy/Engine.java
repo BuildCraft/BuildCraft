@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.energy;
 
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 
@@ -98,4 +99,16 @@ public abstract class Engine {
 		
 		return extracted;
 	}
+	
+	public abstract int getScaledBurnTime (int i);
+	
+	public abstract void burn ();
+	
+    public void readFromNBT(NBTTagCompound nbttagcompound) {
+    	
+    }
+    
+    public void writeToNBT(NBTTagCompound nbttagcompound) {
+    	
+    }
 }

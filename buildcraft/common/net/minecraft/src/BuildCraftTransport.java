@@ -15,7 +15,6 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeItemsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerGold;
-import net.minecraft.src.buildcraft.transport.pipes.PipePowerSnow;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerWood;
 //import net.minecraft.src.buildcraft.transport.TileCobblestonePipe;
@@ -56,7 +55,6 @@ public class BuildCraftTransport {
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
 	public static Item pipePowerGold;
-	public static Item pipePowerSnow;
 	
 	public static void initialize () {
 		if (initialized) {
@@ -191,7 +189,7 @@ public class BuildCraftTransport {
 		pipePowerStone = BlockGenericPipe.registerPipe (4065, PipePowerStone.class);
 		// iron 4066
 		pipePowerGold = BlockGenericPipe.registerPipe (4067, PipePowerGold.class);
-		pipePowerSnow = BlockGenericPipe.registerPipe (4068, PipePowerSnow.class);
+		// diamond 4068
 						
 //				Integer.parseInt(cobblestonePipeId.value));
 //		CoreProxy.addName(cobblestonePipeBlock.setBlockName("cobblestonePipe"),

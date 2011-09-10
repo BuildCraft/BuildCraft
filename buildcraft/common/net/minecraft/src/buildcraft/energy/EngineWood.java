@@ -49,4 +49,14 @@ public class EngineWood extends Engine {
 		return tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
 				tile.yCoord, tile.zCoord);
 	}
+
+	@Override
+	public int getScaledBurnTime(int i) {
+		return 0;
+	}
+
+	@Override
+	public void burn() {
+		
+	}
 }
