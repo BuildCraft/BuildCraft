@@ -30,9 +30,9 @@ public class GuiSteamEngine extends GuiContainer {
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-        if(tileEngine.scaledBurnTime > 0)
+        if(tileEngine.getScaledBurnTime(12) > 0)
         {
-            int l = tileEngine.getBurnTimeRemainingScaled(12);
+            int l = tileEngine.getScaledBurnTime(12);
             drawTexturedModalRect(j + 80, (k + 24 + 12) - l, 176, 12 - l, 14, l + 2);
         }        
     }

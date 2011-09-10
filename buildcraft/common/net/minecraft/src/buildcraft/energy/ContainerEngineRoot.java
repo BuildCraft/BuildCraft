@@ -35,9 +35,9 @@ public class ContainerEngineRoot extends Container
     }
 
 	public void func_20112_a(int i, int j) {
-		if (i == 0) {
-			engine.scaledBurnTime = (short) j;
-		}
+//		if (i == 0) {
+//			engine.scaledBurnTime = (short) j;
+//		}
 
 	}
 

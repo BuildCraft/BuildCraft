@@ -88,7 +88,6 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipePowerWood, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipePowerStone, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipePowerGold, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftTransport.pipePowerSnow, 64));
 			
 			
 			inv.setInventorySlotContents(ind++, new ItemStack(Block.dispenser, 64));

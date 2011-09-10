@@ -1,8 +1,9 @@
 package net.minecraft.src.buildcraft.energy;
 
+import java.util.HashMap;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
@@ -25,28 +26,19 @@ import net.minecraft.src.buildcraft.core.TileNetworkData;
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		IInventory, ILiquidContainer {
 	
+	public static HashMap<Integer, EngineFuel> possibleFuels = new HashMap<Integer, EngineFuel>(); 
+	
 	public @TileNetworkData Engine engine;	
 	public @TileNetworkData int progressPart = 0;	
-	public @TileNetworkData int burnTime = 0;
 	public @TileNetworkData float serverPistonSpeed = 0;
 	
 	boolean lastPower = false;
 
 	public int orientation;
 	
-	private ItemStack itemInInventory;
-	
-	
-	public int totalBurnTime = 0;
-	
-	// Burn time scaled from 1 to 1000, needs for transmission over the GUI
-	public short scaledBurnTime = 0;
+	private ItemStack itemInInventory;	
 	
 	PowerProvider provider;
-
-
-	
-	public static int OIL_BUCKET_TIME = 10000;
 	
 	public TileEngine () {
 		provider = BuildCraftCore.powerFramework.createPowerProvider();		
@@ -143,45 +135,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 				sendNetworkUpdate ();
 			}
 		}
-
-		if (engine instanceof EngineStone) {
-			if(burnTime > 0) {
-				burnTime--;
-				engine.addEnergy(1);
-			}
-
-			if (burnTime == 0 && isPowered) {
-				burnTime = totalBurnTime = getItemBurnTime(itemInInventory);
-				if (burnTime > 0) {
-					decrStackSize(1, 1);				
-				}
-			}
-		} else if (engine instanceof EngineIron) {
-			if (isPowered) {
-				if(burnTime > 0) {
-					burnTime--;
-					engine.addEnergy(2);					
-				}
-			}
-
-			if (itemInInventory != null
-					&& itemInInventory.itemID == BuildCraftEnergy.bucketOil.shiftedIndex) {
-
-				totalBurnTime = OIL_BUCKET_TIME * 10;
-				int stepTime = OIL_BUCKET_TIME;
-
-				if (burnTime + stepTime <= totalBurnTime) {
-					itemInInventory = new ItemStack(Item.bucketEmpty, 1);
-					burnTime = burnTime + stepTime;
-				}
-			}				
-		}
 		
-		if (totalBurnTime != 0) {
-			scaledBurnTime = (short) (burnTime * 1000 / totalBurnTime);
-		} else {
-			scaledBurnTime = 0;
-		}
+		engine.burn ();
 	}
 	
 	private void createEngineIfNeeded() {
@@ -245,13 +200,13 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
     	engine.progress = nbttagcompound.getFloat("progress");
     	engine.energy = nbttagcompound.getInteger("energy");
     	engine.orientation = Orientations.values()[orientation];
-    	totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
-    	burnTime = nbttagcompound.getInteger("burnTime");
     	
     	if (nbttagcompound.hasKey("itemInInventory")) {
     		NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
     		itemInInventory = new ItemStack(cpt);
     	}
+    	
+    	engine.readFromNBT(nbttagcompound);
     }
     
 
@@ -263,8 +218,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		nbttagcompound.setInteger("orientation", orientation);
     	nbttagcompound.setFloat("progress", engine.progress);
     	nbttagcompound.setInteger("energy", engine.energy);
-    	nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
-    	nbttagcompound.setInteger("burnTime", burnTime);
     	
     	if (itemInInventory != null) {
     		NBTTagCompound cpt = new NBTTagCompound();
@@ -272,6 +225,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
     		nbttagcompound.setTag("itemInInventory", cpt);
     	}
     	 
+    	engine.writeToNBT(nbttagcompound);
     }
 
 	@Override
@@ -313,43 +267,15 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
-	}
-	
-    private int getItemBurnTime(ItemStack itemstack)
-    {
-        if(itemstack == null)
-        {
-            return 0;
-        }
-        int i = itemstack.getItem().shiftedIndex;
-        if(i < 256 && Block.blocksList[i].blockMaterial == Material.wood)
-        {
-            return 300;
-        }
-        if(i == Item.stick.shiftedIndex)
-        {
-            return 100;
-        }
-        if(i == Item.coal.shiftedIndex)
-        {
-            return 1600;
-        }
-        if(i == Item.bucketLava.shiftedIndex)
-        {
-            return 20000;
-        } else
-        {
-            return i == Block.sapling.blockID ? 100 : ModLoader.AddAllFuel(i);
-        }
-    }
+	}    
     
     public boolean isBurning()
     {
         return engine != null && engine.isBurning();
     }
     
-    public int getBurnTimeRemainingScaled(int i) {
-        return (((int) scaledBurnTime) * i) / 1000;
+    public int getScaledBurnTime(int i) {
+        return engine.getScaledBurnTime(i);
     }
 	
    
@@ -415,32 +341,11 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 
 	@Override
 	public int fill(Orientations from, int quantity, int id) {
-		if (id != BuildCraftEnergy.oilStill.blockID) {
+		if (engine instanceof EngineIron) {
+			return ((EngineIron) engine).fill(from, quantity, id);
+		} else {		
 			return 0;
 		}
-		
-		if (engine instanceof EngineIron) {
-			totalBurnTime = OIL_BUCKET_TIME * 10;
-			int addedTime = (int) (quantity * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.BUCKET_VOLUME);
-			
-			if (addedTime + burnTime <= OIL_BUCKET_TIME * 10) {
-				burnTime = burnTime + addedTime;
-				return quantity;
-			} else {
-				addedTime = OIL_BUCKET_TIME * 10 - burnTime;
-				
-				int quantityUsed = (int) (addedTime * (float) BuildCraftCore.BUCKET_VOLUME / (float) OIL_BUCKET_TIME);
-				
-				// Recomputed in order to limit rounding errors
-				burnTime += (int) (quantityUsed * (float) OIL_BUCKET_TIME / (float) BuildCraftCore.BUCKET_VOLUME);
-				
-				return quantityUsed;
-			}
-			
-			
-		}
-		
-		return 0;		
 	}
 
 	@Override

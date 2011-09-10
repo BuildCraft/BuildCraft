@@ -1,7 +1,11 @@
 package net.minecraft.src.buildcraft.energy;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.Item;
+import net.minecraft.src.forge.ITextureProvider;
+import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
@@ -30,10 +34,58 @@ public class GuiCombustionEngine extends GuiContainer {
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-        if(tileEngine.scaledBurnTime > 0)
+        
+        if(tileEngine.getScaledBurnTime(58) > 0)
         {
-            int l = tileEngine.getBurnTimeRemainingScaled(58);
-            drawTexturedModalRect(j + 104, (k + 19 + 58) - l, 176, 58 - l, 16, l + 2);
-        }        
+            int l = tileEngine.getScaledBurnTime(58);
+            
+            EngineIron engineIron = ((EngineIron) tileEngine.engine);
+            int liquidId = engineIron.liquidId;
+            
+            Object o = null;
+            int liquidImgIndex = 0;
+    		
+    		if (liquidId < Block.blocksList.length) {
+    			o = Block.blocksList [liquidId];
+    			liquidImgIndex = Block.blocksList [liquidId].blockIndexInTexture;
+    		} else {
+    			o = Item.itemsList [liquidId];
+    			liquidImgIndex = Item.itemsList [liquidId].getIconFromDamage(0);
+    		}
+
+    		if (o instanceof ITextureProvider) {
+    			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
+    					.getTextureFile());
+    		} else {
+    			MinecraftForgeClient.bindTexture("/terrain.png");
+    		}
+    		
+    		int imgLine = liquidImgIndex / 16;
+    		int imgColumn = liquidImgIndex - imgLine * 16;
+            
+    		int start = 0;
+    		    		
+    		while (true) {
+    			int x = 0;	
+    			
+    			if (l > 16) {
+    				x = 16;
+    				l -= 16;
+    			} else {
+    				x = l;
+    				l = 0;
+    			}
+    			
+    			drawTexturedModalRect(j + 104, k + 19 + 58 - x - start, imgColumn * 16, imgLine * 16, 16, 16 - (16 - x));
+    			start = start + 16;
+    			
+    			if (x == 0 || l == 0) {
+    				break;
+    			}
+    		}
+        }    
+        		
+		mc.renderEngine.bindTexture(i);
+		drawTexturedModalRect(j + 104, k + 19, 176, 0, 16, 60);
     }
 }
