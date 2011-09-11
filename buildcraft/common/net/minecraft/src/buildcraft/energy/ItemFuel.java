@@ -8,7 +8,7 @@ public class ItemFuel extends Item implements ITextureProvider {
 
 	public ItemFuel(int i) {
 		super(i);
-		iconIndex = 16 * 2 + 0;
+		iconIndex = 16 * 3 + 0;
 	}
 
 	@Override
