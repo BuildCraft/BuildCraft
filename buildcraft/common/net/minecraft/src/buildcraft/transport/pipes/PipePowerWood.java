@@ -91,12 +91,16 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public void prepareTextureFor(Orientations connection) {
-		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		if (metadata == connection.ordinal()) {
-			nextTexture = plainTexture;
-		} else {
+		if (connection == Orientations.Unknown) {
 			nextTexture = baseTexture;
+		} else {
+			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+			if (metadata == connection.ordinal()) {
+				nextTexture = plainTexture;
+			} else {
+				nextTexture = baseTexture;
+			}
 		}
 	}
 
