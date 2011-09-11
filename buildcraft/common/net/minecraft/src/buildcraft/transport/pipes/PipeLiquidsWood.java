@@ -75,36 +75,6 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		}
 	}
 	
-		
-	
-	
-//	@Override
-//	protected void neighborChange () {		
-//		super.neighborChange();
-//		
-//		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-//		
-//		if (meta > 5) {
-//			switchSource();
-//		} else {
-//			Position pos = new Position(xCoord, yCoord, zCoord,
-//					Orientations.values()[meta]);		
-//			pos.moveForwards(1);
-//
-//			if (!(worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
-//					(int) pos.z) instanceof IInventory)) {
-//
-//				switchSource();
-//			}
-//		}	
-//	}
-	
-
-//	public void initialize () {
-//		super.initialize();
-//		
-//		scheduleNeighborChange();
-//	}
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {
@@ -152,14 +122,17 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public void prepareTextureFor(Orientations connection) {
-		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		if (metadata == connection.ordinal()) {
-			nextTexture = plainTexture;
-		} else {
+		if (connection == Orientations.Unknown) {
 			nextTexture = baseTexture;
-		}
+		} else {
+			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
+			if (metadata == connection.ordinal()) {
+				nextTexture = plainTexture;
+			} else {
+				nextTexture = baseTexture;
+			}
+		}
 	}
 	
 	@Override

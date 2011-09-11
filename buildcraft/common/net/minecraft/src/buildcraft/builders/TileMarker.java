@@ -380,7 +380,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		
 		if (signals != null) {
 			for (EntityBlock b : signals) {
-				b.setEntityDead();
+				if (b != null) {
+					b.setEntityDead();
+				}
 			}
 		}				
 		
