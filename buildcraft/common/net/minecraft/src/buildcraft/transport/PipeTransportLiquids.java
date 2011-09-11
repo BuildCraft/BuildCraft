@@ -264,20 +264,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 //		}
 	}
 
-	public int totalOil() {
-		int total = centerOut + centerIn;
-
-		for (int i : centerToSide) {
-			total += i;
-		}
-
-		for (int i : sideToCenter) {
-			total += i;
-		}
-
-		return total;
-	}
-
 	public int getSideToCenter(int orientation) {
 		if (sideToCenter[orientation] > BuildCraftCore.BUCKET_VOLUME / 4) {
 			return BuildCraftCore.BUCKET_VOLUME / 4;
@@ -312,8 +298,17 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 	@Override
 	public int getLiquidQuantity() {
-		// TODO Auto-generated method stub
-		return 0;
+		int total = centerOut + centerIn;
+
+		for (int i : centerToSide) {
+			total += i;
+		}
+
+		for (int i : sideToCenter) {
+			total += i;
+		}
+
+		return total;
 	}
 
 	@Override

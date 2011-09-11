@@ -2,9 +2,14 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockTank extends BlockContainer implements ITextureProvider {
@@ -60,6 +65,31 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				return 6 * 16 + 0;
 			}
 		}
+	}
+	
+	public boolean blockActivated(World world, int i, int j, int k,
+			EntityPlayer entityplayer) {
+		
+		if (entityplayer.getCurrentEquippedItem() != null) {
+			int liquidId = BuildCraftCore.getLiquidForBucket(entityplayer
+					.getCurrentEquippedItem().itemID);
+
+			if (liquidId != 0) {
+				int qty = ((TileTank) world.getBlockTileEntity(i, j, k)).fill(
+						Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
+						liquidId);
+
+				if (qty != 0 && !BuildCraftCore.debugMode) {
+					entityplayer.inventory.setInventorySlotContents(
+							entityplayer.inventory.currentItem,
+							new ItemStack(Item.bucketEmpty, 1));										
+				}
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }
