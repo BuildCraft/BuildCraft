@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -14,6 +15,7 @@ import net.minecraft.src.buildcraft.core.BuildCraftConfiguration;
 import net.minecraft.src.buildcraft.core.BuildCraftItem;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.LiquidData;
 import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
@@ -59,6 +61,8 @@ public class BuildCraftCore {
 	public static PowerFramework powerFramework;
 	
 	public static final int BUCKET_VOLUME = 1000;
+	
+	public static LinkedList <LiquidData> liquids = new LinkedList <LiquidData> ();
 	
 	@SuppressWarnings({ "all" })
 	public static void initialize () {
@@ -116,6 +120,11 @@ public class BuildCraftCore {
 				"I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron,
 				Character.valueOf('G'), stoneGearItem });
 		CoreProxy.addName(wrenchItem, "Wrench");
+		
+		liquids.add(new LiquidData(Block.waterStill.blockID,
+				Item.bucketWater.shiftedIndex));
+		liquids.add(new LiquidData(Block.lavaStill.blockID,
+				Item.bucketLava.shiftedIndex));
 		
 		mainConfiguration.save();
 	}
@@ -198,6 +207,16 @@ public class BuildCraftCore {
 		 pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 		 markerModel = ModLoader.getUniqueBlockModelID(mod, false);
 		 oilModel = ModLoader.getUniqueBlockModelID(mod, false);
+	}
+
+	public static int getLiquidForBucket(int itemID) {
+		for (LiquidData d : liquids) {
+			if (d.filledBucketId == itemID) {
+				return d.liquidId;
+			}
+		}
+		
+		return 0;
 	}
 	
 }

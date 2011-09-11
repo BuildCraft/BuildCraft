@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.LiquidData;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
@@ -118,6 +119,10 @@ public class BuildCraftEnergy {
 				oilStill.blockID, 2, 10000));
 		TileEngine.possibleFuels.put(fuel.shiftedIndex, new EngineFuel(
 				fuel.shiftedIndex, 5, 50000));
+		
+		BuildCraftCore.liquids.add(new LiquidData(oilStill.blockID,
+				bucketOil.shiftedIndex));
+		BuildCraftCore.liquids.add(new LiquidData(fuel.shiftedIndex, 0));
 	}
 
 	public static void generateSurface(World world, Random random, int i, int j) {

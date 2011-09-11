@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -84,23 +83,32 @@ public class EngineIron extends Engine {
 				addEnergy(currentFuel.powerPerCycle);			
 				heat += currentFuel.powerPerCycle;
 			}
-		}
-
-		ItemStack itemInInventory = tile.getStackInSlot(0);
-				
-		if (itemInInventory != null
-				&& itemInInventory.itemID == BuildCraftEnergy.bucketOil.shiftedIndex) {
-
-			if (liquidQty + BuildCraftCore.BUCKET_VOLUME <= MAX_LIQUID) {
-				itemInInventory = new ItemStack(Item.bucketEmpty, 1);
-				liquidQty += BuildCraftCore.BUCKET_VOLUME;
-			}
-		}				
+		}			
 	}
 	
 	@Override
 	public void update () {
 		super.update();
+		
+		ItemStack itemInInventory = tile.getStackInSlot(0);
+		
+		if (itemInInventory != null) {
+			int liquidId = BuildCraftCore.getLiquidForBucket (itemInInventory.itemID);
+
+			if (liquidId == 0) {
+				return;
+			}
+			
+			
+			if (fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
+					liquidId, false) == BuildCraftCore.BUCKET_VOLUME) {
+				fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
+						liquidId, true);
+
+				tile.setInventorySlotContents(0, new ItemStack(
+						Item.bucketEmpty, 1));
+			}
+		}	
 		
 		if (heat > COOLANT_THRESHOLD) {			
 			int extraHeat = heat - COOLANT_THRESHOLD;
@@ -144,9 +152,9 @@ public class EngineIron extends Engine {
 				* (float) i);
 	}
 	
-	public int fill(Orientations from, int quantity, int id) {		
+	public int fill(Orientations from, int quantity, int id, boolean doFill) {		
 		if (id == Block.waterStill.blockID) {
-			return fillCoolant (from, quantity, id);
+			return fillCoolant (from, quantity, id, doFill);
 		}
 		
 		int res = 0;
@@ -160,11 +168,17 @@ public class EngineIron extends Engine {
 		}
 		
 		if (liquidQty + quantity <= MAX_LIQUID) {
-			liquidQty += quantity;
+			if (doFill) {
+				liquidQty += quantity;
+			}
+			
 			res = quantity;
 		} else {
 			res = MAX_LIQUID - liquidQty;
-			liquidQty = MAX_LIQUID;
+			
+			if (doFill) {
+				liquidQty = MAX_LIQUID;
+			}
 		}
 		
 		liquidId = id;				
@@ -172,7 +186,7 @@ public class EngineIron extends Engine {
 		return res;
 	}
 	
-	private int fillCoolant(Orientations from, int quantity, int id) {
+	private int fillCoolant(Orientations from, int quantity, int id, boolean doFill) {
 		int res = 0;
 		
 		if (coolantQty > 0 && coolantId != id) {
@@ -180,11 +194,17 @@ public class EngineIron extends Engine {
 		}
 		
 		if (coolantQty + quantity <= MAX_LIQUID) {
-			coolantQty += quantity;
+			if (doFill) {
+				coolantQty += quantity;
+			}
+			
 			res = quantity;
 		} else {
 			res = MAX_LIQUID - coolantQty;
-			coolantQty = MAX_LIQUID;
+			
+			if (doFill) {
+				coolantQty = MAX_LIQUID;
+			}
 		}
 		
 		coolantId = id;			
