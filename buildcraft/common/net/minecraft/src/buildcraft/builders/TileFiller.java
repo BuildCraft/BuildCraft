@@ -17,12 +17,13 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor {
+public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor, IMachine {
 	
 	public @TileNetworkData Box box = new Box ();
 	public @TileNetworkData int currentPatternId = 0;
@@ -37,8 +38,8 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     public TileFiller() {
         contents = new ItemStack[getSizeInventory()];
         powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
-        powerProvider.configure(10, 25, 25, 25, 25);
-        powerProvider.configurePowerPerdition(25, 1);
+        powerProvider.configure(10, 25, 100, 25, 100);
+        powerProvider.configurePowerPerdition(25, 40);
     }
     
     public void initialize () {
@@ -70,8 +71,11 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		} else {
 			done = true;
 		}
+		
+		if (powerProvider.energyStored > 25) {
+			doWork();
+		}
 	}
-
 	
 	@Override
 	public void doWork () {
@@ -109,6 +113,10 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 				sendNetworkUpdate();
 			}			
+		}
+		
+		if (powerProvider.energyStored > 25) {
+			doWork();
 		}
 	}	
 
@@ -369,6 +377,21 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	@Override
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return true;
 	}
 
 }
