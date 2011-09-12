@@ -9,7 +9,7 @@ public class PipeLiquidsCobblestone extends Pipe {
 	public PipeLiquidsCobblestone(int itemID) {
 		super(new PipeTransportLiquids(), new PipeLogicStone(), itemID);		
 	}
-
+	
 	@Override
 	public int getBlockTexture() {
 		return 7 * 16 + 1;

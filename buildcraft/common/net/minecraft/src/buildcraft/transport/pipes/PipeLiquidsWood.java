@@ -33,6 +33,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		powerProvider.configure(50, 1, 1, 1, 1);
 		powerProvider.configurePowerPerdition(1, 1);
 	}	
+
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
@@ -109,7 +110,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 						: liquidToExtract, false); 
 				
 				extracted = ((PipeTransportLiquids) transport).fill(
-						pos.orientation, extracted, container.getLiquidId());
+						pos.orientation, extracted, container.getLiquidId(), true);
 				
 				((PipeTransportLiquids) transport).liquidId = container.getLiquidId();
 				

@@ -88,9 +88,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	}
 
 	@Override
-	public int fill(Orientations from, int quantity, int id) {
+	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		if (pipe.transport instanceof ILiquidContainer) {
-			return ((ILiquidContainer) pipe.transport).fill(from, quantity, id);
+			return ((ILiquidContainer) pipe.transport).fill(from, quantity, id, doFill);
 		} else {
 			return 0;	
 		}		

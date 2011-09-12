@@ -1,9 +1,12 @@
 package net.minecraft.src;
 
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 //import net.minecraft.src.buildcraft.transport.BlockCobblestonePipe;
 //import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
+import net.minecraft.src.buildcraft.transport.Pipe;
 //import net.minecraft.src.buildcraft.transport.BlockGoldenPipe;
 //import net.minecraft.src.buildcraft.transport.BlockIronPipe;
 //import net.minecraft.src.buildcraft.transport.BlockStonePipe;
@@ -48,6 +51,8 @@ public class BuildCraftTransport {
 	public static int [] diamondTextures = new int [6];
 	
 	public static boolean alwaysConnectPipes;
+		
+	public static Item pipeWaterproof;
 	
 	public static Item pipeItemsWood;
 	public static Item pipeItemsStone;
@@ -173,28 +178,35 @@ public class BuildCraftTransport {
 //		ModLoader.RegisterTileEntity(TileObsidianPipe.class, "ObsidianPipe");
 //		ModLoader.RegisterTileEntity(TileCobblestonePipe.class, "CobblestonePipe");		
 		
+		pipeWaterproof = new ItemBuildCraftTexture (DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
+		pipeWaterproof.setItemName("pipeWaterproof");
+		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");
+		ModLoader.AddSmelting(Item.slimeBall.shiftedIndex, new ItemStack(
+				pipeWaterproof, 32));
+		
 		genericPipeBlock = new BlockGenericPipe(166);
 		
-		pipeItemsWood = BlockGenericPipe.registerPipe (4050, PipeItemsWood.class);
+		pipeItemsWood = createPipe (4050, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
 		// cobblestone 4051
-		pipeItemsStone = BlockGenericPipe.registerPipe (4052, PipeItemsStone.class);
+		pipeItemsStone = createPipe (4052, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
 		// iron 4053
 		// gold 4054
 		// diamond 4055
 		// obsidian 4056
 		
-		pipeLiquidsWood = BlockGenericPipe.registerPipe (4057, PipeLiquidsWood.class);
-		pipeLiquidsCobblestone = BlockGenericPipe.registerPipe (4058, PipeLiquidsCobblestone.class);
-		pipeLiquidsStone = BlockGenericPipe.registerPipe (4059, PipeLiquidsStone.class);
-		pipeLiquidsIron = BlockGenericPipe.registerPipe (4060, PipeLiquidsIron.class);
-		pipeLiquidsGold = BlockGenericPipe.registerPipe (4061, PipeLiquidsGold.class);
-		// diamond 4062
+		pipeLiquidsWood = createPipe (4057, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
+		pipeLiquidsCobblestone = createPipe (4058, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", null, null, null);
+		pipeLiquidsStone = createPipe (4059, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone, null);		
+		pipeLiquidsIron = createPipe (4060, PipeLiquidsIron.class, "Iron Waterproof Pipe", null, null, null);		
+		pipeLiquidsGold = createPipe (4061, PipeLiquidsGold.class, "Golden Waterproof Pipe", null, null, null);			
+		// diamond 4062		
 		
-		pipePowerWood = BlockGenericPipe.registerPipe (4063, PipePowerWood.class);
+		pipePowerWood = createPipe (4063, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone,  pipeItemsWood, null);		
 		// cobblestone 4064
-		pipePowerStone = BlockGenericPipe.registerPipe (4065, PipePowerStone.class);
+		pipePowerStone = createPipe (4065, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone, null);		
 		// iron 4066
-		pipePowerGold = BlockGenericPipe.registerPipe (4067, PipePowerGold.class);
+		pipePowerGold = createPipe(4067, PipePowerGold.class, "Golden Conductive Pipe", null, null, null);
+		
 		// diamond 4068
 						
 //				Integer.parseInt(cobblestonePipeId.value));
@@ -216,6 +228,29 @@ public class BuildCraftTransport {
 		BuildCraftCore.mainConfiguration.save();
 
 	}	
+	
+	private static Item createPipe (int id, Class <? extends Pipe> clas, String descr, Object r1, Object r2, Object r3) {
+		Item res =  BlockGenericPipe.registerPipe (id, clas);
+		res.setItemName(clas.getSimpleName());
+		CoreProxy.addName(res, descr);
+		
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
+		if (r1 != null && r2 != null && r3 != null) {						
+			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
+				"   ", "ABC", "   ", 
+				Character.valueOf('A'), r1,
+				Character.valueOf('B'), r2,
+				Character.valueOf('C'), r3});
+		} else if (r1 != null && r2 != null) {
+			craftingmanager.addRecipe(new ItemStack(res, 1), new Object[] {
+				"A ", "B ", 
+				Character.valueOf('A'), r1,
+				Character.valueOf('B'), r2});
+		}
+		
+		return res;
+	}
 
 	public static void ModsLoaded () {
 		mod_BuildCraftCore.initialize();

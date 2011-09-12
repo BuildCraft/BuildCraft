@@ -15,7 +15,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	public @TileNetworkData int liquidId = 0;
 	
 	@Override
-	public int fill(Orientations from, int quantity, int id) {
+	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		TileTank lastTank = this;
 		
 		for (int j = yCoord - 1; j > 1; --j) {

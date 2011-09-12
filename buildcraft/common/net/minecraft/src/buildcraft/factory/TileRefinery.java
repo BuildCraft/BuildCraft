@@ -68,7 +68,7 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 	}
 	
 	@Override
-	public int fill(Orientations from, int quantity, int id) {
+	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		int used = slot1.fill(from, quantity, id);
 		used += slot2.fill(from, quantity - used, id);
 				
