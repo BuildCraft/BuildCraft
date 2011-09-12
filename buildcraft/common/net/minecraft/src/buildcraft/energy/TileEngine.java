@@ -336,7 +336,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	}
 
 	@Override
-	public int fill(Orientations from, int quantity, int id) {
+	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		if (engine instanceof EngineIron) {
 			return ((EngineIron) engine).fill(from, quantity, id, true);
 		} else {		

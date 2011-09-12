@@ -6,7 +6,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 
-public class Pipe {
+public abstract class Pipe {
 	
 	public int xCoord;
 	public int yCoord;

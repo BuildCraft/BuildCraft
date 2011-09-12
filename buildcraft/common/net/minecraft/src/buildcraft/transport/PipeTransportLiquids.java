@@ -15,6 +15,8 @@ import net.minecraft.src.buildcraft.core.Utils;
 public class PipeTransportLiquids extends PipeTransport implements ILiquidContainer {
 
 	public int flowRate = 20;
+	
+	public int stillTimer = 0;
 
 	public @TileNetworkData(staticSize = 6)
 	int[] sideToCenter = new int[6];
@@ -133,11 +135,11 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	/**
 	 * Fills the pipe, and return the amount of liquid that has been used.
 	 */
-	public int fill(Orientations from, int quantity, int id) {
+	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		if ((getLiquidQuantity() != 0 && liquidId != id) || id == 0) {
 			return 0;
 		}
-
+				
 		liquidId = id;
 
 		int space = BuildCraftCore.BUCKET_VOLUME / 4
@@ -154,21 +156,44 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			space = flowRate;
 		}
 		
+		int filled = 0;
+		
 		if (space > quantity) {
-			sideToCenter[from.ordinal()] += quantity;
-			return quantity;
-		} else {
-			sideToCenter[from.ordinal()] += space;
-			return space;
+			filled = quantity;
+		} else {					
+			filled = space;
 		}
+		
+		if (doFill) {
+			// Try to put the liquid to center to side as much as possible.
+			
+			if (sideToCenter[from.ordinal()] + centerToSide[from.ordinal()] >= BuildCraftCore.BUCKET_VOLUME / 4) {
+				centerToSide[from.ordinal()] = centerToSide[from.ordinal()]
+						+ sideToCenter[from.ordinal()];
+				sideToCenter [from.ordinal()] = 0;
+			}
+
+			if (centerToSide[from.ordinal()] >= BuildCraftCore.BUCKET_VOLUME
+					/ 4 - flowRate) {
+				centerToSide[from.ordinal()] = centerToSide[from.ordinal()]
+						+ sideToCenter[from.ordinal()] + filled;
+				
+				sideToCenter [from.ordinal()] = 0;
+			} else {
+				sideToCenter[from.ordinal()] = sideToCenter[from.ordinal()]
+						+ filled;
+			}
+		}
+		
+		return filled;
 	}
 
 	private void moveLiquids() {
 		float centerSpace = BuildCraftCore.BUCKET_VOLUME / 2 - centerIn
 				- centerOut + flowRate;
-
+		
 		boolean moved = false;
-
+		
 		// computes the various inputs of liquids
 
 		for (int i = 0; i < 6; ++i) {
@@ -200,19 +225,27 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 					Orientations.values()[i]);
 			p.moveForwards(1);
 
-			if (container.pipe.outputOpen (p.orientation) && canReceiveLiquid(p)) {
-				if (sideToCenter[i] > 0) {
-					ILiquidContainer pipe = (ILiquidContainer) Utils.getTile(
+			if (container.pipe.outputOpen (p.orientation) && canReceiveLiquid(p)) {			
+				if (sideToCenter[i] > 0) {					
+					ILiquidContainer nextPipe = (ILiquidContainer) Utils.getTile(
 							worldObj, p, Orientations.Unknown);
-
-					sideToCenter[i] -= pipe.fill(p.orientation.reverse(),
-							flowRate, liquidId);
-
-					moved = true;
+					
+					int qty = flowRate;
+					
+					if (qty > sideToCenter [i]) {
+						qty = sideToCenter [i];
+					}
+					
+					qty = nextPipe.fill(p.orientation.reverse(),
+							qty, liquidId, true);
+					
+					sideToCenter[i] -= qty;
+					
+					moved = moved || qty > 0;
 				}
 
 				if (centerOut > 0
-						&& sideToCenter[i] + centerToSide[i] <= BuildCraftCore.BUCKET_VOLUME / 4) {
+						&& sideToCenter[i] + centerToSide[i] <= BuildCraftCore.BUCKET_VOLUME / 4) {					
 					lastToOrientation = p.orientation;
 					centerToSide[i] += flowRate;
 					centerOut -= flowRate;
@@ -220,48 +253,41 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 					moved = true;
 				}
 
-				if (centerToSide[i] + sideToCenter[i] >= BuildCraftCore.BUCKET_VOLUME / 4) {
+				if (centerToSide[i] + sideToCenter[i] >= BuildCraftCore.BUCKET_VOLUME / 4) {					
 					sideToCenter[i] = centerToSide[i] + sideToCenter[i];
 					centerToSide[i] = 0;
 				}
 			}
 		}
 
+		if (moved) {
+			stillTimer = 0;
+		}
+		
 		if (!moved) {
+			stillTimer++;
+		}
+		
+		if (stillTimer >= 10) {
+			stillTimer = 0;
+		
 			for (int i = 0; i < 6; ++i) {
 				Position p = new Position(xCoord, yCoord, zCoord,
 						Orientations.values()[i]);
 				p.moveForwards(1);
 
-				if (canReceiveLiquid(p)) {
-					return;
+				if (canReceiveLiquid(p)) {					
+					return;					
 				}
 			}
 
 			// If we can't find a direction where to potentially send liquid,
-			// reset all input markers
-			for (int i = 0; i < 6; ++i) {
-				isInput[i] = false;
-			}
-		}
+			// reset all input directions
 
-//		if (totalOil() > 500) {
-//			int totalSystem = totalOil();
-//
-//			for (int i = 0; i < 6; ++i) {
-//				Position pos = new Position(xCoord, yCoord, zCoord,
-//						Orientations.values()[i]);
-//
-//				TileEntity tile = Utils.getTile(worldObj, pos,
-//						Orientations.values()[i]);
-//
-//				if (tile instanceof TilePipe) {
-//					totalSystem += ((TilePipe) tile).totalOil();
-//				}
-//			}
-//
-//			// System.out.println (totalSystem);
-//		}
+			for (int i = 0; i < 6; ++i) {
+				isInput[i] = false;				
+			}
+		}				
 	}
 
 	public int getSideToCenter(int orientation) {

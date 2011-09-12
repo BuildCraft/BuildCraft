@@ -3,7 +3,7 @@ package net.minecraft.src.buildcraft.core;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public interface ILiquidContainer {
-	public int fill (Orientations from, int quantity, int id);
+	public int fill (Orientations from, int quantity, int id, boolean doFill);
 	
 	public int empty (int quantityMax, boolean doEmpty);
 	

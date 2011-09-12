@@ -111,7 +111,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 				if (tile instanceof ILiquidContainer) {
 					internalLiquid -= ((ILiquidContainer) tile).fill(
-							p.orientation.reverse(), internalLiquid, liquidId);
+							p.orientation.reverse(), internalLiquid, liquidId, true);
 					
 					if (internalLiquid <= 0) {
 						break;

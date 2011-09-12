@@ -77,7 +77,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 			if (liquidId != 0) {
 				int qty = ((TileTank) world.getBlockTileEntity(i, j, k)).fill(
 						Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
-						liquidId);
+						liquidId, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
 					entityplayer.inventory.setInventorySlotContents(

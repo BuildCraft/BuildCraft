@@ -44,7 +44,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.paper, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.stone, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.coal, 64));			
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.glass, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Item.slimeBall, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.planks, 64));			
 			inv.setInventorySlotContents(ind++, new ItemStack (Item.redstoneRepeater, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (Block.torchRedstoneActive, 64));
