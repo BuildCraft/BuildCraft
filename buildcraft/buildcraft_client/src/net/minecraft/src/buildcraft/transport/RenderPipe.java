@@ -31,11 +31,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	final static private int displayLiquidStages = 40;
 	
 	private class DisplayLiquidList {
-		public int [] sideLiquidIn = new int [displayLiquidStages];	
-		public int [] centerLiquidIn = new int [displayLiquidStages * 2];
-
-		public int [] sideLiquidOut = new int [displayLiquidStages];	
-		public int [] centerLiquidOut = new int [displayLiquidStages * 2];
+		public int [] side = new int [displayLiquidStages];
+		public int [] center = new int [displayLiquidStages];
 	}
 	
 	private HashMap<Integer, DisplayLiquidList> displayLiquidLists = new HashMap<Integer, DisplayLiquidList>();
@@ -72,65 +69,40 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		}
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 		
-    	for (int s = 0; s < displayLiquidStages * 2; ++s) {
-    		if (s < displayLiquidStages) {
-        		d.sideLiquidIn [s] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(d.sideLiquidIn [s], 4864 /*GL_COMPILE*/);    
-        		
-    			block.minX = 0;
-    		} else {
-    			d.sideLiquidOut [s - displayLiquidStages] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(d.sideLiquidOut [s - displayLiquidStages], 4864 /*GL_COMPILE*/);    
-    			
-    			block.minX = (s - (float) displayLiquidStages) / ((float) displayLiquidStages) * size / 2F;
-    		}
+		// render size
+		
+    	for (int s = 0; s < displayLiquidStages; ++s) {
+    		d.side [s] = GLAllocation.generateDisplayLists(1);
+    		GL11.glNewList(d.side [s], 4864 /*GL_COMPILE*/);    
+        	
+    		block.minX = 0.0F;    		
+    		block.minZ = Utils.pipeMinPos + 0.01F;
     		
-    		block.minY = Utils.pipeMinPos + 0.01;
-    		block.minZ = Utils.pipeMinPos + 0.01;
+    		block.maxX = block.minX + size / 2F + 0.01F;
+    		block.maxZ = block.minZ + size - 0.02F;
 
-    		if (s < displayLiquidStages) {
-    			block.maxX = s / ((float) displayLiquidStages - 1) * size / 2F;
-    		} else {
-    			block.maxX = size / 2F;
-    		}
-    				
-    		block.maxY = Utils.pipeMaxPos - 0.01;
-    		block.maxZ = Utils.pipeMaxPos - 0.01;    		
-
+    		block.minY = Utils.pipeMinPos + 0.01F;
+			block.maxY = block.minZ + (size - 0.02F)
+					/ (float) displayLiquidStages * (float) s;
+    		
     		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
     				0, 0, false);
 
-    		GL11.glEndList();    		
-    	}
-        
-    	for (int s = 0; s < displayLiquidStages * 4; ++s) {
-    		if (s < displayLiquidStages * 2) {
-        		d.centerLiquidIn [s] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(d.centerLiquidIn [s], 4864 /*GL_COMPILE*/);
-        		
-    			block.minX = Utils.pipeMinPos + 0.01F;
-    		} else {
-        		d.centerLiquidOut [s - displayLiquidStages * 2] = GLAllocation.generateDisplayLists(1);
-        		GL11.glNewList(d.centerLiquidOut [s - displayLiquidStages * 2], 4864 /*GL_COMPILE*/);
-    			
-				block.minX = Utils.pipeMinPos + 0.01F
-						+ (s - (float) displayLiquidStages * 2F - 1) / ((float) displayLiquidStages * 2F - 1)
-						* size;
-    		}
-    		
-    		block.minY = Utils.pipeMinPos + 0.01F;
-    		block.minZ = Utils.pipeMinPos + 0.01F;
-    		
-    		if (s < displayLiquidStages * 2) {
-				block.maxX = Utils.pipeMaxPos - ((size - s
-				/ ((float) displayLiquidStages * 2F - 1) * size)) - 0.01;
-    		} else {
-    			block.maxX = Utils.pipeMaxPos - 0.01;
-    		}
+    		GL11.glEndList();
 
-    		block.maxY = Utils.pipeMaxPos - 0.01;
-    		block.maxZ = Utils.pipeMaxPos - 0.01;
+    		d.center [s] = GLAllocation.generateDisplayLists(1);
+    		GL11.glNewList(d.center [s], 4864 /*GL_COMPILE*/);    
+        	
+    		block.minX = Utils.pipeMinPos + 0.01;    		
+    		block.minZ = Utils.pipeMinPos + 0.01;
+    		
+    		block.maxX = block.minX + size - 0.02;
+    		block.maxZ = block.minZ + size - 0.02;
 
+    		block.minY = Utils.pipeMinPos + 0.01;
+			block.maxY = block.minZ + (size - 0.02F)
+					/ ((float) displayLiquidStages) * (float) s;
+    		
     		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
     				0, 0, false);
 
@@ -261,15 +233,36 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		GL11.glTranslatef((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);		
 				
+		// sides
+		
 		for (int i = 0; i < 6; ++i) {
-			renderSide (angleY [i], angleZ [i], liq.getSideToCenter(i), liq.getCenterToSide(i), d);
+			if (liq.getSide(i) > 0) {
+				int stage = (int) ((float) liq.getSide(i)
+						/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
+
+				GL11.glPushMatrix();
+
+				switch (Orientations.values() [i]) {
+				case YPos:
+					break;
+				case YNeg:
+					break;
+				case XPos: case XNeg: case ZPos: case ZNeg:
+					GL11.glRotatef(angleY [i], 0, 1, 0);
+					GL11.glRotatef(angleZ [i], 0, 0, 1);
+					break;
+				}				
+
+				GL11.glCallList(d.side[stage]);
+				GL11.glPopMatrix();	
+			}						
 		}
 				
 		// CENTER
 
-		if (liq.getCenterIn () > 0 || liq.getCenterOut () > 0) {
-			renderCenter(liq.lastFromOrientation, liq.lastToOrientation,
-					liq.getCenterIn(), liq.getCenterOut(), d);
+		if (liq.getCenter () > 0) {
+			int stage = (int) ((float) liq.getCenter() / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
+			GL11.glCallList(d.center[stage]);						
 		}
 	
 		GL11.glEnable(2896 /*GL_LIGHTING*/);
@@ -289,63 +282,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		}
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
-		GL11.glPopMatrix();
-	}
-	
-	private void renderSide(float angleY, float angleZ, float sideToCenter, float centerToSide, DisplayLiquidList d) {
-		if (sideToCenter == 0 && centerToSide == 0) {
-			return;
-		}
-				
-		GL11.glPushMatrix();		
-		
-		GL11.glRotatef(angleY, 0, 1, 0);
-		GL11.glRotatef(angleZ, 0, 0, 1);
-		
-		if (sideToCenter + centerToSide >= BuildCraftCore.BUCKET_VOLUME / 4) {
-			GL11.glCallList(d.sideLiquidIn[displayLiquidStages - 1]);
-		} else {
-			if (sideToCenter > 0) {
-				GL11.glCallList(d.sideLiquidIn[(int) (sideToCenter
-						/ (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayLiquidStages - 1))]);
-			}
-
-			if (centerToSide > 0) {
-				GL11.glCallList(d.sideLiquidOut[(displayLiquidStages - 1)
-						- (int) (centerToSide / (BuildCraftCore.BUCKET_VOLUME / 4F) * (displayLiquidStages - 1))]);
-			}
-		}
-
-		GL11.glPopMatrix();
-	}
-	
-	private void renderCenter(Orientations lastFromOrientation, Orientations lastToOrientation, float centerIn, float centerOut, DisplayLiquidList d) {
-		GL11.glPushMatrix();					
-
-		if (centerIn + centerOut >= BuildCraftCore.BUCKET_VOLUME / 2) {
-			GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
-			GL11.glRotatef(angleZ [lastFromOrientation.ordinal()], 0, 0, 1);
-			GL11.glCallList(d.centerLiquidIn [displayLiquidStages * 2 - 1]);
-		} else {
-			if (centerIn > 0) {
-				GL11.glRotatef(angleY [lastFromOrientation.ordinal()], 0, 1, 0);
-				GL11.glRotatef(angleZ [lastFromOrientation.ordinal()], 0, 0, 1);
-			} else {
-				GL11.glRotatef(angleY [lastToOrientation.reverse().ordinal()], 0, 1, 0);
-				GL11.glRotatef(angleZ [lastToOrientation.reverse().ordinal()], 0, 0, 1);
-			}			
-			
-			if (centerIn > 0) {
-				GL11.glCallList(d.centerLiquidIn[(int) (centerIn / (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayLiquidStages * 2 - 1))]);
-			}
-
-			if (centerOut > 0) {
-				GL11.glCallList(d.centerLiquidOut[(displayLiquidStages * 2 - 1)
-						- (int) (centerOut
-								/ (BuildCraftCore.BUCKET_VOLUME / 2F) * (displayLiquidStages * 2 - 1))]);
-			}
-		}
-
 		GL11.glPopMatrix();
 	}
 

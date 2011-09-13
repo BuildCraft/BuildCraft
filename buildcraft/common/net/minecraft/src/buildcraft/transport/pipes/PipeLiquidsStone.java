@@ -9,7 +9,7 @@ public class PipeLiquidsStone extends Pipe {
 	public PipeLiquidsStone(int itemID) {
 		super(new PipeTransportLiquids(), new PipeLogicStone(), itemID);
 		
-		((PipeTransportLiquids) transport).flowRate = 40;
+//		((PipeTransportLiquids) transport).flowRate = 40;
 	}
 
 	@Override
