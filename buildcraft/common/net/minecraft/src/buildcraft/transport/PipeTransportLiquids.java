@@ -52,8 +52,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			int date = (int) (worldObj.getWorldTime() % travelDelay);
 			int newDate = date > 0 ? date - 1 : travelDelay - 1;
 			
-			if (qty + toFill > LIQUID_IN_PIPE) {
-				toFill = LIQUID_IN_PIPE - qty;
+			if (qty + toFill > LIQUID_IN_PIPE + flowRate) {
+				toFill = LIQUID_IN_PIPE + flowRate - qty;
 			}
 			
 			if (doFill) {
@@ -116,6 +116,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 					extracted = splitLiquid(out [date], outputNumber);
 					
 					if (extracted < out [date]) {
+						outputNumber = 0;
+						
 						// try a second time, if to split the remaining in non
 						// filled if any
 						for (int i = 0; i < 6; ++i) {
@@ -123,7 +125,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 								outputNumber++;
 							}
 						}
-					
+						
 						extracted += splitLiquid(out [date] - extracted, outputNumber);
 					}
 				}
@@ -138,15 +140,16 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			int extracted = 0;
 			
 			int slotExtract = (int) Math
-			.floor(((double) quantity / (double) outputNumber));
+			.ceil(((double) quantity / (double) outputNumber));
 	
 			for (int i = 0; i < 6; ++i) {
-				int toExtract = slotExtract <= quantity ? slotExtract : quantity;
+				int toExtract = slotExtract <= quantity ? slotExtract : quantity;				
 		
-				if (isOutput [i]) {
+				if (isOutput [i] && !filled [i]) {
 					extracted += side [i].fill(toExtract, true);
+					quantity -= toExtract;
 					
-					if (extracted != quantity) {
+					if (extracted != toExtract) {
 						filled [i] = true;
 					}
 				}
