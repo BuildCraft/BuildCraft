@@ -31,8 +31,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	final static private int displayLiquidStages = 40;
 	
 	private class DisplayLiquidList {
-		public int [] side = new int [displayLiquidStages];
-		public int [] center = new int [displayLiquidStages];
+		public int [] sideHorizontal = new int [displayLiquidStages];
+		public int [] sideVertical = new int [displayLiquidStages];
+		public int [] centerHorizontal = new int [displayLiquidStages];
+		public int [] centerVertical = new int [displayLiquidStages];		
 	}
 	
 	private HashMap<Integer, DisplayLiquidList> displayLiquidLists = new HashMap<Integer, DisplayLiquidList>();
@@ -72,8 +74,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// render size
 		
     	for (int s = 0; s < displayLiquidStages; ++s) {
-    		d.side [s] = GLAllocation.generateDisplayLists(1);
-    		GL11.glNewList(d.side [s], 4864 /*GL_COMPILE*/);    
+    		float ratio = (float) s / (float) displayLiquidStages ;
+    		
+    		// SIDE HORIZONTAL
+    		
+    		d.sideHorizontal [s] = GLAllocation.generateDisplayLists(1);
+    		GL11.glNewList(d.sideHorizontal [s], 4864 /*GL_COMPILE*/);    
         	
     		block.minX = 0.0F;    		
     		block.minZ = Utils.pipeMinPos + 0.01F;
@@ -82,16 +88,36 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     		block.maxZ = block.minZ + size - 0.02F;
 
     		block.minY = Utils.pipeMinPos + 0.01F;
-			block.maxY = block.minZ + (size - 0.02F)
-					/ (float) displayLiquidStages * (float) s;
+			block.maxY = block.minY + (size - 0.02F) * ratio;
     		
     		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
     				0, 0, false);
 
     		GL11.glEndList();
+    		
+    		// SIDE VERTICAL
+    		
+    		d.sideVertical [s] = GLAllocation.generateDisplayLists(1);
+    		GL11.glNewList(d.sideVertical [s], 4864 /*GL_COMPILE*/);    
+        	
+    		block.minY = Utils.pipeMaxPos - 0.01;
+    		block.maxY = 1;
+    		
+    		block.minX = 0.5 - (size / 2 - 0.01) * ratio;
+    		block.maxX = 0.5 + (size / 2 - 0.01) * ratio;
+    		
+    		block.minZ = 0.5 - (size / 2 - 0.01) * ratio;
+    		block.maxZ = 0.5 + (size / 2 - 0.01) * ratio;
+    		
+    		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
+    				0, 0, false);
 
-    		d.center [s] = GLAllocation.generateDisplayLists(1);
-    		GL11.glNewList(d.center [s], 4864 /*GL_COMPILE*/);    
+    		GL11.glEndList();
+    		
+    		// CENTER HORIZONTAL
+
+    		d.centerHorizontal [s] = GLAllocation.generateDisplayLists(1);
+    		GL11.glNewList(d.centerHorizontal [s], 4864 /*GL_COMPILE*/);    
         	
     		block.minX = Utils.pipeMinPos + 0.01;    		
     		block.minZ = Utils.pipeMinPos + 0.01;
@@ -100,13 +126,32 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     		block.maxZ = block.minZ + size - 0.02;
 
     		block.minY = Utils.pipeMinPos + 0.01;
-			block.maxY = block.minZ + (size - 0.02F)
-					/ ((float) displayLiquidStages) * (float) s;
+			block.maxY = block.minY + (size - 0.02F) * ratio;
     		
     		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
     				0, 0, false);
 
     		GL11.glEndList();
+    		
+    		// CENTER VERTICAL
+
+    		d.centerVertical [s] = GLAllocation.generateDisplayLists(1);
+    		GL11.glNewList(d.centerVertical [s], 4864 /*GL_COMPILE*/);    
+        	
+    		block.minY = Utils.pipeMinPos + 0.01;
+    		block.maxY = Utils.pipeMaxPos - 0.01;
+    		
+    		block.minX = 0.5 - (size / 2 - 0.02) * ratio;
+    		block.maxX = 0.5 + (size / 2 - 0.02) * ratio;
+    		
+    		block.minZ = 0.5 - (size / 2 - 0.02) * ratio;
+    		block.maxZ = 0.5 + (size / 2 - 0.02) * ratio;
+    		
+    		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
+    				0, 0, false);
+
+    		GL11.glEndList();
+    		
     	}
     	
 		return d;
@@ -235,25 +280,34 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				
 		// sides
 		
+		boolean sides = false, above = false;
+		
 		for (int i = 0; i < 6; ++i) {
 			if (liq.getSide(i) > 0) {
 				int stage = (int) ((float) liq.getSide(i)
 						/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
 
 				GL11.glPushMatrix();
+				int list = 0;
 
 				switch (Orientations.values() [i]) {
 				case YPos:
+					above = true;
+					list = d.sideVertical [stage];
 					break;
 				case YNeg:
+					GL11.glTranslatef(0, -0.75F, 0);
+					list = d.sideVertical [stage];					
 					break;
 				case XPos: case XNeg: case ZPos: case ZNeg:
+					sides = true;
 					GL11.glRotatef(angleY [i], 0, 1, 0);
 					GL11.glRotatef(angleZ [i], 0, 0, 1);
+					list = d.sideHorizontal [stage];
 					break;
 				}				
 
-				GL11.glCallList(d.side[stage]);
+				GL11.glCallList(list);
 				GL11.glPopMatrix();	
 			}						
 		}
@@ -261,8 +315,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// CENTER
 
 		if (liq.getCenter () > 0) {
-			int stage = (int) ((float) liq.getCenter() / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
-			GL11.glCallList(d.center[stage]);						
+			int stage = (int) ((float) liq.getCenter()
+					/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
+			
+			if (above) {
+				GL11.glCallList(d.centerVertical[stage]);
+			} 
+			
+			if (!above || sides) {
+				GL11.glCallList(d.centerHorizontal[stage]);	
+			}
+			
+									
 		}
 	
 		GL11.glEnable(2896 /*GL_LIGHTING*/);
