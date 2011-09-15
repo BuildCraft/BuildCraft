@@ -21,7 +21,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	 */
 	public static int LIQUID_IN_PIPE = BuildCraftCore.BUCKET_VOLUME / 4;
 	
-	int travelDelay = 5;
+	public int travelDelay = 6;	
+	public int flowRate = 20;
 	
 	public class LiquidBuffer {
 		short [] in = new short [travelDelay];
@@ -207,8 +208,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		
 	}
-	
-	public int flowRate = 20;
 
 	public @TileNetworkData(staticSize = 6)
 	LiquidBuffer[] side = new LiquidBuffer [6];

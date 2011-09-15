@@ -9,7 +9,8 @@ public class PipeLiquidsGold extends Pipe {
 	public PipeLiquidsGold(int itemID) {
 		super(new PipeTransportLiquids(), new PipeLogicGold(), itemID);
 		
-//		((PipeTransportLiquids) transport).flowRate = 80;
+		((PipeTransportLiquids) transport).flowRate = 80;
+		((PipeTransportLiquids) transport).travelDelay = 2;
 	}
 
 	@Override
