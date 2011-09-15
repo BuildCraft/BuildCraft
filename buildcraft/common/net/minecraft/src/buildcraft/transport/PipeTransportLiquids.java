@@ -32,6 +32,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		short liquidId = 0;
 		int orientation;
 		
+		short [] lastQty = new short [100];
+		int lastTotal = 0; 
+		int auverage;
+		
 		boolean bouncing = false;
 		
 		private boolean [] filled;
@@ -48,14 +52,23 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 				out [i] = 0;
 			}
 			
+			for (int i = 0; i < lastQty.length; ++i) {
+				lastQty [i] = 0;
+			}
+			
 			ready = 0;
 			qty = 0;			
 			liquidId = 0;
+			lastTotal = 0;
 		}
 		
 		public int fill (int toFill, boolean doFill, short liquidId) {
 			if (qty > 0 && this.liquidId != liquidId && this.liquidId != 0) {
 				return 0;
+			}
+			
+			if (this.liquidId != liquidId) {
+				reset ();
 			}
 			
 			this.liquidId = liquidId;
@@ -84,10 +97,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			}
 			
 			ready -= toEmpty;
-			
-			//if (qty > 0) {
-			//	System.out.println ("TO EMPTY = " + toEmpty + ", QTY = " + qty);
-			//}
 			
 			out [newDate] += toEmpty;
 			
@@ -160,6 +169,13 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 				ready += out[date] - extracted;
 				out[date] = 0;
 			}
+			
+			int avgDate = (int) (worldObj.getWorldTime() % lastQty.length);
+			
+			lastTotal += qty - lastQty [avgDate];
+			lastQty [avgDate] = qty;
+			
+			auverage = lastTotal / lastQty.length;			
 		}
 		
 		private int splitLiquid (int quantity, int outputNumber) {
@@ -366,18 +382,18 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	}
 
 	public int getSide(int orientation) {
-		if (side[orientation].qty > LIQUID_IN_PIPE) {
+		if (side[orientation].auverage > LIQUID_IN_PIPE) {
 			return LIQUID_IN_PIPE;
 		} else {
-			return side[orientation].qty;
+			return side[orientation].auverage;
 		}
 	}
 
 	public int getCenter() {
-		if (center.qty > LIQUID_IN_PIPE) {
+		if (center.auverage > LIQUID_IN_PIPE) {
 			return LIQUID_IN_PIPE;
 		} else {
-			return center.qty;
+			return center.auverage;
 		}
 	}
 
