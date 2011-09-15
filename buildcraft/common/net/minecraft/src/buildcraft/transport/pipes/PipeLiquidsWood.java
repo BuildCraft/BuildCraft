@@ -112,8 +112,6 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 				extracted = ((PipeTransportLiquids) transport).fill(
 						pos.orientation, extracted, container.getLiquidId(), true);
 				
-				((PipeTransportLiquids) transport).liquidId = container.getLiquidId();
-				
 				container.empty(extracted, true);								
 				
 				liquidToExtract -= extracted;

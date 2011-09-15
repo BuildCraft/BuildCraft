@@ -11,7 +11,7 @@ public class EngineIron extends Engine {
 	
 	public static int MAX_LIQUID = BuildCraftCore.BUCKET_VOLUME * 10;
 	public static int MAX_HEAT          = 100000;
-	public static int COOLANT_THRESHOLD = 55000;
+	public static int COOLANT_THRESHOLD = 49000;
 	
 	int burnTime = 0;
 	int liquidQty = 0;

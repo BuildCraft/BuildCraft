@@ -126,6 +126,11 @@ public class BuildCraftCore {
 		liquids.add(new LiquidData(Block.lavaStill.blockID,
 				Item.bucketLava.shiftedIndex));
 		
+		BuildCraftCore.liquids.add(new LiquidData(Block.waterStill.blockID,
+				Block.waterStill.blockID));
+		BuildCraftCore.liquids.add(new LiquidData(Block.lavaStill.blockID,
+				Block.lavaStill.blockID));
+		
 		mainConfiguration.save();
 	}
 	

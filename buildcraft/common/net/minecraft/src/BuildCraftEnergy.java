@@ -114,7 +114,9 @@ public class BuildCraftEnergy {
 		
 		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
 				10, fuel.shiftedIndex, 1, 1));
-		
+
+		TileEngine.possibleFuels.put(Block.lavaStill.blockID, new EngineFuel(
+				oilStill.blockID, 1, 2000));
 		TileEngine.possibleFuels.put(oilStill.blockID, new EngineFuel(
 				oilStill.blockID, 2, 10000));
 		TileEngine.possibleFuels.put(fuel.shiftedIndex, new EngineFuel(
