@@ -23,12 +23,15 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	
 	int travelDelay = 5;
 	
-	class LiquidBuffer {
-		int [] in = new int [travelDelay];
-		int ready;
-		int [] out = new int [travelDelay];
-		int qty;
+	public class LiquidBuffer {
+		short [] in = new short [travelDelay];
+		short ready;
+		short [] out = new short [travelDelay];
+		short qty;
+		short liquidId = 0;
 		int orientation;
+		
+		boolean bouncing = false;
 		
 		private boolean [] filled;
 		
@@ -46,9 +49,16 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			
 			ready = 0;
 			qty = 0;			
+			liquidId = 0;
 		}
 		
-		public int fill (int toFill, boolean doFill) {
+		public int fill (int toFill, boolean doFill, short liquidId) {
+			if (qty > 0 && this.liquidId != liquidId && this.liquidId != 0) {
+				return 0;
+			}
+			
+			this.liquidId = liquidId;
+			
 			int date = (int) (worldObj.getWorldTime() % travelDelay);
 			int newDate = date > 0 ? date - 1 : travelDelay - 1;
 			
@@ -74,12 +84,22 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			
 			ready -= toEmpty;
 			
+			//if (qty > 0) {
+			//	System.out.println ("TO EMPTY = " + toEmpty + ", QTY = " + qty);
+			//}
+			
 			out [newDate] += toEmpty;
 			
 			return toEmpty;
 		}
 		
 		public void update () {
+			bouncing = false;
+			
+			if (qty == 0) {
+				return;
+			}
+			
 			int date = (int) (worldObj.getWorldTime() % travelDelay);
 
 			ready += in [date];
@@ -90,7 +110,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 				
 				if (orientation < 6) {
 					if (isInput [orientation]) {
-						extracted = center.fill(out [date], true);
+						extracted = center.fill(out [date], true, liquidId);
 					} if (isOutput[orientation]) {
 						Position p = new Position(xCoord, yCoord, zCoord,
 								Orientations.values()[orientation]);
@@ -100,6 +120,11 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 								.getTile(worldObj, p, Orientations.Unknown);
 						extracted = nextPipe.fill(p.orientation.reverse(),
 								out[date], liquidId, true);
+						
+						if (extracted == 0) {
+							bouncing = true;
+							extracted += center.fill(out [date], true, liquidId);
+						}
 					}
 				} else {
 					int outputNumber = 0;
@@ -129,7 +154,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 						extracted += splitLiquid(out [date] - extracted, outputNumber);
 					}
 				}
-				
+
 				qty -= extracted;
 				ready += out[date] - extracted;
 				out[date] = 0;
@@ -142,11 +167,11 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			int slotExtract = (int) Math
 			.ceil(((double) quantity / (double) outputNumber));
 	
-			for (int i = 0; i < 6; ++i) {
+			for (int i = worldObj.rand.nextInt(6); i < 6; ++i) {
 				int toExtract = slotExtract <= quantity ? slotExtract : quantity;				
 		
 				if (isOutput [i] && !filled [i]) {
-					extracted += side [i].fill(toExtract, true);
+					extracted += side [i].fill(toExtract, true, liquidId);
 					quantity -= toExtract;
 					
 					if (extracted != toExtract) {
@@ -157,6 +182,30 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			
 			return extracted;
 		}
+		
+		public void readFromNBT(NBTTagCompound nbttagcompound) {
+			for (int i = 0; i < travelDelay; ++i) {
+				in [i] = nbttagcompound.getShort("in[" + i + "]");
+				out [i] = nbttagcompound.getShort("out[" + i + "]");
+			}	
+			
+			ready = nbttagcompound.getShort("ready");
+			qty = nbttagcompound.getShort("qty");
+			liquidId = nbttagcompound.getShort("liquidId");
+		}
+		
+		public void writeToNBT(NBTTagCompound nbttagcompound) {
+			for (int i = 0; i < travelDelay; ++i) {
+				nbttagcompound.setShort("in[" + i + "]", in [i]);
+				nbttagcompound.setShort("out[" + i + "]", out [i]);
+			}	
+			
+			nbttagcompound.setShort("ready", ready);
+			nbttagcompound.setShort("qty", qty);			
+			nbttagcompound.setShort("liquidId", liquidId);
+		}
+		
+		
 	}
 	
 	public int flowRate = 20;
@@ -165,8 +214,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	LiquidBuffer[] side = new LiquidBuffer [6];
 	public @TileNetworkData
 	LiquidBuffer center;
-	public @TileNetworkData
-	int liquidId = 0;
 
 	public @TileNetworkData(staticSize = 6)
 	boolean[] isInput = new boolean[6];
@@ -217,33 +264,37 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-//		for (int i = 0; i < 6; ++i) {
-//			side[i] = nbttagcompound.getInteger("side[" + i + "]");
-//			isInput[i] = nbttagcompound.getBoolean("isInput[" + i + "]");
-//		}
-//
-//		center = nbttagcompound.getInteger("center");
-		liquidId = nbttagcompound.getInteger("liquidId");
-
-//		if (liquidId == 0) {
-//			center = 0;
-//
-//			for (int i = 0; i < 6; ++i) {
-//				side[i] = 0;
-//			}
-//		}
+		for (int i = 0; i < 6; ++i) {
+			if (nbttagcompound.hasKey("side[" + i + "]")) {
+				side [i].readFromNBT(nbttagcompound.getCompoundTag("side[" + i + "]"));
+			}
+			
+			isInput [i] = nbttagcompound.getBoolean("isInput[" + i + "]");
+		}
+		
+		if (nbttagcompound.hasKey("center")) {
+			center.readFromNBT(nbttagcompound.getCompoundTag("center"));
+		}
+		
+		NBTTagCompound sub = new NBTTagCompound();
+		center.writeToNBT(sub);
+		nbttagcompound.setTag("center", sub);		
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-//		for (int i = 0; i < 6; ++i) {
-//			nbttagcompound.setInteger("side[" + i + "]", side[i]);
-//			nbttagcompound.setBoolean("isInput[" + i + "]", isInput[i]);
-//		}
-//
-//		nbttagcompound.setInteger("center", center);
-		nbttagcompound.setInteger("liquidId", liquidId);
+		for (int i = 0; i < 6; ++i) {
+			NBTTagCompound sub = new NBTTagCompound();
+			side [i].writeToNBT(sub);
+			nbttagcompound.setTag("side[" + i + "]", sub);
+			
+			nbttagcompound.setBoolean("isInput[" + i + "]", isInput [i]);
+		}
+		
+		NBTTagCompound sub = new NBTTagCompound();
+		center.writeToNBT(sub);
+		nbttagcompound.setTag("center", sub);
 	}
 	
 	protected void doWork() {
@@ -257,38 +308,23 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	 * Fills the pipe, and return the amount of liquid that has been used.
 	 */
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		if ((getLiquidQuantity() != 0 && liquidId != id) || id == 0) {
-			return 0;
-		}
-				
-		liquidId = id;
 		isInput[from.ordinal()] = true;
 			
-		return side[from.ordinal()].fill(quantity, doFill);
+		return side[from.ordinal()].fill(quantity, doFill, (short) id);
 	}
 	
-	private void moveLiquids() {						
-		boolean moved = false;
-		boolean sendFailed [] = new boolean [] {false, false, false, false, false, false};
+	private void moveLiquids() {
 		isOutput = new boolean [] {false, false, false, false, false, false};
 		
-		int outputNumber = 0;
+		int outputNumber = computeOutputs ();
 		
-		// COMPUTES OUTPUTS
-
-		for (int i = 0; i < 6; ++i) {
-			Position p = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[i]);
-			p.moveForwards(1);
-			
-			isOutput [i] = container.pipe.outputOpen(p.orientation)
-					&& canReceiveLiquid(p) && !isInput[i];
-			
-			if (isOutput [i]) {
-				outputNumber++;
+		if (outputNumber == 0) {	
+			for (int i = 0; i < 6; ++i) {
+				isInput[i] = false;				
 			}
+			
+			outputNumber = computeOutputs();
 		}		
-				
 		
 		for (int i = 0; i < 6; ++i) {
 			side [i].empty(flowRate);
@@ -302,30 +338,32 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		for (int i = 0; i < 6; ++i) {
 			side [i].update();
-		}
+			
+			if (side [i].bouncing) {
+				isInput [i] = true;
+			} else if (side [i].qty == 0) {
+				isInput [i] = false;
+			}
+		}	
+	}
+
+	private int computeOutputs() {
+		int outputNumber = 0;
 		
-//		if (!moved) {		
-//			for (int i = 0; i < 6; ++i) {
-//				Position p = new Position(xCoord, yCoord, zCoord,
-//						Orientations.values()[i]);
-//				p.moveForwards(1);
-//
-//				if (canReceiveLiquid(p) && !sendFailed [i]) {
-//					//  If we can send liquids there at some point, exit. 
-//					//  Otherwise, we tried to send liquid and that didn't 
-//					//  work, so try an other route.
-//					
-//					return;					
-//				}
-//			}
-//
-//			// If we can't find a direction where to potentially send liquid,
-//			// reset all input directions
-//
-//			for (int i = 0; i < 6; ++i) {
-//				isInput[i] = false;				
-//			}
-//		}				
+		for (int i = 0; i < 6; ++i) {
+			Position p = new Position(xCoord, yCoord, zCoord,
+					Orientations.values()[i]);
+			p.moveForwards(1);
+			
+			isOutput [i] = container.pipe.outputOpen(p.orientation)
+					&& canReceiveLiquid(p) && !isInput[i];
+			
+			if (isOutput [i]) {
+				outputNumber++;
+			}
+		}		
+				
+		return outputNumber;
 	}
 
 	public int getSide(int orientation) {
@@ -382,7 +420,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	}
 
 	public int getLiquidId() {
-		return liquidId;
+		return center.liquidId;
 	}
 	
 	public boolean isPipeConnected(TileEntity tile) {
@@ -391,3 +429,4 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
     	    || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
 	}
 }
+

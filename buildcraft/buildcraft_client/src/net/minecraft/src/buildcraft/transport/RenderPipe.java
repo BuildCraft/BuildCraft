@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.HashMap;
 
 import org.lwjgl.opengl.GL11;
+import org.omg.PortableInterceptor.DISCARDING;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
@@ -21,6 +22,7 @@ import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems.EntityData;
+import net.minecraft.src.buildcraft.transport.PipeTransportLiquids.LiquidBuffer;
 import net.minecraft.src.forge.ITextureProvider;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
@@ -249,32 +251,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	private void renderLiquids(Pipe pipe, double x, double y, double z) {
 		PipeTransportLiquids liq = (PipeTransportLiquids) pipe.transport;
-		
-		int liquidId = liq.getLiquidId();
-		
-		if (liquidId == 0) {
-			return;
-		}
-		
-		Object o = null;
-		
-		if (liquidId < Block.blocksList.length) {
-			o = Block.blocksList [liq.getLiquidId()];
-		} else {
-			o = Item.itemsList [liquidId];
-		}
-		
-		DisplayLiquidList d = getDisplayLiquidLists(liq.getLiquidId());
+
 		
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /*GL_LIGHTING*/);
-				
-		if (o instanceof ITextureProvider) {
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
-					.getTextureFile());
-		} else {
-			MinecraftForgeClient.bindTexture("/terrain.png");
-		}
 
 		GL11.glTranslatef((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);		
 				
@@ -284,6 +264,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		
 		for (int i = 0; i < 6; ++i) {
 			if (liq.getSide(i) > 0) {
+				DisplayLiquidList d = getListFromBuffer(liq.side [i]);
+				
+				if (d == null) {
+					continue;
+				}
+				
 				int stage = (int) ((float) liq.getSide(i)
 						/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
 
@@ -315,15 +301,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// CENTER
 
 		if (liq.getCenter () > 0) {
-			int stage = (int) ((float) liq.getCenter()
-					/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
+			DisplayLiquidList d = getListFromBuffer(liq.center);
 			
-			if (above) {
-				GL11.glCallList(d.centerVertical[stage]);
-			} 
-			
-			if (!above || sides) {
-				GL11.glCallList(d.centerHorizontal[stage]);	
+			if (d != null) {
+				int stage = (int) ((float) liq.getCenter()
+						/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (float) (displayLiquidStages - 1));
+
+				if (above) {
+					GL11.glCallList(d.centerVertical[stage]);
+				} 
+
+				if (!above || sides) {
+					GL11.glCallList(d.centerHorizontal[stage]);	
+				}
 			}
 			
 									
@@ -333,6 +323,32 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();		
 	}
 
+	public DisplayLiquidList getListFromBuffer (LiquidBuffer buf) {
+		
+		int liquidId = buf.liquidId;
+		
+		if (liquidId == 0) {
+			return null;
+		}
+		
+		Object o = null;
+		
+		if (liquidId < Block.blocksList.length) {
+			o = Block.blocksList [liquidId];
+		} else {
+			o = Item.itemsList [liquidId];
+		}
+						
+		if (o instanceof ITextureProvider) {
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
+					.getTextureFile());
+		} else {
+			MinecraftForgeClient.bindTexture("/terrain.png");
+		}
+		
+		return getDisplayLiquidLists(liquidId);
+	}
+	
 	private void renderSolids(Pipe pipe, double x, double y, double z) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
