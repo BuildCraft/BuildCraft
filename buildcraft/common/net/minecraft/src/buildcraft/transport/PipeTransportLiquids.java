@@ -4,6 +4,7 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -34,8 +35,15 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		short [] lastQty = new short [100];
 		int lastTotal = 0; 
-		int auverage;
 		
+		int emptyTime = 0;
+		
+		@TileNetworkData
+		int auverage;
+		// ??? It's probably worth only synchronizing this guy and avoid 
+		// remote computing.
+		
+		int totalBounced = 0;
 		boolean bouncing = false;
 		
 		private boolean [] filled;
@@ -60,6 +68,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			qty = 0;			
 			liquidId = 0;
 			lastTotal = 0;
+			totalBounced = 0;
+			emptyTime = 0;
 		}
 		
 		public int fill (int toFill, boolean doFill, short liquidId) {
@@ -106,10 +116,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		public void update () {
 			bouncing = false;
 			
-			if (qty == 0) {
-				return;
-			}
-			
 			int date = (int) (worldObj.getWorldTime() % travelDelay);
 
 			ready += in [date];
@@ -132,8 +138,15 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 								out[date], liquidId, true);
 						
 						if (extracted == 0) {
-							bouncing = true;
+							totalBounced++;
+							
+							if (totalBounced > 20) {
+								bouncing = true;
+							}
+							
 							extracted += center.fill(out [date], true, liquidId);
+						} else {
+							totalBounced = 0;
 						}
 					}
 				} else {
@@ -175,7 +188,11 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			lastTotal += qty - lastQty [avgDate];
 			lastQty [avgDate] = qty;
 			
-			auverage = lastTotal / lastQty.length;			
+			auverage = lastTotal / lastQty.length;
+			
+			if (qty != 0 && auverage == 0) {
+				auverage = 1;
+			}
 		}
 		
 		private int splitLiquid (int quantity, int outputNumber) {
@@ -184,9 +201,13 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			int slotExtract = (int) Math
 			.ceil(((double) quantity / (double) outputNumber));
 	
-			for (int i = worldObj.rand.nextInt(6); i < 6; ++i) {
+			int [] splitVector = getSplitVector(worldObj);
+			
+			for (int r = 0; r < 6; ++r) {
 				int toExtract = slotExtract <= quantity ? slotExtract : quantity;				
 		
+				int i = splitVector [r];
+				
 				if (isOutput [i] && !filled [i]) {
 					extracted += side [i].fill(toExtract, true, liquidId);
 					quantity -= toExtract;
@@ -328,12 +349,20 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		return side[from.ordinal()].fill(quantity, doFill, (short) id);
 	}
 	
+	int lockedTime = 0;
+	
 	private void moveLiquids() {
 		isOutput = new boolean [] {false, false, false, false, false, false};
 		
 		int outputNumber = computeOutputs ();
 		
-		if (outputNumber == 0) {	
+		if (outputNumber == 0) {
+			lockedTime++;
+		} else {
+			lockedTime = 0;
+		}
+		
+		if (lockedTime > 20) {
 			for (int i = 0; i < 6; ++i) {
 				isInput[i] = false;				
 			}
@@ -341,7 +370,12 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			outputNumber = computeOutputs();
 		}		
 		
-		for (int i = 0; i < 6; ++i) {
+
+		int [] rndIt = getSplitVector(worldObj);
+		
+		for (int r = 0; r < 6; ++r) {
+			int i = rndIt [r];
+			
 			side [i].empty(flowRate);
 		}
 		
@@ -351,12 +385,23 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		center.update();
 		
-		for (int i = 0; i < 6; ++i) {
+		
+		for (int r = 0; r < 6; ++r) {
+			int i = rndIt [r];
+			
 			side [i].update();
+			
+			if (side [i].qty != 0) {
+				side [i].emptyTime = 0;
+			}
 			
 			if (side [i].bouncing) {
 				isInput [i] = true;
 			} else if (side [i].qty == 0) {
+				side [i].emptyTime++;				
+			}
+			
+			if (side [i].emptyTime > 20) {
 				isInput [i] = false;
 			}
 		}	
@@ -442,6 +487,35 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		return tile instanceof TileGenericPipe 
     	    || tile instanceof ILiquidContainer
     	    || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
+	}
+	
+	private static long lastSplit = 0;
+	
+	private static int [] splitVector;
+	
+	public static int [] getSplitVector (World worldObj) {
+		if (lastSplit == worldObj.getWorldTime()) {
+			return splitVector;
+		}
+		
+		lastSplit = worldObj.getWorldTime();
+		
+		splitVector = new int [6];
+		
+		for (int i = 0; i < 6; ++i) { 
+			splitVector [i] = i;
+		}
+		
+		for (int i = 0; i < 20; ++i) {
+			int a = worldObj.rand.nextInt(6);
+			int b = worldObj.rand.nextInt(6);
+			
+			int tmp = splitVector [a];
+			splitVector [a] = splitVector [b];
+			splitVector [b] = tmp;
+		}
+		
+		return splitVector;
 	}
 }
 
