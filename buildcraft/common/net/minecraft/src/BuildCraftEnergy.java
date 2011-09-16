@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.BuildCraftItem;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.LiquidData;
@@ -33,6 +34,7 @@ public class BuildCraftEnergy {
 	public static Block oilMoving;
 	public static Block oilStill;
 	public static Item bucketOil;
+	public static Item bucketFuel;
 	
 	public static Item fuel;
 	
@@ -111,6 +113,10 @@ public class BuildCraftEnergy {
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 		
 		fuel = new ItemFuel (DefaultProps.FUEL_ID);
+		bucketFuel = new BuildCraftItem(DefaultProps.BUCKET_FUEL_ID)
+				.setIconIndex(0 * 16 + 3).setItemName("bucketOil")
+				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
+		CoreProxy.addName(bucketFuel, "Fuel Bucket");
 		
 		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
 				10, fuel.shiftedIndex, 1, 1));
@@ -124,7 +130,8 @@ public class BuildCraftEnergy {
 		
 		BuildCraftCore.liquids.add(new LiquidData(oilStill.blockID,
 				bucketOil.shiftedIndex));
-		BuildCraftCore.liquids.add(new LiquidData(fuel.shiftedIndex, 0));
+		BuildCraftCore.liquids.add(new LiquidData(fuel.shiftedIndex,
+				bucketFuel.shiftedIndex));
 	}
 
 	public static void generateSurface(World world, Random random, int i, int j) {

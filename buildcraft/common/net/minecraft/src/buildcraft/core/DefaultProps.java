@@ -12,6 +12,7 @@ public class DefaultProps {
 	public static int BUCKET_OIL_ID      = 3807;
 	public static int FUEL_ID            = 3808;
 	public static int PIPE_WATERPROOF_ID = 3809;
+	public static int BUCKET_FUEL_ID     = 3810;
 	
 	public static int WOODEN_PIPE_ID      = 145;
 	public static int STONE_PIPE_ID       = 146;
