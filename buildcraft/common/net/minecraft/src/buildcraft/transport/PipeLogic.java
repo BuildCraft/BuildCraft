@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -62,6 +63,42 @@ public class PipeLogic {
 	}
 
 	public boolean outputOpen(Orientations to) {
+		return true;
+	}
+	
+	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		return false;
+	}
+
+	public ItemStack extractItem(boolean doRemove, Orientations from) {
+		return null;
+	}
+	
+	public int getSizeInventory() { 
+		return 0;
+	}
+
+	public ItemStack getStackInSlot(int i) {
+		return null;
+	}
+
+	public ItemStack decrStackSize(int i, int j) {		
+		return null;
+	}
+	
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		
+	}
+	
+	public String getInvName() {
+		return null;
+	}
+	
+	public int getInventoryStackLimit() {
+		return 0;
+	}
+
+	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
 	}
 

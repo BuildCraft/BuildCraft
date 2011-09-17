@@ -10,9 +10,6 @@ import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
 import net.minecraft.src.buildcraft.transport.ItemPipe;
 import net.minecraft.src.buildcraft.transport.RenderPipe;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
-//import net.minecraft.src.buildcraft.transport.RenderPipe;
-//import net.minecraft.src.buildcraft.transport.TileDiamondPipe;
-//import net.minecraft.src.buildcraft.transport.TilePipe;
 import net.minecraft.src.forge.ICustomItemRenderer;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
@@ -31,7 +28,17 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipeItemsWood.shiftedIndex, this);
 		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeItemsCobblestone.shiftedIndex, this);
+		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipeItemsStone.shiftedIndex, this);
+		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeItemsIron.shiftedIndex, this);
+		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeItemsGold.shiftedIndex, this);
+		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeItemsDiamond.shiftedIndex, this);
+		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeItemsObsidian.shiftedIndex, this);
 		
 		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipeLiquidsWood.shiftedIndex, this);

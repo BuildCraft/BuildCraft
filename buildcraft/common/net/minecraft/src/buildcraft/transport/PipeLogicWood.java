@@ -31,11 +31,7 @@ public class PipeLogicWood extends PipeLogic {
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
 					(int) pos.z);
 			
-			if ((tile instanceof IInventory || tile instanceof ILiquidContainer
-					&& !(tile instanceof TileGenericPipe))
-					&& Utils.checkPipesConnections(worldObj, xCoord, yCoord,
-							zCoord, tile.xCoord, tile.yCoord, tile.zCoord)) {
-				
+			if (isInput (tile)) {				
 				if (!isExcludedFromExtraction(block)) {
 					newMeta = o.ordinal();
 					break;
@@ -47,6 +43,13 @@ public class PipeLogicWood extends PipeLogic {
 			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
+	}
+	
+	public boolean isInput(TileEntity tile) {
+		return !(tile instanceof TileGenericPipe)
+				&& (tile instanceof IInventory || tile instanceof ILiquidContainer)
+				&&  Utils.checkPipesConnections(worldObj, xCoord, yCoord,
+						zCoord, tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 	
 	public static boolean isExcludedFromExtraction (Block block) {
@@ -113,9 +116,10 @@ public class PipeLogicWood extends PipeLogic {
 					Orientations.values()[meta]);		
 			pos.moveForwards(1);
 
-			if (!(worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
-					(int) pos.z) instanceof IInventory)) {
-
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
+					(int) pos.z); 
+			
+			if (!isInput(tile)) {
 				switchSource();
 			}
 		}	

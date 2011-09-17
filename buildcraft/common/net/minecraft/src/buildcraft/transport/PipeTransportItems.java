@@ -96,6 +96,11 @@ public class PipeTransportItems extends PipeTransport {
 				}
 			}
 		}
+		
+		if (this.container.pipe instanceof IPipeTransportItemsHook) {
+			result = ((IPipeTransportItemsHook) this.container.pipe)
+					.filterPossibleMovements(result, pos, item);
+		}
 
 		return result;
 	}
