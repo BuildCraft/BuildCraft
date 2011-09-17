@@ -12,6 +12,20 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 //import net.minecraft.src.buildcraft.transport.BlockStonePipe;
 //import net.minecraft.src.buildcraft.transport.BlockObsidianPipe;
 //import net.minecraft.src.buildcraft.transport.BlockWoodenPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockCobblestonePipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockDiamondPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockGoldenPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockIronPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockObsidianPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockStonePipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockWoodenPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyTileCobblestonePipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyTileDiamondPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyTileGoldenPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyTileIronPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyTileObsidianPipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyTileStonePipe;
+import net.minecraft.src.buildcraft.transport.legacy.LegacyTileWoodenPipe;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
@@ -40,18 +54,9 @@ import net.minecraft.src.forge.Property;
 public class BuildCraftTransport {
 	
 	private static boolean initialized = false;
-	
-//	public static BlockWoodenPipe woodenPipeBlock;
-//	public static BlockStonePipe stonePipeBlock;
-//	public static BlockIronPipe ironPipeBlock;
-//	public static BlockGoldenPipe goldenPipeBlock;
-//	public static BlockDiamondPipe diamondPipeBlock;
-//	public static BlockObsidianPipe obsidianPipeBlock;
-//	public static BlockCobblestonePipe cobblestonePipeBlock;
-		
+			
 	public static BlockGenericPipe genericPipeBlock;
 	
-	public static int plainIronTexture;
 	public static int [] diamondTextures = new int [6];
 	
 	public static boolean alwaysConnectPipes;
@@ -85,108 +90,29 @@ public class BuildCraftTransport {
 		
 		mod_BuildCraftCore.initialize();						
 			
-//		Property woodenPipeId = BuildCraftCore.mainConfiguration
-//				.getOrCreateBlockIdProperty("woodenPipe.id",
-//						DefaultProps.WOODEN_PIPE_ID);
-//		Property stonePipeId = BuildCraftCore.mainConfiguration
-//				.getOrCreateBlockIdProperty("stonePipe.id",
-//						DefaultProps.STONE_PIPE_ID);
-//		Property ironPipeId = BuildCraftCore.mainConfiguration
-//				.getOrCreateBlockIdProperty("ironPipe.id",
-//						DefaultProps.IRON_PIPE_ID);
-//		Property goldenPipeId = BuildCraftCore.mainConfiguration
-//				.getOrCreateBlockIdProperty("goldenPipe.id",
-//						DefaultProps.GOLDEN_PIPE_ID);
-//		Property diamondPipeId = BuildCraftCore.mainConfiguration
-//				.getOrCreateBlockIdProperty("diamondPipe.id",
-//						DefaultProps.DIAMOND_PIPE_ID);
-//		Property obsidianPipeId = BuildCraftCore.mainConfiguration
-//				.getOrCreateBlockIdProperty("obsidianPipe.id",
-//						DefaultProps.OBSIDIAN_PIPE_ID);
-//		Property cobblestonePipeId = BuildCraftCore.mainConfiguration
-//				.getOrCreateBlockIdProperty("cobblestonePipe.id",
-//						DefaultProps.COBBLESTONE_PIPE_ID);
+		Property loadLegacyPipes = BuildCraftCore.mainConfiguration
+		.getOrCreateBooleanProperty("loadLegacyPipes", Configuration.GENERAL_PROPERTY, true);
+		loadLegacyPipes.comment = "set to true to load pre 2.2.0 worlds pipes";		
 		
 		Property alwaysConnect = BuildCraftCore.mainConfiguration
 				.getOrCreateBooleanProperty("pipes.alwaysConnect",
 						Configuration.GENERAL_PROPERTY,
 						DefaultProps.PIPES_ALWAYS_CONNECT);
-		alwaysConnect.comment = 
-			"set to false to deactivate pipe connection rules, true by default";
+		alwaysConnect.comment = "set to false to deactivate pipe connection rules, true by default";
 
 //		Property exclusionList = BuildCraftCore.mainConfiguration
-//				.getOrCreateProperty("woodenPipe.exclusion",
-//						Configuration.BLOCK_PROPERTY, "");
+//		.getOrCreateProperty("woodenPipe.exclusion",
+//				Configuration.BLOCK_PROPERTY, "");
 
-//		BlockWoodenPipe.excludedBlocks = exclusionList.value.split(",");
-//		
-//		for (int j = 0; j < BlockWoodenPipe.excludedBlocks.length; ++j) {
-//			BlockWoodenPipe.excludedBlocks[j] = BlockWoodenPipe.excludedBlocks[j]
-//					.trim();
-//		}
-		
+//BlockWoodenPipe.excludedBlocks = exclusionList.value.split(",");
+//
+//for (int j = 0; j < BlockWoodenPipe.excludedBlocks.length; ++j) {
+//	BlockWoodenPipe.excludedBlocks[j] = BlockWoodenPipe.excludedBlocks[j]
+//			.trim();
+//}
+
 		BuildCraftCore.mainConfiguration.save();
-		
-//		CraftingManager craftingmanager = CraftingManager.getInstance();		
-//		woodenPipeBlock = new BlockWoodenPipe(Integer.parseInt(woodenPipeId.value));
-//		CoreProxy.addName(woodenPipeBlock.setBlockName("woodenPipe"), "Wooden Pipe");
-//		ModLoader.RegisterBlock(woodenPipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(woodenPipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Block.planks,
-//				Character.valueOf('G'), Block.glass});
-//		
-//		stonePipeBlock = new BlockStonePipe(Integer.parseInt(stonePipeId.value));
-//		CoreProxy.addName(stonePipeBlock.setBlockName("stonePipe"), "Stone Pipe");
-//		ModLoader.RegisterBlock(stonePipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(stonePipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Block.stone,
-//				Character.valueOf('G'), Block.glass});
-//		
-//		ironPipeBlock = new BlockIronPipe(Integer.parseInt(ironPipeId.value));
-//		CoreProxy.addName(ironPipeBlock.setBlockName("ironPipe"), "Iron Pipe");
-//		ModLoader.RegisterBlock(ironPipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(ironPipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotIron,
-//				Character.valueOf('G'), Block.glass});
-//		
-//		goldenPipeBlock = new BlockGoldenPipe(Integer.parseInt(goldenPipeId.value));
-//		CoreProxy.addName(goldenPipeBlock.setBlockName("goldenPipe"), "Golden Pipe");
-//		ModLoader.RegisterBlock(goldenPipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(goldenPipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Item.ingotGold,
-//				Character.valueOf('G'), Block.glass});
-//		
-//		diamondPipeBlock = new BlockDiamondPipe(Integer.parseInt(diamondPipeId.value));
-//		CoreProxy.addName(diamondPipeBlock.setBlockName("diamondPipe"), "Diamond Pipe");
-//		ModLoader.RegisterBlock(diamondPipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(diamondPipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Item.diamond,
-//				Character.valueOf('G'), Block.glass});
-//		
-//		obsidianPipeBlock = new BlockObsidianPipe(Integer.parseInt(obsidianPipeId.value));
-//		CoreProxy.addName(obsidianPipeBlock.setBlockName("obsidianPipe"), "Obsidian Pipe");
-//		ModLoader.RegisterBlock(obsidianPipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(obsidianPipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Block.obsidian,
-//				Character.valueOf('G'), Block.glass});
-//		
-//		cobblestonePipeBlock = new BlockCobblestonePipe(
-//				Integer.parseInt(cobblestonePipeId.value));
-//		CoreProxy.addName(cobblestonePipeBlock.setBlockName("cobblestonePipe"),
-//				"Cobblestone Pipe");
-//		ModLoader.RegisterBlock(cobblestonePipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(cobblestonePipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Block.cobblestone,
-//				Character.valueOf('G'), Block.glass});
-//		
-//		ModLoader.RegisterTileEntity(TileWoodenPipe.class, "WoodenPipe");
-//		ModLoader.RegisterTileEntity(TileStonePipe.class, "StonePipe");
-//		ModLoader.RegisterTileEntity(TileIronPipe.class, "IronPipe");
-//		ModLoader.RegisterTileEntity(TileGoldenPipe.class, "GoldenPipe");
-//		ModLoader.RegisterTileEntity(TileDiamondPipe.class, "DiamondPipe");
-//		ModLoader.RegisterTileEntity(TileObsidianPipe.class, "ObsidianPipe");
-//		ModLoader.RegisterTileEntity(TileCobblestonePipe.class, "CobblestonePipe");		
-		
+
 		pipeWaterproof = new ItemBuildCraftTexture (DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
 		pipeWaterproof.setItemName("pipeWaterproof");
 		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");
@@ -204,10 +130,10 @@ public class BuildCraftTransport {
 		pipeItemsObsidian = createPipe (4056, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 		
 		pipeLiquidsWood = createPipe (4057, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
-		pipeLiquidsCobblestone = createPipe (4058, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", null, null, null);
+		pipeLiquidsCobblestone = createPipe (4058, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);
 		pipeLiquidsStone = createPipe (4059, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone, null);		
-		pipeLiquidsIron = createPipe (4060, PipeLiquidsIron.class, "Iron Waterproof Pipe", null, null, null);		
-		pipeLiquidsGold = createPipe (4061, PipeLiquidsGold.class, "Golden Waterproof Pipe", null, null, null);			
+		pipeLiquidsIron = createPipe (4060, PipeLiquidsIron.class, "Iron Waterproof Pipe", pipeWaterproof, pipeItemsIron, null);		
+		pipeLiquidsGold = createPipe (4061, PipeLiquidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold, null);			
 		// diamond 4062		
 		
 		pipePowerWood = createPipe (4063, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone,  pipeItemsWood, null);		
@@ -226,13 +152,64 @@ public class BuildCraftTransport {
 //				"   ", "PGP", "   ", Character.valueOf('P'), Block.cobblestone,
 //				Character.valueOf('G'), Block.glass});
 		
-		plainIronTexture = 1 * 16 + 3;
-		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = 1 * 16 + 6 + j;
 		}				
 		
 		alwaysConnectPipes = Boolean.parseBoolean(alwaysConnect.value);
+		
+		if (loadLegacyPipes.value.equals("true")) {
+			Property woodenPipeId = BuildCraftCore.mainConfiguration
+					.getOrCreateBlockIdProperty("woodenPipe.id",
+							DefaultProps.WOODEN_PIPE_ID);
+			Property stonePipeId = BuildCraftCore.mainConfiguration
+					.getOrCreateBlockIdProperty("stonePipe.id",
+							DefaultProps.STONE_PIPE_ID);
+			Property ironPipeId = BuildCraftCore.mainConfiguration
+					.getOrCreateBlockIdProperty("ironPipe.id",
+							DefaultProps.IRON_PIPE_ID);
+			Property goldenPipeId = BuildCraftCore.mainConfiguration
+					.getOrCreateBlockIdProperty("goldenPipe.id",
+							DefaultProps.GOLDEN_PIPE_ID);
+			Property diamondPipeId = BuildCraftCore.mainConfiguration
+					.getOrCreateBlockIdProperty("diamondPipe.id",
+							DefaultProps.DIAMOND_PIPE_ID);
+			Property obsidianPipeId = BuildCraftCore.mainConfiguration
+					.getOrCreateBlockIdProperty("obsidianPipe.id",
+							DefaultProps.OBSIDIAN_PIPE_ID);
+			Property cobblestonePipeId = BuildCraftCore.mainConfiguration
+					.getOrCreateBlockIdProperty("cobblestonePipe.id",
+							DefaultProps.COBBLESTONE_PIPE_ID);
+
+			ModLoader.RegisterBlock(new LegacyBlockWoodenPipe(Integer
+					.parseInt(woodenPipeId.value)));
+			ModLoader.RegisterBlock(new LegacyBlockStonePipe(Integer
+					.parseInt(stonePipeId.value)));
+			ModLoader.RegisterBlock(new LegacyBlockIronPipe(Integer
+					.parseInt(ironPipeId.value)));
+			ModLoader.RegisterBlock(new LegacyBlockGoldenPipe(Integer
+					.parseInt(goldenPipeId.value)));
+			ModLoader.RegisterBlock(new LegacyBlockDiamondPipe(Integer
+					.parseInt(diamondPipeId.value)));
+			ModLoader.RegisterBlock(new LegacyBlockObsidianPipe(Integer
+					.parseInt(obsidianPipeId.value)));
+			ModLoader.RegisterBlock(new LegacyBlockCobblestonePipe(Integer
+					.parseInt(cobblestonePipeId.value)));
+
+			ModLoader.RegisterTileEntity(LegacyTileWoodenPipe.class,
+					"WoodenPipe");
+			ModLoader
+					.RegisterTileEntity(LegacyTileStonePipe.class, "StonePipe");
+			ModLoader.RegisterTileEntity(LegacyTileIronPipe.class, "IronPipe");
+			ModLoader.RegisterTileEntity(LegacyTileGoldenPipe.class,
+					"GoldenPipe");
+			ModLoader.RegisterTileEntity(LegacyTileDiamondPipe.class,
+					"DiamondPipe");
+			ModLoader.RegisterTileEntity(LegacyTileObsidianPipe.class,
+					"ObsidianPipe");
+			ModLoader.RegisterTileEntity(LegacyTileCobblestonePipe.class,
+					"CobblestonePipe");
+		}
 		
 		BuildCraftCore.mainConfiguration.save();
 
