@@ -74,6 +74,17 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 			return defaultOrientations;
 		}
 	}
-	
+
+
+	@Override
+	public void entityEntered(EntityPassiveItem item, Orientations orientation) {
+
+	}
+
+
+	@Override
+	public void readjustSpeed(EntityPassiveItem item) {
+		((PipeTransportItems) transport).defaultReajustSpeed(item);		
+	}	
 	
 }

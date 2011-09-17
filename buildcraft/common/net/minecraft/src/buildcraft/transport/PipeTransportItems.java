@@ -42,6 +42,15 @@ public class PipeTransportItems extends PipeTransport {
 	}
 	
 	public void readjustSpeed (EntityPassiveItem item) {
+		if (container.pipe instanceof IPipeTransportItemsHook) {
+			((IPipeTransportItemsHook) container.pipe).readjustSpeed(item);
+		} else {
+			defaultReajustSpeed(item);
+		}
+	}
+	
+	public void defaultReajustSpeed (EntityPassiveItem item) {
+		
 		if (item.speed > Utils.pipeNormalSpeed) {
 			item.speed = item.speed - Utils.pipeNormalSpeed;
 		}
@@ -65,6 +74,11 @@ public class PipeTransportItems extends PipeTransport {
 		// pipe.
 		if (orientation != Orientations.YPos && orientation != Orientations.YNeg) {
 			item.setPosition(item.posX, yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
+		}
+		
+		if (container.pipe instanceof IPipeTransportItemsHook) {
+			((IPipeTransportItemsHook) container.pipe).entityEntered(item,
+					orientation);
 		}
 		
 		if (APIProxy.isServerSide()) {
