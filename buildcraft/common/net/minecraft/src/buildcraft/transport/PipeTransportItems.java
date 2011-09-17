@@ -99,8 +99,9 @@ public class PipeTransportItems extends PipeTransport {
 			EntityPassiveItem item) {
 		LinkedList<Orientations> result = new LinkedList<Orientations>();
 		
-		for (int o = 0; o <= 5; ++o) {
-			if (Orientations.values()[o] != pos.orientation.reverse()) {
+		for (int o = 0; o < 6; ++o) {
+			if (Orientations.values()[o] != pos.orientation.reverse()
+					&& outputOpen(Orientations.values()[o])) {
 				Position newPos = new Position(pos);
 				newPos.orientation = Orientations.values()[o];
 				newPos.moveForwards(1.0);
