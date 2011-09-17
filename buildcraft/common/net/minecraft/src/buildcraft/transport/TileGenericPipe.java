@@ -1,14 +1,17 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer {
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, ISpecialInventory {
 	public Pipe pipe;
 	private boolean blockNeighborChange = false;
 	private boolean initialized = false;
@@ -46,6 +49,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	public void updateEntity () {
 		if (!initialized) {
 			pipe.initialize();
+			initialized = true;
 		}
 		
 		if (blockNeighborChange) {
@@ -134,6 +138,51 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	
 	public void scheduleNeighborChange() {
 		blockNeighborChange  = true;
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return pipe.logic.getSizeInventory();
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return pipe.logic.getStackInSlot(i);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		return pipe.logic.decrStackSize(i, j);
+	}
+
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		pipe.logic.setInventorySlotContents(i, itemstack);		
+	}
+
+	@Override
+	public String getInvName() {
+		return pipe.logic.getInvName();
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return pipe.logic.getInventoryStackLimit();
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return pipe.logic.canInteractWith(entityplayer);
+	}
+
+	@Override
+	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		return pipe.logic.addItem(stack, doAdd, from);
+	}
+
+	@Override
+	public ItemStack extractItem(boolean doRemove, Orientations from) {
+		return pipe.logic.extractItem(doRemove, from);
 	}
 
 }

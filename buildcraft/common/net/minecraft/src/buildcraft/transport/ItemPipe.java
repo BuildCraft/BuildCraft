@@ -1,6 +1,5 @@
 package net.minecraft.src.buildcraft.transport;
 
-import java.util.Properties;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
@@ -8,10 +7,7 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
-import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class ItemPipe extends Item implements ITextureProvider {

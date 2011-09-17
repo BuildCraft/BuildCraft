@@ -12,7 +12,11 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 //import net.minecraft.src.buildcraft.transport.BlockStonePipe;
 //import net.minecraft.src.buildcraft.transport.BlockObsidianPipe;
 //import net.minecraft.src.buildcraft.transport.BlockWoodenPipe;
-import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsIron;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsObsidian;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsCobblestone;
@@ -56,6 +60,11 @@ public class BuildCraftTransport {
 	
 	public static Item pipeItemsWood;
 	public static Item pipeItemsStone;
+	public static Item pipeItemsCobblestone;
+	public static Item pipeItemsIron;
+	public static Item pipeItemsGold;
+	public static Item pipeItemsDiamond;
+	public static Item pipeItemsObsidian;
 	
 	public static Item pipeLiquidsWood;
 	public static Item pipeLiquidsCobblestone;
@@ -187,12 +196,12 @@ public class BuildCraftTransport {
 		genericPipeBlock = new BlockGenericPipe(166);
 		
 		pipeItemsWood = createPipe (4050, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
-		// cobblestone 4051
+		pipeItemsCobblestone = createPipe(4051, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
 		pipeItemsStone = createPipe (4052, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
-		// iron 4053
-		// gold 4054
-		// diamond 4055
-		// obsidian 4056
+		pipeItemsIron = createPipe (4053, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
+		pipeItemsGold = createPipe (4054, PipeItemsGold.class, "Gold Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
+		pipeItemsDiamond = createPipe (4055, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
+		pipeItemsObsidian = createPipe (4056, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 		
 		pipeLiquidsWood = createPipe (4057, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
 		pipeLiquidsCobblestone = createPipe (4058, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", null, null, null);
