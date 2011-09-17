@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Item;
@@ -262,6 +263,13 @@ public class BlockGenericPipe extends BlockContainer implements
 	
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		return getPipe (iblockaccess, i, j, k).getBlockTexture();
+	}
+	
+	@Override
+	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {   
+		super.onEntityCollidedWithBlock(world, i, j, k, entity);
+		
+		getPipe (world, i, j, k).onEntityCollidedWithBlock(entity);
 	}
 		
 	/** Registration *********************************************************/

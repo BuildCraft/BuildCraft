@@ -10,12 +10,12 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class TransportProxy {
 
-//	public static void displayGUIFilter(EntityPlayer entityplayer, TileDiamondPipe tileRooter) {		
-//		ModLoader.OpenGUI(entityplayer, Utils.packetIdToInt(PacketIds.DiamondPipeGUI),
-//				tileRooter, new CraftingDiamondPipe(entityplayer.inventory, tileRooter));
-//	}
-//	
-	static void obsidianPipePickup (World world, EntityItem item, TileEntity tile) {
+	public static void displayGUIFilter(EntityPlayer entityplayer, TileGenericPipe tileRooter) {		
+		ModLoader.OpenGUI(entityplayer, Utils.packetIdToInt(PacketIds.DiamondPipeGUI),
+				tileRooter, new CraftingDiamondPipe(entityplayer.inventory, tileRooter));
+	}
+	
+	public static void obsidianPipePickup (World world, EntityItem item, TileEntity tile) {
 		
 	}
 	

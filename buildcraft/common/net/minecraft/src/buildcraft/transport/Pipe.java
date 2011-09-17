@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -98,5 +99,9 @@ public abstract class Pipe {
 
 	public boolean outputOpen(Orientations to) {
 		return transport.outputOpen (to) && logic.outputOpen (to);
+	}
+
+	public void onEntityCollidedWithBlock(Entity entity) {
+				
 	}
 }
