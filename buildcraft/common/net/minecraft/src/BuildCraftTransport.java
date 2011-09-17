@@ -6,26 +6,14 @@ import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 //import net.minecraft.src.buildcraft.transport.BlockCobblestonePipe;
 //import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
+import net.minecraft.src.buildcraft.transport.LegacyBlock;
+import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
 //import net.minecraft.src.buildcraft.transport.BlockGoldenPipe;
 //import net.minecraft.src.buildcraft.transport.BlockIronPipe;
 //import net.minecraft.src.buildcraft.transport.BlockStonePipe;
 //import net.minecraft.src.buildcraft.transport.BlockObsidianPipe;
 //import net.minecraft.src.buildcraft.transport.BlockWoodenPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockCobblestonePipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockDiamondPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockGoldenPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockIronPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockObsidianPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockStonePipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyBlockWoodenPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyTileCobblestonePipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyTileDiamondPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyTileGoldenPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyTileIronPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyTileObsidianPipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyTileStonePipe;
-import net.minecraft.src.buildcraft.transport.legacy.LegacyTileWoodenPipe;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
@@ -181,34 +169,24 @@ public class BuildCraftTransport {
 					.getOrCreateBlockIdProperty("cobblestonePipe.id",
 							DefaultProps.COBBLESTONE_PIPE_ID);
 
-			ModLoader.RegisterBlock(new LegacyBlockWoodenPipe(Integer
-					.parseInt(woodenPipeId.value)));
-			ModLoader.RegisterBlock(new LegacyBlockStonePipe(Integer
-					.parseInt(stonePipeId.value)));
-			ModLoader.RegisterBlock(new LegacyBlockIronPipe(Integer
-					.parseInt(ironPipeId.value)));
-			ModLoader.RegisterBlock(new LegacyBlockGoldenPipe(Integer
-					.parseInt(goldenPipeId.value)));
-			ModLoader.RegisterBlock(new LegacyBlockDiamondPipe(Integer
-					.parseInt(diamondPipeId.value)));
-			ModLoader.RegisterBlock(new LegacyBlockObsidianPipe(Integer
-					.parseInt(obsidianPipeId.value)));
-			ModLoader.RegisterBlock(new LegacyBlockCobblestonePipe(Integer
-					.parseInt(cobblestonePipeId.value)));
+			ModLoader.RegisterBlock(new LegacyBlock(Integer
+					.parseInt(woodenPipeId.value), pipeItemsWood.shiftedIndex));
+			ModLoader.RegisterBlock(new LegacyBlock(Integer
+					.parseInt(stonePipeId.value), pipeItemsStone.shiftedIndex));
+			ModLoader.RegisterBlock(new LegacyBlock(Integer
+					.parseInt(ironPipeId.value), pipeItemsIron.shiftedIndex));
+			ModLoader.RegisterBlock(new LegacyBlock(Integer
+					.parseInt(goldenPipeId.value), pipeItemsGold.shiftedIndex));
+			ModLoader.RegisterBlock(new LegacyBlock(Integer
+					.parseInt(diamondPipeId.value), pipeItemsDiamond.shiftedIndex));
+			ModLoader.RegisterBlock(new LegacyBlock(Integer
+					.parseInt(obsidianPipeId.value), pipeItemsObsidian.shiftedIndex));
+			ModLoader.RegisterBlock(new LegacyBlock(Integer
+					.parseInt(cobblestonePipeId.value), pipeItemsCobblestone.shiftedIndex));
 
-			ModLoader.RegisterTileEntity(LegacyTileWoodenPipe.class,
-					"WoodenPipe");
 			ModLoader
-					.RegisterTileEntity(LegacyTileStonePipe.class, "StonePipe");
-			ModLoader.RegisterTileEntity(LegacyTileIronPipe.class, "IronPipe");
-			ModLoader.RegisterTileEntity(LegacyTileGoldenPipe.class,
-					"GoldenPipe");
-			ModLoader.RegisterTileEntity(LegacyTileDiamondPipe.class,
-					"DiamondPipe");
-			ModLoader.RegisterTileEntity(LegacyTileObsidianPipe.class,
-					"ObsidianPipe");
-			ModLoader.RegisterTileEntity(LegacyTileCobblestonePipe.class,
-					"CobblestonePipe");
+					.RegisterTileEntity(LegacyTile.class,
+							"net.buildcraft.src.buildcraft.transport.legacy.LegacyTile");
 		}
 		
 		BuildCraftCore.mainConfiguration.save();
