@@ -3,17 +3,10 @@ package net.minecraft.src;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
-//import net.minecraft.src.buildcraft.transport.BlockCobblestonePipe;
-//import net.minecraft.src.buildcraft.transport.BlockDiamondPipe;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.LegacyBlock;
 import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
-//import net.minecraft.src.buildcraft.transport.BlockGoldenPipe;
-//import net.minecraft.src.buildcraft.transport.BlockIronPipe;
-//import net.minecraft.src.buildcraft.transport.BlockStonePipe;
-//import net.minecraft.src.buildcraft.transport.BlockObsidianPipe;
-//import net.minecraft.src.buildcraft.transport.BlockWoodenPipe;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
@@ -29,13 +22,6 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerWood;
-//import net.minecraft.src.buildcraft.transport.TileCobblestonePipe;
-//import net.minecraft.src.buildcraft.transport.TileDiamondPipe;
-//import net.minecraft.src.buildcraft.transport.TileGoldenPipe;
-//import net.minecraft.src.buildcraft.transport.TileIronPipe;
-//import net.minecraft.src.buildcraft.transport.TileObsidianPipe;
-//import net.minecraft.src.buildcraft.transport.TileStonePipe;
-//import net.minecraft.src.buildcraft.transport.TileWoodenPipe;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
@@ -129,16 +115,7 @@ public class BuildCraftTransport {
 		pipePowerStone = createPipe (4065, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone, null);		
 		// iron 4066
 		pipePowerGold = createPipe(4067, PipePowerGold.class, "Golden Conductive Pipe", null, null, null);
-		
 		// diamond 4068
-						
-//				Integer.parseInt(cobblestonePipeId.value));
-//		CoreProxy.addName(cobblestonePipeBlock.setBlockName("cobblestonePipe"),
-//				"Cobblestone Pipe");
-//		ModLoader.RegisterBlock(cobblestonePipeBlock);		
-//		craftingmanager.addRecipe(new ItemStack(cobblestonePipeBlock, 8), new Object[] {
-//				"   ", "PGP", "   ", Character.valueOf('P'), Block.cobblestone,
-//				Character.valueOf('G'), Block.glass});
 		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = 1 * 16 + 6 + j;
