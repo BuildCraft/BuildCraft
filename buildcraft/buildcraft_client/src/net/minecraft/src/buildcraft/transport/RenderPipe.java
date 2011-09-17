@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.HashMap;
 
 import org.lwjgl.opengl.GL11;
-import org.omg.PortableInterceptor.DISCARDING;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;

@@ -18,7 +18,7 @@ public class PipeLogicStone extends PipeLogic {
 		} else {
 			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicCobblestone))
 					&& super.isPipeConnected(tile);
-		}
+		}		
 	}
 
 }
