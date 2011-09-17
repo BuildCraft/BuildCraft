@@ -26,16 +26,23 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 		int liquidId = 0;
 		int quantity = 0;
 		
-		public int fill(Orientations from, int amount, int id) {
+		public int fill(Orientations from, int amount, int id, boolean doFill) {
 			if (quantity != 0 && liquidId != id) {
 				return 0;
 			} else if (quantity + amount <= LIQUID_PER_SLOT) {
-				quantity = quantity + amount;
+				if (doFill) {
+					quantity = quantity + amount;
+				}
+				
 				liquidId = id;
 				return amount;
 			} else {
 				int used = LIQUID_PER_SLOT - quantity;
-				quantity = LIQUID_PER_SLOT;
+				
+				if (doFill) {
+					quantity = LIQUID_PER_SLOT;
+				}
+				
 				liquidId = id;
 				return used;				
 			}			
@@ -69,8 +76,8 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 	
 	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		int used = slot1.fill(from, quantity, id);
-		used += slot2.fill(from, quantity - used, id);
+		int used = slot1.fill(from, quantity, id, doFill);
+		used += slot2.fill(from, quantity - used, id, doFill);
 				
 		return used;
 	}
@@ -81,10 +88,16 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 		
 		if (result.quantity >= quantityMax) {
 			res = quantityMax;
-			result.quantity -= quantityMax;
+			
+			if (doEmpty) {
+				result.quantity -= quantityMax;
+			}
 		} else {
 			res = result.quantity;
-			result.quantity = 0;
+			
+			if (doEmpty) {
+				result.quantity = 0;
+			}
 		}
 				
 		return res;
@@ -107,43 +120,36 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 
 	@Override
 	public int getSizeInventory() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public String getInvName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -159,7 +165,6 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 
 	@Override
 	public void doWork() {
-		// TODO Auto-generated method stub
 		
 	}
 	
