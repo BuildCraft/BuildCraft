@@ -223,5 +223,15 @@ public class BuildCraftCore {
 		
 		return 0;
 	}
+
+	public static int getBucketForLiquid(int liquidId) {
+		for (LiquidData d : liquids) {
+			if (d.liquidId == liquidId) {
+				return d.filledBucketId;
+			}
+		}
+		
+		return 0;
+	}
 	
 }

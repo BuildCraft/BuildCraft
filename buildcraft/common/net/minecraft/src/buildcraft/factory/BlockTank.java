@@ -71,11 +71,13 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 			EntityPlayer entityplayer) {
 		
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			int liquidId = BuildCraftCore.getLiquidForBucket(entityplayer
-					.getCurrentEquippedItem().itemID);
+			int itemId = entityplayer.getCurrentEquippedItem().itemID;
+			int liquidId = BuildCraftCore.getLiquidForBucket(itemId);
+			
+			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
 			if (liquidId != 0) {
-				int qty = ((TileTank) world.getBlockTileEntity(i, j, k)).fill(
+				int qty = tank.fill(
 						Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
 						liquidId, true);
 
@@ -86,6 +88,19 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				}
 				
 				return true;
+			} else if (itemId == Item.bucketEmpty.shiftedIndex) {
+				int qty = tank.empty(BuildCraftCore.BUCKET_VOLUME, false);
+				
+				int filledBucket = BuildCraftCore.getBucketForLiquid(tank.getLiquidId());
+				
+				if (qty >= BuildCraftCore.BUCKET_VOLUME && filledBucket > 0) {
+					tank.empty(BuildCraftCore.BUCKET_VOLUME, true);
+					
+					entityplayer.inventory.setInventorySlotContents(
+							entityplayer.inventory.currentItem,
+							new ItemStack(Item.itemsList [filledBucket], 1));				 
+				}
+
 			}
 		}
 		
