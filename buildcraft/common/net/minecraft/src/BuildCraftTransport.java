@@ -8,6 +8,7 @@ import net.minecraft.src.buildcraft.transport.LegacyBlock;
 import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
+import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
@@ -120,6 +121,9 @@ public class BuildCraftTransport {
 		// iron 4066
 		pipePowerGold = createPipe(4067, PipePowerGold.class, "Golden Conductive Pipe", Item.redstone, pipeItemsGold, null);
 		// diamond 4068
+		
+		ModLoader.RegisterTileEntity(TileGenericPipe.class,
+				"net.minecraft.src.buildcraft.GenericPipe");
 		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = 1 * 16 + 6 + j;
