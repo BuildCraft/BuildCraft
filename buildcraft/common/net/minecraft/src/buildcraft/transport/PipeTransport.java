@@ -3,6 +3,7 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class PipeTransport {
@@ -62,5 +63,12 @@ public class PipeTransport {
 	public boolean outputOpen(Orientations to) {
 		return true;
 	}
-	
+
+	public boolean acceptItems() {
+		return false;
+	}
+
+	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
+		
+	}
 }

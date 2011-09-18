@@ -60,6 +60,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 	
+	@Override
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
 		readjustSpeed(item);			
 				
@@ -101,7 +102,7 @@ public class PipeTransportItems extends PipeTransport {
 		
 		for (int o = 0; o < 6; ++o) {
 			if (Orientations.values()[o] != pos.orientation.reverse()
-					&& outputOpen(Orientations.values()[o])) {
+					&& container.pipe.outputOpen(Orientations.values()[o])) {
 				Position newPos = new Position(pos);
 				newPos.orientation = Orientations.values()[o];
 				newPos.moveForwards(1.0);
@@ -435,4 +436,9 @@ public class PipeTransportItems extends PipeTransport {
 			|| tile instanceof IInventory
 			|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
+	
+	public boolean acceptItems() {
+		return true;
+	}
+
 }
