@@ -1,5 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -174,6 +175,33 @@ public class PipeTransportPower extends PipeTransport {
 	public void requestEnergy(Orientations from, int i) {
 		step ();
 		nextPowerQuery [from.ordinal()] += i;		
+	}
+	
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+
+		currentDate = nbttagcompound.getLong("currentDate");
+		
+		for (int i = 0; i < 6; ++i) {
+			powerQuery [i] = nbttagcompound.getInteger("powerQuery[" + i + "]");
+			nextPowerQuery [i] = nbttagcompound.getInteger("nextPowerQuery[" + i + "]");
+			internalPower [i] = nbttagcompound.getDouble("internalPower[" + i + "]");
+			internalNextPower [i] = nbttagcompound.getDouble("internalNextPower[" + i + "]");
+		}
+			
+	}
+
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+
+		nbttagcompound.setLong("currentDate", currentDate);
+		
+		for (int i = 0; i < 6; ++i) {
+			nbttagcompound.setInteger("powerQuery[" + i + "]", powerQuery [i]);
+			nbttagcompound.setInteger("nextPowerQuery[" + i + "]", nextPowerQuery [i]);
+			nbttagcompound.setDouble("internalPower[" + i + "]", internalPower [i]);
+			nbttagcompound.setDouble("internalNextPower[" + i + "]", internalNextPower [i]);
+		}
 	}
 
 }
