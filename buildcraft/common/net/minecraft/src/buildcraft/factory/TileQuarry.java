@@ -167,7 +167,9 @@ public class TileQuarry extends TileBuildCraft implements IArmListener,
 						
 			if (contents != null) {
 				if (!Utils.softBlock(blockId)) {
-					Utils.breakBlock (worldObj, contents.x, contents.y, contents.z);
+					// Do not drop items here, too power consuming
+					worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
+							0);
 				} else if (contents.blockId != 0) {
 					worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
 							contents.blockId);

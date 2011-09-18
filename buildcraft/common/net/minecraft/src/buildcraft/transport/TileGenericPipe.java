@@ -4,6 +4,8 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.EntityPassiveItem;
+import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -11,7 +13,7 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, ISpecialInventory {
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, ISpecialInventory, IPipeEntry {
 	public Pipe pipe;
 	private boolean blockNeighborChange = false;
 	private boolean initialized = false;
@@ -183,6 +185,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public ItemStack extractItem(boolean doRemove, Orientations from) {
 		return pipe.logic.extractItem(doRemove, from);
+	}
+
+	@Override
+	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
+		pipe.transport.entityEntering (item, orientation);
+		
+	}
+
+	@Override
+	public boolean acceptItems() {
+		return pipe.transport.acceptItems();
 	}
 
 }

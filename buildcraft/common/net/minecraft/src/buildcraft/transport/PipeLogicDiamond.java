@@ -12,8 +12,7 @@ public class PipeLogicDiamond extends PipeLogic {
 	ItemStack [] items = new ItemStack [54];
 	
 	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		
+	public boolean blockActivated(EntityPlayer entityplayer) {		
 		if (entityplayer.getCurrentEquippedItem() != null
 				&& entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length) {
 			

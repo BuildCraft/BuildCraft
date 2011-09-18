@@ -87,11 +87,14 @@ public class BuildCraftTransport {
 
 		BuildCraftCore.mainConfiguration.save();
 
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
 		pipeWaterproof = new ItemBuildCraftTexture (DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
 		pipeWaterproof.setItemName("pipeWaterproof");
 		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");
-		ModLoader.AddSmelting(Item.slimeBall.shiftedIndex, new ItemStack(
-				pipeWaterproof, 32));
+		craftingmanager.addRecipe(new ItemStack(pipeWaterproof, 1), new Object[] {
+			"W ", "  ", 
+			Character.valueOf('W'), new ItemStack(Item.dyePowder, 1, 2)});
 		
 		genericPipeBlock = new BlockGenericPipe(166);
 		
@@ -99,7 +102,7 @@ public class BuildCraftTransport {
 		pipeItemsCobblestone = createPipe(4051, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
 		pipeItemsStone = createPipe (4052, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
 		pipeItemsIron = createPipe (4053, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
-		pipeItemsGold = createPipe (4054, PipeItemsGold.class, "Gold Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
+		pipeItemsGold = createPipe (4054, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
 		pipeItemsDiamond = createPipe (4055, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
 		pipeItemsObsidian = createPipe (4056, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 		

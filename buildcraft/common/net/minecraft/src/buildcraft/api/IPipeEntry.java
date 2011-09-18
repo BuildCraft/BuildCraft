@@ -8,4 +8,5 @@ public interface IPipeEntry {
 	
 	public void entityEntering(EntityPassiveItem item, Orientations orientation);
 
+	public boolean acceptItems ();
 }
