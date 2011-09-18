@@ -8,7 +8,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class PipeLogic {
-
+	
 	public int xCoord;
 	public int yCoord;
 	public int zCoord;

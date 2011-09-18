@@ -7,15 +7,27 @@ import net.minecraft.src.buildcraft.core.ClassMapping.Indexes;
 
 public class TilePacketWrapper {
 	
-	ClassMapping rootMapping;
+	ClassMapping rootMappings [];
 
 	PacketIds packetType;
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	public TilePacketWrapper (Class c, PacketIds packetType) {
-		rootMapping = new ClassMapping(c);
+		this (new Class [] {c}, packetType);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public TilePacketWrapper (Class c [], PacketIds packetType) {
+		rootMappings = new ClassMapping [c.length];
+		
+		for (int i = 0; i < c.length; ++i) {		
+			rootMappings [i] = new ClassMapping(c [i]);
+		}
+		
 		this.packetType = packetType;
 	}
+	
+	
 	
 	public Packet230ModLoader toPacket (TileEntity tile) {
 		Packet230ModLoader packet = new Packet230ModLoader();
@@ -23,7 +35,7 @@ public class TilePacketWrapper {
 		packet.isChunkDataPacket = true;
 		packet.packetType = packetType.ordinal();
 		
-		int [] size = rootMapping.getSize();
+		int [] size = rootMappings [0].getSize();
 		
 		packet.dataInt = new int [size [0] + 3];
 		packet.dataFloat = new float [size [1]];
@@ -34,7 +46,7 @@ public class TilePacketWrapper {
 		packet.dataInt [2] = tile.zCoord;
 		
 		try {
-			rootMapping.setData(tile, packet.dataInt, packet.dataFloat,
+			rootMappings [0].setData(tile, packet.dataInt, packet.dataFloat,
 					packet.dataString, new Indexes(3, 0, 0));
 			return packet;
 			
@@ -45,9 +57,63 @@ public class TilePacketWrapper {
 		}
 	}
 	
+	public Packet230ModLoader toPacket (int x, int y, int z, Object [] obj) {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		packet.modId = mod_BuildCraftCore.instance.getId();
+		packet.isChunkDataPacket = true;
+		packet.packetType = packetType.ordinal();
+		
+		int sizeI = 3, sizeF = 0, sizeS = 0;
+		
+		for (int i = 0; i < rootMappings.length; ++i) {					
+			int [] size = rootMappings [0].getSize();
+		
+			sizeI += size [0];
+			sizeF += size [1];
+			sizeS += size [2];
+		}
+		
+		packet.dataInt = new int [sizeI];
+		packet.dataFloat = new float [sizeF];
+		packet.dataString = new String [sizeS];
+		
+		packet.dataInt [0] = x;
+		packet.dataInt [1] = y;
+		packet.dataInt [2] = z;
+		
+		try {
+			Indexes ind = new Indexes(3, 0, 0);
+			
+			for (int i = 0; i < rootMappings.length; ++i) {
+				rootMappings [i].setData(obj [i], packet.dataInt, packet.dataFloat,
+						packet.dataString, ind);
+			}
+			
+			return packet;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			return null;
+		}		
+	}
+
+	public void updateFromPacket (Object [] obj, Packet230ModLoader packet) {
+		try {
+			Indexes ind = new Indexes(3, 0, 0);
+			
+			for (int i = 0; i < rootMappings.length; ++i) {
+				rootMappings [i].updateFromData(obj [i], packet.dataInt, packet.dataFloat,
+						packet.dataString, ind);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void updateFromPacket (TileEntity tile, Packet230ModLoader packet) {
 		try {
-			rootMapping.updateFromData(tile, packet.dataInt, packet.dataFloat,
+			rootMappings [0].updateFromData(tile, packet.dataInt, packet.dataFloat,
 					packet.dataString, new Indexes(3, 0, 0));
 		} catch (Exception e) {
 			e.printStackTrace();

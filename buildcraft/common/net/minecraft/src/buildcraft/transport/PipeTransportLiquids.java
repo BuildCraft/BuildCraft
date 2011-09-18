@@ -39,9 +39,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		int emptyTime = 0;
 		
 		@TileNetworkData
-		int auverage;
-		// ??? It's probably worth only synchronizing this guy and avoid 
-		// remote computing.
+		int average;
 		
 		int totalBounced = 0;
 		boolean bouncing = false;
@@ -188,10 +186,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			lastTotal += qty - lastQty [avgDate];
 			lastQty [avgDate] = qty;
 			
-			auverage = lastTotal / lastQty.length;
+			average = lastTotal / lastQty.length;
 			
-			if (qty != 0 && auverage == 0) {
-				auverage = 1;
+			if (qty != 0 && average == 0) {
+				average = 1;
 			}
 		}
 		
@@ -251,7 +249,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	public @TileNetworkData
 	LiquidBuffer center;
 
-	public @TileNetworkData(staticSize = 6)
 	boolean[] isInput = new boolean[6];
 	
 	// Computed at each update
@@ -426,18 +423,18 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	}
 
 	public int getSide(int orientation) {
-		if (side[orientation].auverage > LIQUID_IN_PIPE) {
+		if (side[orientation].average > LIQUID_IN_PIPE) {
 			return LIQUID_IN_PIPE;
 		} else {
-			return side[orientation].auverage;
+			return side[orientation].average;
 		}
 	}
 
 	public int getCenter() {
-		if (center.auverage > LIQUID_IN_PIPE) {
+		if (center.average > LIQUID_IN_PIPE) {
 			return LIQUID_IN_PIPE;
 		} else {
-			return center.auverage;
+			return center.average;
 		}
 	}
 

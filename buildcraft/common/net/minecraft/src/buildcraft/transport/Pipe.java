@@ -1,11 +1,17 @@
 package net.minecraft.src.buildcraft.transport;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 
 public abstract class Pipe {
 	
@@ -19,11 +25,28 @@ public abstract class Pipe {
 	public final PipeLogic logic;
 	public final int itemID;
 	
-	public Pipe (PipeTransport transport, PipeLogic logic, int itemID) {
+	private TilePacketWrapper networkPacket;
+	
+	@SuppressWarnings("rawtypes")
+	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
+	
+	
+	public Pipe(PipeTransport transport, PipeLogic logic, int itemID) {
 		this.transport = transport;
 		this.logic = logic;
 		this.itemID = itemID;
+
+		if (!networkWrappers.containsKey(this.getClass())) {
+			networkWrappers.put(
+					this.getClass(),
+					new TilePacketWrapper(new Class[] {
+							this.transport.getClass(), this.logic.getClass() },
+							PacketIds.TileUpdate));
+		}
+
+		this.networkPacket = networkWrappers.get(this.getClass());
 	}
+
 	
 	public void setPosition (int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
@@ -103,5 +126,14 @@ public abstract class Pipe {
 
 	public void onEntityCollidedWithBlock(Entity entity) {
 				
+	}
+	
+	public Packet230ModLoader getNetworkPacket() {
+		return networkPacket.toPacket(xCoord, yCoord, zCoord, new Object[] {
+				transport, logic });
+	}
+	
+	public void handlePacket (Packet230ModLoader packet) {
+		networkPacket.updateFromPacket(new Object [] {transport, logic}, packet);
 	}
 }
