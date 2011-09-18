@@ -14,6 +14,6 @@ public class mod_BuildCraftTransport extends BaseModMp {
 		
 	@Override
 	public String Version() {
-		return "2.1.1";
+		return "2.2.0";
 	}    
 }
