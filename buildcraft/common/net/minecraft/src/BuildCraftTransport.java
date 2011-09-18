@@ -7,6 +7,7 @@ import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.LegacyBlock;
 import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
+import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
@@ -74,16 +75,16 @@ public class BuildCraftTransport {
 						DefaultProps.PIPES_ALWAYS_CONNECT);
 		alwaysConnect.comment = "set to false to deactivate pipe connection rules, true by default";
 
-//		Property exclusionList = BuildCraftCore.mainConfiguration
-//		.getOrCreateProperty("woodenPipe.exclusion",
-//				Configuration.BLOCK_PROPERTY, "");
+		Property exclusionList = BuildCraftCore.mainConfiguration
+				.getOrCreateProperty("woodenPipe.exclusion",
+						Configuration.BLOCK_PROPERTY, "");
 
-//BlockWoodenPipe.excludedBlocks = exclusionList.value.split(",");
-//
-//for (int j = 0; j < BlockWoodenPipe.excludedBlocks.length; ++j) {
-//	BlockWoodenPipe.excludedBlocks[j] = BlockWoodenPipe.excludedBlocks[j]
-//			.trim();
-//}
+		PipeLogicWood.excludedBlocks = exclusionList.value.split(",");
+
+		for (int j = 0; j < PipeLogicWood.excludedBlocks.length; ++j) {
+			PipeLogicWood.excludedBlocks[j] = PipeLogicWood.excludedBlocks[j]
+					.trim();
+		}
 
 		BuildCraftCore.mainConfiguration.save();
 
@@ -117,7 +118,7 @@ public class BuildCraftTransport {
 		// cobblestone 4064
 		pipePowerStone = createPipe (4065, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone, null);		
 		// iron 4066
-		pipePowerGold = createPipe(4067, PipePowerGold.class, "Golden Conductive Pipe", null, null, null);
+		pipePowerGold = createPipe(4067, PipePowerGold.class, "Golden Conductive Pipe", Item.redstone, pipeItemsGold, null);
 		// diamond 4068
 		
 		for (int j = 0; j < 6; ++j) {

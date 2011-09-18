@@ -384,8 +384,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		// APPLY SCHEDULED FILLED ORDERS
 		
 		center.update();
-		
-		
+				
 		for (int r = 0; r < 6; ++r) {
 			int i = rndIt [r];
 			
