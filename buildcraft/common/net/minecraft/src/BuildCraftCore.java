@@ -23,6 +23,7 @@ import net.minecraft.src.forge.Property;
 public class BuildCraftCore {
 	
 	public static boolean debugMode = false;
+	public static boolean modifyWorld = false;
 	
 	public static BuildCraftConfiguration mainConfiguration;
 	
@@ -157,8 +158,14 @@ public class BuildCraftCore {
 				.getOrCreateIntProperty("diamondGearItem.id",
 						Configuration.ITEM_PROPERTY,
 						DefaultProps.DIAMOND_GEAR_ID);
+		Property modifyWorld = BuildCraftCore.mainConfiguration
+				.getOrCreateBooleanProperty("modifyWorld",
+						Configuration.GENERAL_PROPERTY, true);
+		modifyWorld.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 		
 		BuildCraftCore.mainConfiguration.save();
+		
+		BuildCraftCore.modifyWorld = modifyWorld.equals("true");		
 		
 		gearsInitialized = true;
 		
