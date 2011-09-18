@@ -252,9 +252,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();				
 	}
 
-	private void renderLiquids(Pipe pipe, double x, double y, double z) {
+	private void renderLiquids(Pipe pipe, double x, double y, double z) {		
 		PipeTransportLiquids liq = (PipeTransportLiquids) pipe.transport;
-
 		
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /*GL_LIGHTING*/);
@@ -267,6 +266,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		
 		for (int i = 0; i < 6; ++i) {
 			if (liq.getSide(i) > 0) {
+//				System.out.println ("SIDE = " + liq.getSide(i));
+				
 				DisplayLiquidList d = getListFromBuffer(liq.side [i]);
 				
 				if (d == null) {
@@ -304,6 +305,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// CENTER
 
 		if (liq.getCenter () > 0) {
+//			System.out.println ("CENTER = " + liq.getCenter()));
+			
 			DisplayLiquidList d = getListFromBuffer(liq.center);
 			
 			if (d != null) {

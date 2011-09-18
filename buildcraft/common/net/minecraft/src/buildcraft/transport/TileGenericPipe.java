@@ -209,10 +209,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		System.out.println ("READ DESCRIPTION");
-		
 		if (pipe == null) {
-			System.out.println ("CREATE FROM DESCRIPTION");	
 			pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, packet.dataInt [3]);
 			pipe.setTile(this);	
 			pipe.setWorld(worldObj);

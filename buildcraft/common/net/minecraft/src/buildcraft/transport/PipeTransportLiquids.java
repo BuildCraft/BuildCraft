@@ -5,9 +5,13 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
@@ -15,7 +19,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class PipeTransportLiquids extends PipeTransport implements ILiquidContainer {
 	
-
 	/**
 	 * The amount of liquid contained by a pipe section. For simplicity, all
 	 * pipe sections are assumed to be of the same volume.
@@ -30,7 +33,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		short ready;
 		short [] out = new short [travelDelay];
 		short qty;
-		short liquidId = 0;
 		int orientation;
 		
 		short [] lastQty = new short [100];
@@ -38,8 +40,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		int emptyTime = 0;
 		
+		@TileNetworkData 
+		public int average;
 		@TileNetworkData
-		int average;
+		public short liquidId = 0;
 		
 		int totalBounced = 0;
 		boolean bouncing = false;
@@ -253,6 +257,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	
 	// Computed at each update
 	boolean isOutput [] = new boolean [] {false, false, false, false, false, false};
+
+	private SafeTimeTracker timeTracker = new SafeTimeTracker();
 	
 
 	public PipeTransportLiquids() {
@@ -285,7 +291,20 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	}
 
 	public void updateEntity() {
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		moveLiquids();
+		
+		if (APIProxy.isServerSide()) {
+			if (timeTracker.markTimeIfDelay(worldObj, 10)) {
+				CoreProxy
+						.sendToPlayers(this.container.getUpdatePacket(),
+								xCoord, yCoord, zCoord, 40,
+								mod_BuildCraftCore.instance);
+			}
+		}
 
 //		if (APIProxy.isServerSide()) {
 //			if (timeTracker.markTimeIfDelay(worldObj, 50)) {

@@ -11,6 +11,7 @@ public class ClassMapping {
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
 	private LinkedList<Field> doubleFields = new LinkedList<Field>();
 	private LinkedList<Field> stringFields = new LinkedList<Field>();
+	private LinkedList<Field> shortFields = new LinkedList<Field>();
 	private LinkedList<Field> intFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
@@ -47,7 +48,7 @@ public class ClassMapping {
 				if (!isSynchronizedField(f)) {
 					continue;
 				}
-
+				
 				Type t = f.getGenericType();
 
 				// ??? take into account enumerations here!
@@ -55,7 +56,10 @@ public class ClassMapping {
 				if (t instanceof Class && !((Class)t).isArray()) {
 					Class fieldClass = (Class) t;
 					
-					if (fieldClass.equals(int.class)) {
+					if (fieldClass.equals(short.class)) {
+						sizeInt++;
+						shortFields.add(f);
+					} else if (fieldClass.equals(int.class)) {
 						sizeInt++;
 						intFields.add(f);
 					} else if (fieldClass.equals(boolean.class)) {
@@ -134,6 +138,11 @@ public class ClassMapping {
 	@SuppressWarnings("rawtypes")
 	public void setData(Object obj, int[] intValues, float[] floatValues,
 			String[] stringValues, Indexes index) throws IllegalArgumentException, IllegalAccessException {				
+		
+		for (Field f : shortFields) {
+			intValues [index.intIndex] = f.getShort(obj);
+			index.intIndex++;
+		}
 		
 		for (Field f : intFields) {
 			intValues [index.intIndex] = f.getInt(obj);
@@ -228,6 +237,11 @@ public class ClassMapping {
 	public void updateFromData(Object obj, int[] intValues,
 			float[] floatValues, String[] stringValues, Indexes index)
 			throws IllegalArgumentException, IllegalAccessException {
+		
+		for (Field f : shortFields) {
+			f.setShort(obj, (short) intValues [index.intIndex]);
+			index.intIndex++;
+		}
 		
 		for (Field f : intFields) {
 			f.setInt(obj, intValues [index.intIndex]);
