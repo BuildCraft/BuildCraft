@@ -177,10 +177,13 @@ public class PipeTransportPower extends PipeTransport {
 		nextPowerQuery [from.ordinal()] += i;		
 	}
 	
+	@Override
+	public void initialize () {
+		currentDate = worldObj.getWorldTime();
+	}
+	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
-
-		currentDate = nbttagcompound.getLong("currentDate");
+		super.readFromNBT(nbttagcompound);		
 		
 		for (int i = 0; i < 6; ++i) {
 			powerQuery [i] = nbttagcompound.getInteger("powerQuery[" + i + "]");
@@ -193,8 +196,6 @@ public class PipeTransportPower extends PipeTransport {
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
-
-		nbttagcompound.setLong("currentDate", currentDate);
 		
 		for (int i = 0; i < 6; ++i) {
 			nbttagcompound.setInteger("powerQuery[" + i + "]", powerQuery [i]);
