@@ -3,7 +3,10 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -12,8 +15,12 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
+import net.minecraft.src.buildcraft.core.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.PacketIds;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, ISpecialInventory, IPipeEntry {
+public class TileGenericPipe extends TileEntity implements IPowerReceptor,
+		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile {
+	
 	public Pipe pipe;
 	private boolean blockNeighborChange = false;
 	private boolean initialized = false;
@@ -196,6 +203,47 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public boolean acceptItems() {
 		return pipe.transport.acceptItems();
+	}
+
+	@Override
+	public void handleDescriptionPacket(Packet230ModLoader packet) {
+		pipe.handlePacket(packet);
+		
+	}
+
+	@Override
+	public void handleUpdatePacket(Packet230ModLoader packet) {
+		if (pipe == null) {
+			pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, packet.dataInt [3]);
+			pipe.setTile(this);	
+		}
+	}
+
+	@Override
+	public void postPacketHandling(Packet230ModLoader packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Packet230ModLoader getUpdatePacket() {
+		return pipe.getNetworkPacket();
+	}
+
+	@Override
+	public Packet getDescriptionPacket() {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		packet.modId = mod_BuildCraftCore.instance.getId();
+		packet.isChunkDataPacket = true;
+		packet.packetType = PacketIds.TileDescription.ordinal();
+		
+		packet.dataInt = new int [4];
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		packet.dataInt [3] = pipe.itemID;
+		
+		return packet;
 	}
 
 }

@@ -200,6 +200,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		TileGenericPipe pipe = ((TileGenericPipe) tileentity);
 		
+		if (pipe.pipe == null) {
+			return;
+		}
+		
 		if (pipe.pipe.transport instanceof PipeTransportLiquids) {
 			renderLiquids(pipe.pipe, x, y, z);
 		}

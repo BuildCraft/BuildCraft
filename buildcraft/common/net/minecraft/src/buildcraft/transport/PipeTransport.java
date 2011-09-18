@@ -7,7 +7,7 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class PipeTransport {
-
+	
 	public int xCoord;
 	public int yCoord;
 	public int zCoord;

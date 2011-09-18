@@ -64,7 +64,7 @@ public class BuildCraftCore {
 	public static final int BUCKET_VOLUME = 1000;
 	
 	public static LinkedList <LiquidData> liquids = new LinkedList <LiquidData> ();
-	
+		
 	@SuppressWarnings({ "all" })
 	public static void initialize () {
 		if (initialized) {
