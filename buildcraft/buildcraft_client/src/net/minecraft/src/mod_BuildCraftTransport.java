@@ -61,11 +61,6 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		ModLoader.RegisterTileEntity(TileGenericPipe.class,
 				"net.minecraft.src.buildcraft.GenericPipe", new RenderPipe());		
 		
-//		ModLoader
-//				.RegisterTileEntity(TilePipe.class,
-//						"net.minecraft.src.buildcraft.Pipe",
-//						new RenderPipe());
-		
 		instance = this;
 	}
 	

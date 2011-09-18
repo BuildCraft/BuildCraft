@@ -47,11 +47,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		super.validate();
 		
 		if (pipe == null) {
-			pipe = BlockGenericPipe.pipeBuffer.get(new BlockIndex(xCoord, yCoord, zCoord));
-			pipe.setTile(this);
+			pipe = BlockGenericPipe.pipeBuffer.get(new BlockIndex(xCoord, yCoord, zCoord));			
 		}
 		
-		pipe.setWorld(worldObj);
+		if (pipe != null) {
+			pipe.setTile(this);
+			pipe.setWorld(worldObj);
+		}
 	}
 	
 	@Override
@@ -207,16 +209,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		pipe.handlePacket(packet);
+		System.out.println ("READ DESCRIPTION");
 		
+		if (pipe == null) {
+			System.out.println ("CREATE FROM DESCRIPTION");	
+			pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, packet.dataInt [3]);
+			pipe.setTile(this);	
+			pipe.setWorld(worldObj);
+		}
 	}
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		if (pipe == null) {
-			pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, packet.dataInt [3]);
-			pipe.setTile(this);	
-		}
+		pipe.handlePacket(packet);
 	}
 
 	@Override
