@@ -75,7 +75,7 @@ public class BlockFiller extends BlockContainer implements ICustomTextureBlock {
     }
 	
 	@Override
-	protected TileEntity getBlockEntity() {
+	public TileEntity getBlockEntity() {
 		return new TileFiller();
 	}
 	

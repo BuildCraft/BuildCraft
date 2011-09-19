@@ -46,7 +46,7 @@ public abstract class BlockPipe extends BlockContainer implements
     }
     
 	@Override
-	protected abstract TileEntity getBlockEntity();
+	public abstract TileEntity getBlockEntity();
 	
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {

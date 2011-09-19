@@ -14,6 +14,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -89,7 +90,7 @@ public class TileAutoWorkbench extends TileEntity implements
 				.tagAt(i);	
 	    	 
 	    	 if (!nbttagcompound2.getBoolean("isNull")) {
-	    		 stackList [i] = new ItemStack(nbttagcompound2);
+	    		 stackList [i] = CoreProxy.createItem(nbttagcompound2);
 	    	 }
 	     }
 	 }
@@ -292,5 +293,25 @@ public class TileAutoWorkbench extends TileEntity implements
 		}		
 		
 		return null;
+	}
+
+	public void func_35142_x_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35141_y_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35161_e() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35162_t_() {
+		// TODO Auto-generated method stub
+		
 	}
 }

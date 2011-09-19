@@ -6,8 +6,10 @@ import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.EntityPlayerMP;
@@ -59,8 +61,7 @@ public class CoreProxy {
 		
 	}
 	
-	public static boolean isDamageable (Item item) {
-		return item.func_25005_e();
+	public static ItemStack createItem (NBTTagCompound nbttagcompound) {
+		return ItemStack.func_35618_a(nbttagcompound);
 	}
-	
 }

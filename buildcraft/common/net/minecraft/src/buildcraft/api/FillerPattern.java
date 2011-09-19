@@ -39,8 +39,7 @@ public abstract class FillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, null, world,
-					xSlot, ySlot + 1, zSlot, 0);
+			world.setBlock(xSlot, ySlot, zSlot, stackToPlace.itemID);
 		}
 		
 		return !found;

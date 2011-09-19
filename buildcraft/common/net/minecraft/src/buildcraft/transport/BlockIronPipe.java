@@ -44,7 +44,7 @@ public class BlockIronPipe extends BlockPipe {
 	}
 	
 	@Override
-	protected TileEntity getBlockEntity() {
+	public TileEntity getBlockEntity() {
 		return new TileIronPipe ();
 	}
 		

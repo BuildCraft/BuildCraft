@@ -172,8 +172,8 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 							&& getStackInSlot(s).getItem() instanceof ItemBlock) {
 
 						ItemStack stack = decrStackSize(s, 1);
-						stack.getItem().onItemUse(stack, null, worldObj,
-								contents.x,  contents.y + 1, contents.z, 0);
+						worldObj.setBlock(contents.x, contents.y,
+								contents.z, stack.itemID);
 
 						break;
 					}
@@ -249,7 +249,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
             int j = nbttagcompound1.getByte("Slot") & 0xff;
             if(j >= 0 && j < items.length)
             {
-                items[j] = new ItemStack(nbttagcompound1);
+                items[j] = CoreProxy.createItem(nbttagcompound1);
             }
         }
         
@@ -379,6 +379,25 @@ public class TileBuilder extends TileBuildCraft implements IInventory,
 	@Override
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
+	}
+
+	public void func_35142_x_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35141_y_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35161_e() {
+		// TODO Auto-generated method stub
+		
+	}
+	public void func_35162_t_() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

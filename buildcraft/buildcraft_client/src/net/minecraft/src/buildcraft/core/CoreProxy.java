@@ -7,7 +7,9 @@ import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
 
 public class CoreProxy {
@@ -39,11 +41,9 @@ public class CoreProxy {
 
 	public static void addLocalization(String s1, String string) {
 		ModLoader.AddLocalization(s1, string);
-		
 	}
 	
-	public static boolean isDamageable (Item item) {
-		return item.isDamagable();
+	public static ItemStack createItem (NBTTagCompound nbttagcompound) {
+		return ItemStack.func_35864_a(nbttagcompound);
 	}
-
 }

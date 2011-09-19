@@ -207,7 +207,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
             int j = nbttagcompound1.getByte("Slot") & 0xff;
             if(j >= 0 && j < contents.length)
             {
-                contents[j] = new ItemStack(nbttagcompound1);
+                contents[j] = CoreProxy.createItem(nbttagcompound1);
             }
         }
         
@@ -413,6 +413,26 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 	@Override
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
+	}
+	
+	public void func_35142_x_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35141_y_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35161_e() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35162_t_() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

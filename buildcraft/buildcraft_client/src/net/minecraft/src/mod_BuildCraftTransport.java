@@ -24,7 +24,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 	
 	@Override
 	public String Version() {
-		return "1.7.3.3";
+		return "1.8.1.1";
 	}
 	
     public GuiScreen HandleGUI(int i) {    	

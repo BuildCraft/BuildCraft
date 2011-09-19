@@ -204,7 +204,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
             int j = nbttagcompound1.getByte("Slot") & 0xff;
             if(j >= 0 && j < items.length)
             {
-                items[j] = new ItemStack(nbttagcompound1);
+                items[j] = CoreProxy.createItem(nbttagcompound1);
             }
         }
 	}
@@ -308,5 +308,25 @@ public class TileTemplate extends TileBuildCraft implements IInventory, ISynchro
 		}
 		
 		return packet;
+	}
+
+	public void func_35142_x_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35141_y_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35161_e() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35162_t_() {
+		// TODO Auto-generated method stub
+		
 	}
 }

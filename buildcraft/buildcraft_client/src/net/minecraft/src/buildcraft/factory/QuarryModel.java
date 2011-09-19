@@ -11,11 +11,11 @@ public class QuarryModel extends ModelBase
 	public QuarryModel()
 	{
 		float scale = 0F;
-		quary = new ModelRenderer(0, 20);
+		quary = new ModelRenderer(this, 0, 20);
 		quary.addBox(0F, 0F, 0F, 16, 16, 16, scale);
 		//quary.setPosition(-8F, 8F, -8F);
 
-		lcd = new ModelRenderer(1, 53);
+		lcd = new ModelRenderer(this, 1, 53);
 		lcd.addBox(0F, 0F, 0F, 12, 8, 2, scale);
 		//lcd.setPosition(0F, 9F, -9F);
 		lcd.rotateAngleY = 0.22689F;

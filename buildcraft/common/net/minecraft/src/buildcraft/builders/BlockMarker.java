@@ -69,7 +69,7 @@ public class BlockMarker extends BlockContainer {
     }    
 
 	@Override
-	protected TileEntity getBlockEntity() {
+	public TileEntity getBlockEntity() {
 		return new TileMarker();
 	}
 

@@ -17,13 +17,13 @@ public class BuildCraftContainer extends Container {
 	public final ItemStack getStackInSlot(int i)
 	{
 		ItemStack itemstack = null;
-		Slot slot = (Slot)slots.get(i);
+		Slot slot = (Slot)inventorySlots.get(i);
 		if(slot != null && slot.getHasStack())
 		{
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 			if (i < inventorySize) {
-				func_28125_a(itemstack1, inventorySize, slots.size(), true);
+				func_28125_a(itemstack1, inventorySize, inventorySlots.size(), true);
 			} else {
 				func_28125_a(itemstack1, 0, inventorySize, false);
 			}
@@ -38,7 +38,7 @@ public class BuildCraftContainer extends Container {
 	}
 
 	@Override
-	public final boolean isUsableByPlayer(EntityPlayer entityplayer) {
+	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
 	}
 

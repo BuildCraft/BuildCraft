@@ -113,7 +113,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 
 				if (stack != null && stack.itemID == item.item.itemID)
 				{
-					if (CoreProxy.isDamageable(Item.itemsList[item.item.itemID])) {
+					if (Item.itemsList[item.item.itemID].isDamageable()) {
 						filteredOrientations.add(dir);
 					} else if (stack.getItemDamage() == item.item
 							.getItemDamage()) {
@@ -140,7 +140,7 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
     	for (int j = 0; j < nbttaglist.tagCount(); ++j) {    		
     		NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
     		int index = nbttagcompound2.getInteger("index");
-    		items [index] = new ItemStack(nbttagcompound2);
+    		items [index] = CoreProxy.createItem(nbttagcompound2);
     	}    	
     }
 
@@ -224,5 +224,25 @@ public class TileDiamondPipe extends TilePipe implements IInventory,
 						packet.dataInt[3 + j * 2 + 1]);
 			}			 
 		}
+	}
+
+	public void func_35142_x_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35141_y_() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35161_e() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void func_35162_t_() {
+		// TODO Auto-generated method stub
+		
 	}
 }

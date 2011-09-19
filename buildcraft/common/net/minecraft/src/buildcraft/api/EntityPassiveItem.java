@@ -7,6 +7,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.SafeTimeTracker;
 
 public class EntityPassiveItem extends Entity {
@@ -66,7 +67,7 @@ public class EntityPassiveItem extends Entity {
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");		
 		speed = nbttagcompound.getFloat("speed");
-		item = new ItemStack(nbttagcompound.getCompoundTag("Item"));
+		item = CoreProxy.createItem(nbttagcompound.getCompoundTag("Item"));
 		
 		setPosition (posX, posY, posZ);
 		
@@ -93,12 +94,7 @@ public class EntityPassiveItem extends Entity {
 	public void onCollideWithPlayer(EntityPlayer entityplayer) {
 		
 	}
-	
-	@Override
-	public boolean attackEntityFrom(Entity entity, int i) {
-	   return false;
-	}
-	
+
 	@Override
 	public boolean handleWaterMovement() {
 		return false;

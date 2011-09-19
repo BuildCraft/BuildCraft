@@ -57,7 +57,7 @@ public class BlockMiningWell extends BlockMachineRoot implements ICustomTextureB
     
 
 	@Override
-	protected TileEntity getBlockEntity() {		
+	public TileEntity getBlockEntity() {		
 		return new TileMiningWell();
 	}
 	
