@@ -7,7 +7,6 @@ import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
-import net.minecraft.src.buildcraft.factory.RenderMiningWell;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
 import net.minecraft.src.buildcraft.factory.RenderRefinery;
 import net.minecraft.src.buildcraft.factory.RenderTank;
@@ -46,8 +45,6 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	public String Version() {
 		return "2.2.0";
 	}
-	    
-	RenderMiningWell renderMiningWell = new RenderMiningWell();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void AddRenderer(Map map) {

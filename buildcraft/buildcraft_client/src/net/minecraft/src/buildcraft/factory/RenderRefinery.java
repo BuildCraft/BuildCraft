@@ -2,20 +2,16 @@ package net.minecraft.src.buildcraft.factory;
 
 import java.util.HashMap;
 
-import javax.rmi.CORBA.Tie;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.Item;
+import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
-import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
@@ -29,10 +25,12 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	private ModelRenderer tank;
 	private ModelRenderer magnet [] = new ModelRenderer [4];
 	
+	private ModelBase model = new ModelBase () {};
+	
 	public RenderRefinery () {
 
 		//constructor:
-		tank = new ModelRenderer(0, 0);
+		tank = new ModelRenderer(model, 0, 0);
 		tank.addBox(-4F, -8F, -4F, 8, 16, 8);		
 		tank.rotationPointX = 8;
 		tank.rotationPointY = 8;
@@ -41,7 +39,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		//constructor:
 		
 		for (int i = 0; i < 4; ++i) {
-			magnet[i] = new ModelRenderer(32, i * 8);
+			magnet[i] = new ModelRenderer(model, 32, i * 8);
 			magnet[i].addBox(0, -8F, -8F, 8, 4, 4);		
 			magnet[i].rotationPointX = 8;
 			magnet[i].rotationPointY = 8;

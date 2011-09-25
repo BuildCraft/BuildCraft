@@ -14,7 +14,7 @@ public class LegacyBlock extends BlockContainer {
 	}
 
 	@Override
-	protected TileEntity getBlockEntity() {		
+	public TileEntity getBlockEntity() {		
 		return new LegacyTile();
 	}
 

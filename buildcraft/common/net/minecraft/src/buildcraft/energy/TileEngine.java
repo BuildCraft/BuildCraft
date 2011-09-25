@@ -199,7 +199,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
     	
     	if (nbttagcompound.hasKey("itemInInventory")) {
     		NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
-    		itemInInventory = new ItemStack(cpt);
+    		itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
     	}
     	
     	engine.readFromNBT(nbttagcompound);
@@ -362,6 +362,16 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	@Override
 	public int getLiquidId() {
 		return 0;
+	}
+
+	@Override
+	public void openChest() {
+		
+	}
+
+	@Override
+	public void closeChest() {
+		
 	}
 	
 }

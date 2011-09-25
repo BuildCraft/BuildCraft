@@ -40,7 +40,7 @@ public class BlockEngine extends BlockContainer implements IPipeConnection {
     }
 
 	@Override
-	protected TileEntity getBlockEntity() {
+	public TileEntity getBlockEntity() {
 		return new TileEngine();
 	}
 	

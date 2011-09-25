@@ -92,7 +92,7 @@ public class PipeLogicDiamond extends PipeLogic {
     	for (int j = 0; j < nbttaglist.tagCount(); ++j) {    		
     		NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
     		int index = nbttagcompound2.getInteger("index");
-    		items [index] = new ItemStack(nbttagcompound2);
+    		items [index] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
     	}    	
     }
 

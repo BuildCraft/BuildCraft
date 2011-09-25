@@ -44,7 +44,7 @@ public class BlockAutoWorkbench extends BlockContainer implements
 
     
 	@Override
-	protected TileEntity getBlockEntity() {
+	public TileEntity getBlockEntity() {
 		return new TileAutoWorkbench ();
 	}
 	

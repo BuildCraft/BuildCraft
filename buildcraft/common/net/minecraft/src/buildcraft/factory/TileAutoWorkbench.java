@@ -89,7 +89,7 @@ public class TileAutoWorkbench extends TileEntity implements
 				.tagAt(i);	
 	    	 
 	    	 if (!nbttagcompound2.getBoolean("isNull")) {
-	    		 stackList [i] = new ItemStack(nbttagcompound2);
+	    		 stackList [i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
 	    	 }
 	     }
 	 }
@@ -292,5 +292,15 @@ public class TileAutoWorkbench extends TileEntity implements
 		}		
 		
 		return null;
+	}
+
+	@Override
+	public void openChest() {
+		
+	}
+
+	@Override
+	public void closeChest() {
+		
 	}
 }

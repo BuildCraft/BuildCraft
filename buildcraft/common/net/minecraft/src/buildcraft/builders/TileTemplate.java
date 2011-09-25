@@ -201,7 +201,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
             int j = nbttagcompound1.getByte("Slot") & 0xff;
             if(j >= 0 && j < items.length)
             {
-                items[j] = new ItemStack(nbttagcompound1);
+                items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
         }
 	}
@@ -285,6 +285,16 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
+	}
+
+	@Override
+	public void openChest() {
+		
+	}
+
+	@Override
+	public void closeChest() {
+		
 	}
 
 }
