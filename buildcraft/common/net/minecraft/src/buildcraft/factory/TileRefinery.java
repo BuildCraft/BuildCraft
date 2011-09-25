@@ -329,4 +329,14 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 			}
 		}
 	}
+
+	@Override
+	public void openChest() {
+		
+	}
+
+	@Override
+	public void closeChest() {
+		
+	}
 }

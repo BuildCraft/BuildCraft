@@ -41,7 +41,7 @@ public class BlockRefinery extends BlockContainer {
     }
 
 	@Override
-	protected TileEntity getBlockEntity() {
+	public TileEntity getBlockEntity() {
 		return new TileRefinery();
 	}
 	

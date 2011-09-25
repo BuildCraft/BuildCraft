@@ -96,7 +96,7 @@ public class EngineStone extends Engine {
             return 20000;
         } else
         {
-            return i == Block.sapling.blockID ? 100 : ModLoader.AddAllFuel(i);
+            return i == Block.sapling.blockID ? 100 : ModLoader.AddAllFuel(i, itemstack.getItemDamage());
         }
     }
 }

@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.energy;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
@@ -12,6 +13,8 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
+	private ModelBase model = new ModelBase () {};
+	
 	private ModelRenderer box;
 	private ModelRenderer trunk;
 	private ModelRenderer movingBox;
@@ -21,25 +24,25 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	public RenderEngine () {
 
 		//constructor:
-		box = new ModelRenderer(0, 0);
+		box = new ModelRenderer(model, 0, 0);
 		box.addBox(-8F, -8F, -8F, 16, 4, 16);		
 		box.rotationPointX = 8;
 		box.rotationPointY = 8;
 		box.rotationPointZ = 8;
 
-		trunk = new ModelRenderer(0, 0);
+		trunk = new ModelRenderer(model, 0, 0);
 		trunk.addBox(-4F, -4F, -4F, 8, 12, 8);
 		trunk.rotationPointX = 8F;
 		trunk.rotationPointY = 8F;
 		trunk.rotationPointZ = 8F;
 		
-		movingBox = new ModelRenderer(0, 0);
+		movingBox = new ModelRenderer(model, 0, 0);
 		movingBox.addBox(-8F, -4, -8F, 16, 4, 16);
 		movingBox.rotationPointX = 8F;
 		movingBox.rotationPointY = 8F;
 		movingBox.rotationPointZ = 8F;
 		
-		chamber = new ModelRenderer(0, 0);
+		chamber = new ModelRenderer(model, 0, 0);
 		chamber.addBox(-5F, -4, -5F, 10, 2, 10);
 		chamber.rotationPointX = 8F;
 		chamber.rotationPointY = 8F;

@@ -248,4 +248,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		return packet;
 	}
 
+	@Override
+	public void openChest() {
+		
+	}
+
+	@Override
+	public void closeChest() {
+		
+	}
+
 }

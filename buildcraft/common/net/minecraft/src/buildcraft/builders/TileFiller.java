@@ -220,7 +220,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
             int j = nbttagcompound1.getByte("Slot") & 0xff;
             if(j >= 0 && j < contents.length)
             {
-                contents[j] = new ItemStack(nbttagcompound1);
+                contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
             }
         }
         
@@ -392,6 +392,16 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	@Override
 	public boolean manageSolids() {
 		return true;
+	}
+
+	@Override
+	public void openChest() {
+		
+	}
+
+	@Override
+	public void closeChest() {
+		
 	}
 
 }

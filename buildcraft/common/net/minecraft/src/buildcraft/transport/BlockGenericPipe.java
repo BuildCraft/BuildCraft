@@ -196,7 +196,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	}
 
 	@Override
-	protected TileEntity getBlockEntity() {
+	public TileEntity getBlockEntity() {
 		return new TileGenericPipe();
 	}
 	

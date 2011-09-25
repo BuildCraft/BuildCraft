@@ -58,7 +58,7 @@ public class EntityPassiveItem {
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");		
 		speed = nbttagcompound.getFloat("speed");
-		item = new ItemStack(nbttagcompound.getCompoundTag("Item"));
+		item = ItemStack.loadItemStackFromNBT(nbttagcompound.getCompoundTag("Item"));
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {		
