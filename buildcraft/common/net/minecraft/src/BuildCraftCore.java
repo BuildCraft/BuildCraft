@@ -165,7 +165,8 @@ public class BuildCraftCore {
 		
 		BuildCraftCore.mainConfiguration.save();
 		
-		BuildCraftCore.modifyWorld = modifyWorld.equals("true");		
+		BuildCraftCore.modifyWorld = modifyWorld.value.equals("true");
+		System.out.println ("MODIFY WORLD = " + BuildCraftCore.modifyWorld);
 		
 		gearsInitialized = true;
 		
