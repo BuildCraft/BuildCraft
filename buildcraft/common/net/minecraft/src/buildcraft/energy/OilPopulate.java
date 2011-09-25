@@ -8,7 +8,7 @@ import net.minecraft.src.World;
 
 public class OilPopulate {
 	
-	public static void doPopulate(World world, int x, int z) {
+	public static void doPopulate(World world, int x, int z) {		
 		if (!BuildCraftCore.modifyWorld) {
 			return;
 		}
