@@ -25,7 +25,7 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileQuarry extends TileBuildCraft implements IArmListener,
+public class TileQuarry extends TileMachine implements IArmListener,
 		IMachine, IPowerReceptor {
 	
 	BlockContents nextBlockForBluePrint = null;

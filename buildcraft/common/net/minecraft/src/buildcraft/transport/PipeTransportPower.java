@@ -110,12 +110,11 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			if (tiles[i] instanceof IPowerReceptor
 					&& !(tiles[i] instanceof TileGenericPipe)) {
-				PowerProvider provider = ((IPowerReceptor) tiles[i])
-						.getPowerProvider();
+				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
+				int request = receptor.powerRequest();
 
-				if (provider != null && provider.maxEnergyReceived > 0) {
-					requestEnergy(Orientations.values()[i],
-							provider.maxEnergyReceived);
+				if (request > 0) {
+					requestEnergy(Orientations.values()[i], request);
 				}
 			}
 		}

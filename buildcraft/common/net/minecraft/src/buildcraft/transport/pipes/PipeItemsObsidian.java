@@ -319,4 +319,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
 	}
+
+	@Override
+	public int powerRequest() {
+		return getPowerProvider().maxEnergyReceived;
+	}
 }

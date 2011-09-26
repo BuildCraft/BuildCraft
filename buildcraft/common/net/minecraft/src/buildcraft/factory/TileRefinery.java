@@ -13,9 +13,8 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
-public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
+public class TileRefinery extends TileMachine implements ILiquidContainer,
 		IPowerReceptor, IInventory, IMachine {	
 
 	public static LinkedList <RefineryRecipe> recipes = new LinkedList <RefineryRecipe> ();
@@ -68,6 +67,8 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 	PowerProvider powerProvider;
 
 	private int animationStage = 0;
+
+	private boolean isActive;
 	
 	public TileRefinery () {
 		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
@@ -170,6 +171,8 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 	
 	@Override
 	public void updateEntity () {
+		isActive = false;
+		
 		RefineryRecipe currentRecipe = null;
 		Slot src1 = null, src2 = null;
 		
@@ -213,6 +216,8 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 			return;
 		}
 		
+		isActive = true;
+		
 		if (powerProvider.energyStored >= currentRecipe.energy) {
 			increaseAnimation();
 		} else {
@@ -239,8 +244,7 @@ public class TileRefinery extends TileBuildCraft implements ILiquidContainer,
 
 	@Override
 	public boolean isActive() {
-		// TODO Auto-generated method stub
-		return false;
+		return isActive;
 	}
 
 	@Override

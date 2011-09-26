@@ -139,4 +139,8 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		return nextTexture;
 	}
 
+	@Override
+	public int powerRequest() {
+		return getPowerProvider().maxEnergyReceived;
+	}
 }

@@ -15,6 +15,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
@@ -326,6 +327,11 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	@Override
 	public void closeChest() {
 		
+	}
+
+	@Override
+	public int powerRequest() {
+		return powerProvider.maxEnergyReceived;
 	}
 	
 }

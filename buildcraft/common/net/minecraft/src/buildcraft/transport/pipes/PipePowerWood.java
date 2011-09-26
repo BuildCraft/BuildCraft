@@ -103,5 +103,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 			}
 		}
 	}
+	
+	@Override
+	public int powerRequest() {
+		return getPowerProvider().maxEnergyReceived;
+	}
 
 }
