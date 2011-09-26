@@ -403,5 +403,10 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public void closeChest() {
 		
 	}
+	
+	@Override
+	public int powerRequest() {
+		return powerProvider.maxEnergyReceived;
+	}
 
 }

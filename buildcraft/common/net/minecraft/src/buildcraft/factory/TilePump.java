@@ -22,7 +22,7 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor {
+public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	
 	EntityBlock tube;
 	

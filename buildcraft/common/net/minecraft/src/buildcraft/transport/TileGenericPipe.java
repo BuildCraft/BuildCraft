@@ -258,4 +258,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		
 	}
 
+	@Override
+	public int powerRequest() {
+		return getPowerProvider().maxEnergyReceived;
+	}
+
 }

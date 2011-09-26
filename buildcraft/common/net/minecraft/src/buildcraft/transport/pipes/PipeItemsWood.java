@@ -209,5 +209,10 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 		return null;
 	}
+	
+	@Override
+	public int powerRequest() {
+		return getPowerProvider().maxEnergyReceived;
+	}
 
 }

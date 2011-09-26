@@ -15,7 +15,7 @@ import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor {
+public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor {
 	boolean isDigging = true;
 	
 	PowerProvider powerProvider;
@@ -128,5 +128,4 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 		return true;
 	}
 	
-
 }

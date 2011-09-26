@@ -374,4 +374,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		
 	}
 	
+	@Override
+	public int powerRequest() {
+		return 0;
+	}
 }
