@@ -132,6 +132,13 @@ public class BuildCraftFactory {
 		ModLoader.RegisterBlock(pumpBlock);	
 		
 		refineryBlock = new BlockRefinery(DefaultProps.REFINERY_ID);
+		craftingmanager.addRecipe(
+				new ItemStack(refineryBlock),
+				new Object[] { "   ", "RTR", "TGT",
+					Character.valueOf('T'), tankBlock,
+					Character.valueOf('G'), BuildCraftCore.diamondGearItem,
+					Character.valueOf('R'), Block.torchRedstoneActive,
+				});
 		CoreProxy.addName(refineryBlock.setBlockName("refineryBlock"),
 		"Refinery");
 		ModLoader.RegisterBlock(refineryBlock);
