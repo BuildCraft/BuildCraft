@@ -22,6 +22,30 @@ public class DefaultProps {
 	public static int PIPE_WATERPROOF_ID = 3809;
 	public static int BUCKET_FUEL_ID     = 3810;
 	
+	public static int PIPE_ITEMS_WOOD_ID          = 4050;
+	public static int PIPE_ITEMS_COBBLESTONE_ID   = 4051;
+	public static int PIPE_ITEMS_STONE_ID         = 4052;
+	public static int PIPE_ITEMS_IRON_ID          = 4053;
+	public static int PIPE_ITEMS_GOLD_ID          = 4054;
+	public static int PIPE_ITEMS_DIAMOND_ID       = 4055;
+	public static int PIPE_ITEMS_OBSIDIAN_ID      = 4056;
+	
+	public static int PIPE_LIQUIDS_WOOD_ID        = 4057;
+	public static int PIPE_LIQUIDS_COBBLESTONE_ID = 4058;
+	public static int PIPE_LIQUIDS_STONE_ID       = 4059;
+	public static int PIPE_LIQUIDS_IRON_ID        = 4060;
+	public static int PIPE_LIQUIDS_GOLD_ID        = 4061;
+	public static int PIPE_LIQUIDS_DIAMOND_ID     = 4062;
+	public static int PIPE_LIQUIDS_OBSIDIAN_ID    = 4063;
+	
+	public static int PIPE_POWER_WOOD_ID          = 4064;
+	public static int PIPE_POWER_COBBLESTONE_ID   = 4065;
+	public static int PIPE_POWER_STONE_ID         = 4066;
+	public static int PIPE_POWER_IRON_ID          = 4067;
+	public static int PIPE_POWER_GOLD_ID          = 4068;
+	public static int PIPE_POWER_DIAMOND_ID       = 4069;
+	public static int PIPE_POWER_OBSIDIAN_ID      = 4070;
+	
 	public static int WOODEN_PIPE_ID      = 145;
 	public static int STONE_PIPE_ID       = 146;
     public static int IRON_PIPE_ID        = 147;
@@ -44,8 +68,8 @@ public class DefaultProps {
     public static int PUMP_ID             = 164;
     public static int TANK_ID             = 165;
     public static int GENERIC_PIPE_ID     = 166;
-    public static int REFINERY_ID         = 167;
-	
+    public static int REFINERY_ID         = 167;	   
+    
 	public static boolean CURRENT_CONTINUOUS   = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;
 	
