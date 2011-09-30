@@ -1,3 +1,11 @@
+/** 
+ * BuildCraft is open-source. It is distributed under the terms of the 
+ * BuildCraft Open Source License. It grants rights to read, modify, compile
+ * or run the code. It does *NOT* grant the right to redistribute this software
+ * or its modifications in any form, binary or source, except if expressively
+ * granted by the copyright holder.
+ */
+
 package net.minecraft.src;
 
 import java.util.Random;
@@ -46,10 +54,10 @@ public class BuildCraftEnergy {
 		Property engineId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("engine.id",
 				DefaultProps.ENGINE_ID);
-		Property oilMovingId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("oilMoving.id", DefaultProps.OIL_MOVING_ID);
 		Property oilStillId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("oilStill.id", DefaultProps.OIL_STILL_ID);
+		Property oilMovingId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("oilMoving.id", DefaultProps.OIL_MOVING_ID);
 		Property bucketOilId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("bucketOil.id",
 						Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_OIL_ID);
