@@ -89,6 +89,10 @@ public class BuildCraftTransport {
 						Configuration.BLOCK_PROPERTY, "");
 
 		PipeLogicWood.excludedBlocks = exclusionList.value.split(",");
+		
+		Property genericPipeId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("pipe.id",
+				DefaultProps.GENERIC_PIPE_ID);
 
 		for (int j = 0; j < PipeLogicWood.excludedBlocks.length; ++j) {
 			PipeLogicWood.excludedBlocks[j] = PipeLogicWood.excludedBlocks[j]
@@ -106,29 +110,31 @@ public class BuildCraftTransport {
 			"W ", "  ", 
 			Character.valueOf('W'), new ItemStack(Item.dyePowder, 1, 2)});
 		
-		genericPipeBlock = new BlockGenericPipe(166);
+		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
 		
-		pipeItemsWood = createPipe (4050, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
-		pipeItemsCobblestone = createPipe(4051, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
-		pipeItemsStone = createPipe (4052, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
-		pipeItemsIron = createPipe (4053, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
-		pipeItemsGold = createPipe (4054, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
-		pipeItemsDiamond = createPipe (4055, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
-		pipeItemsObsidian = createPipe (4056, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
+		pipeItemsWood = createPipe (DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
+		pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
+		pipeItemsStone = createPipe (DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
+		pipeItemsIron = createPipe (DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
+		pipeItemsGold = createPipe (DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
+		pipeItemsDiamond = createPipe (DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
+		pipeItemsObsidian = createPipe (DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 		
-		pipeLiquidsWood = createPipe (4057, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
-		pipeLiquidsCobblestone = createPipe (4058, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);
-		pipeLiquidsStone = createPipe (4059, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone, null);		
-		pipeLiquidsIron = createPipe (4060, PipeLiquidsIron.class, "Iron Waterproof Pipe", pipeWaterproof, pipeItemsIron, null);		
-		pipeLiquidsGold = createPipe (4061, PipeLiquidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold, null);			
-		// diamond 4062		
+		pipeLiquidsWood = createPipe (DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
+		pipeLiquidsCobblestone = createPipe (DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);
+		pipeLiquidsStone = createPipe (DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone, null);		
+		pipeLiquidsIron = createPipe (DefaultProps.PIPE_LIQUIDS_IRON_ID, PipeLiquidsIron.class, "Iron Waterproof Pipe", pipeWaterproof, pipeItemsIron, null);		
+		pipeLiquidsGold = createPipe (DefaultProps.PIPE_LIQUIDS_GOLD_ID, PipeLiquidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold, null);			
+		// diamond		
+		// obsidian
 		
-		pipePowerWood = createPipe (4063, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone,  pipeItemsWood, null);		
-		// cobblestone 4064
-		pipePowerStone = createPipe (4065, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone, null);		
-		// iron 4066
-		pipePowerGold = createPipe(4067, PipePowerGold.class, "Golden Conductive Pipe", Item.redstone, pipeItemsGold, null);
-		// diamond 4068
+		pipePowerWood = createPipe (DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone,  pipeItemsWood, null);		
+		// cobblestone
+		pipePowerStone = createPipe (DefaultProps.PIPE_POWER_STONE_ID, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone, null);		
+		// iron
+		pipePowerGold = createPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Conductive Pipe", Item.redstone, pipeItemsGold, null);
+		// diamond
+		// obsidian
 		
 		ModLoader.RegisterTileEntity(TileGenericPipe.class,
 				"net.minecraft.src.buildcraft.GenericPipe");
@@ -186,7 +192,15 @@ public class BuildCraftTransport {
 
 	}	
 	
-	private static Item createPipe (int id, Class <? extends Pipe> clas, String descr, Object r1, Object r2, Object r3) {
+	private static Item createPipe (int defaultID, Class <? extends Pipe> clas, String descr, Object r1, Object r2, Object r3) {
+		String name = Character.toLowerCase(clas.getSimpleName().charAt(0))
+				+ clas.getSimpleName().substring(1);
+		
+		Property prop = BuildCraftCore.mainConfiguration
+				.getOrCreateIntProperty(name + ".id",
+						Configuration.ITEM_PROPERTY, defaultID);
+		
+		int id = Integer.parseInt(prop.value);
 		Item res =  BlockGenericPipe.registerPipe (id, clas);
 		res.setItemName(clas.getSimpleName());
 		CoreProxy.addName(res, descr);
