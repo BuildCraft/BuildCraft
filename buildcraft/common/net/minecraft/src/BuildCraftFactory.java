@@ -66,6 +66,8 @@ public class BuildCraftFactory {
 		   .getOrCreateBlockIdProperty("pump.id", DefaultProps.PUMP_ID);
 		Property tankId = BuildCraftCore.mainConfiguration
 		   .getOrCreateBlockIdProperty("tank.id", DefaultProps.TANK_ID);
+		Property refineryId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("refinery.id", DefaultProps.REFINERY_ID);
 		
 		BuildCraftCore.mainConfiguration.save();
 		
@@ -139,7 +141,7 @@ public class BuildCraftFactory {
 		"Pump");
 		ModLoader.RegisterBlock(pumpBlock);	
 		
-		refineryBlock = new BlockRefinery(DefaultProps.REFINERY_ID);
+		refineryBlock = new BlockRefinery(Integer.parseInt(refineryId.value));
 		craftingmanager.addRecipe(
 				new ItemStack(refineryBlock),
 				new Object[] { "   ", "RTR", "TGT",
