@@ -96,19 +96,6 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				}
 				
 				return true;
-			} else if (itemId == Item.bucketEmpty.shiftedIndex) {
-				int qty = tank.empty(BuildCraftCore.BUCKET_VOLUME, false);
-				
-				int filledBucket = BuildCraftCore.getBucketForLiquid(tank.getLiquidId());
-				
-				if (qty >= BuildCraftCore.BUCKET_VOLUME && filledBucket > 0) {
-					tank.empty(BuildCraftCore.BUCKET_VOLUME, true);
-					
-					entityplayer.inventory.setInventorySlotContents(
-							entityplayer.inventory.currentItem,
-							new ItemStack(Item.itemsList [filledBucket], 1));				 
-				}
-
 			}
 		}
 		
