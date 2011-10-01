@@ -10,6 +10,7 @@ package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.BlockFrame;
 import net.minecraft.src.buildcraft.factory.BlockMiningWell;
@@ -18,12 +19,14 @@ import net.minecraft.src.buildcraft.factory.BlockPump;
 import net.minecraft.src.buildcraft.factory.BlockQuarry;
 import net.minecraft.src.buildcraft.factory.BlockRefinery;
 import net.minecraft.src.buildcraft.factory.BlockTank;
+import net.minecraft.src.buildcraft.factory.TankBucketHandler;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
 import net.minecraft.src.buildcraft.factory.TilePump;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
 import net.minecraft.src.buildcraft.factory.TileTank;
 import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
 
 public class BuildCraftFactory {
@@ -70,6 +73,8 @@ public class BuildCraftFactory {
 		.getOrCreateBlockIdProperty("refinery.id", DefaultProps.REFINERY_ID);
 		
 		BuildCraftCore.mainConfiguration.save();
+		
+		MinecraftForge.registerCustomBucketHandler(new TankBucketHandler());
 		
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
 		ModLoader.RegisterBlock(miningWellBlock);
