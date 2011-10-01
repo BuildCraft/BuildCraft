@@ -241,8 +241,10 @@ public class BlockGenericPipe extends BlockContainer implements
 		Pipe pipe2 = getPipe(blockAccess, x2, y2, z2);
 		
 		if (pipe2 != null
-				&& !pipe1.transport.getClass().equals(
-						pipe2.transport.getClass())) {
+				&& (!pipe1.transport.getClass().isAssignableFrom(
+						pipe2.transport.getClass()) && !pipe2.transport
+						.getClass()
+						.isAssignableFrom(pipe1.transport.getClass()))) {
 			return false;
 		}
 				

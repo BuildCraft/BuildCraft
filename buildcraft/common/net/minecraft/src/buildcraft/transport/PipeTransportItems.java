@@ -38,7 +38,7 @@ public class PipeTransportItems extends PipeTransport {
 	public class EntityData {	
 		// TODO: Move passive data here too, like position, speed and all?
 		boolean toCenter = true;
-		EntityPassiveItem item;
+		public EntityPassiveItem item;
 		
 		public Orientations orientation;
 		
