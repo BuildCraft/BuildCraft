@@ -9,11 +9,10 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 
 public class EngineStone extends Engine {
@@ -79,34 +78,45 @@ public class EngineStone extends Engine {
 
 	@Override
 	public int getScaledBurnTime(int i) {
-		return (int) ((float) burnTime / (float) totalBurnTime) * i;
+		return (int) (((float) burnTime / (float) totalBurnTime) * i);
 	}
 
-	private int getItemBurnTime(ItemStack itemstack)
-    {
-        if(itemstack == null)
-        {
-            return 0;
-        }
-        int i = itemstack.getItem().shiftedIndex;
-        if(i < 256 && Block.blocksList[i].blockMaterial == Material.wood)
-        {
-            return 300;
-        }
-        if(i == Item.stick.shiftedIndex)
-        {
-            return 100;
-        }
-        if(i == Item.coal.shiftedIndex)
-        {
-            return 1600;
-        }
-        if(i == Item.bucketLava.shiftedIndex)
-        {
-            return 20000;
-        } else
-        {
-            return i == Block.sapling.blockID ? 100 : CoreProxy.addFuel(i, itemstack.getItemDamage());
-        }
-    }
+	private int getItemBurnTime(ItemStack itemstack) {
+		if (itemstack == null) {
+			return 0;
+		}
+		int i = itemstack.getItem().shiftedIndex;
+		if (i < 256 && Block.blocksList[i].blockMaterial == Material.wood) {
+			return 300;
+		}
+		if (i == Item.stick.shiftedIndex) {
+			return 100;
+		}
+		if (i == Item.coal.shiftedIndex) {
+			return 1600;
+		}
+		if (i == Item.bucketLava.shiftedIndex) {
+			return 20000;
+		} else {
+			return i == Block.sapling.blockID ? 100 : CoreProxy.addFuel(i,
+					itemstack.getItemDamage());
+		}
+	}
+	
+	public void getGUINetworkData(int i, int j) {
+		if (i == 0) {
+			burnTime = j;
+		} else if (i == 1) {
+			totalBurnTime = j;
+		}
+	}
+
+	public void sendGUINetworkData(ContainerEngine containerEngine,
+			ICrafting iCrafting) {
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, burnTime);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, totalBurnTime);		
+	}
+	
+
+
 }

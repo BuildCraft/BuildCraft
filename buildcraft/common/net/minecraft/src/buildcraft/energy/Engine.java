@@ -8,6 +8,7 @@
 
 package net.minecraft.src.buildcraft.energy;
 
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
@@ -123,4 +124,13 @@ public abstract class Engine {
     public void writeToNBT(NBTTagCompound nbttagcompound) {
     	
     }
+
+	public void getGUINetworkData(int i, int j) {
+		
+	}
+
+	public void sendGUINetworkData(ContainerEngine containerEngine,
+			ICrafting iCrafting) {
+		
+	}
 }
