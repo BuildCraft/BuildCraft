@@ -10,6 +10,7 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -242,5 +243,30 @@ public class EngineIron extends Engine {
         return (int) (((float) coolantQty / (float) (MAX_LIQUID))
 				* (float) i);
     }
+    
+	public void getGUINetworkData(int i, int j) {
+		switch (i) {
+		case 0:
+			liquidQty = j;
+			break;
+		case 1:
+			liquidId = j;
+			break;
+		case 2:
+			coolantQty = j;
+			break;
+		case 3:
+			coolantId = j;
+			break;
+		}		
+	}
+
+	public void sendGUINetworkData(ContainerEngine containerEngine,
+			ICrafting iCrafting) {
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, liquidQty);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, liquidId);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, coolantQty);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, coolantId);
+	}
 	
 }
