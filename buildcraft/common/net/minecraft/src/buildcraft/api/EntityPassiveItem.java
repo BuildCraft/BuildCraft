@@ -39,6 +39,7 @@ public class EntityPassiveItem {
 	public EntityPassiveItem(World world, int id) {		
 		entityId = id;
 		allEntities.put(entityId, this);
+		worldObj = world;
 	}
 	
 	public static EntityPassiveItem getOrCreate (World world, int id) {
@@ -93,19 +94,19 @@ public class EntityPassiveItem {
 		nbttagcompound.setCompoundTag("Item", nbttagcompound2);
 	}
 		
-	public EntityItem toEntityItem (World world, Orientations dir) {		
+	public EntityItem toEntityItem (Orientations dir) {		
 		if (!APIProxy.isClient(worldObj)) {
 			Position motion = new Position (0, 0, 0, dir);
 			motion.moveForwards(0.1 + speed * 2F);
 
-			EntityItem entityitem = new EntityItem(world, posX, posY, posZ,
+			EntityItem entityitem = new EntityItem(worldObj, posX, posY, posZ,
 					item);
 
-			float f3 = 0.00F + world.rand.nextFloat() * 0.04F - 0.02F;
-			entityitem.motionX = (float) world.rand.nextGaussian() * f3 + motion.x;
-			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + motion.y;
-			entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.z;
-			world.entityJoinedWorld(entityitem);
+			float f3 = 0.00F + worldObj.rand.nextFloat() * 0.04F - 0.02F;
+			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3 + motion.x;
+			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3 + motion.y;
+			entityitem.motionZ = (float) worldObj.rand.nextGaussian() * f3 + + motion.z;
+			worldObj.entityJoinedWorld(entityitem);
 			remove ();
 
 			entityitem.delayBeforeCanPickup = 20;

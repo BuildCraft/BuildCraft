@@ -215,12 +215,12 @@ public class PipeTransportItems extends PipeTransport {
 				if (nextOrientation == Orientations.Unknown) {
 					scheduleRemoval(data.item);
 					
-					EntityItem dropped = data.item.toEntityItem(worldObj,
-							data.orientation);
+					EntityItem dropped = data.item.toEntityItem(data.orientation);
 					
 					if (dropped != null) {
 						// On SMP, the client side doesn't actually drops 
 						// items
+						
 						onDropped(dropped);
 					}
 				} else {
@@ -259,9 +259,8 @@ public class PipeTransportItems extends PipeTransport {
 							data.item.remove();						
 						} else {
 							data.item.item = utils.items;
-							EntityItem dropped = data.item.toEntityItem(
-									worldObj, data.orientation);
-							
+							EntityItem dropped = data.item.toEntityItem(data.orientation);
+					
 							if (dropped != null) {
 								// On SMP, the client side doesn't actually drops 
 								// items
@@ -270,8 +269,7 @@ public class PipeTransportItems extends PipeTransport {
 						}
 					}
 				} else {
-					EntityItem dropped = data.item.toEntityItem(worldObj,
-							data.orientation);
+					EntityItem dropped = data.item.toEntityItem(data.orientation);
 					
 					if (dropped != null) {
 						// On SMP, the client side doesn't actually drops 
@@ -384,7 +382,7 @@ public class PipeTransportItems extends PipeTransport {
     
     public void destroy () {
     	for (EntityData data : travelingEntities.values()) {
-    		data.item.toEntityItem(worldObj, data.orientation);
+    		data.item.toEntityItem(data.orientation);
     	}
     	
     	travelingEntities.clear();
