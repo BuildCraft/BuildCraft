@@ -91,8 +91,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 		
 		if (APIProxy.isServerSide()) {
-			if (item.synchroTracker.markTimeIfDelay(worldObj, 20)) {
-				// FIXME: what about the other items???
+			if (item.synchroTracker.markTimeIfDelay(worldObj, 20)) {				
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
 						xCoord, yCoord, zCoord, 50,
 						mod_BuildCraftTransport.instance);
