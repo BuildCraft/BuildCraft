@@ -26,11 +26,11 @@ public class GuiDiamondPipe extends GuiContainer {
 		ySize = 225;
 	}
 	
-    protected void drawGuiContainerForegroundLayer()
-    {
-        fontRenderer.drawString(filterInventory.getInvName(), 8, 6, 0x404040);
-        fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97, 0x404040);        
-    }
+	protected void drawGuiContainerForegroundLayer() {
+		fontRenderer.drawString(filterInventory.getInvName(), 8, 6, 0x404040);
+		fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97,
+				0x404040);
+	}
 	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f) {

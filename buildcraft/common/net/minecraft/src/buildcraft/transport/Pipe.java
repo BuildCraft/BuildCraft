@@ -109,6 +109,7 @@ public abstract class Pipe {
 
 	public void updateEntity() {
 		transport.updateEntity ();		
+		logic.updateEntity ();
 	}
 	
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
