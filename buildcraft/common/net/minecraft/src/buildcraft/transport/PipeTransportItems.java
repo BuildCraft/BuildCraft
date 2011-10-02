@@ -8,6 +8,7 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -71,10 +72,15 @@ public class PipeTransportItems extends PipeTransport {
 	@Override
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
 		readjustSpeed(item);			
-				
+		
 		if (!travelingEntities.containsKey(new Integer(item.entityId))) {
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
 					item, orientation));
+			
+			if (item.container != null && item.container != this.container) {
+				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport)
+						.scheduleRemoval(item);
+			}
 			
 			item.container = container;
 		}
@@ -159,14 +165,34 @@ public class PipeTransportItems extends PipeTransport {
 		moveSolids();
 	}
 	
+	HashSet <Integer> toRemove = new HashSet <Integer> ();	
+	
+	public void scheduleRemoval (EntityPassiveItem item) {
+		if (!toRemove.contains(item.entityId)) {
+			toRemove.add(item.entityId);
+		}
+	}
+	
+	public void performRemoval () {
+		LinkedList <EntityData> removal = new LinkedList<EntityData> ();
+		
+		for (EntityData e : travelingEntities.values ()) {
+			if (toRemove.contains(e.item.entityId)) {
+				removal.add(e);
+			}
+		}
+		
+		travelingEntities.values().removeAll(removal);
+		toRemove = new HashSet <Integer> ();
+	}
+	
 	private void moveSolids () {
 		for (EntityData data : entitiesToLoad) {
 			travelingEntities.put(new Integer(data.item.entityId), data);
 		}
 		
 		entitiesToLoad.clear();
-		
-		LinkedList <EntityData> toRemove = new LinkedList <EntityData> ();				
+		performRemoval();
 		
 		for (EntityData data : travelingEntities.values()) {
 			Position motion = new Position (0, 0, 0, data.orientation);
@@ -187,7 +213,8 @@ public class PipeTransportItems extends PipeTransport {
 				Orientations nextOrientation = resolveDestination (data);
 				
 				if (nextOrientation == Orientations.Unknown) {
-					toRemove.add(data);
+					scheduleRemoval(data.item);
+					
 					EntityItem dropped = data.item.toEntityItem(worldObj,
 							data.orientation);
 					
@@ -202,7 +229,7 @@ public class PipeTransportItems extends PipeTransport {
 				
 				
 		    } else if (!data.toCenter && endReached (data)) {
-		    	toRemove.add(data);
+		    	scheduleRemoval(data.item);
 		    	
 				Position destPos = new Position(xCoord, yCoord, zCoord,
 						data.orientation);
@@ -229,7 +256,7 @@ public class PipeTransportItems extends PipeTransport {
 								destPos.orientation.reverse())
 								&& utils.items.stackSize == 0) {
 							
-							// Do nothing, we're adding the object to the world							
+							data.item.remove();						
 						} else {
 							data.item.item = utils.items;
 							EntityItem dropped = data.item.toEntityItem(
@@ -257,7 +284,7 @@ public class PipeTransportItems extends PipeTransport {
 		    }
 		}	
 		
-		travelingEntities.values().removeAll(toRemove);
+		performRemoval();
 	}
 	
 	public boolean middleReached(EntityData entity) {
@@ -370,9 +397,10 @@ public class PipeTransportItems extends PipeTransport {
 			return;
 		}
 		
-		EntityPassiveItem item = new EntityPassiveItem(worldObj);
-		item.entityId = packet.dataInt [3];
-
+		int entityId = packet.dataInt [3];
+		
+		EntityPassiveItem item = EntityPassiveItem.getOrCreate(worldObj, entityId);
+		
 		int itemId = packet.dataInt [5];
 		int stackSize = packet.dataInt [6];
 		int dmg = packet.dataInt [7];
@@ -387,7 +415,12 @@ public class PipeTransportItems extends PipeTransport {
 		item.speed = packet.dataFloat [3];
 		item.deterministicRandomization = packet.dataInt [8];
 		
-		if (item.container == null) {
+		if (item.container != this.container) {
+			if (item.container != null) {
+				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport)
+				.scheduleRemoval(item);
+			}
+			
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
 					item, orientation));
 			item.container = container;
