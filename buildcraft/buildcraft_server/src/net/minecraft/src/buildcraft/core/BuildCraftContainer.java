@@ -22,7 +22,7 @@ public class BuildCraftContainer extends Container {
 	}
 	
 	@Override	
-	public final ItemStack getStackInSlot(int i)
+	public final ItemStack transferStackInSlot(int i)
 	{
 		ItemStack itemstack = null;
 		Slot slot = (Slot)inventorySlots.get(i);
@@ -31,9 +31,9 @@ public class BuildCraftContainer extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 			if (i < inventorySize) {
-				func_28126_a(itemstack1, inventorySize, inventorySlots.size(), true);
+				mergeItemStack(itemstack1, inventorySize, inventorySlots.size(), true);
 			} else {
-				func_28126_a(itemstack1, 0, inventorySize, false);
+				mergeItemStack(itemstack1, 0, inventorySize, false);
 			}
 
 			if(itemstack1.stackSize == 0) {
