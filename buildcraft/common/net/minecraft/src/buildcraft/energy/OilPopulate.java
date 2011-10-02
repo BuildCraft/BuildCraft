@@ -8,6 +8,8 @@
 
 package net.minecraft.src.buildcraft.energy;
 
+import java.util.Random;
+
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
@@ -16,19 +18,25 @@ import net.minecraft.src.World;
 
 public class OilPopulate {
 	
+	public static Random rand = null;
+	
 	public static void doPopulate(World world, int x, int z) {		
 		if (!BuildCraftCore.modifyWorld) {
 			return;
 		}
 		
+		if (rand == null) {
+			rand = new Random (world.getWorldSeed());
+		}
+		
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(
 				x, z);
 		
-		if (biomegenbase == BiomeGenBase.desert && world.rand.nextFloat() > 0.97) {
+		if (biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
 			
-			int startX = world.rand.nextInt(10) + 2;
-			int startZ = world.rand.nextInt(10) + 2;
+			int startX = rand.nextInt(10) + 2;
+			int startZ = rand.nextInt(10) + 2;
 			
 			for (int j = 128; j > 65; --j) {
 				int i = startX + x;
@@ -44,8 +52,8 @@ public class OilPopulate {
 			}			
 		}
 		
-		boolean mediumDeposit = world.rand.nextDouble() <= (0.1 / 100.0);
-		boolean largeDeposit = world.rand.nextDouble() <= (0.005 / 100.0);
+		boolean mediumDeposit = rand.nextDouble() <= (0.1 / 100.0);
+		boolean largeDeposit = rand.nextDouble() <= (0.005 / 100.0);
 		
 		if (BuildCraftCore.debugMode && x == 0 && z == 0) {
 			largeDeposit = true;
@@ -54,14 +62,14 @@ public class OilPopulate {
 		if (mediumDeposit || largeDeposit) {
 			// Generate a large cave deposit
 
-			int cx = x, cy = 20 + world.rand.nextInt(10), cz = z;
+			int cx = x, cy = 20 + rand.nextInt(10), cz = z;
 			
 			int r = 0;
 			
 			if (largeDeposit) {
-				r = 8 + world.rand.nextInt(9);
+				r = 8 + rand.nextInt(9);
 			} else if (mediumDeposit) {
-				r = 3 + world.rand.nextInt(4);
+				r = 3 + rand.nextInt(4);
 			}
 			
 			int r2 = r * r;
@@ -92,10 +100,10 @@ public class OilPopulate {
 					
 					if (largeDeposit) {
 						generateSurfaceDeposit(world, cx, y, cz,
-								20 + world.rand.nextInt(20));
+								20 + rand.nextInt(20));
 					} else if (mediumDeposit) {
 						generateSurfaceDeposit(world, cx, y, cz,
-								5 + world.rand.nextInt(5));
+								5 + rand.nextInt(5));
 					}
 				
 					int ymax = 0;
@@ -157,7 +165,7 @@ public class OilPopulate {
 	}
 	
 	public static void setOilWithProba (World world, float proba, int x, int y, int z, boolean force) {
-		if ((world.rand.nextFloat() <= proba && world.getBlockId(x, y - 2, z) != 0)
+		if ((rand.nextFloat() <= proba && world.getBlockId(x, y - 2, z) != 0)
 				|| force) {
 			boolean adjacentOil = false;
 			
