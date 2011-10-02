@@ -25,6 +25,7 @@ public class ClassMapping {
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectFields = new LinkedList<ClassMapping>();
 	
+	private LinkedList<Field> doubleArrayFields = new LinkedList<Field>();
 	private LinkedList<Field> intArrayFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanArrayFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectArrayFields = new LinkedList<ClassMapping>();
@@ -110,7 +111,10 @@ public class ClassMapping {
 					
 					Class cptClass = fieldClass.getComponentType();
 
-					if (cptClass.equals(int.class)) {
+					if (cptClass.equals(double.class)) {
+						sizeFloat += updateAnnotation.staticSize();
+						doubleArrayFields.add(f);
+					} else if (cptClass.equals(int.class)) {
 						sizeInt += updateAnnotation.staticSize();
 						intArrayFields.add(f);
 					} else if (cptClass.equals(boolean.class)) {
@@ -118,7 +122,7 @@ public class ClassMapping {
 						booleanArrayFields.add(f);
 					} else {
 						// ADD SOME SAFETY HERE - if we're not child of Object
-
+						
 						ClassMapping mapping = new ClassMapping(cptClass);
 						mapping.field = f;
 						objectArrayFields.add(mapping);
@@ -197,6 +201,15 @@ public class ClassMapping {
 				index.intIndex++;
 				c.setData(cpt, intValues, floatValues, stringValues, index);
 			}								
+		}
+		
+		for (Field f : doubleArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				floatValues [index.floatIndex] = (float) ((double []) f.get (obj)) [i];
+				index.floatIndex++;
+			}
 		}
 		
 		for (Field f : intArrayFields) {
@@ -295,6 +308,15 @@ public class ClassMapping {
 						index);
 			}								
 		}	
+		
+		for (Field f : doubleArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {				
+				((double []) f.get (obj)) [i] = floatValues [index.floatIndex];
+				index.floatIndex++;
+			}
+		}
 		
 		for (Field f : intArrayFields) {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
