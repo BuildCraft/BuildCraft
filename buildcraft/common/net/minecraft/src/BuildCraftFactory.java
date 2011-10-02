@@ -10,7 +10,6 @@ package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.factory.BlockAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.BlockFrame;
 import net.minecraft.src.buildcraft.factory.BlockMiningWell;
@@ -24,6 +23,7 @@ import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
 import net.minecraft.src.buildcraft.factory.TilePump;
 import net.minecraft.src.buildcraft.factory.TileQuarry;
+import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.buildcraft.factory.TileTank;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
@@ -165,6 +165,8 @@ public class BuildCraftFactory {
 				"net.minecraft.src.buildcraft.factory.TilePump");
 		ModLoader.RegisterTileEntity(TileTank.class,
 		"net.minecraft.src.buildcraft.factory.TileTank");
+		ModLoader.RegisterTileEntity(TileRefinery.class,
+				"net.minecraft.src.buildcraft.factory.Refinery");
 
 		drillTexture = 2 * 16 + 1;
 		

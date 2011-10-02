@@ -71,14 +71,14 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	@TileNetworkData public Slot slot1 = new Slot ();
 	@TileNetworkData public Slot slot2 = new Slot ();
 	@TileNetworkData public Slot result = new Slot ();
+	@TileNetworkData public float animationSpeed = 1;
+	private int animationStage = 0;
 	
 	SafeTimeTracker time = new SafeTimeTracker();
 	
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
 	
 	PowerProvider powerProvider;
-
-	private int animationStage = 0;
 
 	private boolean isActive;
 	
@@ -193,6 +193,13 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	
 	@Override
 	public void updateEntity () {
+		if (APIProxy.isClient(worldObj)) {
+			simpleAnimationIterate();
+		} else if (APIProxy.isServerSide()
+				&& updateNetworkTime.markTimeIfDelay(worldObj, 20)) {
+			sendNetworkUpdate();
+		}
+		
 		isActive = false;
 		
 		RefineryRecipe currentRecipe = null;
@@ -261,10 +268,6 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 			if (src2 != null) {
 				src2.quantity -= currentRecipe.sourceQty2;	
 			}
-			
-			if (APIProxy.isServerSide() && updateNetworkTime.markTimeIfDelay(worldObj, 20)) {
-				sendNetworkUpdate();
-			}
 		}
 	}
 
@@ -326,9 +329,22 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	
 	public int getAnimationStage () {
 		return animationStage ;
-	}
+	}	
 	
-	public float animationSpeed = 1;
+	/**
+	 * Used to iterate the animation without computing the speed
+	 */
+	public void simpleAnimationIterate () {
+		if (animationSpeed > 1) {
+			animationStage += animationSpeed;
+			
+			if (animationStage > 300) {
+				animationStage = 100;
+			}
+		} else if (animationStage > 0) {
+			animationStage--;
+		}
+	}
 	
 	public void increaseAnimation () {
 		if (animationSpeed < 2) {
