@@ -104,18 +104,15 @@ public class EngineIron extends Engine {
 		if (itemInInventory != null) {
 			int liquidId = BuildCraftCore.getLiquidForBucket (itemInInventory.itemID);
 
-			if (liquidId == 0) {
-				return;
-			}
-			
-			
-			if (fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
-					liquidId, false) == BuildCraftCore.BUCKET_VOLUME) {
-				fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
-						liquidId, true);
+			if (liquidId != 0) {
+				if (fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
+						liquidId, false) == BuildCraftCore.BUCKET_VOLUME) {
+					fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
+							liquidId, true);
 
-				tile.setInventorySlotContents(0, new ItemStack(
-						Item.bucketEmpty, 1));
+					tile.setInventorySlotContents(0, new ItemStack(
+							Item.bucketEmpty, 1));
+				}
 			}
 		}	
 		
