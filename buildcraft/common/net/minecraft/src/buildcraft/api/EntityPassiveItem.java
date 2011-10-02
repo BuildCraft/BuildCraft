@@ -11,6 +11,8 @@
 
 package net.minecraft.src.buildcraft.api;
 
+import java.util.TreeMap;
+
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -18,6 +20,8 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 public class EntityPassiveItem {
+	
+	public static TreeMap<Integer, EntityPassiveItem> allEntities = new TreeMap<Integer, EntityPassiveItem>();
 
 	public float speed = 0.01F;
 	public ItemStack item;
@@ -29,12 +33,19 @@ public class EntityPassiveItem {
 	public int deterministicRandomization = 0;
 	
 	public EntityPassiveItem(World world) {
-		entityId = maxId;
-		
-		maxId = maxId + 1;
-		
-		if (maxId > Integer.MAX_VALUE) {
-			maxId = 0;
+		this (world, maxId != Integer.MAX_VALUE ? ++maxId : (maxId = 0));		
+	}
+	
+	public EntityPassiveItem(World world, int id) {		
+		entityId = id;
+		allEntities.put(entityId, this);
+	}
+	
+	public static EntityPassiveItem getOrCreate (World world, int id) {
+		if (allEntities.containsKey(id)) {
+			return allEntities.get(id);
+		} else {
+			return new EntityPassiveItem(world, id);
 		}
 	}
 	
@@ -95,11 +106,18 @@ public class EntityPassiveItem {
 			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + motion.y;
 			entityitem.motionZ = (float) world.rand.nextGaussian() * f3 + + motion.z;
 			world.entityJoinedWorld(entityitem);
+			remove ();
 
 			entityitem.delayBeforeCanPickup = 20;
 			return entityitem;
 		} else {			
 			return null;
+		}
+	}
+	
+	public void remove () {
+		if (allEntities.containsKey(entityId)) {
+			allEntities.remove(entityId);
 		}
 	}
 
