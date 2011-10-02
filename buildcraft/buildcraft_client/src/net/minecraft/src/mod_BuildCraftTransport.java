@@ -16,6 +16,7 @@ import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
 import net.minecraft.src.buildcraft.transport.ItemPipe;
+import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.buildcraft.transport.RenderPipe;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.ICustomItemRenderer;
@@ -92,16 +93,22 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];
 		
-//		if (packet.packetType == PacketIds.PipeItem.ordinal()) {						
-//			if (APIProxy.getWorld().blockExists(x, y, z)) {
-//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-//				
-//				if (tile instanceof TilePipe) {
-//					((TilePipe) tile).handleItemPacket(packet);	
-//					
-//					return;
-//				}
-//			}
+		if (packet.packetType == PacketIds.PipeItem.ordinal()) {
+			if (APIProxy.getWorld().blockExists(x, y, z)) {
+				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+				
+				if (tile instanceof TileGenericPipe) {
+					TileGenericPipe pipe = ((TileGenericPipe) tile);
+					
+					if (pipe.pipe.transport instanceof PipeTransportItems) {
+						((PipeTransportItems) pipe.pipe.transport).handleItemPacket(packet);
+					}
+				}
+			}
+			
+			return;
+		}
+		
 //		} else if (packet.packetType == PacketIds.DiamondPipeContents.ordinal()) {	
 //			if (APIProxy.getWorld().blockExists(x, y, z)) {
 //				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
