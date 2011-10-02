@@ -9,10 +9,12 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 
 public class EngineStone extends Engine {
 
@@ -104,7 +106,7 @@ public class EngineStone extends Engine {
             return 20000;
         } else
         {
-            return i == Block.sapling.blockID ? 100 : ModLoader.AddAllFuel(i, itemstack.getItemDamage());
+            return i == Block.sapling.blockID ? 100 : CoreProxy.addFuel(i, itemstack.getItemDamage());
         }
     }
 }

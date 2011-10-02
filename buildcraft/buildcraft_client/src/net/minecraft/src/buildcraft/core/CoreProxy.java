@@ -49,4 +49,7 @@ public class CoreProxy {
 		
 	}
 
+	public static int addFuel (int id, int dmg) {
+		return ModLoader.AddAllFuel(id, dmg);
+	}
 }
