@@ -66,9 +66,11 @@ public abstract class Pipe {
 	}
 	
 	public void setWorld (World worldObj) {
-		this.worldObj = worldObj;
-		transport.setWorld(worldObj);
-		logic.setWorld(worldObj);
+		if (worldObj != null && this.worldObj == null) {
+			this.worldObj = worldObj;
+			transport.setWorld(worldObj);
+			logic.setWorld(worldObj);
+		}
 	}
 	
 	public void setTile (TileGenericPipe tile) {
