@@ -116,7 +116,4 @@ public class EngineStone extends Engine {
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, burnTime);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, totalBurnTime);		
 	}
-	
-
-
 }
