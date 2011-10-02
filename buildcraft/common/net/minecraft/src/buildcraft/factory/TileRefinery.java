@@ -15,12 +15,14 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public class TileRefinery extends TileMachine implements ILiquidContainer,
 		IPowerReceptor, IInventory, IMachine {	
@@ -30,8 +32,8 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	public static int LIQUID_PER_SLOT = BuildCraftCore.BUCKET_VOLUME * 4;	
 	
 	public static class Slot {
-		int liquidId = 0;
-		int quantity = 0;
+		@TileNetworkData public int liquidId = 0;
+		@TileNetworkData public int quantity = 0;
 		
 		public int fill(Orientations from, int amount, int id, boolean doFill) {
 			if (quantity != 0 && liquidId != id) {
@@ -66,11 +68,13 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		}
 	}
 	
-	public Slot slot1 = new Slot ();
-	public Slot slot2 = new Slot ();
-	public Slot result = new Slot ();
+	@TileNetworkData public Slot slot1 = new Slot ();
+	@TileNetworkData public Slot slot2 = new Slot ();
+	@TileNetworkData public Slot result = new Slot ();
 	
 	SafeTimeTracker time = new SafeTimeTracker();
+	
+	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
 	
 	PowerProvider powerProvider;
 
@@ -87,6 +91,11 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		int used = slot1.fill(from, quantity, id, doFill);
 		used += slot2.fill(from, quantity - used, id, doFill);
+		
+		if (doFill && used > 0) {
+			updateNetworkTime.markTime(worldObj);
+			sendNetworkUpdate();
+		}
 				
 		return used;
 	}
@@ -107,6 +116,11 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 			if (doEmpty) {
 				result.quantity = 0;
 			}
+		}
+		
+		if (doEmpty && res > 0) {
+			updateNetworkTime.markTime(worldObj);
+			sendNetworkUpdate();
 		}
 				
 		return res;
@@ -246,6 +260,10 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 			
 			if (src2 != null) {
 				src2.quantity -= currentRecipe.sourceQty2;	
+			}
+			
+			if (APIProxy.isServerSide() && updateNetworkTime.markTimeIfDelay(worldObj, 20)) {
+				sendNetworkUpdate();
 			}
 		}
 	}

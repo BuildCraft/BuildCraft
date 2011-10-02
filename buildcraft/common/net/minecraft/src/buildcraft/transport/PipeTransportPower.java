@@ -10,10 +10,15 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class PipeTransportPower extends PipeTransport {
@@ -24,7 +29,9 @@ public class PipeTransportPower extends PipeTransport {
 	
 	public double [] internalPower = new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	public double [] internalNextPower = new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-	public double [] displayPower = new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	
+	@TileNetworkData(staticSize = 6)
+	public double[] displayPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 	public double powerResitance = 0.01;
 	
@@ -34,6 +41,8 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 	
+	SafeTimeTracker tracker = new SafeTimeTracker();
+	
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
 		return tile instanceof TileGenericPipe
@@ -42,6 +51,16 @@ public class PipeTransportPower extends PipeTransport {
 	
 	@Override
 	public void updateEntity () {
+		if (APIProxy.isClient(worldObj)) {
+			double totalDisplay = 0;
+			
+			for (double d : displayPower) {
+				totalDisplay += d;
+			}
+			
+			return;
+		}
+		
 		step ();
 		
 		TileEntity tiles [] = new TileEntity [6];
@@ -158,7 +177,17 @@ public class PipeTransportPower extends PipeTransport {
 					}
 				}
 			}
-		}					
+		}
+		
+		if (APIProxy.isServerSide()) {
+			if (tracker.markTimeIfDelay(worldObj, 10)) {
+				CoreProxy
+						.sendToPlayers(this.container.getUpdatePacket(),
+								xCoord, yCoord, zCoord, 40,
+								mod_BuildCraftCore.instance);
+			}
+		}
+
 	}
 	
 	public void step () {

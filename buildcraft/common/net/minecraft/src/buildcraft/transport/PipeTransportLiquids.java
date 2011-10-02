@@ -313,12 +313,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 								mod_BuildCraftCore.instance);
 			}
 		}
-
-//		if (APIProxy.isServerSide()) {
-//			if (timeTracker.markTimeIfDelay(worldObj, 50)) {
-//				sendNetworkUpdate();
-//			}
-//		}
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
