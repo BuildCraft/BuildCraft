@@ -16,9 +16,11 @@ import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
 import net.minecraft.src.buildcraft.transport.ItemPipe;
+import net.minecraft.src.buildcraft.transport.PipeLogicDiamond;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.buildcraft.transport.RenderPipe;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.forge.ICustomItemRenderer;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
@@ -78,15 +80,18 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		return "2.2.0";
 	}
 	
-//    public GuiScreen HandleGUI(int i) {    	
-//    	if (Utils.intToPacketId(i) == PacketIds.DiamondPipeGUI) {
-//			return new GuiDiamondPipe(
-//					ModLoader.getMinecraftInstance().thePlayer.inventory,
-//					new TileDiamondPipe());
-//    	} else {
-//    		return null;
-//    	}
-//    }
+    public GuiScreen HandleGUI(int i) {    	
+    	if (Utils.intToPacketId(i) == PacketIds.DiamondPipeGUI) {
+    		TileGenericPipe tmp = new TileGenericPipe();
+			tmp.pipe = new PipeItemsDiamond(
+					BuildCraftTransport.pipeItemsDiamond.shiftedIndex);
+    		
+			return new GuiDiamondPipe(
+					ModLoader.getMinecraftInstance().thePlayer.inventory, tmp);
+    	} else {
+    		return null;
+    	}
+    }
     
     public void HandlePacket(Packet230ModLoader packet) {    	
 		int x = packet.dataInt [0];
@@ -107,27 +112,27 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 			}
 			
 			return;
-		}
-		
-//		} else if (packet.packetType == PacketIds.DiamondPipeContents.ordinal()) {	
-//			if (APIProxy.getWorld().blockExists(x, y, z)) {
-//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-//				
-//				if (tile instanceof TileDiamondPipe) {
-//					((TileDiamondPipe) tile).handlePacket(packet);	
-//					
-//					return;
-//				}
-//			}
-//			
-//			BlockIndex index = new BlockIndex(x, y, z);
-//			
-//			if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
-//				BuildCraftCore.bufferedDescriptions.remove(index);
-//			}			
-//			
-//			BuildCraftCore.bufferedDescriptions.put(index, packet);
-//		}			
+		} else if (packet.packetType == PacketIds.DiamondPipeContents.ordinal()) {	
+			if (APIProxy.getWorld().blockExists(x, y, z)) {
+				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+				
+				if (tile instanceof TileGenericPipe) {
+					TileGenericPipe pipe = ((TileGenericPipe) tile);
+					
+					if (pipe.pipe.logic instanceof PipeLogicDiamond) {
+						((PipeLogicDiamond) pipe.pipe.logic).handleContentsPacket(packet);
+					}
+				}
+			}
+			
+			BlockIndex index = new BlockIndex(x, y, z);
+			
+			if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+				BuildCraftCore.bufferedDescriptions.remove(index);
+			}			
+			
+			BuildCraftCore.bufferedDescriptions.put(index, packet);
+		}			
     }
 
 	@Override

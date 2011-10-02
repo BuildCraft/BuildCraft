@@ -13,11 +13,20 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.mod_BuildCraftTransport;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.PacketIds;
 
 public class PipeLogicDiamond extends PipeLogic {
 	
 	ItemStack [] items = new ItemStack [54];
+	
+	private SafeTimeTracker tracker = new SafeTimeTracker();
 	
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {		
@@ -55,11 +64,11 @@ public class PipeLogicDiamond extends PipeLogic {
 			items [i] = null;
 		}
 		
-//		if (APIProxy.isServerSide()) {
-//			CoreProxy.sendToPlayers(
-//					(Packet230ModLoader) getDescriptionPacket(), xCoord,
-//					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
-//		}
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(
+					(Packet230ModLoader) getContentsPacket(), xCoord,
+					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+		}
 		
 		return stack;
 	}
@@ -68,12 +77,22 @@ public class PipeLogicDiamond extends PipeLogic {
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		items [i] = itemstack;
 		
-//		if (APIProxy.isServerSide()) {
-//			CoreProxy.sendToPlayers(
-//					(Packet230ModLoader) getDescriptionPacket(), xCoord,
-//					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
-//		}
-
+		if (APIProxy.isServerSide()) {
+			CoreProxy.sendToPlayers(
+					(Packet230ModLoader) getContentsPacket(), xCoord,
+					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+		}
+	}
+	
+	@Override
+	public void updateEntity () {
+		if (tracker.markTimeIfDelay(worldObj, 200)) {
+			if (APIProxy.isServerSide()) {
+				CoreProxy.sendToPlayers(
+						(Packet230ModLoader) getContentsPacket(), xCoord,
+						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+			}
+		}
 	}
 
 	@Override
@@ -131,60 +150,46 @@ public class PipeLogicDiamond extends PipeLogic {
 		return null;
 	}
 	
-//	@Override
-//	public void initialize () {
-//		super.initialize();
-//		
-//		BlockIndex index = new BlockIndex(xCoord, yCoord, zCoord);
-//		
-//		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
-//			Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
-//			BuildCraftCore.bufferedDescriptions.remove(index);
-//			
-//			handlePacket(packet);
-//		}
-//	}
+	public Packet getContentsPacket() {
+		Packet230ModLoader packet = new Packet230ModLoader();
+
+		packet.modId = mod_BuildCraftTransport.instance.getId();
+		packet.packetType = PacketIds.DiamondPipeContents.ordinal();
+		packet.isChunkDataPacket = true;
+
+		packet.dataInt = new int [3 + items.length * 2];
+		
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		
+		for (int j = 0; j < items.length; ++j) {
+			if (items [j] == null) {
+				packet.dataInt [3 + j * 2 + 0] = -1;
+				packet.dataInt [3 + j * 2 + 1] = -1;
+			} else {
+				packet.dataInt [3 + j * 2 + 0] = items [j].itemID;
+				packet.dataInt [3 + j * 2 + 1] = items [j].getItemDamage();
+			}
+			 
+		}
+		
+		return packet;
+    }
 	
-//	public Packet getDescriptionPacket() {
-//		Packet230ModLoader packet = new Packet230ModLoader();
-//
-//		packet.modId = mod_BuildCraftTransport.instance.getId();
-//		packet.packetType = PacketIds.DiamondPipeContents.ordinal();
-//		packet.isChunkDataPacket = true;
-//
-//		packet.dataInt = new int [3 + items.length * 2];
-//		
-//		packet.dataInt [0] = xCoord;
-//		packet.dataInt [1] = yCoord;
-//		packet.dataInt [2] = zCoord;
-//		
-//		for (int j = 0; j < items.length; ++j) {
-//			if (items [j] == null) {
-//				packet.dataInt [3 + j * 2 + 0] = -1;
-//				packet.dataInt [3 + j * 2 + 1] = -1;
-//			} else {
-//				packet.dataInt [3 + j * 2 + 0] = items [j].itemID;
-//				packet.dataInt [3 + j * 2 + 1] = items [j].getItemDamage();
-//			}
-//			 
-//		}
-//		
-//		return packet;
-//    }
-//	
-//	public void handlePacket (Packet230ModLoader packet) {
-//		if (packet.packetType != PacketIds.DiamondPipeContents.ordinal()) {
-//			return;
-//		}
-//		
-//		for (int j = 0; j < items.length; ++j) {
-//			if (packet.dataInt [3 + j * 2 + 0] == -1) {
-//				items [j] = null;
-//			} else {
-//				items[j] = new ItemStack(packet.dataInt[3 + j * 2 + 0], 1,
-//						packet.dataInt[3 + j * 2 + 1]);
-//			}			 
-//		}
-//	}
+	public void handleContentsPacket (Packet230ModLoader packet) {
+		if (packet.packetType != PacketIds.DiamondPipeContents.ordinal()) {
+			return;
+		}
+		
+		for (int j = 0; j < items.length; ++j) {
+			if (packet.dataInt [3 + j * 2 + 0] == -1) {
+				items [j] = null;
+			} else {
+				items[j] = new ItemStack(packet.dataInt[3 + j * 2 + 0], 1,
+						packet.dataInt[3 + j * 2 + 1]);
+			}			 
+		}
+	}
 
 }

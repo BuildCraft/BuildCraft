@@ -109,5 +109,9 @@ public class PipeLogic {
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
 	}
+	
+	public void updateEntity() {
+		
+	}
 
 }
