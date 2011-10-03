@@ -19,15 +19,14 @@ import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
-import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 
-public class TileDockingStation extends TileEntity implements ILiquidContainer, ISpecialInventory, 
-													IPipeEntry {
+public class TileDockingStation extends TileEntity implements ILiquidContainer, ISpecialInventory{
 													
 	public TileDockingStation () {
 	}
@@ -222,6 +221,14 @@ public class TileDockingStation extends TileEntity implements ILiquidContainer, 
 	@Override
 	public boolean addItem (ItemStack stack, boolean doAdd, Orientations from)
 	{
+		EntityMinecart cart = getCart();
+		if(cart != null)
+		{
+			if (!cart.isDead && cart.minecartType == 1) {
+						StackUtil utils = new StackUtil(stack);
+						return utils.checkAvailableSlot((IInventory) cart, doAdd, from);
+			}
+		}
 		return false;
 	}
 	
@@ -239,16 +246,4 @@ public class TileDockingStation extends TileEntity implements ILiquidContainer, 
 		return null;
 	}
 	//ITEMS END
-	
-	@Override
-	public boolean acceptItems() {
-		return false;
-	}
-	
-	@Override
-	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
-		
-	}
-		
-		
 }
