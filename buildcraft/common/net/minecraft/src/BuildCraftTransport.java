@@ -32,6 +32,8 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerWood;
+import net.minecraft.src.buildcraft.transport.BlockDockingStation;
+import net.minecraft.src.buildcraft.transport.TileDockingStation;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
@@ -40,6 +42,7 @@ public class BuildCraftTransport {
 	private static boolean initialized = false;
 			
 	public static BlockGenericPipe genericPipeBlock;
+	public static BlockDockingStation dockingStationBlock;
 	
 	public static int [] diamondTextures = new int [6];
 	
@@ -93,6 +96,10 @@ public class BuildCraftTransport {
 		Property genericPipeId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("pipe.id",
 				DefaultProps.GENERIC_PIPE_ID);
+				
+		Property dockingStationId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("dockingStation.id",
+				DefaultProps.DOCKING_STATION_ID);
 
 		for (int j = 0; j < PipeLogicWood.excludedBlocks.length; ++j) {
 			PipeLogicWood.excludedBlocks[j] = PipeLogicWood.excludedBlocks[j]
@@ -136,8 +143,12 @@ public class BuildCraftTransport {
 		// diamond
 		// obsidian
 		
-		ModLoader.RegisterTileEntity(TileGenericPipe.class,
-				"net.minecraft.src.buildcraft.GenericPipe");
+		dockingStationBlock = new BlockDockingStation(Integer.parseInt(dockingStationId.value));
+		ModLoader.RegisterBlock(dockingStationBlock);
+		CoreProxy.addName(dockingStationBlock.setBlockName("dockingStation"),
+		"Docking Station");
+		
+		ModLoader.RegisterTileEntity(TileDockingStation.class, "net.minecraft.src.buildcraft.TileDockingStation");
 		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = 1 * 16 + 6 + j;
