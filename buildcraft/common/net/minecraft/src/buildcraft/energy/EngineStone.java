@@ -13,7 +13,9 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class EngineStone extends Engine {
 
@@ -101,6 +103,23 @@ public class EngineStone extends Engine {
 			return i == Block.sapling.blockID ? 100 : CoreProxy.addFuel(i,
 					itemstack.getItemDamage());
 		}
+	}
+	
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		burnTime = nbttagcompound.getInteger("burnTime");
+		totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
+    }
+    
+    public void writeToNBT(NBTTagCompound nbttagcompound) {
+    	nbttagcompound.setInteger("burnTime", burnTime);
+		nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
+    }
+	
+	public void delete()
+	{
+		ItemStack stack = tile.getStackInSlot(0);
+		if(stack != null)
+			Utils.dropItems(tile.worldObj, stack, tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 	
 	public void getGUINetworkData(int i, int j) {

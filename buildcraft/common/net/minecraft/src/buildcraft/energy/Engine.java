@@ -69,6 +69,8 @@ public abstract class Engine {
 	public abstract float getPistonSpeed ();
 	
 	public abstract boolean isBurning ();
+	
+	public abstract void delete();
 
 	public void addEnergy (int addition) {
 		energy += addition;

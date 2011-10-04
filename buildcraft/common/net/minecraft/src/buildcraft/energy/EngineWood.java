@@ -62,6 +62,10 @@ public class EngineWood extends Engine {
 	public int getScaledBurnTime(int i) {
 		return 0;
 	}
+	
+	public void delete() {
+	
+	}
 
 	@Override
 	public void burn() {

@@ -240,6 +240,10 @@ public class EngineIron extends Engine {
         return (int) (((float) coolantQty / (float) (MAX_LIQUID))
 				* (float) i);
     }
+	
+	public void delete() {
+	
+	}
     
 	public void getGUINetworkData(int i, int j) {
 		switch (i) {
