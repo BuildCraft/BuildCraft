@@ -183,6 +183,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	}
 	
 	public void delete () {
+		engine.delete();
 	
 	}
 	
