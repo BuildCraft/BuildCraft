@@ -70,7 +70,7 @@ public class TileAutoWorkbench extends TileEntity implements
 	@Override
 	public String getInvName() {
 	
-		return "Crafting Container";
+		return "";
 	}
 
 	@Override
