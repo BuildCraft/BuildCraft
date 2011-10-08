@@ -143,12 +143,12 @@ public class BuildCraftTransport {
 		// diamond
 		// obsidian
 		
-		dockingStationBlock = new BlockDockingStation(Integer.parseInt(dockingStationId.value));
-		ModLoader.RegisterBlock(dockingStationBlock);
-		CoreProxy.addName(dockingStationBlock.setBlockName("dockingStation"),
-		"Docking Station");
+//		dockingStationBlock = new BlockDockingStation(Integer.parseInt(dockingStationId.value));
+//		ModLoader.RegisterBlock(dockingStationBlock);
+//		CoreProxy.addName(dockingStationBlock.setBlockName("dockingStation"),
+//		"Docking Station");
 		
-		ModLoader.RegisterTileEntity(TileDockingStation.class, "net.minecraft.src.buildcraft.TileDockingStation");
+//		ModLoader.RegisterTileEntity(TileDockingStation.class, "net.minecraft.src.buildcraft.TileDockingStation");
 		
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = 1 * 16 + 6 + j;
