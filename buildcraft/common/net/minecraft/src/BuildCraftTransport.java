@@ -118,6 +118,8 @@ public class BuildCraftTransport {
 			Character.valueOf('W'), new ItemStack(Item.dyePowder, 1, 2)});
 		
 		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
+		ModLoader.RegisterTileEntity(TileGenericPipe.class,
+				"net.minecraft.src.buildcraft.transport.TileGenericPipe");
 		
 		pipeItemsWood = createPipe (DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
 		pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
