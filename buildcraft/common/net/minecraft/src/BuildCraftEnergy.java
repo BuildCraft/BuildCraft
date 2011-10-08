@@ -61,6 +61,10 @@ public class BuildCraftEnergy {
 		Property bucketOilId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("bucketOil.id",
 						Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_OIL_ID);
+		Property bucketFuelId = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("bucketFuel.id",
+				Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_FUEL_ID);
+		
 
 		BuildCraftCore.mainConfiguration.save();
 		
@@ -121,8 +125,8 @@ public class BuildCraftEnergy {
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 		
 		fuel = new ItemFuel (DefaultProps.FUEL_ID);
-		bucketFuel = new BuildCraftItem(DefaultProps.BUCKET_FUEL_ID)
-				.setIconIndex(0 * 16 + 3).setItemName("bucketOil")
+		bucketFuel = new BuildCraftItem(Integer.parseInt(bucketFuelId.value))
+				.setIconIndex(0 * 16 + 3).setItemName("bucketFuel")
 				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketFuel, "Fuel Bucket");
 		
