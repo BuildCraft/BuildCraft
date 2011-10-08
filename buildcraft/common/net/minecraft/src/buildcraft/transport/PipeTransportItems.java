@@ -33,6 +33,8 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class PipeTransportItems extends PipeTransport {	
 	
+	
+	public boolean allowBouncing = false;
 	public TreeMap<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData> ();
 	LinkedList <EntityData> entitiesToLoad = new LinkedList <EntityData> ();
 	
@@ -124,6 +126,16 @@ public class PipeTransportItems extends PipeTransport {
 					result.add(newPos.orientation);
 				}
 			}
+		}
+		
+		if (result.size() == 0 && allowBouncing) {
+			Position newPos = new Position(pos);
+			newPos.orientation = newPos.orientation.reverse();
+
+			if (canReceivePipeObjects(newPos, item)) {
+				result.add(newPos.orientation);
+			}
+			
 		}
 		
 		if (this.container.pipe instanceof IPipeTransportItemsHook) {
