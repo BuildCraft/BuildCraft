@@ -21,6 +21,8 @@ public class PipeItemsIron extends Pipe {
 
 	public PipeItemsIron(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicIron(), itemID);
+		
+		((PipeTransportItems) transport).allowBouncing = true;
 	}
 	
 	@Override
