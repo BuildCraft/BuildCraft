@@ -25,6 +25,7 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
+import net.minecraft.src.forge.ISidedInventory;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
@@ -138,7 +139,21 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
 		}
 
-		if (inventory.getSizeInventory() == 2) {
+		if (inventory instanceof ISidedInventory) {
+			ISidedInventory sidedInv = (ISidedInventory) inventory;
+			
+			int first = sidedInv.getStartInventorySide(from.ordinal());
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			
+			IInventory inv = Utils.getInventory(inventory);
+
+			ItemStack result = checkExtractGeneric(inv, doRemove, from, first,
+					last);
+
+			if (result != null) {
+				return result;
+			}
+		} else if (inventory.getSizeInventory() == 2) {
 			// This is an input-output inventory
 
 			int slotIndex = 0;
@@ -186,7 +201,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
 
-			ItemStack result = checkExtractGeneric(inv, doRemove, from);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0,
+					inv.getSizeInventory());
 
 			if (result != null) {
 				return result;
@@ -197,8 +213,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	public ItemStack checkExtractGeneric(IInventory inventory,
-			boolean doRemove, Orientations from) {
-		for (int k = 0; k < inventory.getSizeInventory(); ++k) {
+			boolean doRemove, Orientations from, int start, int stop) {
+		for (int k = start; k <= stop; ++k) {
 			if (inventory.getStackInSlot(k) != null
 					&& inventory.getStackInSlot(k).stackSize > 0) {
 

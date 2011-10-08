@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.forge.ISidedInventory;
 
 public class StackUtil {
 
@@ -67,7 +68,7 @@ public class StackUtil {
 								false, pos.orientation.reverse())) {
 					possibleInventories.add(pos.orientation);
 				}
-	}
+			}
 		}
 		
 		if (possibleInventories.size() > 0) {
@@ -111,7 +112,20 @@ public class StackUtil {
 		
 		boolean added = false;
 		
-		if (inventory.getSizeInventory() == 2) {
+		if (inventory instanceof ISidedInventory) {
+			IInventory inv = Utils.getInventory(inventory);
+			ISidedInventory sidedInv = (ISidedInventory) inv;
+			
+			int first = sidedInv.getStartInventorySide(from.ordinal());
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+						
+			for (int j = first; j <= last; ++j) {
+				if (tryAdding (inv, j, add, false)) {
+					added = true;
+					break;
+				}
+			}
+		} else if (inventory.getSizeInventory() == 2) {
    		   //  This is an input / output inventory
 			
 			if (from == Orientations.YNeg || from == Orientations.YPos) {
@@ -162,7 +176,20 @@ public class StackUtil {
 		
 		// If none, then create a new thing
 
-		if (inventory.getSizeInventory() == 2) {
+		if (inventory instanceof ISidedInventory) {
+			IInventory inv = Utils.getInventory(inventory);
+			ISidedInventory sidedInv = (ISidedInventory) inv;
+			
+			int first = sidedInv.getStartInventorySide(from.ordinal());
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			
+			for (int j = first; j <= last; ++j) {
+				if (tryAdding (inv, j, add, true)) {
+					added = true;
+					break;
+				}
+			}
+		} else if (inventory.getSizeInventory() == 2) {
 			//  This is an input / output inventory
 
 			if (from == Orientations.YNeg || from == Orientations.YPos) {

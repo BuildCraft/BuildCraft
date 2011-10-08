@@ -15,6 +15,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 
 public class OilPopulate {
 	
@@ -26,7 +27,7 @@ public class OilPopulate {
 		}
 		
 		if (rand == null) {
-			rand = new Random (world.getWorldSeed());
+			rand = APIProxy.createNewRandom(world);
 		}
 		
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(
