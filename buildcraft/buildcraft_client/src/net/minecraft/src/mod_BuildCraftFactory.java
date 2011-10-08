@@ -52,7 +52,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 	@Override
 	public String Version() {
-		return "2.2.0";
+		return "2.2.1";
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

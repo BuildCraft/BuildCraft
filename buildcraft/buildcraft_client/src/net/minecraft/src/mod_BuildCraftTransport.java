@@ -77,7 +77,7 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 	
 	@Override
 	public String Version() {
-		return "2.2.0";
+		return "2.2.1";
 	}
 	
     public GuiScreen HandleGUI(int i) {    	
