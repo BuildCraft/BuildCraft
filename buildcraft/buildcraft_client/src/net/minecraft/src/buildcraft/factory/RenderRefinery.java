@@ -73,8 +73,16 @@ final static private int displayStages = 100;
 		BlockInterface block = new BlockInterface();
 		
 		if (liquidId < Block.blocksList.length) {
+			if (Block.blocksList [liquidId] == null) {
+				return null;
+			}
+			
 			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
 		} else {
+			if (Item.itemsList [liquidId] == null) {
+				return null;
+			}
+			
 			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
 		}
 		
@@ -210,25 +218,37 @@ final static private int displayStages = 100;
 		
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		if (qty1 > 0) {
-			setTextureFor(liquid1);
-			GL11.glCallList(getDisplayLists(liquid1)[(int) ((float) qty1
-					/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);	
+			int [] list1 = getDisplayLists(liquid1);
+			
+			if (list1 != null) {
+				setTextureFor(liquid1);
+				GL11.glCallList(list1[(int) ((float) qty1
+						/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);
+			}
 		}
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);
 		
 		GL11.glTranslatef(-4F * factor, 0, 4F * factor);
 		if (qty2 > 0) {
-			setTextureFor(liquid2);
-			GL11.glCallList(getDisplayLists(liquid2)[(int) ((float) qty2
-					/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);	
+			int [] list2 = getDisplayLists(liquid2);
+			
+			if (list2 != null) {
+				setTextureFor(liquid2);
+				GL11.glCallList(list2[(int) ((float) qty2
+						/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);
+			}
 		}
 		GL11.glTranslatef(4F * factor, 0, -4F * factor);
 
 		GL11.glTranslatef(4F * factor, 0, 0);
 		if (qty3 > 0) {
-			setTextureFor(liquid3);
-			GL11.glCallList(getDisplayLists(liquid3)[(int) ((float) qty3
-					/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);	
+			int [] list3 = getDisplayLists(liquid3);
+			
+			if (list3 != null) {
+				setTextureFor(liquid3);
+				GL11.glCallList(getDisplayLists(liquid3)[(int) ((float) qty3
+						/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);
+			}
 		}
 		GL11.glTranslatef(-4F * factor, 0, 0);
 		
