@@ -16,6 +16,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderManager;
@@ -409,6 +410,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				&& RenderBlocks
 						.renderItemIn3d(Block.blocksList[itemstack.itemID]
 								.getRenderType())) {
+			
 			GL11.glTranslatef(0, 0.25F, 0);
 			Block block = Block.blocksList[itemstack.itemID];
 
@@ -437,11 +439,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glTranslatef(0, 0.10F, 0);
 			GL11.glScalef(0.5F, 0.5F, 0.5F);
 			int i = itemstack.getIconIndex();
+			
 			if (itemstack.getItem() instanceof ITextureProvider) {
 				MinecraftForgeClient.bindTexture(((ITextureProvider) itemstack
 						.getItem()).getTextureFile());
 			} else if (itemstack.itemID < 256) {
-				MinecraftForgeClient.bindTexture("/terrain.png");
+				Block block = Block.blocksList[itemstack.itemID];
+
+				if (block instanceof ITextureProvider) {
+					MinecraftForgeClient.bindTexture(((ITextureProvider) block)
+							.getTextureFile());
+				} else {
+					MinecraftForgeClient.bindTexture("/terrain.png");
+				}
 			} else {
 				MinecraftForgeClient.bindTexture("/gui/items.png");
 			}
