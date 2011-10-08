@@ -11,6 +11,8 @@
 
 package net.minecraft.src.buildcraft.api;
 
+import java.util.Random;
+
 import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
@@ -52,6 +54,10 @@ public class APIProxy {
 		if (entity.worldObj instanceof WorldClient) {
 			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
 		}
+	}
+
+	public static Random createNewRandom(World world) {
+		return new Random (world.getWorldSeed());
 	}
 	
 }
