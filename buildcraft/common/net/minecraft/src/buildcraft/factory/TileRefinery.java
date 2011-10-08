@@ -64,7 +64,12 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		
 		public void readFromNBT(NBTTagCompound nbttagcompound) {
 			liquidId = nbttagcompound.getInteger("liquidId");
-			quantity = nbttagcompound.getInteger("quantity");			
+			
+			if (liquidId != 0) {
+				quantity = nbttagcompound.getInteger("quantity");
+			} else {
+				quantity = 0;
+			}
 		}
 	}
 	
