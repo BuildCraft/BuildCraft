@@ -53,7 +53,7 @@ public class OilPopulate {
 			}			
 		}
 		
-		boolean mediumDeposit = rand.nextDouble() <= (0.1 / 100.0);
+		boolean mediumDeposit = rand.nextDouble() <= (0.2 / 100.0);
 		boolean largeDeposit = rand.nextDouble() <= (0.005 / 100.0);
 		
 		if (BuildCraftCore.debugMode && x == 0 && z == 0) {
@@ -70,7 +70,7 @@ public class OilPopulate {
 			if (largeDeposit) {
 				r = 8 + rand.nextInt(9);
 			} else if (mediumDeposit) {
-				r = 3 + rand.nextInt(4);
+				r = 4 + rand.nextInt(4);
 			}
 			
 			int r2 = r * r;
