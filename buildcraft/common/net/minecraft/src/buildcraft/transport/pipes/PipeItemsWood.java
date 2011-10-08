@@ -202,7 +202,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			IInventory inv = Utils.getInventory(inventory);
 
 			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0,
-					inv.getSizeInventory());
+					inv.getSizeInventory() - 1);
 
 			if (result != null) {
 				return result;

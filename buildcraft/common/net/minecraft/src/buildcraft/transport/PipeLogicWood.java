@@ -108,13 +108,10 @@ public class PipeLogicWood extends PipeLogic {
 	public void initialize () {
 		super.initialize();
 		
-		switchSource();
+		switchSourceIfNeeded();
 	}
 	
-	@Override
-	public void onNeighborBlockChange () {		
-		super.onNeighborBlockChange();
-		
+	private void switchSourceIfNeeded () {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		
 		if (meta > 5) {
@@ -131,5 +128,12 @@ public class PipeLogicWood extends PipeLogic {
 				switchSource();
 			}
 		}	
+	}
+	
+	@Override
+	public void onNeighborBlockChange () {		
+		super.onNeighborBlockChange();
+		
+		switchSourceIfNeeded();
 	}
 }
