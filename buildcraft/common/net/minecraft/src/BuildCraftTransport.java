@@ -79,7 +79,7 @@ public class BuildCraftTransport {
 			
 		Property loadLegacyPipes = BuildCraftCore.mainConfiguration
 		.getOrCreateBooleanProperty("loadLegacyPipes", Configuration.GENERAL_PROPERTY, true);
-		loadLegacyPipes.comment = "set to true to load pre 2.2.0 worlds pipes";		
+		loadLegacyPipes.comment = "set to true to load pre 2.2.1 worlds pipes";		
 		
 		Property alwaysConnect = BuildCraftCore.mainConfiguration
 				.getOrCreateBooleanProperty("pipes.alwaysConnect",

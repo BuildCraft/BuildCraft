@@ -57,7 +57,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	
 	@Override
 	public String Version() {
-		return "2.2.0";
+		return "2.2.1";
 	}
 
 	public GuiScreen HandleGUI(int i) {
