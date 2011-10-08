@@ -363,8 +363,13 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	 */
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		isInput[from.ordinal()] = true;
-			
-		return side[from.ordinal()].fill(quantity, doFill, (short) id);
+		
+		if (this.container.pipe instanceof IPipeTransportLiquidsHook) {
+			return ((IPipeTransportLiquidsHook) this.container.pipe).fill(from,
+					quantity, id, doFill);
+		} else {
+			return side[from.ordinal()].fill(quantity, doFill, (short) id);
+		}
 	}
 	
 	int lockedTime = 0;
