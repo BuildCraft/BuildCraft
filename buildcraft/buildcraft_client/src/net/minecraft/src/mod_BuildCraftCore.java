@@ -11,6 +11,7 @@ package net.minecraft.src;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.lwjgl.opengl.GL11;
 
@@ -58,6 +59,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public static boolean initialized = false;
 
 	public mod_BuildCraftCore() {
+		ModLoader.getLogger().fine("CREATE BUILDCRAFT CORE");
+		
 		instance = this;
 	}
 
@@ -85,7 +88,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	public static String version() {
-		return "2.2.1";
+		return "2.2.2";
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

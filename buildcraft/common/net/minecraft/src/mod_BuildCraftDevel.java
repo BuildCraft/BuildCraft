@@ -37,6 +37,6 @@ public class mod_BuildCraftDevel extends BaseModMp {
 	
 	@Override
 	public String Version() {
-		return "2.2.1";
+		return "2.2.2";
 	}
 }
