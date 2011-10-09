@@ -11,7 +11,6 @@ package net.minecraft.src.buildcraft.transport.pipes;
 import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityArrow;
 import net.minecraft.src.EntityItem;
@@ -24,6 +23,7 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -47,7 +47,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			entitiesDropped [i] = -1;
 		}
 		
-		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(25, 1, 64, 1, 256);
 		powerProvider.configurePowerPerdition(1, 1);
 	}

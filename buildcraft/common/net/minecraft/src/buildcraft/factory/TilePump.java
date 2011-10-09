@@ -21,6 +21,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityBlock;
@@ -43,7 +44,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	private PowerProvider powerProvider;
 	
 	public TilePump () {
-		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 10, 10, 10, 100);
 	}
 	
@@ -271,7 +272,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
     	tubeY = nbttagcompound.getFloat("tubeY");
     	liquidId = nbttagcompound.getInteger("liquidId");
     	
-    	BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
+    	PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
     	powerProvider.configure(20, 10, 10, 10, 100);
 		
     }
@@ -280,7 +281,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
     public void writeToNBT(NBTTagCompound nbttagcompound) {
     	super.writeToNBT(nbttagcompound);
     	
-    	BuildCraftCore.powerFramework.savePowerProvider(this, nbttagcompound);
+    	PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
     	
     	nbttagcompound.setInteger("internalLiquid", internalLiquid);
     	nbttagcompound.setInteger("aimY", aimY);

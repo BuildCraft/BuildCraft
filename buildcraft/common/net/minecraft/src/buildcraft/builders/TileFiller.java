@@ -8,7 +8,6 @@
 
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
@@ -23,6 +22,7 @@ import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.IMachine;
@@ -45,7 +45,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
     public TileFiller() {
         contents = new ItemStack[getSizeInventory()];
-        powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+        powerProvider = PowerFramework.currentFramework.createPowerProvider();
         powerProvider.configure(10, 25, 100, 25, 100);
         powerProvider.configurePowerPerdition(25, 40);
     }

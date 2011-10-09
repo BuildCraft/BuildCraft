@@ -8,11 +8,11 @@
 
 package net.minecraft.src.buildcraft.transport.pipes;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -31,7 +31,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
-		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 1, 1000, 1, 1000);
 		powerProvider.configurePowerPerdition(1, 100);
 	}

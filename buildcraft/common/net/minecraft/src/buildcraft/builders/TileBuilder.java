@@ -10,7 +10,6 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBuilders;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemBlock;
@@ -23,6 +22,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
@@ -48,7 +48,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	public TileBuilder () {
 		super ();
 		
-		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(10, 25, 25, 25, 25);
 		powerProvider.configurePowerPerdition(25, 1);
 	}
