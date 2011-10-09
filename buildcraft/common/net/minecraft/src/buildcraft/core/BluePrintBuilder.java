@@ -9,6 +9,7 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 
 public class BluePrintBuilder implements IAreaProvider {
@@ -59,26 +60,26 @@ public class BluePrintBuilder implements IAreaProvider {
 						content.y = yCoord;
 						content.z = zCoord;
 						
-						if (Utils.softBlock(content.blockId)) {
-							if (Utils.softBlock(blockId)) {
+						if (API.softBlock(content.blockId)) {
+							if (API.softBlock(blockId)) {
 								// don't do anything, we got only soft blocks 
 								// here
-							} else if (!Utils.unbreakableBlock(blockId)) {
+							} else if (!API.unbreakableBlock(blockId)) {
 								return content;
 							}
 						} else {
 							if (blockId == content.blockId) {
 								// don't do anything, we're already on the 
 								// proper block
-							} else if (!Utils.unbreakableBlock(blockId)) {
+							} else if (!API.unbreakableBlock(blockId)) {
 								return content;
 							}
 						}
 					} else if (mode == Mode.Template) {
-						if ((content.blockId != 0 && Utils.softBlock(blockId))
+						if ((content.blockId != 0 && API.softBlock(blockId))
 								|| (content.blockId == 0 
-										&& !Utils.softBlock(blockId))
-										&& !Utils.unbreakableBlock(blockId)) {
+										&& !API.softBlock(blockId))
+										&& !API.unbreakableBlock(blockId)) {
 							
 							content = new BlockContents();
 							content.x = xCoord;

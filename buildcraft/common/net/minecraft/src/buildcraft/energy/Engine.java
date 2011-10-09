@@ -11,7 +11,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 
 public abstract class Engine {
 

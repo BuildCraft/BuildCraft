@@ -6,7 +6,7 @@
  * granted by the copyright holder.
  */
 
-package net.minecraft.src.buildcraft.core;
+package net.minecraft.src.buildcraft.api;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;

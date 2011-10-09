@@ -13,6 +13,9 @@ package net.minecraft.src.buildcraft.api;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.Block;
+import net.minecraft.src.World;
+
 
 public class API {
 
@@ -36,6 +39,37 @@ public class API {
 		}
 		
 		return 0;
+	}
+
+	/**
+	 * Return true if the block given in parameter is pass through (e.g. air,
+	 * water...)
+	 */
+	public static boolean softBlock (int blockId) {
+		return blockId == 0 
+				|| blockId == Block.waterStill.blockID
+				|| blockId == Block.waterMoving.blockID
+				|| Block.blocksList [blockId] == null;
+	}
+
+	/**
+	 * Return true if the block cannot be broken, typically bedrock and lava
+	 */
+	public static boolean unbreakableBlock (int blockId) {
+		return blockId == Block.bedrock.blockID
+			|| blockId == Block.lavaStill.blockID
+			|| blockId == Block.lavaMoving.blockID;
+	}
+
+	public static void breakBlock(World world, int x, int y, int z) {
+		int blockId = world.getBlockId(x, y, z);
+		
+		if (blockId != 0) {
+			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z,
+					world.getBlockMetadata(x, y, z));
+		}				
+		
+		world.setBlockWithNotify(x, y, z, 0);
 	}
 
 }

@@ -14,7 +14,6 @@ package net.minecraft.src.buildcraft.api;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.Utils;
 
 public abstract class FillerPattern {
 	
@@ -40,7 +39,7 @@ public abstract class FillerPattern {
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {					
-					if (Utils.softBlock(world.getBlockId(x, y, z))) {
+					if (API.softBlock(world.getBlockId(x, y, z))) {
 						xSlot = x;
 						ySlot = y;
 						zSlot = z;
@@ -68,8 +67,8 @@ public abstract class FillerPattern {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if (!Utils.softBlock(world.getBlockId(x, y, z))
-						&& !Utils.unbreakableBlock(world.getBlockId(x, y, z))) {
+					if (!API.softBlock(world.getBlockId(x, y, z))
+						&& !API.unbreakableBlock(world.getBlockId(x, y, z))) {
 						found = true;
 						lastX = x;
 						lastY = y;
@@ -84,7 +83,7 @@ public abstract class FillerPattern {
 		}
 		
 		if (lastX != Integer.MAX_VALUE) {
-			Utils.breakBlock(world, lastX, lastY, lastZ);
+			API.breakBlock(world, lastX, lastY, lastZ);
 		}
 				
 		
