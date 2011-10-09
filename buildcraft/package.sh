@@ -62,10 +62,6 @@ function package_all () {
       mod_BuildCraftDevel*.class \
       buildcraft/devel \
       buildcraft/api
-
-   zip -r $dir/buildcraft$qual-api-$version.zip \
-      buildcraft/api
-
 }
 
 cd ../reobf
@@ -84,3 +80,22 @@ package_all "-server"
 cd ../..
 
 rm -rf reobf
+
+cd buildcraft/
+
+rm -rf api
+mkdir -p api/src/minecraft/net/minecraft/src/buildcraft/api/
+mkdir -p api/src/minecraft_server/net/minecraft/src/buildcraft/api/
+
+cp common/net/minecraft/src/buildcraft/api/* api/src/minecraft/net/minecraft/src/buildcraft/api/
+cp common/net/minecraft/src/buildcraft/api/* api/src/minecraft_server/net/minecraft/src/buildcraft/api/
+
+cp buildcraft_client/src/net/minecraft/src/buildcraft/api/* api/src/minecraft/net/minecraft/src/buildcraft/api
+cp buildcraft_server/src/net/minecraft/src/buildcraft/api/* api/src/minecraft/net/minecraft_server/src/buildcraft/api
+
+cd api
+
+zip -r $dir/buildcraft-client-api-$version-src.zip .
+
+cd ../
+rm -rf api
