@@ -9,7 +9,6 @@
 package net.minecraft.src;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -17,13 +16,14 @@ import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BuildCraftConfiguration;
 import net.minecraft.src.buildcraft.core.BuildCraftItem;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.LiquidData;
 import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
@@ -69,8 +69,6 @@ public class BuildCraftCore {
 	
 	public static final int BUCKET_VOLUME = 1000;
 	
-	public static LinkedList <LiquidData> liquids = new LinkedList <LiquidData> ();
-		
 	@SuppressWarnings({ "all" })
 	public static void initialize () {
 		if (initialized) {
@@ -128,14 +126,14 @@ public class BuildCraftCore {
 				Character.valueOf('G'), stoneGearItem });
 		CoreProxy.addName(wrenchItem, "Wrench");
 		
-		liquids.add(new LiquidData(Block.waterStill.blockID,
+		API.liquids.add(new LiquidData(Block.waterStill.blockID,
 				Item.bucketWater.shiftedIndex));
-		liquids.add(new LiquidData(Block.lavaStill.blockID,
+		API.liquids.add(new LiquidData(Block.lavaStill.blockID,
 				Item.bucketLava.shiftedIndex));
 		
-		BuildCraftCore.liquids.add(new LiquidData(Block.waterStill.blockID,
+		API.liquids.add(new LiquidData(Block.waterStill.blockID,
 				Block.waterStill.blockID));
-		BuildCraftCore.liquids.add(new LiquidData(Block.lavaStill.blockID,
+		API.liquids.add(new LiquidData(Block.lavaStill.blockID,
 				Block.lavaStill.blockID));
 		
 		mainConfiguration.save();
@@ -225,26 +223,6 @@ public class BuildCraftCore {
 		 pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 		 markerModel = ModLoader.getUniqueBlockModelID(mod, false);
 		 oilModel = ModLoader.getUniqueBlockModelID(mod, false);
-	}
-
-	public static int getLiquidForBucket(int itemID) {
-		for (LiquidData d : liquids) {
-			if (d.filledBucketId == itemID) {
-				return d.liquidId;
-			}
-		}
-		
-		return 0;
-	}
-
-	public static int getBucketForLiquid(int liquidId) {
-		for (LiquidData d : liquids) {
-			if (d.liquidId == liquidId) {
-				return d.filledBucketId;
-			}
-		}
-		
-		return 0;
 	}
 	
 }

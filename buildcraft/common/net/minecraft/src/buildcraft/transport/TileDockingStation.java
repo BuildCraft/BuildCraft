@@ -17,13 +17,13 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 
 public class TileDockingStation extends TileEntity implements ILiquidContainer, ISpecialInventory{

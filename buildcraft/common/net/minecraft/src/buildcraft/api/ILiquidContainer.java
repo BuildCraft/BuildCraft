@@ -4,13 +4,16 @@
  * or run the code. It does *NOT* grant the right to redistribute this software
  * or its modifications in any form, binary or source, except if expressively
  * granted by the copyright holder.
+ * 
+ * As a special exception, this file is part of the BuildCraft API and is 
+ * allowed to be redistributed, either in source or binaries form.
  */
 
-package net.minecraft.src.buildcraft.core;
+package net.minecraft.src.buildcraft.api;
 
-import net.minecraft.src.buildcraft.api.Orientations;
 
 public interface ILiquidContainer {
+	
 	public int fill (Orientations from, int quantity, int id, boolean doFill);
 	
 	public int empty (int quantityMax, boolean doEmpty);

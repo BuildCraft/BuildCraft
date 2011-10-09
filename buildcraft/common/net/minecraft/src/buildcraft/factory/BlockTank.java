@@ -17,6 +17,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -80,7 +81,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			int itemId = entityplayer.getCurrentEquippedItem().itemID;
-			int liquidId = BuildCraftCore.getLiquidForBucket(itemId);
+			int liquidId = API.getLiquidForBucket(itemId);
 			
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
