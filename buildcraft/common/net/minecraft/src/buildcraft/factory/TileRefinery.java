@@ -22,8 +22,8 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public class TileRefinery extends TileMachine implements ILiquidContainer,
 		IPowerReceptor, IInventory, IMachine {	

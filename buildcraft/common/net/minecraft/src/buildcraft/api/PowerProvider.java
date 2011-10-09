@@ -13,7 +13,6 @@ package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public abstract class PowerProvider {
 

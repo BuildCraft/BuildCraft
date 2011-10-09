@@ -18,12 +18,14 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_BuildCraftBuilders;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
@@ -31,8 +33,6 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
 import net.minecraft.src.buildcraft.core.Box;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
-import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileBuilder extends TileBuildCraft implements IInventory, IPowerReceptor {
 	
@@ -161,7 +161,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 				return;
 			}
 			
-			if (!Utils.softBlock(contents.blockId)) {
+			if (!API.softBlock(contents.blockId)) {
 				Block.blocksList[contents.blockId].dropBlockAsItem(worldObj,
 						contents.x, contents.y, contents.z, worldObj
 								.getBlockMetadata(contents.x, contents.y,

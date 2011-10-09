@@ -13,6 +13,7 @@ import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 
 public class ClassMapping {
 	

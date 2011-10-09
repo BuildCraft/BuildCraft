@@ -15,6 +15,7 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -22,6 +23,7 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
@@ -29,7 +31,6 @@ import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class TileQuarry extends TileMachine implements IArmListener,
@@ -173,7 +174,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 			int blockId = worldObj.getBlockId(contents.x, contents.y, contents.z);
 						
 			if (contents != null) {
-				if (!Utils.softBlock(blockId)) {
+				if (!API.softBlock(blockId)) {
 					// Do not drop items here, too power consuming
 					worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
 							0);
@@ -403,7 +404,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	
 	private boolean canDig(int blockID) {
 		return !blockDig(blockID) 
-				&& !Utils.softBlock(blockID)
+				&& !API.softBlock(blockID)
 				&& blockID != Block.snow.blockID;
 	}
 	

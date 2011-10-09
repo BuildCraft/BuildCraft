@@ -319,17 +319,6 @@ public class Utils {
 		return lasers;
 	}
 
-	public static void breakBlock(World world, int x, int y, int z) {
-		int blockId = world.getBlockId(x, y, z);
-		
-		if (blockId != 0) {
-			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z,
-					world.getBlockMetadata(x, y, z));
-		}				
-		
-		world.setBlockWithNotify(x, y, z, 0);
-	}
-	
 	public static void handleDescriptionPacket (Packet230ModLoader packet) {
 		int x = packet.dataInt[0];
 		int y = packet.dataInt[1];
@@ -387,17 +376,6 @@ public class Utils {
 		}
 	}
 	
-	/**
-	 * Return true if the block given in parameter is pass through (e.g. air,
-	 * water...)
-	 */
-	public static boolean softBlock (int blockId) {
-		return blockId == 0 
-				|| blockId == Block.waterStill.blockID
-				|| blockId == Block.waterMoving.blockID
-				|| Block.blocksList [blockId] == null;
-	}
-	
 	public static int liquidId (int blockId) {
 		if (blockId == Block.waterStill.blockID
 				|| blockId == Block.waterMoving.blockID) {
@@ -410,15 +388,6 @@ public class Utils {
 		} else {
 			return 0;
 		}
-	}
-	
-	/**
-	 * Return true if the block cannot be broken, typically bedrock and lava
-	 */
-	public static boolean unbreakableBlock (int blockId) {
-		return blockId == Block.bedrock.blockID
-			|| blockId == Block.lavaStill.blockID
-			|| blockId == Block.lavaMoving.blockID;
 	}
 	
 	public static int packetIdToInt (PacketIds id) {

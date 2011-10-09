@@ -14,8 +14,8 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
 
 public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	
