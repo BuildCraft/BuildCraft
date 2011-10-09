@@ -10,6 +10,7 @@ package net.minecraft.src.buildcraft.devel;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockChest;
+import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.BuildCraftFactory;
@@ -67,11 +68,9 @@ public class BlockCheat extends BlockChest {
 			// inv.setInventorySlotContents(ind++, new ItemStack
 			// (BuildCraftFactory.miningWellBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftFactory.quarryBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack(BuildCraftCore.diamondGearItem, 64));
 			// inv.setInventorySlotContents(ind++, new ItemStack
 			// (BuildCraftFactory.autoWorkbenchBlock, 64));
-			// inv.setInventorySlotContents(ind++, new ItemStack
-			// (BuildCraftBuilders.fillerBlock, 64));
+			 inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.fillerBlock, 64));
 			// inv.setInventorySlotContents(ind++, new ItemStack
 			// (BuildCraftBuilders.markerBlock, 64));
 			// inv.setInventorySlotContents(ind++, new ItemStack
