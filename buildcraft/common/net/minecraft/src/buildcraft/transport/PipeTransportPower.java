@@ -46,7 +46,8 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
 		return tile instanceof TileGenericPipe
-    	    || tile instanceof IMachine;
+    	    || tile instanceof IMachine
+    	    || tile instanceof IPowerReceptor;
 	}
 	
 	@Override
