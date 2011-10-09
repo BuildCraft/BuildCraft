@@ -67,8 +67,6 @@ public class BuildCraftCore {
 	public static String customBuildCraftSprites =
 		"/net/minecraft/src/buildcraft/core/gui/item_textures.png";
 	
-	public static PowerFramework powerFramework;
-	
 	public static final int BUCKET_VOLUME = 1000;
 	
 	public static LinkedList <LiquidData> liquids = new LinkedList <LiquidData> ();
@@ -104,12 +102,12 @@ public class BuildCraftCore {
 						"buildcraft.energy.PneumaticPowerFramework");
 		
 		try {
-			powerFramework = (PowerFramework) Class
+			PowerFramework.currentFramework = (PowerFramework) Class
 					.forName(powerFrameworkClass.value).getConstructor(null)
 					.newInstance(null);
 		} catch (Throwable e) {
 			e.printStackTrace();
-			powerFramework = new RedstonePowerFramework();
+			PowerFramework.currentFramework = new RedstonePowerFramework();
 		}
 		
 		Property wrenchId = BuildCraftCore.mainConfiguration

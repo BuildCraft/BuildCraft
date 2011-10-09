@@ -22,6 +22,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
@@ -45,7 +46,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	PowerProvider provider;
 	
 	public TileEngine () {
-		provider = BuildCraftCore.powerFramework.createPowerProvider();		
+		provider = PowerFramework.currentFramework.createPowerProvider();		
 	}
 	
 	@Override

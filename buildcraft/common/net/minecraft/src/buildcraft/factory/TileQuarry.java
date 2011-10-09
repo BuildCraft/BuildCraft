@@ -10,7 +10,6 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
@@ -21,6 +20,7 @@ import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
@@ -55,7 +55,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	public static int MAX_ENERGY = 7000;
 	
 	public TileQuarry() {
-		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 	}
 	
@@ -268,7 +268,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		
-		BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
+		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
 
 		if (nbttagcompound.hasKey("box")) {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
@@ -313,7 +313,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);		
 		
-		BuildCraftCore.powerFramework.savePowerProvider(this, nbttagcompound);
+		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
 		
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);

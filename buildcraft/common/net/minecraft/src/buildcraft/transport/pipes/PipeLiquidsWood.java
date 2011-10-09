@@ -15,6 +15,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.buildcraft.core.TileNetworkData;
@@ -37,7 +38,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public PipeLiquidsWood(int itemID) {
 		super(new PipeTransportLiquids(), new PipeLogicWood(), itemID);
 		
-		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 1, 1, 1, 1);
 		powerProvider.configurePowerPerdition(1, 1);
 	}	

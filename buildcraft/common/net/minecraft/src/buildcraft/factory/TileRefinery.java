@@ -18,6 +18,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
@@ -88,7 +89,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	private boolean isActive;
 	
 	public TileRefinery () {
-		powerProvider = BuildCraftCore.powerFramework.createPowerProvider();
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, 1000);
 	}
 	
@@ -307,7 +308,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		animationStage = nbttagcompound.getInteger("animationStage");	
 		animationSpeed = nbttagcompound.getFloat("animationSpeed");
 		
-		BuildCraftCore.powerFramework.loadPowerProvider(this, nbttagcompound);
+		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
 		powerProvider.configure(20, 25, 25, 25, 1000);
     }
 
@@ -329,7 +330,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		
 		nbttagcompound.setInteger("animationStage", animationStage);
 		nbttagcompound.setFloat("animationSpeed", animationSpeed);
-		BuildCraftCore.powerFramework.savePowerProvider(this, nbttagcompound);
+		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
 	}
 	
 	public int getAnimationStage () {
