@@ -14,6 +14,7 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class EngineIron extends Engine {
@@ -102,7 +103,7 @@ public class EngineIron extends Engine {
 		ItemStack itemInInventory = tile.getStackInSlot(0);
 		
 		if (itemInInventory != null) {
-			int liquidId = BuildCraftCore.getLiquidForBucket (itemInInventory.itemID);
+			int liquidId = API.getLiquidForBucket (itemInInventory.itemID);
 
 			if (liquidId != 0) {
 				if (fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,

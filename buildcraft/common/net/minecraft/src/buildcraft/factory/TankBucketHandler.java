@@ -13,6 +13,7 @@ import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.forge.IBucketHandler;
 
 public class TankBucketHandler implements IBucketHandler {
@@ -25,7 +26,7 @@ public class TankBucketHandler implements IBucketHandler {
 
 			int qty = tank.empty(BuildCraftCore.BUCKET_VOLUME, false);
 
-			int filledBucket = BuildCraftCore.getBucketForLiquid(tank
+			int filledBucket = API.getBucketForLiquid(tank
 					.getLiquidId());
 
 			if (qty >= BuildCraftCore.BUCKET_VOLUME && filledBucket > 0) {

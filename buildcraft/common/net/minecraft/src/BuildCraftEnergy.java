@@ -11,11 +11,12 @@ package net.minecraft.src;
 import java.util.Random;
 import java.util.TreeMap;
 
+import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BuildCraftItem;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.LiquidData;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
@@ -140,9 +141,9 @@ public class BuildCraftEnergy {
 		TileEngine.possibleFuels.put(fuel.shiftedIndex, new EngineFuel(
 				fuel.shiftedIndex, 5, 50000));
 		
-		BuildCraftCore.liquids.add(new LiquidData(oilStill.blockID,
+		API.liquids.add(new LiquidData(oilStill.blockID,
 				bucketOil.shiftedIndex));
-		BuildCraftCore.liquids.add(new LiquidData(fuel.shiftedIndex,
+		API.liquids.add(new LiquidData(fuel.shiftedIndex,
 				bucketFuel.shiftedIndex));
 	}
 

@@ -17,6 +17,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -88,7 +89,7 @@ public class BlockRefinery extends BlockContainer {
 			world.markBlockNeedsUpdate(i, j, k);
 			} else {
 			
-				int liquidId = BuildCraftCore.getLiquidForBucket(entityplayer
+				int liquidId = API.getLiquidForBucket(entityplayer
 						.getCurrentEquippedItem().itemID);
 
 				if (liquidId != 0) {

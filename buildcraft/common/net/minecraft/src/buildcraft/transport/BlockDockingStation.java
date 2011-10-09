@@ -17,12 +17,12 @@ import net.minecraft.src.World;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.EntityLiving;
 
+import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.core.ILiquidContainer;
 import net.minecraft.src.forge.ITextureProvider;
 
 
