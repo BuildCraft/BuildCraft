@@ -257,7 +257,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
 		super.onNeighborBlockChange(world, i, j, k, l);
 		
-		Pipe pipe = getPipe(world, i, j, j);
+		Pipe pipe = getPipe(world, i, j, k);
 		
 		if (pipe != null) {
 			pipe.onNeighborBlockChange();
@@ -267,7 +267,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	public void onBlockPlaced(World world, int i, int j, int k, int l) {
 		super.onBlockPlaced(world, i, j, k, l);
 		
-		Pipe pipe = getPipe(world, i, j, j);
+		Pipe pipe = getPipe(world, i, j, k);
 		
 		if (pipe != null) {
 			pipe.onBlockPlaced();
@@ -277,12 +277,12 @@ public class BlockGenericPipe extends BlockContainer implements
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
 		
-		Pipe pipe = getPipe(world, i, j, j);
+		Pipe pipe = getPipe(world, i, j, k);
 		return pipe != null ? pipe.blockActivated (world, i, j, k, entityplayer) : false;
 	}
 	
 	public void prepareTextureFor (IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		Pipe pipe = getPipe(blockAccess, i, j, j);
+		Pipe pipe = getPipe(blockAccess, i, j, k);
 		
 		if (pipe != null) {
 			pipe.prepareTextureFor(connection);
