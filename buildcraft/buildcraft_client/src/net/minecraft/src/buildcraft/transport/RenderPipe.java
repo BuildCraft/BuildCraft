@@ -16,7 +16,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.Item;
-import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderManager;
@@ -274,9 +273,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		boolean sides = false, above = false;
 		
 		for (int i = 0; i < 6; ++i) {
-			if (liq.getSide(i) > 0) {
-//				System.out.println ("SIDE = " + liq.getSide(i));
-				
+			if (liq.getSide(i) > 0) {				
 				DisplayLiquidList d = getListFromBuffer(liq.side [i]);
 				
 				if (d == null) {
@@ -314,8 +311,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// CENTER
 
 		if (liq.getCenter () > 0) {
-//			System.out.println ("CENTER = " + liq.getCenter()));
-			
 			DisplayLiquidList d = getListFromBuffer(liq.center);
 			
 			if (d != null) {

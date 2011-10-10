@@ -13,7 +13,6 @@ import java.io.File;
 import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.Item;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
 import net.minecraft.src.Packet230ModLoader;
@@ -68,6 +67,10 @@ public class CoreProxy {
 	
 	public static int addFuel (int id, int dmg) {
 		return ModLoader.AddAllFuel(id);
+	}
+	
+	public static int addCustomTexture(String pathToTexture) {
+		return 0;
 	}
 	
 }
