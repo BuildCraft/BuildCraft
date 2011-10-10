@@ -25,7 +25,7 @@ public abstract class Engine {
 
 	protected TileEngine tile;
 	
-	enum EnergyStage {
+	public enum EnergyStage {
 		Blue,
 		Green,
 		Yellow,
