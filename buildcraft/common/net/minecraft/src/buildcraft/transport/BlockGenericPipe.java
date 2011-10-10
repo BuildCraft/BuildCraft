@@ -290,7 +290,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	}
 	
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		Pipe pipe = getPipe(iblockaccess, i, j, j);
+		Pipe pipe = getPipe(iblockaccess, i, j, k);
 		
 		return pipe != null ? pipe.getBlockTexture() : 0;
 	}
@@ -299,7 +299,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {   
 		super.onEntityCollidedWithBlock(world, i, j, k, entity);
 		
-		Pipe pipe = getPipe(world, i, j, j);
+		Pipe pipe = getPipe(world, i, j, k);
 		
 		if (pipe != null) {
 			pipe.onEntityCollidedWithBlock(entity);
