@@ -12,12 +12,15 @@ import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
+import net.minecraft.src.buildcraft.core.BuildCraftContainer;
 
-public class ContainerEngineRoot extends Container
+public class ContainerEngineRoot extends BuildCraftContainer
 {
 
 	public ContainerEngineRoot(InventoryPlayer inventoryplayer,
 			TileEngine tileEngine) {
+		super (tileEngine.getSizeInventory());
+		
 		engine = tileEngine;
 
 		if (tileEngine.engine instanceof EngineStone) {
@@ -45,8 +48,4 @@ public class ContainerEngineRoot extends Container
     }
 
     protected TileEngine engine;
-
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
-	}
 }
