@@ -113,8 +113,8 @@ public class PipeTransportPower extends PipeTransport {
 							nearbyTransport.receiveEnergy(
 									Orientations.values()[j].reverse(), watts);
 							
-							displayPower [j] += watts;
-							displayPower [i] += watts;
+							displayPower [j] += watts / 2F;
+							displayPower [i] += watts / 2F;
 							
 							internalPower [i] -= watts;
 						} else if (tiles [j] instanceof IPowerReceptor) {
@@ -122,8 +122,8 @@ public class PipeTransportPower extends PipeTransport {
 
 							pow.getPowerProvider().receiveEnergy((int) watts);
 
-							displayPower [j] += watts;
-							displayPower [i] += watts;
+							displayPower [j] += watts / 2F;
+							displayPower [i] += watts / 2F;
 
 							internalPower [i] -= watts;
 						}
@@ -210,6 +210,10 @@ public class PipeTransportPower extends PipeTransport {
 					val);
 		} else {
 			internalNextPower[from.ordinal()] += val * (1 - powerResitance);
+						
+			if (internalNextPower [from.ordinal()] >= 1000) {
+				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2);
+			}
 		}		
 	}
 	

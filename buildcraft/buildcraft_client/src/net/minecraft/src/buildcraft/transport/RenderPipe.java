@@ -180,14 +180,14 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     		
     		float unit = (size - minSize) / 2F / (float) displayPowerStages;
     		
-    		block.minY = 0.5 - (minSize / 2F) - unit * s;
-    		block.maxY = 0.5 + (minSize / 2F) + unit * s;
+    		block.minY = 0.5 - (minSize / 2F) - unit * (float) s;
+    		block.maxY = 0.5 + (minSize / 2F) + unit * (float) s;
     		
-    		block.minZ = 0.5 - (minSize / 2F) - unit * s;
-    		block.maxZ = 0.5 + (minSize / 2F) + unit * s;
+    		block.minZ = 0.5 - (minSize / 2F) - unit * (float) s;
+    		block.maxZ = 0.5 + (minSize / 2F) + unit * (float) s;
     		
     		block.minX = 0;    
-    		block.maxX = 0.5 + (minSize / 2F) + unit * s;
+    		block.maxX = 0.5 + (minSize / 2F) + unit * (float) s;
     		    		
     		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
     				0, 0, false);
@@ -198,7 +198,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     	for (int i = 0; i < displayPowerStages; ++i) {
 			displayPowerLimits[displayPowerStages - i - 1] = maxPower
 					- Math.sqrt(maxPower * maxPower / (displayPowerStages - 1)
-							* i);
+							* i);		
     	}
     }
 
@@ -250,7 +250,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					}
 				}
 				
-				GL11.glCallList(displayPowerList [stage]);
+				if (stage < displayPowerList.length) {
+					GL11.glCallList(displayPowerList [stage]);
+				} else {
+					GL11.glCallList(displayPowerList [displayPowerList.length - 1]);
+				}
 			} 
 			
 			GL11.glPopMatrix();		
