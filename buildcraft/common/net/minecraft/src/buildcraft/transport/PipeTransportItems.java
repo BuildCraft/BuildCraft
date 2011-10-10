@@ -425,12 +425,13 @@ public class PipeTransportItems extends PipeTransport {
 		item.speed = packet.dataFloat [3];
 		item.deterministicRandomization = packet.dataInt [8];
 		
-		if (item.container != this.container) {
+		if (item.container != this.container
+				|| !travelingEntities.containsKey(item.entityId)) {
 			if (item.container != null) {
 				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport)
-				.scheduleRemoval(item);
+						.scheduleRemoval(item);
 			}
-			
+
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
 					item, orientation));
 			item.container = container;
