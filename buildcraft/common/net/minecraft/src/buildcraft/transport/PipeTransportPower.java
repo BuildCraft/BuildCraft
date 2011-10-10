@@ -205,12 +205,23 @@ public class PipeTransportPower extends PipeTransport {
 
 	public void receiveEnergy(Orientations from, double val) {
 		step ();
-		internalNextPower [from.ordinal()] += val * (1 - powerResitance);		
+		if (this.container.pipe instanceof IPipeTransportPowerHook) {
+			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from,
+					val);
+		} else {
+			internalNextPower[from.ordinal()] += val * (1 - powerResitance);
+		}		
 	}
 	
 	public void requestEnergy(Orientations from, int i) {
-		step ();
-		nextPowerQuery [from.ordinal()] += i;		
+		step();
+		if (this.container.pipe instanceof IPipeTransportPowerHook) {
+			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from,
+					i);
+		} else {
+			step();
+			nextPowerQuery[from.ordinal()] += i;
+		}
 	}
 	
 	@Override
