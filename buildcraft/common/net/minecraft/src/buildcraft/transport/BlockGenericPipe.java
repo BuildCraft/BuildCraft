@@ -248,38 +248,62 @@ public class BlockGenericPipe extends BlockContainer implements
 			return false;
 		}
 				
-		return getPipe(blockAccess, x1, y1, z1).isPipeConnected(tile);
+		Pipe pipe = getPipe(blockAccess, x1, y1, z1);
+	
+		return pipe != null ? pipe.isPipeConnected(tile) : false;
 	}
 	
 	@Override
 	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
 		super.onNeighborBlockChange(world, i, j, k, l);
-		getPipe (world, i, j, k).onNeighborBlockChange();
+		
+		Pipe pipe = getPipe(world, i, j, j);
+		
+		if (pipe != null) {
+			pipe.onNeighborBlockChange();
+		}
 	}
 	
 	public void onBlockPlaced(World world, int i, int j, int k, int l) {
 		super.onBlockPlaced(world, i, j, k, l);
-		getPipe (world, i, j, k).onBlockPlaced();
+		
+		Pipe pipe = getPipe(world, i, j, j);
+		
+		if (pipe != null) {
+			pipe.onBlockPlaced();
+		}
 	}
 	
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		super.blockActivated(world, i, j, k, entityplayer);		
-		return getPipe (world, i, j, k).blockActivated (world, i, j, k, entityplayer);
+		super.blockActivated(world, i, j, k, entityplayer);
+		
+		Pipe pipe = getPipe(world, i, j, j);
+		return pipe != null ? pipe.blockActivated (world, i, j, k, entityplayer) : false;
 	}
 	
 	public void prepareTextureFor (IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		getPipe (blockAccess, i, j, k).prepareTextureFor(connection);
+		Pipe pipe = getPipe(blockAccess, i, j, j);
+		
+		if (pipe != null) {
+			pipe.prepareTextureFor(connection);
+		}
 	}
 	
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		return getPipe (iblockaccess, i, j, k).getBlockTexture();
+		Pipe pipe = getPipe(iblockaccess, i, j, j);
+		
+		return pipe != null ? pipe.getBlockTexture() : 0;
 	}
 	
 	@Override
 	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {   
 		super.onEntityCollidedWithBlock(world, i, j, k, entity);
 		
-		getPipe (world, i, j, k).onEntityCollidedWithBlock(entity);
+		Pipe pipe = getPipe(world, i, j, j);
+		
+		if (pipe != null) {
+			pipe.onEntityCollidedWithBlock(entity);
+		}
 	}
 		
 	/** Registration *********************************************************/
