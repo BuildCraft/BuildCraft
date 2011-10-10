@@ -313,4 +313,10 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
 		// TODO Auto-generated method stub
 		return BuildCraftEnergy.oilStill.blockID;
 	}
+	
+	@Override
+    public boolean isBlockReplaceable( World world, int i, int j, int k ) {
+	    return true;
+    }
+
 }
