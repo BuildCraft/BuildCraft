@@ -8,9 +8,9 @@
 
 package net.minecraft.src.buildcraft.factory;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -72,7 +72,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	}
 	
 	public int getCapacity () {
-		return BuildCraftCore.BUCKET_VOLUME * 16;
+		return API.BUCKET_VOLUME * 16;
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

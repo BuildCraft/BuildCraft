@@ -10,11 +10,11 @@ package net.minecraft.src.buildcraft.factory;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -30,7 +30,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 
 	public static LinkedList <RefineryRecipe> recipes = new LinkedList <RefineryRecipe> ();
 	
-	public static int LIQUID_PER_SLOT = BuildCraftCore.BUCKET_VOLUME * 4;	
+	public static int LIQUID_PER_SLOT = API.BUCKET_VOLUME * 4;	
 	
 	public static class Slot {
 		@TileNetworkData public int liquidId = 0;
@@ -139,7 +139,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 
 	@Override
 	public int getCapacity() {
-		return BuildCraftCore.BUCKET_VOLUME * 3;
+		return API.BUCKET_VOLUME * 3;
 	}
 
 	@Override

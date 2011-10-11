@@ -11,7 +11,6 @@ package net.minecraft.src;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.lwjgl.opengl.GL11;
 

@@ -9,7 +9,6 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -19,7 +18,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 
 public class EngineIron extends Engine {
 	
-	public static int MAX_LIQUID = BuildCraftCore.BUCKET_VOLUME * 10;
+	public static int MAX_LIQUID = API.BUCKET_VOLUME * 10;
 	public static int MAX_HEAT          = 100000;
 	public static int COOLANT_THRESHOLD = 49000;
 	
@@ -87,7 +86,7 @@ public class EngineIron extends Engine {
 					burnTime--;
 				} else {
 					liquidQty--;
-					burnTime = currentFuel.totalBurningTime / BuildCraftCore.BUCKET_VOLUME;
+					burnTime = currentFuel.totalBurningTime / API.BUCKET_VOLUME;
 				}
 				
 				addEnergy(currentFuel.powerPerCycle);			
@@ -106,9 +105,9 @@ public class EngineIron extends Engine {
 			int liquidId = API.getLiquidForBucket (itemInInventory.itemID);
 
 			if (liquidId != 0) {
-				if (fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
-						liquidId, false) == BuildCraftCore.BUCKET_VOLUME) {
-					fill(Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
+				if (fill(Orientations.Unknown, API.BUCKET_VOLUME,
+						liquidId, false) == API.BUCKET_VOLUME) {
+					fill(Orientations.Unknown, API.BUCKET_VOLUME,
 							liquidId, true);
 
 					tile.setInventorySlotContents(0, new ItemStack(

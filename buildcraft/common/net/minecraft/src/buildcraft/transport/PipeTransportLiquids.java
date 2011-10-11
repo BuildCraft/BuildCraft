@@ -8,12 +8,12 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -31,7 +31,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	 * The amount of liquid contained by a pipe section. For simplicity, all
 	 * pipe sections are assumed to be of the same volume.
 	 */
-	public static int LIQUID_IN_PIPE = BuildCraftCore.BUCKET_VOLUME / 4;
+	public static int LIQUID_IN_PIPE = API.BUCKET_VOLUME / 4;
 	
 	public int travelDelay = 6;	
 	public int flowRate = 20;

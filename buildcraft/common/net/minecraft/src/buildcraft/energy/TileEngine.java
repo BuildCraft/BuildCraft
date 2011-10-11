@@ -10,7 +10,6 @@ package net.minecraft.src.buildcraft.energy;
 
 import java.util.HashMap;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -18,6 +17,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -366,7 +366,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 
 	@Override
 	public int getCapacity() {
-		return BuildCraftCore.BUCKET_VOLUME * 10;
+		return API.BUCKET_VOLUME * 10;
 	}
 
 	@Override

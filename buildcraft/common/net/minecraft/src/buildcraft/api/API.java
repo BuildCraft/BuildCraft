@@ -18,6 +18,7 @@ import net.minecraft.src.World;
 public class API {
 
 	public static LinkedList <LiquidData> liquids = new LinkedList <LiquidData> ();
+	public static final int BUCKET_VOLUME = 1000;
 
 	public static int getLiquidForBucket(int itemID) {
 		for (LiquidData d : liquids) {
@@ -69,5 +70,6 @@ public class API {
 		
 		world.setBlockWithNotify(x, y, z, 0);
 	}
+
 
 }

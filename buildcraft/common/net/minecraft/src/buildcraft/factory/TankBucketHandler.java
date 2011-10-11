@@ -8,7 +8,6 @@
 
 package net.minecraft.src.buildcraft.factory;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -24,13 +23,13 @@ public class TankBucketHandler implements IBucketHandler {
 
 			TileTank tank = (TileTank) w.getBlockTileEntity(i, j, k);
 
-			int qty = tank.empty(BuildCraftCore.BUCKET_VOLUME, false);
+			int qty = tank.empty(API.BUCKET_VOLUME, false);
 
 			int filledBucket = API.getBucketForLiquid(tank
 					.getLiquidId());
 
-			if (qty >= BuildCraftCore.BUCKET_VOLUME && filledBucket > 0) {
-				tank.empty(BuildCraftCore.BUCKET_VOLUME, true);
+			if (qty >= API.BUCKET_VOLUME && filledBucket > 0) {
+				tank.empty(API.BUCKET_VOLUME, true);
 
 				return new ItemStack(Item.itemsList[filledBucket], 1);
 			}
