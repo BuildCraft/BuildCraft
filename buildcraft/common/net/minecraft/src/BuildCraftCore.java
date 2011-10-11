@@ -67,8 +67,6 @@ public class BuildCraftCore {
 	public static String customBuildCraftSprites =
 		"/net/minecraft/src/buildcraft/core/gui/item_textures.png";
 	
-	public static final int BUCKET_VOLUME = 1000;
-	
 	@SuppressWarnings({ "all" })
 	public static void initialize () {
 		if (initialized) {

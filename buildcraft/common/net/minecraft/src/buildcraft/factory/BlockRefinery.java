@@ -95,7 +95,7 @@ public class BlockRefinery extends BlockContainer {
 				if (liquidId != 0) {
 					int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k))
 							.fill(Orientations.Unknown,
-									BuildCraftCore.BUCKET_VOLUME, liquidId, true);
+									API.BUCKET_VOLUME, liquidId, true);
 
 					if (qty != 0 && !BuildCraftCore.debugMode) {
 						entityplayer.inventory.setInventorySlotContents(

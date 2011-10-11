@@ -87,7 +87,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 
 			if (liquidId != 0) {
 				int qty = tank.fill(
-						Orientations.Unknown, BuildCraftCore.BUCKET_VOLUME,
+						Orientations.Unknown, API.BUCKET_VOLUME,
 						liquidId, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
