@@ -29,7 +29,7 @@ import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
-		IInventory, ILiquidContainer {
+		IInventory, ILiquidContainer, IEngineProvider {
 	
 	public static HashMap<Integer, EngineFuel> possibleFuels = new HashMap<Integer, EngineFuel>(); 
 	
@@ -387,5 +387,10 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	@Override
 	public int powerRequest() {
 		return 0;
+	}
+
+	@Override
+	public Engine getEngine() {
+		return engine;
 	}
 }
