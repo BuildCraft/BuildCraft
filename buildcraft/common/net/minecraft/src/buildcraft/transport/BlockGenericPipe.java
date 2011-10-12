@@ -234,23 +234,24 @@ public class BlockGenericPipe extends BlockContainer implements
 	@Override
 	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
 			int z1, int x2, int y2, int z2) {
-		
+
 		TileEntity tile = blockAccess.getBlockTileEntity(x2, y2, z2);
-		
+
 		Pipe pipe1 = getPipe(blockAccess, x1, y1, z1);
 		Pipe pipe2 = getPipe(blockAccess, x2, y2, z2);
-		
-		if (pipe2 != null
-				&& (!pipe1.transport.getClass().isAssignableFrom(
-						pipe2.transport.getClass()) && !pipe2.transport
-						.getClass()
-						.isAssignableFrom(pipe1.transport.getClass()))) {
+
+		if (!isValid(pipe1) || !isValid(pipe2)) {
 			return false;
 		}
-				
-		Pipe pipe = getPipe(blockAccess, x1, y1, z1);
-	
-		return pipe != null ? pipe.isPipeConnected(tile) : false;
+
+		if (!pipe1.transport.getClass().isAssignableFrom(
+				pipe2.transport.getClass())
+				&& !pipe2.transport.getClass().isAssignableFrom(
+						pipe1.transport.getClass())) {
+			return false;
+		}
+
+		return pipe1 != null ? pipe1.isPipeConnected(tile) : false;
 	}
 	
 	@Override
@@ -259,7 +260,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		
 		Pipe pipe = getPipe(world, i, j, k);
 		
-		if (pipe != null) {
+		if (isValid (pipe)) {
 			pipe.onNeighborBlockChange();
 		}
 	}
@@ -269,7 +270,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		
 		Pipe pipe = getPipe(world, i, j, k);
 		
-		if (pipe != null) {
+		if (isValid (pipe)) {
 			pipe.onBlockPlaced();
 		}
 	}
@@ -278,13 +279,13 @@ public class BlockGenericPipe extends BlockContainer implements
 		super.blockActivated(world, i, j, k, entityplayer);
 		
 		Pipe pipe = getPipe(world, i, j, k);
-		return pipe != null ? pipe.blockActivated (world, i, j, k, entityplayer) : false;
+		return isValid (pipe) ? pipe.blockActivated (world, i, j, k, entityplayer) : false;
 	}
 	
 	public void prepareTextureFor (IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
 		Pipe pipe = getPipe(blockAccess, i, j, k);
 		
-		if (pipe != null) {
+		if (isValid (pipe)) {
 			pipe.prepareTextureFor(connection);
 		}
 	}
@@ -292,7 +293,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(iblockaccess, i, j, k);
 		
-		return pipe != null ? pipe.getBlockTexture() : 0;
+		return isValid (pipe) ? pipe.getBlockTexture() : 0;
 	}
 	
 	@Override
@@ -301,7 +302,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		
 		Pipe pipe = getPipe(world, i, j, k);
 		
-		if (pipe != null) {
+		if (isValid (pipe)) {
 			pipe.onEntityCollidedWithBlock(entity);
 		}
 	}
@@ -369,4 +370,8 @@ public class BlockGenericPipe extends BlockContainer implements
 		
 		return pipe;
 	}	
+	
+	public static boolean isValid (Pipe pipe) {
+		return pipe != null && pipe.transport != null && pipe.logic != null;
+	}
 }

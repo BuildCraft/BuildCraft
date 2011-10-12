@@ -66,6 +66,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	
 	@Override
 	public void updateEntity () {
+		if (!BlockGenericPipe.isValid(pipe)) {
+			return;
+		}
+		
 		if (!initialized) {
 			pipe.initialize();
 			pipe.setWorld(worldObj);
