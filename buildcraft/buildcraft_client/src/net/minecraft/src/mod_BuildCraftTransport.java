@@ -30,7 +30,7 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 
 	public void ModsLoaded () {
 		super.ModsLoaded();
-		BuildCraftTransport.ModsLoaded();
+		BuildCraftTransport.initialize();
 		
 		ModLoaderMp.RegisterGUI(this,
 				Utils.packetIdToInt(PacketIds.DiamondPipeGUI));

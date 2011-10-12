@@ -14,7 +14,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 	
 	public void ModsLoaded () {
 		super.ModsLoaded();
-		BuildCraftTransport.ModsLoaded();
+		BuildCraftTransport.initialize();
 		
 		instance = this;
 	}

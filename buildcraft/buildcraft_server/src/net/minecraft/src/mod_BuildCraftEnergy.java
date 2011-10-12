@@ -18,7 +18,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	
 	public void ModsLoaded () {
 		super.ModsLoaded();
-		BuildCraftEnergy.ModsLoaded();	
+		BuildCraftEnergy.initialize();	
 		
 		ModLoader.RegisterTileEntity(TileEngine.class,
 				"net.minecraft.src.buildcraft.energy.Engine");

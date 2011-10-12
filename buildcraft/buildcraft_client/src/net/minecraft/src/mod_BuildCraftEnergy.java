@@ -30,7 +30,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	
 	public void ModsLoaded () {
 		super.ModsLoaded();
-		BuildCraftEnergy.ModsLoaded();	
+		BuildCraftEnergy.initialize();	
 		
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
 				BuildCraftEnergy.engineBlock, 0), new RenderEngine(

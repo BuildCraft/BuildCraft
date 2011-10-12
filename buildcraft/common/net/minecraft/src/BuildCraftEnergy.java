@@ -49,7 +49,15 @@ public class BuildCraftEnergy {
 	
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	
-	public static void ModsLoaded () {
+	private static boolean initialized = false;
+	
+	public static void initialize () {
+		if (initialized) {
+			return;
+		} else {
+			initialized = true;
+		}
+		
 		BuildCraftCore.initialize();
 		
 		Property engineId = BuildCraftCore.mainConfiguration
