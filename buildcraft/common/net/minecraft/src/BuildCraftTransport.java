@@ -74,7 +74,7 @@ public class BuildCraftTransport {
 		}
 		
 		initialized = true;
-		
+
 		mod_BuildCraftCore.initialize();						
 			
 		Property loadLegacyPipes = BuildCraftCore.mainConfiguration
@@ -234,10 +234,5 @@ public class BuildCraftTransport {
 		}
 		
 		return res;
-	}
-
-	public static void ModsLoaded () {
-		mod_BuildCraftCore.initialize();
-		initialize ();
 	}
 }

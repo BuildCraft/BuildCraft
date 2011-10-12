@@ -41,7 +41,14 @@ public class BuildCraftFactory {
 	
 	public static int drillTexture;
 	
+	private static boolean initialized = false;
+	
 	public static void initialize () {		
+		if (initialized) {
+			return;
+		} else {
+			initialized = true;
+		}
 		
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeGears();

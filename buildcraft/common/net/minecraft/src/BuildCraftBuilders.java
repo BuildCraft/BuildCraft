@@ -39,7 +39,15 @@ public class BuildCraftBuilders {
 	public static BlockTemplate templateBlock;
 	public static ItemTemplate templateItem;
 	
-	public static void initialize () {		
+	private static boolean initialized = false;
+	
+	public static void initialize () {	
+		if (initialized) {
+			return;
+		} else {
+			initialized = true;
+		}
+		
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeGears();
 		
