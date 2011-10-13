@@ -495,8 +495,9 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 			pos.moveForwards(1);
 
-			if (!canReceiveLiquid(pos)) {				
-				side[i].reset ();
+			if (!Utils.checkPipesConnections(worldObj, (int) pos.x,
+					(int) pos.y, (int) pos.z, xCoord, yCoord, zCoord)) {
+				side[i].reset();
 			}
 		}
 	}
