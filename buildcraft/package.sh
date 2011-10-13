@@ -95,7 +95,7 @@ cp buildcraft_server/src/net/minecraft/src/buildcraft/api/* api/src/minecraft/ne
 
 cd api
 
-zip -r $dir/buildcraft-client-api-$version-src.zip .
+zip -r $dir/buildcraft-api-$version-src.zip .
 
 cd ../
 rm -rf api

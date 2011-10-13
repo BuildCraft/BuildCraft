@@ -105,7 +105,7 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 				if (tile instanceof TileGenericPipe) {
 					TileGenericPipe pipe = ((TileGenericPipe) tile);
 					
-					if (pipe.pipe.transport instanceof PipeTransportItems) {
+					if (pipe.pipe != null && pipe.pipe.transport instanceof PipeTransportItems) {
 						((PipeTransportItems) pipe.pipe.transport).handleItemPacket(packet);
 					}
 				}

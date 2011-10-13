@@ -235,7 +235,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
-		pipe.handlePacket(packet);
+		if (BlockGenericPipe.isValid(pipe)) {
+			pipe.handlePacket(packet);
+		}
 	}
 
 	@Override
