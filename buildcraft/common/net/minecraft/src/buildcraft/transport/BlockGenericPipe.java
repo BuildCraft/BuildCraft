@@ -194,6 +194,13 @@ public class BlockGenericPipe extends BlockContainer implements
 
 	public void onBlockRemoval(World world, int i, int j, int k) {
 		Utils.preDestroyBlock(world, i, j, k);
+		
+		if (lastRemovedDate != world.getWorldTime()) {
+			lastRemovedDate = world.getWorldTime();
+			pipeRemoved.clear();
+		}
+		
+		pipeRemoved.put(new BlockIndex (i, j, k), getPipe (world, i, j, k));
 
 		super.onBlockRemoval(world, i, j, k);
 	}
@@ -207,7 +214,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	public TileEntity getBlockEntity() {
 		return new TileGenericPipe();
 	}
-	
+		
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k,
 			int l, float f) {
         if(APIProxy.isClient(world))
@@ -221,10 +228,19 @@ public class BlockGenericPipe extends BlockContainer implements
             {
                 continue;
             }
-            int k1 = getPipe(world, i, j, k).itemID;
-            if(k1 > 0)
-            {
-                dropBlockAsItem_do(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
+            
+            Pipe pipe = getPipe(world, i, j, k);
+            
+            if (pipe == null) {
+            	pipe = pipeRemoved.get(new BlockIndex (i, j, k));
+            }
+            
+            if (pipe != null) {
+            	int k1 = pipe.itemID;
+            	if(k1 > 0)
+            	{
+            		dropBlockAsItem_do(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
+            	}
             }
         }
 	}
@@ -311,6 +327,9 @@ public class BlockGenericPipe extends BlockContainer implements
 	
 	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
 	public static TreeMap<BlockIndex, Pipe> pipeBuffer = new TreeMap<BlockIndex, Pipe>();
+	
+	long lastRemovedDate = -1;
+	public static TreeMap<BlockIndex, Pipe> pipeRemoved = new TreeMap<BlockIndex, Pipe>();
 	
 	public static Item registerPipe (int key, Class <? extends Pipe> clas) {
 		Item item = new ItemPipe (key);

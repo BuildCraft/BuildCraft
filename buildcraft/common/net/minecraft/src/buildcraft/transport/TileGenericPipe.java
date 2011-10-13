@@ -58,6 +58,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			pipe = BlockGenericPipe.pipeBuffer.get(new BlockIndex(xCoord, yCoord, zCoord));			
 		}
 		
+		if (BlockGenericPipe.pipeBuffer.containsKey(new BlockIndex(xCoord, yCoord, zCoord))) {
+			BlockGenericPipe.pipeBuffer.remove(new BlockIndex(xCoord, yCoord, zCoord));	
+		}
+		
 		if (pipe != null) {
 			pipe.setTile(this);
 			pipe.setWorld(worldObj);
