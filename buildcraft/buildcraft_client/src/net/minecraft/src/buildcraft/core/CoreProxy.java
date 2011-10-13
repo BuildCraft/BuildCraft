@@ -59,7 +59,7 @@ public class CoreProxy {
 	
 		
 	// Change this one to the first empty row, at the moment it is row 8
-	private static int textureStartingIndex = 8 * 16;
+	private static int textureStartingIndex = 9 * 16;
 	// The current free index
 	private static int textureIndex = textureStartingIndex;
 	// This is calculated by the amount of open slots until there is another
