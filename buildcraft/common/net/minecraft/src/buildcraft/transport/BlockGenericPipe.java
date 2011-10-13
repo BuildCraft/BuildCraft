@@ -240,11 +240,11 @@ public class BlockGenericPipe extends BlockContainer implements
 		Pipe pipe1 = getPipe(blockAccess, x1, y1, z1);
 		Pipe pipe2 = getPipe(blockAccess, x2, y2, z2);
 
-		if (!isValid(pipe1) || !isValid(pipe2)) {
+		if (!isValid(pipe1)) {
 			return false;
 		}
 
-		if (!pipe1.transport.getClass().isAssignableFrom(
+		if (isValid (pipe2) && !pipe1.transport.getClass().isAssignableFrom(
 				pipe2.transport.getClass())
 				&& !pipe2.transport.getClass().isAssignableFrom(
 						pipe1.transport.getClass())) {
