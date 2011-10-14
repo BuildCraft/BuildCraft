@@ -21,7 +21,7 @@ import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.BuildCraftConfiguration;
-import net.minecraft.src.buildcraft.core.BuildCraftItem;
+import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
@@ -116,7 +116,7 @@ public class BuildCraftCore {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		wrenchItem = (new BuildCraftItem(Integer.parseInt(wrenchId.value)))
+		wrenchItem = (new ItemBuildCraftTexture(Integer.parseInt(wrenchId.value)))
 		.setIconIndex(0 * 16 + 2)
 		.setItemName("wrenchItem");
 		craftingmanager.addRecipe(new ItemStack(wrenchItem), new Object[] {
@@ -173,14 +173,14 @@ public class BuildCraftCore {
 		
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		woodenGearItem = (new BuildCraftItem(Integer.parseInt(woodenGearId.value)))
+		woodenGearItem = (new ItemBuildCraftTexture(Integer.parseInt(woodenGearId.value)))
 				.setIconIndex(1 * 16 + 0)
 				.setItemName("woodenGearItem");
 		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
 		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
 		CoreProxy.addName(woodenGearItem, "Wooden Gear");
 		
-		stoneGearItem = (new BuildCraftItem(Integer.parseInt(stoneGearId.value)))
+		stoneGearItem = (new ItemBuildCraftTexture(Integer.parseInt(stoneGearId.value)))
 				.setIconIndex(1 * 16 + 1)
 				.setItemName("stoneGearItem");
 		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
@@ -188,7 +188,7 @@ public class BuildCraftCore {
 				Character.valueOf('G'), woodenGearItem });
 		CoreProxy.addName(stoneGearItem, "Stone Gear");
 		
-		ironGearItem = (new BuildCraftItem(Integer.parseInt(ironGearId.value)))
+		ironGearItem = (new ItemBuildCraftTexture(Integer.parseInt(ironGearId.value)))
 				.setIconIndex(1 * 16 + 2)
 				.setItemName("ironGearItem");
 		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
@@ -196,7 +196,7 @@ public class BuildCraftCore {
 				Character.valueOf('G'), stoneGearItem });
 		CoreProxy.addName(ironGearItem, "Iron Gear");		
 		
-		goldGearItem = (new BuildCraftItem(Integer.parseInt(goldenGearId.value)))
+		goldGearItem = (new ItemBuildCraftTexture(Integer.parseInt(goldenGearId.value)))
 				.setIconIndex(1 * 16 + 3)
 				.setItemName("goldGearItem");
 		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
@@ -204,7 +204,7 @@ public class BuildCraftCore {
 				Character.valueOf('G'), ironGearItem });
 		CoreProxy.addName(goldGearItem, "Gold Gear");
 		
-		diamondGearItem = (new BuildCraftItem(Integer.parseInt(diamondGearId.value)))
+		diamondGearItem = (new ItemBuildCraftTexture(Integer.parseInt(diamondGearId.value)))
 				.setIconIndex(1 * 16 + 4)
 				.setItemName("diamondGearItem");
 		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {

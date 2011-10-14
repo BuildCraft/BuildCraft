@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.core.BlockIndex;
-import net.minecraft.src.buildcraft.core.BuildCraftItem;
+import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
@@ -134,7 +134,7 @@ public class BuildCraftEnergy {
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 		
 		fuel = new ItemFuel (DefaultProps.FUEL_ID);
-		bucketFuel = new BuildCraftItem(Integer.parseInt(bucketFuelId.value))
+		bucketFuel = new ItemBuildCraftTexture(Integer.parseInt(bucketFuelId.value))
 				.setIconIndex(0 * 16 + 3).setItemName("bucketFuel")
 				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketFuel, "Fuel Bucket");
