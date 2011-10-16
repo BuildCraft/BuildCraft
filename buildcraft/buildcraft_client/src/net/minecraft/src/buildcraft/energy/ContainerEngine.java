@@ -39,7 +39,7 @@ public class ContainerEngine extends ContainerEngineRoot {
 //	}
 	
 	@Override
-	public void func_20112_a(int i, int j) {		
+	public void updateProgressBar(int i, int j) {		
 		engine.engine.getGUINetworkData (i, j);
 	}
 }

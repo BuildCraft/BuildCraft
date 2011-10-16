@@ -22,6 +22,7 @@ import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
@@ -33,6 +34,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	private boolean blockNeighborChange = false;
 	private boolean initialized = false;
 
+	@TileNetworkData public int pipeId = -1;
+	
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
@@ -65,6 +68,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if (pipe != null) {
 			pipe.setTile(this);
 			pipe.setWorld(worldObj);
+			pipeId = pipe.itemID;
 		}
 	}
 	
@@ -74,9 +78,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			return;
 		}
 		
-		if (!initialized) {
+		pipeId = pipe.itemID;
+		
+		if (!initialized) {		
 			pipe.initialize();
 			pipe.setWorld(worldObj);
+			pipe.setTile(this);
 			initialized = true;
 		}
 		
@@ -92,7 +99,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 		
 		pipe.updateEntity ();
-	
 	}
 
 	@Override
@@ -170,58 +176,97 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public int getSizeInventory() {
-		return pipe.logic.getSizeInventory();
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.getSizeInventory();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return pipe.logic.getStackInSlot(i);
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.getStackInSlot(i);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		return pipe.logic.decrStackSize(i, j);
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.decrStackSize(i, j);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		pipe.logic.setInventorySlotContents(i, itemstack);		
+		if (BlockGenericPipe.isValid(pipe)) {
+			pipe.logic.setInventorySlotContents(i, itemstack);
+		}
 	}
 
 	@Override
 	public String getInvName() {
-		return pipe.logic.getInvName();
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.getInvName();
+		} else {
+			return "";
+		}
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		return pipe.logic.getInventoryStackLimit();
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.getInventoryStackLimit();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return pipe.logic.canInteractWith(entityplayer);
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.canInteractWith(entityplayer);
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		return pipe.logic.addItem(stack, doAdd, from);
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.addItem(stack, doAdd, from);
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		return pipe.logic.extractItem(doRemove, from);
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.logic.extractItem(doRemove, from);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
-		pipe.transport.entityEntering (item, orientation);
-		
+		if (BlockGenericPipe.isValid(pipe)) {
+			pipe.transport.entityEntering (item, orientation);
+		}		
 	}
 
 	@Override
 	public boolean acceptItems() {
-		return pipe.transport.acceptItems();
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.transport.acceptItems();
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -235,6 +280,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void handleUpdatePacket(Packet230ModLoader packet) {
+		if (!BlockGenericPipe.isValid(pipe) && pipeId != -1) {
+			pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, pipeId);
+			pipe.setTile(this);	
+			pipe.setWorld(worldObj);
+		}
+		
 		if (BlockGenericPipe.isValid(pipe)) {
 			pipe.handlePacket(packet);
 		}
