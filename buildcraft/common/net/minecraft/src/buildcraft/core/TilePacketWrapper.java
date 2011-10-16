@@ -42,12 +42,20 @@ public class TilePacketWrapper {
 		packet.modId = mod_BuildCraftCore.instance.getId();
 		packet.isChunkDataPacket = true;
 		packet.packetType = packetType.ordinal();
+				
+		int sizeI = 3, sizeF = 0, sizeS = 0;
 		
-		int [] size = rootMappings [0].getSize();
+		for (int i = 0; i < rootMappings.length; ++i) {					
+			int [] size = rootMappings [i].getSize();
 		
-		packet.dataInt = new int [size [0] + 3];
-		packet.dataFloat = new float [size [1]];
-		packet.dataString = new String [size [2]];
+			sizeI += size [0];
+			sizeF += size [1];
+			sizeS += size [2];
+		}
+		
+		packet.dataInt = new int [sizeI];
+		packet.dataFloat = new float [sizeF];
+		packet.dataString = new String [sizeS];
 		
 		packet.dataInt [0] = tile.xCoord;
 		packet.dataInt [1] = tile.yCoord;
@@ -74,7 +82,7 @@ public class TilePacketWrapper {
 		int sizeI = 3, sizeF = 0, sizeS = 0;
 		
 		for (int i = 0; i < rootMappings.length; ++i) {					
-			int [] size = rootMappings [0].getSize();
+			int [] size = rootMappings [i].getSize();
 		
 			sizeI += size [0];
 			sizeF += size [1];

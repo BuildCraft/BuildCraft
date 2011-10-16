@@ -48,7 +48,9 @@ public abstract class Pipe {
 			networkWrappers.put(
 					this.getClass(),
 					new TilePacketWrapper(new Class[] {
-							this.transport.getClass(), this.logic.getClass() },
+							TileGenericPipe.class,
+							this.transport.getClass(),
+							this.logic.getClass() },
 							PacketIds.TileUpdate));
 		}
 
@@ -141,10 +143,10 @@ public abstract class Pipe {
 	
 	public Packet230ModLoader getNetworkPacket() {
 		return networkPacket.toPacket(xCoord, yCoord, zCoord, new Object[] {
-				transport, logic });
+				container, transport, logic });
 	}
 	
 	public void handlePacket (Packet230ModLoader packet) {
-		networkPacket.updateFromPacket(new Object [] {transport, logic}, packet);
+		networkPacket.updateFromPacket(new Object [] {container, transport, logic}, packet);
 	}
 }

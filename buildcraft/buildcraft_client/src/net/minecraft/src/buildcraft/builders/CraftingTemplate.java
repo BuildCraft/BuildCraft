@@ -31,7 +31,7 @@ class CraftingTemplate extends CraftingTemplateRoot {
     }
 
 	@Override
-	public void func_20112_a(int i, int j) {		
+	public void updateProgressBar(int i, int j) {		
 		if (i == 0) {
 			template.computingTime = j;
 		}
