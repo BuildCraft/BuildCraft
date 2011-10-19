@@ -107,11 +107,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			if (pipe != null) {
 				pipe.setTile(this);
 				pipe.setWorld(worldObj);
-				pipeId = pipe.itemID;			
-				pipe.initialize();
-				
 				PersistentWorld.getWorld(worldObj).storeTile(pipe,
 						new BlockIndex(xCoord, yCoord, zCoord));
+				pipeId = pipe.itemID;			
+				pipe.initialize();
 			}
 			
 			initialized = true;					
