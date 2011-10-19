@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.api.TileNetworkData"/>
+<fullyQualifiedTypeName name="javax.rmi.CORBA.Tie"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.transport.BlockGenericPipe"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.api.APIProxy"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.api.SafeTimeTracker"/>
+<fullyQualifiedTypeName name="net.minecraft.src.BaseModMp"/>
+<fullyQualifiedTypeName name="net.minecraft.src.mod_BuildCraftCore"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.core.BlockContents"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.core.Agent"/>
+<fullyQualifiedTypeName name="net.minecraft.src.Packet230ModLoader"/>
+<fullyQualifiedTypeName name="java.util.TreeMap"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.core.BlockIndex"/>
+<fullyQualifiedTypeName name="net.minecraft.src.TileEntity"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.transport.TileGenericPipe"/>
+<fullyQualifiedTypeName name="java.lang.Override"/>
+<fullyQualifiedTypeName name="net.minecraft.src.World"/>
+<fullyQualifiedTypeName name="net.minecraft.src.ChunkCache"/>
+<fullyQualifiedTypeName name="net.minecraft.src.WorldChunkManager"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.core.PersistentWorld"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.core.PersistentTile"/>
+<fullyQualifiedTypeName name="net.minecraft.src.IBlockAccess"/>
+<fullyQualifiedTypeName name="net.minecraft.src.buildcraft.core.CoreProxy"/>
+</qualifiedTypeNameHistroy>

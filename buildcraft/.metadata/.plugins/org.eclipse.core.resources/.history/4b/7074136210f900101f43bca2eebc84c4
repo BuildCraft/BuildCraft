@@ -1,0 +1,34 @@
+package net.minecraft.src.buildcraft.core;
+
+import java.util.TreeMap;
+
+public class PersistentWorld {
+	
+	private TreeMap<BlockIndex, PersistentTile> tiles = new TreeMap<BlockIndex, PersistentTile>();
+	
+	public PersistentTile createTile(TileEntity tile, PersistentTile defaultTile, BlockIndex index) {
+		PersistentTile result = null;
+		
+		if (!tiles.containsKey(index)) {
+			tiles.put(index, defaultTile);
+			result = defaultTile;
+		} else {
+			result = tiles.get(index);
+			
+			if (!result.getClass().equals(defaultTile.getClass())) {
+				tiles.remove(index);
+				tiles.put(index, defaultTile);
+				result.destroy ();
+				result = defaultTile;
+			} else {
+				defaultTile.destroy ();
+			}			
+		}
+		
+
+		result.validate(tile);
+		
+		return result;
+	}
+	
+}

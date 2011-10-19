@@ -1,0 +1,4 @@
+#Wed Oct 19 15:40:29 EDT 2011
+prefWatchExpressions=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<watchExpressions/>\r\n
+//org.eclipse.debug.core.PREFERRED_DELEGATES/org.eclipse.cdt.launch.applicationLaunchType=org.eclipse.cdt.cdi.launch.localCLaunch,run
+eclipse.preferences.version=1

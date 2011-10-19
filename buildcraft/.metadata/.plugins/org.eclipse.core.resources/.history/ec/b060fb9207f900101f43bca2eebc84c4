@@ -1,0 +1,53 @@
+package net.minecraft.src.buildcraft.core;
+
+import java.util.HashMap;
+import java.util.TreeMap;
+
+import net.minecraft.src.IBlockAccess;
+
+public class Agent {
+	
+	private static HashMap <IBlockAccess, TreeMap<BlockIndex, Agent>> allAgents = new HashMap <IBlockAccess, TreeMap<BlockIndex, Agent>> ();
+	
+	private static IBlockAccess lastBlockAccess = null;
+	private static TreeMap<BlockIndex, Agent> lastAgents = null;
+	
+	public static Agent getAgent (IBlockAccess blockAccess, int x, int y, int z) {
+		return getAgents(blockAccess).get(new BlockIndex(x, y, z));		
+	}
+	
+	public static void storeAgent (IBlockAccess blockAccess, Agent agent, int x, int y, int z) {
+		BlockIndex index = new BlockIndex(x, y, z);
+		
+		TreeMap<BlockIndex, Agent> agents = getAgents(blockAccess);
+		
+		if (agents.containsKey(index)) {
+			agents.remove(index);
+		}
+		
+		agents.put(index, agent);
+	}
+	
+	public static void removeAgent (IBlockAccess blockAccess, Agent agent, int x, int y, int z) {
+		BlockIndex index = new BlockIndex(x, y, z);
+		
+		TreeMap<BlockIndex, Agent> agents = getAgents(blockAccess);
+		
+		if (agents.containsKey(index)) {
+			agents.remove(index);
+		}
+	}
+	
+	public static TreeMap<BlockIndex, Agent> getAgents (IBlockAccess blockAccess) {
+		if (lastBlockAccess != blockAccess) {
+			if (!allAgents.containsKey(blockAccess)) {
+				allAgents.put(blockAccess, new TreeMap<BlockIndex, Agent> ());
+			}
+			
+			lastAgents = allAgents.get(blockAccess);
+			lastBlockAccess = blockAccess;
+		}
+		
+		return lastAgents;
+	}
+}

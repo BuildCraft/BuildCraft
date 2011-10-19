@@ -1,0 +1,82 @@
+/** 
+ * BuildCraft is open-source. It is distributed under the terms of the 
+ * BuildCraft Open Source License. It grants rights to read, modify, compile
+ * or run the code. It does *NOT* grant the right to redistribute this software
+ * or its modifications in any form, binary or source, except if expressively
+ * granted by the copyright holder.
+ */
+
+package net.minecraft.src.buildcraft.core;
+
+import java.io.File;
+
+import net.minecraft.src.BaseModMp;
+import net.minecraft.src.Block;
+import net.minecraft.src.EntityItem;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.ModLoaderMp;
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.EntityPlayerMP;
+
+public class CoreProxy {
+	public static void addName(Object obj, String s) {
+		
+	}
+	
+	public static void setField804 (EntityItem item, float value) {
+		item.field_432_ae = value;
+	}
+	
+	public static File getPropertyFile() {
+		return new File("BuildCraft.cfg");
+	}
+
+	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
+			int z, int maxDistance, BaseModMp mod) {
+		if (packet != null) {
+			for (int i = 0; i < ModLoader.getMinecraftServerInstance().worldMngr.length; i++) {
+				for (int j = 0; j < ModLoader.getMinecraftServerInstance().worldMngr[i].playerEntities
+						.size(); j++) {
+					EntityPlayerMP player = (EntityPlayerMP) ModLoader
+							.getMinecraftServerInstance().worldMngr[i].playerEntities
+							.get(j);
+
+					if (Math.abs(player.posX - x) <= maxDistance
+							&& Math.abs(player.posY - y) <= maxDistance
+							&& Math.abs(player.posZ - z) <= maxDistance) {
+						ModLoaderMp.SendPacketTo(mod, player, packet);
+					}
+				}
+
+			}
+		}
+	}
+	
+	public static boolean isPlainBlock (Block block) {
+		return block.isACube();
+	}
+
+	public static File getBuildCraftBase() {
+		return new File("buildcraft/");
+	}
+
+	public static void addLocalization(String s1, String string) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static int addFuel (int id, int dmg) {
+		return ModLoader.AddAllFuel(id);
+	}
+	
+	public static int addCustomTexture(String pathToTexture) {
+		return 0;
+	}
+	
+	public static long getHash (IBlockAccess iBlockAccess) {
+//		return iBlockAccess.hashCode();
+		return 0;l
+	}
+	
+}

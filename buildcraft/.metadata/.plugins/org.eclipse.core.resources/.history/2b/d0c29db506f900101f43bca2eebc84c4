@@ -1,0 +1,32 @@
+package net.minecraft.src.buildcraft.core;
+
+import java.util.TreeMap;
+
+import net.minecraft.src.IBlockAccess;
+
+public class Agent {
+	
+	private static HashMap <IBlockAccess, TreeMap<BlockIndex, Agent>> agents = new HashMap <IBlockAccess blockAccess, TreeMap<BlockIndex, Agent>> ();
+	
+	public static Agent getAgent (IBlockAccess blockAccess, int x, int y, int z) {
+		return agents.get(new BlockIndex(x, y, z));		
+	}
+	
+	public static void storeAgent (Agent agent, int x, int y, int z) {
+		BlockIndex index = new BlockIndex(x, y, z);
+		
+		if (agents.containsKey(index)) {
+			agents.remove(index);
+		}
+		
+		agents.put(index, agent);
+	}
+	
+	public static void removeAgent (Agent agent, int x, int y, int z) {
+		BlockIndex index = new BlockIndex(x, y, z);
+		
+		if (agents.containsKey(index)) {
+			agents.remove(index);
+		}
+	}
+}

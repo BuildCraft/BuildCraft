@@ -1,0 +1,16 @@
+
+public class impot {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		float CA = 1516;
+		
+		float Revenu = CA * 34.0 / 100.0;
+		
+		
+
+	}
+
+}

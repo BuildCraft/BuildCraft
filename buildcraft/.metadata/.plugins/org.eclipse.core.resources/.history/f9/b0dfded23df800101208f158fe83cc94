@@ -1,0 +1,139 @@
+/** 
+ * BuildCraft is open-source. It is distributed under the terms of the 
+ * BuildCraft Open Source License. It grants rights to read, modify, compile
+ * or run the code. It does *NOT* grant the right to redistribute this software
+ * or its modifications in any form, binary or source, except if expressively
+ * granted by the copyright holder.
+ */
+
+package net.minecraft.src.buildcraft.core;
+
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.core.ClassMapping.Indexes;
+
+public class TilePacketWrapper {
+	
+	ClassMapping rootMappings [];
+
+	PacketIds packetType;
+	
+	@SuppressWarnings("rawtypes")
+	public TilePacketWrapper (Class c, PacketIds packetType) {
+		this (new Class [] {c}, packetType);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public TilePacketWrapper (Class c [], PacketIds packetType) {
+		rootMappings = new ClassMapping [c.length];
+		
+		for (int i = 0; i < c.length; ++i) {		
+			rootMappings [i] = new ClassMapping(c [i]);
+		}
+		
+		this.packetType = packetType;
+	}
+	
+	
+	
+	public Packet230ModLoader toPacket (TileEntity tile) {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		packet.modId = mod_BuildCraftCore.instance.getId();
+		packet.isChunkDataPacket = true;
+		packet.packetType = packetType.ordinal();
+				
+		int sizeI = 3, sizeF = 0, sizeS = 0;
+		
+		for (int i = 0; i < rootMappings.length; ++i) {					
+			int [] size = rootMappings [i].getSize();
+		
+			sizeI += size [0];
+			sizeF += size [1];
+			sizeS += size [2];
+		}
+		
+		packet.dataInt = new int [sizeI];
+		packet.dataFloat = new float [sizeF];
+		packet.dataString = new String [sizeS];
+		
+		packet.dataInt [0] = tile.xCoord;
+		packet.dataInt [1] = tile.yCoord;
+		packet.dataInt [2] = tile.zCoord;
+		
+		try {
+			rootMappings [0].setData(tile, packet.dataInt, packet.dataFloat,
+					packet.dataString, new Indexes(3, 0, 0));
+			return packet;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			return null;
+		}
+	}
+	
+	public Packet230ModLoader toPacket (int x, int y, int z, Object [] obj) {
+		Packet230ModLoader packet = new Packet230ModLoader();
+		packet.modId = mod_BuildCraftCore.instance.getId();
+		System.out.println (mod_BuildCraftCore.instance.toString() + " => " + mod_BuildCraftCore.instance.getId());
+		packet.isChunkDataPacket = true;
+		packet.packetType = packetType.ordinal();
+		
+		int sizeI = 3, sizeF = 0, sizeS = 0;
+		
+		for (int i = 0; i < rootMappings.length; ++i) {					
+			int [] size = rootMappings [i].getSize();
+		
+			sizeI += size [0];
+			sizeF += size [1];
+			sizeS += size [2];
+		}
+		
+		packet.dataInt = new int [sizeI];
+		packet.dataFloat = new float [sizeF];
+		packet.dataString = new String [sizeS];
+		
+		packet.dataInt [0] = x;
+		packet.dataInt [1] = y;
+		packet.dataInt [2] = z;
+		
+		try {
+			Indexes ind = new Indexes(3, 0, 0);
+			
+			for (int i = 0; i < rootMappings.length; ++i) {
+				rootMappings [i].setData(obj [i], packet.dataInt, packet.dataFloat,
+						packet.dataString, ind);
+			}
+			
+			return packet;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			return null;
+		}		
+	}
+
+	public void updateFromPacket (Object [] obj, Packet230ModLoader packet) {
+		try {
+			Indexes ind = new Indexes(3, 0, 0);
+			
+			for (int i = 0; i < rootMappings.length; ++i) {
+				rootMappings [i].updateFromData(obj [i], packet.dataInt, packet.dataFloat,
+						packet.dataString, ind);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateFromPacket (TileEntity tile, Packet230ModLoader packet) {
+		try {
+			rootMappings [0].updateFromData(tile, packet.dataInt, packet.dataFloat,
+					packet.dataString, new Indexes(3, 0, 0));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

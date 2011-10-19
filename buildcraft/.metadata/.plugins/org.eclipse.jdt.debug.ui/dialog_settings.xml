@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator$ExpressionInformationControl">
+		<item value="200" key="SashWeightDetails"/>
+		<item value="200" key="SashWeightTree"/>
+		<item value="194" key="HEIGHT"/>
+		<item value="614" key="WIDTH"/>
+	</section>
+	<section name="AddExceptionDialog">
+		<item value="true" key="uncaughtChecked"/>
+		<item value="true" key="caughtChecked"/>
+	</section>
+</section>

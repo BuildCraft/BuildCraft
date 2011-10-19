@@ -1,0 +1,29 @@
+package net.minecraft.src.buildcraft.core;
+
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
+
+public abstract class PersistentTile {
+	public TileEntity tile;
+	
+	public BlockIndex index;
+	public World worldObj;
+	
+	public void setTile (TileEntity tile) {
+		this.tile = tile;
+	}
+	
+	public void validate () {		
+		worldObj = tile.worldObj;
+		index = new BlockIndex(tile.xCoord , tile.yCoord, tile.zCoord);
+	}
+
+	public void destroy() {
+
+	}
+	
+	public boolean isValid () {
+		return tile != null && !tile.isInvalid();
+	}
+	
+}

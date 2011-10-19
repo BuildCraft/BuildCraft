@@ -1,0 +1,30 @@
+package net.minecraft.src.buildcraft.core;
+
+import java.util.TreeMap;
+
+public class Agent {
+	
+	private static TreeMap<BlockIndex, Agent> agents = new TreeMap<BlockIndex, Agent>();
+	
+	public static Agent getAgent (int x, int y, int z) {
+		return agents.get(new BlockIndex(x, y, z));		
+	}
+	
+	public static void storeAgent (Agent agent, int x, int y, int z) {
+		BlockIndex index = new BlockIndex(x, y, z);
+		
+		if (agents.containsKey(index)) {
+			agents.remove(index);
+		}
+		
+		agents.put(index, agent);
+	}
+	
+	public static void removeAgent (Agent agent, int x, int y, int z) {
+		BlockIndex index = new BlockIndex(x, y, z);
+		
+		if (agents.containsKey(index)) {
+			agents.remove(index);
+		}
+	}
+}

@@ -1,0 +1,11 @@
+package net.minecraft.src.buildcraft.core;
+
+import net.minecraft.src.IBlockAccess;
+
+public class PersistentTile {
+	public final BlockIndex index;
+	
+	public PersistentTile (IBlockAccess blockAccess, int x, int y, int z) {
+		index = new BlockIndex(x, y, z);
+	}
+}

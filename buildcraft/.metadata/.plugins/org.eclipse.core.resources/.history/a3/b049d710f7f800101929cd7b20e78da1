@@ -1,0 +1,22 @@
+
+public class impot {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		double CA = 1516.0;
+		
+		double Revenu = CA * 50.0 / 100.0;		
+		double Impots_Revenu = Revenu * 30.0 / 100.0;
+		
+		double Cotisations = CA * 13.0 / 100.0;
+		
+		double Taux = (Cotisations + Impots_Revenu) / CA * 100.0;
+		
+		System.out.println ("TOTAL IMPOTS = " + Impots_Revenu + Cotisations);
+		System.out.println ("TAUX = " + Taux + "%");
+
+	}
+
+}
