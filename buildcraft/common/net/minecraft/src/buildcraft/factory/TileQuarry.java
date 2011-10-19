@@ -409,6 +409,11 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	}
 	
 	@Override
+	public void invalidate () {
+		destroy ();
+	}
+	
+	@Override
 	public void destroy () {
 		if (arm != null) {
 			arm.setEntityDead ();
