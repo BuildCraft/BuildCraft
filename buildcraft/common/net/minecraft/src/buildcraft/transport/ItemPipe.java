@@ -70,7 +70,7 @@ public class ItemPipe extends Item implements ITextureProvider {
         }
         if(world.canBlockBePlacedAt(blockID, i, j, k, false, l))
         {
-            BlockGenericPipe.createPipe(i, j, k, shiftedIndex);
+            BlockGenericPipe.createPipe(world, i, j, k, shiftedIndex);
             if(world.setBlockAndMetadataWithNotify(i, j, k, blockID, 0))
             {            	      
                 Block.blocksList[blockID].onBlockPlaced(world, i, j, k, l);

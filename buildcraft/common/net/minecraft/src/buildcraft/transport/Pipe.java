@@ -19,9 +19,10 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 
-public abstract class Pipe {
+public abstract class Pipe extends PersistentTile {
 	
 	public int xCoord;
 	public int yCoord;
@@ -71,15 +72,20 @@ public abstract class Pipe {
 		if (worldObj != null && this.worldObj == null) {
 			this.worldObj = worldObj;
 			transport.setWorld(worldObj);
-			logic.setWorld(worldObj);
+			logic.setWorld(worldObj);			
 		}
 	}
 	
-	public void setTile (TileGenericPipe tile) {
-		this.container = tile;
+	@Override
+	public void setTile (TileEntity tile) {
+		super.setTile(tile);
 		
-		transport.setTile (tile);
-		logic.setTile (tile);
+		this.container = (TileGenericPipe) tile;
+		
+		transport.setTile ((TileGenericPipe) tile);
+		logic.setTile ((TileGenericPipe) tile);
+		
+		setPosition (tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 
 	

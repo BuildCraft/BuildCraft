@@ -34,13 +34,13 @@ public class BlockIndex implements Comparable<BlockIndex> {
 			return 1;
 		} else if (o.i > i) {
 			return -1;
-		} else if (o.j < j) {
-			return 1;
-		} else if (o.j > j) {
-			return -1;
 		} else if (o.k < k) {
 			return 1;
 		} else if (o.k > k) {
+			return -1;
+		} else if (o.j < j) {
+			return 1;
+		} else if (o.j > j) {
 			return -1;
 		} else {
 			return 0;

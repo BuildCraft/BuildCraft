@@ -20,6 +20,10 @@ public class SafeTimeTracker {
 	 * called successfully.
 	 */
 	public boolean markTimeIfDelay (World world, long delay) {
+		if (world == null) {
+			return false;
+		}
+		
 		long currentTime = world.getWorldTime();
 		
 		if (currentTime < lastMark) {

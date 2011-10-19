@@ -15,6 +15,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -22,20 +23,26 @@ import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.PersistentTile;
+import net.minecraft.src.buildcraft.core.PersistentWorld;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile {
+	
+	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 	
 	public Pipe pipe;
 	private boolean blockNeighborChange = false;
 	private boolean initialized = false;
 
 	@TileNetworkData public int pipeId = -1;
-	
+
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
@@ -48,43 +55,26 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		
-		pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, nbttagcompound.getInteger("pipeId"));
+		pipe = BlockGenericPipe.createPipe(nbttagcompound.getInteger("pipeId"));
 		pipe.setTile(this);
-		pipe.readFromNBT(nbttagcompound);	
-	}
-		
-	@Override
-	public void validate () {
-		super.validate();
-		
-		if (pipe == null) {
-			pipe = BlockGenericPipe.pipeBuffer.get(new BlockIndex(xCoord, yCoord, zCoord));			
-		}
-		
-		if (BlockGenericPipe.pipeBuffer.containsKey(new BlockIndex(xCoord, yCoord, zCoord))) {
-			BlockGenericPipe.pipeBuffer.remove(new BlockIndex(xCoord, yCoord, zCoord));	
-		}
-		
-		if (pipe != null) {
-			pipe.setTile(this);
-			pipe.setWorld(worldObj);
-			pipeId = pipe.itemID;
-		}
+		pipe.readFromNBT(nbttagcompound);		
+	}	
+	
+	public void synchronizeIfDelay (int delay) {
+		if (APIProxy.isServerSide()) {
+			if (networkSyncTracker.markTimeIfDelay(worldObj, delay)) {
+				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord,
+						zCoord, 40, mod_BuildCraftCore.instance);
+			}
+		}	
 	}
 	
 	@Override
-	public void updateEntity () {
+	public void updateEntity () {		
+		initializePipe ();
+		
 		if (!BlockGenericPipe.isValid(pipe)) {
 			return;
-		}
-		
-		pipeId = pipe.itemID;
-		
-		if (!initialized) {		
-			pipe.initialize();
-			pipe.setWorld(worldObj);
-			pipe.setTile(this);
-			initialized = true;
 		}
 		
 		if (blockNeighborChange) {
@@ -99,11 +89,41 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 		
 		pipe.updateEntity ();
+		
+		synchronizeIfDelay(200);
+	}
+
+	private void initializePipe() {
+		if (!initialized) {		
+			if (pipe == null) {
+				PersistentTile tile = PersistentWorld.getWorld(worldObj).getTile(new BlockIndex(xCoord,
+						yCoord, zCoord));
+				
+				if (tile != null && tile instanceof Pipe) {
+					pipe = (Pipe) tile;				
+				}
+			} else {
+				// put the pipe in the correct world
+			}
+			
+			if (pipe != null) {
+				pipe.setTile(this);
+				pipe.setWorld(worldObj);
+				pipeId = pipe.itemID;			
+				pipe.initialize();
+				
+				PersistentWorld.getWorld(worldObj).storeTile(pipe,
+						new BlockIndex(xCoord, yCoord, zCoord));
+			}
+			
+			initialized = true;					
+		}
+		
 	}
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {		
-		if (pipe instanceof IPowerReceptor) {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
 			((IPowerReceptor) pipe).setPowerProvider(provider);
 		}
 		
@@ -111,7 +131,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public PowerProvider getPowerProvider() {
-		if (pipe instanceof IPowerReceptor) {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
 			return ((IPowerReceptor) pipe).getPowerProvider();
 		} else {
 			return null;
@@ -120,24 +140,28 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void doWork() {
-		if (pipe instanceof IPowerReceptor) {
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
 			((IPowerReceptor) pipe).doWork();
 		}		
 	}
 
 	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		if (pipe.transport instanceof ILiquidContainer) {
-			return ((ILiquidContainer) pipe.transport).fill(from, quantity, id, doFill);
+		if (BlockGenericPipe.isValid(pipe)
+				&& pipe.transport instanceof ILiquidContainer) {
+			return ((ILiquidContainer) pipe.transport).fill(from, quantity, id,
+					doFill);
 		} else {
-			return 0;	
-		}		
+			return 0;
+		}
 	}
 
 	@Override
 	public int empty(int quantityMax, boolean doEmpty) {
-		if (pipe.transport instanceof ILiquidContainer) {
-			return ((ILiquidContainer) pipe.transport).empty(quantityMax, doEmpty);
+		if (BlockGenericPipe.isValid(pipe)
+				&& pipe.transport instanceof ILiquidContainer) {
+			return ((ILiquidContainer) pipe.transport).empty(quantityMax,
+					doEmpty);
 		} else {
 			return 0;
 		}
@@ -145,16 +169,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public int getLiquidQuantity() {
-		if (pipe.transport instanceof ILiquidContainer) {
+		if (BlockGenericPipe.isValid(pipe)
+				&& pipe.transport instanceof ILiquidContainer) {
 			return ((ILiquidContainer) pipe.transport).getLiquidQuantity();
 		} else {
-			return 0;	
-		}		
+			return 0;
+		}
 	}
 
 	@Override
 	public int getCapacity() {
-		if (pipe.transport instanceof ILiquidContainer) {
+		if (BlockGenericPipe.isValid(pipe)
+				&& pipe.transport instanceof ILiquidContainer) {
 			return ((ILiquidContainer) pipe.transport).getCapacity();
 		} else {
 			return 0;
@@ -163,7 +189,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public int getLiquidId() {
-		if (pipe.transport instanceof ILiquidContainer) {
+		if (BlockGenericPipe.isValid(pipe)
+				&& pipe.transport instanceof ILiquidContainer) {
 			return ((ILiquidContainer) pipe.transport).getLiquidId();
 		} else {
 			return 0;
@@ -272,20 +299,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
 		if (pipe == null) {
-			pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, packet.dataInt [3]);
-			pipe.setTile(this);	
+			pipe = BlockGenericPipe.createPipe(packet.dataInt[3]);
+			pipe.setTile(this);
 			pipe.setWorld(worldObj);
 		}
 	}
 
 	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {
-		if (!BlockGenericPipe.isValid(pipe) && pipeId != -1) {
-			pipe = BlockGenericPipe.createPipe(xCoord, yCoord, zCoord, pipeId);
-			pipe.setTile(this);	
-			pipe.setWorld(worldObj);
-		}
-		
+	public void handleUpdatePacket(Packet230ModLoader packet) {				
 		if (BlockGenericPipe.isValid(pipe)) {
 			pipe.handlePacket(packet);
 		}
@@ -304,17 +325,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public Packet getDescriptionPacket() {
+		initializePipe();
+		
 		Packet230ModLoader packet = new Packet230ModLoader();
 		packet.modId = mod_BuildCraftCore.instance.getId();
 		packet.isChunkDataPacket = true;
 		packet.packetType = PacketIds.TileDescription.ordinal();
-		
-		packet.dataInt = new int [4];
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		packet.dataInt [3] = pipe.itemID;
-		
+
+		packet.dataInt = new int[4];
+		packet.dataInt[0] = xCoord;
+		packet.dataInt[1] = yCoord;
+		packet.dataInt[2] = zCoord;
+		packet.dataInt[3] = pipe.itemID;
+
 		return packet;
 	}
 

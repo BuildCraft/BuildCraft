@@ -20,7 +20,7 @@ public class LegacyTile extends TileEntity {
 		int pipeId = ((LegacyBlock) Block.blocksList[worldObj.getBlockId(
 				xCoord, yCoord, zCoord)]).newPipeId;
 		
-		BlockGenericPipe.createPipe(xCoord, yCoord, zCoord,
+		BlockGenericPipe.createPipe(worldObj, xCoord, yCoord, zCoord,
 				pipeId);
 		worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord,
 				BuildCraftTransport.genericPipeBlock.blockID, meta);

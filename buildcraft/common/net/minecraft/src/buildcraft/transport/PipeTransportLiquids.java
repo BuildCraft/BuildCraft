@@ -12,16 +12,13 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -266,9 +263,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	// Computed at each update
 	boolean isOutput [] = new boolean [] {false, false, false, false, false, false};
 
-	private SafeTimeTracker timeTracker = new SafeTimeTracker();
-	
-
 	public PipeTransportLiquids() {
 		for (int j = 0; j < 6; ++j) {
 			side[j] = new LiquidBuffer(j);
@@ -305,14 +299,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		moveLiquids();
 		
-		if (APIProxy.isServerSide()) {
-			if (timeTracker.markTimeIfDelay(worldObj, 10)) {
-				CoreProxy
-						.sendToPlayers(this.container.getUpdatePacket(),
-								xCoord, yCoord, zCoord, 40,
-								mod_BuildCraftCore.instance);
-			}
-		}
+		this.container.synchronizeIfDelay(10);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

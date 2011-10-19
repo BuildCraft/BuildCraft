@@ -8,8 +8,24 @@
 
 package net.minecraft.src.buildcraft.core;
 
-public interface ILiquid {
+import net.minecraft.src.TileEntity;
 
-	public int stillLiquidId (); 
+public abstract class PersistentTile {
+	public TileEntity tile;
+	
+	public BlockIndex index;
+	
+	public void setTile (TileEntity tile) {
+		this.tile = tile;
+		index = new BlockIndex(tile.xCoord , tile.yCoord, tile.zCoord);
+	}
+
+	public void destroy() {
+
+	}
+	
+	public boolean isValid () {
+		return tile != null && !tile.isInvalid();
+	}
 	
 }

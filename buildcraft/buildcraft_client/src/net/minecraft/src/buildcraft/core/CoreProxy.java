@@ -16,6 +16,7 @@ import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModTextureStatic;
 import net.minecraft.src.Packet230ModLoader;
@@ -114,5 +115,9 @@ public class CoreProxy {
 		}
 		coreTextureIndex = (Integer) textures
 				.get(BuildCraftCore.customBuildCraftTexture);
+	}
+	
+	public static long getHash (IBlockAccess iBlockAccess) {
+		return iBlockAccess.getWorldChunkManager().hashCode();
 	}
 }

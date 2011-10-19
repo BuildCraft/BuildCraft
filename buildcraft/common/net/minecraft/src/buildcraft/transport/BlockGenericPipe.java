@@ -30,6 +30,8 @@ import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.PersistentTile;
+import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -201,6 +203,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 		
 		pipeRemoved.put(new BlockIndex (i, j, k), getPipe (world, i, j, k));
+		PersistentWorld.getWorld(world).removeTile (new BlockIndex (i, j, k));
 
 		super.onBlockRemoval(world, i, j, k);
 	}
@@ -326,7 +329,6 @@ public class BlockGenericPipe extends BlockContainer implements
 	/** Registration *********************************************************/
 	
 	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
-	public static TreeMap<BlockIndex, Pipe> pipeBuffer = new TreeMap<BlockIndex, Pipe>();
 	
 	long lastRemovedDate = -1;
 	public static TreeMap<BlockIndex, Pipe> pipeRemoved = new TreeMap<BlockIndex, Pipe>();
@@ -359,38 +361,27 @@ public class BlockGenericPipe extends BlockContainer implements
 		return null;
 	}
 	
-	public static Pipe createPipe(int i, int j, int k, int key) {
-		BlockIndex index = new BlockIndex(i, j, k);
-		
-		if (pipeBuffer.containsKey(index)) {
-			pipeBuffer.remove(index);
-		}
-		
+	public static Pipe createPipe(IBlockAccess blockAccess, int i, int j, int k, int key) {		
 		Pipe pipe = createPipe(key);
-		pipe.setPosition(i, j, k);
+		pipe.setPosition(i, j, k);		
 		
-		pipeBuffer.put(index, pipe);
-		
-		return pipe;
+		return (Pipe) PersistentWorld.getWorld(blockAccess).createTile(pipe,
+				new BlockIndex(i, j, k));
 	}
 	
 	public static Pipe getPipe (IBlockAccess blockAccess, int i, int j, int k) {
-		TileEntity tile = blockAccess.getBlockTileEntity(i, j, k);		
+		PersistentTile tile = PersistentWorld.getWorld(blockAccess).getTile(
+				new BlockIndex(i, j, k));
 		
-		Pipe pipe = null;
-		
-		if (tile instanceof TileGenericPipe) {
-			pipe = ((TileGenericPipe) tile).pipe;
+		if (tile == null || !tile.isValid() || !(tile instanceof Pipe)) {
+			return null;
+		} else {		
+			return (Pipe) tile;
 		}
-		
-		if (pipe == null) {
-			pipe = pipeBuffer.get(new BlockIndex(i, j, k));
-		}
-		
-		return pipe;
 	}	
 	
 	public static boolean isValid (Pipe pipe) {
-		return pipe != null && pipe.transport != null && pipe.logic != null;
+		return pipe != null && pipe.transport != null && pipe.logic != null
+				&& pipe.isValid();
 	}
 }
