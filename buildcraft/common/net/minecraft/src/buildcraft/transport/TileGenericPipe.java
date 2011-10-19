@@ -89,8 +89,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 		
 		pipe.updateEntity ();
-		
-		synchronizeIfDelay(200);
 	}
 
 	private void initializePipe() {
@@ -203,7 +201,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public int getSizeInventory() {
-		if (BlockGenericPipe.isValid(pipe)) {
+		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.getSizeInventory();
 		} else {
 			return 0;
@@ -212,7 +210,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		if (BlockGenericPipe.isValid(pipe)) {
+		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.getStackInSlot(i);
 		} else {
 			return null;
@@ -221,7 +219,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		if (BlockGenericPipe.isValid(pipe)) {
+		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.decrStackSize(i, j);
 		} else {
 			return null;
@@ -230,14 +228,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		if (BlockGenericPipe.isValid(pipe)) {
+		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			pipe.logic.setInventorySlotContents(i, itemstack);
 		}
 	}
 
 	@Override
 	public String getInvName() {
-		if (BlockGenericPipe.isValid(pipe)) {
+		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.getInvName();
 		} else {
 			return "";
@@ -246,7 +244,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public int getInventoryStackLimit() {
-		if (BlockGenericPipe.isValid(pipe)) {
+		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.getInventoryStackLimit();
 		} else {
 			return 0;
@@ -255,7 +253,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		if (BlockGenericPipe.isValid(pipe)) {
+		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.canInteractWith(entityplayer);
 		} else {
 			return false;

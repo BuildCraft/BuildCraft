@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.WorldChunkManager;
 
 public class PersistentWorld {
 	

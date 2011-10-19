@@ -380,8 +380,11 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 	}	
 	
+	public static boolean isFullyDefined (Pipe pipe) {
+		return pipe != null && pipe.transport != null && pipe.logic != null;
+	}	
+	
 	public static boolean isValid (Pipe pipe) {
-		return pipe != null && pipe.transport != null && pipe.logic != null
-				&& pipe.isValid();
+		return isFullyDefined(pipe)	&& pipe.isValid();
 	}
 }
