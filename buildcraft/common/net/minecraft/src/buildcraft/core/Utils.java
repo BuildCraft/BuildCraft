@@ -337,7 +337,7 @@ public class Utils {
 
 		BlockIndex index = new BlockIndex(x, y, z);
 
-		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
+		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {			
 			BuildCraftCore.bufferedDescriptions.remove(index);
 		}
 		

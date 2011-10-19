@@ -52,13 +52,7 @@ public class PipeTransportPower extends PipeTransport {
 	
 	@Override
 	public void updateEntity () {
-		if (APIProxy.isClient(worldObj)) {
-			double totalDisplay = 0;
-			
-			for (double d : displayPower) {
-				totalDisplay += d;
-			}
-			
+		if (APIProxy.isClient(worldObj)) {			
 			return;
 		}
 		
