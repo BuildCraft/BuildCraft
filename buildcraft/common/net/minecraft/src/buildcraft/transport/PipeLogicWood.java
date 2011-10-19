@@ -14,6 +14,7 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -23,7 +24,7 @@ public class PipeLogicWood extends PipeLogic {
 
 	public static String [] excludedBlocks = new String [0];
 	
-	public void switchSource () {		
+	public void switchSource () {	
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		int newMeta = 6;
 		
@@ -108,7 +109,9 @@ public class PipeLogicWood extends PipeLogic {
 	public void initialize () {
 		super.initialize();
 		
-		switchSourceIfNeeded();
+		if (!APIProxy.isClient(worldObj)) {
+			switchSourceIfNeeded();
+		}
 	}
 	
 	private void switchSourceIfNeeded () {
@@ -134,6 +137,8 @@ public class PipeLogicWood extends PipeLogic {
 	public void onNeighborBlockChange () {		
 		super.onNeighborBlockChange();
 		
-		switchSourceIfNeeded();
+		if (!APIProxy.isClient(worldObj)) {
+			switchSourceIfNeeded();
+		}
 	}
 }
