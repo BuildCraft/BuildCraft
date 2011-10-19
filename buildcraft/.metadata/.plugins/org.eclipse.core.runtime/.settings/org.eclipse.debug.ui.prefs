@@ -1,8 +1,8 @@
-#Wed Oct 19 15:31:24 EDT 2011
+#Wed Oct 19 17:13:09 EDT 2011
 pref_state_memento.org.eclipse.debug.ui.VariableView=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<VariablesViewMemento org.eclipse.debug.ui.SASH_DETAILS_PART\="315" org.eclipse.debug.ui.SASH_VIEW_PART\="684">\r\n<PRESENTATION_CONTEXT_PROPERTIES IMemento.internal.id\="org.eclipse.debug.ui.VariableView"/>\r\n</VariablesViewMemento>
 pref_state_memento.org.eclipse.debug.ui.BreakpointView=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<VariablesViewMemento org.eclipse.debug.ui.SASH_DETAILS_PART\="315" org.eclipse.debug.ui.SASH_VIEW_PART\="684">\r\n<PRESENTATION_CONTEXT_PROPERTIES IMemento.internal.id\="org.eclipse.debug.ui.BreakpointView">\r\n<BOOLEAN BOOLEAN\="true" IMemento.internal.id\="org.eclipse.debug.ui.check"/>\r\n</PRESENTATION_CONTEXT_PROPERTIES>\r\n</VariablesViewMemento>
 pref_state_memento.org.eclipse.debug.ui.DebugVieworg.eclipse.debug.ui.DebugView=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<DebugViewMemento org.eclipse.debug.ui.BREADCRUMB_DROPDOWN_AUTO_EXPAND\="false"/>
 eclipse.preferences.version=1
-preferredDetailPanes=DefaultDetailPane\:DefaultDetailPane|org.eclipse.jdt.debug.ui.DETAIL_PANE_EXCEPTION_BREAKPOINT\:org.eclipse.jdt.debug.ui.DETAIL_PANE_EXCEPTION_BREAKPOINT|
+preferredDetailPanes=DefaultDetailPane\:DefaultDetailPane|org.eclipse.jdt.debug.ui.DETAIL_PANE_LINE_BREAKPOINT\:org.eclipse.jdt.debug.ui.DETAIL_PANE_LINE_BREAKPOINT|org.eclipse.jdt.debug.ui.DETAIL_PANE_EXCEPTION_BREAKPOINT\:org.eclipse.jdt.debug.ui.DETAIL_PANE_EXCEPTION_BREAKPOINT|
 preferredTargets=default\:default|default,org.eclipse.cdt.debug.ui.toggleCBreakpointTarget\:default|org.eclipse.cdt.debug.ui.toggleCBreakpointTarget\:org.eclipse.cdt.debug.ui.toggleCBreakpointTarget|
 org.eclipse.debug.ui.PREF_LAUNCH_PERSPECTIVES=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<launchPerspectives/>\r\n
