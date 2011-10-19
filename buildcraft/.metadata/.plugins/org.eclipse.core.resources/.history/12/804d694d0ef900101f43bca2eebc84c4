@@ -1,0 +1,9 @@
+package net.minecraft.src.buildcraft.core;
+
+import java.util.TreeMap;
+
+public class PersistentWorld {
+	
+	private TreeMap <BlockIndex, PersistentTile> tiles = new TreeMap <BlockIndex, PersistentTile> ();
+
+}

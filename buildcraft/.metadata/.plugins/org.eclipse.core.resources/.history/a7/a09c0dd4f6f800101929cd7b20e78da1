@@ -1,0 +1,17 @@
+
+public class impot {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		double CA = 1516.0;
+		
+		double Revenu = CA * 50.0 / 100.0;		
+		double Impots_Revenu = Revenu * 30.0 / 100.0;
+		
+		double Cotisations = CA * 
+
+	}
+
+}

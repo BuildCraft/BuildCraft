@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<typeInfoHistroy>
+<typeInfo handle="=buildcraft_client/minecraft&lt;net.minecraft.src{MapGenCaves.java[MapGenCaves" modifiers="1" timestamp="1319054958684"/>
+<typeInfo handle="=buildcraft_server/minecraft_server&lt;net.minecraft.src{MapGenBase.java[MapGenBase" modifiers="1" timestamp="1319054977116"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.transport{PipeTransport.java[PipeTransport" modifiers="1" timestamp="1318779778033"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.core{ClassMapping.java[ClassMapping" modifiers="1" timestamp="1318768107615"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.core{TileBuildCraft.java[TileBuildCraft" modifiers="1025" timestamp="1318768107651"/>
+<typeInfo handle="=buildcraft_client/C:\/MCP\/jars\/bin\/minecraft.jar&lt;com.jcraft.jorbis(Block.class[Block" modifiers="33" timestamp="1318774941864"/>
+<typeInfo handle="=buildcraft_client/minecraft&lt;net.minecraft.src{Block.java[Block" modifiers="1" timestamp="1319054997629"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.transport{BlockGenericPipe.java[BlockGenericPipe" modifiers="1" timestamp="1318892389842"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.transport{PipeTransportLiquids.java[PipeTransportLiquids" modifiers="1" timestamp="1318886323686"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.core{PersistentWorld.java[PersistentWorld" modifiers="1" timestamp="1319056445740"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.energy{EngineStone.java[EngineStone" modifiers="1" timestamp="1318768108915"/>
+<typeInfo handle="=buildcraft_client/minecraft&lt;net.minecraft.src{BlockFurnace.java[BlockFurnace" modifiers="1" timestamp="1319054957795"/>
+<typeInfo handle="=buildcraft_client/minecraft&lt;net.minecraft.src{ChunkCache.java[ChunkCache" modifiers="1" timestamp="1319054957916"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.transport{PipeLogicWood.java[PipeLogicWood" modifiers="1" timestamp="1318768109631"/>
+<typeInfo handle="=buildcraft_client/C:\/Program Files \(x86)\/Java\/jre7\/lib\/rt.jar&lt;java.nio.channels(AcceptPendingException.class[AcceptPendingException" modifiers="33" timestamp="1317399065562"/>
+<typeInfo handle="=buildcraft_client/C:\/Program Files \(x86)\/Java\/jre7\/lib\/rt.jar&lt;java.lang(ArrayIndexOutOfBoundsException.class[ArrayIndexOutOfBoundsException" modifiers="33" timestamp="1317399065562"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.energy{EngineFuel.java[EngineFuel" modifiers="1" timestamp="1318768108940"/>
+<typeInfo handle="=buildcraft_client/minecraft&lt;net.minecraft.src{World.java[World" modifiers="1" timestamp="1319055000711"/>
+<typeInfo handle="=buildcraft_client/src&lt;net.minecraft.src.buildcraft.core{CoreProxy.java[CoreProxy" modifiers="1" timestamp="1319056461249"/>
+<typeInfo handle="=buildcraft_server/src&lt;net.minecraft.src.buildcraft.core{CoreProxy.java[CoreProxy" modifiers="1" timestamp="1319056658603"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.transport{TileGenericPipe.java[TileGenericPipe" modifiers="1" timestamp="1319057065763"/>
+<typeInfo handle="=buildcraft_client/common&lt;net.minecraft.src.buildcraft.transport{PipeTransportItems.java[PipeTransportItems" modifiers="1" timestamp="1318768109694"/>
+</typeInfoHistroy>

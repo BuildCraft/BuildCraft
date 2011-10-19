@@ -1,0 +1,6 @@
+package net.minecraft.src.buildcraft.core;
+
+public class Agent {
+	public TreeMap <BlockIndex, Agent> agents = new TreeMap <BlockIndex, Agent> ();
+	
+}

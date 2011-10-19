@@ -1,0 +1,22 @@
+#Wed Oct 19 15:50:46 EDT 2011
+sourceHoverBackgroundColor=255,255,225
+content_assist_proposals_foreground=0,0,0
+spelling_locale_initialized=true
+org.eclipse.jdt.ui.text.templates_migrated=true
+useAnnotationsPrefPage=true
+eclipse.preferences.version=1
+org.eclipse.jface.textfont=1|Consolas|10.0|0|WINDOWS|1|0|0|0|0|0|0|0|0|1|0|0|0|0|Consolas;
+tabWidthPropagated=true
+LexicalSortingAction.isChecked=true
+org.eclipse.jdt.ui.editor.tab.width=
+fontPropagated=true
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+org.eclipse.jdt.ui.javadoclocations.migrated=true
+proposalOrderMigrated=true
+content_assist_proposals_background=255,255,255
+org.eclipse.jdt.ui.formatterprofiles.version=12
+content_assist_number_of_computers=13
+useQuickDiffPrefPage=true
+org.eclipse.jdt.ui.text.custom_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"><lhs name\="net.minecraft.src.buildcraft.api.SafeTimeTracker"><rhs name\="net.minecraft.src.buildcraft.api.SafeTimeTracker"/></lhs><lhs name\="net.minecraft.src.buildcraft.core.BlockIndex"><rhs name\="net.minecraft.src.buildcraft.core.BlockIndex"/></lhs><lhs name\="net.minecraft.src.buildcraft.core.PersistentWorld"><rhs name\="net.minecraft.src.buildcraft.core.PersistentWorld"/></lhs><lhs name\="net.minecraft.src.buildcraft.api.IPowerReceptor"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.buildcraft.api.ILiquidContainer"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.buildcraft.api.ISpecialInventory"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.buildcraft.api.IPipeEntry"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.buildcraft.core.ISynchronizedTile"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.IInventory"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.TileEntity"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"><rhs name\="net.minecraft.src.buildcraft.transport.TileGenericPipe"/></lhs><lhs name\="net.minecraft.src.IBlockAccess"><rhs name\="net.minecraft.src.World"/><rhs name\="net.minecraft.src.ChunkCache"/></lhs><lhs name\="net.minecraft.src.World"><rhs name\="net.minecraft.src.World"/></lhs></history>
+org.eclipse.jdt.ui.text.code_templates_migrated=true

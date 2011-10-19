@@ -1,0 +1,20 @@
+package net.minecraft.src.buildcraft.core;
+
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.TileEntity;
+
+public class PersistentTile {
+	public final BlockIndex index;
+	public TileEntity tile;
+	
+	public PersistentTile (TileEntity tile) {
+		index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);	
+		
+	}
+	
+	public void invalidate () {
+		tileEntity
+	}
+	
+	p
+}
