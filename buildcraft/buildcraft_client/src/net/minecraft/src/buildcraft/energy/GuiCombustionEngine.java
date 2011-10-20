@@ -59,12 +59,16 @@ public class GuiCombustionEngine extends GuiContainer {
 		Object o = null;
 		int liquidImgIndex = 0;
 
-		if (liquidId < Block.blocksList.length) {
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
 			o = Block.blocksList[liquidId];
 			liquidImgIndex = Block.blocksList[liquidId].blockIndexInTexture;
-		} else {
+		} else if (Item.itemsList[liquidId] != null) {
 			o = Item.itemsList[liquidId];
 			liquidImgIndex = Item.itemsList[liquidId].getIconFromDamage(0);
+		}
+		
+		if (o == null) {
+			return;
 		}
 
 		if (o instanceof ITextureProvider) {
