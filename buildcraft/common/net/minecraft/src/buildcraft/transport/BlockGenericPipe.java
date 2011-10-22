@@ -249,6 +249,12 @@ public class BlockGenericPipe extends BlockContainer implements
         }
 	}
 	
+	@Override
+	public int idDropped(int meta, Random rand) {
+		// Returns 0 to be safe - the id does not depend on the meta
+		return 0;
+	}
+	
 	/** Wrappers *************************************************************/
 
 	@Override
@@ -425,5 +431,5 @@ public class BlockGenericPipe extends BlockContainer implements
 	
 	public static boolean isValid (Pipe pipe) {
 		return isFullyDefined(pipe)	&& pipe.isValid();
-	}
+	}	
 }
