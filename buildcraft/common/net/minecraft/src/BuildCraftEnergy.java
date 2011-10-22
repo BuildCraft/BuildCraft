@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
@@ -20,13 +21,11 @@ import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
-import net.minecraft.src.buildcraft.energy.EngineFuel;
 import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.ItemFuel;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
-import net.minecraft.src.buildcraft.energy.TileEngine;
 import net.minecraft.src.buildcraft.factory.RefineryRecipe;
 import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.forge.Configuration;
@@ -142,11 +141,11 @@ public class BuildCraftEnergy {
 		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
 				10, fuel.shiftedIndex, 1, 1));
 
-		TileEngine.possibleFuels.put(Block.lavaStill.blockID, new EngineFuel(
+		API.ironEngineFuel.put(Block.lavaStill.blockID, new IronEngineFuel(
 				oilStill.blockID, 1, 2000));
-		TileEngine.possibleFuels.put(oilStill.blockID, new EngineFuel(
+		API.ironEngineFuel.put(oilStill.blockID, new IronEngineFuel(
 				oilStill.blockID, 2, 10000));
-		TileEngine.possibleFuels.put(fuel.shiftedIndex, new EngineFuel(
+		API.ironEngineFuel.put(fuel.shiftedIndex, new IronEngineFuel(
 				fuel.shiftedIndex, 5, 50000));
 		
 		API.liquids.add(new LiquidData(oilStill.blockID,

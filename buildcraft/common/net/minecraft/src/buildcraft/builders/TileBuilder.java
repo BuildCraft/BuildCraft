@@ -288,6 +288,11 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
     }
 
     @Override
+    public void invalidate () {
+    	destroy ();
+    }
+    
+    @Override
 	public void destroy() {		
 		if (box.isInitialized()) {
 			box.deleteLasers();

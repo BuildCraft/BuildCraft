@@ -54,6 +54,10 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	public void updateEntity () {
 		super.updateEntity();
 		
+		if (tube == null) {
+			return;
+		}
+		
 		if (!APIProxy.isClient(worldObj)) {
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
@@ -338,9 +342,16 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		}
 	}
 	
+	@Override
+	public void invalidate () {
+		destroy ();
+	}
+	
+	@Override
 	public void destroy () {
 		if (tube != null) {
 			APIProxy.removeEntity(tube);
+			tube = null;
 		}
 	}
 

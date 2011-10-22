@@ -14,6 +14,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class EngineIron extends Engine {
@@ -72,7 +73,7 @@ public class EngineIron extends Engine {
 	}
 	
 	public void burn () {
-		EngineFuel currentFuel = TileEngine.possibleFuels.get(liquidId);
+		IronEngineFuel currentFuel = API.ironEngineFuel.get(liquidId);
 		
 		if (currentFuel == null) {
 			return;
@@ -169,7 +170,7 @@ public class EngineIron extends Engine {
 			return 0;
 		}
 		
-		if (!TileEngine.possibleFuels.containsKey(id)) {
+		if (!API.ironEngineFuel.containsKey(id)) {
 			return 0;
 		}
 		
