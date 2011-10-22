@@ -243,6 +243,11 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 	}
 	
 	@Override
+	public void invalidate () {
+		destroy ();
+	}
+	
+	@Override
     public void destroy () {
     	if (box.isInitialized()) {
     		box.deleteLasers();    		

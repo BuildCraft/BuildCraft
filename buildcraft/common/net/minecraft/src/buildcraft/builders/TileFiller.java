@@ -279,9 +279,14 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     }
     
     @Override
+    public void invalidate () {
+    	destroy ();
+    }
+    
+    @Override
     public void destroy () {
     	if (box != null) {
-    		box.deleteLasers();    		
+    		box.deleteLasers();
     	}
     }
 

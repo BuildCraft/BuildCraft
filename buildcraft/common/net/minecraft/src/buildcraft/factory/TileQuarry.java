@@ -409,7 +409,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	}
 	
 	@Override
-	public void invalidate () {
+	public void invalidate () {		
 		destroy ();
 	}
 	
@@ -420,6 +420,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 		}
 		
 		box.deleteLasers();
+		arm = null;
 	}
 
 	@Override

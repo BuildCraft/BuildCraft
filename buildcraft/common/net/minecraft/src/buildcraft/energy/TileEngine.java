@@ -8,7 +8,6 @@
 
 package net.minecraft.src.buildcraft.energy;
 
-import java.util.HashMap;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -30,8 +29,6 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		IInventory, ILiquidContainer, IEngineProvider {
-	
-	public static HashMap<Integer, EngineFuel> possibleFuels = new HashMap<Integer, EngineFuel>(); 
 	
 	public @TileNetworkData Engine engine;	
 	public @TileNetworkData int progressPart = 0;	

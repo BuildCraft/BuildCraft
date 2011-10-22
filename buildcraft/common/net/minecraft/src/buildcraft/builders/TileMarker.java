@@ -341,6 +341,11 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 	
 	@Override
+	public void invalidate () {
+		destroy ();
+	}
+	
+	@Override
 	public void destroy () {
 		TileMarker markerOrigin = null;
 		

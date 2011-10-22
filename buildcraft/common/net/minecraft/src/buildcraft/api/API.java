@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.api;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
@@ -19,6 +20,7 @@ public class API {
 
 	public static LinkedList <LiquidData> liquids = new LinkedList <LiquidData> ();
 	public static final int BUCKET_VOLUME = 1000;
+	public static HashMap<Integer, IronEngineFuel> ironEngineFuel = new HashMap<Integer, IronEngineFuel>();
 
 	public static int getLiquidForBucket(int itemID) {
 		for (LiquidData d : liquids) {
@@ -70,6 +72,5 @@ public class API {
 		
 		world.setBlockWithNotify(x, y, z, 0);
 	}
-
-
+	
 }

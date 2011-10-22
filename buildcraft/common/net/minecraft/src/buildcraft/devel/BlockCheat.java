@@ -47,10 +47,6 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack(Block.workbench, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(Block.oreGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(Block.obsidian, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack(Item.dyePowder, 64, 0));
-			inv.setInventorySlotContents(ind++, new ItemStack(Item.dyePowder, 64, 2));
-			inv.setInventorySlotContents(ind++, new ItemStack(Item.dyePowder, 64, 4));
-			inv.setInventorySlotContents(ind++, new ItemStack(Item.dyePowder, 64, 11));
 			inv.setInventorySlotContents(ind++, new ItemStack(Block.stone, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(Item.coal, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(Block.planks, 64));
@@ -60,10 +56,13 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack(Item.ingotGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(Item.diamond, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(Block.wood, 64, 0));
-			inv.setInventorySlotContents(ind++, new ItemStack(Block.pistonBase, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack(Item.bed, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack(Item.bucketLava, 1));
 			inv.setInventorySlotContents(ind++, new ItemStack(Item.bucketWater, 1));
+			 inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.markerBlock, 64));
+			 inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.builderBlock, 64));
+			 inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateBlock, 64));
+			 inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.templateItem, 1));
 		} else {
 			// inv.setInventorySlotContents(ind++, new ItemStack
 			// (BuildCraftFactory.miningWellBlock, 64));
@@ -71,14 +70,6 @@ public class BlockCheat extends BlockChest {
 			// inv.setInventorySlotContents(ind++, new ItemStack
 			// (BuildCraftFactory.autoWorkbenchBlock, 64));
 			 inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.fillerBlock, 64));
-			// inv.setInventorySlotContents(ind++, new ItemStack
-			// (BuildCraftBuilders.markerBlock, 64));
-			// inv.setInventorySlotContents(ind++, new ItemStack
-			// (BuildCraftBuilders.builderBlock, 64));
-			// inv.setInventorySlotContents(ind++, new ItemStack
-			// (BuildCraftBuilders.templateBlock, 64));
-			// inv.setInventorySlotContents(ind++, new ItemStack
-			// (BuildCraftBuilders.templateItem, 1));
 			// inv.setInventorySlotContents(ind++, new ItemStack
 			// (BuildCraftCore.goldGearItem, 64));
 			// inv.setInventorySlotContents(ind++, new ItemStack
