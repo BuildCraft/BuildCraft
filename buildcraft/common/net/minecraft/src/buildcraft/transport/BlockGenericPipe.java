@@ -10,6 +10,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.TreeMap;
 
 import net.minecraft.src.AxisAlignedBB;
@@ -284,6 +285,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 	}
 	
+	@Override
 	public void onBlockPlaced(World world, int i, int j, int k, int l) {
 		super.onBlockPlaced(world, i, j, k, l);
 		
@@ -294,6 +296,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 	}
 	
+	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
 		
@@ -301,6 +304,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		return isValid (pipe) ? pipe.blockActivated (world, i, j, k, entityplayer) : false;
 	}
 	
+	@Override
 	public void prepareTextureFor (IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
 		Pipe pipe = getPipe(blockAccess, i, j, k);
 		
@@ -309,6 +313,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 	}
 	
+	@Override
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(iblockaccess, i, j, k);
 		
@@ -325,6 +330,44 @@ public class BlockGenericPipe extends BlockContainer implements
 			pipe.onEntityCollidedWithBlock(entity);
 		}
 	}
+	
+	public boolean isPoweringTo(IBlockAccess iblockaccess, int x, int y, int z, int l) {
+		Pipe pipe = getPipe(iblockaccess, x, y, z);
+		
+		if (isValid (pipe)) {
+			return pipe.isPoweringTo(l);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean canProvidePower() {
+		return true;
+	}
+
+	@Override
+	public boolean isIndirectlyPoweringTo(World world, int i, int j, int k, int l) {
+		Pipe pipe = getPipe(world, i, j, k);
+		
+		if (isValid (pipe)) {
+			return pipe.isIndirectlyPoweringTo(l);
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
+		super.randomDisplayTick(world, i, j, k, random);
+		
+		Pipe pipe = getPipe(world, i, j, k);
+		
+		if (isValid (pipe)) {
+			pipe.randomDisplayTick(random);
+		}
+	}
+
 		
 	/** Registration *********************************************************/
 	

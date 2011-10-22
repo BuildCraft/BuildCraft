@@ -10,6 +10,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
@@ -155,5 +156,19 @@ public abstract class Pipe extends PersistentTile implements IPipe {
 	
 	public void handlePacket (Packet230ModLoader packet) {
 		networkPacket.updateFromPacket(new Object [] {container, transport, logic}, packet);
+	}
+
+
+	public boolean isPoweringTo(int l) {
+		return false;
+	}
+
+
+	public boolean isIndirectlyPoweringTo(int l) {
+		return false;
+	}
+
+
+	public void randomDisplayTick(Random random) {
 	}
 }
