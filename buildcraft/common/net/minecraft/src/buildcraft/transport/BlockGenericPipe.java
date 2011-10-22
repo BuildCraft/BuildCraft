@@ -313,7 +313,6 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 	}
 	
-	@Override
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(iblockaccess, i, j, k);
 		
@@ -357,7 +356,6 @@ public class BlockGenericPipe extends BlockContainer implements
 		}
 	}
 
-	@Override
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		super.randomDisplayTick(world, i, j, k, random);
 		
