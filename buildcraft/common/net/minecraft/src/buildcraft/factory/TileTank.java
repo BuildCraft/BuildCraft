@@ -34,10 +34,10 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			}
 		}
 		
-		return lastTank.actualFill(from, quantity, id);				
+		return lastTank.actualFill(from, quantity, id, doFill);				
 	}
 	
-	private int actualFill(Orientations from, int quantity, int id) {
+	private int actualFill(Orientations from, int quantity, int id, boolean doFill) {
 		if (stored != 0 && id != liquidId) {
 			return 0;
 		}
@@ -49,19 +49,25 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		int used = 0;
 		
 		if (stored + quantity <= getCapacity()) {
-			stored += quantity;
+			if (doFill) {
+				stored += quantity;
+			}
+			
 			used = quantity;
 		} else if (stored <= getCapacity()) {
-			used = getCapacity() - stored;			
-			stored = getCapacity();		
+			used = getCapacity() - stored;		
+			
+			if (doFill) {
+				stored = getCapacity();
+			}
 		}
 		
-		if (APIProxy.isServerSide() && used > 0) {
+		if (doFill && APIProxy.isServerSide() && used > 0) {
 			sendNetworkUpdate();
 		}
 				
 		if (used < quantity && above instanceof TileTank) {
-			used = used + ((TileTank) above).actualFill(from, quantity - used, id);
+			used = used + ((TileTank) above).actualFill(from, quantity - used, id, doFill);
 		}		
 		
 		return used;
