@@ -17,12 +17,13 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 
-public abstract class Pipe extends PersistentTile {
+public abstract class Pipe extends PersistentTile implements IPipe {
 	
 	public int xCoord;
 	public int yCoord;

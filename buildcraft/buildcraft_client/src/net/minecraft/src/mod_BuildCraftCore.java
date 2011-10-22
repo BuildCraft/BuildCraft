@@ -15,10 +15,14 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.buildcraft.api.IBlockPipe;
+import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.PersistentTile;
+import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.MinecraftForgeClient;
@@ -112,72 +116,143 @@ public class mod_BuildCraftCore extends BaseModMp {
 			renderMarkerWithMeta(block, i, j, k,
 					iblockaccess.getBlockMetadata(i, j, k));
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
-			float minSize = Utils.pipeMinPos;
-			float maxSize = Utils.pipeMaxPos;
-
-			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-					Orientations.Unknown);
-			block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize,
-					maxSize);
-			renderblocks.renderStandardBlock(block, i, j, k);
-
-			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
-				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-						Orientations.XNeg);
-				block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
-						maxSize);
-				renderblocks.renderStandardBlock(block, i, j, k);
-			}
-
-			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
-				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-						Orientations.XPos);
-				block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
-						maxSize);
-				renderblocks.renderStandardBlock(block, i, j, k);
-			}
-
-			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
-				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-						Orientations.YNeg);
-				block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
-						maxSize);
-				renderblocks.renderStandardBlock(block, i, j, k);
-			}
-
-			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
-				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-						Orientations.YPos);
-				block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
-						maxSize);
-				renderblocks.renderStandardBlock(block, i, j, k);
-			}
-
-			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
-				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-						Orientations.ZNeg);
-				block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
-						minSize);
-				renderblocks.renderStandardBlock(block, i, j, k);
-			}
-
-			if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
-				((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-						Orientations.ZPos);
-				block.setBlockBounds(minSize, minSize, maxSize, maxSize,
-						maxSize, 1.0F);
-				renderblocks.renderStandardBlock(block, i, j, k);
-			}
-
-			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+			PersistentTile tile = PersistentWorld.getWorld(iblockaccess)
+					.getTile(new BlockIndex(i, j, k));
 			
-			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
-					Orientations.Unknown);
+			if (tile == null || !(tile instanceof IPipe)) {
+				legacyPipeRender(renderblocks, iblockaccess, i, j, k, block, l);
+			} else {
+				pipeRender(renderblocks, iblockaccess, i, j, k, block, l,
+						(IPipe) tile);
+			}
 		} else if (block.getRenderType() == BuildCraftCore.oilModel) {
 			renderblocks.renderBlockFluids(block, i, j, k);
 		}
 
 		return true;
+	}
+	
+	private void pipeRender (RenderBlocks renderblocks,
+			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l, IPipe pipe) {
+		float minSize = Utils.pipeMinPos;
+		float maxSize = Utils.pipeMaxPos;
+
+		pipe.prepareTextureFor(Orientations.Unknown);
+		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize,
+				maxSize);
+		renderblocks.renderStandardBlock(block, i, j, k);
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.XNeg);
+			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
+			pipe.prepareTextureFor(Orientations.XPos);
+			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
+			pipe.prepareTextureFor(Orientations.YNeg);
+			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
+			pipe.prepareTextureFor(Orientations.YPos);
+			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
+			pipe.prepareTextureFor(Orientations.ZNeg);
+			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
+					minSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
+			pipe.prepareTextureFor(Orientations.ZPos);
+			block.setBlockBounds(minSize, minSize, maxSize, maxSize,
+					maxSize, 1.0F);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		
+		pipe.prepareTextureFor(Orientations.Unknown);
+	}
+	
+	private void legacyPipeRender (RenderBlocks renderblocks,
+			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
+		float minSize = Utils.pipeMinPos;
+		float maxSize = Utils.pipeMaxPos;
+
+		((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+				Orientations.Unknown);
+		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize,
+				maxSize);
+		renderblocks.renderStandardBlock(block, i, j, k);
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.XNeg);
+			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.XPos);
+			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.YNeg);
+			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.YPos);
+			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
+					maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.ZNeg);
+			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
+					minSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+					Orientations.ZPos);
+			block.setBlockBounds(minSize, minSize, maxSize, maxSize,
+					maxSize, 1.0F);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		
+		((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
+				Orientations.Unknown);
 	}
 
 	RenderItem itemRenderer = new RenderItem();
