@@ -91,7 +91,7 @@ cp common/net/minecraft/src/buildcraft/api/* api/src/minecraft/net/minecraft/src
 cp common/net/minecraft/src/buildcraft/api/* api/src/minecraft_server/net/minecraft/src/buildcraft/api/
 
 cp buildcraft_client/src/net/minecraft/src/buildcraft/api/* api/src/minecraft/net/minecraft/src/buildcraft/api
-cp buildcraft_server/src/net/minecraft/src/buildcraft/api/* api/src/minecraft/net/minecraft_server/src/buildcraft/api
+cp buildcraft_server/src/net/minecraft/src/buildcraft/api/* api/src/minecraft_server/net/minecraft/src/buildcraft/api
 
 cd api
 
