@@ -357,8 +357,6 @@ public class BlockGenericPipe extends BlockContainer implements
 	}
 
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-		super.randomDisplayTick(world, i, j, k, random);
-		
 		Pipe pipe = getPipe(world, i, j, k);
 		
 		if (isValid (pipe)) {
