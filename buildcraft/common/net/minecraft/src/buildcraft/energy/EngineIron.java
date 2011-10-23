@@ -139,17 +139,17 @@ public class EngineIron extends Engine {
 		}
 	}
 	
-	public EnergyStage getEnergyStage () {
+	public void computeEnergyStage () {
 		if (heat <= MAX_HEAT / 4) {
-			return EnergyStage.Blue;
+			energyStage = EnergyStage.Blue;
 		} else if (heat <= MAX_HEAT / 2) {
-		 	return EnergyStage.Green;
+			energyStage = EnergyStage.Green;
 		}  else if (heat <= (float) MAX_HEAT * 3F / 4F) {
-			return EnergyStage.Yellow;
+			energyStage = EnergyStage.Yellow;
 		} else if (heat <= MAX_HEAT) {
-			return EnergyStage.Red;
+			energyStage = EnergyStage.Red;
 		} else {
-			return EnergyStage.Explosion;
+			energyStage = EnergyStage.Explosion;
 		}
 	}
 
