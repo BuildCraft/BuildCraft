@@ -72,17 +72,19 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 		if (!initialized) {
 			initializeMarkerMatrix();
+
+			MinecraftForgeClient
+			.preloadTexture(BuildCraftCore.customBuildCraftTexture);
+			MinecraftForgeClient
+			.preloadTexture(BuildCraftCore.customBuildCraftSprites);
+			
 			initialized = true;
 		}
 	}
 
 	public void ModsLoaded() {
 		mod_BuildCraftCore.initialize();
-		BuildCraftCore.initializeModel(this);
-		MinecraftForgeClient
-				.preloadTexture(BuildCraftCore.customBuildCraftTexture);
-		MinecraftForgeClient
-				.preloadTexture(BuildCraftCore.customBuildCraftSprites);
+		BuildCraftCore.initializeModel(this);		
 	}
 
 	@Override

@@ -42,6 +42,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	private boolean initialized = false;
 
 	@TileNetworkData public int pipeId = -1;
+	
+	public TileGenericPipe () {
+		
+	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
@@ -70,8 +74,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 	
 	@Override
+	public void validate () {
+		initializePipe();
+	}
+	
+	@Override
 	public void updateEntity () {		
 		initializePipe ();
+		pipe.initialize();
 		
 		if (!BlockGenericPipe.isValid(pipe)) {
 			return;
@@ -100,8 +110,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 				if (tile != null && tile instanceof Pipe) {
 					pipe = (Pipe) tile;				
 				}
-			} else {
-				// put the pipe in the correct world
 			}
 			
 			if (pipe != null) {
@@ -110,7 +118,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 				PersistentWorld.getWorld(worldObj).storeTile(pipe,
 						new BlockIndex(xCoord, yCoord, zCoord));
 				pipeId = pipe.itemID;			
-				pipe.initialize();
 			}
 			
 			initialized = true;					

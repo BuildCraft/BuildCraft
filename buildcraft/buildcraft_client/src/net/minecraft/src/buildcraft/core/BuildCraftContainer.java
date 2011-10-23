@@ -24,25 +24,32 @@ public class BuildCraftContainer extends Container {
 	@Override	
 	public final ItemStack transferStackInSlot(int i)
 	{
-		ItemStack itemstack = null;
-		Slot slot = (Slot)inventorySlots.get(i);
-		if(slot != null && slot.getHasStack())
-		{
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
-			if (i < inventorySize) {
-				mergeItemStack(itemstack1, inventorySize, inventorySlots.size(), true);
-			} else {
-				mergeItemStack(itemstack1, 0, inventorySize, false);
-			}
-
-			if(itemstack1.stackSize == 0) {
-				slot.putStack(null);
-			} else {
-				slot.onSlotChanged();
-			}
-		}
-		return itemstack;
+        ItemStack itemstack = null;
+        Slot slot = (Slot)inventorySlots.get(i);
+        if(slot != null && slot.getHasStack())
+        {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+            if(i < inventorySize)
+            {
+                if(!mergeItemStack(itemstack1, inventorySize, inventorySlots.size(), true))
+                {
+                    return null;
+                }
+            } else
+            if(!mergeItemStack(itemstack1, 0, inventorySize, false))
+            {
+                return null;
+            }
+            if(itemstack1.stackSize == 0)
+            {
+                slot.putStack(null);
+            } else
+            {
+                slot.onSlotChanged();
+            }
+        }
+        return itemstack;
 	}
 
 	@Override
