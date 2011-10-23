@@ -39,7 +39,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	
 	public Pipe pipe;
 	private boolean blockNeighborChange = false;
-	private boolean initialized = false;
+	private boolean pipeBound = false;
 
 	@TileNetworkData public int pipeId = -1;
 	
@@ -75,12 +75,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	
 	@Override
 	public void validate () {
-		initializePipe();
+		bindPipe();
 	}
 	
 	@Override
 	public void updateEntity () {		
-		initializePipe ();
+		bindPipe ();
 		pipe.initialize();
 		
 		if (!BlockGenericPipe.isValid(pipe)) {
@@ -101,8 +101,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		pipe.updateEntity ();
 	}
 
-	private void initializePipe() {
-		if (!initialized) {		
+	private void bindPipe() {
+		if (!pipeBound) {		
 			if (pipe == null) {
 				PersistentTile tile = PersistentWorld.getWorld(worldObj).getTile(new BlockIndex(xCoord,
 						yCoord, zCoord));
@@ -117,10 +117,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 				pipe.setWorld(worldObj);
 				PersistentWorld.getWorld(worldObj).storeTile(pipe,
 						new BlockIndex(xCoord, yCoord, zCoord));
-				pipeId = pipe.itemID;			
-			}
-			
-			initialized = true;					
+				pipeId = pipe.itemID;				
+				pipeBound = true;				
+			}	
 		}
 		
 	}
@@ -304,8 +303,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
 		if (pipe == null) {
 			pipe = BlockGenericPipe.createPipe(packet.dataInt[3]);
-			pipe.setTile(this);
-			pipe.setWorld(worldObj);
+			pipeBound = false;
+			bindPipe();
+			pipe.initialize();
 		}
 	}
 
@@ -329,7 +329,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public Packet getDescriptionPacket() {
-		initializePipe();
+		bindPipe();
 		
 		Packet230ModLoader packet = new Packet230ModLoader();
 		packet.modId = mod_BuildCraftCore.instance.getId();
