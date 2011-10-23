@@ -131,10 +131,15 @@ public abstract class Pipe extends PersistentTile implements IPipe {
 		transport.readFromNBT(nbttagcompound);
 		logic.readFromNBT(nbttagcompound);
 	}
+	
+	private boolean initialized = false;
 
 	public void initialize () {
-		transport.initialize ();
-		logic.initialize ();
+		if (!initialized) {
+			transport.initialize ();
+			logic.initialize ();
+			initialized = true;
+		}
 	}
 
 	public boolean inputOpen(Orientations from) {
