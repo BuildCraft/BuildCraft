@@ -10,6 +10,7 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 
@@ -19,7 +20,8 @@ public abstract class Engine {
 	
 	public @TileNetworkData float progress;	
 	public @TileNetworkData Orientations orientation;	
-	public @TileNetworkData int energy;	
+	public int energy;	
+	public @TileNetworkData EnergyStage energyStage = EnergyStage.Blue;
 	
 	public int maxEnergyExtracted = 1;
 
@@ -37,18 +39,26 @@ public abstract class Engine {
 		this.tile = tile;
 	}
 			
-	public EnergyStage getEnergyStage () {
+	protected void computeEnergyStage () {
 		if (energy / (double) maxEnergy * 100.0 <= 25.0) {
-			return EnergyStage.Blue;
+			energyStage = EnergyStage.Blue;
 		} else if (energy / (double) maxEnergy * 100.0 <= 50.0) {
-		 	return EnergyStage.Green;
-		}  else if (energy / (double) maxEnergy * 100.0 <= 75.0) {
-			return EnergyStage.Yellow;
+			energyStage = EnergyStage.Green;
+		} else if (energy / (double) maxEnergy * 100.0 <= 75.0) {
+			energyStage = EnergyStage.Yellow;
 		} else if (energy / (double) maxEnergy * 100.0 <= 100.0) {
-			return EnergyStage.Red;
+			energyStage = EnergyStage.Red;
 		} else {
-			return EnergyStage.Explosion;
+			energyStage = EnergyStage.Explosion;
 		}
+	}
+	
+	public final EnergyStage getEnergyStage () {
+		if (!APIProxy.isClient(tile.worldObj)) {
+			computeEnergyStage();
+		}
+			
+		return energyStage;
 	}	
 	
 	public void update () {

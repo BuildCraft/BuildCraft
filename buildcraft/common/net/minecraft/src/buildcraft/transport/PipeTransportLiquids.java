@@ -80,6 +80,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		}
 		
 		public int fill (int toFill, boolean doFill, short liquidId) {
+			if (worldObj == null) {
+				return 0;
+			}
+			
 			if (qty > 0 && this.liquidId != liquidId && this.liquidId != 0) {
 				return 0;
 			}
