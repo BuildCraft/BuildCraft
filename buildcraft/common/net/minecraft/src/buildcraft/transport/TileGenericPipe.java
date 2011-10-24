@@ -60,8 +60,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		super.readFromNBT(nbttagcompound);
 		
 		pipe = BlockGenericPipe.createPipe(nbttagcompound.getInteger("pipeId"));
-		pipe.setTile(this);
-		pipe.readFromNBT(nbttagcompound);		
+		
+		if (pipe != null) {
+			pipe.setTile(this);
+			pipe.readFromNBT(nbttagcompound);
+		}
 	}	
 	
 	public void synchronizeIfDelay (int delay) {
@@ -81,7 +84,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	@Override
 	public void updateEntity () {		
 		bindPipe ();
-		pipe.initialize();
+		if (pipe != null) {
+			pipe.initialize();
+		}
 		
 		if (!BlockGenericPipe.isValid(pipe)) {
 			return;
@@ -98,7 +103,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			provider.update(this);
 		}
 		
-		pipe.updateEntity ();
+		if (pipe != null) {
+			pipe.updateEntity ();
+		}
 	}
 
 	private void bindPipe() {
@@ -301,11 +308,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		if (pipe == null) {
+		if (pipe == null && packet.dataInt[3] != 0) {
 			pipe = BlockGenericPipe.createPipe(packet.dataInt[3]);
 			pipeBound = false;
 			bindPipe();
-			pipe.initialize();
+			
+			if (pipe != null) {
+				pipe.initialize();
+			}
 		}
 	}
 
@@ -340,7 +350,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		packet.dataInt[0] = xCoord;
 		packet.dataInt[1] = yCoord;
 		packet.dataInt[2] = zCoord;
-		packet.dataInt[3] = pipe.itemID;
+		
+		if (pipe != null) {
+			packet.dataInt[3] = pipe.itemID;
+		} else {
+			packet.dataInt[3] = 0;
+			
+		}
 
 		return packet;
 	}
