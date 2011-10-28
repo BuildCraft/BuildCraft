@@ -50,7 +50,6 @@ public class TextureLiquidsFX extends TextureFX {
 		field_1157_h = new float[int_numPixels];
 		field_1156_i = new float[int_numPixels];
 		field_1155_j = new float[int_numPixels];
-		tickCounter = 0;
 	}
 
 	public void bindImage(RenderEngine renderengine) {
@@ -58,7 +57,6 @@ public class TextureLiquidsFX extends TextureFX {
 	}
 
 	public void onTick() {
-		tickCounter++;
 		for (int i = 0; i < int_size; i++) {
 			for (int k = 0; k < int_size; k++) {
 				float f = 0.0F;
@@ -124,5 +122,4 @@ public class TextureLiquidsFX extends TextureFX {
 	protected float field_1157_h[];
 	protected float field_1156_i[];
 	protected float field_1155_j[];
-	private int tickCounter;
 }
