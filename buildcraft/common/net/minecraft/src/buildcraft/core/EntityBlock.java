@@ -1,9 +1,10 @@
 /** 
- * BuildCraft is open-source. It is distributed under the terms of the 
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) SpaceToad, 2011
+ * http://www.mod-buildcraft.com
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
 package net.minecraft.src.buildcraft.core;
@@ -16,6 +17,10 @@ public class EntityBlock extends Entity {
 
 	public int texture = -1;
 	public float shadowSize = 0;
+	
+	public float rotationX = 0;
+	public float rotationY = 0;
+	public float rotationZ = 0;
 	
 	public double iSize, jSize, kSize;
 	
@@ -38,7 +43,7 @@ public class EntityBlock extends Entity {
         this.iSize = iSize;
         this.jSize = jSize;
         this.kSize = kSize;    
-        
+     
         setPosition(i, j, k);
     }
     
