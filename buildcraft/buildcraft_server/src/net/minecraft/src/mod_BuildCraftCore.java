@@ -34,6 +34,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 	
 	public static String version() {
-		return "2.2.2";
+		return "2.2.5";
 	}
 }
