@@ -62,9 +62,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public static boolean initialized = false;
 
-	public mod_BuildCraftCore() {
-		ModLoader.getLogger().fine("CREATE BUILDCRAFT CORE");
-		
+	public mod_BuildCraftCore() {		
 		instance = this;
 	}
 
