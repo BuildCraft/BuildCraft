@@ -75,7 +75,11 @@ public class BuildCraftCore {
 		
 		ModLoader.getLogger().fine ("Starting BuildCraft " + mod_BuildCraftCore.version());
 		ModLoader.getLogger().fine ("Copyright (c) SpaceToad, 2011");
-		ModLoader.getLogger().fine ("http://www.mod-buildcraft.com");		
+		ModLoader.getLogger().fine ("http://www.mod-buildcraft.com");
+		
+		System.out.println ("Starting BuildCraft " + mod_BuildCraftCore.version());
+		System.out.println ("Copyright (c) SpaceToad, 2011");
+		System.out.println ("http://www.mod-buildcraft.com");		
 		
 		initialized = true;
 				
