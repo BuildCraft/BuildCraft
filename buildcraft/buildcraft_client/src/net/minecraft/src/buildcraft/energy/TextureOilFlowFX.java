@@ -1,9 +1,10 @@
 /** 
- * BuildCraft is open-source. It is distributed under the terms of the 
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) SpaceToad, 2011
+ * http://www.mod-buildcraft.com
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
 package net.minecraft.src.buildcraft.energy;
@@ -28,7 +29,7 @@ public class TextureOilFlowFX extends TextureFX
         super(BuildCraftEnergy.oilMoving.blockIndexInTexture + 1);
 
 		try {
-			Class sizeClass = Class
+			Class <? extends Object> sizeClass = Class
 					.forName("com.pclewis.mcpatcher.mod.TileSize");
 
 			int_numPixels = sizeClass.getDeclaredField("int_numPixels").getInt(

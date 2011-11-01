@@ -1,9 +1,10 @@
 /** 
- * BuildCraft is open-source. It is distributed under the terms of the 
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) SpaceToad, 2011
+ * http://www.mod-buildcraft.com
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
 package net.minecraft.src.buildcraft.core;
@@ -68,9 +69,9 @@ public class RenderEntityBlock extends Render {
 		BlockInterface util = new BlockInterface(); 
 		util.texture = entity.texture;
 		
-		for (int iBase = 0; iBase <= entity.iSize; ++iBase)
-			for (int jBase = 0; jBase <= entity.jSize; ++jBase)
-				for (int kBase = 0; kBase <= entity.kSize; ++kBase) 
+		for (int iBase = 0; iBase < entity.iSize; ++iBase)
+			for (int jBase = 0; jBase < entity.jSize; ++jBase)
+				for (int kBase = 0; kBase < entity.kSize; ++kBase) 
 		{			
 					
 			util.minX = 0;
@@ -85,8 +86,13 @@ public class RenderEntityBlock extends Render {
 			util.maxY = (remainY > 1.0 ? 1.0 : remainY);
 			util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);			
 			
-			GL11.glPushMatrix();
-			GL11.glTranslatef((float)i + iBase + 0.5F, (float)j + jBase + 0.5F, (float)k + kBase + 0.5F);
+			GL11.glPushMatrix();			
+			GL11.glTranslatef((float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F);
+			GL11.glRotatef(entity.rotationX, 1, 0, 0);
+			GL11.glRotatef(entity.rotationY, 0, 1, 0);
+			GL11.glRotatef(entity.rotationZ, 0, 0, 1);
+			GL11.glTranslatef(iBase, jBase, kBase);
+
 			
 			MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
 
@@ -384,7 +390,7 @@ public class RenderEntityBlock extends Render {
 	        double d10 = d1 + block.maxY;
 	        double d11 = d2 + block.minZ;
 	        double d12 = d2 + block.maxZ;
-
+	        
 	        tessellator.addVertexWithUV(d8, d9, d12, d3, d6);
 	        tessellator.addVertexWithUV(d8, d9, d11, d4, d6);
 	        tessellator.addVertexWithUV(d8, d10, d11, d4, d5);
