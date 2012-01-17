@@ -76,22 +76,27 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 	}
 	
+	@Override
 	public Packet getDescriptionPacket() {		
 		return descriptionPacket.toPacket(this);
     }
 	
+	@Override
 	public Packet230ModLoader getUpdatePacket() {
 		return updatePacket.toPacket(this);
     }
 	
+	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
 		descriptionPacket.updateFromPacket(this, packet);
 	}
 	
+	@Override
 	public void handleUpdatePacket (Packet230ModLoader packet) {
 		updatePacket.updateFromPacket(this, packet);
 	}
 	
+	@Override
 	public void postPacketHandling (Packet230ModLoader packet) {
 		
 	}

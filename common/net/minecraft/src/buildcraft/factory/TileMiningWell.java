@@ -9,12 +9,15 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBlockUtil;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
@@ -23,7 +26,7 @@ import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor {
+public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
 	boolean isDigging = true;
 	
 	PowerProvider powerProvider;
@@ -64,8 +67,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 		
 		int blockId = w.getBlockId(xCoord, depth, zCoord);
 		
-		ItemStack stack = BuildCraftBlockUtil.getItemStackFromBlock(w, xCoord,
-				depth, zCoord);
+		ArrayList <ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, (int) xCoord, (int) depth, (int) zCoord);		
 		
 		w.setBlockWithNotify((int) xCoord, (int) depth, (int) zCoord,
 				BuildCraftFactory.plainPipeBlock.blockID);
@@ -74,41 +76,43 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			return;
 		}							
 		
-		if (stack == null) {
+		if (stacks == null || stacks.size() == 0) {
 			return;
 		}
 		
-		StackUtil stackUtil = new StackUtil(stack);
-		
-		if (stackUtil.addToRandomInventory(this, Orientations.Unknown)
-				&& stackUtil.items.stackSize == 0) {
-			//  The object has been added to a nearby chest.
-			return;
-		}
-		
-		if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, stack)
-				&& stackUtil.items.stackSize == 0) {
-			//  The object has been added to a nearby pipe.
-			return;
-		}
-		
-		// Throw the object away.
-		// TODO: factorize that code
-		
-		float f = w.rand.nextFloat() * 0.8F + 0.1F;
-		float f1 = w.rand.nextFloat() * 0.8F + 0.1F;
-		float f2 = w.rand.nextFloat() * 0.8F + 0.1F;
+		for (ItemStack s : stacks) {
+			StackUtil stackUtil = new StackUtil(s);
 
-		EntityItem entityitem = new EntityItem(w, (float) xCoord + f,
-				(float) yCoord + f1 + 0.5F, (float) zCoord + f2,
-				stackUtil.items);
+			if (stackUtil.addToRandomInventory(this, Orientations.Unknown)
+					&& stackUtil.items.stackSize == 0) {
+				//  The object has been added to a nearby chest.
+				return;
+			}
 
-		float f3 = 0.05F;
-		entityitem.motionX = (float) w.rand.nextGaussian() * f3;
-		entityitem.motionY = (float) w.rand.nextGaussian() * f3
-				+ 1.0F;
-		entityitem.motionZ = (float) w.rand.nextGaussian() * f3;
-		w.entityJoinedWorld(entityitem);
+			if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, s)
+					&& stackUtil.items.stackSize == 0) {
+				//  The object has been added to a nearby pipe.
+				return;
+			}
+
+			// Throw the object away.
+			// TODO: factorize that code
+
+			float f = w.rand.nextFloat() * 0.8F + 0.1F;
+			float f1 = w.rand.nextFloat() * 0.8F + 0.1F;
+			float f2 = w.rand.nextFloat() * 0.8F + 0.1F;
+
+			EntityItem entityitem = new EntityItem(w, (float) xCoord + f,
+					(float) yCoord + f1 + 0.5F, (float) zCoord + f2,
+					stackUtil.items);
+
+			float f3 = 0.05F;
+			entityitem.motionX = (float) w.rand.nextGaussian() * f3;
+			entityitem.motionY = (float) w.rand.nextGaussian() * f3
+			+ 1.0F;
+			entityitem.motionZ = (float) w.rand.nextGaussian() * f3;
+			w.spawnEntityInWorld(entityitem);
+		}
 	}
 
 	@Override
@@ -136,4 +140,13 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 		return true;
 	}
 	
+	@Override
+	public boolean isPipeConnected(Orientations with) {
+		return true;
+	}
+	
+	@Override
+	public boolean allowActions () {
+		return false;
+	}
 }

@@ -15,8 +15,9 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.IDropControlInventory;
 
-public class PipeLogic {
+public class PipeLogic implements IDropControlInventory {
 	
 	public int xCoord;
 	public int yCoord;
@@ -55,7 +56,7 @@ public class PipeLogic {
 		return true;
 	}
 
-	public void onNeighborBlockChange() {
+	public void onNeighborBlockChange(int blockId) {
 		
 	}
 
@@ -115,4 +116,8 @@ public class PipeLogic {
 		
 	}
 
+	@Override
+	public boolean doDrop() {
+		return true;
+	}
 }

@@ -15,7 +15,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 
-public class PipeTransport {
+public abstract class PipeTransport {
 	
 	public int xCoord;
 	public int yCoord;
@@ -53,7 +53,7 @@ public class PipeTransport {
 		return true;
 	}
 
-	public void onNeighborBlockChange() {
+	public void onNeighborBlockChange(int blockId) {
 		
 	}
 
@@ -79,5 +79,13 @@ public class PipeTransport {
 
 	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
 		
+	}
+
+	public void dropContents() {
+		
+	}
+	
+	public boolean allowsConnect(PipeTransport with) {
+		return false;
 	}
 }

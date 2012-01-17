@@ -52,7 +52,8 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 	
-	public int getBlockTexture() {
+	@Override
+	public int getMainBlockTexture() {
 		return 1 * 16 + 12;
 	}
 
@@ -68,37 +69,6 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			pullItemIntoPipe(entity, 0);
 		}
     }
-    
-	//Vacuum pipe can be connected only to ONE other Pipe or IInventory. Otherwise it won't do anything
-	public Orientations getSuckingOrientation() {	
-	
-		Position pos = new Position(xCoord, yCoord, zCoord);
-		int Connections_num = 0;
-		
-		Position target_pos = new Position(pos);
-		
-		for (int o = 0; o <= 5; ++o) {
-			Position newPos = new Position(pos);
-			newPos.orientation = Orientations.values()[o];
-			newPos.moveForwards(1.0);
-						
-			if (Utils.checkPipesConnections(worldObj, (int) newPos.x,
-					(int) newPos.y, (int) newPos.z, xCoord, yCoord, zCoord)) {
-
-				Connections_num++;
-
-				if (Connections_num == 1) {
-					target_pos = new Position(newPos);
-				}
-			}
-		}
-		
-		if(Connections_num > 1 || Connections_num == 0) {
-			return Orientations.Unknown;
-		}
-			
-		return target_pos.orientation.reverse();
-	}
 	
 	private AxisAlignedBB getSuckingBox(Orientations orientation, int distance)
 	{		
@@ -180,7 +150,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 	
 	private boolean trySucc (int distance) {		
-		AxisAlignedBB box = getSuckingBox(getSuckingOrientation(), distance);
+		AxisAlignedBB box = getSuckingBox(getOpenOrientation(), distance);
 		
 		if(box == null) {
 			return false;			
@@ -204,13 +174,13 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 					if (!cart.isDead && cart.minecartType == 1) {
 						ItemStack stack = checkExtractGeneric(
 								(IInventory) cart, true,
-								getSuckingOrientation().reverse());
+								getOpenOrientation());
 						if (stack != null && powerProvider.useEnergy(1, 1, true) == 1) {
 							EntityItem entityitem = new EntityItem(worldObj,
 									cart.posX, cart.posY + 0.3F, cart.posZ,
 									stack);
 							entityitem.delayBeforeCanPickup = 10;
-							worldObj.entityJoinedWorld(entityitem);
+							worldObj.spawnEntityInWorld(entityitem);
 							pullItemIntoPipe(entityitem, 1);
 							return true;
 						}
@@ -248,7 +218,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			return;
 		}
 				
-		Orientations orientation = getSuckingOrientation();
+		Orientations orientation = getOpenOrientation().reverse();
 		
 		if(orientation != Orientations.Unknown) {
 			worldObj.playSoundAtEntity(
@@ -259,11 +229,13 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			
 			ItemStack stack = null;
 			
+			double speed = 0.01F;
+			
 			if (entity instanceof EntityItem) {
 				EntityItem item = (EntityItem) entity;
 				TransportProxy.obsidianPipePickup(worldObj, item, this.container);
 				
-				int energyUsed = powerProvider.useEnergy(distance,
+				float energyUsed = powerProvider.useEnergy(distance,
 						item.item.stackSize * distance, true);
 				
 				if (distance == 0
@@ -271,9 +243,16 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 					stack = item.item;
 					APIProxy.removeEntity(entity);
 				} else {
-					stack = item.item.splitStack(energyUsed / distance);
+					stack = item.item.splitStack((int) (energyUsed / distance));
 				}
 				
+				speed = Math.sqrt(item.motionX * item.motionX + item.motionY
+						* item.motionY + item.motionZ * item.motionZ);
+				speed = speed / 2F - 0.05;
+				
+				if (speed < 0.01) {
+					speed = 0.01;
+				}
 			} else if (entity instanceof EntityArrow) {
 				powerProvider.useEnergy(distance, distance, true);
 				stack = new ItemStack(Item.arrow, 1);
@@ -283,11 +262,14 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
 					+ Utils.getPipeFloorOf(stack), zCoord + 0.5, stack);
 			
+			passive.speed = (float) speed;
+			
 			((PipeTransportItems) transport).entityEntering(passive,
-					orientation.reverse());
+					orientation);
 		}
 	}
 	
+	@Override
 	public void onDropped (EntityItem item) {		
 		if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
 			entitiesDroppedIndex = 0;
@@ -299,10 +281,14 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 	
 	public boolean canSuck (Entity entity, int distance) {
-		if (entity.isDead) {
+		if (!entity.isEntityAlive()) {
 			return false;
 		} if (entity instanceof EntityItem) {
 			EntityItem item = (EntityItem) entity;
+			
+			if (item.item.stackSize <= 0) {
+				return false;
+			}
 		
 			for (int i = 0; i < entitiesDropped.length; ++i) {
 				if (item.entityId == entitiesDropped [i]) {

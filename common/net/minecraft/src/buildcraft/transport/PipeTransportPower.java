@@ -9,15 +9,16 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -32,7 +33,7 @@ public class PipeTransportPower extends PipeTransport {
 	public double [] internalNextPower = new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	
 	@TileNetworkData(staticSize = 6)
-	public double[] displayPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
 	public double powerResitance = 0.01;
 	
@@ -64,22 +65,15 @@ public class PipeTransportPower extends PipeTransport {
 		// Extract the nearby connected tiles
 		
 		for (int i = 0; i < 6; ++i) {
-			Position p = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[i]);
-			
-			p.moveForwards(1.0);
-
-			if (Utils.checkPipesConnections(worldObj, (int) p.x, (int) p.y,
-					(int) p.z, xCoord, yCoord, zCoord)) {
-				
-				tiles [i] = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
-						(int) p.z);
+			if (Utils.checkPipesConnections(
+					container.getTile(Orientations.values()[i]), container)) {
+				tiles[i] = container.getTile(Orientations.values()[i]);
 			}
 		}
 		
 		// Send the power to nearby pipes who requested it
 		
-		displayPower = new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+		displayPower = new short [] {0, 0, 0, 0, 0, 0};
 		
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower [i] > 0) {
@@ -115,7 +109,8 @@ public class PipeTransportPower extends PipeTransport {
 						} else if (tiles [j] instanceof IPowerReceptor) {
 							IPowerReceptor pow = (IPowerReceptor) tiles [j];
 
-							pow.getPowerProvider().receiveEnergy((int) watts);
+							pow.getPowerProvider().receiveEnergy((float) watts,
+									Orientations.values()[j].reverse());
 
 							displayPower [j] += watts / 2F;
 							displayPower [i] += watts / 2F;
@@ -176,7 +171,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 		
 		if (APIProxy.isServerSide()) {
-			if (tracker.markTimeIfDelay(worldObj, 10)) {
+			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				CoreProxy
 						.sendToPlayers(this.container.getUpdatePacket(),
 								xCoord, yCoord, zCoord, 40,
@@ -228,6 +223,7 @@ public class PipeTransportPower extends PipeTransport {
 		currentDate = worldObj.getWorldTime();
 	}
 	
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);		
 		
@@ -240,6 +236,7 @@ public class PipeTransportPower extends PipeTransport {
 			
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		
@@ -250,5 +247,15 @@ public class PipeTransportPower extends PipeTransport {
 			nbttagcompound.setDouble("internalNextPower[" + i + "]", internalNextPower [i]);
 		}
 	}
+	
+	public boolean isTriggerActive (Trigger trigger) {
+		return false;
+	}
+	
+	@Override
+	public boolean allowsConnect(PipeTransport with) {
+		return with instanceof PipeTransportPower;
+	}
+
 
 }

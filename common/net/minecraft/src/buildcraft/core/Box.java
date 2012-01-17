@@ -24,6 +24,15 @@ public class Box implements IBox {
 	
 	private EntityBlock lasers [];
 	
+	public void initialize (Box box) {
+		this.xMin = box.xMin;
+		this.yMin = box.yMin;
+		this.zMin = box.zMin;
+		this.xMax = box.xMax;
+		this.yMax = box.yMax;
+		this.zMax = box.zMax;
+	}
+	
 	public void initialize (int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 		this.xMin = xMin;
 		this.yMin = yMin;
@@ -72,14 +81,17 @@ public class Box implements IBox {
 		return 6;
 	}
 	
-	public Position p1 () {
+	@Override
+	public Position pMin () {
 		return new Position (xMin, yMin, zMin);
 	}
 	
-	public Position p2 () {
+	@Override
+	public Position pMax () {
 		return new Position (xMax, yMax, zMax);
 	}
 	
+	@Override
 	public void createLasers (World world, LaserKind kind) {
 		if (lasers == null) {
 			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax,
@@ -87,6 +99,7 @@ public class Box implements IBox {
 		}
 	}
 	
+	@Override
 	public void deleteLasers () {
 		if (lasers != null) {
 			for (EntityBlock b : lasers) {
@@ -124,5 +137,54 @@ public class Box implements IBox {
 	public String toString () {
 		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {"
 		+ zMin + ", " + zMax + "}";
+	}
+
+	public double centerX() {
+		return (double) xMin + (double) sizeX() / 2.0;
+	}
+	
+	public double centerY() {
+		return (double) yMin + (double) sizeY() / 2.0;
+	}
+	
+	public double centerZ() {
+		return (double) zMin + (double) sizeZ() / 2.0;
+	}
+	
+	public Box rotateLeft () {
+		Box nBox = new Box ();
+		nBox.xMin = (sizeZ() - 1) - zMin;
+		nBox.yMin = yMin;
+		nBox.zMin = xMin;
+
+		nBox.xMax = (sizeZ() - 1) - zMax;
+		nBox.yMax = yMax;
+		nBox.zMax = xMax;
+		
+		nBox.reorder ();
+		
+		return nBox;
+	}
+	
+	public void reorder () {
+		int tmp;
+		
+		if (xMin > xMax) {
+			tmp = xMin;
+			xMin = xMax;
+			xMax = tmp;
+		}
+		
+		if (yMin > yMax) {
+			tmp = yMin;
+			yMin = yMax;
+			yMax = tmp;
+		}
+		
+		if (zMin > zMax) {
+			tmp = zMin;
+			zMin = zMax;
+			zMax = tmp;
+		}
 	}
 }

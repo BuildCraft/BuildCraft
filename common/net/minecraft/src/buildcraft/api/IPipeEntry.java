@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.api;
 
-
 /**
  * Interface used to put objects into pipes, implemented by pipe tile entities.
  */

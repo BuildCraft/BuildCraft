@@ -16,4 +16,7 @@ public interface IMachine {
 	public boolean manageLiquids ();
 	
 	public boolean manageSolids ();
+	
+	public boolean allowActions ();
+
 }

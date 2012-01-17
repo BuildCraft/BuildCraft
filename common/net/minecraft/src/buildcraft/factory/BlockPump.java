@@ -9,8 +9,11 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -37,6 +40,7 @@ public class BlockPump extends BlockContainer implements ITextureProvider {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
 
+	@Override
 	 public int getBlockTextureFromSide(int i) {
 		 switch (i) {
 		 case 0:
@@ -48,9 +52,16 @@ public class BlockPump extends BlockContainer implements ITextureProvider {
 		 }
 	 }
 	 
+	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {
 		Utils.preDestroyBlock(world, i, j, k);
 
 		super.onBlockRemoval(world, i, j, k);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 }

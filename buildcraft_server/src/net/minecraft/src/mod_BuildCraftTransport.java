@@ -25,4 +25,8 @@ public class mod_BuildCraftTransport extends BaseModMp {
 	public String Version() {
 		return "2.2.5";
 	}    
+	
+	public static void registerTilePipe (Class <? extends TileEntity> clas, String name) {
+		ModLoader.RegisterTileEntity(clas, name);
+	}
 }

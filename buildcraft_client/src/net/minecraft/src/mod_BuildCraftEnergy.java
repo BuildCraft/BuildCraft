@@ -29,6 +29,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 
 	public static mod_BuildCraftEnergy instance;
 	
+	@Override
 	public void ModsLoaded () {
 		super.ModsLoaded();
 		BuildCraftEnergy.initialize();	
@@ -57,10 +58,11 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	}
 	
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "3.1.2";
 	}
 
+	@Override
 	public GuiScreen HandleGUI(int i) {
 		TileEngine tile = new TileEngine();
 
@@ -78,8 +80,15 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		}
 	}
 	
+	@Override
     public void GenerateSurface(World world, Random random, int i, int j) {
     	BuildCraftEnergy.generateSurface (world, random, i, j);
     }
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

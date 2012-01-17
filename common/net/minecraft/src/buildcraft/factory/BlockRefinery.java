@@ -9,6 +9,8 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
@@ -18,7 +20,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -31,11 +33,13 @@ public class BlockRefinery extends BlockContainer {
 		setHardness(0.5F);
 	}
 	
+	@Override
 	public boolean isOpaqueCube()
 	{
 		return false;
 	}
 
+	@Override
 	public boolean renderAsNormalBlock()
 	{
 		return false;
@@ -45,6 +49,7 @@ public class BlockRefinery extends BlockContainer {
 		return false;
 	}
 
+	@Override
     public int getRenderType()
     {
     	return BuildCraftCore.blockByEntityModel;
@@ -55,6 +60,7 @@ public class BlockRefinery extends BlockContainer {
 		return new TileRefinery();
 	}
 	
+	@Override
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
     	super.onBlockPlacedBy(world, i, j, k, entityliving);
     	
@@ -66,6 +72,7 @@ public class BlockRefinery extends BlockContainer {
 				.ordinal());
     }
     
+	@Override
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {	
 		if (entityplayer.getCurrentEquippedItem() != null)
 			if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
@@ -90,13 +97,13 @@ public class BlockRefinery extends BlockContainer {
 			world.markBlockNeedsUpdate(i, j, k);
 			} else {
 			
-				int liquidId = API.getLiquidForBucket(entityplayer
-						.getCurrentEquippedItem().itemID);
+				int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer
+						.getCurrentEquippedItem());
 
 				if (liquidId != 0) {
 					int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k))
 							.fill(Orientations.Unknown,
-									API.BUCKET_VOLUME, liquidId, true);
+									BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
 
 					if (qty != 0 && !BuildCraftCore.debugMode) {
 						entityplayer.inventory.setInventorySlotContents(
@@ -107,8 +114,17 @@ public class BlockRefinery extends BlockContainer {
 					return true;
 				}				
 		}
-				
-		return false;
+		
+		
+		FactoryProxy.displayGUIRefinery(world, entityplayer, i, j, k);
+			
+		return true;		
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 	
 }

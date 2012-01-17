@@ -1,5 +1,6 @@
 version=$1
 dir=`pwd`/../release-$version
+src_dir=`pwd`
 
 function remove_svn () {
   (
@@ -58,6 +59,13 @@ function package_all () {
       net/minecraft/src/buildcraft/energy \
       buildcraft/api
 
+   zip -r $dir/buildcraft$qual-C-silicon-$version.zip \
+      mod_BuildCraftSilicon*.class \
+      BuildCraftSilicon*.class \
+      buildcraft/silicon \
+      net/minecraft/src/buildcraft/silicon \
+      buildcraft/api
+
    zip -r $dir/buildcraft$qual-C-devel-$version.zip \
       mod_BuildCraftDevel*.class \
       buildcraft/devel \
@@ -81,7 +89,7 @@ cd ../..
 
 rm -rf reobf
 
-cd buildcraft/
+cd $src_dir
 
 rm -rf api
 mkdir -p api/src/minecraft/net/minecraft/src/buildcraft/api/

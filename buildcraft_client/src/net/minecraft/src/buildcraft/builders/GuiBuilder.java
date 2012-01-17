@@ -9,39 +9,91 @@
 
 package net.minecraft.src.buildcraft.builders;
 
+import java.util.Collection;
+
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 
-public class GuiBuilder extends GuiContainer {
+public class GuiBuilder extends GuiAdvancedInterface {
 	
 	IInventory playerInventory;
-	IInventory builderInventory;
+	TileBuilder builder;
 	
-	public GuiBuilder(IInventory playerInventory, IInventory filterInventory) {
-		super(new CraftingBuilder(playerInventory, filterInventory));
+	public GuiBuilder(IInventory playerInventory, TileBuilder builder) {
+		super(new CraftingBuilder(playerInventory, builder));
 		this.playerInventory = playerInventory;
-		this.builderInventory = filterInventory;
-		xSize = 175;
+		this.builder = builder;
+		xSize = 176;
 		ySize = 225;
+		
+		slots = new AdvancedSlot [7 * 4];
+		
+		for (int i = 0; i < 7; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				slots [i * 4 + j] = new ItemSlot (179 + j * 18, 18 + i * 18);
+			}
+		}
 	}
 	
-    protected void drawGuiContainerForegroundLayer() {        
-        fontRenderer.drawString("Template", 67, 15, 0x404040);
+	@Override
+    protected void drawGuiContainerForegroundLayer() {     
+    	super.drawGuiContainerForegroundLayer ();
+    	
+        fontRenderer.drawString("Builder", 73, 12, 0x404040);
         fontRenderer.drawString("Building Resources", 8, 60, 0x404040);
-        fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97, 0x404040);        
+        fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97, 0x404040);   
+        
+        if (builder.isBuildingBlueprint()) {
+        	fontRenderer.drawString("Needed", 185, 7, 0x404040);
+        }
+        
+        drawForegroundSelection();
     }
 	
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f) {
-		int i = mc.renderEngine
-				.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
+	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+		int i = 0;
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+		int realXSize = 0;
+		
+		if (builder.isBuildingBlueprint()) {
+			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder_blueprint.png");
+			realXSize = 256;
+		} else {
+			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder.png");
+			realXSize = 176;
+		}
+			
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(i);
+
+		drawTexturedModalRect(j, k, 0, 0, realXSize, ySize);
+		
+		for (int s = 0; s < slots.length; ++s) {
+			((ItemSlot) slots [s]).stack = null;
+		}
+		
+        Collection <ItemStack> needs = builder.getNeededItems();
+        
+        if (needs != null) {
+        	int s = 0;
+        	
+        	for (ItemStack stack : needs) {
+        		if (s >= slots.length) {
+        			break;
+        		}
+        		        		
+        		((ItemSlot) slots [s]).stack = stack.copy(); 
+        		s++;        		
+        	}
+        }
+        
+		
+		drawBackgroundSlots();
 	}
 
 	int inventoryRows = 6;

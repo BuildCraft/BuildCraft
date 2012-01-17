@@ -15,7 +15,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -37,7 +36,7 @@ public class StackUtil {
 	 * successful, false otherwise.
 	 */
 	public boolean addToRandomInventory (TileEntity tile, Orientations from) {
-		World w = APIProxy.getWorld();
+		World w = tile.worldObj;
 		
 		LinkedList <Orientations> possibleInventories = new LinkedList <Orientations> ();
 		
@@ -62,9 +61,7 @@ public class StackUtil {
 			}
 			
 			if (tileInventory instanceof IInventory) {
-				if (Utils.checkPipesConnections(tile.worldObj, tile.xCoord,
-						tile.yCoord, tile.zCoord, tileInventory.xCoord,
-						tileInventory.yCoord, tileInventory.zCoord)
+				if (Utils.checkPipesConnections(tile, tileInventory)
 						&& checkAvailableSlot((IInventory) tileInventory,
 								false, pos.orientation.reverse())) {
 					possibleInventories.add(pos.orientation);
@@ -261,7 +258,8 @@ public class StackUtil {
 				if (stack.getItem() == items.getItem()
 						&& stack.getItemDamage() == items.getItemDamage()
 						&& stack.stackSize + 1 <= stack
-						.getMaxStackSize()) {
+						.getMaxStackSize()
+						&& stack.stackSize + 1 <= inventory.getInventoryStackLimit()) {
 
 					if (doAdd) {
 						stack.stackSize++;

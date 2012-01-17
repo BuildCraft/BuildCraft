@@ -9,20 +9,21 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
-import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockQuarry extends BlockMachineRoot implements
-		ITextureProvider, IPipeConnection {
+		ITextureProvider {
 	
 	int textureTop;
 	int textureFront;
@@ -41,6 +42,7 @@ public class BlockQuarry extends BlockMachineRoot implements
 		
 	}
     
+	@Override
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
     	super.onBlockPlacedBy(world, i, j, k, entityliving);
     	
@@ -76,7 +78,7 @@ public class BlockQuarry extends BlockMachineRoot implements
 		return new TileQuarry();
 	}
 	
-
+	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {
 		Utils.preDestroyBlock(world, i, j, k);
 		
@@ -87,10 +89,10 @@ public class BlockQuarry extends BlockMachineRoot implements
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
-			int z1, int x2, int y2, int z2) {
-		return true;
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 }

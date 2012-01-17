@@ -9,19 +9,21 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
-import net.minecraft.src.buildcraft.api.IPipeConnection;
+import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockPlainPipe extends Block implements IPipeConnection,
+public class BlockPlainPipe extends Block implements ILegacyPipeConnection,
 		IBlockPipe, ITextureProvider {	
 	
 	public BlockPlainPipe(int i) {
@@ -38,11 +40,13 @@ public class BlockPlainPipe extends Block implements IPipeConnection,
 		maxZ = Utils.pipeMaxPos;
 	}
     
+	@Override
     public boolean isOpaqueCube()
     {
         return false;
     }
     
+	@Override
     public boolean renderAsNormalBlock()
     {
         return false;
@@ -78,6 +82,12 @@ public class BlockPlainPipe extends Block implements IPipeConnection,
 			int k, Orientations connection) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 
 }

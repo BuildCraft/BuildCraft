@@ -8,6 +8,8 @@
 
 package net.minecraft.src;
 
+import java.util.ArrayList;
+
 public class BuildCraftBlockUtil {
 
     public static int damageDropped(World world, int i, int j, int k) {		
@@ -16,7 +18,7 @@ public class BuildCraftBlockUtil {
 		return block.damageDropped(world.getBlockMetadata(i, j, k));
     }
     
-    public static ItemStack getItemStackFromBlock(World world, int i, int j, int k)
+    public static ArrayList <ItemStack> getItemStackFromBlock(World world, int i, int j, int k)
     {
     	Block block = Block.blocksList[world.getBlockId(i, j, k)];
     
@@ -25,14 +27,7 @@ public class BuildCraftBlockUtil {
     	}
     	
     	int meta = world.getBlockMetadata(i, j, k);
-    	int id = block.idDropped(meta, world.rand);
-    	int qty = block.quantityDropped(world.rand);
-    	int dmg = block.damageDropped(meta);
     	
-    	if (id <= 0 || qty == 0) {
-    		return null;
-    	} else {    	
-    		return new ItemStack(id, qty, dmg);
-    	}
-    }
+    	return block.getBlockDropped(world, i, j, k, meta, 0);    	
+   }
 }

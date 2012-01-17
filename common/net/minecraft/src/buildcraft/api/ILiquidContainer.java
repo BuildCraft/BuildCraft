@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.api;
 
-
 public interface ILiquidContainer {
 	
 	public int fill (Orientations from, int quantity, int id, boolean doFill);
@@ -18,7 +17,7 @@ public interface ILiquidContainer {
 	
 	public int getLiquidQuantity ();
 	
-	public int getCapacity ();
-	
 	public int getLiquidId ();
+	
+	public LiquidSlot [] getLiquidSlots ();	
 }

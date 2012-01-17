@@ -107,6 +107,7 @@ public class RenderEntityBlock extends Render {
 							lightX,
 							lightY,
 							lightZ,
+							false, 
 							true);
 			GL11.glEnable(2896 /*GL_LIGHTING*/);
 			GL11.glPopMatrix();
@@ -114,20 +115,24 @@ public class RenderEntityBlock extends Render {
 		}		
 	}
 	
-	 public static void renderBlock(BlockInterface block, World world, int i, int j, int k, boolean doLight)
+	 public static void renderBlock(BlockInterface block, IBlockAccess blockAccess, int i, int j, int k, boolean doLight, boolean doTessellating)
 	    {
 	        float f = 0.5F;
 	        float f1 = 1.0F;
 	        float f2 = 0.8F;
 	        float f3 = 0.6F;
+	        
 	        Tessellator tessellator = Tessellator.instance;
-	        tessellator.startDrawingQuads();
+	        
+	        if (doTessellating) {
+	        	tessellator.startDrawingQuads();
+	    	}
 	        
 	        float f4 = 0, f5 = 0;
 	        
 	        if (doLight) {
-	        	f4 = block.getBlockBrightness(world, i, j, k);
-	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	f4 = block.getBlockBrightness(blockAccess, i, j, k);
+	        	f5 = block.getBlockBrightness(blockAccess, i, j, k);
 	        	if(f5 < f4)
 	        	{
 	        		f5 = f4;
@@ -138,7 +143,7 @@ public class RenderEntityBlock extends Render {
 	        renderBottomFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(0));
 	        
 	        if (doLight) {
-	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	f5 = block.getBlockBrightness(blockAccess, i, j, k);
 	        	if(f5 < f4)
 	        	{
 	        		f5 = f4;
@@ -149,7 +154,7 @@ public class RenderEntityBlock extends Render {
 	        renderTopFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(1));
 	        
 	        if (doLight) {
-	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	f5 = block.getBlockBrightness(blockAccess, i, j, k);
 	        	if(f5 < f4)
 	        	{
 	        		f5 = f4;
@@ -160,7 +165,7 @@ public class RenderEntityBlock extends Render {
 	        renderEastFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(2));
 	        
 	        if (doLight) {
-	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	f5 = block.getBlockBrightness(blockAccess, i, j, k);
 	        	if(f5 < f4)
 	        	{
 	        		f5 = f4;
@@ -171,7 +176,7 @@ public class RenderEntityBlock extends Render {
 	        renderWestFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(3));
 	        
 	        if (doLight) {
-	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	f5 = block.getBlockBrightness(blockAccess, i, j, k);
 	        	if(f5 < f4)
 	        	{
 	        		f5 = f4;
@@ -182,7 +187,7 @@ public class RenderEntityBlock extends Render {
 	        renderNorthFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(4));
 	        
 	        if (doLight) {
-	        	f5 = block.getBlockBrightness(world, i, j, k);
+	        	f5 = block.getBlockBrightness(blockAccess, i, j, k);
 	        	if(f5 < f4)
 	        	{
 	        		f5 = f4;
@@ -191,7 +196,10 @@ public class RenderEntityBlock extends Render {
 	        }
 	        
 	        renderSouthFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(5));
-	        tessellator.draw();
+	        
+	        if (doTessellating) {
+	        	tessellator.draw();
+	        }
 	    }
 	 
 	 public static void renderBottomFace(BlockInterface block, double d, double d1, double d2, 

@@ -9,6 +9,8 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
@@ -18,7 +20,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -32,10 +34,12 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		
 	}
 
+	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
-
+	
+	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
@@ -54,15 +58,18 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
 
-	 public int getBlockTextureFromSide(int i) {
-		 switch (i) {
-		 case 0: case 1:
-			 return 6 * 16 + 2;		 
-		 default:
-			 return 6 * 16 + 0;		 
-		 }
-	 }
-	 
+	@Override
+	public int getBlockTextureFromSide(int i) {
+		switch (i) {
+		case 0:
+		case 1:
+			return 6 * 16 + 2;
+		default:
+			return 6 * 16 + 0;
+		}
+	}
+
+	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
 			int l) {
 		switch (l) {
@@ -77,24 +84,33 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		}
 	}
 	
+	@Override
 	public boolean blockActivated(World world, int i, int j, int k,
 			EntityPlayer entityplayer) {
 		
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			int itemId = entityplayer.getCurrentEquippedItem().itemID;
-			int liquidId = API.getLiquidForBucket(itemId);
+			int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer
+					.getCurrentEquippedItem());
 			
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
 			if (liquidId != 0) {
 				int qty = tank.fill(
-						Orientations.Unknown, API.BUCKET_VOLUME,
+						Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME,
 						liquidId, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
-					entityplayer.inventory.setInventorySlotContents(
-							entityplayer.inventory.currentItem,
-							new ItemStack(Item.bucketEmpty, 1));										
+					Item containerItem = entityplayer.getCurrentEquippedItem()
+					.getItem().getContainerItem(); 
+					
+					if (containerItem != null) {
+						entityplayer.inventory.setInventorySlotContents(
+								entityplayer.inventory.currentItem, new ItemStack(
+										containerItem, 1));
+					} else {
+						entityplayer.inventory.decrStackSize(
+								entityplayer.inventory.currentItem, 1);
+					}
 				}
 				
 				return true;
@@ -102,6 +118,12 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		}
 		
 		return false;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 	
 }

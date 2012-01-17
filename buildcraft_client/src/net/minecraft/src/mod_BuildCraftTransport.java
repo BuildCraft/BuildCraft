@@ -11,7 +11,6 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -29,6 +28,7 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		
 	public static mod_BuildCraftTransport instance;
 
+	@Override
 	public void ModsLoaded () {
 		super.ModsLoaded();
 		BuildCraftTransport.initialize();
@@ -69,18 +69,24 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 				BuildCraftTransport.pipePowerStone.shiftedIndex, this);
 		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipePowerGold.shiftedIndex, this);
-		
-		ModLoader.RegisterTileEntity(TileGenericPipe.class,
-				"net.minecraft.src.buildcraft.GenericPipe", new RenderPipe());		
+		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeStructureCobblestone.shiftedIndex, this);
+		MinecraftForgeClient.registerCustomItemRenderer(
+				BuildCraftTransport.pipeItemsStipes.shiftedIndex, this);
 		
 		instance = this;
 	}
 	
-	@Override
-	public String Version() {
-		return "2.2.5";
+	public static void registerTilePipe (Class <? extends TileEntity> clas, String name) {
+		ModLoader.RegisterTileEntity(clas, name, new RenderPipe());
 	}
 	
+	@Override
+	public String getVersion() {
+		return "3.1.2";
+	}
+	
+	@Override
     public GuiScreen HandleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.DiamondPipeGUI) {
     		TileGenericPipe tmp = new TileGenericPipe();
@@ -94,14 +100,17 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
     	}
     }
     
+	@Override
     public void HandlePacket(Packet230ModLoader packet) {    	
 		int x = packet.dataInt [0];
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];
 		
-		if (packet.packetType == PacketIds.PipeItem.ordinal()) {
-			if (APIProxy.getWorld().blockExists(x, y, z)) {
-				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+		World w = ModLoader.getMinecraftInstance().theWorld;
+		
+		if (packet.packetType == PacketIds.PipeItem.ordinal()) {			
+			if (w.blockExists(x, y, z)) {
+				TileEntity tile = w.getBlockTileEntity(x, y, z);
 				
 				if (tile instanceof TileGenericPipe) {
 					TileGenericPipe pipe = ((TileGenericPipe) tile);
@@ -114,8 +123,8 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 			
 			return;
 		} else if (packet.packetType == PacketIds.DiamondPipeContents.ordinal()) {	
-			if (APIProxy.getWorld().blockExists(x, y, z)) {
-				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+			if (w.blockExists(x, y, z)) {
+				TileEntity tile = w.getBlockTileEntity(x, y, z);
 				
 				if (tile instanceof TileGenericPipe) {
 					TileGenericPipe pipe = ((TileGenericPipe) tile);
@@ -174,6 +183,12 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		tessellator.draw();
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		
+	}
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
 		
 	}
 }

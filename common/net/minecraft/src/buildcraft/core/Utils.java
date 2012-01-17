@@ -18,6 +18,8 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryLargeChest;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
@@ -25,6 +27,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -83,7 +86,7 @@ public class Utils {
 	 * Returns true if successful, false otherwise.
 	 */
 	public static boolean addToRandomPipeEntry (TileEntity tile, Orientations from, ItemStack items) {
-		World w = APIProxy.getWorld();
+		World w = tile.worldObj;
 		
 		LinkedList <Orientations> possiblePipes = new LinkedList <Orientations> ();
 		
@@ -144,7 +147,7 @@ public class Utils {
 				(double) j + d1, (double) k + d2, stack);
 		entityitem.delayBeforeCanPickup = 10;
 		
-		world.entityJoinedWorld(entityitem);
+		world.spawnEntityInWorld(entityitem);
 	}
 	
 	public static void dropItems (World world, IInventory inventory, int i, int j, int k) {
@@ -285,7 +288,7 @@ public class Utils {
 		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize,
 				kSize, texture);
 		
-		world.entityJoinedWorld(block);
+		world.spawnEntityInWorld(block);
 		
 		return block;
 	}
@@ -320,13 +323,13 @@ public class Utils {
 		return lasers;
 	}
 
-	public static void handleDescriptionPacket (Packet230ModLoader packet) {
+	public static void handleDescriptionPacket (Packet230ModLoader packet, World world) {
 		int x = packet.dataInt[0];
 		int y = packet.dataInt[1];
 		int z = packet.dataInt[2];
 
-		if (APIProxy.getWorld().blockExists(x, y, z)) {
-			TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+		if (world.blockExists(x, y, z)) {
+			TileEntity tile = world.getBlockTileEntity(x, y, z);
 
 			if (tile instanceof ISynchronizedTile) {
 				((ISynchronizedTile) tile).handleDescriptionPacket(packet);
@@ -345,13 +348,13 @@ public class Utils {
 		BuildCraftCore.bufferedDescriptions.put(index, packet);
 	}
 	
-	public static void handleUpdatePacket (Packet230ModLoader packet) {
+	public static void handleUpdatePacket (Packet230ModLoader packet, World world) {
 		int x = packet.dataInt[0];
 		int y = packet.dataInt[1];
 		int z = packet.dataInt[2];
 		
-		if (APIProxy.getWorld().blockExists(x, y, z)) {
-			TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+		if (world.blockExists(x, y, z)) {
+			TileEntity tile = world.getBlockTileEntity(x, y, z);
 			
 			if (tile instanceof ISynchronizedTile) {
 				
@@ -437,32 +440,78 @@ public class Utils {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 		
 		if (tile instanceof IInventory && !APIProxy.isClient(world)) {
-			dropItems(world, (IInventory) tile, i, j, k);
+			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
+				dropItems(world, (IInventory) tile, i, j, k);
+			}			
 		}
 		
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
 		}
 	}
+
+	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {	
+		if (tile1 == null || tile2 == null) {
+			return false;
+		}
+		
+		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection)) {
+			return false;
+		}
+		
+		Orientations o = Orientations.Unknown;
+		
+		if (tile1.xCoord - 1 == tile2.xCoord) {
+			o = Orientations.XNeg;
+		} else if (tile1.xCoord + 1 == tile2.xCoord) {
+			o = Orientations.XPos;
+		} else if (tile1.yCoord - 1 == tile2.yCoord) {
+			o = Orientations.YNeg;
+		} else if (tile1.yCoord + 1 == tile2.yCoord) {
+			o = Orientations.YPos;
+		} else if (tile1.zCoord - 1 == tile2.zCoord) {
+			o = Orientations.ZNeg;
+		} else if (tile1.zCoord + 1 == tile2.zCoord) {
+			o = Orientations.ZPos;
+		}
+		
+		if (tile1 instanceof IPipeConnection
+				&& !((IPipeConnection) tile1).isPipeConnected(o)) {
+			return false;
+		}
+		
+		if (tile2 instanceof IPipeConnection
+				&& !((IPipeConnection) tile2).isPipeConnected(o.reverse())) {
+			return false;
+		}
+
+		return true;
+	}
 	
-	public static boolean checkPipesConnections(IBlockAccess blockAccess, int x1,
+	public static boolean checkPipesConnections(IBlockAccess blockAccess, TileEntity tile1, int x2, int y2, int z2) {
+		TileEntity tile2 = blockAccess.getBlockTileEntity(x2, y2, z2);
+		
+		return checkPipesConnections(tile1, tile2);
+	}
+	
+	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1,
 			int y1, int z1, int x2, int y2, int z2) {
 
 		Block b1 = Block.blocksList [blockAccess.getBlockId(x1, y1, z1)];
 		Block b2 = Block.blocksList [blockAccess.getBlockId(x2, y2, z2)];
 		
-		if (!(b1 instanceof IPipeConnection) && !(b2 instanceof IPipeConnection)) {
+		if (!(b1 instanceof ILegacyPipeConnection) && !(b2 instanceof ILegacyPipeConnection)) {
 			return false;
 		}
 		
-		if (b1 instanceof IPipeConnection
-				&& !((IPipeConnection) b1).isPipeConnected(blockAccess, x1, y1,
+		if (b1 instanceof ILegacyPipeConnection
+				&& !((ILegacyPipeConnection) b1).isPipeConnected(blockAccess, x1, y1,
 						z1, x2, y2, z2)) {
 			return false;
 		}
 		
-		if (b2 instanceof IPipeConnection
-				&& !((IPipeConnection) b2).isPipeConnected(blockAccess, x2, y2,
+		if (b2 instanceof ILegacyPipeConnection
+				&& !((ILegacyPipeConnection) b2).isPipeConnected(blockAccess, x2, y2,
 						z2, x1, y1, z1)) {
 			return false;
 		}
@@ -470,4 +519,35 @@ public class Utils {
 		return true;
 		
 	}
+	
+	public static void readStacksFromNBT (NBTTagCompound nbt, String name, ItemStack [] stacks) {
+		NBTTagList nbttaglist = nbt.getTagList(name);
+
+		for (int i = 0; i < stacks.length; ++i) {
+			if (i < nbttaglist.tagCount()) {
+				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
+				.tagAt(i);
+
+				stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
+			} else {
+				stacks[i] = null;
+			}
+		}
+	}
+	
+	public static void writeStacksToNBT (NBTTagCompound nbt, String name, ItemStack [] stacks) {
+		NBTTagList nbttaglist = new NBTTagList();
+    	
+    	for (int i = 0; i < stacks.length; ++i) {    		
+    		NBTTagCompound cpt = new NBTTagCompound ();
+    		nbttaglist.setTag(cpt);
+    		if (stacks [i] != null) {
+    			stacks [i].writeToNBT(cpt);
+    		}
+    		
+    	}
+    	
+    	nbt.setTag(name, nbttaglist);
+	}
+	
 }

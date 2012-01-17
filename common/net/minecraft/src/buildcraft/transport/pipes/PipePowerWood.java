@@ -11,7 +11,6 @@ package net.minecraft.src.buildcraft.transport.pipes;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -37,7 +36,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int getBlockTexture() {
+	public int getMainBlockTexture() {
 		return nextTexture;
 	}
 
@@ -61,21 +60,15 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	public void updateEntity() {
 		super.updateEntity();
 		
-		for (int i = 0; i < 6; ++i) {
-			Position p = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[i]);
-
-			p.moveForwards(1.0);
-
-			if (Utils.checkPipesConnections(worldObj, xCoord, yCoord, zCoord,
-					(int) p.x, (int) p.y, (int) p.z)) {
-				TileEntity tile = worldObj.getBlockTileEntity((int) p.x,
-						(int) p.y, (int) p.z);
+		for (Orientations o : Orientations.dirs()) {
+			if (Utils.checkPipesConnections(container,
+					container.getTile(o))) {
+				TileEntity tile = container.getTile(o);
 
 				if (tile instanceof TileGenericPipe) {
 					PipeTransportPower pow = (PipeTransportPower) ((TileGenericPipe) tile).pipe.transport;
 
-					int energyToRemove = 0;
+					float energyToRemove = 0;
 					
 					if (powerProvider.energyStored > 40) {
 						energyToRemove = powerProvider.energyStored / 40 + 4; 
@@ -85,12 +78,12 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 						energyToRemove = 1;
 					}
 					
-					int energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
+					float energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
 					
-					pow.receiveEnergy(p.orientation.reverse(),
+					pow.receiveEnergy(o.reverse(),
 							energyUsed);
 					
-					((PipeTransportPower) transport).displayPower[i] += energyUsed;
+					((PipeTransportPower) transport).displayPower[o.ordinal()] += energyUsed;
 				}
 
 			}

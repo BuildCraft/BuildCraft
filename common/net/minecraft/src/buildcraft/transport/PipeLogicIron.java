@@ -16,7 +16,6 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
 
 public class PipeLogicIron extends PipeLogic {
 
@@ -45,12 +44,7 @@ public class PipeLogicIron extends PipeLogic {
 				nextMetadata = 0;
 			}
 			
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[nextMetadata]);
-			pos.moveForwards(1.0);
-			
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);		
+			TileEntity tile = container.getTile(Orientations.values()[nextMetadata]);		
 
 			if (tile instanceof TileGenericPipe) {
 				if (((TileGenericPipe) tile).pipe.logic instanceof PipeLogicWood) {
@@ -72,7 +66,7 @@ public class PipeLogicIron extends PipeLogic {
 	@Override
 	public void initialize () {
 		super.initialize();
-		
+				
 		lastPower = worldObj.isBlockIndirectlyGettingPowered(xCoord,
 				yCoord, zCoord);
 	}
@@ -103,8 +97,8 @@ public class PipeLogicIron extends PipeLogic {
 	}
 
 	@Override
-	public void onNeighborBlockChange() {
-		super.onNeighborBlockChange();
+	public void onNeighborBlockChange(int blockId) {
+		super.onNeighborBlockChange(blockId);
 		
 		switchPower();
 	}

@@ -30,10 +30,12 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	
-	public int getBlockTexture() {
+	@Override
+	public int getMainBlockTexture() {
 		return nextTexture;
 	}
 	
+	@Override
 	public void prepareTextureFor(Orientations connection) {
 		if (connection == Orientations.Unknown) {
 			nextTexture = 1 * 16 + 5;

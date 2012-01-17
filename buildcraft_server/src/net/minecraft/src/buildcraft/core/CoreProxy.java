@@ -14,7 +14,10 @@ import java.io.File;
 import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
 import net.minecraft.src.Packet230ModLoader;
@@ -79,5 +82,11 @@ public class CoreProxy {
 //		return iBlockAccess.hashCode();
 		return 0;
 	}
-	
+
+	public static void TakenFromCrafting(EntityPlayer thePlayer,
+			ItemStack itemstack, IInventory craftMatrix) {
+
+		ModLoader.TakenFromCrafting(thePlayer, itemstack);
+
+	}	
 }

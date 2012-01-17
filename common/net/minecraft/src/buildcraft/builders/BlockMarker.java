@@ -9,12 +9,15 @@
 
 package net.minecraft.src.buildcraft.builders;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
@@ -33,6 +36,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 		setLightValue(0.5F);
 	}
 	
+	@Override
     public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k)
     {
         int meta = world.getBlockMetadata(i, j, k);
@@ -68,6 +72,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
         }        
     }
 	
+	@Override
     public int getRenderType() {
         return BuildCraftCore.markerModel;
     }
@@ -81,29 +86,35 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 		return new TileMarker();
 	}
 
+	@Override
     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
         return true;
     }
     
+	@Override
     public void onBlockRemoval(World world, int i, int j, int k) {
     	Utils.preDestroyBlock(world, i, j, k);
     	
         super.onBlockRemoval(world, i, j, k);       
     }
     
+	@Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
         return null;
     }
 
+	@Override
     public boolean isOpaqueCube() {
         return Block.torchWood.isOpaqueCube ();
     }
 
+	@Override
     public boolean renderAsNormalBlock() {
         return false;
     }
     
+	@Override
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
     	((TileMarker) world.getBlockTileEntity(i, j, k)).switchSignals();
 
@@ -138,16 +149,18 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
     		if(flag)
     		{
 				dropBlockAsItem(world, i, j, k,
-						BuildCraftBuilders.markerBlock.blockID);
+						BuildCraftBuilders.markerBlock.blockID, 0);
     			world.setBlockWithNotify(i, j, k, 0);
     		}
     	}
     }
 
+	@Override
     public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
     	return Block.torchWood.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
     }
     
+	@Override
     public boolean canPlaceBlockAt(World world, int i, int j, int k) {
         if(BuildersProxy.canPlaceTorch(world, i - 1, j, k)) {
             return true;
@@ -168,6 +181,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
         return BuildersProxy.canPlaceTorch(world, i, j + 1, k);
     }
 
+	@Override
     public void onBlockPlaced(World world, int i, int j, int k, int l) {
     	super.onBlockPlaced(world, i, j, k, l);
         int i1 = world.getBlockMetadata(i, j, k);
@@ -197,9 +211,8 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
         }
         world.setBlockMetadataWithNotify(i, j, k, i1);
     }
-
     
-
+	@Override
     public void onBlockAdded(World world, int i, int j, int k) {
     	super.onBlockAdded(world, i, j, k);
     	
@@ -225,7 +238,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
         if(!canPlaceBlockAt(world, i, j, k))
         {
 			dropBlockAsItem(world, i, j, k,
-					BuildCraftBuilders.markerBlock.blockID);
+					BuildCraftBuilders.markerBlock.blockID, 0);
             world.setBlockWithNotify(i, j, k, 0);
             return false;
         } else
@@ -237,5 +250,11 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 	@Override
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 }

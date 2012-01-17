@@ -12,7 +12,7 @@ package net.minecraft.src.buildcraft.builders;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IBox;
 import net.minecraft.src.buildcraft.api.FillerPattern;
 
@@ -20,12 +20,12 @@ public class FillerFlattener extends FillerPattern {
 
 	@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.p1().x;
-		int yMin = (int) box.p1().y;
-		int zMin = (int) box.p1().z;
+		int xMin = (int) box.pMin().x;
+		int yMin = (int) box.pMin().y;
+		int zMin = (int) box.pMin().z;
 		
-		int xMax = (int) box.p2().x;
-		int zMax = (int) box.p2().z;
+		int xMax = (int) box.pMax().x;
+		int zMax = (int) box.pMax().z;
 
 		int sizeX = xMax - xMin + 1;
 		int sizeZ = zMax - zMin + 1;
@@ -47,7 +47,7 @@ public class FillerFlattener extends FillerPattern {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (!blockedColumns [x - xMin][z - zMin]) {
-						if (!API.softBlock(tile.worldObj.getBlockId(x, y, z))) {
+						if (!BuildCraftAPI.softBlock(tile.worldObj.getBlockId(x, y, z))) {
 							blockedColumns [x - xMin][z - zMin] = true;
 						} else {
 							found = true;
@@ -65,8 +65,9 @@ public class FillerFlattener extends FillerPattern {
 		}
 		
 		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, null, tile.worldObj,
-				lastX, lastY + 1, lastZ, 0);
+			stackToPlace.getItem().onItemUse(stackToPlace,
+					BuildCraftAPI.getBuildCraftPlayer(tile.worldObj),
+					tile.worldObj, lastX, lastY - 1, lastZ, 1);
 		}
 		
 		if (lastX != Integer.MAX_VALUE) {

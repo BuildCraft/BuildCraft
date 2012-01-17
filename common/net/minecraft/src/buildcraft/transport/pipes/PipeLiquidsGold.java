@@ -22,7 +22,7 @@ public class PipeLiquidsGold extends Pipe {
 	}
 
 	@Override
-	public int getBlockTexture() {
+	public int getMainBlockTexture() {
 		return 7 * 16 + 4;
 	}
 }

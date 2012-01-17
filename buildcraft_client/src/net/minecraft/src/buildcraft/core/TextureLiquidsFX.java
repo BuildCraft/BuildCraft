@@ -53,10 +53,12 @@ public class TextureLiquidsFX extends TextureFX {
 		field_1155_j = new float[int_numPixels];
 	}
 
+	@Override
 	public void bindImage(RenderEngine renderengine) {
 		MinecraftForgeClient.bindTexture(texture);
 	}
 
+	@Override
 	public void onTick() {
 		for (int i = 0; i < int_size; i++) {
 			for (int k = 0; k < int_size; k++) {

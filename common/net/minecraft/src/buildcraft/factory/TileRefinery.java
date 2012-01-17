@@ -9,29 +9,30 @@
 
 package net.minecraft.src.buildcraft.factory;
 
-import java.util.LinkedList;
-
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.RefineryRecipe;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.IMachine;
 
 public class TileRefinery extends TileMachine implements ILiquidContainer,
-		IPowerReceptor, IInventory, IMachine {	
-
-	public static LinkedList <RefineryRecipe> recipes = new LinkedList <RefineryRecipe> ();
+		IPowerReceptor, IInventory, IMachine {		
 	
-	public static int LIQUID_PER_SLOT = API.BUCKET_VOLUME * 4;	
+	private int [] filters = new int [2];
+	
+	public static int LIQUID_PER_SLOT = BuildCraftAPI.BUCKET_VOLUME * 4;	
 	
 	public static class Slot {
 		@TileNetworkData public int liquidId = 0;
@@ -92,12 +93,27 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	public TileRefinery () {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, 1000);
+		
+		filters [0] = 0;
+		filters [1] = 0;
 	}
 	
 	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		int used = slot1.fill(from, quantity, id, doFill);
-		used += slot2.fill(from, quantity - used, id, doFill);
+		int used = 0;
+		
+		if (filters [0] != 0 || filters [1] != 0) {
+			if (filters [0] == id) {
+				used += slot1.fill(from, quantity, id, doFill);
+			}
+			
+			if (filters [1] == id) {
+				used += slot2.fill(from, quantity - used, id, doFill);
+			}
+		} else {		
+			used += slot1.fill(from, quantity, id, doFill);
+			used += slot2.fill(from, quantity - used, id, doFill);
+		}
 		
 		if (doFill && used > 0) {
 			updateNetworkTime.markTime(worldObj);
@@ -139,11 +155,6 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	}
 
 	@Override
-	public int getCapacity() {
-		return API.BUCKET_VOLUME * 3;
-	}
-
-	@Override
 	public int getLiquidId() {
 		return result.liquidId;
 	}
@@ -179,8 +190,8 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return false;
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override
@@ -203,39 +214,16 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		if (APIProxy.isClient(worldObj)) {
 			simpleAnimationIterate();
 		} else if (APIProxy.isServerSide()
-				&& updateNetworkTime.markTimeIfDelay(worldObj, 20)) {
+				&& updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 		
 		isActive = false;
 		
 		RefineryRecipe currentRecipe = null;
-		Slot src1 = null, src2 = null;
-		
-		for (RefineryRecipe r : recipes) {					
-			if (r.sourceId1 == this.slot1.liquidId && this.slot1.quantity >= r.sourceQty1) {
-				src1 = slot1;
-				src2 = slot2;
-			} else if (r.sourceId1 == this.slot2.liquidId && this.slot2.quantity >= r.sourceQty1) {
-				src1 = slot2;
-				src2 = slot1;				
-			}
-			
-			if (src1 == null) {
-				continue;
-			}
-			
-			if (r.sourceQty2 > 0) {
-				if (r.sourceId2 != src2.liquidId || src2.quantity < r.sourceQty2) {
-					continue;
-				}	
-			} else {
-				src2 = null;
-			}
-			
-			currentRecipe = r;
-			break;
-		}
+				
+		currentRecipe = BuildCraftAPI.findRefineryRecipe(slot1.liquidId, slot1.quantity,
+				slot2.liquidId, slot2.quantity);		
 		
 		if (currentRecipe == null) {
 			decreaseAnimation();
@@ -258,24 +246,50 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
+			return;
 		}
 		
 		if (!time.markTimeIfDelay(worldObj, currentRecipe.delay)) {
 			return;
+		}		
+		
+		if (!containsInput(currentRecipe.sourceId1, currentRecipe.sourceQty1)
+				|| !containsInput(currentRecipe.sourceId2,
+						currentRecipe.sourceQty2)) {
+			decreaseAnimation();
+			return;
 		}
 		
-		int energyUsed = powerProvider.useEnergy(currentRecipe.energy,
+		float energyUsed = powerProvider.useEnergy(currentRecipe.energy,
 				currentRecipe.energy, true);
 		
 		if (energyUsed != 0) {
-			result.liquidId = currentRecipe.resultId;
-			result.quantity += currentRecipe.resultQty;
-			src1.quantity -= currentRecipe.sourceQty1;
-			
-			if (src2 != null) {
-				src2.quantity -= currentRecipe.sourceQty2;	
+			if (consumeInput(currentRecipe.sourceId1, currentRecipe.sourceQty1)
+					&& consumeInput(currentRecipe.sourceId2,
+							currentRecipe.sourceQty2)) {
+				result.liquidId = currentRecipe.resultId;
+				result.quantity += currentRecipe.resultQty;
 			}
 		}
+	}
+
+	private boolean containsInput(int id, int qty) {
+		return id == 0 || (slot1.liquidId == id && slot1.quantity >= qty)
+				|| (slot2.liquidId == id && slot2.quantity >= qty);
+	}
+	
+	private boolean consumeInput (int id, int qty) {
+		if (id == 0) {
+			return true;
+		} else if (slot1.liquidId == id && slot1.quantity >= qty) {
+			slot1.quantity -= qty;
+			return true;
+		} else if (slot2.liquidId == id && slot2.quantity >= qty) {
+			slot2.quantity -= qty;
+			return true;
+		}
+		
+		return false;
 	}
 
 	@Override
@@ -293,10 +307,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		return true;
 	}
 	
-	public static void addRecipe (RefineryRecipe r) {
-		recipes.add(r);
-	}
-	
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		
@@ -311,6 +322,9 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
 		powerProvider.configure(20, 25, 25, 25, 1000);
+		
+		filters [0] = nbttagcompound.getInteger("filters_0");
+		filters [1] = nbttagcompound.getInteger("filters_1");
     }
 
 	@Override
@@ -332,6 +346,9 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		nbttagcompound.setInteger("animationStage", animationStage);
 		nbttagcompound.setFloat("animationSpeed", animationSpeed);
 		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		
+		nbttagcompound.setInteger("filters_0", filters [0]);
+		nbttagcompound.setInteger("filters_1", filters [1]);
 	}
 	
 	public int getAnimationStage () {
@@ -391,5 +408,26 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	@Override
 	public void closeChest() {
 		
+	}
+
+	@Override
+	public LiquidSlot[] getLiquidSlots() {
+		return new LiquidSlot [] {
+				new LiquidSlot(slot1.liquidId, slot1.quantity, LIQUID_PER_SLOT),
+				new LiquidSlot(slot2.liquidId, slot2.quantity, LIQUID_PER_SLOT),
+				new LiquidSlot(result.liquidId, result.quantity, LIQUID_PER_SLOT)};
+	}
+	
+	public void setFilter (int number, int liquidId) {
+		filters [number] = liquidId;
+	}
+	
+	public int getFilter (int number) {
+		return filters [number];
+	}
+	
+	@Override
+	public boolean allowActions () {
+		return false;
 	}
 }

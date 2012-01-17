@@ -21,7 +21,7 @@ public class PipeLiquidsStone extends Pipe {
 	}
 
 	@Override
-	public int getBlockTexture() {
+	public int getMainBlockTexture() {
 		return 7 * 16 + 2;
 	}
 }

@@ -30,18 +30,22 @@ public class EngineStone extends Engine {
 		maxEnergyExtracted = 100;
 	}
 	
+	@Override
 	public String getTextureFile () {
 		return "/net/minecraft/src/buildcraft/energy/gui/base_stone.png";
 	}
 	
+	@Override
 	public int explosionRange () {
 		return 4;
 	}
 	
+	@Override
 	public int maxEnergyReceived () {
 		return 200;
 	}
 	
+	@Override
 	public float getPistonSpeed () {
 		switch (getEnergyStage()) {
 		case Blue:
@@ -57,24 +61,30 @@ public class EngineStone extends Engine {
 		return 0;
 	}
 	
+	@Override
 	public boolean isBurning () {
 		return burnTime > 0;
 	}
 	
+	@Override
 	public void burn () {
 		if(burnTime > 0) {
 			burnTime--;
 			addEnergy(1);
 		}
 
-		if (burnTime == 0 && tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
-				tile.yCoord, tile.zCoord)) {
+		if (burnTime == 0 && tile.isRedstonePowered) {
 			
 			
 			burnTime = totalBurnTime = getItemBurnTime(tile.getStackInSlot(0));
 			
 			if (burnTime > 0) {
-				tile.decrStackSize(1, 1);				
+				ItemStack stack = tile.decrStackSize(1, 1);
+				
+				if (stack.getItem().getContainerItem() != null) {
+					tile.setInventorySlotContents(1, new ItemStack(stack
+							.getItem().getContainerItem(), 1));
+				}
 			}
 		}
 	}
@@ -89,7 +99,7 @@ public class EngineStone extends Engine {
 			return 0;
 		}
 		int i = itemstack.getItem().shiftedIndex;
-		if (i < 256 && Block.blocksList[i].blockMaterial == Material.wood) {
+		if (i < Block.blocksList.length && Block.blocksList[i].blockMaterial == Material.wood) {
 			return 300;
 		}
 		if (i == Item.stick.shiftedIndex) {
@@ -106,16 +116,19 @@ public class EngineStone extends Engine {
 		}
 	}
 	
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		burnTime = nbttagcompound.getInteger("burnTime");
 		totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
     }
     
+	@Override
     public void writeToNBT(NBTTagCompound nbttagcompound) {
     	nbttagcompound.setInteger("burnTime", burnTime);
 		nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
     }
 	
+	@Override
 	public void delete()
 	{
 		ItemStack stack = tile.getStackInSlot(0);
@@ -123,6 +136,7 @@ public class EngineStone extends Engine {
 			Utils.dropItems(tile.worldObj, stack, tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 	
+	@Override
 	public void getGUINetworkData(int i, int j) {
 		if (i == 0) {
 			burnTime = j;
@@ -131,6 +145,7 @@ public class EngineStone extends Engine {
 		}
 	}
 
+	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine,
 			ICrafting iCrafting) {
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, burnTime);

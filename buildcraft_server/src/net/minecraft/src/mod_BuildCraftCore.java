@@ -9,6 +9,11 @@
 
 package net.minecraft.src;
 
+import java.util.Date;
+
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.buildcraft.core.ClassMapping;
+
 public class mod_BuildCraftCore extends BaseModMp {	
 	
 	public static mod_BuildCraftCore instance;
@@ -26,6 +31,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	public void ModsLoaded () {
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeModel(this);
+		ModLoader.SetInGameHook(this, true, true);
 	}
 	
 	@Override
@@ -35,5 +41,20 @@ public class mod_BuildCraftCore extends BaseModMp {
 	
 	public static String version() {
 		return "2.2.5";
+	}
+	
+	long lastReport = 0;
+
+	public void OnTickInGame(MinecraftServer minecraftserver) {
+		if (BuildCraftCore.trackNetworkUsage) {			
+			Date d = new Date();
+
+			if (d.getTime() - lastReport > 10000) {
+				lastReport = d.getTime();
+				int bytes = ClassMapping.report();
+				System.out.println ("BuildCraft bandwidth = " + (bytes / 10) + " bytes / second");
+				System.out.println ();
+			}			
+		}
 	}
 }

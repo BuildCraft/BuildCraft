@@ -20,6 +20,7 @@ public class TilePollution extends TileEntity {
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	public int saturation = 0; /* from 0 to 100 */	
 	
+	@Override
 	public void updateEntity () {
 		if (!init) {
 			init = true;

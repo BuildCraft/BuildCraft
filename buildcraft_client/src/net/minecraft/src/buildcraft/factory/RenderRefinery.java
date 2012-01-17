@@ -20,7 +20,7 @@ import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
-import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
@@ -62,7 +62,7 @@ final static private int displayStages = 100;
 	
 	private HashMap <Integer, int []> stage = new HashMap <Integer, int []> ();	
 	
-    private int [] getDisplayLists(int liquidId) {
+    private int [] getDisplayLists(int liquidId, World world) {
     	
     	if (stage.containsKey(liquidId)) {
     		return stage.get(liquidId);
@@ -99,8 +99,8 @@ final static private int displayStages = 100;
     		block.maxY = (float) s / (float) displayStages;
     		block.maxZ = 0.5 + 4F * factor - 0.01;
     		
-    		RenderEntityBlock.renderBlock(block, APIProxy.getWorld(), 0,
-    				0, 0, false);
+    		RenderEntityBlock.renderBlock(block, world, 0,
+    				0, 0, false, true);
     		
     		GL11.glEndList();
     	}
@@ -112,6 +112,7 @@ final static private int displayStages = 100;
 		this ();
 	}
 
+	@Override
 	public void inventoryRender(double x, double y, double z,
 			float f, float f1) {
 		render(null, x, y, z);
@@ -219,7 +220,7 @@ final static private int displayStages = 100;
 		
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		if (qty1 > 0) {
-			int [] list1 = getDisplayLists(liquid1);
+			int [] list1 = getDisplayLists(liquid1, tile.worldObj);
 			
 			if (list1 != null) {
 				setTextureFor(liquid1);
@@ -231,7 +232,7 @@ final static private int displayStages = 100;
 		
 		GL11.glTranslatef(-4F * factor, 0, 4F * factor);
 		if (qty2 > 0) {
-			int [] list2 = getDisplayLists(liquid2);
+			int [] list2 = getDisplayLists(liquid2, tile.worldObj);
 			
 			if (list2 != null) {
 				setTextureFor(liquid2);
@@ -243,11 +244,11 @@ final static private int displayStages = 100;
 
 		GL11.glTranslatef(4F * factor, 0, 0);
 		if (qty3 > 0) {
-			int [] list3 = getDisplayLists(liquid3);
+			int [] list3 = getDisplayLists(liquid3, tile.worldObj);
 			
 			if (list3 != null) {
 				setTextureFor(liquid3);
-				GL11.glCallList(getDisplayLists(liquid3)[(int) ((float) qty3
+				GL11.glCallList(getDisplayLists(liquid3, tile.worldObj)[(int) ((float) qty3
 						/ (float) TileRefinery.LIQUID_PER_SLOT * (float) (displayStages - 1))]);
 			}
 		}

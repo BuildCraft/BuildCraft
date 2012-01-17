@@ -9,13 +9,12 @@
 
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.builders.GuiBuilder;
 import net.minecraft.src.buildcraft.builders.GuiFiller;
 import net.minecraft.src.buildcraft.builders.GuiTemplate;
 import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
-import net.minecraft.src.buildcraft.builders.TileTemplate;
+import net.minecraft.src.buildcraft.builders.TileArchitect;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -27,6 +26,12 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		instance = this;
 	}
 	
+	@Override
+	public void load () {
+		
+	}
+	
+	@Override
 	public void ModsLoaded () {
 		super.ModsLoaded();
 		
@@ -37,10 +42,11 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	}
 	
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "3.1.2";
 	}
 	 
+	@Override
 	public GuiScreen HandleGUI(int i) {		
 		switch (Utils.intToPacketId(i)) {
 		case FillerGUI: 
@@ -50,10 +56,10 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		case TemplateGUI:
 			return new GuiTemplate(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					new TileTemplate());
+					new TileArchitect());
 		case BuilderGUI:
 			TileBuilder tile = new TileBuilder();
-			tile.worldObj = APIProxy.getWorld();
+			tile.worldObj = ModLoader.getMinecraftInstance().theWorld;
 			return new GuiBuilder(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
 					tile);

@@ -65,7 +65,7 @@ public class PersistentWorld {
 	}
 	
 	public void removeTile(BlockIndex index) {
-		if (!tiles.containsKey(index)) {
+		if (tiles.containsKey(index)) {
 			tiles.remove(index).destroy ();
 		}
 	}

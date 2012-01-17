@@ -28,7 +28,8 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 		super(new PipeTransportItems(), new PipeLogicGold(), itemID);
 	}
 
-	public int getBlockTexture() {
+	@Override
+	public int getMainBlockTexture() {
 		if (worldObj != null
 				&& worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord,
 						zCoord)) {

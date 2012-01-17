@@ -49,7 +49,7 @@ public class RedstonePowerProvider extends PowerProvider {
 	}
 
 	@Override
-	public int useEnergy (int min, int max, boolean doUse) {		
+	public float useEnergy (float min, float max, boolean doUse) {		
 		return min;
 	}
 	
@@ -65,6 +65,7 @@ public class RedstonePowerProvider extends PowerProvider {
 		nbttagcompound.setBoolean("lastPower", lastPower);
 	}
 
+	@Override
 	public void configure(int latency, int minEnergyReceived,
 			int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
 		super.configure(latency, minEnergyReceived, maxEnergyReceived,

@@ -52,11 +52,13 @@ public class TextureOilFlowFX extends TextureFX
          
     }
     
+    @Override
 	public void bindImage(RenderEngine renderengine) {
 		GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/ /* GL_TEXTURE_2D */,
 				renderengine.getTexture(BuildCraftCore.customBuildCraftTexture));
 	}
 
+    @Override
     public void onTick()
     {
         field_1134_k++;

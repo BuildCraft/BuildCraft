@@ -11,9 +11,11 @@ package net.minecraft.src;
 import java.util.Random;
 import java.util.TreeMap;
 
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.LiquidData;
+import net.minecraft.src.buildcraft.api.RefineryRecipe;
+import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.core.CoreProxy;
@@ -21,13 +23,14 @@ import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
+import net.minecraft.src.buildcraft.energy.BptBlockEngine;
 import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.ItemFuel;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
-import net.minecraft.src.buildcraft.factory.RefineryRecipe;
-import net.minecraft.src.buildcraft.factory.TileRefinery;
+import net.minecraft.src.buildcraft.energy.TriggerEngineHeat;
+import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
@@ -49,6 +52,11 @@ public class BuildCraftEnergy {
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	
 	private static boolean initialized = false;
+	
+	public static Trigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.Blue);
+	public static Trigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.Green);
+	public static Trigger triggerYellowEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_YELLOW_ENGINE_HEAT, EnergyStage.Yellow);
+	public static Trigger triggerRedEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_RED_ENGINE_HEAT, EnergyStage.Red);
 	
 	public static void initialize () {
 		if (initialized) {
@@ -72,39 +80,18 @@ public class BuildCraftEnergy {
 		Property bucketFuelId = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("bucketFuel.id",
 				Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_FUEL_ID);
+		Property itemFuelId = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("fuel.id",
+				Configuration.ITEM_PROPERTY, DefaultProps.FUEL_ID);
 		
-
 		BuildCraftCore.mainConfiguration.save();
 		
-		CraftingManager craftingmanager = CraftingManager.getInstance();		
-		
 		engineBlock = new BlockEngine(Integer.parseInt(engineId.value));
-		craftingmanager.addRecipe(
-				new ItemStack(engineBlock, 1, 0),
-				new Object[] { "www", " g ", "GpG", 
-					Character.valueOf('w'),	Block.planks,
-					Character.valueOf('g'), Block.glass,
-					Character.valueOf('G'), BuildCraftCore.woodenGearItem,
-					Character.valueOf('p'), Block.pistonBase});
-		craftingmanager.addRecipe(
-				new ItemStack(engineBlock, 1, 1),
-				new Object[] { "www", " g ", "GpG", 
-					Character.valueOf('w'),	Block.cobblestone,
-					Character.valueOf('g'), Block.glass,
-					Character.valueOf('G'), BuildCraftCore.stoneGearItem,
-					Character.valueOf('p'), Block.pistonBase});
-		craftingmanager.addRecipe(
-				new ItemStack(engineBlock, 1, 2),
-				new Object[] { "www", " g ", "GpG", 
-					Character.valueOf('w'),	Item.ingotIron,
-					Character.valueOf('g'), Block.glass,
-					Character.valueOf('G'), BuildCraftCore.ironGearItem,
-					Character.valueOf('p'), Block.pistonBase});
 		ModLoader.RegisterBlock(engineBlock);
 		
 		Item.itemsList[engineBlock.blockID] = null;
 		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
-				engineBlock.blockID - 256));
+				engineBlock.blockID - Block.blocksList.length));
 		
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 0), "Redstone Engine");
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 1), "Steam Engine");
@@ -132,26 +119,65 @@ public class BuildCraftEnergy {
 				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 		
-		fuel = new ItemFuel (DefaultProps.FUEL_ID);
+		fuel = new ItemFuel (Integer.parseInt(itemFuelId.value)).setItemName("fuel");
+		CoreProxy.addName(fuel, "Fuel");
+		
 		bucketFuel = new ItemBuildCraftTexture(Integer.parseInt(bucketFuelId.value))
 				.setIconIndex(0 * 16 + 3).setItemName("bucketFuel")
 				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketFuel, "Fuel Bucket");
 		
-		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
-				10, fuel.shiftedIndex, 1, 1));
+		BuildCraftAPI.registerRefineryRecipe(new RefineryRecipe(oilStill.blockID, 1, 0,
+				0, 10, fuel.shiftedIndex, 1, 1));
 
-		API.ironEngineFuel.put(Block.lavaStill.blockID, new IronEngineFuel(
-				oilStill.blockID, 1, 2000));
-		API.ironEngineFuel.put(oilStill.blockID, new IronEngineFuel(
+		BuildCraftAPI.ironEngineFuel.put(Block.lavaStill.blockID, new IronEngineFuel(
+				oilStill.blockID, 1, 20000));
+		BuildCraftAPI.ironEngineFuel.put(oilStill.blockID, new IronEngineFuel(
 				oilStill.blockID, 2, 10000));
-		API.ironEngineFuel.put(fuel.shiftedIndex, new IronEngineFuel(
+		BuildCraftAPI.ironEngineFuel.put(fuel.shiftedIndex, new IronEngineFuel(
 				fuel.shiftedIndex, 5, 50000));
 		
-		API.liquids.add(new LiquidData(oilStill.blockID,
-				bucketOil.shiftedIndex));
-		API.liquids.add(new LiquidData(fuel.shiftedIndex,
-				bucketFuel.shiftedIndex));
+		BuildCraftAPI.liquids.add(new LiquidData(oilStill.blockID, 
+				oilMoving.blockID,
+				bucketOil));
+		BuildCraftAPI.liquids.add(new LiquidData(fuel.shiftedIndex, 0,
+				bucketFuel));
+		
+		BuildCraftAPI.softBlocks [oilMoving.blockID] = true;
+		BuildCraftAPI.softBlocks [oilStill.blockID] = true;
+		
+		new BptBlockEngine(engineBlock.blockID);
+
+		
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
+	}
+	
+	public static void loadRecipes () {
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
+		craftingmanager.addRecipe(
+				new ItemStack(engineBlock, 1, 0),
+				new Object[] { "www", " g ", "GpG", 
+					Character.valueOf('w'),	Block.planks,
+					Character.valueOf('g'), Block.glass,
+					Character.valueOf('G'), BuildCraftCore.woodenGearItem,
+					Character.valueOf('p'), Block.pistonBase});
+		craftingmanager.addRecipe(
+				new ItemStack(engineBlock, 1, 1),
+				new Object[] { "www", " g ", "GpG", 
+					Character.valueOf('w'),	Block.cobblestone,
+					Character.valueOf('g'), Block.glass,
+					Character.valueOf('G'), BuildCraftCore.stoneGearItem,
+					Character.valueOf('p'), Block.pistonBase});
+		craftingmanager.addRecipe(
+				new ItemStack(engineBlock, 1, 2),
+				new Object[] { "www", " g ", "GpG", 
+					Character.valueOf('w'),	Item.ingotIron,
+					Character.valueOf('g'), Block.glass,
+					Character.valueOf('G'), BuildCraftCore.ironGearItem,
+					Character.valueOf('p'), Block.pistonBase});		
 	}
 
 	public static void generateSurface(World world, Random random, int i, int j) {

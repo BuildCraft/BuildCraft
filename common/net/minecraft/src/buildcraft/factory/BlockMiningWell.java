@@ -9,19 +9,20 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
-import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider, IPipeConnection {
+public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider {
 
 	int textureFront, textureSides, textureBack, textureTop;
 	
@@ -39,6 +40,7 @@ public class BlockMiningWell extends BlockMachineRoot implements ITextureProvide
 
 	}
     
+	@Override
     public int getBlockTextureFromSideAndMetadata(int i, int j)
     {
     	if (j == 0 && i == 3) {
@@ -59,6 +61,7 @@ public class BlockMiningWell extends BlockMachineRoot implements ITextureProvide
     	}
     }
     
+	@Override
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
     {
 		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX,
@@ -77,11 +80,10 @@ public class BlockMiningWell extends BlockMachineRoot implements ITextureProvide
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-
-	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
-			int z1, int x2, int y2, int z2) {
-		return true;
-	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
 }

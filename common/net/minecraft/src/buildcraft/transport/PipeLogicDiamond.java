@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -20,14 +21,37 @@ import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 
 public class PipeLogicDiamond extends PipeLogic {
 	
 	ItemStack [] items = new ItemStack [54];
 	
+	public class PacketStack {
+		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
+		public int num;
+		
+		@TileNetworkData (staticSize = 9)
+		public short [] ids = new short [9];
+		
+		@TileNetworkData (staticSize = 9, intKind = TileNetworkData.UNSIGNED_BYTE)
+		public int [] dmg = new int [9];
+	}
+	
+	private static TilePacketWrapper networkPacket;
+	
 	private SafeTimeTracker tracker = new SafeTimeTracker();
+	
+	public PipeLogicDiamond () {
+		if (networkPacket == null) {
+			networkPacket = new TilePacketWrapper(new Class[] {
+					PacketStack.class },
+					PacketIds.DiamondPipeContents);
+		}
+	}
 	
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {		
@@ -66,9 +90,11 @@ public class PipeLogicDiamond extends PipeLogic {
 		}
 		
 		if (APIProxy.isServerSide()) {
-			CoreProxy.sendToPlayers(
-					(Packet230ModLoader) getContentsPacket(), xCoord,
-					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+			for (int p = 0; p < 6; ++p) {
+				CoreProxy.sendToPlayers(
+						(Packet230ModLoader) getContentsPacket(p), xCoord,
+						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+			}
 		}
 		
 		return stack;
@@ -76,22 +102,36 @@ public class PipeLogicDiamond extends PipeLogic {
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		items [i] = itemstack;
+		if (items [i] == null && itemstack == null) {
+			return;
+		} else if (items [i] != null && itemstack != null && items[i].isStackEqual(itemstack)) {
+			return;
+		}
+		
+		if (itemstack != null) {
+			items [i] = itemstack.copy();
+		} else {
+			items [i] = null;
+		}
 		
 		if (APIProxy.isServerSide()) {
-			CoreProxy.sendToPlayers(
-					(Packet230ModLoader) getContentsPacket(), xCoord,
-					yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+			for (int p = 0; p < 6; ++p) {
+				CoreProxy.sendToPlayers(
+						(Packet230ModLoader) getContentsPacket(p), xCoord,
+						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+			}
 		}
 	}
 	
 	@Override
 	public void updateEntity () {
-		if (tracker.markTimeIfDelay(worldObj, 200)) {
+		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor)) {
 			if (APIProxy.isServerSide()) {
-				CoreProxy.sendToPlayers(
-						(Packet230ModLoader) getContentsPacket(), xCoord,
-						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+				for (int p = 0; p < 6; ++p) {
+					CoreProxy.sendToPlayers(
+							(Packet230ModLoader) getContentsPacket(p), xCoord,
+							yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+				}
 			}
 		}
 	}
@@ -112,6 +152,7 @@ public class PipeLogicDiamond extends PipeLogic {
 		return true;
 	}
 	
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);	
 		
@@ -124,6 +165,7 @@ public class PipeLogicDiamond extends PipeLogic {
     	}    	
     }
 
+	@Override
     public void writeToNBT(NBTTagCompound nbttagcompound) {
     	super.writeToNBT(nbttagcompound);
     	
@@ -151,46 +193,85 @@ public class PipeLogicDiamond extends PipeLogic {
 		return null;
 	}
 	
-	public Packet getContentsPacket() {
-		Packet230ModLoader packet = new Packet230ModLoader();
-
-		packet.modId = mod_BuildCraftTransport.instance.getId();
-		packet.packetType = PacketIds.DiamondPipeContents.ordinal();
-		packet.isChunkDataPacket = true;
-
-		packet.dataInt = new int [3 + items.length * 2];
+	public Packet getContentsPacket(int num) {
+		PacketStack stacks = new PacketStack();
+		stacks.num = num;
 		
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		
-		for (int j = 0; j < items.length; ++j) {
-			if (items [j] == null) {
-				packet.dataInt [3 + j * 2 + 0] = -1;
-				packet.dataInt [3 + j * 2 + 1] = -1;
+		for (int j = 0; j < 9; ++j) {
+			if (items [j + num * 9] == null) {
+				stacks.ids [j] = -1;
+				stacks.dmg [j] = -1;
 			} else {
-				packet.dataInt [3 + j * 2 + 0] = items [j].itemID;
-				packet.dataInt [3 + j * 2 + 1] = items [j].getItemDamage();
+				stacks.ids [j] = (short) items [j + num * 9].itemID;
+				stacks.dmg [j] = items [j + num * 9].getItemDamage();
 			}
 			 
 		}
 		
-		return packet;
+		return networkPacket.toPacket(xCoord, yCoord, zCoord, stacks);
+		
+//		Packet230ModLoader packet = new Packet230ModLoader();
+//
+//		packet.modId = mod_BuildCraftTransport.instance.getId();
+//		packet.packetType = PacketIds.DiamondPipeContents.ordinal();
+//		packet.isChunkDataPacket = true;
+//
+//		packet.dataInt = new int [3 + 1 + 9 * 2];
+//		
+//		packet.dataInt [0] = xCoord;
+//		packet.dataInt [1] = yCoord;
+//		packet.dataInt [2] = zCoord;
+//		packet.dataInt [3] = num;
+//		
+//		for (int j = 0; j < 9; ++j) {
+//			if (items [j + num * 9] == null) {
+//				packet.dataInt [4 + j * 2 + 0] = -1;
+//				packet.dataInt [4 + j * 2 + 1] = -1;
+//			} else {
+//				packet.dataInt [4 + j * 2 + 0] = items [j + num * 9].itemID;
+//				packet.dataInt [4 + j * 2 + 1] = items [j + num * 9].getItemDamage();
+//			}
+//			 
+//		}
+		
+//		return packet;
     }
 	
 	public void handleContentsPacket (Packet230ModLoader packet) {
-		if (packet.packetType != PacketIds.DiamondPipeContents.ordinal()) {
-			return;
-		}
+		PacketStack stacks = new PacketStack();
 		
-		for (int j = 0; j < items.length; ++j) {
-			if (packet.dataInt [3 + j * 2 + 0] == -1) {
-				items [j] = null;
-			} else {
-				items[j] = new ItemStack(packet.dataInt[3 + j * 2 + 0], 1,
-						packet.dataInt[3 + j * 2 + 1]);
+		networkPacket.updateFromPacket(stacks, packet);
+
+		int num = stacks.num;
+		
+		for (int j = 0; j < 9; ++j) {
+			if (stacks.ids [j] == -1) {
+				items [num * 9 + j] = null;
+			} else {				
+				items[num * 9 + j] = new ItemStack(stacks.ids [j], 1,
+						stacks.dmg [j]);
 			}			 
 		}
+		
+//		if (packet.packetType != PacketIds.DiamondPipeContents.ordinal()) {
+//			return;
+//		}
+		
+//		int num = packet.dataInt [3];
+//		
+//		for (int j = 0; j < 9; ++j) {
+//			if (packet.dataInt [4 + j * 2 + 0] == -1) {
+//				items [num * 9 + j] = null;
+//			} else {
+//				items[num * 9 + j] = new ItemStack(packet.dataInt[3 + j * 2 + 0], 1,
+//						packet.dataInt[3 + j * 2 + 1]);
+//			}			 
+//		}
+	}
+	
+	@Override
+	public boolean doDrop() {
+		return false;
 	}
 
 }

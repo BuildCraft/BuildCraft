@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.core;
 import net.minecraft.src.TileEntity;
 
 public abstract class PersistentTile {
+	
 	public TileEntity tile;
 	
 	public BlockIndex index;

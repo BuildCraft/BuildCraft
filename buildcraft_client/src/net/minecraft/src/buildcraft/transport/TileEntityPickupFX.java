@@ -38,6 +38,7 @@ public class TileEntityPickupFX extends EntityFX
         yDestination = Utils.getPipeFloorOf(entity.item);
     }
 
+    @Override
     public void renderParticle(Tessellator tessellator, float f, float f1, float f2, float f3, float f4, float f5)
     {
         float f6 = ((float)field_678_p + f) / (float)field_677_q;
@@ -67,6 +68,7 @@ public class TileEntityPickupFX extends EntityFX
 		}
     }
 
+    @Override
     public void onUpdate()
     {
         field_678_p++;
@@ -76,6 +78,7 @@ public class TileEntityPickupFX extends EntityFX
         }
     }
 
+    @Override
     public int getFXLayer()
     {
         return 3;

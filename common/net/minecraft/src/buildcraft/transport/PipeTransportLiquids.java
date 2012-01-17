@@ -9,17 +9,20 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
+import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -29,7 +32,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	 * The amount of liquid contained by a pipe section. For simplicity, all
 	 * pipe sections are assumed to be of the same volume.
 	 */
-	public static int LIQUID_IN_PIPE = API.BUCKET_VOLUME / 4;
+	public static int LIQUID_IN_PIPE = BuildCraftAPI.BUCKET_VOLUME / 4;
 	
 	public int travelDelay = 6;	
 	public int flowRate = 20;
@@ -46,7 +49,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		int emptyTime = 0;
 		
-		@TileNetworkData 
+		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE) 
 		public int average;
 		@TileNetworkData
 		public short liquidId = 0;
@@ -144,8 +147,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 								Orientations.values()[orientation]);
 						p.moveForwards(1);
 
-						ILiquidContainer nextPipe = (ILiquidContainer) Utils
-								.getTile(worldObj, p, Orientations.Unknown);
+						ILiquidContainer nextPipe = (ILiquidContainer) container
+								.getTile(Orientations.values()[orientation]);
 						extracted = nextPipe.fill(p.orientation.reverse(),
 								out[date], liquidId, true);
 						
@@ -277,16 +280,14 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		center = new LiquidBuffer(6);
 	}
 	
-	public boolean canReceiveLiquid(Position p) {
-		TileEntity entity = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
-				(int) p.z);
+	public boolean canReceiveLiquid(Orientations o) {
+		TileEntity entity = container.getTile(o);
 
-		if (isInput[p.orientation.ordinal()]) {
+		if (isInput[o.ordinal()]) {
 			return false;
 		}
 
-		if (!Utils.checkPipesConnections(worldObj, (int) p.x, (int) p.y,
-				(int) p.z, xCoord, yCoord, zCoord)) {
+		if (!Utils.checkPipesConnections(container, entity)) {
 			return false;
 		}
 
@@ -297,6 +298,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		return false;
 	}
 
+	@Override
 	public void updateEntity() {
 		if (APIProxy.isClient(worldObj)) {
 			return;
@@ -304,9 +306,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		moveLiquids();
 		
-		this.container.synchronizeIfDelay(10);
+		this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
@@ -327,6 +330,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		nbttagcompound.setTag("center", sub);		
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
@@ -353,6 +357,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	/**
 	 * Fills the pipe, and return the amount of liquid that has been used.
 	 */
+	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		isInput[from.ordinal()] = true;
 		
@@ -424,15 +429,11 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	private int computeOutputs() {
 		int outputNumber = 0;
 		
-		for (int i = 0; i < 6; ++i) {
-			Position p = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[i]);
-			p.moveForwards(1);
+		for (Orientations o : Orientations.dirs()) {			
+			isOutput [o.ordinal()] = container.pipe.outputOpen(o)
+					&& canReceiveLiquid(o) && !isInput[o.ordinal()];
 			
-			isOutput [i] = container.pipe.outputOpen(p.orientation)
-					&& canReceiveLiquid(p) && !isInput[i];
-			
-			if (isOutput [i]) {
+			if (isOutput [o.ordinal()]) {
 				outputNumber++;
 			}
 		}		
@@ -468,39 +469,38 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	}
 
 	@Override
-	public int getCapacity() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public int empty(int quantityMax, boolean doEmpty) {
 		return 0;
 	}
 
 	@Override
-	public void onNeighborBlockChange() {
-		super.onNeighborBlockChange();
+	public void onNeighborBlockChange(int blockId) {
+		super.onNeighborBlockChange(blockId);
 		
 		for (int i = 0; i < 6; ++i) {
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[i]);
-
-			pos.moveForwards(1);
-
-			if (!Utils.checkPipesConnections(worldObj, (int) pos.x,
-					(int) pos.y, (int) pos.z, xCoord, yCoord, zCoord)) {
+			if (!Utils.checkPipesConnections(
+					container.getTile(Orientations.values()[i]), container)) {
 				side[i].reset();
 			}
 		}
 	}
 
+	@Override
 	public int getLiquidId() {
 		return center.liquidId;
 	}
 	
+	@Override
 	public boolean isPipeConnected(TileEntity tile) {
-		return tile instanceof TileGenericPipe 
-    	    || tile instanceof ILiquidContainer
+		if (tile instanceof ILiquidContainer) {
+			ILiquidContainer liq = (ILiquidContainer) tile;
+			
+			if (liq.getLiquidSlots() != null && liq.getLiquidSlots().length > 0) {
+				return true;
+			}
+		}
+		
+		return tile instanceof TileGenericPipe     	    
     	    || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
 	}
 	
@@ -532,5 +532,20 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		return splitVector;
 	}
+	
+	public boolean isTriggerActive (Trigger trigger) {
+		return false;
+	}
+
+	@Override
+	public LiquidSlot[] getLiquidSlots() {
+		return new LiquidSlot [0];
+	}
+	
+	@Override
+	public boolean allowsConnect(PipeTransport with) {
+		return with instanceof PipeTransportLiquids;
+	}
+
 }
 

@@ -14,10 +14,11 @@ import net.minecraft.src.IInventory;
 
 class CraftingTemplate extends CraftingTemplateRoot {
 	
-	public CraftingTemplate (IInventory playerInventory, TileTemplate template) {
+	public CraftingTemplate (IInventory playerInventory, TileArchitect template) {
 		super (playerInventory, template);
 	}
 	
+	@Override
 	public void updateCraftingResults() {
         super.updateCraftingResults();
         for(int i = 0; i < crafters.size(); i++)

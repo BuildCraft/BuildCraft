@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 
@@ -27,7 +28,7 @@ public abstract class Engine {
 	public int maxEnergyExtracted = 1;
 
 	protected TileEngine tile;
-	
+
 	public enum EnergyStage {
 		Blue,
 		Green,
@@ -63,8 +64,7 @@ public abstract class Engine {
 	}	
 	
 	public void update () {
-		if (!tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
-				tile.yCoord, tile.zCoord)) {
+		if (!tile.isRedstonePowered) {
 			if (energy > 1) {
 				energy -= 1;
 			}
@@ -145,5 +145,13 @@ public abstract class Engine {
 	public void sendGUINetworkData(ContainerEngine containerEngine,
 			ICrafting iCrafting) {
 		
+	}
+
+	public LiquidSlot[] getLiquidSlots() {
+		return new LiquidSlot [0];
+	}
+
+	public boolean isActive() {
+		return true;
 	}
 }

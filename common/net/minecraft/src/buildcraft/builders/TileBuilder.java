@@ -9,17 +9,18 @@
 
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.Block;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.mod_BuildCraftBuilders;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -27,111 +28,251 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.core.BlockContents;
-import net.minecraft.src.buildcraft.core.BluePrint;
-import net.minecraft.src.buildcraft.core.BluePrintBuilder;
-import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.TileBuildCraft;
-import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.BptBlueprint;
+import net.minecraft.src.buildcraft.core.BptBuilderBlueprint;
+import net.minecraft.src.buildcraft.core.BptBuilderTemplate;
+import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.BptBase;
+import net.minecraft.src.buildcraft.core.BptBuilderBase;
+import net.minecraft.src.buildcraft.core.BptContext;
+import net.minecraft.src.buildcraft.core.EntityRobot;
+import net.minecraft.src.buildcraft.core.EntityLaser;
+import net.minecraft.src.buildcraft.core.IBuilderInventory;
+import net.minecraft.src.buildcraft.core.IMachine;
+import net.minecraft.src.buildcraft.core.SurroundingInventory;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileBuilder extends TileBuildCraft implements IInventory, IPowerReceptor {
+public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 	
 	private ItemStack items [] = new ItemStack [28];
 	
-	private BluePrintBuilder bluePrintBuilder;
-	private int currentBluePrintId = -1;
+	private BptBuilderBase bluePrintBuilder;
 	
 	public @TileNetworkData Box box = new Box ();
 	
 	private PowerProvider powerProvider;
+	
+	private LinkedList <BlockIndex> path;
+	
+	private LinkedList <EntityLaser> pathLasers;
+	
+	private EntityRobot builderRobot;
+	
+	private class PathIterator {
+		public Iterator <BlockIndex> currentIterator;
+		public double cx, cy, cz;
+		public float ix, iy, iz;
+		public BlockIndex to;
+		public double lastDistance;
+		AxisAlignedBB oldBoundingBox = null;
+		Orientations o = null;
+		
+		public PathIterator (BlockIndex from, Iterator <BlockIndex> it) {
+			this.to = it.next();
+			currentIterator = it;
+			
+			double dx = to.i - from.i;
+			double dy = to.j - from.j;
+			double dz = to.k - from.k;
+			
+			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			
+			cx = dx / size / 10;
+			cy = dy / size / 10;
+			cz = dz / size / 10;
+			
+			ix = from.i;
+			iy = from.j;
+			iz = from.k;
+			
+			lastDistance = (ix - to.i) * (ix - to.i) + (iy - to.j)
+					* (iy - to.j) + (iz - to.k) * (iz - to.k);
+			
+			if (Math.abs(dx) > Math.abs(dz)) {
+				if (dx > 0) {
+					o = Orientations.XPos;
+				} else {
+					o = Orientations.XNeg;
+				}
+			} else {
+				if (dz > 0) {
+					o = Orientations.ZPos;
+				} else {
+					o = Orientations.ZNeg;
+				}
+			}
+		}
+		
+		/**
+		 * Return false when reached the end of the iteration
+		 */
+		public BptBuilderBase next () {			
+			while (true) {
+				BptBuilderBase bpt;
+				
+				int newX = Math.round(ix);
+				int newY = Math.round(iy);
+				int newZ = Math.round(iz);
+			
+				bpt = instanciateBluePrint(newX, newY, newZ, o);
+
+				if (bpt == null) {
+					return null;
+				}
+			
+				AxisAlignedBB boundingBox = bpt.getBoundingBox();
+			
+				if (oldBoundingBox == null
+						|| !collision (oldBoundingBox, boundingBox)) {
+
+					oldBoundingBox = boundingBox;
+					
+					if (bpt != null) {
+						return bpt;
+					}					
+				}
+
+				ix += cx;
+				iy += cy;
+				iz += cz;
+			
+				double distance = (ix - to.i)  * (ix - to.i)  + (iy - to.j) * (iy - to.j) + (iz - to.k) * (iz - to.k);
+
+				if (distance > lastDistance) {
+					return null;
+				} else {
+					lastDistance = distance;
+				}		
+			}			
+		}
+		
+		public PathIterator iterate () {
+			if (currentIterator.hasNext()) {
+				PathIterator next = new PathIterator(to, currentIterator);
+				next.oldBoundingBox = oldBoundingBox;
+				
+				return next;
+			} else {
+				return null;
+			}
+		}
+		
+		public boolean collision(AxisAlignedBB left, AxisAlignedBB right) {
+			if (left.maxX < right.minX || left.minX > right.maxX) {
+				return false;
+			}
+			if (left.maxY < right.minY || left.minY > right.maxY) {
+				return false;
+			}
+			if (left.maxZ < right.minZ || left.minZ > right.maxZ) {
+				return false;
+			}
+			return true;
+		}
+	}
+	
+	public PathIterator currentPathIterator;
+
+	private boolean done = true;
 	
 	public TileBuilder () {
 		super ();
 		
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(10, 25, 25, 25, 25);
-		powerProvider.configurePowerPerdition(25, 1);
 	}
 	
+	@Override
 	public void initialize () {
 		super.initialize();
 		
-		initalizeBluePrint();
+		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
+			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
+				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
+					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+					
+					if (tile instanceof TilePathMarker) {
+						path = ((TilePathMarker) tile).getPath();
+						
+						for (BlockIndex b : path) {
+							worldObj.setBlockWithNotify(b.i, b.j, b.k, 0);							
+							
+							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj,
+									b.i, b.j, b.k,
+									BuildCraftBuilders.pathMarkerBlock.blockID, 0);
+						}						
+						
+						break;
+					}
+				}
+			}
+		}
+		
+		if (path != null && pathLasers == null) {
+			path.getFirst().i = xCoord;
+			path.getFirst().j = yCoord;
+			path.getFirst().k = zCoord;
+			
+			createLasersForPath();
+		}
+		
+		iterateBpt();
 	}
 	
-	public void initalizeBluePrint () {
-		if (APIProxy.isClient(worldObj)) {
-			return;
-		}
+	public void createLasersForPath () {
+		pathLasers = new LinkedList<EntityLaser>();
+		BlockIndex previous = null;
 		
-		if (items[0] == null
-				|| items[0].getItem().shiftedIndex != BuildCraftBuilders.templateItem.shiftedIndex) {
-			currentBluePrintId = -1;
-			bluePrintBuilder = null;
-
-			if (box.isInitialized()) {
-				box.deleteLasers();
-				box.reset();
+		for (BlockIndex b : path) {
+			if (previous != null) {
+				EntityLaser laser = new EntityLaser(worldObj);
+				
+				laser.setPositions(previous.i + 0.5,
+						previous.j + 0.5, previous.k + 0.5,
+						b.i + 0.5, b.j + 0.5, b.k + 0.5);
+				laser.setTexture("/net/minecraft/src/buildcraft/core/gui/stripes.png");
+				worldObj.spawnEntityInWorld(laser);
+				pathLasers.add(laser);
 			}
 			
-			if (APIProxy.isServerSide()) {
-				sendNetworkUpdate();
-			}
-
-			return;
+			previous = b;
 		}
-		
-		if (items [0].getItemDamage() == currentBluePrintId) {
-			return;
-		}
-		
-		bluePrintBuilder = null;
-		
-		if (box.isInitialized()) {
-			box.deleteLasers();
-			box.reset();
-		}
-		
-		BluePrint bpt = BuildCraftBuilders.bluePrints[items[0]
-				.getItemDamage()];
+	}
+	
+	public BptBuilderBase instanciateBluePrint (int x, int y, int z, Orientations o) {						
+		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(items[0]
+				.getItemDamage());
 
 		if (bpt == null) {
-			if (APIProxy.isServerSide()) {
-				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord, zCoord,
-						50, mod_BuildCraftBuilders.instance);
-			}
-			
-			return;
+			return null;
 		}
-
-		bpt = new BluePrint(bpt);
-
-		Orientations o = Orientations.values()[worldObj.getBlockMetadata(
-				xCoord, yCoord, zCoord)].reverse();
-
+		
+		bpt = (BptBase) bpt.clone ();
+		
+		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos (x, y, z));
+		
 		if (o == Orientations.XPos) {
 			// Do nothing
 		} else if (o == Orientations.ZPos) {
-			bpt.rotateLeft();
+			bpt.rotateLeft(context);
 		} else if (o == Orientations.XNeg) {
-			bpt.rotateLeft();
-			bpt.rotateLeft();
+			bpt.rotateLeft(context);
+			bpt.rotateLeft(context);
 		} else if (o == Orientations.ZNeg) {
-			bpt.rotateLeft();
-			bpt.rotateLeft();
-			bpt.rotateLeft();
+			bpt.rotateLeft(context);
+			bpt.rotateLeft(context);
+			bpt.rotateLeft(context);
 		}
 
-		bluePrintBuilder = new BluePrintBuilder(bpt, xCoord, yCoord,
-				zCoord);
-		
-		box.initialize(bluePrintBuilder);
-		box.createLasers(worldObj, LaserKind.Stripes);
-		currentBluePrintId = items[0].getItemDamage();
-		
-		if (APIProxy.isServerSide()) {
-			sendNetworkUpdate();
+		if (items [0].getItem() instanceof ItemBptTemplate) {
+			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
+		} else if (items [0].getItem() instanceof ItemBptBluePrint) { 
+			return new BptBuilderBlueprint((BptBlueprint) bpt, worldObj, x, y,
+					z);
+		} else {
+			return null;
 		}
 	}
 	
@@ -141,51 +282,116 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 			return;
 		}
 		
+		if (done) {
+			return;
+		}
+		
+		if (builderRobot != null && !builderRobot.readyToBuild()) {
+			return;
+		}
+
 		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
 		
-		initalizeBluePrint();
-		
+		iterateBpt ();
+
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			BlockContents contents = bluePrintBuilder.findNextBlock(worldObj,
-					Mode.Template);
-			
-			if (contents == null && box.isInitialized()) {
-				box.deleteLasers();
-				box.reset();
-				
-				if (APIProxy.isServerSide()) {
-					sendNetworkUpdate();
-				}
-				
-				return;
+			if (!box.isInitialized()) {
+				box.initialize(bluePrintBuilder);
 			}
 			
-			if (!API.softBlock(contents.blockId)) {
-				Block.blocksList[contents.blockId].dropBlockAsItem(worldObj,
-						contents.x, contents.y, contents.z, worldObj
-								.getBlockMetadata(contents.x, contents.y,
-										contents.z));
+			if (builderRobot == null) {
+				builderRobot = new EntityRobot(worldObj, box);
+				worldObj.spawnEntityInWorld(builderRobot);
+			}
+			
+			box.createLasers(worldObj, LaserKind.Stripes);
+			
+			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(
+					worldObj, new SurroundingInventory(worldObj, xCoord,
+							yCoord, zCoord)),bluePrintBuilder.getContext());
+		}		
+	}
+	
+	public void iterateBpt () {
+		if (items[0] == null
+				|| !(items[0].getItem() instanceof ItemBptBase)) {
+		
+			if (bluePrintBuilder != null) {
+				bluePrintBuilder = null;
+			}
+			
+			if (builderRobot != null) {
+				builderRobot.setEntityDead();
+				builderRobot = null;
+			}
+			
+			if (box.isInitialized()) {
+				box.deleteLasers();
+				box.reset();
+			}
+			
+			if (currentPathIterator != null) {
+				currentPathIterator = null;
+			}
+			
+			return;
+		}
+		
+		if (bluePrintBuilder == null || bluePrintBuilder.done) {
+			if (path != null) {
+				if (currentPathIterator == null) {
+					Iterator<BlockIndex> it = path.iterator();
+					BlockIndex start = it.next();
+					currentPathIterator = new PathIterator(start, it);
+				}
 				
-				worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
-						0);				
+				if (bluePrintBuilder != null && builderRobot != null) {
+					builderRobot.markEndOfBlueprint(bluePrintBuilder);
+				}
+				
+				bluePrintBuilder = currentPathIterator.next();
+				
+				if (bluePrintBuilder != null) {
+					box.deleteLasers();
+					box.reset();
+					box.initialize(bluePrintBuilder);
+					box.createLasers(worldObj, LaserKind.Stripes);
+				}
+				
+				if (builderRobot != null) {
+					builderRobot.setBox (box);
+				}
+
+				if (bluePrintBuilder == null) {
+					currentPathIterator = currentPathIterator.iterate();
+				} 
+				
+				if (currentPathIterator == null) {
+					done = true;
+				}
 			} else {
-				for (int s = 1; s < getSizeInventory(); ++s) {
-					if (getStackInSlot(s) != null
-							&& getStackInSlot(s).stackSize > 0
-							&& getStackInSlot(s).getItem() instanceof ItemBlock) {
-
-						ItemStack stack = decrStackSize(s, 1);
-						stack.getItem().onItemUse(stack, null, worldObj,
-								contents.x,  contents.y + 1, contents.z, 0);
-
-						break;
+				if (bluePrintBuilder != null && bluePrintBuilder.done) {					
+					if (builderRobot != null) {
+						builderRobot.markEndOfBlueprint(bluePrintBuilder);
+					}
+					
+					done = true;
+					bluePrintBuilder = null;
+				} else {
+					bluePrintBuilder = instanciateBluePrint(xCoord, yCoord,
+							zCoord,
+							Orientations.values()[worldObj.getBlockMetadata(
+									xCoord, yCoord, zCoord)].reverse());
+					
+					if (bluePrintBuilder != null) {
+						box.initialize(bluePrintBuilder);
+						box.createLasers(worldObj, LaserKind.Stripes);
 					}
 				}
 			}
-		}
-		
+		}		
 	}
 
 	@Override
@@ -212,7 +418,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 		}
 		
 		if (i == 0) {
-			initalizeBluePrint();
+			iterateBpt();
 		}
 		
 		return result;
@@ -223,9 +429,9 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 		items [i] = itemstack;
 		
 		if (i == 0) {
-			initalizeBluePrint();
-		}
-		
+			iterateBpt ();
+			done = false;
+		}		
 	}
 
 	@Override
@@ -239,53 +445,60 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 	
+	@Override
     public void readFromNBT(NBTTagCompound nbttagcompound)
     {
         super.readFromNBT(nbttagcompound);
-        NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-        items = new ItemStack[getSizeInventory()];
-        for(int i = 0; i < nbttaglist.tagCount(); i++)
-        {
-            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
-            int j = nbttagcompound1.getByte("Slot") & 0xff;
-            if(j >= 0 && j < items.length)
-            {
-                items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-            }
-        }
+        
+        Utils.readStacksFromNBT(nbttagcompound, "Items", items);
         
         if (nbttagcompound.hasKey("box")) {
         	box.initialize(nbttagcompound.getCompoundTag("box"));
         }
+        
+        if (nbttagcompound.hasKey("path")) {
+        	path = new LinkedList<BlockIndex>();
+        	NBTTagList list = nbttagcompound.getTagList("path");
+        	
+        	for (int i = 0; i < list.tagCount(); ++i) {
+        		path.add(new BlockIndex((NBTTagCompound) list.tagAt(i)));
+        	}
+        }
+        
+        done = nbttagcompound.getBoolean("done");
 
     }
 
+	@Override
     public void writeToNBT(NBTTagCompound nbttagcompound)
     {
         super.writeToNBT(nbttagcompound);
-        NBTTagList nbttaglist = new NBTTagList();
-        for(int i = 0; i < items.length; i++)
-        {
-            if(items[i] != null)
-            {
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Slot", (byte)i);
-                items[i].writeToNBT(nbttagcompound1);
-                nbttaglist.setTag(nbttagcompound1);
-            }
-        }
-
-        nbttagcompound.setTag("Items", nbttaglist);
+        
+        Utils.writeStacksToNBT(nbttagcompound, "Items", items);
         
         if (box.isInitialized()) {
         	NBTTagCompound boxStore = new NBTTagCompound();
         	((Box)box).writeToNBT(boxStore);
         	nbttagcompound.setTag("box", boxStore);
         }
+        
+        if (path != null) {
+        	NBTTagList list = new NBTTagList();
+
+        	for (BlockIndex i : path) {
+        		NBTTagCompound c = new NBTTagCompound();
+        		i.writeTo(c);
+        		list.setTag(c);
+        	}
+        	
+			nbttagcompound.setTag("path", list);
+        }
+        
+        nbttagcompound.setBoolean("done", done);
     }
 
     @Override
@@ -298,6 +511,13 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 		if (box.isInitialized()) {
 			box.deleteLasers();
 		}
+		
+		if (builderRobot != null) {
+			builderRobot.setEntityDead();
+			builderRobot = null;
+		}
+		
+		cleanPathLasers();
 	}
 
 	@Override
@@ -344,7 +564,87 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 
 	@Override
 	public int powerRequest() {
-		return powerProvider.maxEnergyReceived;
+		if (bluePrintBuilder != null && !done) {
+			return powerProvider.maxEnergyReceived;
+		} else {
+			return 0;
+		}
 	}
 	
+	@Override
+	public void updateEntity () {
+		super.updateEntity();
+		
+		if (builderRobot != null) {
+			builderRobot.update();
+		}
+		
+		if ((bluePrintBuilder == null || bluePrintBuilder.done)
+				&& box.isInitialized() 
+				&& (builderRobot == null || builderRobot.done())) {
+			
+			box.deleteLasers();
+			box.reset();
+
+			if (APIProxy.isServerSide()) {
+				sendNetworkUpdate();
+			}
+
+			return;
+		}
+		
+		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {	
+			builderRobot.setEntityDead();
+			builderRobot = null;
+		}
+	}
+
+	@Override
+	public boolean isActive() {
+		return !done;
+	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return true;
+	}
+	
+	public void cleanPathLasers () {
+		if (pathLasers != null) {
+			for (EntityLaser l : pathLasers) {
+				l.setEntityDead();			
+			}
+
+			pathLasers = null;
+		}
+	}
+	
+	public boolean isBuildingBlueprint() {
+		return getStackInSlot(0) != null
+				&& getStackInSlot(0).getItem() instanceof ItemBptBluePrint;
+	}
+	
+	public Collection <ItemStack> getNeededItems () {
+		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
+			return ((BptBuilderBlueprint) bluePrintBuilder).neededItems;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public boolean isBuildingMaterial(int i) {
+		return i != 0;
+	}
+	
+	@Override
+	public boolean allowActions () {
+		return false;
+	}
+
 }

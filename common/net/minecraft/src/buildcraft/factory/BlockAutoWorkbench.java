@@ -9,12 +9,16 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.IItemPipe;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -32,6 +36,7 @@ public class BlockAutoWorkbench extends BlockContainer implements
         setHardness(1.0F);
     }
 
+    @Override
     public int getBlockTextureFromSide(int i)
     {
         if(i == 1 || i == 0)
@@ -42,9 +47,16 @@ public class BlockAutoWorkbench extends BlockContainer implements
         }
     }
 
+    @Override
 	public boolean blockActivated(World world, int i, int j, int k,
 			EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
+		
+		if (entityplayer.getCurrentEquippedItem() != null) {
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
+				return false;
+			}
+		}
 
 		FactoryProxy.displayGUIAutoCrafting(world, entityplayer, i, j, k);
 
@@ -57,6 +69,7 @@ public class BlockAutoWorkbench extends BlockContainer implements
 		return new TileAutoWorkbench ();
 	}
 	
+	@Override
     public void onBlockRemoval(World world, int i, int j, int k) {
     	Utils.preDestroyBlock(world, i, j, k);
     	
@@ -66,5 +79,11 @@ public class BlockAutoWorkbench extends BlockContainer implements
     @Override
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
+	}
+    
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 }

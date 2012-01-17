@@ -27,7 +27,7 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	}
 	
 	@Override
-	public int getBlockTexture() {
+	public int getMainBlockTexture() {
 		return 1 * 16 + 13;
 	}
 	

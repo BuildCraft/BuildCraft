@@ -11,7 +11,6 @@ package net.minecraft.src;
 
 import java.util.Map;
 
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -28,6 +27,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	
 	public static mod_BuildCraftFactory instance;
 	
+	@Override
 	public void ModsLoaded () {		
 		super.ModsLoaded();
 		
@@ -51,23 +51,31 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	}
 		
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "3.1.2";
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	public void AddRenderer(Map map) {
     	map.put (EntityMechanicalArm.class, new RenderVoid());
     }
 	
+	@Override
     public GuiScreen HandleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
 			return new GuiAutoCrafting(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					APIProxy.getWorld(),
+					ModLoader.getMinecraftInstance().theWorld,
 					new TileAutoWorkbench());
     	} else {
     		return null;
     	}
     }
+    
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
+	}
 }

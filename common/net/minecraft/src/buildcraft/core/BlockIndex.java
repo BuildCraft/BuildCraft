@@ -9,6 +9,8 @@
 
 package net.minecraft.src.buildcraft.core;
 
+import net.minecraft.src.NBTTagCompound;
+
 /**
  * This class is a comparable container for block positions.
  * TODO: should this be merged with position?
@@ -27,9 +29,16 @@ public class BlockIndex implements Comparable<BlockIndex> {
 		this.k = k;
 	}
 	
+	public BlockIndex (NBTTagCompound c) {
+		this.i = c.getInteger("i");
+		this.j = c.getInteger("j");
+		this.k = c.getInteger("k");
+	}
+	
 	/**
 	 * Provides a deterministic and complete ordering of block positions.
 	 */
+	@Override
 	public int compareTo(BlockIndex o) {
 		if (o.i < i) {
 			return 1;
@@ -46,5 +55,11 @@ public class BlockIndex implements Comparable<BlockIndex> {
 		} else {
 			return 0;
 		}
+	}
+	
+	public void writeTo (NBTTagCompound c) {
+		c.setInteger("i", i);
+		c.setInteger("j", j);
+		c.setInteger("k", k);
 	}
 }

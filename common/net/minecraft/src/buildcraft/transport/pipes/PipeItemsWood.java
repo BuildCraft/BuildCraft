@@ -44,7 +44,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int getBlockTexture() {
+	public int getMainBlockTexture() {
 		return nextTexture;
 	}
 
@@ -169,7 +169,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			if (slot != null && slot.stackSize > 0) {
 				if (doRemove) {
 					return inventory.decrStackSize(slotIndex,
-							powerProvider.useEnergy(1, slot.stackSize, true));
+							(int) powerProvider.useEnergy(1, slot.stackSize, true));
 				} else {
 					return slot;
 				}
@@ -192,7 +192,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			if (slot != null && slot.stackSize > 0) {
 				if (doRemove) {
 					return inventory.decrStackSize(slotIndex,
-							powerProvider.useEnergy(1, slot.stackSize, true));
+							(int) powerProvider.useEnergy(1, slot.stackSize, true));
 				} else {
 					return slot;
 				}
@@ -222,7 +222,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 				if (slot != null && slot.stackSize > 0) {
 					if (doRemove) {
-						return inventory.decrStackSize(k, powerProvider
+						return inventory.decrStackSize(k, (int) powerProvider
 								.useEnergy(1, slot.stackSize, true));
 					} else {
 						return slot;

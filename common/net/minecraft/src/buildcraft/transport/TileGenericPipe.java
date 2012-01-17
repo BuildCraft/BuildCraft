@@ -9,6 +9,10 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import java.util.LinkedList;
+
+import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -19,22 +23,35 @@ import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
+import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
+import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.IDropControlInventory;
 import net.minecraft.src.buildcraft.core.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.ITileBufferHolder;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.PersistentWorld;
+import net.minecraft.src.buildcraft.core.TileBuffer;
+import net.minecraft.src.buildcraft.transport.Pipe.GateKind;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor,
-		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile {
+		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile,
+		IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory {
+	
+	public TileBuffer [] tileBuffer;
+	public boolean [] pipeConnectionsBuffer = new boolean [6];
 	
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 	
@@ -48,6 +65,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
@@ -57,6 +75,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		
@@ -78,23 +97,40 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 	
 	@Override
+	public void invalidate () {
+		super.invalidate();
+		
+		if (BlockGenericPipe.isValid (pipe)) {
+			BlockGenericPipe.removePipe (pipe);
+		}
+		
+		// Clean the persistent world in case the tile is still here.
+		PersistentWorld.getWorld(worldObj).removeTile(
+				new BlockIndex(xCoord, yCoord, zCoord));
+	}
+	
+	@Override
 	public void validate () {
 		bindPipe();
 	}
 	
+	public boolean initialized = false;
+	
 	@Override
 	public void updateEntity () {		
-		bindPipe ();
-		if (pipe != null) {
-			pipe.initialize();
-		}
+		if (!initialized) {
+			initialize ();
+			
+			initialized = true;
+		}				
 		
 		if (!BlockGenericPipe.isValid(pipe)) {
 			return;
 		}
 		
 		if (blockNeighborChange) {
-			pipe.onNeighborBlockChange();
+			computeConnections();
+			pipe.onNeighborBlockChange(0);
 			blockNeighborChange = false;
 		}
 		
@@ -107,6 +143,36 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if (pipe != null) {
 			pipe.updateEntity ();
 		}
+	}
+	
+	private void initialize () {
+		tileBuffer = new TileBuffer [6];
+		
+		for (Orientations o : Orientations.dirs()) {
+			Position pos = new Position (xCoord, yCoord, zCoord, o);
+			pos.moveForwards(1.0);
+			
+			tileBuffer[o.ordinal()] = new TileBuffer();
+			tileBuffer[o.ordinal()].initialize(worldObj, (int) pos.x,
+					(int) pos.y, (int) pos.z);
+		}
+		
+		for (Orientations o : Orientations.dirs()) {
+			TileEntity tile = getTile (o);
+			
+			if (tile instanceof ITileBufferHolder) {
+				((ITileBufferHolder) tile).blockCreated(o,
+						BuildCraftTransport.genericPipeBlock.blockID, this);
+			}
+		}
+		
+		bindPipe ();
+		
+		if (pipe != null) {
+			pipe.initialize();
+		}
+		
+		computeConnections();
 	}
 
 	private void bindPipe() {
@@ -123,6 +189,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			if (pipe != null) {
 				pipe.setTile(this);
 				pipe.setWorld(worldObj);
+				
+				if (worldObj == null) {
+					throw new NullPointerException();
+				}
+				
 				PersistentWorld.getWorld(worldObj).storeTile(pipe,
 						new BlockIndex(xCoord, yCoord, zCoord));
 				pipeId = pipe.itemID;				
@@ -183,16 +254,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if (BlockGenericPipe.isValid(pipe)
 				&& pipe.transport instanceof ILiquidContainer) {
 			return ((ILiquidContainer) pipe.transport).getLiquidQuantity();
-		} else {
-			return 0;
-		}
-	}
-
-	@Override
-	public int getCapacity() {
-		if (BlockGenericPipe.isValid(pipe)
-				&& pipe.transport instanceof ILiquidContainer) {
-			return ((ILiquidContainer) pipe.transport).getCapacity();
 		} else {
 			return 0;
 		}
@@ -265,7 +326,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
+			return false;
+		}
+		
 		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.canInteractWith(entityplayer);
 		} else {
@@ -377,4 +442,108 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		return getPowerProvider().maxEnergyReceived;
 	}
 
+	@Override
+	public LinkedList<Trigger> getTriggers() {
+		LinkedList <Trigger> result = new LinkedList <Trigger> ();
+		
+		if (BlockGenericPipe.isFullyDefined(pipe) && pipe.gateKind != GateKind.None) {
+			result.add(BuildCraftCore.triggerRedstoneActive);
+			result.add(BuildCraftCore.triggerRedstoneInactive);
+		}
+		
+		return result;
+	}
+
+	@Override
+	public LiquidSlot[] getLiquidSlots() {
+		return new LiquidSlot [0];
+	}
+
+	@Override
+	public void blockRemoved(Orientations from) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void blockCreated(Orientations from, int blockID, TileEntity tile) {
+		if (tileBuffer != null) {
+			tileBuffer [from.reverse().ordinal()].set(blockID, tile);
+		}
+	}
+
+	@Override
+	public int getBlockId(Orientations to) {
+		if (tileBuffer != null) {
+			return tileBuffer [to.ordinal()].getBlockID();
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public TileEntity getTile(Orientations to) {
+		if (tileBuffer != null) {
+			return tileBuffer [to.ordinal()].getTile();
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean isPipeConnected(TileEntity with) {
+		Pipe pipe1 = pipe;
+		Pipe pipe2 = null;
+		
+		if (with instanceof TileGenericPipe) {
+			pipe2 = ((TileGenericPipe) with).pipe;
+		}
+
+		if (!BlockGenericPipe.isValid(pipe1)) {
+			return false;
+		}
+
+		if (BlockGenericPipe.isValid (pipe2) && !pipe1.transport.getClass().isAssignableFrom(
+				pipe2.transport.getClass())
+				&& !pipe1.transport.allowsConnect(pipe2.transport)) {
+			return false;
+		}
+
+		return pipe1 != null ? pipe1.isPipeConnected(with) : false;
+	}
+
+	private void computeConnections() {		
+		if (tileBuffer != null) {
+			boolean [] oldConnections = pipeConnectionsBuffer;
+			pipeConnectionsBuffer = new boolean [6];
+			
+			for (int i = 0; i < tileBuffer.length; ++i) {
+				TileBuffer t = tileBuffer[i];
+				t.refresh();
+				
+				if (t.getTile() != null) {
+					pipeConnectionsBuffer[i] = isPipeConnected (t.getTile());
+				}
+			}
+			
+			for (int i = 0; i < tileBuffer.length; ++i) {
+				if (oldConnections [i] != pipeConnectionsBuffer [i]) {
+					worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public boolean isPipeConnected(Orientations with) {
+		return pipeConnectionsBuffer [with.ordinal()];
+	}
+
+	@Override
+	public boolean doDrop() {
+		if (BlockGenericPipe.isValid(pipe)) {
+			return pipe.doDrop ();
+		} else {
+			return false;
+		}
+	}
 }

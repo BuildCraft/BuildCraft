@@ -8,21 +8,42 @@
 
 package net.minecraft.src;
 
+import net.minecraft.src.buildcraft.api.Action;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.IPipe;
+import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.core.AssemblyRecipe;
+
+import java.util.LinkedList;
+
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
+import net.minecraft.src.buildcraft.transport.ActionSignalOutput;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
+import net.minecraft.src.buildcraft.transport.BptBlockPipe;
+import net.minecraft.src.buildcraft.transport.BptItemPipeDiamond;
+import net.minecraft.src.buildcraft.transport.BptItemPipeIron;
+import net.minecraft.src.buildcraft.transport.BptItemPipeWodden;
+import net.minecraft.src.buildcraft.transport.ItemGate;
 import net.minecraft.src.buildcraft.transport.LegacyBlock;
 import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
+import net.minecraft.src.buildcraft.transport.PipeTriggerProvider;
+import net.minecraft.src.buildcraft.transport.TileDummyGenericPipe;
+import net.minecraft.src.buildcraft.transport.TileDummyGenericPipe2;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.transport.TriggerPipeContents;
+import net.minecraft.src.buildcraft.transport.TriggerPipeSignal;
+import net.minecraft.src.buildcraft.transport.TriggerPipeContents.Kind;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsIron;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsObsidian;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStone;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStripes;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsGold;
@@ -32,8 +53,7 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerWood;
-import net.minecraft.src.buildcraft.transport.BlockDockingStation;
-import net.minecraft.src.buildcraft.transport.TileDockingStation;
+import net.minecraft.src.buildcraft.transport.pipes.PipeStructureCobblestone;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
@@ -42,13 +62,18 @@ public class BuildCraftTransport {
 	private static boolean initialized = false;
 			
 	public static BlockGenericPipe genericPipeBlock;
-	public static BlockDockingStation dockingStationBlock;
 	
 	public static int [] diamondTextures = new int [6];
 	
 	public static boolean alwaysConnectPipes;
+	public static int maxItemsInPipes;
 		
 	public static Item pipeWaterproof;
+	public static Item pipeGate;
+	public static Item redPipeWire;
+	public static Item bluePipeWire;
+	public static Item greenPipeWire;
+	public static Item yellowPipeWire;
 	
 	public static Item pipeItemsWood;
 	public static Item pipeItemsStone;
@@ -68,6 +93,35 @@ public class BuildCraftTransport {
 	public static Item pipePowerStone;
 	public static Item pipePowerGold;
 	
+	public static Item pipeItemsStipes;
+	public static Item pipeStructureCobblestone;
+	public static int groupItemsTrigger;
+	
+	public static Trigger triggerPipeEmpty = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_EMPTY, Kind.Empty);
+	public static Trigger triggerPipeItems = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_ITEMS, Kind.ContainsItems);
+	public static Trigger triggerPipeLiquids = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_LIQUIDS, Kind.ContainsLiquids);
+	public static Trigger triggerPipeEnergy = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_ENERGY, Kind.ContainsEnergy);
+	public static Trigger triggerRedSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_RED_SIGNAL_ACTIVE, true, IPipe.WireColor.Red);
+	public static Trigger triggerRedSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_RED_SIGNAL_INACTIVE, false, IPipe.WireColor.Red);
+	public static Trigger triggerBlueSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_BLUE_SIGNAL_ACTIVE, true, IPipe.WireColor.Blue);
+	public static Trigger triggerBlueSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_BLUE_SIGNAL_INACTIVE, false, IPipe.WireColor.Blue);
+	public static Trigger triggerGreenSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_GREEN_SIGNAL_ACTIVE, true, IPipe.WireColor.Green);
+	public static Trigger triggerGreenSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_GREEN_SIGNAL_INACTIVE, false, IPipe.WireColor.Green);
+	public static Trigger triggerYellowSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_ACTIVE, true, IPipe.WireColor.Yellow);
+	public static Trigger triggerYellowSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_INACTIVE, false, IPipe.WireColor.Yellow);
+
+	public static Action actionRedSignal = new ActionSignalOutput(DefaultProps.ACTION_RED_SIGNAL, IPipe.WireColor.Red);
+	public static Action actionBlueSignal = new ActionSignalOutput(DefaultProps.ACTION_BLUE_SIGNAL, IPipe.WireColor.Blue);
+	public static Action actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
+	public static Action actionYellowSignal = new ActionSignalOutput(DefaultProps.ACTION_YELLOW_SIGNAL, IPipe.WireColor.Yellow);
+	
+	private static class PipeRecipe {
+		ItemStack result;
+		Object [] input;
+	}
+	
+	private static LinkedList <PipeRecipe> pipeRecipes = new LinkedList <PipeRecipe> ();
+
 	public static void initialize () {
 		if (initialized) {
 			return;
@@ -93,33 +147,48 @@ public class BuildCraftTransport {
 
 		PipeLogicWood.excludedBlocks = exclusionList.value.split(",");
 		
+		Property maxItemInPipesProp = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("pipes.maxItems",
+				Configuration.GENERAL_PROPERTY,
+				100);
+		maxItemInPipesProp.comment = "pipes containing more than this amount of items will explode, not dropping any item";
+
+		maxItemsInPipes = Integer.parseInt(maxItemInPipesProp.value);
+		
+		Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("pipes.groupItemsTrigger",
+				Configuration.GENERAL_PROPERTY,
+				32);
+		groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
+
+		groupItemsTrigger = Integer.parseInt(groupItemsTriggerProp.value);
+
+		
 		Property genericPipeId = BuildCraftCore.mainConfiguration
 		.getOrCreateBlockIdProperty("pipe.id",
 				DefaultProps.GENERIC_PIPE_ID);
-				
-		Property dockingStationId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("dockingStation.id",
-				DefaultProps.DOCKING_STATION_ID);
 
 		for (int j = 0; j < PipeLogicWood.excludedBlocks.length; ++j) {
 			PipeLogicWood.excludedBlocks[j] = PipeLogicWood.excludedBlocks[j]
 					.trim();
 		}
 
-		BuildCraftCore.mainConfiguration.save();
-
-		CraftingManager craftingmanager = CraftingManager.getInstance();
+		BuildCraftCore.mainConfiguration.save();		
 		
 		pipeWaterproof = new ItemBuildCraftTexture (DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
 		pipeWaterproof.setItemName("pipeWaterproof");
-		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");
-		craftingmanager.addRecipe(new ItemStack(pipeWaterproof, 1), new Object[] {
-			"W ", "  ", 
-			Character.valueOf('W'), new ItemStack(Item.dyePowder, 1, 2)});
-		
+		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");		
 		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
-		ModLoader.RegisterTileEntity(TileGenericPipe.class,
+		ModLoader.RegisterBlock(genericPipeBlock);
+		
+		// Fixing retro-compatiblity
+		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe.class,
+				"net.minecraft.src.buildcraft.GenericPipe");
+		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe2.class,
 				"net.minecraft.src.buildcraft.transport.TileGenericPipe");
+		
+		mod_BuildCraftTransport.registerTilePipe(TileGenericPipe.class,
+				"net.minecraft.src.buildcraft.transport.GenericPipe");	
 		
 		pipeItemsWood = createPipe (DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
 		pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
@@ -145,6 +214,12 @@ public class BuildCraftTransport {
 		// diamond
 		// obsidian
 		
+		// Fix name and recipe (Structure pipe insteand of Signal?)
+		pipeStructureCobblestone = createPipe (DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Block.gravel,  pipeItemsCobblestone, null);
+		
+		// Fix the recipe
+		pipeItemsStipes = createPipe (DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack (Item.dyePowder, 1, 0),  Block.glass, new ItemStack (Item.dyePowder, 1, 11));
+		
 //		dockingStationBlock = new BlockDockingStation(Integer.parseInt(dockingStationId.value));
 //		ModLoader.RegisterBlock(dockingStationBlock);
 //		CoreProxy.addName(dockingStationBlock.setBlockName("dockingStation"),
@@ -155,6 +230,45 @@ public class BuildCraftTransport {
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures [j] = 1 * 16 + 6 + j;
 		}				
+		
+		redPipeWire = new ItemBuildCraftTexture(DefaultProps.RED_PIPE_WIRE).setIconIndex(4 * 16 + 0);
+		redPipeWire.setItemName("redPipeWire");
+		CoreProxy.addName(redPipeWire, "Red Pipe Wire");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(Item.dyePowder, 1, 1),
+				new ItemStack(Item.redstone, 1),
+				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(
+				redPipeWire, 8)));
+		
+		bluePipeWire = new ItemBuildCraftTexture(DefaultProps.BLUE_PIPE_WIRE).setIconIndex(4 * 16 + 1);
+		bluePipeWire.setItemName("bluePipeWire");
+		CoreProxy.addName(bluePipeWire, "Blue Pipe Wire");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(Item.dyePowder, 1, 4),
+				new ItemStack(Item.redstone, 1),
+				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(
+				bluePipeWire, 8)));
+		
+		greenPipeWire = new ItemBuildCraftTexture(DefaultProps.GREEN_PIPE_WIRE).setIconIndex(4 * 16 + 2);
+		greenPipeWire.setItemName("greenPipeWire");
+		CoreProxy.addName(greenPipeWire, "Green Pipe Wire");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(Item.dyePowder, 1, 2),
+				new ItemStack(Item.redstone, 1),
+				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(
+				greenPipeWire, 8)));
+		
+		yellowPipeWire = new ItemBuildCraftTexture(DefaultProps.YELLOW_PIPE_WIRE).setIconIndex(4 * 16 + 3);
+		yellowPipeWire.setItemName("yellowPipeWire");
+		CoreProxy.addName(yellowPipeWire, "Yellow Pipe Wire");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(Item.dyePowder, 1, 11),
+				new ItemStack(Item.redstone, 1),
+				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(
+				yellowPipeWire, 8)));
+		
+		pipeGate = new ItemGate(DefaultProps.GATE_ID).setIconIndex(2 * 16 + 3);
+		pipeGate.setItemName("pipeGate");
 		
 		alwaysConnectPipes = Boolean.parseBoolean(alwaysConnect.value);
 		
@@ -203,7 +317,33 @@ public class BuildCraftTransport {
 		
 		BuildCraftCore.mainConfiguration.save();
 
+		new BptBlockPipe (genericPipeBlock.blockID);
+		
+		BuildCraftCore.itemBptProps [pipeItemsWood.shiftedIndex] = new BptItemPipeWodden();
+		BuildCraftCore.itemBptProps [pipeLiquidsWood.shiftedIndex] = new BptItemPipeWodden();
+		BuildCraftCore.itemBptProps [pipeItemsIron.shiftedIndex] = new BptItemPipeIron();
+		BuildCraftCore.itemBptProps [pipeLiquidsIron.shiftedIndex] = new BptItemPipeIron();
+		BuildCraftCore.itemBptProps [pipeItemsDiamond.shiftedIndex] = new BptItemPipeDiamond();
+		
+		BuildCraftAPI.registerTriggerProvider(new PipeTriggerProvider());
+
+		
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
 	}	
+	
+	public static void loadRecipes () {
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
+		craftingmanager.addRecipe(new ItemStack(pipeWaterproof, 1), new Object[] {
+			"W ", "  ", 
+			Character.valueOf('W'), new ItemStack(Item.dyePowder, 1, 2)});
+		
+		for (PipeRecipe p : pipeRecipes) {
+			craftingmanager.addRecipe(p.result, p.input);
+		}
+	}
 	
 	private static Item createPipe (int defaultID, Class <? extends Pipe> clas, String descr, Object r1, Object r2, Object r3) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0))
@@ -218,19 +358,25 @@ public class BuildCraftTransport {
 		res.setItemName(clas.getSimpleName());
 		CoreProxy.addName(res, descr);
 		
-		CraftingManager craftingmanager = CraftingManager.getInstance();
+		PipeRecipe re = new PipeRecipe ();
 		
-		if (r1 != null && r2 != null && r3 != null) {						
-			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
+		if (r1 != null && r2 != null && r3 != null) {	
+			re.result = new ItemStack(res, 8);
+			re.input = new Object[] {
 				"   ", "ABC", "   ", 
 				Character.valueOf('A'), r1,
 				Character.valueOf('B'), r2,
-				Character.valueOf('C'), r3});
+				Character.valueOf('C'), r3};
+			
+			pipeRecipes.add(re);
 		} else if (r1 != null && r2 != null) {
-			craftingmanager.addRecipe(new ItemStack(res, 1), new Object[] {
+			re.result = new ItemStack(res, 1);
+			re.input = new Object[] {
 				"A ", "B ", 
 				Character.valueOf('A'), r1,
-				Character.valueOf('B'), r2});
+				Character.valueOf('B'), r2};
+			
+			pipeRecipes.add(re);
 		}
 		
 		return res;

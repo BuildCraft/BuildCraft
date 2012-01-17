@@ -37,7 +37,7 @@ public abstract class FillerPattern {
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {					
-					if (API.softBlock(world.getBlockId(x, y, z))) {
+					if (BuildCraftAPI.softBlock(world.getBlockId(x, y, z))) {
 						xSlot = x;
 						ySlot = y;
 						zSlot = z;
@@ -49,8 +49,9 @@ public abstract class FillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, null, world,
-					xSlot, ySlot + 1, zSlot, 0);
+			stackToPlace.getItem().onItemUse(stackToPlace,
+					BuildCraftAPI.getBuildCraftPlayer(world), world, xSlot,
+					ySlot - 1, zSlot, 1);
 		}
 		
 		return !found;
@@ -65,8 +66,8 @@ public abstract class FillerPattern {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if (!API.softBlock(world.getBlockId(x, y, z))
-						&& !API.unbreakableBlock(world.getBlockId(x, y, z))) {
+					if (!BuildCraftAPI.softBlock(world.getBlockId(x, y, z))
+						&& !BuildCraftAPI.unbreakableBlock(world.getBlockId(x, y, z))) {
 						found = true;
 						lastX = x;
 						lastY = y;
@@ -81,7 +82,7 @@ public abstract class FillerPattern {
 		}
 		
 		if (lastX != Integer.MAX_VALUE) {
-			API.breakBlock(world, lastX, lastY, lastZ);
+			BuildCraftAPI.breakBlock(world, lastX, lastY, lastZ);
 		}
 				
 		

@@ -1,45 +1,83 @@
 /** 
- * BuildCraft is open-source. It is distributed under the terms of the 
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
- * granted by the copyright holder.
+ * Copyright (c) SpaceToad, 2011-2012
+ * http://www.mod-buildcraft.com
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
 package net.minecraft.src;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.TreeMap;
 
+import net.minecraft.src.buildcraft.api.BptBlock;
 import net.minecraft.src.buildcraft.api.FillerRegistry;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockBed;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockCustomStack;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockDelegate;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockDirt;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockDoor;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockIgnore;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockIgnoreMeta;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockLever;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockLiquid;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockPiston;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockPumpkin;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockRedstoneRepeater;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockSign;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockStairs;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockRotateMeta;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockWallSide;
+import net.minecraft.src.buildcraft.builders.BlockBlueprintLibrary;
 import net.minecraft.src.buildcraft.builders.BlockBuilder;
 import net.minecraft.src.buildcraft.builders.BlockFiller;
 import net.minecraft.src.buildcraft.builders.BlockMarker;
-import net.minecraft.src.buildcraft.builders.BlockTemplate;
+import net.minecraft.src.buildcraft.builders.BlockPathMarker;
+import net.minecraft.src.buildcraft.builders.BlockArchitect;
+import net.minecraft.src.buildcraft.builders.BptBlockFiller;
 import net.minecraft.src.buildcraft.builders.FillerFillAll;
 import net.minecraft.src.buildcraft.builders.FillerFillPyramid;
 import net.minecraft.src.buildcraft.builders.FillerFillStairs;
 import net.minecraft.src.buildcraft.builders.FillerFillWalls;
 import net.minecraft.src.buildcraft.builders.FillerFlattener;
 import net.minecraft.src.buildcraft.builders.FillerRemover;
-import net.minecraft.src.buildcraft.builders.ItemTemplate;
+import net.minecraft.src.buildcraft.builders.ItemBptBluePrint;
+import net.minecraft.src.buildcraft.builders.ItemBptTemplate;
+import net.minecraft.src.buildcraft.builders.TileBlueprintLibrary;
 import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
 import net.minecraft.src.buildcraft.builders.TileMarker;
-import net.minecraft.src.buildcraft.builders.TileTemplate;
-import net.minecraft.src.buildcraft.core.BluePrint;
+import net.minecraft.src.buildcraft.builders.TilePathMarker;
+import net.minecraft.src.buildcraft.builders.TileArchitect;
+import net.minecraft.src.buildcraft.core.BptPlayerIndex;
+import net.minecraft.src.buildcraft.core.BptRootIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.WorldIteratorRadius;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
 public class BuildCraftBuilders {
+	public static final int LIBRARY_PAGE_SIZE = 12;
+	
+	public static final int MAX_BLUEPRINTS_NAME_SIZE= 88;
+	
 	public static BlockMarker markerBlock;
+	public static BlockPathMarker pathMarkerBlock;
 	public static BlockFiller fillerBlock;
 	public static BlockBuilder builderBlock;
-	public static BlockTemplate templateBlock;
-	public static ItemTemplate templateItem;
+	public static BlockArchitect architectBlock;
+	public static BlockBlueprintLibrary libraryBlock;
+	public static ItemBptTemplate templateItem;
+	public static ItemBptBluePrint blueprintItem;
 	
 	private static boolean initialized = false;
+	
+	private static BptRootIndex rootBptIndex;
+
+	public static TreeMap <String, BptPlayerIndex> playerLibrary = new TreeMap <String, BptPlayerIndex> ();
 	
 	public static void initialize () {	
 		if (initialized) {
@@ -54,79 +92,69 @@ public class BuildCraftBuilders {
 		Property templateItemId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("templateItem.id", Configuration.ITEM_PROPERTY,
 						DefaultProps.TEMPLATE_ITEM_ID);
+		Property blueprintItemId = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("blueprintItem.id", Configuration.ITEM_PROPERTY,
+				DefaultProps.BLUEPRINT_ITEM_ID);
 		Property markerId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("marker.id", DefaultProps.MARKER_ID);
+		Property pathMarkerId = BuildCraftCore.mainConfiguration
+		.getOrCreateBlockIdProperty("pathMarker.id", DefaultProps.PATH_MARKER_ID);
 		Property fillerId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("filler.id", DefaultProps.FILLER_ID);
 		Property builderId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("builder.id",
 						DefaultProps.BUILDER_ID);
-		Property templateId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("template.id",
-						DefaultProps.TEMPLATE_ID);
+		Property architectId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("architect.id",
+						DefaultProps.ARCHITECT_ID);		
+		Property libraryId = BuildCraftCore.mainConfiguration
+				.getOrCreateBlockIdProperty("blueprintLibrary.id",
+						DefaultProps.BLUEPRINT_LIBRARY_ID);
 		
-		BuildCraftCore.mainConfiguration.save();
+		BuildCraftCore.mainConfiguration.save();		
 		
-		CraftingManager craftingmanager = CraftingManager.getInstance();
-		
-		templateItem = new ItemTemplate (Integer.parseInt(templateItemId.value));
+		templateItem = new ItemBptTemplate (Integer.parseInt(templateItemId.value));
 		templateItem.setItemName("templateItem");
-		CoreProxy.addName(templateItem, "Blank Template");
-		craftingmanager.addRecipe(new ItemStack(templateItem, 1), new Object[] {
-			"ppp", "pip", "ppp", 
-			Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('p'), Item.paper });	
+		CoreProxy.addName(templateItem, "Template");
+		
+		blueprintItem = new ItemBptBluePrint(Integer.parseInt(blueprintItemId.value));
+		blueprintItem.setItemName("blueprintItem");
+		CoreProxy.addName(blueprintItem, "Blueprint");		
 		
 		markerBlock = new BlockMarker(Integer.parseInt(markerId.value));		
 		ModLoader.RegisterBlock(markerBlock);
 		CoreProxy.addName(markerBlock.setBlockName("markerBlock"), "Land Mark");
-		craftingmanager.addRecipe(new ItemStack(markerBlock, 1), new Object[] {
-				"l ", "r ", Character.valueOf('l'),
-				new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'),
-				Block.torchRedstoneActive });	
+		
+		pathMarkerBlock = new BlockPathMarker(Integer.parseInt(pathMarkerId.value));		
+		ModLoader.RegisterBlock(pathMarkerBlock);
+		CoreProxy.addName(pathMarkerBlock.setBlockName("pathMarkerBlock"), "Path Mark");
 		
 		fillerBlock = new BlockFiller(Integer.parseInt(fillerId.value));		
 		ModLoader.RegisterBlock(fillerBlock);
 		CoreProxy.addName(fillerBlock.setBlockName("fillerBlock"), "Filler");
-		craftingmanager.addRecipe(new ItemStack(fillerBlock, 1), new Object[] {
-			"btb", "ycy", "gCg", 
-			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('t'), markerBlock,
-			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench,
-			Character.valueOf('g'), BuildCraftCore.goldGearItem,
-			Character.valueOf('C'), Block.chest	});	
-		
+	
 		builderBlock = new BlockBuilder(Integer.parseInt(builderId.value));
 		ModLoader.RegisterBlock(builderBlock);
 		CoreProxy.addName(builderBlock.setBlockName("builderBlock"), "Builder");
-		craftingmanager.addRecipe(new ItemStack(builderBlock, 1), new Object[] {
-			"btb", "ycy", "gCg", 
-			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('t'), markerBlock,
-			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench,
-			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
-			Character.valueOf('C'), Block.chest	});	
 		
-		templateBlock = new BlockTemplate(Integer.parseInt(templateId.value));
-		ModLoader.RegisterBlock(templateBlock);
-		CoreProxy.addName(templateBlock.setBlockName("templateBlock"), "Template Drawing Table");
-		craftingmanager.addRecipe(new ItemStack(templateBlock, 1), new Object[] {
-			"btb", "ycy", "gCg", 
-			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('t'), markerBlock,
-			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench,
-			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
-			Character.valueOf('C'), new ItemStack (templateItem, 1) });	
+		architectBlock = new BlockArchitect(Integer.parseInt(architectId.value));
+		ModLoader.RegisterBlock(architectBlock);
+		CoreProxy.addName(architectBlock.setBlockName("architectBlock"), "Architect Table");
+		
+		libraryBlock = new BlockBlueprintLibrary(Integer.parseInt(libraryId.value));
+		ModLoader.RegisterBlock(libraryBlock);
+		CoreProxy.addName(libraryBlock.setBlockName("libraryBlock"), "Blueprint Library");
 		
 		ModLoader.RegisterTileEntity(TileMarker.class, "Marker");
 		ModLoader.RegisterTileEntity(TileFiller.class, "Filler");
 		ModLoader.RegisterTileEntity(TileBuilder.class,
 				"net.minecraft.src.builders.TileBuilder");
-		ModLoader.RegisterTileEntity(TileTemplate.class,
+		ModLoader.RegisterTileEntity(TileArchitect.class,
 				"net.minecraft.src.builders.TileTemplate");
+		ModLoader.RegisterTileEntity(TilePathMarker.class,
+		"net.minecraft.src.builders.TilePathMarker");
+		ModLoader.RegisterTileEntity(TileBlueprintLibrary.class,
+		"net.minecraft.src.builders.TileBlueprintLibrary");
 		
 		FillerRegistry.addRecipe(new FillerFillAll(), new Object[] { "bbb",
 				"bbb", "bbb", Character.valueOf('b'),
@@ -153,50 +181,187 @@ public class BuildCraftBuilders {
 						Block.brick });
 
 		
-		BuildCraftCore.mainConfiguration.save();
+		BuildCraftCore.mainConfiguration.save();		
 		
-		loadBluePrints();
-	}
 		
-	public static BluePrint bluePrints [] = new BluePrint [65025];
-	
-	public static int storeBluePrint (BluePrint bluePrint) {
-		// Position 0 is "no blueprint yet"
-		for (int i = 1; i < bluePrints.length; ++i) {
-			if (bluePrints [i] == null) {
-				bluePrints [i] = bluePrint;
-				bluePrint.save(i);
+//	    public static final Block music;
+//	    public static final Block cloth;
+//	    public static final Block tilledField;
+//	    public static final BlockPortal portal;
+//	    public static final Block trapdoor;
+
+		new BptBlock(0); // default bpt block
+		
+		new BptBlockIgnore(Block.snow.blockID);
+		new BptBlockIgnore(Block.tallGrass.blockID);
+		new BptBlockIgnore(Block.ice.blockID);
+		new BptBlockIgnore(Block.pistonExtension.blockID);
+		
+		new BptBlockDirt(Block.dirt.blockID);
+		new BptBlockDirt(Block.grass.blockID);
+		new BptBlockDirt(Block.tilledField.blockID);
+		
+		new BptBlockDelegate(Block.torchRedstoneIdle.blockID, Block.torchRedstoneActive.blockID);		
+		new BptBlockDelegate(Block.stoneOvenActive.blockID, Block.stoneOvenIdle.blockID);
+		new BptBlockDelegate(Block.pistonMoving.blockID, Block.pistonBase.blockID);
+		
+		new BptBlockWallSide(Block.torchWood.blockID);
+		new BptBlockWallSide(Block.torchRedstoneActive.blockID);
+		
+		new BptBlockRotateMeta(Block.ladder.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(Block.stoneOvenIdle.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(Block.chest.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(Block.lockedChest.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(Block.dispenser.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(Block.fenceGate.blockID, new int [] {0, 1, 2, 3}, true);
+		
+		new BptBlockRotateMeta(Block.vine.blockID, new int [] {1, 4, 8, 2}, false);
+		new BptBlockRotateMeta(Block.trapdoor.blockID, new int [] {0, 1, 2, 3}, false);
+		
+		new BptBlockLever(Block.button.blockID);
+		new BptBlockLever(Block.lever.blockID);
+		
+		new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));
+		new BptBlockCustomStack(Block.redstoneWire.blockID, new ItemStack(Item.redstone));
+		new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
+		new BptBlockCustomStack(Block.cake.blockID, new ItemStack(Item.cake));
+		new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
+		new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));
+		new BptBlockCustomStack(Block.melonStem.blockID, new ItemStack(Item.melonSeeds));
+		
+		new BptBlockRedstoneRepeater(Block.redstoneRepeaterActive.blockID);
+		new BptBlockRedstoneRepeater(Block.redstoneRepeaterIdle.blockID);
+
+		new BptBlockLiquid (Block.waterStill.blockID, new ItemStack (Item.bucketWater));
+		new BptBlockLiquid(Block.waterMoving.blockID, new ItemStack (Item.bucketWater));
+		new BptBlockLiquid (Block.lavaStill.blockID, new ItemStack (Item.bucketLava));
+		new BptBlockLiquid(Block.lavaMoving.blockID, new ItemStack (Item.bucketLava));
+		
+		new BptBlockIgnoreMeta(Block.rail.blockID);
+		new BptBlockIgnoreMeta(Block.railPowered.blockID);
+		new BptBlockIgnoreMeta(Block.railDetector.blockID);
+		new BptBlockIgnoreMeta(Block.thinGlass.blockID);
 				
-				return i;
-			}
-		}
+		new BptBlockPiston(Block.pistonBase.blockID);
+		new BptBlockPiston(Block.pistonStickyBase.blockID);
 		
-		throw new RuntimeException("No more blueprint slot available.");
+		new BptBlockPumpkin(Block.pumpkinLantern.blockID);
+		
+		new BptBlockStairs(Block.stairCompactCobblestone.blockID);
+		new BptBlockStairs(Block.stairCompactPlanks.blockID);
+		new BptBlockStairs(Block.stairsNetherBrick.blockID);
+		new BptBlockStairs(Block.stairsBrick.blockID);
+		new BptBlockStairs(Block.stairsStoneBrickSmooth.blockID);
+		
+		new BptBlockDoor(Block.doorWood.blockID, new ItemStack(Item.doorWood));
+		new BptBlockDoor(Block.doorSteel.blockID, new ItemStack(Item.doorSteel));
+		
+		new BptBlockBed(Block.bed.blockID);
+		
+		new BptBlockSign(Block.signWall.blockID, true);
+		new BptBlockSign(Block.signPost.blockID, false);		
+		
+		new BptBlockWallSide(markerBlock.blockID);
+		new BptBlockWallSide(pathMarkerBlock.blockID);
+		new BptBlockFiller (fillerBlock.blockID);
+					
+		// Optimization
+		WorldIteratorRadius.createPrecomputedList(TilePathMarker.searchSize);
+		
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
 	}
-
 	
-	public static void loadBluePrints () {
-		File baseDir = new File (CoreProxy.getBuildCraftBase(), "blueprints/");
+	public static void loadRecipes () {
+		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
-		baseDir.mkdir();
+		craftingmanager.addRecipe(new ItemStack(templateItem, 1), new Object[] {
+			"ppp", "pip", "ppp", 
+			Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('p'), Item.paper });	
 		
-		String files [] = baseDir.list();
+		craftingmanager.addRecipe(new ItemStack(blueprintItem, 1), new Object[] {
+			"ppp", "pip", "ppp", 
+			Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 4),
+			Character.valueOf('p'), Item.paper });	
 		
-		for (String file : files) {
-			String [] parts = file.split("[.]");
+		craftingmanager.addRecipe(new ItemStack(markerBlock, 1), new Object[] {
+			"l ", "r ", Character.valueOf('l'),
+			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'),
+			Block.torchRedstoneActive });
+		
+		craftingmanager.addRecipe(new ItemStack(pathMarkerBlock, 1), new Object[] {
+			"l ", "r ", Character.valueOf('l'),
+			new ItemStack(Item.dyePowder, 1, 2), Character.valueOf('r'),
+			Block.torchRedstoneActive });
+		
+		craftingmanager.addRecipe(new ItemStack(fillerBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.goldGearItem,
+			Character.valueOf('C'), Block.chest	});	
+		
+		craftingmanager.addRecipe(new ItemStack(builderBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
+			Character.valueOf('C'), Block.chest	});	
+		
+		craftingmanager.addRecipe(new ItemStack(architectBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
+			Character.valueOf('C'), new ItemStack (templateItem, 1) });	
+		
+		craftingmanager.addRecipe(new ItemStack(libraryBlock, 1), new Object[] {
+			"bbb", "bBb", "bbb", 
+			Character.valueOf('b'), new ItemStack(blueprintItem),
+			Character.valueOf('B'), Block.bookShelf });	
+	}
 
-			if (parts.length == 2) {
-				if (parts[1].equals("bpt")) {
-					int bptNumber = Integer.parseInt(parts[0]);
-					
-					if (bptNumber == 0) {
-						continue;
-					}
-					
-					bluePrints[bptNumber] = new BluePrint(
-							new File(baseDir, file));					
-				}
+	public static BptPlayerIndex getPlayerIndex(EntityPlayer thePlayer) {
+		BptRootIndex rootIndex = getBptRootIndex();
+		
+		if (!playerLibrary.containsKey(thePlayer.username)) {
+			try {
+				playerLibrary.put(thePlayer.username, new BptPlayerIndex(thePlayer.username + ".list", rootIndex));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
+		
+		return playerLibrary.get(thePlayer.username);
 	}
+	
+	public static BptRootIndex getBptRootIndex () {
+		if (rootBptIndex == null) {
+			try {
+				rootBptIndex = new BptRootIndex ("index.txt");
+				rootBptIndex.loadIndex();
+
+				BptPlayerIndex playerIndex = new BptPlayerIndex(
+						ModLoader.getMinecraftInstance().thePlayer.username
+						+ ".list", rootBptIndex);
+				playerLibrary.put(ModLoader.getMinecraftInstance().thePlayer.username, playerIndex);
+
+				rootBptIndex.importNewFiles();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return rootBptIndex;
+	}
+	
 }

@@ -17,18 +17,22 @@ public class EngineWood extends Engine {
 		maxEnergy = 1000;
 	}
 	
+	@Override
 	public String getTextureFile () {
 		return "/net/minecraft/src/buildcraft/energy/gui/base_wood.png";
 	}
 	
+	@Override
 	public int explosionRange () {
 		return 1;
 	}
 	
+	@Override
 	public int maxEnergyReceived () {
 		return 50;
 	}
 	
+	@Override
 	public float getPistonSpeed () {
 		switch (getEnergyStage()) {
 		case Blue:
@@ -44,19 +48,20 @@ public class EngineWood extends Engine {
 		return 0;
 	}
 
+	@Override
 	public void update () {
 		super.update();
 		
-		if (tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord)) {
+		if (tile.isRedstonePowered) {
 			if ((tile.worldObj.getWorldTime() % 20) == 0) {
 				energy++;
 			}
 		}
 	}
 	
+	@Override
 	public boolean isBurning() {
-		return tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
-				tile.yCoord, tile.zCoord);
+		return tile.isRedstonePowered;
 	}
 
 	@Override
@@ -64,6 +69,7 @@ public class EngineWood extends Engine {
 		return 0;
 	}
 	
+	@Override
 	public void delete() {
 	
 	}

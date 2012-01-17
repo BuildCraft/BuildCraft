@@ -11,7 +11,7 @@ package net.minecraft.src.buildcraft.transport.pipes;
 import net.minecraft.src.Block;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -46,6 +46,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	/** 
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
+	@Override
 	public void doWork () {
 		if (powerProvider.energyStored <= 0) {
 			return;
@@ -76,9 +77,9 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		
 		
 	if (tile instanceof ILiquidContainer) {
-			if (liquidToExtract <= API.BUCKET_VOLUME) {
+			if (liquidToExtract <= BuildCraftAPI.BUCKET_VOLUME) {
 				liquidToExtract += powerProvider.useEnergy(1, 1, true)
-						* API.BUCKET_VOLUME;
+						* BuildCraftAPI.BUCKET_VOLUME;
 				
 //				sendNetworkUpdate();
 			}
@@ -144,7 +145,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	}
 	
 	@Override
-	public int getBlockTexture() {
+	public int getMainBlockTexture() {
 		return nextTexture;
 	}
 

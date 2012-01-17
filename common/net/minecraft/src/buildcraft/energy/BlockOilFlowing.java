@@ -30,6 +30,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
 		// TODO Auto-generated constructor stub
 	}
 	
+	@Override
     public int getRenderType() {
         return BuildCraftCore.oilModel;
     }
@@ -47,6 +48,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
         world.markBlockNeedsUpdate(i, j, k);
     }
 
+    @Override
     public void updateTick(World world, int i, int j, int k, Random random)
     {
         int l = getFlowDecay(world, i, j, k);
@@ -145,7 +147,8 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
             int i1 = world.getBlockId(i, j, k);
             if(i1 > 0)
             {
-				Block.blocksList[i1].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k));
+				Block.blocksList[i1].dropBlockAsItem(world, i, j, k,
+						world.getBlockMetadata(i, j, k), 0);
             }
             world.setBlockAndMetadataWithNotify(i, j, k, blockID, l);
         }
@@ -296,6 +299,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
         }
     }
 
+    @Override
     public void onBlockAdded(World world, int i, int j, int k)
     {
         super.onBlockAdded(world, i, j, k);

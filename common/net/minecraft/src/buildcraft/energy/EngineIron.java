@@ -14,13 +14,14 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IronEngineFuel;
+import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class EngineIron extends Engine {
 	
-	public static int MAX_LIQUID = API.BUCKET_VOLUME * 10;
+	public static int MAX_LIQUID = BuildCraftAPI.BUCKET_VOLUME * 10;
 	public static int MAX_HEAT          = 100000;
 	public static int COOLANT_THRESHOLD = 49000;
 	
@@ -32,6 +33,10 @@ public class EngineIron extends Engine {
 	int coolantId = 0;
 	
 	int heat = 0;
+	
+	public int penatlyCooling = 0;
+	
+	boolean lastPowered = false;
 
 	public EngineIron(TileEngine engine) {
 		super(engine);
@@ -40,18 +45,22 @@ public class EngineIron extends Engine {
 		maxEnergyExtracted = 500;
 	}
 	
+	@Override
 	public String getTextureFile () {
 		return "/net/minecraft/src/buildcraft/energy/gui/base_iron.png";
 	}
 	
+	@Override
 	public int explosionRange () {
 		return 8;
 	}
 	
+	@Override
 	public int maxEnergyReceived () {
 		return 2000;
 	}
 
+	@Override
 	public float getPistonSpeed () {
 		switch (getEnergyStage()) {
 		case Blue:
@@ -67,34 +76,44 @@ public class EngineIron extends Engine {
 		return 0;
 	}
 	
+	@Override
 	public boolean isBurning () {
 		return liquidQty > 0
-				&& tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
-						tile.yCoord, tile.zCoord);
+				&& penatlyCooling == 0
+				&& tile.isRedstonePowered;
 	}
 	
+	@Override
 	public void burn () {
-		IronEngineFuel currentFuel = API.ironEngineFuel.get(liquidId);
+		IronEngineFuel currentFuel = BuildCraftAPI.ironEngineFuel.get(liquidId);
 		
 		if (currentFuel == null) {
 			return;
 		}
 		
-		if (tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
-				tile.yCoord, tile.zCoord)) {
+		if (penatlyCooling <= 0 &&
+				tile.isRedstonePowered) {
+			
+			lastPowered = true;
 			
 			if(burnTime > 0 || liquidQty > 0) {
 				if (burnTime > 0) {
 					burnTime--;
 				} else {
 					liquidQty--;
-					burnTime = currentFuel.totalBurningTime / API.BUCKET_VOLUME;
+					burnTime = currentFuel.totalBurningTime / BuildCraftAPI.BUCKET_VOLUME;
 				}
 				
 				addEnergy(currentFuel.powerPerCycle);			
 				heat += currentFuel.powerPerCycle;
 			}
-		}			
+		} else if (penatlyCooling <= 0) {
+			if (lastPowered) {
+				lastPowered = false;
+				penatlyCooling = 30 * 20; 
+				// 30 sec of penalty on top of the cooling				
+			}
+		}
 	}
 	
 	@Override
@@ -104,12 +123,12 @@ public class EngineIron extends Engine {
 		ItemStack itemInInventory = tile.getStackInSlot(0);
 		
 		if (itemInInventory != null) {
-			int liquidId = API.getLiquidForBucket (itemInInventory.itemID);
+			int liquidId = BuildCraftAPI.getLiquidForFilledItem (itemInInventory);
 
 			if (liquidId != 0) {
-				if (fill(Orientations.Unknown, API.BUCKET_VOLUME,
-						liquidId, false) == API.BUCKET_VOLUME) {
-					fill(Orientations.Unknown, API.BUCKET_VOLUME,
+				if (fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME,
+						liquidId, false) == BuildCraftAPI.BUCKET_VOLUME) {
+					fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME,
 							liquidId, true);
 
 					tile.setInventorySlotContents(0, new ItemStack(
@@ -130,16 +149,18 @@ public class EngineIron extends Engine {
 			}
 		}
 		
-		if (heat > 0 && !tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord,
-						tile.yCoord, tile.zCoord)) {
-			if (heat >= 10) {
-				heat -= 10;
-			} else {
-				heat -= 1;
-			}
+		if (heat > 0
+				&& (penatlyCooling > 0 || !tile.isRedstonePowered)) {
+			heat -= 10;
+			
+		}
+		
+		if (heat <= 0 && penatlyCooling > 0) {
+			penatlyCooling--;
 		}
 	}
 	
+	@Override
 	public void computeEnergyStage () {
 		if (heat <= MAX_HEAT / 4) {
 			energyStage = EnergyStage.Blue;
@@ -171,7 +192,7 @@ public class EngineIron extends Engine {
 			return 0;
 		}
 		
-		if (!API.ironEngineFuel.containsKey(id)) {
+		if (!BuildCraftAPI.ironEngineFuel.containsKey(id)) {
 			return 0;
 		}
 		
@@ -220,6 +241,7 @@ public class EngineIron extends Engine {
 		return res;
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		liquidId = nbttagcompound.getInteger("liquidId");
 		liquidQty = nbttagcompound.getInteger("liquidQty");
@@ -227,8 +249,10 @@ public class EngineIron extends Engine {
 		coolantId = nbttagcompound.getInteger("coolantId");
 		coolantQty = nbttagcompound.getInteger("coolantQty");
 		heat = nbttagcompound.getInteger("heat");
+		penatlyCooling = nbttagcompound.getInteger("penaltyCooling");
     }
     
+	@Override
     public void writeToNBT(NBTTagCompound nbttagcompound) {
     	nbttagcompound.setInteger("liquidId", liquidId);
     	nbttagcompound.setInteger("liquidQty", liquidQty);
@@ -236,6 +260,7 @@ public class EngineIron extends Engine {
 		nbttagcompound.setInteger("coolantId", coolantId);
 		nbttagcompound.setInteger("coolantQty", coolantQty);
 		nbttagcompound.setInteger("heat", heat);
+		nbttagcompound.setInteger("penaltyCooling", penatlyCooling);
     }
     
     public int getScaledCoolant(int i) {
@@ -243,10 +268,12 @@ public class EngineIron extends Engine {
 				* (float) i);
     }
 	
+    @Override
 	public void delete() {
 	
 	}
     
+    @Override
 	public void getGUINetworkData(int i, int j) {
 		switch (i) {
 		case 0:
@@ -264,6 +291,7 @@ public class EngineIron extends Engine {
 		}		
 	}
 
+    @Override
 	public void sendGUINetworkData(ContainerEngine containerEngine,
 			ICrafting iCrafting) {
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, liquidQty);
@@ -272,4 +300,15 @@ public class EngineIron extends Engine {
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, coolantId);
 	}
 	
+    @Override
+	public LiquidSlot[] getLiquidSlots() {
+		return new LiquidSlot[] {
+				new LiquidSlot(liquidId, liquidQty, MAX_LIQUID),
+				new LiquidSlot(coolantId, coolantQty, MAX_LIQUID) };
+	}
+	
+    @Override
+	public boolean isActive() {
+		return penatlyCooling <= 0;
+	}
 }

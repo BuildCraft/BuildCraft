@@ -9,10 +9,13 @@
 
 package net.minecraft.src.buildcraft.builders;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -45,6 +48,7 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
 
+	@Override
     public int getBlockTextureFromSideAndMetadata(int i, int j) {
     	if (j == 0 && i == 3) {
 			return blockTextureFront;
@@ -62,6 +66,7 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 		}
     }
     
+    @Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {	
 		if (entityplayer.getCurrentEquippedItem() != null 
 				&& entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
@@ -94,9 +99,9 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 		}
 	}
 	
+	@Override
     public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
     	super.onBlockPlacedBy(world, i, j, k, entityliving);
-    	
 		Orientations orientation = Utils.get2dOrientation(new Position(
 				entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
@@ -105,10 +110,16 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 				.ordinal());
     }
     
-
+    @Override
     public void onBlockRemoval(World world, int i, int j, int k) {
     	Utils.preDestroyBlock(world, i, j, k);
     	super.onBlockRemoval(world, i, j, k);
     }
+    
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
 
 }

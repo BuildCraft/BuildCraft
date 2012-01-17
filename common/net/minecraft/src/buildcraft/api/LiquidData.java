@@ -9,14 +9,36 @@
 
 package net.minecraft.src.buildcraft.api;
 
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+
 public class LiquidData {
 
 	public final int liquidId;
-	public final int filledBucketId;
+	public final int movingLiquidId;
 	
-	public LiquidData (int liquidId, int filledBucketId) {
+	public final ItemStack filled;
+	public final ItemStack container;
+
+	public LiquidData (int liquidId, int movingLiquidId, Item filled) {
+		this.liquidId = liquidId;		
+		this.movingLiquidId = movingLiquidId;
+		this.filled = new ItemStack (filled, 1);		
+		this.container = new ItemStack(Item.bucketEmpty);
+	}
+	
+	public LiquidData (int liquidId, int movingLiquidId, ItemStack filled) {
 		this.liquidId = liquidId;
-		this.filledBucketId = filledBucketId;
+		this.movingLiquidId = movingLiquidId;
+		this.filled = filled;		
+		this.container = new ItemStack(Item.bucketEmpty);
+	}
+	
+	public LiquidData(int liquidId, int movingLiquidId, ItemStack filled, ItemStack container) {
+		this.liquidId = liquidId;		
+		this.movingLiquidId = movingLiquidId;
+		this.filled = filled;		
+		this.container = container;
 	}
 	
 }

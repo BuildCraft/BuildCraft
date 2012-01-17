@@ -9,14 +9,16 @@
 
 package net.minecraft.src.buildcraft.builders;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.FillerPattern;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
@@ -38,6 +40,7 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
 		textureTopOff = 4 * 16 + 1;
 	}
 	
+	@Override
 	public boolean blockActivated(World world, int i, int j, int k,
 			EntityPlayer entityplayer) {
 		
@@ -47,20 +50,21 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
 		return true;
 	}
 	
+	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 			
-		if (APIProxy.getWorld() == null) {
+		if (iblockaccess == null) {
 			return getBlockTextureFromSideAndMetadata(i, m);
 		}
 		
-		TileEntity tile = APIProxy.getWorld().getBlockTileEntity(
+		TileEntity tile = iblockaccess.getBlockTileEntity(
 				i, j, k);				
 		
 		if (tile != null && tile instanceof TileFiller) {
 			TileFiller filler = (TileFiller) tile;
 			if (l == 1 || l == 0) {
-				if (filler.done) {
+				if (!filler.isActive()) {
 					return textureTopOff;
 				} else {
 					return textureTopOn;
@@ -75,6 +79,7 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
     	return getBlockTextureFromSideAndMetadata(l, m);
 	}	
 
+	@Override
     public int getBlockTextureFromSide(int i) {
         if (i == 0 || i == 1) {
         	return textureTopOn;
@@ -88,6 +93,7 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
 		return new TileFiller();
 	}
 	
+	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {		
 		Utils.preDestroyBlock(world, i, j, k);
 		
@@ -97,5 +103,11 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
     @Override
 	public String getTextureFile() {	
 		return BuildCraftCore.customBuildCraftTexture;
+	}
+    
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 }

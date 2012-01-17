@@ -29,11 +29,13 @@ public class BlockPollution extends BlockContainer implements ITextureProvider {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
 
+	@Override
     public boolean renderAsNormalBlock()
     {
         return false;
     }
 
+	@Override
     public boolean isOpaqueCube() {
         return false;
     }
@@ -43,6 +45,7 @@ public class BlockPollution extends BlockContainer implements ITextureProvider {
 		return new TilePollution();
 	}
 	
+	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		return 5 * 16 + iblockaccess.getBlockMetadata(i, j, k); 
 	}	

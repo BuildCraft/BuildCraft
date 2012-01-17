@@ -9,12 +9,32 @@
 
 package net.minecraft.src.buildcraft.api;
 
+import net.minecraft.src.TileEntity;
+
 public interface IPipe {
 
+	enum DrawingState {
+		DrawingPipe, DrawingRedWire, DrawingBlueWire, DrawingGreenWire, DrawingYellowWire, DrawingGate
+	}
+	
+	enum WireColor {
+		Red, Blue, Green, Yellow
+	}
+	
 	/**
 	 * With special kind of pipes, connectors texture has to vary (e.g. 
 	 * diamond or iron pipes. 
 	 */
 	public void prepareTextureFor (Orientations connection);
+	
+	public void setDrawingState (DrawingState state);
+	
+	public boolean isWired (WireColor color);
+	
+	public boolean hasInterface ();
+	
+	public TileEntity getContainer ();
+	
+	public boolean isWireConnectedTo (TileEntity tile, WireColor color);
 	
 }

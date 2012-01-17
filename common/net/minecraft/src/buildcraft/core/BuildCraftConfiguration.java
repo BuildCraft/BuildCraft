@@ -92,6 +92,7 @@ public class BuildCraftConfiguration extends Configuration {
 		}
 	}
 	
+	@Override
 	public void save () {
 		Property versionProp = null;
 		

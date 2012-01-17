@@ -16,17 +16,18 @@ import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
-import net.minecraft.src.buildcraft.api.IPipeConnection;
+import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockFrame extends Block implements IPipeConnection, IBlockPipe,
+public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPipe,
 		ITextureProvider {
 
 	public BlockFrame(int i) {
@@ -37,51 +38,52 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe,
 		setHardness(0.5F);
 	}
 
+	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
 
+	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
 
-	public boolean isACube() {
-		return false;
-	}
-
-	public int idDropped(int i, Random random) {
+	@Override
+	public int idDropped(int i, Random random, int j) {
 		return -1;
 	}
 
+	@Override
 	public int getRenderType() {
 		return BuildCraftCore.pipeModel;
 	}
 
+	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i,
 			int j, int k) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
-		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
 			xMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i + 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
 			xMax = 1.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j - 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
 			yMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j + 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
 			yMax = 1.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j, k - 1)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
 			zMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
 			zMax = 1.0F;
 		}
 
@@ -90,6 +92,7 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe,
 				(double) j + yMax, (double) k + zMax);
 	}
 
+	@Override
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i,
 			int j, int k) {
 		return getCollisionBoundingBoxFromPool(world, i, j, k);
@@ -104,42 +107,42 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe,
 		super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb,
 				arraylist);
 
-		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos,
 					Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb,
 					arraylist);
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i + 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos,
 					Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb,
 					arraylist);
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j - 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
 					Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb,
 					arraylist);
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j + 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos,
 					Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb,
 					arraylist);
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j, k - 1)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F,
 					Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb,
 					arraylist);
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos,
 					Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
 			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb,
@@ -154,27 +157,27 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe,
 			int k, Vec3D vec3d, Vec3D vec3d1) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
-		if (Utils.checkPipesConnections(world, i, j, k, i - 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
 			xMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i + 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
 			xMax = 1.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j - 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
 			yMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j + 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
 			yMax = 1.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j, k - 1)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
 			zMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, i, j, k, i, j, k + 1)) {
+		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
 			zMax = 1.0F;
 		}
 
@@ -193,11 +196,7 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe,
 			int z1, int x2, int y2, int z2) {
 		return blockAccess.getBlockId(x2, y2, z2) == blockID;
 	}
-
-	public float getHeightInPipe() {
-		return 0.5F;
-	}
-
+	
 	@Override
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
@@ -208,5 +207,11 @@ public class BlockFrame extends Block implements IPipeConnection, IBlockPipe,
 			int k, Orientations connection) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
 	}
 }

@@ -56,6 +56,7 @@ public class DefaultAreaProvider implements IAreaProvider {
 		return zMax;
 	}
 
+	@Override
 	public void removeFromWorld () {
 		
 	}

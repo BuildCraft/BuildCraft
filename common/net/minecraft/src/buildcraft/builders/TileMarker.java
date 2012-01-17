@@ -408,6 +408,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 	}
 	
+	@Override
 	public void removeFromWorld () {
 		if (!origin.isSet()) {
 			return;
@@ -421,7 +422,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 				
 				BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
 						m.x, m.y, m.z,
-						BuildCraftBuilders.markerBlock.blockID);
+						BuildCraftBuilders.markerBlock.blockID, 0);
 			}
 		}
 		
@@ -430,9 +431,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		
 		BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
 				o.vectO.x, o.vectO.y, o.vectO.z,
-				BuildCraftBuilders.markerBlock.blockID);
+				BuildCraftBuilders.markerBlock.blockID, 0);
 	}
 	
+	@Override
 	 public void readFromNBT(NBTTagCompound nbttagcompound) {
 		 super.readFromNBT(nbttagcompound);
 		 		 
@@ -449,6 +451,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		 }
 	 }
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
@@ -470,6 +473,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 	}
 	
+	@Override
 	public Packet getDescriptionPacket() {		
 		if (origin.vectO.getMarker(worldObj) == this) {
 			return super.getDescriptionPacket();
@@ -478,6 +482,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 	}
 	
+	@Override
 	public Packet230ModLoader getUpdatePacket () {	
 		TileMarker marker = origin.vectO.getMarker(worldObj);
 			

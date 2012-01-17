@@ -17,7 +17,7 @@ public class EnergyProxy {
 
 	public static void displayGUISteamEngine(EntityPlayer entityplayer,
 			TileEngine tile) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
+		if (!APIProxy.isClient(tile.worldObj)) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(
 					new GuiSteamEngine(entityplayer.inventory, tile));
 		}
@@ -25,7 +25,7 @@ public class EnergyProxy {
 	
 	public static void displayGUICombustionEngine(EntityPlayer entityplayer,
 			TileEngine tile) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
+		if (!APIProxy.isClient(tile.worldObj)) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(
 					new GuiCombustionEngine(entityplayer.inventory, tile));
 		}

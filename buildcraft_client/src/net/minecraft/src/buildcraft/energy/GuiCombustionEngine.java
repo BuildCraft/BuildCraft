@@ -28,14 +28,15 @@ public class GuiCombustionEngine extends GuiContainer {
         this.tileEngine = tileEngine;
     }
 
+	@Override
     protected void drawGuiContainerForegroundLayer()
     {
         fontRenderer.drawString("Combustion Engine", 50, 6, 0x404040);
         fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
     }
 
-    protected void drawGuiContainerBackgroundLayer(float f)
-    {
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		int i = mc.renderEngine
 				.getTexture("/net/minecraft/src/buildcraft/energy/gui/combustion_engine_gui.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

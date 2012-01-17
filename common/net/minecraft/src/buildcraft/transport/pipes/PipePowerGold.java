@@ -20,7 +20,8 @@ public class PipePowerGold extends Pipe {
 		((PipeTransportPower) transport).powerResitance = 0.001;
 	}
 
-	public int getBlockTexture() {
+	@Override
+	public int getMainBlockTexture() {
 		return 7 * 16 + 10;
 	}
 

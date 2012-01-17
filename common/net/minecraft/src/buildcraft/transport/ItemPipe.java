@@ -16,9 +16,10 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.IItemPipe;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class ItemPipe extends Item implements ITextureProvider {
+public class ItemPipe extends Item implements ITextureProvider, IItemPipe {
 
 	Pipe dummyPipe;
 	
@@ -65,10 +66,6 @@ public class ItemPipe extends Item implements ITextureProvider {
         {
             return false;
         }
-        if(j == 127 && Block.blocksList[blockID].blockMaterial.isSolid())
-        {
-            return false;
-        }
         if(world.canBlockBePlacedAt(blockID, i, j, k, false, l))
         {
             BlockGenericPipe.createPipe(world, i, j, k, shiftedIndex);
@@ -97,7 +94,7 @@ public class ItemPipe extends Item implements ITextureProvider {
 			dummyPipe = BlockGenericPipe.createPipe(shiftedIndex);
 		}
 		
-		return dummyPipe.getBlockTexture();
+		return dummyPipe.getPipeTexture();
 	}
 
 }

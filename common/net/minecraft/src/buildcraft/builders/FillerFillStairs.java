@@ -19,13 +19,13 @@ public class FillerFillStairs extends FillerPattern {
 
 	@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.p1().x;
-		int yMin = (int) box.p1().y;
-		int zMin = (int) box.p1().z;
+		int xMin = (int) box.pMin().x;
+		int yMin = (int) box.pMin().y;
+		int zMin = (int) box.pMin().z;
 		
-		int xMax = (int) box.p2().x;
-		int yMax = (int) box.p2().y;
-		int zMax = (int) box.p2().z;
+		int xMax = (int) box.pMax().x;
+		int yMax = (int) box.pMax().y;
+		int zMax = (int) box.pMax().z;
 		
 		int sizeX = xMax - xMin + 1;
 		int sizeZ = zMax - zMin + 1;

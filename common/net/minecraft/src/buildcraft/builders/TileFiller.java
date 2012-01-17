@@ -9,14 +9,15 @@
 
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.FillerRegistry;
+import net.minecraft.src.buildcraft.api.IActionReceptor;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.FillerPattern;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -26,13 +27,15 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.core.ActionMachineControl;
+import net.minecraft.src.buildcraft.core.ActionMachineControl.Mode;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor, IMachine {
+public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor, IMachine, IActionReceptor {
 	
 	public @TileNetworkData Box box = new Box ();
 	public @TileNetworkData int currentPatternId = 0;
@@ -43,6 +46,8 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	boolean forceDone = false;
     private ItemStack contents[];
     PowerProvider powerProvider;
+    
+	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
     public TileFiller() {
         contents = new ItemStack[getSizeInventory()];
@@ -51,6 +56,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
         powerProvider.configurePowerPerdition(25, 40);
     }
     
+    @Override
     public void initialize () {
     	super.initialize();
     	
@@ -72,23 +78,34 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		computeRecipe ();
     }
     
+    @Override
 	public void updateEntity () {		
 		super.updateEntity();
 		
 		if (box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
-		} else {
-			done = true;
+		}
+		
+		if (done) {
+			if (lastMode == Mode.Loop) {
+				done = false;
+			} else {
+				return;
+			}
 		}
 		
 		if (powerProvider.energyStored > 25) {
 			doWork();
-		}
+		}				
 	}
 	
 	@Override
 	public void doWork () {
 		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
+		if (lastMode == Mode.Off) {
 			return;
 		}
 		
@@ -102,8 +119,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			
 			for (int s = 9; s < getSizeInventory(); ++s) {
 				if (getStackInSlot(s) != null
-						&& getStackInSlot(s).stackSize > 0
-						&& getStackInSlot(s).getItem() instanceof ItemBlock) {
+						&& getStackInSlot(s).stackSize > 0) {
 
 					stack = contents [s];
 					stackId = s;
@@ -129,10 +145,12 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		}
 	}	
 
+	@Override
     public int getSizeInventory() {
         return 36;
     }
 
+	@Override
     public ItemStack getStackInSlot(int i) {
         return contents[i];
     }
@@ -151,7 +169,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     	currentPattern = newPattern;
     	
     	if (currentPattern == null || forceDone) {
-    		done = true;
+    		done = lastMode != Mode.Loop;
     		forceDone = false;
     	} else {
     		done = false;
@@ -172,6 +190,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		}
     }
     
+    @Override
     public ItemStack decrStackSize(int i, int j)
     {
         if(contents[i] != null) {
@@ -201,6 +220,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
         }
     }
 
+    @Override
     public void setInventorySlotContents(int i, ItemStack itemstack)
     {
         contents[i] = itemstack;
@@ -213,51 +233,35 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 //        onInventoryChanged();
     }
 
+    @Override
     public String getInvName()
     {
         return "Filler";
     }
 
+    @Override
     public void readFromNBT(NBTTagCompound nbttagcompound)
     {
         super.readFromNBT(nbttagcompound);
-        NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-        contents = new ItemStack[getSizeInventory()];
-        for(int i = 0; i < nbttaglist.tagCount(); i++)
-        {
-            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
-            int j = nbttagcompound1.getByte("Slot") & 0xff;
-            if(j >= 0 && j < contents.length)
-            {
-                contents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-            }
-        }
+        
+        Utils.readStacksFromNBT(nbttagcompound, "Items", contents);
         
         if (nbttagcompound.hasKey("box")) {
         	box.initialize(nbttagcompound.getCompoundTag("box"));
         }        
         
         done = nbttagcompound.getBoolean("done");
+        lastMode = Mode.values() [nbttagcompound.getByte("lastMode")];
         
         forceDone = done;
     }
 
+    @Override
     public void writeToNBT(NBTTagCompound nbttagcompound)
     {
         super.writeToNBT(nbttagcompound);
-        NBTTagList nbttaglist = new NBTTagList();
-        for(int i = 0; i < contents.length; i++)
-        {
-            if(contents[i] != null)
-            {
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Slot", (byte)i);
-                contents[i].writeToNBT(nbttagcompound1);
-                nbttaglist.setTag(nbttagcompound1);
-            }
-        }
-
-        nbttagcompound.setTag("Items", nbttaglist);
+        
+        Utils.writeStacksToNBT(nbttagcompound, "Items", contents);
         
         if (box != null) {
         	NBTTagCompound boxStore = new NBTTagCompound();
@@ -266,13 +270,16 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
         }
         
         nbttagcompound.setBoolean("done", done);
+        nbttagcompound.setByte("lastMode", (byte) lastMode.ordinal());
     }
 
+    @Override
     public int getInventoryStackLimit() {
         return 64;
     }
 
-    public boolean canInteractWith(EntityPlayer entityplayer) {
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
         if(worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
             return false;
         }
@@ -395,7 +402,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public boolean isActive() {
-		return true;
+		return !done && lastMode != Mode.Off;
 	}
 
 	@Override
@@ -420,7 +427,26 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	
 	@Override
 	public int powerRequest() {
-		return powerProvider.maxEnergyReceived;
+		if (isActive()) {
+			return powerProvider.maxEnergyReceived;
+		} else {
+			return 0;
+		}		
 	}
 
+	@Override
+	public void actionActivated(Action action) {
+		if (action == BuildCraftCore.actionOn) {
+			lastMode = ActionMachineControl.Mode.On;
+		} else if (action == BuildCraftCore.actionOff) {
+			lastMode = ActionMachineControl.Mode.Off;
+		} else if (action == BuildCraftCore.actionLoop) {
+			lastMode = ActionMachineControl.Mode.Loop;
+		}		
+	}
+
+	@Override
+	public boolean allowActions () {
+		return true;
+	}	
 }

@@ -19,20 +19,23 @@ public class GuiAutoCrafting extends GuiContainer {
 
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world,
 			TileAutoWorkbench tile) {
-		super(new ContainerAutoWorkbench(inventoryplayer, world, tile));
+		super(new ContainerAutoWorkbench(inventoryplayer, tile));
 	}
 
+	@Override
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		inventorySlots.onCraftGuiClosed(mc.thePlayer);
 	}
 
+	@Override
 	protected void drawGuiContainerForegroundLayer() {
 		fontRenderer.drawString("Crafting", 28, 6, 0x404040);
 		fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
 	}
 
-	protected void drawGuiContainerBackgroundLayer(float f) {
+	@Override
+	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		int i = mc.renderEngine.getTexture("/gui/crafting.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);

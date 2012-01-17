@@ -9,6 +9,7 @@
 package net.minecraft.src;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -16,22 +17,42 @@ import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.Action;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.api.PowerFramework;
+import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.core.ActionMachineControl;
+import net.minecraft.src.buildcraft.core.ActionMachineControl.Mode;
+import net.minecraft.src.buildcraft.core.ActionRedstoneOutput;
+import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.BptItem;
 import net.minecraft.src.buildcraft.core.BuildCraftConfiguration;
+import net.minecraft.src.buildcraft.core.DefaultActionProvider;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
+import net.minecraft.src.buildcraft.core.TriggerInventory;
+import net.minecraft.src.buildcraft.core.TriggerMachine;
+import net.minecraft.src.buildcraft.core.TriggerLiquidContainer;
+import net.minecraft.src.buildcraft.core.DefaultTriggerProvider;
+import net.minecraft.src.buildcraft.transport.TriggerRedstoneInput;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
-public class BuildCraftCore {
+public class BuildCraftCore {	
+	
+	public static enum RenderMode {Full, NoDynamic};
+	
+	public static RenderMode render = RenderMode.Full;
 	
 	public static boolean debugMode = false;
 	public static boolean modifyWorld = false;
+	public static boolean trackNetworkUsage = false;
+	
+	public static int updateFactor = 10;
 	
 	public static BuildCraftConfiguration mainConfiguration;
 	
@@ -61,12 +82,41 @@ public class BuildCraftCore {
 	public static int markerModel;
 	public static int oilModel;
 	
+	public static Trigger triggerMachineActive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_ACTIVE, true);
+	public static Trigger triggerMachineInactive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_INACTIVE, false);
+	public static Trigger triggerEmptyInventory = new TriggerInventory(DefaultProps.TRIGGER_EMPTY_INVENTORY, TriggerInventory.State.Empty);
+	public static Trigger triggerContainsInventory = new TriggerInventory(DefaultProps.TRIGGER_CONTAINS_INVENTORY, TriggerInventory.State.Contains);
+	public static Trigger triggerSpaceInventory = new TriggerInventory(DefaultProps.TRIGGER_SPACE_INVENTORY, TriggerInventory.State.Space);
+	public static Trigger triggerFullInventory = new TriggerInventory(DefaultProps.TRIGGER_FULL_INVENTORY, TriggerInventory.State.Full);
+	public static Trigger triggerEmptyLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_EMPTY_LIQUID, TriggerLiquidContainer.State.Empty);
+	public static Trigger triggerContainsLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_CONTAINS_LIQUID, TriggerLiquidContainer.State.Contains);
+	public static Trigger triggerSpaceLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_SPACE_LIQUID, TriggerLiquidContainer.State.Space);
+	public static Trigger triggerFullLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerLiquidContainer.State.Full);
+	public static Trigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
+	public static Trigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
+		
+	public static Action actionRedstone = new ActionRedstoneOutput(DefaultProps.ACTION_REDSTONE);
+	public static Action actionOn = new ActionMachineControl(DefaultProps.ACTION_ON, Mode.On);
+	public static Action actionOff = new ActionMachineControl(DefaultProps.ACTION_OFF, Mode.Off);
+	public static Action actionLoop = new ActionMachineControl(DefaultProps.ACTION_LOOP, Mode.Loop);
+	
 	public static String customBuildCraftTexture =
 		"/net/minecraft/src/buildcraft/core/gui/block_textures.png";
 	
 	public static String customBuildCraftSprites =
 		"/net/minecraft/src/buildcraft/core/gui/item_textures.png";
 	
+	public static String triggerTextures =
+		"/net/minecraft/src/buildcraft/core/gui/trigger_textures.png";
+	
+	public static LinkedList<AssemblyRecipe> assemblyRecipes = new LinkedList<AssemblyRecipe>();
+	
+	public static boolean loadDefaultRecipes = true;
+	public static boolean forcePneumaticPower = false;
+	public static boolean consumeWaterSources = true;
+	
+	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
+
 	@SuppressWarnings({ "all" })
 	public static void initialize () {
 		if (initialized) {
@@ -78,7 +128,7 @@ public class BuildCraftCore {
 		ModLoader.getLogger().fine ("http://www.mod-buildcraft.com");
 		
 		System.out.println ("Starting BuildCraft " + mod_BuildCraftCore.version());
-		System.out.println ("Copyright (c) SpaceToad, 2011");
+		System.out.println ("Copyright (c) SpaceToad, 2011-2012");
 		System.out.println ("http://www.mod-buildcraft.com");		
 		
 		initialized = true;
@@ -100,18 +150,54 @@ public class BuildCraftCore {
 
 		continuousCurrentModel = Boolean.parseBoolean(continuousCurrent.value);
 		
+		Property trackNetwork = BuildCraftCore.mainConfiguration
+		.getOrCreateBooleanProperty("trackNetworkUsage",
+				Configuration.GENERAL_PROPERTY,
+				false);
+		
+		trackNetworkUsage = Boolean.parseBoolean(trackNetwork.value);
+		
 		Property powerFrameworkClass = BuildCraftCore.mainConfiguration
 				.getOrCreateProperty("power.framework",
 						Configuration.GENERAL_PROPERTY,
 						"buildcraft.energy.PneumaticPowerFramework");
 		
-		try {
-			PowerFramework.currentFramework = (PowerFramework) Class
-					.forName(powerFrameworkClass.value).getConstructor(null)
-					.newInstance(null);
-		} catch (Throwable e) {
-			e.printStackTrace();
-			PowerFramework.currentFramework = new RedstonePowerFramework();
+		Property factor = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("network.updateFactor",
+				Configuration.GENERAL_PROPERTY, 10);
+		factor.comment = 
+			"increasing this number will decrease network update frequency, useful for overloaded servers";
+
+		updateFactor = Integer.parseInt(factor.value);
+		
+		String prefix = "";
+		
+		if (BuildCraftCore.class.getName().startsWith("net.minecraft.src.")) {
+			prefix = "net.minecraft.src.";
+		}
+		
+		if (forcePneumaticPower) {
+			try {
+				PowerFramework.currentFramework = (PowerFramework) Class
+						.forName(prefix + "buildcraft.energy.PneumaticPowerFramework")
+						.getConstructor(null).newInstance(null);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				String className = powerFrameworkClass.value;
+				if (className.startsWith("net.minecraft.src.")) {
+					className = className.replace("net.minecraft.src.", "");
+				}
+				
+				PowerFramework.currentFramework = (PowerFramework) Class
+				.forName(prefix + className).getConstructor(null)
+				.newInstance(null);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				PowerFramework.currentFramework = new RedstonePowerFramework();
+			}
 		}
 		
 		Property wrenchId = BuildCraftCore.mainConfiguration
@@ -122,27 +208,53 @@ public class BuildCraftCore {
 		
 		initializeGears ();
 		
-		CraftingManager craftingmanager = CraftingManager.getInstance();
-		
 		wrenchItem = (new ItemBuildCraftTexture(Integer.parseInt(wrenchId.value)))
 		.setIconIndex(0 * 16 + 2)
-		.setItemName("wrenchItem");
-		craftingmanager.addRecipe(new ItemStack(wrenchItem), new Object[] {
-				"I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron,
-				Character.valueOf('G'), stoneGearItem });
+		.setItemName("wrenchItem");		
 		CoreProxy.addName(wrenchItem, "Wrench");
 		
-		API.liquids.add(new LiquidData(Block.waterStill.blockID,
-				Item.bucketWater.shiftedIndex));
-		API.liquids.add(new LiquidData(Block.lavaStill.blockID,
-				Item.bucketLava.shiftedIndex));
+		BuildCraftAPI.liquids.add(new LiquidData(Block.waterStill.blockID, Block.waterMoving.blockID,
+				Item.bucketWater));
+		BuildCraftAPI.liquids.add(new LiquidData(Block.lavaStill.blockID, Block.lavaMoving.blockID,
+				Item.bucketLava));
 		
-		API.liquids.add(new LiquidData(Block.waterStill.blockID,
-				Block.waterStill.blockID));
-		API.liquids.add(new LiquidData(Block.lavaStill.blockID,
-				Block.lavaStill.blockID));
+		BuildCraftAPI.softBlocks [Block.tallGrass.blockID] = true;
+		BuildCraftAPI.softBlocks [Block.snow.blockID] = true;
+		BuildCraftAPI.softBlocks [Block.waterMoving.blockID] = true;
+		BuildCraftAPI.softBlocks [Block.waterStill.blockID] = true;		
 		
 		mainConfiguration.save();
+		
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
+	}
+	
+	public static void loadRecipes () {
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
+		craftingmanager.addRecipe(new ItemStack(wrenchItem), new Object[] {
+			"I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron,
+			Character.valueOf('G'), stoneGearItem });
+		
+		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
+			" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
+		
+		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
+			" I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone,
+			Character.valueOf('G'), woodenGearItem });
+		
+		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
+			" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
+			Character.valueOf('G'), stoneGearItem });
+		
+		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
+			" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold,
+			Character.valueOf('G'), ironGearItem });
+		
+		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
+			" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
+			Character.valueOf('G'), goldGearItem });
 	}
 	
 	public static void initializeGears () {
@@ -179,48 +291,35 @@ public class BuildCraftCore {
 		
 		gearsInitialized = true;
 		
-		CraftingManager craftingmanager = CraftingManager.getInstance();
-		
 		woodenGearItem = (new ItemBuildCraftTexture(Integer.parseInt(woodenGearId.value)))
 				.setIconIndex(1 * 16 + 0)
 				.setItemName("woodenGearItem");
-		craftingmanager.addRecipe(new ItemStack(woodenGearItem), new Object[] {
-		" S ", "S S", " S ", Character.valueOf('S'), Item.stick});
 		CoreProxy.addName(woodenGearItem, "Wooden Gear");
 		
 		stoneGearItem = (new ItemBuildCraftTexture(Integer.parseInt(stoneGearId.value)))
 				.setIconIndex(1 * 16 + 1)
-				.setItemName("stoneGearItem");
-		craftingmanager.addRecipe(new ItemStack(stoneGearItem), new Object[] {
-				" I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone,
-				Character.valueOf('G'), woodenGearItem });
+				.setItemName("stoneGearItem");		
 		CoreProxy.addName(stoneGearItem, "Stone Gear");
 		
 		ironGearItem = (new ItemBuildCraftTexture(Integer.parseInt(ironGearId.value)))
 				.setIconIndex(1 * 16 + 2)
 				.setItemName("ironGearItem");
-		craftingmanager.addRecipe(new ItemStack(ironGearItem), new Object[] {
-				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron,
-				Character.valueOf('G'), stoneGearItem });
 		CoreProxy.addName(ironGearItem, "Iron Gear");		
 		
 		goldGearItem = (new ItemBuildCraftTexture(Integer.parseInt(goldenGearId.value)))
 				.setIconIndex(1 * 16 + 3)
 				.setItemName("goldGearItem");
-		craftingmanager.addRecipe(new ItemStack(goldGearItem), new Object[] {
-				" I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold,
-				Character.valueOf('G'), ironGearItem });
 		CoreProxy.addName(goldGearItem, "Gold Gear");
 		
 		diamondGearItem = (new ItemBuildCraftTexture(Integer.parseInt(diamondGearId.value)))
 				.setIconIndex(1 * 16 + 4)
 				.setItemName("diamondGearItem");
-		craftingmanager.addRecipe(new ItemStack(diamondGearItem), new Object[] {
-				" I ", "IGI", " I ", Character.valueOf('I'), Item.diamond,
-				Character.valueOf('G'), goldGearItem });
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");
 
 		BuildCraftCore.mainConfiguration.save();
+		
+		BuildCraftAPI.registerTriggerProvider(new DefaultTriggerProvider());
+		BuildCraftAPI.registerActionProvider(new DefaultActionProvider());
 	}
 	
 	

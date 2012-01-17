@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 import net.minecraft.src.buildcraft.core.BuildCraftContainer;
@@ -22,15 +23,6 @@ class CraftingDiamondPipe extends BuildCraftContainer {
 		super (filterInventory.getSizeInventory());		
 		this.playerIInventory = playerInventory;
 		this.filterIInventory = filterInventory;
-		
-		for(int k = 0; k < 6; k++)
-        {
-            for(int j1 = 0; j1 < 9; j1++)
-            {
-                addSlot(new Slot(filterInventory, j1 + k * 9, 8 + j1 * 18, 18 + k * 18));
-            }
-
-        }
 
         for(int l = 0; l < 3; l++)
         {
@@ -45,6 +37,11 @@ class CraftingDiamondPipe extends BuildCraftContainer {
         {
             addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 198));
         }
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return filterIInventory.isUseableByPlayer(entityplayer);
 	}
 	
 }

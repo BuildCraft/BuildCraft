@@ -18,7 +18,6 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class PipeLogicWood extends PipeLogic {
@@ -32,14 +31,8 @@ public class PipeLogicWood extends PipeLogic {
 		for (int i = meta + 1; i <= meta + 6; ++i) {
 			Orientations o = Orientations.values() [i % 6];
 			
-			Position pos = new Position (xCoord, yCoord, zCoord, o);
-			
-			pos.moveForwards(1);
-			
-			Block block = Block.blocksList[worldObj.getBlockId((int) pos.x,
-					(int) pos.y, (int) pos.z)];
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
-					(int) pos.z);
+			Block block = Block.blocksList[container.getBlockId(o)];
+			TileEntity tile = container.getTile(o);
 			
 			if (isInput (tile)) {				
 				if (!isExcludedFromExtraction(block)) {
@@ -58,8 +51,7 @@ public class PipeLogicWood extends PipeLogic {
 	public boolean isInput(TileEntity tile) {
 		return !(tile instanceof TileGenericPipe)
 				&& (tile instanceof IInventory || tile instanceof ILiquidContainer)
-				&&  Utils.checkPipesConnections(worldObj, xCoord, yCoord,
-						zCoord, tile.xCoord, tile.yCoord, tile.zCoord);
+				&&  Utils.checkPipesConnections(container, tile);
 	}
 	
 	public static boolean isExcludedFromExtraction (Block block) {
@@ -78,6 +70,7 @@ public class PipeLogicWood extends PipeLogic {
 	}
 	
     
+	@Override
     public boolean blockActivated(EntityPlayer entityplayer) {
 		if (entityplayer.getCurrentEquippedItem() != null 
 				&& entityplayer.getCurrentEquippedItem().getItem() == BuildCraftCore.wrenchItem) {
@@ -121,12 +114,7 @@ public class PipeLogicWood extends PipeLogic {
 		if (meta > 5) {
 			switchSource();
 		} else {
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[meta]);		
-			pos.moveForwards(1);
-
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y,
-					(int) pos.z); 
+			TileEntity tile = container.getTile(Orientations.values()[meta]); 
 			
 			if (!isInput(tile)) {
 				switchSource();
@@ -135,8 +123,8 @@ public class PipeLogicWood extends PipeLogic {
 	}
 	
 	@Override
-	public void onNeighborBlockChange () {		
-		super.onNeighborBlockChange();
+	public void onNeighborBlockChange (int blockId) {		
+		super.onNeighborBlockChange(blockId);
 		
 		if (!APIProxy.isClient(worldObj)) {
 			switchSourceIfNeeded();

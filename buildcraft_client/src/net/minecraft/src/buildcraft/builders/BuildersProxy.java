@@ -18,8 +18,8 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 public class BuildersProxy {
 
 	public static void displayGUITemplate(EntityPlayer entityplayer,
-			TileTemplate tile) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			TileArchitect tile) {
+		if (!APIProxy.isClient(tile.worldObj)) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(
 					new GuiTemplate(entityplayer.inventory, tile));
 		}
@@ -27,7 +27,7 @@ public class BuildersProxy {
 
 	public static void displayGUIBuilder(EntityPlayer entityplayer,
 			TileBuilder tile) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
+		if (!APIProxy.isClient(tile.worldObj)) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(
 					new GuiBuilder(entityplayer.inventory, tile));
 		}
@@ -35,9 +35,16 @@ public class BuildersProxy {
 	
 	public static void displayGUIFiller(EntityPlayer entityplayer,
 			TileFiller tile) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
+		if (!APIProxy.isClient(tile.worldObj)) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(
 					new GuiFiller(entityplayer.inventory, tile));
+		}
+	}
+	
+	public static void displayGUILibrary(EntityPlayer entityplayer, TileBlueprintLibrary library) {
+		if (!APIProxy.isClient(library.worldObj)) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(
+					new GuiBlueprintLibrary(entityplayer, library));
 		}
 	}
 	

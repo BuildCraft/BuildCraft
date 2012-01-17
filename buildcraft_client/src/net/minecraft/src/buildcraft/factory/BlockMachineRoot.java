@@ -22,6 +22,7 @@ public abstract class BlockMachineRoot extends BlockContainer {
 		// TODO Auto-generated constructor stub
 	}
 	
+	@Override
 	public float getBlockBrightness	(IBlockAccess iblockaccess, int i, int j, int k) {	
 		for (int x = i - 1; x <= i + 1; ++x)
 			for (int y = j - 1; y <= j + 1; ++y)

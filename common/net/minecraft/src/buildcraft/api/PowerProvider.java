@@ -19,13 +19,15 @@ public abstract class PowerProvider {
 	public int maxEnergyReceived;
 	public int maxEnergyStored;
 	public int minActivationEnergy;	
-	public @TileNetworkData int energyStored = 0;
+	public @TileNetworkData float energyStored = 0;
 	
     protected int powerLoss = 1;
 	protected int powerLossRegularity = 100;
 	
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	public SafeTimeTracker energyLossTracker = new SafeTimeTracker();
+	
+	public int [] powerSources = {0, 0, 0, 0, 0, 0};
 	
 	public void configure(int latency, int minEnergyReceived,
 			int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
@@ -71,6 +73,12 @@ public abstract class PowerProvider {
 			}
 		}
 		
+		for (int i = 0; i < 6; ++i) {
+			if (powerSources [i] > 0) {
+				powerSources [i]--;
+			}
+		}
+		
 		return result;		
 	}
 	
@@ -78,8 +86,8 @@ public abstract class PowerProvider {
 		return true;
 	}
 	
-	public int useEnergy (int min, int max, boolean doUse) {
-		int result = 0;
+	public float useEnergy (float min, float max, boolean doUse) {
+		float result = 0;
 		
 		if (energyStored >= min) {
 			if (energyStored <= max) {
@@ -105,7 +113,12 @@ public abstract class PowerProvider {
 		maxEnergyReceived = nbttagcompound.getInteger("maxEnergyReceived");
 		maxEnergyStored = nbttagcompound.getInteger("maxStoreEnergy");
 		minActivationEnergy = nbttagcompound.getInteger("minActivationEnergy");	
-		energyStored = nbttagcompound.getInteger("storedEnergy");		
+		
+		try {
+			energyStored = nbttagcompound.getFloat("storedEnergy");		
+		} catch (Throwable c) {
+			energyStored = 0;
+		}
 	}
 	
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -114,14 +127,20 @@ public abstract class PowerProvider {
 		nbttagcompound.setInteger("maxEnergyReceived", maxEnergyReceived);
 		nbttagcompound.setInteger("maxStoreEnergy", maxEnergyStored);
 		nbttagcompound.setInteger("minActivationEnergy", minActivationEnergy);
-		nbttagcompound.setInteger("storedEnergy", energyStored);
+		nbttagcompound.setFloat("storedEnergy", energyStored);
 	}
 	
-	public void receiveEnergy (int quantity) {
+	public void receiveEnergy (float quantity, Orientations from) {
+		powerSources [from.ordinal()] = 2;
+		
 		energyStored += quantity;
 		
 		if (energyStored > maxEnergyStored) {
 			energyStored = maxEnergyStored;
 		}
+	}
+	
+	public boolean isPowerSource (Orientations from) {
+		return powerSources [from.ordinal()] != 0;
 	}
 }

@@ -19,7 +19,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 public class TransportProxy {
 
 	public static void displayGUIFilter(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
+		if (!APIProxy.isClient(tilePipe.worldObj)) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(
 					new GuiDiamondPipe(entityplayer.inventory, tilePipe));
 		}
@@ -28,6 +28,15 @@ public class TransportProxy {
 	static public void obsidianPipePickup (World world, EntityItem item, TileEntity tile) {
 		ModLoader.getMinecraftInstance().effectRenderer
 		.addEffect(new TileEntityPickupFX(world, item, tile));
+	}
+
+	public static void displayGUIRedstoneInterface(EntityPlayer entityplayer,
+			Pipe pipe) {
+		if (!APIProxy.isClient(pipe.worldObj)) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(
+					new GuiGateInterface(entityplayer.inventory, pipe));
+		}
+		
 	}
 	
 }

@@ -20,7 +20,7 @@ public class PipeItemsCobblestone extends Pipe {
 	}
 	
 	@Override
-	public int getBlockTexture() {
+	public int getMainBlockTexture() {
 		return 1 * 16 + 1;
 	}
 

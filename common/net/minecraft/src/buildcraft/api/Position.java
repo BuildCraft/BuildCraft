@@ -118,6 +118,7 @@ public class Position {
 		nbttagcompound.setDouble("k", z);
 	}
 	
+	@Override
 	public String toString () {
 		return "{" + x + ", " + y + ", " + z + "}";
 	}

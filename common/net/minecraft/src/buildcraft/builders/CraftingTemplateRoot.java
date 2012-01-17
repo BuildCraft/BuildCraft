@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 import net.minecraft.src.buildcraft.core.BuildCraftContainer;
@@ -16,10 +17,10 @@ import net.minecraft.src.buildcraft.core.BuildCraftContainer;
 class CraftingTemplateRoot extends BuildCraftContainer {
 	
 	IInventory playerIInventory;
-	TileTemplate template;
+	TileArchitect template;
 	int computingTime = 0;
 	
-	public CraftingTemplateRoot (IInventory playerInventory, TileTemplate template) {
+	public CraftingTemplateRoot (IInventory playerInventory, TileArchitect template) {
 		super (template.getSizeInventory());
 		this.playerIInventory = playerInventory;
 		this.template = template;
@@ -37,6 +38,11 @@ class CraftingTemplateRoot extends BuildCraftContainer {
         for(int i1 = 0; i1 < 9; i1++) {
             addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
         }
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return template.isUseableByPlayer(entityplayer);
 	}
 
 }

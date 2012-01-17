@@ -24,6 +24,7 @@ public class BlockOilStill extends BlockStationary implements ITextureProvider, 
 		// TODO Auto-generated constructor stub
 	}
 	
+	@Override
 	 public int getRenderType() {
 		 return BuildCraftCore.oilModel;
 	 }

@@ -14,10 +14,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 
+import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -84,8 +86,12 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 						if (powerProvider.useEnergy(10, 10, true) == 10) {
 							index = getNextIndexToPump(true);
-							worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
-							internalLiquid = internalLiquid += API.BUCKET_VOLUME;
+							
+							if (liquidId != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
+								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+							}
+							
+							internalLiquid = internalLiquid += BuildCraftAPI.BUCKET_VOLUME;
 
 							if (APIProxy.isServerSide()) {
 								sendNetworkUpdate();
@@ -134,6 +140,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		}
 	}
 	
+	@Override
 	public void initialize () {
 		tube = new EntityBlock(worldObj);
 		tube.texture = 6 * 16 + 6;
@@ -153,7 +160,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		
 		setTubePosition();
 		
-		worldObj.entityJoinedWorld(tube);
+		worldObj.spawnEntityInWorld(tube);
 		
 		if (APIProxy.isServerSide()) {
 			sendNetworkUpdate();
@@ -320,12 +327,14 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		// TODO Auto-generated method stub		
 	}
 	
+	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
 		super.handleDescriptionPacket(packet);
 		
 		setTubePosition();
 	}
 	
+	@Override
 	public void handleUpdatePacket (Packet230ModLoader packet) {
 		super.handleDescriptionPacket(packet);
 		
@@ -363,6 +372,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 	@Override
 	public boolean manageSolids() {
+		return false;
+	}
+
+	@Override
+	public boolean allowActions () {
 		return false;
 	}
 }

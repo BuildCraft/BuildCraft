@@ -11,10 +11,12 @@ package net.minecraft.src.buildcraft.energy;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
+import net.minecraft.src.BuildCraftCore.RenderMode;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;
@@ -63,6 +65,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		this.baseTexture = baseTexture;
 	}
 
+	@Override
 	public void inventoryRender(double x, double y, double z,
 			float f, float f1) {
 		render(EnergyStage.Blue, 0.25F, Orientations.YPos,
@@ -84,6 +87,10 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	
 	private void render(EnergyStage energy, float progress,
 			Orientations orientation, String baseTexture, double x, double y, double z) {
+		
+		if (BuildCraftCore.render == RenderMode.NoDynamic) {
+			return;
+		}
 			
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /*GL_LIGHTING*/);

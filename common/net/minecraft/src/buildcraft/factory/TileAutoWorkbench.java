@@ -18,7 +18,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -29,10 +28,25 @@ import net.minecraft.src.buildcraft.core.Utils;
 public class TileAutoWorkbench extends TileEntity implements
 		ISpecialInventory {
 
-	private ItemStack stackList[];
+	private ItemStack stackList[] = new ItemStack [9];
 	
-	public TileAutoWorkbench () {
-		stackList = new ItemStack [3*3];
+	class LocalInventoryCrafting extends InventoryCrafting {
+
+		public LocalInventoryCrafting() {
+			super(new Container () {
+				@SuppressWarnings("all")
+				public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+					return false;
+				}
+
+				@SuppressWarnings("all")
+				public boolean canInteractWith(EntityPlayer entityplayer) {
+					// TODO Auto-generated method stub
+					return false;
+				}}, 3, 3);
+			// TODO Auto-generated constructor stub
+		}
+		
 	}
 	
 	@Override
@@ -43,7 +57,6 @@ public class TileAutoWorkbench extends TileEntity implements
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-
 		return stackList [i];
 	}
 
@@ -65,7 +78,6 @@ public class TileAutoWorkbench extends TileEntity implements
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		stackList [i] = itemstack;
-		
 	}
 
 	@Override
@@ -81,46 +93,22 @@ public class TileAutoWorkbench extends TileEntity implements
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-
-		return true;
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 	
-	 public void readFromNBT(NBTTagCompound nbttagcompound) {
-	     super.readFromNBT(nbttagcompound);
-	     
-	     NBTTagList nbttaglist = nbttagcompound.getTagList("stackList");
-	     
-	     stackList = new ItemStack [nbttaglist.tagCount()];
-	     
-	     for (int i = 0; i < stackList.length; ++i) {  
-	    	 NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
-				.tagAt(i);	
-	    	 
-	    	 if (!nbttagcompound2.getBoolean("isNull")) {
-	    		 stackList [i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
-	    	 }
-	     }
-	 }
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
+		Utils.readStacksFromNBT(nbttagcompound, "stackList", stackList);		
+	}
+
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		
-    	NBTTagList nbttaglist = new NBTTagList();
-    	
-    	for (int i = 0; i < stackList.length; ++i) {    		
-    		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
-    		nbttaglist.setTag(nbttagcompound2);
-    		if (stackList [i] == null) {
-    			nbttagcompound2.setBoolean("isNull", true);
-    		} else {
-    			nbttagcompound2.setBoolean("isNull", false);
-    			stackList [i].writeToNBT(nbttagcompound2);
-    		}
-    		
-    	}
-    	
-    	nbttagcompound.setTag("stackList", nbttaglist);
+		Utils.writeStacksToNBT(nbttagcompound, "stackList", stackList);		
 	}
 
 	@Override
@@ -163,27 +151,33 @@ public class TileAutoWorkbench extends TileEntity implements
 		ItemStack item;
 	}
 	
-	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
-			@SuppressWarnings("all")
-			public boolean isUsableByPlayer(EntityPlayer entityplayer) {
-				return false;
-			}
-
-			@SuppressWarnings("all")
-			public boolean canInteractWith(EntityPlayer entityplayer) {
-				// TODO Auto-generated method stub
-				return false;
-			}}, 3, 3);	
+	public ItemStack findRecipe () {
+		InventoryCrafting craftMatrix = new LocalInventoryCrafting();	
+		
+		for (int i = 0; i < getSizeInventory(); ++i) {
+			ItemStack stack = getStackInSlot(i);
+			
+			craftMatrix.setInventorySlotContents(i, stack);
+		}
+		
+		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(
+				craftMatrix);
+				
+		return recipe;
+	}
+	
+	public ItemStack extractItem(boolean doRemove, boolean removeRecipe) {
+		InventoryCrafting craftMatrix = new LocalInventoryCrafting();	
 
 		LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
+		
+		int itemsToLeave = (removeRecipe ? 0 : 1);
 		
 		for (int i = 0; i < getSizeInventory(); ++i) {
 			ItemStack stack = getStackInSlot(i);
 			
 			if (stack != null) {				
-				if (stack.stackSize <= 1) {
+				if (stack.stackSize <= itemsToLeave) {
 					StackPointer pointer = getNearbyItem(stack.itemID,
 							stack.getItemDamage());
 
@@ -199,6 +193,7 @@ public class TileAutoWorkbench extends TileEntity implements
 					pointer.inventory = this;
 					pointer.item = this.decrStackSize(i, 1);
 					pointer.index = i;
+					stack = pointer.item;
 					
 					pointerList.add(pointer);
 				}
@@ -226,6 +221,11 @@ public class TileAutoWorkbench extends TileEntity implements
 		}
 
 		return resultStack;
+	}
+	
+	@Override
+	public ItemStack extractItem(boolean doRemove, Orientations from) {
+		return extractItem(doRemove, false);
 	}
 	
 	public void resetPointers (LinkedList <StackPointer> pointers) {

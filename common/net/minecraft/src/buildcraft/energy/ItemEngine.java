@@ -22,16 +22,13 @@ public class ItemEngine extends ItemBlock
         setHasSubtypes(true);
     }
     
+    @Override
     public int getMetadata(int i)
     {
-        return getPlacedBlockMetadata(i);
+    	return i;
     }
 
-    public int getPlacedBlockMetadata(int i)
-    {
-        return i;
-    }
-
+    @SuppressWarnings({ "all" })
     public String getItemNameIS(ItemStack itemstack)
     {
     	if (itemstack.getItemDamage() == 0) {
