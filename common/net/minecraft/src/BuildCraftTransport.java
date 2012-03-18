@@ -179,7 +179,7 @@ public class BuildCraftTransport {
 		pipeWaterproof.setItemName("pipeWaterproof");
 		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");		
 		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
-		ModLoader.RegisterBlock(genericPipeBlock);
+		CoreProxy.registerBlock(genericPipeBlock);
 		
 		// Fixing retro-compatiblity
 		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe.class,
@@ -295,23 +295,22 @@ public class BuildCraftTransport {
 					.getOrCreateBlockIdProperty("cobblestonePipe.id",
 							DefaultProps.COBBLESTONE_PIPE_ID);
 
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			CoreProxy.registerBlock(new LegacyBlock(Integer
 					.parseInt(woodenPipeId.value), pipeItemsWood.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			CoreProxy.registerBlock(new LegacyBlock(Integer
 					.parseInt(stonePipeId.value), pipeItemsStone.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			CoreProxy.registerBlock(new LegacyBlock(Integer
 					.parseInt(ironPipeId.value), pipeItemsIron.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			CoreProxy.registerBlock(new LegacyBlock(Integer
 					.parseInt(goldenPipeId.value), pipeItemsGold.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			CoreProxy.registerBlock(new LegacyBlock(Integer
 					.parseInt(diamondPipeId.value), pipeItemsDiamond.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			CoreProxy.registerBlock(new LegacyBlock(Integer
 					.parseInt(obsidianPipeId.value), pipeItemsObsidian.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			CoreProxy.registerBlock(new LegacyBlock(Integer
 					.parseInt(cobblestonePipeId.value), pipeItemsCobblestone.shiftedIndex));
 
-			ModLoader
-					.RegisterTileEntity(LegacyTile.class,
+			CoreProxy.registerTileEntity(LegacyTile.class,
 							"net.buildcraft.src.buildcraft.transport.legacy.LegacyTile");
 		}
 		

@@ -74,7 +74,7 @@ public class BptBlockUtils {
     	
     	for (int i = 0; i < stacks.length; ++i) {    		
     		NBTTagCompound cpt = new NBTTagCompound ();
-    		nbttaglist.setTag(cpt);
+    		nbttaglist.appendTag(cpt);
     		ItemStack stack = stacks [i];
     		
     		if (stack != null && stack.stackSize != 0) {

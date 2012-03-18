@@ -95,10 +95,10 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	@Override
-	public void ModsLoaded() {
+	public void modsLoaded() {
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeModel(this);		
-		ModLoader.SetInGameHook(this, true, true);
+		ModLoader.setInGameHook(this, true, true);
 	}
 
 	@Override
@@ -107,12 +107,12 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	public static String version() {
-		return "3.1.2";
+		return "3.1.4";
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void AddRenderer(Map map) {
+	public void addRenderer(Map map) {
 		map.put(EntityBlock.class, new RenderEntityBlock());
 		map.put (EntityLaser.class, new RenderLaser());
 		map.put (EntityEnergyLaser.class, new RenderEnergyLaser());
@@ -120,7 +120,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	@Override
-	public boolean RenderWorldBlock(RenderBlocks renderblocks,
+	public boolean renderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
@@ -550,7 +550,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	RenderItem itemRenderer = new RenderItem();
 
 	@Override
-	public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i,
+	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i,
 			int j) {
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 
@@ -818,7 +818,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	@Override
-	public void HandlePacket(Packet230ModLoader packet) {
+	public void handlePacket(Packet230ModLoader packet) {
 		switch (PacketIds.values()[packet.packetType]) {
 		case TileDescription:
 			Utils.handleDescriptionPacket(packet, ModLoader.getMinecraftInstance().theWorld);
@@ -833,7 +833,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	long lastReport = 0;
 	
 	@Override
-	public boolean OnTickInGame(float f, Minecraft minecraft) {
+	public boolean onTickInGame(float f, Minecraft minecraft) {
 		if (BuildCraftCore.trackNetworkUsage) {			
 			Date d = new Date();
 			

@@ -79,6 +79,15 @@ public class TileAutoWorkbench extends TileEntity implements
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		stackList [i] = itemstack;
 	}
+	
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if (this.stackList[slot] == null) return null;
+		
+		ItemStack stackToTake = this.stackList[slot];
+		this.stackList[slot] = null;
+		return stackToTake;
+	}
 
 	@Override
 	public String getInvName() {
@@ -312,4 +321,5 @@ public class TileAutoWorkbench extends TileEntity implements
 	public void closeChest() {
 		
 	}
+
 }

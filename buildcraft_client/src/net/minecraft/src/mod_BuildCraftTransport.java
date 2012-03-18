@@ -12,6 +12,7 @@ package net.minecraft.src;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.GuiDiamondPipe;
@@ -29,11 +30,11 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 	public static mod_BuildCraftTransport instance;
 
 	@Override
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	public void modsLoaded () {
+		super.modsLoaded();
 		BuildCraftTransport.initialize();
 		
-		ModLoaderMp.RegisterGUI(this,
+		CoreProxy.registerGUI(this,
 				Utils.packetIdToInt(PacketIds.DiamondPipeGUI));
 		
 
@@ -78,16 +79,16 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 	}
 	
 	public static void registerTilePipe (Class <? extends TileEntity> clas, String name) {
-		ModLoader.RegisterTileEntity(clas, name, new RenderPipe());
+		ModLoader.registerTileEntity(clas, name, new RenderPipe());
 	}
 	
 	@Override
 	public String getVersion() {
-		return "3.1.2";
+		return "3.1.4";
 	}
 	
 	@Override
-    public GuiScreen HandleGUI(int i) {    	
+    public GuiScreen handleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.DiamondPipeGUI) {
     		TileGenericPipe tmp = new TileGenericPipe();
 			tmp.pipe = new PipeItemsDiamond(
@@ -101,7 +102,7 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
     }
     
 	@Override
-    public void HandlePacket(Packet230ModLoader packet) {    	
+    public void handlePacket(Packet230ModLoader packet) {    	
 		int x = packet.dataInt [0];
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];

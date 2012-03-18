@@ -79,16 +79,12 @@ public class EngineStone extends Engine {
 			burnTime = totalBurnTime = getItemBurnTime(tile.getStackInSlot(0));
 			
 			if (burnTime > 0) {
-				ItemStack stack = tile.decrStackSize(1, 1);
-				
-				if (stack.getItem().getContainerItem() != null) {
-					tile.setInventorySlotContents(1, new ItemStack(stack
-							.getItem().getContainerItem(), 1));
-				}
+				tile.setInventorySlotContents(0,
+						Utils.consumeItem(tile.getStackInSlot(0)));
 			}
 		}
 	}
-
+	
 	@Override
 	public int getScaledBurnTime(int i) {
 		return (int) (((float) burnTime / (float) totalBurnTime) * i);
@@ -99,7 +95,7 @@ public class EngineStone extends Engine {
 			return 0;
 		}
 		int i = itemstack.getItem().shiftedIndex;
-		if (i < Block.blocksList.length && Block.blocksList[i].blockMaterial == Material.wood) {
+		if (i < Block.blocksList.length && Block.blocksList[i] != null && Block.blocksList[i].blockMaterial == Material.wood) {
 			return 300;
 		}
 		if (i == Item.stick.shiftedIndex) {

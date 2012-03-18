@@ -272,8 +272,10 @@ public class StackUtil {
 		} else {
 			if (stack == null) {
 				if (doAdd) {
-					stack = new ItemStack(items.itemID, 1,
-							items.getItemDamage());
+					// need to to a copy to keep NBT with enchantements
+					stack = items.copy();
+					stack.stackSize = 1;
+					
 					items.stackSize--;
 					inventory.setInventorySlotContents(stackIndex, stack);
 				}

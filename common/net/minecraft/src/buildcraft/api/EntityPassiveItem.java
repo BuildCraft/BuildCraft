@@ -144,7 +144,7 @@ public class EntityPassiveItem {
 			}
 			
 			cpt.setString ("class", className);
-			contribList.setTag(cpt);
+			contribList.appendTag(cpt);
 		}
 		
 		nbttagcompound.setTag("contribList", contribList);

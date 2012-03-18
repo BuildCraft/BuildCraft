@@ -15,6 +15,7 @@ import net.minecraft.src.buildcraft.builders.GuiTemplate;
 import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
 import net.minecraft.src.buildcraft.builders.TileArchitect;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -32,22 +33,22 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	}
 	
 	@Override
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	public void modsLoaded () {
+		super.modsLoaded();
 		
 		BuildCraftBuilders.initialize();
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
+		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
+		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
+		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
 	}
 	
 	@Override
 	public String getVersion() {
-		return "3.1.2";
+		return "3.1.4";
 	}
 	 
 	@Override
-	public GuiScreen HandleGUI(int i) {		
+	public GuiScreen handleGUI(int i) {		
 		switch (Utils.intToPacketId(i)) {
 		case FillerGUI: 
 			return new GuiFiller(

@@ -9,9 +9,7 @@
 
 package net.minecraft.src.buildcraft.api;
 
-import net.minecraft.src.BuildCraftCore;
-
-public class Action {	
+public abstract class Action {	
 	public int id;
 	
 	public Action (int id) {
@@ -19,9 +17,7 @@ public class Action {
 		BuildCraftAPI.actions [id] = this;
 	}
 	
-	public String getTexture () {
-		return BuildCraftCore.triggerTextures;
-	}
+	public abstract String getTexture ();
 	
 	public int getIndexInTexture () {
 		return 0;

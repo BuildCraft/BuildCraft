@@ -287,6 +287,15 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	}
 
 	@Override
+	public ItemStack getStackInSlotOnClosing(int var1) {
+		if(itemInInventory == null)
+			return null;
+		ItemStack toReturn = itemInInventory;
+		itemInInventory = null;
+		return toReturn;
+	}
+
+	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		itemInInventory = itemstack;		
 	}
@@ -385,7 +394,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
 		if (engine instanceof EngineIron) {
-			return ((EngineIron) engine).fill(from, quantity, id, true);
+			return ((EngineIron) engine).fill(from, quantity, id, doFill);
 		} else {		
 			return 0;
 		}

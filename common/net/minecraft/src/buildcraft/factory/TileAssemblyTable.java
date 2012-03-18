@@ -134,6 +134,15 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 	}
 
 	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if (this.items[slot] == null) return null;
+		
+		ItemStack stackToTake = this.items[slot];
+		this.items[slot] = null;
+		return stackToTake;
+	}
+
+	@Override
 	public String getInvName() {
 		return "Assembly Table";
 	}
@@ -210,7 +219,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
     	for (AssemblyRecipe recipe : plannedOutput) {
     		NBTTagCompound cpt = new NBTTagCompound();
     		recipe.output.writeToNBT(cpt);
-    		list.setTag(cpt);
+    		list.appendTag(cpt);
     	}
     	
     	nbttagcompound.setTag("planned", list);

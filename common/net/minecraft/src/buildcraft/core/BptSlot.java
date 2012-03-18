@@ -60,7 +60,7 @@ public class BptSlot extends BptSlotInfo {
 		obj.z = z;
 		obj.blockId = blockId;
 		obj.meta = meta; 
-		obj.cpt = (NBTTagCompound) cpt.cloneTag();
+		obj.cpt = (NBTTagCompound) cpt.copy();
 		obj.storedRequirements = (LinkedList<ItemStack>) storedRequirements.clone();
 		
 		if (stackToUse != null) {

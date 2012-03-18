@@ -621,6 +621,11 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		
 	}
+	
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		return null;
+	}
 
 	@Override
 	public String getInvName() {
@@ -654,4 +659,5 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	public boolean allowActions () {
 		return false;
 	}
+
 }

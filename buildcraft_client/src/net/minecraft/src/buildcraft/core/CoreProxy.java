@@ -24,9 +24,12 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.ModLoaderMp;
 import net.minecraft.src.ModTextureStatic;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.RenderEngine;
+import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraftSilicon;
 
 public class CoreProxy {
 	private static class CustomModTextureStatic extends ModTextureStatic {
@@ -41,9 +44,25 @@ public class CoreProxy {
 		}
 	}
 	
+	/// FIXING GENERAL MLMP AND DEOBFUSCATION DERPINESS
 	public static void addName(Object obj, String s) {
-		ModLoader.AddName(obj, s);
+		ModLoader.addName(obj, s);
+	}
+	public static void registerBlock(Block block, Class clas) {
+		ModLoader.registerBlock(block, clas);
+	}
+	public static void registerBlock(Block block) {
+		ModLoader.registerBlock(block);
+	}
+	public static void registerTileEntity(Class clas, String ident) {
+		ModLoader.registerTileEntity(clas, ident);
 	}	
+	public static void registerGUI(BaseModMp basemod, int id) {
+		ModLoaderMp.registerGUI(basemod, id);
+	}
+	public static void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
+		stack.func_48507_a(world, player, stack.stackSize);
+	}
 	
 	public static void setField804 (EntityItem item, float value) {
 		item.field_804_d = value;
@@ -68,12 +87,12 @@ public class CoreProxy {
 	}
 
 	public static void addLocalization(String s1, String string) {
-		ModLoader.AddLocalization(s1, string);
+		ModLoader.addLocalization(s1, string);
 		
 	}
 
 	public static int addFuel (int id, int dmg) {
-		return ModLoader.AddAllFuel(id, dmg);
+		return ModLoader.addAllFuel(id, dmg);
 	}
 	
 		
@@ -121,10 +140,11 @@ public class CoreProxy {
 	}
 	
 	public static long getHash (IBlockAccess iBlockAccess) {
-		return iBlockAccess.getWorldChunkManager().hashCode();
+		//return iBlockAccess.func_48454_a(x, z).hashCode();
+		return 0;
 	}
 	
 	public static void TakenFromCrafting(EntityPlayer entityplayer, ItemStack itemstack, IInventory iinventory) {
-		ModLoader.TakenFromCrafting(entityplayer, itemstack, iinventory);
+		ModLoader.takenFromCrafting(entityplayer, itemstack, iinventory);
 	}
 }

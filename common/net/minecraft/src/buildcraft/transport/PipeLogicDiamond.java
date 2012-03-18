@@ -174,7 +174,7 @@ public class PipeLogicDiamond extends PipeLogic {
     	for (int j = 0; j < items.length; ++j) {    		    		
     		if (items [j] != null && items [j].stackSize > 0) {
         		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
-        		nbttaglist.setTag(nbttagcompound2);
+        		nbttaglist.appendTag(nbttagcompound2);
     			nbttagcompound2.setInteger("index", j);
     			items [j].writeToNBT(nbttagcompound2);	
     		}     		

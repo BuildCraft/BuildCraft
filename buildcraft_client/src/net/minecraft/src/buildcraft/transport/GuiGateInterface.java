@@ -280,7 +280,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			break;
 		}
 		
-		fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97,
+		fontRenderer.drawString("Inventory", 8, ySize - 97,
 				0x404040);
 		
 		drawForegroundSelection ();

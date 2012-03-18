@@ -20,6 +20,7 @@ import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
 public class TileTank extends TileBuildCraft implements ILiquidContainer {
@@ -112,7 +113,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	public int empty (int quantityMax, boolean doEmpty) {
 		TileTank lastTank = this;
 		
-		for (int j = yCoord + 1; j <= 128; ++j) {
+		for (int j = yCoord + 1; j <= DefaultProps.WORLD_HEIGHT; ++j) {
 			if (worldObj.getBlockTileEntity(xCoord, j, zCoord) instanceof TileTank) {
 				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j, zCoord);
 			} else {

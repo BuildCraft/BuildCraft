@@ -40,7 +40,8 @@ public class RenderTank extends TileEntitySpecialRenderer {
     	stage.put(liquidId, d);
 		
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length) {
+		if (liquidId < Block.blocksList.length
+				&& Block.blocksList[liquidId] != null) {
 			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
 		} else {
 			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
@@ -86,7 +87,8 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		
 		Object o = null;
 		
-		if (liquidId < Block.blocksList.length) {
+		if (liquidId < Block.blocksList.length
+				&& Block.blocksList[liquidId] != null) {
 			o = Block.blocksList [liquidId];
 		} else {
 			o = Item.itemsList [liquidId];

@@ -117,6 +117,22 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 	}
 
 	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		int lastSize = 0, size = 0;
+		
+		for (IInventory inv : invs) {
+			size += inv.getSizeInventory();
+			
+			if (size > slot) {
+				return inv.getStackInSlotOnClosing(slot - lastSize);
+			}
+			lastSize = size;
+		}
+		
+		return null;
+	}
+
+	@Override
 	public String getInvName() {
 		return "";
 	}
@@ -163,5 +179,4 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 		
 		return false;
 	}
-	
 }

@@ -24,7 +24,7 @@ import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 
 public class TileLaser extends TileEntity implements IPowerReceptor {
 
-	private EntityEnergyLaser l = null;
+	private EntityEnergyLaser laser = null;
 	
 	private SafeTimeTracker laserTickTracker = new SafeTimeTracker();
 	private SafeTimeTracker searchTracker = new SafeTimeTracker();
@@ -44,7 +44,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 	@Override
 	public void updateEntity () {
 		if (powerProvider.energyStored == 0) {
-			if (l != null) {
+			if (laser != null) {
 				deleteLaser();
 			}
 			
@@ -60,22 +60,22 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			deleteLaser();
 		}		
 		
-		if (l != null && laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate)) {
+		if (laser != null && laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate)) {
 			setLaserPosition();
 			nextLaserUpdate = 5 + worldObj.rand.nextInt(10);
 		}
 		
 		if (assemblyTable != null) {
 			float p = powerProvider.useEnergy(0, 4, true);
-			l.pushPower(p);
+			laser.pushPower(p);
 			assemblyTable.receiveLaserEnergy(p);
 		}
 	}
 	
 	private void deleteLaser () {
-		if (l != null) {
-			l.setEntityDead();
-			l = null;
+		if (laser != null) {
+			laser.setEntityDead();
+			laser = null;
 			assemblyTable = null;
 		}
 	}
@@ -135,15 +135,15 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 		}
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
-		
-		if (l == null) {
-			l = new EntityEnergyLaser(worldObj);			
-		}
-		
 		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
-		setLaserPosition();
-
-		worldObj.spawnEntityInWorld(l);
+				
+		if (laser == null) {
+			laser = new EntityEnergyLaser(worldObj);
+			setLaserPosition();
+			worldObj.spawnEntityInWorld(laser);
+		} else {
+			setLaserPosition();	
+		}
 	}
 
 	private void setLaserPosition () {
@@ -171,7 +171,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			break;
 		}
 		
-		l.setPositions(
+		laser.setPositions(
 				xCoord + 0.5 + px,
 				yCoord + 0.5 + py,
 				zCoord + 0.5 + pz,
@@ -199,7 +199,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 
 	@Override
 	public int powerRequest() {
-		if (powerProvider.energyStored < 200 || l != null) {
+		if (powerProvider.energyStored < 200 || laser != null) {
 			return 25;
 		} else {
 			return 0;

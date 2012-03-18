@@ -35,7 +35,7 @@ public class GuiTemplate extends GuiContainer {
 	@Override
     protected void drawGuiContainerForegroundLayer() {
         fontRenderer.drawString(template.getInvName(), 8, 6, 0x404040);
-        fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 152, 0x404040);        
+        fontRenderer.drawString("Inventory", 8, ySize - 152, 0x404040);
         
         if (editMode && ((new Date ()).getTime() / 100) % 8 >= 4) {
         	fontRenderer.drawString(template.name + "|", 51, 62, 0x404040);

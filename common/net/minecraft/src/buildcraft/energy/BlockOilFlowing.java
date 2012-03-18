@@ -270,7 +270,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
             return false;
         }
         Material material = Block.blocksList[l].blockMaterial;
-        return material.getIsSolid();
+        return material.isSolid();
     }
 
     protected int getSmallestFlowDecay(World world, int i, int j, int k, int l)

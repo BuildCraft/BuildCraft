@@ -11,6 +11,7 @@ package net.minecraft.src;
 
 import java.util.Map;
 
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -28,19 +29,19 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	public static mod_BuildCraftFactory instance;
 	
 	@Override
-	public void ModsLoaded () {		
-		super.ModsLoaded();
+	public void modsLoaded () {		
+		super.modsLoaded();
 		
 		BuildCraftFactory.initialize();
 		
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
+		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
 		
 		ModLoader
-		.RegisterTileEntity(TileTank.class,
+		.registerTileEntity(TileTank.class,
 				"net.minecraft.src.buildcraft.factory.TileTank",
 				new RenderTank());
 		
-		ModLoader.RegisterTileEntity(TileRefinery.class,
+		ModLoader.registerTileEntity(TileRefinery.class,
 				"net.minecraft.src.buildcraft.factory.Refinery",
 				new RenderRefinery());
 		
@@ -52,17 +53,17 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 	@Override
 	public String getVersion() {
-		return "3.1.2";
+		return "3.1.4";
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void AddRenderer(Map map) {
+	public void addRenderer(Map map) {
     	map.put (EntityMechanicalArm.class, new RenderVoid());
     }
 	
 	@Override
-    public GuiScreen HandleGUI(int i) {    	
+    public GuiScreen handleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
 			return new GuiAutoCrafting(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,

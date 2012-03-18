@@ -34,7 +34,7 @@ public class APIProxy {
 	}
 
 	public static Random createNewRandom(World world) {
-		return new Random (world.getWorldSeed());
+		return new Random (world.getSeed());
 	}
 	
 }

@@ -540,7 +540,7 @@ public class Utils {
     	
     	for (int i = 0; i < stacks.length; ++i) {    		
     		NBTTagCompound cpt = new NBTTagCompound ();
-    		nbttaglist.setTag(cpt);
+    		nbttaglist.appendTag(cpt);
     		if (stacks [i] != null) {
     			stacks [i].writeToNBT(cpt);
     		}
@@ -548,6 +548,20 @@ public class Utils {
     	}
     	
     	nbt.setTag(name, nbttaglist);
+	}
+	
+	public static ItemStack consumeItem (ItemStack stack) {
+		if (stack.stackSize == 1) {
+			if (stack.getItem().getContainerItem() != null) {
+				return new ItemStack(stack.getItem().getContainerItem(), 1);
+			} else {
+				return null;
+			}
+		} else {
+			stack.splitStack(1);
+			
+			return stack;
+		}
 	}
 	
 }

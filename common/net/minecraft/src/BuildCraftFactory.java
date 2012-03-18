@@ -90,25 +90,25 @@ public class BuildCraftFactory {
 		MinecraftForge.registerCustomBucketHandler(new TankBucketHandler());
 		
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
-		ModLoader.RegisterBlock(miningWellBlock);
+		CoreProxy.registerBlock(miningWellBlock);
 		CoreProxy.addName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");		
 		
 		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(plainPipeId.value));
-		ModLoader.RegisterBlock(plainPipeBlock);
+		CoreProxy.registerBlock(plainPipeBlock);
 		CoreProxy.addName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
 		
 		autoWorkbenchBlock = new BlockAutoWorkbench(
 				Integer.parseInt(autoWorkbenchId.value));
-		ModLoader.RegisterBlock(autoWorkbenchBlock);		
+		CoreProxy.registerBlock(autoWorkbenchBlock);		
 		CoreProxy.addName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
 				"Automatic Crafting Table");
 				
 		frameBlock = new BlockFrame(Integer.parseInt(frameId.value));
-		ModLoader.RegisterBlock(frameBlock);
+		CoreProxy.registerBlock(frameBlock);
 		CoreProxy.addName(frameBlock.setBlockName("frameBlock"), "Frame");
 		
 		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
-		ModLoader.RegisterBlock(quarryBlock);			
+		CoreProxy.registerBlock(quarryBlock);			
 		
 		CoreProxy.addName(quarryBlock.setBlockName("machineBlock"),
 		"Quarry");
@@ -116,31 +116,29 @@ public class BuildCraftFactory {
 		tankBlock = new BlockTank(Integer.parseInt(tankId.value));		
 		CoreProxy.addName(tankBlock.setBlockName("tankBlock"),
 		"Tank");
-		ModLoader.RegisterBlock(tankBlock);			
+		CoreProxy.registerBlock(tankBlock);			
 		
 		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
 		CoreProxy.addName(pumpBlock.setBlockName("pumpBlock"),
 		"Pump");
-		ModLoader.RegisterBlock(pumpBlock);	
+		CoreProxy.registerBlock(pumpBlock);	
 		
 		refineryBlock = new BlockRefinery(Integer.parseInt(refineryId.value));		
 		CoreProxy.addName(refineryBlock.setBlockName("refineryBlock"),
 		"Refinery");
-		ModLoader.RegisterBlock(refineryBlock);
+		CoreProxy.registerBlock(refineryBlock);
 		
-		ModLoader.RegisterTileEntity(TileQuarry.class, "Machine");		
-		ModLoader.RegisterTileEntity(TileMiningWell.class, "MiningWell");
-		ModLoader.RegisterTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
-		ModLoader.RegisterTileEntity(TilePump.class,
+		CoreProxy.registerTileEntity(TileQuarry.class, "Machine");		
+		CoreProxy.registerTileEntity(TileMiningWell.class, "MiningWell");
+		CoreProxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
+		CoreProxy.registerTileEntity(TilePump.class,
 				"net.minecraft.src.buildcraft.factory.TilePump");
-		ModLoader.RegisterTileEntity(TileTank.class,
+		CoreProxy.registerTileEntity(TileTank.class,
 		"net.minecraft.src.buildcraft.factory.TileTank");
-		ModLoader.RegisterTileEntity(TileRefinery.class,
+		CoreProxy.registerTileEntity(TileRefinery.class,
 				"net.minecraft.src.buildcraft.factory.Refinery");
-		ModLoader
-				.RegisterTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
-		ModLoader
-		.RegisterTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
+		CoreProxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
+		CoreProxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 
 		drillTexture = 2 * 16 + 1;
 		

@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.IPipe;
 
@@ -52,5 +53,10 @@ public class ActionSignalOutput extends Action {
 		}
 		
 		return "";
+	}
+	
+	@Override
+	public String getTexture() {
+		return BuildCraftCore.triggerTextures;
 	}
 }

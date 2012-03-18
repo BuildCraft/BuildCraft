@@ -167,12 +167,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 		
 		bindPipe ();
+
+		computeConnections();
 		
 		if (pipe != null) {
 			pipe.initialize();
 		}
-		
-		computeConnections();
 	}
 
 	private void bindPipe() {
@@ -305,6 +305,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			pipe.logic.setInventorySlotContents(i, itemstack);
 		}
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if (!BlockGenericPipe.isFullyDefined(pipe))
+			return null;
+
+		if(pipe.logic.getStackInSlot(slot) == null)
+			return null;
+		
+		ItemStack toReturn = pipe.logic.getStackInSlot(slot);
+		pipe.logic.setInventorySlotContents(slot, null);
+		return toReturn;
 	}
 
 	@Override

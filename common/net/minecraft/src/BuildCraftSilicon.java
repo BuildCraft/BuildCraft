@@ -8,6 +8,7 @@
 
 package net.minecraft.src;
 
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockInventory;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockRotateMeta;
 import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
@@ -46,12 +47,12 @@ public class BuildCraftSilicon {
 		laserBlock = new BlockLaser (Integer.parseInt(laserId.value));		
 		CoreProxy.addName(laserBlock.setBlockName("laserBlock"),
 		"Laser");
-		ModLoader.RegisterBlock(laserBlock);
+		CoreProxy.registerBlock(laserBlock);
 		
 		assemblyTableBlock = new BlockAssemblyTable (Integer.parseInt(assemblyTableId.value));
 		CoreProxy.addName(assemblyTableBlock.setBlockName("assemblyTableBlock"),
 		"Assembly Table");
-		ModLoader.RegisterBlock(assemblyTableBlock);
+		CoreProxy.registerBlock(assemblyTableBlock);
 
 		redstoneChipset = new ItemRedstoneChipset(DefaultProps.REDSTONE_CHIPSET);
 		redstoneChipset.setItemName("redstoneChipset");
@@ -131,6 +132,7 @@ public class BuildCraftSilicon {
 				"Diamond OR Gate");
 
 		new BptBlockRotateMeta(laserBlock.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockInventory(assemblyTableBlock.blockID);
 		
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

@@ -195,6 +195,11 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	}
 
 	@Override
+	public ItemStack getStackInSlotOnClosing(int var1) {
+		return null;
+	}
+
+	@Override
 	public void setPowerProvider(PowerProvider provider) {
 		powerProvider = provider;		
 	}

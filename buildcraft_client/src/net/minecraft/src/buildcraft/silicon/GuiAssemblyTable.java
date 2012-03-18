@@ -86,7 +86,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
 		fontRenderer.drawString("Assembly Table", 60, 15, 0x404040);
-		fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97,
+		fontRenderer.drawString("Inventory", 8, ySize - 97,
 				0x404040);
 		
 		drawForegroundSelection();

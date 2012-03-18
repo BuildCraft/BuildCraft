@@ -140,6 +140,15 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 			}
 		}
 	}
+	
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if(stack[slot] == null)
+			return null;
+		ItemStack toReturn = stack[slot];
+		stack[slot] = null;
+		return toReturn;
+	}
 
 	@Override
 	public String getInvName() {

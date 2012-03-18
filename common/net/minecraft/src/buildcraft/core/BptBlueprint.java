@@ -121,7 +121,8 @@ public class BptBlueprint extends BptBase {
 		writer.newLine();
 		
 		for (Integer id : idsToMap) {
-			if (id < Block.blocksList.length) {
+			if (id < Block.blocksList.length
+					&& Block.blocksList[id] != null) {
 				writer.write(BuildCraftAPI
 						.getBlockSignature(Block.blocksList[id]) + "=" + id);
 			} else {
@@ -150,7 +151,7 @@ public class BptBlueprint extends BptBase {
 							slot.cpt.setInteger("meta", slot.meta);
 						}
 
-						NBTBase.writeTag(slot.cpt, new BptDataStream(writer));
+						NBTBase.writeNamedTag(slot.cpt, new BptDataStream(writer));
 
 						writer.newLine();
 					} else {
@@ -177,10 +178,10 @@ public class BptBlueprint extends BptBase {
 						for (ItemStack stack : slot.storedRequirements) {
 							NBTTagCompound sub = new NBTTagCompound();
 							stack.writeToNBT(sub);
-							list.setTag(sub);
+							list.appendTag(sub);
 						}
 						
-						NBTBase.writeTag(list, new BptDataStream(writer));
+						NBTBase.writeNamedTag(list, new BptDataStream(writer));
 
 						writer.newLine();
 					} else {
@@ -292,7 +293,7 @@ public class BptBlueprint extends BptBase {
 							slot.z = z;
 							
 							slot.cpt = (NBTTagCompound) NBTBase
-									.readTag(new BptDataStream(
+									.readNamedTag(new BptDataStream(
 											new StringReader(slotStr)));
 
 							slot.blockId = mapWorldId(slot.cpt
@@ -319,7 +320,7 @@ public class BptBlueprint extends BptBase {
 						
 						if (!reqStr.equals("")) {							
 							NBTTagList list = (NBTTagList) NBTBase
-									.readTag(new BptDataStream(
+									.readNamedTag(new BptDataStream(
 											new StringReader(reqStr)));
 
 							for (int i = 0; i < list.tagCount(); ++i) {

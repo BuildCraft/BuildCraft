@@ -219,6 +219,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		initializeComputing();
 		
 	}
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if(items[slot] == null)
+			return null;
+		ItemStack toReturn = items[slot];
+		items[slot] = null;
+		return toReturn;
+	}
 
 	@Override
 	public String getInvName() {
@@ -284,7 +292,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte)i);
                 items[i].writeToNBT(nbttagcompound1);
-                nbttaglist.setTag(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
             }
         }
 

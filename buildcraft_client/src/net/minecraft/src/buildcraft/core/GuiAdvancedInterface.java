@@ -107,7 +107,7 @@ public abstract class GuiAdvancedInterface extends GuiContainer {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		
-        RenderHelper.func_41089_c();
+        RenderHelper.enableGUIStandardItemLighting();
         GL11.glPushMatrix();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);

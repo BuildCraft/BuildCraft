@@ -76,7 +76,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
     	displayLiquidLists.put(liquidId, d);
     	
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length) {
+		if (liquidId < Block.blocksList.length
+				&& Block.blocksList[liquidId] != null) {
 			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
 		} else {
 			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
@@ -364,7 +365,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		
 		Object o = null;
 		
-		if (liquidId < Block.blocksList.length) {
+		if (liquidId < Block.blocksList.length
+				&& Block.blocksList[liquidId] != null) {
 			o = Block.blocksList [liquidId];
 		} else {
 			o = Item.itemsList [liquidId];
@@ -452,7 +454,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 						entityitem.getEntityBrightness(f1));
                 GL11.glPopMatrix();
             }
-        } else if(itemstack.itemID < Block.blocksList.length && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
+        } else if(itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
         {
 //            GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
         	GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
@@ -486,12 +488,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
         	
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             int i = itemstack.getIconIndex();
-            if(itemstack.itemID < Block.blocksList.length)
-            {
+            if(itemstack.itemID < Block.blocksList.length
+            		&& Block.blocksList[itemstack.itemID] != null) {
                 loadTexture("/terrain.png");
                 ForgeHooksClient.overrideTexture(Block.blocksList[itemstack.itemID]);
-            } else
-            {
+            } else {
                 loadTexture("/gui/items.png");
                 ForgeHooksClient.overrideTexture(Item.itemsList[itemstack.itemID]);
             }

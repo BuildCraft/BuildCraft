@@ -12,6 +12,8 @@ package net.minecraft.src;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.ItemPipe;
 import net.minecraft.src.forge.ICustomItemRenderer;
@@ -21,8 +23,8 @@ public class mod_BuildCraftSilicon extends BaseModMp implements ICustomItemRende
 	public static mod_BuildCraftSilicon instance;
 	
 	@Override
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	public void modsLoaded () {
+		super.modsLoaded();
 		BuildCraftTransport.initialize();
 		BuildCraftSilicon.initialize();
 		
@@ -34,7 +36,7 @@ public class mod_BuildCraftSilicon extends BaseModMp implements ICustomItemRende
 	
 	@Override
 	public String getVersion() {
-		return "3.1.2";
+		return "3.1.4";
 	}
 	    
 	@Override
@@ -79,7 +81,7 @@ public class mod_BuildCraftSilicon extends BaseModMp implements ICustomItemRende
 	}
 	
 	@Override
-    public boolean RenderWorldBlock(RenderBlocks renderblocks,
+    public boolean renderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int x, int y, int z, Block block, int l) {
     	
     	int meta = iblockaccess.getBlockMetadata(x, y, z);
@@ -160,7 +162,7 @@ public class mod_BuildCraftSilicon extends BaseModMp implements ICustomItemRende
     }
     
 	@Override
-	public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i,
+	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i,
 			int j) {
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
 				Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);

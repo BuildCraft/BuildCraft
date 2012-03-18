@@ -71,6 +71,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		
 		public PathIterator (BlockIndex from, Iterator <BlockIndex> it) {
 			this.to = it.next();
+			
 			currentIterator = it;
 			
 			double dx = to.i - from.i;
@@ -108,7 +109,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		/**
 		 * Return false when reached the end of the iteration
 		 */
-		public BptBuilderBase next () {			
+		public BptBuilderBase next () {
 			while (true) {
 				BptBuilderBase bpt;
 				
@@ -148,8 +149,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			}			
 		}
 		
-		public PathIterator iterate () {
-			if (currentIterator.hasNext()) {
+		public PathIterator iterate () {			
+			if (currentIterator.hasNext()) {				
 				PathIterator next = new PathIterator(to, currentIterator);
 				next.oldBoundingBox = oldBoundingBox;
 				
@@ -332,7 +333,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				box.reset();
 			}
 			
-			if (currentPathIterator != null) {
+			if (currentPathIterator != null) {				
 				currentPathIterator = null;
 			}
 			
@@ -435,6 +436,15 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if(items[slot] == null)
+			return null;
+		ItemStack toReturn = items[slot];
+		items[slot] = null;
+		return toReturn;
+	}
+
+	@Override
 	public String getInvName() {
 		return "Builder";
 	}
@@ -492,7 +502,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
         	for (BlockIndex i : path) {
         		NBTTagCompound c = new NBTTagCompound();
         		i.writeTo(c);
-        		list.setTag(c);
+        		list.appendTag(c);
         	}
         	
 			nbttagcompound.setTag("path", list);
@@ -564,7 +574,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public int powerRequest() {
-		if (bluePrintBuilder != null && !done) {
+		if ((bluePrintBuilder != null || currentPathIterator != null) && !done) {
 			return powerProvider.maxEnergyReceived;
 		} else {
 			return 0;

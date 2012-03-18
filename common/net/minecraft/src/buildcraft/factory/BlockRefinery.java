@@ -15,7 +15,6 @@ import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
@@ -108,7 +107,7 @@ public class BlockRefinery extends BlockContainer {
 					if (qty != 0 && !BuildCraftCore.debugMode) {
 						entityplayer.inventory.setInventorySlotContents(
 								entityplayer.inventory.currentItem,
-								new ItemStack(Item.bucketEmpty, 1));
+								Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
 					}
 
 					return true;

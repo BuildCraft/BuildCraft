@@ -62,4 +62,9 @@ public class BlockIndex implements Comparable<BlockIndex> {
 		c.setInteger("j", j);
 		c.setInteger("k", k);
 	}
+	
+	@Override
+	public String toString () {
+		return "{" + i + ", " + j + ", " + k + "}";
+	}
 }

@@ -11,13 +11,13 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.ICrafting;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.Utils;
 
 public class EngineIron extends Engine {
 	
@@ -131,8 +131,8 @@ public class EngineIron extends Engine {
 					fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME,
 							liquidId, true);
 
-					tile.setInventorySlotContents(0, new ItemStack(
-							Item.bucketEmpty, 1));
+					tile.setInventorySlotContents(0,
+							Utils.consumeItem(itemInInventory));
 				}
 			}
 		}	

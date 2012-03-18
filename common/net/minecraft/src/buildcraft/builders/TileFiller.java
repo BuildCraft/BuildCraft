@@ -233,6 +233,15 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 //        onInventoryChanged();
     }
 
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if(contents[slot] == null)
+			return null;
+		ItemStack toReturn = contents[slot];
+		contents[slot] = null;
+		return toReturn;
+	}	
+
     @Override
     public String getInvName()
     {
@@ -448,5 +457,5 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	@Override
 	public boolean allowActions () {
 		return true;
-	}	
+	}
 }

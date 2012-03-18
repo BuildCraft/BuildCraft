@@ -35,12 +35,16 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	private int plainTexture = 1 * 16 + 15;
 	private int nextTexture = baseTexture;
 
-	public PipeItemsWood(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicWood(), itemID);
+	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
+		super(transport, new PipeLogicWood(), itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 1, 64, 1, 64);
 		powerProvider.configurePowerPerdition(64, 1);
+	}
+	
+	public PipeItemsWood(int itemID) {
+		this(itemID, new PipeTransportItems());
 	}
 
 	@Override

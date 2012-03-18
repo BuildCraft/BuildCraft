@@ -87,11 +87,11 @@ public class BuildCraftEnergy {
 		BuildCraftCore.mainConfiguration.save();
 		
 		engineBlock = new BlockEngine(Integer.parseInt(engineId.value));
-		ModLoader.RegisterBlock(engineBlock);
+		CoreProxy.registerBlock(engineBlock);
 		
 		Item.itemsList[engineBlock.blockID] = null;
 		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
-				engineBlock.blockID - Block.blocksList.length));
+				engineBlock.blockID - 256));
 		
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 0), "Redstone Engine");
 		CoreProxy.addName(new ItemStack (engineBlock, 1, 1), "Steam Engine");
@@ -101,13 +101,13 @@ public class BuildCraftEnergy {
 				Material.water)).setHardness(100F).setLightOpacity(3)
 				.setBlockName("oil");
 		CoreProxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
-		ModLoader.RegisterBlock(oilMoving);
+		CoreProxy.registerBlock(oilMoving);
 		
 		oilStill = (new BlockOilStill(Integer.parseInt(oilStillId.value),
 				Material.water)).setHardness(100F).setLightOpacity(3)
 				.setBlockName("oil");
 		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
-		ModLoader.RegisterBlock(oilStill);
+		CoreProxy.registerBlock(oilStill);
 		
 		if (oilMoving.blockID + 1 != oilStill.blockID) {
 			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");

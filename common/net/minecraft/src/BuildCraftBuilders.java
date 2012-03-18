@@ -21,11 +21,13 @@ import net.minecraft.src.buildcraft.api.bptblocks.BptBlockDirt;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockDoor;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockIgnore;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockIgnoreMeta;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockInventory;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockLever;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockLiquid;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockPiston;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockPumpkin;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockRedstoneRepeater;
+import net.minecraft.src.buildcraft.api.bptblocks.BptBlockRotateInventory;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockSign;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockStairs;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockRotateMeta;
@@ -122,38 +124,38 @@ public class BuildCraftBuilders {
 		CoreProxy.addName(blueprintItem, "Blueprint");		
 		
 		markerBlock = new BlockMarker(Integer.parseInt(markerId.value));		
-		ModLoader.RegisterBlock(markerBlock);
+		CoreProxy.registerBlock(markerBlock);
 		CoreProxy.addName(markerBlock.setBlockName("markerBlock"), "Land Mark");
 		
 		pathMarkerBlock = new BlockPathMarker(Integer.parseInt(pathMarkerId.value));		
-		ModLoader.RegisterBlock(pathMarkerBlock);
+		CoreProxy.registerBlock(pathMarkerBlock);
 		CoreProxy.addName(pathMarkerBlock.setBlockName("pathMarkerBlock"), "Path Mark");
 		
 		fillerBlock = new BlockFiller(Integer.parseInt(fillerId.value));		
-		ModLoader.RegisterBlock(fillerBlock);
+		CoreProxy.registerBlock(fillerBlock);
 		CoreProxy.addName(fillerBlock.setBlockName("fillerBlock"), "Filler");
 	
 		builderBlock = new BlockBuilder(Integer.parseInt(builderId.value));
-		ModLoader.RegisterBlock(builderBlock);
+		CoreProxy.registerBlock(builderBlock);
 		CoreProxy.addName(builderBlock.setBlockName("builderBlock"), "Builder");
 		
 		architectBlock = new BlockArchitect(Integer.parseInt(architectId.value));
-		ModLoader.RegisterBlock(architectBlock);
+		CoreProxy.registerBlock(architectBlock);
 		CoreProxy.addName(architectBlock.setBlockName("architectBlock"), "Architect Table");
 		
 		libraryBlock = new BlockBlueprintLibrary(Integer.parseInt(libraryId.value));
-		ModLoader.RegisterBlock(libraryBlock);
+		CoreProxy.registerBlock(libraryBlock);
 		CoreProxy.addName(libraryBlock.setBlockName("libraryBlock"), "Blueprint Library");
 		
-		ModLoader.RegisterTileEntity(TileMarker.class, "Marker");
-		ModLoader.RegisterTileEntity(TileFiller.class, "Filler");
-		ModLoader.RegisterTileEntity(TileBuilder.class,
+		CoreProxy.registerTileEntity(TileMarker.class, "Marker");
+		CoreProxy.registerTileEntity(TileFiller.class, "Filler");
+		CoreProxy.registerTileEntity(TileBuilder.class,
 				"net.minecraft.src.builders.TileBuilder");
-		ModLoader.RegisterTileEntity(TileArchitect.class,
+		CoreProxy.registerTileEntity(TileArchitect.class,
 				"net.minecraft.src.builders.TileTemplate");
-		ModLoader.RegisterTileEntity(TilePathMarker.class,
+		CoreProxy.registerTileEntity(TilePathMarker.class,
 		"net.minecraft.src.builders.TilePathMarker");
-		ModLoader.RegisterTileEntity(TileBlueprintLibrary.class,
+		CoreProxy.registerTileEntity(TileBlueprintLibrary.class,
 		"net.minecraft.src.builders.TileBlueprintLibrary");
 		
 		FillerRegistry.addRecipe(new FillerFillAll(), new Object[] { "bbb",
@@ -190,6 +192,8 @@ public class BuildCraftBuilders {
 //	    public static final BlockPortal portal;
 //	    public static final Block trapdoor;
 
+		// STANDARD BLOCKS
+		
 		new BptBlock(0); // default bpt block
 		
 		new BptBlockIgnore(Block.snow.blockID);
@@ -209,11 +213,14 @@ public class BuildCraftBuilders {
 		new BptBlockWallSide(Block.torchRedstoneActive.blockID);
 		
 		new BptBlockRotateMeta(Block.ladder.blockID, new int [] {2, 5, 3, 4}, true);
-		new BptBlockRotateMeta(Block.stoneOvenIdle.blockID, new int [] {2, 5, 3, 4}, true);
-		new BptBlockRotateMeta(Block.chest.blockID, new int [] {2, 5, 3, 4}, true);
-		new BptBlockRotateMeta(Block.lockedChest.blockID, new int [] {2, 5, 3, 4}, true);
-		new BptBlockRotateMeta(Block.dispenser.blockID, new int [] {2, 5, 3, 4}, true);
 		new BptBlockRotateMeta(Block.fenceGate.blockID, new int [] {0, 1, 2, 3}, true);
+		
+		new BptBlockRotateInventory(Block.stoneOvenIdle.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Block.chest.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Block.lockedChest.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Block.dispenser.blockID, new int [] {2, 5, 3, 4}, true);
+		
+		new BptBlockInventory(Block.brewingStand.blockID);
 		
 		new BptBlockRotateMeta(Block.vine.blockID, new int [] {1, 4, 8, 2}, false);
 		new BptBlockRotateMeta(Block.trapdoor.blockID, new int [] {0, 1, 2, 3}, false);
@@ -228,6 +235,7 @@ public class BuildCraftBuilders {
 		new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
 		new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));
 		new BptBlockCustomStack(Block.melonStem.blockID, new ItemStack(Item.melonSeeds));
+		new BptBlockCustomStack(Block.glowStone.blockID, new ItemStack(Block.glowStone));
 		
 		new BptBlockRedstoneRepeater(Block.redstoneRepeaterActive.blockID);
 		new BptBlockRedstoneRepeater(Block.redstoneRepeaterIdle.blockID);
@@ -260,6 +268,13 @@ public class BuildCraftBuilders {
 		
 		new BptBlockSign(Block.signWall.blockID, true);
 		new BptBlockSign(Block.signPost.blockID, false);		
+		
+		// BUILDCRAFT BLOCKS
+		
+		new BptBlockRotateInventory(architectBlock.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(builderBlock.blockID, new int [] {2, 5, 3, 4}, true);
+		
+		new BptBlockInventory(libraryBlock.blockID);
 		
 		new BptBlockWallSide(markerBlock.blockID);
 		new BptBlockWallSide(pathMarkerBlock.blockID);

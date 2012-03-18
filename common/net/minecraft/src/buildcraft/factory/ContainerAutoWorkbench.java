@@ -50,7 +50,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	    @Override
 	    public void onPickupFromSlot(ItemStack itemstack)
 	    {
-	        itemstack.onCrafting(thePlayer.worldObj, thePlayer);
+	        CoreProxy.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
 	        if(itemstack.itemID == Block.workbench.blockID)
 	        {
 	            thePlayer.addStat(AchievementList.buildWorkBench, 1);

@@ -399,7 +399,7 @@ public class PipeTransportItems extends PipeTransport {
     	    	
     	for (EntityData data : travelingEntities.values()) {    		
     		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
-    		nbttaglist.setTag(nbttagcompound2);
+    		nbttaglist.appendTag(nbttagcompound2);
     		data.item.writeToNBT(nbttagcompound2);
     		nbttagcompound2.setBoolean("toCenter", data.toCenter);
     		nbttagcompound2.setInteger("orientation", data.orientation.ordinal());    		

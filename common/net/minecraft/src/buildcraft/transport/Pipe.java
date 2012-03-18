@@ -635,20 +635,28 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 					}
 				}
 			}
-		}
+		}		
 		
-		if (oldBroadcastRedstone != broadcastRedstone) {
+		actionsActivated (actions);
+		
+		if (oldBroadcastRedstone != broadcastRedstone) {		
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord,
 					BuildCraftTransport.genericPipeBlock.blockID);
 		}
 		
-		if (oldBroadcastSignal != broadcastSignal) {
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-			updateSignalState();
-		}
+		for (int i = 0; i < oldBroadcastSignal.length; ++i) {
+			if (oldBroadcastSignal [i] != broadcastSignal [i]) {
+				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				updateSignalState();
+				break;
+			}	
+		}		
 	}
 
+	protected void actionsActivated(HashMap<Integer, Boolean> actions) {
+		
+	}
 
 	@Override
 	public TileGenericPipe getContainer() {

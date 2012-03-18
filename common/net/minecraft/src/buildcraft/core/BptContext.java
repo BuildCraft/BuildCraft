@@ -47,7 +47,9 @@ public class BptContext implements IBptContext {
 
 	@Override
 	public void storeId(int worldId) {
-		bpt.storeId(worldId);
+		if (bpt != null) {
+			bpt.storeId(worldId);
+		}
 	}
 
 	@Override

@@ -36,6 +36,9 @@ public class BlockCheat extends BlockChest {
 			EntityPlayer entityplayer) {
 		IInventory inv = (IInventory) world.getBlockTileEntity(i, j, k);
 
+		
+		entityplayer.experienceLevel = 50;
+		
 		int ind = 0;
 
 		if (world.getBlockId(i + 1, j, k) == blockID
@@ -89,7 +92,7 @@ public class BlockCheat extends BlockChest {
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.pipeItemsIron, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.pipePowerGold, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftBuilders.libraryBlock, 64));
-			inv.setInventorySlotContents(ind++, new ItemStack (Block.rail, 64));
+			inv.setInventorySlotContents(ind++, new ItemStack (Block.enchantmentTable, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftEnergy.bucketOil, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftFactory.tankBlock, 64));
 			inv.setInventorySlotContents(ind++, new ItemStack (BuildCraftTransport.pipeLiquidsWood, 64));									
