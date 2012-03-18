@@ -10,8 +10,6 @@
 package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.LaserKind;
-import net.minecraft.src.buildcraft.api.Position;
 
 
 public interface IBox {

@@ -389,7 +389,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 					.nextGaussian() * f3 + 1.0F;
 					entityitem.motionZ = (float) worldObj.rand
 					.nextGaussian() * f3;
-					worldObj.entityJoinedWorld(entityitem);
+					worldObj.spawnEntityInWorld(entityitem);
 				}				
 			}
 					

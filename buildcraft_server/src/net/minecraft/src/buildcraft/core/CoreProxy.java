@@ -14,11 +14,16 @@ import java.io.File;
 import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
 import net.minecraft.src.Packet230ModLoader;
-import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.World;
+import net.minecraft.src.forge.DimensionManager;
 
 public class CoreProxy {
 	public static void addName(Object obj, String s) {
@@ -29,6 +34,10 @@ public class CoreProxy {
 		item.field_432_ae = value;
 	}
 	
+	public static void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
+		stack.onCrafting(world, player, stack.stackSize);
+	}	
+	
 	public static File getPropertyFile() {
 		return new File("BuildCraft.cfg");
 	}
@@ -36,17 +45,16 @@ public class CoreProxy {
 	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
 			int z, int maxDistance, BaseModMp mod) {
 		if (packet != null) {
-			for (int i = 0; i < ModLoader.getMinecraftServerInstance().worldMngr.length; i++) {
-				for (int j = 0; j < ModLoader.getMinecraftServerInstance().worldMngr[i].playerEntities
+			
+			for (int i = 0; i < DimensionManager.getWorlds().length; i++) {
+				for (int j = 0; j < DimensionManager.getWorlds()[i].playerEntities
 						.size(); j++) {
-					EntityPlayerMP player = (EntityPlayerMP) ModLoader
-							.getMinecraftServerInstance().worldMngr[i].playerEntities
-							.get(j);
+					EntityPlayerMP player = (EntityPlayerMP) DimensionManager.getWorlds()[i].playerEntities.get(j);
 
 					if (Math.abs(player.posX - x) <= maxDistance
 							&& Math.abs(player.posY - y) <= maxDistance
 							&& Math.abs(player.posZ - z) <= maxDistance) {
-						ModLoaderMp.SendPacketTo(mod, player, packet);
+						ModLoaderMp.sendPacketTo(mod, player, packet);
 					}
 				}
 
@@ -55,7 +63,7 @@ public class CoreProxy {
 	}
 	
 	public static boolean isPlainBlock (Block block) {
-		return block.isACube();
+		return block.renderAsNormalBlock();
 	}
 
 	public static File getBuildCraftBase() {
@@ -68,7 +76,7 @@ public class CoreProxy {
 	}
 	
 	public static int addFuel (int id, int dmg) {
-		return ModLoader.AddAllFuel(id);
+		return ModLoader.addAllFuel(id, dmg);
 	}
 	
 	public static int addCustomTexture(String pathToTexture) {
@@ -79,5 +87,11 @@ public class CoreProxy {
 //		return iBlockAccess.hashCode();
 		return 0;
 	}
-	
+
+	public static void TakenFromCrafting(EntityPlayer thePlayer,
+			ItemStack itemstack, IInventory craftMatrix) {
+
+		ModLoader.takenFromCrafting(thePlayer, itemstack, craftMatrix);
+
+	}	
 }

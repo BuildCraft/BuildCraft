@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -46,7 +47,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		int emptyTime = 0;
 		
-		@TileNetworkData 
+		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE) 
 		public int average;
 		@TileNetworkData
 		public short liquidId = 0;
@@ -304,7 +305,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		
 		moveLiquids();
 		
-		this.container.synchronizeIfDelay(10);
+		this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

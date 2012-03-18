@@ -9,10 +9,10 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
+
+import org.lwjgl.opengl.GL11;
 
 public class GuiDiamondPipe extends GuiContainer {
 	
@@ -29,12 +29,12 @@ public class GuiDiamondPipe extends GuiContainer {
 	
 	protected void drawGuiContainerForegroundLayer() {
 		fontRenderer.drawString(filterInventory.getInvName(), 8, 6, 0x404040);
-		fontRenderer.drawString(playerInventory.getInvName(), 8, ySize - 97,
+		fontRenderer.drawString("Inventory", 8, ySize - 97,
 				0x404040);
 	}
 	
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f) {
+	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		int i = mc.renderEngine
 				.getTexture("/net/minecraft/src/buildcraft/transport/gui/filter.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

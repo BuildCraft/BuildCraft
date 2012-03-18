@@ -16,9 +16,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.FillerRegistry;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.FillerPattern;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -27,6 +25,8 @@ import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.FillerPattern;
+import net.minecraft.src.buildcraft.core.FillerRegistry;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
@@ -253,7 +253,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte)i);
                 contents[i].writeToNBT(nbttagcompound1);
-                nbttaglist.setTag(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
@@ -268,11 +268,13 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
         nbttagcompound.setBoolean("done", done);
     }
 
+    @Override
     public int getInventoryStackLimit() {
         return 64;
     }
 
-    public boolean canInteractWith(EntityPlayer entityplayer) {
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
         if(worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
             return false;
         }
@@ -422,5 +424,14 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public int powerRequest() {
 		return powerProvider.maxEnergyReceived;
 	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		if (this.contents[var1] == null) return null;
+		ItemStack stack = this.contents[var1];
+		this.contents[var1] = null;
+		return stack;
+	}
+
 
 }

@@ -29,22 +29,6 @@ public class APIProxy {
 	public static boolean isServerSide () {
 		return false;
 	}
-	
-	public static Entity getEntity (World world, int entityId) {
-		if (world instanceof WorldClient) {
-			return ((WorldClient) world).func_709_b(entityId);
-		} else {
-			return null;
-		}
-	}
-	
-	public static void storeEntity (World world, Entity entity) {
-		if (world instanceof WorldClient) {
-			((WorldClient) world).func_712_a(entity.entityId, entity);
-		} else {
-			world.entityJoinedWorld(entity);
-		}
-	}
 
 	public static void removeEntity (Entity entity) {
 		entity.setEntityDead();
@@ -55,7 +39,7 @@ public class APIProxy {
 	}
 
 	public static Random createNewRandom(World world) {
-		return new Random (world.getWorldSeed());
+		return new Random (world.getSeed());
 	}
 	
 }

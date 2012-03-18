@@ -10,7 +10,6 @@ package net.minecraft.src;
 
 import java.io.File;
 
-import net.minecraft.src.buildcraft.api.FillerRegistry;
 import net.minecraft.src.buildcraft.builders.BlockBuilder;
 import net.minecraft.src.buildcraft.builders.BlockFiller;
 import net.minecraft.src.buildcraft.builders.BlockMarker;
@@ -29,6 +28,7 @@ import net.minecraft.src.buildcraft.builders.TileTemplate;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.FillerRegistry;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
@@ -65,67 +65,33 @@ public class BuildCraftBuilders {
 				.getOrCreateBlockIdProperty("template.id",
 						DefaultProps.TEMPLATE_ID);
 		
-		BuildCraftCore.mainConfiguration.save();
-		
-		CraftingManager craftingmanager = CraftingManager.getInstance();
+		BuildCraftCore.mainConfiguration.save();		
 		
 		templateItem = new ItemTemplate (Integer.parseInt(templateItemId.value));
 		templateItem.setItemName("templateItem");
 		CoreProxy.addName(templateItem, "Blank Template");
-		craftingmanager.addRecipe(new ItemStack(templateItem, 1), new Object[] {
-			"ppp", "pip", "ppp", 
-			Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('p'), Item.paper });	
 		
 		markerBlock = new BlockMarker(Integer.parseInt(markerId.value));		
-		ModLoader.RegisterBlock(markerBlock);
+		ModLoader.registerBlock(markerBlock);
 		CoreProxy.addName(markerBlock.setBlockName("markerBlock"), "Land Mark");
-		craftingmanager.addRecipe(new ItemStack(markerBlock, 1), new Object[] {
-				"l ", "r ", Character.valueOf('l'),
-				new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'),
-				Block.torchRedstoneActive });	
 		
 		fillerBlock = new BlockFiller(Integer.parseInt(fillerId.value));		
-		ModLoader.RegisterBlock(fillerBlock);
+		ModLoader.registerBlock(fillerBlock);
 		CoreProxy.addName(fillerBlock.setBlockName("fillerBlock"), "Filler");
-		craftingmanager.addRecipe(new ItemStack(fillerBlock, 1), new Object[] {
-			"btb", "ycy", "gCg", 
-			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('t'), markerBlock,
-			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench,
-			Character.valueOf('g'), BuildCraftCore.goldGearItem,
-			Character.valueOf('C'), Block.chest	});	
-		
+	
 		builderBlock = new BlockBuilder(Integer.parseInt(builderId.value));
-		ModLoader.RegisterBlock(builderBlock);
+		ModLoader.registerBlock(builderBlock);
 		CoreProxy.addName(builderBlock.setBlockName("builderBlock"), "Builder");
-		craftingmanager.addRecipe(new ItemStack(builderBlock, 1), new Object[] {
-			"btb", "ycy", "gCg", 
-			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('t'), markerBlock,
-			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench,
-			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
-			Character.valueOf('C'), Block.chest	});	
 		
 		templateBlock = new BlockTemplate(Integer.parseInt(templateId.value));
-		ModLoader.RegisterBlock(templateBlock);
+		ModLoader.registerBlock(templateBlock);
 		CoreProxy.addName(templateBlock.setBlockName("templateBlock"), "Template Drawing Table");
-		craftingmanager.addRecipe(new ItemStack(templateBlock, 1), new Object[] {
-			"btb", "ycy", "gCg", 
-			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
-			Character.valueOf('t'), markerBlock,
-			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench,
-			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
-			Character.valueOf('C'), new ItemStack (templateItem, 1) });	
 		
-		ModLoader.RegisterTileEntity(TileMarker.class, "Marker");
-		ModLoader.RegisterTileEntity(TileFiller.class, "Filler");
-		ModLoader.RegisterTileEntity(TileBuilder.class,
+		ModLoader.registerTileEntity(TileMarker.class, "Marker");
+		ModLoader.registerTileEntity(TileFiller.class, "Filler");
+		ModLoader.registerTileEntity(TileBuilder.class,
 				"net.minecraft.src.builders.TileBuilder");
-		ModLoader.RegisterTileEntity(TileTemplate.class,
+		ModLoader.registerTileEntity(TileTemplate.class,
 				"net.minecraft.src.builders.TileTemplate");
 		
 		FillerRegistry.addRecipe(new FillerFillAll(), new Object[] { "bbb",
@@ -156,6 +122,51 @@ public class BuildCraftBuilders {
 		BuildCraftCore.mainConfiguration.save();
 		
 		loadBluePrints();
+		
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
+	}
+	
+	public static void loadRecipes () {
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
+		craftingmanager.addRecipe(new ItemStack(templateItem, 1), new Object[] {
+			"ppp", "pip", "ppp", 
+			Character.valueOf('i'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('p'), Item.paper });	
+		
+		craftingmanager.addRecipe(new ItemStack(markerBlock, 1), new Object[] {
+			"l ", "r ", Character.valueOf('l'),
+			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'),
+			Block.torchRedstoneActive });	
+		
+		craftingmanager.addRecipe(new ItemStack(fillerBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.goldGearItem,
+			Character.valueOf('C'), Block.chest	});	
+		
+		craftingmanager.addRecipe(new ItemStack(builderBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
+			Character.valueOf('C'), Block.chest	});	
+		
+		craftingmanager.addRecipe(new ItemStack(templateBlock, 1), new Object[] {
+			"btb", "ycy", "gCg", 
+			Character.valueOf('b'), new ItemStack(Item.dyePowder, 1, 0),
+			Character.valueOf('t'), markerBlock,
+			Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench,
+			Character.valueOf('g'), BuildCraftCore.diamondGearItem,
+			Character.valueOf('C'), new ItemStack (templateItem, 1) });	
 	}
 		
 	public static BluePrint bluePrints [] = new BluePrint [65025];

@@ -29,8 +29,9 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 
 	public static mod_BuildCraftEnergy instance;
 	
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	@Override
+	public void modsLoaded () {
+		super.modsLoaded();
 		BuildCraftEnergy.initialize();	
 		
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
@@ -47,21 +48,22 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureFuelFX());
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
 		
-		ModLoader.RegisterTileEntity(TileEngine.class,
+		ModLoader.registerTileEntity(TileEngine.class,
 				"net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
 		
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.EngineSteamGUI));
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.EngineCombustionGUI));	
+		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineSteamGUI));
+		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineCombustionGUI));	
 		
 		instance = this;
 	}
 	
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "2.2.13";
 	}
 
-	public GuiScreen HandleGUI(int i) {
+	@Override
+	public GuiScreen handleGUI(int i) {
 		TileEngine tile = new TileEngine();
 
 		switch (Utils.intToPacketId(i)) {
@@ -78,8 +80,15 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		}
 	}
 	
-    public void GenerateSurface(World world, Random random, int i, int j) {
+	@Override
+    public void generateSurface(World world, Random random, int i, int j) {
     	BuildCraftEnergy.generateSurface (world, random, i, j);
     }
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

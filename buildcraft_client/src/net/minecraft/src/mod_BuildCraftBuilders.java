@@ -27,21 +27,28 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		instance = this;
 	}
 	
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	@Override
+	public void load () {
 		
-		BuildCraftBuilders.initialize();
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
 	}
 	
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public void modsLoaded () {
+		super.modsLoaded();
+		
+		BuildCraftBuilders.initialize();
+		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
+		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
+		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
 	}
-	 
-	public GuiScreen HandleGUI(int i) {		
+	
+	@Override
+	public String getVersion() {
+		return "2.2.13";
+	}
+	
+	@Override
+	public GuiScreen handleGUI(int i) {		
 		switch (Utils.intToPacketId(i)) {
 		case FillerGUI: 
 			return new GuiFiller(

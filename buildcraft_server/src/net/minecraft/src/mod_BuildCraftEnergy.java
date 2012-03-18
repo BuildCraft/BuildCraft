@@ -17,22 +17,30 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 
 	public static mod_BuildCraftEnergy instance;
 	
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	@Override
+	public void modsLoaded () {
+		super.modsLoaded();
 		BuildCraftEnergy.initialize();	
 		
-		ModLoader.RegisterTileEntity(TileEngine.class,
+		ModLoader.registerTileEntity(TileEngine.class,
 				"net.minecraft.src.buildcraft.energy.Engine");
 		
 		instance = this;
 	}
 	
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "2.2.13";
 	}
 	
-    public void GenerateSurface(World world, Random random, int i, int j) {
+	@Override
+    public void generateSurface(World world, Random random, int i, int j) {
     	BuildCraftEnergy.generateSurface (world, random, i, j);
     }
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
+	}
 }

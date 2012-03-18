@@ -17,15 +17,22 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		instance = this;
 	}
 	
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	@Override
+	public void modsLoaded () {
+		super.modsLoaded();
 		
 		BuildCraftBuilders.initialize();
 	}
 	
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "2.2.13";
+	}
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -11,6 +11,7 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftBuilders;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemBlock;
@@ -30,10 +31,10 @@ import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.BlockContents;
 import net.minecraft.src.buildcraft.core.BluePrint;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder;
-import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
 public class TileBuilder extends TileBuildCraft implements IInventory, IPowerReceptor {
 	
@@ -166,7 +167,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 				Block.blocksList[contents.blockId].dropBlockAsItem(worldObj,
 						contents.x, contents.y, contents.z, worldObj
 								.getBlockMetadata(contents.x, contents.y,
-										contents.z));
+										contents.z), 0);
 				
 				worldObj.setBlockWithNotify(contents.x, contents.y, contents.z,
 						0);				
@@ -177,8 +178,10 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 							&& getStackInSlot(s).getItem() instanceof ItemBlock) {
 
 						ItemStack stack = decrStackSize(s, 1);
-						stack.getItem().onItemUse(stack, null, worldObj,
-								contents.x,  contents.y + 1, contents.z, 0);
+						stack.getItem().onItemUse(stack,
+								BuildCraftCore.getBuildCraftPlayer(worldObj),
+								worldObj, contents.x, contents.y + 1,
+								contents.z, 0);
 
 						break;
 					}
@@ -239,8 +242,8 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 	
     public void readFromNBT(NBTTagCompound nbttagcompound)
@@ -275,7 +278,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte)i);
                 items[i].writeToNBT(nbttagcompound1);
-                nbttaglist.setTag(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
@@ -345,6 +348,15 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	@Override
 	public int powerRequest() {
 		return powerProvider.maxEnergyReceived;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		if (this.items[var1] == null) return null;
+		
+		ItemStack var2 = this.items[var1];
+		this.items[var1] = null;
+		return var2;
 	}
 	
 }

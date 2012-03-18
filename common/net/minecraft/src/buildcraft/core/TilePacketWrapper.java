@@ -31,7 +31,7 @@ public class TilePacketWrapper {
 		
 		for (int i = 0; i < c.length; ++i) {		
 			rootMappings [i] = new ClassMapping(c [i]);
-		}
+		}		
 		
 		this.packetType = packetType;
 	}
@@ -44,27 +44,30 @@ public class TilePacketWrapper {
 		packet.isChunkDataPacket = true;
 		packet.packetType = packetType.ordinal();
 				
-		int sizeI = 3, sizeF = 0, sizeS = 0;
+		int sizeF = 0, sizeS = 0;
 		
 		for (int i = 0; i < rootMappings.length; ++i) {					
 			int [] size = rootMappings [i].getSize();
 		
-			sizeI += size [0];
 			sizeF += size [1];
 			sizeS += size [2];
 		}
 		
-		packet.dataInt = new int [sizeI];
 		packet.dataFloat = new float [sizeF];
 		packet.dataString = new String [sizeS];
 		
-		packet.dataInt [0] = tile.xCoord;
-		packet.dataInt [1] = tile.yCoord;
-		packet.dataInt [2] = tile.zCoord;
+		ByteBuffer buf = new ByteBuffer();
 		
-		try {
-			rootMappings [0].setData(tile, packet.dataInt, packet.dataFloat,
-					packet.dataString, new Indexes(3, 0, 0));
+		buf.writeInt(tile.xCoord);
+		buf.writeInt(tile.yCoord);
+		buf.writeInt(tile.zCoord);
+		
+		try {			
+			rootMappings [0].setData(tile, buf, packet.dataFloat,
+					packet.dataString, new Indexes(0, 0));
+			
+			packet.dataInt = buf.readIntArray();
+			
 			return packet;
 			
 		} catch (Exception e) {
@@ -74,37 +77,43 @@ public class TilePacketWrapper {
 		}
 	}
 	
+	public Packet230ModLoader toPacket (int x, int y, int z, Object obj) {
+		return toPacket(x, y, z, new Object [] {obj});
+	}
+	
 	public Packet230ModLoader toPacket (int x, int y, int z, Object [] obj) {
 		Packet230ModLoader packet = new Packet230ModLoader();
 		packet.modId = mod_BuildCraftCore.instance.getId();
 		packet.isChunkDataPacket = true;
 		packet.packetType = packetType.ordinal();
 		
-		int sizeI = 3, sizeF = 0, sizeS = 0;
+		int sizeF = 0, sizeS = 0;
 		
 		for (int i = 0; i < rootMappings.length; ++i) {					
 			int [] size = rootMappings [i].getSize();
 		
-			sizeI += size [0];
 			sizeF += size [1];
 			sizeS += size [2];
 		}
 		
-		packet.dataInt = new int [sizeI];
 		packet.dataFloat = new float [sizeF];
 		packet.dataString = new String [sizeS];
 		
-		packet.dataInt [0] = x;
-		packet.dataInt [1] = y;
-		packet.dataInt [2] = z;
+		ByteBuffer buf = new ByteBuffer();
+		
+		buf.writeInt(x);
+		buf.writeInt(y);
+		buf.writeInt(z);
 		
 		try {
-			Indexes ind = new Indexes(3, 0, 0);
+			Indexes ind = new Indexes(0, 0);
 			
 			for (int i = 0; i < rootMappings.length; ++i) {
-				rootMappings [i].setData(obj [i], packet.dataInt, packet.dataFloat,
+				rootMappings [i].setData(obj [i], buf, packet.dataFloat,
 						packet.dataString, ind);
 			}
+			
+			packet.dataInt = buf.readIntArray();
 			
 			return packet;
 			
@@ -115,14 +124,27 @@ public class TilePacketWrapper {
 		}		
 	}
 
+
+	public void updateFromPacket (Object obj, Packet230ModLoader packet) {
+		updateFromPacket(new Object [] {obj}, packet);
+	}
+	
 	public void updateFromPacket (Object [] obj, Packet230ModLoader packet) {
 		try {
-			Indexes ind = new Indexes(3, 0, 0);
+			ByteBuffer buf = new ByteBuffer();
+			buf.writeIntArray(packet.dataInt);
+			buf.readInt();
+			buf.readInt();
+			buf.readInt();
+			
+			Indexes ind = new Indexes(0, 0);
 			
 			for (int i = 0; i < rootMappings.length; ++i) {
-				rootMappings [i].updateFromData(obj [i], packet.dataInt, packet.dataFloat,
+				rootMappings [i].updateFromData(obj [i], buf, packet.dataFloat,
 						packet.dataString, ind);
 			}
+			
+			packet.dataInt = buf.readIntArray();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -130,8 +152,16 @@ public class TilePacketWrapper {
 	
 	public void updateFromPacket (TileEntity tile, Packet230ModLoader packet) {
 		try {
-			rootMappings [0].updateFromData(tile, packet.dataInt, packet.dataFloat,
-					packet.dataString, new Indexes(3, 0, 0));
+			ByteBuffer buf = new ByteBuffer();
+			buf.writeIntArray(packet.dataInt);
+			buf.readInt();
+			buf.readInt();
+			buf.readInt();
+			
+			rootMappings [0].updateFromData(tile, buf, packet.dataFloat,
+					packet.dataString, new Indexes(0, 0));
+			
+			packet.dataInt = buf.readIntArray();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

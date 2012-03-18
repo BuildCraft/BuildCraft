@@ -62,19 +62,19 @@ public class EntityMechanicalArm extends Entity {
 
 		xArm = new EntityBlock(world, i, j, k, width, 0.5, 0.5);
 		xArm.texture = BuildCraftFactory.drillTexture;
-		world.entityJoinedWorld(xArm);
+		world.spawnEntityInWorld(xArm);
 		
 		yArm = new EntityBlock(world, i, j, k, 0.5, 1, 0.5);
 		yArm.texture = BuildCraftFactory.drillTexture;
-		world.entityJoinedWorld(yArm);
+		world.spawnEntityInWorld(yArm);
 		
 		zArm = new EntityBlock(world, i, j, k, 0.5, 0.5, height);
 		zArm.texture = BuildCraftFactory.drillTexture;
-		world.entityJoinedWorld(zArm);
+		world.spawnEntityInWorld(zArm);
 		
 		head = new EntityBlock(world, i, j, k, 0.2, 1, 0.2);
 		head.texture = 2 * 16 + 10;
-		world.entityJoinedWorld(head);
+		world.spawnEntityInWorld(head);
 		head.shadowSize = 1.0F;
         		
 		updatePosition();
@@ -251,11 +251,11 @@ public class EntityMechanicalArm extends Entity {
     	zArm.worldObj = w;
     	head.worldObj = w;
 
-    	w.entityJoinedWorld(this);
-    	w.entityJoinedWorld(xArm);
-    	w.entityJoinedWorld(yArm);
-    	w.entityJoinedWorld(zArm);
-    	w.entityJoinedWorld(head);
+    	w.spawnEntityInWorld(this);
+    	w.spawnEntityInWorld(xArm);
+    	w.spawnEntityInWorld(yArm);
+    	w.spawnEntityInWorld(zArm);
+    	w.spawnEntityInWorld(head);
     }
 
 	public void setEntityDead() {

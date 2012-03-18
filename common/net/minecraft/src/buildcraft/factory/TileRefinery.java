@@ -11,6 +11,7 @@ package net.minecraft.src.buildcraft.factory;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -96,6 +97,10 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	
 	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
+		if (id != BuildCraftCore.refineryInput) {
+			return 0;
+		}
+		
 		int used = slot1.fill(from, quantity, id, doFill);
 		used += slot2.fill(from, quantity - used, id, doFill);
 		
@@ -179,7 +184,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return false;
 	}
 
@@ -203,7 +208,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		if (APIProxy.isClient(worldObj)) {
 			simpleAnimationIterate();
 		} else if (APIProxy.isServerSide()
-				&& updateNetworkTime.markTimeIfDelay(worldObj, 20)) {
+				&& updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 		
@@ -391,5 +396,10 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	@Override
 	public void closeChest() {
 		
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		return null;
 	}
 }

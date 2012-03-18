@@ -9,8 +9,6 @@
 
 package net.minecraft.src;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.PacketIds;
@@ -25,15 +23,18 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.forge.ICustomItemRenderer;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
+import org.lwjgl.opengl.GL11;
+
 public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRenderer {
 		
 	public static mod_BuildCraftTransport instance;
 
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	@Override
+	public void modsLoaded () {
+		super.modsLoaded();
 		BuildCraftTransport.initialize();
 		
-		ModLoaderMp.RegisterGUI(this,
+		ModLoaderMp.registerGUI(this,
 				Utils.packetIdToInt(PacketIds.DiamondPipeGUI));
 		
 
@@ -69,19 +70,21 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 				BuildCraftTransport.pipePowerStone.shiftedIndex, this);
 		MinecraftForgeClient.registerCustomItemRenderer(
 				BuildCraftTransport.pipePowerGold.shiftedIndex, this);
-		
-		ModLoader.RegisterTileEntity(TileGenericPipe.class,
-				"net.minecraft.src.buildcraft.GenericPipe", new RenderPipe());		
-		
+				
 		instance = this;
 	}
 	
-	@Override
-	public String Version() {
-		return "2.2.5";
+	public static void registerTilePipe (Class <? extends TileEntity> clas, String name) {
+		ModLoader.registerTileEntity(clas, name, new RenderPipe());
 	}
 	
-    public GuiScreen HandleGUI(int i) {    	
+	@Override
+	public String getVersion() {
+		return "2.2.13";
+	}
+	
+	@Override
+    public GuiScreen handleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.DiamondPipeGUI) {
     		TileGenericPipe tmp = new TileGenericPipe();
 			tmp.pipe = new PipeItemsDiamond(
@@ -94,7 +97,8 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
     	}
     }
     
-    public void HandlePacket(Packet230ModLoader packet) {    	
+	@Override
+    public void handlePacket(Packet230ModLoader packet) {    	
 		int x = packet.dataInt [0];
 		int y = packet.dataInt [1];
 		int z = packet.dataInt [2];
@@ -174,6 +178,12 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		tessellator.draw();
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		
+	}
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
 		
 	}
 }

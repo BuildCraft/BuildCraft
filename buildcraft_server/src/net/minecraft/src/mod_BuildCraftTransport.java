@@ -13,8 +13,9 @@ public class mod_BuildCraftTransport extends BaseModMp {
 	
 	public static mod_BuildCraftTransport instance;
 	
-	public void ModsLoaded () {
-		super.ModsLoaded();
+	@Override
+	public void modsLoaded () {
+		super.modsLoaded();
 		BuildCraftTransport.initialize();
 		
 		instance = this;
@@ -22,7 +23,18 @@ public class mod_BuildCraftTransport extends BaseModMp {
 	
 		
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "2.2.13";
 	}    
+	
+	public static void registerTilePipe (Class <? extends TileEntity> clas, String name) {
+		ModLoader.registerTileEntity(clas, name);
+	}
+
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -12,20 +12,16 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
+import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.EntityMinecart;
-import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.ISynchronizedTile;
 
 public class TileDockingStation extends TileEntity implements ILiquidContainer, ISpecialInventory{
 													
@@ -62,7 +58,7 @@ public class TileDockingStation extends TileEntity implements ILiquidContainer, 
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return true;
 	}
 			
@@ -247,4 +243,10 @@ public class TileDockingStation extends TileEntity implements ILiquidContainer, 
 		return null;
 	}
 	//ITEMS END
+	
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		return null;
+	}
+
 }

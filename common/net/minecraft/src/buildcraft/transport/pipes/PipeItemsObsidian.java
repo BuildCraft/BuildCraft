@@ -210,7 +210,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 									cart.posX, cart.posY + 0.3F, cart.posZ,
 									stack);
 							entityitem.delayBeforeCanPickup = 10;
-							worldObj.entityJoinedWorld(entityitem);
+							worldObj.spawnEntityInWorld(entityitem);
 							pullItemIntoPipe(entityitem, 1);
 							return true;
 						}
@@ -288,6 +288,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		}
 	}
 	
+	@Override
 	public void onDropped (EntityItem item) {		
 		if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
 			entitiesDroppedIndex = 0;
@@ -299,10 +300,14 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 	
 	public boolean canSuck (Entity entity, int distance) {
-		if (entity.isDead) {
+		if (!entity.isEntityAlive()) {
 			return false;
 		} if (entity instanceof EntityItem) {
 			EntityItem item = (EntityItem) entity;
+			
+			if (item.item.stackSize <= 0) {
+				return false;
+			}
 		
 			for (int i = 0; i < entitiesDropped.length; ++i) {
 				if (item.entityId == entitiesDropped [i]) {

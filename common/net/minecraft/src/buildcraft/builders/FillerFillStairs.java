@@ -13,7 +13,7 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IBox;
-import net.minecraft.src.buildcraft.api.FillerPattern;
+import net.minecraft.src.buildcraft.core.FillerPattern;
 
 public class FillerFillStairs extends FillerPattern {
 

@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -26,14 +27,15 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
+import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class PipeTransportItems extends PipeTransport {	
-	
 	
 	public boolean allowBouncing = false;
 	public TreeMap<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData> ();
@@ -74,6 +76,12 @@ public class PipeTransportItems extends PipeTransport {
 	
 	@Override
 	public void entityEntering (EntityPassiveItem item, Orientations orientation) {
+		if (item.isCorrupted()) {
+			// Safe guard - if for any reason the item is corrupted at this 
+			// stage, avoid adding it to the pipe to avoid further exceptions.
+			return;
+		}
+		
 		readjustSpeed(item);			
 		
 		if (!travelingEntities.containsKey(new Integer(item.entityId))) {
@@ -100,7 +108,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 		
 		if (APIProxy.isServerSide()) {
-			if (item.synchroTracker.markTimeIfDelay(worldObj, 20)) {				
+			if (item.synchroTracker.markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {				
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
 						xCoord, yCoord, zCoord, 50,
 						mod_BuildCraftTransport.instance);
@@ -208,6 +216,12 @@ public class PipeTransportItems extends PipeTransport {
 		performRemoval();
 		
 		for (EntityData data : travelingEntities.values()) {
+			if (data.item.isCorrupted()) {
+				scheduleRemoval(data.item);
+				data.item.remove();
+				continue;
+			}
+			
 			Position motion = new Position (0, 0, 0, data.orientation);
 			motion.moveForwards(data.item.speed);												
 			
@@ -340,6 +354,12 @@ public class PipeTransportItems extends PipeTransport {
 
 				EntityPassiveItem entity = new EntityPassiveItem (APIProxy.getWorld());
 				entity.readFromNBT(nbttagcompound2);
+				
+				if (entity.isCorrupted()) {
+					entity.remove();
+					continue;
+				}
+				
 				entity.container = container;
 
 				EntityData data = new EntityData(entity,
@@ -362,7 +382,7 @@ public class PipeTransportItems extends PipeTransport {
     	    	
     	for (EntityData data : travelingEntities.values()) {    		
     		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
-    		nbttaglist.setTag(nbttagcompound2);
+    		nbttaglist.appendTag(nbttagcompound2);
     		data.item.writeToNBT(nbttagcompound2);
     		nbttagcompound2.setBoolean("toCenter", data.toCenter);
     		nbttagcompound2.setInteger("orientation", data.orientation.ordinal());    		
@@ -403,28 +423,46 @@ public class PipeTransportItems extends PipeTransport {
     
     protected void doWork () {}
 
+	public class ItemData {
+		@TileNetworkData public float posX;
+		@TileNetworkData public float posY;
+		@TileNetworkData public float posZ;
+		@TileNetworkData public float speed;
+		
+		@TileNetworkData public int entityId;
+		
+		@TileNetworkData public Orientations orientation; 
+		@TileNetworkData public short itemID;
+		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE) 
+		public int stackSize;
+		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
+		public int itemDamage;
+		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
+		public int deterministicRandomization;		
+	}
+	
+	public static TilePacketWrapper networkItemData = null;
+	
 	public void handleItemPacket(Packet230ModLoader packet) {
+		if (networkItemData == null) {
+			networkItemData = new TilePacketWrapper(ItemData.class, PacketIds.PipeItem);
+		}
+		
 		if (packet.packetType != PacketIds.PipeItem.ordinal()) {
 			return;
 		}
 		
-		int entityId = packet.dataInt [3];
+		ItemData data = new ItemData();
 		
-		EntityPassiveItem item = EntityPassiveItem.getOrCreate(worldObj, entityId);
-		
-		int itemId = packet.dataInt [5];
-		int stackSize = packet.dataInt [6];
-		int dmg = packet.dataInt [7];
-
-		item.item = new ItemStack(itemId, stackSize, dmg);		
-		
-		Orientations orientation;						
-		orientation = Orientations.values()[packet.dataInt [4]];
-		
-		item.setPosition(packet.dataFloat[0], packet.dataFloat[1],
-				packet.dataFloat[2]);
-		item.speed = packet.dataFloat [3];
-		item.deterministicRandomization = packet.dataInt [8];
+		networkItemData.updateFromPacket(data, packet);
+				
+		EntityPassiveItem item = EntityPassiveItem.getOrCreate(worldObj, data.entityId);
+				
+		item.item = new ItemStack(data.itemID, data.stackSize, data.itemDamage);		
+				
+		item.setPosition(data.posX, data.posY, data.posZ);
+		item.speed = data.speed;
+		item.deterministicRandomization = data.deterministicRandomization;
 		
 		if (item.container != this.container
 				|| !travelingEntities.containsKey(item.entityId)) {
@@ -434,40 +472,38 @@ public class PipeTransportItems extends PipeTransport {
 			}
 
 			travelingEntities.put(new Integer(item.entityId), new EntityData(
-					item, orientation));
+					item, data.orientation));
 			item.container = container;
 		} else {
-			travelingEntities.get(new Integer(item.entityId)).orientation = orientation;
+			travelingEntities.get(new Integer(item.entityId)).orientation = data.orientation;
 		}
 	}
 	
 	public Packet230ModLoader createItemPacket (EntityPassiveItem item, Orientations orientation) {
-		Packet230ModLoader packet = new Packet230ModLoader();
+		if (networkItemData == null) {
+			networkItemData = new TilePacketWrapper(ItemData.class, PacketIds.PipeItem);
+		}
 		
-		item.deterministicRandomization += worldObj.rand.nextInt(6);
+		item.deterministicRandomization += worldObj.rand.nextInt(6);				
+		
+		ItemData data = new ItemData();
+		
+		data.posX = (float) item.posX;
+		data.posY = (float) item.posY;
+		data.posZ = (float) item.posZ;
+		data.entityId = item.entityId;
+		data.orientation = orientation;
+		data.speed = item.speed;
+		data.itemID = (short) item.item.itemID;
+		data.stackSize = item.item.stackSize;
+		data.itemDamage = item.item.getItemDamage();
+		data.deterministicRandomization = item.deterministicRandomization;
+		
+		Packet230ModLoader packet = networkItemData.toPacket(xCoord, yCoord, zCoord, data);
 		
 		packet.modId = mod_BuildCraftTransport.instance.getId();
-		packet.packetType = PacketIds.PipeItem.ordinal();
-		packet.isChunkDataPacket = true;
 		
-		packet.dataInt = new int [9];
-		packet.dataInt [0] = xCoord;
-		packet.dataInt [1] = yCoord;
-		packet.dataInt [2] = zCoord;
-		packet.dataInt [3] = item.entityId;
-		packet.dataInt [4] = orientation.ordinal();
-		packet.dataInt [5] = item.item.itemID;
-		packet.dataInt [6] = item.item.stackSize;
-		packet.dataInt [7] = item.item.getItemDamage();
-		packet.dataInt [8] = item.deterministicRandomization;
-		
-		packet.dataFloat = new float [4];
-		packet.dataFloat [0] = (float) item.posX;
-		packet.dataFloat [1] = (float) item.posY;
-		packet.dataFloat [2] = (float) item.posZ;
-		packet.dataFloat [3] = (float) item.speed;
-		
-		return packet;		
+		return packet;
 	}
 
 	public int getNumberOfItems () {
@@ -475,7 +511,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	public void onDropped (EntityItem item) {
-		
+		this.container.pipe.onDropped (item);
 	}
 	
 	protected void neighborChange() {
@@ -493,4 +529,10 @@ public class PipeTransportItems extends PipeTransport {
 		return true;
 	}
 
+	@Override
+	public void dropContents() {
+		for (EntityData data : travelingEntities.values()) {
+			Utils.dropItems(worldObj, data.item.item, xCoord, yCoord, zCoord);
+		}
+	}
 }

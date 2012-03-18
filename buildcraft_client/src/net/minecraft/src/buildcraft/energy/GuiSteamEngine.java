@@ -30,7 +30,7 @@ public class GuiSteamEngine extends GuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f) {
+	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		int i = mc.renderEngine
 				.getTexture("/net/minecraft/src/buildcraft/energy/gui/steam_engine_gui.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

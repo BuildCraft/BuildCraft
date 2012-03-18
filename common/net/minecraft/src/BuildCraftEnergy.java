@@ -15,9 +15,9 @@ import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.core.BlockIndex;
-import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
@@ -72,13 +72,79 @@ public class BuildCraftEnergy {
 		Property bucketFuelId = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("bucketFuel.id",
 				Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_FUEL_ID);
+		Property itemFuelId = BuildCraftCore.mainConfiguration
+		.getOrCreateIntProperty("fuel.id",
+				Configuration.ITEM_PROPERTY, DefaultProps.FUEL_ID);
 		
-
 		BuildCraftCore.mainConfiguration.save();
 		
-		CraftingManager craftingmanager = CraftingManager.getInstance();		
-		
 		engineBlock = new BlockEngine(Integer.parseInt(engineId.value));
+		ModLoader.registerBlock(engineBlock);
+		
+		Item.itemsList[engineBlock.blockID] = null;
+		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
+				engineBlock.blockID - 256));
+		
+		CoreProxy.addName(new ItemStack (engineBlock, 1, 0), "Redstone Engine");
+		CoreProxy.addName(new ItemStack (engineBlock, 1, 1), "Steam Engine");
+		CoreProxy.addName(new ItemStack (engineBlock, 1, 2), "Combustion Engine");
+		        
+		oilMoving = (new BlockOilFlowing(Integer.parseInt(oilMovingId.value),
+				Material.water)).setHardness(100F).setLightOpacity(3)
+				.setBlockName("oil");
+		CoreProxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
+		ModLoader.registerBlock(oilMoving);
+		
+		oilStill = (new BlockOilStill(Integer.parseInt(oilStillId.value),
+				Material.water)).setHardness(100F).setLightOpacity(3)
+				.setBlockName("oil");
+		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
+		ModLoader.registerBlock(oilStill);
+		
+		if (oilMoving.blockID + 1 != oilStill.blockID) {
+			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
+		}
+		
+        MinecraftForge.registerCustomBucketHandler(new OilBucketHandler());
+         
+		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value)))
+				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
+		CoreProxy.addName(bucketOil, "Oil Bucket");
+		
+		fuel = new ItemFuel (Integer.parseInt(itemFuelId.value));
+		bucketFuel = new ItemBuildCraftTexture(Integer.parseInt(bucketFuelId.value))
+				.setIconIndex(0 * 16 + 3).setItemName("bucketFuel")
+				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
+		CoreProxy.addName(bucketFuel, "Fuel Bucket");
+		
+		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
+				10, fuel.shiftedIndex, 1, 1));
+
+		API.ironEngineFuel.put(Block.lavaStill.blockID, new IronEngineFuel(
+				oilStill.blockID, 1, 20000));
+		API.ironEngineFuel.put(oilStill.blockID, new IronEngineFuel(
+				oilStill.blockID, 2, 10000));
+		API.ironEngineFuel.put(fuel.shiftedIndex, new IronEngineFuel(
+				fuel.shiftedIndex, 5, 50000));
+		
+		API.liquids.add(new LiquidData(oilStill.blockID, 
+				bucketOil.shiftedIndex));
+		API.liquids.add(new LiquidData(fuel.shiftedIndex,
+				bucketFuel.shiftedIndex));
+		
+		API.softBlocks [oilMoving.blockID] = true;
+		API.softBlocks [oilStill.blockID] = true;
+		
+		BuildCraftCore.refineryInput = oilStill.blockID;
+		
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
+	}
+	
+	public static void loadRecipes () {
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
 		craftingmanager.addRecipe(
 				new ItemStack(engineBlock, 1, 0),
 				new Object[] { "www", " g ", "GpG", 
@@ -99,59 +165,7 @@ public class BuildCraftEnergy {
 					Character.valueOf('w'),	Item.ingotIron,
 					Character.valueOf('g'), Block.glass,
 					Character.valueOf('G'), BuildCraftCore.ironGearItem,
-					Character.valueOf('p'), Block.pistonBase});
-		ModLoader.RegisterBlock(engineBlock);
-		
-		Item.itemsList[engineBlock.blockID] = null;
-		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
-				engineBlock.blockID - 256));
-		
-		CoreProxy.addName(new ItemStack (engineBlock, 1, 0), "Redstone Engine");
-		CoreProxy.addName(new ItemStack (engineBlock, 1, 1), "Steam Engine");
-		CoreProxy.addName(new ItemStack (engineBlock, 1, 2), "Combustion Engine");
-		        
-		oilMoving = (new BlockOilFlowing(Integer.parseInt(oilMovingId.value),
-				Material.water)).setHardness(100F).setLightOpacity(3)
-				.setBlockName("oil");
-		CoreProxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
-		ModLoader.RegisterBlock(oilMoving);
-		
-		oilStill = (new BlockOilStill(Integer.parseInt(oilStillId.value),
-				Material.water)).setHardness(100F).setLightOpacity(3)
-				.setBlockName("oil");
-		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
-		ModLoader.RegisterBlock(oilStill);
-		
-		if (oilMoving.blockID + 1 != oilStill.blockID) {
-			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
-		}
-		
-        MinecraftForge.registerCustomBucketHandler(new OilBucketHandler());
-         
-		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value)))
-				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
-		CoreProxy.addName(bucketOil, "Oil Bucket");
-		
-		fuel = new ItemFuel (DefaultProps.FUEL_ID);
-		bucketFuel = new ItemBuildCraftTexture(Integer.parseInt(bucketFuelId.value))
-				.setIconIndex(0 * 16 + 3).setItemName("bucketFuel")
-				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
-		CoreProxy.addName(bucketFuel, "Fuel Bucket");
-		
-		TileRefinery.addRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0,
-				10, fuel.shiftedIndex, 1, 1));
-
-		API.ironEngineFuel.put(Block.lavaStill.blockID, new IronEngineFuel(
-				oilStill.blockID, 1, 2000));
-		API.ironEngineFuel.put(oilStill.blockID, new IronEngineFuel(
-				oilStill.blockID, 2, 10000));
-		API.ironEngineFuel.put(fuel.shiftedIndex, new IronEngineFuel(
-				fuel.shiftedIndex, 5, 50000));
-		
-		API.liquids.add(new LiquidData(oilStill.blockID,
-				bucketOil.shiftedIndex));
-		API.liquids.add(new LiquidData(fuel.shiftedIndex,
-				bucketFuel.shiftedIndex));
+					Character.valueOf('p'), Block.pistonBase});		
 	}
 
 	public static void generateSurface(World world, Random random, int i, int j) {

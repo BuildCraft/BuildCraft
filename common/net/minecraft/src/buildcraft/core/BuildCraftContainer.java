@@ -10,11 +10,10 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 
-public class BuildCraftContainer extends Container {
+public abstract class BuildCraftContainer extends Container {
 
 	private int inventorySize;
 	
@@ -23,7 +22,7 @@ public class BuildCraftContainer extends Container {
 	}
 	
 	@Override	
-	public final ItemStack transferStackInSlot(int i)
+	public ItemStack transferStackInSlot(int i)
 	{
         ItemStack itemstack = null;
         Slot slot = (Slot)inventorySlots.get(i);
@@ -51,11 +50,6 @@ public class BuildCraftContainer extends Container {
             }
         }
         return itemstack;
-	}
-
-	@Override
-	public final boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
 	}
 
 }

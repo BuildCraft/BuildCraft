@@ -108,7 +108,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 		entityitem.motionY = (float) w.rand.nextGaussian() * f3
 				+ 1.0F;
 		entityitem.motionZ = (float) w.rand.nextGaussian() * f3;
-		w.entityJoinedWorld(entityitem);
+		w.spawnEntityInWorld(entityitem);
 	}
 
 	@Override

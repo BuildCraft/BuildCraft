@@ -16,8 +16,9 @@ public class mod_BuildCraftDevel extends BaseModMp {
 
 	public static BlockCheat cheatBlock;
 	
-    public void ModsLoaded() {	
-    	super.ModsLoaded();
+	@Override
+    public void modsLoaded() {	
+    	super.modsLoaded();
     	
     	BuildCraftCore.debugMode = true;
     	
@@ -29,7 +30,7 @@ public class mod_BuildCraftDevel extends BaseModMp {
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 		
 		cheatBlock = new BlockCheat(Integer.parseInt(cheatId.value));
-		ModLoader.RegisterBlock(cheatBlock);
+		ModLoader.registerBlock(cheatBlock);
 		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
 			"# ", "  ", Character.valueOf('#'), Block.dirt });
 		
@@ -37,7 +38,13 @@ public class mod_BuildCraftDevel extends BaseModMp {
 	}
 	
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "2.2.13";
+	}
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
 	}
 }

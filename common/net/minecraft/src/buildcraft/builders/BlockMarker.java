@@ -138,7 +138,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
     		if(flag)
     		{
 				dropBlockAsItem(world, i, j, k,
-						BuildCraftBuilders.markerBlock.blockID);
+						BuildCraftBuilders.markerBlock.blockID, 0);
     			world.setBlockWithNotify(i, j, k, 0);
     		}
     	}
@@ -225,7 +225,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
         if(!canPlaceBlockAt(world, i, j, k))
         {
 			dropBlockAsItem(world, i, j, k,
-					BuildCraftBuilders.markerBlock.blockID);
+					BuildCraftBuilders.markerBlock.blockID, 0);
             world.setBlockWithNotify(i, j, k, 0);
             return false;
         } else

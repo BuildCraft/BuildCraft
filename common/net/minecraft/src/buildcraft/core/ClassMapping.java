@@ -12,11 +12,42 @@ package net.minecraft.src.buildcraft.core;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
-import net.minecraft.src.TileEntity;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 
 public class ClassMapping {
+	
+	public static class Reporter {
+		Class <? extends Object> clas;
+		int occurences = 0;
+		int dataInt = 0;
+		int dataFloat = 0;
+		int dataString = 0;
+		int bytes = 0;
+		
+		public String toString () {
+			String res = clas + ": " + occurences + " times (" + dataInt + ", "
+					+ dataFloat + ", " + dataString + " = " + bytes + ")";
+			
+			return res;
+		}
+	}
+	
+	private static TreeMap<String, Reporter> report = new TreeMap<String, Reporter>();
+	
+	public static int report () {
+		int bytes = 0;
+		for (Reporter r : report.values()) {
+			System.out.println (r);
+			bytes += r.bytes;
+		}
+		
+		report.clear();
+		
+		return bytes;
+	}
 	
 	private LinkedList<Field> floatFields = new LinkedList<Field>();
 	private LinkedList<Field> doubleFields = new LinkedList<Field>();
@@ -25,33 +56,37 @@ public class ClassMapping {
 	private LinkedList<Field> intFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanFields = new LinkedList<Field>();
 	private LinkedList<Field> enumFields = new LinkedList<Field>();
+	private LinkedList<Field> unsignedByteFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectFields = new LinkedList<ClassMapping>();
 	
 	private LinkedList<Field> doubleArrayFields = new LinkedList<Field>();
+	private LinkedList<Field> shortArrayFields = new LinkedList<Field>();
 	private LinkedList<Field> intArrayFields = new LinkedList<Field>();
 	private LinkedList<Field> booleanArrayFields = new LinkedList<Field>();
+	private LinkedList<Field> unsignedByteArrayFields = new LinkedList<Field>();
 	private LinkedList<ClassMapping> objectArrayFields = new LinkedList<ClassMapping>();
 	
-	private int sizeInt;
+	private int sizeBytes;
 	private int sizeFloat;
 	private int sizeString;
 	
 	private Field field;
 	
+	private Class <? extends Object> clas;
+	
 	public static class Indexes {
-		public Indexes (int initInt, int initFloat, int initString) {
-			intIndex = initInt;
+		public Indexes (int initFloat, int initString) {
 			floatIndex = initFloat;
 			stringIndex = initString;
 		}
 		
-		int intIndex = 0;
 		int floatIndex = 0;
 		int stringIndex = 0;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ClassMapping(final Class <? extends TileEntity> c) {
+	public ClassMapping(final Class <? extends Object> c) {
+		clas = c;
 		Field[] fields = c.getFields();
 
 		try {
@@ -68,16 +103,23 @@ public class ClassMapping {
 					Class fieldClass = (Class) t;
 					
 					if (fieldClass.equals(short.class)) {
-						sizeInt++;
+						sizeBytes += 2;
 						shortFields.add(f);
 					} else if (fieldClass.equals(int.class)) {
-						sizeInt++;
-						intFields.add(f);
+						TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+						
+						if (updateAnnotation.intKind() == TileNetworkData.UNSIGNED_BYTE) {
+							sizeBytes += 1;
+							unsignedByteFields.add (f);
+						} else {
+							sizeBytes += 4;
+							intFields.add(f);
+						}
 					} else if (fieldClass.equals(boolean.class)) {
-						sizeInt++;
+						sizeBytes += 1;
 						booleanFields.add(f);
 					} else if (Enum.class.isAssignableFrom(fieldClass)) {
-						sizeInt++;
+						sizeBytes += 1;
 						enumFields.add (f);
 					} else if (fieldClass.equals(String.class)) {
 						sizeString++;
@@ -95,9 +137,9 @@ public class ClassMapping {
 						mapping.field = f;
 
 						objectFields.add(mapping);
-						sizeInt++; // to catch null / not null.
+						sizeBytes += 1; // to catch null / not null.
 
-						sizeInt += mapping.sizeInt;
+						sizeBytes += mapping.sizeBytes;
 						sizeFloat += mapping.sizeFloat;
 						sizeString += mapping.sizeString;
 					}
@@ -116,11 +158,21 @@ public class ClassMapping {
 					if (cptClass.equals(double.class)) {
 						sizeFloat += updateAnnotation.staticSize();
 						doubleArrayFields.add(f);
+					} else if (cptClass.equals(short.class)) {
+						sizeBytes += updateAnnotation.staticSize() * 2;
+						shortArrayFields.add(f);
 					} else if (cptClass.equals(int.class)) {
-						sizeInt += updateAnnotation.staticSize();
-						intArrayFields.add(f);
+						updateAnnotation = f.getAnnotation(TileNetworkData.class);
+						
+						if (updateAnnotation.intKind() == TileNetworkData.UNSIGNED_BYTE) {
+							sizeBytes += updateAnnotation.staticSize();
+							unsignedByteArrayFields.add(f);
+						} else {
+							sizeBytes += updateAnnotation.staticSize() * 4;
+							intArrayFields.add(f);
+						}
 					} else if (cptClass.equals(boolean.class)) {
-						sizeInt += updateAnnotation.staticSize();
+						sizeBytes += updateAnnotation.staticSize();
 						booleanArrayFields.add(f);
 					} else {
 						// ADD SOME SAFETY HERE - if we're not child of Object
@@ -129,9 +181,9 @@ public class ClassMapping {
 						mapping.field = f;
 						objectArrayFields.add(mapping);
 
-						sizeInt += updateAnnotation.staticSize(); // to catch null / not null.
+						sizeBytes += updateAnnotation.staticSize(); // to catch null / not null.
 
-						sizeInt += updateAnnotation.staticSize() * mapping.sizeInt;
+						sizeBytes += updateAnnotation.staticSize() * mapping.sizeBytes;
 						sizeFloat += updateAnnotation.staticSize() * mapping.sizeFloat;
 						sizeString += updateAnnotation.staticSize() * mapping.sizeString;
 					}
@@ -150,58 +202,95 @@ public class ClassMapping {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public void setData(Object obj, int[] intValues, float[] floatValues,
+	public void setData(Object obj, ByteBuffer byteBuffer, float[] floatValues,
 			String[] stringValues, Indexes index) throws IllegalArgumentException, IllegalAccessException {				
 		
-		for (Field f : shortFields) {
-			intValues [index.intIndex] = f.getShort(obj);
-			index.intIndex++;
+		Reporter r = null;
+		
+		if (BuildCraftCore.trackNetworkUsage) {
+			if (!report.containsKey(clas.getName())) {
+				report.put(clas.getName(), new Reporter ());
+			}
+			
+			r = report.get(clas.getName());
+			r.clas = clas;
+		} else {
+			r = new Reporter ();
 		}
 		
-		for (Field f : intFields) {
-			intValues [index.intIndex] = f.getInt(obj);
-			index.intIndex++;
+		r.occurences++;
+		
+		for (Field f : shortFields) {			
+			byteBuffer.writeShort(f.getShort(obj));
+			r.bytes += 2;
+			r.dataInt += 1;
+		}
+		
+		for (Field f : intFields) {			
+			byteBuffer.writeInt(f.getInt(obj));
+			r.bytes += 4;
+			r.dataInt += 1;
 		}
 		
 		for (Field f : booleanFields) {
-			intValues [index.intIndex] = f.getBoolean(obj) ? 1 : 0;
-			index.intIndex++;
+			byteBuffer.writeUnsignedByte(f.getBoolean(obj) ? 1 : 0);
+			r.bytes += 1;
+			r.dataInt += 1;
 		}
 		
 		for (Field f : enumFields) {
-			intValues [index.intIndex] = ((Enum)f.get (obj)).ordinal();
-			index.intIndex++;
+			byteBuffer.writeUnsignedByte(((Enum)f.get (obj)).ordinal());
+			r.bytes += 1;
+			r.dataInt += 1;
+		}
+		
+		for (Field f : unsignedByteFields) {			
+			byteBuffer.writeUnsignedByte(f.getInt(obj));
+			r.bytes += 1;
+			r.dataInt += 1;
 		}
 		
 		for (Field f : floatFields) {
 			floatValues [index.floatIndex] = f.getFloat(obj);
 			index.floatIndex++;
+			r.bytes += 4;
+			r.dataFloat += 1;
 		}
 		
 		for (Field f : doubleFields) {
 			floatValues [index.floatIndex] = (float) f.getDouble(obj);
-			index.floatIndex++;						
+			index.floatIndex++;
+			r.bytes += 4;
+			r.dataFloat += 1;
 		}
 		
 		for (Field f : stringFields) {
 			stringValues [index.stringIndex] = (String) f.get(obj);
 			index.stringIndex++;
+			r.bytes += stringValues [index.stringIndex].length();
+			r.dataString += 1;
 		}
 		
 		for (ClassMapping c : objectFields) {
 			Object cpt = c.field.get (obj);	
 			
 			if (cpt == null) {
-				intValues [index.intIndex] = 0;
-				index.intIndex++;
+				byteBuffer.writeUnsignedByte(0);
 				
-				index.intIndex += c.sizeInt;
+				for (int i = 0; i < c.sizeBytes; ++i) {
+					byteBuffer.writeUnsignedByte(0);
+					r.bytes += 1;
+					r.dataInt += 1;
+				}
+				
 				index.floatIndex += c.sizeFloat;
 				index.stringIndex += c.sizeString;
 			} else {
-				intValues [index.intIndex] = 1;
-				index.intIndex++;
-				c.setData(cpt, intValues, floatValues, stringValues, index);
+				byteBuffer.writeUnsignedByte(1);
+				r.bytes += 1;
+				r.dataInt += 1;
+							
+				c.setData(cpt, byteBuffer, floatValues, stringValues, index);
 			}								
 		}
 		
@@ -211,6 +300,18 @@ public class ClassMapping {
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				floatValues [index.floatIndex] = (float) ((double []) f.get (obj)) [i];
 				index.floatIndex++;
+				r.bytes += 4;
+				r.dataFloat += 1;
+			}
+		}
+		
+		for (Field f : shortArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				byteBuffer.writeShort(((short []) f.get (obj)) [i]);
+				r.bytes += 2;
+				r.dataInt += 1;
 			}
 		}
 		
@@ -218,8 +319,9 @@ public class ClassMapping {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				intValues [index.intIndex] = ((int []) f.get (obj)) [i];
-				index.intIndex++;
+				byteBuffer.writeInt(((int []) f.get (obj)) [i]);
+				r.bytes += 4;
+				r.dataInt += 1;
 			}
 		}
 		
@@ -227,8 +329,19 @@ public class ClassMapping {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				intValues [index.intIndex] = ((boolean []) f.get (obj)) [i] ? 1 : 0;
-				index.intIndex++;
+				byteBuffer.writeUnsignedByte(((boolean []) f.get (obj)) [i] ? 1 : 0);
+				r.bytes += 1;
+				r.dataInt += 1;
+			}
+		}
+		
+		for (Field f : unsignedByteFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				byteBuffer.writeUnsignedByte(((int []) f.get (obj)) [i]);
+				r.bytes += 1;
+				r.dataInt += 1;
 			}
 		}
 		
@@ -239,74 +352,114 @@ public class ClassMapping {
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				if (cpts [i] == null) {
-					intValues[index.intIndex] = 0;
-					index.intIndex++;
-
-					index.intIndex += c.sizeInt;
+					byteBuffer.writeUnsignedByte(0);
+					
+					for (int j = 0; j < c.sizeBytes; ++j) {
+						byteBuffer.writeUnsignedByte(0);
+						r.bytes += 1;
+						r.dataInt += 1;
+					}
+				
 					index.floatIndex += c.sizeFloat;
 					index.stringIndex += c.sizeString;
 				} else {
-					intValues[index.intIndex] = 1;
-					index.intIndex++;
+					byteBuffer.writeUnsignedByte(1);
+					r.bytes += 1;
+					r.dataInt += 1;
 					
-					c.setData(cpts [i], intValues, floatValues, stringValues,
+					c.setData(cpts [i], byteBuffer, floatValues, stringValues,
 							index);
 				}
 			}
-		}
+		}		
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public void updateFromData(Object obj, int[] intValues,
+	public void updateFromData(Object obj, ByteBuffer byteBuffer,
 			float[] floatValues, String[] stringValues, Indexes index)
 			throws IllegalArgumentException, IllegalAccessException {
 		
-		for (Field f : shortFields) {
-			f.setShort(obj, (short) intValues [index.intIndex]);
-			index.intIndex++;
+		Reporter r = null;
+		
+		if (BuildCraftCore.trackNetworkUsage) {
+			if (!report.containsKey(clas.getName())) {
+				report.put(clas.getName(), new Reporter ());
+			}
+			
+			r = report.get(clas.getName());
+			r.clas = clas;
+		} else {
+			r = new Reporter ();
 		}
 		
-		for (Field f : intFields) {
-			f.setInt(obj, intValues [index.intIndex]);
-			index.intIndex++;
+		r.occurences++;
+		
+		for (Field f : shortFields) {
+			f.setShort(obj, byteBuffer.readShort());
+			r.bytes += 2;
+			r.dataInt += 1;
+		}
+		
+		for (Field f : intFields) {			
+			f.setInt(obj, byteBuffer.readInt());
+			r.bytes += 4;
+			r.dataInt += 1;
 		}
 		
 		for (Field f : booleanFields) {
-			f.setBoolean(obj, intValues [index.intIndex] == 1);
-			index.intIndex++;
+			f.setBoolean(obj, byteBuffer.readUnsignedByte() == 1);
+			r.bytes += 1;
+			r.dataInt += 1;
 		}
 		
 		for (Field f : enumFields) {
 			f.set(obj,
-					((Class) f.getGenericType()).getEnumConstants()[intValues[index.intIndex]]);
-			index.intIndex++;
+					((Class) f.getGenericType()).getEnumConstants()[byteBuffer.readUnsignedByte()]);
+			r.bytes += 1;
+			r.dataInt += 1;
+		}
+		
+		for (Field f : unsignedByteFields) {
+			f.setInt(obj, byteBuffer.readUnsignedByte());
+			r.bytes += 1;
+			r.dataInt += 1;
 		}
 		
 		for (Field f : floatFields) {
 			f.setFloat(obj, floatValues [index.floatIndex]);			
 			index.floatIndex++;
+			r.bytes += 4;
+			r.dataFloat += 1;
 		}
 		
 		for (Field f : doubleFields) {
 			f.setDouble(obj, floatValues [index.floatIndex]);
 			index.floatIndex++;
+			r.bytes += 4;
+			r.dataFloat += 1;
 		}
 		
 		for (Field f : stringFields) {
 			f.set(obj, stringValues [index.stringIndex]);
 			index.stringIndex++;
+			r.bytes += stringValues [index.stringIndex].length();
+			r.dataString += 1;
 		}
 		
 		for (ClassMapping c : objectFields) {
-			boolean isNull = intValues [index.intIndex] == 0;
-			index.intIndex++;	
+			boolean isNull = byteBuffer.readUnsignedByte() == 0;
+			r.bytes += 1;
+			r.dataInt += 1;
 			
 			if (isNull) {
-				index.intIndex += c.sizeInt;
+				for (int i = 0; i < c.sizeBytes; ++i) {
+					byteBuffer.readUnsignedByte();
+				}
+				
 				index.floatIndex += c.sizeFloat;
 				index.stringIndex += c.sizeString;
 			} else {
-				c.updateFromData(c.field.get(obj), intValues, floatValues, stringValues,
+				c.updateFromData(c.field.get(obj), byteBuffer, floatValues, stringValues,
 						index);
 			}								
 		}	
@@ -317,6 +470,19 @@ public class ClassMapping {
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {				
 				((double []) f.get (obj)) [i] = floatValues [index.floatIndex];
 				index.floatIndex++;
+				r.bytes += 4;
+				r.dataFloat += 1;
+			}
+		}
+		
+		for (Field f : shortArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				((short []) f.get (obj)) [i] = byteBuffer.readShort();
+				r.bytes += 2;
+				r.dataInt += 1;
+
 			}
 		}
 		
@@ -324,8 +490,10 @@ public class ClassMapping {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				((int []) f.get (obj)) [i] = intValues [index.intIndex];
-				index.intIndex++;
+				((int []) f.get (obj)) [i] = byteBuffer.readInt();
+				r.bytes += 4;
+				r.dataInt += 1;
+
 			}
 		}
 		
@@ -333,8 +501,19 @@ public class ClassMapping {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				((boolean []) f.get (obj)) [i] = intValues [index.intIndex] == 1;
-				index.intIndex++;
+				((boolean []) f.get (obj)) [i] = byteBuffer.readUnsignedByte() == 1;
+				r.bytes += 1;
+				r.dataInt += 1;
+			}
+		}
+		
+		for (Field f : unsignedByteArrayFields) {
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
+			
+			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
+				((int []) f.get (obj)) [i] = byteBuffer.readUnsignedByte();
+				r.bytes += 1;
+				r.dataInt += 1;
 			}
 		}
 		
@@ -344,15 +523,19 @@ public class ClassMapping {
 			Object [] cpts = (Object []) c.field.get (obj);	
 			
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				boolean isNull = intValues [index.intIndex] == 0;
-				index.intIndex++;	
+				boolean isNull = byteBuffer.readUnsignedByte() == 0;
+				r.bytes += 1;
+				r.dataInt += 1;
 				
 				if (isNull) {		
-					index.intIndex += c.sizeInt;
+					for (int j = 0; j < c.sizeBytes; ++j) {
+						byteBuffer.readUnsignedByte();
+					}
+					
 					index.floatIndex += c.sizeFloat;
 					index.stringIndex += c.sizeString;
 				} else {
-					c.updateFromData(cpts [i], intValues, floatValues, stringValues,
+					c.updateFromData(cpts [i], byteBuffer, floatValues, stringValues,
 							index);
 				}
 			}
@@ -362,7 +545,7 @@ public class ClassMapping {
 	public int [] getSize () {
 		int [] result = new int [3];
 				
-		result [0] = sizeInt;
+		result [0] = sizeBytes;
 		result [1] = sizeFloat;
 		result [2] = sizeString;
 		

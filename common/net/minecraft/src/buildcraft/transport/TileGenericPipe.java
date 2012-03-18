@@ -78,6 +78,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 	
 	@Override
+	public void invalidate () {
+		super.invalidate();
+		
+		if (BlockGenericPipe.isValid (pipe)) {
+			BlockGenericPipe.removePipe (pipe);
+		}
+		
+		// Clean the persistent world in case the tile is still here.
+		PersistentWorld.getWorld(worldObj).removeTile(
+				new BlockIndex(xCoord, yCoord, zCoord));
+	}
+	
+	@Override
 	public void validate () {
 		bindPipe();
 	}
@@ -265,7 +278,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
+			return false;
+		}
+		
 		if (BlockGenericPipe.isFullyDefined(pipe)) {
 			return pipe.logic.canInteractWith(entityplayer);
 		} else {
@@ -375,6 +392,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	@Override
 	public int powerRequest() {
 		return getPowerProvider().maxEnergyReceived;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		return null;
 	}
 
 }

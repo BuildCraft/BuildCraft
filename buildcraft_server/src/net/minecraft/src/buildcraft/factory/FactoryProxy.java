@@ -20,8 +20,8 @@ public class FactoryProxy {
 	public static void displayGUIAutoCrafting (World world, EntityPlayer entityplayer, int i, int j, int k) {
 		TileAutoWorkbench tile = (TileAutoWorkbench) world.getBlockTileEntity(i, j, k);
 		
-		ModLoader.OpenGUI(entityplayer, Utils.packetIdToInt(PacketIds.AutoCraftingGUI),
-				tile, new ContainerAutoWorkbench(entityplayer.inventory, world, tile));
+		ModLoader.openGUI(entityplayer, Utils.packetIdToInt(PacketIds.AutoCraftingGUI),
+				tile, new ContainerAutoWorkbench(entityplayer.inventory, tile));
 	}
 	
 }

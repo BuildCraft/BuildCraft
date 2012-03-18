@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.transport;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
@@ -32,7 +33,7 @@ public class PipeTransportPower extends PipeTransport {
 	public double [] internalNextPower = new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	
 	@TileNetworkData(staticSize = 6)
-	public double[] displayPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
 	public double powerResitance = 0.01;
 	
@@ -79,7 +80,7 @@ public class PipeTransportPower extends PipeTransport {
 		
 		// Send the power to nearby pipes who requested it
 		
-		displayPower = new double [] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+		displayPower = new short [] {0, 0, 0, 0, 0, 0};
 		
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower [i] > 0) {
@@ -176,7 +177,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 		
 		if (APIProxy.isServerSide()) {
-			if (tracker.markTimeIfDelay(worldObj, 10)) {
+			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				CoreProxy
 						.sendToPlayers(this.container.getUpdatePacket(),
 								xCoord, yCoord, zCoord, 40,

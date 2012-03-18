@@ -12,11 +12,11 @@ package net.minecraft.src.buildcraft.energy;
 import java.util.Random;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockFluid;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
-import net.minecraft.src.BlockFluid;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.core.ILiquid;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -145,7 +145,8 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
             int i1 = world.getBlockId(i, j, k);
             if(i1 > 0)
             {
-				Block.blocksList[i1].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k));
+				Block.blocksList[i1].dropBlockAsItem(world, i, j, k,
+						world.getBlockMetadata(i, j, k), 0);
             }
             world.setBlockAndMetadataWithNotify(i, j, k, blockID, l);
         }
@@ -267,7 +268,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
             return false;
         }
         Material material = Block.blocksList[l].blockMaterial;
-        return material.getIsSolid();
+        return material.isSolid();
     }
 
     protected int getSmallestFlowDecay(World world, int i, int j, int k, int l)

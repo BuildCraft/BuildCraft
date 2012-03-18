@@ -9,24 +9,46 @@
 
 package net.minecraft.src.buildcraft.core;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.HashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModTextureStatic;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.RenderEngine;
+import net.minecraft.src.World;
+
+import org.lwjgl.opengl.GL11;
 
 public class CoreProxy {
+	private static class CustomModTextureStatic extends ModTextureStatic {
+		public CustomModTextureStatic(int i, BufferedImage bufferedimage) {
+			super(i, 0, bufferedimage);
+		}
+
+		@Override
+		public void bindImage(RenderEngine renderengine) {
+			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, renderengine
+					.getTexture(BuildCraftCore.customBuildCraftTexture));
+		}
+	}
+	
 	public static void addName(Object obj, String s) {
-		ModLoader.AddName(obj, s);
+		ModLoader.addName(obj, s);
 	}	
+	
+	public static void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
+		stack.func_48507_a(world, player, stack.stackSize);
+	}
 	
 	public static void setField804 (EntityItem item, float value) {
 		item.field_804_d = value;
@@ -51,12 +73,12 @@ public class CoreProxy {
 	}
 
 	public static void addLocalization(String s1, String string) {
-		ModLoader.AddLocalization(s1, string);
+		ModLoader.addLocalization(s1, string);
 		
 	}
 
 	public static int addFuel (int id, int dmg) {
-		return ModLoader.AddAllFuel(id, dmg);
+		return ModLoader.addAllFuel(id, dmg);
 	}
 	
 		
@@ -76,15 +98,15 @@ public class CoreProxy {
 	 * pipes with icons.
 	 */
 	public static int addCustomTexture(String pathToTexture) {
-		loadTextureIndex();
+//		loadTextureIndex();
 		try {
 			if (textureIndex >= textureStopIndex) {
 				System.out.println("Out of BuildCraft Textures!");
 				return 0;
 			}
-			ModTextureStatic modtexturestatic;
-			modtexturestatic = new ModTextureStatic(textureIndex,
-					coreTextureIndex, ModLoader.loadImage(
+			CustomModTextureStatic modtexturestatic;
+			modtexturestatic = new CustomModTextureStatic(textureIndex,
+					ModLoader.loadImage(
 							ModLoader.getMinecraftInstance().renderEngine,
 							pathToTexture));
 			ModLoader.getMinecraftInstance().renderEngine
@@ -102,23 +124,12 @@ public class CoreProxy {
 		}
 
 	}
-
-	@SuppressWarnings("unchecked")
-	private static void loadTextureIndex() {
-		if (coreTextureIndex >= 0)
-			return;
-		HashMap <String, Integer> textures = new HashMap <String, Integer>();
-		try {
-			textures = (HashMap <String, Integer>) ModLoader.getPrivateValue(RenderEngine.class,
-					ModLoader.getMinecraftInstance().renderEngine, 1);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		coreTextureIndex = (Integer) textures
-				.get(BuildCraftCore.customBuildCraftTexture);
-	}
 	
 	public static long getHash (IBlockAccess iBlockAccess) {
-		return iBlockAccess.getWorldChunkManager().hashCode();
+		return 0;
+	}
+	
+	public static void TakenFromCrafting(EntityPlayer entityplayer, ItemStack itemstack, IInventory iinventory) {
+		ModLoader.takenFromCrafting(entityplayer, itemstack, iinventory);
 	}
 }

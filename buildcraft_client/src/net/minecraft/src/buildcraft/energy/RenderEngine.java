@@ -9,8 +9,6 @@
 
 package net.minecraft.src.buildcraft.energy;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
@@ -19,6 +17,8 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;
 import net.minecraft.src.forge.MinecraftForgeClient;
+
+import org.lwjgl.opengl.GL11;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 

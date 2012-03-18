@@ -13,7 +13,8 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-
+import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
@@ -84,7 +85,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 						if (powerProvider.useEnergy(10, 10, true) == 10) {
 							index = getNextIndexToPump(true);
-							worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+							
+							if (liquidId != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
+								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+							}
+							
 							internalLiquid = internalLiquid += API.BUCKET_VOLUME;
 
 							if (APIProxy.isServerSide()) {
@@ -153,7 +158,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		
 		setTubePosition();
 		
-		worldObj.entityJoinedWorld(tube);
+		worldObj.spawnEntityInWorld(tube);
 		
 		if (APIProxy.isServerSide()) {
 			sendNetworkUpdate();

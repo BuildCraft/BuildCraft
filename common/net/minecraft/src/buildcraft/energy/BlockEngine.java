@@ -54,7 +54,12 @@ public class BlockEngine extends BlockContainer implements IPipeConnection {
 	}
 	
 	 public void onBlockRemoval(World world, int i, int j, int k) {
-		 ((TileEngine) world.getBlockTileEntity(i, j, k)).delete();
+		 TileEngine engine = ((TileEngine) world.getBlockTileEntity(i, j, k));
+		 
+		 if (engine != null) {
+			 engine.delete ();
+		 }
+	
 		 super.onBlockRemoval(world, i, j, k);
 	 }
 	 

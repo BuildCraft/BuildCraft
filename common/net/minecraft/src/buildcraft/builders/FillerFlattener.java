@@ -14,7 +14,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.IBox;
-import net.minecraft.src.buildcraft.api.FillerPattern;
+import net.minecraft.src.buildcraft.core.FillerPattern;
 
 public class FillerFlattener extends FillerPattern {
 
@@ -65,8 +65,9 @@ public class FillerFlattener extends FillerPattern {
 		}
 		
 		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, null, tile.worldObj,
-				lastX, lastY + 1, lastZ, 0);
+			stackToPlace.getItem().onItemUse(stackToPlace,
+					BuildCraftCore.getBuildCraftPlayer(tile.worldObj),
+					tile.worldObj, lastX, lastY + 1, lastZ, 0);
 		}
 		
 		if (lastX != Integer.MAX_VALUE) {

@@ -421,7 +421,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 				
 				BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
 						m.x, m.y, m.z,
-						BuildCraftBuilders.markerBlock.blockID);
+						BuildCraftBuilders.markerBlock.blockID, 0);
 			}
 		}
 		
@@ -430,7 +430,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		
 		BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj,
 				o.vectO.x, o.vectO.y, o.vectO.z,
-				BuildCraftBuilders.markerBlock.blockID);
+				BuildCraftBuilders.markerBlock.blockID, 0);
 	}
 	
 	 public void readFromNBT(NBTTagCompound nbttagcompound) {

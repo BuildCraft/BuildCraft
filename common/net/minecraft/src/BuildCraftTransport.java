@@ -8,14 +8,19 @@
 
 package net.minecraft.src;
 
+import java.util.LinkedList;
+
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
+import net.minecraft.src.buildcraft.transport.BlockDockingStation;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.LegacyBlock;
 import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
+import net.minecraft.src.buildcraft.transport.TileDummyGenericPipe;
+import net.minecraft.src.buildcraft.transport.TileDummyGenericPipe2;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
@@ -32,8 +37,6 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerWood;
-import net.minecraft.src.buildcraft.transport.BlockDockingStation;
-import net.minecraft.src.buildcraft.transport.TileDockingStation;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
@@ -67,6 +70,13 @@ public class BuildCraftTransport {
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
 	public static Item pipePowerGold;
+	
+	private static class PipeRecipe {
+		ItemStack result;
+		Object [] input;
+	}
+	
+	private static LinkedList <PipeRecipe> pipeRecipes = new LinkedList <PipeRecipe> ();
 	
 	public static void initialize () {
 		if (initialized) {
@@ -106,20 +116,21 @@ public class BuildCraftTransport {
 					.trim();
 		}
 
-		BuildCraftCore.mainConfiguration.save();
-
-		CraftingManager craftingmanager = CraftingManager.getInstance();
+		BuildCraftCore.mainConfiguration.save();		
 		
 		pipeWaterproof = new ItemBuildCraftTexture (DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
 		pipeWaterproof.setItemName("pipeWaterproof");
-		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");
-		craftingmanager.addRecipe(new ItemStack(pipeWaterproof, 1), new Object[] {
-			"W ", "  ", 
-			Character.valueOf('W'), new ItemStack(Item.dyePowder, 1, 2)});
-		
+		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");		
 		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
-		ModLoader.RegisterTileEntity(TileGenericPipe.class,
+		
+		// Fixing retro-compatiblity
+		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe.class,
+				"net.minecraft.src.buildcraft.GenericPipe");
+		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe2.class,
 				"net.minecraft.src.buildcraft.transport.TileGenericPipe");
+		
+		mod_BuildCraftTransport.registerTilePipe(TileGenericPipe.class,
+				"net.minecraft.src.buildcraft.transport.GenericPipe");	
 		
 		pipeItemsWood = createPipe (DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
 		pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
@@ -181,29 +192,44 @@ public class BuildCraftTransport {
 					.getOrCreateBlockIdProperty("cobblestonePipe.id",
 							DefaultProps.COBBLESTONE_PIPE_ID);
 
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			ModLoader.registerBlock(new LegacyBlock(Integer
 					.parseInt(woodenPipeId.value), pipeItemsWood.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			ModLoader.registerBlock(new LegacyBlock(Integer
 					.parseInt(stonePipeId.value), pipeItemsStone.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			ModLoader.registerBlock(new LegacyBlock(Integer
 					.parseInt(ironPipeId.value), pipeItemsIron.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			ModLoader.registerBlock(new LegacyBlock(Integer
 					.parseInt(goldenPipeId.value), pipeItemsGold.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			ModLoader.registerBlock(new LegacyBlock(Integer
 					.parseInt(diamondPipeId.value), pipeItemsDiamond.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			ModLoader.registerBlock(new LegacyBlock(Integer
 					.parseInt(obsidianPipeId.value), pipeItemsObsidian.shiftedIndex));
-			ModLoader.RegisterBlock(new LegacyBlock(Integer
+			ModLoader.registerBlock(new LegacyBlock(Integer
 					.parseInt(cobblestonePipeId.value), pipeItemsCobblestone.shiftedIndex));
 
 			ModLoader
-					.RegisterTileEntity(LegacyTile.class,
+					.registerTileEntity(LegacyTile.class,
 							"net.buildcraft.src.buildcraft.transport.legacy.LegacyTile");
 		}
 		
 		BuildCraftCore.mainConfiguration.save();
-
+		
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
 	}	
+	
+	public static void loadRecipes () {
+		CraftingManager craftingmanager = CraftingManager.getInstance();
+		
+		craftingmanager.addRecipe(new ItemStack(pipeWaterproof, 1), new Object[] {
+			"W ", "  ", 
+			Character.valueOf('W'), new ItemStack(Item.dyePowder, 1, 2)});
+		
+		for (PipeRecipe p : pipeRecipes) {
+			craftingmanager.addRecipe(p.result, p.input);
+		}
+	}
 	
 	private static Item createPipe (int defaultID, Class <? extends Pipe> clas, String descr, Object r1, Object r2, Object r3) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0))
@@ -218,19 +244,25 @@ public class BuildCraftTransport {
 		res.setItemName(clas.getSimpleName());
 		CoreProxy.addName(res, descr);
 		
-		CraftingManager craftingmanager = CraftingManager.getInstance();
+		PipeRecipe re = new PipeRecipe ();
 		
-		if (r1 != null && r2 != null && r3 != null) {						
-			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
+		if (r1 != null && r2 != null && r3 != null) {	
+			re.result = new ItemStack(res, 8);
+			re.input = new Object[] {
 				"   ", "ABC", "   ", 
 				Character.valueOf('A'), r1,
 				Character.valueOf('B'), r2,
-				Character.valueOf('C'), r3});
+				Character.valueOf('C'), r3};
+			
+			pipeRecipes.add(re);
 		} else if (r1 != null && r2 != null) {
-			craftingmanager.addRecipe(new ItemStack(res, 1), new Object[] {
+			re.result = new ItemStack(res, 1);
+			re.input = new Object[] {
 				"A ", "B ", 
 				Character.valueOf('A'), r1,
-				Character.valueOf('B'), r2});
+				Character.valueOf('B'), r2};
+			
+			pipeRecipes.add(re);
 		}
 		
 		return res;

@@ -9,19 +9,25 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
 public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	
 	public @TileNetworkData int stored = 0;
 	public @TileNetworkData int liquidId = 0;
+	
+	public boolean hasUpdate = false;
+	public SafeTimeTracker tracker = new SafeTimeTracker();
 	
 	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
@@ -52,6 +58,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		if (stored + quantity <= getCapacity()) {
 			if (doFill) {
 				stored += quantity;
+				hasUpdate = true;
 			}
 			
 			used = quantity;
@@ -60,11 +67,8 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			
 			if (doFill) {
 				stored = getCapacity();
+				hasUpdate = true;
 			}
-		}
-		
-		if (doFill && APIProxy.isServerSide() && used > 0) {
-			sendNetworkUpdate();
 		}
 				
 		if (used < quantity && above instanceof TileTank) {
@@ -105,7 +109,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	public int empty (int quantityMax, boolean doEmpty) {
 		TileTank lastTank = this;
 		
-		for (int j = yCoord + 1; j <= 128; ++j) {
+		for (int j = yCoord + 1; j <= DefaultProps.WORLD_HEIGHT; ++j) {
 			if (worldObj.getBlockTileEntity(xCoord, j, zCoord) instanceof TileTank) {
 				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j, zCoord);
 			} else {
@@ -120,6 +124,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		if (stored >= quantityMax) {
 			if (doEmpty) {
 				stored -= quantityMax;
+				hasUpdate = true;
 			}
 			
 			return quantityMax;
@@ -128,6 +133,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			
 			if (doEmpty) {
 				stored = 0;
+				hasUpdate = true;
 			}
 		
 			TileEntity under = worldObj.getBlockTileEntity(xCoord, yCoord - 1,
@@ -146,5 +152,14 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	public int getLiquidId() {
 		return liquidId;
 	}	
+	
+	@TileNetworkData
+	public void updateEntity () {
+		if (APIProxy.isServerSide() && hasUpdate
+				&& tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+			sendNetworkUpdate();
+			hasUpdate = false;
+		}
+	}
 	
 }

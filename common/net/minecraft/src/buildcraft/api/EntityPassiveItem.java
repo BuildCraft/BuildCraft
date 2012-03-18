@@ -12,7 +12,9 @@ package net.minecraft.src.buildcraft.api;
 import java.util.TreeMap;
 
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.MathHelper;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -104,7 +106,7 @@ public class EntityPassiveItem {
 			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3 + motion.x;
 			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3 + motion.y;
 			entityitem.motionZ = (float) worldObj.rand.nextGaussian() * f3 + + motion.z;
-			worldObj.entityJoinedWorld(entityitem);
+			worldObj.spawnEntityInWorld(entityitem);
 			remove ();
 
 			entityitem.delayBeforeCanPickup = 20;
@@ -118,6 +120,27 @@ public class EntityPassiveItem {
 		if (allEntities.containsKey(entityId)) {
 			allEntities.remove(entityId);
 		}
+	}
+	
+	public float getEntityBrightness(float f)
+    {
+        int i = MathHelper.floor_double(posX);
+        int j = MathHelper.floor_double(posZ);
+        worldObj.getClass();
+        if(worldObj.blockExists(i, 128 / 2, j))
+        {
+            double d = 0.66000000000000003D;
+            int k = MathHelper.floor_double(posY + d);
+            return worldObj.getLightBrightness(i, k, j);
+        } else
+        {
+            return 0.0F;
+        }
+    }
+	
+	public boolean isCorrupted () {
+		return item == null || item.stackSize <= 0
+				|| Item.itemsList[item.itemID] == null;
 	}
 
 }

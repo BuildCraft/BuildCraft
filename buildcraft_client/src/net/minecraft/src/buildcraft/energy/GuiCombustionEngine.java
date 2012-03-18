@@ -34,8 +34,8 @@ public class GuiCombustionEngine extends GuiContainer {
         fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
     }
 
-    protected void drawGuiContainerBackgroundLayer(float f)
-    {
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		int i = mc.renderEngine
 				.getTexture("/net/minecraft/src/buildcraft/energy/gui/combustion_engine_gui.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -60,7 +60,7 @@ public class GuiCombustionEngine extends GuiContainer {
 		Object o = null;
 		int liquidImgIndex = 0;
 
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
+		if (liquidId < 256 && Block.blocksList[liquidId] != null) {
 			o = Block.blocksList[liquidId];
 			liquidImgIndex = Block.blocksList[liquidId].blockIndexInTexture;
 		} else if (Item.itemsList[liquidId] != null) {

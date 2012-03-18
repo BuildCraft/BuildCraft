@@ -9,17 +9,17 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import org.lwjgl.opengl.GL11;
-
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityFX;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.World;
 import net.minecraft.src.MathHelper;
-import net.minecraft.src.Entity;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.Tessellator;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.Utils;
+
+import org.lwjgl.opengl.GL11;
 
 public class TileEntityPickupFX extends EntityFX
 {

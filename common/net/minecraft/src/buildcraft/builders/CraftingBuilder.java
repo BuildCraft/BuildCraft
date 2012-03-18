@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.builders;
 
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 import net.minecraft.src.buildcraft.core.BuildCraftContainer;
@@ -45,6 +46,11 @@ class CraftingBuilder extends BuildCraftContainer {
         {
             addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 198));
         }
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return builderInventory.isUseableByPlayer(entityplayer);
 	}	   
 	
 }

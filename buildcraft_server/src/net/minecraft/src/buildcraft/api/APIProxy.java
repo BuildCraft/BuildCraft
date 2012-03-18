@@ -28,20 +28,12 @@ public class APIProxy {
 	public static boolean isServerSide () {
 		return true;
 	}
-	
-	public static Entity getEntity (World world, int entityId) {
-		return null;
-	}
-	
-	public static void storeEntity (World world, Entity entity) {
-		world.entityJoinedWorld(entity);
-	}
 
 	public static void removeEntity (Entity entity) {
 		entity.setEntityDead();		
 	}
 	
 	public static Random createNewRandom (World world) {
-		return new Random (world.getRandomSeed());
+		return new Random (world.getSeed());
 	}
 }

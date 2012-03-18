@@ -9,12 +9,12 @@
 
 package net.minecraft.src.buildcraft.energy;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.TextureFX;
+
+import org.lwjgl.opengl.GL11;
 
 public class TextureOilFlowFX extends TextureFX
 {

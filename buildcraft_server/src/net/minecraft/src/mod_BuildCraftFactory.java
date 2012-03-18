@@ -13,8 +13,9 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	
 	public static mod_BuildCraftFactory instance;
 	
-	public void ModsLoaded () {		
-		super.ModsLoaded();
+	@Override
+	public void modsLoaded () {		
+		super.modsLoaded();
 		
 		BuildCraftFactory.initialize();
 		
@@ -22,7 +23,13 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	}
 		
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "2.2.13";
+	}
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
 	}
 }

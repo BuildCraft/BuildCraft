@@ -11,36 +11,37 @@ package net.minecraft.src;
 
 import java.util.Map;
 
+import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
+import net.minecraft.src.buildcraft.factory.GuiAutoCrafting;
 import net.minecraft.src.buildcraft.factory.RenderRefinery;
 import net.minecraft.src.buildcraft.factory.RenderTank;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.buildcraft.factory.TileTank;
-import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 
 public class mod_BuildCraftFactory extends BaseModMp {		
 	
 	public static mod_BuildCraftFactory instance;
 	
-	public void ModsLoaded () {		
-		super.ModsLoaded();
+	@Override
+	public void modsLoaded () {		
+		super.modsLoaded();
 		
 		BuildCraftFactory.initialize();
 		
-		ModLoaderMp.RegisterGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
+		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
 		
 		ModLoader
-		.RegisterTileEntity(TileTank.class,
+		.registerTileEntity(TileTank.class,
 				"net.minecraft.src.buildcraft.factory.TileTank",
 				new RenderTank());
 		
-		ModLoader.RegisterTileEntity(TileRefinery.class,
+		ModLoader.registerTileEntity(TileRefinery.class,
 				"net.minecraft.src.buildcraft.factory.Refinery",
 				new RenderRefinery());
 		
@@ -51,16 +52,18 @@ public class mod_BuildCraftFactory extends BaseModMp {
 	}
 		
 	@Override
-	public String Version() {
-		return "2.2.5";
+	public String getVersion() {
+		return "2.2.13";
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void AddRenderer(Map map) {
+	@Override
+	public void addRenderer(Map map) {
     	map.put (EntityMechanicalArm.class, new RenderVoid());
     }
 	
-    public GuiScreen HandleGUI(int i) {    	
+	@Override
+    public GuiScreen handleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
 			return new GuiAutoCrafting(
 					ModLoader.getMinecraftInstance().thePlayer.inventory,
@@ -70,4 +73,10 @@ public class mod_BuildCraftFactory extends BaseModMp {
     		return null;
     	}
     }
+
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
+	}
 }

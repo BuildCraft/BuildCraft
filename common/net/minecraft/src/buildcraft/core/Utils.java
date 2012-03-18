@@ -144,7 +144,7 @@ public class Utils {
 				(double) j + d1, (double) k + d2, stack);
 		entityitem.delayBeforeCanPickup = 10;
 		
-		world.entityJoinedWorld(entityitem);
+		world.spawnEntityInWorld(entityitem);
 	}
 	
 	public static void dropItems (World world, IInventory inventory, int i, int j, int k) {
@@ -285,7 +285,7 @@ public class Utils {
 		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize,
 				kSize, texture);
 		
-		world.entityJoinedWorld(block);
+		world.spawnEntityInWorld(block);
 		
 		return block;
 	}

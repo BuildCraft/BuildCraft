@@ -18,13 +18,13 @@ public class EnergyProxy {
 
 	public static void displayGUISteamEngine(EntityPlayer entityplayer,
 			TileEngine tile) {
-		ModLoader.OpenGUI(entityplayer, Utils.packetIdToInt(PacketIds.EngineSteamGUI),
+		ModLoader.openGUI(entityplayer, Utils.packetIdToInt(PacketIds.EngineSteamGUI),
 				tile, new ContainerEngine(entityplayer.inventory, tile));
 	}
 
 	public static void displayGUICombustionEngine(EntityPlayer entityplayer,
 			TileEngine tile) {
-		ModLoader.OpenGUI(entityplayer, Utils.packetIdToInt(PacketIds.EngineCombustionGUI),
+		ModLoader.openGUI(entityplayer, Utils.packetIdToInt(PacketIds.EngineCombustionGUI),
 				tile, new ContainerEngine(entityplayer.inventory, tile));
 	}
 	

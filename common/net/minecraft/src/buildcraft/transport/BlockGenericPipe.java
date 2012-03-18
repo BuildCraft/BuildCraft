@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.TreeMap;
@@ -195,17 +194,36 @@ public class BlockGenericPipe extends BlockContainer implements
 
 		return r;
 	}
-
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		Utils.preDestroyBlock(world, i, j, k);
+	
+	public static void removePipe (Pipe pipe) {
+		if (pipe == null) {
+			return;
+		}
+		
+		World world = pipe.worldObj;
+		
+		if (world == null) {
+			return;
+		}
+		
+		int i = pipe.xCoord;
+		int j = pipe.yCoord;
+		int k = pipe.zCoord;
 		
 		if (lastRemovedDate != world.getWorldTime()) {
 			lastRemovedDate = world.getWorldTime();
 			pipeRemoved.clear();
 		}
 		
-		pipeRemoved.put(new BlockIndex (i, j, k), getPipe (world, i, j, k));
+		pipeRemoved.put(new BlockIndex (i, j, k), pipe);		
+		
 		PersistentWorld.getWorld(world).removeTile (new BlockIndex (i, j, k));
+	}
+
+	public void onBlockRemoval(World world, int i, int j, int k) {
+		Utils.preDestroyBlock(world, i, j, k);
+		
+		removePipe (getPipe (world, i, j, k));
 
 		super.onBlockRemoval(world, i, j, k);
 	}
@@ -220,12 +238,15 @@ public class BlockGenericPipe extends BlockContainer implements
 		return new TileGenericPipe();
 	}
 		
+	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k,
-			int l, float f) {
+			int l, float f, int dmg) {
+		
         if(APIProxy.isClient(world))
         {
             return;
-        }
+        }        
+        
         int i1 = quantityDropped(world.rand);
         for(int j1 = 0; j1 < i1; j1++)
         {
@@ -234,16 +255,18 @@ public class BlockGenericPipe extends BlockContainer implements
                 continue;
             }
             
-            Pipe pipe = getPipe(world, i, j, k);
+            Pipe pipe = getPipe(world, i, j, k);            
             
             if (pipe == null) {
             	pipe = pipeRemoved.get(new BlockIndex (i, j, k));
             }
             
             if (pipe != null) {
-            	int k1 = pipe.itemID;
+            	int k1 = pipe.itemID;            	            	
+            	
             	if(k1 > 0)
             	{
+            		pipe.dropContents ();
             		dropBlockAsItem_do(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
             	}
             }
@@ -251,7 +274,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	}
 	
 	@Override
-	public int idDropped(int meta, Random rand) {
+	public int idDropped(int meta, Random rand, int dmg) {
 		// Returns 0 to be safe - the id does not depend on the meta
 		return 0;
 	}
@@ -376,7 +399,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	
 	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
 	
-	long lastRemovedDate = -1;
+	static long lastRemovedDate = -1;
 	public static TreeMap<BlockIndex, Pipe> pipeRemoved = new TreeMap<BlockIndex, Pipe>();
 	
 	public static Item registerPipe (int key, Class <? extends Pipe> clas) {
@@ -390,18 +413,8 @@ public class BlockGenericPipe extends BlockContainer implements
 	public static Pipe createPipe (int key) {
 		try {
 			return pipes.get(key).getConstructor(int.class).newInstance(key);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 		
 		return null;

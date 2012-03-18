@@ -44,8 +44,13 @@ public class ContainerEngineRoot extends BuildCraftContainer
 
     public boolean isUsableByPlayer(EntityPlayer entityplayer)
     {
-        return engine.canInteractWith(entityplayer);
+        return engine.isUseableByPlayer(entityplayer);
     }
 
     protected TileEngine engine;
+
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return engine.isUseableByPlayer(entityplayer);
+	}
 }

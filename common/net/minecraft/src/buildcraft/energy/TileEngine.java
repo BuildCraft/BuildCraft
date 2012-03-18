@@ -268,8 +268,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}    
     
     public boolean isBurning()
@@ -389,5 +389,10 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	@Override
 	public Engine getEngine() {
 		return engine;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		return null;
 	}
 }

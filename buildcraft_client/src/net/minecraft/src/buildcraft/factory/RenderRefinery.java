@@ -11,8 +11,6 @@ package net.minecraft.src.buildcraft.factory;
 
 import java.util.HashMap;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.src.Block;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.Item;
@@ -26,6 +24,8 @@ import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
 import net.minecraft.src.forge.ITextureProvider;
 import net.minecraft.src.forge.MinecraftForgeClient;
+
+import org.lwjgl.opengl.GL11;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
@@ -73,19 +73,13 @@ final static private int displayStages = 100;
     	
 		BlockInterface block = new BlockInterface();
 		
-		if (liquidId < Block.blocksList.length) {
-			if (Block.blocksList [liquidId] == null) {
-				return null;
-			}
-			
+		if (liquidId < Block.blocksList.length
+			&& Block.blocksList [liquidId] != null)
 			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
-		} else {
-			if (Item.itemsList [liquidId] == null) {
-				return null;
-			}
-			
+		else if (Item.itemsList [liquidId] != null)
 			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
-		}
+		else
+			return null;
 		
     	for (int s = 0; s < displayStages; ++s) {
     		d [s] = GLAllocation.generateDisplayLists(1);
@@ -262,7 +256,8 @@ final static private int displayStages = 100;
 	public void setTextureFor(int liquidId) {
 		Object o = null;
 		
-		if (liquidId < Block.blocksList.length) {
+		if (liquidId < Block.blocksList.length
+				&& Block.blocksList[liquidId] != null) {
 			o = Block.blocksList [liquidId];
 		} else {
 			o = Item.itemsList [liquidId];

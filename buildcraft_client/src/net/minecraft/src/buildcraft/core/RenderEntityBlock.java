@@ -9,8 +9,6 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Entity;
@@ -19,6 +17,8 @@ import net.minecraft.src.Render;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.MinecraftForgeClient;
+
+import org.lwjgl.opengl.GL11;
 
 public class RenderEntityBlock extends Render {
 

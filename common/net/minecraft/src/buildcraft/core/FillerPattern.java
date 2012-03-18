@@ -7,11 +7,14 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.core;
 
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.API;
+import net.minecraft.src.buildcraft.api.IBox;
 
 public abstract class FillerPattern {
 	
@@ -49,8 +52,9 @@ public abstract class FillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, null, world,
-					xSlot, ySlot + 1, zSlot, 0);
+			stackToPlace.getItem().onItemUse(stackToPlace,
+					BuildCraftCore.getBuildCraftPlayer(world), world, xSlot,
+					ySlot + 1, zSlot, 0);
 		}
 		
 		return !found;

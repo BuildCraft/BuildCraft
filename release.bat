@@ -6,8 +6,8 @@ cd ..
 cmd /C reobfuscate.bat
 cd %BCDIR%
 
-set PATH=C:\cygwin\bin;%PATH%
+set PATH=E:\cygwin\bin;%PATH%
 
-sh package.sh 2.2.4
+sh package.sh 2.2.12
 
 pause

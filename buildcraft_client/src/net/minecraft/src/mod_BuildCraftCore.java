@@ -10,15 +10,16 @@
 
 package net.minecraft.src;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lwjgl.opengl.GL11;
-
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.ClassMapping;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.PacketIds;
@@ -27,6 +28,8 @@ import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.MinecraftForgeClient;
+
+import org.lwjgl.opengl.GL11;
 
 public class mod_BuildCraftCore extends BaseModMp {
 
@@ -62,7 +65,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	public static boolean initialized = false;
 
-	public mod_BuildCraftCore() {		
+	public mod_BuildCraftCore() {
 		instance = this;
 	}
 
@@ -81,27 +84,36 @@ public class mod_BuildCraftCore extends BaseModMp {
 		}
 	}
 
-	public void ModsLoaded() {
+	@Override
+	public void modsLoaded() {
+		super.modsLoaded();
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeModel(this);		
+		ModLoader.setInGameHook(this, true, true);
 	}
 
+	
+	
 	@Override
-	public String Version() {
+	public String getVersion() {
+
 		return version();
 	}
 
 	public static String version() {
-		return "2.2.5";
+		return "2.2.13";
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void AddRenderer(Map map) {
+	public void addRenderer(Map map) {
 		map.put(EntityBlock.class, new RenderEntityBlock());
 	}
+	
+	
 
-	public boolean RenderWorldBlock(RenderBlocks renderblocks,
+	@Override
+	public boolean renderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
@@ -258,7 +270,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	RenderItem itemRenderer = new RenderItem();
 
-	public void RenderInvBlock(RenderBlocks renderblocks, Block block, int i,
+	@Override
+	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i,
 			int j) {
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 
@@ -507,7 +520,8 @@ public class mod_BuildCraftCore extends BaseModMp {
 		}
 	}
 
-	public void HandlePacket(Packet230ModLoader packet) {
+	@Override
+	public void handlePacket(Packet230ModLoader packet) {
 		switch (PacketIds.values()[packet.packetType]) {
 		case TileDescription:
 			Utils.handleDescriptionPacket(packet);
@@ -518,5 +532,28 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 		}
 	}
+	
+	long lastReport = 0;
+	
+	@Override
+	public boolean onTickInGame(float f, Minecraft minecraft) {
+		if (BuildCraftCore.trackNetworkUsage) {			
+			Date d = new Date();
+			
+			if (d.getTime() - lastReport > 10000) {
+				lastReport = d.getTime();
+				int bytes = ClassMapping.report();
+				System.out.println ("BuildCraft badwith = " + (bytes / 10) + " bytes / second");
+				System.out.println ();
+			}			
+		}
+		
+		return true;
+	}
 
+	@Override
+	public void load() {
+		// TODO Auto-generated method stub
+		
+	}
 }

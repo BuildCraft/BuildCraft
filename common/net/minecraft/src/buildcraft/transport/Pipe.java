@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
@@ -59,6 +60,8 @@ public abstract class Pipe extends PersistentTile implements IPipe {
 		}
 
 		this.networkPacket = networkWrappers.get(this.getClass());
+		
+		
 	}
 
 	
@@ -177,4 +180,14 @@ public abstract class Pipe extends PersistentTile implements IPipe {
 
 	public void randomDisplayTick(Random random) {
 	}
+
+	public void dropContents() {
+		transport.dropContents ();
+	}
+
+
+	public void onDropped(EntityItem item) {
+		
+	}
+
 }

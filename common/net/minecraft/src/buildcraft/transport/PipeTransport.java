@@ -80,4 +80,9 @@ public class PipeTransport {
 	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
 		
 	}
+
+	public void dropContents() {
+		// TODO Auto-generated method stub
+		
+	}
 }

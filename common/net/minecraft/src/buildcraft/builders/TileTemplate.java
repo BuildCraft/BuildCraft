@@ -187,8 +187,8 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 	
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -236,7 +236,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte)i);
                 items[i].writeToNBT(nbttagcompound1);
-                nbttaglist.setTag(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
             }
         }
 
@@ -310,5 +310,13 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 	public void closeChest() {
 		
 	}
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		if (this.items[var1] == null) return null;
+		ItemStack stack = this.items[var1];
+		this.items[var1] = null;
+		return stack;
+	}
+
 
 }

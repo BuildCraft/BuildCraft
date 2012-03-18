@@ -35,6 +35,25 @@ public class TileAutoWorkbench extends TileEntity implements
 		stackList = new ItemStack [3*3];
 	}
 	
+	class LocalInventoryCrafting extends InventoryCrafting {
+
+		public LocalInventoryCrafting() {
+			super(new Container () {
+				@SuppressWarnings("all")
+				public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+					return false;
+				}
+
+				@SuppressWarnings("all")
+				public boolean canInteractWith(EntityPlayer entityplayer) {
+					// TODO Auto-generated method stub
+					return false;
+				}}, 3, 3);
+			// TODO Auto-generated constructor stub
+		}
+		
+	}
+	
 	@Override
 	public int getSizeInventory() {
 
@@ -43,7 +62,6 @@ public class TileAutoWorkbench extends TileEntity implements
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-
 		return stackList [i];
 	}
 
@@ -65,7 +83,6 @@ public class TileAutoWorkbench extends TileEntity implements
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		stackList [i] = itemstack;
-		
 	}
 
 	@Override
@@ -81,9 +98,8 @@ public class TileAutoWorkbench extends TileEntity implements
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-
-		return true;
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 	
 	 public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -110,7 +126,7 @@ public class TileAutoWorkbench extends TileEntity implements
     	
     	for (int i = 0; i < stackList.length; ++i) {    		
     		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
-    		nbttaglist.setTag(nbttagcompound2);
+    		nbttaglist.appendTag(nbttagcompound2);
     		if (stackList [i] == null) {
     			nbttagcompound2.setBoolean("isNull", true);
     		} else {
@@ -163,27 +179,33 @@ public class TileAutoWorkbench extends TileEntity implements
 		ItemStack item;
 	}
 	
-	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		InventoryCrafting craftMatrix = new InventoryCrafting(new Container () {
-			@SuppressWarnings("all")
-			public boolean isUsableByPlayer(EntityPlayer entityplayer) {
-				return false;
-			}
-
-			@SuppressWarnings("all")
-			public boolean canInteractWith(EntityPlayer entityplayer) {
-				// TODO Auto-generated method stub
-				return false;
-			}}, 3, 3);	
+	public ItemStack findRecipe () {
+		InventoryCrafting craftMatrix = new LocalInventoryCrafting();	
+		
+		for (int i = 0; i < getSizeInventory(); ++i) {
+			ItemStack stack = getStackInSlot(i);
+			
+			craftMatrix.setInventorySlotContents(i, stack);
+		}
+		
+		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(
+				craftMatrix);
+				
+		return recipe;
+	}
+	
+	public ItemStack extractItem(boolean doRemove, boolean removeRecipe) {
+		InventoryCrafting craftMatrix = new LocalInventoryCrafting();	
 
 		LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
+		
+		int itemsToLeave = (removeRecipe ? 0 : 1);
 		
 		for (int i = 0; i < getSizeInventory(); ++i) {
 			ItemStack stack = getStackInSlot(i);
 			
 			if (stack != null) {				
-				if (stack.stackSize <= 1) {
+				if (stack.stackSize <= itemsToLeave) {
 					StackPointer pointer = getNearbyItem(stack.itemID,
 							stack.getItemDamage());
 
@@ -199,6 +221,7 @@ public class TileAutoWorkbench extends TileEntity implements
 					pointer.inventory = this;
 					pointer.item = this.decrStackSize(i, 1);
 					pointer.index = i;
+					stack = pointer.item;
 					
 					pointerList.add(pointer);
 				}
@@ -226,6 +249,11 @@ public class TileAutoWorkbench extends TileEntity implements
 		}
 
 		return resultStack;
+	}
+	
+	@Override
+	public ItemStack extractItem(boolean doRemove, Orientations from) {
+		return extractItem(doRemove, false);
 	}
 	
 	public void resetPointers (LinkedList <StackPointer> pointers) {
@@ -311,5 +339,13 @@ public class TileAutoWorkbench extends TileEntity implements
 	@Override
 	public void closeChest() {
 		
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1){
+		if (this.stackList[var1] == null) return null;
+		ItemStack stack = this.stackList[var1];
+		this.stackList[var1] = null;
+		return stack;
 	}
 }

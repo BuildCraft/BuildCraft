@@ -17,7 +17,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.FillerPattern;
+import net.minecraft.src.buildcraft.core.FillerPattern;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 

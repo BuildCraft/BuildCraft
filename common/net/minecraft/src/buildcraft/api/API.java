@@ -18,6 +18,7 @@ import net.minecraft.src.World;
 
 public class API {
 
+	public static boolean [] softBlocks = new boolean [Block.blocksList.length];
 	public static LinkedList <LiquidData> liquids = new LinkedList <LiquidData> ();
 	public static final int BUCKET_VOLUME = 1000;
 	public static HashMap<Integer, IronEngineFuel> ironEngineFuel = new HashMap<Integer, IronEngineFuel>();
@@ -48,8 +49,7 @@ public class API {
 	 */
 	public static boolean softBlock (int blockId) {
 		return blockId == 0 
-				|| blockId == Block.waterStill.blockID
-				|| blockId == Block.waterMoving.blockID
+				|| softBlocks [blockId]
 				|| Block.blocksList [blockId] == null;
 	}
 
@@ -67,10 +67,16 @@ public class API {
 		
 		if (blockId != 0) {
 			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z,
-					world.getBlockMetadata(x, y, z));
+					world.getBlockMetadata(x, y, z), 0);
 		}				
 		
 		world.setBlockWithNotify(x, y, z, 0);
+	}
+	
+	static {
+		for (int i = 0; i < softBlocks.length; ++i) {
+			softBlocks [i] = false;
+		}
 	}
 	
 }

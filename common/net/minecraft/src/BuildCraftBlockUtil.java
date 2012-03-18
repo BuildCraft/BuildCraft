@@ -25,8 +25,8 @@ public class BuildCraftBlockUtil {
     	}
     	
     	int meta = world.getBlockMetadata(i, j, k);
-    	int id = block.idDropped(meta, world.rand);
-    	int qty = block.quantityDropped(world.rand);
+    	int id = block.idDropped(meta, world.rand, 0);
+    	int qty = block.quantityDropped(meta, 0, world.rand);
     	int dmg = block.damageDropped(meta);
     	
     	if (id <= 0 || qty == 0) {

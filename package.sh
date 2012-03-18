@@ -1,5 +1,6 @@
 version=$1
 dir=`pwd`/../release-$version
+src_dir=`pwd`
 
 function remove_svn () {
   (
@@ -81,7 +82,7 @@ cd ../..
 
 rm -rf reobf
 
-cd buildcraft/
+cd $src_dir
 
 rm -rf api
 mkdir -p api/src/minecraft/net/minecraft/src/buildcraft/api/
