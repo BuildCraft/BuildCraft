@@ -15,7 +15,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -336,6 +335,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
         return (computingTime * i) / 200;
     }
     
+    /*
     @Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
 		boolean initialized = box.isInitialized();
@@ -356,7 +356,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
-	}
+	} */
 
 	@Override
 	public void openChest() {

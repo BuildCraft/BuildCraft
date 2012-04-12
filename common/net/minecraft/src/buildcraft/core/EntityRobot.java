@@ -236,11 +236,11 @@ public class EntityRobot extends Entity {
 	}
 	
 	@Override
-	public void setEntityDead() {
+	public void setDead() {
 		if (laser != null) {
-			laser.setEntityDead();
+			laser.setDead();
 		}
 
-		super.setEntityDead();
+		super.setDead();
 	}
 }

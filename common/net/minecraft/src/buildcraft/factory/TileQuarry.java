@@ -18,7 +18,6 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -185,7 +184,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	    	} else {
 	    		if (builder != null && builder.done ()) {
 	    			box.deleteLasers();
-	    			builder.setEntityDead();
+	    			builder.setDead();
 	    			builder = null;
 	    		}
 	    	}
@@ -427,7 +426,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	@Override
 	public void destroy () {
 		if (arm != null) {
-			arm.setEntityDead ();
+			arm.setDead ();
 		}
 		
 		box.deleteLasers();
@@ -552,6 +551,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 				box.xMin, yCoord, box.zMin);
 	}
 	
+	/*
 	@Override
 	public void postPacketHandling (Packet230ModLoader packet) { 		
 		super.postPacketHandling(packet);
@@ -563,7 +563,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 			arm.setTarget(targetX, targetY, targetZ);
 			arm.speed = speed;
 		}
-	}
+	} */
 	
 	@Override
 	public void initialize() {

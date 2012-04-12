@@ -12,13 +12,10 @@ package net.minecraft.src;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.transport.ItemPipe;
-import net.minecraft.src.forge.ICustomItemRenderer;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftSilicon extends BaseModMp implements ICustomItemRenderer {
+public class mod_BuildCraftSilicon extends NetworkMod {
 		
 	public static mod_BuildCraftSilicon instance;
 	
@@ -36,48 +33,7 @@ public class mod_BuildCraftSilicon extends BaseModMp implements ICustomItemRende
 	
 	@Override
 	public String getVersion() {
-		return "3.1.4";
-	}
-	    
-	@Override
-	public void renderInventory(RenderBlocks renderblocks, int itemID,
-			int meta) {
-		Tessellator tessellator = Tessellator.instance;
-
-		Block block = BuildCraftTransport.genericPipeBlock;
-		int textureID = ((ItemPipe) Item.itemsList [itemID]).getTextureIndex();
-		
-		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
-				Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-		block.setBlockBoundsForItemRender();
-		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, -1F, 0.0F);
-		renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, textureID);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, textureID);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, -1F);
-		renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, textureID);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, textureID);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, textureID);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, textureID);
-		tessellator.draw();
-		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-		
+		return "3.1.5";
 	}
 	
 	@Override
@@ -220,7 +176,9 @@ public class mod_BuildCraftSilicon extends BaseModMp implements ICustomItemRende
 
 	@Override
 	public void load() {
-		// TODO Auto-generated method stub
-		
+
 	}
+
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
 }

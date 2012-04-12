@@ -140,12 +140,12 @@ public class TilePathMarker extends TileMarker {
 		
 		if (lasers [0] != null) {
 			links [0].unlink (this);
-			lasers [0].setEntityDead();
+			lasers [0].setDead();
 		}
 		
 		if (lasers [1] != null) {
 			links [1].unlink (this);
-			lasers [1].setEntityDead();
+			lasers [1].setDead();
 		}
 		
 		lasers = new EntityLaser [2];

@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.core.ClassMapping.Indexes;
@@ -37,7 +36,7 @@ public class TilePacketWrapper {
 	}
 	
 	
-	
+	/*
 	public Packet230ModLoader toPacket (TileEntity tile) {
 		Packet230ModLoader packet = new Packet230ModLoader();
 		packet.modId = mod_BuildCraftCore.instance.getId();
@@ -166,4 +165,5 @@ public class TilePacketWrapper {
 			e.printStackTrace();
 		}
 	}
+	*/
 }

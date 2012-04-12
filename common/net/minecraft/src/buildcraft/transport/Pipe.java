@@ -20,7 +20,6 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Action;
@@ -430,6 +429,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 				
 	}
 	
+	/*
 	public Packet230ModLoader getNetworkPacket() {
 		return networkPacket.toPacket(xCoord, yCoord, zCoord, new Object[] {
 				container, transport, logic });
@@ -437,8 +437,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 	
 	public void handlePacket (Packet230ModLoader packet) {
 		networkPacket.updateFromPacket(new Object [] {container, transport, logic}, packet);
-	}
-
+	}*/
 
 	public boolean isPoweringTo(int l) {		
 		if (!broadcastRedstone) {

@@ -92,10 +92,10 @@ public class BuildCraftBuilders {
 		BuildCraftCore.initializeGears();
 		
 		Property templateItemId = BuildCraftCore.mainConfiguration
-				.getOrCreateIntProperty("templateItem.id", Configuration.ITEM_PROPERTY,
+				.getOrCreateIntProperty("templateItem.id", Configuration.CATEGORY_ITEM,
 						DefaultProps.TEMPLATE_ITEM_ID);
 		Property blueprintItemId = BuildCraftCore.mainConfiguration
-		.getOrCreateIntProperty("blueprintItem.id", Configuration.ITEM_PROPERTY,
+		.getOrCreateIntProperty("blueprintItem.id", Configuration.CATEGORY_ITEM,
 				DefaultProps.BLUEPRINT_ITEM_ID);
 		Property markerId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("marker.id", DefaultProps.MARKER_ID);

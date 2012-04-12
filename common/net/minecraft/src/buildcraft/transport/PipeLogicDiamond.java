@@ -16,7 +16,6 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -89,13 +88,14 @@ public class PipeLogicDiamond extends PipeLogic {
 			items [i] = null;
 		}
 		
+		/*
 		if (APIProxy.isServerSide()) {
 			for (int p = 0; p < 6; ++p) {
 				CoreProxy.sendToPlayers(
 						(Packet230ModLoader) getContentsPacket(p), xCoord,
 						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 			}
-		}
+		} */
 		
 		return stack;
 	}
@@ -114,25 +114,27 @@ public class PipeLogicDiamond extends PipeLogic {
 			items [i] = null;
 		}
 		
+		/*
 		if (APIProxy.isServerSide()) {
 			for (int p = 0; p < 6; ++p) {
 				CoreProxy.sendToPlayers(
 						(Packet230ModLoader) getContentsPacket(p), xCoord,
 						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 			}
-		}
+		} */
 	}
 	
 	@Override
 	public void updateEntity () {
 		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor)) {
+			/*
 			if (APIProxy.isServerSide()) {
 				for (int p = 0; p < 6; ++p) {
 					CoreProxy.sendToPlayers(
 							(Packet230ModLoader) getContentsPacket(p), xCoord,
 							yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 				}
-			}
+			} */
 		}
 	}
 
@@ -194,6 +196,7 @@ public class PipeLogicDiamond extends PipeLogic {
 	}
 	
 	public Packet getContentsPacket(int num) {
+		/*
 		PacketStack stacks = new PacketStack();
 		stacks.num = num;
 		
@@ -206,9 +209,10 @@ public class PipeLogicDiamond extends PipeLogic {
 				stacks.dmg [j] = items [j + num * 9].getItemDamage();
 			}
 			 
-		}
+		} */
 		
-		return networkPacket.toPacket(xCoord, yCoord, zCoord, stacks);
+		//return networkPacket.toPacket(xCoord, yCoord, zCoord, stacks);
+		return null;
 		
 //		Packet230ModLoader packet = new Packet230ModLoader();
 //
@@ -237,6 +241,7 @@ public class PipeLogicDiamond extends PipeLogic {
 //		return packet;
     }
 	
+	/*
 	public void handleContentsPacket (Packet230ModLoader packet) {
 		PacketStack stacks = new PacketStack();
 		
@@ -267,7 +272,7 @@ public class PipeLogicDiamond extends PipeLogic {
 //						packet.dataInt[3 + j * 2 + 1]);
 //			}			 
 //		}
-	}
+	} */
 	
 	@Override
 	public boolean doDrop() {

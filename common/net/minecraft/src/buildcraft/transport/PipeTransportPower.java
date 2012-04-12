@@ -170,6 +170,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 		
+		/*
 		if (APIProxy.isServerSide()) {
 			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				CoreProxy
@@ -177,7 +178,7 @@ public class PipeTransportPower extends PipeTransport {
 								xCoord, yCoord, zCoord, 40,
 								mod_BuildCraftCore.instance);
 			}
-		}
+		} */
 
 	}
 	

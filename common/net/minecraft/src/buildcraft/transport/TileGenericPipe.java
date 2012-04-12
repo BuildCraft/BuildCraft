@@ -17,7 +17,6 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -88,12 +87,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}	
 	
 	public void synchronizeIfDelay (int delay) {
+		/*
 		if (APIProxy.isServerSide()) {
 			if (networkSyncTracker.markTimeIfDelay(worldObj, delay)) {
 				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord,
 						zCoord, 40, mod_BuildCraftCore.instance);
 			}
-		}	
+		}
+		*/	
 	}
 	
 	@Override
@@ -385,6 +386,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 	}
 
+	/*
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
 		if (pipe == null && packet.dataInt[3] != 0) {
@@ -415,9 +417,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	public Packet230ModLoader getUpdatePacket() {
 		return pipe.getNetworkPacket();
 	}
-
+*/
 	@Override
 	public Packet getDescriptionPacket() {
+		/*
 		bindPipe();
 		
 		Packet230ModLoader packet = new Packet230ModLoader();
@@ -438,6 +441,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 
 		return packet;
+		*/
+		
+		return null;
 	}
 
 	@Override

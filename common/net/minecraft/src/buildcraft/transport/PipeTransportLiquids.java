@@ -504,7 +504,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
     	    || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
 	}
 	
-	private static long lastSplit = 0;
+	private static long lastSplit = -1;
 	
 	private static int [] splitVector;
 	

@@ -86,7 +86,7 @@ public class CoreProxy {
 	public static void TakenFromCrafting(EntityPlayer thePlayer,
 			ItemStack itemstack, IInventory craftMatrix) {
 
-		ModLoader.takenFromCrafting(thePlayer, itemstack);
+		ModLoader.TakenFromCrafting(thePlayer, itemstack);
 
 	}	
 }

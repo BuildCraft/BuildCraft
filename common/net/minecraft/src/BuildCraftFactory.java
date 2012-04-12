@@ -64,7 +64,7 @@ public class BuildCraftFactory {
 		allowMining = Boolean
 				.parseBoolean(BuildCraftCore.mainConfiguration
 						.getOrCreateBooleanProperty("mining.enabled",
-								Configuration.GENERAL_PROPERTY, true).value);
+								Configuration.CATEGORY_GENERAL, true).value);
 		
 		Property minigWellId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("miningWell.id",

@@ -18,7 +18,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
@@ -162,6 +161,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			engine = newEngine (kind);
 
 			engine.orientation = Orientations.values()[orientation];
+			worldObj.notifyBlockChange(xCoord, yCoord, zCoord, BuildCraftEnergy.engineBlock.blockID);
 		}
 	}
 
@@ -336,6 +336,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		return super.getDescriptionPacket();
 	}
 	
+    /*
 	@Override
 	public Packet230ModLoader getUpdatePacket () {
 		if (engine != null) {		
@@ -357,7 +358,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		createEngineIfNeeded();
 		
 		super.handleUpdatePacket(packet);
-	}
+	} */
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {

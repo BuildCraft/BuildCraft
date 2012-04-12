@@ -22,10 +22,11 @@ import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.buildcraft.transport.RenderPipe;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
-import net.minecraft.src.forge.ICustomItemRenderer;
+import net.minecraft.src.forge.IItemRenderer;
 import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRenderer {
+public class mod_BuildCraftTransport extends NetworkMod implements IItemRenderer {
 		
 	public static mod_BuildCraftTransport instance;
 
@@ -34,45 +35,45 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 		super.modsLoaded();
 		BuildCraftTransport.initialize();
 		
-		CoreProxy.registerGUI(this,
-				Utils.packetIdToInt(PacketIds.DiamondPipeGUI));
+		//CoreProxy.registerGUI(this,
+		//		Utils.packetIdToInt(PacketIds.DiamondPipeGUI));
 		
 
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsWood.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsCobblestone.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsStone.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsIron.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsGold.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsDiamond.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsObsidian.shiftedIndex, this);
 		
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeLiquidsWood.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeLiquidsCobblestone.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeLiquidsStone.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeLiquidsIron.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeLiquidsGold.shiftedIndex, this);
 		
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipePowerWood.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipePowerStone.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipePowerGold.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeStructureCobblestone.shiftedIndex, this);
-		MinecraftForgeClient.registerCustomItemRenderer(
+		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsStipes.shiftedIndex, this);
 		
 		instance = this;
@@ -84,9 +85,10 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 	
 	@Override
 	public String getVersion() {
-		return "3.1.4";
+		return "3.1.5";
 	}
 	
+	/*
 	@Override
     public GuiScreen handleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.DiamondPipeGUI) {
@@ -144,52 +146,84 @@ public class mod_BuildCraftTransport extends BaseModMp implements ICustomItemRen
 			
 			BuildCraftCore.bufferedDescriptions.put(index, packet);
 		}			
-    }
+    } */
 
-	@Override
-	public void renderInventory(RenderBlocks renderblocks, int itemID,
-			int meta) {
+	private void renderPipeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		Tessellator tessellator = Tessellator.instance;
 
 		Block block = BuildCraftTransport.genericPipeBlock;
-		int textureID = ((ItemPipe) Item.itemsList [itemID]).getTextureIndex();
+		int textureID = ((ItemPipe) Item.itemsList [item.itemID]).getTextureIndex();
 		
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
 				Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();
-		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
-		renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderBottomFace(block, 0.0D, 0.0D, 0.0D, textureID);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderTopFace(block, 0.0D, 0.0D, 0.0D, textureID);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, -1F);
-		renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderEastFace(block, 0.0D, 0.0D, 0.0D, textureID);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderWestFace(block, 0.0D, 0.0D, 0.0D, textureID);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderNorthFace(block, 0.0D, 0.0D, 0.0D, textureID);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderSouthFace(block, 0.0D, 0.0D, 0.0D, textureID);
 		tessellator.draw();
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-		
 	}
+
 
 	@Override
 	public void load() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+		switch(type){
+			case ENTITY: return true;
+			case EQUIPPED: return true;
+			case INVENTORY: return true;
+		}
+
+		return false;
+	}
+	
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
+
+	@Override
+	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
+		return true;
+	}
+
+	@Override
+	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+		switch(type){
+		case ENTITY:
+			renderPipeItem((RenderBlocks) data[0], item, -0.5f, -0.5f, -0.5f);
+			break;
+		case EQUIPPED:
+			renderPipeItem((RenderBlocks) data[0], item, -0.4f, 0.50f, 0.35f);
+			break;
+		case INVENTORY:
+			renderPipeItem((RenderBlocks) data[0], item,  -0.5f, -0.5f, -0.5f );
+			break;
+		}
 	}
 }

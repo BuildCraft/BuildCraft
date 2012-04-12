@@ -13,7 +13,6 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.FillerRegistry;
@@ -371,6 +370,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		return null;
 	}
 
+	/*
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
 		boolean initialized = box.isInitialized();
@@ -397,7 +397,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
-	}
+	} */
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {

@@ -19,7 +19,6 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -324,7 +323,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			}
 			
 			if (builderRobot != null) {
-				builderRobot.setEntityDead();
+				builderRobot.setDead();
 				builderRobot = null;
 			}
 			
@@ -523,7 +522,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 		
 		if (builderRobot != null) {
-			builderRobot.setEntityDead();
+			builderRobot.setDead();
 			builderRobot = null;
 		}
 		
@@ -540,6 +539,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		return powerProvider;
 	}
 	
+	/*
 	@Override
 	public void handleDescriptionPacket(Packet230ModLoader packet) {
 		boolean initialized = box.isInitialized();
@@ -560,7 +560,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
-	}
+	}*/
 
 	@Override
 	public void openChest() {
@@ -604,7 +604,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 		
 		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {	
-			builderRobot.setEntityDead();
+			builderRobot.setDead();
 			builderRobot = null;
 		}
 	}
@@ -627,7 +627,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public void cleanPathLasers () {
 		if (pathLasers != null) {
 			for (EntityLaser l : pathLasers) {
-				l.setEntityDead();			
+				l.setDead();			
 			}
 
 			pathLasers = null;

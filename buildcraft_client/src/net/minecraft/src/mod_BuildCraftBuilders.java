@@ -18,8 +18,9 @@ import net.minecraft.src.buildcraft.builders.TileArchitect;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftBuilders extends BaseModMp {
+public class mod_BuildCraftBuilders extends NetworkMod {
 
 	public static mod_BuildCraftBuilders instance;
 	
@@ -37,16 +38,17 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		super.modsLoaded();
 		
 		BuildCraftBuilders.initialize();
-		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
-		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
-		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
+		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
+		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
+		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
 	}
 	
 	@Override
 	public String getVersion() {
-		return "3.1.4";
+		return "3.1.5";
 	}
-	 
+	
+	/*
 	@Override
 	public GuiScreen handleGUI(int i) {		
 		switch (Utils.intToPacketId(i)) {
@@ -67,6 +69,9 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		default:
 			return null;
 		}
-	}
+	} */
+
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
 
 }

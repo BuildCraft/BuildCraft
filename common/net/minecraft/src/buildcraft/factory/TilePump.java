@@ -17,7 +17,6 @@ import java.util.TreeSet;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -327,6 +326,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		// TODO Auto-generated method stub		
 	}
 	
+	/*
 	@Override
 	public void handleDescriptionPacket (Packet230ModLoader packet) {
 		super.handleDescriptionPacket(packet);
@@ -339,7 +339,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		super.handleDescriptionPacket(packet);
 		
 		setTubePosition();		
-	}
+	} */
 	
 	private void setTubePosition () {
 		if (tube != null) {

@@ -38,8 +38,9 @@ import net.minecraft.src.buildcraft.core.RenderEnergyLaser;
 import net.minecraft.src.buildcraft.core.RenderLaser;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftCore extends BaseModMp {
+public class mod_BuildCraftCore extends NetworkMod {
 
 	public static mod_BuildCraftCore instance;
 
@@ -107,7 +108,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	public static String version() {
-		return "3.1.4";
+		return "3.1.5";
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -817,6 +818,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 		}
 	}
 
+	/*
 	@Override
 	public void handlePacket(Packet230ModLoader packet) {
 		switch (PacketIds.values()[packet.packetType]) {
@@ -828,7 +830,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 			break;
 
 		}
-	}
+	}*/
 	
 	long lastReport = 0;
 	
@@ -854,4 +856,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 		
 	}
 
+
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
 }

@@ -22,9 +22,10 @@ import net.minecraft.src.buildcraft.factory.RenderTank;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.buildcraft.factory.TileTank;
+import net.minecraft.src.forge.NetworkMod;
 import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 
-public class mod_BuildCraftFactory extends BaseModMp {		
+public class mod_BuildCraftFactory extends NetworkMod {		
 	
 	public static mod_BuildCraftFactory instance;
 	
@@ -34,7 +35,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 		BuildCraftFactory.initialize();
 		
-		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
+		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
 		
 		ModLoader
 		.registerTileEntity(TileTank.class,
@@ -53,7 +54,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		
 	@Override
 	public String getVersion() {
-		return "3.1.4";
+		return "3.1.5";
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -62,6 +63,7 @@ public class mod_BuildCraftFactory extends BaseModMp {
     	map.put (EntityMechanicalArm.class, new RenderVoid());
     }
 	
+	/*
 	@Override
     public GuiScreen handleGUI(int i) {    	
     	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
@@ -72,11 +74,14 @@ public class mod_BuildCraftFactory extends BaseModMp {
     	} else {
     		return null;
     	}
-    }
+    } */
     
 	@Override
 	public void load() {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
 }

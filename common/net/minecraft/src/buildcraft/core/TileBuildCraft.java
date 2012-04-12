@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -61,7 +60,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 	
 	public void initialize () {
-		Utils.handleBufferedDescription(this);
+		//Utils.handleBufferedDescription(this);
 	}
 	
 	public void destroy () {
@@ -69,18 +68,20 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 	
 	public void sendNetworkUpdate() {
+		/*
 		if (this instanceof ISynchronizedTile) {
 			CoreProxy.sendToPlayers(
 					((ISynchronizedTile) this).getUpdatePacket(), xCoord,
 					yCoord, zCoord, 50, mod_BuildCraftCore.instance);
-		}
+		}*/
 	}
 	
 	@Override
 	public Packet getDescriptionPacket() {		
-		return descriptionPacket.toPacket(this);
+		return null;
     }
 	
+	/*
 	@Override
 	public Packet230ModLoader getUpdatePacket() {
 		return updatePacket.toPacket(this);
@@ -99,6 +100,6 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	@Override
 	public void postPacketHandling (Packet230ModLoader packet) {
 		
-	}
+	} */
 	
 }

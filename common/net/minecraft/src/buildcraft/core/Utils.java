@@ -20,7 +20,6 @@ import net.minecraft.src.InventoryLargeChest;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
@@ -323,6 +322,7 @@ public class Utils {
 		return lasers;
 	}
 
+	/*
 	public static void handleDescriptionPacket (Packet230ModLoader packet, World world) {
 		int x = packet.dataInt[0];
 		int y = packet.dataInt[1];
@@ -379,7 +379,7 @@ public class Utils {
 			tileSynch.postPacketHandling(packet);
 		}
 	}
-	
+	*/
 	public static int liquidId (int blockId) {
 		if (blockId == Block.waterStill.blockID
 				|| blockId == Block.waterMoving.blockID) {

@@ -74,7 +74,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 	
 	private void deleteLaser () {
 		if (laser != null) {
-			laser.setEntityDead();
+			laser.setDead();
 			laser = null;
 			assemblyTable = null;
 		}

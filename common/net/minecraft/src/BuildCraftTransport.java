@@ -132,24 +132,24 @@ public class BuildCraftTransport {
 		mod_BuildCraftCore.initialize();						
 			
 		Property loadLegacyPipes = BuildCraftCore.mainConfiguration
-		.getOrCreateBooleanProperty("loadLegacyPipes", Configuration.GENERAL_PROPERTY, true);
+		.getOrCreateBooleanProperty("loadLegacyPipes", Configuration.CATEGORY_GENERAL, true);
 		loadLegacyPipes.comment = "set to true to load pre 2.2.5 worlds pipes";		
 		
 		Property alwaysConnect = BuildCraftCore.mainConfiguration
 				.getOrCreateBooleanProperty("pipes.alwaysConnect",
-						Configuration.GENERAL_PROPERTY,
+						Configuration.CATEGORY_GENERAL,
 						DefaultProps.PIPES_ALWAYS_CONNECT);
 		alwaysConnect.comment = "set to false to deactivate pipe connection rules, true by default";
 
 		Property exclusionList = BuildCraftCore.mainConfiguration
 				.getOrCreateProperty("woodenPipe.exclusion",
-						Configuration.BLOCK_PROPERTY, "");
+						Configuration.CATEGORY_BLOCK, "");
 
 		PipeLogicWood.excludedBlocks = exclusionList.value.split(",");
 		
 		Property maxItemInPipesProp = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("pipes.maxItems",
-				Configuration.GENERAL_PROPERTY,
+				Configuration.CATEGORY_GENERAL,
 				100);
 		maxItemInPipesProp.comment = "pipes containing more than this amount of items will explode, not dropping any item";
 
@@ -157,7 +157,7 @@ public class BuildCraftTransport {
 		
 		Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("pipes.groupItemsTrigger",
-				Configuration.GENERAL_PROPERTY,
+				Configuration.CATEGORY_GENERAL,
 				32);
 		groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 
@@ -350,7 +350,7 @@ public class BuildCraftTransport {
 		
 		Property prop = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty(name + ".id",
-						Configuration.ITEM_PROPERTY, defaultID);
+						Configuration.CATEGORY_ITEM, defaultID);
 		
 		int id = Integer.parseInt(prop.value);
 		Item res =  BlockGenericPipe.registerPipe (id, clas);

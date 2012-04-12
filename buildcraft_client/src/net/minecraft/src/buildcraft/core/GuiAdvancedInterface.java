@@ -113,7 +113,7 @@ public abstract class GuiAdvancedInterface extends GuiContainer {
         GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
         int i1 = 240;
         int k1 = 240;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapEnabled, (float)i1 / 1.0F, (float)k1 / 1.0F);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)i1 / 1.0F, (float)k1 / 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		for (int s = 0; s < slots.length; ++s) {

@@ -12,7 +12,6 @@ package net.minecraft.src.buildcraft.builders;
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -358,7 +357,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			if (markerOrigin != null && markerOrigin.lasers != null) {
 				for (EntityBlock e : markerOrigin.lasers) {
 					if (e != null) {
-						e.setEntityDead();
+						e.setDead();
 					}
 				}			
 			}
@@ -395,7 +394,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		if (signals != null) {
 			for (EntityBlock b : signals) {
 				if (b != null) {
-					b.setEntityDead();
+					b.setDead();
 				}
 			}
 		}				
@@ -482,6 +481,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 	}
 	
+	/*
 	@Override
 	public Packet230ModLoader getUpdatePacket () {	
 		TileMarker marker = origin.vectO.getMarker(worldObj);
@@ -512,6 +512,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 		
 		createLasers();
-	}
+	} */
 	
 }

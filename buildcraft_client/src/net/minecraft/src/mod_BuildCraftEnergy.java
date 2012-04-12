@@ -25,8 +25,9 @@ import net.minecraft.src.buildcraft.energy.TextureFuelFX;
 import net.minecraft.src.buildcraft.energy.TextureOilFX;
 import net.minecraft.src.buildcraft.energy.TextureOilFlowFX;
 import net.minecraft.src.buildcraft.energy.TileEngine;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftEnergy extends BaseModMp {
+public class mod_BuildCraftEnergy extends NetworkMod {
 
 	public static mod_BuildCraftEnergy instance;
 	
@@ -52,17 +53,18 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		ModLoader.registerTileEntity(TileEngine.class,
 				"net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
 		
-		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineSteamGUI));
-		CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineCombustionGUI));	
+		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineSteamGUI));
+		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineCombustionGUI));	
 		
 		instance = this;
 	}
 	
 	@Override
 	public String getVersion() {
-		return "3.1.4";
+		return "3.1.5";
 	}
 
+	/*
 	@Override
 	public GuiScreen handleGUI(int i) {
 		TileEngine tile = new TileEngine();
@@ -79,7 +81,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		default:
 			return null;
 		}
-	}
+	} */
 	
 	@Override
     public void generateSurface(World world, Random random, int i, int j) {
@@ -91,5 +93,8 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
 
 }

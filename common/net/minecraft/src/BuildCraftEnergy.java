@@ -76,13 +76,13 @@ public class BuildCraftEnergy {
 		.getOrCreateBlockIdProperty("oilMoving.id", DefaultProps.OIL_MOVING_ID);
 		Property bucketOilId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("bucketOil.id",
-						Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_OIL_ID);
+						Configuration.CATEGORY_ITEM, DefaultProps.BUCKET_OIL_ID);
 		Property bucketFuelId = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("bucketFuel.id",
-				Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_FUEL_ID);
+				Configuration.CATEGORY_ITEM, DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("fuel.id",
-				Configuration.ITEM_PROPERTY, DefaultProps.FUEL_ID);
+				Configuration.CATEGORY_ITEM, DefaultProps.FUEL_ID);
 		
 		BuildCraftCore.mainConfiguration.save();
 		

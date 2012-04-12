@@ -259,12 +259,12 @@ public class EntityMechanicalArm extends Entity {
     }
 
     @Override
-	public void setEntityDead() {    
-		xArm.setEntityDead ();
-		yArm.setEntityDead ();
-		zArm.setEntityDead ();
-		head.setEntityDead ();
-		super.setEntityDead ();
+	public void setDead() {    
+		xArm.setDead ();
+		yArm.setDead ();
+		zArm.setDead ();
+		head.setDead ();
+		super.setDead ();
 		
 	}
 	

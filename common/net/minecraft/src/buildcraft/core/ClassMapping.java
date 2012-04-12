@@ -267,8 +267,8 @@ public class ClassMapping {
 		
 		for (Field f : stringFields) {
 			stringValues [index.stringIndex] = (String) f.get(obj);
-			index.stringIndex++;
 			r.bytes += stringValues [index.stringIndex].length();
+			index.stringIndex++;
 			r.dataString += 1;
 		}
 		
@@ -442,8 +442,8 @@ public class ClassMapping {
 		
 		for (Field f : stringFields) {
 			f.set(obj, stringValues [index.stringIndex]);
-			index.stringIndex++;
 			r.bytes += stringValues [index.stringIndex].length();
+			index.stringIndex++;
 			r.dataString += 1;
 		}
 		

@@ -10,9 +10,10 @@
 package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.devel.BlockCheat;
+import net.minecraft.src.forge.NetworkMod;
 import net.minecraft.src.forge.Property;
 
-public class mod_BuildCraftDevel extends BaseModMp {	
+public class mod_BuildCraftDevel extends NetworkMod {	
 
 	public static BlockCheat cheatBlock;
 	
@@ -39,7 +40,7 @@ public class mod_BuildCraftDevel extends BaseModMp {
 	
 	@Override
 	public String getVersion() {
-		return "3.1.4";
+		return "3.1.5";
 	}
 
 	@Override
@@ -47,4 +48,7 @@ public class mod_BuildCraftDevel extends BaseModMp {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
 }

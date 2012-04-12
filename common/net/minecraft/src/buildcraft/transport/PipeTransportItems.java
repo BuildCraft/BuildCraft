@@ -22,7 +22,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -101,10 +100,11 @@ public class PipeTransportItems extends PipeTransport {
 		}
 		
 		if (APIProxy.isServerSide()) {
-			if (item.synchroTracker.markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {				
+			if (item.synchroTracker.markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {
+				/*
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
 						xCoord, yCoord, zCoord, 50,
-						mod_BuildCraftTransport.instance);
+						mod_BuildCraftTransport.instance); */
 			}
 		}
 		
@@ -452,6 +452,7 @@ public class PipeTransportItems extends PipeTransport {
 	
 	public static TilePacketWrapper networkItemData = null;
 	
+	/*
 	public void handleItemPacket(Packet230ModLoader packet) {
 		if (networkItemData == null) {
 			networkItemData = new TilePacketWrapper(ItemData.class, PacketIds.PipeItem);
@@ -513,7 +514,7 @@ public class PipeTransportItems extends PipeTransport {
 		packet.modId = mod_BuildCraftTransport.instance.getId();
 		
 		return packet;
-	}
+	} */
 
 	public int getNumberOfItems () {
 		return travelingEntities.size();
