@@ -9,9 +9,12 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -23,6 +26,11 @@ import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockQuarry extends BlockMachineRoot implements
 		ITextureProvider, IPipeConnection {
+	
+	@Override
+	public void addCreativeItems(ArrayList a) {
+		a.add(new ItemStack(this, 1));
+	}
 	
 	int textureTop;
 	int textureFront;

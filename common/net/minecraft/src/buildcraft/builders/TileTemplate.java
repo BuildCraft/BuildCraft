@@ -15,7 +15,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -26,6 +25,8 @@ import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileTemplate extends TileBuildCraft implements IInventory {
 	
@@ -280,7 +281,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
     }
     
     @Override
-	public void handleDescriptionPacket(Packet230ModLoader packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 		
 		super.handleDescriptionPacket(packet);		
@@ -291,7 +292,7 @@ public class TileTemplate extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {
+	public void handleUpdatePacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 		
 		super.handleUpdatePacket(packet);

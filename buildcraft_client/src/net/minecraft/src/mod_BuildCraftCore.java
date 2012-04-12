@@ -20,18 +20,19 @@ import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ClassMapping;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraft.src.forge.NetworkMod;
 
 import org.lwjgl.opengl.GL11;
 
-public class mod_BuildCraftCore extends BaseModMp {
+public class mod_BuildCraftCore extends NetworkMod {
 
 	public static mod_BuildCraftCore instance;
 
@@ -101,7 +102,7 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 
 	public static String version() {
-		return "2.2.13";
+		return DefaultProps.VERSION;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -520,19 +521,6 @@ public class mod_BuildCraftCore extends BaseModMp {
 		}
 	}
 
-	@Override
-	public void handlePacket(Packet230ModLoader packet) {
-		switch (PacketIds.values()[packet.packetType]) {
-		case TileDescription:
-			Utils.handleDescriptionPacket(packet);
-			break;
-		case TileUpdate:
-			Utils.handleUpdatePacket(packet);
-			break;
-
-		}
-	}
-	
 	long lastReport = 0;
 	
 	@Override
@@ -553,7 +541,9 @@ public class mod_BuildCraftCore extends BaseModMp {
 
 	@Override
 	public void load() {
-		// TODO Auto-generated method stub
-		
+		BuildCraftCore.load();
 	}
+	
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return true; }
 }

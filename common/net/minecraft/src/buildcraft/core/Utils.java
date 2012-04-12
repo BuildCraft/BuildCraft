@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.core;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
@@ -18,7 +19,6 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryLargeChest;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
@@ -30,6 +30,8 @@ import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class Utils {	
 	
@@ -320,60 +322,17 @@ public class Utils {
 		return lasers;
 	}
 
-	public static void handleDescriptionPacket (Packet230ModLoader packet) {
-		int x = packet.dataInt[0];
-		int y = packet.dataInt[1];
-		int z = packet.dataInt[2];
-
-		if (APIProxy.getWorld().blockExists(x, y, z)) {
-			TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-
-			if (tile instanceof ISynchronizedTile) {
-				((ISynchronizedTile) tile).handleDescriptionPacket(packet);
-				((ISynchronizedTile) tile).postPacketHandling(packet);
-
-				return;
-			}
-		}
-
-		BlockIndex index = new BlockIndex(x, y, z);
-
-		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {			
-			BuildCraftCore.bufferedDescriptions.remove(index);
-		}
-		
-		BuildCraftCore.bufferedDescriptions.put(index, packet);
-	}
-	
-	public static void handleUpdatePacket (Packet230ModLoader packet) {
-		int x = packet.dataInt[0];
-		int y = packet.dataInt[1];
-		int z = packet.dataInt[2];
-		
-		if (APIProxy.getWorld().blockExists(x, y, z)) {
-			TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-			
-			if (tile instanceof ISynchronizedTile) {
-				
-				((ISynchronizedTile) tile).handleUpdatePacket(packet);	
-				((ISynchronizedTile) tile).postPacketHandling(packet);	
-				
-				return;
-			}
-		}
-	}
-	
 	public static void handleBufferedDescription (ISynchronizedTile tileSynch) {
 		TileEntity tile = (TileEntity) tileSynch;
 		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);		
 		
 		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
 			
-			Packet230ModLoader packet = BuildCraftCore.bufferedDescriptions.get(index);
+			PacketUpdate payload = BuildCraftCore.bufferedDescriptions.get(index);
 			BuildCraftCore.bufferedDescriptions.remove(index);
 			
-			tileSynch.handleDescriptionPacket(packet);
-			tileSynch.postPacketHandling(packet);
+			tileSynch.handleDescriptionPacket(payload);
+			tileSynch.postPacketHandling(payload);
 		}
 	}
 	
@@ -467,7 +426,25 @@ public class Utils {
 			return false;
 		}
 
-		return true;
-		
+		return true;	
 	}
+	
+	public static <T> T[] concat(T[] first, T[] second) {
+		  T[] result = Arrays.copyOf(first, first.length + second.length);
+		  System.arraycopy(second, 0, result, first.length, second.length);
+		  return result;
+	}
+	
+	public static int[] concat(int[] first, int[] second) {
+		  int[] result = Arrays.copyOf(first, first.length + second.length);
+		  System.arraycopy(second, 0, result, first.length, second.length);
+		  return result;
+	}
+	
+	public static float[] concat(float[] first, float[] second) {
+		  float[] result = Arrays.copyOf(first, first.length + second.length);
+		  System.arraycopy(second, 0, result, first.length, second.length);
+		  return result;
+	}
+
 }

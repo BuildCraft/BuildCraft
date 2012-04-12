@@ -18,25 +18,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class BuildersProxy {
 
-	public static void displayGUITemplate(EntityPlayer entityplayer,
-			TileTemplate tile) {
-		ModLoader.openGUI(entityplayer, Utils.packetIdToInt(PacketIds.TemplateGUI),
-				tile, new CraftingTemplate(entityplayer.inventory, tile));
-	}
-	
-	public static void displayGUIBuilder(EntityPlayer entityplayer,
-			TileBuilder tile) {
-		ModLoader.openGUI(entityplayer, Utils.packetIdToInt(PacketIds.BuilderGUI),
-				tile, new CraftingBuilder(entityplayer.inventory, tile));
-	}
-
-	public static void displayGUIFiller(EntityPlayer entityplayer,
-			TileFiller tile) {		
-		
-		ModLoader.openGUI(entityplayer, Utils.packetIdToInt(PacketIds.FillerGUI),
-				tile, new CraftingFiller(entityplayer.inventory, tile));
-	}
-
 	public static boolean canPlaceTorch(World world, int i, int j, int k) {
 		Block block = Block.blocksList [world.getBlockId(i, j, k)];
 		

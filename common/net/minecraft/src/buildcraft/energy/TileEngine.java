@@ -14,7 +14,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -26,6 +25,8 @@ import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		IInventory, ILiquidContainer, IEngineProvider {
@@ -290,21 +291,21 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	}
 	
 	@Override
-	public Packet230ModLoader getUpdatePacket () {
+	public Packet getUpdatePacket () {
 		serverPistonSpeed = engine.getPistonSpeed();
 		
 		return super.getUpdatePacket();
 	}
 
 	@Override
-	public void handleDescriptionPacket(Packet230ModLoader packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) {
 		createEngineIfNeeded();
 		
 		super.handleDescriptionPacket(packet);
 	}
 
 	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {
+	public void handleUpdatePacket(PacketUpdate packet) {
 		createEngineIfNeeded();
 		
 		super.handleUpdatePacket(packet);

@@ -16,15 +16,16 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.PacketIds;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
+import net.minecraft.src.buildcraft.core.GuiIds;
+import net.minecraft.src.buildcraft.core.network.PacketIds;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public class PipeLogicDiamond extends PipeLogic {
 	
@@ -48,8 +49,7 @@ public class PipeLogicDiamond extends PipeLogic {
 	public PipeLogicDiamond () {
 		if (networkPacket == null) {
 			networkPacket = new TilePacketWrapper(new Class[] {
-					PacketStack.class },
-					PacketIds.DiamondPipeContents);
+					PacketStack.class });
 		}
 	}
 	
@@ -63,7 +63,8 @@ public class PipeLogicDiamond extends PipeLogic {
 			}
 		}
 		
-		TransportProxy.displayGUIFilter(entityplayer, this.container);
+		if(!APIProxy.isClient(container.worldObj))
+			entityplayer.openGui(mod_BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
 		
 		return true;		
 	}	 
@@ -92,7 +93,7 @@ public class PipeLogicDiamond extends PipeLogic {
 		if (APIProxy.isServerSide()) {
 			for (int p = 0; p < 6; ++p) {
 				CoreProxy.sendToPlayers(
-						(Packet230ModLoader) getContentsPacket(p), xCoord,
+						getContentsPacket(p), xCoord,
 						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 			}
 		}
@@ -117,7 +118,7 @@ public class PipeLogicDiamond extends PipeLogic {
 		if (APIProxy.isServerSide()) {
 			for (int p = 0; p < 6; ++p) {
 				CoreProxy.sendToPlayers(
-						(Packet230ModLoader) getContentsPacket(p), xCoord,
+						getContentsPacket(p), xCoord,
 						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 			}
 		}
@@ -129,7 +130,7 @@ public class PipeLogicDiamond extends PipeLogic {
 			if (APIProxy.isServerSide()) {
 				for (int p = 0; p < 6; ++p) {
 					CoreProxy.sendToPlayers(
-							(Packet230ModLoader) getContentsPacket(p), xCoord,
+							getContentsPacket(p), xCoord,
 							yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 				}
 			}
@@ -206,39 +207,14 @@ public class PipeLogicDiamond extends PipeLogic {
 			 
 		}
 		
-		return networkPacket.toPacket(xCoord, yCoord, zCoord, stacks);
+		return new PacketUpdate(PacketIds.DIAMOND_PIPE_CONTENTS, networkPacket.toPayload(xCoord, yCoord, zCoord, stacks)).getPacket();
 		
-//		Packet230ModLoader packet = new Packet230ModLoader();
-//
-//		packet.modId = mod_BuildCraftTransport.instance.getId();
-//		packet.packetType = PacketIds.DiamondPipeContents.ordinal();
-//		packet.isChunkDataPacket = true;
-//
-//		packet.dataInt = new int [3 + 1 + 9 * 2];
-//		
-//		packet.dataInt [0] = xCoord;
-//		packet.dataInt [1] = yCoord;
-//		packet.dataInt [2] = zCoord;
-//		packet.dataInt [3] = num;
-//		
-//		for (int j = 0; j < 9; ++j) {
-//			if (items [j + num * 9] == null) {
-//				packet.dataInt [4 + j * 2 + 0] = -1;
-//				packet.dataInt [4 + j * 2 + 1] = -1;
-//			} else {
-//				packet.dataInt [4 + j * 2 + 0] = items [j + num * 9].itemID;
-//				packet.dataInt [4 + j * 2 + 1] = items [j + num * 9].getItemDamage();
-//			}
-//			 
-//		}
-		
-//		return packet;
     }
 	
-	public void handleContentsPacket (Packet230ModLoader packet) {
+	public void handleContentsPacket (PacketUpdate packet) {
 		PacketStack stacks = new PacketStack();
 		
-		networkPacket.updateFromPacket(stacks, packet);
+		networkPacket.fromPayload(stacks, packet.payload);
 
 		int num = stacks.num;
 		
@@ -251,20 +227,6 @@ public class PipeLogicDiamond extends PipeLogic {
 			}			 
 		}
 		
-//		if (packet.packetType != PacketIds.DiamondPipeContents.ordinal()) {
-//			return;
-//		}
-		
-//		int num = packet.dataInt [3];
-//		
-//		for (int j = 0; j < 9; ++j) {
-//			if (packet.dataInt [4 + j * 2 + 0] == -1) {
-//				items [num * 9 + j] = null;
-//			} else {
-//				items[num * 9 + j] = new ItemStack(packet.dataInt[3 + j * 2 + 0], 1,
-//						packet.dataInt[3 + j * 2 + 1]);
-//			}			 
-//		}
 	}
 
 }

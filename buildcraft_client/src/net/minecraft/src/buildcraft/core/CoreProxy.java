@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
@@ -23,9 +22,11 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModTextureStatic;
-import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.Packet;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.World;
+import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraft.src.forge.NetworkMod;
 
 import org.lwjgl.opengl.GL11;
 
@@ -47,7 +48,7 @@ public class CoreProxy {
 	}	
 	
 	public static void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
-		stack.func_48507_a(world, player, stack.stackSize);
+		stack.onCrafting(world, player, stack.stackSize);
 	}
 	
 	public static void setField804 (EntityItem item, float value) {
@@ -63,8 +64,8 @@ public class CoreProxy {
 		return new File(Minecraft.getMinecraftDir(), "/buildcraft/");
 	}
 	
-	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
-			int z, int maxDistance, BaseModMp mod) {
+	public static void sendToPlayers(Packet packet, int x, int y,
+			int z, int maxDistance, NetworkMod mod) {
 
 	}
 	

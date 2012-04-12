@@ -9,19 +9,31 @@
 
 package net.minecraft.src.buildcraft.energy;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraftEnergy;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.GuiIds;
 
 public class BlockEngine extends BlockContainer implements IPipeConnection {
+	
+	@Override
+	public void addCreativeItems(ArrayList a) {
+		a.add(new ItemStack(this, 1, 0));
+		a.add(new ItemStack(this, 1, 1));
+		a.add(new ItemStack(this, 1, 2));
+	}
 	
 	public BlockEngine(int i) {
 		super(i, Material.iron);
@@ -73,10 +85,12 @@ public class BlockEngine extends BlockContainer implements IPipeConnection {
 			return true;
 		} else {
 			if (tile.engine instanceof EngineStone) {
-				EnergyProxy.displayGUISteamEngine(entityplayer, tile);
+				if(!APIProxy.isClient(tile.worldObj))
+					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				return true;
 			} else if (tile.engine instanceof EngineIron) {
-				EnergyProxy.displayGUICombustionEngine(entityplayer, tile);
+				if(!APIProxy.isClient(tile.worldObj))
+					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				return true;
 			}
 		}

@@ -13,7 +13,7 @@ import java.util.Map;
 
 import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.core.PacketIds;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RenderVoid;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
@@ -23,19 +23,22 @@ import net.minecraft.src.buildcraft.factory.RenderTank;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileRefinery;
 import net.minecraft.src.buildcraft.factory.TileTank;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftFactory extends BaseModMp {		
+public class mod_BuildCraftFactory extends NetworkMod {		
 	
 	public static mod_BuildCraftFactory instance;
+	
+	public mod_BuildCraftFactory() {
+		instance = this;
+	}
 	
 	@Override
 	public void modsLoaded () {		
 		super.modsLoaded();
 		
 		BuildCraftFactory.initialize();
-		
-		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
-		
+				
 		ModLoader
 		.registerTileEntity(TileTank.class,
 				"net.minecraft.src.buildcraft.factory.TileTank",
@@ -48,12 +51,11 @@ public class mod_BuildCraftFactory extends BaseModMp {
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
 				BuildCraftFactory.refineryBlock, 0), new RenderRefinery());	
 		
-		instance = this;
 	}
 		
 	@Override
 	public String getVersion() {
-		return "2.2.13";
+		return DefaultProps.VERSION;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -63,20 +65,10 @@ public class mod_BuildCraftFactory extends BaseModMp {
     }
 	
 	@Override
-    public GuiScreen handleGUI(int i) {    	
-    	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
-			return new GuiAutoCrafting(
-					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					APIProxy.getWorld(),
-					new TileAutoWorkbench());
-    	} else {
-    		return null;
-    	}
-    }
-
-	@Override
 	public void load() {
-		// TODO Auto-generated method stub
-		
-	}
+		BuildCraftFactory.load();
+		}
+	
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return false; }
 }

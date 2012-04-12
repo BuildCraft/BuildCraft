@@ -15,6 +15,7 @@ import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.transport.BlockDockingStation;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
+import net.minecraft.src.buildcraft.transport.GuiHandler;
 import net.minecraft.src.buildcraft.transport.LegacyBlock;
 import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -22,6 +23,7 @@ import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.TileDummyGenericPipe;
 import net.minecraft.src.buildcraft.transport.TileDummyGenericPipe2;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.transport.network.ConnectionHandler;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
@@ -38,6 +40,7 @@ import net.minecraft.src.buildcraft.transport.pipes.PipePowerGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerWood;
 import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
 
 public class BuildCraftTransport {
@@ -78,6 +81,14 @@ public class BuildCraftTransport {
 	
 	private static LinkedList <PipeRecipe> pipeRecipes = new LinkedList <PipeRecipe> ();
 	
+	public static void load() {
+		// Register connection handler
+		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
+	
+		// Register gui handler
+		MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
+	}
+
 	public static void initialize () {
 		if (initialized) {
 			return;
@@ -88,18 +99,18 @@ public class BuildCraftTransport {
 		mod_BuildCraftCore.initialize();						
 			
 		Property loadLegacyPipes = BuildCraftCore.mainConfiguration
-		.getOrCreateBooleanProperty("loadLegacyPipes", Configuration.GENERAL_PROPERTY, true);
+		.getOrCreateBooleanProperty("loadLegacyPipes", Configuration.CATEGORY_GENERAL, true);
 		loadLegacyPipes.comment = "set to true to load pre 2.2.5 worlds pipes";		
 		
 		Property alwaysConnect = BuildCraftCore.mainConfiguration
 				.getOrCreateBooleanProperty("pipes.alwaysConnect",
-						Configuration.GENERAL_PROPERTY,
+						Configuration.CATEGORY_GENERAL,
 						DefaultProps.PIPES_ALWAYS_CONNECT);
 		alwaysConnect.comment = "set to false to deactivate pipe connection rules, true by default";
 
 		Property exclusionList = BuildCraftCore.mainConfiguration
 				.getOrCreateProperty("woodenPipe.exclusion",
-						Configuration.BLOCK_PROPERTY, "");
+						Configuration.CATEGORY_BLOCK, "");
 
 		PipeLogicWood.excludedBlocks = exclusionList.value.split(",");
 		
@@ -237,7 +248,7 @@ public class BuildCraftTransport {
 		
 		Property prop = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty(name + ".id",
-						Configuration.ITEM_PROPERTY, defaultID);
+						Configuration.CATEGORY_ITEM, defaultID);
 		
 		int id = Integer.parseInt(prop.value);
 		Item res =  BlockGenericPipe.registerPipe (id, clas);

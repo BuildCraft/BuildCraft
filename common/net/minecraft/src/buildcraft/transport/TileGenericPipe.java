@@ -13,7 +13,6 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -28,10 +27,14 @@ import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
-import net.minecraft.src.buildcraft.core.ISynchronizedTile;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.PersistentWorld;
+import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.network.PacketPayload;
+import net.minecraft.src.buildcraft.core.network.PacketPipeDescription;
+import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile {
@@ -325,9 +328,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	@Override
-	public void handleDescriptionPacket(Packet230ModLoader packet) {
-		if (pipe == null && packet.dataInt[3] != 0) {
-			pipe = BlockGenericPipe.createPipe(packet.dataInt[3]);
+	public void handleDescriptionPacket(PacketUpdate packet) {
+		if (pipe == null && packet.payload.intPayload[0] != 0) {
+			pipe = BlockGenericPipe.createPipe(packet.payload.intPayload[0]);
 			pipeBound = false;
 			bindPipe();
 			
@@ -338,45 +341,39 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {				
+	public void handleUpdatePacket(PacketUpdate packet) {				
 		if (BlockGenericPipe.isValid(pipe)) {
 			pipe.handlePacket(packet);
 		}
 	}
 
 	@Override
-	public void postPacketHandling(Packet230ModLoader packet) {
+	public void postPacketHandling(PacketUpdate packet) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public Packet230ModLoader getUpdatePacket() {
-		return pipe.getNetworkPacket();
+	public Packet getUpdatePacket() {
+		return new PacketTileUpdate(this).getPacket();
 	}
 
 	@Override
 	public Packet getDescriptionPacket() {
 		bindPipe();
-		
-		Packet230ModLoader packet = new Packet230ModLoader();
-		packet.modId = mod_BuildCraftCore.instance.getId();
-		packet.isChunkDataPacket = true;
-		packet.packetType = PacketIds.TileDescription.ordinal();
-
-		packet.dataInt = new int[4];
-		packet.dataInt[0] = xCoord;
-		packet.dataInt[1] = yCoord;
-		packet.dataInt[2] = zCoord;
-		
-		if (pipe != null) {
-			packet.dataInt[3] = pipe.itemID;
-		} else {
-			packet.dataInt[3] = 0;
-			
-		}
-
-		return packet;
+	
+		PacketPipeDescription packet;
+		if(pipe != null)
+			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, pipe.itemID);
+		else
+			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, 0);
+	
+		return packet.getPacket();
+	}
+	
+	@Override
+	public PacketPayload getPacketPayload() {
+		return pipe.getNetworkPacket();
 	}
 
 	@Override

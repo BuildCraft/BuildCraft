@@ -31,7 +31,7 @@ public class APIProxy {
 	}
 
 	public static void removeEntity (Entity entity) {
-		entity.setEntityDead();
+		entity.setDead();
 		
 		if (entity.worldObj instanceof WorldClient) {
 			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);

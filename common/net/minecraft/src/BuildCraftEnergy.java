@@ -21,6 +21,7 @@ import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
+import net.minecraft.src.buildcraft.energy.GuiHandler;
 import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
 import net.minecraft.src.buildcraft.energy.ItemFuel;
@@ -50,6 +51,11 @@ public class BuildCraftEnergy {
 	
 	private static boolean initialized = false;
 	
+	public static void load() {
+		// Register gui handler
+		MinecraftForge.setGuiHandler(mod_BuildCraftEnergy.instance, new GuiHandler());
+	}
+	
 	public static void initialize () {
 		if (initialized) {
 			return;
@@ -68,13 +74,13 @@ public class BuildCraftEnergy {
 		.getOrCreateBlockIdProperty("oilMoving.id", DefaultProps.OIL_MOVING_ID);
 		Property bucketOilId = BuildCraftCore.mainConfiguration
 				.getOrCreateIntProperty("bucketOil.id",
-						Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_OIL_ID);
+						Configuration.CATEGORY_ITEM, DefaultProps.BUCKET_OIL_ID);
 		Property bucketFuelId = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("bucketFuel.id",
-				Configuration.ITEM_PROPERTY, DefaultProps.BUCKET_FUEL_ID);
+				Configuration.CATEGORY_ITEM, DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration
 		.getOrCreateIntProperty("fuel.id",
-				Configuration.ITEM_PROPERTY, DefaultProps.FUEL_ID);
+				Configuration.CATEGORY_ITEM, DefaultProps.FUEL_ID);
 		
 		BuildCraftCore.mainConfiguration.save();
 		

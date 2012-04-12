@@ -9,9 +9,16 @@
 
 package net.minecraft.src;
 
-public class mod_BuildCraftTransport extends BaseModMp {
+import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.forge.NetworkMod;
+
+public class mod_BuildCraftTransport extends NetworkMod {
 	
 	public static mod_BuildCraftTransport instance;
+	
+	public mod_BuildCraftTransport() {
+		instance = this;
+	}
 	
 	@Override
 	public void modsLoaded () {
@@ -24,7 +31,7 @@ public class mod_BuildCraftTransport extends BaseModMp {
 		
 	@Override
 	public String getVersion() {
-		return "2.2.13";
+		return DefaultProps.VERSION;
 	}    
 	
 	public static void registerTilePipe (Class <? extends TileEntity> clas, String name) {
@@ -34,7 +41,10 @@ public class mod_BuildCraftTransport extends BaseModMp {
 
 	@Override
 	public void load() {
-		// TODO Auto-generated method stub
-		
+		BuildCraftTransport.load();
 	}
+
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return false; }
+
 }

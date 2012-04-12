@@ -20,6 +20,7 @@ import net.minecraft.src.buildcraft.builders.FillerFillStairs;
 import net.minecraft.src.buildcraft.builders.FillerFillWalls;
 import net.minecraft.src.buildcraft.builders.FillerFlattener;
 import net.minecraft.src.buildcraft.builders.FillerRemover;
+import net.minecraft.src.buildcraft.builders.GuiHandler;
 import net.minecraft.src.buildcraft.builders.ItemTemplate;
 import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
@@ -30,6 +31,7 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.FillerRegistry;
 import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
 
 public class BuildCraftBuilders {
@@ -41,6 +43,11 @@ public class BuildCraftBuilders {
 	
 	private static boolean initialized = false;
 	
+	public static void load() {
+		// Register gui handler
+		MinecraftForge.setGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
+	}
+
 	public static void initialize () {	
 		if (initialized) {
 			return;
@@ -52,7 +59,7 @@ public class BuildCraftBuilders {
 		BuildCraftCore.initializeGears();
 		
 		Property templateItemId = BuildCraftCore.mainConfiguration
-				.getOrCreateIntProperty("templateItem.id", Configuration.ITEM_PROPERTY,
+				.getOrCreateIntProperty("templateItem.id", Configuration.CATEGORY_ITEM,
 						DefaultProps.TEMPLATE_ITEM_ID);
 		Property markerId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("marker.id", DefaultProps.MARKER_ID);

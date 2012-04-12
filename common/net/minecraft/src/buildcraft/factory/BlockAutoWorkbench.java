@@ -9,17 +9,29 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
+import net.minecraft.src.mod_BuildCraftFactory;
+import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.core.GuiIds;
+
 
 public class BlockAutoWorkbench extends BlockContainer implements
 		ITextureProvider {
+	
+	@Override
+	public void addCreativeItems(ArrayList a) {
+		a.add(new ItemStack(this, 1));
+	}
 
 	int topTexture;
 	int sideTexture;
@@ -46,7 +58,8 @@ public class BlockAutoWorkbench extends BlockContainer implements
 			EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
 
-		FactoryProxy.displayGUIAutoCrafting(world, entityplayer, i, j, k);
+		if(!APIProxy.isClient(world))
+			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 
 		return true;
 	}

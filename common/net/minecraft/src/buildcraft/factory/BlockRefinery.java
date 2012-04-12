@@ -9,6 +9,8 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
@@ -25,6 +27,11 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class BlockRefinery extends BlockContainer {
 
+	@Override
+	public void addCreativeItems(ArrayList a) {
+		a.add(new ItemStack(this, 1));
+	}
+	
 	public BlockRefinery(int i) {
 		super(i, Material.iron);
 		

@@ -9,8 +9,11 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -19,6 +22,11 @@ import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockPump extends BlockContainer implements ITextureProvider {
 
+	@Override
+	public void addCreativeItems(ArrayList a) {
+		a.add(new ItemStack(this, 1));
+	}
+	
 	public BlockPump(int i) {
 		super(i, Material.iron);
 		

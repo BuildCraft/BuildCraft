@@ -9,6 +9,8 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
@@ -24,6 +26,11 @@ import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockTank extends BlockContainer implements ITextureProvider {
 
+	@Override
+	public void addCreativeItems(ArrayList a) {
+		a.add(new ItemStack(this, 1));
+	}
+	
 	public BlockTank(int i) {
 		super(i, Material.glass);
 		

@@ -14,7 +14,6 @@ import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -31,6 +30,8 @@ import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor, IMachine {
 	
@@ -358,7 +359,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	@Override
-	public void handleDescriptionPacket(Packet230ModLoader packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 		
 		super.handleDescriptionPacket(packet);		
@@ -372,7 +373,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {
+	public void handleUpdatePacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 		
 		super.handleUpdatePacket(packet);

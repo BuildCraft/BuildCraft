@@ -198,6 +198,7 @@ public class EngineIron extends Engine {
 		int res = 0;
 		
 		if (coolantQty > 0 && coolantId != id) {
+			System.out.println("Wrong coolant ID!");
 			return 0;
 		}
 		

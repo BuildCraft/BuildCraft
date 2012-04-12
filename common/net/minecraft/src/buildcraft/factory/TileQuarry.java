@@ -15,7 +15,6 @@ import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
@@ -33,6 +32,8 @@ import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileQuarry extends TileMachine implements IArmListener,
 		IMachine, IPowerReceptor {
@@ -543,7 +544,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	}
 	
 	@Override
-	public void postPacketHandling (Packet230ModLoader packet) { 		
+	public void postPacketHandling (PacketUpdate packet) { 		
 		super.postPacketHandling(packet);
 	
 		createUtilsIfNeeded();

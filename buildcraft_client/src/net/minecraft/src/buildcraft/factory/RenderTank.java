@@ -103,7 +103,12 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		GL11.glTranslatef((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);
 		
-		GL11.glCallList(d[(int) ((float) tank.getLiquidQuantity() / (float) (tank.getCapacity()) * (float) (displayStages - 1))]);
+		// immibis testing
+		try {
+			GL11.glCallList(d[(int) ((float) tank.getLiquidQuantity() / (float) (tank.getCapacity()) * (float) (displayStages - 1))]);
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("Tank contains "+tank.getLiquidQuantity()+" out of "+tank.getCapacity()+" units!");
+		}
 					
 		GL11.glEnable(2896 /*GL_LIGHTING*/);
 		GL11.glPopMatrix();

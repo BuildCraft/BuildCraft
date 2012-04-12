@@ -16,8 +16,11 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraftBuilders;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -87,9 +90,8 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 			
 			return true;
 		} else {
-			TileBuilder tile = (TileBuilder) world.getBlockTileEntity(i, j, k);				
-			BuildersProxy.displayGUIBuilder(entityplayer, tile);
-
+			if(!APIProxy.isClient(world))
+				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			return true;
 		}
 	}

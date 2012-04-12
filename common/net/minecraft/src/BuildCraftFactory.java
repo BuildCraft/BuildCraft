@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.factory.BlockPump;
 import net.minecraft.src.buildcraft.factory.BlockQuarry;
 import net.minecraft.src.buildcraft.factory.BlockRefinery;
 import net.minecraft.src.buildcraft.factory.BlockTank;
+import net.minecraft.src.buildcraft.factory.GuiHandler;
 import net.minecraft.src.buildcraft.factory.TankBucketHandler;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileMiningWell;
@@ -45,6 +46,11 @@ public class BuildCraftFactory {
 	
 	public static boolean allowMining = true;
 	
+	public static void load() {
+		// Register gui handler
+		MinecraftForge.setGuiHandler(mod_BuildCraftFactory.instance, new GuiHandler());
+	}
+	
 	public static void initialize () {		
 		if (initialized) {
 			return;
@@ -58,7 +64,7 @@ public class BuildCraftFactory {
 		allowMining = Boolean
 				.parseBoolean(BuildCraftCore.mainConfiguration
 						.getOrCreateBooleanProperty("mining.enabled",
-								Configuration.GENERAL_PROPERTY, true).value);
+								Configuration.CATEGORY_GENERAL, true).value);
 		
 		Property minigWellId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("miningWell.id",

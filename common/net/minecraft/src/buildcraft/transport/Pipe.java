@@ -17,14 +17,14 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.PersistentTile;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
+import net.minecraft.src.buildcraft.core.network.PacketPayload;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public abstract class Pipe extends PersistentTile implements IPipe {
 	
@@ -55,8 +55,8 @@ public abstract class Pipe extends PersistentTile implements IPipe {
 					new TilePacketWrapper(new Class[] {
 							TileGenericPipe.class,
 							this.transport.getClass(),
-							this.logic.getClass() },
-							PacketIds.TileUpdate));
+							this.logic.getClass() }
+					));
 		}
 
 		this.networkPacket = networkWrappers.get(this.getClass());
@@ -158,13 +158,13 @@ public abstract class Pipe extends PersistentTile implements IPipe {
 				
 	}
 	
-	public Packet230ModLoader getNetworkPacket() {
-		return networkPacket.toPacket(xCoord, yCoord, zCoord, new Object[] {
+	public PacketPayload getNetworkPacket() {
+		return networkPacket.toPayload(xCoord, yCoord, zCoord, new Object[] {
 				container, transport, logic });
 	}
 	
-	public void handlePacket (Packet230ModLoader packet) {
-		networkPacket.updateFromPacket(new Object [] {container, transport, logic}, packet);
+	public void handlePacket (PacketUpdate packet) {
+		networkPacket.fromPayload(new Object [] {container, transport, logic}, packet.payload);
 	}
 
 

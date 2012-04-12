@@ -13,6 +13,7 @@ package net.minecraft.src;
 import java.util.Random;
 
 import net.minecraft.src.mod_BuildCraftCore.EntityRenderIndex;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.energy.EngineIron;
@@ -24,10 +25,15 @@ import net.minecraft.src.buildcraft.energy.TextureFuelFX;
 import net.minecraft.src.buildcraft.energy.TextureOilFX;
 import net.minecraft.src.buildcraft.energy.TextureOilFlowFX;
 import net.minecraft.src.buildcraft.energy.TileEngine;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftEnergy extends BaseModMp {
+public class mod_BuildCraftEnergy extends NetworkMod {
 
 	public static mod_BuildCraftEnergy instance;
+	
+	public mod_BuildCraftEnergy() {
+		instance = this;
+	}
 	
 	@Override
 	public void modsLoaded () {
@@ -51,35 +57,13 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 		ModLoader.registerTileEntity(TileEngine.class,
 				"net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
 		
-		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineSteamGUI));
-		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineCombustionGUI));	
-		
-		instance = this;
 	}
 	
 	@Override
 	public String getVersion() {
-		return "2.2.13";
+		return DefaultProps.VERSION;
 	}
 
-	@Override
-	public GuiScreen handleGUI(int i) {
-		TileEngine tile = new TileEngine();
-
-		switch (Utils.intToPacketId(i)) {
-		case EngineSteamGUI:
-			tile.engine = new EngineStone(tile);
-			return new GuiSteamEngine(
-					ModLoader.getMinecraftInstance().thePlayer.inventory, tile);
-		case EngineCombustionGUI:
-			tile.engine = new EngineIron(tile);
-			return new GuiCombustionEngine(
-					ModLoader.getMinecraftInstance().thePlayer.inventory, tile);
-		default:
-			return null;
-		}
-	}
-	
 	@Override
     public void generateSurface(World world, Random random, int i, int j) {
     	BuildCraftEnergy.generateSurface (world, random, i, j);
@@ -87,8 +71,11 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 
 	@Override
 	public void load() {
-		// TODO Auto-generated method stub
-		
+		BuildCraftEnergy.load();
 	}
+	
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return false; }
+	
 
 }

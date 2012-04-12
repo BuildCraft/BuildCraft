@@ -11,11 +11,17 @@ package net.minecraft.src;
 
 import java.util.Random;
 
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.energy.TileEngine;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftEnergy extends BaseModMp {
+public class mod_BuildCraftEnergy extends NetworkMod {
 
 	public static mod_BuildCraftEnergy instance;
+	
+	public mod_BuildCraftEnergy() {
+		instance = this;
+	}
 	
 	@Override
 	public void modsLoaded () {
@@ -30,7 +36,7 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 	
 	@Override
 	public String getVersion() {
-		return "2.2.13";
+		return DefaultProps.VERSION;
 	}
 	
 	@Override
@@ -40,7 +46,10 @@ public class mod_BuildCraftEnergy extends BaseModMp {
 
 	@Override
 	public void load() {
-		// TODO Auto-generated method stub
-		
+		BuildCraftEnergy.load();
 	}
+	
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return false; }
+
 }

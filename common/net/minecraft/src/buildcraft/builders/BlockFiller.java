@@ -16,8 +16,10 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.FillerPattern;
+import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -41,8 +43,8 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
 	public boolean blockActivated(World world, int i, int j, int k,
 			EntityPlayer entityplayer) {
 		
-		TileFiller tile = (TileFiller) world.getBlockTileEntity(i, j, k);	
-		BuildersProxy.displayGUIFiller(entityplayer, tile);
+		if(!APIProxy.isClient(world))
+			entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);		
 		
 		return true;
 	}

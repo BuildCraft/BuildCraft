@@ -16,10 +16,12 @@ import net.minecraft.src.buildcraft.builders.GuiTemplate;
 import net.minecraft.src.buildcraft.builders.TileBuilder;
 import net.minecraft.src.buildcraft.builders.TileFiller;
 import net.minecraft.src.buildcraft.builders.TileTemplate;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftBuilders extends BaseModMp {
+public class mod_BuildCraftBuilders extends NetworkMod {
 
 	public static mod_BuildCraftBuilders instance;
 	
@@ -29,7 +31,7 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 	
 	@Override
 	public void load () {
-		
+		BuildCraftBuilders.load();
 	}
 	
 	@Override
@@ -37,36 +39,13 @@ public class mod_BuildCraftBuilders extends BaseModMp {
 		super.modsLoaded();
 		
 		BuildCraftBuilders.initialize();
-		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.FillerGUI));
-		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.TemplateGUI));
-		ModLoaderMp.registerGUI(this, Utils.packetIdToInt(PacketIds.BuilderGUI));				
 	}
 	
 	@Override
 	public String getVersion() {
-		return "2.2.13";
+		return DefaultProps.VERSION;
 	}
 	
-	@Override
-	public GuiScreen handleGUI(int i) {		
-		switch (Utils.intToPacketId(i)) {
-		case FillerGUI: 
-			return new GuiFiller(
-					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					new TileFiller());
-		case TemplateGUI:
-			return new GuiTemplate(
-					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					new TileTemplate());
-		case BuilderGUI:
-			TileBuilder tile = new TileBuilder();
-			tile.worldObj = APIProxy.getWorld();
-			return new GuiBuilder(
-					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					tile);
-		default:
-			return null;
-		}
-	}
-
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return false; }
 }

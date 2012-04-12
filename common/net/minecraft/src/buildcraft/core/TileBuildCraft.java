@@ -13,10 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
+import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
+import net.minecraft.src.buildcraft.core.network.PacketPayload;
+import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 
@@ -32,13 +36,11 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	
 	public TileBuildCraft () {
 		if (!updateWrappers.containsKey(this.getClass())) {
-			updateWrappers.put(this.getClass(), new TilePacketWrapper(
-					this.getClass (), PacketIds.TileUpdate));
+			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass ()));
 		}
 		
 		if (!descriptionWrappers.containsKey(this.getClass())) {
-			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(
-					this.getClass (), PacketIds.TileDescription));
+			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass ()));
 		}
 		
 		updatePacket = updateWrappers.get(this.getClass ());
@@ -76,24 +78,33 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 	}
 	
-	public Packet getDescriptionPacket() {		
-		return descriptionPacket.toPacket(this);
+	@Override
+	public Packet getDescriptionPacket() {
+		return new PacketTileUpdate(this).getPacket();
     }
 	
-	public Packet230ModLoader getUpdatePacket() {
-		return updatePacket.toPacket(this);
-    }
-	
-	public void handleDescriptionPacket (Packet230ModLoader packet) {
-		descriptionPacket.updateFromPacket(this, packet);
+	public PacketPayload getPacketPayload() {
+		return updatePacket.toPayload(this);
+	}
+
+	@Override
+	public Packet getUpdatePacket() {
+		return new PacketTileUpdate(this).getPacket();
+	}
+    
+	@Override
+	public void handleDescriptionPacket (PacketUpdate packet) {
+		descriptionPacket.fromPayload(this, packet.payload);
 	}
 	
-	public void handleUpdatePacket (Packet230ModLoader packet) {
-		updatePacket.updateFromPacket(this, packet);
+	@Override
+	public void handleUpdatePacket (PacketUpdate packet) {
+		updatePacket.fromPayload(this, packet.payload);
 	}
 	
-	public void postPacketHandling (Packet230ModLoader packet) {
-		
+	@Override
+	public void postPacketHandling (PacketUpdate packet) {
+	
 	}
 	
 }

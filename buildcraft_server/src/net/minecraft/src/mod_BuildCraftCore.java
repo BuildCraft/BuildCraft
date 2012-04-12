@@ -13,8 +13,10 @@ import java.util.Date;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.buildcraft.core.ClassMapping;
+import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.forge.NetworkMod;
 
-public class mod_BuildCraftCore extends BaseModMp {	
+public class mod_BuildCraftCore extends NetworkMod {	
 	
 	public static mod_BuildCraftCore instance;
 	
@@ -42,13 +44,13 @@ public class mod_BuildCraftCore extends BaseModMp {
 	}
 	
 	public static String version() {
-		return "2.2.13";
+		return DefaultProps.VERSION;
 	}
 	
 	long lastReport = 0;
 
 	@Override
-	public void onTickInGame(MinecraftServer minecraftserver) {
+	public boolean onTickInGame(MinecraftServer minecraftserver) {
 		if (BuildCraftCore.trackNetworkUsage) {			
 			Date d = new Date();
 
@@ -59,11 +61,17 @@ public class mod_BuildCraftCore extends BaseModMp {
 				System.out.println ();
 			}			
 		}
+		
+		return true;
 	}
 
 	@Override
 	public void load() {
-		// TODO Auto-generated method stub
-		
+		BuildCraftCore.load();		
 	}
+	
+	@Override public boolean clientSideRequired() { return true; }
+	@Override public boolean serverSideRequired() { return false; }
+	
+
 }

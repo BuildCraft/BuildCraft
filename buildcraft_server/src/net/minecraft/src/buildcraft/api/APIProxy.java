@@ -30,7 +30,7 @@ public class APIProxy {
 	}
 
 	public static void removeEntity (Entity entity) {
-		entity.setEntityDead();		
+		entity.setDead();		
 	}
 	
 	public static Random createNewRandom (World world) {

@@ -18,7 +18,6 @@ import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -35,6 +34,8 @@ import net.minecraft.src.buildcraft.core.BluePrintBuilder.Mode;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileBuilder extends TileBuildCraft implements IInventory, IPowerReceptor {
 	
@@ -314,7 +315,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	}
 	
 	@Override
-	public void handleDescriptionPacket(Packet230ModLoader packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 		
 		super.handleDescriptionPacket(packet);		
@@ -325,7 +326,7 @@ public class TileBuilder extends TileBuildCraft implements IInventory, IPowerRec
 	}
 
 	@Override
-	public void handleUpdatePacket(Packet230ModLoader packet) {
+	public void handleUpdatePacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 		
 		super.handleUpdatePacket(packet);

@@ -19,7 +19,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
@@ -30,10 +30,12 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IMachine;
-import net.minecraft.src.buildcraft.core.PacketIds;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.network.PacketIds;
+import net.minecraft.src.buildcraft.core.network.PacketPipeTransportContent;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public class PipeTransportItems extends PipeTransport {	
 	
@@ -422,88 +424,52 @@ public class PipeTransportItems extends PipeTransport {
     }
     
     protected void doWork () {}
+	
+	/**
+     * Handles a packet describing a stack of items inside a pipe.
+     * @param packet
+     */
+    public void handleItemPacket(PacketPipeTransportContent packet) {
 
-	public class ItemData {
-		@TileNetworkData public float posX;
-		@TileNetworkData public float posY;
-		@TileNetworkData public float posZ;
-		@TileNetworkData public float speed;
-		
-		@TileNetworkData public int entityId;
-		
-		@TileNetworkData public Orientations orientation; 
-		@TileNetworkData public short itemID;
-		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE) 
-		public int stackSize;
-		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
-		public int itemDamage;
-		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
-		public int deterministicRandomization;		
-	}
-	
-	public static TilePacketWrapper networkItemData = null;
-	
-	public void handleItemPacket(Packet230ModLoader packet) {
-		if (networkItemData == null) {
-			networkItemData = new TilePacketWrapper(ItemData.class, PacketIds.PipeItem);
-		}
-		
-		if (packet.packetType != PacketIds.PipeItem.ordinal()) {
-			return;
-		}
-		
-		ItemData data = new ItemData();
-		
-		networkItemData.updateFromPacket(data, packet);
-				
-		EntityPassiveItem item = EntityPassiveItem.getOrCreate(worldObj, data.entityId);
-				
-		item.item = new ItemStack(data.itemID, data.stackSize, data.itemDamage);		
-				
-		item.setPosition(data.posX, data.posY, data.posZ);
-		item.speed = data.speed;
-		item.deterministicRandomization = data.deterministicRandomization;
-		
-		if (item.container != this.container
-				|| !travelingEntities.containsKey(item.entityId)) {
-			if (item.container != null) {
-				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport)
-						.scheduleRemoval(item);
-			}
+    	if (packet.getID() != PacketIds.PIPE_CONTENTS)
+    		return;
 
-			travelingEntities.put(new Integer(item.entityId), new EntityData(
-					item, data.orientation));
-			item.container = container;
-		} else {
-			travelingEntities.get(new Integer(item.entityId)).orientation = data.orientation;
-		}
-	}
+    	EntityPassiveItem item = EntityPassiveItem.getOrCreate(worldObj, packet.getEntityId());
+
+    	item.item = new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage());
+
+    	item.setPosition(packet.getPosX(), packet.getPosY(), packet.getPosZ());
+    	item.speed = packet.getSpeed();
+    	item.deterministicRandomization = packet.getRandomization();
+
+    	if (item.container != this.container
+    			|| !travelingEntities.containsKey(item.entityId)) {
+
+    		if (item.container != null)
+    			((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport)
+    					.scheduleRemoval(item);
+
+    		travelingEntities.put(new Integer(item.entityId), new EntityData(
+    				item, packet.getOrientation()));
+    		item.container = container;
+
+    	} else
+    		travelingEntities.get(new Integer(item.entityId)).orientation = packet.getOrientation();
+
+    }
 	
-	public Packet230ModLoader createItemPacket (EntityPassiveItem item, Orientations orientation) {
-		if (networkItemData == null) {
-			networkItemData = new TilePacketWrapper(ItemData.class, PacketIds.PipeItem);
-		}
+	/**
+	 * Creates a packet describing a stack of items inside a pipe.
+	 * @param item
+	 * @param orientation
+	 * @return
+	 */
+	public Packet createItemPacket (EntityPassiveItem item, Orientations orientation) {
+	
+		item.deterministicRandomization += worldObj.rand.nextInt(6);
+		PacketPipeTransportContent packet = new PacketPipeTransportContent(container.xCoord, container.yCoord, container.zCoord, item, orientation);
 		
-		item.deterministicRandomization += worldObj.rand.nextInt(6);				
-		
-		ItemData data = new ItemData();
-		
-		data.posX = (float) item.posX;
-		data.posY = (float) item.posY;
-		data.posZ = (float) item.posZ;
-		data.entityId = item.entityId;
-		data.orientation = orientation;
-		data.speed = item.speed;
-		data.itemID = (short) item.item.itemID;
-		data.stackSize = item.item.stackSize;
-		data.itemDamage = item.item.getItemDamage();
-		data.deterministicRandomization = item.deterministicRandomization;
-		
-		Packet230ModLoader packet = networkItemData.toPacket(xCoord, yCoord, zCoord, data);
-		
-		packet.modId = mod_BuildCraftTransport.instance.getId();
-		
-		return packet;
+		return packet.getPacket();
 	}
 
 	public int getNumberOfItems () {

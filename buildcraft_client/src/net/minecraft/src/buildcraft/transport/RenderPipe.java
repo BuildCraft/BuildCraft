@@ -14,6 +14,7 @@ import java.util.Random;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -32,7 +33,8 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems.EntityData;
 import net.minecraft.src.buildcraft.transport.PipeTransportLiquids.LiquidBuffer;
 import net.minecraft.src.forge.ForgeHooksClient;
-import net.minecraft.src.forge.ICustomItemRenderer;
+import net.minecraft.src.forge.IItemRenderer;
+import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
 import net.minecraft.src.forge.ITextureProvider;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
@@ -43,6 +45,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	final static private int maxPower = 1000;
 	
 	final static private int displayLiquidStages = 40;
+	
+	private final static EntityItem dummyEntityItem = new EntityItem(null); 
 	
 	private class DisplayLiquidList {
 		public int [] sideHorizontal = new int [displayLiquidStages];
@@ -415,7 +419,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
         GL11.glTranslatef((float)d, (float)d1, (float)d2);
         GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
 
-        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(itemstack.itemID);
+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, ItemRenderType.ENTITY);
         
         if (customRenderer != null) {
 //        	GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
@@ -435,9 +439,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
                     float f9 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
                     GL11.glTranslatef(f5, f7, f9);
                 }
-				ForgeHooksClient.renderCustomItem(customRenderer, renderBlocks,
-						itemstack.itemID, itemstack.getItemDamage(),
-						entityitem.getEntityBrightness(f1));
+                RenderPipe.dummyEntityItem.item = itemstack;
+               
+                customRenderer.renderItem(ItemRenderType.ENTITY, itemstack, renderBlocks, RenderPipe.dummyEntityItem);
                 GL11.glPopMatrix();
             }
         } else if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))

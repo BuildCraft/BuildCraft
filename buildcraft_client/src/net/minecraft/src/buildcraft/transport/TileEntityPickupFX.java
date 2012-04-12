@@ -72,7 +72,7 @@ public class TileEntityPickupFX extends EntityFX
         field_678_p++;
         if(field_678_p == field_677_q)
         {
-            setEntityDead();
+            setDead();
         }
     }
 

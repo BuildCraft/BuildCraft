@@ -9,6 +9,8 @@
 
 package net.minecraft.src.buildcraft.devel;
 
+import java.util.ArrayList;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockChest;
 import net.minecraft.src.BuildCraftBuilders;
@@ -25,6 +27,11 @@ import net.minecraft.src.World;
 public class BlockCheat extends BlockChest {
 
 	public int texture;
+	
+	@Override
+	public void addCreativeItems(ArrayList a) {
+		a.add(new ItemStack(this, 1, 0));
+	}
 
 	public BlockCheat(int i) {
 		super(i);

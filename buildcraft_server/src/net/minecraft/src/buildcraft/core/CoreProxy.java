@@ -11,7 +11,6 @@ package net.minecraft.src.buildcraft.core;
 
 import java.io.File;
 
-import net.minecraft.src.BaseModMp;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -20,10 +19,10 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.ModLoaderMp;
-import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.DimensionManager;
+import net.minecraft.src.forge.NetworkMod;
 
 public class CoreProxy {
 	public static void addName(Object obj, String s) {
@@ -42,8 +41,8 @@ public class CoreProxy {
 		return new File("BuildCraft.cfg");
 	}
 
-	public static void sendToPlayers(Packet230ModLoader packet, int x, int y,
-			int z, int maxDistance, BaseModMp mod) {
+	public static void sendToPlayers(Packet packet, int x, int y,
+			int z, int maxDistance, NetworkMod mod) {
 		if (packet != null) {
 			
 			for (int i = 0; i < DimensionManager.getWorlds().length; i++) {
@@ -54,7 +53,7 @@ public class CoreProxy {
 					if (Math.abs(player.posX - x) <= maxDistance
 							&& Math.abs(player.posY - y) <= maxDistance
 							&& Math.abs(player.posZ - z) <= maxDistance) {
-						ModLoaderMp.sendPacketTo(mod, player, packet);
+						player.playerNetServerHandler.sendPacket(packet);
 					}
 				}
 

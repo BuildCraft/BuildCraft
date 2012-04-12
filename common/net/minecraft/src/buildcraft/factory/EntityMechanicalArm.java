@@ -259,11 +259,11 @@ public class EntityMechanicalArm extends Entity {
     }
 
 	public void setEntityDead() {
-		xArm.setEntityDead ();
-		yArm.setEntityDead ();
-		zArm.setEntityDead ();
-		head.setEntityDead ();
-		super.setEntityDead ();
+		xArm.setDead ();
+		yArm.setDead ();
+		zArm.setDead ();
+		head.setDead ();
+		super.setDead ();
 		
 	}
 	
