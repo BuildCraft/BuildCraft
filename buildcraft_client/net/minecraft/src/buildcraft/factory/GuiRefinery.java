@@ -1,0 +1,110 @@
+/**
+ * Copyright (c) SpaceToad, 2011
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
+
+package net.minecraft.src.buildcraft.factory;
+
+import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.RefineryRecipe;
+import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
+
+import org.lwjgl.opengl.GL11;
+
+public class GuiRefinery extends GuiAdvancedInterface {
+
+	ContainerRefinery container;
+
+	public GuiRefinery(InventoryPlayer inventory, TileRefinery refinery) {
+		super(new ContainerRefinery(inventory, refinery));
+
+		xSize = 175;
+		ySize = 207;
+
+		this.container = (ContainerRefinery)this.inventorySlots;
+
+		this.slots = new AdvancedSlot [3];
+
+		this.slots [0] = new ItemSlot(38, 54);
+		this.slots [1] = new ItemSlot(126, 54);
+		this.slots [2] = new ItemSlot(82, 54);
+	}
+
+
+	@Override
+	protected void drawGuiContainerForegroundLayer() {
+		fontRenderer.drawString("Refinery Setup", 28, 6, 0x404040);
+		fontRenderer.drawString("->", 63, 59, 0x404040);
+		fontRenderer.drawString("<-", 106, 59, 0x404040);
+		fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
+
+		drawForegroundSelection ();
+	}
+
+	@Override
+	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/factory/gui/refinery_filter.png");
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(i);
+		int j = (width - xSize) / 2;
+		int k = (height - ySize) / 2;
+		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+
+		updateSlots();
+		drawBackgroundSlots();
+	}
+
+	@Override
+	protected void mouseClicked(int i, int j, int k) {
+		super.mouseClicked(i, j, k);
+
+		int cornerX = (width - xSize) / 2;
+		int cornerY = (height - ySize) / 2;
+
+		int position = getSlotAtLocation (i - cornerX, j - cornerY);
+
+		AdvancedSlot slot = null;
+
+		if (position != -1 && position != 2)
+			slot = slots[position];
+
+		if (slot != null) {
+			int liquidId = BuildCraftAPI.getLiquidForFilledItem(mc.thePlayer.inventory
+					.getItemStack());
+
+			container.setFilter(position, liquidId, 0);			
+		}
+	}
+
+	private void updateSlots() {
+		
+		ItemStack filter0 = container.getFilter(0);
+		ItemStack filter1 = container.getFilter(1);
+		
+		((ItemSlot)slots[0]).stack = filter0;
+		((ItemSlot)slots[1]).stack = filter1;
+
+		int liquid0Id = 0;
+		int liquid1Id = 0;
+		
+		if(filter0 != null)
+			liquid0Id = filter0.itemID;
+		if(filter1 != null)
+			liquid1Id = filter1.itemID;
+			
+		RefineryRecipe recipe = BuildCraftAPI.findRefineryRecipe(liquid0Id, BuildCraftAPI.BUCKET_VOLUME, liquid1Id, BuildCraftAPI.BUCKET_VOLUME);
+
+		if (recipe != null)
+			((ItemSlot) slots[2]).stack = new ItemStack(recipe.resultId, 1, 0);
+		else
+			((ItemSlot)slots[2]).stack = null;
+	}
+	
+
+}

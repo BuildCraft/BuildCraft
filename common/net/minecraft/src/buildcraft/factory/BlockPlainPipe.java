@@ -1,0 +1,93 @@
+/** 
+ * Copyright (c) SpaceToad, 2011
+ * http://www.mod-buildcraft.com
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
+
+package net.minecraft.src.buildcraft.factory;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.Material;
+import net.minecraft.src.buildcraft.api.IBlockPipe;
+import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ITextureProvider;
+
+public class BlockPlainPipe extends Block implements ILegacyPipeConnection,
+		IBlockPipe, ITextureProvider {	
+	
+	public BlockPlainPipe(int i) {
+		super(i, Material.glass);
+		
+		blockIndexInTexture = 16 * 2 + 0;
+		
+		minX = Utils.pipeMinPos;
+		minY = 0.0;
+		minZ = Utils.pipeMinPos;
+		
+		maxX = Utils.pipeMaxPos;
+		maxY = 1.0;
+		maxZ = Utils.pipeMaxPos;
+	}
+    
+	@Override
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
+    
+	@Override
+    public boolean renderAsNormalBlock()
+    {
+        return false;
+    }
+    
+    public boolean isACube () {
+    	return false;
+    }    
+    
+    public int idDropped(int i, Random random)
+    {
+        return 0;
+    }
+
+	@Override
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
+			int z1, int x2, int y2, int z2) {
+
+		return false;
+	}
+    
+    @Override
+	public String getTextureFile() {	
+		return BuildCraftCore.customBuildCraftTexture;
+	}
+	
+    public float getHeightInPipe () {
+    	return 0.5F;
+    }
+
+	@Override
+	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j,
+			int k, Orientations connection) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
+
+}
