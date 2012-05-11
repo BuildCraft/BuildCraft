@@ -397,8 +397,7 @@ public class BlockGenericPipe extends BlockContainer implements
 		// Try to strip gate next
 		if(pipe.hasGate()) {
 			pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
-			pipe.gate = null;
-			pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			pipe.resetGate();
 			return true;
 		}
 

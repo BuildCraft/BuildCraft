@@ -530,6 +530,12 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 		activatedActions [position] = action;
 	}
 
+	public void resetGate() {
+		gate = null;
+		activatedTriggers = new Trigger[activatedTriggers.length];
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+	}
+	
 	private void resolveActions () {
 		if (!hasGate())
 			return;
