@@ -35,17 +35,7 @@ public class EntityMechanicalArm extends Entity {
 	public EntityMechanicalArm(World world) {
 		super (world);
 	}
-	/**
-	 * Constructor for Forge netcode.
-	 * @param world
-	 * @param xPos
-	 * @param yPos
-	 * @param zPos
-	 */
-	public EntityMechanicalArm(World world, double xPos, double yPos, double zPos) {
-		super(world);
-		setPosition(xPos, yPos, zPos);
-	}
+
 	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height) {
 		super(world);
 		
@@ -91,10 +81,7 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	@Override
-	protected void entityInit() {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void entityInit() {}
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {

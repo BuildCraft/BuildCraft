@@ -20,8 +20,8 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
@@ -32,8 +32,8 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.BptBlueprint;
-import net.minecraft.src.buildcraft.core.BptBuilderBlueprint;
 import net.minecraft.src.buildcraft.core.BptBuilderBase;
+import net.minecraft.src.buildcraft.core.BptBuilderBlueprint;
 import net.minecraft.src.buildcraft.core.DefaultAreaProvider;
 import net.minecraft.src.buildcraft.core.EntityRobot;
 import net.minecraft.src.buildcraft.core.IBuilderInventory;
@@ -56,6 +56,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	public @TileNetworkData double speed = 0.03;
 	
 	public EntityRobot builder;
+	public @TileNetworkData boolean builderDone = false;
 		
 	boolean loadArm = false;			
 	
@@ -83,7 +84,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
     		initializeBluePrintBuilder();
     	}    	
     	
-    	if (bluePrintBuilder.done) {    	
+    	if (builderDone) {    	
     		box.deleteLasers();
     		
     		if (arm == null) {
@@ -129,7 +130,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 			.useEnergy(energyToUse, energyToUse, true);
 						
 			if (energy > 0) {
-				arm.doMove(0.015 + (float) energy / 200F);
+				arm.doMove(0.015 + energy / 200F);
 			}
 		}
 		
@@ -147,7 +148,10 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	}
 	
 	@Override
-	public void doWork() {				
+	public void doWork() {		
+		
+		builderDone = bluePrintBuilder.done;
+		
 		if (APIProxy.isClient(worldObj)) {
 			return;
 		}
@@ -163,7 +167,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	    createUtilsIfNeeded();
 	    
 	    if (bluePrintBuilder != null) {
-	    	if (!bluePrintBuilder.done) {
+	    	if (!builderDone) {
 	    		// configuration for building phase
 	    		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 
@@ -351,9 +355,9 @@ public class TileQuarry extends TileMachine implements IArmListener,
 			return;
 		}
 		
-		int i = (int) targetX;
-		int j = (int) targetY - 1;
-		int k = (int) targetZ;
+		int i = targetX;
+		int j = targetY - 1;
+		int k = targetZ;
 		
 		//Collect any lost items laying around
 		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(arm.headPosX - 0.5, arm.headPosY, arm.headPosZ - 0.5, arm.headPosX + 1.5, arm.headPosY + 1.5, arm.headPosZ + 1.5);
@@ -386,7 +390,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 				}
 			}
 					
-			worldObj.setBlockWithNotify((int) i, (int) j, (int) k, 0);
+			worldObj.setBlockWithNotify(i, j, k, 0);
 		}		
 	}
 
@@ -413,8 +417,8 @@ public class TileQuarry extends TileMachine implements IArmListener,
 			float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 
 			EntityItem entityitem = new EntityItem(worldObj,
-					(float) xCoord + f, (float) yCoord + f1 + 0.5F,
-					(float) zCoord + f2, stackUtils.items);
+					xCoord + f, yCoord + f1 + 0.5F,
+					zCoord + f2, stackUtils.items);
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) worldObj.rand
