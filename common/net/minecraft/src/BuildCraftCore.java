@@ -28,7 +28,6 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultActionProvider;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.DefaultTriggerProvider;
-import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.EntityLaser;
 import net.minecraft.src.buildcraft.core.EntityRobot;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
@@ -130,7 +129,7 @@ public class BuildCraftCore {
 		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 		
 		MinecraftForge.registerEntity(EntityRobot.class, mod_BuildCraftCore.instance, EntityIds.ROBOT, 50, 10, true);
-		MinecraftForge.registerEntity(EntityBlock.class, mod_BuildCraftCore.instance, EntityIds.BLOCK, 50, 10, true);
+		//MinecraftForge.registerEntity(EntityBlock.class, mod_BuildCraftCore.instance, EntityIds.BLOCK, 50, 10, true);
 		MinecraftForge.registerEntity(EntityLaser.class, mod_BuildCraftCore.instance, EntityIds.LASER, 50, 10, true);
 	}
 

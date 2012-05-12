@@ -49,17 +49,10 @@ public class EntityRobot extends Entity {
 
 	public static int MAX_SIZE = 20;
 
-	/**
-	 * Constructor for Forge Netcode
-	 * @param world
-	 * @param xPos
-	 * @param yPos
-	 * @param zPos
-	 */
-	public EntityRobot(World world, double xPos, double yPos, double zPos) {
-		super(world);		
-		setPosition(xPos, yPos, zPos);
+	public EntityRobot(World world) {
+		super(world);
 	}
+
 	public EntityRobot(World world, Box box) {
 		super(world);
 

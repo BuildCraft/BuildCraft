@@ -20,7 +20,6 @@ import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
-import net.minecraft.src.buildcraft.core.network.EntityIds;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
@@ -33,7 +32,6 @@ import net.minecraft.src.buildcraft.energy.ItemFuel;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
 import net.minecraft.src.buildcraft.energy.TriggerEngineHeat;
-import net.minecraft.src.buildcraft.factory.EntityMechanicalArm;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
@@ -65,7 +63,7 @@ public class BuildCraftEnergy {
 		// Register gui handler
 		MinecraftForge.setGuiHandler(mod_BuildCraftEnergy.instance, new GuiHandler());
 		
-		MinecraftForge.registerEntity(EntityMechanicalArm.class, mod_BuildCraftEnergy.instance, EntityIds.MECHANICAL_ARM, 50, 10, true);
+		//MinecraftForge.registerEntity(EntityMechanicalArm.class, mod_BuildCraftEnergy.instance, EntityIds.MECHANICAL_ARM, 50, 10, true);
 	}
 
 	public static void initialize () {
