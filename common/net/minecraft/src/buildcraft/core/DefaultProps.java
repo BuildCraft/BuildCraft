@@ -45,6 +45,7 @@ public class DefaultProps {
 	public static int PIPE_ITEMS_GOLD_ID          = 4054;
 	public static int PIPE_ITEMS_DIAMOND_ID       = 4055;
 	public static int PIPE_ITEMS_OBSIDIAN_ID      = 4056;
+	public static int PIPE_ITEMS_STEEL_ID         = 4073;
 
 	public static int PIPE_LIQUIDS_WOOD_ID        = 4057;
 	public static int PIPE_LIQUIDS_COBBLESTONE_ID = 4058;
@@ -64,6 +65,8 @@ public class DefaultProps {
 
 	public static int PIPE_ITEMS_STRIPES_ID       = 4071;
 	public static int PIPE_STRUCTURE_COBBLESTONE_ID  = 4072;
+	
+	/// 4073 = PIPE_ITEMS_STEEL_ID
 
 	public static int WOODEN_PIPE_ID       = 145; // LEGACY
 	public static int STONE_PIPE_ID        = 146; // LEGACY
