@@ -121,6 +121,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	private String owner;
 	
 	@Override
+	public boolean isSecure() {
+		if(pipe != null)
+			return pipe.isSecure();
+		else
+			return false;
+	}
+	@Override
 	public String getOwnerName() {
 		return owner;
 	}
