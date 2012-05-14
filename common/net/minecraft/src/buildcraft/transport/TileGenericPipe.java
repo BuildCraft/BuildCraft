@@ -47,10 +47,12 @@ import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPipeDescription;
 import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.utils.IOwnable;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile,
-		IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory {
+		IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory,
+		IOwnable {
 
 	public TileBuffer [] tileBuffer;
 	public boolean [] pipeConnectionsBuffer = new boolean [6];
@@ -63,14 +65,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@TileNetworkData public int pipeId = -1;
 
-	public TileGenericPipe () {
-
-	}
+	public TileGenericPipe () {}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
+		nbttagcompound.setString("owner", owner);
 		if (pipe != null) {
 			nbttagcompound.setInteger("pipeId", pipe.itemID);
 			pipe.writeToNBT(nbttagcompound);
@@ -81,8 +82,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
+		if(nbttagcompound.hasKey("owner"))
+			owner = nbttagcompound.getString("owner");
 		pipe = BlockGenericPipe.createPipe(nbttagcompound.getInteger("pipeId"));
-
 		if (pipe != null) {
 			pipe.setTile(this);
 			pipe.readFromNBT(nbttagcompound);
@@ -115,6 +117,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	public boolean initialized = false;
 
+	/// OWNERSHIP
+	private String owner;
+	
+	@Override
+	public String getOwnerName() {
+		return owner;
+	}
+	@Override
+	public void setOwner(EntityPlayer player) {
+		owner = player.username;
+	}
+	
+	/// UPDATING
 	@Override
 	public void updateEntity () {
 		if (!initialized) {
