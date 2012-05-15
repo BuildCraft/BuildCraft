@@ -7,7 +7,7 @@ import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.utils.IOwnable;
 import net.minecraft.src.buildcraft.core.utils.ISecuredInventory;
 
-public class PipeTransportSecure extends PipeTransportItems {
+public class PipeTransportSecure extends PipeTransportSolids {
 	
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
@@ -23,7 +23,6 @@ public class PipeTransportSecure extends PipeTransportItems {
 			return inventory.getOwnerName().equals(container.getOwnerName());
 		}
 		
-		System.out.println("isPipeConnected returning false.");
 		return false;
 	}
 	
@@ -33,7 +32,9 @@ public class PipeTransportSecure extends PipeTransportItems {
 		if(with instanceof PipeTransportSecure)
 			return true;
 		
-		System.out.println("allowsConnect returning false.");
+		if(with.container.pipe.logic instanceof PipeLogicWood)
+			return true;
+		
 		return false;
 	}
 
