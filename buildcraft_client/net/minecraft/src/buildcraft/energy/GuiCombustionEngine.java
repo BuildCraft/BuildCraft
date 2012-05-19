@@ -13,12 +13,14 @@ import net.minecraft.src.Block;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
+import net.minecraft.src.buildcraft.core.GuiBuildCraft;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 import net.minecraft.src.forge.ITextureProvider;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiCombustionEngine extends GuiContainer {
+public class GuiCombustionEngine extends GuiBuildCraft {
 
     private TileEngine tileEngine;
 
@@ -31,8 +33,9 @@ public class GuiCombustionEngine extends GuiContainer {
 	@Override
     protected void drawGuiContainerForegroundLayer()
     {
-        fontRenderer.drawString("Combustion Engine", 50, 6, 0x404040);
-        fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
+		String title = StringUtil.localize("tile.engineIron");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
     }
 
     @Override

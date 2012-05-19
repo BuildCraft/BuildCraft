@@ -11,10 +11,12 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.buildcraft.core.GuiBuildCraft;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiSteamEngine extends GuiContainer {
+public class GuiSteamEngine extends GuiBuildCraft {
 
     private TileEngine tileEngine;
 
@@ -25,8 +27,9 @@ public class GuiSteamEngine extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString("Steam Engine", 60, 6, 0x404040);
-		fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
+		String title = StringUtil.localize("tile.engineStone");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
 
 	@Override

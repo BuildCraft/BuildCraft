@@ -11,10 +11,12 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.buildcraft.core.GuiBuildCraft;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiFiller extends GuiContainer {
+public class GuiFiller extends GuiBuildCraft {
 
 	IInventory playerInventory;
 	TileFiller filler;
@@ -29,9 +31,10 @@ public class GuiFiller extends GuiContainer {
 
 	@Override
     protected void drawGuiContainerForegroundLayer() {
-        fontRenderer.drawString("Filler", 75, 6, 0x404040);
-        fontRenderer.drawString("Filling Resources", 8, 74, 0x404040);
-        fontRenderer.drawString("Inventory", 8, 142, 0x404040);
+		String title = StringUtil.localize("tile.fillerBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.filling.resources"), 8, 74, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, 142, 0x404040);
 
         if(filler.currentPattern != null)
         	drawForegroundSelection(filler.currentPattern.getName());

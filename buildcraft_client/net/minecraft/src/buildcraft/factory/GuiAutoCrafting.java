@@ -12,10 +12,12 @@ package net.minecraft.src.buildcraft.factory;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.GuiBuildCraft;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiAutoCrafting extends GuiContainer {
+public class GuiAutoCrafting extends GuiBuildCraft {
 
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world,
 			TileAutoWorkbench tile) {
@@ -30,8 +32,9 @@ public class GuiAutoCrafting extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString("Crafting", 28, 6, 0x404040);
-		fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
+		String title = StringUtil.localize("tile.tile.autoWorkBenchBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
 
 	@Override

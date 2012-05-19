@@ -23,6 +23,7 @@ import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable.SelectionMessage;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
@@ -84,9 +85,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString("Assembly Table", 60, 15, 0x404040);
-		fontRenderer.drawString("Inventory", 8, ySize - 97,
-				0x404040);
+		String title = StringUtil.localize("tile.assemblyTableBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection();
 	}

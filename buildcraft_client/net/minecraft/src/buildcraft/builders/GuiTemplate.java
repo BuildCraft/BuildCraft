@@ -14,10 +14,12 @@ import java.util.Date;
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.buildcraft.core.GuiBuildCraft;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiTemplate extends GuiContainer {
+public class GuiTemplate extends GuiBuildCraft {
 
 	IInventory playerInventory;
 	TileArchitect template;
@@ -34,8 +36,8 @@ public class GuiTemplate extends GuiContainer {
 
 	@Override
     protected void drawGuiContainerForegroundLayer() {
-        fontRenderer.drawString(template.getInvName(), 8, 6, 0x404040);
-        fontRenderer.drawString("Inventory", 8, ySize - 152, 0x404040);
+        fontRenderer.drawString(template.getInvName(), getCenteredOffset(template.getInvName()), 6, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 152, 0x404040);
 
         if (editMode && ((new Date ()).getTime() / 100) % 8 >= 4)
 			fontRenderer.drawString(template.name + "|", 51, 62, 0x404040);
