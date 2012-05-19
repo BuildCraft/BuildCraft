@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
@@ -148,15 +149,16 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			ContainerAssemblyTable container = (ContainerAssemblyTable)inventorySlots;
 
-			PacketPayload payload = TileAssemblyTable.selectionMessageWrapper
-					.toPayload(container.x, container.y,
-							container.z, message);
+			if(APIProxy.isRemote()) {
+				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,container.z, message);
 
-			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, payload);
-			packet.posX = container.x;
-			packet.posY = container.y;
-			packet.posZ = container.z;
-			CoreProxy.sendToServer(packet.getPacket());
+				PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, payload);
+				packet.posX = container.x;
+				packet.posY = container.y;
+				packet.posZ = container.z;
+			
+				CoreProxy.sendToServer(packet.getPacket());
+			}
 		}
 
 	}
