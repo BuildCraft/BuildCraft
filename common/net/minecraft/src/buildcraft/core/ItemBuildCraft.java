@@ -11,14 +11,21 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class ItemBuildCraftTexture extends Item implements ITextureProvider {
+public class ItemBuildCraft extends Item implements ITextureProvider {
 
-	public ItemBuildCraftTexture(int i) {
+	public ItemBuildCraft(int i) {
 		super(i);
 	}
 
+	//@Override Client side only
+    public String getItemDisplayName(ItemStack itemstack) {
+    	return StringUtil.localize(getItemNameIS(itemstack));
+    }
+	
 	@Override
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftSprites;

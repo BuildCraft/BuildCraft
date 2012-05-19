@@ -3,9 +3,9 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.ArrayList;
 
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
+import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 
-public class ItemGate extends ItemBuildCraftTexture {
+public class ItemGate extends ItemBuildCraft {
 
 	private int series;
 

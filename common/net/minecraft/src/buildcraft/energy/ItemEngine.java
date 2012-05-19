@@ -11,26 +11,17 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.buildcraft.core.ItemBlockBuildCraft;
 
-public class ItemEngine extends ItemBlock
+public class ItemEngine extends ItemBlockBuildCraft
 {
 
-    public ItemEngine(int i)
-    {
-        super(i);
-        setMaxDamage(0);
-        setHasSubtypes(true);
-    }
-    
-    @Override
-    public int getMetadata(int i)
-    {
-    	return i;
+    public ItemEngine(int i) {
+        super(i, "engine");
     }
 
     @SuppressWarnings({ "all" })
-    public String getItemNameIS(ItemStack itemstack)
-    {
+    public String getItemNameIS(ItemStack itemstack) {
     	if (itemstack.getItemDamage() == 0) {
     		return "tile.engineWood";
     	} else if (itemstack.getItemDamage() == 1) {

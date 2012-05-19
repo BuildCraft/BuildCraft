@@ -18,15 +18,15 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.BptBase;
+import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 import net.minecraft.src.forge.ITextureProvider;
 
-public abstract class ItemBptBase extends Item implements ITextureProvider {
+public abstract class ItemBptBase extends ItemBuildCraft {
 
 	public ItemBptBase(int i) {
 		super(i);
 		
-		maxStackSize = 1;
-		
+		maxStackSize = 1;		
 		iconIndex = 5 * 16 + 0;
 	}
 	
@@ -47,10 +47,5 @@ public abstract class ItemBptBase extends Item implements ITextureProvider {
     @Override
     public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
     }
-
-	@Override
-	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftSprites;
-	}
     
 }

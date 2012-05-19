@@ -17,9 +17,11 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
+import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.network.BuildCraftPacket;
 import net.minecraft.src.forge.DimensionManager;
@@ -27,13 +29,13 @@ import net.minecraft.src.forge.NetworkMod;
 
 public class CoreProxy {
 
+	public static String getCurrentLanguage() { return null; }
+	
 	/// FIXING GENERAL MLMP AND DEOBFUSCATION DERPINESS
 	public static void addName(Object obj, String s) {}
-	public static void registerBlock(Block block, Class clas) {
-		ModLoader.registerBlock(block, clas);
-	}
 	public static void registerBlock(Block block) {
-		ModLoader.registerBlock(block);
+		Item.itemsList[block.blockID] = null;
+		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getBlockName());
 	}
 	public static void registerTileEntity(Class clas, String ident) {
 		ModLoader.registerTileEntity(clas, ident);

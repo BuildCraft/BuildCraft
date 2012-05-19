@@ -19,11 +19,13 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModTextureStatic;
 import net.minecraft.src.Packet;
 import net.minecraft.src.RenderEngine;
+import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.network.BuildCraftPacket;
 import net.minecraft.src.forge.MinecraftForgeClient;
@@ -44,15 +46,16 @@ public class CoreProxy {
 		}
 	}
 
+	public static String getCurrentLanguage() {
+		return StringTranslate.getInstance().getCurrentLanguage();
+	}
 	/// FIXING GENERAL MLMP AND DEOBFUSCATION DERPINESS
 	public static void addName(Object obj, String s) {
 		ModLoader.addName(obj, s);
 	}
-	public static void registerBlock(Block block, @SuppressWarnings("rawtypes") Class clas) {
-		ModLoader.registerBlock(block, clas);
-	}
 	public static void registerBlock(Block block) {
-		ModLoader.registerBlock(block);
+		Item.itemsList[block.blockID] = null;
+		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getBlockName());
 	}
 	public static void registerTileEntity(@SuppressWarnings("rawtypes") Class clas, String ident) {
 		ModLoader.registerTileEntity(clas, ident);

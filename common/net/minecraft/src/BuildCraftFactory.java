@@ -113,53 +113,44 @@ public class BuildCraftFactory {
 		MinecraftForge.registerCustomBucketHandler(new TankBucketHandler());
 
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
-		CoreProxy.registerBlock(miningWellBlock);
-		CoreProxy.addName(miningWellBlock.setBlockName("miningWellBlock"), "Mining Well");
+		CoreProxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
+		CoreProxy.addName(miningWellBlock, "Mining Well");
 
 		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(plainPipeId.value));
-		CoreProxy.registerBlock(plainPipeBlock);
-		CoreProxy.addName(plainPipeBlock.setBlockName("plainPipeBlock"), "Mining Pipe");
+		CoreProxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+		CoreProxy.addName(plainPipeBlock, "Mining Pipe");
 
 		autoWorkbenchBlock = new BlockAutoWorkbench(
 				Integer.parseInt(autoWorkbenchId.value));
-		CoreProxy.registerBlock(autoWorkbenchBlock);
-		CoreProxy.addName(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"),
-				"Automatic Crafting Table");
+		CoreProxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+		CoreProxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
 
 		frameBlock = new BlockFrame(Integer.parseInt(frameId.value));
-		CoreProxy.registerBlock(frameBlock);
-		CoreProxy.addName(frameBlock.setBlockName("frameBlock"), "Frame");
+		CoreProxy.registerBlock(frameBlock.setBlockName("frameBlock"));
+		CoreProxy.addName(frameBlock, "Frame");
 
 		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
-		CoreProxy.registerBlock(quarryBlock);
-
-		CoreProxy.addName(quarryBlock.setBlockName("machineBlock"),
-		"Quarry");
+		CoreProxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+		CoreProxy.addName(quarryBlock, "Quarry");
 
 		tankBlock = new BlockTank(Integer.parseInt(tankId.value));
-		CoreProxy.addName(tankBlock.setBlockName("tankBlock"),
-		"Tank");
-		CoreProxy.registerBlock(tankBlock);
+		CoreProxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+		CoreProxy.addName(tankBlock, "Tank");
 
 		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
-		CoreProxy.addName(pumpBlock.setBlockName("pumpBlock"),
-		"Pump");
-		CoreProxy.registerBlock(pumpBlock);
+		CoreProxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+		CoreProxy.addName(pumpBlock,"Pump");
 
 		refineryBlock = new BlockRefinery(Integer.parseInt(refineryId.value));
-		CoreProxy.addName(refineryBlock.setBlockName("refineryBlock"),
-		"Refinery");
-		CoreProxy.registerBlock(refineryBlock);
+		CoreProxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+		CoreProxy.addName(refineryBlock, "Refinery");
 		
 		hopperDisabled = Boolean.parseBoolean(hopperDisable.value); 
 		if (!hopperDisabled){
 			hopperBlock = new BlockHopper(Integer.parseInt(hopperId.value));
-			CoreProxy.addName(hopperBlock.setBlockName("blockHopper"), 
-			"Hopper");
-			CoreProxy.registerBlock(hopperBlock);
-		}
-		
-
+			CoreProxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+			CoreProxy.addName(hopperBlock, "Hopper");
+		}	
 
 		CoreProxy.registerTileEntity(TileQuarry.class, "Machine");
 		CoreProxy.registerTileEntity(TileMiningWell.class, "MiningWell");

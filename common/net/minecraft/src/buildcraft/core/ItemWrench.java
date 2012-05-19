@@ -3,7 +3,7 @@ package net.minecraft.src.buildcraft.core;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 
-public class ItemWrench extends ItemBuildCraftTexture implements IToolWrench{
+public class ItemWrench extends ItemBuildCraft implements IToolWrench{
 
 	public ItemWrench(int i) {
 		super(i);
