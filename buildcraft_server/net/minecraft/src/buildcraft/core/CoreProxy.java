@@ -22,7 +22,6 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.network.BuildCraftPacket;
-import net.minecraft.src.forge.DimensionManager;
 import net.minecraft.src.forge.NetworkMod;
 
 public class CoreProxy {
