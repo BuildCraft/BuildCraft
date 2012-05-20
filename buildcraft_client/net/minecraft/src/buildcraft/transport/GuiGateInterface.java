@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.transport.Gate.GateKind;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
@@ -212,13 +213,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerForegroundLayer() {
 		String name = _container.getGateName();
 
-		if(name == "Gate")
-			fontRenderer.drawString("Gate", 75, 15, 0x404040);
-		else
-			fontRenderer.drawString(name, 60, 15, 0x404040);
-
-		fontRenderer.drawString("Inventory", 8, ySize - 97,
-				0x404040);
+		fontRenderer.drawString(name, getCenteredOffset(name), 15, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection ();
 	}

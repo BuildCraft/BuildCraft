@@ -19,7 +19,7 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
+import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 import net.minecraft.src.buildcraft.energy.BlockEngine;
 import net.minecraft.src.buildcraft.energy.BlockOilFlowing;
 import net.minecraft.src.buildcraft.energy.BlockOilStill;
@@ -28,7 +28,6 @@ import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;
 import net.minecraft.src.buildcraft.energy.GuiHandler;
 import net.minecraft.src.buildcraft.energy.ItemBucketOil;
 import net.minecraft.src.buildcraft.energy.ItemEngine;
-import net.minecraft.src.buildcraft.energy.ItemFuel;
 import net.minecraft.src.buildcraft.energy.OilBucketHandler;
 import net.minecraft.src.buildcraft.energy.OilPopulate;
 import net.minecraft.src.buildcraft.energy.TriggerEngineHeat;
@@ -94,7 +93,6 @@ public class BuildCraftEnergy {
 		BuildCraftCore.mainConfiguration.save();
 
 		engineBlock = new BlockEngine(Integer.parseInt(engineId.value));
-		CoreProxy.registerBlock(engineBlock);
 
 		Item.itemsList[engineBlock.blockID] = null;
 		Item.itemsList[engineBlock.blockID] = (new ItemEngine(
@@ -125,10 +123,10 @@ public class BuildCraftEnergy {
 				.setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketOil, "Oil Bucket");
 
-		fuel = new ItemFuel (Integer.parseInt(itemFuelId.value)).setItemName("fuel");
+		fuel = new ItemBuildCraft(Integer.parseInt(itemFuelId.value)).setItemName("fuel");
 		CoreProxy.addName(fuel, "Fuel");
 
-		bucketFuel = new ItemBuildCraftTexture(Integer.parseInt(bucketFuelId.value))
+		bucketFuel = new ItemBuildCraft(Integer.parseInt(bucketFuelId.value))
 				.setIconIndex(0 * 16 + 3).setItemName("bucketFuel")
 				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketFuel, "Fuel Bucket");

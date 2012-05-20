@@ -17,6 +17,7 @@ import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketSlotChange;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond.PacketStack;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
@@ -47,9 +48,8 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString(filterInventory.getInvName(), 8, 6, 0x404040);
-		fontRenderer.drawString("Inventory", 8, ySize - 97,
-				0x404040);
+		fontRenderer.drawString(filterInventory.getInvName(), getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection ();
 	}

@@ -17,9 +17,10 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.IItemPipe;
+import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class ItemPipe extends Item implements ITextureProvider, IItemPipe {
+public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	Pipe dummyPipe;
 

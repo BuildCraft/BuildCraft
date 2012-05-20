@@ -14,6 +14,7 @@ import java.util.Collection;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
@@ -40,12 +41,13 @@ public class GuiBuilder extends GuiAdvancedInterface {
     protected void drawGuiContainerForegroundLayer() {
     	super.drawGuiContainerForegroundLayer ();
 
-        fontRenderer.drawString("Builder", 73, 12, 0x404040);
-        fontRenderer.drawString("Building Resources", 8, 60, 0x404040);
-        fontRenderer.drawString("Inventory", 8, ySize - 97, 0x404040);
+		String title = StringUtil.localize("tile.builderBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 12, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.building.resources"), 8, 60, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
         if (builder.isBuildingBlueprint())
-			fontRenderer.drawString("Needed", 185, 7, 0x404040);
+			fontRenderer.drawString(StringUtil.localize("gui.needed"), 185, 7, 0x404040);
 
         drawForegroundSelection();
     }

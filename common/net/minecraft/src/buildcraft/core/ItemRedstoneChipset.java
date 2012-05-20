@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import net.minecraft.src.ItemStack;
 
-public class ItemRedstoneChipset extends ItemBuildCraftTexture {
+public class ItemRedstoneChipset extends ItemBuildCraft {
 
 	public ItemRedstoneChipset(int i) {
 		super(i);

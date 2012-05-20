@@ -8,7 +8,7 @@ import net.minecraft.src.RenderHelper;
 
 import org.lwjgl.opengl.GL11;
 
-public abstract class GuiAdvancedInterface extends GuiContainer {
+public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 	public abstract class AdvancedSlot {
 		final public int x, y;

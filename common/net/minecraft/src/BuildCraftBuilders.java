@@ -139,28 +139,28 @@ public class BuildCraftBuilders {
 		CoreProxy.addName(blueprintItem, "Blueprint");
 
 		markerBlock = new BlockMarker(Integer.parseInt(markerId.value));
-		CoreProxy.registerBlock(markerBlock);
-		CoreProxy.addName(markerBlock.setBlockName("markerBlock"), "Land Mark");
+		CoreProxy.registerBlock(markerBlock.setBlockName("markerBlock"));
+		CoreProxy.addName(markerBlock, "Land Mark");
 
 		pathMarkerBlock = new BlockPathMarker(Integer.parseInt(pathMarkerId.value));
-		CoreProxy.registerBlock(pathMarkerBlock);
-		CoreProxy.addName(pathMarkerBlock.setBlockName("pathMarkerBlock"), "Path Mark");
+		CoreProxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
+		CoreProxy.addName(pathMarkerBlock, "Path Mark");
 
 		fillerBlock = new BlockFiller(Integer.parseInt(fillerId.value));
-		CoreProxy.registerBlock(fillerBlock);
-		CoreProxy.addName(fillerBlock.setBlockName("fillerBlock"), "Filler");
+		CoreProxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
+		CoreProxy.addName(fillerBlock, "Filler");
 
 		builderBlock = new BlockBuilder(Integer.parseInt(builderId.value));
-		CoreProxy.registerBlock(builderBlock);
-		CoreProxy.addName(builderBlock.setBlockName("builderBlock"), "Builder");
+		CoreProxy.registerBlock(builderBlock.setBlockName("builderBlock"));
+		CoreProxy.addName(builderBlock, "Builder");
 
 		architectBlock = new BlockArchitect(Integer.parseInt(architectId.value));
-		CoreProxy.registerBlock(architectBlock);
-		CoreProxy.addName(architectBlock.setBlockName("architectBlock"), "Architect Table");
+		CoreProxy.registerBlock(architectBlock.setBlockName("architectBlock"));
+		CoreProxy.addName(architectBlock, "Architect Table");
 
 		libraryBlock = new BlockBlueprintLibrary(Integer.parseInt(libraryId.value));
-		CoreProxy.registerBlock(libraryBlock);
-		CoreProxy.addName(libraryBlock.setBlockName("libraryBlock"), "Blueprint Library");
+		CoreProxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
+		CoreProxy.addName(libraryBlock, "Blueprint Library");
 
 		CoreProxy.registerTileEntity(TileMarker.class, "Marker");
 		CoreProxy.registerTileEntity(TileFiller.class, "Filler");

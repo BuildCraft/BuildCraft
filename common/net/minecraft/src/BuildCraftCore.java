@@ -30,7 +30,7 @@ import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.DefaultTriggerProvider;
 import net.minecraft.src.buildcraft.core.EntityLaser;
 import net.minecraft.src.buildcraft.core.EntityRobot;
-import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
+import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 import net.minecraft.src.buildcraft.core.ItemWrench;
 import net.minecraft.src.buildcraft.core.RedstonePowerFramework;
 import net.minecraft.src.buildcraft.core.TriggerInventory;
@@ -305,27 +305,27 @@ public class BuildCraftCore {
 
 		gearsInitialized = true;
 
-		woodenGearItem = (new ItemBuildCraftTexture(Integer.parseInt(woodenGearId.value)))
+		woodenGearItem = (new ItemBuildCraft(Integer.parseInt(woodenGearId.value)))
 				.setIconIndex(1 * 16 + 0)
 				.setItemName("woodenGearItem");
 		CoreProxy.addName(woodenGearItem, "Wooden Gear");
 
-		stoneGearItem = (new ItemBuildCraftTexture(Integer.parseInt(stoneGearId.value)))
+		stoneGearItem = (new ItemBuildCraft(Integer.parseInt(stoneGearId.value)))
 				.setIconIndex(1 * 16 + 1)
 				.setItemName("stoneGearItem");
 		CoreProxy.addName(stoneGearItem, "Stone Gear");
 
-		ironGearItem = (new ItemBuildCraftTexture(Integer.parseInt(ironGearId.value)))
+		ironGearItem = (new ItemBuildCraft(Integer.parseInt(ironGearId.value)))
 				.setIconIndex(1 * 16 + 2)
 				.setItemName("ironGearItem");
 		CoreProxy.addName(ironGearItem, "Iron Gear");
 
-		goldGearItem = (new ItemBuildCraftTexture(Integer.parseInt(goldenGearId.value)))
+		goldGearItem = (new ItemBuildCraft(Integer.parseInt(goldenGearId.value)))
 				.setIconIndex(1 * 16 + 3)
 				.setItemName("goldGearItem");
 		CoreProxy.addName(goldGearItem, "Gold Gear");
 
-		diamondGearItem = (new ItemBuildCraftTexture(Integer.parseInt(diamondGearId.value)))
+		diamondGearItem = (new ItemBuildCraft(Integer.parseInt(diamondGearId.value)))
 				.setIconIndex(1 * 16 + 4)
 				.setItemName("diamondGearItem");
 		CoreProxy.addName(diamondGearItem, "Diamond Gear");

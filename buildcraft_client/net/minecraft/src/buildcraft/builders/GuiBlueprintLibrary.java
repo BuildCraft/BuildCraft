@@ -16,10 +16,12 @@ import net.minecraft.src.GuiContainer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BptBase;
 import net.minecraft.src.buildcraft.core.BptPlayerIndex;
+import net.minecraft.src.buildcraft.core.GuiBuildCraft;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiBlueprintLibrary extends GuiContainer {
+public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	EntityPlayer player;
 	TileBlueprintLibrary library;
@@ -64,21 +66,22 @@ public class GuiBlueprintLibrary extends GuiContainer {
 		controlList.add(nextPageButton);
 
 //		if (library.owner.equals(player.username)) {
-			deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, "Del");
+			deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtil.localize("gui.del"));
 			controlList.add(deleteButton);
 
-			lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, "Lock");
+			lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
 			controlList.add(lockButton);
 
 			if (library.locked)
-				lockButton.displayString = "Unlock";
-			else lockButton.displayString = "Lock";
+				lockButton.displayString = StringUtil.localize("gui.unlock");
+			else lockButton.displayString = StringUtil.localize("gui.lock");
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
 //		fontRenderer.drawString(library.owner + "'s Library", 6, 6, 0x404040);
-		fontRenderer.drawString("Blueprint Library", 6, 6, 0x404040);
+		String title = StringUtil.localize("tile.libraryBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
 		for (BptBase bpt : container.contents) {
@@ -165,9 +168,9 @@ public class GuiBlueprintLibrary extends GuiContainer {
 			library.locked = !library.locked;
 
 			if (library.locked)
-				lockButton.displayString = "Unlock";
+				lockButton.displayString = StringUtil.localize("gui.unlock");
 			else
-				lockButton.displayString = "Lock";
+				lockButton.displayString = StringUtil.localize("gui.lock");
 		} else if (deleteButton != null && deleteButton.mousePressed(ModLoader.getMinecraftInstance(), i, j))
 			if (library.selected != null) {
 				index.deleteBluePrint (library.selected.file.getName());

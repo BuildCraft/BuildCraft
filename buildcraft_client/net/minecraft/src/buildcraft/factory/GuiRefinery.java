@@ -14,6 +14,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.RefineryRecipe;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
+import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
@@ -39,10 +40,11 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString("Refinery Setup", 28, 6, 0x404040);
+		String title = StringUtil.localize("tile.refineryBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString("->", 63, 59, 0x404040);
 		fontRenderer.drawString("<-", 106, 59, 0x404040);
-		fontRenderer.drawString("Inventory", 8, (ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
 		drawForegroundSelection ();
 	}

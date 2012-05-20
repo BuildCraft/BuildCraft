@@ -57,13 +57,11 @@ public class BuildCraftSilicon {
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser (Integer.parseInt(laserId.value));
-		CoreProxy.addName(laserBlock.setBlockName("laserBlock"),
-		"Laser");
+		CoreProxy.addName(laserBlock.setBlockName("laserBlock"), "Laser");
 		CoreProxy.registerBlock(laserBlock);
 
 		assemblyTableBlock = new BlockAssemblyTable (Integer.parseInt(assemblyTableId.value));
-		CoreProxy.addName(assemblyTableBlock.setBlockName("assemblyTableBlock"),
-		"Assembly Table");
+		CoreProxy.addName(assemblyTableBlock.setBlockName("assemblyTableBlock"), "Assembly Table");
 		CoreProxy.registerBlock(assemblyTableBlock);
 
 		redstoneChipset = new ItemRedstoneChipset(DefaultProps.REDSTONE_CHIPSET);

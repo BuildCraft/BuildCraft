@@ -17,7 +17,7 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.ItemBuildCraftTexture;
+import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 import net.minecraft.src.buildcraft.transport.ActionEnergyPulser;
 import net.minecraft.src.buildcraft.transport.ActionSignalOutput;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
@@ -190,7 +190,7 @@ public class BuildCraftTransport {
 
 		BuildCraftCore.mainConfiguration.save();
 
-		pipeWaterproof = new ItemBuildCraftTexture (DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
+		pipeWaterproof = new ItemBuildCraft (DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
 		pipeWaterproof.setItemName("pipeWaterproof");
 		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");
 		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
@@ -247,7 +247,7 @@ public class BuildCraftTransport {
 		for (int j = 0; j < 6; ++j)
 			diamondTextures [j] = 1 * 16 + 6 + j;
 
-		redPipeWire = new ItemBuildCraftTexture(DefaultProps.RED_PIPE_WIRE).setIconIndex(4 * 16 + 0);
+		redPipeWire = new ItemBuildCraft(DefaultProps.RED_PIPE_WIRE).setIconIndex(4 * 16 + 0);
 		redPipeWire.setItemName("redPipeWire");
 		CoreProxy.addName(redPipeWire, "Red Pipe Wire");
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
@@ -256,7 +256,7 @@ public class BuildCraftTransport {
 				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(
 				redPipeWire, 8)));
 
-		bluePipeWire = new ItemBuildCraftTexture(DefaultProps.BLUE_PIPE_WIRE).setIconIndex(4 * 16 + 1);
+		bluePipeWire = new ItemBuildCraft(DefaultProps.BLUE_PIPE_WIRE).setIconIndex(4 * 16 + 1);
 		bluePipeWire.setItemName("bluePipeWire");
 		CoreProxy.addName(bluePipeWire, "Blue Pipe Wire");
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
@@ -265,7 +265,7 @@ public class BuildCraftTransport {
 				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(
 				bluePipeWire, 8)));
 
-		greenPipeWire = new ItemBuildCraftTexture(DefaultProps.GREEN_PIPE_WIRE).setIconIndex(4 * 16 + 2);
+		greenPipeWire = new ItemBuildCraft(DefaultProps.GREEN_PIPE_WIRE).setIconIndex(4 * 16 + 2);
 		greenPipeWire.setItemName("greenPipeWire");
 		CoreProxy.addName(greenPipeWire, "Green Pipe Wire");
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
@@ -274,7 +274,7 @@ public class BuildCraftTransport {
 				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(
 				greenPipeWire, 8)));
 
-		yellowPipeWire = new ItemBuildCraftTexture(DefaultProps.YELLOW_PIPE_WIRE).setIconIndex(4 * 16 + 3);
+		yellowPipeWire = new ItemBuildCraft(DefaultProps.YELLOW_PIPE_WIRE).setIconIndex(4 * 16 + 3);
 		yellowPipeWire.setItemName("yellowPipeWire");
 		CoreProxy.addName(yellowPipeWire, "Yellow Pipe Wire");
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
