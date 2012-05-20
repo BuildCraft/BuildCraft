@@ -92,8 +92,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	public void synchronizeIfDelay (int delay) {
 		if (APIProxy.isServerSide())
 			if (networkSyncTracker.markTimeIfDelay(worldObj, delay))
-				CoreProxy.sendToPlayers(getUpdatePacket(), xCoord, yCoord,
-						zCoord, 40, mod_BuildCraftCore.instance);
+				CoreProxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord,
+						yCoord, zCoord, 40, mod_BuildCraftCore.instance);
 	}
 
 	@Override
