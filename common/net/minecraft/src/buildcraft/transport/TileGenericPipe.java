@@ -34,6 +34,7 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.pipes.IOwnable;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
@@ -47,7 +48,6 @@ import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPipeDescription;
 import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
-import net.minecraft.src.buildcraft.core.utils.IOwnable;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile,
@@ -71,7 +71,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		nbttagcompound.setString("owner", owner);
+		if(owner != null && !owner.isEmpty())
+			nbttagcompound.setString("owner", owner);
 		if (pipe != null) {
 			nbttagcompound.setInteger("pipeId", pipe.itemID);
 			pipe.writeToNBT(nbttagcompound);

@@ -44,6 +44,7 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsIron;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsObsidian;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsRedstone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsSteel;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStripes;
@@ -89,6 +90,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsObsidian;
 
 	public static Item pipeItemsSteel;
+	public static Item pipeItemsRedstone;
 	
 	public static Item pipeLiquidsWood;
 	public static Item pipeLiquidsCobblestone;
@@ -214,6 +216,7 @@ public class BuildCraftTransport {
 		pipeItemsObsidian = createPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 
 		pipeItemsSteel = createPipe(DefaultProps.PIPE_ITEMS_STEEL_ID, PipeItemsSteel.class, "Steel Transport Pipe", Item.clay, Block.glass, Item.clay);
+		pipeItemsRedstone = createPipe(DefaultProps.PIPE_ITEMS_REDSTONE_ID, PipeItemsRedstone.class, "Redstone Transport Pipe", Item.redstone, Block.glass, Item.redstone);
 		
 		pipeLiquidsWood = createPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
 		pipeLiquidsCobblestone = createPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);

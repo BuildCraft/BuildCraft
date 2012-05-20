@@ -1,4 +1,4 @@
-package net.minecraft.src.buildcraft.core.utils;
+package net.minecraft.src.buildcraft.api.pipes;
 
 import net.minecraft.src.EntityPlayer;
 

@@ -54,6 +54,8 @@ public class mod_BuildCraftTransport extends NetworkMod implements IItemRenderer
 
 		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeItemsSteel.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(
+				BuildCraftTransport.pipeItemsRedstone.shiftedIndex, this);
 		
 		MinecraftForgeClient.registerItemRenderer(
 				BuildCraftTransport.pipeLiquidsWood.shiftedIndex, this);
