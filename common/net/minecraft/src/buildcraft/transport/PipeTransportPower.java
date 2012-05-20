@@ -159,7 +159,7 @@ public class PipeTransportPower extends PipeTransport {
 			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor))
 				CoreProxy
 						.sendToPlayers(this.container.getUpdatePacket(),
-								xCoord, yCoord, zCoord, 40,
+								worldObj, xCoord, yCoord, zCoord, 40,
 								mod_BuildCraftCore.instance);
 
 	}
