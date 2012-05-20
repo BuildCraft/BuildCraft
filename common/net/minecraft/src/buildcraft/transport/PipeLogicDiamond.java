@@ -88,7 +88,7 @@ public class PipeLogicDiamond extends PipeLogic {
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
 				CoreProxy.sendToPlayers(
-						getContentsPacket(p), xCoord,
+						getContentsPacket(p), worldObj, xCoord,
 						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 
 		return stack;
@@ -109,7 +109,7 @@ public class PipeLogicDiamond extends PipeLogic {
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
 				CoreProxy.sendToPlayers(
-						getContentsPacket(p), xCoord,
+						getContentsPacket(p), worldObj, xCoord,
 						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 	}
 
@@ -119,7 +119,7 @@ public class PipeLogicDiamond extends PipeLogic {
 			if (APIProxy.isServerSide())
 				for (int p = 0; p < 6; ++p)
 					CoreProxy.sendToPlayers(
-							getContentsPacket(p), xCoord,
+							getContentsPacket(p), worldObj, xCoord,
 							yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 	}
 

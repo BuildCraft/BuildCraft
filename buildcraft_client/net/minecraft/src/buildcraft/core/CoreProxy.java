@@ -78,7 +78,7 @@ public class CoreProxy {
 		return new File(Minecraft.getMinecraftDir(), "/buildcraft/");
 	}
 
-	public static void sendToPlayers(Packet packet, int x, int y, int z, int maxDistance, NetworkMod mod) {}
+	public static void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance, NetworkMod mod) {}
 	public static void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {}
 
 	public static void sendToServer(Packet packet) {

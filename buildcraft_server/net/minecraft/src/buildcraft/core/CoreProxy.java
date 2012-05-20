@@ -49,20 +49,17 @@ public class CoreProxy {
 		return new File("BuildCraft.cfg");
 	}
 
-	public static void sendToPlayers(Packet packet, int x, int y,
+	public static void sendToPlayers(Packet packet, World w, int x, int y,
 			int z, int maxDistance, NetworkMod mod) {
 		if (packet != null) {
-			World[] worlds = DimensionManager.getWorlds();
-			for (int i = 0; i < worlds.length; i++)
-				for (int j = 0; j < worlds[i].playerEntities
-						.size(); j++) {
-					EntityPlayerMP player = (EntityPlayerMP)worlds[i].playerEntities.get(j);
+			for (int j = 0; j < w.playerEntities.size(); j++) {
+				EntityPlayerMP player = (EntityPlayerMP)w.playerEntities.get(j);
 
-					if (Math.abs(player.posX - x) <= maxDistance
-							&& Math.abs(player.posY - y) <= maxDistance
-							&& Math.abs(player.posZ - z) <= maxDistance)
-						player.playerNetServerHandler.sendPacket(packet);
-				}
+				if (Math.abs(player.posX - x) <= maxDistance
+						&& Math.abs(player.posY - y) <= maxDistance
+						&& Math.abs(player.posZ - z) <= maxDistance)
+					player.playerNetServerHandler.sendPacket(packet);
+			}
 		}
 	}
 
