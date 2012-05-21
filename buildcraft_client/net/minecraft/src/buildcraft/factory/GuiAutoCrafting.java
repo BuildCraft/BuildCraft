@@ -32,7 +32,7 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		String title = StringUtil.localize("tile.tile.autoWorkBenchBlock");
+		String title = StringUtil.localize("tile.autoWorkBenchBlock");
         fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
