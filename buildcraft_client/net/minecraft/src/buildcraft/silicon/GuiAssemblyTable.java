@@ -21,9 +21,9 @@ import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable.SelectionMessage;
-import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 

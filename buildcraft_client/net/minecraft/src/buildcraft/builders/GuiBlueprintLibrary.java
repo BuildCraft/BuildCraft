@@ -17,7 +17,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BptBase;
 import net.minecraft.src.buildcraft.core.BptPlayerIndex;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
-import net.minecraft.src.forestry.core.utils.StringUtil;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
