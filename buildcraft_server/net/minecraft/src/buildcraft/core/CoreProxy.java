@@ -10,7 +10,9 @@
 package net.minecraft.src.buildcraft.core;
 
 import java.io.File;
+import java.util.List;
 
+import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -53,13 +55,9 @@ public class CoreProxy {
 	public static void sendToPlayers(Packet packet, World w, int x, int y,
 			int z, int maxDistance, NetworkMod mod) {
 		if (packet != null) {
-			for (int j = 0; j < w.playerEntities.size(); j++) {
-				EntityPlayerMP player = (EntityPlayerMP)w.playerEntities.get(j);
-
-				if (Math.abs(player.posX - x) <= maxDistance
-						&& Math.abs(player.posY - y) <= maxDistance
-						&& Math.abs(player.posZ - z) <= maxDistance)
-					player.playerNetServerHandler.sendPacket(packet);
+			List<EntityPlayerMP> players = w.getEntitiesWithinAABB(EntityPlayerMP.class, AxisAlignedBB.getBoundingBoxFromPool(x - maxDistance, y - maxDistance, z - maxDistance, x + maxDistance, y + maxDistance, z + maxDistance));
+			for (EntityPlayerMP player: players) {
+				player.playerNetServerHandler.sendPacket(packet);
 			}
 		}
 	}
