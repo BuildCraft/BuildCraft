@@ -9,11 +9,12 @@
 
 package net.minecraft.src.buildcraft.core;
 
+import cpw.mods.fml.client.FMLTextureFX;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.TextureFX;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
-public class TextureLiquidsFX extends TextureFX {
+public class TextureLiquidsFX extends FMLTextureFX {
 	private final int redMin, redMax, greenMin, greenMax, blueMin, blueMax;
 	private final String texture;
 
@@ -48,8 +49,8 @@ public class TextureLiquidsFX extends TextureFX {
 
 	@Override
 	public void onTick() {
-		for (int i = 0; i < iconTileSize; i++)
-			for (int k = 0; k < iconTileSize; k++) {
+		for (int i = 0; i < tileSizeBase; i++)
+			for (int k = 0; k < tileSizeBase; k++) {
 				float f = 0.0F;
 				for (int j1 = i - 1; j1 <= i + 1; j1++) {
 					int k1 = j1 & tileSizeMask;
