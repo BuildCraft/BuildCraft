@@ -85,7 +85,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 		if(nbttagcompound.hasKey("owner"))
 			owner = nbttagcompound.getString("owner");
-		pipe = BlockGenericPipe.createPipe(nbttagcompound.getInteger("pipeId"));
+		int key = nbttagcompound.getInteger("pipeId");
+		if (key > 0) {
+			pipe = BlockGenericPipe.createPipe(key);
+		}
+
 		if (pipe != null) {
 			pipe.setTile(this);
 			pipe.readFromNBT(nbttagcompound);
