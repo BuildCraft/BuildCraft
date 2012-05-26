@@ -198,7 +198,7 @@ public class BuildCraftCore {
 			try {
 				PowerFramework.currentFramework = (PowerFramework) Class
 						.forName(prefix + "buildcraft.energy.PneumaticPowerFramework")
-						.getConstructor(null).newInstance(null);
+						.getConstructor().newInstance();
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
@@ -209,8 +209,8 @@ public class BuildCraftCore {
 					className = className.replace("net.minecraft.src.", "");
 
 				PowerFramework.currentFramework = (PowerFramework) Class
-				.forName(prefix + className).getConstructor(null)
-				.newInstance(null);
+				.forName(prefix + className).getConstructor()
+				.newInstance();
 			} catch (Throwable e) {
 				e.printStackTrace();
 				PowerFramework.currentFramework = new RedstonePowerFramework();
