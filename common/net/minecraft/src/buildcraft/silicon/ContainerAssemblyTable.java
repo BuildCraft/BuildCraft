@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.silicon;
 
-
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
@@ -61,31 +60,17 @@ class ContainerAssemblyTable extends BuildCraftContainer {
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return table.isUseableByPlayer(entityplayer);
 	}
+		
+	// @Override client side only
+	public void updateProgressBar(int i, int j) {
+		table.getGUINetworkData (i, j);
+	}
 	
 	@Override
 	public void updateCraftingResults() {
 		super.updateCraftingResults();
-		
-		for (int i = 0; i < crafters.size(); i++) {
-			ICrafting crafting = (ICrafting) crafters.get(i);
 
-			crafting.updateCraftingInventoryInfo(this, 0, table.xCoord);
-			crafting.updateCraftingInventoryInfo(this, 1, table.yCoord);
-			crafting.updateCraftingInventoryInfo(this, 2, table.zCoord);
-		}
-	}
-	
-	public void updateProgressBar(int i, int j) {	
-		if (i == 0) {
-			x = j;
-		} else if (i == 1) {
-			y = j;
-		} else if (i == 2) {
-			z = j;
-		}
-		
-		if (!networkSynchronized && x != Integer.MAX_VALUE && y != Integer.MAX_VALUE && z != Integer.MAX_VALUE)
-			networkSynchronized = true;		
-			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, x, y, z).getPacket());
+        for(int i = 0; i < crafters.size(); i++)
+			table.sendGUINetworkData (this, (ICrafting)crafters.get(i));
 	}
 }

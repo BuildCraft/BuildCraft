@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
+import net.minecraft.src.buildcraft.core.network.PacketCoordinates;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
@@ -69,6 +70,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			}
 
 		updateRecipes();
+		
+		// Request current selection from server
+		CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
 	}
 
 	public void updateRecipes() {
@@ -154,9 +158,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,container.z, message);
 
 				PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, payload);
-				packet.posX = container.x;
-				packet.posY = container.y;
-				packet.posZ = container.z;
+				packet.posX = assemblyTable.xCoord;
+				packet.posY = assemblyTable.yCoord;
+				packet.posZ = assemblyTable.zCoord;
 			
 				CoreProxy.sendToServer(packet.getPacket());
 			}

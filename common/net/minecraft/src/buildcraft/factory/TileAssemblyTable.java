@@ -3,8 +3,10 @@ package net.minecraft.src.buildcraft.factory;
 import java.util.LinkedList;
 
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.Container;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -30,6 +32,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 		
 	public AssemblyRecipe currentRecipe;
 	
+	private float currentRequiredEnergy = 0;
 	private float energyStored = 0;
 	
 	public static class SelectionMessage {
@@ -289,25 +292,33 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 		return recipe != null && recipe == currentRecipe;		
 	}
 	
+	private void setCurrentRecipe(AssemblyRecipe recipe) {
+		this.currentRecipe = recipe;
+		if(recipe != null)
+			this.currentRequiredEnergy = recipe.energy;
+		else
+			this.currentRequiredEnergy = 0;
+	}
+	
 	public void planOutput (AssemblyRecipe recipe) {
 		if (recipe != null && !isPlanned(recipe)) {
 			plannedOutput.add(recipe);
 			
 			if (!isAssembling(currentRecipe) || !isPlanned(currentRecipe)) {
-				currentRecipe = recipe;
+				setCurrentRecipe(recipe);
 			}
 		}
 	}
 
 	public void cancelPlanOutput(AssemblyRecipe recipe) {
 		if (isAssembling(recipe)) {
-			currentRecipe = null;
+			setCurrentRecipe(null);
 		}
 		
 		plannedOutput.remove(recipe);		
 		
 		if (plannedOutput.size() != 0) {
-			currentRecipe = plannedOutput.getFirst();
+			setCurrentRecipe(plannedOutput.getFirst());
 		}
 	}
 	
@@ -318,19 +329,19 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 			if (recipe == currentRecipe) {
 				takeNext = true;
 			} else if (takeNext && recipe.canBeDone(items)) {
-				currentRecipe = recipe;
+				setCurrentRecipe(recipe);
 				return;
 			}
 		}
 
 		for (AssemblyRecipe recipe : plannedOutput) {
 			if (recipe.canBeDone(items)) {
-				currentRecipe = recipe;
+				setCurrentRecipe(recipe);
 				return;
 			}
 		}
 		
-		currentRecipe = null;
+		setCurrentRecipe(null);
 	}
 
 	@Override
@@ -339,13 +350,13 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 	}
 	
 	public void handleSelectionMessage(SelectionMessage message) {
-		for (AssemblyRecipe r : BuildCraftCore.assemblyRecipes) {
-			if (r.output.itemID == message.itemID
-					&& r.output.getItemDamage() == message.itemDmg) {
+		for (AssemblyRecipe recipe : BuildCraftCore.assemblyRecipes) {
+			if (recipe.output.itemID == message.itemID
+					&& recipe.output.getItemDamage() == message.itemDmg) {
 				if (message.select) {
-					planOutput(r);
+					planOutput(recipe);
 				} else {
-					cancelPlanOutput(r);
+					cancelPlanOutput(recipe);
 				}
 				
 				break;
@@ -375,4 +386,24 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 					mod_BuildCraftSilicon.instance);
 		}
 	}
+	
+	/* SMP GUI */
+	public void getGUINetworkData(int i, int j) {
+		switch(i)
+		{
+		case 0:
+			currentRequiredEnergy = j;
+			break;
+		case 1:
+			energyStored = j;
+			break;
+		}
+	}
+
+	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
+		iCrafting.updateCraftingInventoryInfo(container, 0, (int)currentRequiredEnergy);
+		iCrafting.updateCraftingInventoryInfo(container, 1, (int)energyStored);
+	}
+
+
 }
