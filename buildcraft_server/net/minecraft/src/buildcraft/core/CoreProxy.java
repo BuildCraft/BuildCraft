@@ -10,7 +10,9 @@
 package net.minecraft.src.buildcraft.core;
 
 import java.io.File;
+import java.util.List;
 
+import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -24,7 +26,6 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.network.BuildCraftPacket;
-import net.minecraft.src.forge.DimensionManager;
 import net.minecraft.src.forge.NetworkMod;
 
 public class CoreProxy {
@@ -51,20 +52,13 @@ public class CoreProxy {
 		return new File("BuildCraft.cfg");
 	}
 
-	public static void sendToPlayers(Packet packet, int x, int y,
+	public static void sendToPlayers(Packet packet, World w, int x, int y,
 			int z, int maxDistance, NetworkMod mod) {
 		if (packet != null) {
-			World[] worlds = DimensionManager.getWorlds();
-			for (int i = 0; i < worlds.length; i++)
-				for (int j = 0; j < worlds[i].playerEntities
-						.size(); j++) {
-					EntityPlayerMP player = (EntityPlayerMP)worlds[i].playerEntities.get(j);
-
-					if (Math.abs(player.posX - x) <= maxDistance
-							&& Math.abs(player.posY - y) <= maxDistance
-							&& Math.abs(player.posZ - z) <= maxDistance)
-						player.playerNetServerHandler.sendPacket(packet);
-				}
+			List<EntityPlayerMP> players = w.getEntitiesWithinAABB(EntityPlayerMP.class, AxisAlignedBB.getBoundingBoxFromPool(x - maxDistance, y - maxDistance, z - maxDistance, x + maxDistance, y + maxDistance, z + maxDistance));
+			for (EntityPlayerMP player: players) {
+				player.playerNetServerHandler.sendPacket(packet);
+			}
 		}
 	}
 

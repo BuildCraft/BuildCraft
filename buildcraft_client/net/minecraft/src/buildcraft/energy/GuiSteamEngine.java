@@ -12,7 +12,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
-import net.minecraft.src.forestry.core.utils.StringUtil;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 

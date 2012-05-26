@@ -13,7 +13,7 @@ import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
-import net.minecraft.src.forestry.core.utils.StringUtil;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 
@@ -32,7 +32,7 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		String title = StringUtil.localize("tile.tile.autoWorkBenchBlock");
+		String title = StringUtil.localize("tile.autoWorkBenchBlock");
         fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}

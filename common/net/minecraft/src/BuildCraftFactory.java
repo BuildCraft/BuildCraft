@@ -229,7 +229,13 @@ public class BuildCraftFactory {
 					Character.valueOf('R'), Block.torchRedstoneActive,
 				});
 		if (!hopperDisabled){
-			
+			craftingmanager.addRecipe(
+					new ItemStack(hopperBlock),
+					new Object[] {"ICI", "IGI", " I ",
+						Character.valueOf('I'), Item.ingotIron,
+						Character.valueOf('C'), Block.chest,
+						Character.valueOf('G'), BuildCraftCore.stoneGearItem
+					});
 		}
 		
 	}

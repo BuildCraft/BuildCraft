@@ -381,7 +381,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 			packet.posX = xCoord;
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
-			CoreProxy.sendToPlayers(packet.getPacket(),
+			CoreProxy.sendToPlayers(packet.getPacket(), worldObj,
 					(int) player.posX, (int) player.posY, (int) player.posZ, 100,
 					mod_BuildCraftSilicon.instance);
 		}

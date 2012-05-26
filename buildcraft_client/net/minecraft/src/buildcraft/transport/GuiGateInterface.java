@@ -17,8 +17,8 @@ import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.buildcraft.transport.Gate.GateKind;
-import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 

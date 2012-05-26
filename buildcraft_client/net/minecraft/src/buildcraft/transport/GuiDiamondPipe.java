@@ -16,8 +16,8 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketSlotChange;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond.PacketStack;
-import net.minecraft.src.forestry.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 

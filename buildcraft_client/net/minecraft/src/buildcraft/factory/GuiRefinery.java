@@ -14,7 +14,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.RefineryRecipe;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
-import net.minecraft.src.forestry.core.utils.StringUtil;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
 import org.lwjgl.opengl.GL11;
 

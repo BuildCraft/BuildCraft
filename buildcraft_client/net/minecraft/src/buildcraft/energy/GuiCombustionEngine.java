@@ -14,7 +14,7 @@ import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
-import net.minecraft.src.forestry.core.utils.StringUtil;
+import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.forge.ITextureProvider;
 import net.minecraft.src.forge.MinecraftForgeClient;
 

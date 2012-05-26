@@ -42,7 +42,7 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public class PipeTransportItems extends PipeTransportSolids {
-	
+
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
 		return tile instanceof TileGenericPipe
