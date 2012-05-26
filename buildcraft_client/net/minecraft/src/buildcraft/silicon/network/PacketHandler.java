@@ -41,7 +41,7 @@ public class PacketHandler implements IPacketHandler {
 	private void onSelectionUpdate(PacketUpdate packet) {
 
 		GuiScreen screen = ModLoader.getMinecraftInstance().currentScreen;
-
+		
 		if (screen instanceof GuiAssemblyTable) {
 			GuiAssemblyTable gui = (GuiAssemblyTable) screen;
 			SelectionMessage message = new SelectionMessage();
