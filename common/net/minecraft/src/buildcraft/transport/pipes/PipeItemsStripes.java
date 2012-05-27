@@ -30,7 +30,6 @@ import net.minecraft.src.buildcraft.transport.ItemPipe;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicStripes;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
-import net.minecraft.src.buildcraft.transport.PipeTransportSolids;
 
 public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPowerReceptor {
 
@@ -79,7 +78,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 
 	@Override
-	public void drop(PipeTransportSolids pipe, EntityData data) {
+	public void drop(PipeTransportItems pipe, EntityData data) {
 		Position p = new Position (xCoord, yCoord, zCoord, data.orientation);
 		p.moveForwards(1.0);
 
@@ -99,19 +98,19 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 
 	@Override
-	public void centerReached(PipeTransportSolids pipe, EntityData data) {
+	public void centerReached(PipeTransportItems pipe, EntityData data) {
 		convertPipe(pipe, data);
 	}
 
 	@SuppressWarnings("unchecked")
-	public boolean convertPipe (PipeTransportSolids pipe, EntityData data) {
+	public boolean convertPipe (PipeTransportItems pipe, EntityData data) {
 		if (data.item.item.getItem() instanceof ItemPipe)
 			if (!(data.item.item.itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
 				Pipe newPipe = BlockGenericPipe.createPipe(worldObj, xCoord, yCoord, zCoord, data.item.item.itemID);
 				newPipe.setTile(this.container);
 				newPipe.setWorld(worldObj);
 				this.container.pipe = newPipe;
-				((PipeTransportItems)newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
+				((PipeTransportItems) newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
 						.clone();
 
 				data.item.item.stackSize--;
@@ -144,6 +143,8 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 
 	@Override
-	public void endReached(PipeTransportSolids pipe, EntityData data,
-			TileEntity tile) {}
+	public void endReached(PipeTransportItems pipe, EntityData data,
+			TileEntity tile) {
+
+	}
 }

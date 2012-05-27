@@ -18,7 +18,6 @@ import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Item;
@@ -300,18 +299,6 @@ public class BlockGenericPipe extends BlockContainer implements
 			pipe.onBlockPlaced();
 	}
 
-    @Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-    
-        if(APIProxy.isClient(world))
-			return;
-
-        TileGenericPipe tile = (TileGenericPipe)world.getBlockTileEntity(i, j, k);
-        if(entityliving instanceof EntityPlayer)
-        	tile.setOwner((EntityPlayer)entityliving);
-    	
-    }
-	
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
