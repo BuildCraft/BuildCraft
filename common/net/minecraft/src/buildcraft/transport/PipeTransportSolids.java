@@ -84,9 +84,8 @@ public abstract class PipeTransportSolids extends PipeTransport {
 
 		if (APIProxy.isServerSide())
 			if (item.synchroTracker.markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor))
-				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
-						xCoord, yCoord, zCoord, 50,
-						mod_BuildCraftTransport.instance);
+				CoreProxy.sendToPlayers(createItemPacket(item, orientation), container.worldObj, 
+						xCoord, yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
 
 		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
 			groupEntities();
