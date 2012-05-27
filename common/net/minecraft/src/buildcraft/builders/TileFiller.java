@@ -73,6 +73,9 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     				((TileMarker) a).removeFromWorld();
     			}
     			
+				if (!APIProxy.isClient(worldObj) && box.isInitialized()) {
+					box.createLasers(worldObj, LaserKind.Stripes);
+				}
     			sendNetworkUpdate();
     		}
     	}
@@ -83,10 +86,6 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
     @Override
 	public void updateEntity () {		
 		super.updateEntity();
-		
-		if (box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);
-		}
 		
 		if (done) {
 			if (lastMode == Mode.Loop) {
