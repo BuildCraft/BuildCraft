@@ -44,8 +44,6 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsIron;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsObsidian;
-import net.minecraft.src.buildcraft.transport.pipes.PipeItemsRedstone;
-import net.minecraft.src.buildcraft.transport.pipes.PipeItemsSteel;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStripes;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsWood;
@@ -89,9 +87,6 @@ public class BuildCraftTransport {
 	public static Item pipeItemsDiamond;
 	public static Item pipeItemsObsidian;
 
-	public static Item pipeItemsSteel;
-	public static Item pipeItemsRedstone;
-	
 	public static Item pipeLiquidsWood;
 	public static Item pipeLiquidsCobblestone;
 	public static Item pipeLiquidsStone;
@@ -207,22 +202,19 @@ public class BuildCraftTransport {
 		mod_BuildCraftTransport.registerTilePipe(TileGenericPipe.class,
 				"net.minecraft.src.buildcraft.transport.GenericPipe");
 
-		pipeItemsWood = createPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
+		pipeItemsWood = createPipe (DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
 		pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
-		pipeItemsStone = createPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
-		pipeItemsIron = createPipe(DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
-		pipeItemsGold = createPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
-		pipeItemsDiamond = createPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
-		pipeItemsObsidian = createPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
+		pipeItemsStone = createPipe (DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
+		pipeItemsIron = createPipe (DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
+		pipeItemsGold = createPipe (DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
+		pipeItemsDiamond = createPipe (DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
+		pipeItemsObsidian = createPipe (DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 
-		pipeItemsSteel = createPipe(DefaultProps.PIPE_ITEMS_STEEL_ID, PipeItemsSteel.class, "Steel Transport Pipe", Item.clay, Block.glass, Item.clay);
-		pipeItemsRedstone = createPipe(DefaultProps.PIPE_ITEMS_REDSTONE_ID, PipeItemsRedstone.class, "Redstone Transport Pipe", Item.redstone, Block.glass, Item.redstone);
-		
-		pipeLiquidsWood = createPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
-		pipeLiquidsCobblestone = createPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);
-		pipeLiquidsStone = createPipe(DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone, null);
-		pipeLiquidsIron = createPipe(DefaultProps.PIPE_LIQUIDS_IRON_ID, PipeLiquidsIron.class, "Iron Waterproof Pipe", pipeWaterproof, pipeItemsIron, null);
-		pipeLiquidsGold = createPipe(DefaultProps.PIPE_LIQUIDS_GOLD_ID, PipeLiquidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold, null);
+		pipeLiquidsWood = createPipe (DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
+		pipeLiquidsCobblestone = createPipe (DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);
+		pipeLiquidsStone = createPipe (DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone, null);
+		pipeLiquidsIron = createPipe (DefaultProps.PIPE_LIQUIDS_IRON_ID, PipeLiquidsIron.class, "Iron Waterproof Pipe", pipeWaterproof, pipeItemsIron, null);
+		pipeLiquidsGold = createPipe (DefaultProps.PIPE_LIQUIDS_GOLD_ID, PipeLiquidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold, null);
 		// diamond
 		// obsidian
 

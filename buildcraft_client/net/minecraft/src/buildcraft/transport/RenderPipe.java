@@ -231,7 +231,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (pipe.pipe.transport instanceof PipeTransportLiquids)
 			renderLiquids(pipe.pipe, x, y, z);
 
-		if (pipe.pipe.transport instanceof PipeTransportSolids)
+		if (pipe.pipe.transport instanceof PipeTransportItems)
 			renderSolids(pipe.pipe, x, y, z);
 
 		if (pipe.pipe.transport instanceof PipeTransportPower)
@@ -371,7 +371,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		for (EntityData data : ((PipeTransportSolids) pipe.transport).travelingEntities
+		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities
 				.values())
 			doRenderItem(data.item, x + data.item.posX - pipe.xCoord, y
 					+ data.item.posY - pipe.yCoord, z + data.item.posZ
