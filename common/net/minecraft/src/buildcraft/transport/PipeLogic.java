@@ -40,6 +40,9 @@ public class PipeLogic implements IDropControlInventory {
 		return false;
 	}
 
+	/// OWNERSHIP
+	public boolean isSecure() { return false; }
+	
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 
 	}

@@ -122,4 +122,6 @@ public class PipeLogicWood extends PipeLogic {
 		if (!APIProxy.isClient(worldObj))
 			switchSourceIfNeeded();
 	}
+	
+	@Override public boolean isSecure() { return true; }
 }

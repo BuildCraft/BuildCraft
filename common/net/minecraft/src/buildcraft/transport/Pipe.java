@@ -142,6 +142,10 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 		updateSignalState();
 	}
 
+	/// OWNERSHIP
+	public boolean isSecure() { return logic.isSecure(); }
+	
+	/// CONNECTING
 	public boolean isPipeConnected(TileEntity tile) {
     	return logic.isPipeConnected(tile) && transport.isPipeConnected (tile);
 	}
