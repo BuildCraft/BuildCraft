@@ -4,10 +4,10 @@ import net.minecraft.src.TileEntity;
 
 public interface IItemTravelingHook {
 
-	public void drop (PipeTransportSolids pipe, EntityData data);
+	public void drop (PipeTransportItems pipe, EntityData data);
 
-	public void centerReached (PipeTransportSolids pipe, EntityData data);
+	public void centerReached (PipeTransportItems pipe, EntityData data);
 
-	public void endReached(PipeTransportSolids pipe,	EntityData data, TileEntity tile);
+	public void endReached(PipeTransportItems pipe,	EntityData data, TileEntity tile);
 
 }

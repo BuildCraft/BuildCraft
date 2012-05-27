@@ -25,7 +25,6 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
-import net.minecraft.src.buildcraft.transport.PipeTransportSolids;
 import net.minecraft.src.forge.ISidedInventory;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
@@ -36,7 +35,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	private int plainTexture = 1 * 16 + 15;
 	private int nextTexture = baseTexture;
 
-	protected PipeItemsWood(int itemID, PipeTransportSolids transport) {
+	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
 		super(transport, new PipeLogicWood(), itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
@@ -123,7 +122,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
 					entityPos.y, entityPos.z, stack);
 
-			((PipeTransportSolids) transport).entityEntering(entity,
+			((PipeTransportItems) transport).entityEntering(entity,
 					entityPos.orientation);
 		}
 	}
