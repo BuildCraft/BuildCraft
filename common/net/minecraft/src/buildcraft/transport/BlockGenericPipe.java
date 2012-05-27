@@ -315,8 +315,8 @@ public class BlockGenericPipe extends BlockContainer implements
 					(entityplayer.getCurrentEquippedItem() == null
 					|| !(entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench))) {
 
-				if(pipe.hasGate()
-						|| pipe.isWired())
+				if(!APIProxy.isRemote()
+						&& (pipe.hasGate() || pipe.isWired()))
 					return stripEquipment(pipe);
 
 			} else if (entityplayer.getCurrentEquippedItem() == null) {
@@ -384,7 +384,7 @@ public class BlockGenericPipe extends BlockContainer implements
 	}
 
 	private boolean stripEquipment(Pipe pipe) {
-
+		
 		// Try to strip wires first, starting with yellow.
 		for(IPipe.WireColor color : IPipe.WireColor.values())
 			if(pipe.wireSet[color.reverse().ordinal()]) {
