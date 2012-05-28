@@ -129,8 +129,35 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	 * Sets the currently selected actions and triggers according to packet.
 	 * @param packet
 	 */
-	public void setSelection(PacketUpdate packet) {
+	public void setSelection(PacketUpdate packet){
+		PacketPayload payload = packet.payload;
+		int position = payload.intPayload[0];
 		
+		if(payload.intPayload[1] >= 0 && payload.intPayload[1] < BuildCraftAPI.triggers.length){
+			setTrigger(position, BuildCraftAPI.triggers[payload.intPayload[1]], false);
+			//System.out.println("Trigger["+ position + "]: " + pipe.activatedTriggers[position].getDescription());
+		} else {
+			setTrigger(position, null, false);
+			//System.out.println("Trigger["+ position + "] clear!");
+		}
+		
+		if(payload.intPayload[2] >= 0 && payload.intPayload[2] < BuildCraftAPI.actions.length){
+			setAction(position, BuildCraftAPI.actions[payload.intPayload[2]], false);
+			//System.out.println("Action["+ position + "]: " + pipe.activatedActions[position].getDescription());
+		} else {
+			setAction(position, null, false);
+			//System.out.println("Action["+ position + "] clear!");
+		}
+		
+		int itemID = payload.intPayload[3];
+		if(itemID <= 0) {
+			setTriggerParameter(position, null, false);
+			return;
+		}
+			
+		TriggerParameter param = new TriggerParameter();
+		param.set(new ItemStack(itemID, payload.intPayload[4], payload.intPayload[5]));
+		setTriggerParameter(position, param, false);
 	}
 	
 	public void sendSelectionChange(int position) {
@@ -142,6 +169,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 			payload.intPayload[1] = pipe.activatedTriggers[position].id;
 		else
 			payload.intPayload[1] = -1;
+		
 		if(pipe.activatedActions[position] != null)
 			payload.intPayload[2] = pipe.activatedActions[position].id;
 		else
@@ -185,24 +213,31 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		PacketPayload payload = packet.payload;
 		int position = payload.intPayload[0];
 		
-		if(payload.intPayload[1] >= 0 && payload.intPayload[1] < BuildCraftAPI.triggers.length)
-			setTrigger(position, BuildCraftAPI.triggers[payload.intPayload[1]]);
-		else
-			setTrigger(position, null);
-		if(payload.intPayload[2] >= 0 && payload.intPayload[2] < BuildCraftAPI.actions.length)
-			setAction(position, BuildCraftAPI.actions[payload.intPayload[2]]);
-		else
-			setAction(position, null);
+		if(payload.intPayload[1] >= 0 && payload.intPayload[1] < BuildCraftAPI.triggers.length){
+			setTrigger(position, BuildCraftAPI.triggers[payload.intPayload[1]], true);
+			//System.out.println("Trigger["+ position + "]: " + pipe.activatedTriggers[position].getDescription());
+		} else {
+			setTrigger(position, null, true);
+			//System.out.println("Trigger["+ position + "] clear!");
+		}
+		
+		if(payload.intPayload[2] >= 0 && payload.intPayload[2] < BuildCraftAPI.actions.length){
+			setAction(position, BuildCraftAPI.actions[payload.intPayload[2]], true);
+			//System.out.println("Action["+ position + "]: " + pipe.activatedActions[position].getDescription());
+		} else {
+			setAction(position, null, true);
+			//System.out.println("Action["+ position + "] clear!");
+		}
 		
 		int itemID = payload.intPayload[3];
 		if(itemID <= 0) {
-			setTriggerParameter(position, null);
+			setTriggerParameter(position, null, true);
 			return;
 		}
 			
 		TriggerParameter param = new TriggerParameter();
 		param.set(new ItemStack(itemID, payload.intPayload[4], payload.intPayload[5]));
-		setTriggerParameter(position, param);
+		setTriggerParameter(position, param, true);
 	}
 	
 	/**
@@ -250,7 +285,51 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	 * @param player
 	 */
 	public void sendSelection(EntityPlayer player) {
+		if (pipe == null || pipe.gate == null) return;
+		int positions = 0;
+		switch (pipe.gate.kind){
+			case Single:
+				positions = 1;
+				break;
+			case AND_2:
+			case OR_2:
+				positions = 2;
+				break;
+			case AND_3:
+			case OR_3:
+				positions = 4;
+				break;
+			case OR_4:
+			case AND_4:
+				positions = 8;
+				break;
+		}
 		
+		for(int position = 0; position < positions; position++){
+			PacketPayload payload = new PacketPayload(6, 0, 0);
+			
+			payload.intPayload[0] = position;
+			
+			if(pipe.activatedTriggers[position] != null)
+				payload.intPayload[1] = pipe.activatedTriggers[position].id;
+			else
+				payload.intPayload[1] = -1;
+			
+			if(pipe.activatedActions[position] != null)
+				payload.intPayload[2] = pipe.activatedActions[position].id;
+			else
+				payload.intPayload[2] = -1;
+			
+			if(pipe.triggerParameters[position] != null && pipe.triggerParameters[position].stack != null) {
+				payload.intPayload[3] = pipe.triggerParameters[position].stack.itemID;
+				payload.intPayload[4] = pipe.triggerParameters[position].stack.stackSize;
+				payload.intPayload[5] = pipe.triggerParameters[position].stack.getItemDamage();
+			}
+			
+			CoreProxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload));
+		}
+		
+		//System.out.println("Sending current selection to player");
 	}
 	
 	/** TRIGGERS **/
@@ -274,16 +353,16 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		return pipe.isNearbyTriggerActive(trigger, parameter);
 	}
 	
-	public void setTrigger(int position, Trigger trigger){
-		if(APIProxy.isRemote())
-			sendSelectionChange(position);
+	public void setTrigger(int position, Trigger trigger, boolean notify){
 		pipe.setTrigger(position, trigger);
+		if(APIProxy.isRemote() && notify)
+			sendSelectionChange(position);
 	}
 	
-	public void setTriggerParameter(int position, TriggerParameter parameter){
-		if(APIProxy.isRemote())
-			sendSelectionChange(position);
+	public void setTriggerParameter(int position, TriggerParameter parameter, boolean notify){
 		pipe.setTriggerParameter(position, parameter);
+		if(APIProxy.isRemote() && notify)
+			sendSelectionChange(position);
 	}
 
 	
@@ -304,10 +383,10 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		return descending ? _potentialActions.descendingIterator() : _potentialActions.iterator();
 	}
 	
-	public void setAction(int position, Action action){
-		if(APIProxy.isRemote())
-			sendSelectionChange(position);
+	public void setAction(int position, Action action, boolean notify){
 		pipe.setAction(position, action);
+		if(APIProxy.isRemote() && notify)
+			sendSelectionChange(position);
 	}
 	
 	/** GATE INFORMATION **/

@@ -314,11 +314,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 			}
 
-			_container.setTrigger(position, triggerSlot.trigger);
+			_container.setTrigger(position, triggerSlot.trigger, true);
 
 			if (_container.getGateOrdinal() >= GateKind.AND_3.ordinal()) {
 				((TriggerParameterSlot) slots [position + nbEntries * 2]).parameter = null;
-				_container.setTriggerParameter(position, null);
+				_container.setTriggerParameter(position, null, true);
 			}
 		} else if (slot instanceof ActionSlot) {
 			ActionSlot actionSlot = (ActionSlot) slot;
@@ -348,7 +348,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 			}
 
-			_container.setAction(position - nbEntries, actionSlot.action);
+			_container.setAction(position - nbEntries, actionSlot.action, true);
 		} else if (slot instanceof TriggerParameterSlot) {
 			TriggerSlot trigger = (TriggerSlot) slots [position - nbEntries * 2];
 
@@ -359,7 +359,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 					param.set(mc.thePlayer.inventory.getItemStack());
 					((TriggerParameterSlot) slot).parameter = param;
 
-					_container.setTriggerParameter(position - nbEntries * 2, param);
+					_container.setTriggerParameter(position - nbEntries * 2, param, true);
 				}
 			}
 		}

@@ -60,6 +60,8 @@ public class PacketHandler implements IPacketHandler {
 				onGateTriggers(packet);
 				break;
 			case PacketIds.GATE_SELECTION:
+				packet.readData(data);
+				onGateSelection(packet);
 				break;
 			}
 
@@ -92,6 +94,19 @@ public class PacketHandler implements IPacketHandler {
 			return;
 		
 		((CraftingGateInterface)container).updateTriggers(packet);
+	}
+	
+	/**
+	 * Handles received current gate selection on a gate
+	 * @param packet
+	 */
+	private void onGateSelection(PacketUpdate packet) {
+		Container container = ModLoader.getMinecraftInstance().thePlayer.craftingInventory;
+		
+		if (!(container instanceof CraftingGateInterface))
+			return;
+		
+		((CraftingGateInterface)container).setSelection(packet);
 	}
 
 	/**

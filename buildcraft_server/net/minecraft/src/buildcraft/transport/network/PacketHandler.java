@@ -67,7 +67,7 @@ public class PacketHandler implements IPacketHandler {
 		if(!(playerEntity.craftingInventory instanceof CraftingGateInterface))
 			return;
 	
-		((CraftingGateInterface)playerEntity.craftingInventory).setSelection(packet);
+		((CraftingGateInterface)playerEntity.craftingInventory).handleSelectionChange(packet);
 	}
 
 	/**
