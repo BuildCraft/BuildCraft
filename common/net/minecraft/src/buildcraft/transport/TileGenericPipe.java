@@ -36,6 +36,7 @@ import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
 import net.minecraft.src.buildcraft.core.ITileBufferHolder;
 import net.minecraft.src.buildcraft.core.PersistentTile;
@@ -96,7 +97,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if (APIProxy.isServerSide())
 			if (networkSyncTracker.markTimeIfDelay(worldObj, delay))
 				CoreProxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord,
-						yCoord, zCoord, 40, mod_BuildCraftCore.instance);
+						yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
 	}
 
 	@Override

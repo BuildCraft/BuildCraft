@@ -30,22 +30,20 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketPipeTransportContent;
-import net.minecraft.src.buildcraft.core.network.PacketUpdate;
-import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public class PipeTransportItems extends PipeTransport {
 
 	public boolean allowBouncing = false;
 	public TreeMap<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData> ();
-	private Vector <EntityData> entitiesToLoad = new Vector <EntityData> ();
+	private final Vector <EntityData> entitiesToLoad = new Vector <EntityData> ();
 
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
@@ -98,7 +96,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (APIProxy.isServerSide())
 			if (item.synchroTracker.markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor))
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
-						worldObj, xCoord, yCoord, zCoord, 50,
+						worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
 						mod_BuildCraftTransport.instance);
 
 		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {

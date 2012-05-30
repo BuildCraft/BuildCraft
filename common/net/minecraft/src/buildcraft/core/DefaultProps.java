@@ -15,6 +15,7 @@ public class DefaultProps {
 	
 	public static int WORLD_HEIGHT       = 256;
 	public static String NET_CHANNEL_NAME = "BC";
+	public static int NETWORK_UPDATE_RANGE = 128;
 
 	public static int WOODEN_GEAR_ID     = 3800;
 	public static int STONE_GEAR_ID      = 3801;
