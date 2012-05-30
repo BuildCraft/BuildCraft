@@ -361,19 +361,6 @@ public class TileQuarry extends TileMachine implements IArmListener,
 		int j = targetY - 1;
 		int k = targetZ;
 		
-		//Collect any lost items laying around
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(arm.headPosX - 0.5, arm.headPosY, arm.headPosZ - 0.5, arm.headPosX + 1.5, arm.headPosY + 1.5, arm.headPosZ + 1.5);
-		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-		for (int  ii = 0; ii < result.size(); ii++){
-			if (result.get(ii) instanceof EntityItem) {
-				EntityItem entity = (EntityItem) result.get(ii);
-				if (entity.isDead)	continue;
-				if (entity.item.stackSize <= 0) continue;
-				APIProxy.removeEntity(entity);
-				mineStack(entity.item);
-			}
-		}
-		
 		int blockId = worldObj.getBlockId(i, j, k);
 		
 		if (canDig(blockId)) {
@@ -393,7 +380,20 @@ public class TileQuarry extends TileMachine implements IArmListener,
 			}
 					
 			worldObj.setBlockWithNotify(i, j, k, 0);
-		}		
+		}
+		
+		//Collect any lost items laying around
+		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(arm.headPosX - 1.5, arm.headPosY, arm.headPosZ - 1.5, arm.headPosX + 2.5, arm.headPosY + 2.5, arm.headPosZ + 2.5);
+		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
+		for (int  ii = 0; ii < result.size(); ii++){
+			if (result.get(ii) instanceof EntityItem) {
+				EntityItem entity = (EntityItem) result.get(ii);
+				if (entity.isDead)	continue;
+				if (entity.item.stackSize <= 0) continue;
+				APIProxy.removeEntity(entity);
+				mineStack(entity.item);
+			}
+		}
 	}
 
 	private void mineStack(ItemStack s) {
