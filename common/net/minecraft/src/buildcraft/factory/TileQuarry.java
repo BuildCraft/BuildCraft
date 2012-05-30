@@ -72,6 +72,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	}
 	
     public void createUtilsIfNeeded () {
+    	
     	if (!box.isInitialized() && APIProxy.isClient(worldObj)) {
     		return;
     	}

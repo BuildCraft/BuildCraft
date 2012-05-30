@@ -23,9 +23,8 @@ import net.minecraft.src.buildcraft.api.TileNetworkData;
 
 public class Box implements IBox {
 
-	public @TileNetworkData
-	int xMin, yMin, zMin, xMax, yMax, zMax;
-	private boolean initialized;
+	public @TileNetworkData int xMin, yMin, zMin, xMax, yMax, zMax;
+	public @TileNetworkData boolean initialized;
 
 	private EntityBlock lasers[];
 
