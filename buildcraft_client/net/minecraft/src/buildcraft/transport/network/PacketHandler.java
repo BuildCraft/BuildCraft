@@ -156,6 +156,7 @@ public class PacketHandler implements IPacketHandler {
 	 * @param packet
 	 */
 	private void onDiamondContents(PacketUpdate packet) {
+
 		World world = ModLoader.getMinecraftInstance().theWorld;
 
 		if(!world.blockExists(packet.posX, packet.posY, packet.posZ))

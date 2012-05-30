@@ -38,11 +38,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 		for(int k = 0; k < 6; k++)
 			for(int j1 = 0; j1 < 9; j1++) {
 				int id = k * 9 + j1;
-				slots [id] = new ItemSlot(8 + j1 * 18, 18 + k * 18);
-				ItemStack stack = filterInventory.getStackInSlot(j1 + k * 9);
-
-				if (stack != null)
-					((ItemSlot) slots[id]).stack = stack.copy();
+				slots [id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18, filterInventory, j1 + k * 9);
 			}
 	}
 
@@ -78,10 +74,10 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 		int position = getSlotAtLocation (i - cornerX, j - cornerY);
 
-		ItemSlot slot = null;
+		IInventorySlot slot = null;
 
 		if (position != -1)
-			slot = (ItemSlot) slots[position];
+			slot = (IInventorySlot) slots[position];
 
 		if (slot != null) {
 			ItemStack playerStack = mc.thePlayer.inventory.getItemStack();
@@ -92,7 +88,6 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 			else
 				newStack = null;
 			
-			slot.stack = newStack;
 			filterInventory.setInventorySlotContents(position, newStack);
 			
 			if(APIProxy.isRemote()) {

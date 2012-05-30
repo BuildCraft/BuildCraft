@@ -179,6 +179,7 @@ public class PipeLogicDiamond extends PipeLogic {
 		return null;
 	}
 
+	/** SERVER SIDE **/
 	public Packet getContentsPacket(int num) {
 		PacketStack stacks = new PacketStack();
 		stacks.num = num;
@@ -192,10 +193,11 @@ public class PipeLogicDiamond extends PipeLogic {
 				stacks.dmg [j] = items [j + num * 9].getItemDamage();
 			}
 
-		return new PacketUpdate(PacketIds.DIAMOND_PIPE_CONTENTS, networkPacket.toPayload(xCoord, yCoord, zCoord, stacks)).getPacket();
+		return new PacketUpdate(PacketIds.DIAMOND_PIPE_CONTENTS, xCoord, yCoord, zCoord, networkPacket.toPayload(stacks)).getPacket();
 
     }
 
+	/** CLIENT SIDE **/
 	public void handleContentsPacket (PacketUpdate packet) {
 		PacketStack stacks = new PacketStack();
 

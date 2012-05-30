@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.GuiContainer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.OpenGlHelper;
 import net.minecraft.src.RenderHelper;
@@ -83,6 +84,27 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		public ItemStack getItemStack() {
 			return stack;
 		}
+	}
+	
+	/**
+	 * More dynamic slot displaying an inventory stack at specified position in the passed IInventory 
+	 */
+	public class IInventorySlot extends AdvancedSlot {
+
+		private IInventory tile;
+		private int slot;
+		
+		public IInventorySlot(int x, int y, IInventory tile, int slot) {
+			super(x, y);
+			this.tile = tile;
+			this.slot = slot;
+		}
+		
+		@Override
+		public ItemStack getItemStack() {
+			return tile.getStackInSlot(slot);
+		}
+		
 	}
 
 	public AdvancedSlot[] slots;
