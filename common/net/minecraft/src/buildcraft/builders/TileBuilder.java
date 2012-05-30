@@ -583,11 +583,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	
 	@Override
 	public void updateEntity () {
-		super.updateEntity();
 		
-		if (builderRobot != null) {
-			//builderRobot.update();
-		}
+		super.updateEntity();
 		
 		if ((bluePrintBuilder == null || bluePrintBuilder.done)
 				&& box.isInitialized() 

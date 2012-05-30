@@ -121,6 +121,8 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	public void onUpdate() {
 		
 		move();
+		build();
+		updateLaser();
 	}
 	
 	protected void move() {
@@ -177,6 +179,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		destY = y;
 		destZ = z;
 
+		//TODO: apply power modifier
 		motionX = (destX - posX) / 75 * 1;
 		motionY = (destY - posY) / 75 * 1;
 		motionZ = (destZ - posZ) / 75 * 1;
@@ -189,12 +192,12 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		
 		return false;
 	}
-
-	public void updateOLD () {
-		
-		move();
+	
+	protected void build() {
+	
 		updateWait();
-
+		
+		//TODO: rewrite
 		if (targets.size() > 0) {
 			
 			Action a = targets.getFirst();
@@ -234,8 +237,6 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 			}
 		} else
 			laser.hidden = true;
-
-		updateLaser();
 	}
 
 	public void updateWait () {

@@ -120,9 +120,11 @@ public class TileQuarry extends TileMachine implements IArmListener,
 
 	@Override
 	public void updateEntity () {
+		
 		super.updateEntity();
 		
 		if (inProcess && arm != null) {
+			
 			arm.speed = 0;
 			float energyToUse = 2 + powerProvider.energyStored / 1000;
 			
@@ -134,15 +136,12 @@ public class TileQuarry extends TileMachine implements IArmListener,
 		}
 		
 		if (arm != null) {
+			
 			headPosX = arm.headPosX;
 			headPosY = arm.headPosY;
 			headPosZ = arm.headPosZ;
 			
 			speed = arm.speed;
-		}
-		
-		if (builder != null) {
-			//builder.update();
 		}
 	}
 	
