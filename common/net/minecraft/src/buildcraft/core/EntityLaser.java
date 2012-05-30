@@ -21,17 +21,6 @@ public class EntityLaser extends Entity {
 
 	public String texture;
 
-	/**
-	 * Constructor for Forge netcode.
-	 * @param world
-	 * @param xPos
-	 * @param yPos
-	 * @param zPos
-	 */
-	public EntityLaser(World world, double xPos, double yPos, double zPos) {
-		super(world);
-		setPosition(xPos, yPos, zPos);
-	}
 	public EntityLaser(World world) {
 		super(world);
 
@@ -62,6 +51,7 @@ public class EntityLaser extends Entity {
 
 	@Override
     public void setPosition(double d, double d1, double d2) {
+		
     	posX = d;
     	posY = d1;
     	posZ = d2;
@@ -90,6 +80,7 @@ public class EntityLaser extends Entity {
 	double angleZ = 0;
 
 	public void updateGraphicData () {
+		
 		double dx = x1 - x2;
 		double dy = y1 - y2;
 		double dz = z1 - z2;
@@ -105,22 +96,13 @@ public class EntityLaser extends Entity {
 
 
 	@Override
-	protected void entityInit() {
-		// TODO Auto-generated method stub
-
-	}
+	protected void entityInit() {}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
-
-	}
+	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
-
-	}
+	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
 	public String getTexture () {
 		return texture;

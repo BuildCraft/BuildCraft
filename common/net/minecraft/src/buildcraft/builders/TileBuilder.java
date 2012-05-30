@@ -27,27 +27,26 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.Box;
+import net.minecraft.src.buildcraft.core.BptBase;
 import net.minecraft.src.buildcraft.core.BptBlueprint;
+import net.minecraft.src.buildcraft.core.BptBuilderBase;
 import net.minecraft.src.buildcraft.core.BptBuilderBlueprint;
 import net.minecraft.src.buildcraft.core.BptBuilderTemplate;
-import net.minecraft.src.buildcraft.core.BlockIndex;
-import net.minecraft.src.buildcraft.core.BptBase;
-import net.minecraft.src.buildcraft.core.BptBuilderBase;
 import net.minecraft.src.buildcraft.core.BptContext;
-import net.minecraft.src.buildcraft.core.EntityRobot;
 import net.minecraft.src.buildcraft.core.EntityLaser;
+import net.minecraft.src.buildcraft.core.EntityRobot;
 import net.minecraft.src.buildcraft.core.IBuilderInventory;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.SurroundingInventory;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 	
-	private ItemStack items [] = new ItemStack [28];
+	private final ItemStack items [] = new ItemStack [28];
 	
 	private BptBuilderBase bluePrintBuilder;
 	
@@ -251,7 +250,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			return null;
 		}
 		
-		bpt = (BptBase) bpt.clone ();
+		bpt = bpt.clone ();
 		
 		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos (x, y, z));
 		
@@ -493,7 +492,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
         
         if (box.isInitialized()) {
         	NBTTagCompound boxStore = new NBTTagCompound();
-        	((Box)box).writeToNBT(boxStore);
+        	box.writeToNBT(boxStore);
         	nbttagcompound.setTag("box", boxStore);
         }
         
@@ -587,7 +586,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		super.updateEntity();
 		
 		if (builderRobot != null) {
-			builderRobot.update();
+			//builderRobot.update();
 		}
 		
 		if ((bluePrintBuilder == null || bluePrintBuilder.done)

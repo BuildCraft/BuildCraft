@@ -126,8 +126,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 			arm.speed = 0;
 			float energyToUse = 2 + powerProvider.energyStored / 1000;
 			
-			float energy = powerProvider
-			.useEnergy(energyToUse, energyToUse, true);
+			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
 						
 			if (energy > 0) {
 				arm.doMove(0.015 + energy / 200F);
@@ -143,7 +142,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 		}
 		
 		if (builder != null) {
-			builder.update();
+			//builder.update();
 		}
 	}
 	
@@ -167,6 +166,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	    createUtilsIfNeeded();
 	    
 	    if (bluePrintBuilder != null) {
+	    	
 	    	if (!builderDone) {
 	    		// configuration for building phase
 	    		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
@@ -188,7 +188,9 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	    		}
 
 	    		return;
+	    		
 	    	} else {
+	    		
 	    		if (builder != null && builder.done ()) {
 	    			box.deleteLasers();
 	    			builder.setDead();
@@ -535,6 +537,7 @@ public class TileQuarry extends TileMachine implements IArmListener,
 	}
 	
 	private void initializeBluePrintBuilder () {
+		
 		BptBlueprint bluePrint = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());	
 	
 		for (int i = 0; i < bluePrint.sizeX; ++i) {

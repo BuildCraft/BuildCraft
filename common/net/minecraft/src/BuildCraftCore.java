@@ -125,15 +125,14 @@ public class BuildCraftCore {
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
 	public static void load() {
-		// Register connection handler
+		
 		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 		
-		MinecraftForge.registerEntity(EntityRobot.class, mod_BuildCraftCore.instance, EntityIds.ROBOT, 50, 10, true);
-		//MinecraftForge.registerEntity(EntityBlock.class, mod_BuildCraftCore.instance, EntityIds.BLOCK, 50, 10, true);
-		MinecraftForge.registerEntity(EntityLaser.class, mod_BuildCraftCore.instance, EntityIds.LASER, 50, 10, true);
+		//MinecraftForge.registerEntity(EntityBlock.class, mod_BuildCraftCore.instance, EntityIds.BLOCK, 64, 10, true);
+		MinecraftForge.registerEntity(EntityRobot.class, mod_BuildCraftCore.instance, EntityIds.ROBOT, 64, 3, true);
+		MinecraftForge.registerEntity(EntityLaser.class, mod_BuildCraftCore.instance, EntityIds.LASER, 64, 10, false);
 	}
 
-	@SuppressWarnings({ "all" })
 	public static void initialize () {
 		if (initialized)
 			return;
