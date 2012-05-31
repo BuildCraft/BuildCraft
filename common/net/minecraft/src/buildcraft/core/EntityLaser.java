@@ -107,5 +107,9 @@ public class EntityLaser extends Entity {
 	public String getTexture () {
 		return texture;
 	}
-
+	
+    public int getBrightnessForRender(float par1)
+    {
+        return 210;
+    }
 }
