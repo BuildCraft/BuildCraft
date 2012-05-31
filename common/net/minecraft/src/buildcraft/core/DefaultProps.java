@@ -15,6 +15,11 @@ public class DefaultProps {
 	
 	public static int WORLD_HEIGHT       = 256;
 	public static String NET_CHANNEL_NAME = "BC";
+	
+	public static final int QUARRY_PULL_RADIOUS	= 5;
+	//This is the factor which is multiplied with the head speed to determine 
+	//the speed at which items will move towards the head
+	public static final float QUARRY_PULL_SPEED	= 3;
 
 	public static int WOODEN_GEAR_ID     = 3800;
 	public static int STONE_GEAR_ID      = 3801;

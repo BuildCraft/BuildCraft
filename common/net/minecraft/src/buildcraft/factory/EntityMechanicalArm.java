@@ -9,10 +9,15 @@
 
 package net.minecraft.src.buildcraft.factory;
 
+import java.util.Iterator;
+import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
@@ -41,25 +46,25 @@ public class EntityMechanicalArm extends Entity {
 		
 		setPosition(i, j, k);
 		
-        motionX = 0.0D;
-        motionY = 0.0D;
-        motionZ = 0.0D;
-        prevPosX = i;
-        prevPosY = j;
-        prevPosZ = k;
-        sizeX = height;
-        sizeZ = width;
-        noClip = true;
-        baseY = j;
-        
-        headPosX = i;
-        headPosY = j - 2;
-        headPosZ = k;
+		motionX = 0.0D;
+		motionY = 0.0D;
+		motionZ = 0.0D;
+		prevPosX = i;
+		prevPosY = j;
+		prevPosZ = k;
+		sizeX = height;
+		sizeZ = width;
+		noClip = true;
+		baseY = j;
+		
+		headPosX = i;
+		headPosY = j - 2;
+		headPosZ = k;
 
-        setTarget (headPosX, headPosY, headPosZ);
-        inProgressionXZ = false;
-        inProgressionY = false;
-
+		setTarget(headPosX, headPosY, headPosZ);
+		inProgressionXZ = false;
+		inProgressionY = false;
+		
 		xArm = new EntityBlock(world, i, j, k, width, 0.5, 0.5);
 		xArm.texture = BuildCraftFactory.drillTexture;
 		world.spawnEntityInWorld(xArm);
@@ -229,6 +234,43 @@ public class EntityMechanicalArm extends Entity {
     	}
     	
     	updatePosition();
+				
+		
+		//Collect items from the ground
+
+		//Get the minimum search Y and ensure it's not < 0
+		double minSearchY = (headPosY - DefaultProps.QUARRY_PULL_RADIOUS > 0) ? headPosY - DefaultProps.QUARRY_PULL_RADIOUS : 0;
+		//Make a box below the head with size = 2*QUARRY_PULL_RADIOUS(along the X axis) * QUARRY_PULL_RADIOUS (along the Y axis) * 2*QUARRY_PULL_RADIOUS(along the Z axis)
+		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(headPosX + 0.5 - DefaultProps.QUARRY_PULL_RADIOUS, minSearchY, headPosZ + 0.5 - DefaultProps.QUARRY_PULL_RADIOUS, headPosX + 0.5 + DefaultProps.QUARRY_PULL_RADIOUS, headPosY + 0.2, headPosZ + 0.5 + DefaultProps.QUARRY_PULL_RADIOUS);
+		//Get a list pf the item entities within the box and get the iterator for the list
+		Iterator it = worldObj.getEntitiesWithinAABB(EntityItem.class, axis).iterator();
+		//Iterate the list
+		while (it.hasNext()) {
+			//Get the next item
+			EntityItem item = (EntityItem) it.next();
+
+			if (item.isDead)
+				continue;
+			if (item.item.stackSize <= 0)
+				continue;
+
+			//Calculate the distances from the head
+			double distanceX = headPosX + 0.5 - item.posX;
+			double distanceY = headPosY - item.posY;
+			double distanceZ = headPosZ + 0.5 - item.posZ;
+
+			double distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
+
+			//If it's close pick it up
+			if (distance < 0.2) {
+				APIProxy.removeEntity(item);
+				((TileQuarry) listener).mineStack(item.item);
+			} else {	//Else make it move towards the arm with QUARRY_PULL_SPEED * the speed of the arm
+				item.motionX = distanceX / distance * instantSpeed * DefaultProps.QUARRY_PULL_SPEED;
+				item.motionY = distanceY / distance * instantSpeed * DefaultProps.QUARRY_PULL_SPEED;
+				item.motionZ = distanceZ / distance * instantSpeed * DefaultProps.QUARRY_PULL_SPEED;
+			}
+		}
     }
     
     public void updatePosition () {		
