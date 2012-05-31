@@ -22,6 +22,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
@@ -44,7 +45,7 @@ public class PipeLogicDiamond extends PipeLogic {
 
 	private static TilePacketWrapper networkPacket;
 
-	private SafeTimeTracker tracker = new SafeTimeTracker();
+	private final SafeTimeTracker tracker = new SafeTimeTracker();
 
 	public PipeLogicDiamond () {
 		if (networkPacket == null)
@@ -88,8 +89,8 @@ public class PipeLogicDiamond extends PipeLogic {
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
 				CoreProxy.sendToPlayers(
-						getContentsPacket(p), worldObj, xCoord,
-						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+						getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 
 		return stack;
 	}
@@ -109,8 +110,8 @@ public class PipeLogicDiamond extends PipeLogic {
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
 				CoreProxy.sendToPlayers(
-						getContentsPacket(p), worldObj, xCoord,
-						yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+						getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 	}
 
 	@Override
@@ -119,8 +120,8 @@ public class PipeLogicDiamond extends PipeLogic {
 			if (APIProxy.isServerSide())
 				for (int p = 0; p < 6; ++p)
 					CoreProxy.sendToPlayers(
-							getContentsPacket(p), worldObj, xCoord,
-							yCoord, zCoord, 50, mod_BuildCraftTransport.instance);
+							getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
+							DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 	}
 
 	@Override

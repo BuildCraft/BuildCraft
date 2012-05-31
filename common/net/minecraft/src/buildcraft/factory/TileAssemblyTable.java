@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
@@ -382,7 +383,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
 			CoreProxy.sendToPlayers(packet.getPacket(), worldObj,
-					(int) player.posX, (int) player.posY, (int) player.posZ, 100,
+					(int) player.posX, (int) player.posY, (int) player.posZ, DefaultProps.NETWORK_UPDATE_RANGE,
 					mod_BuildCraftSilicon.instance);
 		}
 	}

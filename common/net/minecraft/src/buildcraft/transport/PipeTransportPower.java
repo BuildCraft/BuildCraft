@@ -20,6 +20,7 @@ import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -159,7 +160,7 @@ public class PipeTransportPower extends PipeTransport {
 			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor))
 				CoreProxy
 						.sendToPlayers(this.container.getUpdatePacket(),
-								worldObj, xCoord, yCoord, zCoord, 40,
+								worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
 								mod_BuildCraftCore.instance);
 
 	}

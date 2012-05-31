@@ -29,8 +29,8 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
 
-	private TilePacketWrapper descriptionPacket;
-	private TilePacketWrapper updatePacket;
+	private final TilePacketWrapper descriptionPacket;
+	private final TilePacketWrapper updatePacket;
 
 	private boolean init = false;
 
@@ -72,7 +72,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		if (this instanceof ISynchronizedTile)
 			CoreProxy.sendToPlayers(
 					((ISynchronizedTile) this).getUpdatePacket(), worldObj, 
-					xCoord,	yCoord, zCoord, 50, mod_BuildCraftCore.instance);
+					xCoord,	yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
 	}
 
 	@Override
@@ -80,6 +80,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		return new PacketTileUpdate(this).getPacket();
     }
 
+	@Override
 	public PacketPayload getPacketPayload() {
 		return updatePacket.toPayload(this);
 	}
