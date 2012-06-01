@@ -9,35 +9,18 @@
 
 package net.minecraft.src.buildcraft.core;
 
+import cpw.mods.fml.client.FMLTextureFX;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.TextureFX;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
-public class TextureLiquidsFX extends TextureFX {
-
-	private int int_numPixels = 256;
-	private int int_size = 16;
-	private int int_sizeMinus1 = 0xF;
-
+public class TextureLiquidsFX extends FMLTextureFX {
 	private final int redMin, redMax, greenMin, greenMax, blueMin, blueMax;
 	private final String texture;
 
 	public TextureLiquidsFX(int redMin, int redMax, int greenMin, int greenMax,
 			int blueMin, int blueMax, int spriteIndex, String texture) {
 		super(spriteIndex);
-
-		try {
-			Class<? extends Object> sizeClass = Class
-					.forName("com.pclewis.mcpatcher.mod.TileSize");
-
-			int_numPixels = sizeClass.getDeclaredField("int_numPixels").getInt(
-					sizeClass);
-			int_size = sizeClass.getDeclaredField("int_size").getInt(sizeClass);
-			int_sizeMinus1 = sizeClass.getDeclaredField("int_sizeMinus1")
-					.getInt(sizeClass);
-		} catch (Throwable t) {
-
-		}
 
 		this.redMin = redMin;
 		this.redMax = redMax;
@@ -46,13 +29,19 @@ public class TextureLiquidsFX extends TextureFX {
 		this.blueMin = blueMin;
 		this.blueMax = blueMax;
 		this.texture = texture;
-
-		field_1158_g = new float[int_numPixels];
-		field_1157_h = new float[int_numPixels];
-		field_1156_i = new float[int_numPixels];
-		field_1155_j = new float[int_numPixels];
+		setup();
 	}
 
+	@Override
+	public void setup() {
+		super.setup();
+		
+		field_1158_g = new float[tileSizeSquare];
+		field_1157_h = new float[tileSizeSquare];
+		field_1156_i = new float[tileSizeSquare];
+		field_1155_j = new float[tileSizeSquare];
+	}
+	
 	@Override
 	public void bindImage(RenderEngine renderengine) {
 		MinecraftForgeClient.bindTexture(texture);
@@ -60,33 +49,33 @@ public class TextureLiquidsFX extends TextureFX {
 
 	@Override
 	public void onTick() {
-		for (int i = 0; i < int_size; i++)
-			for (int k = 0; k < int_size; k++) {
+		for (int i = 0; i < tileSizeBase; i++)
+			for (int k = 0; k < tileSizeBase; k++) {
 				float f = 0.0F;
 				for (int j1 = i - 1; j1 <= i + 1; j1++) {
-					int k1 = j1 & int_sizeMinus1;
-					int i2 = k & int_sizeMinus1;
-					f += field_1158_g[k1 + i2 * int_size];
+					int k1 = j1 & tileSizeMask;
+					int i2 = k & tileSizeMask;
+					f += field_1158_g[k1 + i2 * tileSize];
 				}
 
-				field_1157_h[i + k * int_size] = f / 3.3F
-						+ field_1156_i[i + k * int_size] * 0.8F;
+				field_1157_h[i + k * tileSize] = f / 3.3F
+						+ field_1156_i[i + k * tileSize] * 0.8F;
 			}
 
-		for (int j = 0; j < int_size; j++)
-			for (int l = 0; l < int_size; l++) {
-				field_1156_i[j + l * int_size] += field_1155_j[j + l * int_size] * 0.05F;
-				if (field_1156_i[j + l * int_size] < 0.0F)
-					field_1156_i[j + l * int_size] = 0.0F;
-				field_1155_j[j + l * int_size] -= 0.1F;
+		for (int j = 0; j < tileSize; j++)
+			for (int l = 0; l < tileSize; l++) {
+				field_1156_i[j + l * tileSize] += field_1155_j[j + l * tileSize] * 0.05F;
+				if (field_1156_i[j + l * tileSize] < 0.0F)
+					field_1156_i[j + l * tileSize] = 0.0F;
+				field_1155_j[j + l * tileSize] -= 0.1F;
 				if (Math.random() < 0.050000000000000003D)
-					field_1155_j[j + l * int_size] = 0.5F;
+					field_1155_j[j + l * tileSize] = 0.5F;
 			}
 
 		float af[] = field_1157_h;
 		field_1157_h = field_1158_g;
 		field_1158_g = af;
-		for (int i1 = 0; i1 < int_numPixels; i1++) {
+		for (int i1 = 0; i1 < tileSizeSquare; i1++) {
 			float f1 = field_1158_g[i1];
 			if (f1 > 1.0F)
 				f1 = 1.0F;

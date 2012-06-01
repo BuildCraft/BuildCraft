@@ -11,6 +11,7 @@ package net.minecraft.src.buildcraft.core;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
@@ -33,22 +34,15 @@ import net.minecraft.src.forge.NetworkMod;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.SpriteHelper;
+
 public class CoreProxy {
-	private static class CustomModTextureStatic extends ModTextureStatic {
-		public CustomModTextureStatic(int i, BufferedImage bufferedimage) {
-			super(i, 0, bufferedimage);
-		}
-
-		@Override
-		public void bindImage(RenderEngine renderengine) {
-			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, renderengine
-					.getTexture(BuildCraftCore.externalBuildCraftTexture));
-		}
-	}
-
+	private static boolean registeredOverrideTextureMap=false;
+	
 	public static String getCurrentLanguage() {
 		return StringTranslate.getInstance().getCurrentLanguage();
 	}
+	
 	/// FIXING GENERAL MLMP AND DEOBFUSCATION DERPINESS
 	public static void addName(Object obj, String s) {
 		ModLoader.addName(obj, s);
@@ -98,46 +92,19 @@ public class CoreProxy {
 		return ModLoader.addAllFuel(id, dmg);
 	}
 
-
-	// Change this one to the first empty row, at the moment it is row 8
-	private static int textureStartingIndex = 0; //10 * 16;
-	// The current free index
-	private static int textureIndex = textureStartingIndex;
-	// This is calculated by the amount of open slots until there is another
-	// block on the sheet. Starting at row 8 you have 3 empty rows of 16 + 13
-	// empty in the next row
-	private static int textureStopIndex = 15 + 15*16 - 1;//textureStartingIndex + 61;
-
 	/**
 	 * Adds an override to the buildcraft texture file, mainly to provide
 	 * pipes with icons.
 	 */
 	public static int addCustomTexture(String pathToTexture) {
-//		loadTextureIndex();
-		try {
-			if (textureIndex >= textureStopIndex) {
-				System.out.println("Out of BuildCraft Textures!");
-				return 0;
-			}
-			CustomModTextureStatic modtexturestatic;
-			modtexturestatic = new CustomModTextureStatic(textureIndex,
-					ModLoader.loadImage(
-							ModLoader.getMinecraftInstance().renderEngine,
-							pathToTexture));
-			ModLoader.getMinecraftInstance().renderEngine
-					.registerTextureFX(modtexturestatic);
-			System.out.println("Overriding " + BuildCraftCore.externalBuildCraftTexture + " @ "
-					+ textureIndex + " With " + pathToTexture + ". "
-					+ (textureStopIndex - textureIndex) + " left.");
-			int i = textureIndex;
-			textureIndex++;
-			return i + 256;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0; // Error, but the game won't crash, just have the wrong
-						// texture
+		if (!registeredOverrideTextureMap) {
+			char[] map=new char[256];
+			// every slot is free!
+			Arrays.fill(map,'1');
+			SpriteHelper.registerSpriteMapForFile(BuildCraftCore.externalBuildCraftTexture, new String(map));
+			registeredOverrideTextureMap=true;
 		}
-
+		return ModLoader.addOverride(BuildCraftCore.externalBuildCraftTexture, pathToTexture) + 256;
 	}
 
 	public static long getHash (IBlockAccess iBlockAccess) {
