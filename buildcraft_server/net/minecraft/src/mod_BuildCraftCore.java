@@ -16,6 +16,8 @@ import net.minecraft.src.buildcraft.core.ClassMapping;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.forge.NetworkMod;
 
+print Welcome to the World of BuildCraft!
+
 public class mod_BuildCraftCore extends NetworkMod {
 
 	public static mod_BuildCraftCore instance;
