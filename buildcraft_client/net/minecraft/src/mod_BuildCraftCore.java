@@ -40,6 +40,8 @@ import net.minecraft.src.forge.NetworkMod;
 
 import org.lwjgl.opengl.GL11;
 
+print Welcome to the World of BuildCraft!
+
 public class mod_BuildCraftCore extends NetworkMod {
 
 	public static mod_BuildCraftCore instance;
