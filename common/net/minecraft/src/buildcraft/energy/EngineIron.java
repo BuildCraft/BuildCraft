@@ -85,6 +85,7 @@ public class EngineIron extends Engine {
 	
 	@Override
 	public void burn () {
+		currentOutput = 0;
 		IronEngineFuel currentFuel = BuildCraftAPI.ironEngineFuel.get(liquidId);
 		
 		if (currentFuel == null) {
@@ -104,6 +105,7 @@ public class EngineIron extends Engine {
 					burnTime = currentFuel.totalBurningTime / BuildCraftAPI.BUCKET_VOLUME;
 				}
 				
+				currentOutput = currentFuel.powerPerCycle;
 				addEnergy(currentFuel.powerPerCycle);			
 				heat += currentFuel.powerPerCycle;
 			}
@@ -277,15 +279,24 @@ public class EngineIron extends Engine {
 	public void getGUINetworkData(int i, int j) {
 		switch (i) {
 		case 0:
-			liquidQty = j;
+			energy = j;
 			break;
 		case 1:
-			liquidId = j;
+			currentOutput = j;
 			break;
 		case 2:
-			coolantQty = j;
+			heat = j;
 			break;
 		case 3:
+			liquidQty = j;
+			break;
+		case 4:
+			liquidId = j;
+			break;
+		case 5:
+			coolantQty = j;
+			break;
+		case 6:
 			coolantId = j;
 			break;
 		}		
@@ -294,10 +305,13 @@ public class EngineIron extends Engine {
     @Override
 	public void sendGUINetworkData(ContainerEngine containerEngine,
 			ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, liquidQty);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, liquidId);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, coolantQty);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, coolantId);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, energy);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);	
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, heat);	
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, liquidQty);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 4, liquidId);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 5, coolantQty);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 6, coolantId);
 	}
 	
     @Override
@@ -311,4 +325,6 @@ public class EngineIron extends Engine {
 	public boolean isActive() {
 		return penatlyCooling <= 0;
 	}
+    
+	@Override public int getHeat() { return heat; }
 }

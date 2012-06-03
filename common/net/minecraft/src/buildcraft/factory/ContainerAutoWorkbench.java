@@ -100,7 +100,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	}
 	
 	public ContainerAutoWorkbench(InventoryPlayer inventoryplayer, TileAutoWorkbench tile) {
-		super (3);
+		super(tile);
 		
 		craftResult = new InventoryCraftResult();
 		this.tile = tile;

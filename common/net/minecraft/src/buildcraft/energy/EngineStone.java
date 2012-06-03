@@ -68,8 +68,10 @@ public class EngineStone extends Engine {
 	
 	@Override
 	public void burn () {
+		currentOutput = 0;
 		if(burnTime > 0) {
 			burnTime--;
+			currentOutput = 1;
 			addEnergy(1);
 		}
 
@@ -136,17 +138,30 @@ public class EngineStone extends Engine {
 	
 	@Override
 	public void getGUINetworkData(int i, int j) {
-		if (i == 0) {
+		switch (i) {
+		case 0:
+			energy = j;
+			break;
+		case 1:
+			currentOutput = j;
+			break;
+		case 2:
 			burnTime = j;
-		} else if (i == 1) {
+			break;
+		case 3:
 			totalBurnTime = j;
+			break;
 		}
 	}
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine,
 			ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, burnTime);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, totalBurnTime);		
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, energy);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);	
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, burnTime);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, totalBurnTime);	
 	}
+	
+	@Override public int getHeat() { return energy; }
 }

@@ -362,6 +362,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			return false;
 	}
 
+	/**
+	 * Description packets and update packets are handled differently. They should be unified.
+	 */
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
 		if (pipe == null && packet.payload.intPayload[0] != 0) {
@@ -372,9 +375,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			if (pipe != null)
 				pipe.initialize();
 			
+			// Check for wire information
+			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
 			// Check for gate information
-			if(packet.payload.intPayload.length > 1)
-				pipe.handleGatePayload(packet.payload, new IndexInPayload(1, 0, 0));
+			if(packet.payload.intPayload.length > 5)
+				pipe.handleGatePayload(packet.payload, new IndexInPayload(5, 0, 0));
 		}
 	}
 
@@ -400,7 +405,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if(pipe != null)
 			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, pipe);
 		else
-			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, 0);
+			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, null);
 
 		return packet.getPacket();
 	}

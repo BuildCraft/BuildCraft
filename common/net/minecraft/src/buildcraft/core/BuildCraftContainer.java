@@ -10,15 +10,16 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.Container;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 
 public abstract class BuildCraftContainer extends Container {
 
-	private int inventorySize;
+	public IInventory inventory;
 
-	public BuildCraftContainer (int inventorySize) {
-		this.inventorySize = inventorySize;
+	public BuildCraftContainer (IInventory inventory) {
+		this.inventory = inventory;
 	}
 
 	@Override
@@ -30,12 +31,12 @@ public abstract class BuildCraftContainer extends Container {
         {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
-            if(i < inventorySize)
+            if(i < inventory.getSizeInventory())
             {
-                if(!mergeItemStack(itemstack1, inventorySize, inventorySlots.size(), true))
+                if(!mergeItemStack(itemstack1, inventory.getSizeInventory(), inventorySlots.size(), true))
 					return null;
             } else
-            if(!mergeItemStack(itemstack1, 0, inventorySize, false))
+            if(!mergeItemStack(itemstack1, 0, inventory.getSizeInventory(), false))
 				return null;
             if(itemstack1.stackSize == 0)
 				slot.putStack(null);

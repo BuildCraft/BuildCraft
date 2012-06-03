@@ -17,6 +17,8 @@ public class DefaultProps {
 	public static String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 128;
 
+	public static String TEXTURE_ICONS = "/net/minecraft/src/buildcraft/core/gui/icons.png";
+	
 	public static final int QUARRY_PULL_RADIOUS	= 5;
 	//This is the factor which is multiplied with the head speed to determine 
 	//the speed at which items will move towards the head

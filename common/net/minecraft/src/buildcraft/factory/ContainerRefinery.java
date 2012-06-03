@@ -25,7 +25,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 	TileRefinery refinery;
 
 	public ContainerRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-		super(3);
+		super(refinery);
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {

@@ -21,7 +21,7 @@ class CraftingTemplateRoot extends BuildCraftContainer {
 	int computingTime = 0;
 	
 	public CraftingTemplateRoot (IInventory playerInventory, TileArchitect template) {
-		super (template.getSizeInventory());
+		super (template);
 		this.playerIInventory = playerInventory;
 		this.template = template;
 		
