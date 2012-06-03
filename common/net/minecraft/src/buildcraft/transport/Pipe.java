@@ -71,6 +71,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 	TriggerParameter [] triggerParameters = new TriggerParameter [8];
 	Action[] activatedActions = new Action [8];
 
+	@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
 	public boolean broadcastSignal[] = new boolean[] {false, false, false, false};
 	public boolean broadcastRedstone = false;
 
@@ -392,10 +393,31 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 		return payload;
 	}
 
+	/**
+	 * This is used by update packets and uses TileNetworkData. Should be unified with description packets!
+	 * @param packet
+	 */
 	public void handlePacket(PacketUpdate packet) {
 		networkPacket.fromPayload(new Object [] {container, transport, logic}, packet.payload);
 	}
 
+	/**
+	 * This is used by description packets.
+	 * @param payload
+	 * @param index
+	 */
+	public void handleWirePayload(PacketPayload payload, IndexInPayload index) {
+		for(int i = index.intIndex; i < index.intIndex + 4; i++)
+			if(payload.intPayload[i] > 0)
+				wireSet[i - index.intIndex] = true;
+			else
+				wireSet[i - index.intIndex] = false;
+	}
+	/**
+	 * This is used by description packets.
+	 * @param payload
+	 * @param index
+	 */
 	public void handleGatePayload(PacketPayload payload, IndexInPayload index) {
 		gate = new GateVanilla(this);
 		gate.fromPayload(payload, index);
