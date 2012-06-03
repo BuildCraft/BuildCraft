@@ -36,10 +36,10 @@ public class TextureLiquidsFX extends FMLTextureFX {
 	public void setup() {
 		super.setup();
 		
-		field_1158_g = new float[tileSizeSquare];
-		field_1157_h = new float[tileSizeSquare];
-		field_1156_i = new float[tileSizeSquare];
-		field_1155_j = new float[tileSizeSquare];
+		red = new float[tileSizeSquare];
+		green = new float[tileSizeSquare];
+		blue = new float[tileSizeSquare];
+		alpha = new float[tileSizeSquare];
 	}
 	
 	@Override
@@ -49,34 +49,40 @@ public class TextureLiquidsFX extends FMLTextureFX {
 
 	@Override
 	public void onTick() {
-		for (int i = 0; i < tileSizeBase; i++)
-			for (int k = 0; k < tileSizeBase; k++) {
-				float f = 0.0F;
-				for (int j1 = i - 1; j1 <= i + 1; j1++) {
-					int k1 = j1 & tileSizeMask;
-					int i2 = k & tileSizeMask;
-					f += field_1158_g[k1 + i2 * tileSize];
-				}
+		
+        for (int i = 0; i < tileSizeBase; ++i) {
+            for (int j = 0; j < tileSizeBase; ++j) {
+                float var3 = 0.0F;
 
-				field_1157_h[i + k * tileSize] = f / 3.3F
-						+ field_1156_i[i + k * tileSize] * 0.8F;
-			}
+                for (int k = i - 1; k <= i + 1; ++k) {
+                    int r = k & tileSizeMask;
+                    int g = j & tileSizeMask;
+                    var3 += this.red[r + g * tileSizeBase];
+                }
 
-		for (int j = 0; j < tileSize; j++)
-			for (int l = 0; l < tileSize; l++) {
-				field_1156_i[j + l * tileSize] += field_1155_j[j + l * tileSize] * 0.05F;
-				if (field_1156_i[j + l * tileSize] < 0.0F)
-					field_1156_i[j + l * tileSize] = 0.0F;
-				field_1155_j[j + l * tileSize] -= 0.1F;
-				if (Math.random() < 0.050000000000000003D)
-					field_1155_j[j + l * tileSize] = 0.5F;
-			}
+                this.green[i + j * tileSizeBase] = var3 / 3.3F + this.blue[i + j * tileSizeBase] * 0.8F;
+            }
+        }
 
-		float af[] = field_1157_h;
-		field_1157_h = field_1158_g;
-		field_1158_g = af;
+        for (int i = 0; i < tileSizeBase; ++i) {
+            for (int j = 0; j < tileSizeBase; ++j) {
+                this.blue[i + j * tileSizeBase] += this.alpha[i + j * tileSizeBase] * 0.05F;
+
+                if (this.blue[i + j * tileSizeBase] < 0.0F)
+                    this.blue[i + j * tileSizeBase] = 0.0F;
+
+                this.alpha[i + j * tileSizeBase] -= 0.1F;
+
+                if (Math.random() < 0.05D)
+                    this.alpha[i + j * tileSizeBase] = 0.5F;
+            }
+        }
+
+		float af[] = green;
+		green = red;
+		red = af;
 		for (int i1 = 0; i1 < tileSizeSquare; i1++) {
-			float f1 = field_1158_g[i1];
+			float f1 = red[i1];
 			if (f1 > 1.0F)
 				f1 = 1.0F;
 			if (f1 < 0.0F)
@@ -97,13 +103,13 @@ public class TextureLiquidsFX extends FMLTextureFX {
 			imageData[i1 * 4 + 0] = (byte) r;
 			imageData[i1 * 4 + 1] = (byte) g;
 			imageData[i1 * 4 + 2] = (byte) b;
-			imageData[i1 * 4 + 3] = /* (byte)l2 */(byte) 255;
+			imageData[i1 * 4 + 3] = (byte) 255;
 		}
 
 	}
 
-	protected float field_1158_g[];
-	protected float field_1157_h[];
-	protected float field_1156_i[];
-	protected float field_1155_j[];
+	protected float red[];
+	protected float green[];
+	protected float blue[];
+	protected float alpha[];
 }
