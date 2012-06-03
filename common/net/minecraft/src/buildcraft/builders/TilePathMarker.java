@@ -5,6 +5,7 @@ import java.util.TreeSet;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityLaser;
 import net.minecraft.src.buildcraft.core.WorldIterator;
@@ -38,12 +39,13 @@ public class TilePathMarker extends TileMarker {
 			links[1] = marker;
 		}
 	}
-
-	public void createLaserAndConnect(TilePathMarker pathMarker) {
-		EntityLaser laser = new EntityLaser(worldObj);
-		laser.setPositions(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5,
-				pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5,
-				pathMarker.zCoord + 0.5);
+	
+	public void createLaserAndConnect (TilePathMarker pathMarker) {
+		
+		EntityLaser laser = new EntityLaser(worldObj, 
+				new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5),
+				new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+		
 		laser.setTexture("/net/minecraft/src/buildcraft/core/gui/laser_1.png");
 		worldObj.spawnEntityInWorld(laser);
 

@@ -23,6 +23,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BptSlot.Mode;
 import net.minecraft.src.forge.ISpawnHandler;
 
@@ -76,10 +77,9 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		motionZ = 0;
 
 		setPosition(destX, destY, destZ);
-		laser = new EntityEnergyLaser(worldObj);
+		
+		laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
 		laser.hidden = true;
-		laser.setPositions(posX, posY, posZ, posX, posY, posZ);
-
 		worldObj.spawnEntityInWorld(laser);
 	}
 
@@ -129,20 +129,19 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	protected void move() {
-
-		if (!reachedDesination()) {
-
-			setPosition(posX + motionX, posY + motionY, posZ + motionZ);
-
-			return;
-		}
-
+		
+		setPosition(posX + motionX, 
+				posY + motionY, 
+				posZ + motionZ);
+		
 		if (APIProxy.isClient(worldObj))
 			return;
-
+		
+		if (!reachedDesination())
+			return;
+		
 		BlockIndex newDesination = getNewDesination();
 		if (newDesination != null) {
-
 			setDestination(newDesination.i, newDesination.j, newDesination.k);
 		}
 
@@ -198,8 +197,8 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	protected void build() {
 
 		updateWait();
-
-		// TODO: rewrite
+		
+		//TODO: possible rewrite
 		if (targets.size() > 0) {
 
 			Action a = targets.getFirst();
@@ -264,8 +263,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		}
 
 		if (target != null)
-			laser.setPositions(posX, posY, posZ, target.x + 0.5,
-					target.y + 0.5, target.z + 0.5);
+			laser.setPositions (new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
 		else
 			laser.hidden = true;
 

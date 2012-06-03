@@ -9,60 +9,116 @@
 
 package net.minecraft.src.buildcraft.core;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.forge.ISpawnHandler;
 
-public class EntityLaser extends Entity {
+public class EntityLaser extends Entity implements ISpawnHandler {
 
-	public double x1, y1, z1, x2, y2, z2;
+	protected Position head, tail;
 
-	boolean hidden = false;
-
+	public boolean hidden = false;
+	public double renderSize = 0;
+	public double angleY = 0;
+	public double angleZ = 0;
 	public String texture;
 
 	public EntityLaser(World world) {
+
 		super(world);
+	}
+
+	public EntityLaser(World world, Position head, Position tail) {
+
+		super(world);
+
+		this.head = head;
+		this.tail = tail;
+
+		init();
+	}
+
+	protected void init() {
 
 		preventEntitySpawning = false;
 		noClip = true;
 		isImmuneToFire = true;
 
-		setPosition(x1, y1, z1);
+		setPosition(head.x, head.y, head.z);
 		setSize(10, 10);
-	}
 
-	public void setPositions(double x1, double y1, double z1, double x2,
-			double y2, double z2) {
-		this.x1 = x1;
-		this.y1 = y1;
-		this.z1 = z1;
-
-		this.x2 = x2;
-		this.y2 = y2;
-		this.z2 = z2;
-
-		setPosition(x1, y1, z1);
-	}
-
-	public void setTexture(String texture) {
-		this.texture = texture;
+		dataWatcher.addObject(8 , Integer.valueOf((int) head.x * 8000));
+		dataWatcher.addObject(9 , Integer.valueOf((int) head.y * 8000));
+		dataWatcher.addObject(10, Integer.valueOf((int) head.z * 8000));
+		dataWatcher.addObject(11, Integer.valueOf((int) tail.x * 8000));
+		dataWatcher.addObject(12, Integer.valueOf((int) tail.y * 8000));
+		dataWatcher.addObject(13, Integer.valueOf((int) tail.z * 8000));
+		
+		updateGraphicData();
 	}
 
 	@Override
-	public void setPosition(double d, double d1, double d2) {
+	public void writeSpawnData(DataOutputStream data) throws IOException {
 
-		posX = d;
-		posY = d1;
-		posZ = d2;
+		data.writeDouble(head.x);
+		data.writeDouble(head.y);
+		data.writeDouble(head.z);
+		data.writeDouble(tail.x);
+		data.writeDouble(tail.y);
+		data.writeDouble(tail.z);
+	}
 
-		boundingBox.minX = x1 <= x2 ? x1 : x2;
-		boundingBox.minY = y1 <= y2 ? y1 : y2;
-		boundingBox.minZ = z1 <= z2 ? z1 : z2;
+	@Override
+	public void readSpawnData(DataInputStream data) throws IOException {
 
-		boundingBox.maxX = x1 <= x2 ? x2 : x1;
-		boundingBox.maxY = y1 <= y2 ? y2 : y1;
-		boundingBox.maxZ = z1 <= z2 ? z2 : z1;
+		head = new Position(data.readDouble(), data.readDouble(), data.readDouble());
+		tail = new Position(data.readDouble(), data.readDouble(), data.readDouble());
+		init();
+	}
+
+	public void setPositions(Position head, Position tail) {
+
+		this.head = head;
+		this.tail = tail;
+		
+		dataWatcher.updateObject(8 , Integer.valueOf((int) head.x * 10000));
+		dataWatcher.updateObject(9 , Integer.valueOf((int) head.y * 10000));
+		dataWatcher.updateObject(10, Integer.valueOf((int) head.z * 10000));
+		dataWatcher.updateObject(11, Integer.valueOf((int) tail.x * 10000));
+		dataWatcher.updateObject(12, Integer.valueOf((int) tail.y * 10000));
+		dataWatcher.updateObject(13, Integer.valueOf((int) tail.z * 10000));
+		
+		updateGraphicData();
+	}
+
+	@Override
+	public void setPosition(double x, double y, double z) {
+
+		posX = x;
+		posY = y;
+		posZ = z;
+	}
+
+	public void updateGraphicData() {
+		
+		if (head == null || tail == null)
+			return;
+		
+		//updatePositions();
+		
+		boundingBox.minX = Math.min(head.x, tail.x);
+		boundingBox.minY = Math.min(head.y, tail.y);
+		boundingBox.minZ = Math.min(head.z, tail.z);
+
+		boundingBox.maxX = Math.max(head.x, tail.x);
+		boundingBox.maxY = Math.max(head.y, tail.y);
+		boundingBox.maxZ = Math.max(head.z, tail.z);
 
 		boundingBox.minX--;
 		boundingBox.minY--;
@@ -72,26 +128,34 @@ public class EntityLaser extends Entity {
 		boundingBox.maxY++;
 		boundingBox.maxZ++;
 
-		updateGraphicData();
-	}
-
-	double renderSize = 0;
-	double angleY = 0;
-	double angleZ = 0;
-
-	public void updateGraphicData() {
-
-		double dx = x1 - x2;
-		double dy = y1 - y2;
-		double dz = z1 - z2;
+		double dx = head.x - tail.x;
+		double dy = head.y - tail.y;
+		double dz = head.z - tail.z;
 
 		renderSize = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
 		angleZ = 360 - (Math.atan2(dz, dx) * 180.0 / Math.PI + 180.0);
-
 		dx = Math.sqrt(renderSize * renderSize - dy * dy);
-
 		angleY = -Math.atan2(dy, dx) * 180 / Math.PI;
+	}
+	
+	protected void updatePositions() {
+
+		head.x = dataWatcher.getWatchableObjectInt(8) / 10000D;
+		head.y = dataWatcher.getWatchableObjectInt(9) / 10000D;
+		head.z = dataWatcher.getWatchableObjectInt(10) / 10000D;
+		
+		tail.x = dataWatcher.getWatchableObjectInt(11) / 10000D;
+		tail.y = dataWatcher.getWatchableObjectInt(12) / 10000D;
+		tail.z = dataWatcher.getWatchableObjectInt(13) / 10000D;
+	}
+
+	public void setTexture(String texture) {
+		this.texture = texture;
+	}
+
+	@Override
+	public String getTexture() {
+		return texture;
 	}
 
 	@Override
@@ -106,11 +170,6 @@ public class EntityLaser extends Entity {
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
 	}
 
-	public String getTexture() {
-		return texture;
-	}
+	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
-	public int getBrightnessForRender(float par1) {
-		return 210;
-	}
 }

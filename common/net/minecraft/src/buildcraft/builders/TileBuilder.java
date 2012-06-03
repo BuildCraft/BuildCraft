@@ -24,6 +24,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
@@ -232,10 +233,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 		for (BlockIndex b : path) {
 			if (previous != null) {
-				EntityLaser laser = new EntityLaser(worldObj);
-
-				laser.setPositions(previous.i + 0.5, previous.j + 0.5,
-						previous.k + 0.5, b.i + 0.5, b.j + 0.5, b.k + 0.5);
+				
+				EntityLaser laser = new EntityLaser(worldObj,
+						new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5),
+						new Position(b.i + 0.5, b.j + 0.5, b.k + 0.5));
+				
 				laser.setTexture("/net/minecraft/src/buildcraft/core/gui/stripes.png");
 				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);
