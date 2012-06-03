@@ -20,19 +20,17 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiCombustionEngine extends GuiBuildCraft {
-
-    private TileEngine tileEngine;
+public class GuiCombustionEngine extends GuiEngine {
 
 	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine)
     {
         super(new ContainerEngine(inventoryplayer, tileEngine));
-        this.tileEngine = tileEngine;
     }
 
 	@Override
     protected void drawGuiContainerForegroundLayer()
     {
+		super.drawGuiContainerForegroundLayer();
 		String title = StringUtil.localize("tile.engineIron");
         fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
         fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
@@ -48,10 +46,11 @@ public class GuiCombustionEngine extends GuiBuildCraft {
         int k = (height - ySize) / 2;
         drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 
-        EngineIron engineIron = ((EngineIron) tileEngine.engine);
+		TileEngine engine = (TileEngine)tile;
+        EngineIron engineIron = ((EngineIron) engine.engine);
 
-        if (tileEngine.getScaledBurnTime(58) > 0)
-			displayGauge(j, k, 19, 104, tileEngine.getScaledBurnTime(58), engineIron.liquidId);
+        if (engine.getScaledBurnTime(58) > 0)
+			displayGauge(j, k, 19, 104, engine.getScaledBurnTime(58), engineIron.liquidId);
 
         if (engineIron.getScaledCoolant(58) > 0)
 			displayGauge(j, k, 19, 122, engineIron.getScaledCoolant(58), engineIron.coolantId);

@@ -17,6 +17,8 @@ public class DefaultProps {
 	public static String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 128;
 
+	public static String TEXTURE_ICONS = "/net/minecraft/src/buildcraft/core/gui/icons.png";
+	
 	public static int WOODEN_GEAR_ID     = 3800;
 	public static int STONE_GEAR_ID      = 3801;
 	public static int IRON_GEAR_ID       = 3802;

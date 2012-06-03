@@ -45,7 +45,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	private boolean isNetInitialized = false;
 
 	public CraftingGateInterface(IInventory playerInventory, Pipe pipe) {
-		super(pipe.container.getSizeInventory());
+		super(pipe.container);
 		this.playerIInventory = playerInventory;
 
 		for (int l = 0; l < 3; l++)

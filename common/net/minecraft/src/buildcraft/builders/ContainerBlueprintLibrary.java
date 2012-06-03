@@ -25,7 +25,7 @@ class ContainerBlueprintLibrary extends BuildCraftContainer {
 	TileBlueprintLibrary library;
 	
 	public ContainerBlueprintLibrary (EntityPlayer player, TileBlueprintLibrary library) {	
-		super (0);
+		super (library);
 		this.playerInventory = player.inventory;
 		this.library = library;
 		

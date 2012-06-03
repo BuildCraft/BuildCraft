@@ -19,7 +19,7 @@ public class ContainerEngineRoot extends BuildCraftContainer
 
 	public ContainerEngineRoot(InventoryPlayer inventoryplayer,
 			TileEngine tileEngine) {
-		super (tileEngine.getSizeInventory());
+		super (tileEngine);
 		
 		engine = tileEngine;
 

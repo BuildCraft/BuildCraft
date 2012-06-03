@@ -20,6 +20,7 @@ public abstract class Engine {
 
 	public int maxEnergy;
 	
+	protected int currentOutput = 0;
 	public @TileNetworkData float progress;	
 	public @TileNetworkData Orientations orientation;	
 	public int energy;	
@@ -154,5 +155,9 @@ public abstract class Engine {
 	public boolean isActive() {
 		return true;
 	}
+
+	public int getHeat() { return 0; }
+	public int getEnergyStored() { return energy; }
+	public int getCurrentOutput() { return currentOutput; }
 
 }
