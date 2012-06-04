@@ -4,17 +4,20 @@ import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.core.BlockBuildCraft;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.IItemPipe;
 
-public class BlockHopper extends BlockContainer{
+public class BlockHopper extends BlockBuildCraft {
 
 	public BlockHopper(int blockId) {
 		super(blockId, Material.iron);
@@ -44,7 +47,6 @@ public class BlockHopper extends BlockContainer{
 	
 	@Override
 	public int getBlockTextureFromSide(int par1) {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 	
