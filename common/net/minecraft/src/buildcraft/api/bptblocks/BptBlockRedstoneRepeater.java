@@ -17,21 +17,22 @@ import net.minecraft.src.buildcraft.api.BptBlock;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.IBptContext;
 
-public class BptBlockRedstoneRepeater extends BptBlock  {
+public class BptBlockRedstoneRepeater extends BptBlock {
 
 	public BptBlockRedstoneRepeater(int blockId) {
 		super(blockId);
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
-		requirements.add (new ItemStack (Item.redstoneRepeater));
+	public void addRequirements(BptSlotInfo slot, IBptContext context,
+			LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(Item.redstoneRepeater));
 	}
-	
+
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		int step = slot.meta - (slot.meta & 3);
-		
+
 		switch (slot.meta - step) {
 		case 0:
 			slot.meta = 1 + step;

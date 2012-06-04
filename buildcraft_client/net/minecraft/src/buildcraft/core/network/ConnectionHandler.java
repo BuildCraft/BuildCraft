@@ -10,7 +10,8 @@ public class ConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void onConnect(NetworkManager network) {
-		MessageManager.getInstance().registerChannel(network, new PacketHandler(), DefaultProps.NET_CHANNEL_NAME);
+		MessageManager.getInstance().registerChannel(network,
+				new PacketHandler(), DefaultProps.NET_CHANNEL_NAME);
 	}
 
 	@Override

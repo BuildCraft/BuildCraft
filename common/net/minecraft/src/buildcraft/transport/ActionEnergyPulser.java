@@ -10,7 +10,7 @@ public class ActionEnergyPulser extends Action {
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		return 4 * 16 + 0;
 	}
 

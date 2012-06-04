@@ -17,16 +17,15 @@ import net.minecraft.src.TileEntity;
 public interface ITriggerProvider {
 
 	/**
-	 * Returns the list of triggers that are available from the pipe holding 
-	 * the gate.
+	 * Returns the list of triggers that are available from the pipe holding the
+	 * gate.
 	 */
 	public abstract LinkedList<Trigger> getPipeTriggers(IPipe pipe);
-	
+
 	/**
-	 * Returns the list of triggers available to a gate next to the given 
-	 * block.
+	 * Returns the list of triggers available to a gate next to the given block.
 	 */
 	public abstract LinkedList<Trigger> getNeighborTriggers(Block block,
 			TileEntity tile);
-	
+
 }

@@ -23,17 +23,17 @@ import net.minecraft.src.BuildCraftBuilders;
 
 public class BptRootIndex {
 
-	private TreeMap <Integer, File> bluePrintsFile = new TreeMap <Integer, File> ();
+	private TreeMap<Integer, File> bluePrintsFile = new TreeMap<Integer, File>();
 	public TreeMap<String, Integer> filesSet = new TreeMap<String, Integer>();
 
-	private TreeMap <Integer, BptBase> bluePrints = new TreeMap <Integer, BptBase> ();
+	private TreeMap<Integer, BptBase> bluePrints = new TreeMap<Integer, BptBase>();
 
 	private File baseDir;
 	private File file;
 
 	public int maxBpt = 0;
 
-	public BptRootIndex (String filename) throws IOException {
+	public BptRootIndex(String filename) throws IOException {
 		baseDir = new File(CoreProxy.getBuildCraftBase(), "blueprints/");
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
@@ -69,10 +69,10 @@ public class BptRootIndex {
 
 		input.close();
 
-		saveIndex ();
+		saveIndex();
 	}
 
-	public void importNewFiles () throws IOException {
+	public void importNewFiles() throws IOException {
 		String files[] = baseDir.list();
 
 		for (String foundFile : files) {
@@ -95,10 +95,10 @@ public class BptRootIndex {
 			}
 		}
 
-		saveIndex ();
+		saveIndex();
 	}
 
-	public void saveIndex () throws IOException {
+	public void saveIndex() throws IOException {
 		FileOutputStream output = new FileOutputStream(file);
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 				output, "8859_1"));
@@ -116,10 +116,11 @@ public class BptRootIndex {
 		output.close();
 	}
 
-	public BptBase getBluePrint (int number) {
+	public BptBase getBluePrint(int number) {
 		if (!bluePrints.containsKey(number))
 			if (bluePrintsFile.containsKey(number)) {
-				BptBase bpt = BptBase.loadBluePrint (bluePrintsFile.get(number), number);
+				BptBase bpt = BptBase.loadBluePrint(bluePrintsFile.get(number),
+						number);
 
 				if (bpt != null) {
 					bluePrints.put(number, bpt);
@@ -133,11 +134,11 @@ public class BptRootIndex {
 		return bluePrints.get(number);
 	}
 
-	public BptBase getBluePrint (String filename) {
-		return getBluePrint (filesSet.get(filename));
+	public BptBase getBluePrint(String filename) {
+		return getBluePrint(filesSet.get(filename));
 	}
 
-	public int storeBluePrint (BptBase bluePrint) {
+	public int storeBluePrint(BptBase bluePrint) {
 		String name = bluePrint.name;
 
 		if (name == null || name.equals(""))
@@ -154,11 +155,11 @@ public class BptRootIndex {
 
 		maxBpt++;
 
-		filesSet.put (name + ".bpt", maxBpt);
+		filesSet.put(name + ".bpt", maxBpt);
 
 		name = name + ".bpt";
 
-		File bptFile = new File (baseDir, name);
+		File bptFile = new File(baseDir, name);
 
 		bluePrintsFile.put(maxBpt, bptFile);
 		bluePrints.put(maxBpt, bluePrint);
@@ -167,7 +168,7 @@ public class BptRootIndex {
 		bluePrint.position = maxBpt;
 
 		try {
-			saveIndex ();
+			saveIndex();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

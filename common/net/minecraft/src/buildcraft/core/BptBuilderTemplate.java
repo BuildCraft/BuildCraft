@@ -21,7 +21,8 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
 	LinkedList<BptSlot> buildList = new LinkedList<BptSlot>();
 
-	public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y, int z) {
+	public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y,
+			int z) {
 		super(bluePrint, world, x, y, z);
 
 		for (int j = bluePrint.sizeY - 1; j >= 0; --j)
@@ -31,7 +32,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					BptSlot slot = bluePrint.contents [i][j][k];
+					BptSlot slot = bluePrint.contents[i][j][k];
 
 					if (slot == null || slot.blockId == 0) {
 						slot = new BptSlot();
@@ -54,7 +55,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					int yCoord = j + y - bluePrint.anchorY;
 					int zCoord = k + z - bluePrint.anchorZ;
 
-					BptSlot slot = bluePrint.contents [i][j][k];
+					BptSlot slot = bluePrint.contents[i][j][k];
 
 					if (slot != null)
 						slot = slot.clone();
@@ -75,7 +76,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				}
 	}
 
-	private void checkDone () {
+	private void checkDone() {
 		if (clearList.size() == 0 && buildList.size() == 0)
 			done = true;
 		else
@@ -83,7 +84,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	public BptSlot getNextBlock (World world, IBuilderInventory inv) {
+	public BptSlot getNextBlock(World world, IBuilderInventory inv) {
 		if (clearList.size() != 0) {
 			BptSlot slot = internalGetNextBlock(world, inv, clearList);
 			checkDone();
@@ -109,13 +110,15 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public BptSlot internalGetNextBlock (World world, IBuilderInventory inv, LinkedList <BptSlot> list) {
+	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv,
+			LinkedList<BptSlot> list) {
 		BptSlot result = null;
 
 		while (list.size() > 0) {
 			BptSlot slot = list.getFirst();
 
-			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z)))
+			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI
+					.softBlock(world.getBlockId(slot.x, slot.y, slot.z)))
 				list.removeFirst();
 			else if (slot.mode == Mode.ClearIfInvalid) {
 				result = slot;

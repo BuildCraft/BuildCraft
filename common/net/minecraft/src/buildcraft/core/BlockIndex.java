@@ -13,11 +13,11 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 
 /**
- * This class is a comparable container for block positions.
- * TODO: should this be merged with position?
+ * This class is a comparable container for block positions. TODO: should this
+ * be merged with position?
  */
 public class BlockIndex implements Comparable<BlockIndex> {
-	
+
 	public int i;
 	public int j;
 	public int k;
@@ -25,15 +25,15 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	/**
 	 * Creates an index for a block located on i, j. k
 	 */
-	public BlockIndex (int i, int j, int k) {
-		
+	public BlockIndex(int i, int j, int k) {
+
 		this.i = i;
 		this.j = j;
 		this.k = k;
 	}
 
-	public BlockIndex (NBTTagCompound c) {
-		
+	public BlockIndex(NBTTagCompound c) {
+
 		this.i = c.getInteger("i");
 		this.j = c.getInteger("j");
 		this.k = c.getInteger("k");
@@ -44,7 +44,7 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	 */
 	@Override
 	public int compareTo(BlockIndex o) {
-		
+
 		if (o.i < i)
 			return 1;
 		else if (o.i > i)
@@ -61,19 +61,19 @@ public class BlockIndex implements Comparable<BlockIndex> {
 			return 0;
 	}
 
-	public void writeTo (NBTTagCompound c) {
-		
+	public void writeTo(NBTTagCompound c) {
+
 		c.setInteger("i", i);
 		c.setInteger("j", j);
 		c.setInteger("k", k);
 	}
-	
+
 	public int getBlockId(World world) {
 		return world.getBlockId(i, j, k);
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		return "{" + i + ", " + j + ", " + k + "}";
 	}
 }

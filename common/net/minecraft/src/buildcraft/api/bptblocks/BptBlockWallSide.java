@@ -16,24 +16,25 @@ import net.minecraft.src.buildcraft.api.BptBlock;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.IBptContext;
 
-public class BptBlockWallSide extends BptBlock  {
+public class BptBlockWallSide extends BptBlock {
 
 	public BptBlockWallSide(int blockId) {
 		super(blockId);
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
-		requirements.add (new ItemStack (slot.blockId, 1, 0));
+	public void addRequirements(BptSlotInfo slot, IBptContext context,
+			LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(slot.blockId, 1, 0));
 	}
-	
+
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		final int XPos = 2;
 		final int XNeg = 1;
 		final int ZPos = 4;
 		final int ZNeg = 3;
-		
+
 		switch (slot.meta) {
 		case XPos:
 			slot.meta = ZPos;

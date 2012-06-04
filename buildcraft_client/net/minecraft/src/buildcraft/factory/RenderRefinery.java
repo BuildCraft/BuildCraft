@@ -27,25 +27,27 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
-public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
+public class RenderRefinery extends TileEntitySpecialRenderer implements
+		IInventoryRenderer {
 
 	static final float factor = (float) (1.0 / 16.0);
 
 	private ModelRenderer tank;
-	private ModelRenderer magnet [] = new ModelRenderer [4];
+	private ModelRenderer magnet[] = new ModelRenderer[4];
 
-	private ModelBase model = new ModelBase () {};
+	private ModelBase model = new ModelBase() {
+	};
 
-	public RenderRefinery () {
+	public RenderRefinery() {
 
-		//constructor:
+		// constructor:
 		tank = new ModelRenderer(model, 0, 0);
 		tank.addBox(-4F, -8F, -4F, 8, 16, 8);
 		tank.rotationPointX = 8;
 		tank.rotationPointY = 8;
 		tank.rotationPointZ = 8;
 
-		//constructor:
+		// constructor:
 
 		for (int i = 0; i < 4; ++i) {
 			magnet[i] = new ModelRenderer(model, 32, i * 8);
@@ -58,62 +60,59 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 	}
 
-final static private int displayStages = 100;
+	final static private int displayStages = 100;
 
-	private HashMap <Integer, int []> stage = new HashMap <Integer, int []> ();
+	private HashMap<Integer, int[]> stage = new HashMap<Integer, int[]>();
 
-    private int [] getDisplayLists(int liquidId, World world) {
+	private int[] getDisplayLists(int liquidId, World world) {
 
-    	if (stage.containsKey(liquidId))
+		if (stage.containsKey(liquidId))
 			return stage.get(liquidId);
 
-    	int [] d = new int [displayStages];
-    	stage.put(liquidId, d);
+		int[] d = new int[displayStages];
+		stage.put(liquidId, d);
 
 		BlockInterface block = new BlockInterface();
 
 		// Retrieve the texture depending on type of item.
 		if (liquidId < Block.blocksList.length
-				&& Block.blocksList [liquidId] != null)
-			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
+				&& Block.blocksList[liquidId] != null)
+			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 
-		else if (Item.itemsList [liquidId] != null)
-			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
+		else if (Item.itemsList[liquidId] != null)
+			block.texture = Item.itemsList[liquidId].getIconFromDamage(0);
 
 		else
 			return null;
 
-    	for (int s = 0; s < displayStages; ++s) {
-    		d [s] = GLAllocation.generateDisplayLists(1);
-    		GL11.glNewList(d [s], 4864 /*GL_COMPILE*/);
+		for (int s = 0; s < displayStages; ++s) {
+			d[s] = GLAllocation.generateDisplayLists(1);
+			GL11.glNewList(d[s], 4864 /* GL_COMPILE */);
 
-    		block.minX = 0.5 - 4F * factor + 0.01;
-    		block.minY = 0;
-    		block.minZ = 0.5 - 4F * factor + 0.01;
+			block.minX = 0.5 - 4F * factor + 0.01;
+			block.minY = 0;
+			block.minZ = 0.5 - 4F * factor + 0.01;
 
-    		block.maxX = 0.5 + 4F * factor - 0.01;
-    		block.maxY = (float) s / (float) displayStages;
-    		block.maxZ = 0.5 + 4F * factor - 0.01;
+			block.maxX = 0.5 + 4F * factor - 0.01;
+			block.maxY = (float) s / (float) displayStages;
+			block.maxZ = 0.5 + 4F * factor - 0.01;
 
-    		RenderEntityBlock.renderBlock(block, world, 0,
-    				0, 0, false, true);
+			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
 
-    		GL11.glEndList();
-    	}
+			GL11.glEndList();
+		}
 
-    	return d;
-    }
+		return d;
+	}
 
-	public RenderRefinery (String baseTexture) {
-		this ();
+	public RenderRefinery(String baseTexture) {
+		this();
 	}
 
 	@Override
-	public void inventoryRender(double x, double y, double z,
-			float f, float f1) {
+	public void inventoryRender(double x, double y, double z, float f, float f1) {
 		render(null, x, y, z);
 	}
-
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
@@ -128,7 +127,7 @@ final static private int displayStages = 100;
 		int qty1 = 0, qty2 = 0, qty3 = 0;
 		float anim = 0;
 		int angle = 0;
-		ModelRenderer theMagnet = magnet [0];
+		ModelRenderer theMagnet = magnet[0];
 
 		if (tile != null) {
 			liquid1 = tile.slot1.liquidId;
@@ -142,7 +141,8 @@ final static private int displayStages = 100;
 
 			anim = tile.getAnimationStage();
 
-			switch (tile.worldObj.getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord)) {
+			switch (tile.worldObj.getBlockMetadata(tile.xCoord, tile.yCoord,
+					tile.zCoord)) {
 			case 2:
 				angle = 90;
 				break;
@@ -158,26 +158,27 @@ final static private int displayStages = 100;
 			}
 
 			if (tile.animationSpeed <= 1)
-				theMagnet = magnet [0];
+				theMagnet = magnet[0];
 			else if (tile.animationSpeed <= 2.5)
-				theMagnet = magnet [1];
+				theMagnet = magnet[1];
 			else if (tile.animationSpeed <= 4.5)
-				theMagnet = magnet [2];
+				theMagnet = magnet[2];
 			else
-				theMagnet = magnet [3];
+				theMagnet = magnet[3];
 
 		}
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /*GL_LIGHTING*/);
+		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		GL11.glTranslatef((float)x, (float)y, (float)z);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		GL11.glRotatef(angle, 0, 1, 0);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/factory/gui/refinery.png");
+		MinecraftForgeClient
+				.bindTexture("/net/minecraft/src/buildcraft/factory/gui/refinery.png");
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		tank.render(factor);
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);
@@ -215,7 +216,7 @@ final static private int displayStages = 100;
 
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		if (qty1 > 0) {
-			int [] list1 = getDisplayLists(liquid1, tile.worldObj);
+			int[] list1 = getDisplayLists(liquid1, tile.worldObj);
 
 			if (list1 != null) {
 				setTextureFor(liquid1);
@@ -227,7 +228,7 @@ final static private int displayStages = 100;
 
 		GL11.glTranslatef(-4F * factor, 0, 4F * factor);
 		if (qty2 > 0) {
-			int [] list2 = getDisplayLists(liquid2, tile.worldObj);
+			int[] list2 = getDisplayLists(liquid2, tile.worldObj);
 
 			if (list2 != null) {
 				setTextureFor(liquid2);
@@ -239,7 +240,7 @@ final static private int displayStages = 100;
 
 		GL11.glTranslatef(4F * factor, 0, 0);
 		if (qty3 > 0) {
-			int [] list3 = getDisplayLists(liquid3, tile.worldObj);
+			int[] list3 = getDisplayLists(liquid3, tile.worldObj);
 
 			if (list3 != null) {
 				setTextureFor(liquid3);
@@ -249,9 +250,7 @@ final static private int displayStages = 100;
 		}
 		GL11.glTranslatef(-4F * factor, 0, 0);
 
-
-
-		GL11.glEnable(2896 /*GL_LIGHTING*/);
+		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
 	}
 
@@ -260,9 +259,9 @@ final static private int displayStages = 100;
 
 		if (liquidId < Block.blocksList.length
 				&& Block.blocksList[liquidId] != null)
-			o = Block.blocksList [liquidId];
+			o = Block.blocksList[liquidId];
 		else
-			o = Item.itemsList [liquidId];
+			o = Item.itemsList[liquidId];
 
 		if (o instanceof ITextureProvider)
 			MinecraftForgeClient.bindTexture(((ITextureProvider) o)

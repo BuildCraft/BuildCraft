@@ -15,44 +15,43 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 
 /**
- * This class records a slot, either from a blueprint or from a block placed
- * in the world.
+ * This class records a slot, either from a blueprint or from a block placed in
+ * the world.
  */
-public class BptSlotInfo {	
-	
+public class BptSlotInfo {
+
 	public int blockId = 0;
 	public int meta = 0;
 	public int x;
 	public int y;
 	public int z;
-	
+
 	/**
 	 * This field contains requirements for a given block when stored in the
-	 * blueprint. Modders can either rely on this list or compute their own
-	 * int BptBlock.
+	 * blueprint. Modders can either rely on this list or compute their own int
+	 * BptBlock.
 	 */
-	public LinkedList <ItemStack> storedRequirements = new LinkedList <ItemStack> ();
-	
+	public LinkedList<ItemStack> storedRequirements = new LinkedList<ItemStack>();
+
 	/**
 	 * This tree contains additional data to be stored in the blueprint. By
 	 * default, it will be initialized from BptBlock.initializeFromWorld with
-	 * the standard readNBT function of the corresponding tile (if any) and 
-	 * will be loaded from BptBlock.buildBlock using the standard writeNBT 
-	 * function.  
+	 * the standard readNBT function of the corresponding tile (if any) and will
+	 * be loaded from BptBlock.buildBlock using the standard writeNBT function.
 	 */
 	public NBTTagCompound cpt = new NBTTagCompound();
-	
+
 	@Override
-	public BptSlotInfo clone () {
+	public BptSlotInfo clone() {
 		BptSlotInfo obj = new BptSlotInfo();
-		
+
 		obj.x = x;
 		obj.y = y;
 		obj.z = z;
 		obj.blockId = blockId;
-		obj.meta = meta; 
+		obj.meta = meta;
 		obj.cpt = (NBTTagCompound) cpt.copy();
-		
+
 		return obj;
 	}
 

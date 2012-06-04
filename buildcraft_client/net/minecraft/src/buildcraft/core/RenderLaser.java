@@ -10,10 +10,11 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderLaser extends Render {
 
-	protected ModelBase model = new ModelBase () {};
+	protected ModelBase model = new ModelBase() {
+	};
 	private ModelRenderer box;
 
-	public RenderLaser () {
+	public RenderLaser() {
 		box = new ModelRenderer(model, 0, 0);
 		box.addBox(0, -0.5F, -0.5F, 16, 1, 1);
 		box.rotationPointX = 0;
@@ -21,10 +22,9 @@ public class RenderLaser extends Render {
 		box.rotationPointZ = 0;
 	}
 
-
 	@Override
-	public void doRender(Entity entity, double x, double y, double z,
-			float f, float f1) {
+	public void doRender(Entity entity, double x, double y, double z, float f,
+			float f1) {
 		doRender((EntityLaser) entity, x, y, z, f, f1);
 
 		entity.setAngles(45, 180);
@@ -37,11 +37,11 @@ public class RenderLaser extends Render {
 			return;
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /*GL_LIGHTING*/);
+		GL11.glDisable(2896 /* GL_LIGHTING */);
 		GL11.glTranslated(x, y, z);
 
-		GL11.glRotatef((float)laser.angleZ, 0, 1, 0);
-		GL11.glRotatef((float)laser.angleY, 0, 0, 1);
+		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
+		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
 		MinecraftForgeClient.bindTexture(laser.getTexture());
 
@@ -50,17 +50,17 @@ public class RenderLaser extends Render {
 		float lasti = 0;
 
 		for (float i = 0; i <= laser.renderSize - 1; ++i) {
-			getBox (laser).render(factor);
+			getBox(laser).render(factor);
 			GL11.glTranslated(1, 0, 0);
 			lasti = i;
 		}
 
 		lasti++;
 
-		GL11.glScalef(((float)laser.renderSize - lasti), 1, 1);
-		getBox (laser).render(factor);
+		GL11.glScalef(((float) laser.renderSize - lasti), 1, 1);
+		getBox(laser).render(factor);
 
-		iterate (laser);
+		iterate(laser);
 
 		GL11.glPopMatrix();
 

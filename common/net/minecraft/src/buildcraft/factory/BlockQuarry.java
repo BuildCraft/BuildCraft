@@ -23,37 +23,37 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockQuarry extends BlockMachineRoot implements
-		ITextureProvider {
-	
+public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
+
 	int textureTop;
 	int textureFront;
 	int textureSide;
-	
+
 	public BlockQuarry(int i) {
 		super(i, Material.iron);
-		
+
 		setHardness(1.5F);
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
-		
+
 		textureSide = 2 * 16 + 9;
 		textureFront = 2 * 16 + 7;
-		textureTop = 2 * 16 + 8;	
-		
+		textureTop = 2 * 16 + 8;
+
 	}
-    
+
 	@Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-    	super.onBlockPlacedBy(world, i, j, k, entityliving);
-    	
+	public void onBlockPlacedBy(World world, int i, int j, int k,
+			EntityLiving entityliving) {
+		super.onBlockPlacedBy(world, i, j, k, entityliving);
+
 		Orientations orientation = Utils.get2dOrientation(new Position(
 				entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
-    	
+
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
 				.ordinal());
-    }
+	}
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
@@ -61,7 +61,7 @@ public class BlockQuarry extends BlockMachineRoot implements
 		if (j == 0 && i == 3) {
 			return textureFront;
 		}
-		
+
 		if (i == j) {
 			return textureFront;
 		}
@@ -73,15 +73,16 @@ public class BlockQuarry extends BlockMachineRoot implements
 			return textureSide;
 		}
 	}
-    
+
 	@Override
-	public TileEntity getBlockEntity() {		
+	public TileEntity getBlockEntity() {
 		return new TileQuarry();
 	}
-	
+
 	public void searchFrames(World world, int i, int j, int k) {
 		int width2 = 1;
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
+		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i
+				+ width2, j + width2, k + width2))
 			return;
 
 		int blockID = world.getBlockId(i, j, k);
@@ -115,7 +116,7 @@ public class BlockQuarry extends BlockMachineRoot implements
 
 		}
 	}
-	
+
 	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {
 		Utils.preDestroyBlock(world, i, j, k);
@@ -123,15 +124,16 @@ public class BlockQuarry extends BlockMachineRoot implements
 		byte width = 1;
 		int width2 = width + 1;
 
-		if(world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
+		if (world.checkChunksExist(i - width2, j - width2, k - width2, i
+				+ width2, j + width2, k + width2)) {
 
 			boolean frameFound = false;
 			for (int z = -width; z <= width; ++z) {
-				
+
 				for (int y = -width; y <= width; ++y) {
-					
+
 					for (int x = -width; x <= width; ++x) {
-						
+
 						int blockID = world.getBlockId(i + z, j + y, k + x);
 
 						if (blockID == BuildCraftFactory.frameBlock.blockID) {
@@ -150,12 +152,12 @@ public class BlockQuarry extends BlockMachineRoot implements
 
 		super.onBlockRemoval(world, i, j, k);
 	}
-	
+
 	@Override
-	public String getTextureFile() {	
+	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

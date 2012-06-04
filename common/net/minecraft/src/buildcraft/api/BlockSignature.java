@@ -16,60 +16,60 @@ public class BlockSignature {
 	public String mod;
 	public String modVersion;
 	public String customField;
-	
-	public BlockSignature (String str) {
-		String [] values = str.split("/");
-		
+
+	public BlockSignature(String str) {
+		String[] values = str.split("/");
+
 		int i = 0;
-		
-		if (values [0].equals("#B")) {
+
+		if (values[0].equals("#B")) {
 			i++;
 		}
-		
-		blockClassName = values [i];
-		tileClassName = values [i + 1];
-		blockName = values [i + 2];
-		mod = values [i + 3];
-		modVersion = values [i + 4];
-		customField = values [i + 5];		
-		
+
+		blockClassName = values[i];
+		tileClassName = values[i + 1];
+		blockName = values[i + 2];
+		mod = values[i + 3];
+		modVersion = values[i + 4];
+		customField = values[i + 5];
+
 		replaceNullWithStar();
-		
+
 	}
-	
-	public BlockSignature () {
+
+	public BlockSignature() {
 		replaceNullWithStar();
 	}
-	
+
 	@Override
 	public String toString() {
 		replaceNullWithStar();
-		
-		return "#B/" + blockClassName + "/" + tileClassName + "/" + blockName + "/"
-				+ mod + "/" + modVersion + "/" + customField;
+
+		return "#B/" + blockClassName + "/" + tileClassName + "/" + blockName
+				+ "/" + mod + "/" + modVersion + "/" + customField;
 	}
 
-	public void replaceNullWithStar () {
+	public void replaceNullWithStar() {
 		if (blockClassName == null) {
 			blockClassName = "*";
 		}
-		
+
 		if (tileClassName == null) {
 			tileClassName = "*";
 		}
-		
+
 		if (blockName == null) {
 			blockName = "*";
 		}
-		
+
 		if (mod == null) {
 			mod = "*";
 		}
-		
+
 		if (modVersion == null) {
 			modVersion = "*";
 		}
-		
+
 		if (customField == null) {
 			customField = "*";
 		}

@@ -12,7 +12,7 @@ public class DefaultActionProvider implements IActionProvider {
 
 	@Override
 	public LinkedList<Action> getNeighborActions(Block block, TileEntity tile) {
-		LinkedList <Action> res = new LinkedList<Action>();
+		LinkedList<Action> res = new LinkedList<Action>();
 
 		res.add(BuildCraftCore.actionRedstone);
 

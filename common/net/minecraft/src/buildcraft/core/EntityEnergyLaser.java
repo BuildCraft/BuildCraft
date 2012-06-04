@@ -15,21 +15,21 @@ public class EntityEnergyLaser extends EntityLaser {
 
 	public int displayStage = 0;
 
-	private float power [] = new float [100];
+	private float power[] = new float[100];
 	private int powerIndex = 0;
 	public float powerAverage = 0;
 
-	public void pushPower (float p) {
-		powerAverage -= power [powerIndex];
+	public void pushPower(float p) {
+		powerAverage -= power[powerIndex];
 		powerAverage += p;
-		power [powerIndex] = p;
+		power[powerIndex] = p;
 		powerIndex++;
 
 		if (powerIndex == power.length)
 			powerIndex = 0;
 	}
 
-	public float getPowerAverage () {
+	public float getPowerAverage() {
 		return powerAverage / power.length;
 	}
 
@@ -37,16 +37,16 @@ public class EntityEnergyLaser extends EntityLaser {
 		super(world);
 
 		for (int j = 0; j < power.length; ++j)
-			power [j] = 0;
+			power[j] = 0;
 	}
 
 	@Override
-	public String getTexture () {
-		if (getPowerAverage () <= 1.0)
+	public String getTexture() {
+		if (getPowerAverage() <= 1.0)
 			return "/net/minecraft/src/buildcraft/core/gui/laser_1.png";
-		else if (getPowerAverage () <= 2.0)
+		else if (getPowerAverage() <= 2.0)
 			return "/net/minecraft/src/buildcraft/core/gui/laser_2.png";
-		else if (getPowerAverage () <= 3.0)
+		else if (getPowerAverage() <= 3.0)
 			return "/net/minecraft/src/buildcraft/core/gui/laser_3.png";
 		else
 			return "/net/minecraft/src/buildcraft/core/gui/laser_4.png";

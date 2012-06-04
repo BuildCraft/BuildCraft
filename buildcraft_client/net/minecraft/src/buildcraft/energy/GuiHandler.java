@@ -1,8 +1,6 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerSP;
-import net.minecraft.src.GuiScreen;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.GuiIds;
@@ -14,16 +12,16 @@ public class GuiHandler implements IGuiHandler {
 	public Object getGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
 
-		if(!world.blockExists(x, y, z))
+		if (!world.blockExists(x, y, z))
 			return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if(!(tile instanceof TileEngine))
+		if (!(tile instanceof TileEngine))
 			return null;
 
-		TileEngine engine = (TileEngine)tile;
+		TileEngine engine = (TileEngine) tile;
 
-		switch(ID) {
+		switch (ID) {
 
 		case GuiIds.ENGINE_IRON:
 			return new GuiCombustionEngine(player.inventory, engine);

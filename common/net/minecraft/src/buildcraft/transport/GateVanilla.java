@@ -16,7 +16,6 @@ import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.core.network.PacketPayload;
 
 public class GateVanilla extends Gate {
 
@@ -29,19 +28,19 @@ public class GateVanilla extends Gate {
 	public GateVanilla(Pipe pipe, ItemStack stack) {
 		super(pipe, stack);
 
-		if(stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex)
+		if (stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex)
 			addEnergyPulser(pipe);
 	}
 
-	/// SAVING & LOADING
+	// / SAVING & LOADING
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		if(pulser != null) {
-        	NBTTagCompound nbttagcompoundC = new NBTTagCompound();
-        	pulser.writeToNBT(nbttagcompoundC);
-        	nbttagcompound.setTag("Pulser", nbttagcompoundC);
+		if (pulser != null) {
+			NBTTagCompound nbttagcompoundC = new NBTTagCompound();
+			pulser.writeToNBT(nbttagcompoundC);
+			nbttagcompound.setTag("Pulser", nbttagcompoundC);
 		}
 	}
 
@@ -50,29 +49,31 @@ public class GateVanilla extends Gate {
 		super.readFromNBT(nbttagcompound);
 
 		// Load pulser if any
-        if(nbttagcompound.hasKey("Pulser")) {
-        	NBTTagCompound nbttagcompoundP = nbttagcompound.getCompoundTag("Pulser");
-        	pulser = new EnergyPulser((IPowerReceptor)pipe);
-        	pulser.readFromNBT(nbttagcompoundP);
-        }
+		if (nbttagcompound.hasKey("Pulser")) {
+			NBTTagCompound nbttagcompoundP = nbttagcompound
+					.getCompoundTag("Pulser");
+			pulser = new EnergyPulser((IPowerReceptor) pipe);
+			pulser.readFromNBT(nbttagcompoundP);
+		}
 
 	}
 
 	// GUI
 	@Override
 	public void openGui(EntityPlayer player) {
-		if(!APIProxy.isClient(player.worldObj))
-			player.openGui(mod_BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+		if (!APIProxy.isClient(player.worldObj))
+			player.openGui(mod_BuildCraftTransport.instance, GuiIds.GATES,
+					pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
 
-	/// UPDATING
+	// / UPDATING
 	@Override
 	public void update() {
-		if(hasPulser())
+		if (hasPulser())
 			pulser.update();
 	}
 
-	/// INFORMATION
+	// / INFORMATION
 	private boolean hasPulser() {
 		return pulser != null;
 	}
@@ -102,12 +103,10 @@ public class GateVanilla extends Gate {
 
 	@Override
 	public GateConditional getConditional() {
-		if(kind == GateKind.OR_2
-				|| kind == GateKind.OR_3
+		if (kind == GateKind.OR_2 || kind == GateKind.OR_3
 				|| kind == GateKind.OR_4)
 			return GateConditional.OR;
-		else if(kind == GateKind.AND_2
-				|| kind == GateKind.AND_3
+		else if (kind == GateKind.AND_2 || kind == GateKind.AND_3
 				|| kind == GateKind.AND_4)
 			return GateConditional.AND;
 		else
@@ -116,20 +115,22 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Tries to add an energy pulser to gates that accept energy.
+	 * 
 	 * @param pipe
 	 * @return
 	 */
 	private boolean addEnergyPulser(Pipe pipe) {
-		if(!(pipe instanceof IPowerReceptor))
+		if (!(pipe instanceof IPowerReceptor))
 			return false;
 
-		pulser = new EnergyPulser((IPowerReceptor)pipe);
+		pulser = new EnergyPulser((IPowerReceptor) pipe);
 
 		return true;
 	}
 
 	/**
 	 * Drops a gate item of the specified kind.
+	 * 
 	 * @param kind
 	 * @param world
 	 * @param i
@@ -140,7 +141,7 @@ public class GateVanilla extends Gate {
 	public void dropGate(World world, int i, int j, int k) {
 
 		int gateDamage = 0;
-		switch(kind) {
+		switch (kind) {
 		case Single:
 			gateDamage = 0;
 			break;
@@ -165,7 +166,7 @@ public class GateVanilla extends Gate {
 		}
 
 		Item gateItem;
-		if(hasPulser())
+		if (hasPulser())
 			gateItem = BuildCraftTransport.pipeGateAutarchic;
 		else
 			gateItem = BuildCraftTransport.pipeGate;
@@ -174,37 +175,41 @@ public class GateVanilla extends Gate {
 
 	}
 
-	/// ACTIONS
+	// / ACTIONS
 	@Override
 	public void addActions(LinkedList<Action> list) {
 
-		if (pipe.wireSet [IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal())
-			list.add (BuildCraftTransport.actionRedSignal);
+		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_2.ordinal())
+			list.add(BuildCraftTransport.actionRedSignal);
 
-		if (pipe.wireSet [IPipe.WireColor.Blue.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_3.ordinal())
-			list.add (BuildCraftTransport.actionBlueSignal);
+		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_3.ordinal())
+			list.add(BuildCraftTransport.actionBlueSignal);
 
-		if (pipe.wireSet [IPipe.WireColor.Green.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
-			list.add (BuildCraftTransport.actionGreenSignal);
+		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
+			list.add(BuildCraftTransport.actionGreenSignal);
 
-		if (pipe.wireSet [IPipe.WireColor.Yellow.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
-			list.add (BuildCraftTransport.actionYellowSignal);
+		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
+			list.add(BuildCraftTransport.actionYellowSignal);
 
-		if(hasPulser())
+		if (hasPulser())
 			list.add(BuildCraftTransport.actionEnergyPulser);
 
 	}
 
 	@Override
 	public void startResolution() {
-		if(hasPulser())
+		if (hasPulser())
 			pulser.disablePulse();
 	}
 
 	@Override
 	public boolean resolveAction(Action action) {
 
-		if(action instanceof ActionEnergyPulser) {
+		if (action instanceof ActionEnergyPulser) {
 			pulser.enablePulse();
 			return true;
 		}
@@ -212,38 +217,42 @@ public class GateVanilla extends Gate {
 		return false;
 	}
 
-	/// TRIGGERS
+	// / TRIGGERS
 	@Override
 	public void addTrigger(LinkedList<Trigger> list) {
 
-		if (pipe.wireSet [IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal()) {
-			list.add (BuildCraftTransport.triggerRedSignalActive);
-			list.add (BuildCraftTransport.triggerRedSignalInactive);
+		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_2.ordinal()) {
+			list.add(BuildCraftTransport.triggerRedSignalActive);
+			list.add(BuildCraftTransport.triggerRedSignalInactive);
 		}
 
-		if (pipe.wireSet [IPipe.WireColor.Blue.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_3.ordinal()) {
-			list.add (BuildCraftTransport.triggerBlueSignalActive);
-			list.add (BuildCraftTransport.triggerBlueSignalInactive);
+		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_3.ordinal()) {
+			list.add(BuildCraftTransport.triggerBlueSignalActive);
+			list.add(BuildCraftTransport.triggerBlueSignalInactive);
 		}
 
-		if (pipe.wireSet [IPipe.WireColor.Green.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
-			list.add (BuildCraftTransport.triggerGreenSignalActive);
-			list.add (BuildCraftTransport.triggerGreenSignalInactive);
+		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
+			list.add(BuildCraftTransport.triggerGreenSignalActive);
+			list.add(BuildCraftTransport.triggerGreenSignalInactive);
 		}
 
-		if (pipe.wireSet [IPipe.WireColor.Yellow.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
-			list.add (BuildCraftTransport.triggerYellowSignalActive);
-			list.add (BuildCraftTransport.triggerYellowSignalInactive);
+		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]
+				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
+			list.add(BuildCraftTransport.triggerYellowSignalActive);
+			list.add(BuildCraftTransport.triggerYellowSignalInactive);
 		}
 
 	}
 
-	/// TEXTURES
+	// / TEXTURES
 	@Override
 	public final int getTexture(boolean isSignalActive) {
 
 		boolean isGateActive = isSignalActive;
-		if(hasPulser() && pulser.isActive())
+		if (hasPulser() && pulser.isActive())
 			isGateActive = true;
 
 		int n = getTextureRow();
@@ -257,21 +266,21 @@ public class GateVanilla extends Gate {
 				return n * 16 + 13;
 		case AND_2:
 			if (!isGateActive) {
-				if(hasPulser())
+				if (hasPulser())
 					return 9 * 16 + 0;
 				else
 					return 6 * 16 + 7;
-			} else if(hasPulser())
+			} else if (hasPulser())
 				return 9 * 16 + 1;
 			else
 				return 6 * 16 + 8;
 		case OR_2:
 			if (!isGateActive) {
-				if(hasPulser())
+				if (hasPulser())
 					return 9 * 16 + 2;
 				else
 					return 6 * 16 + 9;
-			} else if(hasPulser())
+			} else if (hasPulser())
 				return 9 * 16 + 3;
 			else
 				return 6 * 16 + 10;
@@ -301,7 +310,7 @@ public class GateVanilla extends Gate {
 	}
 
 	private int getTextureRow() {
-		if(hasPulser())
+		if (hasPulser())
 			return 9;
 		else
 			return 8;

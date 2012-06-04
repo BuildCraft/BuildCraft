@@ -35,16 +35,16 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 	private PowerProvider powerProvider;
 
-	private int [] entitiesDropped;
+	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
 
 	public PipeItemsObsidian(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicObsidian(), itemID);
 
-		entitiesDropped = new int [32];
+		entitiesDropped = new int[32];
 
 		for (int i = 0; i < entitiesDropped.length; ++i)
-			entitiesDropped [i] = -1;
+			entitiesDropped[i] = -1;
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(25, 1, 64, 1, 256);
@@ -60,16 +60,15 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	public void onEntityCollidedWithBlock(Entity entity) {
 		super.onEntityCollidedWithBlock(entity);
 
-    	if (entity.isDead)
+		if (entity.isDead)
 			return;
 
 		if (canSuck(entity, 0))
 			pullItemIntoPipe(entity, 0);
-    }
+	}
 
-	private AxisAlignedBB getSuckingBox(Orientations orientation, int distance)
-	{
-		if(orientation == Orientations.Unknown)
+	private AxisAlignedBB getSuckingBox(Orientations orientation, int distance) {
+		if (orientation == Orientations.Unknown)
 			return null;
 		Position p1 = new Position(xCoord, yCoord, zCoord, orientation);
 		Position p2 = new Position(xCoord, yCoord, zCoord, orientation);
@@ -132,9 +131,8 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				max.y, max.z);
 	}
 
-
 	@Override
-	public void doWork () {
+	public void doWork() {
 		for (int j = 1; j < 5; ++j)
 			if (trySucc(j))
 				return;
@@ -142,10 +140,10 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		powerProvider.useEnergy(1, 1, true);
 	}
 
-	private boolean trySucc (int distance) {
+	private boolean trySucc(int distance) {
 		AxisAlignedBB box = getSuckingBox(getOpenOrientation(), distance);
 
-		if(box == null)
+		if (box == null)
 			return false;
 
 		@SuppressWarnings("rawtypes")
@@ -164,10 +162,10 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				if (distance == 1 && list.get(g) instanceof EntityMinecart) {
 					EntityMinecart cart = (EntityMinecart) list.get(g);
 					if (!cart.isDead && cart.minecartType == 1) {
-						ItemStack stack = checkExtractGeneric(
-								cart, true,
+						ItemStack stack = checkExtractGeneric(cart, true,
 								getOpenOrientation());
-						if (stack != null && powerProvider.useEnergy(1, 1, true) == 1) {
+						if (stack != null
+								&& powerProvider.useEnergy(1, 1, true) == 1) {
 							EntityItem entityitem = new EntityItem(worldObj,
 									cart.posX, cart.posY + 0.3F, cart.posZ,
 									stack);
@@ -207,7 +205,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 		Orientations orientation = getOpenOrientation().reverse();
 
-		if(orientation != Orientations.Unknown) {
+		if (orientation != Orientations.Unknown) {
 			worldObj.playSoundAtEntity(
 					entity,
 					"random.pop",
@@ -220,7 +218,8 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 			if (entity instanceof EntityItem) {
 				EntityItem item = (EntityItem) entity;
-				TransportProxy.obsidianPipePickup(worldObj, item, this.container);
+				TransportProxy.obsidianPipePickup(worldObj, item,
+						this.container);
 
 				float energyUsed = powerProvider.useEnergy(distance,
 						item.item.stackSize * distance, true);
@@ -244,8 +243,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				APIProxy.removeEntity(entity);
 			}
 
-			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
-					+ Utils.getPipeFloorOf(stack), zCoord + 0.5, stack);
+			EntityPassiveItem passive = new EntityPassiveItem(worldObj,
+					xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack),
+					zCoord + 0.5, stack);
 
 			passive.speed = (float) speed;
 
@@ -255,25 +255,26 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void onDropped (EntityItem item) {
+	public void onDropped(EntityItem item) {
 		if (entitiesDroppedIndex + 1 >= entitiesDropped.length)
 			entitiesDroppedIndex = 0;
 		else
 			entitiesDroppedIndex++;
 
-		entitiesDropped [entitiesDroppedIndex] = item.entityId;
+		entitiesDropped[entitiesDroppedIndex] = item.entityId;
 	}
 
-	public boolean canSuck (Entity entity, int distance) {
+	public boolean canSuck(Entity entity, int distance) {
 		if (!entity.isEntityAlive())
-			return false; if (entity instanceof EntityItem) {
+			return false;
+		if (entity instanceof EntityItem) {
 			EntityItem item = (EntityItem) entity;
 
 			if (item.item.stackSize <= 0)
 				return false;
 
 			for (int i = 0; i < entitiesDropped.length; ++i)
-				if (item.entityId == entitiesDropped [i])
+				if (item.entityId == entitiesDropped[i])
 					return false;
 
 			return powerProvider.useEnergy(1, distance, false) >= distance;

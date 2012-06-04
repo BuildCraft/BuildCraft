@@ -24,41 +24,40 @@ public class BlockPump extends BlockContainer implements ITextureProvider {
 
 	public BlockPump(int i) {
 		super(i, Material.iron);
-		
-		
+
 		setHardness(5F);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {	
+	public TileEntity getBlockEntity() {
 		return new TilePump();
 	}
-	
+
 	@Override
-	public String getTextureFile() {		
+	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
 
 	@Override
-	 public int getBlockTextureFromSide(int i) {
-		 switch (i) {
-		 case 0:
-			 return 6 * 16 + 4;
-		 case 1:
-			 return 6 * 16 + 5;		 
-		 default:
-			 return 6 * 16 + 3;		 
-		 }
-	 }
-	 
+	public int getBlockTextureFromSide(int i) {
+		switch (i) {
+		case 0:
+			return 6 * 16 + 4;
+		case 1:
+			return 6 * 16 + 5;
+		default:
+			return 6 * 16 + 3;
+		}
+	}
+
 	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {
 		Utils.preDestroyBlock(world, i, j, k);
 
 		super.onBlockRemoval(world, i, j, k);
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

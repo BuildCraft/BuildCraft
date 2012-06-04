@@ -21,11 +21,11 @@ public class ItemBuildCraft extends Item implements ITextureProvider {
 		super(i);
 	}
 
-	//@Override Client side only
-    public String getItemDisplayName(ItemStack itemstack) {
-    	return StringUtil.localize(getItemNameIS(itemstack));
-    }
-	
+	// @Override Client side only
+	public String getItemDisplayName(ItemStack itemstack) {
+		return StringUtil.localize(getItemNameIS(itemstack));
+	}
+
 	@Override
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftSprites;

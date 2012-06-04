@@ -51,10 +51,11 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		ILiquidContainer, ISpecialInventory, IPipeEntry, ISynchronizedTile,
-		IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory {
+		IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection,
+		IDropControlInventory {
 
-	public TileBuffer [] tileBuffer;
-	public boolean [] pipeConnectionsBuffer = new boolean [6];
+	public TileBuffer[] tileBuffer;
+	public boolean[] pipeConnectionsBuffer = new boolean[6];
 
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 
@@ -62,9 +63,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	private boolean blockNeighborChange = false;
 	private boolean pipeBound = false;
 
-	@TileNetworkData public int pipeId = -1;
+	@TileNetworkData
+	public int pipeId = -1;
 
-	public TileGenericPipe () {
+	public TileGenericPipe() {
 
 	}
 
@@ -93,19 +95,20 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 	}
 
-	public void synchronizeIfDelay (int delay) {
+	public void synchronizeIfDelay(int delay) {
 		if (APIProxy.isServerSide())
 			if (networkSyncTracker.markTimeIfDelay(worldObj, delay))
 				CoreProxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord,
-						yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+						yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
+						mod_BuildCraftCore.instance);
 	}
 
 	@Override
-	public void invalidate () {
+	public void invalidate() {
 		super.invalidate();
 
-		if (BlockGenericPipe.isValid (pipe))
-			BlockGenericPipe.removePipe (pipe);
+		if (BlockGenericPipe.isValid(pipe))
+			BlockGenericPipe.removePipe(pipe);
 
 		// Clean the persistent world in case the tile is still here.
 		PersistentWorld.getWorld(worldObj).removeTile(
@@ -113,16 +116,16 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	@Override
-	public void validate () {
+	public void validate() {
 		bindPipe();
 	}
 
 	public boolean initialized = false;
 
 	@Override
-	public void updateEntity () {
+	public void updateEntity() {
 		if (!initialized) {
-			initialize ();
+			initialize();
 
 			initialized = true;
 		}
@@ -142,14 +145,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			provider.update(this);
 
 		if (pipe != null)
-			pipe.updateEntity ();
+			pipe.updateEntity();
 	}
 
-	private void initialize () {
-		tileBuffer = new TileBuffer [6];
+	private void initialize() {
+		tileBuffer = new TileBuffer[6];
 
 		for (Orientations o : Orientations.dirs()) {
-			Position pos = new Position (xCoord, yCoord, zCoord, o);
+			Position pos = new Position(xCoord, yCoord, zCoord, o);
 			pos.moveForwards(1.0);
 
 			tileBuffer[o.ordinal()] = new TileBuffer();
@@ -158,14 +161,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		}
 
 		for (Orientations o : Orientations.dirs()) {
-			TileEntity tile = getTile (o);
+			TileEntity tile = getTile(o);
 
 			if (tile instanceof ITileBufferHolder)
 				((ITileBufferHolder) tile).blockCreated(o,
 						BuildCraftTransport.genericPipeBlock.blockID, this);
 		}
 
-		bindPipe ();
+		bindPipe();
 
 		computeConnections();
 
@@ -176,8 +179,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	private void bindPipe() {
 		if (!pipeBound) {
 			if (pipe == null) {
-				PersistentTile tile = PersistentWorld.getWorld(worldObj).getTile(new BlockIndex(xCoord,
-						yCoord, zCoord));
+				PersistentTile tile = PersistentWorld.getWorld(worldObj)
+						.getTile(new BlockIndex(xCoord, yCoord, zCoord));
 
 				if (tile != null && tile instanceof Pipe)
 					pipe = (Pipe) tile;
@@ -259,7 +262,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	public void scheduleNeighborChange() {
-		blockNeighborChange  = true;
+		blockNeighborChange = true;
 	}
 
 	@Override
@@ -297,7 +300,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if (!BlockGenericPipe.isFullyDefined(pipe))
 			return null;
 
-		if(pipe.logic.getStackInSlot(slot) == null)
+		if (pipe.logic.getStackInSlot(slot) == null)
 			return null;
 
 		ItemStack toReturn = pipe.logic.getStackInSlot(slot);
@@ -351,7 +354,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	@Override
 	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
 		if (BlockGenericPipe.isValid(pipe))
-			pipe.transport.entityEntering (item, orientation);
+			pipe.transport.entityEntering(item, orientation);
 	}
 
 	@Override
@@ -363,7 +366,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	/**
-	 * Description packets and update packets are handled differently. They should be unified.
+	 * Description packets and update packets are handled differently. They
+	 * should be unified.
 	 */
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
@@ -374,12 +378,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 			if (pipe != null)
 				pipe.initialize();
-			
+
 			// Check for wire information
 			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
 			// Check for gate information
-			if(packet.payload.intPayload.length > 5)
-				pipe.handleGatePayload(packet.payload, new IndexInPayload(5, 0, 0));
+			if (packet.payload.intPayload.length > 5)
+				pipe.handleGatePayload(packet.payload, new IndexInPayload(5, 0,
+						0));
 		}
 	}
 
@@ -390,7 +395,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	}
 
 	@Override
-	public void postPacketHandling(PacketUpdate packet) {}
+	public void postPacketHandling(PacketUpdate packet) {
+	}
 
 	@Override
 	public Packet getUpdatePacket() {
@@ -402,7 +408,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		bindPipe();
 
 		PacketPipeDescription packet;
-		if(pipe != null)
+		if (pipe != null)
 			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, pipe);
 		else
 			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, null);
@@ -432,7 +438,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public LinkedList<Trigger> getTriggers() {
-		LinkedList <Trigger> result = new LinkedList <Trigger> ();
+		LinkedList<Trigger> result = new LinkedList<Trigger>();
 
 		if (BlockGenericPipe.isFullyDefined(pipe) && pipe.hasGate()) {
 			result.add(BuildCraftCore.triggerRedstoneActive);
@@ -444,7 +450,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	@Override
 	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot [0];
+		return new LiquidSlot[0];
 	}
 
 	@Override
@@ -456,13 +462,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	@Override
 	public void blockCreated(Orientations from, int blockID, TileEntity tile) {
 		if (tileBuffer != null)
-			tileBuffer [from.reverse().ordinal()].set(blockID, tile);
+			tileBuffer[from.reverse().ordinal()].set(blockID, tile);
 	}
 
 	@Override
 	public int getBlockId(Orientations to) {
 		if (tileBuffer != null)
-			return tileBuffer [to.ordinal()].getBlockID();
+			return tileBuffer[to.ordinal()].getBlockID();
 		else
 			return 0;
 	}
@@ -470,7 +476,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 	@Override
 	public TileEntity getTile(Orientations to) {
 		if (tileBuffer != null)
-			return tileBuffer [to.ordinal()].getTile();
+			return tileBuffer[to.ordinal()].getTile();
 		else
 			return null;
 	}
@@ -485,8 +491,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 		if (!BlockGenericPipe.isValid(pipe1))
 			return false;
 
-		if (BlockGenericPipe.isValid (pipe2) && !pipe1.transport.getClass().isAssignableFrom(
-				pipe2.transport.getClass())
+		if (BlockGenericPipe.isValid(pipe2)
+				&& !pipe1.transport.getClass().isAssignableFrom(
+						pipe2.transport.getClass())
 				&& !pipe1.transport.allowsConnect(pipe2.transport))
 			return false;
 
@@ -495,15 +502,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 
 	private void computeConnections() {
 		if (tileBuffer != null) {
-			boolean [] oldConnections = pipeConnectionsBuffer;
-			pipeConnectionsBuffer = new boolean [6];
+			boolean[] oldConnections = pipeConnectionsBuffer;
+			pipeConnectionsBuffer = new boolean[6];
 
 			for (int i = 0; i < tileBuffer.length; ++i) {
 				TileBuffer t = tileBuffer[i];
 				t.refresh();
 
 				if (t.getTile() != null) {
-					pipeConnectionsBuffer[i] = isPipeConnected (t.getTile());
+					pipeConnectionsBuffer[i] = isPipeConnected(t.getTile());
 
 					if (t.getTile() instanceof TileGenericPipe) {
 						TileGenericPipe pipe = (TileGenericPipe) t.getTile();
@@ -514,23 +521,25 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor,
 			}
 
 			for (int i = 0; i < tileBuffer.length; ++i)
-				if (oldConnections [i] != pipeConnectionsBuffer [i]) {
-					Position pos = new Position (xCoord, yCoord, zCoord, Orientations.values() [i]);
+				if (oldConnections[i] != pipeConnectionsBuffer[i]) {
+					Position pos = new Position(xCoord, yCoord, zCoord,
+							Orientations.values()[i]);
 					pos.moveForwards(1.0);
-					worldObj.markBlockAsNeedsUpdate((int)pos.x, (int)pos.y, (int)pos.z);
+					worldObj.markBlockAsNeedsUpdate((int) pos.x, (int) pos.y,
+							(int) pos.z);
 				}
 		}
 	}
 
 	@Override
 	public boolean isPipeConnected(Orientations with) {
-		return pipeConnectionsBuffer [with.ordinal()];
+		return pipeConnectionsBuffer[with.ordinal()];
 	}
 
 	@Override
 	public boolean doDrop() {
 		if (BlockGenericPipe.isValid(pipe))
-			return pipe.doDrop ();
+			return pipe.doDrop();
 		else
 			return false;
 	}

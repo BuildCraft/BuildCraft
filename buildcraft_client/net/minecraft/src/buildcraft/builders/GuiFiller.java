@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
@@ -30,15 +29,17 @@ public class GuiFiller extends GuiBuildCraft {
 	}
 
 	@Override
-    protected void drawGuiContainerForegroundLayer() {
+	protected void drawGuiContainerForegroundLayer() {
 		String title = StringUtil.localize("tile.fillerBlock");
-        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-        fontRenderer.drawString(StringUtil.localize("gui.filling.resources"), 8, 74, 0x404040);
-        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, 142, 0x404040);
+		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.filling.resources"),
+				8, 74, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, 142,
+				0x404040);
 
-        if(filler.currentPattern != null)
-        	drawForegroundSelection(filler.currentPattern.getName());
-    }
+		if (filler.currentPattern != null)
+			drawForegroundSelection(filler.currentPattern.getName());
+	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
@@ -51,30 +52,33 @@ public class GuiFiller extends GuiBuildCraft {
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		if (filler.currentPattern != null) {
-			i = mc.renderEngine
-			.getTexture(filler.currentPattern.getTextureFile());
+			i = mc.renderEngine.getTexture(filler.currentPattern
+					.getTextureFile());
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			mc.renderEngine.bindTexture(i);
 
 			int textureI = filler.currentPattern.getTextureIndex() >> 4;
-			int textureJ = filler.currentPattern.getTextureIndex() - textureI * 16;
+			int textureJ = filler.currentPattern.getTextureIndex() - textureI
+					* 16;
 
-			drawTexturedModalRect(guiLeft + patternSymbolX, guiTop + patternSymbolY, 16 * textureJ, 16 * textureI, 16, 16);
+			drawTexturedModalRect(guiLeft + patternSymbolX, guiTop
+					+ patternSymbolY, 16 * textureJ, 16 * textureI, 16, 16);
 		}
 
 	}
 
 	public boolean intersectsWith(int i, int j) {
 
-		if (i >= patternSymbolX && i <= patternSymbolX + 16 && j >= patternSymbolY && j <= patternSymbolY + 16)
-				return true;
+		if (i >= patternSymbolX && i <= patternSymbolX + 16
+				&& j >= patternSymbolY && j <= patternSymbolY + 16)
+			return true;
 
 		return false;
 	}
 
 	protected void drawForegroundSelection(String tag) {
 
-		if(!intersectsWith(lastX - guiLeft, lastY - guiTop))
+		if (!intersectsWith(lastX - guiLeft, lastY - guiTop))
 			return;
 
 		if (tag.length() > 0) {

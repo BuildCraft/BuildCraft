@@ -11,12 +11,13 @@ import java.io.OutputStreamWriter;
 import java.util.TreeMap;
 
 public class BptPlayerIndex {
-	private TreeMap <String, File> bluePrintsFile = new TreeMap <String, File> ();
+	private TreeMap<String, File> bluePrintsFile = new TreeMap<String, File>();
 
 	private File baseDir;
 	private File file;
 
-	public BptPlayerIndex (String filename, BptRootIndex rootIndex) throws IOException {
+	public BptPlayerIndex(String filename, BptRootIndex rootIndex)
+			throws IOException {
 		baseDir = new File(CoreProxy.getBuildCraftBase(), "blueprints/");
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
@@ -25,7 +26,7 @@ public class BptPlayerIndex {
 			file.createNewFile();
 
 			for (String file : rootIndex.filesSet.keySet())
-				bluePrintsFile.put(file, new File (baseDir, file));
+				bluePrintsFile.put(file, new File(baseDir, file));
 
 			saveIndex();
 		} else
@@ -57,10 +58,10 @@ public class BptPlayerIndex {
 	public void addBlueprint(File file) throws IOException {
 		bluePrintsFile.put(file.getName(), file);
 
-		saveIndex ();
+		saveIndex();
 	}
 
-	public void saveIndex () throws IOException {
+	public void saveIndex() throws IOException {
 		FileOutputStream output = new FileOutputStream(file);
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 				output, "8859_1"));
@@ -78,13 +79,13 @@ public class BptPlayerIndex {
 		bluePrintsFile.remove(fileName);
 
 		try {
-			saveIndex ();
+			saveIndex();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public String nextBpt (String name) {
+	public String nextBpt(String name) {
 		if (bluePrintsFile.size() == 0)
 			return null;
 		else if (name == null)
@@ -93,7 +94,7 @@ public class BptPlayerIndex {
 			return bluePrintsFile.higherKey(name);
 	}
 
-	public String prevBpt (String name) {
+	public String prevBpt(String name) {
 		if (bluePrintsFile.size() == 0)
 			return null;
 		else if (name == null)

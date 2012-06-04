@@ -19,9 +19,10 @@ import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.IBptContext;
 
 public class BptBlockUtils {
-	
-	public static void requestInventoryContents (BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
-		ItemStack [] stacks = getItemStacks(slot, context);
+
+	public static void requestInventoryContents(BptSlotInfo slot,
+			IBptContext context, LinkedList<ItemStack> requirements) {
+		ItemStack[] stacks = getItemStacks(slot, context);
 
 		for (ItemStack stack : stacks) {
 			if (stack != null) {
@@ -29,61 +30,65 @@ public class BptBlockUtils {
 			}
 		}
 	}
-	
-	public static void initializeInventoryContents (BptSlotInfo slot, IBptContext context, IInventory inventory) {	
-		ItemStack [] stacks = new ItemStack [inventory.getSizeInventory()];
-    	
-    	for (int i = 0; i < inventory.getSizeInventory(); ++i) {    		
-    		stacks [i] = inventory.getStackInSlot(i);
-    	}
-    	
-    	setItemStacks(slot, context, stacks);		
+
+	public static void initializeInventoryContents(BptSlotInfo slot,
+			IBptContext context, IInventory inventory) {
+		ItemStack[] stacks = new ItemStack[inventory.getSizeInventory()];
+
+		for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+			stacks[i] = inventory.getStackInSlot(i);
+		}
+
+		setItemStacks(slot, context, stacks);
 	}
-	
-	public static void buildInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory) {
-		ItemStack [] stacks = getItemStacks(slot, context);
-		
+
+	public static void buildInventoryContents(BptSlotInfo slot,
+			IBptContext context, IInventory inventory) {
+		ItemStack[] stacks = getItemStacks(slot, context);
+
 		for (int i = 0; i < stacks.length; ++i) {
-			inventory.setInventorySlotContents(i, stacks [i]);
+			inventory.setInventorySlotContents(i, stacks[i]);
 		}
 	}
-	
-	public static ItemStack [] getItemStacks(BptSlotInfo slot, IBptContext context) {
+
+	public static ItemStack[] getItemStacks(BptSlotInfo slot,
+			IBptContext context) {
 		NBTTagList list = (NBTTagList) slot.cpt.getTag("inv");
-		
+
 		if (list == null) {
-			return new ItemStack [0];
+			return new ItemStack[0];
 		}
-		
-		ItemStack stacks [] = new ItemStack [list.tagCount()];
+
+		ItemStack stacks[] = new ItemStack[list.tagCount()];
 
 		for (int i = 0; i < list.tagCount(); ++i) {
 			ItemStack stack = ItemStack
-			.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
-			
+					.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
+
 			if (stack != null && stack.itemID != 0 && stack.stackSize > 0) {
-				stacks [i] = context.mapItemStack(stack);
+				stacks[i] = context.mapItemStack(stack);
 			}
 		}
-		
+
 		return stacks;
 	}
-	
-	public static void setItemStacks(BptSlotInfo slot, IBptContext context, ItemStack [] stacks) {
+
+	public static void setItemStacks(BptSlotInfo slot, IBptContext context,
+			ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
-    	
-    	for (int i = 0; i < stacks.length; ++i) {    		
-    		NBTTagCompound cpt = new NBTTagCompound ();
-    		nbttaglist.appendTag(cpt);
-    		ItemStack stack = stacks [i];
-    		
-    		if (stack != null && stack.stackSize != 0) {
-    			stack.writeToNBT(cpt);
-    			context.storeId(stack.itemID);
-    		}    		
-    	}
-    	
-    	slot.cpt.setTag("inv", nbttaglist);
+
+		for (int i = 0; i < stacks.length; ++i) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			nbttaglist.appendTag(cpt);
+			ItemStack stack = stacks[i];
+
+			if (stack != null && stack.stackSize != 0) {
+				stack.writeToNBT(cpt);
+				context.storeId(stack.itemID);
+			}
+		}
+
+		slot.cpt.setTag("inv", nbttaglist);
 	}
 
 }

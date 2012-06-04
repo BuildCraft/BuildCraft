@@ -36,7 +36,8 @@ public class BuildCraftSilicon {
 		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftSilicon.instance, new GuiHandler());
+		MinecraftForge.setGuiHandler(mod_BuildCraftSilicon.instance,
+				new GuiHandler());
 	}
 
 	public static void initialize() {
@@ -53,21 +54,24 @@ public class BuildCraftSilicon {
 		Property assemblyTableId = BuildCraftCore.mainConfiguration
 				.getOrCreateBlockIdProperty("assemblyTable.id",
 						DefaultProps.ASSEMBLY_TABLE_ID);
-		
+
 		BuildCraftCore.mainConfiguration.save();
 
-		laserBlock = new BlockLaser (Integer.parseInt(laserId.value));
+		laserBlock = new BlockLaser(Integer.parseInt(laserId.value));
 		CoreProxy.addName(laserBlock.setBlockName("laserBlock"), "Laser");
 		CoreProxy.registerBlock(laserBlock);
 
-		assemblyTableBlock = new BlockAssemblyTable (Integer.parseInt(assemblyTableId.value));
-		CoreProxy.addName(assemblyTableBlock.setBlockName("assemblyTableBlock"), "Assembly Table");
+		assemblyTableBlock = new BlockAssemblyTable(
+				Integer.parseInt(assemblyTableId.value));
+		CoreProxy.addName(
+				assemblyTableBlock.setBlockName("assemblyTableBlock"),
+				"Assembly Table");
 		CoreProxy.registerBlock(assemblyTableBlock);
 
 		redstoneChipset = new ItemRedstoneChipset(DefaultProps.REDSTONE_CHIPSET);
 		redstoneChipset.setItemName("redstoneChipset");
 
-		/// REDSTONE CHIPSETS
+		// / REDSTONE CHIPSETS
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
 				new ItemStack[] { new ItemStack(Item.redstone) }, 10000,
 				new ItemStack(redstoneChipset, 1, 0)));
@@ -95,57 +99,51 @@ public class BuildCraftSilicon {
 		CoreProxy.addName(new ItemStack(redstoneChipset, 1, 4),
 				"Pulsating Chipset");
 
-		/// REDSTONE GATES
+		// / REDSTONE GATES
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
 				new ItemStack[] { new ItemStack(redstoneChipset, 1, 0) },
 				20000, new ItemStack(BuildCraftTransport.pipeGate, 1, 0)));
 		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 0),
 				"Gate");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[] {
-						new ItemStack(BuildCraftTransport.pipeGate, 1, 0),
-						new ItemStack(redstoneChipset, 1, 4),
-						new ItemStack(redstoneChipset, 1, 1)
-				},
-				10000, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 0)));
-		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 0),
-				"Autarchic Gate");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(BuildCraftTransport.pipeGate, 1, 0),
+				new ItemStack(redstoneChipset, 1, 4),
+				new ItemStack(redstoneChipset, 1, 1) }, 10000, new ItemStack(
+				BuildCraftTransport.pipeGateAutarchic, 1, 0)));
+		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic,
+				1, 0), "Autarchic Gate");
 
-		/// IRON AND GATES
+		// / IRON AND GATES
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
 				new ItemStack(redstoneChipset, 1, 1),
 				new ItemStack(BuildCraftTransport.redPipeWire) }, 40000,
 				new ItemStack(BuildCraftTransport.pipeGate, 1, 1)));
 		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 1),
 				"Iron AND Gate");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[] {
-						new ItemStack(BuildCraftTransport.pipeGate, 1, 1),
-						new ItemStack(redstoneChipset, 1, 4),
-						new ItemStack(redstoneChipset, 1, 1)
-				},
-				20000, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1)));
-		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1),
-				"Autarchic Iron AND Gate");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(BuildCraftTransport.pipeGate, 1, 1),
+				new ItemStack(redstoneChipset, 1, 4),
+				new ItemStack(redstoneChipset, 1, 1) }, 20000, new ItemStack(
+				BuildCraftTransport.pipeGateAutarchic, 1, 1)));
+		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic,
+				1, 1), "Autarchic Iron AND Gate");
 
-		/// IRON OR GATES
+		// / IRON OR GATES
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
 				new ItemStack(redstoneChipset, 1, 1),
 				new ItemStack(BuildCraftTransport.redPipeWire) }, 40000,
 				new ItemStack(BuildCraftTransport.pipeGate, 1, 2)));
 		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 2),
 				"Iron OR Gate");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[] {
-						new ItemStack(BuildCraftTransport.pipeGate, 1, 2),
-						new ItemStack(redstoneChipset, 1, 4),
-						new ItemStack(redstoneChipset, 1, 1)
-				},
-				20000, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2)));
-		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2),
-				"Autarchic Iron OR Gate");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(BuildCraftTransport.pipeGate, 1, 2),
+				new ItemStack(redstoneChipset, 1, 4),
+				new ItemStack(redstoneChipset, 1, 1) }, 20000, new ItemStack(
+				BuildCraftTransport.pipeGateAutarchic, 1, 2)));
+		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic,
+				1, 2), "Autarchic Iron OR Gate");
 
-		/// GOLD AND GATES
+		// / GOLD AND GATES
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
 				new ItemStack(redstoneChipset, 1, 2),
 				new ItemStack(BuildCraftTransport.redPipeWire),
@@ -153,17 +151,15 @@ public class BuildCraftSilicon {
 				new ItemStack(BuildCraftTransport.pipeGate, 1, 3)));
 		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 3),
 				"Gold AND Gate");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[] {
-						new ItemStack(BuildCraftTransport.pipeGate, 1, 3),
-						new ItemStack(redstoneChipset, 1, 4),
-						new ItemStack(redstoneChipset, 1, 1)
-				},
-				40000, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3)));
-		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3),
-				"Autarchic Gold AND Gate");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(BuildCraftTransport.pipeGate, 1, 3),
+				new ItemStack(redstoneChipset, 1, 4),
+				new ItemStack(redstoneChipset, 1, 1) }, 40000, new ItemStack(
+				BuildCraftTransport.pipeGateAutarchic, 1, 3)));
+		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic,
+				1, 3), "Autarchic Gold AND Gate");
 
-		/// GOLD OR GATES
+		// / GOLD OR GATES
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
 				new ItemStack(redstoneChipset, 1, 2),
 				new ItemStack(BuildCraftTransport.redPipeWire),
@@ -171,17 +167,15 @@ public class BuildCraftSilicon {
 				new ItemStack(BuildCraftTransport.pipeGate, 1, 4)));
 		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 4),
 				"Gold OR Gate");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[] {
-						new ItemStack(BuildCraftTransport.pipeGate, 1, 4),
-						new ItemStack(redstoneChipset, 1, 4),
-						new ItemStack(redstoneChipset, 1, 1)
-				},
-				40000, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4)));
-		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4),
-				"Autarchic Gold OR Gate");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(BuildCraftTransport.pipeGate, 1, 4),
+				new ItemStack(redstoneChipset, 1, 4),
+				new ItemStack(redstoneChipset, 1, 1) }, 40000, new ItemStack(
+				BuildCraftTransport.pipeGateAutarchic, 1, 4)));
+		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic,
+				1, 4), "Autarchic Gold OR Gate");
 
-		/// DIAMOND AND GATES
+		// / DIAMOND AND GATES
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
 				new ItemStack(redstoneChipset, 1, 3),
 				new ItemStack(BuildCraftTransport.redPipeWire),
@@ -191,17 +185,15 @@ public class BuildCraftSilicon {
 				new ItemStack(BuildCraftTransport.pipeGate, 1, 5)));
 		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 5),
 				"Diamond AND Gate");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[] {
-						new ItemStack(BuildCraftTransport.pipeGate, 1, 5),
-						new ItemStack(redstoneChipset, 1, 4),
-						new ItemStack(redstoneChipset, 1, 1)
-				},
-				80000, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5)));
-		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5),
-				"Autarchic Diamond AND Gate");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(BuildCraftTransport.pipeGate, 1, 5),
+				new ItemStack(redstoneChipset, 1, 4),
+				new ItemStack(redstoneChipset, 1, 1) }, 80000, new ItemStack(
+				BuildCraftTransport.pipeGateAutarchic, 1, 5)));
+		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic,
+				1, 5), "Autarchic Diamond AND Gate");
 
-		/// DIAMOND OR GATES
+		// / DIAMOND OR GATES
 		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
 				new ItemStack(redstoneChipset, 1, 3),
 				new ItemStack(BuildCraftTransport.redPipeWire),
@@ -211,17 +203,16 @@ public class BuildCraftSilicon {
 				new ItemStack(BuildCraftTransport.pipeGate, 1, 6)));
 		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGate, 1, 6),
 				"Diamond OR Gate");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[] {
-						new ItemStack(BuildCraftTransport.pipeGate, 1, 6),
-						new ItemStack(redstoneChipset, 1, 4),
-						new ItemStack(redstoneChipset, 1, 1)
-				},
-				80000, new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6)));
-		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6),
-				"Autarchic Diamond OR Gate");
+		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {
+				new ItemStack(BuildCraftTransport.pipeGate, 1, 6),
+				new ItemStack(redstoneChipset, 1, 4),
+				new ItemStack(redstoneChipset, 1, 1) }, 80000, new ItemStack(
+				BuildCraftTransport.pipeGateAutarchic, 1, 6)));
+		CoreProxy.addName(new ItemStack(BuildCraftTransport.pipeGateAutarchic,
+				1, 6), "Autarchic Diamond OR Gate");
 
-		new BptBlockRotateMeta(laserBlock.blockID, new int [] {2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(laserBlock.blockID, new int[] { 2, 5, 3, 4 },
+				true);
 		new BptBlockInventory(assemblyTableBlock.blockID);
 
 		if (BuildCraftCore.loadDefaultRecipes)
@@ -229,25 +220,23 @@ public class BuildCraftSilicon {
 
 	}
 
-	public static void loadRecipes () {
+	public static void loadRecipes() {
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 
-		craftingmanager.addRecipe(
-				new ItemStack(laserBlock),
-				new Object[] { "ORR", "DDR", "ORR",
-					Character.valueOf('O'), Block.obsidian,
-					Character.valueOf('R'), Item.redstone,
-					Character.valueOf('D'), Item.diamond,
-				});
+		craftingmanager.addRecipe(new ItemStack(laserBlock), new Object[] {
+				"ORR", "DDR", "ORR", Character.valueOf('O'), Block.obsidian,
+				Character.valueOf('R'), Item.redstone, Character.valueOf('D'),
+				Item.diamond, });
 
-		craftingmanager.addRecipe(
-				new ItemStack(assemblyTableBlock),
-				new Object[] { "ORO", "ODO", "OGO",
-					Character.valueOf('O'), Block.obsidian,
-					Character.valueOf('R'), Item.redstone,
-					Character.valueOf('D'), Item.diamond,
-					Character.valueOf('G'), BuildCraftCore.diamondGearItem,
-				});
+		craftingmanager
+				.addRecipe(
+						new ItemStack(assemblyTableBlock),
+						new Object[] { "ORO", "ODO", "OGO",
+								Character.valueOf('O'), Block.obsidian,
+								Character.valueOf('R'), Item.redstone,
+								Character.valueOf('D'), Item.diamond,
+								Character.valueOf('G'),
+								BuildCraftCore.diamondGearItem, });
 	}
 
 	public static void initializeModel(BaseMod mod) {

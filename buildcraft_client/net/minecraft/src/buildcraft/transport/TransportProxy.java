@@ -16,9 +16,10 @@ import net.minecraft.src.World;
 
 public class TransportProxy {
 
-	static public void obsidianPipePickup (World world, EntityItem item, TileEntity tile) {
+	static public void obsidianPipePickup(World world, EntityItem item,
+			TileEntity tile) {
 		ModLoader.getMinecraftInstance().effectRenderer
-		.addEffect(new TileEntityPickupFX(world, item, tile));
+				.addEffect(new TileEntityPickupFX(world, item, tile));
 	}
 
 }

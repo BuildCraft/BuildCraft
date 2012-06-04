@@ -33,23 +33,24 @@ import net.minecraft.src.buildcraft.api.ItemSignature;
 
 public class BptBlueprint extends BptBase {
 
-	private int [] idMapping = new int [Item.itemsList.length];
+	private int[] idMapping = new int[Item.itemsList.length];
 
-	TreeSet <Integer> idsToMap = new TreeSet <Integer>();
+	TreeSet<Integer> idsToMap = new TreeSet<Integer>();
 
-	public BptBlueprint () {
+	public BptBlueprint() {
 		for (int i = 0; i < idMapping.length; ++i)
-			idMapping [i] = i;
+			idMapping[i] = i;
 	}
 
-	public BptBlueprint (int sizeX, int sizeY, int sizeZ) {
-		super (sizeX, sizeY, sizeZ);
+	public BptBlueprint(int sizeX, int sizeY, int sizeZ) {
+		super(sizeX, sizeY, sizeZ);
 
 		for (int i = 0; i < idMapping.length; ++i)
-			idMapping [i] = i;
+			idMapping[i] = i;
 	}
 
-	public void readFromWorld (IBptContext context, TileEntity anchorTile, int x, int y, int z) {
+	public void readFromWorld(IBptContext context, TileEntity anchorTile,
+			int x, int y, int z) {
 		BptSlot slot = new BptSlot();
 
 		slot.x = (int) (x - context.surroundingBox().pMin().x);
@@ -58,7 +59,7 @@ public class BptBlueprint extends BptBase {
 		slot.blockId = anchorTile.worldObj.getBlockId(x, y, z);
 		slot.meta = anchorTile.worldObj.getBlockMetadata(x, y, z);
 
-		if (Block.blocksList [slot.blockId] instanceof BlockContainer) {
+		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
 			TileEntity tile = anchorTile.worldObj.getBlockTileEntity(x, y, z);
 
 			if (tile != null && tile instanceof IBptContributor) {
@@ -69,13 +70,12 @@ public class BptBlueprint extends BptBase {
 		}
 
 		try {
-			slot.initializeFromWorld (context, x, y, z);
-			contents [slot.x][slot.y][slot.z] = slot;
+			slot.initializeFromWorld(context, x, y, z);
+			contents[slot.x][slot.y][slot.z] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			ModLoader.getLogger().throwing("BptBlueprint",
-					"readFromWorld", t);
+			ModLoader.getLogger().throwing("BptBlueprint", "readFromWorld", t);
 
 		}
 	}
@@ -95,33 +95,32 @@ public class BptBlueprint extends BptBase {
 		writer.write("anchorZ:" + anchorZ);
 		writer.newLine();
 
-		boolean [] idsUsed = new boolean [Item.itemsList.length];
+		boolean[] idsUsed = new boolean[Item.itemsList.length];
 
 		for (int i = 1; i < idsUsed.length; ++i)
-			idsUsed [i] = false;
+			idsUsed[i] = false;
 
 		for (int x = 0; x < sizeX; ++x)
 			for (int y = 0; y < sizeY; ++y)
 				for (int z = 0; z < sizeZ; ++z) {
-					BptSlotInfo slot = contents [x][y][z];
+					BptSlotInfo slot = contents[x][y][z];
 
-					storeId (slot.blockId);
+					storeId(slot.blockId);
 
 					for (ItemStack stack : slot.storedRequirements)
-						storeId (stack.itemID);
+						storeId(stack.itemID);
 				}
 
 		writer.write("idMap:");
 		writer.newLine();
 
 		for (Integer id : idsToMap) {
-			if (id < Block.blocksList.length
-					&& Block.blocksList[id] != null)
+			if (id < Block.blocksList.length && Block.blocksList[id] != null)
 				writer.write(BuildCraftAPI
 						.getBlockSignature(Block.blocksList[id]) + "=" + id);
 			else
-				writer.write(BuildCraftAPI
-						.getItemSignature(Item.itemsList[id]) + "=" + id);
+				writer.write(BuildCraftAPI.getItemSignature(Item.itemsList[id])
+						+ "=" + id);
 
 			writer.newLine();
 		}
@@ -129,13 +128,13 @@ public class BptBlueprint extends BptBase {
 		writer.write(":idMap");
 		writer.newLine();
 
-		writer.write ("contents:");
+		writer.write("contents:");
 		writer.newLine();
 
 		for (int x = 0; x < sizeX; ++x)
 			for (int y = 0; y < sizeY; ++y)
 				for (int z = 0; z < sizeZ; ++z) {
-					BptSlotInfo slot = contents [x][y][z];
+					BptSlotInfo slot = contents[x][y][z];
 
 					if (slot != null && slot.blockId != 0) {
 						slot.cpt.setInteger("bId", slot.blockId);
@@ -143,7 +142,8 @@ public class BptBlueprint extends BptBase {
 						if (slot.meta != 0)
 							slot.cpt.setInteger("meta", slot.meta);
 
-						NBTBase.writeNamedTag(slot.cpt, new BptDataStream(writer));
+						NBTBase.writeNamedTag(slot.cpt, new BptDataStream(
+								writer));
 
 						writer.newLine();
 					} else
@@ -153,15 +153,16 @@ public class BptBlueprint extends BptBase {
 		writer.write(":contents");
 		writer.newLine();
 
-		writer.write ("requirements:");
+		writer.write("requirements:");
 		writer.newLine();
 
 		for (int x = 0; x < sizeX; ++x)
 			for (int y = 0; y < sizeY; ++y)
 				for (int z = 0; z < sizeZ; ++z) {
-					BptSlotInfo slot = contents [x][y][z];
+					BptSlotInfo slot = contents[x][y][z];
 
-					if (slot != null && slot.blockId != 0 && slot.storedRequirements.size() > 0) {
+					if (slot != null && slot.blockId != 0
+							&& slot.storedRequirements.size() > 0) {
 						NBTTagList list = new NBTTagList();
 
 						for (ItemStack stack : slot.storedRequirements) {
@@ -182,9 +183,12 @@ public class BptBlueprint extends BptBase {
 	}
 
 	@Override
-	public void loadAttribute(BufferedReader reader, String attr, String val) throws IOException, BptError {
+	public void loadAttribute(BufferedReader reader, String attr, String val)
+			throws IOException, BptError {
 		if ("3.1.0".equals(version))
-			throw new BptError("Blueprint format 3.1.0 is not supported anymore, can't load " + file);
+			throw new BptError(
+					"Blueprint format 3.1.0 is not supported anymore, can't load "
+							+ file);
 
 		// blockMap is still tested for being able to load pre 3.1.2 bpts
 		if (attr.equals("blockMap") || attr.equals("idMap"))
@@ -199,66 +203,72 @@ public class BptBlueprint extends BptBase {
 				if (mapStr.equals(":blockMap") || mapStr.equals(":idMap"))
 					return;
 
-				String [] parts = mapStr.split("=");
-				int blockId = Integer.parseInt(parts [1]);
+				String[] parts = mapStr.split("=");
+				int blockId = Integer.parseInt(parts[1]);
 
 				if (parts[0].startsWith("#I")) {
-					ItemSignature sig = new ItemSignature(parts [0]);
-					int itemId = Integer.parseInt(parts [1]);
+					ItemSignature sig = new ItemSignature(parts[0]);
+					int itemId = Integer.parseInt(parts[1]);
 
-					if (!itemMatch(sig, Item.itemsList [itemId])) {
+					if (!itemMatch(sig, Item.itemsList[itemId])) {
 						boolean found = false;
 						for (int i = 256; i < Item.itemsList.length; ++i) {
 
-							// Items between 256 and Block.blocksList.length may be item or block
-							if(i < Block.blocksList.length && Block.blocksList[i] != null)
+							// Items between 256 and Block.blocksList.length may
+							// be item or block
+							if (i < Block.blocksList.length
+									&& Block.blocksList[i] != null)
 								continue;
 
-							if (itemMatch(sig, Item.itemsList [i])) {
+							if (itemMatch(sig, Item.itemsList[i])) {
 								found = true;
-								idMapping [itemId] = i;
+								idMapping[itemId] = i;
 								break;
 							}
 						}
 
 						if (!found)
-							throw new BptError ("BLUEPRINT ERROR: can't find item of signature "
-									+ sig + " for " + name);
+							throw new BptError(
+									"BLUEPRINT ERROR: can't find item of signature "
+											+ sig + " for " + name);
 					}
 
 				} else {
 					BlockSignature bptSignature = new BlockSignature(parts[0]);
-					BptBlock defaultBlock = BuildCraftAPI.blockBptProps [0];
+					BptBlock defaultBlock = BuildCraftAPI.blockBptProps[0];
 
-					BptBlock handlingBlock = BuildCraftAPI.blockBptProps [blockId];
+					BptBlock handlingBlock = BuildCraftAPI.blockBptProps[blockId];
 
 					if (handlingBlock == null)
 						handlingBlock = defaultBlock;
 
-					if (!handlingBlock.match(Block.blocksList [blockId], bptSignature)) {
+					if (!handlingBlock.match(Block.blocksList[blockId],
+							bptSignature)) {
 						boolean found = false;
 
 						for (int i = 0; i < Block.blocksList.length; ++i)
-							if (Block.blocksList [i] != null) {
-								handlingBlock = BuildCraftAPI.blockBptProps [i];
+							if (Block.blocksList[i] != null) {
+								handlingBlock = BuildCraftAPI.blockBptProps[i];
 
 								if (handlingBlock == null)
 									handlingBlock = defaultBlock;
 
-								if (handlingBlock.match(Block.blocksList [i], bptSignature)) {
-									idMapping [blockId] = i;
+								if (handlingBlock.match(Block.blocksList[i],
+										bptSignature)) {
+									idMapping[blockId] = i;
 									found = true;
 								}
 							}
 
 						if (!found)
-							throw new BptError ("BLUEPRINT ERROR: can't find block of signature "
-									+ bptSignature + " for " + name);
+							throw new BptError(
+									"BLUEPRINT ERROR: can't find block of signature "
+											+ bptSignature + " for " + name);
 					}
 				}
 			}
 		else if (attr.equals("contents")) {
-			contents = new BptSlot [sizeX][sizeY][sizeZ];
+			contents = new BptSlot[sizeX][sizeY][sizeZ];
 
 			for (int x = 0; x < sizeX; ++x)
 				for (int y = 0; y < sizeY; ++y)
@@ -284,7 +294,7 @@ public class BptBlueprint extends BptBase {
 							if (slot.cpt.hasKey("meta"))
 								slot.meta = slot.cpt.getInteger("meta");
 
-							contents [x][y][z] = slot;
+							contents[x][y][z] = slot;
 						}
 					}
 		} else if (attr.equals("requirements"))
@@ -303,18 +313,17 @@ public class BptBlueprint extends BptBase {
 
 							for (int i = 0; i < list.tagCount(); ++i) {
 								ItemStack stk = mapItemStack(ItemStack
-								.loadItemStackFromNBT((NBTTagCompound) list
-										.tagAt(i)));
+										.loadItemStackFromNBT((NBTTagCompound) list
+												.tagAt(i)));
 
-								contents[x][y][z].storedRequirements
-										.add(stk);
+								contents[x][y][z].storedRequirements.add(stk);
 							}
 						}
 					}
 	}
 
 	@Override
-	public String getName () {
+	public String getName() {
 		if (name == null)
 			return "Blueprint #" + position;
 		else
@@ -324,13 +333,13 @@ public class BptBlueprint extends BptBase {
 	public ItemStack mapItemStack(ItemStack bptItemStack) {
 		ItemStack newStack = bptItemStack.copy();
 
-		newStack.itemID = idMapping [newStack.itemID];
+		newStack.itemID = idMapping[newStack.itemID];
 
 		return newStack;
 	}
 
 	public int mapWorldId(int bptWorldId) {
-		return idMapping [bptWorldId];
+		return idMapping[bptWorldId];
 	}
 
 	public void storeId(int worldId) {
@@ -338,21 +347,24 @@ public class BptBlueprint extends BptBase {
 			idsToMap.add(worldId);
 	}
 
-	private boolean itemMatch (ItemSignature sig, Item item) {
+	private boolean itemMatch(ItemSignature sig, Item item) {
 		if (item == null)
 			return false;
 
-		if (!"*".equals (sig.itemClassName) && !item.getClass().getSimpleName().equals(sig.itemClassName))
+		if (!"*".equals(sig.itemClassName)
+				&& !item.getClass().getSimpleName().equals(sig.itemClassName))
 			return false;
 
-		if (!"*".equals (sig.itemName) && !item.getItemNameIS(new ItemStack(item)).equals(sig.itemName))
+		if (!"*".equals(sig.itemName)
+				&& !item.getItemNameIS(new ItemStack(item))
+						.equals(sig.itemName))
 			return false;
 
 		return true;
 	}
 
 	@Override
-	public void setBlockId (int x, int y, int z, int blockId) {
+	public void setBlockId(int x, int y, int z, int blockId) {
 		super.setBlockId(x, y, z, blockId);
 	}
 

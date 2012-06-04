@@ -21,9 +21,9 @@ public class OilBucketHandler implements IBucketHandler {
 		if ((w.getBlockId(i, j, k) == BuildCraftEnergy.oilStill.blockID || w
 				.getBlockId(i, j, k) == BuildCraftEnergy.oilMoving.blockID)
 				&& w.getBlockMetadata(i, j, k) == 0) {
-			
+
 			w.setBlockWithNotify(i, j, k, 0);
-			
+
 			return new ItemStack(BuildCraftEnergy.bucketOil);
 		} else {
 			return null;

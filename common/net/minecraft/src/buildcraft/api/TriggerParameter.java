@@ -13,33 +13,33 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 
 public class TriggerParameter {
-	
+
 	public ItemStack stack;
-	
-	public void set (ItemStack stack) {
+
+	public void set(ItemStack stack) {
 		if (stack != null) {
 			this.stack = stack.copy();
 			this.stack.stackSize = 1;
 		}
 	}
-	
-	public void writeToNBT (NBTTagCompound compound) {
+
+	public void writeToNBT(NBTTagCompound compound) {
 		if (stack != null) {
 			compound.setInteger("itemID", stack.itemID);
 			compound.setInteger("itemDMG", stack.getItemDamage());
 		}
 	}
-	
-	public void readFromNBT (NBTTagCompound compound) {
+
+	public void readFromNBT(NBTTagCompound compound) {
 		int itemID = compound.getInteger("itemID");
-		
+
 		if (itemID != 0) {
 			stack = new ItemStack(itemID, 1, compound.getInteger("itemDMG"));
 		}
 	}
-	
-	public ItemStack getItem () {
+
+	public ItemStack getItem() {
 		return stack;
 	}
-	
+
 }

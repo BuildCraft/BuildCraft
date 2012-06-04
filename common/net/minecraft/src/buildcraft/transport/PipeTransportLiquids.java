@@ -26,7 +26,8 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class PipeTransportLiquids extends PipeTransport implements ILiquidContainer {
+public class PipeTransportLiquids extends PipeTransport implements
+		ILiquidContainer {
 
 	/**
 	 * The amount of liquid contained by a pipe section. For simplicity, all
@@ -38,18 +39,18 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	public int flowRate = 20;
 
 	public class LiquidBuffer {
-		short [] in = new short [travelDelay];
+		short[] in = new short[travelDelay];
 		short ready;
-		short [] out = new short [travelDelay];
+		short[] out = new short[travelDelay];
 		short qty;
 		int orientation;
 
-		short [] lastQty = new short [100];
+		short[] lastQty = new short[100];
 		int lastTotal = 0;
 
 		int emptyTime = 0;
 
-		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
+		@TileNetworkData(intKind = TileNetworkData.UNSIGNED_BYTE)
 		public int average;
 		@TileNetworkData
 		public short liquidId = 0;
@@ -57,22 +58,22 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		int totalBounced = 0;
 		boolean bouncing = false;
 
-		private boolean [] filled;
+		private boolean[] filled;
 
-		public LiquidBuffer (int o) {
+		public LiquidBuffer(int o) {
 			this.orientation = o;
 
-			reset ();
+			reset();
 		}
 
 		public void reset() {
 			for (int i = 0; i < travelDelay; ++i) {
-				in [i] = 0;
-				out [i] = 0;
+				in[i] = 0;
+				out[i] = 0;
 			}
 
 			for (int i = 0; i < lastQty.length; ++i)
-				lastQty [i] = 0;
+				lastQty[i] = 0;
 
 			ready = 0;
 			qty = 0;
@@ -82,7 +83,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			emptyTime = 0;
 		}
 
-		public int fill (int toFill, boolean doFill, short liquidId) {
+		public int fill(int toFill, boolean doFill, short liquidId) {
 			if (worldObj == null)
 				return 0;
 
@@ -90,7 +91,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 				return 0;
 
 			if (this.liquidId != liquidId)
-				reset ();
+				reset();
 
 			this.liquidId = liquidId;
 
@@ -102,13 +103,13 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 			if (doFill) {
 				qty += toFill;
-				in [newDate] += toFill;
+				in[newDate] += toFill;
 			}
 
 			return toFill;
 		}
 
-		public int empty (int toEmpty) {
+		public int empty(int toEmpty) {
 			int date = (int) (worldObj.getWorldTime() % travelDelay);
 			int newDate = date > 0 ? date - 1 : travelDelay - 1;
 
@@ -117,25 +118,26 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 			ready -= toEmpty;
 
-			out [newDate] += toEmpty;
+			out[newDate] += toEmpty;
 
 			return toEmpty;
 		}
 
-		public void update () {
+		public void update() {
 			bouncing = false;
 
 			int date = (int) (worldObj.getWorldTime() % travelDelay);
 
-			ready += in [date];
-			in [date] = 0;
+			ready += in[date];
+			in[date] = 0;
 
-			if (out [date] != 0) {
+			if (out[date] != 0) {
 				int extracted = 0;
 
 				if (orientation < 6) {
-					if (isInput [orientation])
-						extracted = center.fill(out [date], true, liquidId); if (isOutput[orientation]) {
+					if (isInput[orientation])
+						extracted = center.fill(out[date], true, liquidId);
+					if (isOutput[orientation]) {
 						Position p = new Position(xCoord, yCoord, zCoord,
 								Orientations.values()[orientation]);
 						p.moveForwards(1);
@@ -151,7 +153,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 							if (totalBounced > 20)
 								bouncing = true;
 
-							extracted += center.fill(out [date], true, liquidId);
+							extracted += center.fill(out[date], true, liquidId);
 						} else
 							totalBounced = 0;
 					}
@@ -159,24 +161,26 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 					int outputNumber = 0;
 
 					for (int i = 0; i < 6; ++i)
-						if (isOutput [i])
+						if (isOutput[i])
 							outputNumber++;
 
-					filled = new boolean [] {false, false, false, false, false, false};
+					filled = new boolean[] { false, false, false, false, false,
+							false };
 
 					// try first, to detect filled outputs
-					extracted = splitLiquid(out [date], outputNumber);
+					extracted = splitLiquid(out[date], outputNumber);
 
-					if (extracted < out [date]) {
+					if (extracted < out[date]) {
 						outputNumber = 0;
 
 						// try a second time, if to split the remaining in non
 						// filled if any
 						for (int i = 0; i < 6; ++i)
-							if (isOutput [i] && !filled [i])
+							if (isOutput[i] && !filled[i])
 								outputNumber++;
 
-						extracted += splitLiquid(out [date] - extracted, outputNumber);
+						extracted += splitLiquid(out[date] - extracted,
+								outputNumber);
 					}
 				}
 
@@ -187,8 +191,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 			int avgDate = (int) (worldObj.getWorldTime() % lastQty.length);
 
-			lastTotal += qty - lastQty [avgDate];
-			lastQty [avgDate] = qty;
+			lastTotal += qty - lastQty[avgDate];
+			lastQty[avgDate] = qty;
 
 			average = lastTotal / lastQty.length;
 
@@ -196,25 +200,26 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 				average = 1;
 		}
 
-		private int splitLiquid (int quantity, int outputNumber) {
+		private int splitLiquid(int quantity, int outputNumber) {
 			int extracted = 0;
 
 			int slotExtract = (int) Math
-			.ceil(((double) quantity / (double) outputNumber));
+					.ceil(((double) quantity / (double) outputNumber));
 
-			int [] splitVector = getSplitVector(worldObj);
+			int[] splitVector = getSplitVector(worldObj);
 
 			for (int r = 0; r < 6; ++r) {
-				int toExtract = slotExtract <= quantity ? slotExtract : quantity;
+				int toExtract = slotExtract <= quantity ? slotExtract
+						: quantity;
 
-				int i = splitVector [r];
+				int i = splitVector[r];
 
-				if (isOutput [i] && !filled [i]) {
-					extracted += side [i].fill(toExtract, true, liquidId);
+				if (isOutput[i] && !filled[i]) {
+					extracted += side[i].fill(toExtract, true, liquidId);
 					quantity -= toExtract;
 
 					if (extracted != toExtract)
-						filled [i] = true;
+						filled[i] = true;
 				}
 			}
 
@@ -223,8 +228,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 		public void readFromNBT(NBTTagCompound nbttagcompound) {
 			for (int i = 0; i < travelDelay; ++i) {
-				in [i] = nbttagcompound.getShort("in[" + i + "]");
-				out [i] = nbttagcompound.getShort("out[" + i + "]");
+				in[i] = nbttagcompound.getShort("in[" + i + "]");
+				out[i] = nbttagcompound.getShort("out[" + i + "]");
 			}
 
 			ready = nbttagcompound.getShort("ready");
@@ -234,8 +239,8 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 		public void writeToNBT(NBTTagCompound nbttagcompound) {
 			for (int i = 0; i < travelDelay; ++i) {
-				nbttagcompound.setShort("in[" + i + "]", in [i]);
-				nbttagcompound.setShort("out[" + i + "]", out [i]);
+				nbttagcompound.setShort("in[" + i + "]", in[i]);
+				nbttagcompound.setShort("out[" + i + "]", out[i]);
 			}
 
 			nbttagcompound.setShort("ready", ready);
@@ -243,18 +248,18 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			nbttagcompound.setShort("liquidId", liquidId);
 		}
 
-
 	}
 
 	public @TileNetworkData(staticSize = 6)
-	LiquidBuffer[] side = new LiquidBuffer [6];
+	LiquidBuffer[] side = new LiquidBuffer[6];
 	public @TileNetworkData
 	LiquidBuffer center;
 
 	boolean[] isInput = new boolean[6];
 
 	// Computed at each update
-	boolean isOutput [] = new boolean [] {false, false, false, false, false, false};
+	boolean isOutput[] = new boolean[] { false, false, false, false, false,
+			false };
 
 	public PipeTransportLiquids() {
 		for (int j = 0; j < 6; ++j) {
@@ -296,9 +301,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 		for (int i = 0; i < 6; ++i) {
 			if (nbttagcompound.hasKey("side[" + i + "]"))
-				side [i].readFromNBT(nbttagcompound.getCompoundTag("side[" + i + "]"));
+				side[i].readFromNBT(nbttagcompound.getCompoundTag("side[" + i
+						+ "]"));
 
-			isInput [i] = nbttagcompound.getBoolean("isInput[" + i + "]");
+			isInput[i] = nbttagcompound.getBoolean("isInput[" + i + "]");
 		}
 
 		if (nbttagcompound.hasKey("center"))
@@ -315,10 +321,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 
 		for (int i = 0; i < 6; ++i) {
 			NBTTagCompound sub = new NBTTagCompound();
-			side [i].writeToNBT(sub);
+			side[i].writeToNBT(sub);
 			nbttagcompound.setTag("side[" + i + "]", sub);
 
-			nbttagcompound.setBoolean("isInput[" + i + "]", isInput [i]);
+			nbttagcompound.setBoolean("isInput[" + i + "]", isInput[i]);
 		}
 
 		NBTTagCompound sub = new NBTTagCompound();
@@ -350,9 +356,9 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	int lockedTime = 0;
 
 	private void moveLiquids() {
-		isOutput = new boolean [] {false, false, false, false, false, false};
+		isOutput = new boolean[] { false, false, false, false, false, false };
 
-		int outputNumber = computeOutputs ();
+		int outputNumber = computeOutputs();
 
 		if (outputNumber == 0)
 			lockedTime++;
@@ -366,13 +372,12 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			outputNumber = computeOutputs();
 		}
 
-
-		int [] rndIt = getSplitVector(worldObj);
+		int[] rndIt = getSplitVector(worldObj);
 
 		for (int r = 0; r < 6; ++r) {
-			int i = rndIt [r];
+			int i = rndIt[r];
 
-			side [i].empty(flowRate);
+			side[i].empty(flowRate);
 		}
 
 		center.empty(flowRate);
@@ -382,20 +387,20 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		center.update();
 
 		for (int r = 0; r < 6; ++r) {
-			int i = rndIt [r];
+			int i = rndIt[r];
 
-			side [i].update();
+			side[i].update();
 
-			if (side [i].qty != 0)
-				side [i].emptyTime = 0;
+			if (side[i].qty != 0)
+				side[i].emptyTime = 0;
 
-			if (side [i].bouncing)
-				isInput [i] = true;
-			else if (side [i].qty == 0)
-				side [i].emptyTime++;
+			if (side[i].bouncing)
+				isInput[i] = true;
+			else if (side[i].qty == 0)
+				side[i].emptyTime++;
 
-			if (side [i].emptyTime > 20)
-				isInput [i] = false;
+			if (side[i].emptyTime > 20)
+				isInput[i] = false;
 		}
 	}
 
@@ -403,10 +408,10 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		int outputNumber = 0;
 
 		for (Orientations o : Orientations.dirs()) {
-			isOutput [o.ordinal()] = container.pipe.outputOpen(o)
+			isOutput[o.ordinal()] = container.pipe.outputOpen(o)
 					&& canReceiveLiquid(o) && !isInput[o.ordinal()];
 
-			if (isOutput [o.ordinal()])
+			if (isOutput[o.ordinal()])
 				outputNumber++;
 		}
 
@@ -467,43 +472,44 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		}
 
 		return tile instanceof TileGenericPipe
-    	    || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
+				|| (tile instanceof IMachine && ((IMachine) tile)
+						.manageLiquids());
 	}
 
 	private static long lastSplit = -1;
 
-	private static int [] splitVector;
+	private static int[] splitVector;
 
-	public static int [] getSplitVector (World worldObj) {
+	public static int[] getSplitVector(World worldObj) {
 		if (lastSplit == worldObj.getWorldTime())
 			return splitVector;
 
 		lastSplit = worldObj.getWorldTime();
 
-		splitVector = new int [6];
+		splitVector = new int[6];
 
 		for (int i = 0; i < 6; ++i)
-			splitVector [i] = i;
+			splitVector[i] = i;
 
 		for (int i = 0; i < 20; ++i) {
 			int a = worldObj.rand.nextInt(6);
 			int b = worldObj.rand.nextInt(6);
 
-			int tmp = splitVector [a];
-			splitVector [a] = splitVector [b];
-			splitVector [b] = tmp;
+			int tmp = splitVector[a];
+			splitVector[a] = splitVector[b];
+			splitVector[b] = tmp;
 		}
 
 		return splitVector;
 	}
 
-	public boolean isTriggerActive (Trigger trigger) {
+	public boolean isTriggerActive(Trigger trigger) {
 		return false;
 	}
 
 	@Override
 	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot [0];
+		return new LiquidSlot[0];
 	}
 
 	@Override
@@ -512,4 +518,3 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 	}
 
 }
-

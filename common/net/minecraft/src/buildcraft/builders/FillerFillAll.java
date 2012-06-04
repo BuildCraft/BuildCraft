@@ -17,7 +17,8 @@ import net.minecraft.src.buildcraft.api.IBox;
 public class FillerFillAll extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public boolean iteratePattern(TileEntity tile, IBox box,
+			ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -26,7 +27,8 @@ public class FillerFillAll extends FillerPattern {
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		return fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
+		return fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace,
+				tile.worldObj);
 	}
 
 	@Override

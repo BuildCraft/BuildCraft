@@ -17,24 +17,25 @@ import net.minecraft.src.buildcraft.api.BptBlock;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.IBptContext;
 
-public class BptBlockBed extends BptBlock  {
-	
-	public BptBlockBed (int blockId) {
-		super (blockId);
+public class BptBlockBed extends BptBlock {
+
+	public BptBlockBed(int blockId) {
+		super(blockId);
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context,
+			LinkedList<ItemStack> requirements) {
 		if ((slot.meta & 8) == 0) {
-			requirements.add (new ItemStack (Item.bed));
+			requirements.add(new ItemStack(Item.bed));
 		}
 	}
-	
+
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {			
-		int orientation = (slot.meta & 7);				
+	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+		int orientation = (slot.meta & 7);
 		int others = slot.meta - orientation;
-		
+
 		switch (orientation) {
 		case 0:
 			slot.meta = 1 + others;
@@ -50,23 +51,23 @@ public class BptBlockBed extends BptBlock  {
 			break;
 		}
 	}
-	
+
 	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {		
+	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		if ((slot.meta & 8) != 0) {
 			return;
 		}
-		
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y,
-				slot.z, slot.blockId, slot.meta);
-		
+
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z,
+				slot.blockId, slot.meta);
+
 		int x2 = slot.x;
 		int z2 = slot.z;
-		
+
 		switch (slot.meta) {
 		case 0:
 			z2++;
-			break;			
+			break;
 		case 1:
 			x2--;
 			break;
@@ -77,13 +78,13 @@ public class BptBlockBed extends BptBlock  {
 			x2++;
 			break;
 		}
-		
+
 		context.world().setBlockAndMetadataWithNotify(x2, slot.y, z2,
-				slot.blockId, slot.meta + 8);		
+				slot.blockId, slot.meta + 8);
 	}
-	
+
 	@Override
-	public boolean ignoreBuilding (BptSlotInfo slot) {
+	public boolean ignoreBuilding(BptSlotInfo slot) {
 		return (slot.meta & 8) != 0;
 	}
 }

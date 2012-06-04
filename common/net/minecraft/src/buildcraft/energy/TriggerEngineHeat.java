@@ -15,17 +15,17 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 
 public class TriggerEngineHeat extends Trigger {
-	
+
 	public Engine.EnergyStage stage;
-	
-	public TriggerEngineHeat (int id, Engine.EnergyStage stage) {
-		super (id);
-		
+
+	public TriggerEngineHeat(int id, Engine.EnergyStage stage) {
+		super(id);
+
 		this.stage = stage;
 	}
-	
+
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		switch (stage) {
 		case Blue:
 			return 1 * 16 + 0;
@@ -37,9 +37,9 @@ public class TriggerEngineHeat extends Trigger {
 			return 1 * 16 + 3;
 		}
 	}
-	
+
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		switch (stage) {
 		case Blue:
 			return "Engine Blue";
@@ -51,16 +51,15 @@ public class TriggerEngineHeat extends Trigger {
 			return "Engine Red";
 		}
 	}
-	
+
 	@Override
-	public boolean isTriggerActive (TileEntity tile, TriggerParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, TriggerParameter parameter) {
 		if (tile instanceof TileEngine) {
 			Engine engine = ((TileEngine) tile).engine;
-			
-			return engine != null
-					&& engine.getEnergyStage() == stage;
+
+			return engine != null && engine.getEnergyStage() == stage;
 		}
-		
+
 		return false;
 	}
 

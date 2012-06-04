@@ -10,7 +10,7 @@ public class ItemGate extends ItemBuildCraft {
 	private int series;
 
 	public ItemGate(int i, int series) {
-		super (i);
+		super(i);
 
 		this.series = series;
 
@@ -22,7 +22,7 @@ public class ItemGate extends ItemBuildCraft {
 	// @Override (client only)
 	public int getIconFromDamage(int i) {
 		int n = 0;
-		if(series > 0)
+		if (series > 0)
 			n = 3;
 		else
 			n = 2;
@@ -51,16 +51,15 @@ public class ItemGate extends ItemBuildCraft {
 				.append(itemstack.getItemDamage()).toString();
 	}
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void addCreativeItems(ArrayList itemList)
-    {
-    	itemList.add(new ItemStack(this, 1, 0));
-    	itemList.add(new ItemStack(this, 1, 1));
-    	itemList.add(new ItemStack(this, 1, 2));
-    	itemList.add(new ItemStack(this, 1, 3));
-    	itemList.add(new ItemStack(this, 1, 4));
-    	itemList.add(new ItemStack(this, 1, 5));
-    	itemList.add(new ItemStack(this, 1, 6));
-    }
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this, 1, 0));
+		itemList.add(new ItemStack(this, 1, 1));
+		itemList.add(new ItemStack(this, 1, 2));
+		itemList.add(new ItemStack(this, 1, 3));
+		itemList.add(new ItemStack(this, 1, 4));
+		itemList.add(new ItemStack(this, 1, 5));
+		itemList.add(new ItemStack(this, 1, 6));
+	}
 }

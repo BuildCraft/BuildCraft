@@ -17,14 +17,14 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 
 	boolean active;
 
-	public TriggerRedstoneInput (int id, boolean active) {
-		super (id);
+	public TriggerRedstoneInput(int id, boolean active) {
+		super(id);
 
 		this.active = active;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		if (active)
 			return 0 * 16 + 0;
 		else
@@ -32,7 +32,7 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		if (active)
 			return "Redstone Signal On";
 		else

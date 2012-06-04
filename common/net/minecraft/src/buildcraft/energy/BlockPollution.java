@@ -14,13 +14,12 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
-
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockPollution extends BlockContainer implements ITextureProvider {
 
 	public BlockPollution(int i) {
-		super(i, Material.air);	
+		super(i, Material.air);
 		blockIndexInTexture = 5 * 16 + 0;
 	}
 
@@ -30,23 +29,23 @@ public class BlockPollution extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 
 	@Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
-   
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
 	@Override
 	public TileEntity getBlockEntity() {
 		return new TilePollution();
 	}
-	
+
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		return 5 * 16 + iblockaccess.getBlockMetadata(i, j, k); 
-	}	
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
+			int l) {
+		return 5 * 16 + iblockaccess.getBlockMetadata(i, j, k);
+	}
 }

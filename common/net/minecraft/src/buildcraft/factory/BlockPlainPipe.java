@@ -24,42 +24,39 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockPlainPipe extends Block implements ILegacyPipeConnection,
-		IBlockPipe, ITextureProvider {	
-	
+		IBlockPipe, ITextureProvider {
+
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
-		
+
 		blockIndexInTexture = 16 * 2 + 0;
-		
+
 		minX = Utils.pipeMinPos;
 		minY = 0.0;
 		minZ = Utils.pipeMinPos;
-		
+
 		maxX = Utils.pipeMaxPos;
 		maxY = 1.0;
 		maxZ = Utils.pipeMaxPos;
 	}
-    
+
 	@Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
-    
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
 	@Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
-    
-    public boolean isACube () {
-    	return false;
-    }    
-    
-    public int idDropped(int i, Random random)
-    {
-        return 0;
-    }
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	public boolean isACube() {
+		return false;
+	}
+
+	public int idDropped(int i, Random random) {
+		return 0;
+	}
 
 	@Override
 	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
@@ -67,23 +64,23 @@ public class BlockPlainPipe extends Block implements ILegacyPipeConnection,
 
 		return false;
 	}
-    
-    @Override
-	public String getTextureFile() {	
+
+	@Override
+	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-	
-    public float getHeightInPipe () {
-    	return 0.5F;
-    }
+
+	public float getHeightInPipe() {
+		return 0.5F;
+	}
 
 	@Override
 	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j,
 			int k, Orientations connection) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

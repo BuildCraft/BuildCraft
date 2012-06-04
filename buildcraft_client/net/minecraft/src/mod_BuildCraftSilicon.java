@@ -25,10 +25,11 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		super.modsLoaded();
 
-		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.AssemblyTableGUI));
+		// CoreProxy.registerGUI(this,
+		// Utils.packetIdToInt(PacketIds.AssemblyTableGUI));
 
 		BuildCraftTransport.initialize();
 		BuildCraftSilicon.initialize();
@@ -42,85 +43,89 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 	}
 
 	@Override
-    public boolean renderWorldBlock(RenderBlocks renderblocks,
+	public boolean renderWorldBlock(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int x, int y, int z, Block block, int l) {
 
-    	int meta = iblockaccess.getBlockMetadata(x, y, z);
+		int meta = iblockaccess.getBlockMetadata(x, y, z);
 
-    	if (meta == Orientations.XPos.ordinal()) {
-    		renderblocks.uvRotateEast = 2;
-    		renderblocks.uvRotateWest = 1;
-    		renderblocks.uvRotateTop = 1;
-    		renderblocks.uvRotateBottom = 2;
+		if (meta == Orientations.XPos.ordinal()) {
+			renderblocks.uvRotateEast = 2;
+			renderblocks.uvRotateWest = 1;
+			renderblocks.uvRotateTop = 1;
+			renderblocks.uvRotateBottom = 2;
 
-    		block.setBlockBounds(0.0F, 0.0F, 0.0F, 4F/16F, 1, 1);
-    		renderblocks.renderStandardBlock(block, x, y, z);
+			block.setBlockBounds(0.0F, 0.0F, 0.0F, 4F / 16F, 1, 1);
+			renderblocks.renderStandardBlock(block, x, y, z);
 
-    		block.setBlockBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F, 11F / 16F, 11F / 16F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
-    	} else if (meta == Orientations.XNeg.ordinal()) {
-    		renderblocks.uvRotateEast = 1;
-    		renderblocks.uvRotateWest = 2;
-    		renderblocks.uvRotateTop = 2;
-    		renderblocks.uvRotateBottom = 1;
+			block.setBlockBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F,
+					11F / 16F, 11F / 16F);
+			renderblocks.renderStandardBlock(block, x, y, z);
+		} else if (meta == Orientations.XNeg.ordinal()) {
+			renderblocks.uvRotateEast = 1;
+			renderblocks.uvRotateWest = 2;
+			renderblocks.uvRotateTop = 2;
+			renderblocks.uvRotateBottom = 1;
 
-    		block.setBlockBounds(1F - 4F / 16F, 0.0F, 0.0F, 1, 1, 1);
-    		renderblocks.renderStandardBlock(block, x, y, z);
+			block.setBlockBounds(1F - 4F / 16F, 0.0F, 0.0F, 1, 1, 1);
+			renderblocks.renderStandardBlock(block, x, y, z);
 
-    		block.setBlockBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F, 1F - 4F / 16F, 11F / 16F, 11F / 16F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
-    	} else if (meta == Orientations.ZNeg.ordinal()) {
-    		renderblocks.uvRotateSouth = 1;
-    		renderblocks.uvRotateNorth = 2;
+			block.setBlockBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F,
+					1F - 4F / 16F, 11F / 16F, 11F / 16F);
+			renderblocks.renderStandardBlock(block, x, y, z);
+		} else if (meta == Orientations.ZNeg.ordinal()) {
+			renderblocks.uvRotateSouth = 1;
+			renderblocks.uvRotateNorth = 2;
 
-    		block.setBlockBounds(0.0F, 0.0F, 1F - 4F / 16F, 1, 1, 1);
-    		renderblocks.renderStandardBlock(block, x, y, z);
+			block.setBlockBounds(0.0F, 0.0F, 1F - 4F / 16F, 1, 1, 1);
+			renderblocks.renderStandardBlock(block, x, y, z);
 
-    		block.setBlockBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F, 11F / 16F, 1F - 4F / 16F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
-    	} else if (meta == Orientations.ZPos.ordinal()) {
-    		renderblocks.uvRotateSouth = 2;
-    		renderblocks.uvRotateNorth = 1;
-    		renderblocks.uvRotateTop = 3;
-    		renderblocks.uvRotateBottom = 3;
+			block.setBlockBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F,
+					11F / 16F, 1F - 4F / 16F);
+			renderblocks.renderStandardBlock(block, x, y, z);
+		} else if (meta == Orientations.ZPos.ordinal()) {
+			renderblocks.uvRotateSouth = 2;
+			renderblocks.uvRotateNorth = 1;
+			renderblocks.uvRotateTop = 3;
+			renderblocks.uvRotateBottom = 3;
 
-    		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 1, 4F/16F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
+			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 1, 4F / 16F);
+			renderblocks.renderStandardBlock(block, x, y, z);
 
-    		block.setBlockBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F, 11F / 16F, 13F / 16F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
-    	} else if (meta == Orientations.YNeg.ordinal()) {
-    		renderblocks.uvRotateEast = 3;
-    		renderblocks.uvRotateWest = 3;
-    		renderblocks.uvRotateSouth = 3;
-    		renderblocks.uvRotateNorth = 3;
+			block.setBlockBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F,
+					11F / 16F, 13F / 16F);
+			renderblocks.renderStandardBlock(block, x, y, z);
+		} else if (meta == Orientations.YNeg.ordinal()) {
+			renderblocks.uvRotateEast = 3;
+			renderblocks.uvRotateWest = 3;
+			renderblocks.uvRotateSouth = 3;
+			renderblocks.uvRotateNorth = 3;
 
-    		block.setBlockBounds(0.0F, 1.0F - 4F/16F, 0.0F, 1.0F, 1.0F, 1.0F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
+			block.setBlockBounds(0.0F, 1.0F - 4F / 16F, 0.0F, 1.0F, 1.0F, 1.0F);
+			renderblocks.renderStandardBlock(block, x, y, z);
 
-    		block.setBlockBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F, 1F - 4F / 16F, 11F / 16F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
-    	} else if (meta == Orientations.YPos.ordinal()) {
-    		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F/16F, 1);
-    		renderblocks.renderStandardBlock(block, x, y, z);
+			block.setBlockBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F,
+					1F - 4F / 16F, 11F / 16F);
+			renderblocks.renderStandardBlock(block, x, y, z);
+		} else if (meta == Orientations.YPos.ordinal()) {
+			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
+			renderblocks.renderStandardBlock(block, x, y, z);
 
-    		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
-    		renderblocks.renderStandardBlock(block, x, y, z);
-    	}
+			block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F,
+					13F / 16F, 11F / 16F);
+			renderblocks.renderStandardBlock(block, x, y, z);
+		}
 
+		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 1, 1);
+		renderblocks.uvRotateEast = 0;
+		renderblocks.uvRotateWest = 0;
+		renderblocks.uvRotateSouth = 0;
+		renderblocks.uvRotateNorth = 0;
+		renderblocks.uvRotateTop = 0;
+		renderblocks.uvRotateBottom = 0;
 
+		return true;
 
-    	block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 1, 1);
-    	renderblocks.uvRotateEast = 0;
-    	renderblocks.uvRotateWest = 0;
-    	renderblocks.uvRotateSouth = 0;
-    	renderblocks.uvRotateNorth = 0;
-    	renderblocks.uvRotateTop = 0;
-    	renderblocks.uvRotateBottom = 0;
-
-    	return true;
-
-    }
+	}
 
 	@Override
 	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i,
@@ -129,10 +134,11 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 				Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F/16F, 1);
+		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
 		renderBlockInInv(renderblocks, block, 0);
 
-		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
+		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F,
+				13F / 16F, 11F / 16F);
 		renderBlockInInv(renderblocks, block, 1);
 
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
@@ -178,48 +184,43 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 		tessellator.draw();
 	}
 
-
 	@Override
 	public void load() {
 		BuildCraftSilicon.load();
 	}
 
 	/*
-	@Override
-	public GuiScreen handleGUI(int i) {
-		switch (Utils.intToPacketId(i)) {
-		case AssemblyTableGUI:
-			return new GuiAssemblyTable(
-					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					new TileAssemblyTable());
-		default:
-			return null;
-		}
-	}*/
+	 * @Override public GuiScreen handleGUI(int i) { switch
+	 * (Utils.intToPacketId(i)) { case AssemblyTableGUI: return new
+	 * GuiAssemblyTable( ModLoader.getMinecraftInstance().thePlayer.inventory,
+	 * new TileAssemblyTable()); default: return null; } }
+	 */
 
 	/*
-    @Override
-	public void handlePacket(Packet230ModLoader packet)
-    {
-		switch (PacketIds.values()[packet.packetType]) {
-		case AssemblyTableSelect:
-			GuiScreen screen = ModLoader.getMinecraftInstance().currentScreen;
+	 * @Override public void handlePacket(Packet230ModLoader packet) { switch
+	 * (PacketIds.values()[packet.packetType]) { case AssemblyTableSelect:
+	 * GuiScreen screen = ModLoader.getMinecraftInstance().currentScreen;
+	 * 
+	 * if (screen instanceof GuiAssemblyTable) { GuiAssemblyTable gui =
+	 * (GuiAssemblyTable) screen; SelectionMessage message = new
+	 * SelectionMessage();
+	 * 
+	 * TileAssemblyTable.selectionMessageWrapper.updateFromPacket(message,
+	 * packet);
+	 * 
+	 * gui.handleSelectionMessage (message); }
+	 * 
+	 * break; } }
+	 */
 
-			if (screen instanceof GuiAssemblyTable) {
-				GuiAssemblyTable gui = (GuiAssemblyTable) screen;
-				SelectionMessage message = new SelectionMessage();
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
 
-				TileAssemblyTable.selectionMessageWrapper.updateFromPacket(message, packet);
-
-				gui.handleSelectionMessage (message);
-			}
-
-			break;
-		}
-    } */
-
-
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 
 }

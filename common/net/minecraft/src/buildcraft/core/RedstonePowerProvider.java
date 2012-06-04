@@ -19,7 +19,7 @@ public class RedstonePowerProvider extends PowerProvider {
 
 	private boolean lastPower = false;
 
-	public RedstonePowerProvider () {
+	public RedstonePowerProvider() {
 		this.powerLoss = 0;
 		this.powerLossRegularity = 0;
 	}
@@ -45,7 +45,7 @@ public class RedstonePowerProvider extends PowerProvider {
 	}
 
 	@Override
-	public float useEnergy (float min, float max, boolean doUse) {
+	public float useEnergy(float min, float max, boolean doUse) {
 		return min;
 	}
 

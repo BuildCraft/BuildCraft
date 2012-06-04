@@ -17,30 +17,42 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.liquids.ILiquid;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockOilStill extends BlockStationary implements ITextureProvider, ILiquid {
+public class BlockOilStill extends BlockStationary implements ITextureProvider,
+		ILiquid {
 
 	public BlockOilStill(int i, Material material) {
 		super(i, material);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	 public int getRenderType() {
-		 return BuildCraftCore.oilModel;
-	 }
-	 
+	public int getRenderType() {
+		return BuildCraftCore.oilModel;
+	}
+
 	@Override
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-	
-	@Override public int stillLiquidId() { return BuildCraftEnergy.oilStill.blockID; }
-	@Override public boolean isMetaSensitive() { return false; }
-	@Override public int stillLiquidMeta() { return 0; }
-	
+
 	@Override
-    public boolean isBlockReplaceable( World world, int i, int j, int k ) {
-	    return true;
-    }
+	public int stillLiquidId() {
+		return BuildCraftEnergy.oilStill.blockID;
+	}
+
+	@Override
+	public boolean isMetaSensitive() {
+		return false;
+	}
+
+	@Override
+	public int stillLiquidMeta() {
+		return 0;
+	}
+
+	@Override
+	public boolean isBlockReplaceable(World world, int i, int j, int k) {
+		return true;
+	}
 
 }

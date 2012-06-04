@@ -13,22 +13,22 @@ public class LiquidSlot {
 	private int liquidId;
 	private int liquidQty;
 	private int capacity;
-	
-	public LiquidSlot (int liquidId, int liquidQty, int capacity) {
+
+	public LiquidSlot(int liquidId, int liquidQty, int capacity) {
 		this.liquidId = liquidId;
 		this.liquidQty = liquidQty;
 		this.capacity = capacity;
 	}
-	
-	public int getLiquidId () {
+
+	public int getLiquidId() {
 		return liquidId;
 	}
-	
-	public int getLiquidQty () {
+
+	public int getLiquidQty() {
 		return liquidQty;
 	}
-	
-	public int getCapacity () {
+
+	public int getCapacity() {
 		return capacity;
 	}
 }

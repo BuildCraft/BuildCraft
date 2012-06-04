@@ -7,7 +7,6 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-
 package net.minecraft.src;
 
 import java.util.Random;
@@ -30,7 +29,7 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		super.modsLoaded();
 		BuildCraftEnergy.initialize();
 
@@ -44,15 +43,21 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 				BuildCraftEnergy.engineBlock, 2), new RenderEngine(
 				"/net/minecraft/src/buildcraft/energy/gui/base_iron.png"));
 
-		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
-		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureFuelFX());
-		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
+		ModLoader.getMinecraftInstance().renderEngine
+				.registerTextureFX(new TextureOilFX());
+		ModLoader.getMinecraftInstance().renderEngine
+				.registerTextureFX(new TextureFuelFX());
+		ModLoader.getMinecraftInstance().renderEngine
+				.registerTextureFX(new TextureOilFlowFX());
 
 		ModLoader.registerTileEntity(TileEngine.class,
-				"net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
+				"net.minecraft.src.buildcraft.energy.Engine",
+				new RenderEngine());
 
-		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineSteamGUI));
-		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.EngineCombustionGUI));
+		// CoreProxy.registerGUI(this,
+		// Utils.packetIdToInt(PacketIds.EngineSteamGUI));
+		// CoreProxy.registerGUI(this,
+		// Utils.packetIdToInt(PacketIds.EngineCombustionGUI));
 	}
 
 	@Override
@@ -61,36 +66,36 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 	}
 
 	/*
-	@Override
-	public GuiScreen handleGUI(int i) {
-		TileEngine tile = new TileEngine();
+	 * @Override public GuiScreen handleGUI(int i) { TileEngine tile = new
+	 * TileEngine();
+	 * 
+	 * switch (Utils.intToPacketId(i)) { case EngineSteamGUI: tile.engine = new
+	 * EngineStone(tile); return new GuiSteamEngine(
+	 * ModLoader.getMinecraftInstance().thePlayer.inventory, tile); case
+	 * EngineCombustionGUI: tile.engine = new EngineIron(tile); return new
+	 * GuiCombustionEngine(
+	 * ModLoader.getMinecraftInstance().thePlayer.inventory, tile); default:
+	 * return null; } }
+	 */
 
-		switch (Utils.intToPacketId(i)) {
-		case EngineSteamGUI:
-			tile.engine = new EngineStone(tile);
-			return new GuiSteamEngine(
-					ModLoader.getMinecraftInstance().thePlayer.inventory, tile);
-		case EngineCombustionGUI:
-			tile.engine = new EngineIron(tile);
-			return new GuiCombustionEngine(
-					ModLoader.getMinecraftInstance().thePlayer.inventory, tile);
-		default:
-			return null;
-		}
+	@Override
+	public void generateSurface(World world, Random random, int i, int j) {
+		BuildCraftEnergy.generateSurface(world, random, i, j);
 	}
-	*/
-
-	@Override
-    public void generateSurface(World world, Random random, int i, int j) {
-    	BuildCraftEnergy.generateSurface (world, random, i, j);
-    }
 
 	@Override
 	public void load() {
 		BuildCraftEnergy.load();
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 
 }

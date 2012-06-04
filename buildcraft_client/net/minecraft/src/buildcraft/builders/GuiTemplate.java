@@ -12,7 +12,6 @@ package net.minecraft.src.buildcraft.builders;
 import java.util.Date;
 
 import net.minecraft.src.BuildCraftBuilders;
-import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
@@ -35,15 +34,17 @@ public class GuiTemplate extends GuiBuildCraft {
 	}
 
 	@Override
-    protected void drawGuiContainerForegroundLayer() {
-        fontRenderer.drawString(template.getInvName(), getCenteredOffset(template.getInvName()), 6, 0x404040);
-        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 152, 0x404040);
+	protected void drawGuiContainerForegroundLayer() {
+		fontRenderer.drawString(template.getInvName(),
+				getCenteredOffset(template.getInvName()), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
+				ySize - 152, 0x404040);
 
-        if (editMode && ((new Date ()).getTime() / 100) % 8 >= 4)
+		if (editMode && ((new Date()).getTime() / 100) % 8 >= 4)
 			fontRenderer.drawString(template.name + "|", 51, 62, 0x404040);
 		else
 			fontRenderer.drawString(template.name, 51, 62, 0x404040);
-    }
+	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {

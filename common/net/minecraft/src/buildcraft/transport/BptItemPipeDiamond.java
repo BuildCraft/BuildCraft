@@ -25,42 +25,43 @@ public class BptItemPipeDiamond extends BptItem {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot,
+			LinkedList<ItemStack> requirements) {
 
 	}
 
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		ItemStack inv [] = BptBlockUtils.getItemStacks(slot, context);
-		ItemStack newInv [] = new ItemStack [54];
+		ItemStack inv[] = BptBlockUtils.getItemStacks(slot, context);
+		ItemStack newInv[] = new ItemStack[54];
 
 		for (int dir = 0; dir <= 1; ++dir)
 			for (int s = 0; s < 9; ++s)
-				newInv [dir * 9 + s] = inv [dir * 9 + s];
+				newInv[dir * 9 + s] = inv[dir * 9 + s];
 
 		for (int dir = 2; dir <= 5; ++dir) {
-			Orientations r = Orientations.values() [dir].rotateLeft();
+			Orientations r = Orientations.values()[dir].rotateLeft();
 
 			for (int s = 0; s < 9; ++s)
-				newInv [r.ordinal() * 9 + s] = inv [dir * 9 + s];
+				newInv[r.ordinal() * 9 + s] = inv[dir * 9 + s];
 		}
 
 		BptBlockUtils.setItemStacks(slot, context, newInv);
 	}
 
 	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x,
-			int y, int z) {
-		IInventory inventory = (IInventory) context.world()
-				.getBlockTileEntity(x, y, z);
+	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context,
+			int x, int y, int z) {
+		IInventory inventory = (IInventory) context.world().getBlockTileEntity(
+				x, y, z);
 
 		BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
 	}
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x,
-				slot.y, slot.z);
+		IInventory inventory = (IInventory) context.world().getBlockTileEntity(
+				slot.x, slot.y, slot.z);
 
 		BptBlockUtils.buildInventoryContents(slot, context, inventory);
 	}

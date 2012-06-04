@@ -36,15 +36,15 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	public LinkedList<Action> targets = new LinkedList<Action>();
 	public static int MAX_TARGETS = 20;
 	public int wait = 0;
-	
+
 	private class Action {
-		
-		public Action (BptSlot slot, BptContext context) {
+
+		public Action(BptSlot slot, BptContext context) {
 			this.slot = slot;
 			this.context = context;
 		}
 
-		public Action (BptBuilderBase builder) {
+		public Action(BptBuilderBase builder) {
 			this.builder = builder;
 		}
 
@@ -58,15 +58,15 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	public EntityRobot(World world, Box box) {
-		
+
 		super(world);
-		
+
 		this.box = box;
 		init();
 	}
-	
+
 	protected void init() {
-		
+
 		destX = (int) box.centerX();
 		destY = (int) box.centerY();
 		destZ = (int) box.centerZ();
@@ -82,10 +82,10 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 		worldObj.spawnEntityInWorld(laser);
 	}
-	
+
 	@Override
 	public void writeSpawnData(DataOutputStream data) throws IOException {
-		
+
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
 		data.writeInt(box.zMin);
@@ -96,7 +96,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 	@Override
 	public void readSpawnData(DataInputStream data) throws IOException {
-		
+
 		box = new Box();
 		box.xMin = data.readInt();
 		box.yMin = data.readInt();
@@ -104,133 +104,139 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		box.xMax = data.readInt();
 		box.yMax = data.readInt();
 		box.zMax = data.readInt();
-		
+
 		init();
 	}
 
 	@Override
-	protected void entityInit() {}
+	protected void entityInit() {
+	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
+	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
-	
+	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
+	}
+
 	@Override
 	public void onUpdate() {
-		
+
 		move();
 		build();
 		updateLaser();
 	}
-	
+
 	protected void move() {
-		
+
 		if (!reachedDesination()) {
-			
-			setPosition(posX + motionX, 
-						posY + motionY, 
-						posZ + motionZ);
-			
+
+			setPosition(posX + motionX, posY + motionY, posZ + motionZ);
+
 			return;
 		}
-		
+
 		if (APIProxy.isClient(worldObj))
 			return;
-		
+
 		BlockIndex newDesination = getNewDesination();
 		if (newDesination != null) {
-			
+
 			setDestination(newDesination.i, newDesination.j, newDesination.k);
 		}
-		
+
 	}
-	
+
 	protected BlockIndex getNewDesination() {
-		
+
 		Box movementBoundary = new Box();
 		movementBoundary.initialize(box);
 		movementBoundary.expand(1);
-		
+
 		Box moveArea = new Box();
 		moveArea.initialize(destX, destY, destZ, 1);
-		
+
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
-			
-			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj)) && movementBoundary.contains(blockIndex)) {
+
+			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj))
+					&& movementBoundary.contains(blockIndex)) {
 				potentialDestinations.add(blockIndex);
 			}
 		}
-		
+
 		if (!potentialDestinations.isEmpty()) {
-			
+
 			int i = worldObj.rand.nextInt(potentialDestinations.size());
 			return potentialDestinations.get(i);
 		}
-		
+
 		return null;
 	}
-	
-	protected void setDestination (int x, int y, int z) {
-		
+
+	protected void setDestination(int x, int y, int z) {
+
 		destX = x;
 		destY = y;
 		destZ = z;
 
-		//TODO: apply power modifier
+		// TODO: apply power modifier
 		motionX = (destX - posX) / 75 * 1;
 		motionY = (destY - posY) / 75 * 1;
 		motionZ = (destZ - posZ) / 75 * 1;
 	}
-	
+
 	protected boolean reachedDesination() {
-		
+
 		if (getDistance(destX, destY, destZ) <= .2)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	protected void build() {
-	
+
 		updateWait();
-		
-		//TODO: rewrite
+
+		// TODO: rewrite
 		if (targets.size() > 0) {
-			
+
 			Action a = targets.getFirst();
 			if (a.slot != null) {
-				
+
 				BptSlot target = a.slot;
 				if (wait <= 0) {
-					
+
 					if (target.mode == Mode.ClearIfInvalid) {
-						
+
 						if (!target.isValid(a.context))
-							worldObj.setBlockAndMetadataWithNotify(target.x, target.y, target.z, 0, 0);
-						
+							worldObj.setBlockAndMetadataWithNotify(target.x,
+									target.y, target.z, 0, 0);
+
 					} else if (target.stackToUse != null) {
-						
-						worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
-						target.stackToUse.getItem().onItemUse(target.stackToUse,
-								BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
-								target.z, 1);
+
+						worldObj.setBlockWithNotify(target.x, target.y,
+								target.z, 0);
+						target.stackToUse.getItem().onItemUse(
+								target.stackToUse,
+								BuildCraftAPI.getBuildCraftPlayer(worldObj),
+								worldObj, target.x, target.y - 1, target.z, 1);
 					} else {
-						
+
 						try {
 							target.buildBlock(a.context);
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							ModLoader.getLogger().throwing("EntityRobot", "update", t);
+							ModLoader.getLogger().throwing("EntityRobot",
+									"update", t);
 						}
 					}
 
 					targets.pop();
 				}
-				
+
 			} else if (a.builder != null) {
 				a.builder.postProcessing(worldObj);
 				targets.pop();
@@ -239,8 +245,8 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 			laser.hidden = true;
 	}
 
-	public void updateWait () {
-		
+	public void updateWait() {
+
 		if (targets.size() > 0)
 			if (wait == 0)
 				wait = MAX_TARGETS - targets.size() + 2;
@@ -248,8 +254,8 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 				wait--;
 	}
 
-	private void updateLaser () {
-		
+	private void updateLaser() {
+
 		BptSlotInfo target = null;
 
 		if (targets.size() > 0) {
@@ -258,46 +264,48 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		}
 
 		if (target != null)
-			laser.setPositions (posX, posY, posZ, target.x + 0.5, target.y + 0.5, target.z + 0.5);
+			laser.setPositions(posX, posY, posZ, target.x + 0.5,
+					target.y + 0.5, target.z + 0.5);
 		else
 			laser.hidden = true;
 
-		laser.pushPower (((float) targets.size ()) / ((float) MAX_TARGETS) * 4F);
+		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
 	}
 
-	public void scheduleContruction (BptSlot slot, BptContext context) {
-		
+	public void scheduleContruction(BptSlot slot, BptContext context) {
+
 		if (slot != null) {
-			targets.add(new Action (slot, context));
+			targets.add(new Action(slot, context));
 			laser.hidden = false;
 		}
 	}
 
-	public void markEndOfBlueprint (BptBuilderBase builder) {
-		targets.add(new Action (builder));
+	public void markEndOfBlueprint(BptBuilderBase builder) {
+		targets.add(new Action(builder));
 	}
 
-	public boolean readyToBuild () {
+	public boolean readyToBuild() {
 		return targets.size() < MAX_TARGETS;
 	}
 
-	public boolean done () {
+	public boolean done() {
 		return targets.isEmpty();
 	}
 
 	public void setBox(Box box) {
-		
+
 		this.box = box;
-		setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
+		setDestination((int) box.centerX(), (int) box.centerY(),
+				(int) box.centerZ());
 	}
 
 	@Override
 	public void setDead() {
-		
+
 		if (laser != null)
 			laser.setDead();
 
 		super.setDead();
 	}
-	
+
 }

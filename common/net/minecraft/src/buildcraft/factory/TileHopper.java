@@ -13,60 +13,68 @@ import net.minecraft.src.buildcraft.core.utils.SidedInventoryAdapter;
 import net.minecraft.src.buildcraft.core.utils.SimpleInventory;
 import net.minecraft.src.forge.ISidedInventory;
 
-public class TileHopper extends TileBuildCraft implements IInventory{
+public class TileHopper extends TileBuildCraft implements IInventory {
 
-	private final SimpleInventory _inventory = new SimpleInventory(4, "Hopper", 64);
-	private final InventoryUtil _internalInventory = new InventoryUtil(_inventory);
-	
+	private final SimpleInventory _inventory = new SimpleInventory(4, "Hopper",
+			64);
+	private final InventoryUtil _internalInventory = new InventoryUtil(
+			_inventory);
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
 		NBTTagCompound p = (NBTTagCompound) nbtTagCompound.getTag("inventory");
 		_inventory.readFromNBT(p);
 	}
-	
+
 	@Override
 	public void writeToNBT(NBTTagCompound nbtTagCompound) {
 		super.writeToNBT(nbtTagCompound);
-		NBTTagCompound inventoryTag  = new NBTTagCompound();
+		NBTTagCompound inventoryTag = new NBTTagCompound();
 		_inventory.writeToNBT(inventoryTag);
 		nbtTagCompound.setTag("inventory", inventoryTag);
 	}
-	
-	@Override 
+
+	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (worldObj.getWorldTime() % 5 != 0) return;
+		if (worldObj.getWorldTime() % 5 != 0)
+			return;
 		int internalSlot = _internalInventory.getIdForFirstSlot();
-		if (internalSlot < 0) return;
+		if (internalSlot < 0)
+			return;
 
-		TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
-		
-		if (tile instanceof ISpecialInventory){
+		TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1,
+				zCoord);
+
+		if (tile instanceof ISpecialInventory) {
 			ISpecialInventory special = (ISpecialInventory) tile;
-			ItemStack clonedStack = _inventory.getStackInSlot(internalSlot).copy().splitStack(1);
-			if (special.addItem(clonedStack, true, Orientations.YPos)){
+			ItemStack clonedStack = _inventory.getStackInSlot(internalSlot)
+					.copy().splitStack(1);
+			if (special.addItem(clonedStack, true, Orientations.YPos)) {
 				_inventory.decrStackSize(internalSlot, 1);
 			}
 			return;
 		}
 
-		if (!(tile instanceof IInventory)) return;
+		if (!(tile instanceof IInventory))
+			return;
 		IInventory inventory = (IInventory) tile;
-		if (tile instanceof ISidedInventory){
-			inventory = new SidedInventoryAdapter((ISidedInventory) tile, Orientations.YPos);
+		if (tile instanceof ISidedInventory) {
+			inventory = new SidedInventoryAdapter((ISidedInventory) tile,
+					Orientations.YPos);
 		}
-		
+
 		InventoryUtil externalInventory = new InventoryUtil(inventory);
-		if (externalInventory.hasRoomForItem(_inventory.getStackInSlot(internalSlot))){
+		if (externalInventory.hasRoomForItem(_inventory
+				.getStackInSlot(internalSlot))) {
 			ItemStack stackToMove = _inventory.decrStackSize(internalSlot, 1);
-			externalInventory.addToInventory(stackToMove); 
+			externalInventory.addToInventory(stackToMove);
 		}
 	}
 
-	
 	/** IInventory Implementation **/
-	
+
 	@Override
 	public int getSizeInventory() {
 		return _inventory.getSizeInventory();
@@ -108,8 +116,10 @@ public class TileHopper extends TileBuildCraft implements IInventory{
 	}
 
 	@Override
-	public void openChest() {}
+	public void openChest() {
+	}
 
 	@Override
-	public void closeChest() {}
+	public void closeChest() {
+	}
 }

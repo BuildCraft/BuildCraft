@@ -44,53 +44,55 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
-public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
-	
-	private final ItemStack items [] = new ItemStack [28];
-	
+public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
+		IPowerReceptor, IMachine {
+
+	private final ItemStack items[] = new ItemStack[28];
+
 	private BptBuilderBase bluePrintBuilder;
-	
-	public @TileNetworkData Box box = new Box ();
-	
+
+	public @TileNetworkData
+	Box box = new Box();
+
 	private PowerProvider powerProvider;
-	
-	private LinkedList <BlockIndex> path;
-	
-	private LinkedList <EntityLaser> pathLasers;
-	
+
+	private LinkedList<BlockIndex> path;
+
+	private LinkedList<EntityLaser> pathLasers;
+
 	private EntityRobot builderRobot;
-	
+
 	private class PathIterator {
-		public Iterator <BlockIndex> currentIterator;
+		public Iterator<BlockIndex> currentIterator;
 		public double cx, cy, cz;
 		public float ix, iy, iz;
 		public BlockIndex to;
 		public double lastDistance;
 		AxisAlignedBB oldBoundingBox = null;
 		Orientations o = null;
-		
-		public PathIterator (BlockIndex from, Iterator <BlockIndex> it) {
+
+		public PathIterator(BlockIndex from, Iterator<BlockIndex> it) {
 			this.to = it.next();
-			
+
 			currentIterator = it;
-			
+
 			double dx = to.i - from.i;
 			double dy = to.j - from.j;
 			double dz = to.k - from.k;
-			
+
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
-			
+
 			cx = dx / size / 10;
 			cy = dy / size / 10;
 			cz = dz / size / 10;
-			
+
 			ix = from.i;
 			iy = from.j;
 			iz = from.k;
-			
+
 			lastDistance = (ix - to.i) * (ix - to.i) + (iy - to.j)
 					* (iy - to.j) + (iz - to.k) * (iz - to.k);
-			
+
 			if (Math.abs(dx) > Math.abs(dz)) {
 				if (dx > 0) {
 					o = Orientations.XPos;
@@ -105,61 +107,62 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				}
 			}
 		}
-		
+
 		/**
 		 * Return false when reached the end of the iteration
 		 */
-		public BptBuilderBase next () {
+		public BptBuilderBase next() {
 			while (true) {
 				BptBuilderBase bpt;
-				
+
 				int newX = Math.round(ix);
 				int newY = Math.round(iy);
 				int newZ = Math.round(iz);
-			
+
 				bpt = instanciateBluePrint(newX, newY, newZ, o);
 
 				if (bpt == null) {
 					return null;
 				}
-			
+
 				AxisAlignedBB boundingBox = bpt.getBoundingBox();
-			
+
 				if (oldBoundingBox == null
-						|| !collision (oldBoundingBox, boundingBox)) {
+						|| !collision(oldBoundingBox, boundingBox)) {
 
 					oldBoundingBox = boundingBox;
-					
+
 					if (bpt != null) {
 						return bpt;
-					}					
+					}
 				}
 
 				ix += cx;
 				iy += cy;
 				iz += cz;
-			
-				double distance = (ix - to.i)  * (ix - to.i)  + (iy - to.j) * (iy - to.j) + (iz - to.k) * (iz - to.k);
+
+				double distance = (ix - to.i) * (ix - to.i) + (iy - to.j)
+						* (iy - to.j) + (iz - to.k) * (iz - to.k);
 
 				if (distance > lastDistance) {
 					return null;
 				} else {
 					lastDistance = distance;
-				}		
-			}			
+				}
+			}
 		}
-		
-		public PathIterator iterate () {			
-			if (currentIterator.hasNext()) {				
+
+		public PathIterator iterate() {
+			if (currentIterator.hasNext()) {
 				PathIterator next = new PathIterator(to, currentIterator);
 				next.oldBoundingBox = oldBoundingBox;
-				
+
 				return next;
 			} else {
 				return null;
 			}
 		}
-		
+
 		public boolean collision(AxisAlignedBB left, AxisAlignedBB right) {
 			if (left.maxX < right.minX || left.minX > right.maxX) {
 				return false;
@@ -173,87 +176,89 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			return true;
 		}
 	}
-	
+
 	public PathIterator currentPathIterator;
 
 	private boolean done = true;
-	
-	public TileBuilder () {
-		super ();
-		
+
+	public TileBuilder() {
+		super();
+
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(10, 25, 25, 25, 25);
 	}
-	
+
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
-		
+
 		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
 			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
 				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
 					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
-					
+
 					if (tile instanceof TilePathMarker) {
 						path = ((TilePathMarker) tile).getPath();
-						
+
 						for (BlockIndex b : path) {
-							worldObj.setBlockWithNotify(b.i, b.j, b.k, 0);							
-							
-							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj,
-									b.i, b.j, b.k,
-									BuildCraftBuilders.pathMarkerBlock.blockID, 0);
-						}						
-						
+							worldObj.setBlockWithNotify(b.i, b.j, b.k, 0);
+
+							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
+									worldObj, b.i, b.j, b.k,
+									BuildCraftBuilders.pathMarkerBlock.blockID,
+									0);
+						}
+
 						break;
 					}
 				}
 			}
 		}
-		
+
 		if (path != null && pathLasers == null) {
 			path.getFirst().i = xCoord;
 			path.getFirst().j = yCoord;
 			path.getFirst().k = zCoord;
-			
+
 			createLasersForPath();
 		}
-		
+
 		iterateBpt();
 	}
-	
-	public void createLasersForPath () {
+
+	public void createLasersForPath() {
 		pathLasers = new LinkedList<EntityLaser>();
 		BlockIndex previous = null;
-		
+
 		for (BlockIndex b : path) {
 			if (previous != null) {
 				EntityLaser laser = new EntityLaser(worldObj);
-				
-				laser.setPositions(previous.i + 0.5,
-						previous.j + 0.5, previous.k + 0.5,
-						b.i + 0.5, b.j + 0.5, b.k + 0.5);
+
+				laser.setPositions(previous.i + 0.5, previous.j + 0.5,
+						previous.k + 0.5, b.i + 0.5, b.j + 0.5, b.k + 0.5);
 				laser.setTexture("/net/minecraft/src/buildcraft/core/gui/stripes.png");
 				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);
 			}
-			
+
 			previous = b;
 		}
 	}
-	
-	public BptBuilderBase instanciateBluePrint (int x, int y, int z, Orientations o) {						
-		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(items[0]
-				.getItemDamage());
+
+	public BptBuilderBase instanciateBluePrint(int x, int y, int z,
+			Orientations o) {
+		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(
+				items[0].getItemDamage());
 
 		if (bpt == null) {
 			return null;
 		}
-		
-		bpt = bpt.clone ();
-		
-		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos (x, y, z));
-		
+
+		bpt = bpt.clone();
+
+		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos(x,
+				y, z));
+
 		if (o == Orientations.XPos) {
 			// Do nothing
 		} else if (o == Orientations.ZPos) {
@@ -267,26 +272,26 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			bpt.rotateLeft(context);
 		}
 
-		if (items [0].getItem() instanceof ItemBptTemplate) {
+		if (items[0].getItem() instanceof ItemBptTemplate) {
 			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
-		} else if (items [0].getItem() instanceof ItemBptBluePrint) { 
+		} else if (items[0].getItem() instanceof ItemBptBluePrint) {
 			return new BptBuilderBlueprint((BptBlueprint) bpt, worldObj, x, y,
 					z);
 		} else {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public void doWork() {
 		if (APIProxy.isClient(worldObj)) {
 			return;
 		}
-		
+
 		if (done) {
 			return;
 		}
-		
+
 		if (builderRobot != null && !builderRobot.readyToBuild()) {
 			return;
 		}
@@ -294,52 +299,51 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
-		
-		iterateBpt ();
+
+		iterateBpt();
 
 		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
 			if (!box.isInitialized()) {
 				box.initialize(bluePrintBuilder);
 			}
-			
+
 			if (builderRobot == null) {
 				builderRobot = new EntityRobot(worldObj, box);
 				worldObj.spawnEntityInWorld(builderRobot);
 			}
-			
+
 			box.createLasers(worldObj, LaserKind.Stripes);
-			
+
 			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(
 					worldObj, new SurroundingInventory(worldObj, xCoord,
-							yCoord, zCoord)),bluePrintBuilder.getContext());
-		}		
+							yCoord, zCoord)), bluePrintBuilder.getContext());
+		}
 	}
-	
-	public void iterateBpt () {
-		if (items[0] == null
-				|| !(items[0].getItem() instanceof ItemBptBase)) {
-		
+
+	public void iterateBpt() {
+		if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
+
 			if (bluePrintBuilder != null) {
 				bluePrintBuilder = null;
 			}
-			
+
 			if (builderRobot != null) {
 				builderRobot.setDead();
 				builderRobot = null;
 			}
-			
+
 			if (box.isInitialized()) {
 				box.deleteLasers();
 				box.reset();
 			}
-			
-			if (currentPathIterator != null) {				
+
+			if (currentPathIterator != null) {
 				currentPathIterator = null;
 			}
-			
+
 			return;
 		}
-		
+
 		if (bluePrintBuilder == null || bluePrintBuilder.done) {
 			if (path != null) {
 				if (currentPathIterator == null) {
@@ -347,37 +351,37 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 					BlockIndex start = it.next();
 					currentPathIterator = new PathIterator(start, it);
 				}
-				
+
 				if (bluePrintBuilder != null && builderRobot != null) {
 					builderRobot.markEndOfBlueprint(bluePrintBuilder);
 				}
-				
+
 				bluePrintBuilder = currentPathIterator.next();
-				
+
 				if (bluePrintBuilder != null) {
 					box.deleteLasers();
 					box.reset();
 					box.initialize(bluePrintBuilder);
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
-				
+
 				if (builderRobot != null) {
-					builderRobot.setBox (box);
+					builderRobot.setBox(box);
 				}
 
 				if (bluePrintBuilder == null) {
 					currentPathIterator = currentPathIterator.iterate();
-				} 
-				
+				}
+
 				if (currentPathIterator == null) {
 					done = true;
 				}
 			} else {
-				if (bluePrintBuilder != null && bluePrintBuilder.done) {					
+				if (bluePrintBuilder != null && bluePrintBuilder.done) {
 					if (builderRobot != null) {
 						builderRobot.markEndOfBlueprint(bluePrintBuilder);
 					}
-					
+
 					done = true;
 					bluePrintBuilder = null;
 				} else {
@@ -385,14 +389,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 							zCoord,
 							Orientations.values()[worldObj.getBlockMetadata(
 									xCoord, yCoord, zCoord)].reverse());
-					
+
 					if (bluePrintBuilder != null) {
 						box.initialize(bluePrintBuilder);
 						box.createLasers(worldObj, LaserKind.Stripes);
 					}
 				}
 			}
-		}		
+		}
 	}
 
 	@Override
@@ -402,42 +406,42 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return items [i];
+		return items[i];
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
 		ItemStack result;
-		if (items [i] == null) {
+		if (items[i] == null) {
 			result = null;
-		} else if (items [i].stackSize > j) {
-			result = items [i].splitStack(j);
+		} else if (items[i].stackSize > j) {
+			result = items[i].splitStack(j);
 		} else {
-			ItemStack tmp = items [i];
-			items [i] = null;
+			ItemStack tmp = items[i];
+			items[i] = null;
 			result = tmp;
 		}
-		
+
 		if (i == 0) {
 			iterateBpt();
 		}
-		
+
 		return result;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		items [i] = itemstack;
-		
+		items[i] = itemstack;
+
 		if (i == 0) {
-			iterateBpt ();
+			iterateBpt();
 			done = false;
-		}		
+		}
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if(items[slot] == null)
+		if (items[slot] == null)
 			return null;
 		ItemStack toReturn = items[slot];
 		items[slot] = null;
@@ -458,75 +462,73 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
-	
-	@Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        
-        Utils.readStacksFromNBT(nbttagcompound, "Items", items);
-        
-        if (nbttagcompound.hasKey("box")) {
-        	box.initialize(nbttagcompound.getCompoundTag("box"));
-        }
-        
-        if (nbttagcompound.hasKey("path")) {
-        	path = new LinkedList<BlockIndex>();
-        	NBTTagList list = nbttagcompound.getTagList("path");
-        	
-        	for (int i = 0; i < list.tagCount(); ++i) {
-        		path.add(new BlockIndex((NBTTagCompound) list.tagAt(i)));
-        	}
-        }
-        
-        done = nbttagcompound.getBoolean("done");
-
-    }
 
 	@Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
-        
-        Utils.writeStacksToNBT(nbttagcompound, "Items", items);
-        
-        if (box.isInitialized()) {
-        	NBTTagCompound boxStore = new NBTTagCompound();
-        	box.writeToNBT(boxStore);
-        	nbttagcompound.setTag("box", boxStore);
-        }
-        
-        if (path != null) {
-        	NBTTagList list = new NBTTagList();
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-        	for (BlockIndex i : path) {
-        		NBTTagCompound c = new NBTTagCompound();
-        		i.writeTo(c);
-        		list.appendTag(c);
-        	}
-        	
+		Utils.readStacksFromNBT(nbttagcompound, "Items", items);
+
+		if (nbttagcompound.hasKey("box")) {
+			box.initialize(nbttagcompound.getCompoundTag("box"));
+		}
+
+		if (nbttagcompound.hasKey("path")) {
+			path = new LinkedList<BlockIndex>();
+			NBTTagList list = nbttagcompound.getTagList("path");
+
+			for (int i = 0; i < list.tagCount(); ++i) {
+				path.add(new BlockIndex((NBTTagCompound) list.tagAt(i)));
+			}
+		}
+
+		done = nbttagcompound.getBoolean("done");
+
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+
+		Utils.writeStacksToNBT(nbttagcompound, "Items", items);
+
+		if (box.isInitialized()) {
+			NBTTagCompound boxStore = new NBTTagCompound();
+			box.writeToNBT(boxStore);
+			nbttagcompound.setTag("box", boxStore);
+		}
+
+		if (path != null) {
+			NBTTagList list = new NBTTagList();
+
+			for (BlockIndex i : path) {
+				NBTTagCompound c = new NBTTagCompound();
+				i.writeTo(c);
+				list.appendTag(c);
+			}
+
 			nbttagcompound.setTag("path", list);
-        }
-        
-        nbttagcompound.setBoolean("done", done);
-    }
+		}
 
-    @Override
-    public void invalidate () {
-    	destroy ();
-    }
-    
-    @Override
-	public void destroy() {		
+		nbttagcompound.setBoolean("done", done);
+	}
+
+	@Override
+	public void invalidate() {
+		destroy();
+	}
+
+	@Override
+	public void destroy() {
 		if (box.isInitialized()) {
 			box.deleteLasers();
 		}
-		
+
 		if (builderRobot != null) {
 			builderRobot.setDead();
 			builderRobot = null;
 		}
-		
+
 		cleanPathLasers();
 	}
 
@@ -539,24 +541,24 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public PowerProvider getPowerProvider() {
 		return powerProvider;
 	}
-	
+
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
-		
-		super.handleDescriptionPacket(packet);		
-		
+
+		super.handleDescriptionPacket(packet);
+
 		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);			
+			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
-		
+
 		super.handleUpdatePacket(packet);
-		
+
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
@@ -564,12 +566,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void openChest() {
-		
+
 	}
 
 	@Override
 	public void closeChest() {
-		
+
 	}
 
 	@Override
@@ -580,16 +582,16 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			return 0;
 		}
 	}
-	
+
 	@Override
-	public void updateEntity () {
-		
+	public void updateEntity() {
+
 		super.updateEntity();
-		
+
 		if ((bluePrintBuilder == null || bluePrintBuilder.done)
-				&& box.isInitialized() 
+				&& box.isInitialized()
 				&& (builderRobot == null || builderRobot.done())) {
-			
+
 			box.deleteLasers();
 			box.reset();
 
@@ -599,8 +601,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 			return;
 		}
-		
-		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {	
+
+		if (!box.isInitialized() && bluePrintBuilder == null
+				&& builderRobot != null) {
 			builderRobot.setDead();
 			builderRobot = null;
 		}
@@ -620,23 +623,23 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public boolean manageSolids() {
 		return true;
 	}
-	
-	public void cleanPathLasers () {
+
+	public void cleanPathLasers() {
 		if (pathLasers != null) {
 			for (EntityLaser laser : pathLasers) {
-				laser.setDead();			
+				laser.setDead();
 			}
 
 			pathLasers = null;
 		}
 	}
-	
+
 	public boolean isBuildingBlueprint() {
 		return getStackInSlot(0) != null
 				&& getStackInSlot(0).getItem() instanceof ItemBptBluePrint;
 	}
-	
-	public Collection <ItemStack> getNeededItems () {
+
+	public Collection<ItemStack> getNeededItems() {
 		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
 			return ((BptBuilderBlueprint) bluePrintBuilder).neededItems;
 		} else {
@@ -648,9 +651,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public boolean isBuildingMaterial(int i) {
 		return i != 0;
 	}
-	
+
 	@Override
-	public boolean allowActions () {
+	public boolean allowActions() {
 		return false;
 	}
 }

@@ -22,9 +22,11 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
-public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
+public class RenderEngine extends TileEntitySpecialRenderer implements
+		IInventoryRenderer {
 
-	private ModelBase model = new ModelBase () {};
+	private ModelBase model = new ModelBase() {
+	};
 
 	private ModelRenderer box;
 	private ModelRenderer trunk;
@@ -32,9 +34,9 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	private ModelRenderer chamber;
 	private String baseTexture;
 
-	public RenderEngine () {
+	public RenderEngine() {
 
-		//constructor:
+		// constructor:
 		box = new ModelRenderer(model, 0, 0);
 		box.addBox(-8F, -8F, -8F, 16, 4, 16);
 		box.rotationPointX = 8;
@@ -60,18 +62,15 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		chamber.rotationPointZ = 8F;
 	}
 
-	public RenderEngine (String baseTexture) {
-		this ();
+	public RenderEngine(String baseTexture) {
+		this();
 		this.baseTexture = baseTexture;
 	}
 
 	@Override
-	public void inventoryRender(double x, double y, double z,
-			float f, float f1) {
-		render(EnergyStage.Blue, 0.25F, Orientations.YPos,
-				baseTexture, x, y, z);
+	public void inventoryRender(double x, double y, double z, float f, float f1) {
+		render(EnergyStage.Blue, 0.25F, Orientations.YPos, baseTexture, x, y, z);
 	}
-
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
@@ -80,20 +79,21 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		Engine engine = ((IEngineProvider) tileentity).getEngine();
 
 		if (engine != null)
-			render(engine.getEnergyStage(), engine.progress, engine.orientation,
-					engine.getTextureFile(), x, y, z);
+			render(engine.getEnergyStage(), engine.progress,
+					engine.orientation, engine.getTextureFile(), x, y, z);
 	}
 
 	private void render(EnergyStage energy, float progress,
-			Orientations orientation, String baseTexture, double x, double y, double z) {
+			Orientations orientation, String baseTexture, double x, double y,
+			double z) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
 			return;
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /*GL_LIGHTING*/);
+		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		GL11.glTranslatef((float)x, (float)y, (float)z);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		float step;
 
@@ -102,51 +102,51 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		else
 			step = progress * 2F * 7.99F;
 
-		float [] angle = {0, 0, 0};
-		float [] translate = {0, 0, 0};
+		float[] angle = { 0, 0, 0 };
+		float[] translate = { 0, 0, 0 };
 		float translatefact = step / 16;
 
 		switch (orientation) {
 		case XPos:
-			angle [2] = (float) -Math.PI / 2;
-			translate [0] = 1;
+			angle[2] = (float) -Math.PI / 2;
+			translate[0] = 1;
 			break;
 		case XNeg:
-			angle [2] = (float) Math.PI / 2;
-			translate [0] = -1;
+			angle[2] = (float) Math.PI / 2;
+			translate[0] = -1;
 			break;
 		case YPos:
-			translate [1] = 1;
+			translate[1] = 1;
 			break;
 		case YNeg:
-			angle [2] = (float) Math.PI;
-			translate [1] = -1;
+			angle[2] = (float) Math.PI;
+			translate[1] = -1;
 			break;
 		case ZPos:
-			angle [0] = (float) Math.PI / 2;
-			translate [2] = 1;
+			angle[0] = (float) Math.PI / 2;
+			translate[2] = 1;
 			break;
 		case ZNeg:
-			angle [0] = (float) -Math.PI / 2;
-			translate [2] = -1;
+			angle[0] = (float) -Math.PI / 2;
+			translate[2] = -1;
 			break;
 		}
 
-		box.rotateAngleX = angle [0];
-		box.rotateAngleY = angle [1];
-		box.rotateAngleZ = angle [2];
+		box.rotateAngleX = angle[0];
+		box.rotateAngleY = angle[1];
+		box.rotateAngleZ = angle[2];
 
-		trunk.rotateAngleX = angle [0];
-		trunk.rotateAngleY = angle [1];
-		trunk.rotateAngleZ = angle [2];
+		trunk.rotateAngleX = angle[0];
+		trunk.rotateAngleY = angle[1];
+		trunk.rotateAngleZ = angle[2];
 
-		movingBox.rotateAngleX = angle [0];
-		movingBox.rotateAngleY = angle [1];
-		movingBox.rotateAngleZ = angle [2];
+		movingBox.rotateAngleX = angle[0];
+		movingBox.rotateAngleY = angle[1];
+		movingBox.rotateAngleZ = angle[2];
 
-		chamber.rotateAngleX = angle [0];
-		chamber.rotateAngleY = angle [1];
-		chamber.rotateAngleZ = angle [2];
+		chamber.rotateAngleX = angle[0];
+		chamber.rotateAngleY = angle[1];
+		chamber.rotateAngleZ = angle[2];
 
 		float factor = (float) (1.0 / 16.0);
 
@@ -167,11 +167,13 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		for (int i = 0; i <= step + 2; i += 2) {
 			chamber.render(factor);
-			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf, translate[2] * chamberf);
+			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf,
+					translate[2] * chamberf);
 		}
 
 		for (int i = 0; i <= step + 2; i += 2)
-			GL11.glTranslatef(-translate[0] * chamberf, -translate[1] * chamberf, -translate[2] * chamberf);
+			GL11.glTranslatef(-translate[0] * chamberf, -translate[1]
+					* chamberf, -translate[2] * chamberf);
 
 		String texture = "";
 
@@ -194,7 +196,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		trunk.render(factor);
 
-		GL11.glEnable(2896 /*GL_LIGHTING*/);
+		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
 	}
 }

@@ -30,27 +30,30 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		xSize = 176;
 		ySize = 225;
 
-		slots = new AdvancedSlot [7 * 4];
+		slots = new AdvancedSlot[7 * 4];
 
 		for (int i = 0; i < 7; ++i)
 			for (int j = 0; j < 4; ++j)
-				slots [i * 4 + j] = new ItemSlot (179 + j * 18, 18 + i * 18);
+				slots[i * 4 + j] = new ItemSlot(179 + j * 18, 18 + i * 18);
 	}
 
 	@Override
-    protected void drawGuiContainerForegroundLayer() {
-    	super.drawGuiContainerForegroundLayer ();
+	protected void drawGuiContainerForegroundLayer() {
+		super.drawGuiContainerForegroundLayer();
 
 		String title = StringUtil.localize("tile.builderBlock");
-        fontRenderer.drawString(title, getCenteredOffset(title), 12, 0x404040);
-        fontRenderer.drawString(StringUtil.localize("gui.building.resources"), 8, 60, 0x404040);
-        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(title, getCenteredOffset(title), 12, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.building.resources"),
+				8, 60, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
+				ySize - 97, 0x404040);
 
-        if (builder.isBuildingBlueprint())
-			fontRenderer.drawString(StringUtil.localize("gui.needed"), 185, 7, 0x404040);
+		if (builder.isBuildingBlueprint())
+			fontRenderer.drawString(StringUtil.localize("gui.needed"), 185, 7,
+					0x404040);
 
-        drawForegroundSelection();
-    }
+		drawForegroundSelection();
+	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
@@ -60,10 +63,12 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		int realXSize = 0;
 
 		if (builder.isBuildingBlueprint()) {
-			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder_blueprint.png");
+			i = mc.renderEngine
+					.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder_blueprint.png");
 			realXSize = 256;
 		} else {
-			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder.png");
+			i = mc.renderEngine
+					.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder.png");
 			realXSize = 176;
 		}
 
@@ -73,22 +78,21 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		drawTexturedModalRect(j, k, 0, 0, realXSize, ySize);
 
 		for (int s = 0; s < slots.length; ++s)
-			((ItemSlot) slots [s]).stack = null;
+			((ItemSlot) slots[s]).stack = null;
 
-        Collection <ItemStack> needs = builder.getNeededItems();
+		Collection<ItemStack> needs = builder.getNeededItems();
 
-        if (needs != null) {
-        	int s = 0;
+		if (needs != null) {
+			int s = 0;
 
-        	for (ItemStack stack : needs) {
-        		if (s >= slots.length)
+			for (ItemStack stack : needs) {
+				if (s >= slots.length)
 					break;
 
-        		((ItemSlot) slots [s]).stack = stack.copy();
-        		s++;
-        	}
-        }
-
+				((ItemSlot) slots[s]).stack = stack.copy();
+				s++;
+			}
+		}
 
 		drawBackgroundSlots();
 	}

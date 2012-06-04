@@ -70,9 +70,11 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			}
 
 		updateRecipes();
-		
+
 		// Request current selection from server
-		CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
+		CoreProxy.sendToServer(new PacketCoordinates(
+				PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
+				assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
 	}
 
 	public void updateRecipes() {
@@ -90,8 +92,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
 		String title = StringUtil.localize("tile.assemblyTableBlock");
-        fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
+				ySize - 97, 0x404040);
 
 		drawForegroundSelection();
 	}
@@ -109,7 +112,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		updateRecipes();
 
 		for (int s = 0; s < slots.length; ++s) {
-			RecipeSlot slot = (RecipeSlot) slots [s];
+			RecipeSlot slot = (RecipeSlot) slots[s];
 
 			if (assemblyTable.isAssembling(slot.recipe))
 				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196,
@@ -137,7 +140,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		int position = getSlotAtLocation(i - cornerX, j - cornerY);
 
 		if (position != -1) {
-			RecipeSlot slot = (RecipeSlot) slots [position];
+			RecipeSlot slot = (RecipeSlot) slots[position];
 
 			SelectionMessage message = new SelectionMessage();
 
@@ -152,16 +155,19 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			message.itemID = slot.recipe.output.itemID;
 			message.itemDmg = slot.recipe.output.getItemDamage();
 
-			ContainerAssemblyTable container = (ContainerAssemblyTable)inventorySlots;
+			ContainerAssemblyTable container = (ContainerAssemblyTable) inventorySlots;
 
-			if(APIProxy.isRemote()) {
-				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,container.z, message);
+			if (APIProxy.isRemote()) {
+				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper
+						.toPayload(container.x, container.y, container.z,
+								message);
 
-				PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, payload);
+				PacketUpdate packet = new PacketUpdate(
+						PacketIds.SELECTION_ASSEMBLY, payload);
 				packet.posX = assemblyTable.xCoord;
 				packet.posY = assemblyTable.yCoord;
 				packet.posZ = assemblyTable.zCoord;
-			
+
 				CoreProxy.sendToServer(packet.getPacket());
 			}
 		}

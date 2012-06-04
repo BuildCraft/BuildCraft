@@ -21,13 +21,13 @@ import net.minecraft.src.buildcraft.api.Position;
 
 public class SurroundingInventory implements IInventory, IBuilderInventory {
 
-	LinkedList <IInventory> invs = new LinkedList <IInventory> ();
+	LinkedList<IInventory> invs = new LinkedList<IInventory>();
 	int invSize = 0;
 
 	int x, y, z;
 	World world;
 
-	public SurroundingInventory (World world, int x, int y, int z) {
+	public SurroundingInventory(World world, int x, int y, int z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -36,7 +36,7 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 		updateInvs();
 	}
 
-	public void updateInvs () {
+	public void updateInvs() {
 		invs.clear();
 		invSize = 0;
 
@@ -48,7 +48,7 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 			invSize += inv.getSizeInventory();
 		}
 
-		Position pos = new Position (x, y, z);
+		Position pos = new Position(x, y, z);
 
 		for (Orientations o : Orientations.dirs()) {
 			tile = Utils.getTile(world, pos, o);
@@ -165,7 +165,8 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 
 			if (size > i)
 				if (inv instanceof IBuilderInventory)
-					return ((IBuilderInventory) inv).isBuildingMaterial(i - lastSize);
+					return ((IBuilderInventory) inv).isBuildingMaterial(i
+							- lastSize);
 				else
 					return true;
 

@@ -14,22 +14,22 @@ import net.minecraft.src.IInventory;
 
 class CraftingTemplate extends CraftingTemplateRoot {
 
-	public CraftingTemplate (IInventory playerInventory, TileArchitect template) {
-		super (playerInventory, template);
+	public CraftingTemplate(IInventory playerInventory, TileArchitect template) {
+		super(playerInventory, template);
 	}
 
 	@Override
 	public void updateCraftingResults() {
-        super.updateCraftingResults();
-        for(int i = 0; i < crafters.size(); i++)
-        {
-            ICrafting icrafting = (ICrafting)crafters.get(i);
-            if(computingTime != template.computingTime)
-				icrafting.updateCraftingInventoryInfo(this, 0, template.computingTime);
-        }
+		super.updateCraftingResults();
+		for (int i = 0; i < crafters.size(); i++) {
+			ICrafting icrafting = (ICrafting) crafters.get(i);
+			if (computingTime != template.computingTime)
+				icrafting.updateCraftingInventoryInfo(this, 0,
+						template.computingTime);
+		}
 
-        computingTime = template.computingTime;
-    }
+		computingTime = template.computingTime;
+	}
 
 	@Override
 	public void updateProgressBar(int i, int j) {

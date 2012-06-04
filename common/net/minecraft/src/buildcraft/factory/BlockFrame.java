@@ -29,8 +29,8 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPipe,
-		ITextureProvider {
+public class BlockFrame extends Block implements ILegacyPipeConnection,
+		IBlockPipe, ITextureProvider {
 
 	public BlockFrame(int i) {
 		super(i, Material.glass);
@@ -45,23 +45,22 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 		byte width = 1;
 		int width2 = width + 1;
 
-		if(world.isRemote)
-			return;
-		
-		if(!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
+		if (world.isRemote)
 			return;
 
-		Position[] targets = new Position[] {
-				new Position(i + 1, j, k),
-				new Position(i - 1, j, k),
-				new Position(i, j + 1, k),
-				new Position(i, j - 1, k),
-				new Position(i, j, k + 1),
-				new Position(i, j, k - 1)
-		};
-		
-		for(Position pos : targets) {
-			int x = (int)pos.x; int y = (int)pos.y; int z = (int)pos.z;
+		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i
+				+ width2, j + width2, k + width2))
+			return;
+
+		Position[] targets = new Position[] { new Position(i + 1, j, k),
+				new Position(i - 1, j, k), new Position(i, j + 1, k),
+				new Position(i, j - 1, k), new Position(i, j, k + 1),
+				new Position(i, j, k - 1) };
+
+		for (Position pos : targets) {
+			int x = (int) pos.x;
+			int y = (int) pos.y;
+			int z = (int) pos.z;
 			int blockID = world.getBlockId(x, y, z);
 
 			if (blockID == BuildCraftFactory.frameBlock.blockID) {
@@ -74,9 +73,9 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 	@Override
 	public void updateTick(World world, int i, int j, int k, Random random) {
 
-		if(world.isRemote)
+		if (world.isRemote)
 			return;
-			
+
 		int meta = world.getBlockMetadata(i, j, k);
 
 		if ((meta & 8) != 0 && (meta & 4) == 0) {
@@ -88,19 +87,23 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 
 			int[] adjacentFrameBlocks = new int[yFactor * yFactor * yFactor];
 
-			if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
+			if (world.checkChunksExist(i - width2, j - width2, k - width2, i
+					+ width2, j + width2, k + width2)) {
 				for (int z = -width; z <= width; ++z) {
 					for (int y = -width; y <= width; ++y) {
 						for (int x = -width; x <= width; ++x) {
 							int blockID = world.getBlockId(i + z, j + y, k + x);
 
 							if (blockID == BuildCraftFactory.quarryBlock.blockID)
-								adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] = 0;
+								adjacentFrameBlocks[(z + xFactor) * zFactor
+										+ (y + xFactor) * yFactor + x + xFactor] = 0;
 
 							else if (blockID == BuildCraftFactory.frameBlock.blockID)
-								adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] = -2;
+								adjacentFrameBlocks[(z + xFactor) * zFactor
+										+ (y + xFactor) * yFactor + x + xFactor] = -2;
 							else
-								adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] = -1;
+								adjacentFrameBlocks[(z + xFactor) * zFactor
+										+ (y + xFactor) * yFactor + x + xFactor] = -1;
 						}
 					}
 				}
@@ -109,24 +112,49 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 					for (int z = -width; z <= width; ++z) {
 						for (int y = -width; y <= width; ++y) {
 							for (int x = -width; x <= width; ++x) {
-								if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] == type - 1) {
-									if (adjacentFrameBlocks[(z + xFactor - 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor - 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] = type;
+								if (adjacentFrameBlocks[(z + xFactor) * zFactor
+										+ (y + xFactor) * yFactor + x + xFactor] == type - 1) {
+									if (adjacentFrameBlocks[(z + xFactor - 1)
+											* zFactor + (y + xFactor) * yFactor
+											+ x + xFactor] == -2)
+										adjacentFrameBlocks[(z + xFactor - 1)
+												* zFactor + (y + xFactor)
+												* yFactor + x + xFactor] = type;
 
-									if (adjacentFrameBlocks[(z + xFactor + 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor + 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] = type;
+									if (adjacentFrameBlocks[(z + xFactor + 1)
+											* zFactor + (y + xFactor) * yFactor
+											+ x + xFactor] == -2)
+										adjacentFrameBlocks[(z + xFactor + 1)
+												* zFactor + (y + xFactor)
+												* yFactor + x + xFactor] = type;
 
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor - 1) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor - 1) * yFactor + x + xFactor] = type;
+									if (adjacentFrameBlocks[(z + xFactor)
+											* zFactor + (y + xFactor - 1)
+											* yFactor + x + xFactor] == -2)
+										adjacentFrameBlocks[(z + xFactor)
+												* zFactor + (y + xFactor - 1)
+												* yFactor + x + xFactor] = type;
 
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor + 1) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor + 1) * yFactor + x + xFactor] = type;
+									if (adjacentFrameBlocks[(z + xFactor)
+											* zFactor + (y + xFactor + 1)
+											* yFactor + x + xFactor] == -2)
+										adjacentFrameBlocks[(z + xFactor)
+												* zFactor + (y + xFactor + 1)
+												* yFactor + x + xFactor] = type;
 
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + (x + xFactor - 1)] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + (x + xFactor - 1)] = type;
+									if (adjacentFrameBlocks[(z + xFactor)
+											* zFactor + (y + xFactor) * yFactor
+											+ (x + xFactor - 1)] == -2)
+										adjacentFrameBlocks[(z + xFactor)
+												* zFactor + (y + xFactor)
+												* yFactor + (x + xFactor - 1)] = type;
 
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor + 1] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor + 1] = type;
+									if (adjacentFrameBlocks[(z + xFactor)
+											* zFactor + (y + xFactor) * yFactor
+											+ x + xFactor + 1] == -2)
+										adjacentFrameBlocks[(z + xFactor)
+												* zFactor + (y + xFactor)
+												* yFactor + x + xFactor + 1] = type;
 								}
 							}
 						}
@@ -134,7 +162,8 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 				}
 			}
 
-			int var12 = adjacentFrameBlocks[xFactor * zFactor + xFactor * yFactor + xFactor];
+			int var12 = adjacentFrameBlocks[xFactor * zFactor + xFactor
+					* yFactor + xFactor];
 
 			if (var12 >= 0)
 				world.setBlockMetadata(i, j, k, meta & -9);
@@ -142,7 +171,6 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 				world.setBlockWithNotify(i, j, k, 0);
 		}
 	}
-
 
 	@Override
 	public boolean isOpaqueCube() {
@@ -204,7 +232,7 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 			int j, int k) {
 		return getCollisionBoundingBoxFromPool(world, i, j, k);
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void getCollidingBoundingBoxes(World world, int i, int j, int k,
@@ -258,7 +286,7 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
-	
+
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int i, int j,
 			int k, Vec3D vec3d, Vec3D vec3d1) {
@@ -303,7 +331,7 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 			int z1, int x2, int y2, int z2) {
 		return blockAccess.getBlockId(x2, y2, z2) == blockID;
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
@@ -315,7 +343,7 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

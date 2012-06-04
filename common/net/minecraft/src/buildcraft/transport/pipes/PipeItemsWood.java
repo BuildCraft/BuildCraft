@@ -142,7 +142,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 
 			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal())
+					- 1;
 
 			IInventory inv = Utils.getInventory(inventory);
 
@@ -166,7 +167,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			if (slot != null && slot.stackSize > 0)
 				if (doRemove)
 					return inventory.decrStackSize(slotIndex,
-							(int) powerProvider.useEnergy(1, slot.stackSize, true));
+							(int) powerProvider.useEnergy(1, slot.stackSize,
+									true));
 				else
 					return slot;
 		} else if (inventory.getSizeInventory() == 3) {
@@ -186,7 +188,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			if (slot != null && slot.stackSize > 0)
 				if (doRemove)
 					return inventory.decrStackSize(slotIndex,
-							(int) powerProvider.useEnergy(1, slot.stackSize, true));
+							(int) powerProvider.useEnergy(1, slot.stackSize,
+									true));
 				else
 					return slot;
 		} else {

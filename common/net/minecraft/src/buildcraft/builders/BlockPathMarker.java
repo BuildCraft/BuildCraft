@@ -20,35 +20,37 @@ import net.minecraft.src.buildcraft.core.Utils;
 public class BlockPathMarker extends BlockMarker {
 
 	public BlockPathMarker(int i) {
-		super(i);		
-		
+		super(i);
+
 		blockIndexInTexture = 3 * 16 + 10;
 	}
-	
+
 	@Override
 	public TileEntity getBlockEntity() {
 		return new TilePathMarker();
 	}
-    
-    @Override
+
+	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {
-    	Utils.preDestroyBlock(world, i, j, k);
-    	
-        super.onBlockRemoval(world, i, j, k);       
-    }    
-    
-    @SuppressWarnings({ "all" })
-    // @Override (client only)
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		TilePathMarker marker = (TilePathMarker) iblockaccess.getBlockTileEntity(i, j, k);
-		
+		Utils.preDestroyBlock(world, i, j, k);
+
+		super.onBlockRemoval(world, i, j, k);
+	}
+
+	@SuppressWarnings({ "all" })
+	// @Override (client only)
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
+			int l) {
+		TilePathMarker marker = (TilePathMarker) iblockaccess
+				.getBlockTileEntity(i, j, k);
+
 		if (l == 1 || (marker != null && marker.currentWorldIterator != null)) {
 			return 3 * 16 + 11;
 		} else {
 			return 3 * 16 + 10;
 		}
 	}
-    
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

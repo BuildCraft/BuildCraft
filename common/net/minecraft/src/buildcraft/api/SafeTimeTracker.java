@@ -14,18 +14,18 @@ import net.minecraft.src.World;
 public class SafeTimeTracker {
 
 	private long lastMark = 0;
-		
+
 	/**
-	 * Return true if a given delay has passed since last time marked was
-	 * called successfully.
+	 * Return true if a given delay has passed since last time marked was called
+	 * successfully.
 	 */
-	public boolean markTimeIfDelay (World world, long delay) {
+	public boolean markTimeIfDelay(World world, long delay) {
 		if (world == null) {
 			return false;
 		}
-		
+
 		long currentTime = world.getWorldTime();
-		
+
 		if (currentTime < lastMark) {
 			lastMark = currentTime;
 			return false;
@@ -35,10 +35,10 @@ public class SafeTimeTracker {
 		} else {
 			return false;
 		}
-		
+
 	}
-	
-	public void markTime (World world) {
+
+	public void markTime(World world) {
 		lastMark = world.getWorldTime();
 	}
 }

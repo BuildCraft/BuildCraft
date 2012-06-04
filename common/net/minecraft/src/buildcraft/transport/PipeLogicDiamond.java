@@ -30,27 +30,27 @@ import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public class PipeLogicDiamond extends PipeLogic {
 
-	ItemStack [] items = new ItemStack [54];
+	ItemStack[] items = new ItemStack[54];
 
 	public class PacketStack {
-		@TileNetworkData (intKind = TileNetworkData.UNSIGNED_BYTE)
+		@TileNetworkData(intKind = TileNetworkData.UNSIGNED_BYTE)
 		public int num;
 
-		@TileNetworkData (staticSize = 9)
-		public short [] ids = new short [9];
+		@TileNetworkData(staticSize = 9)
+		public short[] ids = new short[9];
 
-		@TileNetworkData (staticSize = 9, intKind = TileNetworkData.UNSIGNED_BYTE)
-		public int [] dmg = new int [9];
+		@TileNetworkData(staticSize = 9, intKind = TileNetworkData.UNSIGNED_BYTE)
+		public int[] dmg = new int[9];
 	}
 
 	private static TilePacketWrapper networkPacket;
 
 	private final SafeTimeTracker tracker = new SafeTimeTracker();
 
-	public PipeLogicDiamond () {
+	public PipeLogicDiamond() {
 		if (networkPacket == null)
-			networkPacket = new TilePacketWrapper(new Class[] {
-					PacketStack.class });
+			networkPacket = new TilePacketWrapper(
+					new Class[] { PacketStack.class });
 	}
 
 	@Override
@@ -60,8 +60,10 @@ public class PipeLogicDiamond extends PipeLogic {
 			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe)
 				return false;
 
-		if(!APIProxy.isClient(container.worldObj))
-			entityplayer.openGui(mod_BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
+		if (!APIProxy.isClient(container.worldObj))
+			entityplayer.openGui(mod_BuildCraftTransport.instance,
+					GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord,
+					container.yCoord, container.zCoord);
 
 		return true;
 	}
@@ -73,55 +75,57 @@ public class PipeLogicDiamond extends PipeLogic {
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return items [i];
+		return items[i];
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		ItemStack stack = items [i].copy();
+		ItemStack stack = items[i].copy();
 		stack.stackSize = j;
 
-		items [i].stackSize -= j;
+		items[i].stackSize -= j;
 
-		if (items [i].stackSize == 0)
-			items [i] = null;
+		if (items[i].stackSize == 0)
+			items[i] = null;
 
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
-				CoreProxy.sendToPlayers(
-						getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
+				CoreProxy.sendToPlayers(getContentsPacket(p), worldObj, xCoord,
+						yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
+						mod_BuildCraftTransport.instance);
 
 		return stack;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		if (items [i] == null && itemstack == null)
+		if (items[i] == null && itemstack == null)
 			return;
-		else if (items [i] != null && itemstack != null && items[i].isStackEqual(itemstack))
+		else if (items[i] != null && itemstack != null
+				&& items[i].isStackEqual(itemstack))
 			return;
 
 		if (itemstack != null)
-			items [i] = itemstack.copy();
+			items[i] = itemstack.copy();
 		else
-			items [i] = null;
+			items[i] = null;
 
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
-				CoreProxy.sendToPlayers(
-						getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
+				CoreProxy.sendToPlayers(getContentsPacket(p), worldObj, xCoord,
+						yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
+						mod_BuildCraftTransport.instance);
 	}
 
 	@Override
-	public void updateEntity () {
+	public void updateEntity() {
 		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor))
 			if (APIProxy.isServerSide())
 				for (int p = 0; p < 6; ++p)
-					CoreProxy.sendToPlayers(
-							getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
-							DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
+					CoreProxy.sendToPlayers(getContentsPacket(p), worldObj,
+							xCoord, yCoord, zCoord,
+							DefaultProps.NETWORK_UPDATE_RANGE,
+							mod_BuildCraftTransport.instance);
 	}
 
 	@Override
@@ -146,29 +150,30 @@ public class PipeLogicDiamond extends PipeLogic {
 
 		NBTTagList nbttaglist = nbttagcompound.getTagList("items");
 
-    	for (int j = 0; j < nbttaglist.tagCount(); ++j) {
-    		NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
-    		int index = nbttagcompound2.getInteger("index");
-    		items [index] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
-    	}
-    }
+		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
+			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
+					.tagAt(j);
+			int index = nbttagcompound2.getInteger("index");
+			items[index] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
+		}
+	}
 
 	@Override
-    public void writeToNBT(NBTTagCompound nbttagcompound) {
-    	super.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
 
 		NBTTagList nbttaglist = new NBTTagList();
 
-    	for (int j = 0; j < items.length; ++j)
-			if (items [j] != null && items [j].stackSize > 0) {
-        		NBTTagCompound nbttagcompound2 = new NBTTagCompound ();
-        		nbttaglist.appendTag(nbttagcompound2);
-    			nbttagcompound2.setInteger("index", j);
-    			items [j].writeToNBT(nbttagcompound2);
-    		}
+		for (int j = 0; j < items.length; ++j)
+			if (items[j] != null && items[j].stackSize > 0) {
+				NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+				nbttaglist.appendTag(nbttagcompound2);
+				nbttagcompound2.setInteger("index", j);
+				items[j].writeToNBT(nbttagcompound2);
+			}
 
-    	nbttagcompound.setTag("items", nbttaglist);
-    }
+		nbttagcompound.setTag("items", nbttaglist);
+	}
 
 	@Override
 	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
@@ -186,20 +191,21 @@ public class PipeLogicDiamond extends PipeLogic {
 		stacks.num = num;
 
 		for (int j = 0; j < 9; ++j)
-			if (items [j + num * 9] == null) {
-				stacks.ids [j] = -1;
-				stacks.dmg [j] = -1;
+			if (items[j + num * 9] == null) {
+				stacks.ids[j] = -1;
+				stacks.dmg[j] = -1;
 			} else {
-				stacks.ids [j] = (short) items [j + num * 9].itemID;
-				stacks.dmg [j] = items [j + num * 9].getItemDamage();
+				stacks.ids[j] = (short) items[j + num * 9].itemID;
+				stacks.dmg[j] = items[j + num * 9].getItemDamage();
 			}
 
-		return new PacketUpdate(PacketIds.DIAMOND_PIPE_CONTENTS, xCoord, yCoord, zCoord, networkPacket.toPayload(stacks)).getPacket();
+		return new PacketUpdate(PacketIds.DIAMOND_PIPE_CONTENTS, xCoord,
+				yCoord, zCoord, networkPacket.toPayload(stacks)).getPacket();
 
-    }
+	}
 
 	/** CLIENT SIDE **/
-	public void handleContentsPacket (PacketUpdate packet) {
+	public void handleContentsPacket(PacketUpdate packet) {
 		PacketStack stacks = new PacketStack();
 
 		networkPacket.fromPayload(stacks, packet.payload);
@@ -207,11 +213,11 @@ public class PipeLogicDiamond extends PipeLogic {
 		int num = stacks.num;
 
 		for (int j = 0; j < 9; ++j)
-			if (stacks.ids [j] == -1)
-				items [num * 9 + j] = null;
+			if (stacks.ids[j] == -1)
+				items[num * 9 + j] = null;
 			else
-				items[num * 9 + j] = new ItemStack(stacks.ids [j], 1,
-						stacks.dmg [j]);
+				items[num * 9 + j] = new ItemStack(stacks.ids[j], 1,
+						stacks.dmg[j]);
 	}
 
 	@Override

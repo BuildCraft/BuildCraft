@@ -24,21 +24,21 @@ public class StackUtil {
 
 	public ItemStack items;
 
-	public StackUtil (ItemStack stack) {
+	public StackUtil(ItemStack stack) {
 		this.items = stack;
 	}
 
 	/**
-	 * Look around the tile given in parameter in all 6 position, tries to
-	 * add the items to a random inventory around. Will make sure that the location
+	 * Look around the tile given in parameter in all 6 position, tries to add
+	 * the items to a random inventory around. Will make sure that the location
 	 * from which the items are coming from (identified by the from parameter)
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public boolean addToRandomInventory (TileEntity tile, Orientations from) {
+	public boolean addToRandomInventory(TileEntity tile, Orientations from) {
 		World w = tile.worldObj;
 
-		LinkedList <Orientations> possibleInventories = new LinkedList <Orientations> ();
+		LinkedList<Orientations> possibleInventories = new LinkedList<Orientations>();
 
 		for (int j = 0; j < 6; ++j) {
 			if (from.reverse().ordinal() == j)
@@ -53,8 +53,8 @@ public class StackUtil {
 					(int) pos.y, (int) pos.z);
 
 			if (tileInventory instanceof ISpecialInventory)
-				if (((ISpecialInventory) tileInventory).addItem(items,
-						false, from))
+				if (((ISpecialInventory) tileInventory).addItem(items, false,
+						from))
 					possibleInventories.add(pos.orientation);
 
 			if (tileInventory instanceof IInventory)
@@ -87,18 +87,16 @@ public class StackUtil {
 	}
 
 	/**
-	 * Checks if all the items can be added to the inventory. If add is
-	 * true, they will be effectively added. Orientations is the direction to
-	 * look to find the item, e.g. if the item is coming from the top, it
-	 * will be YPos.
+	 * Checks if all the items can be added to the inventory. If add is true,
+	 * they will be effectively added. Orientations is the direction to look to
+	 * find the item, e.g. if the item is coming from the top, it will be YPos.
 	 */
 	public boolean checkAvailableSlot(IInventory inventory, boolean add,
 			Orientations from) {
 		// First, look for a similar pile
 
 		if (inventory instanceof ISpecialInventory)
-			return ((ISpecialInventory) inventory).addItem(items, add,
-					from);
+			return ((ISpecialInventory) inventory).addItem(items, add, from);
 
 		boolean added = false;
 
@@ -107,37 +105,38 @@ public class StackUtil {
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
 			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal())
+					- 1;
 
 			for (int j = first; j <= last; ++j)
-				if (tryAdding (inv, j, add, false)) {
+				if (tryAdding(inv, j, add, false)) {
 					added = true;
 					break;
 				}
 		} else if (inventory.getSizeInventory() == 2) {
-   		   //  This is an input / output inventory
+			// This is an input / output inventory
 
 			if (from == Orientations.YNeg || from == Orientations.YPos) {
-				if (tryAdding (inventory, 0, add, false))
+				if (tryAdding(inventory, 0, add, false))
 					added = true;
-			} else if (tryAdding (inventory, 1, add, false))
+			} else if (tryAdding(inventory, 1, add, false))
 				added = true;
 		} else if (inventory.getSizeInventory() == 3) {
-			//  This is a furnace-like inventory
+			// This is a furnace-like inventory
 
 			if (from == Orientations.YPos) {
-				if (tryAdding (inventory, 0, add, false))
+				if (tryAdding(inventory, 0, add, false))
 					added = true;
 			} else if (from == Orientations.YNeg)
-				if (tryAdding (inventory, 1, add, false))
+				if (tryAdding(inventory, 1, add, false))
 					added = true;
 
 		} else {
-			//  This is a generic inventory
+			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
 
 			for (int j = 0; j < inv.getSizeInventory(); ++j)
-				if (tryAdding (inv, j, add, false)) {
+				if (tryAdding(inv, j, add, false)) {
 					added = true;
 					break;
 				}
@@ -161,37 +160,38 @@ public class StackUtil {
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
 			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal())
+					- 1;
 
 			for (int j = first; j <= last; ++j)
-				if (tryAdding (inv, j, add, true)) {
+				if (tryAdding(inv, j, add, true)) {
 					added = true;
 					break;
 				}
 		} else if (inventory.getSizeInventory() == 2) {
-			//  This is an input / output inventory
+			// This is an input / output inventory
 
 			if (from == Orientations.YNeg || from == Orientations.YPos) {
-				if (tryAdding (inventory, 0, add, true))
+				if (tryAdding(inventory, 0, add, true))
 					added = true;
-			} else if (tryAdding (inventory, 1, add, true))
+			} else if (tryAdding(inventory, 1, add, true))
 				added = true;
 		} else if (inventory.getSizeInventory() == 3) {
-			//  This is a furnace-like inventory
+			// This is a furnace-like inventory
 
 			if (from == Orientations.YPos) {
-				if (tryAdding (inventory, 0, add, true))
+				if (tryAdding(inventory, 0, add, true))
 					added = true;
 			} else if (from == Orientations.YNeg)
-				if (tryAdding (inventory, 1, add, true))
+				if (tryAdding(inventory, 1, add, true))
 					added = true;
 
 		} else {
-			//  This is a generic inventory
+			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
 
 			for (int j = 0; j < inv.getSizeInventory(); ++j)
-				if (tryAdding (inv, j, add, true)) {
+				if (tryAdding(inv, j, add, true)) {
 					added = true;
 					break;
 				}
@@ -217,21 +217,20 @@ public class StackUtil {
 	 * stackIndex. If doAdd is false, then no item will actually get added. If
 	 * addInEmpty is true, then items will be added in empty slots only,
 	 * otherwise in slot containing the same item only.
-	 *
+	 * 
 	 * This will add one item at a time, and decrease the items member.
 	 */
-	public boolean tryAdding(IInventory inventory,
-			int stackIndex, boolean doAdd, boolean addInEmpty)
-	{
+	public boolean tryAdding(IInventory inventory, int stackIndex,
+			boolean doAdd, boolean addInEmpty) {
 		ItemStack stack = inventory.getStackInSlot(stackIndex);
 
 		if (!addInEmpty) {
 			if (stack != null)
 				if (stack.getItem() == items.getItem()
 						&& stack.getItemDamage() == items.getItemDamage()
-						&& stack.stackSize + 1 <= stack
-						.getMaxStackSize()
-						&& stack.stackSize + 1 <= inventory.getInventoryStackLimit()) {
+						&& stack.stackSize + 1 <= stack.getMaxStackSize()
+						&& stack.stackSize + 1 <= inventory
+								.getInventoryStackLimit()) {
 
 					if (doAdd) {
 						stack.stackSize++;
@@ -255,6 +254,5 @@ public class StackUtil {
 
 		return false;
 	}
-
 
 }

@@ -32,7 +32,8 @@ public class EntityLaser extends Entity {
 		setSize(10, 10);
 	}
 
-	public void setPositions (double x1, double y1, double z1, double x2, double y2, double z2) {
+	public void setPositions(double x1, double y1, double z1, double x2,
+			double y2, double z2) {
 		this.x1 = x1;
 		this.y1 = y1;
 		this.z1 = z1;
@@ -44,43 +45,42 @@ public class EntityLaser extends Entity {
 		setPosition(x1, y1, z1);
 	}
 
-	public void setTexture (String texture) {
+	public void setTexture(String texture) {
 		this.texture = texture;
 	}
 
-
 	@Override
-    public void setPosition(double d, double d1, double d2) {
-		
-    	posX = d;
-    	posY = d1;
-    	posZ = d2;
+	public void setPosition(double d, double d1, double d2) {
 
-        boundingBox.minX = x1 <= x2 ? x1 : x2;
-        boundingBox.minY = y1 <= y2 ? y1 : y2;
-        boundingBox.minZ = z1 <= z2 ? z1 : z2;
+		posX = d;
+		posY = d1;
+		posZ = d2;
 
-        boundingBox.maxX = x1 <= x2 ? x2 : x1;
-        boundingBox.maxY = y1 <= y2 ? y2 : y1;
-        boundingBox.maxZ = z1 <= z2 ? z2 : z1;
+		boundingBox.minX = x1 <= x2 ? x1 : x2;
+		boundingBox.minY = y1 <= y2 ? y1 : y2;
+		boundingBox.minZ = z1 <= z2 ? z1 : z2;
 
-        boundingBox.minX--;
-        boundingBox.minY--;
-        boundingBox.minZ--;
+		boundingBox.maxX = x1 <= x2 ? x2 : x1;
+		boundingBox.maxY = y1 <= y2 ? y2 : y1;
+		boundingBox.maxZ = z1 <= z2 ? z2 : z1;
 
-        boundingBox.maxX++;
-        boundingBox.maxY++;
-        boundingBox.maxZ++;
+		boundingBox.minX--;
+		boundingBox.minY--;
+		boundingBox.minZ--;
 
-        updateGraphicData();
-    }
+		boundingBox.maxX++;
+		boundingBox.maxY++;
+		boundingBox.maxZ++;
+
+		updateGraphicData();
+	}
 
 	double renderSize = 0;
 	double angleY = 0;
 	double angleZ = 0;
 
-	public void updateGraphicData () {
-		
+	public void updateGraphicData() {
+
 		double dx = x1 - x2;
 		double dy = y1 - y2;
 		double dz = z1 - z2;
@@ -94,22 +94,23 @@ public class EntityLaser extends Entity {
 		angleY = -Math.atan2(dy, dx) * 180 / Math.PI;
 	}
 
+	@Override
+	protected void entityInit() {
+	}
 
 	@Override
-	protected void entityInit() {}
+	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
+	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
+	}
 
-	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
-
-	public String getTexture () {
+	public String getTexture() {
 		return texture;
 	}
-	
-    public int getBrightnessForRender(float par1)
-    {
-        return 210;
-    }
+
+	public int getBrightnessForRender(float par1) {
+		return 210;
+	}
 }

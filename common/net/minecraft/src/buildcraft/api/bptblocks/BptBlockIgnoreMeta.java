@@ -23,12 +23,13 @@ public class BptBlockIgnoreMeta extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
-		requirements.add (new ItemStack (slot.blockId, 1, 0));
+	public void addRequirements(BptSlotInfo slot, IBptContext context,
+			LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(slot.blockId, 1, 0));
 	}
 
 	@Override
-	public boolean isValid(BptSlotInfo slot,IBptContext context) {
+	public boolean isValid(BptSlotInfo slot, IBptContext context) {
 		return slot.blockId == context.world().getBlockId(slot.x, slot.y,
 				slot.z);
 	}

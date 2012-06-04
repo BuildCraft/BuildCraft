@@ -26,71 +26,73 @@ import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
+public class TileMiningWell extends TileMachine implements IMachine,
+		IPowerReceptor, IPipeConnection {
 	boolean isDigging = true;
-	
+
 	PowerProvider powerProvider;
 
-	
-	public TileMiningWell () {		
+	public TileMiningWell() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 25, 25, 25, 1000);
 	}
-	
-	/** 
-	 * Dig the next available piece of land if not done. As soon as it 
-	 * reaches bedrock, lava or goes below 0, it's considered done.
+
+	/**
+	 * Dig the next available piece of land if not done. As soon as it reaches
+	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
-	public void doWork () {	
+	public void doWork() {
 		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
-		
+
 		World world = worldObj;
-		
+
 		int depth = yCoord - 1;
-		
+
 		while (world.getBlockId(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock.blockID) {
 			depth = depth - 1;
 		}
-		
+
 		if (depth < 0
-			|| (Block.blocksList[world.getBlockId(xCoord, depth, zCoord)] != null && Block.blocksList[world.getBlockId(xCoord, depth, zCoord)].getHardness() == -1.0f)
-			|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
-			|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
-			
-			    isDigging = false;		    
-				return;
-			}
-		
+				|| (Block.blocksList[world.getBlockId(xCoord, depth, zCoord)] != null && Block.blocksList[world
+						.getBlockId(xCoord, depth, zCoord)].getHardness() == -1.0f)
+				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
+				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
+
+			isDigging = false;
+			return;
+		}
+
 		int blockId = world.getBlockId(xCoord, depth, zCoord);
-		
-		ArrayList <ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, (int) xCoord, (int) depth, (int) zCoord);		
-		
-		world.setBlockWithNotify((int) xCoord, (int) depth, (int) zCoord,
+
+		ArrayList<ItemStack> stacks = BuildCraftBlockUtil
+				.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
+
+		world.setBlockWithNotify(xCoord, depth, zCoord,
 				BuildCraftFactory.plainPipeBlock.blockID);
-		
+
 		if (blockId == 0) {
 			return;
-		}							
-		
+		}
+
 		if (stacks == null || stacks.size() == 0) {
 			return;
 		}
-		
+
 		for (ItemStack s : stacks) {
 			StackUtil stackUtil = new StackUtil(s);
 
 			if (stackUtil.addToRandomInventory(this, Orientations.Unknown)
 					&& stackUtil.items.stackSize == 0) {
-				//  The object has been added to a nearby chest.
+				// The object has been added to a nearby chest.
 				return;
 			}
 
 			if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, s)
 					&& stackUtil.items.stackSize == 0) {
-				//  The object has been added to a nearby pipe.
+				// The object has been added to a nearby pipe.
 				return;
 			}
 
@@ -101,14 +103,12 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-			EntityItem entityitem = new EntityItem(world, (float) xCoord + f,
-					(float) yCoord + f1 + 0.5F, (float) zCoord + f2,
-					stackUtil.items);
+			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord
+					+ f1 + 0.5F, zCoord + f2, stackUtil.items);
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-			entityitem.motionY = (float) world.rand.nextGaussian() * f3
-			+ 1.0F;
+			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
 			entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
 			world.spawnEntityInWorld(entityitem);
 		}
@@ -121,7 +121,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {
-		powerProvider = provider;		
+		powerProvider = provider;
 	}
 
 	@Override
@@ -138,14 +138,14 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	public boolean manageSolids() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isPipeConnected(Orientations with) {
 		return true;
 	}
-	
+
 	@Override
-	public boolean allowActions () {
+	public boolean allowActions() {
 		return false;
 	}
 }

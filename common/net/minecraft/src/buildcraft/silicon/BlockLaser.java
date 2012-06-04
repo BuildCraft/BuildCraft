@@ -27,12 +27,12 @@ public class BlockLaser extends BlockContainer implements ITextureProvider {
 		super(i, Material.iron);
 		setHardness(0.5F);
 	}
-	
+
 	@Override
 	public int getRenderType() {
 		return BuildCraftSilicon.laserBlockModel;
 	}
-	
+
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
@@ -47,7 +47,6 @@ public class BlockLaser extends BlockContainer implements ITextureProvider {
 		return false;
 	}
 
-
 	@Override
 	public TileEntity getBlockEntity() {
 		return new TileLaser();
@@ -57,28 +56,28 @@ public class BlockLaser extends BlockContainer implements ITextureProvider {
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-	
+
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (i == Orientations.values()[j].reverse().ordinal()) {
-			return 16 * 2 + 15;	
+			return 16 * 2 + 15;
 		} else if (i == j) {
-			return 16 * 2 + 14;	
+			return 16 * 2 + 14;
 		} else {
 			return 16 * 2 + 13;
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onBlockPlaced(World world, int i, int j, int k, int l) {
-    	super.onBlockPlaced(world, i, j, k, l);
-        int i1 = world.getBlockMetadata(i, j, k);
-        if (l <= 6) {
-        	i1 = l;
-        }
-        world.setBlockMetadataWithNotify(i, j, k, i1);
-    }
+		super.onBlockPlaced(world, i, j, k, l);
+		int i1 = world.getBlockMetadata(i, j, k);
+		if (l <= 6) {
+			i1 = l;
+		}
+		world.setBlockMetadataWithNotify(i, j, k, i1);
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override

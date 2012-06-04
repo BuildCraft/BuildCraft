@@ -17,14 +17,14 @@ public class ActionSignalOutput extends Action {
 
 	public IPipe.WireColor color;
 
-	public ActionSignalOutput (int id, IPipe.WireColor color) {
-		super (id);
+	public ActionSignalOutput(int id, IPipe.WireColor color) {
+		super(id);
 
 		this.color = color;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		switch (color) {
 		case Red:
 			return 0 * 16 + 3;
@@ -40,7 +40,7 @@ public class ActionSignalOutput extends Action {
 	}
 
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		switch (color) {
 		case Red:
 			return "Red Pipe Signal";

@@ -22,7 +22,8 @@ import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
-public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
+public abstract class TileBuildCraft extends TileEntity implements
+		ISynchronizedTile {
 
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
@@ -34,12 +35,14 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	private boolean init = false;
 
-	public TileBuildCraft () {
+	public TileBuildCraft() {
 		if (!updateWrappers.containsKey(this.getClass()))
-			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass ()));
+			updateWrappers.put(this.getClass(),
+					new TilePacketWrapper(this.getClass()));
 
 		if (!descriptionWrappers.containsKey(this.getClass()))
-			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass ()));
+			descriptionWrappers.put(this.getClass(),
+					new TilePacketWrapper(this.getClass()));
 
 		updatePacket = updateWrappers.get(this.getClass());
 		descriptionPacket = descriptionWrappers.get(this.getClass());
@@ -47,7 +50,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public void updateEntity () {
+	public void updateEntity() {
 		if (!init) {
 			initialize();
 			init = true;
@@ -60,25 +63,26 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 	}
 
-	public void initialize () {
+	public void initialize() {
 		Utils.handleBufferedDescription(this);
 	}
 
-	public void destroy () {
+	public void destroy() {
 
 	}
 
 	public void sendNetworkUpdate() {
 		if (this instanceof ISynchronizedTile)
 			CoreProxy.sendToPlayers(
-					((ISynchronizedTile) this).getUpdatePacket(), worldObj, 
-					xCoord,	yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+					((ISynchronizedTile) this).getUpdatePacket(), worldObj,
+					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
+					mod_BuildCraftCore.instance);
 	}
 
 	@Override
 	public Packet getDescriptionPacket() {
 		return new PacketTileUpdate(this).getPacket();
-    }
+	}
 
 	@Override
 	public PacketPayload getPacketPayload() {
@@ -88,20 +92,20 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	@Override
 	public Packet getUpdatePacket() {
 		return new PacketTileUpdate(this).getPacket();
-    }
+	}
 
 	@Override
-	public void handleDescriptionPacket (PacketUpdate packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) {
 		descriptionPacket.fromPayload(this, packet.payload);
 	}
 
 	@Override
-	public void handleUpdatePacket (PacketUpdate packet) {
+	public void handleUpdatePacket(PacketUpdate packet) {
 		updatePacket.fromPayload(this, packet.payload);
 	}
 
 	@Override
-	public void postPacketHandling (PacketUpdate packet) {
+	public void postPacketHandling(PacketUpdate packet) {
 
 	}
 

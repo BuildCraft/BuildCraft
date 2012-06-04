@@ -27,7 +27,7 @@ public class BuildCraftConfiguration extends Configuration {
 			loadLegacyProperties();
 	}
 
-	public void loadLegacyProperties () {
+	public void loadLegacyProperties() {
 		File cfgfile = CoreProxy.getPropertyFile();
 		Properties props = new Properties();
 
@@ -50,9 +50,11 @@ public class BuildCraftConfiguration extends Configuration {
 					props.getProperty("goldenPipe.blockId"));
 			getOrCreateProperty("diamondPipe.id", Configuration.CATEGORY_BLOCK,
 					props.getProperty("diamondPipe.blockId"));
-			getOrCreateProperty("obsidianPipe.id", Configuration.CATEGORY_BLOCK,
+			getOrCreateProperty("obsidianPipe.id",
+					Configuration.CATEGORY_BLOCK,
 					props.getProperty("obsidianPipeBlock.blockId"));
-			getOrCreateProperty("autoWorkbench.id", Configuration.CATEGORY_BLOCK,
+			getOrCreateProperty("autoWorkbench.id",
+					Configuration.CATEGORY_BLOCK,
 					props.getProperty("autoWorkbench.blockId"));
 			getOrCreateProperty("miningWell.id", Configuration.CATEGORY_BLOCK,
 					props.getProperty("miningWell.blockId"));
@@ -67,20 +69,26 @@ public class BuildCraftConfiguration extends Configuration {
 			getOrCreateProperty("filler.id", Configuration.CATEGORY_BLOCK,
 					props.getProperty("filler.blockId"));
 
-			getOrCreateProperty("woodenGearItem.id", Configuration.CATEGORY_ITEM,
+			getOrCreateProperty("woodenGearItem.id",
+					Configuration.CATEGORY_ITEM,
 					props.getProperty("woodenGearItem.id"));
-			getOrCreateProperty("stoneGearItem.id", Configuration.CATEGORY_ITEM,
+			getOrCreateProperty("stoneGearItem.id",
+					Configuration.CATEGORY_ITEM,
 					props.getProperty("stoneGearItem.id"));
 			getOrCreateProperty("ironGearItem.id", Configuration.CATEGORY_ITEM,
 					props.getProperty("ironGearItem.id"));
-			getOrCreateProperty("goldenGearItem.id", Configuration.CATEGORY_ITEM,
+			getOrCreateProperty("goldenGearItem.id",
+					Configuration.CATEGORY_ITEM,
 					props.getProperty("goldGearItem.id"));
-			getOrCreateProperty("diamondGearItem.id", Configuration.CATEGORY_ITEM,
+			getOrCreateProperty("diamondGearItem.id",
+					Configuration.CATEGORY_ITEM,
 					props.getProperty("diamondGearItem.id"));
 
-			getOrCreateProperty("mining.enabled", Configuration.CATEGORY_GENERAL,
+			getOrCreateProperty("mining.enabled",
+					Configuration.CATEGORY_GENERAL,
 					props.getProperty("mining.enabled"));
-			getOrCreateProperty("current.continuous", Configuration.CATEGORY_GENERAL,
+			getOrCreateProperty("current.continuous",
+					Configuration.CATEGORY_GENERAL,
 					props.getProperty("current.continous"));
 
 			cfgfile.delete();
@@ -91,7 +99,7 @@ public class BuildCraftConfiguration extends Configuration {
 	}
 
 	@Override
-	public void save () {
+	public void save() {
 		Property versionProp = null;
 
 		if (!generalProperties.containsKey("version")) {

@@ -15,7 +15,7 @@ import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 public class PipeItemsCobblestone extends Pipe {
 
 	public PipeItemsCobblestone(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicCobblestone (), itemID);
+		super(new PipeTransportItems(), new PipeLogicCobblestone(), itemID);
 
 	}
 

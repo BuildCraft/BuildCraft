@@ -23,8 +23,10 @@ import net.minecraft.src.buildcraft.api.TileNetworkData;
 
 public class Box implements IBox {
 
-	public @TileNetworkData int xMin, yMin, zMin, xMax, yMax, zMax;
-	public @TileNetworkData boolean initialized;
+	public @TileNetworkData
+	int xMin, yMin, zMin, xMax, yMax, zMax;
+	public @TileNetworkData
+	boolean initialized;
 
 	private EntityBlock lasers[];
 
@@ -47,7 +49,8 @@ public class Box implements IBox {
 		return initialized;
 	}
 
-	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
+	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax,
+			int zMax) {
 
 		this.xMin = xMin;
 		this.yMin = yMin;
@@ -70,8 +73,7 @@ public class Box implements IBox {
 
 	public void initialize(NBTTagCompound nbttagcompound) {
 
-		initialize(
-				nbttagcompound.getInteger("xMin"),
+		initialize(nbttagcompound.getInteger("xMin"),
 				nbttagcompound.getInteger("yMin"),
 				nbttagcompound.getInteger("zMin"),
 				nbttagcompound.getInteger("xMax"),
@@ -81,32 +83,27 @@ public class Box implements IBox {
 
 	public void initialize(int centerX, int centerY, int centerZ, int size) {
 
-		initialize(
-				centerX - size,
-				centerY - size,
-				centerZ - size,
-				centerX + size,
-				centerY + size,
-				centerZ + size);
-		
+		initialize(centerX - size, centerY - size, centerZ - size, centerX
+				+ size, centerY + size, centerZ + size);
+
 	}
 
 	public List<BlockIndex> getBlocksInArea() {
-		
+
 		List<BlockIndex> blocks = new ArrayList<BlockIndex>();
-		
+
 		for (int x = xMin; x <= xMax; x++) {
 			for (int y = yMin; y <= yMax; y++) {
 				for (int z = zMin; z <= zMax; z++) {
 					blocks.add(new BlockIndex(x, y, z));
 				}
 			}
-			
+
 		}
-		
+
 		return blocks;
 	}
-	
+
 	@Override
 	public void expand(int amount) {
 
@@ -123,24 +120,22 @@ public class Box implements IBox {
 		expand(-amount);
 	}
 
-	
 	@Override
 	public boolean contains(int x, int y, int z) {
-		
-		if (x >= xMin && x <= xMax &&
-			y >= yMin && y <= yMax &&
-			z >= zMin && z <= zMax) {
-			
+
+		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin
+				&& z <= zMax) {
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean contains(Position p) {
-		return contains((int)p.x, (int)p.y, (int)p.z);
+		return contains((int) p.x, (int) p.y, (int) p.z);
 	}
-	
+
 	public boolean contains(BlockIndex i) {
 		return contains(i.i, i.j, i.k);
 	}
@@ -154,7 +149,7 @@ public class Box implements IBox {
 	public Position pMax() {
 		return new Position(xMax, yMax, zMax);
 	}
-	
+
 	public int sizeX() {
 		return xMax - xMin + 1;
 	}
@@ -166,7 +161,7 @@ public class Box implements IBox {
 	public int sizeZ() {
 		return zMax - zMin + 1;
 	}
-	
+
 	public double centerX() {
 		return xMin + sizeX() / 2.0;
 	}
@@ -178,7 +173,7 @@ public class Box implements IBox {
 	public double centerZ() {
 		return zMin + sizeZ() / 2.0;
 	}
-	
+
 	public Box rotateLeft() {
 
 		Box nBox = new Box();
@@ -220,14 +215,15 @@ public class Box implements IBox {
 
 	@Override
 	public void createLasers(World world, LaserKind kind) {
-		
+
 		if (lasers == null)
-			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax, zMax, kind);
+			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax,
+					zMax, kind);
 	}
 
 	@Override
 	public void deleteLasers() {
-		
+
 		if (lasers != null) {
 			for (EntityBlock b : lasers)
 				APIProxy.removeEntity(b);
@@ -237,7 +233,7 @@ public class Box implements IBox {
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		
+
 		nbttagcompound.setInteger("xMin", xMin);
 		nbttagcompound.setInteger("yMin", yMin);
 		nbttagcompound.setInteger("zMin", zMin);
@@ -249,7 +245,8 @@ public class Box implements IBox {
 
 	@Override
 	public String toString() {
-		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
+		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {"
+				+ zMin + ", " + zMax + "}";
 	}
-	
+
 }

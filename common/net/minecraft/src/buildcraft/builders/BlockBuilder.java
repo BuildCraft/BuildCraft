@@ -34,7 +34,7 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 	int blockTextureTop;
 	int blockTextureSide;
 	int blockTextureFront;
-	
+
 	public BlockBuilder(int i) {
 		super(i, Material.iron);
 		blockTextureSide = 3 * 16 + 5;
@@ -54,11 +54,11 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-    public int getBlockTextureFromSideAndMetadata(int i, int j) {
-    	if (j == 0 && i == 3) {
+	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+		if (j == 0 && i == 3) {
 			return blockTextureFront;
 		}
-		
+
 		if (i == j) {
 			return blockTextureFront;
 		}
@@ -69,18 +69,21 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 		default:
 			return blockTextureSide;
 		}
-    }
-    
-    @Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	
+	}
+
+	@Override
+	public boolean blockActivated(World world, int i, int j, int k,
+			EntityPlayer entityplayer) {
+
 		// Drop through if the player is sneaking
-		if(entityplayer.isSneaking())
+		if (entityplayer.isSneaking())
 			return false;
-		
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)){
-			
+
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer
+				.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench
+				&& ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+
 			int meta = world.getBlockMetadata(i, j, k);
 
 			switch (Orientations.values()[meta]) {
@@ -97,36 +100,38 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 				world.setBlockMetadata(i, j, k, Orientations.XPos.ordinal());
 				break;
 			}
-			
+
 			world.markBlockNeedsUpdate(i, j, k);
-			((IToolWrench)equipped).wrenchUsed(entityplayer, i, j, k);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
 			return true;
 		} else {
-			
-			if(!APIProxy.isClient(world))
-				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
+
+			if (!APIProxy.isClient(world))
+				entityplayer.openGui(mod_BuildCraftBuilders.instance,
+						GuiIds.BUILDER, world, i, j, k);
 			return true;
-			
+
 		}
 	}
-	
+
 	@Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-    	super.onBlockPlacedBy(world, i, j, k, entityliving);
+	public void onBlockPlacedBy(World world, int i, int j, int k,
+			EntityLiving entityliving) {
+		super.onBlockPlacedBy(world, i, j, k, entityliving);
 		Orientations orientation = Utils.get2dOrientation(new Position(
 				entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
-    	
+
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
 				.ordinal());
-    }
-    
-    @Override
-    public void onBlockRemoval(World world, int i, int j, int k) {
-    	Utils.preDestroyBlock(world, i, j, k);
-    	super.onBlockRemoval(world, i, j, k);
-    }
-    
+	}
+
+	@Override
+	public void onBlockRemoval(World world, int i, int j, int k) {
+		Utils.preDestroyBlock(world, i, j, k);
+		super.onBlockRemoval(world, i, j, k);
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

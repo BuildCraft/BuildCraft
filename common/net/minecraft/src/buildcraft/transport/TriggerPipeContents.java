@@ -17,17 +17,19 @@ import net.minecraft.src.buildcraft.transport.PipeTransportLiquids.LiquidBuffer;
 
 public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 
-	public enum Kind {Empty, ContainsItems, ContainsLiquids, ContainsEnergy};
+	public enum Kind {
+		Empty, ContainsItems, ContainsLiquids, ContainsEnergy
+	};
 
 	Kind kind;
 
-	public TriggerPipeContents (int id, Kind kind) {
-		super (id);
+	public TriggerPipeContents(int id, Kind kind) {
+		super(id);
 		this.kind = kind;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		switch (kind) {
 		case Empty:
 			return 3 * 16 + 0;
@@ -42,7 +44,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean hasParameter () {
+	public boolean hasParameter() {
 		switch (kind) {
 		case ContainsItems:
 		case ContainsLiquids:
@@ -80,8 +82,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 				if (parameter != null && parameter.getItem() != null) {
 					for (EntityData data : transportItems.travelingEntities
 							.values())
-						if (data.item.item.itemID == parameter.getItem()
-								.itemID
+						if (data.item.item.itemID == parameter.getItem().itemID
 								&& data.item.item.getItemDamage() == parameter
 										.getItem().getItemDamage())
 							return true;
@@ -93,7 +94,8 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = BuildCraftAPI.getLiquidForFilledItem(parameter.getItem());
+				seachedLiquidId = BuildCraftAPI
+						.getLiquidForFilledItem(parameter.getItem());
 
 			if (kind == Kind.Empty) {
 				for (LiquidBuffer b : transportLiquids.side)
@@ -104,7 +106,8 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			} else {
 				for (LiquidBuffer b : transportLiquids.side)
 					if (b.average != 0)
-						if (seachedLiquidId == 0 || b.liquidId == seachedLiquidId)
+						if (seachedLiquidId == 0
+								|| b.liquidId == seachedLiquidId)
 							return true;
 
 				return false;

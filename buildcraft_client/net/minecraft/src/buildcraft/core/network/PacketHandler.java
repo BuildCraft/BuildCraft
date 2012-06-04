@@ -13,12 +13,13 @@ import net.minecraft.src.forge.IPacketHandler;
 public class PacketHandler implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
+	public void onPacketData(NetworkManager network, String channel,
+			byte[] bytes) {
 
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
-		try
-		{
-			NetClientHandler net = (NetClientHandler)network.getNetHandler();
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
+				bytes));
+		try {
+			NetClientHandler net = (NetClientHandler) network.getNetHandler();
 
 			int packetID = data.read();
 			switch (packetID) {
@@ -28,7 +29,7 @@ public class PacketHandler implements IPacketHandler {
 				onTileUpdate(packetT);
 				break;
 			}
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
@@ -37,14 +38,14 @@ public class PacketHandler implements IPacketHandler {
 	private void onTileUpdate(PacketTileUpdate packet) {
 		World world = ModLoader.getMinecraftInstance().theWorld;
 
-		if(!packet.targetExists(world))
+		if (!packet.targetExists(world))
 			return;
 
 		TileEntity entity = packet.getTarget(world);
-		if(!(entity instanceof ISynchronizedTile))
+		if (!(entity instanceof ISynchronizedTile))
 			return;
 
-		ISynchronizedTile tile = (ISynchronizedTile)entity;
+		ISynchronizedTile tile = (ISynchronizedTile) entity;
 		tile.handleUpdatePacket(packet);
 		tile.postPacketHandling(packet);
 	}

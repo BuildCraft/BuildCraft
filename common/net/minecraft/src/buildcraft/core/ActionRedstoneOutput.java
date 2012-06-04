@@ -14,17 +14,17 @@ import net.minecraft.src.buildcraft.api.Action;
 
 public class ActionRedstoneOutput extends Action {
 
-	public ActionRedstoneOutput (int id) {
-		super (id);
+	public ActionRedstoneOutput(int id) {
+		super(id);
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		return 0 * 16 + 0;
 	}
 
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		return "Redstone Signal";
 	}
 

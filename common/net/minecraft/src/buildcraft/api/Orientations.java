@@ -17,11 +17,11 @@ public enum Orientations {
 	XNeg, // 4
 	XPos, // 5
 	Unknown;
-	
-	public Orientations reverse () {
+
+	public Orientations reverse() {
 		switch (this) {
 		case YPos:
-			return  Orientations.YNeg;
+			return Orientations.YNeg;
 		case YNeg:
 			return Orientations.YPos;
 		case ZPos:
@@ -33,10 +33,10 @@ public enum Orientations {
 		case XNeg:
 			return Orientations.XPos;
 		}
-		
+
 		return Orientations.Unknown;
 	}
-	
+
 	public Orientations rotateLeft() {
 		switch (this) {
 		case XPos:
@@ -48,17 +48,11 @@ public enum Orientations {
 		case ZPos:
 			return XNeg;
 		}
-		
+
 		return this;
 	}
-	
-	public static Orientations [] dirs () {
-		return new Orientations [] 
-		{YNeg,
-		 YPos,
-		 ZNeg,
-		 ZPos,
-		 XNeg,
-		 XPos };
+
+	public static Orientations[] dirs() {
+		return new Orientations[] { YNeg, YPos, ZNeg, ZPos, XNeg, XPos };
 	}
 }

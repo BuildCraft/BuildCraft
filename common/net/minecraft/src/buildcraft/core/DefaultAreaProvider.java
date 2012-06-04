@@ -57,7 +57,7 @@ public class DefaultAreaProvider implements IAreaProvider {
 	}
 
 	@Override
-	public void removeFromWorld () {
+	public void removeFromWorld() {
 
 	}
 }

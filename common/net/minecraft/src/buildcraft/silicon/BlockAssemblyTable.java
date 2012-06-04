@@ -15,17 +15,18 @@ import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockAssemblyTable extends BlockContainer implements ITextureProvider {
+public class BlockAssemblyTable extends BlockContainer implements
+		ITextureProvider {
 
 	public BlockAssemblyTable(int i) {
 		super(i, Material.iron);
 		// TODO Auto-generated constructor stub
-		
+
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(0.5F);
-		
+
 	}
-	
+
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
@@ -39,28 +40,30 @@ public class BlockAssemblyTable extends BlockContainer implements ITextureProvid
 	public boolean isACube() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k,
+			EntityPlayer entityplayer) {
 		// Drop through if the player is sneaking
-		if(entityplayer.isSneaking())
+		if (entityplayer.isSneaking())
 			return false;
-		
-		if(!APIProxy.isClient(world))
-			entityplayer.openGui(mod_BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
+
+		if (!APIProxy.isClient(world))
+			entityplayer.openGui(mod_BuildCraftSilicon.instance,
+					GuiIds.ASSEMBLY_TABLE, world, i, j, k);
 		return true;
 	}
-	
+
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (i == 1) {
-			return 16 * 6 + 12;	
+			return 16 * 6 + 12;
 		} else if (i == 0) {
-			return 16 * 2 + 15;	
+			return 16 * 2 + 15;
 		} else {
 			return 16 * 6 + 11;
 		}
-		
+
 	}
 
 	@Override
@@ -72,7 +75,7 @@ public class BlockAssemblyTable extends BlockContainer implements ITextureProvid
 	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

@@ -16,28 +16,29 @@ import net.minecraft.src.buildcraft.api.BptBlock;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.IBptContext;
 
-public class BptBlockDoor extends BptBlock  {
-	
+public class BptBlockDoor extends BptBlock {
+
 	final ItemStack stack;
-	
-	public BptBlockDoor (int blockId, ItemStack stack) {
-		super (blockId);
-		
+
+	public BptBlockDoor(int blockId, ItemStack stack) {
+		super(blockId);
+
 		this.stack = stack;
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context,
+			LinkedList<ItemStack> requirements) {
 		if ((slot.meta & 8) == 0) {
-			requirements.add (stack.copy ());
+			requirements.add(stack.copy());
 		}
 	}
-	
+
 	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {			
-		int orientation = (slot.meta & 3);				
+	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+		int orientation = (slot.meta & 3);
 		int others = slot.meta - orientation;
-		
+
 		switch (orientation) {
 		case 0:
 			slot.meta = 1 + others;
@@ -53,19 +54,23 @@ public class BptBlockDoor extends BptBlock  {
 			break;
 		}
 	}
-	
+
 	@Override
 	public boolean ignoreBuilding(BptSlotInfo slot) {
 		return (slot.meta & 8) != 0;
 	}
-	
+
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);			
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.blockId, slot.meta + 8);
-				
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.meta + 8);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
-		
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z,
+				slot.blockId, slot.meta);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y + 1,
+				slot.z, slot.blockId, slot.meta + 8);
+
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y + 1, slot.z,
+				slot.meta + 8);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z,
+				slot.meta);
+
 	}
 }

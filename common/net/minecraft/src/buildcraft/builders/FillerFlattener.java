@@ -18,36 +18,37 @@ import net.minecraft.src.buildcraft.api.IBox;
 public class FillerFlattener extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public boolean iteratePattern(TileEntity tile, IBox box,
+			ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
-		
+
 		int xMax = (int) box.pMax().x;
 		int zMax = (int) box.pMax().z;
 
 		int sizeX = xMax - xMin + 1;
 		int sizeZ = zMax - zMin + 1;
-		
-		
-		boolean [][] blockedColumns = new boolean [sizeX][sizeZ];
-		
+
+		boolean[][] blockedColumns = new boolean[sizeX][sizeZ];
+
 		for (int i = 0; i < blockedColumns.length; ++i) {
 			for (int j = 0; j < blockedColumns[0].length; ++j) {
-				blockedColumns [i][j] = false;
+				blockedColumns[i][j] = false;
 			}
 		}
 
 		boolean found = false;
 		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
-		
+
 		for (int y = yMin - 1; y >= 0; --y) {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if (!blockedColumns [x - xMin][z - zMin]) {
-						if (!BuildCraftAPI.softBlock(tile.worldObj.getBlockId(x, y, z))) {
-							blockedColumns [x - xMin][z - zMin] = true;
+					if (!blockedColumns[x - xMin][z - zMin]) {
+						if (!BuildCraftAPI.softBlock(tile.worldObj.getBlockId(
+								x, y, z))) {
+							blockedColumns[x - xMin][z - zMin] = true;
 						} else {
 							found = true;
 							lastX = x;
@@ -62,18 +63,18 @@ public class FillerFlattener extends FillerPattern {
 				break;
 			}
 		}
-		
+
 		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
 			stackToPlace.getItem().onItemUse(stackToPlace,
 					BuildCraftAPI.getBuildCraftPlayer(tile.worldObj),
 					tile.worldObj, lastX, lastY - 1, lastZ, 1);
 		}
-		
+
 		if (lastX != Integer.MAX_VALUE) {
 			return false;
 		}
-		
-		return empty (xMin, yMin, zMin, xMax, 64 * 2, zMax, tile.worldObj);
+
+		return empty(xMin, yMin, zMin, xMax, 64 * 2, zMax, tile.worldObj);
 	}
 
 	@Override

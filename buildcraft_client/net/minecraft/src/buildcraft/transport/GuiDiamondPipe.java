@@ -17,7 +17,6 @@ import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketSlotChange;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
-import net.minecraft.src.buildcraft.transport.PipeLogicDiamond.PacketStack;
 
 import org.lwjgl.opengl.GL11;
 
@@ -26,28 +25,32 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 	IInventory playerInventory;
 	TileGenericPipe filterInventory;
 
-	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe filterInventory) {
+	public GuiDiamondPipe(IInventory playerInventory,
+			TileGenericPipe filterInventory) {
 		super(new CraftingDiamondPipe(playerInventory, filterInventory));
 		this.playerInventory = playerInventory;
 		this.filterInventory = filterInventory;
 		xSize = 175;
 		ySize = 225;
 
-		slots = new AdvancedSlot [54];
+		slots = new AdvancedSlot[54];
 
-		for(int k = 0; k < 6; k++)
-			for(int j1 = 0; j1 < 9; j1++) {
+		for (int k = 0; k < 6; k++)
+			for (int j1 = 0; j1 < 9; j1++) {
 				int id = k * 9 + j1;
-				slots [id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18, filterInventory, j1 + k * 9);
+				slots[id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18,
+						filterInventory, j1 + k * 9);
 			}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString(filterInventory.getInvName(), getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(filterInventory.getInvName(),
+				getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
+				ySize - 97, 0x404040);
 
-		drawForegroundSelection ();
+		drawForegroundSelection();
 	}
 
 	@Override
@@ -72,7 +75,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation (i - cornerX, j - cornerY);
+		int position = getSlotAtLocation(i - cornerX, j - cornerY);
 
 		IInventorySlot slot = null;
 
@@ -84,14 +87,18 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 			ItemStack newStack;
 			if (playerStack != null)
-				newStack = new ItemStack(playerStack.itemID, 1, playerStack.getItemDamage());
+				newStack = new ItemStack(playerStack.itemID, 1,
+						playerStack.getItemDamage());
 			else
 				newStack = null;
-			
+
 			filterInventory.setInventorySlotContents(position, newStack);
-			
-			if(APIProxy.isRemote()) {
-				PacketSlotChange packet = new PacketSlotChange(PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord, filterInventory.yCoord, filterInventory.zCoord, position, newStack);
+
+			if (APIProxy.isRemote()) {
+				PacketSlotChange packet = new PacketSlotChange(
+						PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord,
+						filterInventory.yCoord, filterInventory.zCoord,
+						position, newStack);
 				CoreProxy.sendToServer(packet.getPacket());
 			}
 		}

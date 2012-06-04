@@ -1,4 +1,3 @@
-
 package net.minecraft.src.buildcraft.core.utils;
 
 import net.minecraft.src.EntityPlayer;
@@ -8,17 +7,20 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.forge.ISidedInventory;
 
 /**
- * This class is responsible for abstracting an ISidedInventory as a normal IInventory
+ * This class is responsible for abstracting an ISidedInventory as a normal
+ * IInventory
+ * 
  * @author Krapht
- *
+ * 
  */
 public class SidedInventoryAdapter implements IInventory {
 
 	private final ISidedInventory _sidedInventory;
 	private final Orientations _side;
 	private final int _slotOffset;
-	
-	public SidedInventoryAdapter(ISidedInventory sidedInventory, Orientations side){
+
+	public SidedInventoryAdapter(ISidedInventory sidedInventory,
+			Orientations side) {
 		_sidedInventory = sidedInventory;
 		_side = side;
 		_slotOffset = _sidedInventory.getStartInventorySide(side.ordinal());
@@ -73,7 +75,6 @@ public class SidedInventoryAdapter implements IInventory {
 	public void closeChest() {
 		_sidedInventory.closeChest();
 	}
-
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {

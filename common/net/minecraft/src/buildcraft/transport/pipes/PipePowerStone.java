@@ -24,5 +24,4 @@ public class PipePowerStone extends Pipe {
 		return 7 * 16 + 8;
 	}
 
-
 }

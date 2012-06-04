@@ -10,7 +10,7 @@ public class EntityData {
 
 	public Orientations orientation;
 
-	public EntityData (EntityPassiveItem citem, Orientations orientation) {
+	public EntityData(EntityPassiveItem citem, Orientations orientation) {
 		item = citem;
 
 		this.orientation = orientation;

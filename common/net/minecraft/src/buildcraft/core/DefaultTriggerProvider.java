@@ -19,16 +19,18 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 		if (tile instanceof IOverrideDefaultTriggers)
 			return ((IOverrideDefaultTriggers) tile).getTriggers();
 
-		LinkedList <Trigger> res = new LinkedList<Trigger>();
+		LinkedList<Trigger> res = new LinkedList<Trigger>();
 
-		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
+		if (tile instanceof IInventory
+				&& ((IInventory) tile).getSizeInventory() > 0) {
 			res.add(BuildCraftCore.triggerEmptyInventory);
 			res.add(BuildCraftCore.triggerContainsInventory);
 			res.add(BuildCraftCore.triggerSpaceInventory);
 			res.add(BuildCraftCore.triggerFullInventory);
 		}
 
-		if (tile instanceof ILiquidContainer && ((ILiquidContainer) tile).getLiquidSlots().length > 0) {
+		if (tile instanceof ILiquidContainer
+				&& ((ILiquidContainer) tile).getLiquidSlots().length > 0) {
 			res.add(BuildCraftCore.triggerEmptyLiquid);
 			res.add(BuildCraftCore.triggerContainsLiquid);
 			res.add(BuildCraftCore.triggerSpaceLiquid);
@@ -39,7 +41,6 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerMachineActive);
 			res.add(BuildCraftCore.triggerMachineInactive);
 		}
-
 
 		if (block != null && block.canProvidePower()) {
 			res.add(BuildCraftCore.triggerRedstoneActive);

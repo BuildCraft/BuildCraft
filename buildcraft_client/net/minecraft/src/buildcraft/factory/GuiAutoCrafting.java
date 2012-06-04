@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.factory;
 
-import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
@@ -33,8 +32,9 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
 		String title = StringUtil.localize("tile.autoWorkbenchBlock");
-        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
+				(ySize - 96) + 2, 0x404040);
 	}
 
 	@Override

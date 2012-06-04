@@ -5,16 +5,16 @@ import net.minecraft.src.World;
 
 public class PacketTileUpdate extends PacketUpdate {
 
-    public PacketTileUpdate() {
-    	super(PacketIds.TILE_UPDATE);
-    }
+	public PacketTileUpdate() {
+		super(PacketIds.TILE_UPDATE);
+	}
 
 	public PacketTileUpdate(ISynchronizedTile tile) {
-    	super(PacketIds.TILE_UPDATE);
+		super(PacketIds.TILE_UPDATE);
 
 		payload = tile.getPacketPayload();
 
-		TileEntity entity = (TileEntity)tile;
+		TileEntity entity = (TileEntity) tile;
 		posX = entity.xCoord;
 		posY = entity.yCoord;
 		posZ = entity.zCoord;

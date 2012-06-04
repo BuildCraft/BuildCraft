@@ -19,22 +19,22 @@ public class mod_BuildCraftDevel extends NetworkMod {
 	public static BlockCheat cheatBlock;
 
 	@Override
-    public void modsLoaded() {
-    	super.modsLoaded();
+	public void modsLoaded() {
+		super.modsLoaded();
 
-    	BuildCraftCore.debugMode = true;
+		BuildCraftCore.debugMode = true;
 
 		mod_BuildCraftCore.initialize();
 
 		Property cheatId = BuildCraftCore.mainConfiguration
-		.getOrCreateBlockIdProperty("cheat.id", 255);
+				.getOrCreateBlockIdProperty("cheat.id", 255);
 
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 
 		cheatBlock = new BlockCheat(Integer.parseInt(cheatId.value));
 		ModLoader.registerBlock(cheatBlock);
 		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
-			"# ", "  ", Character.valueOf('#'), Block.dirt });
+				"# ", "  ", Character.valueOf('#'), Block.dirt });
 
 		BuildCraftCore.mainConfiguration.save();
 	}
@@ -44,8 +44,17 @@ public class mod_BuildCraftDevel extends NetworkMod {
 		return DefaultProps.VERSION;
 	}
 
-	@Override public void load() {}
+	@Override
+	public void load() {
+	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 }

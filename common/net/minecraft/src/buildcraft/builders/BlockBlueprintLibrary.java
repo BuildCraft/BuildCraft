@@ -24,9 +24,9 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockBlueprintLibrary extends BlockContainer implements ITextureProvider {
+public class BlockBlueprintLibrary extends BlockContainer implements
+		ITextureProvider {
 
-	
 	public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
 		setHardness(0.7F);
@@ -37,27 +37,30 @@ public class BlockBlueprintLibrary extends BlockContainer implements ITexturePro
 		return BuildCraftCore.customBuildCraftTexture;
 	}
 
-    @Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-    	
+	@Override
+	public boolean blockActivated(World world, int i, int j, int k,
+			EntityPlayer entityplayer) {
+
 		// Drop through if the player is sneaking
-		if(entityplayer.isSneaking())
+		if (entityplayer.isSneaking())
 			return false;
-    	
-    	TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
-    	
-    	if (!tile.locked || entityplayer.username.equals(tile.owner))
-    		if(!APIProxy.isClient(world))
-    			entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
-		
+
+		TileBlueprintLibrary tile = (TileBlueprintLibrary) world
+				.getBlockTileEntity(i, j, k);
+
+		if (!tile.locked || entityplayer.username.equals(tile.owner))
+			if (!APIProxy.isClient(world))
+				entityplayer.openGui(mod_BuildCraftBuilders.instance,
+						GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+
 		return true;
 	}
 
 	@Override
 	public TileEntity getBlockEntity() {
-		return new TileBlueprintLibrary ();
+		return new TileBlueprintLibrary();
 	}
-	
+
 	@Override
 	public int getBlockTextureFromSide(int i) {
 		switch (i) {
@@ -68,19 +71,19 @@ public class BlockBlueprintLibrary extends BlockContainer implements ITexturePro
 			return 3 * 16 + 8;
 		}
 	}
-	
 
-    @Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
-    {
-    	if (entityliving instanceof EntityPlayer) {
-    		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
-    		
-    		tile.owner = ((EntityPlayer) entityliving).username;
-    	}
-    }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void onBlockPlacedBy(World world, int i, int j, int k,
+			EntityLiving entityliving) {
+		if (entityliving instanceof EntityPlayer) {
+			TileBlueprintLibrary tile = (TileBlueprintLibrary) world
+					.getBlockTileEntity(i, j, k);
+
+			tile.owner = ((EntityPlayer) entityliving).username;
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));

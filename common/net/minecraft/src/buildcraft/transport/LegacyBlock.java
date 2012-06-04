@@ -17,8 +17,8 @@ public class LegacyBlock extends BlockContainer {
 
 	public int newPipeId;
 
-	public LegacyBlock (int itemId, int newPipeId) {
-		super (itemId, Material.glass);
+	public LegacyBlock(int itemId, int newPipeId) {
+		super(itemId, Material.glass);
 		this.newPipeId = newPipeId;
 	}
 

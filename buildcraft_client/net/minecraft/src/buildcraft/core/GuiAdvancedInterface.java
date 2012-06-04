@@ -1,7 +1,5 @@
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.Container;
-import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.OpenGlHelper;
@@ -21,7 +19,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		public String getDescription() {
 			if (getItemStack() != null)
-				return getItemStack().getItem().getItemDisplayName(getItemStack());
+				return getItemStack().getItem().getItemDisplayName(
+						getItemStack());
 			else
 				return "";
 		}
@@ -85,26 +84,27 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			return stack;
 		}
 	}
-	
+
 	/**
-	 * More dynamic slot displaying an inventory stack at specified position in the passed IInventory 
+	 * More dynamic slot displaying an inventory stack at specified position in
+	 * the passed IInventory
 	 */
 	public class IInventorySlot extends AdvancedSlot {
 
 		private IInventory tile;
 		private int slot;
-		
+
 		public IInventorySlot(int x, int y, IInventory tile, int slot) {
 			super(x, y);
 			this.tile = tile;
 			this.slot = slot;
 		}
-		
+
 		@Override
 		public ItemStack getItemStack() {
 			return tile.getStackInSlot(slot);
 		}
-		
+
 	}
 
 	public AdvancedSlot[] slots;
@@ -126,14 +126,15 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-        RenderHelper.enableGUIStandardItemLighting();
-        GL11.glPushMatrix();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
-        int i1 = 240;
-        int k1 = 240;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, i1 / 1.0F, k1 / 1.0F);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderHelper.enableGUIStandardItemLighting();
+		GL11.glPushMatrix();
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
+		int i1 = 240;
+		int k1 = 240;
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,
+				i1 / 1.0F, k1 / 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		for (int s = 0; s < slots.length; ++s) {
 			AdvancedSlot slot = slots[s];

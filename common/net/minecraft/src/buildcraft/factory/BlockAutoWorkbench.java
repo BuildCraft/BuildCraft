@@ -30,65 +30,62 @@ public class BlockAutoWorkbench extends BlockContainer implements
 
 	int topTexture;
 	int sideTexture;
-	
-    public BlockAutoWorkbench(int i)
-    {
-        super(i, Material.wood);
-        topTexture = 2 * 16 + 11;
-        sideTexture = 2 * 16 + 12;
-        setHardness(1.0F);
-    }
 
-    @Override
-    public int getBlockTextureFromSide(int i)
-    {
-        if(i == 1 || i == 0)
-        {
+	public BlockAutoWorkbench(int i) {
+		super(i, Material.wood);
+		topTexture = 2 * 16 + 11;
+		sideTexture = 2 * 16 + 12;
+		setHardness(1.0F);
+	}
+
+	@Override
+	public int getBlockTextureFromSide(int i) {
+		if (i == 1 || i == 0) {
 			return topTexture;
-        } else {
-        	return sideTexture;
-        }
-    }
+		} else {
+			return sideTexture;
+		}
+	}
 
-    @Override
+	@Override
 	public boolean blockActivated(World world, int i, int j, int k,
 			EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
-		
+
 		// Drop through if the player is sneaking
-		if(entityplayer.isSneaking())
-			return false;		
-		
+		if (entityplayer.isSneaking())
+			return false;
+
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
 				return false;
 			}
 		}
 
-		if(!APIProxy.isClient(world))
-			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
+		if (!APIProxy.isClient(world))
+			entityplayer.openGui(mod_BuildCraftFactory.instance,
+					GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 
 		return true;
 	}
 
-    
 	@Override
 	public TileEntity getBlockEntity() {
-		return new TileAutoWorkbench ();
+		return new TileAutoWorkbench();
 	}
-	
+
 	@Override
-    public void onBlockRemoval(World world, int i, int j, int k) {
-    	Utils.preDestroyBlock(world, i, j, k);
-    	
-        super.onBlockRemoval(world, i, j, k);        
-    }
-    
-    @Override
-	public String getTextureFile() {	
+	public void onBlockRemoval(World world, int i, int j, int k) {
+		Utils.preDestroyBlock(world, i, j, k);
+
+		super.onBlockRemoval(world, i, j, k);
+	}
+
+	@Override
+	public String getTextureFile() {
 		return BuildCraftCore.customBuildCraftTexture;
 	}
-    
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

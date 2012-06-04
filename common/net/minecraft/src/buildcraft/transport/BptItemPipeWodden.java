@@ -24,7 +24,8 @@ public class BptItemPipeWodden extends BptItem {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, LinkedList <ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot,
+			LinkedList<ItemStack> requirements) {
 
 	}
 

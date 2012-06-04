@@ -29,7 +29,6 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 		super(new PipeTransportItems(), new PipeLogicDiamond(), itemID);
 	}
 
-
 	@Override
 	public int getMainBlockTexture() {
 		return nextTexture;
@@ -40,16 +39,18 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 		if (connection == Orientations.Unknown)
 			nextTexture = 1 * 16 + 5;
 		else
-			nextTexture = BuildCraftTransport.diamondTextures[connection.ordinal()];
+			nextTexture = BuildCraftTransport.diamondTextures[connection
+					.ordinal()];
 	}
 
 	@Override
-	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<Orientations> filterPossibleMovements(
+			LinkedList<Orientations> possibleOrientations, Position pos,
 			EntityPassiveItem item) {
 		LinkedList<Orientations> filteredOrientations = new LinkedList<Orientations>();
 		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
 
-		//Filtered outputs
+		// Filtered outputs
 		for (Orientations dir : possibleOrientations) {
 			boolean foundFilter = false;
 
@@ -57,7 +58,8 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 			// to use that filter is higher, this is why there are
 			// no breaks here.
 			for (int slot = 0; slot < 9; ++slot) {
-				ItemStack stack = logic.getStackInSlot(dir.ordinal() * 9 + slot);
+				ItemStack stack = logic
+						.getStackInSlot(dir.ordinal() * 9 + slot);
 
 				if (stack != null)
 					foundFilter = true;
@@ -65,25 +67,22 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 				if (stack != null && stack.itemID == item.item.itemID)
 					if ((Item.itemsList[item.item.itemID].isDamageable()))
 						filteredOrientations.add(dir);
-					else if (stack.getItemDamage() == item.item
-							.getItemDamage())
+					else if (stack.getItemDamage() == item.item.getItemDamage())
 						filteredOrientations.add(dir);
 			}
 			if (!foundFilter)
 				defaultOrientations.add(dir);
 		}
-		if(filteredOrientations.size() != 0)
+		if (filteredOrientations.size() != 0)
 			return filteredOrientations;
 		else
 			return defaultOrientations;
 	}
 
-
 	@Override
 	public void entityEntered(EntityPassiveItem item, Orientations orientation) {
 
 	}
-
 
 	@Override
 	public void readjustSpeed(EntityPassiveItem item) {

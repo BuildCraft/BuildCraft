@@ -10,7 +10,6 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -24,19 +23,19 @@ import net.minecraft.src.buildcraft.core.Utils;
 
 public class PipeLogicWood extends PipeLogic {
 
-	public static String [] excludedBlocks = new String [0];
+	public static String[] excludedBlocks = new String[0];
 
-	public void switchSource () {
+	public void switchSource() {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		int newMeta = 6;
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			Orientations o = Orientations.values() [i % 6];
+			Orientations o = Orientations.values()[i % 6];
 
 			Block block = Block.blocksList[container.getBlockId(o)];
 			TileEntity tile = container.getTile(o);
 
-			if (isInput (tile))
+			if (isInput(tile))
 				if (!isExcludedFromExtraction(block)) {
 					newMeta = o.ordinal();
 					break;
@@ -52,33 +51,36 @@ public class PipeLogicWood extends PipeLogic {
 	public boolean isInput(TileEntity tile) {
 		return !(tile instanceof TileGenericPipe)
 				&& (tile instanceof IInventory || tile instanceof ILiquidContainer)
-				&&  Utils.checkPipesConnections(container, tile);
+				&& Utils.checkPipesConnections(container, tile);
 	}
 
-	public static boolean isExcludedFromExtraction (Block block) {
+	public static boolean isExcludedFromExtraction(Block block) {
 		if (block == null)
 			return true;
 
 		for (String excluded : excludedBlocks)
-			if (excluded.equals (block.getBlockName())
-					|| excluded.equals (Integer.toString(block.blockID)))
+			if (excluded.equals(block.getBlockName())
+					|| excluded.equals(Integer.toString(block.blockID)))
 				return true;
 
 		return false;
 	}
 
-
 	@Override
-    public boolean blockActivated(EntityPlayer entityplayer) {
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)){
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer
+				.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench
+				&& ((IToolWrench) equipped).canWrench(entityplayer,
+						this.xCoord, this.yCoord, this.zCoord)) {
 			switchSource();
-			((IToolWrench)equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord,
+					this.yCoord, this.zCoord);
 			return true;
 		}
 
-        return false;
-    }
+		return false;
+	}
 
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
@@ -95,14 +97,14 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
 
 		if (!APIProxy.isClient(worldObj))
 			switchSourceIfNeeded();
 	}
 
-	private void switchSourceIfNeeded () {
+	private void switchSourceIfNeeded() {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		if (meta > 5)
@@ -116,7 +118,7 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	@Override
-	public void onNeighborBlockChange (int blockId) {
+	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
 		if (!APIProxy.isClient(worldObj))

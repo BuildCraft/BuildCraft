@@ -7,7 +7,6 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-
 package net.minecraft.src;
 
 import java.util.Date;
@@ -86,12 +85,12 @@ public class mod_BuildCraftCore extends NetworkMod {
 			initializeMarkerMatrix();
 
 			MinecraftForgeClient
-			.preloadTexture(BuildCraftCore.customBuildCraftTexture);
+					.preloadTexture(BuildCraftCore.customBuildCraftTexture);
 			MinecraftForgeClient
-			.preloadTexture(BuildCraftCore.customBuildCraftSprites);
+					.preloadTexture(BuildCraftCore.customBuildCraftSprites);
 			MinecraftForgeClient
-			.preloadTexture(BuildCraftCore.externalBuildCraftTexture);
-			
+					.preloadTexture(BuildCraftCore.externalBuildCraftTexture);
+
 			initialized = true;
 		}
 	}
@@ -116,9 +115,9 @@ public class mod_BuildCraftCore extends NetworkMod {
 	@Override
 	public void addRenderer(Map map) {
 		map.put(EntityBlock.class, new RenderEntityBlock());
-		map.put (EntityLaser.class, new RenderLaser());
-		map.put (EntityEnergyLaser.class, new RenderEnergyLaser());
-		map.put (EntityRobot.class, new RenderRobot());
+		map.put(EntityLaser.class, new RenderLaser());
+		map.put(EntityEnergyLaser.class, new RenderEnergyLaser());
+		map.put(EntityRobot.class, new RenderRobot());
 	}
 
 	@Override
@@ -143,15 +142,17 @@ public class mod_BuildCraftCore extends NetworkMod {
 			if (tile == null || !(tile instanceof IPipe))
 				legacyPipeRender(renderblocks, iblockaccess, i, j, k, block, l);
 			else
-				pipeRender(renderblocks, iblockaccess, tile.tile, (IPipe) tile, block, l);
+				pipeRender(renderblocks, iblockaccess, tile.tile, (IPipe) tile,
+						block, l);
 		} else if (block.getRenderType() == BuildCraftCore.oilModel)
 			renderblocks.renderBlockFluids(block, i, j, k);
 
 		return true;
 	}
 
-	private void pipeRender (RenderBlocks renderblocks,
-			IBlockAccess iblockaccess, TileEntity tile, IPipe pipe, Block block, int l) {
+	private void pipeRender(RenderBlocks renderblocks,
+			IBlockAccess iblockaccess, TileEntity tile, IPipe pipe,
+			Block block, int l) {
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
 
 		float minSize = Utils.pipeMinPos;
@@ -162,90 +163,111 @@ public class mod_BuildCraftCore extends NetworkMod {
 		pipe.prepareTextureFor(Orientations.Unknown);
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize,
 				maxSize);
-		renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+		renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+				tile.zCoord);
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.XNeg))) {
+		if (Utils
+				.checkPipesConnections(tile, holder.getTile(Orientations.XNeg))) {
 			pipe.prepareTextureFor(Orientations.XNeg);
 			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
 					maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.XPos))) {
+		if (Utils
+				.checkPipesConnections(tile, holder.getTile(Orientations.XPos))) {
 			pipe.prepareTextureFor(Orientations.XPos);
 			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
 					maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.YNeg))) {
+		if (Utils
+				.checkPipesConnections(tile, holder.getTile(Orientations.YNeg))) {
 			pipe.prepareTextureFor(Orientations.YNeg);
 			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
 					maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.YPos))) {
+		if (Utils
+				.checkPipesConnections(tile, holder.getTile(Orientations.YPos))) {
 			pipe.prepareTextureFor(Orientations.YPos);
 			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
 					maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZNeg))) {
+		if (Utils
+				.checkPipesConnections(tile, holder.getTile(Orientations.ZNeg))) {
 			pipe.prepareTextureFor(Orientations.ZNeg);
 			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
 					minSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZPos))) {
+		if (Utils
+				.checkPipesConnections(tile, holder.getTile(Orientations.ZPos))) {
 			pipe.prepareTextureFor(Orientations.ZPos);
-			block.setBlockBounds(minSize, minSize, maxSize, maxSize,
-					maxSize, 1.0F);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize,
+					1.0F);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		pipe.prepareTextureFor(Orientations.Unknown);
-		MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
-		
+		MinecraftForgeClient
+				.bindTexture(BuildCraftCore.customBuildCraftTexture);
+
 		if (pipe.isWired(IPipe.WireColor.Red)) {
 			pipe.setDrawingState(DrawingState.DrawingRedWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l,
-					Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, IPipe.WireColor.Red);
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block,
+					l, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos,
+					IPipe.WireColor.Red);
 		}
 
 		if (pipe.isWired(IPipe.WireColor.Blue)) {
 			pipe.setDrawingState(DrawingState.DrawingBlueWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l,
-					Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos, IPipe.WireColor.Blue);
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block,
+					l, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos,
+					IPipe.WireColor.Blue);
 		}
 
 		if (pipe.isWired(IPipe.WireColor.Green)) {
 			pipe.setDrawingState(DrawingState.DrawingGreenWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l,
-					Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMinPos, IPipe.WireColor.Green);
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block,
+					l, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMinPos,
+					IPipe.WireColor.Green);
 		}
 
 		if (pipe.isWired(IPipe.WireColor.Yellow)) {
 			pipe.setDrawingState(DrawingState.DrawingYellowWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l,
-					Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, IPipe.WireColor.Yellow);
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block,
+					l, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos,
+					IPipe.WireColor.Yellow);
 		}
 
 		if (pipe.hasInterface())
-			pipeInterfaceRender(renderblocks, iblockaccess, tile, pipe, block, l);
+			pipeInterfaceRender(renderblocks, iblockaccess, tile, pipe, block,
+					l);
 	}
 
-	private boolean isConnectedWiredPipe (IPipe pipe, TileEntity tile2, IPipe.WireColor color) {
+	private boolean isConnectedWiredPipe(IPipe pipe, TileEntity tile2,
+			IPipe.WireColor color) {
 		return pipe.isWireConnectedTo(tile2, color);
 	}
 
 	private void pipeRedstoneRender(RenderBlocks renderblocks,
-			IBlockAccess iblockaccess, TileEntity tile, IPipe pipe, Block block, int l,
-			float cx, float cy, float cz, IPipe.WireColor color) {
+			IBlockAccess iblockaccess, TileEntity tile, IPipe pipe,
+			Block block, int l, float cx, float cy, float cz,
+			IPipe.WireColor color) {
 
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
 
@@ -332,61 +354,57 @@ public class mod_BuildCraftCore extends NetworkMod {
 		// Z render
 
 		if (minZ != Utils.pipeMinPos || maxZ != Utils.pipeMaxPos || !found) {
-			block.setBlockBounds
-			(cx == Utils.pipeMinPos ? cx - 0.05F : cx,
-			 cy == Utils.pipeMinPos ? cy - 0.05F : cy,
-			 minZ,
-			 cx == Utils.pipeMinPos ? cx : cx + 0.05F,
-			 cy == Utils.pipeMinPos ? cy : cy + 0.05F,
-			 maxZ);
+			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx,
+					cy == Utils.pipeMinPos ? cy - 0.05F : cy, minZ,
+					cx == Utils.pipeMinPos ? cx : cx + 0.05F,
+					cy == Utils.pipeMinPos ? cy : cy + 0.05F, maxZ);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
 		// X render
 
 		if (minX != Utils.pipeMinPos || maxX != Utils.pipeMaxPos || !found) {
-			block.setBlockBounds
-			(minX,
-			 cy == Utils.pipeMinPos ? cy - 0.05F : cy,
-			 cz == Utils.pipeMinPos ? cz - 0.05F : cz,
-			 maxX,
-			 cy == Utils.pipeMinPos ? cy : cy + 0.05F,
-			 cz == Utils.pipeMinPos ? cz : cz + 0.05F);
+			block.setBlockBounds(minX,
+					cy == Utils.pipeMinPos ? cy - 0.05F : cy,
+					cz == Utils.pipeMinPos ? cz - 0.05F : cz, maxX,
+					cy == Utils.pipeMinPos ? cy : cy + 0.05F,
+					cz == Utils.pipeMinPos ? cz : cz + 0.05F);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
 		// Y render
 
 		if (minY != Utils.pipeMinPos || maxY != Utils.pipeMaxPos || !found) {
-			block.setBlockBounds
-			(cx == Utils.pipeMinPos ? cx - 0.05F : cx,
-			 minY,
-			 cz == Utils.pipeMinPos ? cz - 0.05F : cz,
-			 cx == Utils.pipeMinPos ? cx : cx + 0.05F,
-			 maxY,
-			 cz == Utils.pipeMinPos ? cz : cz + 0.05F);
+			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx,
+					minY, cz == Utils.pipeMinPos ? cz - 0.05F : cz,
+					cx == Utils.pipeMinPos ? cx : cx + 0.05F, maxY,
+					cz == Utils.pipeMinPos ? cz : cz + 0.05F);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
 		if (center || !found) {
-			block.setBlockBounds
-			(cx == Utils.pipeMinPos ? cx - 0.05F : cx,
-			 cy == Utils.pipeMinPos ? cy - 0.05F : cy,
-			 cz == Utils.pipeMinPos ? cz - 0.05F : cz,
-			 cx == Utils.pipeMinPos ? cx : cx + 0.05F,
-			 cy == Utils.pipeMinPos ? cy : cy + 0.05F,
-			 cz == Utils.pipeMinPos ? cz : cz + 0.05F);
+			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx,
+					cy == Utils.pipeMinPos ? cy - 0.05F : cy,
+					cz == Utils.pipeMinPos ? cz - 0.05F : cz,
+					cx == Utils.pipeMinPos ? cx : cx + 0.05F,
+					cy == Utils.pipeMinPos ? cy : cy + 0.05F,
+					cz == Utils.pipeMinPos ? cz : cz + 0.05F);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
 	}
 
-	private void pipeInterfaceRender (RenderBlocks renderblocks,
-			IBlockAccess iblockaccess, TileEntity tile, IPipe pipe, Block block, int l) {
+	private void pipeInterfaceRender(RenderBlocks renderblocks,
+			IBlockAccess iblockaccess, TileEntity tile, IPipe pipe,
+			Block block, int l) {
 
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
 
@@ -395,81 +413,62 @@ public class mod_BuildCraftCore extends NetworkMod {
 		float min = Utils.pipeMinPos + 0.05F;
 		float max = Utils.pipeMaxPos - 0.05F;
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.XNeg))) {
-			block.setBlockBounds
-			(Utils.pipeMinPos - 0.10F,
-			 min,
-			 min,
-			 Utils.pipeMinPos,
-			 max,
-			 max);
+		if (!Utils.checkPipesConnections(tile,
+				holder.getTile(Orientations.XNeg))) {
+			block.setBlockBounds(Utils.pipeMinPos - 0.10F, min, min,
+					Utils.pipeMinPos, max, max);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.XPos))) {
-			block.setBlockBounds
-			(Utils.pipeMaxPos,
-			 min,
-			 min,
-			 Utils.pipeMaxPos + 0.10F,
-			 max,
-			 max);
+		if (!Utils.checkPipesConnections(tile,
+				holder.getTile(Orientations.XPos))) {
+			block.setBlockBounds(Utils.pipeMaxPos, min, min,
+					Utils.pipeMaxPos + 0.10F, max, max);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.YNeg))) {
-			block.setBlockBounds
-			(min,
-			 Utils.pipeMinPos - 0.10F,
-			 min,
-			 max,
-			 Utils.pipeMinPos,
-			 max);
+		if (!Utils.checkPipesConnections(tile,
+				holder.getTile(Orientations.YNeg))) {
+			block.setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max,
+					Utils.pipeMinPos, max);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.YPos))) {
-			block.setBlockBounds
-			(min,
-			 Utils.pipeMaxPos,
-			 min,
-			 max,
-			 Utils.pipeMaxPos + 0.10F,
-			 max);
+		if (!Utils.checkPipesConnections(tile,
+				holder.getTile(Orientations.YPos))) {
+			block.setBlockBounds(min, Utils.pipeMaxPos, min, max,
+					Utils.pipeMaxPos + 0.10F, max);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZNeg))) {
-			block.setBlockBounds
-			(min,
-			 min,
-			 Utils.pipeMinPos - 0.10F,
-			 max,
-			 max,
-			 Utils.pipeMinPos);
+		if (!Utils.checkPipesConnections(tile,
+				holder.getTile(Orientations.ZNeg))) {
+			block.setBlockBounds(min, min, Utils.pipeMinPos - 0.10F, max, max,
+					Utils.pipeMinPos);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZPos))) {
-			block.setBlockBounds
-			(min,
-			 min,
-			 Utils.pipeMaxPos,
-			 max,
-			 max,
-			 Utils.pipeMaxPos + 0.10F);
+		if (!Utils.checkPipesConnections(tile,
+				holder.getTile(Orientations.ZPos))) {
+			block.setBlockBounds(min, min, Utils.pipeMaxPos, max, max,
+					Utils.pipeMaxPos + 0.10F);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord,
+					tile.zCoord);
 		}
 	}
 
-
-	private void legacyPipeRender (RenderBlocks renderblocks,
+	private void legacyPipeRender(RenderBlocks renderblocks,
 			IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;
@@ -480,7 +479,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 				maxSize);
 		renderblocks.renderStandardBlock(block, i, j, k);
 
-		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i - 1, j,
+				k)) {
 			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
 					Orientations.XNeg);
 			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize,
@@ -488,7 +488,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
-		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i + 1, j,
+				k)) {
 			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
 					Orientations.XPos);
 			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize,
@@ -496,7 +497,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
-		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j - 1,
+				k)) {
 			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
 					Orientations.YNeg);
 			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize,
@@ -504,7 +506,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
-		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j + 1,
+				k)) {
 			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
 					Orientations.YPos);
 			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F,
@@ -512,7 +515,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
-		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j,
+				k - 1)) {
 			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
 					Orientations.ZNeg);
 			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize,
@@ -520,11 +524,12 @@ public class mod_BuildCraftCore extends NetworkMod {
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
-		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j,
+				k + 1)) {
 			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k,
 					Orientations.ZPos);
-			block.setBlockBounds(minSize, minSize, maxSize, maxSize,
-					maxSize, 1.0F);
+			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize,
+					1.0F);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
@@ -659,8 +664,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 	}
 
-	public void renderMarkerWithMeta(IBlockAccess iblockaccess, Block block, double x, double y, double z,
-			int meta) {
+	public void renderMarkerWithMeta(IBlockAccess iblockaccess, Block block,
+			double x, double y, double z, int meta) {
 		Tessellator tessellator = Tessellator.instance;
 
 		int xCoord = (int) x;
@@ -811,8 +816,9 @@ public class mod_BuildCraftCore extends NetworkMod {
 			if (d.getTime() - lastReport > 10000) {
 				lastReport = d.getTime();
 				int bytes = ClassMapping.report();
-				System.out.println ("BuildCraft bandwidth = " + (bytes / 10) + " bytes / second");
-				System.out.println ();
+				System.out.println("BuildCraft bandwidth = " + (bytes / 10)
+						+ " bytes / second");
+				System.out.println();
 			}
 		}
 
@@ -820,25 +826,29 @@ public class mod_BuildCraftCore extends NetworkMod {
 	}
 
 	/*
-	@Override
-	public void handlePacket(Packet230ModLoader packet) {
-		switch (PacketIds.values()[packet.packetType]) {
-		case TileDescription:
-			Utils.handleDescriptionPacket(packet, ModLoader.getMinecraftInstance().theWorld);
-			break;
-		case TileUpdate:
-			Utils.handleUpdatePacket(packet,  ModLoader.getMinecraftInstance().theWorld);
-			break;
-
-		}
-	} */
+	 * @Override public void handlePacket(Packet230ModLoader packet) { switch
+	 * (PacketIds.values()[packet.packetType]) { case TileDescription:
+	 * Utils.handleDescriptionPacket(packet,
+	 * ModLoader.getMinecraftInstance().theWorld); break; case TileUpdate:
+	 * Utils.handleUpdatePacket(packet,
+	 * ModLoader.getMinecraftInstance().theWorld); break;
+	 * 
+	 * } }
+	 */
 
 	@Override
 	public void load() {
 		BuildCraftCore.load();
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 
 }

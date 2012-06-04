@@ -31,7 +31,8 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicStripes;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPowerReceptor {
+public class PipeItemsStripes extends Pipe implements IItemTravelingHook,
+		IPowerReceptor {
 
 	private PowerProvider powerProvider;
 
@@ -56,22 +57,25 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 			Orientations o = getOpenOrientation();
 
 			if (o != Orientations.Unknown) {
-				Position p = new Position (xCoord, yCoord, zCoord, o);
+				Position p = new Position(xCoord, yCoord, zCoord, o);
 				p.moveForwards(1.0);
 
-				ArrayList <ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, (int) p.x, (int) p.y, (int)p.z);
+				ArrayList<ItemStack> stacks = BuildCraftBlockUtil
+						.getItemStackFromBlock(worldObj, (int) p.x, (int) p.y,
+								(int) p.z);
 
 				if (stacks != null)
 					for (ItemStack s : stacks)
 						if (s != null) {
-							EntityPassiveItem newItem = new EntityPassiveItem(worldObj,
-									xCoord + 0.5, yCoord + Utils.getPipeFloorOf(s),
+							EntityPassiveItem newItem = new EntityPassiveItem(
+									worldObj, xCoord + 0.5, yCoord
+											+ Utils.getPipeFloorOf(s),
 									zCoord + 0.5, s);
 
 							this.container.entityEntering(newItem, o.reverse());
 						}
 
-				worldObj.setBlock((int) p.x, (int) p.y, (int)p.z, 0);
+				worldObj.setBlock((int) p.x, (int) p.y, (int) p.z, 0);
 			}
 		}
 
@@ -79,7 +83,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 
 	@Override
 	public void drop(PipeTransportItems pipe, EntityData data) {
-		Position p = new Position (xCoord, yCoord, zCoord, data.orientation);
+		Position p = new Position(xCoord, yCoord, zCoord, data.orientation);
 		p.moveForwards(1.0);
 
 		if (convertPipe(pipe, data))
@@ -89,12 +93,12 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 					(int) p.y - 1, (int) p.z, 1);
 		else if (worldObj.getBlockId((int) p.x, (int) p.y, (int) p.z) == 0)
 			data.item.item.getItem().onItemUse(data.item.item,
-					BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
-					(int) p.y - 1, (int) p.z, 1);
+					BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj,
+					(int) p.x, (int) p.y - 1, (int) p.z, 1);
 		else
 			data.item.item.getItem().onItemUse(data.item.item,
-					BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
-					(int) p.y, (int) p.z, 1);
+					BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj,
+					(int) p.x, (int) p.y, (int) p.z, 1);
 	}
 
 	@Override
@@ -103,10 +107,11 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 
 	@SuppressWarnings("unchecked")
-	public boolean convertPipe (PipeTransportItems pipe, EntityData data) {
+	public boolean convertPipe(PipeTransportItems pipe, EntityData data) {
 		if (data.item.item.getItem() instanceof ItemPipe)
 			if (!(data.item.item.itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
-				Pipe newPipe = BlockGenericPipe.createPipe(worldObj, xCoord, yCoord, zCoord, data.item.item.itemID);
+				Pipe newPipe = BlockGenericPipe.createPipe(worldObj, xCoord,
+						yCoord, zCoord, data.item.item.itemID);
 				newPipe.setTile(this.container);
 				newPipe.setWorld(worldObj);
 				this.container.pipe = newPipe;
@@ -116,7 +121,8 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 				data.item.item.stackSize--;
 
 				if (data.item.item.stackSize <= 0)
-					((PipeTransportItems) newPipe.transport).travelingEntities.remove(data.item.entityId);
+					((PipeTransportItems) newPipe.transport).travelingEntities
+							.remove(data.item.entityId);
 
 				pipe.scheduleRemoval(data.item);
 
@@ -125,7 +131,6 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 
 		return false;
 	}
-
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {

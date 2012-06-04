@@ -12,12 +12,12 @@ package net.minecraft.src.buildcraft.api;
 import java.util.LinkedList;
 
 /**
- * This interface has to be implemented by a TileEntity or a Pipe that wants to 
- * provide triggers different from the ones installed by default with 
+ * This interface has to be implemented by a TileEntity or a Pipe that wants to
+ * provide triggers different from the ones installed by default with
  * BuildCraft.
  */
 public interface IOverrideDefaultTriggers {
 
-	public abstract LinkedList <Trigger> getTriggers ();
-	
+	public abstract LinkedList<Trigger> getTriggers();
+
 }

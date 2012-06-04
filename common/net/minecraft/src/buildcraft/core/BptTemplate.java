@@ -15,18 +15,16 @@ import java.io.IOException;
 
 public class BptTemplate extends BptBase {
 
-
-	public BptTemplate () {
+	public BptTemplate() {
 	}
 
-
-	public BptTemplate (int sizeX, int sizeY, int sizeZ) {
-		super (sizeX, sizeY, sizeZ);
+	public BptTemplate(int sizeX, int sizeY, int sizeZ) {
+		super(sizeX, sizeY, sizeZ);
 	}
 
 	@Override
 	public void saveAttributes(BufferedWriter writer) throws IOException {
-		writer.write ("mask:");
+		writer.write("mask:");
 
 		boolean first = true;
 
