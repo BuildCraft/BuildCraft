@@ -13,13 +13,19 @@ import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.core.ItemBlockBuildCraft;
 
-public class ItemEngine extends ItemBlockBuildCraft
-{
+public class ItemEngine extends ItemBlockBuildCraft {
 
     public ItemEngine(int i) {
         super(i, "engine");
+        setMaxDamage(0);
+        setHasSubtypes(true);
     }
 
+    @Override
+    public int getMetadata(int i) {
+        return i;
+    }
+    
     @SuppressWarnings({ "all" })
     public String getItemNameIS(ItemStack itemstack) {
     	if (itemstack.getItemDamage() == 0) {
