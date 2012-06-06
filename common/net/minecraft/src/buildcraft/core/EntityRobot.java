@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.core;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,9 +78,8 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		motionZ = 0;
 
 		setPosition(destX, destY, destZ);
-		
+
 		laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
-		laser.hidden = true;
 		worldObj.spawnEntityInWorld(laser);
 	}
 
@@ -129,20 +129,20 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	protected void move() {
-		
-		setPosition(posX + motionX, 
-				posY + motionY, 
-				posZ + motionZ);
-		
+
+		//System.out.println("move: " + new Position(motionX, motionY, motionZ));
+		setPosition(posX + motionX, posY + motionY, posZ + motionZ);
+
 		if (APIProxy.isClient(worldObj))
 			return;
+
+		if (reachedDesination()) {
+
+			BlockIndex newDesination = getNewDesination();
+			if (newDesination != null) {
+				setDestination(newDesination.i, newDesination.j, newDesination.k);
+			}
 		
-		if (!reachedDesination())
-			return;
-		
-		BlockIndex newDesination = getNewDesination();
-		if (newDesination != null) {
-			setDestination(newDesination.i, newDesination.j, newDesination.k);
 		}
 
 	}
@@ -159,8 +159,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
 
-			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj))
-					&& movementBoundary.contains(blockIndex)) {
+			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj)) && movementBoundary.contains(blockIndex)) {
 				potentialDestinations.add(blockIndex);
 			}
 		}
@@ -181,9 +180,11 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		destZ = z;
 
 		// TODO: apply power modifier
-		motionX = (destX - posX) / 75 * 1;
-		motionY = (destY - posY) / 75 * 1;
-		motionZ = (destZ - posZ) / 75 * 1;
+		motionX = new BigDecimal((float) (destX - posX) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		motionY = new BigDecimal((float) (destY - posY) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		motionZ = new BigDecimal((float) (destZ - posZ) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		
+		//System.out.println("setDest: " + new Position(motionX, motionY, motionZ));
 	}
 
 	protected boolean reachedDesination() {
@@ -197,8 +198,8 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	protected void build() {
 
 		updateWait();
-		
-		//TODO: possible rewrite
+
+		// TODO: possible rewrite
 		if (targets.size() > 0) {
 
 			Action a = targets.getFirst();
@@ -210,17 +211,14 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 					if (target.mode == Mode.ClearIfInvalid) {
 
 						if (!target.isValid(a.context))
-							worldObj.setBlockAndMetadataWithNotify(target.x,
-									target.y, target.z, 0, 0);
+							worldObj.setBlockAndMetadataWithNotify(target.x, target.y, target.z, 0, 0);
 
 					} else if (target.stackToUse != null) {
 
-						worldObj.setBlockWithNotify(target.x, target.y,
-								target.z, 0);
-						target.stackToUse.getItem().onItemUse(
-								target.stackToUse,
-								BuildCraftAPI.getBuildCraftPlayer(worldObj),
-								worldObj, target.x, target.y - 1, target.z, 1);
+						worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
+						target.stackToUse.getItem().onItemUse(target.stackToUse,
+								BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
+								target.z, 1);
 					} else {
 
 						try {
@@ -228,7 +226,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							ModLoader.getLogger().throwing("EntityRobot",
+							ModLoader.getLogger().throwing("EntityRobot", "update", t);
 									"update", t);
 						}
 					}
@@ -240,8 +238,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 				a.builder.postProcessing(worldObj);
 				targets.pop();
 			}
-		} else
-			laser.hidden = true;
+		}
 	}
 
 	public void updateWait() {
@@ -254,19 +251,24 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	private void updateLaser() {
-
-		BptSlotInfo target = null;
-
+		
+		if (APIProxy.isClient(worldObj)) {
+			return;
+		}
+		
 		if (targets.size() > 0) {
+			
 			Action a = targets.getFirst();
-			target = a.slot;
+			BptSlotInfo target = a.slot;
+
+			laser.setPositions(new Position(posX, posY, posZ),
+								new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
+		}
+		else {
+			//laser.hide();
 		}
 
-		if (target != null)
-			laser.setPositions (new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
-		else
-			laser.hidden = true;
-
+		laser.updateGraphicData();
 		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
 	}
 
@@ -274,7 +276,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 		if (slot != null) {
 			targets.add(new Action(slot, context));
-			laser.hidden = false;
+			laser.show();
 		}
 	}
 

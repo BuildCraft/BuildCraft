@@ -20,14 +20,13 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.forge.ISpawnHandler;
 
 public class EntityLaser extends Entity implements ISpawnHandler {
-
+	
 	protected Position head, tail;
 
-	public boolean hidden = false;
-	public double renderSize = 0;
-	public double angleY = 0;
-	public double angleZ = 0;
-	public String texture;
+	protected double renderSize = 0;
+	protected double angleY = 0;
+	protected double angleZ = 0;
+	protected String texture;
 
 	public EntityLaser(World world) {
 
@@ -53,12 +52,14 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		setPosition(head.x, head.y, head.z);
 		setSize(10, 10);
 
-		dataWatcher.addObject(8 , Integer.valueOf((int) head.x * 8000));
-		dataWatcher.addObject(9 , Integer.valueOf((int) head.y * 8000));
-		dataWatcher.addObject(10, Integer.valueOf((int) head.z * 8000));
-		dataWatcher.addObject(11, Integer.valueOf((int) tail.x * 8000));
-		dataWatcher.addObject(12, Integer.valueOf((int) tail.y * 8000));
-		dataWatcher.addObject(13, Integer.valueOf((int) tail.z * 8000));
+		dataWatcher.addObject(8 , Integer.valueOf((int) head.x * 10000));
+		dataWatcher.addObject(9 , Integer.valueOf((int) head.y * 10000));
+		dataWatcher.addObject(10, Integer.valueOf((int) head.z * 10000));
+		dataWatcher.addObject(11, Integer.valueOf((int) tail.x * 10000));
+		dataWatcher.addObject(12, Integer.valueOf((int) tail.y * 10000));
+		dataWatcher.addObject(13, Integer.valueOf((int) tail.z * 10000));
+		
+		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
 		
 		updateGraphicData();
 	}
@@ -83,9 +84,11 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	public void setPositions(Position head, Position tail) {
-
+		
 		this.head = head;
 		this.tail = tail;
+		
+		setPosition(head.x, head.y, head.z);
 		
 		dataWatcher.updateObject(8 , Integer.valueOf((int) head.x * 10000));
 		dataWatcher.updateObject(9 , Integer.valueOf((int) head.y * 10000));
@@ -110,7 +113,9 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		if (head == null || tail == null)
 			return;
 		
-		//updatePositions();
+		updatePositions();
+		
+		//System.out.println(head + " " + tail);
 		
 		boundingBox.minX = Math.min(head.x, tail.x);
 		boundingBox.minY = Math.min(head.y, tail.y);
@@ -148,12 +153,24 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		tail.y = dataWatcher.getWatchableObjectInt(12) / 10000D;
 		tail.z = dataWatcher.getWatchableObjectInt(13) / 10000D;
 	}
+	
+	public void show() {
+		System.out.println("showing");
+		dataWatcher.updateObject(14, Byte.valueOf((byte) 1));
+		System.out.println(isVisible());
+	}
+	
+	public void hide() {
+	}
+	
+	public boolean isVisible() {
+		return dataWatcher.getWatchableObjectByte(14) == 0 ? false : true;
+	}
 
 	public void setTexture(String texture) {
 		this.texture = texture;
 	}
 
-	@Override
 	public String getTexture() {
 		return texture;
 	}
@@ -171,5 +188,4 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
-
 }

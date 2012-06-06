@@ -147,13 +147,10 @@ public class BuildCraftCore {
 	public static void load() {
 
 		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
-
-		// MinecraftForge.registerEntity(EntityBlock.class,
-		// mod_BuildCraftCore.instance, EntityIds.BLOCK, 64, 10, true);
-		MinecraftForge.registerEntity(EntityRobot.class,
-				mod_BuildCraftCore.instance, EntityIds.ROBOT, 64, 3, true);
-		MinecraftForge.registerEntity(EntityLaser.class,
-				mod_BuildCraftCore.instance, EntityIds.LASER, 64, 10, false);
+		
+		//MinecraftForge.registerEntity(EntityBlock.class, mod_BuildCraftCore.instance, EntityIds.BLOCK, 64, 10, true);
+		MinecraftForge.registerEntity(EntityRobot.class, mod_BuildCraftCore.instance, EntityIds.ROBOT, 64, 3, true);
+		MinecraftForge.registerEntity(EntityLaser.class, mod_BuildCraftCore.instance, EntityIds.LASER, 64, 1, true);
 	}
 
 	public static void initialize() {
