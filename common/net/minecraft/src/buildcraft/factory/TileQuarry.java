@@ -120,7 +120,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 				yCoord + bluePrintBuilder.bluePrint.sizeY - 1
 						+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,
 				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
-				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2);
+				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2, this);
 
 		arm.listener = this;
 		loadArm = true;
@@ -456,8 +456,9 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 	}
 
 	@Override
-	public void invalidate() {
-		destroy();
+	public void invalidate () {		
+		System.out.println("hi");
+		destroy ();
 	}
 
 	@Override
