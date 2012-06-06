@@ -17,10 +17,10 @@ public class ContainerHopper extends BuildCraftContainer {
 		hopper = tile;
 
 		// Adding hopper inventory
-		addSlot(new Slot(tile, 3, 62, 18));
-		addSlot(new Slot(tile, 2, 80, 18));
-		addSlot(new Slot(tile, 1, 98, 18));
-		addSlot(new Slot(tile, 0, 80, 36));
+		addSlot(new Slot(tile, 0, 62, 18));
+		addSlot(new Slot(tile, 1, 80, 18));
+		addSlot(new Slot(tile, 2, 98, 18));
+		addSlot(new Slot(tile, 3, 80, 36));
 
 		// Player inventory
 		for (int i1 = 0; i1 < 3; i1++)
