@@ -472,7 +472,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		} else {
 			GL11.glTranslatef(0, 0.10F, 0); // BC SPECIFIC
 
-			if (itemstack.getItem().func_46058_c()) {
+			if (itemstack.getItem().requiresMultipleRenderPasses()) {
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 				this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png",
 						Item.itemsList[itemstack.itemID]));
