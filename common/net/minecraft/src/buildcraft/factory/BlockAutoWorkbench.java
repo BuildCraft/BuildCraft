@@ -20,13 +20,13 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftFactory;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.core.BlockBuildCraft;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.IItemPipe;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockAutoWorkbench extends BlockContainer implements
-		ITextureProvider {
+public class BlockAutoWorkbench extends BlockBuildCraft {
 
 	int topTexture;
 	int sideTexture;
@@ -72,18 +72,6 @@ public class BlockAutoWorkbench extends BlockContainer implements
 	@Override
 	public TileEntity getBlockEntity() {
 		return new TileAutoWorkbench();
-	}
-
-	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		Utils.preDestroyBlock(world, i, j, k);
-
-		super.onBlockRemoval(world, i, j, k);
-	}
-
-	@Override
-	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
