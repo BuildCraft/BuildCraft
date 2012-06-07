@@ -227,7 +227,6 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
 							ModLoader.getLogger().throwing("EntityRobot", "update", t);
-									"update", t);
 						}
 					}
 

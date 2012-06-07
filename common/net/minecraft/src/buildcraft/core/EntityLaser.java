@@ -184,8 +184,5 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-	}
-
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 }
