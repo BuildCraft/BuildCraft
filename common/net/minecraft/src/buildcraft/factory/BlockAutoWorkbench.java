@@ -26,7 +26,7 @@ import net.minecraft.src.buildcraft.core.IItemPipe;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockAutoWorkbench extends BlockContainer implements ITextureProvider {
+public class BlockAutoWorkbench extends BlockBuildCraft {
 
 	int topTexture;
 	int sideTexture;
