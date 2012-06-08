@@ -116,14 +116,6 @@ public class BuildCraftCore {
 	public static Action actionOff = new ActionMachineControl(DefaultProps.ACTION_OFF, Mode.Off);
 	public static Action actionLoop = new ActionMachineControl(DefaultProps.ACTION_LOOP, Mode.Loop);
 
-	public static String customBuildCraftTexture = "/net/minecraft/src/buildcraft/core/gui/block_textures.png";
-
-	public static String externalBuildCraftTexture = "/net/minecraft/src/buildcraft/core/gui/external-textures.png";
-
-	public static String customBuildCraftSprites = "/net/minecraft/src/buildcraft/core/gui/item_textures.png";
-
-	public static String triggerTextures = "/net/minecraft/src/buildcraft/core/gui/trigger_textures.png";
-
 	public static LinkedList<AssemblyRecipe> assemblyRecipes = new LinkedList<AssemblyRecipe>();
 
 	public static boolean loadDefaultRecipes = true;

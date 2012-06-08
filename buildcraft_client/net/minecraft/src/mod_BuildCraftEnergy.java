@@ -34,11 +34,11 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 		BuildCraftEnergy.initialize();
 
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(
-				"/net/minecraft/src/buildcraft/energy/gui/base_wood.png"));
+				DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"));
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(
-				"/net/minecraft/src/buildcraft/energy/gui/base_stone.png"));
+				DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png"));
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(
-				"/net/minecraft/src/buildcraft/energy/gui/base_iron.png"));
+				DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png"));
 
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureFuelFX());

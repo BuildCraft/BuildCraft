@@ -32,7 +32,7 @@ public class RenderRobot extends Render {
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 		GL11.glTranslated(x, y, z);
 
-		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/core/gui/robot.png");
+		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/robot.png");
 
 		float factor = (float) (1.0 / 16.0);
 

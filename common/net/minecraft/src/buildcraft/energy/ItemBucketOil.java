@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -29,7 +30,7 @@ public class ItemBucketOil extends ItemBucket implements ITextureProvider {
 
 	@Override
 	public String getTextureFile() {
-		return "/net/minecraft/src/buildcraft/core/gui/item_textures.png";
+		return DefaultProps.TEXTURE_ITEMS;
 	}
 
 }

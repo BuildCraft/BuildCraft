@@ -21,6 +21,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftBuilders;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -33,7 +34,7 @@ public class BlockBlueprintLibrary extends BlockContainer implements ITexturePro
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override

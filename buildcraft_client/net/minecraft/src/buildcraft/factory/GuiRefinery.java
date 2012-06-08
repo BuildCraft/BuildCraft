@@ -13,6 +13,7 @@ import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.RefineryRecipe;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
@@ -50,7 +51,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/factory/gui/refinery_filter.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/refinery_filter.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;

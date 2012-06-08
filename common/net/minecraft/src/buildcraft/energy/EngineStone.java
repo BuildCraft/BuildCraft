@@ -16,6 +16,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class EngineStone extends Engine {
@@ -32,7 +33,7 @@ public class EngineStone extends Engine {
 
 	@Override
 	public String getTextureFile() {
-		return "/net/minecraft/src/buildcraft/energy/gui/base_stone.png";
+		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png";
 	}
 
 	@Override

@@ -86,7 +86,7 @@ public class RenderEntityBlock extends Render {
 					GL11.glRotatef(entity.rotationZ, 0, 0, 1);
 					GL11.glTranslatef(iBase, jBase, kBase);
 
-					MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
+					MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
 
 					int lightX, lightY, lightZ;
 

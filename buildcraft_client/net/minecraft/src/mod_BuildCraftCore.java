@@ -85,9 +85,9 @@ public class mod_BuildCraftCore extends NetworkMod {
 		if (!initialized) {
 			initializeMarkerMatrix();
 
-			MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftTexture);
-			MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftSprites);
-			MinecraftForgeClient.preloadTexture(BuildCraftCore.externalBuildCraftTexture);
+			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
+			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
+			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_EXTERNAL);
 
 			initialized = true;
 		}
@@ -195,7 +195,7 @@ public class mod_BuildCraftCore extends NetworkMod {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		pipe.prepareTextureFor(Orientations.Unknown);
-		MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
+		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
 
 		if (pipe.isWired(IPipe.WireColor.Red)) {
 			pipe.setDrawingState(DrawingState.DrawingRedWire);

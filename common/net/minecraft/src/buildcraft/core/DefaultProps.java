@@ -17,7 +17,15 @@ public class DefaultProps {
 	public static String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 128;
 
-	public static String TEXTURE_ICONS = "/net/minecraft/src/buildcraft/core/gui/icons.png";
+	public static String TEXTURE_PATH_GUI = "/gfx/buildcraft/gui";
+	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";
+	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entitites";
+	
+	public static String TEXTURE_BLOCKS = TEXTURE_PATH_BLOCKS + "/blocks.png";
+	public static String TEXTURE_EXTERNAL = TEXTURE_PATH_BLOCKS + "/external.png";
+	public static String TEXTURE_ITEMS = "/gfx/buildcraft/items/items.png";
+	public static String TEXTURE_ICONS = TEXTURE_PATH_GUI + "/icons.png";
+	public static String TEXTURE_TRIGGERS = TEXTURE_PATH_GUI + "/triggers.png";
 
 	public static int WOODEN_GEAR_ID = 3800;
 	public static int STONE_GEAR_ID = 3801;

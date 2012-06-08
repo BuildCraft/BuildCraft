@@ -13,6 +13,7 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class TriggerEngineHeat extends Trigger {
 
@@ -65,6 +66,6 @@ public class TriggerEngineHeat extends Trigger {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

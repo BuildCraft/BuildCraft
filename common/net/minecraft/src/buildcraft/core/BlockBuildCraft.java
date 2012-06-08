@@ -30,7 +30,7 @@ public abstract class BlockBuildCraft extends BlockContainer implements ITexture
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 }

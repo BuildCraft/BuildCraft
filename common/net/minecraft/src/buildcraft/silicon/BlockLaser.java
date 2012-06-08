@@ -19,6 +19,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockLaser extends BlockContainer implements ITextureProvider {
@@ -54,7 +55,7 @@ public class BlockLaser extends BlockContainer implements ITextureProvider {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override

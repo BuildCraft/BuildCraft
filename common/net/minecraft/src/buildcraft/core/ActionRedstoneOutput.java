@@ -30,6 +30,6 @@ public class ActionRedstoneOutput extends Action {
 
 	@Override
 	public String getTexture() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

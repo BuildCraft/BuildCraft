@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.Action;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class ActionEnergyPulser extends Action {
 
@@ -16,7 +17,7 @@ public class ActionEnergyPulser extends Action {
 
 	@Override
 	public String getTexture() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 
 	@Override

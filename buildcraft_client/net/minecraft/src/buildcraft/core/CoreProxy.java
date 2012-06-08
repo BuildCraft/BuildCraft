@@ -99,10 +99,10 @@ public class CoreProxy {
 			char[] map = new char[256];
 			// every slot is free!
 			Arrays.fill(map, '1');
-			SpriteHelper.registerSpriteMapForFile(BuildCraftCore.externalBuildCraftTexture, new String(map));
+			SpriteHelper.registerSpriteMapForFile(DefaultProps.TEXTURE_EXTERNAL, new String(map));
 			registeredOverrideTextureMap = true;
 		}
-		return ModLoader.addOverride(BuildCraftCore.externalBuildCraftTexture, pathToTexture) + 256;
+		return ModLoader.addOverride(DefaultProps.TEXTURE_EXTERNAL, pathToTexture) + 256;
 	}
 
 	public static long getHash(IBlockAccess iBlockAccess) {

@@ -19,6 +19,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -74,7 +75,7 @@ public class BlockMiningWell extends BlockMachineRoot implements ITextureProvide
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

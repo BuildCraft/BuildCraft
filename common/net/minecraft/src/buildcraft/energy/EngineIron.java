@@ -17,6 +17,7 @@ import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 
 public class EngineIron extends Engine {
@@ -47,7 +48,7 @@ public class EngineIron extends Engine {
 
 	@Override
 	public String getTextureFile() {
-		return "/net/minecraft/src/buildcraft/energy/gui/base_iron.png";
+		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png";
 	}
 
 	@Override

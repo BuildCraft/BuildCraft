@@ -20,6 +20,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -65,7 +66,7 @@ public class BlockPlainPipe extends Block implements ILegacyPipeConnection, IBlo
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	public float getHeightInPipe() {

@@ -18,6 +18,7 @@ import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.liquids.ILiquid;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILiquid {
@@ -37,7 +38,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	private void func_30003_j(World world, int i, int j, int k) {

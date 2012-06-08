@@ -34,6 +34,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -212,7 +213,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override
@@ -417,15 +418,15 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(iblockaccess, i, j, k);
 		if (!isValid(pipe)) {
-			CoreProxy.BindTexture(BuildCraftCore.customBuildCraftTexture);
+			CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
 			return 0;
 		}
 		int pipeTexture = pipe.getPipeTexture();
 		if (pipeTexture > 255) {
-			CoreProxy.BindTexture(BuildCraftCore.externalBuildCraftTexture);
+			CoreProxy.BindTexture(DefaultProps.TEXTURE_EXTERNAL);
 			return pipeTexture - 256;
 		}
-		CoreProxy.BindTexture(BuildCraftCore.customBuildCraftTexture);
+		CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
 		return pipeTexture;
 	}
 

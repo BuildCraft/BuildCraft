@@ -15,6 +15,7 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IItemPipe;
 import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 
@@ -68,9 +69,9 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	@Override
 	public String getTextureFile() {
 		if (getTextureIndex() > 255) {
-			return BuildCraftCore.externalBuildCraftTexture;
+			return DefaultProps.TEXTURE_EXTERNAL;
 		}
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	public int getTextureIndex() {

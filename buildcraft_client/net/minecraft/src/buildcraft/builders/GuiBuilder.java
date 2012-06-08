@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
@@ -60,10 +61,10 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		int realXSize = 0;
 
 		if (builder.isBuildingBlueprint()) {
-			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder_blueprint.png");
+			i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");
 			realXSize = 256;
 		} else {
-			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder.png");
+			i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/builder.png");
 			realXSize = 176;
 		}
 

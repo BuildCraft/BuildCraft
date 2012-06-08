@@ -15,6 +15,7 @@ import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.liquids.ILiquid;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockOilStill extends BlockStationary implements ITextureProvider, ILiquid {
@@ -31,7 +32,7 @@ public class BlockOilStill extends BlockStationary implements ITextureProvider, 
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override

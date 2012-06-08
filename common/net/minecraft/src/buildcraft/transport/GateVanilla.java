@@ -14,6 +14,7 @@ import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -307,13 +308,13 @@ public class GateVanilla extends Gate {
 	@Override
 	public String getGuiFile() {
 		if (kind == GateKind.Single)
-			return "/net/minecraft/src/buildcraft/transport/gui/gate_interface_1.png";
+			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_1.png";
 		else if (kind == GateKind.AND_2 || kind == GateKind.OR_2)
-			return "/net/minecraft/src/buildcraft/transport/gui/gate_interface_2.png";
+			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_2.png";
 		else if (kind == GateKind.AND_3 || kind == GateKind.OR_3)
-			return "/net/minecraft/src/buildcraft/transport/gui/gate_interface_3.png";
+			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_3.png";
 		else
-			return "/net/minecraft/src/buildcraft/transport/gui/gate_interface_4.png";
+			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_4.png";
 	}
 
 }

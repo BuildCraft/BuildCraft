@@ -16,6 +16,7 @@ import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;
 import net.minecraft.src.forge.MinecraftForgeClient;
@@ -153,7 +154,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/energy/gui/chamber.png");
+		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
 
 		float chamberf = 2F / 16F;
 
@@ -169,16 +170,16 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		switch (energy) {
 		case Blue:
-			texture = "/net/minecraft/src/buildcraft/energy/gui/trunk_blue.png";
+			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png";
 			break;
 		case Green:
-			texture = "/net/minecraft/src/buildcraft/energy/gui/trunk_green.png";
+			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png";
 			break;
 		case Yellow:
-			texture = "/net/minecraft/src/buildcraft/energy/gui/trunk_yellow.png";
+			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png";
 			break;
 		default:
-			texture = "/net/minecraft/src/buildcraft/energy/gui/trunk_red.png";
+			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png";
 			break;
 		}
 

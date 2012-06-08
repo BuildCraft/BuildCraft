@@ -189,7 +189,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		}
 
 		protected void drawBackground(int x, int y) {
-			int texture = mc.renderEngine.getTexture("/gfx/gui/ledger.png");
+			int texture = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 
 			float colorR = (overlayColor >> 16 & 255) / 255.0F;
 			float colorG = (overlayColor >> 8 & 255) / 255.0F;

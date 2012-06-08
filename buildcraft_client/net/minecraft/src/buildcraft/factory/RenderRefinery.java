@@ -19,6 +19,7 @@ import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
@@ -172,7 +173,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		GL11.glRotatef(angle, 0, 1, 0);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/factory/gui/refinery.png");
+		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		tank.render(factor);
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);

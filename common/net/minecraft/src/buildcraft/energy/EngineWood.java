@@ -9,6 +9,8 @@
 
 package net.minecraft.src.buildcraft.energy;
 
+import net.minecraft.src.buildcraft.core.DefaultProps;
+
 public class EngineWood extends Engine {
 
 	public EngineWood(TileEngine engine) {
@@ -19,7 +21,7 @@ public class EngineWood extends Engine {
 
 	@Override
 	public String getTextureFile() {
-		return "/net/minecraft/src/buildcraft/energy/gui/base_wood.png";
+		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png";
 	}
 
 	@Override

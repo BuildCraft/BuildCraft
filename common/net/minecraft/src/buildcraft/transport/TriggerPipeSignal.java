@@ -13,6 +13,7 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 
@@ -97,6 +98,6 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

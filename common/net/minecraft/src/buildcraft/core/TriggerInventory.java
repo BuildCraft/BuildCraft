@@ -114,6 +114,6 @@ public class TriggerInventory extends Trigger {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

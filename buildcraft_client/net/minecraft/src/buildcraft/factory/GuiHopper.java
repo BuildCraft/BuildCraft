@@ -2,6 +2,7 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 import org.lwjgl.opengl.GL11;
 
@@ -14,7 +15,7 @@ public class GuiHopper extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/factory/gui/hopper_gui.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/hopper_gui.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;

@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.IInventory;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
@@ -42,7 +43,7 @@ public class GuiFiller extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
-		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/filler.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 

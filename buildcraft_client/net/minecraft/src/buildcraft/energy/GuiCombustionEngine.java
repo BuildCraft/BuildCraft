@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.Block;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.forge.ITextureProvider;
 import net.minecraft.src.forge.MinecraftForgeClient;
@@ -34,7 +35,7 @@ public class GuiCombustionEngine extends GuiEngine {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/energy/gui/combustion_engine_gui.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
@@ -94,7 +95,7 @@ public class GuiCombustionEngine extends GuiEngine {
 				break;
 		}
 
-		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/energy/gui/combustion_engine_gui.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 
 		mc.renderEngine.bindTexture(i);
 		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);

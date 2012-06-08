@@ -13,6 +13,7 @@ import java.util.Date;
 
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
@@ -46,7 +47,7 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/template_gui.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;

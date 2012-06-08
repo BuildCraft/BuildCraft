@@ -28,6 +28,7 @@ import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -237,7 +238,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
+		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 

@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.energy;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.RenderEngine;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 import org.lwjgl.opengl.GL11;
 
@@ -38,7 +39,7 @@ public class TextureOilFlowFX extends FMLTextureFX {
 
 	@Override
 	public void bindImage(RenderEngine renderengine) {
-		GL11.glBindTexture(3553, renderengine.getTexture(BuildCraftCore.customBuildCraftTexture));
+		GL11.glBindTexture(3553, renderengine.getTexture(DefaultProps.TEXTURE_BLOCKS));
 	}
 
 	@Override

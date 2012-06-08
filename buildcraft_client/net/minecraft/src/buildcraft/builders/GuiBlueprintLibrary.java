@@ -15,6 +15,7 @@ import net.minecraft.src.GuiButton;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BptBase;
 import net.minecraft.src.buildcraft.core.BptPlayerIndex;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
@@ -105,7 +106,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		int i = 0;
 		// if (library.owner.equals(player.username)) {
-		i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/library_rw.png");
+		i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
 		// } else {
 		// i = mc.renderEngine
 		// .getTexture("/net/minecraft/src/buildcraft/builders/gui/library_r.png");

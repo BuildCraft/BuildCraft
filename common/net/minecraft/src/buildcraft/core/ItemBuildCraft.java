@@ -28,7 +28,7 @@ public class ItemBuildCraft extends Item implements ITextureProvider {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftSprites;
+		return DefaultProps.TEXTURE_ITEMS;
 	}
 
 }

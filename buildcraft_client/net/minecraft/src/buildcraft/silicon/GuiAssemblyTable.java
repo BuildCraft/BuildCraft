@@ -17,6 +17,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.network.PacketCoordinates;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
@@ -71,7 +72,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		updateRecipes();
 
 		// Request current selection from server
-		CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
+		if(APIProxy.isRemote())
+			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
 				assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
 	}
 
@@ -97,7 +99,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/factory/gui/assembly_table.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int cornerX = (width - xSize) / 2;
