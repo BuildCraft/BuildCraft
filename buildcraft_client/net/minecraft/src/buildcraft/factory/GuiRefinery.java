@@ -43,16 +43,14 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString("->", 63, 59, 0x404040);
 		fontRenderer.drawString("<-", 106, 59, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
-				(ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
 		drawForegroundSelection();
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine
-				.getTexture("/net/minecraft/src/buildcraft/factory/gui/refinery_filter.png");
+		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/factory/gui/refinery_filter.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
@@ -78,9 +76,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			slot = slots[position];
 
 		if (slot != null) {
-			int liquidId = BuildCraftAPI
-					.getLiquidForFilledItem(mc.thePlayer.inventory
-							.getItemStack());
+			int liquidId = BuildCraftAPI.getLiquidForFilledItem(mc.thePlayer.inventory.getItemStack());
 
 			container.setFilter(position, liquidId, 0);
 		}
@@ -102,8 +98,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		if (filter1 != null)
 			liquid1Id = filter1.itemID;
 
-		RefineryRecipe recipe = BuildCraftAPI.findRefineryRecipe(liquid0Id,
-				BuildCraftAPI.BUCKET_VOLUME, liquid1Id,
+		RefineryRecipe recipe = BuildCraftAPI.findRefineryRecipe(liquid0Id, BuildCraftAPI.BUCKET_VOLUME, liquid1Id,
 				BuildCraftAPI.BUCKET_VOLUME);
 
 		if (recipe != null)

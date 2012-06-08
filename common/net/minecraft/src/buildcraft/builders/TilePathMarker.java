@@ -41,8 +41,7 @@ public class TilePathMarker extends TileMarker {
 
 	public void createLaserAndConnect(TilePathMarker pathMarker) {
 		EntityLaser laser = new EntityLaser(worldObj);
-		laser.setPositions(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5,
-				pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5,
+		laser.setPositions(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5,
 				pathMarker.zCoord + 0.5);
 		laser.setTexture("/net/minecraft/src/buildcraft/core/gui/laser_1.png");
 		worldObj.spawnEntityInWorld(laser);
@@ -60,8 +59,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (currentWorldIterator == null) {
-			currentWorldIterator = new WorldIteratorRadius(worldObj, xCoord,
-					yCoord, zCoord, searchSize);
+			currentWorldIterator = new WorldIteratorRadius(worldObj, xCoord, yCoord, zCoord, searchSize);
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
@@ -96,8 +94,7 @@ public class TilePathMarker extends TileMarker {
 				if (tile instanceof TilePathMarker) {
 					TilePathMarker pathMarker = (TilePathMarker) tile;
 
-					if (!pathMarker.isFullyConnected()
-							&& !isLinkedTo(pathMarker)) {
+					if (!pathMarker.isFullyConnected() && !isLinkedTo(pathMarker)) {
 						createLaserAndConnect(pathMarker);
 
 						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
@@ -116,20 +113,17 @@ public class TilePathMarker extends TileMarker {
 		TilePathMarker nextTile = this;
 
 		while (nextTile != null) {
-			BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord,
-					nextTile.zCoord);
+			BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
 
 			visitedPaths.add(b);
 			res.add(b);
 
 			if (nextTile.links[0] != null
-					&& !visitedPaths.contains(new BlockIndex(
-							nextTile.links[0].xCoord, nextTile.links[0].yCoord,
+					&& !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord,
 							nextTile.links[0].zCoord))) {
 				nextTile = nextTile.links[0];
 			} else if (nextTile.links[1] != null
-					&& !visitedPaths.contains(new BlockIndex(
-							nextTile.links[1].xCoord, nextTile.links[1].yCoord,
+					&& !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord,
 							nextTile.links[1].zCoord))) {
 				nextTile = nextTile.links[1];
 			} else {
@@ -166,8 +160,7 @@ public class TilePathMarker extends TileMarker {
 		if (loadLink0) {
 			TileEntity e0 = worldObj.getBlockTileEntity(x0, y0, z0);
 
-			if (links[0] != e0 && links[1] != e0
-					&& e0 instanceof TilePathMarker) {
+			if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e0);
 			}
 
@@ -177,8 +170,7 @@ public class TilePathMarker extends TileMarker {
 		if (loadLink1) {
 			TileEntity e1 = worldObj.getBlockTileEntity(x1, y1, z1);
 
-			if (links[0] != e1 && links[1] != e1
-					&& e1 instanceof TilePathMarker) {
+			if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e1);
 			}
 

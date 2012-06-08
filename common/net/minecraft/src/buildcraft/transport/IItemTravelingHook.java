@@ -8,7 +8,6 @@ public interface IItemTravelingHook {
 
 	public void centerReached(PipeTransportItems pipe, EntityData data);
 
-	public void endReached(PipeTransportItems pipe, EntityData data,
-			TileEntity tile);
+	public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile);
 
 }

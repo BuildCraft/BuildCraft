@@ -22,8 +22,7 @@ import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
-public abstract class TileBuildCraft extends TileEntity implements
-		ISynchronizedTile {
+public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
@@ -37,12 +36,10 @@ public abstract class TileBuildCraft extends TileEntity implements
 
 	public TileBuildCraft() {
 		if (!updateWrappers.containsKey(this.getClass()))
-			updateWrappers.put(this.getClass(),
-					new TilePacketWrapper(this.getClass()));
+			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
 
 		if (!descriptionWrappers.containsKey(this.getClass()))
-			descriptionWrappers.put(this.getClass(),
-					new TilePacketWrapper(this.getClass()));
+			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
 
 		updatePacket = updateWrappers.get(this.getClass());
 		descriptionPacket = descriptionWrappers.get(this.getClass());
@@ -73,10 +70,8 @@ public abstract class TileBuildCraft extends TileEntity implements
 
 	public void sendNetworkUpdate() {
 		if (this instanceof ISynchronizedTile)
-			CoreProxy.sendToPlayers(
-					((ISynchronizedTile) this).getUpdatePacket(), worldObj,
-					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
-					mod_BuildCraftCore.instance);
+			CoreProxy.sendToPlayers(((ISynchronizedTile) this).getUpdatePacket(), worldObj, xCoord, yCoord, zCoord,
+					DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
 	}
 
 	@Override

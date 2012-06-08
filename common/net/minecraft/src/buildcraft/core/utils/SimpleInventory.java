@@ -79,20 +79,17 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public void openChest() {
-	}
+	public void openChest() {}
 
 	@Override
-	public void closeChest() {
-	}
+	public void closeChest() {}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		NBTTagList nbttaglist = nbttagcompound.getTagList("items");
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
-			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
-					.tagAt(j);
+			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
 			int index = nbttagcompound2.getInteger("index");
 			_contents[index] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
 		}

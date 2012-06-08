@@ -15,8 +15,7 @@ import java.io.IOException;
 
 public class BptTemplate extends BptBase {
 
-	public BptTemplate() {
-	}
+	public BptTemplate() {}
 
 	public BptTemplate(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
@@ -55,8 +54,7 @@ public class BptTemplate extends BptBase {
 						contents[x][y][z].x = x;
 						contents[x][y][z].y = y;
 						contents[x][y][z].z = z;
-						contents[x][y][z].blockId = Integer
-								.parseInt(mask[maskIndex]);
+						contents[x][y][z].blockId = Integer.parseInt(mask[maskIndex]);
 
 						maskIndex++;
 					}

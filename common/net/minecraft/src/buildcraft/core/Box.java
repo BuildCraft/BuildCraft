@@ -49,8 +49,7 @@ public class Box implements IBox {
 		return initialized;
 	}
 
-	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax,
-			int zMax) {
+	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 
 		this.xMin = xMin;
 		this.yMin = yMin;
@@ -73,18 +72,13 @@ public class Box implements IBox {
 
 	public void initialize(NBTTagCompound nbttagcompound) {
 
-		initialize(nbttagcompound.getInteger("xMin"),
-				nbttagcompound.getInteger("yMin"),
-				nbttagcompound.getInteger("zMin"),
-				nbttagcompound.getInteger("xMax"),
-				nbttagcompound.getInteger("yMax"),
-				nbttagcompound.getInteger("zMax"));
+		initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"),
+				nbttagcompound.getInteger("xMax"), nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
 	}
 
 	public void initialize(int centerX, int centerY, int centerZ, int size) {
 
-		initialize(centerX - size, centerY - size, centerZ - size, centerX
-				+ size, centerY + size, centerZ + size);
+		initialize(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
 
 	}
 
@@ -123,8 +117,7 @@ public class Box implements IBox {
 	@Override
 	public boolean contains(int x, int y, int z) {
 
-		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin
-				&& z <= zMax) {
+		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax) {
 
 			return true;
 		}
@@ -217,8 +210,7 @@ public class Box implements IBox {
 	public void createLasers(World world, LaserKind kind) {
 
 		if (lasers == null)
-			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax,
-					zMax, kind);
+			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax, zMax, kind);
 	}
 
 	@Override
@@ -245,8 +237,7 @@ public class Box implements IBox {
 
 	@Override
 	public String toString() {
-		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {"
-				+ zMin + ", " + zMax + "}";
+		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
 	}
 
 }

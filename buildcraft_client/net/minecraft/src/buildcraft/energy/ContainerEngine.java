@@ -13,8 +13,7 @@ import net.minecraft.src.InventoryPlayer;
 
 public class ContainerEngine extends ContainerEngineRoot {
 
-	public ContainerEngine(InventoryPlayer inventoryplayer,
-			TileEngine tileEngine) {
+	public ContainerEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
 		super(inventoryplayer, tileEngine);
 		// TODO Auto-generated constructor stub
 	}

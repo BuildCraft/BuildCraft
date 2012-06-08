@@ -56,13 +56,11 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			nextLaserSearch = 190 + worldObj.rand.nextInt(20);
 		}
 
-		if (assemblyTable != null
-				&& (assemblyTable.isInvalid() || assemblyTable.currentRecipe == null)) {
+		if (assemblyTable != null && (assemblyTable.isInvalid() || assemblyTable.currentRecipe == null)) {
 			deleteLaser();
 		}
 
-		if (laser != null
-				&& laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate)) {
+		if (laser != null && laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate)) {
 			setLaserPosition();
 			nextLaserUpdate = 5 + worldObj.rand.nextInt(10);
 		}
@@ -135,8 +133,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 		}
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
-		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i,
-				b.j, b.k);
+		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
 
 		if (laser == null) {
 			laser = new EntityEnergyLaser(worldObj);
@@ -172,11 +169,9 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			break;
 		}
 
-		laser.setPositions(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5
-				+ pz, assemblyTable.xCoord + 0.475
-				+ (worldObj.rand.nextFloat() - 0.5) / 5F,
-				assemblyTable.yCoord + 9F / 16F, assemblyTable.zCoord + 0.475
-						+ (worldObj.rand.nextFloat() - 0.5) / 5F);
+		laser.setPositions(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz,
+				assemblyTable.xCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, assemblyTable.yCoord + 9F / 16F,
+				assemblyTable.zCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 	}
 
 	@Override

@@ -44,23 +44,20 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
 			return false;
 
 		if (!APIProxy.isClient(world))
-			entityplayer.openGui(mod_BuildCraftBuilders.instance,
-					GuiIds.FILLER, world, i, j, k);
+			entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
 		return true;
 
 	}
 
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
-			int l) {
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 
 		if (iblockaccess == null) {

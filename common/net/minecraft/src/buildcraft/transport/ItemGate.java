@@ -47,8 +47,7 @@ public class ItemGate extends ItemBuildCraft {
 
 	@Override
 	public String getItemNameIS(ItemStack itemstack) {
-		return (new StringBuilder()).append(super.getItemName()).append(".")
-				.append(itemstack.getItemDamage()).toString();
+		return (new StringBuilder()).append(super.getItemName()).append(".").append(itemstack.getItemDamage()).toString();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

@@ -39,13 +39,11 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 		if (connection == Orientations.Unknown)
 			nextTexture = 1 * 16 + 5;
 		else
-			nextTexture = BuildCraftTransport.diamondTextures[connection
-					.ordinal()];
+			nextTexture = BuildCraftTransport.diamondTextures[connection.ordinal()];
 	}
 
 	@Override
-	public LinkedList<Orientations> filterPossibleMovements(
-			LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
 			EntityPassiveItem item) {
 		LinkedList<Orientations> filteredOrientations = new LinkedList<Orientations>();
 		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
@@ -58,8 +56,7 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 			// to use that filter is higher, this is why there are
 			// no breaks here.
 			for (int slot = 0; slot < 9; ++slot) {
-				ItemStack stack = logic
-						.getStackInSlot(dir.ordinal() * 9 + slot);
+				ItemStack stack = logic.getStackInSlot(dir.ordinal() * 9 + slot);
 
 				if (stack != null)
 					foundFilter = true;

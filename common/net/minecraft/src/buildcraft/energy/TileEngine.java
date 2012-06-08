@@ -37,8 +37,7 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 //TODO: All Engines need to take func_48081_b into account 
 
-public class TileEngine extends TileBuildCraft implements IPowerReceptor,
-		IInventory, ILiquidContainer, IEngineProvider,
+public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInventory, ILiquidContainer, IEngineProvider,
 		IOverrideDefaultTriggers, IPipeConnection, IBuilderInventory {
 
 	public @TileNetworkData
@@ -70,8 +69,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			}
 
 			engine.orientation = Orientations.values()[orientation];
-			provider.configure(0, 1, engine.maxEnergyReceived(), 1,
-					engine.maxEnergy);
+			provider.configure(0, 1, engine.maxEnergyReceived(), 1, engine.maxEnergy);
 			checkRedstonePower();
 		}
 	}
@@ -104,24 +102,18 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			if (engine.progress > 0.5 && progressPart == 1) {
 				progressPart = 2;
 
-				Position pos = new Position(xCoord, yCoord, zCoord,
-						engine.orientation);
+				Position pos = new Position(xCoord, yCoord, zCoord, engine.orientation);
 				pos.moveForwards(1.0);
-				TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
-						(int) pos.y, (int) pos.z);
+				TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 				if (isPoweredTile(tile)) {
 					IPowerReceptor receptor = (IPowerReceptor) tile;
 
-					int extracted = engine
-							.extractEnergy(
-									receptor.getPowerProvider().minEnergyReceived,
-									receptor.getPowerProvider().maxEnergyReceived,
-									true);
+					int extracted = engine.extractEnergy(receptor.getPowerProvider().minEnergyReceived,
+							receptor.getPowerProvider().maxEnergyReceived, true);
 
 					if (extracted > 0) {
-						receptor.getPowerProvider().receiveEnergy(extracted,
-								engine.orientation.reverse());
+						receptor.getPowerProvider().receiveEnergy(extracted, engine.orientation.reverse());
 					}
 				}
 			} else if (engine.progress >= 1) {
@@ -129,17 +121,14 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 				progressPart = 0;
 			}
 		} else if (isRedstonePowered && engine.isActive()) {
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					engine.orientation);
+			Position pos = new Position(xCoord, yCoord, zCoord, engine.orientation);
 			pos.moveForwards(1.0);
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (isPoweredTile(tile)) {
 				IPowerReceptor receptor = (IPowerReceptor) tile;
 
-				if (engine.extractEnergy(
-						receptor.getPowerProvider().minEnergyReceived,
+				if (engine.extractEnergy(receptor.getPowerProvider().minEnergyReceived,
 						receptor.getPowerProvider().maxEnergyReceived, false) > 0) {
 					progressPart = 1;
 
@@ -169,8 +158,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			engine = newEngine(kind);
 
 			engine.orientation = Orientations.values()[orientation];
-			worldObj.notifyBlockChange(xCoord, yCoord, zCoord,
-					BuildCraftEnergy.engineBlock.blockID);
+			worldObj.notifyBlockChange(xCoord, yCoord, zCoord, BuildCraftEnergy.engineBlock.blockID);
 		}
 	}
 
@@ -182,8 +170,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 
 			pos.moveForwards(1);
 
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (isPoweredTile(tile)) {
 				if (engine != null) {
@@ -232,8 +219,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 		}
 
 		if (nbttagcompound.hasKey("itemInInventory")) {
-			NBTTagCompound cpt = nbttagcompound
-					.getCompoundTag("itemInInventory");
+			NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
 			itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
 		}
 
@@ -246,8 +232,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		nbttagcompound.setInteger("kind",
-				worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+		nbttagcompound.setInteger("kind", worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
 
 		if (engine != null) {
 			nbttagcompound.setInteger("orientation", orientation);
@@ -382,8 +367,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			return;
 		}
 
-		engine.addEnergy((int) (provider.useEnergy(1,
-				engine.maxEnergyReceived(), true) * 0.95F));
+		engine.addEnergy((int) (provider.useEnergy(1, engine.maxEnergyReceived(), true) * 0.95F));
 	}
 
 	public boolean isPoweredTile(TileEntity tile) {
@@ -391,8 +375,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 			IPowerReceptor receptor = (IPowerReceptor) tile;
 			PowerProvider provider = receptor.getPowerProvider();
 
-			return provider != null
-					&& provider.getClass().equals(PneumaticPowerProvider.class);
+			return provider != null && provider.getClass().equals(PneumaticPowerProvider.class);
 		}
 
 		return false;
@@ -490,7 +473,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor,
 	}
 
 	public void checkRedstonePower() {
-		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord,
-				yCoord, zCoord);
+		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
 }

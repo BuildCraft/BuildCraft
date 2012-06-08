@@ -7,6 +7,7 @@ import net.minecraft.src.EntityPlayer;
  * wrench for buildcraft
  */
 public interface IToolWrench {
+
 	/***
 	 * Called to ensure that the wrench can be used. To get the ItemStack that
 	 * is used, check player.inventory.getCurrentItem()

@@ -36,8 +36,7 @@ public class EntityBlock extends Entity {
 		setPosition(xPos, yPos, zPos);
 	}
 
-	public EntityBlock(World world, double i, double j, double k, double iSize,
-			double jSize, double kSize) {
+	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
 		this(world);
 
 		motionX = 0.0D;
@@ -53,8 +52,7 @@ public class EntityBlock extends Entity {
 		setPosition(i, j, k);
 	}
 
-	public EntityBlock(World world, double i, double j, double k, double iSize,
-			double jSize, double kSize, int textureID) {
+	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, int textureID) {
 		this(world, i, j, k, iSize, jSize, kSize);
 
 		texture = textureID;

@@ -39,10 +39,8 @@ public class BlockPathMarker extends BlockMarker {
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
-			int l) {
-		TilePathMarker marker = (TilePathMarker) iblockaccess
-				.getBlockTileEntity(i, j, k);
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+		TilePathMarker marker = (TilePathMarker) iblockaccess.getBlockTileEntity(i, j, k);
 
 		if (l == 1 || (marker != null && marker.currentWorldIterator != null)) {
 			return 3 * 16 + 11;

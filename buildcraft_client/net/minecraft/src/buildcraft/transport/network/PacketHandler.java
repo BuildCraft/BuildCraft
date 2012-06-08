@@ -25,11 +25,9 @@ import net.minecraft.src.forge.IPacketHandler;
 public class PacketHandler implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager network, String channel,
-			byte[] bytes) {
+	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
 
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
-				bytes));
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
 		try {
 			NetClientHandler net = (NetClientHandler) network.getNetHandler();
 
@@ -125,8 +123,7 @@ public class PacketHandler implements IPacketHandler {
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY,
-				packet.posZ);
+		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (!(entity instanceof ISynchronizedTile))
 			return;
 
@@ -145,8 +142,7 @@ public class PacketHandler implements IPacketHandler {
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY,
-				packet.posZ);
+		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (!(entity instanceof TileGenericPipe))
 			return;
 
@@ -172,8 +168,7 @@ public class PacketHandler implements IPacketHandler {
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY,
-				packet.posZ);
+		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (!(entity instanceof TileGenericPipe))
 			return;
 

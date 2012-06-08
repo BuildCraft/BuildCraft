@@ -39,8 +39,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 
 		for (int j = yCoord - 1; j > 1; --j) {
 			if (worldObj.getBlockTileEntity(xCoord, j, zCoord) instanceof TileTank) {
-				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j,
-						zCoord);
+				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j, zCoord);
 			} else {
 				break;
 			}
@@ -49,16 +48,14 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		return lastTank.actualFill(from, quantity, id, doFill);
 	}
 
-	private int actualFill(Orientations from, int quantity, int id,
-			boolean doFill) {
+	private int actualFill(Orientations from, int quantity, int id, boolean doFill) {
 		if (stored != 0 && id != liquidId) {
 			return 0;
 		}
 
 		liquidId = id;
 
-		TileEntity above = worldObj.getBlockTileEntity(xCoord, yCoord + 1,
-				zCoord);
+		TileEntity above = worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord);
 
 		int used = 0;
 
@@ -79,9 +76,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		}
 
 		if (used < quantity && above instanceof TileTank) {
-			used = used
-					+ ((TileTank) above).actualFill(from, quantity - used, id,
-							doFill);
+			used = used + ((TileTank) above).actualFill(from, quantity - used, id, doFill);
 		}
 
 		return used;
@@ -122,8 +117,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 
 		for (int j = yCoord + 1; j <= DefaultProps.WORLD_HEIGHT; ++j) {
 			if (worldObj.getBlockTileEntity(xCoord, j, zCoord) instanceof TileTank) {
-				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j,
-						zCoord);
+				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j, zCoord);
 			} else {
 				break;
 			}
@@ -148,12 +142,10 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 				hasUpdate = true;
 			}
 
-			TileEntity under = worldObj.getBlockTileEntity(xCoord, yCoord - 1,
-					zCoord);
+			TileEntity under = worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
 
 			if (under instanceof TileTank) {
-				result += ((TileTank) under).actualEmtpy(quantityMax - result,
-						doEmpty);
+				result += ((TileTank) under).actualEmtpy(quantityMax - result, doEmpty);
 			}
 
 			return result;
@@ -167,10 +159,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 
 	@Override
 	public void updateEntity() {
-		if (APIProxy.isServerSide()
-				&& hasUpdate
-				&& tracker.markTimeIfDelay(worldObj,
-						2 * BuildCraftCore.updateFactor)) {
+		if (APIProxy.isServerSide() && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 			hasUpdate = false;
 		}
@@ -194,8 +183,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 				break;
 			}
 
-			TileTank tank = (TileTank) worldObj.getBlockTileEntity(xCoord,
-					ySearch, zCoord);
+			TileTank tank = (TileTank) worldObj.getBlockTileEntity(xCoord, ySearch, zCoord);
 
 			if (tank.stored != 0) {
 				resultLiquidId = tank.liquidId;
@@ -210,8 +198,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 				break;
 			}
 
-			TileTank tank = (TileTank) worldObj.getBlockTileEntity(xCoord,
-					ySearch, zCoord);
+			TileTank tank = (TileTank) worldObj.getBlockTileEntity(xCoord, ySearch, zCoord);
 
 			if (tank.stored != 0) {
 				resultLiquidId = tank.liquidId;
@@ -221,7 +208,6 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			resultCapacity += tank.getTankCapacity();
 		}
 
-		return new LiquidSlot[] { new LiquidSlot(resultLiquidId,
-				resultLiquidQty, resultCapacity) };
+		return new LiquidSlot[] { new LiquidSlot(resultLiquidId, resultLiquidQty, resultCapacity) };
 	}
 }

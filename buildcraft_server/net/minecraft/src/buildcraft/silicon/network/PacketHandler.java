@@ -20,9 +20,8 @@ public class PacketHandler implements IPacketHandler {
 	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
 
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
-		try
-		{
-			NetServerHandler net = (NetServerHandler)network.getNetHandler();
+		try {
+			NetServerHandler net = (NetServerHandler) network.getNetHandler();
 
 			int packetID = data.read();
 			switch (packetID) {
@@ -40,7 +39,7 @@ public class PacketHandler implements IPacketHandler {
 
 			}
 
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
@@ -48,25 +47,26 @@ public class PacketHandler implements IPacketHandler {
 
 	private TileAssemblyTable getAssemblyTable(World world, int x, int y, int z) {
 
-		if(!world.blockExists(x, y, z))
+		if (!world.blockExists(x, y, z))
 			return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if(!(tile instanceof TileAssemblyTable))
+		if (!(tile instanceof TileAssemblyTable))
 			return null;
 
-		return (TileAssemblyTable)tile;
+		return (TileAssemblyTable) tile;
 	}
 
 	/**
 	 * Sends the current selection on the assembly table to a player.
+	 * 
 	 * @param player
 	 * @param packet
 	 */
 	private void onAssemblyGetSelection(EntityPlayerMP player, PacketCoordinates packet) {
 
 		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if(tile == null)
+		if (tile == null)
 			return;
 
 		tile.sendSelectionTo(player);
@@ -74,15 +74,16 @@ public class PacketHandler implements IPacketHandler {
 
 	/**
 	 * Sets the selection on an assembly table according to player request.
+	 * 
 	 * @param player
 	 * @param packet
 	 */
 	private void onAssemblySelect(EntityPlayerMP player, PacketUpdate packet) {
 
 		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if(tile == null)
+		if (tile == null)
 			return;
-		
+
 		TileAssemblyTable.SelectionMessage message = new TileAssemblyTable.SelectionMessage();
 		TileAssemblyTable.selectionMessageWrapper.fromPayload(message, packet.payload);
 		tile.handleSelectionMessage(message);

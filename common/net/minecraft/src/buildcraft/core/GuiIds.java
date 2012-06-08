@@ -1,6 +1,7 @@
 package net.minecraft.src.buildcraft.core;
 
 public class GuiIds {
+
 	public static final int ARCHITECT_TABLE = 10;
 	public static final int BUILDER = 11;
 	public static final int FILLER = 12;

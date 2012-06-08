@@ -74,34 +74,26 @@ public class PipeTransportItems extends PipeTransport {
 		readjustSpeed(item);
 
 		if (!travelingEntities.containsKey(new Integer(item.entityId))) {
-			travelingEntities.put(new Integer(item.entityId), new EntityData(
-					item, orientation));
+			travelingEntities.put(new Integer(item.entityId), new EntityData(item, orientation));
 
 			if (item.container != null && item.container != this.container)
-				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport)
-						.scheduleRemoval(item);
+				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport).scheduleRemoval(item);
 
 			item.container = container;
 		}
 
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
-		if (orientation != Orientations.YPos
-				&& orientation != Orientations.YNeg)
-			item.setPosition(item.posX,
-					yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
+		if (orientation != Orientations.YPos && orientation != Orientations.YNeg)
+			item.setPosition(item.posX, yCoord + Utils.getPipeFloorOf(item.item), item.posZ);
 
 		if (container.pipe instanceof IPipeTransportItemsHook)
-			((IPipeTransportItemsHook) container.pipe).entityEntered(item,
-					orientation);
+			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
 
 		if (APIProxy.isServerSide())
-			if (item.synchroTracker.markTimeIfDelay(worldObj,
-					6 * BuildCraftCore.updateFactor))
-				CoreProxy.sendToPlayers(createItemPacket(item, orientation),
-						worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE,
-						mod_BuildCraftTransport.instance);
+			if (item.synchroTracker.markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor))
+				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 
 		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
 			groupEntities();
@@ -115,8 +107,7 @@ public class PipeTransportItems extends PipeTransport {
 	 * Returns a list of all possible movements, that is to say adjacent
 	 * implementers of IPipeEntry or TileEntityChest.
 	 */
-	public LinkedList<Orientations> getPossibleMovements(Position pos,
-			EntityPassiveItem item) {
+	public LinkedList<Orientations> getPossibleMovements(Position pos, EntityPassiveItem item) {
 		LinkedList<Orientations> result = new LinkedList<Orientations>();
 
 		for (Orientations o : Orientations.dirs())
@@ -134,8 +125,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		if (this.container.pipe instanceof IPipeTransportItemsHook)
-			result = ((IPipeTransportItemsHook) this.container.pipe)
-					.filterPossibleMovements(result, pos, item);
+			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
 
 		return result;
 	}
@@ -153,8 +143,7 @@ public class PipeTransportItems extends PipeTransport {
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
 		} else if (entity instanceof IInventory)
-			if (new StackUtil(item.item).checkAvailableSlot(
-					(IInventory) entity, false, o.reverse()))
+			if (new StackUtil(item.item).checkAvailableSlot((IInventory) entity, false, o.reverse()))
 				return true;
 
 		return false;
@@ -196,17 +185,14 @@ public class PipeTransportItems extends PipeTransport {
 			Position motion = new Position(0, 0, 0, data.orientation);
 			motion.moveForwards(data.item.speed);
 
-			data.item.setPosition(data.item.posX + motion.x, data.item.posY
-					+ motion.y, data.item.posZ + motion.z);
+			data.item.setPosition(data.item.posX + motion.x, data.item.posY + motion.y, data.item.posZ + motion.z);
 
 			if ((data.toCenter && middleReached(data)) || outOfBounds(data)) {
 				data.toCenter = false;
 
 				// Reajusting to the middle
 
-				data.item.setPosition(xCoord + 0.5,
-						yCoord + Utils.getPipeFloorOf(data.item.item), zCoord
-								+ +0.5);
+				data.item.setPosition(xCoord + 0.5, yCoord + Utils.getPipeFloorOf(data.item.item), zCoord + +0.5);
 
 				Orientations nextOrientation = resolveDestination(data);
 
@@ -231,13 +217,11 @@ public class PipeTransportItems extends PipeTransport {
 				}
 
 			} else if (!data.toCenter && endReached(data)) {
-				Position destPos = new Position(xCoord, yCoord, zCoord,
-						data.orientation);
+				Position destPos = new Position(xCoord, yCoord, zCoord, data.orientation);
 
 				destPos.moveForwards(1.0);
 
-				TileEntity tile = worldObj.getBlockTileEntity((int) destPos.x,
-						(int) destPos.y, (int) destPos.z);
+				TileEntity tile = worldObj.getBlockTileEntity((int) destPos.x, (int) destPos.y, (int) destPos.z);
 
 				if (travelHook != null)
 					travelHook.endReached(this, data, tile);
@@ -257,24 +241,19 @@ public class PipeTransportItems extends PipeTransport {
 	private void handleTileReached(EntityData data, TileEntity tile) {
 		if (tile instanceof IPipeEntry)
 			((IPipeEntry) tile).entityEntering(data.item, data.orientation);
-		else if (tile instanceof TileGenericPipe
-				&& ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
+		else if (tile instanceof TileGenericPipe && ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
 			TileGenericPipe pipe = (TileGenericPipe) tile;
 
-			((PipeTransportItems) pipe.pipe.transport).entityEntering(
-					data.item, data.orientation);
+			((PipeTransportItems) pipe.pipe.transport).entityEntering(data.item, data.orientation);
 		} else if (tile instanceof IInventory) {
 			StackUtil utils = new StackUtil(data.item.item);
 
 			if (!APIProxy.isClient(worldObj))
-				if (utils.checkAvailableSlot((IInventory) tile, true,
-						data.orientation.reverse())
-						&& utils.items.stackSize == 0)
+				if (utils.checkAvailableSlot((IInventory) tile, true, data.orientation.reverse()) && utils.items.stackSize == 0)
 					data.item.remove();
 				else {
 					data.item.item = utils.items;
-					EntityItem dropped = data.item
-							.toEntityItem(data.orientation);
+					EntityItem dropped = data.item.toEntityItem(data.orientation);
 
 					if (dropped != null)
 						// On SMP, the client side doesn't actually drops
@@ -297,24 +276,18 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean middleReached(EntityData entity) {
 		float middleLimit = entity.item.speed * 1.01F;
 		return (Math.abs(xCoord + 0.5 - entity.item.posX) < middleLimit
-				&& Math.abs(yCoord + Utils.getPipeFloorOf(entity.item.item)
-						- entity.item.posY) < middleLimit && Math.abs(zCoord
+				&& Math.abs(yCoord + Utils.getPipeFloorOf(entity.item.item) - entity.item.posY) < middleLimit && Math.abs(zCoord
 				+ 0.5 - entity.item.posZ) < middleLimit);
 	}
 
 	public boolean endReached(EntityData entity) {
-		return entity.item.posX > xCoord + 1.0 || entity.item.posX < xCoord
-				|| entity.item.posY > yCoord + 1.0 || entity.item.posY < yCoord
-				|| entity.item.posZ > zCoord + 1.0 || entity.item.posZ < zCoord;
+		return entity.item.posX > xCoord + 1.0 || entity.item.posX < xCoord || entity.item.posY > yCoord + 1.0
+				|| entity.item.posY < yCoord || entity.item.posZ > zCoord + 1.0 || entity.item.posZ < zCoord;
 	}
 
 	public boolean outOfBounds(EntityData entity) {
-		return entity.item.posX > xCoord + 2.0
-				|| entity.item.posX < xCoord - 1.0
-				|| entity.item.posY > yCoord + 2.0
-				|| entity.item.posY < yCoord - 1.0
-				|| entity.item.posZ > zCoord + 2.0
-				|| entity.item.posZ < zCoord - 1.0;
+		return entity.item.posX > xCoord + 2.0 || entity.item.posX < xCoord - 1.0 || entity.item.posY > yCoord + 2.0
+				|| entity.item.posY < yCoord - 1.0 || entity.item.posZ > zCoord + 2.0 || entity.item.posZ < zCoord - 1.0;
 	}
 
 	public Position getPosition() {
@@ -329,8 +302,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j)
 			try {
-				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
-						.tagAt(j);
+				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
 
 				EntityPassiveItem entity = new EntityPassiveItem(null);
 				entity.readFromNBT(nbttagcompound2);
@@ -342,9 +314,7 @@ public class PipeTransportItems extends PipeTransport {
 
 				entity.container = container;
 
-				EntityData data = new EntityData(entity,
-						Orientations.values()[nbttagcompound2
-								.getInteger("orientation")]);
+				EntityData data = new EntityData(entity, Orientations.values()[nbttagcompound2.getInteger("orientation")]);
 				data.toCenter = nbttagcompound2.getBoolean("toCenter");
 
 				entitiesToLoad.add(data);
@@ -366,17 +336,15 @@ public class PipeTransportItems extends PipeTransport {
 			nbttaglist.appendTag(nbttagcompound2);
 			data.item.writeToNBT(nbttagcompound2);
 			nbttagcompound2.setBoolean("toCenter", data.toCenter);
-			nbttagcompound2.setInteger("orientation",
-					data.orientation.ordinal());
+			nbttagcompound2.setInteger("orientation", data.orientation.ordinal());
 		}
 
 		nbttagcompound.setTag("travelingEntities", nbttaglist);
 	}
 
 	public Orientations resolveDestination(EntityData data) {
-		LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(
-				new Position(xCoord, yCoord, zCoord, data.orientation),
-				data.item);
+		LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(xCoord, yCoord, zCoord,
+				data.orientation), data.item);
 
 		if (listOfPossibleMovements.size() == 0)
 			return Orientations.Unknown;
@@ -384,8 +352,7 @@ public class PipeTransportItems extends PipeTransport {
 			int i;
 
 			if (APIProxy.isClient(worldObj) || APIProxy.isServerSide())
-				i = Math.abs(data.item.entityId + xCoord + yCoord + zCoord
-						+ data.item.deterministicRandomization)
+				i = Math.abs(data.item.entityId + xCoord + yCoord + zCoord + data.item.deterministicRandomization)
 						% listOfPossibleMovements.size();
 			else
 				i = worldObj.rand.nextInt(listOfPossibleMovements.size());
@@ -394,8 +361,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 
-	protected void doWork() {
-	}
+	protected void doWork() {}
 
 	/**
 	 * Handles a packet describing a stack of items inside a pipe.
@@ -407,30 +373,24 @@ public class PipeTransportItems extends PipeTransport {
 		if (packet.getID() != PacketIds.PIPE_CONTENTS)
 			return;
 
-		EntityPassiveItem item = EntityPassiveItem.getOrCreate(worldObj,
-				packet.getEntityId());
+		EntityPassiveItem item = EntityPassiveItem.getOrCreate(worldObj, packet.getEntityId());
 
-		item.item = new ItemStack(packet.getItemId(), packet.getStackSize(),
-				packet.getItemDamage());
+		item.item = new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage());
 
 		item.setPosition(packet.getPosX(), packet.getPosY(), packet.getPosZ());
 		item.speed = packet.getSpeed();
 		item.deterministicRandomization = packet.getRandomization();
 
-		if (item.container != this.container
-				|| !travelingEntities.containsKey(item.entityId)) {
+		if (item.container != this.container || !travelingEntities.containsKey(item.entityId)) {
 
 			if (item.container != null)
-				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport)
-						.scheduleRemoval(item);
+				((PipeTransportItems) ((TileGenericPipe) item.container).pipe.transport).scheduleRemoval(item);
 
-			travelingEntities.put(new Integer(item.entityId), new EntityData(
-					item, packet.getOrientation()));
+			travelingEntities.put(new Integer(item.entityId), new EntityData(item, packet.getOrientation()));
 			item.container = container;
 
 		} else
-			travelingEntities.get(new Integer(item.entityId)).orientation = packet
-					.getOrientation();
+			travelingEntities.get(new Integer(item.entityId)).orientation = packet.getOrientation();
 
 	}
 
@@ -441,13 +401,11 @@ public class PipeTransportItems extends PipeTransport {
 	 * @param orientation
 	 * @return
 	 */
-	public Packet createItemPacket(EntityPassiveItem item,
-			Orientations orientation) {
+	public Packet createItemPacket(EntityPassiveItem item, Orientations orientation) {
 
 		item.deterministicRandomization += worldObj.rand.nextInt(6);
-		PacketPipeTransportContent packet = new PacketPipeTransportContent(
-				container.xCoord, container.yCoord, container.zCoord, item,
-				orientation);
+		PacketPipeTransportContent packet = new PacketPipeTransportContent(container.xCoord, container.yCoord, container.zCoord,
+				item, orientation);
 
 		return packet.getPacket();
 	}
@@ -466,11 +424,8 @@ public class PipeTransportItems extends PipeTransport {
 
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
-		return tile instanceof TileGenericPipe
-				|| tile instanceof IPipeEntry
-				|| tile instanceof IInventory
-				|| (tile instanceof IMachine && ((IMachine) tile)
-						.manageSolids());
+		return tile instanceof TileGenericPipe || tile instanceof IPipeEntry || tile instanceof IInventory
+				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 
 	@Override
@@ -487,8 +442,7 @@ public class PipeTransportItems extends PipeTransport {
 	 * contribution controlling them
 	 */
 	public void groupEntities() {
-		EntityData[] entities = travelingEntities.values().toArray(
-				new EntityData[travelingEntities.size()]);
+		EntityData[] entities = travelingEntities.values().toArray(new EntityData[travelingEntities.size()]);
 
 		TreeSet<Integer> toRemove = new TreeSet<Integer>();
 
@@ -499,15 +453,10 @@ public class PipeTransportItems extends PipeTransport {
 				EntityData data2 = entities[j];
 
 				if (data1.item.item.itemID == data2.item.item.itemID
-						&& data1.item.item.getItemDamage() == data2.item.item
-								.getItemDamage()
-						&& !toRemove.contains(data1.item.entityId)
-						&& !toRemove.contains(data2.item.entityId)
-						&& !data1.item.hasContributions()
-						&& !data2.item.hasContributions()
-						&& data1.item.item.stackSize
-								+ data2.item.item.stackSize < data1.item.item
-									.getMaxStackSize()) {
+						&& data1.item.item.getItemDamage() == data2.item.item.getItemDamage()
+						&& !toRemove.contains(data1.item.entityId) && !toRemove.contains(data2.item.entityId)
+						&& !data1.item.hasContributions() && !data2.item.hasContributions()
+						&& data1.item.item.stackSize + data2.item.item.stackSize < data1.item.item.getMaxStackSize()) {
 
 					data1.item.item.stackSize += data2.item.item.stackSize;
 					toRemove.add(data2.item.entityId);

@@ -48,8 +48,7 @@ public class BuildCraftAPI {
 		}
 
 		for (LiquidData d : liquids) {
-			if (d.filled.itemID == filledItem.itemID
-					&& d.filled.getItemDamage() == filledItem.getItemDamage()) {
+			if (d.filled.itemID == filledItem.itemID && d.filled.getItemDamage() == filledItem.getItemDamage()) {
 				return d.liquidId;
 			}
 		}
@@ -86,17 +85,14 @@ public class BuildCraftAPI {
 	 * water...)
 	 */
 	public static boolean softBlock(int blockId) {
-		return blockId == 0 || softBlocks[blockId]
-				|| Block.blocksList[blockId] == null;
+		return blockId == 0 || softBlocks[blockId] || Block.blocksList[blockId] == null;
 	}
 
 	/**
 	 * Return true if the block cannot be broken, typically bedrock and lava
 	 */
 	public static boolean unbreakableBlock(int blockId) {
-		return blockId == Block.bedrock.blockID
-				|| blockId == Block.lavaStill.blockID
-				|| blockId == Block.lavaMoving.blockID;
+		return blockId == Block.bedrock.blockID || blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID;
 	}
 
 	@Deprecated
@@ -105,8 +101,7 @@ public class BuildCraftAPI {
 		int blockId = world.getBlockId(x, y, z);
 
 		if (blockId != 0) {
-			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z,
-					world.getBlockMetadata(x, y, z), 0);
+			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 		}
 
 		world.setBlockWithNotify(x, y, z, 0);
@@ -126,8 +121,7 @@ public class BuildCraftAPI {
 		}
 	}
 
-	public static RefineryRecipe findRefineryRecipe(int liquid1, int qty1,
-			int liquid2, int qty2) {
+	public static RefineryRecipe findRefineryRecipe(int liquid1, int qty1, int liquid2, int qty2) {
 		int l1 = qty1 > 0 ? liquid1 : 0;
 		int l2 = qty2 > 0 ? liquid2 : 0;
 
@@ -147,8 +141,7 @@ public class BuildCraftAPI {
 				continue;
 			}
 
-			if ((r.sourceQty2 == 0 && (src2 == 0 || src2 == src1))
-					|| r.sourceId2 == src2) {
+			if ((r.sourceQty2 == 0 && (src2 == 0 || src2 == src1)) || r.sourceId2 == src2) {
 				return r;
 			}
 		}
@@ -163,8 +156,7 @@ public class BuildCraftAPI {
 	public static ItemSignature getItemSignature(Item item) {
 		ItemSignature sig = new ItemSignature();
 
-		if (item.shiftedIndex >= Block.blocksList.length
-				+ BuildCraftAPI.LAST_ORIGINAL_ITEM) {
+		if (item.shiftedIndex >= Block.blocksList.length + BuildCraftAPI.LAST_ORIGINAL_ITEM) {
 			sig.itemClassName = item.getClass().getSimpleName();
 		}
 
@@ -179,13 +171,11 @@ public class BuildCraftAPI {
 		}
 	}
 
-	public static LinkedList<Trigger> getNeighborTriggers(Block block,
-			TileEntity entity) {
+	public static LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity entity) {
 		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			LinkedList<Trigger> toAdd = provider.getNeighborTriggers(block,
-					entity);
+			LinkedList<Trigger> toAdd = provider.getNeighborTriggers(block, entity);
 
 			if (toAdd != null) {
 				for (Trigger t : toAdd) {
@@ -205,13 +195,11 @@ public class BuildCraftAPI {
 		}
 	}
 
-	public static LinkedList<Action> getNeighborActions(Block block,
-			TileEntity entity) {
+	public static LinkedList<Action> getNeighborActions(Block block, TileEntity entity) {
 		LinkedList<Action> actions = new LinkedList<Action>();
 
 		for (IActionProvider provider : actionProviders) {
-			LinkedList<Action> toAdd = provider.getNeighborActions(block,
-					entity);
+			LinkedList<Action> toAdd = provider.getNeighborActions(block, entity);
 
 			if (toAdd != null) {
 				for (Action t : toAdd) {

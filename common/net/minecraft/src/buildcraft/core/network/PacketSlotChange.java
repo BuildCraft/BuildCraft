@@ -11,11 +11,9 @@ public class PacketSlotChange extends PacketCoordinates {
 	public int slot;
 	public ItemStack stack;
 
-	public PacketSlotChange() {
-	}
+	public PacketSlotChange() {}
 
-	public PacketSlotChange(int id, int x, int y, int z, int slot,
-			ItemStack stack) {
+	public PacketSlotChange(int id, int x, int y, int z, int slot, ItemStack stack) {
 		super(id, x, y, z);
 		this.slot = slot;
 		this.stack = stack;

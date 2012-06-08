@@ -70,8 +70,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 	}
 
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
-			int l) {
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
 		case 0:
 		case 1:
@@ -86,24 +85,19 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer
-					.getCurrentEquippedItem());
+			int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
 			if (liquidId != 0) {
-				int qty = tank.fill(Orientations.Unknown,
-						BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
+				int qty = tank.fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
-					entityplayer.inventory.setInventorySlotContents(
-							entityplayer.inventory.currentItem, Utils
-									.consumeItem(entityplayer.inventory
-											.getCurrentItem()));
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+							Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
 				}
 
 				return true;

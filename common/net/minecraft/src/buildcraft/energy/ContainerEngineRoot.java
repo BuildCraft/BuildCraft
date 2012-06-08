@@ -16,8 +16,7 @@ import net.minecraft.src.buildcraft.core.BuildCraftContainer;
 
 public class ContainerEngineRoot extends BuildCraftContainer {
 
-	public ContainerEngineRoot(InventoryPlayer inventoryplayer,
-			TileEngine tileEngine) {
+	public ContainerEngineRoot(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
 		super(tileEngine);
 
 		engine = tileEngine;
@@ -30,8 +29,7 @@ public class ContainerEngineRoot extends BuildCraftContainer {
 
 		for (int i = 0; i < 3; i++) {
 			for (int k = 0; k < 9; k++) {
-				addSlot(new Slot(inventoryplayer, k + i * 9 + 9, 8 + k * 18,
-						84 + i * 18));
+				addSlot(new Slot(inventoryplayer, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
 			}
 
 		}

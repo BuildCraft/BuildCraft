@@ -77,8 +77,7 @@ public class EntityPassiveItem {
 		posZ = z;
 	}
 
-	public EntityPassiveItem(World world, double d, double d1, double d2,
-			ItemStack itemstack) {
+	public EntityPassiveItem(World world, double d, double d1, double d2, ItemStack itemstack) {
 		this(world, d, d1, d2);
 		this.item = itemstack.copy();
 	}
@@ -88,8 +87,7 @@ public class EntityPassiveItem {
 		posY = nbttagcompound.getDouble("y");
 		posZ = nbttagcompound.getDouble("z");
 		speed = nbttagcompound.getFloat("speed");
-		item = ItemStack.loadItemStackFromNBT(nbttagcompound
-				.getCompoundTag("Item"));
+		item = ItemStack.loadItemStackFromNBT(nbttagcompound.getCompoundTag("Item"));
 
 		NBTTagList contribList = nbttagcompound.getTagList("contribList");
 
@@ -104,8 +102,7 @@ public class EntityPassiveItem {
 			}
 
 			try {
-				IPassiveItemContribution contrib = ((IPassiveItemContribution) Class
-						.forName(className).newInstance());
+				IPassiveItemContribution contrib = ((IPassiveItemContribution) Class.forName(className).newInstance());
 
 				contrib.readFromNBT(cpt);
 
@@ -160,16 +157,12 @@ public class EntityPassiveItem {
 			Position motion = new Position(0, 0, 0, dir);
 			motion.moveForwards(0.1 + speed * 2F);
 
-			EntityItem entityitem = new EntityItem(worldObj, posX, posY, posZ,
-					item);
+			EntityItem entityitem = new EntityItem(worldObj, posX, posY, posZ, item);
 
 			float f3 = 0.00F + worldObj.rand.nextFloat() * 0.04F - 0.02F;
-			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3
-					+ motion.x;
-			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3
-					+ motion.y;
-			entityitem.motionZ = (float) worldObj.rand.nextGaussian() * f3
-					+ +motion.z;
+			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3 + motion.x;
+			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3 + motion.y;
+			entityitem.motionZ = (float) worldObj.rand.nextGaussian() * f3 + +motion.z;
 			worldObj.spawnEntityInWorld(entityitem);
 			remove();
 
@@ -200,12 +193,10 @@ public class EntityPassiveItem {
 	}
 
 	public boolean isCorrupted() {
-		return item == null || item.stackSize <= 0
-				|| Item.itemsList[item.itemID] == null;
+		return item == null || item.stackSize <= 0 || Item.itemsList[item.itemID] == null;
 	}
 
-	public void addContribution(String key,
-			IPassiveItemContribution contribution) {
+	public void addContribution(String key, IPassiveItemContribution contribution) {
 		contributions.put(key, contribution);
 	}
 

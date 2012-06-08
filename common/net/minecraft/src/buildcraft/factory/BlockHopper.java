@@ -47,8 +47,7 @@ public class BlockHopper extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int x, int y, int z,
-			EntityPlayer entityPlayer) {
+	public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer) {
 		super.blockActivated(world, x, y, z, entityPlayer);
 
 		// Drop through if the player is sneaking
@@ -62,8 +61,7 @@ public class BlockHopper extends BlockBuildCraft {
 		}
 
 		if (!APIProxy.isClient(world))
-			entityPlayer.openGui(mod_BuildCraftFactory.instance, GuiIds.HOPPER,
-					world, x, y, z);
+			entityPlayer.openGui(mod_BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
 
 		return true;
 	}

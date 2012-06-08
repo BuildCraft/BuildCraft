@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.api;
 
 public class BlockSignature {
+
 	public String blockClassName;
 	public String tileClassName;
 	public String blockName;
@@ -45,8 +46,7 @@ public class BlockSignature {
 	public String toString() {
 		replaceNullWithStar();
 
-		return "#B/" + blockClassName + "/" + tileClassName + "/" + blockName
-				+ "/" + mod + "/" + modVersion + "/" + customField;
+		return "#B/" + blockClassName + "/" + tileClassName + "/" + blockName + "/" + mod + "/" + modVersion + "/" + customField;
 	}
 
 	public void replaceNullWithStar() {

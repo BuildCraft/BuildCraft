@@ -43,16 +43,13 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k,
-			EntityLiving entityliving) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-		Orientations orientation = Utils.get2dOrientation(new Position(
-				entityliving.posX, entityliving.posY, entityliving.posZ),
+		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
-				.ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
 	@Override
@@ -81,8 +78,7 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 
 	public void searchFrames(World world, int i, int j, int k) {
 		int width2 = 1;
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i
-				+ width2, j + width2, k + width2))
+		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
 			return;
 
 		int blockID = world.getBlockId(i, j, k);
@@ -124,8 +120,7 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 		byte width = 1;
 		int width2 = width + 1;
 
-		if (world.checkChunksExist(i - width2, j - width2, k - width2, i
-				+ width2, j + width2, k + width2)) {
+		if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
 
 			boolean frameFound = false;
 			for (int z = -width; z <= width; ++z) {

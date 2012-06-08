@@ -62,29 +62,23 @@ public class BlockRefinery extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k,
-			EntityLiving entityliving) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-		Orientations orientation = Utils.get2dOrientation(new Position(
-				entityliving.posX, entityliving.posY, entityliving.posZ),
+		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
-				.ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
 			return false;
 
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer
-				.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench
-				&& ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
 
 			int meta = world.getBlockMetadata(i, j, k);
 
@@ -107,19 +101,15 @@ public class BlockRefinery extends BlockContainer {
 			return true;
 		} else {
 
-			int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer
-					.getCurrentEquippedItem());
+			int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
 
 			if (liquidId != 0) {
-				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k))
-						.fill(Orientations.Unknown,
-								BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
+				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(Orientations.Unknown,
+						BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
-					entityplayer.inventory.setInventorySlotContents(
-							entityplayer.inventory.currentItem, Utils
-									.consumeItem(entityplayer.inventory
-											.getCurrentItem()));
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+							Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
 				}
 
 				return true;
@@ -127,8 +117,7 @@ public class BlockRefinery extends BlockContainer {
 		}
 
 		if (!APIProxy.isClient(world))
-			entityplayer.openGui(mod_BuildCraftFactory.instance,
-					GuiIds.REFINERY, world, i, j, k);
+			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
 
 		return true;
 	}

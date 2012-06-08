@@ -22,8 +22,7 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockMiningWell extends BlockMachineRoot implements
-		ITextureProvider {
+public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider {
 
 	int textureFront, textureSides, textureBack, textureTop;
 
@@ -53,8 +52,7 @@ public class BlockMiningWell extends BlockMachineRoot implements
 			return textureBack;
 		} else if (i == j) {
 			return textureFront;
-		} else if (j >= 0 && j < 6
-				&& Orientations.values()[j].reverse().ordinal() == i) {
+		} else if (j >= 0 && j < 6 && Orientations.values()[j].reverse().ordinal() == i) {
 			return textureBack;
 		} else {
 			return textureSides;
@@ -62,14 +60,11 @@ public class BlockMiningWell extends BlockMachineRoot implements
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k,
-			EntityLiving entityliving) {
-		Orientations orientation = Utils.get2dOrientation(new Position(
-				entityliving.posX, entityliving.posY, entityliving.posZ),
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
+		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
-				.ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
 	@Override

@@ -27,8 +27,7 @@ public class BptBlockLiquid extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		if (slot.meta == 0) {
 			requirements.add(bucketStack.copy());
 		}
@@ -37,8 +36,7 @@ public class BptBlockLiquid extends BptBlock {
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
 		if (slot.meta == 0) {
-			return slot.blockId == context.world().getBlockId(slot.x, slot.y,
-					slot.z)
+			return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z)
 					&& context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
 		} else {
 			return true;
@@ -58,8 +56,7 @@ public class BptBlockLiquid extends BptBlock {
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		if (slot.meta == 0) {
-			context.world().setBlockAndMetadataWithNotify(slot.x, slot.y,
-					slot.z, slot.blockId, 0);
+			context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, 0);
 		}
 	}
 

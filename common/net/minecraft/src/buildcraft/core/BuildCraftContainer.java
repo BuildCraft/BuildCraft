@@ -30,11 +30,9 @@ public abstract class BuildCraftContainer extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 			if (i < inventory.getSizeInventory()) {
-				if (!mergeItemStack(itemstack1, inventory.getSizeInventory(),
-						inventorySlots.size(), true))
+				if (!mergeItemStack(itemstack1, inventory.getSizeInventory(), inventorySlots.size(), true))
 					return null;
-			} else if (!mergeItemStack(itemstack1, 0,
-					inventory.getSizeInventory(), false))
+			} else if (!mergeItemStack(itemstack1, 0, inventory.getSizeInventory(), false))
 				return null;
 			if (itemstack1.stackSize == 0)
 				slot.putStack(null);

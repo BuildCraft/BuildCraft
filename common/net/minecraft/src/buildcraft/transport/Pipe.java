@@ -41,8 +41,7 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 import net.minecraft.src.buildcraft.transport.Gate.GateConditional;
 
-public class Pipe extends PersistentTile implements IPipe,
-		IDropControlInventory {
+public class Pipe extends PersistentTile implements IPipe, IDropControlInventory {
 
 	public int[] signalStrength = new int[] { 0, 0, 0, 0 };
 
@@ -73,8 +72,7 @@ public class Pipe extends PersistentTile implements IPipe,
 	Action[] activatedActions = new Action[8];
 
 	@TileNetworkData(intKind = TileNetworkData.UNSIGNED_BYTE)
-	public boolean broadcastSignal[] = new boolean[] { false, false, false,
-			false };
+	public boolean broadcastSignal[] = new boolean[] { false, false, false, false };
 	public boolean broadcastRedstone = false;
 
 	public SafeTimeTracker actionTracker = new SafeTimeTracker();
@@ -86,8 +84,7 @@ public class Pipe extends PersistentTile implements IPipe,
 
 		if (!networkWrappers.containsKey(this.getClass()))
 			networkWrappers
-					.put(this.getClass(), new TilePacketWrapper(new Class[] {
-							TileGenericPipe.class, this.transport.getClass(),
+					.put(this.getClass(), new TilePacketWrapper(new Class[] { TileGenericPipe.class, this.transport.getClass(),
 							this.logic.getClass() }));
 
 		this.networkPacket = networkWrappers.get(this.getClass());
@@ -123,8 +120,7 @@ public class Pipe extends PersistentTile implements IPipe,
 		setPosition(tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		return logic.blockActivated(entityplayer);
 	}
 
@@ -227,10 +223,8 @@ public class Pipe extends PersistentTile implements IPipe,
 			nbttagcompound.setBoolean("wireSet[" + i + "]", wireSet[i]);
 
 		for (int i = 0; i < 8; ++i) {
-			nbttagcompound.setInteger("action[" + i + "]",
-					activatedActions[i] != null ? activatedActions[i].id : 0);
-			nbttagcompound.setInteger("trigger[" + i + "]",
-					activatedTriggers[i] != null ? activatedTriggers[i].id : 0);
+			nbttagcompound.setInteger("action[" + i + "]", activatedActions[i] != null ? activatedActions[i].id : 0);
+			nbttagcompound.setInteger("trigger[" + i + "]", activatedTriggers[i] != null ? activatedTriggers[i].id : 0);
 		}
 
 		for (int i = 0; i < 8; ++i)
@@ -247,14 +241,12 @@ public class Pipe extends PersistentTile implements IPipe,
 
 		// Load pulser if any
 		if (nbttagcompound.hasKey("Gate")) {
-			NBTTagCompound nbttagcompoundP = nbttagcompound
-					.getCompoundTag("Gate");
+			NBTTagCompound nbttagcompoundP = nbttagcompound.getCompoundTag("Gate");
 			gate = new GateVanilla(this);
 			gate.readFromNBT(nbttagcompoundP);
 		} else if (nbttagcompound.hasKey("gateKind")) {
 			// Legacy implementation
-			Gate.GateKind kind = Gate.GateKind.values()[nbttagcompound
-					.getInteger("gateKind")];
+			Gate.GateKind kind = Gate.GateKind.values()[nbttagcompound.getInteger("gateKind")];
 			if (kind != Gate.GateKind.None) {
 				gate = new GateVanilla(this);
 				gate.kind = kind;
@@ -265,17 +257,14 @@ public class Pipe extends PersistentTile implements IPipe,
 			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
 
 		for (int i = 0; i < 8; ++i) {
-			activatedActions[i] = BuildCraftAPI.actions[nbttagcompound
-					.getInteger("action[" + i + "]")];
-			activatedTriggers[i] = BuildCraftAPI.triggers[nbttagcompound
-					.getInteger("trigger[" + i + "]")];
+			activatedActions[i] = BuildCraftAPI.actions[nbttagcompound.getInteger("action[" + i + "]")];
+			activatedTriggers[i] = BuildCraftAPI.triggers[nbttagcompound.getInteger("trigger[" + i + "]")];
 		}
 
 		for (int i = 0; i < 8; ++i)
 			if (nbttagcompound.hasKey("triggerParameters[" + i + "]")) {
 				triggerParameters[i] = new TriggerParameter();
-				triggerParameters[i].readFromNBT(nbttagcompound
-						.getCompoundTag("triggerParameters[" + i + "]"));
+				triggerParameters[i].readFromNBT(nbttagcompound.getCompoundTag("triggerParameters[" + i + "]"));
 			}
 	}
 
@@ -301,9 +290,7 @@ public class Pipe extends PersistentTile implements IPipe,
 
 				if (BlockGenericPipe.isFullyDefined(tilePipe.pipe))
 					if (isWireConnectedTo(tile, color))
-						foundBiggerSignal |= receiveSignal(
-								tilePipe.pipe.signalStrength[color.ordinal()] - 1,
-								color);
+						foundBiggerSignal |= receiveSignal(tilePipe.pipe.signalStrength[color.ordinal()] - 1, color);
 			}
 		}
 
@@ -349,11 +336,9 @@ public class Pipe extends PersistentTile implements IPipe,
 				if (tile instanceof TileGenericPipe) {
 					TileGenericPipe tilePipe = (TileGenericPipe) tile;
 
-					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe)
-							&& tilePipe.pipe.wireSet[color.ordinal()])
+					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe) && tilePipe.pipe.wireSet[color.ordinal()])
 						if (isWireConnectedTo(tile, color))
-							tilePipe.pipe.receiveSignal(
-									signalStrength[color.ordinal()] - 1, color);
+							tilePipe.pipe.receiveSignal(signalStrength[color.ordinal()] - 1, color);
 				}
 			}
 	}
@@ -389,8 +374,7 @@ public class Pipe extends PersistentTile implements IPipe,
 	}
 
 	public PacketPayload getNetworkPacket() {
-		PacketPayload payload = networkPacket.toPayload(xCoord, yCoord, zCoord,
-				new Object[] { container, transport, logic });
+		PacketPayload payload = networkPacket.toPayload(xCoord, yCoord, zCoord, new Object[] { container, transport, logic });
 
 		return payload;
 	}
@@ -402,8 +386,7 @@ public class Pipe extends PersistentTile implements IPipe,
 	 * @param packet
 	 */
 	public void handlePacket(PacketUpdate packet) {
-		networkPacket.fromPayload(new Object[] { container, transport, logic },
-				packet.payload);
+		networkPacket.fromPayload(new Object[] { container, transport, logic }, packet.payload);
 	}
 
 	/**
@@ -438,8 +421,7 @@ public class Pipe extends PersistentTile implements IPipe,
 		Orientations o = Orientations.values()[l].reverse();
 		TileEntity tile = container.getTile(o);
 
-		if (tile instanceof TileGenericPipe
-				&& Utils.checkPipesConnections(this.container, tile))
+		if (tile instanceof TileGenericPipe && Utils.checkPipesConnections(this.container, tile))
 			return false;
 
 		return true;
@@ -449,8 +431,7 @@ public class Pipe extends PersistentTile implements IPipe,
 		return isPoweringTo(l);
 	}
 
-	public void randomDisplayTick(Random random) {
-	}
+	public void randomDisplayTick(Random random) {}
 
 	private DrawingState drawingState = DrawingState.DrawingPipe;
 
@@ -484,20 +465,16 @@ public class Pipe extends PersistentTile implements IPipe,
 
 	public void onBlockRemoval() {
 		if (wireSet[IPipe.WireColor.Red.ordinal()])
-			Utils.dropItems(worldObj, new ItemStack(
-					BuildCraftTransport.redPipeWire), xCoord, yCoord, zCoord);
+			Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.redPipeWire), xCoord, yCoord, zCoord);
 
 		if (wireSet[IPipe.WireColor.Blue.ordinal()])
-			Utils.dropItems(worldObj, new ItemStack(
-					BuildCraftTransport.bluePipeWire), xCoord, yCoord, zCoord);
+			Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.bluePipeWire), xCoord, yCoord, zCoord);
 
 		if (wireSet[IPipe.WireColor.Green.ordinal()])
-			Utils.dropItems(worldObj, new ItemStack(
-					BuildCraftTransport.greenPipeWire), xCoord, yCoord, zCoord);
+			Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.greenPipeWire), xCoord, yCoord, zCoord);
 
 		if (wireSet[IPipe.WireColor.Yellow.ordinal()])
-			Utils.dropItems(worldObj, new ItemStack(
-					BuildCraftTransport.yellowPipeWire), xCoord, yCoord, zCoord);
+			Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.yellowPipeWire), xCoord, yCoord, zCoord);
 
 		if (hasGate())
 			gate.dropGate(worldObj, xCoord, yCoord, zCoord);
@@ -519,16 +496,14 @@ public class Pipe extends PersistentTile implements IPipe,
 		return triggerParameters[position];
 	}
 
-	public boolean isNearbyTriggerActive(Trigger trigger,
-			TriggerParameter parameter) {
+	public boolean isNearbyTriggerActive(Trigger trigger, TriggerParameter parameter) {
 		if (trigger instanceof ITriggerPipe)
 			return ((ITriggerPipe) trigger).isTriggerActive(this, parameter);
 		else if (trigger != null)
 			for (Orientations o : Orientations.dirs()) {
 				TileEntity tile = container.getTile(o);
 
-				if (tile != null && !(tile instanceof TileGenericPipe)
-						&& trigger.isTriggerActive(tile, parameter))
+				if (tile != null && !(tile instanceof TileGenericPipe) && trigger.isTriggerActive(tile, parameter))
 					return true;
 			}
 
@@ -585,14 +560,11 @@ public class Pipe extends PersistentTile implements IPipe,
 
 			if (trigger != null && action != null)
 				if (!actions.containsKey(action.id))
-					actions.put(action.id,
-							isNearbyTriggerActive(trigger, parameter));
+					actions.put(action.id, isNearbyTriggerActive(trigger, parameter));
 				else if (gate.getConditional() == GateConditional.AND)
-					actions.put(action.id, actions.get(action.id)
-							&& isNearbyTriggerActive(trigger, parameter));
+					actions.put(action.id, actions.get(action.id) && isNearbyTriggerActive(trigger, parameter));
 				else
-					actions.put(action.id, actions.get(action.id)
-							|| isNearbyTriggerActive(trigger, parameter));
+					actions.put(action.id, actions.get(action.id) || isNearbyTriggerActive(trigger, parameter));
 		}
 
 		// Activate the actions
@@ -606,13 +578,11 @@ public class Pipe extends PersistentTile implements IPipe,
 				if (BuildCraftAPI.actions[i] instanceof ActionRedstoneOutput)
 					broadcastRedstone = true;
 				else if (BuildCraftAPI.actions[i] instanceof ActionSignalOutput)
-					broadcastSignal[((ActionSignalOutput) BuildCraftAPI.actions[i]).color
-							.ordinal()] = true;
+					broadcastSignal[((ActionSignalOutput) BuildCraftAPI.actions[i]).color.ordinal()] = true;
 				else
 					for (int a = 0; a < container.tileBuffer.length; ++a)
 						if (container.tileBuffer[a].getTile() instanceof IActionReceptor) {
-							IActionReceptor recept = (IActionReceptor) container.tileBuffer[a]
-									.getTile();
+							IActionReceptor recept = (IActionReceptor) container.tileBuffer[a].getTile();
 							recept.actionActivated(BuildCraftAPI.actions[i]);
 						}
 			}
@@ -621,8 +591,7 @@ public class Pipe extends PersistentTile implements IPipe,
 
 		if (oldBroadcastRedstone != broadcastRedstone) {
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord,
-					BuildCraftTransport.genericPipeBlock.blockID);
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
 		}
 
 		for (int i = 0; i < oldBroadcastSignal.length; ++i)
@@ -655,9 +624,8 @@ public class Pipe extends PersistentTile implements IPipe,
 		if (!tilePipe.pipe.wireSet[color.ordinal()])
 			return false;
 
-		return (tilePipe.pipe.transport instanceof PipeTransportStructure
-				|| transport instanceof PipeTransportStructure || Utils
-					.checkPipesConnections(container, tile));
+		return (tilePipe.pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure || Utils
+				.checkPipesConnections(container, tile));
 	}
 
 	public void dropContents() {

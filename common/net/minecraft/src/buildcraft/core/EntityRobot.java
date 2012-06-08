@@ -109,16 +109,13 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	protected void entityInit() {
-	}
+	protected void entityInit() {}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-	}
+	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-	}
+	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
 	@Override
 	public void onUpdate() {
@@ -160,8 +157,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
 
-			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj))
-					&& movementBoundary.contains(blockIndex)) {
+			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj)) && movementBoundary.contains(blockIndex)) {
 				potentialDestinations.add(blockIndex);
 			}
 		}
@@ -211,16 +207,12 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 					if (target.mode == Mode.ClearIfInvalid) {
 
 						if (!target.isValid(a.context))
-							worldObj.setBlockAndMetadataWithNotify(target.x,
-									target.y, target.z, 0, 0);
+							worldObj.setBlockAndMetadataWithNotify(target.x, target.y, target.z, 0, 0);
 
 					} else if (target.stackToUse != null) {
 
-						worldObj.setBlockWithNotify(target.x, target.y,
-								target.z, 0);
-						target.stackToUse.getItem().onItemUse(
-								target.stackToUse,
-								BuildCraftAPI.getBuildCraftPlayer(worldObj),
+						worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
+						target.stackToUse.getItem().onItemUse(target.stackToUse, BuildCraftAPI.getBuildCraftPlayer(worldObj),
 								worldObj, target.x, target.y - 1, target.z, 1);
 					} else {
 
@@ -229,8 +221,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							ModLoader.getLogger().throwing("EntityRobot",
-									"update", t);
+							ModLoader.getLogger().throwing("EntityRobot", "update", t);
 						}
 					}
 
@@ -264,8 +255,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		}
 
 		if (target != null)
-			laser.setPositions(posX, posY, posZ, target.x + 0.5,
-					target.y + 0.5, target.z + 0.5);
+			laser.setPositions(posX, posY, posZ, target.x + 0.5, target.y + 0.5, target.z + 0.5);
 		else
 			laser.hidden = true;
 
@@ -295,8 +285,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	public void setBox(Box box) {
 
 		this.box = box;
-		setDestination((int) box.centerX(), (int) box.centerY(),
-				(int) box.centerZ());
+		setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
 	}
 
 	@Override

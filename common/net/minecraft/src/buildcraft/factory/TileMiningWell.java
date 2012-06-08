@@ -26,8 +26,8 @@ import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class TileMiningWell extends TileMachine implements IMachine,
-		IPowerReceptor, IPipeConnection {
+public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
+
 	boolean isDigging = true;
 
 	PowerProvider powerProvider;
@@ -56,8 +56,8 @@ public class TileMiningWell extends TileMachine implements IMachine,
 		}
 
 		if (depth < 0
-				|| (Block.blocksList[world.getBlockId(xCoord, depth, zCoord)] != null && Block.blocksList[world
-						.getBlockId(xCoord, depth, zCoord)].getHardness() == -1.0f)
+				|| (Block.blocksList[world.getBlockId(xCoord, depth, zCoord)] != null && Block.blocksList[world.getBlockId(
+						xCoord, depth, zCoord)].getHardness() == -1.0f)
 				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
 				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
 
@@ -67,11 +67,9 @@ public class TileMiningWell extends TileMachine implements IMachine,
 
 		int blockId = world.getBlockId(xCoord, depth, zCoord);
 
-		ArrayList<ItemStack> stacks = BuildCraftBlockUtil
-				.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
+		ArrayList<ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
-		world.setBlockWithNotify(xCoord, depth, zCoord,
-				BuildCraftFactory.plainPipeBlock.blockID);
+		world.setBlockWithNotify(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
 		if (blockId == 0) {
 			return;
@@ -84,14 +82,12 @@ public class TileMiningWell extends TileMachine implements IMachine,
 		for (ItemStack s : stacks) {
 			StackUtil stackUtil = new StackUtil(s);
 
-			if (stackUtil.addToRandomInventory(this, Orientations.Unknown)
-					&& stackUtil.items.stackSize == 0) {
+			if (stackUtil.addToRandomInventory(this, Orientations.Unknown) && stackUtil.items.stackSize == 0) {
 				// The object has been added to a nearby chest.
 				return;
 			}
 
-			if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, s)
-					&& stackUtil.items.stackSize == 0) {
+			if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, s) && stackUtil.items.stackSize == 0) {
 				// The object has been added to a nearby pipe.
 				return;
 			}
@@ -103,8 +99,7 @@ public class TileMiningWell extends TileMachine implements IMachine,
 			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord
-					+ f1 + 0.5F, zCoord + f2, stackUtil.items);
+			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stackUtil.items);
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) world.rand.nextGaussian() * f3;

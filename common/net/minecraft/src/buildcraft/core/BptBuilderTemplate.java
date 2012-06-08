@@ -21,8 +21,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
 	LinkedList<BptSlot> buildList = new LinkedList<BptSlot>();
 
-	public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y,
-			int z) {
+	public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
 
 		for (int j = bluePrint.sizeY - 1; j >= 0; --j)
@@ -110,15 +109,13 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		return null;
 	}
 
-	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv,
-			LinkedList<BptSlot> list) {
+	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list) {
 		BptSlot result = null;
 
 		while (list.size() > 0) {
 			BptSlot slot = list.getFirst();
 
-			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI
-					.softBlock(world.getBlockId(slot.x, slot.y, slot.z)))
+			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z)))
 				list.removeFirst();
 			else if (slot.mode == Mode.ClearIfInvalid) {
 				result = slot;

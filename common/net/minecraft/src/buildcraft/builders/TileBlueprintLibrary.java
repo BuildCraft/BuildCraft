@@ -29,8 +29,7 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 	public LinkedList<BptBase> getNextPage(String after) {
 		LinkedList<BptBase> result = new LinkedList<BptBase>();
 
-		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy
-				.getOwner(this));
+		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
 		String it = after;
 
@@ -54,8 +53,7 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 	public LinkedList<BptBase> getPrevPage(String before) {
 		LinkedList<BptBase> result = new LinkedList<BptBase>();
 
-		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy
-				.getOwner(this));
+		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
 		String it = before;
 
@@ -167,12 +165,10 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 	}
 
 	@Override
-	public void openChest() {
-	}
+	public void openChest() {}
 
 	@Override
-	public void closeChest() {
-	}
+	public void closeChest() {}
 
 	@Override
 	public void updateEntity() {
@@ -187,12 +183,10 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 		if (progressIn == 100 && stack[1] == null) {
 			setInventorySlotContents(1, stack[0]);
 			setInventorySlotContents(0, null);
-			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(
-					stack[1].getItemDamage());
+			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(stack[1].getItemDamage());
 
 			if (bpt != null) {
-				BptPlayerIndex index = BuildCraftBuilders
-						.getPlayerIndex(BuildersProxy.getOwner(this));
+				BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
 				try {
 					index.addBlueprint(bpt.file);
@@ -204,11 +198,9 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 
 		if (progressOut == 100 && stack[3] == null) {
 			if (selected != null) {
-				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1,
-						selected.position));
+				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, selected.position));
 			} else {
-				setInventorySlotContents(3,
-						new ItemStack(stack[2].itemID, 1, 0));
+				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, 0));
 			}
 			setInventorySlotContents(2, null);
 		}

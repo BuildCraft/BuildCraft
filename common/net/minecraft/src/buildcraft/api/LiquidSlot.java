@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.api;
 
 public class LiquidSlot {
+
 	private int liquidId;
 	private int liquidQty;
 	private int capacity;

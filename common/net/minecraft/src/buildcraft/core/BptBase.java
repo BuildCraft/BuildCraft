@@ -40,8 +40,7 @@ public abstract class BptBase {
 
 	protected String version = "";
 
-	public BptBase() {
-	}
+	public BptBase() {}
 
 	public BptBase(int sizeX, int sizeY, int sizeZ) {
 		contents = new BptSlot[sizeX][sizeY][sizeZ];
@@ -80,8 +79,7 @@ public abstract class BptBase {
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							ModLoader.getLogger().throwing("BptBase",
-									"rotateLeft", t);
+							ModLoader.getLogger().throwing("BptBase", "rotateLeft", t);
 						}
 				}
 
@@ -114,8 +112,7 @@ public abstract class BptBase {
 
 			FileOutputStream output = new FileOutputStream(file);
 
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-					output, "8859_1"));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
 			writer.write("version:" + mod_BuildCraftCore.version());
 			writer.newLine();
@@ -171,24 +168,20 @@ public abstract class BptBase {
 
 		BptBase bpt = (BptBase) o;
 
-		if (sizeX != bpt.sizeX || sizeY != bpt.sizeY || sizeZ != bpt.sizeZ
-				|| anchorX != bpt.anchorX || anchorY != bpt.anchorY
+		if (sizeX != bpt.sizeX || sizeY != bpt.sizeY || sizeZ != bpt.sizeZ || anchorX != bpt.anchorX || anchorY != bpt.anchorY
 				|| anchorZ != bpt.anchorZ)
 			return false;
 
 		for (int x = 0; x < contents.length; ++x)
 			for (int y = 0; y < contents[0].length; ++y)
 				for (int z = 0; z < contents[0][0].length; ++z) {
-					if (contents[x][y][z] != null
-							&& bpt.contents[x][y][z] == null)
+					if (contents[x][y][z] != null && bpt.contents[x][y][z] == null)
 						return false;
 
-					if (contents[x][y][z] == null
-							&& bpt.contents[x][y][z] != null)
+					if (contents[x][y][z] == null && bpt.contents[x][y][z] != null)
 						return false;
 
-					if (contents[x][y][z] == null
-							&& bpt.contents[x][y][z] == null)
+					if (contents[x][y][z] == null && bpt.contents[x][y][z] == null)
 						continue;
 
 					if (contents[x][y][z].blockId != bpt.contents[x][y][z].blockId)
@@ -206,8 +199,7 @@ public abstract class BptBase {
 		try {
 			FileInputStream input = new FileInputStream(file);
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					input, "8859_1"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input, "8859_1"));
 
 			while (true) {
 				String line = reader.readLine();
@@ -333,9 +325,7 @@ public abstract class BptBase {
 		return res;
 	}
 
-	public abstract void loadAttribute(BufferedReader reader, String attr,
-			String val) throws IOException, BptError;
+	public abstract void loadAttribute(BufferedReader reader, String attr, String val) throws IOException, BptError;
 
-	public abstract void saveAttributes(BufferedWriter writer)
-			throws IOException;
+	public abstract void saveAttributes(BufferedWriter writer) throws IOException;
 }

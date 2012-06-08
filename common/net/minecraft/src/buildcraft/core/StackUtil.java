@@ -44,39 +44,32 @@ public class StackUtil {
 			if (from.reverse().ordinal() == j)
 				continue;
 
-			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
-					Orientations.values()[j]);
+			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, Orientations.values()[j]);
 
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tileInventory instanceof ISpecialInventory)
-				if (((ISpecialInventory) tileInventory).addItem(items, false,
-						from))
+				if (((ISpecialInventory) tileInventory).addItem(items, false, from))
 					possibleInventories.add(pos.orientation);
 
 			if (tileInventory instanceof IInventory)
 				if (Utils.checkPipesConnections(tile, tileInventory)
-						&& checkAvailableSlot((IInventory) tileInventory,
-								false, pos.orientation.reverse()))
+						&& checkAvailableSlot((IInventory) tileInventory, false, pos.orientation.reverse()))
 					possibleInventories.add(pos.orientation);
 		}
 
 		if (possibleInventories.size() > 0) {
 			int choice = w.rand.nextInt(possibleInventories.size());
 
-			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
-					possibleInventories.get(choice));
+			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possibleInventories.get(choice));
 
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			checkAvailableSlot((IInventory) tileInventory, true,
-					pos.orientation.reverse());
+			checkAvailableSlot((IInventory) tileInventory, true, pos.orientation.reverse());
 
 			if (items.stackSize > 0)
 				return addToRandomInventory(tileInventory, from);
@@ -91,8 +84,7 @@ public class StackUtil {
 	 * they will be effectively added. Orientations is the direction to look to
 	 * find the item, e.g. if the item is coming from the top, it will be YPos.
 	 */
-	public boolean checkAvailableSlot(IInventory inventory, boolean add,
-			Orientations from) {
+	public boolean checkAvailableSlot(IInventory inventory, boolean add, Orientations from) {
 		// First, look for a similar pile
 
 		if (inventory instanceof ISpecialInventory)
@@ -105,8 +97,7 @@ public class StackUtil {
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
 			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal())
-					- 1;
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
 
 			for (int j = first; j <= last; ++j)
 				if (tryAdding(inv, j, add, false)) {
@@ -160,8 +151,7 @@ public class StackUtil {
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
 			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal())
-					- 1;
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
 
 			for (int j = first; j <= last; ++j)
 				if (tryAdding(inv, j, add, true)) {
@@ -220,17 +210,14 @@ public class StackUtil {
 	 * 
 	 * This will add one item at a time, and decrease the items member.
 	 */
-	public boolean tryAdding(IInventory inventory, int stackIndex,
-			boolean doAdd, boolean addInEmpty) {
+	public boolean tryAdding(IInventory inventory, int stackIndex, boolean doAdd, boolean addInEmpty) {
 		ItemStack stack = inventory.getStackInSlot(stackIndex);
 
 		if (!addInEmpty) {
 			if (stack != null)
-				if (stack.getItem() == items.getItem()
-						&& stack.getItemDamage() == items.getItemDamage()
+				if (stack.getItem() == items.getItem() && stack.getItemDamage() == items.getItemDamage()
 						&& stack.stackSize + 1 <= stack.getMaxStackSize()
-						&& stack.stackSize + 1 <= inventory
-								.getInventoryStackLimit()) {
+						&& stack.stackSize + 1 <= inventory.getInventoryStackLimit()) {
 
 					if (doAdd) {
 						stack.stackSize++;

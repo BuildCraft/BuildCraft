@@ -29,8 +29,7 @@ public class BptBlockFiller extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		ItemStack[] recipeStack = BptBlockUtils.getItemStacks(slot, context);
 
 		for (int i = 0; i < recipeStack.length; ++i) {
@@ -70,11 +69,9 @@ public class BptBlockFiller extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world()
-				.setBlockWithNotify(slot.x, slot.y, slot.z, slot.blockId);
+		context.world().setBlockWithNotify(slot.x, slot.y, slot.z, slot.blockId);
 
-		TileFiller filler = (TileFiller) context.world().getBlockTileEntity(
-				slot.x, slot.y, slot.z);
+		TileFiller filler = (TileFiller) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
 
 		Box box = new Box();
 		box.initialize(slot.cpt.getCompoundTag("box"));
@@ -101,10 +98,8 @@ public class BptBlockFiller extends BptBlock {
 	}
 
 	@Override
-	public void initializeFromWorld(BptSlotInfo slot, IBptContext context,
-			int x, int y, int z) {
-		TileFiller filler = (TileFiller) context.world().getBlockTileEntity(x,
-				y, z);
+	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
+		TileFiller filler = (TileFiller) context.world().getBlockTileEntity(x, y, z);
 
 		NBTTagCompound cpt = new NBTTagCompound();
 

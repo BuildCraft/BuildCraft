@@ -31,8 +31,7 @@ public class PipeTransportPower extends PipeTransport {
 	public long currentDate;
 
 	public double[] internalPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-	public double[] internalNextPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
-			0.0 };
+	public double[] internalNextPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 	@TileNetworkData(staticSize = 6)
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
@@ -48,8 +47,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
-		return tile instanceof TileGenericPipe || tile instanceof IMachine
-				|| tile instanceof IPowerReceptor;
+		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
 	}
 
 	@Override
@@ -64,8 +62,7 @@ public class PipeTransportPower extends PipeTransport {
 		// Extract the nearby connected tiles
 
 		for (int i = 0; i < 6; ++i)
-			if (Utils.checkPipesConnections(
-					container.getTile(Orientations.values()[i]), container))
+			if (Utils.checkPipesConnections(container.getTile(Orientations.values()[i]), container))
 				tiles[i] = container.getTile(Orientations.values()[i]);
 
 		// Send the power to nearby pipes who requested it
@@ -78,8 +75,7 @@ public class PipeTransportPower extends PipeTransport {
 
 				for (int j = 0; j < 6; ++j)
 					if (j != i && powerQuery[j] > 0)
-						if (tiles[j] instanceof TileGenericPipe
-								|| tiles[j] instanceof IPowerReceptor)
+						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IPowerReceptor)
 							div += powerQuery[j];
 
 				double totalWatt = internalPower[i];
@@ -93,8 +89,7 @@ public class PipeTransportPower extends PipeTransport {
 
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
-							nearbyTransport.receiveEnergy(
-									Orientations.values()[j].reverse(), watts);
+							nearbyTransport.receiveEnergy(Orientations.values()[j].reverse(), watts);
 
 							displayPower[j] += watts / 2F;
 							displayPower[i] += watts / 2F;
@@ -103,8 +98,7 @@ public class PipeTransportPower extends PipeTransport {
 						} else if (tiles[j] instanceof IPowerReceptor) {
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
 
-							pow.getPowerProvider().receiveEnergy((float) watts,
-									Orientations.values()[j].reverse());
+							pow.getPowerProvider().receiveEnergy((float) watts, Orientations.values()[j].reverse());
 
 							displayPower[j] += watts / 2F;
 							displayPower[i] += watts / 2F;
@@ -117,8 +111,7 @@ public class PipeTransportPower extends PipeTransport {
 		// Compute the tiles requesting energy that are not pipes
 
 		for (int i = 0; i < 6; ++i)
-			if (tiles[i] instanceof IPowerReceptor
-					&& !(tiles[i] instanceof TileGenericPipe)) {
+			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
 				int request = receptor.powerRequest();
 
@@ -150,19 +143,14 @@ public class PipeTransportPower extends PipeTransport {
 
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
-						nearbyTransport.requestEnergy(
-								Orientations.values()[i].reverse(),
-								transferQuery[i]);
+						nearbyTransport.requestEnergy(Orientations.values()[i].reverse(), transferQuery[i]);
 					}
 				}
 
 		if (APIProxy.isServerSide())
-			if (tracker.markTimeIfDelay(worldObj,
-					2 * BuildCraftCore.updateFactor))
-				CoreProxy.sendToPlayers(this.container.getUpdatePacket(),
-						worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE,
-						mod_BuildCraftCore.instance);
+			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor))
+				CoreProxy.sendToPlayers(this.container.getUpdatePacket(), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
 
 	}
 
@@ -181,8 +169,7 @@ public class PipeTransportPower extends PipeTransport {
 	public void receiveEnergy(Orientations from, double val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook)
-			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from,
-					val);
+			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
 		else {
 			internalNextPower[from.ordinal()] += val * (1 - powerResitance);
 
@@ -194,8 +181,7 @@ public class PipeTransportPower extends PipeTransport {
 	public void requestEnergy(Orientations from, int i) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook)
-			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from,
-					i);
+			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, i);
 		else {
 			step();
 			nextPowerQuery[from.ordinal()] += i;
@@ -213,12 +199,9 @@ public class PipeTransportPower extends PipeTransport {
 
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = nbttagcompound.getInteger("powerQuery[" + i + "]");
-			nextPowerQuery[i] = nbttagcompound.getInteger("nextPowerQuery[" + i
-					+ "]");
-			internalPower[i] = nbttagcompound.getDouble("internalPower[" + i
-					+ "]");
-			internalNextPower[i] = nbttagcompound
-					.getDouble("internalNextPower[" + i + "]");
+			nextPowerQuery[i] = nbttagcompound.getInteger("nextPowerQuery[" + i + "]");
+			internalPower[i] = nbttagcompound.getDouble("internalPower[" + i + "]");
+			internalNextPower[i] = nbttagcompound.getDouble("internalNextPower[" + i + "]");
 		}
 
 	}
@@ -229,12 +212,9 @@ public class PipeTransportPower extends PipeTransport {
 
 		for (int i = 0; i < 6; ++i) {
 			nbttagcompound.setInteger("powerQuery[" + i + "]", powerQuery[i]);
-			nbttagcompound.setInteger("nextPowerQuery[" + i + "]",
-					nextPowerQuery[i]);
-			nbttagcompound.setDouble("internalPower[" + i + "]",
-					internalPower[i]);
-			nbttagcompound.setDouble("internalNextPower[" + i + "]",
-					internalNextPower[i]);
+			nbttagcompound.setInteger("nextPowerQuery[" + i + "]", nextPowerQuery[i]);
+			nbttagcompound.setDouble("internalPower[" + i + "]", internalPower[i]);
+			nbttagcompound.setDouble("internalNextPower[" + i + "]", internalNextPower[i]);
 		}
 	}
 

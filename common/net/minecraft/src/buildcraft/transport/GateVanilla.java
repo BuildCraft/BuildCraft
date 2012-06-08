@@ -50,8 +50,7 @@ public class GateVanilla extends Gate {
 
 		// Load pulser if any
 		if (nbttagcompound.hasKey("Pulser")) {
-			NBTTagCompound nbttagcompoundP = nbttagcompound
-					.getCompoundTag("Pulser");
+			NBTTagCompound nbttagcompoundP = nbttagcompound.getCompoundTag("Pulser");
 			pulser = new EnergyPulser((IPowerReceptor) pipe);
 			pulser.readFromNBT(nbttagcompoundP);
 		}
@@ -62,8 +61,7 @@ public class GateVanilla extends Gate {
 	@Override
 	public void openGui(EntityPlayer player) {
 		if (!APIProxy.isClient(player.worldObj))
-			player.openGui(mod_BuildCraftTransport.instance, GuiIds.GATES,
-					pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			player.openGui(mod_BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
 
 	// / UPDATING
@@ -103,11 +101,9 @@ public class GateVanilla extends Gate {
 
 	@Override
 	public GateConditional getConditional() {
-		if (kind == GateKind.OR_2 || kind == GateKind.OR_3
-				|| kind == GateKind.OR_4)
+		if (kind == GateKind.OR_2 || kind == GateKind.OR_3 || kind == GateKind.OR_4)
 			return GateConditional.OR;
-		else if (kind == GateKind.AND_2 || kind == GateKind.AND_3
-				|| kind == GateKind.AND_4)
+		else if (kind == GateKind.AND_2 || kind == GateKind.AND_3 || kind == GateKind.AND_4)
 			return GateConditional.AND;
 		else
 			return GateConditional.None;
@@ -179,20 +175,16 @@ public class GateVanilla extends Gate {
 	@Override
 	public void addActions(LinkedList<Action> list) {
 
-		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_2.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal())
 			list.add(BuildCraftTransport.actionRedSignal);
 
-		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_3.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_3.ordinal())
 			list.add(BuildCraftTransport.actionBlueSignal);
 
-		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
 			list.add(BuildCraftTransport.actionGreenSignal);
 
-		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
 			list.add(BuildCraftTransport.actionYellowSignal);
 
 		if (hasPulser())
@@ -221,26 +213,22 @@ public class GateVanilla extends Gate {
 	@Override
 	public void addTrigger(LinkedList<Trigger> list) {
 
-		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_2.ordinal()) {
+		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal()) {
 			list.add(BuildCraftTransport.triggerRedSignalActive);
 			list.add(BuildCraftTransport.triggerRedSignalInactive);
 		}
 
-		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_3.ordinal()) {
+		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_3.ordinal()) {
 			list.add(BuildCraftTransport.triggerBlueSignalActive);
 			list.add(BuildCraftTransport.triggerBlueSignalInactive);
 		}
 
-		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
+		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
 			list.add(BuildCraftTransport.triggerGreenSignalActive);
 			list.add(BuildCraftTransport.triggerGreenSignalInactive);
 		}
 
-		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]
-				&& kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
+		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
 			list.add(BuildCraftTransport.triggerYellowSignalActive);
 			list.add(BuildCraftTransport.triggerYellowSignalInactive);
 		}

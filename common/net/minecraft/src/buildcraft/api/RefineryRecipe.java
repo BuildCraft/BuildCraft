@@ -20,8 +20,8 @@ public class RefineryRecipe {
 	public final int resultQty;
 	public final int delay;
 
-	public RefineryRecipe(int sourceId1, int sourceQty1, int sourceId2,
-			int sourceQty2, int energy, int resultId, int resultQty, int delay) {
+	public RefineryRecipe(int sourceId1, int sourceQty1, int sourceId2, int sourceQty2, int energy, int resultId, int resultQty,
+			int delay) {
 		this.sourceId1 = sourceId1;
 		this.sourceId2 = sourceId2;
 		this.sourceQty1 = sourceQty1;

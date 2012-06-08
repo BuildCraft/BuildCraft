@@ -59,23 +59,18 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord,
-				Orientations.values()[meta]);
+		Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
 		pos.moveForwards(1);
 		int blockId = w.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
-		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
-				(int) pos.z);
+		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-		if (tile == null
-				|| !(tile instanceof ILiquidContainer)
-				|| PipeLogicWood
-						.isExcludedFromExtraction(Block.blocksList[blockId]))
+		if (tile == null || !(tile instanceof ILiquidContainer)
+				|| PipeLogicWood.isExcludedFromExtraction(Block.blocksList[blockId]))
 			return;
 
 		if (tile instanceof ILiquidContainer)
 			if (liquidToExtract <= BuildCraftAPI.BUCKET_VOLUME)
-				liquidToExtract += powerProvider.useEnergy(1, 1, true)
-						* BuildCraftAPI.BUCKET_VOLUME;
+				liquidToExtract += powerProvider.useEnergy(1, 1, true) * BuildCraftAPI.BUCKET_VOLUME;
 	}
 
 	@Override
@@ -95,25 +90,19 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		if (liquidToExtract > 0 && meta < 6) {
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[meta]);
+			Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
 			pos.moveForwards(1);
 
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tile instanceof ILiquidContainer) {
 				ILiquidContainer container = (ILiquidContainer) tile;
 
 				int flowRate = ((PipeTransportLiquids) transport).flowRate;
 
-				int extracted = container
-						.empty(liquidToExtract > flowRate ? flowRate
-								: liquidToExtract, false);
+				int extracted = container.empty(liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
-				extracted = ((PipeTransportLiquids) transport).fill(
-						pos.orientation, extracted, container.getLiquidId(),
-						true);
+				extracted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, container.getLiquidId(), true);
 
 				container.empty(extracted, true);
 

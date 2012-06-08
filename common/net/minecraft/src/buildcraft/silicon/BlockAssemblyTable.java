@@ -15,8 +15,7 @@ import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockAssemblyTable extends BlockContainer implements
-		ITextureProvider {
+public class BlockAssemblyTable extends BlockContainer implements ITextureProvider {
 
 	public BlockAssemblyTable(int i) {
 		super(i, Material.iron);
@@ -42,15 +41,13 @@ public class BlockAssemblyTable extends BlockContainer implements
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
 			return false;
 
 		if (!APIProxy.isClient(world))
-			entityplayer.openGui(mod_BuildCraftSilicon.instance,
-					GuiIds.ASSEMBLY_TABLE, world, i, j, k);
+			entityplayer.openGui(mod_BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
 		return true;
 	}
 

@@ -25,8 +25,7 @@ import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
-public class TileAssemblyTable extends TileEntity implements IInventory,
-		IPipeConnection {
+public class TileAssemblyTable extends TileEntity implements IInventory, IPipeConnection {
 
 	ItemStack[] items = new ItemStack[12];
 
@@ -38,6 +37,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory,
 	private float energyStored = 0;
 
 	public static class SelectionMessage {
+
 		/**
 		 * If true, select, if false, unselect
 		 */
@@ -57,8 +57,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory,
 		public int itemDmg = 0;
 	}
 
-	public static TilePacketWrapper selectionMessageWrapper = new TilePacketWrapper(
-			SelectionMessage.class);
+	public static TilePacketWrapper selectionMessageWrapper = new TilePacketWrapper(SelectionMessage.class);
 
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
 		LinkedList<AssemblyRecipe> result = new LinkedList<AssemblyRecipe>();
@@ -148,20 +147,16 @@ public class TileAssemblyTable extends TileEntity implements IInventory,
 					}
 				}
 
-				StackUtil stackUtils = new StackUtil(
-						currentRecipe.output.copy());
+				StackUtil stackUtils = new StackUtil(currentRecipe.output.copy());
 
-				boolean added = stackUtils.addToRandomInventory(this,
-						Orientations.Unknown);
+				boolean added = stackUtils.addToRandomInventory(this, Orientations.Unknown);
 
 				if (!added || stackUtils.items.stackSize > 0) {
-					added = Utils.addToRandomPipeEntry(this,
-							Orientations.Unknown, stackUtils.items);
+					added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, stackUtils.items);
 				}
 
 				if (!added) {
-					EntityItem entityitem = new EntityItem(worldObj,
-							xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
+					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
 							currentRecipe.output.copy());
 
 					worldObj.spawnEntityInWorld(entityitem);
@@ -263,20 +258,17 @@ public class TileAssemblyTable extends TileEntity implements IInventory,
 			ItemStack stack = ItemStack.loadItemStackFromNBT(cpt);
 
 			for (AssemblyRecipe r : BuildCraftCore.assemblyRecipes) {
-				if (r.output.itemID == stack.itemID
-						&& r.output.getItemDamage() == stack.getItemDamage()) {
+				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
 					plannedOutput.add(r);
 				}
 			}
 		}
 
 		if (nbttagcompound.hasKey("recipe")) {
-			ItemStack stack = ItemStack.loadItemStackFromNBT(nbttagcompound
-					.getCompoundTag("recipe"));
+			ItemStack stack = ItemStack.loadItemStackFromNBT(nbttagcompound.getCompoundTag("recipe"));
 
 			for (AssemblyRecipe r : plannedOutput) {
-				if (r.output.itemID == stack.itemID
-						&& r.output.getItemDamage() == stack.getItemDamage()) {
+				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
 					currentRecipe = r;
 					break;
 				}
@@ -390,8 +382,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory,
 
 	public void handleSelectionMessage(SelectionMessage message) {
 		for (AssemblyRecipe recipe : BuildCraftCore.assemblyRecipes) {
-			if (recipe.output.itemID == message.itemID
-					&& recipe.output.getItemDamage() == message.itemDmg) {
+			if (recipe.output.itemID == message.itemID && recipe.output.getItemDamage() == message.itemDmg) {
 				if (message.select) {
 					planOutput(recipe);
 				} else {
@@ -416,17 +407,13 @@ public class TileAssemblyTable extends TileEntity implements IInventory,
 				message.select = false;
 			}
 
-			PacketUpdate packet = new PacketUpdate(
-					PacketIds.SELECTION_ASSEMBLY,
-					selectionMessageWrapper.toPayload(xCoord, yCoord, zCoord,
-							message));
+			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, selectionMessageWrapper.toPayload(xCoord,
+					yCoord, zCoord, message));
 			packet.posX = xCoord;
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
-			CoreProxy.sendToPlayers(packet.getPacket(), worldObj,
-					(int) player.posX, (int) player.posY, (int) player.posZ,
-					DefaultProps.NETWORK_UPDATE_RANGE,
-					mod_BuildCraftSilicon.instance);
+			CoreProxy.sendToPlayers(packet.getPacket(), worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
+					DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftSilicon.instance);
 		}
 	}
 
@@ -443,8 +430,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory,
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(container, 0,
-				(int) currentRequiredEnergy);
+		iCrafting.updateCraftingInventoryInfo(container, 0, (int) currentRequiredEnergy);
 		iCrafting.updateCraftingInventoryInfo(container, 1, (int) energyStored);
 	}
 

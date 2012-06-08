@@ -80,8 +80,7 @@ public class EngineStone extends Engine {
 			burnTime = totalBurnTime = getItemBurnTime(tile.getStackInSlot(0));
 
 			if (burnTime > 0) {
-				tile.setInventorySlotContents(0,
-						Utils.consumeItem(tile.getStackInSlot(0)));
+				tile.setInventorySlotContents(0, Utils.consumeItem(tile.getStackInSlot(0)));
 			}
 		}
 	}
@@ -96,8 +95,7 @@ public class EngineStone extends Engine {
 			return 0;
 		}
 		int i = itemstack.getItem().shiftedIndex;
-		if (i < Block.blocksList.length && Block.blocksList[i] != null
-				&& Block.blocksList[i].blockMaterial == Material.wood) {
+		if (i < Block.blocksList.length && Block.blocksList[i] != null && Block.blocksList[i].blockMaterial == Material.wood) {
 			return 300;
 		}
 		if (i == Item.stick.shiftedIndex) {
@@ -109,8 +107,7 @@ public class EngineStone extends Engine {
 		if (i == Item.bucketLava.shiftedIndex) {
 			return 20000;
 		} else {
-			return i == Block.sapling.blockID ? 100 : CoreProxy.addFuel(i,
-					itemstack.getItemDamage());
+			return i == Block.sapling.blockID ? 100 : CoreProxy.addFuel(i, itemstack.getItemDamage());
 		}
 	}
 
@@ -130,8 +127,7 @@ public class EngineStone extends Engine {
 	public void delete() {
 		ItemStack stack = tile.getStackInSlot(0);
 		if (stack != null)
-			Utils.dropItems(tile.worldObj, stack, tile.xCoord, tile.yCoord,
-					tile.zCoord);
+			Utils.dropItems(tile.worldObj, stack, tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 
 	@Override
@@ -153,14 +149,11 @@ public class EngineStone extends Engine {
 	}
 
 	@Override
-	public void sendGUINetworkData(ContainerEngine containerEngine,
-			ICrafting iCrafting) {
+	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, energy);
-		iCrafting
-				.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, burnTime);
-		iCrafting
-				.updateCraftingInventoryInfo(containerEngine, 3, totalBurnTime);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, totalBurnTime);
 	}
 
 	@Override

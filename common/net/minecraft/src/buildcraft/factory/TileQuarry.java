@@ -42,8 +42,7 @@ import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
-public class TileQuarry extends TileMachine implements IArmListener, IMachine,
-		IPowerReceptor, IPipeConnection, IBuilderInventory {
+public class TileQuarry extends TileMachine implements IArmListener, IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 
 	boolean isDigging = false;
 
@@ -116,10 +115,8 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 	private boolean loadDefaultBoundaries = false;
 
 	private void createArm() {
-		arm = new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos,
-				yCoord + bluePrintBuilder.bluePrint.sizeY - 1
-						+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,
-				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
+		arm = new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos, yCoord + bluePrintBuilder.bluePrint.sizeY - 1
+				+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos, bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
 				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2);
 
 		arm.listener = this;
@@ -136,8 +133,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 			arm.speed = 0;
 			float energyToUse = 2 + powerProvider.energyStored / 1000;
 
-			float energy = powerProvider.useEnergy(energyToUse, energyToUse,
-					true);
+			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
 
 			if (energy > 0) {
 				arm.doMove(0.015 + energy / 200F);
@@ -191,9 +187,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 				}
 
 				if (builder.readyToBuild()) {
-					builder.scheduleContruction(
-							bluePrintBuilder.getNextBlock(worldObj, this),
-							bluePrintBuilder.getContext());
+					builder.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, this), bluePrintBuilder.getContext());
 				}
 
 				return;
@@ -213,8 +207,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 			powerProvider.configure(20, 30, 200, 50, MAX_ENERGY);
 
 			if (!findTarget(true)) {
-				arm.setTarget(box.xMin + arm.sizeX / 2, yCoord + 2, box.zMin
-						+ arm.sizeX / 2);
+				arm.setTarget(box.xMin + arm.sizeX / 2, yCoord + 2, box.zMin + arm.sizeX / 2);
 
 				isDigging = false;
 			}
@@ -264,8 +257,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 
 				for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
 					if (!blockedColumns[searchX][searchZ]) {
-						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin
-								+ searchZ + 1;
+						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
 
 						int blockId = worldObj.getBlockId(bx, by, bz);
 
@@ -310,8 +302,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 			int ySize = nbttagcompound.getInteger("ySize");
 			int zSize = nbttagcompound.getInteger("zSize");
 
-			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize
-					- 1, zMin + zSize - 1);
+			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1);
 
 			loadDefaultBoundaries = false;
 		} else {
@@ -376,8 +367,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 
 			// Share this with mining well!
 
-			ArrayList<ItemStack> stacks = BuildCraftBlockUtil
-					.getItemStackFromBlock(worldObj, i, j, k);
+			ArrayList<ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, i, j, k);
 
 			if (stacks != null) {
 				for (ItemStack s : stacks) {
@@ -391,8 +381,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 		}
 
 		// Collect any lost items laying around
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(
-				arm.headPosX - 1.5, arm.headPosY, arm.headPosZ - 1.5,
+		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(arm.headPosX - 1.5, arm.headPosY, arm.headPosZ - 1.5,
 				arm.headPosX + 2.5, arm.headPosY + 2.5, arm.headPosZ + 2.5);
 		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
 		for (int ii = 0; ii < result.size(); ii++) {
@@ -418,8 +407,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 		added = stackUtils.addToRandomInventory(this, Orientations.Unknown);
 
 		if (!added || stackUtils.items.stackSize > 0) {
-			added = Utils.addToRandomPipeEntry(this, Orientations.Unknown,
-					stackUtils.items);
+			added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, stackUtils.items);
 		}
 
 		// Last, throw the object away
@@ -429,13 +417,11 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 			float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 
-			EntityItem entityitem = new EntityItem(worldObj, xCoord + f, yCoord
-					+ f1 + 0.5F, zCoord + f2, stackUtils.items);
+			EntityItem entityitem = new EntityItem(worldObj, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stackUtils.items);
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3;
-			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3
-					+ 1.0F;
+			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3 + 1.0F;
 			entityitem.motionZ = (float) worldObj.rand.nextGaussian() * f3;
 			worldObj.spawnEntityInWorld(entityitem);
 		}
@@ -443,12 +429,10 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 
 	private boolean blockDig(int blockID) {
 
-		if (Block.blocksList[blockID] != null
-				&& Block.blocksList[blockID].getHardness() == -1.0f)
+		if (Block.blocksList[blockID] != null && Block.blocksList[blockID].getHardness() == -1.0f)
 			return true;
 
-		return blockID == Block.lavaStill.blockID
-				|| blockID == Block.lavaMoving.blockID;
+		return blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID;
 	}
 
 	private boolean canDig(int blockID) {
@@ -483,8 +467,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 		}
 
 		if (a == null) {
-			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10,
-					yCoord + 4, zCoord + 10);
+			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
 			useDefault = true;
 		}
@@ -494,8 +477,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 		int zSize = a.zMax() - a.zMin() + 1;
 
 		if (xSize < 3 || zSize < 3) {
-			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10,
-					yCoord + 4, zCoord + 10);
+			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
 			useDefault = true;
 		}
@@ -514,8 +496,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 		if (useDefault) {
 			int xMin = 0, zMin = 0;
 
-			Orientations o = Orientations.values()[worldObj.getBlockMetadata(
-					xCoord, yCoord, zCoord)].reverse();
+			Orientations o = Orientations.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].reverse();
 
 			switch (o) {
 			case XPos:
@@ -536,8 +517,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 				break;
 			}
 
-			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize
-					- 1, zMin + zSize - 1);
+			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1);
 		}
 
 		a.removeFromWorld();
@@ -545,8 +525,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 
 	private void initializeBluePrintBuilder() {
 
-		BptBlueprint bluePrint = new BptBlueprint(box.sizeX(), box.sizeY(),
-				box.sizeZ());
+		BptBlueprint bluePrint = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int i = 0; i < bluePrint.sizeX; ++i) {
 			for (int j = 0; j < bluePrint.sizeY; ++j) {
@@ -558,35 +537,25 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				bluePrint.setBlockId(i, it * (box.sizeY() - 1), 0,
-						BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(i, it * (box.sizeY() - 1),
-						bluePrint.sizeZ - 1,
-						BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlockId(i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlockId(i, it * (box.sizeY() - 1), bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
 			}
 
 			for (int k = 0; k < bluePrint.sizeZ; ++k) {
-				bluePrint.setBlockId(0, it * (box.sizeY() - 1), k,
-						BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(bluePrint.sizeX - 1, it
-						* (box.sizeY() - 1), k,
-						BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlockId(0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID);
+				bluePrint.setBlockId(bluePrint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID);
 
 			}
 		}
 
 		for (int h = 1; h < box.sizeY(); ++h) {
 			bluePrint.setBlockId(0, h, 0, BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(0, h, bluePrint.sizeZ - 1,
-					BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(bluePrint.sizeX - 1, h, 0,
-					BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(bluePrint.sizeX - 1, h, bluePrint.sizeZ - 1,
-					BuildCraftFactory.frameBlock.blockID);
+			bluePrint.setBlockId(0, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
+			bluePrint.setBlockId(bluePrint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock.blockID);
+			bluePrint.setBlockId(bluePrint.sizeX - 1, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
 		}
 
-		bluePrintBuilder = new BptBuilderBlueprint(bluePrint, worldObj,
-				box.xMin, yCoord, box.zMin);
+		bluePrintBuilder = new BptBuilderBlueprint(bluePrint, worldObj, box.xMin, yCoord, box.zMin);
 	}
 
 	@Override
@@ -680,12 +649,10 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 	}
 
 	@Override
-	public void openChest() {
-	}
+	public void openChest() {}
 
 	@Override
-	public void closeChest() {
-	}
+	public void closeChest() {}
 
 	@Override
 	public boolean isBuildingMaterial(int i) {

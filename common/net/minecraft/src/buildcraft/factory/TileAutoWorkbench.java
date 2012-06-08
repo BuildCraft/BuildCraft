@@ -33,6 +33,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 		public LocalInventoryCrafting() {
 			super(new Container() {
+
 				@SuppressWarnings("all")
 				public boolean isUsableByPlayer(EntityPlayer entityplayer) {
 					return false;
@@ -131,12 +132,8 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		for (int j = 0; j < getSizeInventory(); ++j) {
 			ItemStack stackInInventory = getStackInSlot(j);
 
-			if (stackInInventory != null
-					&& stackInInventory.stackSize > 0
-					&& stackInInventory.itemID == stack.itemID
-					&& stackInInventory.getItemDamage() == stack
-							.getItemDamage()
-					&& stackInInventory.stackSize < minSimilar) {
+			if (stackInInventory != null && stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID
+					&& stackInInventory.getItemDamage() == stack.getItemDamage() && stackInInventory.stackSize < minSimilar) {
 				minSimilar = stackInInventory.stackSize;
 				minSlot = j;
 			}
@@ -158,6 +155,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	}
 
 	class StackPointer {
+
 		IInventory inventory;
 		int index;
 		ItemStack item;
@@ -172,8 +170,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(
-				craftMatrix);
+		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(craftMatrix);
 
 		return recipe;
 	}
@@ -190,8 +187,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 			if (stack != null) {
 				if (stack.stackSize <= itemsToLeave) {
-					StackPointer pointer = getNearbyItem(stack.itemID,
-							stack.getItemDamage());
+					StackPointer pointer = getNearbyItem(stack.itemID, stack.getItemDamage());
 
 					if (pointer == null) {
 						resetPointers(pointerList);
@@ -214,8 +210,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack resultStack = CraftingManager.getInstance()
-				.findMatchingRecipe(craftMatrix);
+		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix);
 
 		if (resultStack == null || !doRemove) {
 			resetPointers(pointerList);
@@ -224,8 +219,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 				// replace with the container where appropriate
 
 				if (p.item.getItem().getContainerItem() != null) {
-					ItemStack newStack = new ItemStack(p.item.getItem()
-							.getContainerItem(), 1);
+					ItemStack newStack = new ItemStack(p.item.getItem().getContainerItem(), 1);
 
 					p.inventory.setInventorySlotContents(p.index, newStack);
 				}
@@ -255,44 +249,36 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	public StackPointer getNearbyItem(int itemId, int damage) {
 		StackPointer pointer = null;
 
-		pointer = getNearbyItemFromOrientation(itemId, damage,
-				Orientations.XNeg);
+		pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.XNeg);
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage,
-					Orientations.XPos);
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.XPos);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage,
-					Orientations.YNeg);
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YNeg);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage,
-					Orientations.YPos);
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YPos);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage,
-					Orientations.ZNeg);
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.ZNeg);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage,
-					Orientations.ZPos);
+			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.ZPos);
 		}
 
 		return pointer;
 	}
 
-	public StackPointer getNearbyItemFromOrientation(int itemId, int damage,
-			Orientations orientation) {
+	public StackPointer getNearbyItemFromOrientation(int itemId, int damage, Orientations orientation) {
 		Position p = new Position(xCoord, yCoord, zCoord, orientation);
 		p.moveForwards(1.0);
 
-		TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
-				(int) p.z);
+		TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
 
 		if (tile instanceof ISpecialInventory) {
 			// Don't get stuff out of ISpecialInventory for now / we wouldn't
@@ -304,9 +290,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
 				ItemStack stack = inventory.getStackInSlot(j);
 
-				if (stack != null && stack.stackSize > 0
-						&& stack.itemID == itemId
-						&& stack.getItemDamage() == damage) {
+				if (stack != null && stack.stackSize > 0 && stack.itemID == itemId && stack.getItemDamage() == damage) {
 					inventory.decrStackSize(j, 1);
 
 					StackPointer result = new StackPointer();

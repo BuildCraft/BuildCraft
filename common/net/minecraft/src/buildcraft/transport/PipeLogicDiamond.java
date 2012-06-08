@@ -33,6 +33,7 @@ public class PipeLogicDiamond extends PipeLogic {
 	ItemStack[] items = new ItemStack[54];
 
 	public class PacketStack {
+
 		@TileNetworkData(intKind = TileNetworkData.UNSIGNED_BYTE)
 		public int num;
 
@@ -49,8 +50,7 @@ public class PipeLogicDiamond extends PipeLogic {
 
 	public PipeLogicDiamond() {
 		if (networkPacket == null)
-			networkPacket = new TilePacketWrapper(
-					new Class[] { PacketStack.class });
+			networkPacket = new TilePacketWrapper(new Class[] { PacketStack.class });
 	}
 
 	@Override
@@ -61,8 +61,7 @@ public class PipeLogicDiamond extends PipeLogic {
 				return false;
 
 		if (!APIProxy.isClient(container.worldObj))
-			entityplayer.openGui(mod_BuildCraftTransport.instance,
-					GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord,
+			entityplayer.openGui(mod_BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord,
 					container.yCoord, container.zCoord);
 
 		return true;
@@ -90,9 +89,8 @@ public class PipeLogicDiamond extends PipeLogic {
 
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
-				CoreProxy.sendToPlayers(getContentsPacket(p), worldObj, xCoord,
-						yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
-						mod_BuildCraftTransport.instance);
+				CoreProxy.sendToPlayers(getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 
 		return stack;
 	}
@@ -101,8 +99,7 @@ public class PipeLogicDiamond extends PipeLogic {
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		if (items[i] == null && itemstack == null)
 			return;
-		else if (items[i] != null && itemstack != null
-				&& items[i].isStackEqual(itemstack))
+		else if (items[i] != null && itemstack != null && items[i].isStackEqual(itemstack))
 			return;
 
 		if (itemstack != null)
@@ -112,9 +109,8 @@ public class PipeLogicDiamond extends PipeLogic {
 
 		if (APIProxy.isServerSide())
 			for (int p = 0; p < 6; ++p)
-				CoreProxy.sendToPlayers(getContentsPacket(p), worldObj, xCoord,
-						yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
-						mod_BuildCraftTransport.instance);
+				CoreProxy.sendToPlayers(getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 	}
 
 	@Override
@@ -122,10 +118,8 @@ public class PipeLogicDiamond extends PipeLogic {
 		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor))
 			if (APIProxy.isServerSide())
 				for (int p = 0; p < 6; ++p)
-					CoreProxy.sendToPlayers(getContentsPacket(p), worldObj,
-							xCoord, yCoord, zCoord,
-							DefaultProps.NETWORK_UPDATE_RANGE,
-							mod_BuildCraftTransport.instance);
+					CoreProxy.sendToPlayers(getContentsPacket(p), worldObj, xCoord, yCoord, zCoord,
+							DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 	}
 
 	@Override
@@ -151,8 +145,7 @@ public class PipeLogicDiamond extends PipeLogic {
 		NBTTagList nbttaglist = nbttagcompound.getTagList("items");
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
-			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
-					.tagAt(j);
+			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
 			int index = nbttagcompound2.getInteger("index");
 			items[index] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
 		}
@@ -199,8 +192,8 @@ public class PipeLogicDiamond extends PipeLogic {
 				stacks.dmg[j] = items[j + num * 9].getItemDamage();
 			}
 
-		return new PacketUpdate(PacketIds.DIAMOND_PIPE_CONTENTS, xCoord,
-				yCoord, zCoord, networkPacket.toPayload(stacks)).getPacket();
+		return new PacketUpdate(PacketIds.DIAMOND_PIPE_CONTENTS, xCoord, yCoord, zCoord, networkPacket.toPayload(stacks))
+				.getPacket();
 
 	}
 
@@ -216,8 +209,7 @@ public class PipeLogicDiamond extends PipeLogic {
 			if (stacks.ids[j] == -1)
 				items[num * 9 + j] = null;
 			else
-				items[num * 9 + j] = new ItemStack(stacks.ids[j], 1,
-						stacks.dmg[j]);
+				items[num * 9 + j] = new ItemStack(stacks.ids[j], 1, stacks.dmg[j]);
 	}
 
 	@Override

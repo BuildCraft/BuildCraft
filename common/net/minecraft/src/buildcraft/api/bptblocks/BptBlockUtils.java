@@ -20,8 +20,7 @@ import net.minecraft.src.buildcraft.api.IBptContext;
 
 public class BptBlockUtils {
 
-	public static void requestInventoryContents(BptSlotInfo slot,
-			IBptContext context, LinkedList<ItemStack> requirements) {
+	public static void requestInventoryContents(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		ItemStack[] stacks = getItemStacks(slot, context);
 
 		for (ItemStack stack : stacks) {
@@ -31,8 +30,7 @@ public class BptBlockUtils {
 		}
 	}
 
-	public static void initializeInventoryContents(BptSlotInfo slot,
-			IBptContext context, IInventory inventory) {
+	public static void initializeInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory) {
 		ItemStack[] stacks = new ItemStack[inventory.getSizeInventory()];
 
 		for (int i = 0; i < inventory.getSizeInventory(); ++i) {
@@ -42,8 +40,7 @@ public class BptBlockUtils {
 		setItemStacks(slot, context, stacks);
 	}
 
-	public static void buildInventoryContents(BptSlotInfo slot,
-			IBptContext context, IInventory inventory) {
+	public static void buildInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory) {
 		ItemStack[] stacks = getItemStacks(slot, context);
 
 		for (int i = 0; i < stacks.length; ++i) {
@@ -51,8 +48,7 @@ public class BptBlockUtils {
 		}
 	}
 
-	public static ItemStack[] getItemStacks(BptSlotInfo slot,
-			IBptContext context) {
+	public static ItemStack[] getItemStacks(BptSlotInfo slot, IBptContext context) {
 		NBTTagList list = (NBTTagList) slot.cpt.getTag("inv");
 
 		if (list == null) {
@@ -62,8 +58,7 @@ public class BptBlockUtils {
 		ItemStack stacks[] = new ItemStack[list.tagCount()];
 
 		for (int i = 0; i < list.tagCount(); ++i) {
-			ItemStack stack = ItemStack
-					.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
+			ItemStack stack = ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
 
 			if (stack != null && stack.itemID != 0 && stack.stackSize > 0) {
 				stacks[i] = context.mapItemStack(stack);
@@ -73,8 +68,7 @@ public class BptBlockUtils {
 		return stacks;
 	}
 
-	public static void setItemStacks(BptSlotInfo slot, IBptContext context,
-			ItemStack[] stacks) {
+	public static void setItemStacks(BptSlotInfo slot, IBptContext context, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
 
 		for (int i = 0; i < stacks.length; ++i) {

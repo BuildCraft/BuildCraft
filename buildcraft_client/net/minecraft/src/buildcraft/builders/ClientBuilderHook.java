@@ -12,17 +12,12 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 public class ClientBuilderHook implements IBuilderHook {
 
 	@Override
-	public void rootIndexInitialized(BptRootIndex rootBptIndex)
-			throws IOException {
-		if (!APIProxy.isServerSide()
-				&& !APIProxy
-						.isClient(ModLoader.getMinecraftInstance().theWorld)) {
+	public void rootIndexInitialized(BptRootIndex rootBptIndex) throws IOException {
+		if (!APIProxy.isServerSide() && !APIProxy.isClient(ModLoader.getMinecraftInstance().theWorld)) {
 			// If we're on a SSP game, then pre-load the player list
 
-			BptPlayerIndex playerIndex = new BptPlayerIndex(
-					CoreProxy.playerName() + ".list", rootBptIndex);
-			BuildCraftBuilders.playerLibrary.put(CoreProxy.playerName(),
-					playerIndex);
+			BptPlayerIndex playerIndex = new BptPlayerIndex(CoreProxy.playerName() + ".list", rootBptIndex);
+			BuildCraftBuilders.playerLibrary.put(CoreProxy.playerName(), playerIndex);
 		}
 	}
 

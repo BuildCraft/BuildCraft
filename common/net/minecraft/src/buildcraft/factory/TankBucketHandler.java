@@ -25,8 +25,7 @@ public class TankBucketHandler implements IBucketHandler {
 
 			int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
 
-			ItemStack filledBucket = BuildCraftAPI.getFilledItemForLiquid(tank
-					.getLiquidId());
+			ItemStack filledBucket = BuildCraftAPI.getFilledItemForLiquid(tank.getLiquidId());
 
 			if (qty >= BuildCraftAPI.BUCKET_VOLUME && filledBucket != null) {
 				tank.empty(BuildCraftAPI.BUCKET_VOLUME, true);

@@ -9,6 +9,7 @@ import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IBptContext;
 
 public class BptSlot extends BptSlotInfo {
+
 	public enum Mode {
 		ClearIfInvalid, Build
 	};
@@ -29,8 +30,7 @@ public class BptSlot extends BptSlotInfo {
 	}
 
 	public void initializeFromWorld(IBptContext context, int xs, int ys, int zs) {
-		BuildCraftAPI.blockBptProps[blockId].initializeFromWorld(this, context,
-				xs, ys, zs);
+		BuildCraftAPI.blockBptProps[blockId].initializeFromWorld(this, context, xs, ys, zs);
 	}
 
 	public void postProcessing(IBptContext context) {
@@ -40,8 +40,7 @@ public class BptSlot extends BptSlotInfo {
 	public LinkedList<ItemStack> getRequirements(IBptContext context) {
 		LinkedList<ItemStack> res = new LinkedList<ItemStack>();
 
-		BuildCraftAPI.blockBptProps[blockId]
-				.addRequirements(this, context, res);
+		BuildCraftAPI.blockBptProps[blockId].addRequirements(this, context, res);
 
 		return res;
 	}
@@ -65,8 +64,7 @@ public class BptSlot extends BptSlotInfo {
 		obj.blockId = blockId;
 		obj.meta = meta;
 		obj.cpt = (NBTTagCompound) cpt.copy();
-		obj.storedRequirements = (LinkedList<ItemStack>) storedRequirements
-				.clone();
+		obj.storedRequirements = (LinkedList<ItemStack>) storedRequirements.clone();
 
 		if (stackToUse != null)
 			obj.stackToUse = stackToUse.copy();

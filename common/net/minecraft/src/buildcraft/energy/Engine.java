@@ -87,8 +87,7 @@ public abstract class Engine {
 		energy += addition;
 
 		if (getEnergyStage() == EnergyStage.Explosion) {
-			tile.worldObj.createExplosion(null, tile.xCoord, tile.yCoord,
-					tile.zCoord, explosionRange());
+			tile.worldObj.createExplosion(null, tile.xCoord, tile.yCoord, tile.zCoord, explosionRange());
 		}
 
 		if (energy > maxEnergy) {
@@ -142,8 +141,7 @@ public abstract class Engine {
 
 	}
 
-	public void sendGUINetworkData(ContainerEngine containerEngine,
-			ICrafting iCrafting) {
+	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 
 	}
 

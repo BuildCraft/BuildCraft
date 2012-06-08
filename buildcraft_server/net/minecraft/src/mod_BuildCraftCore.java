@@ -20,18 +20,18 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 	public static mod_BuildCraftCore instance;
 
-	public mod_BuildCraftCore () {
+	public mod_BuildCraftCore() {
 		instance = this;
 	}
 
 	BuildCraftCore proxy = new BuildCraftCore();
 
-	public static void initialize () {
-		BuildCraftCore.initialize ();
+	public static void initialize() {
+		BuildCraftCore.initialize();
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeModel(this);
 		ModLoader.setInGameHook(this, true, true);
@@ -43,7 +43,7 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 	@Override
 	public String getVersion() {
-		return version ();
+		return version();
 	}
 
 	long lastReport = 0;
@@ -56,11 +56,11 @@ public class mod_BuildCraftCore extends NetworkMod {
 			if (d.getTime() - lastReport > 10000) {
 				lastReport = d.getTime();
 				int bytes = ClassMapping.report();
-				System.out.println ("BuildCraft bandwidth = " + (bytes / 10) + " bytes / second");
-				System.out.println ();
+				System.out.println("BuildCraft bandwidth = " + (bytes / 10) + " bytes / second");
+				System.out.println();
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -69,7 +69,14 @@ public class mod_BuildCraftCore extends NetworkMod {
 		BuildCraftCore.load();
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 
 }

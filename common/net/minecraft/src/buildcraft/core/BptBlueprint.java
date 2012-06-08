@@ -49,8 +49,7 @@ public class BptBlueprint extends BptBase {
 			idMapping[i] = i;
 	}
 
-	public void readFromWorld(IBptContext context, TileEntity anchorTile,
-			int x, int y, int z) {
+	public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z) {
 		BptSlot slot = new BptSlot();
 
 		slot.x = (int) (x - context.surroundingBox().pMin().x);
@@ -116,11 +115,9 @@ public class BptBlueprint extends BptBase {
 
 		for (Integer id : idsToMap) {
 			if (id < Block.blocksList.length && Block.blocksList[id] != null)
-				writer.write(BuildCraftAPI
-						.getBlockSignature(Block.blocksList[id]) + "=" + id);
+				writer.write(BuildCraftAPI.getBlockSignature(Block.blocksList[id]) + "=" + id);
 			else
-				writer.write(BuildCraftAPI.getItemSignature(Item.itemsList[id])
-						+ "=" + id);
+				writer.write(BuildCraftAPI.getItemSignature(Item.itemsList[id]) + "=" + id);
 
 			writer.newLine();
 		}
@@ -142,8 +139,7 @@ public class BptBlueprint extends BptBase {
 						if (slot.meta != 0)
 							slot.cpt.setInteger("meta", slot.meta);
 
-						NBTBase.writeNamedTag(slot.cpt, new BptDataStream(
-								writer));
+						NBTBase.writeNamedTag(slot.cpt, new BptDataStream(writer));
 
 						writer.newLine();
 					} else
@@ -161,8 +157,7 @@ public class BptBlueprint extends BptBase {
 				for (int z = 0; z < sizeZ; ++z) {
 					BptSlotInfo slot = contents[x][y][z];
 
-					if (slot != null && slot.blockId != 0
-							&& slot.storedRequirements.size() > 0) {
+					if (slot != null && slot.blockId != 0 && slot.storedRequirements.size() > 0) {
 						NBTTagList list = new NBTTagList();
 
 						for (ItemStack stack : slot.storedRequirements) {
@@ -183,12 +178,9 @@ public class BptBlueprint extends BptBase {
 	}
 
 	@Override
-	public void loadAttribute(BufferedReader reader, String attr, String val)
-			throws IOException, BptError {
+	public void loadAttribute(BufferedReader reader, String attr, String val) throws IOException, BptError {
 		if ("3.1.0".equals(version))
-			throw new BptError(
-					"Blueprint format 3.1.0 is not supported anymore, can't load "
-							+ file);
+			throw new BptError("Blueprint format 3.1.0 is not supported anymore, can't load " + file);
 
 		// blockMap is still tested for being able to load pre 3.1.2 bpts
 		if (attr.equals("blockMap") || attr.equals("idMap"))
@@ -216,8 +208,7 @@ public class BptBlueprint extends BptBase {
 
 							// Items between 256 and Block.blocksList.length may
 							// be item or block
-							if (i < Block.blocksList.length
-									&& Block.blocksList[i] != null)
+							if (i < Block.blocksList.length && Block.blocksList[i] != null)
 								continue;
 
 							if (itemMatch(sig, Item.itemsList[i])) {
@@ -228,9 +219,7 @@ public class BptBlueprint extends BptBase {
 						}
 
 						if (!found)
-							throw new BptError(
-									"BLUEPRINT ERROR: can't find item of signature "
-											+ sig + " for " + name);
+							throw new BptError("BLUEPRINT ERROR: can't find item of signature " + sig + " for " + name);
 					}
 
 				} else {
@@ -242,8 +231,7 @@ public class BptBlueprint extends BptBase {
 					if (handlingBlock == null)
 						handlingBlock = defaultBlock;
 
-					if (!handlingBlock.match(Block.blocksList[blockId],
-							bptSignature)) {
+					if (!handlingBlock.match(Block.blocksList[blockId], bptSignature)) {
 						boolean found = false;
 
 						for (int i = 0; i < Block.blocksList.length; ++i)
@@ -253,17 +241,14 @@ public class BptBlueprint extends BptBase {
 								if (handlingBlock == null)
 									handlingBlock = defaultBlock;
 
-								if (handlingBlock.match(Block.blocksList[i],
-										bptSignature)) {
+								if (handlingBlock.match(Block.blocksList[i], bptSignature)) {
 									idMapping[blockId] = i;
 									found = true;
 								}
 							}
 
 						if (!found)
-							throw new BptError(
-									"BLUEPRINT ERROR: can't find block of signature "
-											+ bptSignature + " for " + name);
+							throw new BptError("BLUEPRINT ERROR: can't find block of signature " + bptSignature + " for " + name);
 					}
 				}
 			}
@@ -284,12 +269,9 @@ public class BptBlueprint extends BptBase {
 							slot.y = y;
 							slot.z = z;
 
-							slot.cpt = (NBTTagCompound) NBTBase
-									.readNamedTag(new BptDataStream(
-											new StringReader(slotStr)));
+							slot.cpt = (NBTTagCompound) NBTBase.readNamedTag(new BptDataStream(new StringReader(slotStr)));
 
-							slot.blockId = mapWorldId(slot.cpt
-									.getInteger("bId"));
+							slot.blockId = mapWorldId(slot.cpt.getInteger("bId"));
 
 							if (slot.cpt.hasKey("meta"))
 								slot.meta = slot.cpt.getInteger("meta");
@@ -307,14 +289,10 @@ public class BptBlueprint extends BptBase {
 							return;
 
 						if (!reqStr.equals("")) {
-							NBTTagList list = (NBTTagList) NBTBase
-									.readNamedTag(new BptDataStream(
-											new StringReader(reqStr)));
+							NBTTagList list = (NBTTagList) NBTBase.readNamedTag(new BptDataStream(new StringReader(reqStr)));
 
 							for (int i = 0; i < list.tagCount(); ++i) {
-								ItemStack stk = mapItemStack(ItemStack
-										.loadItemStackFromNBT((NBTTagCompound) list
-												.tagAt(i)));
+								ItemStack stk = mapItemStack(ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i)));
 
 								contents[x][y][z].storedRequirements.add(stk);
 							}
@@ -351,13 +329,10 @@ public class BptBlueprint extends BptBase {
 		if (item == null)
 			return false;
 
-		if (!"*".equals(sig.itemClassName)
-				&& !item.getClass().getSimpleName().equals(sig.itemClassName))
+		if (!"*".equals(sig.itemClassName) && !item.getClass().getSimpleName().equals(sig.itemClassName))
 			return false;
 
-		if (!"*".equals(sig.itemName)
-				&& !item.getItemNameIS(new ItemStack(item))
-						.equals(sig.itemName))
+		if (!"*".equals(sig.itemName) && !item.getItemNameIS(new ItemStack(item)).equals(sig.itemName))
 			return false;
 
 		return true;

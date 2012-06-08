@@ -49,6 +49,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
 	private class DisplayLiquidList {
+
 		public int[] sideHorizontal = new int[displayLiquidStages];
 		public int[] sideVertical = new int[displayLiquidStages];
 		public int[] centerHorizontal = new int[displayLiquidStages];
@@ -79,8 +80,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		displayLiquidLists.put(liquidId, d);
 
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 		else
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(0);
@@ -205,13 +205,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		for (int i = 0; i < displayPowerStages; ++i)
 			displayPowerLimits[displayPowerStages - i - 1] = maxPower
-					- Math.sqrt(maxPower * maxPower / (displayPowerStages - 1)
-							* i);
+					- Math.sqrt(maxPower * maxPower / (displayPowerStages - 1) * i);
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
-			double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
 			return;
@@ -239,8 +237,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		MinecraftForgeClient
-				.bindTexture(BuildCraftCore.customBuildCraftTexture);
+		MinecraftForgeClient.bindTexture(BuildCraftCore.customBuildCraftTexture);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 
@@ -284,14 +281,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		for (int i = 0; i < 6; ++i)
 			if (liq.getSide(i) > 0) {
-				DisplayLiquidList d = getListFromBuffer(liq.side[i],
-						pipe.worldObj);
+				DisplayLiquidList d = getListFromBuffer(liq.side[i], pipe.worldObj);
 
 				if (d == null)
 					continue;
 
-				int stage = (int) ((float) liq.getSide(i)
-						/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liq.getSide(i) / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
@@ -326,8 +321,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			DisplayLiquidList d = getListFromBuffer(liq.center, pipe.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) liq.getCenter()
-						/ (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liq.getCenter() / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
@@ -351,15 +345,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		Object o = null;
 
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			o = Block.blocksList[liquidId];
 		else
 			o = Item.itemsList[liquidId];
 
 		if (o instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
-					.getTextureFile());
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
 		else
 			MinecraftForgeClient.bindTexture("/terrain.png");
 
@@ -370,12 +362,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities
-				.values())
-			doRenderItem(data.item, x + data.item.posX - pipe.xCoord, y
-					+ data.item.posY - pipe.yCoord, z + data.item.posZ
-					- pipe.zCoord, pipe.worldObj.getLightBrightness(
-					pipe.xCoord, pipe.yCoord, pipe.zCoord));
+		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values())
+			doRenderItem(data.item, x + data.item.posX - pipe.xCoord, y + data.item.posY - pipe.yCoord, z + data.item.posZ
+					- pipe.zCoord, pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord));
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
@@ -383,8 +372,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	private Random random = new Random();
 
-	public void doRenderItem(EntityPassiveItem entityitem, double d, double d1,
-			double d2, float f1) {
+	public void doRenderItem(EntityPassiveItem entityitem, double d, double d1, double d2, float f1) {
 
 		if (entityitem == null || entityitem.item == null)
 			return;
@@ -405,8 +393,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
 		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
 
-		IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(
-				itemstack, ItemRenderType.ENTITY);
+		IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, ItemRenderType.ENTITY);
 
 		if (customRenderer != null) {
 
@@ -430,21 +417,16 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 				RenderPipe.dummyEntityItem.item = itemstack;
 
-				customRenderer.renderItem(ItemRenderType.ENTITY, itemstack,
-						renderBlocks, RenderPipe.dummyEntityItem);
+				customRenderer.renderItem(ItemRenderType.ENTITY, itemstack, renderBlocks, RenderPipe.dummyEntityItem);
 				GL11.glPopMatrix();
 			}
 
-		} else if (itemstack.itemID < Block.blocksList.length
-				&& Block.blocksList[itemstack.itemID] != null
-				&& RenderBlocks
-						.renderItemIn3d(Block.blocksList[itemstack.itemID]
-								.getRenderType())) {
+		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
+				&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
 
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
 			loadTexture("/terrain.png");
-			ForgeHooksClient
-					.overrideTexture(Block.blocksList[itemstack.itemID]);
+			ForgeHooksClient.overrideTexture(Block.blocksList[itemstack.itemID]);
 			float f4 = 0.25F;
 			int j = Block.blocksList[itemstack.itemID].getRenderType();
 			if (j == 1 || j == 19 || j == 12 || j == 2)
@@ -457,15 +439,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				if (k > 0) {
 					float f6 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
 					float f9 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
-					float f11 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F)
-							/ f4;
+					float f11 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
 					GL11.glTranslatef(f6, f9, f11);
 				}
 
 				float f7 = 1.0F;
-				renderBlocks.renderBlockAsItem(
-						Block.blocksList[itemstack.itemID],
-						itemstack.getItemDamage(), f7);
+				renderBlocks.renderBlockAsItem(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), f7);
 				GL11.glPopMatrix();
 			}
 
@@ -474,23 +453,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			if (itemstack.getItem().requiresMultipleRenderPasses()) {
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
-				this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png",
-						Item.itemsList[itemstack.itemID]));
+				this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]));
 
 				for (int i = 0; i <= 1; ++i) {
-					int iconIndex = itemstack.getItem().func_46057_a(
-							itemstack.getItemDamage(), i);
+					int iconIndex = itemstack.getItem().func_46057_a(itemstack.getItemDamage(), i);
 					float scale = 1.0F;
 
 					if (true) {
-						int var17 = Item.itemsList[itemstack.itemID]
-								.getColorFromDamage(itemstack.getItemDamage(),
-										i);
+						int var17 = Item.itemsList[itemstack.itemID].getColorFromDamage(itemstack.getItemDamage(), i);
 						float var18 = (var17 >> 16 & 255) / 255.0F;
 						float var19 = (var17 >> 8 & 255) / 255.0F;
 						float var20 = (var17 & 255) / 255.0F;
-						GL11.glColor4f(var18 * scale, var19 * scale, var20
-								* scale, 1.0F);
+						GL11.glColor4f(var18 * scale, var19 * scale, var20 * scale, 1.0F);
 					}
 
 					this.drawItem(iconIndex, quantity);
@@ -499,15 +473,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 				int i = itemstack.getIconIndex();
-				if (itemstack.itemID < Block.blocksList.length
-						&& Block.blocksList[itemstack.itemID] != null) {
+				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null) {
 					loadTexture("/terrain.png");
-					ForgeHooksClient
-							.overrideTexture(Block.blocksList[itemstack.itemID]);
+					ForgeHooksClient.overrideTexture(Block.blocksList[itemstack.itemID]);
 				} else {
 					loadTexture("/gui/items.png");
-					ForgeHooksClient
-							.overrideTexture(Item.itemsList[itemstack.itemID]);
+					ForgeHooksClient.overrideTexture(Item.itemsList[itemstack.itemID]);
 				}
 
 				drawItem(i, quantity);
@@ -538,18 +509,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glTranslatef(var12, var13, var14);
 			}
 
-			GL11.glRotatef(180.0F - RenderManager.instance.playerViewY, 0.0F,
-					1.0F, 0.0F);
+			GL11.glRotatef(180.0F - RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
 			tesselator.startDrawingQuads();
 			tesselator.setNormal(0.0F, 1.0F, 0.0F);
-			tesselator.addVertexWithUV((0.0F - var9), (0.0F - var10), 0.0D,
-					var4, var7);
-			tesselator.addVertexWithUV((var8 - var9), (0.0F - var10), 0.0D,
-					var5, var7);
-			tesselator.addVertexWithUV((var8 - var9), (1.0F - var10), 0.0D,
-					var5, var6);
-			tesselator.addVertexWithUV((0.0F - var9), (1.0F - var10), 0.0D,
-					var4, var6);
+			tesselator.addVertexWithUV((0.0F - var9), (0.0F - var10), 0.0D, var4, var7);
+			tesselator.addVertexWithUV((var8 - var9), (0.0F - var10), 0.0D, var5, var7);
+			tesselator.addVertexWithUV((var8 - var9), (1.0F - var10), 0.0D, var5, var6);
+			tesselator.addVertexWithUV((0.0F - var9), (1.0F - var10), 0.0D, var4, var6);
 			tesselator.draw();
 			GL11.glPopMatrix();
 		}

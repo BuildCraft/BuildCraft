@@ -41,8 +41,7 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public LinkedList<Orientations> filterPossibleMovements(
-			LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
 			EntityPassiveItem item) {
 		return possibleOrientations;
 	}

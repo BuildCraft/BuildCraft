@@ -24,8 +24,7 @@ class ContainerAssemblyTable extends BuildCraftContainer {
 	int x = Integer.MAX_VALUE, y = Integer.MAX_VALUE, z = Integer.MAX_VALUE;
 	boolean networkSynchronized = false;
 
-	public ContainerAssemblyTable(IInventory playerInventory,
-			TileAssemblyTable table) {
+	public ContainerAssemblyTable(IInventory playerInventory, TileAssemblyTable table) {
 		super(table);
 		this.playerIInventory = playerInventory;
 
@@ -38,8 +37,7 @@ class ContainerAssemblyTable extends BuildCraftContainer {
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
-				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18,
-						123 + l * 18));
+				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
 			}
 
 		}

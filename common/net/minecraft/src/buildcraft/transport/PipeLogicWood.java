@@ -49,8 +49,7 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	public boolean isInput(TileEntity tile) {
-		return !(tile instanceof TileGenericPipe)
-				&& (tile instanceof IInventory || tile instanceof ILiquidContainer)
+		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof ILiquidContainer)
 				&& Utils.checkPipesConnections(container, tile);
 	}
 
@@ -59,8 +58,7 @@ public class PipeLogicWood extends PipeLogic {
 			return true;
 
 		for (String excluded : excludedBlocks)
-			if (excluded.equals(block.getBlockName())
-					|| excluded.equals(Integer.toString(block.blockID)))
+			if (excluded.equals(block.getBlockName()) || excluded.equals(Integer.toString(block.blockID)))
 				return true;
 
 		return false;
@@ -68,14 +66,11 @@ public class PipeLogicWood extends PipeLogic {
 
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer
-				.getCurrentEquippedItem().getItem() : null;
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench
-				&& ((IToolWrench) equipped).canWrench(entityplayer,
-						this.xCoord, this.yCoord, this.zCoord)) {
+				&& ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
 			switchSource();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord,
-					this.yCoord, this.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
 			return true;
 		}
 
@@ -92,8 +87,7 @@ public class PipeLogicWood extends PipeLogic {
 		if (BuildCraftTransport.alwaysConnectPipes)
 			return super.isPipeConnected(tile);
 		else
-			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood))
-					&& super.isPipeConnected(tile);
+			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood)) && super.isPipeConnected(tile);
 	}
 
 	@Override

@@ -99,8 +99,7 @@ public class EngineIron extends Engine {
 					burnTime--;
 				} else {
 					liquidQty--;
-					burnTime = currentFuel.totalBurningTime
-							/ BuildCraftAPI.BUCKET_VOLUME;
+					burnTime = currentFuel.totalBurningTime / BuildCraftAPI.BUCKET_VOLUME;
 				}
 
 				currentOutput = currentFuel.powerPerCycle;
@@ -123,17 +122,13 @@ public class EngineIron extends Engine {
 		ItemStack itemInInventory = tile.getStackInSlot(0);
 
 		if (itemInInventory != null) {
-			int liquidId = BuildCraftAPI
-					.getLiquidForFilledItem(itemInInventory);
+			int liquidId = BuildCraftAPI.getLiquidForFilledItem(itemInInventory);
 
 			if (liquidId != 0) {
-				if (fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME,
-						liquidId, false) == BuildCraftAPI.BUCKET_VOLUME) {
-					fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME,
-							liquidId, true);
+				if (fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, false) == BuildCraftAPI.BUCKET_VOLUME) {
+					fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
 
-					tile.setInventorySlotContents(0,
-							Utils.consumeItem(itemInInventory));
+					tile.setInventorySlotContents(0, Utils.consumeItem(itemInInventory));
 				}
 			}
 		}
@@ -214,8 +209,7 @@ public class EngineIron extends Engine {
 		return res;
 	}
 
-	private int fillCoolant(Orientations from, int quantity, int id,
-			boolean doFill) {
+	private int fillCoolant(Orientations from, int quantity, int id, boolean doFill) {
 		int res = 0;
 
 		if (coolantQty > 0 && coolantId != id) {
@@ -300,11 +294,9 @@ public class EngineIron extends Engine {
 	}
 
 	@Override
-	public void sendGUINetworkData(ContainerEngine containerEngine,
-			ICrafting iCrafting) {
+	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, energy);
-		iCrafting
-				.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, heat);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, liquidQty);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 4, liquidId);
@@ -314,8 +306,7 @@ public class EngineIron extends Engine {
 
 	@Override
 	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot[] {
-				new LiquidSlot(liquidId, liquidQty, MAX_LIQUID),
+		return new LiquidSlot[] { new LiquidSlot(liquidId, liquidQty, MAX_LIQUID),
 				new LiquidSlot(coolantId, coolantQty, MAX_LIQUID) };
 	}
 

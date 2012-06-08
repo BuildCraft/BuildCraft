@@ -19,8 +19,7 @@ public abstract class PowerFramework {
 
 	public abstract PowerProvider createPowerProvider();
 
-	public void loadPowerProvider(IPowerReceptor receptor,
-			NBTTagCompound compound) {
+	public void loadPowerProvider(IPowerReceptor receptor, NBTTagCompound compound) {
 
 		PowerProvider provider = createPowerProvider();
 
@@ -34,8 +33,7 @@ public abstract class PowerFramework {
 		receptor.setPowerProvider(provider);
 	}
 
-	public void savePowerProvider(IPowerReceptor receptor,
-			NBTTagCompound compound) {
+	public void savePowerProvider(IPowerReceptor receptor, NBTTagCompound compound) {
 
 		PowerProvider provider = receptor.getPowerProvider();
 

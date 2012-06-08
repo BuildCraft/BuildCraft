@@ -22,8 +22,7 @@ public class BptBlockPiston extends BptBlockRotateMeta {
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		int meta = slot.meta & 7;
 
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.blockId, meta);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, meta);
 	}
 
 }

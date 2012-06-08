@@ -25,8 +25,7 @@ public class ContainerHopper extends BuildCraftContainer {
 		// Player inventory
 		for (int i1 = 0; i1 < 3; i1++)
 			for (int l1 = 0; l1 < 9; l1++) {
-				addSlot(new Slot(inventory, l1 + i1 * 9 + 9, 8 + l1 * 18,
-						71 + i1 * 18));
+				addSlot(new Slot(inventory, l1 + i1 * 9 + 9, 8 + l1 * 18, 71 + i1 * 18));
 			}
 
 		// Player hotbar

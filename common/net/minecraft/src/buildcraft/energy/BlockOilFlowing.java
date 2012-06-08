@@ -20,8 +20,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.liquids.ILiquid;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockOilFlowing extends BlockFluid implements ITextureProvider,
-		ILiquid {
+public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILiquid {
 
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);
@@ -121,19 +120,16 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider,
 		if (liquidCanDisplaceBlock(world, i, j, k)) {
 			int i1 = world.getBlockId(i, j, k);
 			if (i1 > 0) {
-				Block.blocksList[i1].dropBlockAsItem(world, i, j, k,
-						world.getBlockMetadata(i, j, k), 0);
+				Block.blocksList[i1].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
 			}
 			world.setBlockAndMetadataWithNotify(i, j, k, blockID, l);
 		}
 	}
 
-	private int calculateFlowCost(World world, int i, int j, int k, int l,
-			int i1) {
+	private int calculateFlowCost(World world, int i, int j, int k, int l, int i1) {
 		int j1 = 1000;
 		for (int k1 = 0; k1 < 4; k1++) {
-			if (k1 == 0 && i1 == 1 || k1 == 1 && i1 == 0 || k1 == 2 && i1 == 3
-					|| k1 == 3 && i1 == 2) {
+			if (k1 == 0 && i1 == 1 || k1 == 1 && i1 == 0 || k1 == 2 && i1 == 3 || k1 == 3 && i1 == 2) {
 				continue;
 			}
 			int l1 = i;
@@ -151,8 +147,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider,
 			if (k1 == 3) {
 				j2++;
 			}
-			if (blockBlocksFlow(world, l1, i2, j2)
-					|| world.getBlockMaterial(l1, i2, j2) == blockMaterial
+			if (blockBlocksFlow(world, l1, i2, j2) || world.getBlockMaterial(l1, i2, j2) == blockMaterial
 					&& world.getBlockMetadata(l1, i2, j2) == 0) {
 				continue;
 			}
@@ -189,8 +184,7 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider,
 			if (l == 3) {
 				j2++;
 			}
-			if (blockBlocksFlow(world, j1, i2, j2)
-					|| world.getBlockMaterial(j1, i2, j2) == blockMaterial
+			if (blockBlocksFlow(world, j1, i2, j2) || world.getBlockMaterial(j1, i2, j2) == blockMaterial
 					&& world.getBlockMetadata(j1, i2, j2) == 0) {
 				continue;
 			}
@@ -217,9 +211,8 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider,
 
 	private boolean blockBlocksFlow(World world, int i, int j, int k) {
 		int l = world.getBlockId(i, j, k);
-		if (l == Block.doorWood.blockID || l == Block.doorSteel.blockID
-				|| l == Block.signPost.blockID || l == Block.ladder.blockID
-				|| l == Block.reed.blockID) {
+		if (l == Block.doorWood.blockID || l == Block.doorSteel.blockID || l == Block.signPost.blockID
+				|| l == Block.ladder.blockID || l == Block.reed.blockID) {
 			return true;
 		}
 		if (l == 0) {

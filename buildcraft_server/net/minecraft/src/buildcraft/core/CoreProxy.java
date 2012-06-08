@@ -28,20 +28,26 @@ import net.minecraft.src.forge.NetworkMod;
 
 public class CoreProxy {
 
-	public static String getCurrentLanguage() { return null; }
-	
-	/// FIXING GENERAL MLMP AND DEOBFUSCATION DERPINESS
+	public static String getCurrentLanguage() {
+		return null;
+	}
+
+	// / FIXING GENERAL MLMP AND DEOBFUSCATION DERPINESS
 	public static void addName(Object obj, String s) {}
+
 	public static void registerBlock(Block block) {
 		Item.itemsList[block.blockID] = null;
 		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getBlockName());
 	}
+
 	public static void registerTileEntity(Class clas, String ident) {
 		ModLoader.registerTileEntity(clas, ident);
 	}
-	public static void setField804 (EntityItem item, float value) {
+
+	public static void setField804(EntityItem item, float value) {
 		item.field_432_ae = value;
 	}
+
 	public static void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
 		stack.onCrafting(world, player, stack.stackSize);
 	}
@@ -50,14 +56,12 @@ public class CoreProxy {
 		return new File("BuildCraft.cfg");
 	}
 
-	public static void sendToPlayers(Packet packet, World w, int x, int y,
-			int z, int maxDistance, NetworkMod mod) {
+	public static void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance, NetworkMod mod) {
 		if (packet != null) {
 			for (int j = 0; j < w.playerEntities.size(); j++) {
-				EntityPlayerMP player = (EntityPlayerMP)w.playerEntities.get(j);
+				EntityPlayerMP player = (EntityPlayerMP) w.playerEntities.get(j);
 
-				if (Math.abs(player.posX - x) <= maxDistance
-						&& Math.abs(player.posY - y) <= maxDistance
+				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance
 						&& Math.abs(player.posZ - z) <= maxDistance)
 					player.playerNetServerHandler.sendPacket(packet);
 			}
@@ -65,10 +69,10 @@ public class CoreProxy {
 	}
 
 	public static void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
-		EntityPlayerMP player = (EntityPlayerMP)entityplayer;
+		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
 		player.playerNetServerHandler.sendPacket(packet.getPacket());
 	}
-	
+
 	/**
 	 * Server side stub.
 	 */
@@ -83,7 +87,7 @@ public class CoreProxy {
 
 	}
 
-	public static int addFuel (int id, int dmg) {
+	public static int addFuel(int id, int dmg) {
 		return ModLoader.addAllFuel(id, dmg);
 	}
 
@@ -91,19 +95,18 @@ public class CoreProxy {
 		return 0;
 	}
 
-	public static long getHash (IBlockAccess iBlockAccess) {
-//		return iBlockAccess.hashCode();
+	public static long getHash(IBlockAccess iBlockAccess) {
+		// return iBlockAccess.hashCode();
 		return 0;
 	}
 
-	public static void TakenFromCrafting(EntityPlayer thePlayer,
-			ItemStack itemstack, IInventory craftMatrix) {
+	public static void TakenFromCrafting(EntityPlayer thePlayer, ItemStack itemstack, IInventory craftMatrix) {
 
 		ModLoader.takenFromCrafting(thePlayer, itemstack, craftMatrix);
 
 	}
-	
-	public static void BindTexture(String texture){
-		
+
+	public static void BindTexture(String texture) {
+
 	}
 }

@@ -31,8 +31,7 @@ public class BptBlockPipe extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
 		requirements.add(new ItemStack(pipeId, 1, 0));
@@ -51,19 +50,16 @@ public class BptBlockPipe extends BptBlock {
 
 		if (slot.cpt.hasKey("gate")) {
 			int gateId = slot.cpt.getInteger("gate");
-			requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1,
-					gateId - 1));
+			requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
 		}
 
 		if (BuildCraftCore.itemBptProps[pipeId] != null)
-			BuildCraftCore.itemBptProps[pipeId].addRequirements(slot,
-					requirements);
+			BuildCraftCore.itemBptProps[pipeId].addRequirements(slot, requirements);
 	}
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		Pipe pipe = BlockGenericPipe.getPipe(context.world(), slot.x, slot.y,
-				slot.z);
+		Pipe pipe = BlockGenericPipe.getPipe(context.world(), slot.x, slot.y, slot.z);
 
 		if (BlockGenericPipe.isValid(pipe))
 			return pipe.itemID == slot.cpt.getInteger("pipeId");
@@ -83,8 +79,7 @@ public class BptBlockPipe extends BptBlock {
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		Pipe pipe = BlockGenericPipe.createPipe(context.world(), slot.x,
-				slot.y, slot.z, pipeId);
+		Pipe pipe = BlockGenericPipe.createPipe(context.world(), slot.x, slot.y, slot.z, pipeId);
 
 		for (int i = 0; i < pipe.wireSet.length; ++i)
 			if (slot.cpt.hasKey("wire" + i))
@@ -98,13 +93,10 @@ public class BptBlockPipe extends BptBlock {
 
 			for (int i = 0; i < 8; ++i) {
 				if (slot.cpt.hasKey("trigger" + i))
-					pipe.activatedTriggers[i] = BuildCraftAPI.triggers[slot.cpt
-							.getInteger("trigger" + i)];
+					pipe.activatedTriggers[i] = BuildCraftAPI.triggers[slot.cpt.getInteger("trigger" + i)];
 
 				if (slot.cpt.hasKey("triggerParameter" + i)) {
-					ItemStack s = ItemStack
-							.loadItemStackFromNBT((NBTTagCompound) slot.cpt
-									.getTag("triggerParameter" + i));
+					ItemStack s = ItemStack.loadItemStackFromNBT((NBTTagCompound) slot.cpt.getTag("triggerParameter" + i));
 
 					if (s != null) {
 						pipe.triggerParameters[i] = new TriggerParameter();
@@ -113,23 +105,19 @@ public class BptBlockPipe extends BptBlock {
 				}
 
 				if (slot.cpt.hasKey("action" + i))
-					pipe.activatedActions[i] = BuildCraftAPI.actions[slot.cpt
-							.getInteger("action" + i)];
+					pipe.activatedActions[i] = BuildCraftAPI.actions[slot.cpt.getInteger("action" + i)];
 			}
 		}
 
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.blockId, slot.meta);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.meta);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
 
 		if (BuildCraftCore.itemBptProps[pipeId] != null)
 			BuildCraftCore.itemBptProps[pipeId].buildBlock(slot, context);
 	}
 
 	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context,
-			int x, int y, int z) {
+	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
 		Pipe pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
 
 		if (BlockGenericPipe.isValid(pipe)) {
@@ -145,8 +133,7 @@ public class BptBlockPipe extends BptBlock {
 
 				for (int i = 0; i < 8; ++i) {
 					if (pipe.activatedTriggers[i] != null)
-						bptSlot.cpt.setInteger("trigger" + i,
-								pipe.activatedTriggers[i].id);
+						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].id);
 
 					if (pipe.triggerParameters[i] != null) {
 						NBTTagCompound subCpt = new NBTTagCompound();
@@ -156,14 +143,12 @@ public class BptBlockPipe extends BptBlock {
 					}
 
 					if (pipe.activatedActions[i] != null)
-						bptSlot.cpt.setInteger("action" + i,
-								pipe.activatedActions[i].id);
+						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].id);
 				}
 			}
 
 			if (BuildCraftCore.itemBptProps[pipe.itemID] != null)
-				BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(
-						bptSlot, context, x, y, z);
+				BuildCraftCore.itemBptProps[pipe.itemID].initializeFromWorld(bptSlot, context, x, y, z);
 		}
 	}
 

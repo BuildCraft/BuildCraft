@@ -89,41 +89,33 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord,
-				Orientations.values()[meta]);
+		Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
 		pos.moveForwards(1);
 		int blockId = w.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
-		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y,
-				(int) pos.z);
+		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-		if (tile == null
-				|| !(tile instanceof IInventory || tile instanceof ILiquidContainer)
-				|| PipeLogicWood
-						.isExcludedFromExtraction(Block.blocksList[blockId]))
+		if (tile == null || !(tile instanceof IInventory || tile instanceof ILiquidContainer)
+				|| PipeLogicWood.isExcludedFromExtraction(Block.blocksList[blockId]))
 			return;
 
 		if (tile instanceof IInventory) {
 			IInventory inventory = (IInventory) tile;
 
-			ItemStack stack = checkExtract(inventory, true,
-					pos.orientation.reverse());
+			ItemStack stack = checkExtract(inventory, true, pos.orientation.reverse());
 
 			if (stack == null || stack.stackSize == 0) {
 				powerProvider.useEnergy(1, 1, false);
 				return;
 			}
 
-			Position entityPos = new Position(pos.x + 0.5, pos.y
-					+ Utils.getPipeFloorOf(stack), pos.z + 0.5,
+			Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
 					pos.orientation.reverse());
 
 			entityPos.moveForwards(0.5);
 
-			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
-					entityPos.y, entityPos.z, stack);
+			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
 
-			((PipeTransportItems) transport).entityEntering(entity,
-					entityPos.orientation);
+			((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
 		}
 	}
 
@@ -132,8 +124,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	 * inventory, null if none. On certain cases, the extractable slot depends
 	 * on the position of the pipe.
 	 */
-	public ItemStack checkExtract(IInventory inventory, boolean doRemove,
-			Orientations from) {
+	public ItemStack checkExtract(IInventory inventory, boolean doRemove, Orientations from) {
 		if (inventory instanceof ISpecialInventory)
 			// TAKE INTO ACCOUNT SPECIAL INVENTORIES!!!
 			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
@@ -142,13 +133,11 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 
 			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal())
-					- 1;
+			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
 
 			IInventory inv = Utils.getInventory(inventory);
 
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, first,
-					last);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from, first, last);
 
 			if (result != null)
 				return result;
@@ -166,9 +155,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			if (slot != null && slot.stackSize > 0)
 				if (doRemove)
-					return inventory.decrStackSize(slotIndex,
-							(int) powerProvider.useEnergy(1, slot.stackSize,
-									true));
+					return inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true));
 				else
 					return slot;
 		} else if (inventory.getSizeInventory() == 3) {
@@ -187,17 +174,14 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			if (slot != null && slot.stackSize > 0)
 				if (doRemove)
-					return inventory.decrStackSize(slotIndex,
-							(int) powerProvider.useEnergy(1, slot.stackSize,
-									true));
+					return inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true));
 				else
 					return slot;
 		} else {
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
 
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0,
-					inv.getSizeInventory() - 1);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
 
 			if (result != null)
 				return result;
@@ -206,18 +190,15 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		return null;
 	}
 
-	public ItemStack checkExtractGeneric(IInventory inventory,
-			boolean doRemove, Orientations from, int start, int stop) {
+	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, Orientations from, int start, int stop) {
 		for (int k = start; k <= stop; ++k)
-			if (inventory.getStackInSlot(k) != null
-					&& inventory.getStackInSlot(k).stackSize > 0) {
+			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
 
 				ItemStack slot = inventory.getStackInSlot(k);
 
 				if (slot != null && slot.stackSize > 0)
 					if (doRemove)
-						return inventory.decrStackSize(k, (int) powerProvider
-								.useEnergy(1, slot.stackSize, true));
+						return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
 					else
 						return slot;
 			}

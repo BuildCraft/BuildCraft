@@ -27,16 +27,14 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
-public class RenderRefinery extends TileEntitySpecialRenderer implements
-		IInventoryRenderer {
+public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
 	static final float factor = (float) (1.0 / 16.0);
 
 	private ModelRenderer tank;
 	private ModelRenderer magnet[] = new ModelRenderer[4];
 
-	private ModelBase model = new ModelBase() {
-	};
+	private ModelBase model = new ModelBase() {};
 
 	public RenderRefinery() {
 
@@ -75,8 +73,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements
 		BlockInterface block = new BlockInterface();
 
 		// Retrieve the texture depending on type of item.
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 
 		else if (Item.itemsList[liquidId] != null)
@@ -115,8 +112,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
-			double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
 		render((TileRefinery) tileentity, x, y, z);
 	}
@@ -141,8 +137,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements
 
 			anim = tile.getAnimationStage();
 
-			switch (tile.worldObj.getBlockMetadata(tile.xCoord, tile.yCoord,
-					tile.zCoord)) {
+			switch (tile.worldObj.getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord)) {
 			case 2:
 				angle = 90;
 				break;
@@ -177,8 +172,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements
 		GL11.glRotatef(angle, 0, 1, 0);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		MinecraftForgeClient
-				.bindTexture("/net/minecraft/src/buildcraft/factory/gui/refinery.png");
+		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/factory/gui/refinery.png");
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		tank.render(factor);
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);
@@ -220,8 +214,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements
 
 			if (list1 != null) {
 				setTextureFor(liquid1);
-				GL11.glCallList(list1[(int) ((float) qty1
-						/ (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
+				GL11.glCallList(list1[(int) ((float) qty1 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
 			}
 		}
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);
@@ -232,8 +225,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements
 
 			if (list2 != null) {
 				setTextureFor(liquid2);
-				GL11.glCallList(list2[(int) ((float) qty2
-						/ (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
+				GL11.glCallList(list2[(int) ((float) qty2 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
 			}
 		}
 		GL11.glTranslatef(4F * factor, 0, -4F * factor);
@@ -257,15 +249,13 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements
 	public void setTextureFor(int liquidId) {
 		Object o = null;
 
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			o = Block.blocksList[liquidId];
 		else
 			o = Item.itemsList[liquidId];
 
 		if (o instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
-					.getTextureFile());
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
 		else
 			MinecraftForgeClient.bindTexture("/terrain.png");
 	}

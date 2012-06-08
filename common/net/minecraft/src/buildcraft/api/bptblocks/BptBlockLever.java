@@ -22,8 +22,7 @@ public class BptBlockLever extends BptBlockWallSide {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(slot.blockId, 1, 0));
 	}
 

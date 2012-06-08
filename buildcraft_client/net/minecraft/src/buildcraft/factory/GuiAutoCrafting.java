@@ -18,8 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 
-	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world,
-			TileAutoWorkbench tile) {
+	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
 		super(new ContainerAutoWorkbench(inventoryplayer, tile));
 	}
 
@@ -33,8 +32,7 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	protected void drawGuiContainerForegroundLayer() {
 		String title = StringUtil.localize("tile.autoWorkbenchBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
-				(ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
 
 	@Override

@@ -39,8 +39,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		stage.put(liquidId, d);
 
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 		else
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(0);
@@ -66,8 +65,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
-			double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
 		TileTank tank = ((TileTank) tileentity);
 
@@ -83,22 +81,19 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		Object o = null;
 
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			o = Block.blocksList[liquidId];
 		else
 			o = Item.itemsList[liquidId];
 
 		if (o instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
-					.getTextureFile());
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
 		else
 			MinecraftForgeClient.bindTexture("/terrain.png");
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 
-		GL11.glCallList(d[(int) ((float) tank.getLiquidQuantity()
-				/ (float) (tank.getTankCapacity()) * (displayStages - 1))]);
+		GL11.glCallList(d[(int) ((float) tank.getLiquidQuantity() / (float) (tank.getTankCapacity()) * (displayStages - 1))]);
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();

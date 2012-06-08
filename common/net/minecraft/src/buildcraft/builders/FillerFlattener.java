@@ -18,8 +18,7 @@ import net.minecraft.src.buildcraft.api.IBox;
 public class FillerFlattener extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box,
-			ItemStack stackToPlace) {
+	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -46,8 +45,7 @@ public class FillerFlattener extends FillerPattern {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (!blockedColumns[x - xMin][z - zMin]) {
-						if (!BuildCraftAPI.softBlock(tile.worldObj.getBlockId(
-								x, y, z))) {
+						if (!BuildCraftAPI.softBlock(tile.worldObj.getBlockId(x, y, z))) {
 							blockedColumns[x - xMin][z - zMin] = true;
 						} else {
 							found = true;
@@ -65,9 +63,8 @@ public class FillerFlattener extends FillerPattern {
 		}
 
 		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace,
-					BuildCraftAPI.getBuildCraftPlayer(tile.worldObj),
-					tile.worldObj, lastX, lastY - 1, lastZ, 1);
+			stackToPlace.getItem().onItemUse(stackToPlace, BuildCraftAPI.getBuildCraftPlayer(tile.worldObj), tile.worldObj,
+					lastX, lastY - 1, lastZ, 1);
 		}
 
 		if (lastX != Integer.MAX_VALUE) {

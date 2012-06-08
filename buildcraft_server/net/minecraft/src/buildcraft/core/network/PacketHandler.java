@@ -6,7 +6,6 @@ import net.minecraft.src.forge.IPacketHandler;
 public class PacketHandler implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager network, String channel, byte[] data) {
-	}
+	public void onPacketData(NetworkManager network, String channel, byte[] data) {}
 
 }

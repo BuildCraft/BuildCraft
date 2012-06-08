@@ -127,8 +127,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		Position min = p1.min(p2);
 		Position max = p1.max(p2);
 
-		return AxisAlignedBB.getBoundingBoxFromPool(min.x, min.y, min.z, max.x,
-				max.y, max.z);
+		return AxisAlignedBB.getBoundingBoxFromPool(min.x, min.y, min.z, max.x, max.y, max.z);
 	}
 
 	@Override
@@ -147,8 +146,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			return false;
 
 		@SuppressWarnings("rawtypes")
-		List list = worldObj.getEntitiesWithinAABB(
-				net.minecraft.src.Entity.class, box);
+		List list = worldObj.getEntitiesWithinAABB(net.minecraft.src.Entity.class, box);
 
 		for (int g = 0; g < list.size(); g++)
 			if (list.get(g) instanceof Entity) {
@@ -162,13 +160,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				if (distance == 1 && list.get(g) instanceof EntityMinecart) {
 					EntityMinecart cart = (EntityMinecart) list.get(g);
 					if (!cart.isDead && cart.minecartType == 1) {
-						ItemStack stack = checkExtractGeneric(cart, true,
-								getOpenOrientation());
-						if (stack != null
-								&& powerProvider.useEnergy(1, 1, true) == 1) {
-							EntityItem entityitem = new EntityItem(worldObj,
-									cart.posX, cart.posY + 0.3F, cart.posZ,
-									stack);
+						ItemStack stack = checkExtractGeneric(cart, true, getOpenOrientation());
+						if (stack != null && powerProvider.useEnergy(1, 1, true) == 1) {
+							EntityItem entityitem = new EntityItem(worldObj, cart.posX, cart.posY + 0.3F, cart.posZ, stack);
 							entityitem.delayBeforeCanPickup = 10;
 							worldObj.spawnEntityInWorld(entityitem);
 							pullItemIntoPipe(entityitem, 1);
@@ -181,11 +175,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		return false;
 	}
 
-	public ItemStack checkExtractGeneric(IInventory inventory,
-			boolean doRemove, Orientations from) {
+	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, Orientations from) {
 		for (int k = 0; k < inventory.getSizeInventory(); ++k)
-			if (inventory.getStackInSlot(k) != null
-					&& inventory.getStackInSlot(k).stackSize > 0) {
+			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
 
 				ItemStack slot = inventory.getStackInSlot(k);
 
@@ -206,10 +198,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		Orientations orientation = getOpenOrientation().reverse();
 
 		if (orientation != Orientations.Unknown) {
-			worldObj.playSoundAtEntity(
-					entity,
-					"random.pop",
-					0.2F,
+			worldObj.playSoundAtEntity(entity, "random.pop", 0.2F,
 					((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
 			ItemStack stack = null;
@@ -218,21 +207,17 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 			if (entity instanceof EntityItem) {
 				EntityItem item = (EntityItem) entity;
-				TransportProxy.obsidianPipePickup(worldObj, item,
-						this.container);
+				TransportProxy.obsidianPipePickup(worldObj, item, this.container);
 
-				float energyUsed = powerProvider.useEnergy(distance,
-						item.item.stackSize * distance, true);
+				float energyUsed = powerProvider.useEnergy(distance, item.item.stackSize * distance, true);
 
-				if (distance == 0
-						|| energyUsed / distance == item.item.stackSize) {
+				if (distance == 0 || energyUsed / distance == item.item.stackSize) {
 					stack = item.item;
 					APIProxy.removeEntity(entity);
 				} else
 					stack = item.item.splitStack((int) (energyUsed / distance));
 
-				speed = Math.sqrt(item.motionX * item.motionX + item.motionY
-						* item.motionY + item.motionZ * item.motionZ);
+				speed = Math.sqrt(item.motionX * item.motionX + item.motionY * item.motionY + item.motionZ * item.motionZ);
 				speed = speed / 2F - 0.05;
 
 				if (speed < 0.01)
@@ -243,14 +228,12 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				APIProxy.removeEntity(entity);
 			}
 
-			EntityPassiveItem passive = new EntityPassiveItem(worldObj,
-					xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack),
+			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack),
 					zCoord + 0.5, stack);
 
 			passive.speed = (float) speed;
 
-			((PipeTransportItems) transport).entityEntering(passive,
-					orientation);
+			((PipeTransportItems) transport).entityEntering(passive, orientation);
 		}
 	}
 

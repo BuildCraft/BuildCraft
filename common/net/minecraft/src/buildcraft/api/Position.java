@@ -13,6 +13,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
 public class Position {
+
 	public double x, y, z;
 	public Orientations orientation;
 
@@ -127,13 +128,11 @@ public class Position {
 	}
 
 	public Position min(Position p) {
-		return new Position(p.x > x ? x : p.x, p.y > y ? y : p.y, p.z > z ? z
-				: p.z);
+		return new Position(p.x > x ? x : p.x, p.y > y ? y : p.y, p.z > z ? z : p.z);
 	}
 
 	public Position max(Position p) {
-		return new Position(p.x < x ? x : p.x, p.y < y ? y : p.y, p.z < z ? z
-				: p.z);
+		return new Position(p.x < x ? x : p.x, p.y < y ? y : p.y, p.z < z ? z : p.z);
 	}
 
 }

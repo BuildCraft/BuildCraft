@@ -4,6 +4,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 
 public class InventoryUtil {
+
 	private final IInventory _inventory;
 
 	public InventoryUtil(IInventory inventory) {
@@ -21,10 +22,11 @@ public class InventoryUtil {
 				totalRoom += Math.min(_inventory.getInventoryStackLimit(), itemToTest.getMaxStackSize());
 				continue;
 			}
-			if (itemToTest.itemID != stack.itemID || (!itemToTest.getItem().isDamageable() && itemToTest.getItemDamage() != stack.getItemDamage()))
+			if (itemToTest.itemID != stack.itemID
+					|| (!itemToTest.getItem().isDamageable() && itemToTest.getItemDamage() != stack.getItemDamage()))
 				continue;
 
-			totalRoom += (Math.min(_inventory.getInventoryStackLimit(),	itemToTest.getMaxStackSize()) - stack.stackSize);
+			totalRoom += (Math.min(_inventory.getInventoryStackLimit(), itemToTest.getMaxStackSize()) - stack.stackSize);
 		}
 		return totalRoom;
 	}
@@ -52,7 +54,8 @@ public class InventoryUtil {
 				_inventory.setInventorySlotContents(i, stackToMove);
 				return null;
 			}
-			if (stackToMove.itemID == stack.itemID	&& (stackToMove.getItem().isDamageable() || stackToMove.getItemDamage() == stack.getItemDamage())) {
+			if (stackToMove.itemID == stack.itemID
+					&& (stackToMove.getItem().isDamageable() || stackToMove.getItemDamage() == stack.getItemDamage())) {
 				if (stackToMove.stackSize + stack.stackSize <= stack.getMaxStackSize()) {
 					stack.stackSize += stackToMove.stackSize;
 					return null;

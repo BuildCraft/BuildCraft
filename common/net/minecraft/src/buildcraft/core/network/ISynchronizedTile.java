@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.core.network;
 import net.minecraft.src.Packet;
 
 public interface ISynchronizedTile {
+
 	public void handleDescriptionPacket(PacketUpdate packet);
 
 	public void handleUpdatePacket(PacketUpdate packet);

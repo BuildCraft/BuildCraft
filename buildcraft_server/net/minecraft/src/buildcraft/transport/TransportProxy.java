@@ -15,7 +15,7 @@ import net.minecraft.src.World;
 
 public class TransportProxy {
 
-	public static void obsidianPipePickup (World world, EntityItem item, TileEntity tile) {
+	public static void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
 
 	}
 

@@ -34,16 +34,13 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public void addInformation(ItemStack itemstack, List list) {
-		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(
-				itemstack.getItemDamage());
+		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(itemstack.getItemDamage());
 		if (bpt != null) {
 			list.add(bpt.getName());
 		}
 	}
 
 	@Override
-	public void onUpdate(ItemStack itemstack, World world, Entity entity,
-			int i, boolean flag) {
-	}
+	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {}
 
 }

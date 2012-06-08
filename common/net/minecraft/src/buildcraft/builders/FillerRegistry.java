@@ -22,13 +22,13 @@ import net.minecraft.src.buildcraft.api.filler.IFillerRegistry;
 public class FillerRegistry implements IFillerRegistry {
 
 	static class ShapedPatternRecipe {
+
 		private int recipeWidth;
 		private int recipeHeight;
 		private ItemStack recipeItems[];
 		private IFillerPattern recipeOutput;
 
-		public ShapedPatternRecipe(int i, int j, ItemStack aitemstack[],
-				IFillerPattern pattern) {
+		public ShapedPatternRecipe(int i, int j, ItemStack aitemstack[], IFillerPattern pattern) {
 			recipeWidth = i;
 			recipeHeight = j;
 			recipeItems = aitemstack;
@@ -51,37 +51,30 @@ public class FillerRegistry implements IFillerRegistry {
 			return false;
 		}
 
-		private boolean func_21137_a(IInventory inventorycrafting, int i,
-				int j, boolean flag) {
+		private boolean func_21137_a(IInventory inventorycrafting, int i, int j, boolean flag) {
 			for (int k = 0; k < 3; k++) {
 				for (int l = 0; l < 3; l++) {
 					int i1 = k - i;
 					int j1 = l - j;
 					ItemStack itemstack = null;
-					if (i1 >= 0 && j1 >= 0 && i1 < recipeWidth
-							&& j1 < recipeHeight) {
+					if (i1 >= 0 && j1 >= 0 && i1 < recipeWidth && j1 < recipeHeight) {
 						if (flag) {
-							itemstack = recipeItems[(recipeWidth - i1 - 1) + j1
-									* recipeWidth];
+							itemstack = recipeItems[(recipeWidth - i1 - 1) + j1 * recipeWidth];
 						} else {
 							itemstack = recipeItems[i1 + j1 * recipeWidth];
 						}
 					}
-					ItemStack itemstack1 = inventorycrafting.getStackInSlot(k
-							+ l * 3);
+					ItemStack itemstack1 = inventorycrafting.getStackInSlot(k + l * 3);
 					if (itemstack1 == null && itemstack == null) {
 						continue;
 					}
-					if (itemstack1 == null && itemstack != null
-							|| itemstack1 != null && itemstack == null) {
+					if (itemstack1 == null && itemstack != null || itemstack1 != null && itemstack == null) {
 						return false;
 					}
 					if (itemstack.itemID != itemstack1.itemID) {
 						return false;
 					}
-					if (itemstack.getItemDamage() != -1
-							&& itemstack.getItemDamage() != itemstack1
-									.getItemDamage()) {
+					if (itemstack.getItemDamage() != -1 && itemstack.getItemDamage() != itemstack1.getItemDamage()) {
 						return false;
 					}
 				}

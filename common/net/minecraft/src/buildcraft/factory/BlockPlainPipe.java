@@ -23,8 +23,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockPlainPipe extends Block implements ILegacyPipeConnection,
-		IBlockPipe, ITextureProvider {
+public class BlockPlainPipe extends Block implements ILegacyPipeConnection, IBlockPipe, ITextureProvider {
 
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
@@ -59,8 +58,7 @@ public class BlockPlainPipe extends Block implements ILegacyPipeConnection,
 	}
 
 	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1,
-			int z1, int x2, int y2, int z2) {
+	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
 
 		return false;
 	}
@@ -75,8 +73,7 @@ public class BlockPlainPipe extends Block implements ILegacyPipeConnection,
 	}
 
 	@Override
-	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j,
-			int k, Orientations connection) {
+	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
 		// TODO Auto-generated method stub
 
 	}

@@ -29,8 +29,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
-				addSlot(new Slot(inventory, k1 + l * 9 + 9, 8 + k1 * 18,
-						123 + l * 18));
+				addSlot(new Slot(inventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
 			}
 		}
 
@@ -60,9 +59,8 @@ public class ContainerRefinery extends BuildCraftContainer {
 			payload.intPayload[0] = slot;
 			payload.intPayload[1] = liquidId;
 			payload.intPayload[2] = liquidMeta;
-			CoreProxy.sendToServer(new PacketUpdate(
-					PacketIds.REFINERY_FILTER_SET, refinery.xCoord,
-					refinery.yCoord, refinery.zCoord, payload).getPacket());
+			CoreProxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord,
+					refinery.zCoord, payload).getPacket());
 		}
 	}
 

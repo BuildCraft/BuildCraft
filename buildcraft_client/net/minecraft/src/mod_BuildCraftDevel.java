@@ -26,15 +26,13 @@ public class mod_BuildCraftDevel extends NetworkMod {
 
 		mod_BuildCraftCore.initialize();
 
-		Property cheatId = BuildCraftCore.mainConfiguration
-				.getOrCreateBlockIdProperty("cheat.id", 255);
+		Property cheatId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("cheat.id", 255);
 
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 
 		cheatBlock = new BlockCheat(Integer.parseInt(cheatId.value));
 		ModLoader.registerBlock(cheatBlock);
-		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] {
-				"# ", "  ", Character.valueOf('#'), Block.dirt });
+		craftingmanager.addRecipe(new ItemStack(cheatBlock, 1), new Object[] { "# ", "  ", Character.valueOf('#'), Block.dirt });
 
 		BuildCraftCore.mainConfiguration.save();
 	}
@@ -45,8 +43,7 @@ public class mod_BuildCraftDevel extends NetworkMod {
 	}
 
 	@Override
-	public void load() {
-	}
+	public void load() {}
 
 	@Override
 	public boolean clientSideRequired() {

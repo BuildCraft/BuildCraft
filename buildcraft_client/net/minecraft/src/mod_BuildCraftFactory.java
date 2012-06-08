@@ -42,30 +42,21 @@ public class mod_BuildCraftFactory extends NetworkMod {
 		// CoreProxy.registerGUI(this,
 		// Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
 
-		ModLoader.registerTileEntity(TileTank.class,
-				"net.minecraft.src.buildcraft.factory.TileTank",
-				new RenderTank());
+		ModLoader.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank", new RenderTank());
 
-		ModLoader.registerTileEntity(TileRefinery.class,
-				"net.minecraft.src.buildcraft.factory.Refinery",
+		ModLoader.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery", new RenderRefinery());
+
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0),
 				new RenderRefinery());
 
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
-				BuildCraftFactory.refineryBlock, 0), new RenderRefinery());
+		ModLoader.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper", new RenderHopper());
 
-		ModLoader.registerTileEntity(TileHopper.class,
-				"net.minecraft.src.buildcraft.factory.TileHopper",
-				new RenderHopper());
-
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
-				BuildCraftFactory.hopperBlock, 0), new RenderHopper());
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 
 		// Detect the presence of NEI and add overlay for the Autocrafting Table
 		try {
-			Class<?> neiRenderer = Class
-					.forName("codechicken.nei.DefaultOverlayRenderer");
-			Method method = neiRenderer.getMethod("registerGuiOverlay",
-					Class.class, String.class, int.class, int.class);
+			Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
+			Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
 			method.invoke(null, GuiAutoCrafting.class, "crafting", 5, 11);
 			ModLoader.getLogger().fine("NEI detected, adding NEI overlay");
 		} catch (Exception e) {

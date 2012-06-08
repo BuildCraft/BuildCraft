@@ -44,8 +44,7 @@ public class BlockPollution extends BlockContainer implements ITextureProvider {
 	}
 
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
-			int l) {
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		return 5 * 16 + iblockaccess.getBlockMetadata(i, j, k);
 	}
 }

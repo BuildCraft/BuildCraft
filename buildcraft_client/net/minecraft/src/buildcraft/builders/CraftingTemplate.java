@@ -24,8 +24,7 @@ class CraftingTemplate extends CraftingTemplateRoot {
 		for (int i = 0; i < crafters.size(); i++) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
 			if (computingTime != template.computingTime)
-				icrafting.updateCraftingInventoryInfo(this, 0,
-						template.computingTime);
+				icrafting.updateCraftingInventoryInfo(this, 0, template.computingTime);
 		}
 
 		computingTime = template.computingTime;

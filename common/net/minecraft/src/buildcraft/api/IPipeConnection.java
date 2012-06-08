@@ -10,5 +10,6 @@
 package net.minecraft.src.buildcraft.api;
 
 public interface IPipeConnection {
+
 	public boolean isPipeConnected(Orientations with);
 }

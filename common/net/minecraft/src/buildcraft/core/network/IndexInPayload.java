@@ -5,6 +5,7 @@ package net.minecraft.src.buildcraft.core.network;
  * Internal use only.
  */
 public class IndexInPayload {
+
 	public IndexInPayload(int intIndex, int floatIndex, int stringIndex) {
 		this.intIndex = intIndex;
 		this.floatIndex = floatIndex;

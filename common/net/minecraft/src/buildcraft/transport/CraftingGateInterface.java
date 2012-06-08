@@ -49,8 +49,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 
 		for (int l = 0; l < 3; l++)
 			for (int k1 = 0; k1 < 9; k1++)
-				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18,
-						123 + l * 18));
+				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
 
 		for (int i1 = 0; i1 < 9; i1++)
 			addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
@@ -64,24 +63,19 @@ public class CraftingGateInterface extends BuildCraftContainer {
 			_potentialTriggers.addAll(BuildCraftAPI.getPipeTriggers(pipe));
 
 			for (Orientations o : Orientations.dirs()) {
-				Position pos = new Position(pipe.xCoord, pipe.yCoord,
-						pipe.zCoord, o);
+				Position pos = new Position(pipe.xCoord, pipe.yCoord, pipe.zCoord, o);
 				pos.moveForwards(1.0);
-				TileEntity tile = pipe.worldObj.getBlockTileEntity((int) pos.x,
-						(int) pos.y, (int) pos.z);
-				int blockID = pipe.worldObj.getBlockId((int) pos.x,
-						(int) pos.y, (int) pos.z);
+				TileEntity tile = pipe.worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+				int blockID = pipe.worldObj.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
 				Block block = Block.blocksList[blockID];
 
-				LinkedList<Trigger> nearbyTriggers = BuildCraftAPI
-						.getNeighborTriggers(block, tile);
+				LinkedList<Trigger> nearbyTriggers = BuildCraftAPI.getNeighborTriggers(block, tile);
 
 				for (Trigger t : nearbyTriggers)
 					if (!_potentialTriggers.contains(t))
 						_potentialTriggers.add(t);
 
-				LinkedList<Action> nearbyActions = BuildCraftAPI
-						.getNeighborActions(block, tile);
+				LinkedList<Action> nearbyActions = BuildCraftAPI.getNeighborActions(block, tile);
 
 				for (Action a : nearbyActions)
 					if (!_potentialActions.contains(a))
@@ -116,8 +110,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		int length = packet.payload.intPayload[0];
 
 		for (int i = 0; i < length; i++)
-			_potentialActions
-					.add(BuildCraftAPI.actions[packet.payload.intPayload[i + 1]]);
+			_potentialActions.add(BuildCraftAPI.actions[packet.payload.intPayload[i + 1]]);
 
 	}
 
@@ -131,8 +124,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		int length = packet.payload.intPayload[0];
 
 		for (int i = 0; i < length; i++)
-			_potentialTriggers
-					.add(BuildCraftAPI.triggers[packet.payload.intPayload[i + 1]]);
+			_potentialTriggers.add(BuildCraftAPI.triggers[packet.payload.intPayload[i + 1]]);
 	}
 
 	/**
@@ -144,10 +136,8 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		PacketPayload payload = packet.payload;
 		int position = payload.intPayload[0];
 
-		if (payload.intPayload[1] >= 0
-				&& payload.intPayload[1] < BuildCraftAPI.triggers.length) {
-			setTrigger(position, BuildCraftAPI.triggers[payload.intPayload[1]],
-					false);
+		if (payload.intPayload[1] >= 0 && payload.intPayload[1] < BuildCraftAPI.triggers.length) {
+			setTrigger(position, BuildCraftAPI.triggers[payload.intPayload[1]], false);
 			// System.out.println("Trigger["+ position + "]: " +
 			// pipe.activatedTriggers[position].getDescription());
 		} else {
@@ -155,10 +145,8 @@ public class CraftingGateInterface extends BuildCraftContainer {
 			// System.out.println("Trigger["+ position + "] clear!");
 		}
 
-		if (payload.intPayload[2] >= 0
-				&& payload.intPayload[2] < BuildCraftAPI.actions.length) {
-			setAction(position, BuildCraftAPI.actions[payload.intPayload[2]],
-					false);
+		if (payload.intPayload[2] >= 0 && payload.intPayload[2] < BuildCraftAPI.actions.length) {
+			setAction(position, BuildCraftAPI.actions[payload.intPayload[2]], false);
 			// System.out.println("Action["+ position + "]: " +
 			// pipe.activatedActions[position].getDescription());
 		} else {
@@ -173,8 +161,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		}
 
 		TriggerParameter param = new TriggerParameter();
-		param.set(new ItemStack(itemID, payload.intPayload[4],
-				payload.intPayload[5]));
+		param.set(new ItemStack(itemID, payload.intPayload[4], payload.intPayload[5]));
 		setTriggerParameter(position, param, false);
 	}
 
@@ -193,17 +180,14 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		else
 			payload.intPayload[2] = -1;
 
-		if (pipe.triggerParameters[position] != null
-				&& pipe.triggerParameters[position].stack != null) {
+		if (pipe.triggerParameters[position] != null && pipe.triggerParameters[position].stack != null) {
 			payload.intPayload[3] = pipe.triggerParameters[position].stack.itemID;
 			payload.intPayload[4] = pipe.triggerParameters[position].stack.stackSize;
-			payload.intPayload[5] = pipe.triggerParameters[position].stack
-					.getItemDamage();
+			payload.intPayload[5] = pipe.triggerParameters[position].stack.getItemDamage();
 		}
 
-		CoreProxy.sendToServer(new PacketUpdate(
-				PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord,
-				pipe.zCoord, payload).getPacket());
+		CoreProxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload)
+				.getPacket());
 	}
 
 	/**
@@ -214,16 +198,14 @@ public class CraftingGateInterface extends BuildCraftContainer {
 
 		if (!isNetInitialized && APIProxy.isRemote()) {
 			isNetInitialized = true;
-			CoreProxy.sendToServer(new PacketCoordinates(
-					PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord,
-					pipe.zCoord).getPacket());
+			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord)
+					.getPacket());
 		}
 
 		if (!isSynchronized && APIProxy.isRemote()) {
 			isSynchronized = true;
-			CoreProxy.sendToServer(new PacketCoordinates(
-					PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord,
-					pipe.zCoord).getPacket());
+			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord)
+					.getPacket());
 		}
 
 	}
@@ -240,10 +222,8 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		PacketPayload payload = packet.payload;
 		int position = payload.intPayload[0];
 
-		if (payload.intPayload[1] >= 0
-				&& payload.intPayload[1] < BuildCraftAPI.triggers.length) {
-			setTrigger(position, BuildCraftAPI.triggers[payload.intPayload[1]],
-					true);
+		if (payload.intPayload[1] >= 0 && payload.intPayload[1] < BuildCraftAPI.triggers.length) {
+			setTrigger(position, BuildCraftAPI.triggers[payload.intPayload[1]], true);
 			// System.out.println("Trigger["+ position + "]: " +
 			// pipe.activatedTriggers[position].getDescription());
 		} else {
@@ -251,10 +231,8 @@ public class CraftingGateInterface extends BuildCraftContainer {
 			// System.out.println("Trigger["+ position + "] clear!");
 		}
 
-		if (payload.intPayload[2] >= 0
-				&& payload.intPayload[2] < BuildCraftAPI.actions.length) {
-			setAction(position, BuildCraftAPI.actions[payload.intPayload[2]],
-					true);
+		if (payload.intPayload[2] >= 0 && payload.intPayload[2] < BuildCraftAPI.actions.length) {
+			setAction(position, BuildCraftAPI.actions[payload.intPayload[2]], true);
 			// System.out.println("Action["+ position + "]: " +
 			// pipe.activatedActions[position].getDescription());
 		} else {
@@ -269,8 +247,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		}
 
 		TriggerParameter param = new TriggerParameter();
-		param.set(new ItemStack(itemID, payload.intPayload[4],
-				payload.intPayload[5]));
+		param.set(new ItemStack(itemID, payload.intPayload[4], payload.intPayload[5]));
 		setTriggerParameter(position, param, true);
 	}
 
@@ -289,8 +266,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		for (int i = 0; i < length; i++)
 			payload.intPayload[i + 1] = _potentialActions.get(i).id;
 
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS,
-				pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
+		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
 		// Send to player
 		CoreProxy.sendToPlayer(player, packet);
@@ -311,8 +287,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 		for (int i = 0; i < length; i++)
 			payload.intPayload[i + 1] = _potentialTriggers.get(i).id;
 
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS,
-				pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
+		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
 		// Send to player
 		CoreProxy.sendToPlayer(player, packet);
@@ -360,17 +335,14 @@ public class CraftingGateInterface extends BuildCraftContainer {
 			else
 				payload.intPayload[2] = -1;
 
-			if (pipe.triggerParameters[position] != null
-					&& pipe.triggerParameters[position].stack != null) {
+			if (pipe.triggerParameters[position] != null && pipe.triggerParameters[position].stack != null) {
 				payload.intPayload[3] = pipe.triggerParameters[position].stack.itemID;
 				payload.intPayload[4] = pipe.triggerParameters[position].stack.stackSize;
-				payload.intPayload[5] = pipe.triggerParameters[position].stack
-						.getItemDamage();
+				payload.intPayload[5] = pipe.triggerParameters[position].stack.getItemDamage();
 			}
 
-			CoreProxy.sendToPlayer(player, new PacketUpdate(
-					PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord,
-					pipe.zCoord, payload));
+			CoreProxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord,
+					payload));
 		}
 
 		// System.out.println("Sending current selection to player");
@@ -382,22 +354,18 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	}
 
 	public Trigger getFirstTrigger() {
-		return _potentialTriggers.size() > 0 ? _potentialTriggers.getFirst()
-				: null;
+		return _potentialTriggers.size() > 0 ? _potentialTriggers.getFirst() : null;
 	}
 
 	public Trigger getLastTrigger() {
-		return _potentialTriggers.size() > 0 ? _potentialTriggers.getLast()
-				: null;
+		return _potentialTriggers.size() > 0 ? _potentialTriggers.getLast() : null;
 	}
 
 	public Iterator<Trigger> getTriggerIterator(boolean descending) {
-		return descending ? _potentialTriggers.descendingIterator()
-				: _potentialTriggers.iterator();
+		return descending ? _potentialTriggers.descendingIterator() : _potentialTriggers.iterator();
 	}
 
-	public boolean isNearbyTriggerActive(Trigger trigger,
-			TriggerParameter parameter) {
+	public boolean isNearbyTriggerActive(Trigger trigger, TriggerParameter parameter) {
 		return pipe.isNearbyTriggerActive(trigger, parameter);
 	}
 
@@ -407,8 +375,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 			sendSelectionChange(position);
 	}
 
-	public void setTriggerParameter(int position, TriggerParameter parameter,
-			boolean notify) {
+	public void setTriggerParameter(int position, TriggerParameter parameter, boolean notify) {
 		pipe.setTriggerParameter(position, parameter);
 		if (APIProxy.isRemote() && notify)
 			sendSelectionChange(position);
@@ -420,18 +387,15 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	}
 
 	public Action getFirstAction() {
-		return _potentialActions.size() > 0 ? _potentialActions.getFirst()
-				: null;
+		return _potentialActions.size() > 0 ? _potentialActions.getFirst() : null;
 	}
 
 	public Action getLastAction() {
-		return _potentialActions.size() > 0 ? _potentialActions.getLast()
-				: null;
+		return _potentialActions.size() > 0 ? _potentialActions.getLast() : null;
 	}
 
 	public Iterator<Action> getActionIterator(boolean descending) {
-		return descending ? _potentialActions.descendingIterator()
-				: _potentialActions.iterator();
+		return descending ? _potentialActions.descendingIterator() : _potentialActions.iterator();
 	}
 
 	public void setAction(int position, Action action, boolean notify) {

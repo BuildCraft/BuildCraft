@@ -86,8 +86,7 @@ public class Utils {
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static boolean addToRandomPipeEntry(TileEntity tile,
-			Orientations from, ItemStack items) {
+	public static boolean addToRandomPipeEntry(TileEntity tile, Orientations from, ItemStack items) {
 		World w = tile.worldObj;
 
 		LinkedList<Orientations> possiblePipes = new LinkedList<Orientations>();
@@ -96,26 +95,21 @@ public class Utils {
 			if (from.reverse().ordinal() == j)
 				continue;
 
-			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
-					Orientations.values()[j]);
+			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, Orientations.values()[j]);
 
 			pos.moveForwards(1.0);
 
-			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (pipeEntry instanceof IPipeEntry
-					&& ((IPipeEntry) pipeEntry).acceptItems())
+			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems())
 				possiblePipes.add(Orientations.values()[j]);
 		}
 
 		if (possiblePipes.size() > 0) {
 			int choice = w.rand.nextInt(possiblePipes.size());
 
-			Position entityPos = new Position(tile.xCoord, tile.yCoord,
-					tile.zCoord, possiblePipes.get(choice));
-			Position pipePos = new Position(tile.xCoord, tile.yCoord,
-					tile.zCoord, possiblePipes.get(choice));
+			Position entityPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
+			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
 
 			entityPos.x += 0.5;
 			entityPos.y += getPipeFloorOf(items);
@@ -125,11 +119,9 @@ public class Utils {
 
 			pipePos.moveForwards(1.0);
 
-			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity(
-					(int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
+			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity((int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
 
-			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
-					entityPos.y, entityPos.z, items);
+			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, items);
 
 			pipeEntry.entityEntering(entity, entityPos.orientation);
 			items.stackSize = 0;
@@ -138,21 +130,18 @@ public class Utils {
 			return false;
 	}
 
-	public static void dropItems(World world, ItemStack stack, int i, int j,
-			int k) {
+	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-		EntityItem entityitem = new EntityItem(world, i + d, j + d1, k + d2,
-				stack);
+		EntityItem entityitem = new EntityItem(world, i + d, j + d1, k + d2, stack);
 		entityitem.delayBeforeCanPickup = 10;
 
 		world.spawnEntityInWorld(entityitem);
 	}
 
-	public static void dropItems(World world, IInventory inventory, int i,
-			int j, int k) {
+	public static void dropItems(World world, IInventory inventory, int i, int j, int k) {
 		for (int l = 0; l < inventory.getSizeInventory(); ++l) {
 			ItemStack items = inventory.getStackInSlot(l);
 
@@ -161,8 +150,7 @@ public class Utils {
 		}
 	}
 
-	public static TileEntity getTile(World world, Position pos,
-			Orientations step) {
+	public static TileEntity getTile(World world, Position pos, Orientations step) {
 		Position tmp = new Position(pos);
 		tmp.orientation = step;
 		tmp.moveForwards(1.0);
@@ -173,8 +161,7 @@ public class Utils {
 	public static IInventory getInventory(IInventory inv) {
 		if (inv instanceof TileEntityChest) {
 			TileEntityChest chest = (TileEntityChest) inv;
-			Position pos = new Position(chest.xCoord, chest.yCoord,
-					chest.zCoord);
+			Position pos = new Position(chest.xCoord, chest.yCoord, chest.zCoord);
 			TileEntity tile;
 			IInventory chest2 = null;
 			tile = Utils.getTile(chest.worldObj, pos, Orientations.XNeg);
@@ -195,8 +182,7 @@ public class Utils {
 		return inv;
 	}
 
-	public static IAreaProvider getNearbyAreaProvider(World world, int i,
-			int j, int k) {
+	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
 		TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
 		TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);
 		TileEntity a3 = world.getBlockTileEntity(i, j, k + 1);
@@ -225,8 +211,7 @@ public class Utils {
 		return null;
 	}
 
-	public static EntityBlock createLaser(World world, Position p1,
-			Position p2, LaserKind kind) {
+	public static EntityBlock createLaser(World world, Position p1, Position p2, LaserKind kind) {
 		if (p1.equals(p2))
 			return null;
 
@@ -277,17 +262,15 @@ public class Utils {
 			break;
 		}
 
-		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize,
-				kSize, texture);
+		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize, kSize, texture);
 
 		world.spawnEntityInWorld(block);
 
 		return block;
 	}
 
-	public static EntityBlock[] createLaserBox(World world, double xMin,
-			double yMin, double zMin, double xMax, double yMax, double zMax,
-			LaserKind kind) {
+	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax,
+			double zMax, LaserKind kind) {
 		EntityBlock lasers[] = new EntityBlock[12];
 		Position[] p = new Position[8];
 
@@ -322,8 +305,7 @@ public class Utils {
 
 		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
 
-			PacketUpdate payload = BuildCraftCore.bufferedDescriptions
-					.get(index);
+			PacketUpdate payload = BuildCraftCore.bufferedDescriptions.get(index);
 			BuildCraftCore.bufferedDescriptions.remove(index);
 
 			tileSynch.handleDescriptionPacket(payload);
@@ -332,11 +314,9 @@ public class Utils {
 	}
 
 	public static int liquidId(int blockId) {
-		if (blockId == Block.waterStill.blockID
-				|| blockId == Block.waterMoving.blockID)
+		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID)
 			return Block.waterStill.blockID;
-		else if (blockId == Block.lavaStill.blockID
-				|| blockId == Block.lavaMoving.blockID)
+		else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID)
 			return Block.lavaStill.blockID;
 		else if (Block.blocksList[blockId] instanceof ILiquid)
 			return ((ILiquid) Block.blocksList[blockId]).stillLiquidId();
@@ -394,21 +374,18 @@ public class Utils {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 
 		if (tile instanceof IInventory && !APIProxy.isClient(world))
-			if (!(tile instanceof IDropControlInventory)
-					|| ((IDropControlInventory) tile).doDrop())
+			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop())
 				dropItems(world, (IInventory) tile, i, j, k);
 
 		if (tile instanceof TileBuildCraft)
 			((TileBuildCraft) tile).destroy();
 	}
 
-	public static boolean checkPipesConnections(TileEntity tile1,
-			TileEntity tile2) {
+	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
 		if (tile1 == null || tile2 == null)
 			return false;
 
-		if (!(tile1 instanceof IPipeConnection)
-				&& !(tile2 instanceof IPipeConnection))
+		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection))
 			return false;
 
 		Orientations o = Orientations.Unknown;
@@ -426,64 +403,54 @@ public class Utils {
 		else if (tile1.zCoord + 1 == tile2.zCoord)
 			o = Orientations.ZPos;
 
-		if (tile1 instanceof IPipeConnection
-				&& !((IPipeConnection) tile1).isPipeConnected(o))
+		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o))
 			return false;
 
-		if (tile2 instanceof IPipeConnection
-				&& !((IPipeConnection) tile2).isPipeConnected(o.reverse()))
+		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.reverse()))
 			return false;
 
 		return true;
 	}
 
-	public static boolean checkPipesConnections(IBlockAccess blockAccess,
-			TileEntity tile1, int x2, int y2, int z2) {
+	public static boolean checkPipesConnections(IBlockAccess blockAccess, TileEntity tile1, int x2, int y2, int z2) {
 		TileEntity tile2 = blockAccess.getBlockTileEntity(x2, y2, z2);
 
 		return checkPipesConnections(tile1, tile2);
 	}
 
-	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess,
-			int x1, int y1, int z1, int x2, int y2, int z2) {
+	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
 
 		Block b1 = Block.blocksList[blockAccess.getBlockId(x1, y1, z1)];
 		Block b2 = Block.blocksList[blockAccess.getBlockId(x2, y2, z2)];
 
-		if (!(b1 instanceof ILegacyPipeConnection)
-				&& !(b2 instanceof ILegacyPipeConnection))
+		if (!(b1 instanceof ILegacyPipeConnection) && !(b2 instanceof ILegacyPipeConnection))
 			return false;
 
 		if (b1 instanceof ILegacyPipeConnection
-				&& !((ILegacyPipeConnection) b1).isPipeConnected(blockAccess,
-						x1, y1, z1, x2, y2, z2))
+				&& !((ILegacyPipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2))
 			return false;
 
 		if (b2 instanceof ILegacyPipeConnection
-				&& !((ILegacyPipeConnection) b2).isPipeConnected(blockAccess,
-						x2, y2, z2, x1, y1, z1))
+				&& !((ILegacyPipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1))
 			return false;
 
 		return true;
 
 	}
 
-	public static void readStacksFromNBT(NBTTagCompound nbt, String name,
-			ItemStack[] stacks) {
+	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = nbt.getTagList(name);
 
 		for (int i = 0; i < stacks.length; ++i)
 			if (i < nbttaglist.tagCount()) {
-				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
-						.tagAt(i);
+				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(i);
 
 				stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
 			} else
 				stacks[i] = null;
 	}
 
-	public static void writeStacksToNBT(NBTTagCompound nbt, String name,
-			ItemStack[] stacks) {
+	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
 
 		for (int i = 0; i < stacks.length; ++i) {

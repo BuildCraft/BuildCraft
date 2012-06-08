@@ -33,26 +33,18 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 		super.modsLoaded();
 		BuildCraftEnergy.initialize();
 
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
-				BuildCraftEnergy.engineBlock, 0), new RenderEngine(
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(
 				"/net/minecraft/src/buildcraft/energy/gui/base_wood.png"));
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
-				BuildCraftEnergy.engineBlock, 1), new RenderEngine(
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(
 				"/net/minecraft/src/buildcraft/energy/gui/base_stone.png"));
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
-				BuildCraftEnergy.engineBlock, 2), new RenderEngine(
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(
 				"/net/minecraft/src/buildcraft/energy/gui/base_iron.png"));
 
-		ModLoader.getMinecraftInstance().renderEngine
-				.registerTextureFX(new TextureOilFX());
-		ModLoader.getMinecraftInstance().renderEngine
-				.registerTextureFX(new TextureFuelFX());
-		ModLoader.getMinecraftInstance().renderEngine
-				.registerTextureFX(new TextureOilFlowFX());
+		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
+		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureFuelFX());
+		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
 
-		ModLoader.registerTileEntity(TileEngine.class,
-				"net.minecraft.src.buildcraft.energy.Engine",
-				new RenderEngine());
+		ModLoader.registerTileEntity(TileEngine.class, "net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
 
 		// CoreProxy.registerGUI(this,
 		// Utils.packetIdToInt(PacketIds.EngineSteamGUI));

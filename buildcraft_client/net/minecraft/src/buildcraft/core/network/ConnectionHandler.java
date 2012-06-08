@@ -10,17 +10,13 @@ public class ConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void onConnect(NetworkManager network) {
-		MessageManager.getInstance().registerChannel(network,
-				new PacketHandler(), DefaultProps.NET_CHANNEL_NAME);
+		MessageManager.getInstance().registerChannel(network, new PacketHandler(), DefaultProps.NET_CHANNEL_NAME);
 	}
 
 	@Override
-	public void onLogin(NetworkManager network, Packet1Login login) {
-	}
+	public void onLogin(NetworkManager network, Packet1Login login) {}
 
 	@Override
-	public void onDisconnect(NetworkManager network, String message,
-			Object[] args) {
-	}
+	public void onDisconnect(NetworkManager network, String message, Object[] args) {}
 
 }

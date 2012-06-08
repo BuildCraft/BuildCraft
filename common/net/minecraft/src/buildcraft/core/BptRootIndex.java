@@ -45,8 +45,7 @@ public class BptRootIndex {
 	public void loadIndex() throws IOException {
 		FileInputStream input = new FileInputStream(file);
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input,
-				"8859_1"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "8859_1"));
 
 		while (true) {
 			String line = reader.readLine();
@@ -89,8 +88,7 @@ public class BptRootIndex {
 
 				bluePrintsFile.put(maxBpt, newFile);
 
-				for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary
-						.values())
+				for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary.values())
 					playerIndex.addBlueprint(newFile);
 			}
 		}
@@ -100,8 +98,7 @@ public class BptRootIndex {
 
 	public void saveIndex() throws IOException {
 		FileOutputStream output = new FileOutputStream(file);
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-				output, "8859_1"));
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
 		for (int i = 1; i <= maxBpt; ++i) {
 			File f = bluePrintsFile.get(i);
@@ -119,8 +116,7 @@ public class BptRootIndex {
 	public BptBase getBluePrint(int number) {
 		if (!bluePrints.containsKey(number))
 			if (bluePrintsFile.containsKey(number)) {
-				BptBase bpt = BptBase.loadBluePrint(bluePrintsFile.get(number),
-						number);
+				BptBase bpt = BptBase.loadBluePrint(bluePrintsFile.get(number), number);
 
 				if (bpt != null) {
 					bluePrints.put(number, bpt);

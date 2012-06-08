@@ -32,8 +32,7 @@ public class EntityLaser extends Entity {
 		setSize(10, 10);
 	}
 
-	public void setPositions(double x1, double y1, double z1, double x2,
-			double y2, double z2) {
+	public void setPositions(double x1, double y1, double z1, double x2, double y2, double z2) {
 		this.x1 = x1;
 		this.y1 = y1;
 		this.z1 = z1;
@@ -95,16 +94,13 @@ public class EntityLaser extends Entity {
 	}
 
 	@Override
-	protected void entityInit() {
-	}
+	protected void entityInit() {}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-	}
+	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-	}
+	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 
 	public String getTexture() {
 		return texture;

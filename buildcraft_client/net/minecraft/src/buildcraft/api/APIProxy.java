@@ -35,8 +35,7 @@ public class APIProxy {
 		entity.setDead();
 
 		if (entity.worldObj instanceof WorldClient)
-			((WorldClient) entity.worldObj)
-					.removeEntityFromWorld(entity.entityId);
+			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
 	}
 
 	public static Random createNewRandom(World world) {

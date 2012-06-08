@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.api;
 
 public class ItemSignature {
+
 	public String itemClassName;
 	public String itemName;
 

@@ -4,8 +4,7 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 
 public class PacketPipeDescription extends PacketUpdate {
 
-	public PacketPipeDescription() {
-	}
+	public PacketPipeDescription() {}
 
 	public PacketPipeDescription(int posX, int posY, int posZ, Pipe pipe) {
 

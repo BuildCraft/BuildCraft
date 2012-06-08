@@ -27,8 +27,7 @@ public class BptBlockDoor extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		if ((slot.meta & 8) == 0) {
 			requirements.add(stack.copy());
 		}
@@ -62,15 +61,11 @@ public class BptBlockDoor extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.blockId, slot.meta);
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y + 1,
-				slot.z, slot.blockId, slot.meta + 8);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.blockId, slot.meta + 8);
 
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y + 1, slot.z,
-				slot.meta + 8);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.meta);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.meta + 8);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
 
 	}
 }

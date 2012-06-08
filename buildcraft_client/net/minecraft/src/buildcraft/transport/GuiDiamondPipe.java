@@ -25,8 +25,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 	IInventory playerInventory;
 	TileGenericPipe filterInventory;
 
-	public GuiDiamondPipe(IInventory playerInventory,
-			TileGenericPipe filterInventory) {
+	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe filterInventory) {
 		super(new CraftingDiamondPipe(playerInventory, filterInventory));
 		this.playerInventory = playerInventory;
 		this.filterInventory = filterInventory;
@@ -38,25 +37,21 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 		for (int k = 0; k < 6; k++)
 			for (int j1 = 0; j1 < 9; j1++) {
 				int id = k * 9 + j1;
-				slots[id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18,
-						filterInventory, j1 + k * 9);
+				slots[id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18, filterInventory, j1 + k * 9);
 			}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString(filterInventory.getInvName(),
-				getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
-				ySize - 97, 0x404040);
+		fontRenderer.drawString(filterInventory.getInvName(), getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection();
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine
-				.getTexture("/net/minecraft/src/buildcraft/transport/gui/filter.png");
+		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/transport/gui/filter.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
@@ -87,18 +82,15 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 			ItemStack newStack;
 			if (playerStack != null)
-				newStack = new ItemStack(playerStack.itemID, 1,
-						playerStack.getItemDamage());
+				newStack = new ItemStack(playerStack.itemID, 1, playerStack.getItemDamage());
 			else
 				newStack = null;
 
 			filterInventory.setInventorySlotContents(position, newStack);
 
 			if (APIProxy.isRemote()) {
-				PacketSlotChange packet = new PacketSlotChange(
-						PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord,
-						filterInventory.yCoord, filterInventory.zCoord,
-						position, newStack);
+				PacketSlotChange packet = new PacketSlotChange(PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord,
+						filterInventory.yCoord, filterInventory.zCoord, position, newStack);
 				CoreProxy.sendToServer(packet.getPacket());
 			}
 		}

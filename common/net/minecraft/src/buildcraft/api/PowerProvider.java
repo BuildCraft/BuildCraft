@@ -30,8 +30,7 @@ public abstract class PowerProvider {
 
 	public int[] powerSources = { 0, 0, 0, 0, 0, 0 };
 
-	public void configure(int latency, int minEnergyReceived,
-			int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
+	public void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
 		this.latency = latency;
 		this.minEnergyReceived = minEnergyReceived;
 		this.maxEnergyReceived = maxEnergyReceived;
@@ -64,9 +63,7 @@ public abstract class PowerProvider {
 			}
 		}
 
-		if (powerLoss > 0
-				&& energyLossTracker.markTimeIfDelay(tile.worldObj,
-						powerLossRegularity)) {
+		if (powerLoss > 0 && energyLossTracker.markTimeIfDelay(tile.worldObj, powerLossRegularity)) {
 
 			energyStored -= powerLoss;
 			if (energyStored < 0) {

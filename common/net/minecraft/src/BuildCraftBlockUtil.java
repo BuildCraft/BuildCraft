@@ -18,8 +18,7 @@ public class BuildCraftBlockUtil {
 		return block.damageDropped(world.getBlockMetadata(i, j, k));
 	}
 
-	public static ArrayList<ItemStack> getItemStackFromBlock(World world,
-			int i, int j, int k) {
+	public static ArrayList<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
 		if (block == null)
@@ -34,8 +33,7 @@ public class BuildCraftBlockUtil {
 		int blockId = world.getBlockId(x, y, z);
 
 		if (blockId != 0 && BuildCraftCore.dropBrokenBlocks)
-			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z,
-					world.getBlockMetadata(x, y, z), 0);
+			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 
 		world.setBlockWithNotify(x, y, z, 0);
 	}

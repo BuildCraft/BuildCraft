@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.api;
 
 public abstract class Action {
+
 	public int id;
 
 	public Action(int id) {

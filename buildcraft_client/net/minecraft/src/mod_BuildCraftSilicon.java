@@ -43,8 +43,7 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 	}
 
 	@Override
-	public boolean renderWorldBlock(RenderBlocks renderblocks,
-			IBlockAccess iblockaccess, int x, int y, int z, Block block, int l) {
+	public boolean renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iblockaccess, int x, int y, int z, Block block, int l) {
 
 		int meta = iblockaccess.getBlockMetadata(x, y, z);
 
@@ -57,8 +56,7 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 4F / 16F, 1, 1);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
-			block.setBlockBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F,
-					11F / 16F, 11F / 16F);
+			block.setBlockBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F, 11F / 16F, 11F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.XNeg.ordinal()) {
 			renderblocks.uvRotateEast = 1;
@@ -69,8 +67,7 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 			block.setBlockBounds(1F - 4F / 16F, 0.0F, 0.0F, 1, 1, 1);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
-			block.setBlockBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F,
-					1F - 4F / 16F, 11F / 16F, 11F / 16F);
+			block.setBlockBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F, 1F - 4F / 16F, 11F / 16F, 11F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.ZNeg.ordinal()) {
 			renderblocks.uvRotateSouth = 1;
@@ -79,8 +76,7 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 			block.setBlockBounds(0.0F, 0.0F, 1F - 4F / 16F, 1, 1, 1);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
-			block.setBlockBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F,
-					11F / 16F, 1F - 4F / 16F);
+			block.setBlockBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F, 11F / 16F, 1F - 4F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.ZPos.ordinal()) {
 			renderblocks.uvRotateSouth = 2;
@@ -91,8 +87,7 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 1, 4F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
-			block.setBlockBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F,
-					11F / 16F, 13F / 16F);
+			block.setBlockBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F, 11F / 16F, 13F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.YNeg.ordinal()) {
 			renderblocks.uvRotateEast = 3;
@@ -103,15 +98,13 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 			block.setBlockBounds(0.0F, 1.0F - 4F / 16F, 0.0F, 1.0F, 1.0F, 1.0F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
-			block.setBlockBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F,
-					1F - 4F / 16F, 11F / 16F);
+			block.setBlockBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F, 1F - 4F / 16F, 11F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.YPos.ordinal()) {
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
-			block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F,
-					13F / 16F, 11F / 16F);
+			block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
@@ -128,17 +121,14 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 	}
 
 	@Override
-	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i,
-			int j) {
-		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
-				Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i, int j) {
+		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
 		renderBlockInInv(renderblocks, block, 0);
 
-		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F,
-				13F / 16F, 11F / 16F);
+		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
 		renderBlockInInv(renderblocks, block, 1);
 
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
@@ -149,38 +139,32 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
-		renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D,
-				block.getBlockTextureFromSideAndMetadata(0, i));
+		renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D,
-				block.getBlockTextureFromSideAndMetadata(1, i));
+		renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, -1F);
-		renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D,
-				block.getBlockTextureFromSideAndMetadata(2, i));
+		renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D,
-				block.getBlockTextureFromSideAndMetadata(3, i));
+		renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D,
-				block.getBlockTextureFromSideAndMetadata(4, i));
+		renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D,
-				block.getBlockTextureFromSideAndMetadata(5, i));
+		renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, i));
 		tessellator.draw();
 	}
 

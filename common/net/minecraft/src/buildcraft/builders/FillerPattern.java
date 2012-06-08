@@ -27,8 +27,7 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * size if needed. Return true when the iteration process is finished.
 	 */
 	@Override
-	public abstract boolean iteratePattern(TileEntity tile, IBox box,
-			ItemStack stackToPlace);
+	public abstract boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace);
 
 	@Override
 	public abstract String getTextureFile();
@@ -46,8 +45,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		return this.id;
 	}
 
-	public boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax,
-			int zMax, ItemStack stackToPlace, World world) {
+	public boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, ItemStack stackToPlace, World world) {
 		boolean found = false;
 		int xSlot = 0, ySlot = 0, zSlot = 0;
 
@@ -66,16 +64,14 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace,
-					BuildCraftAPI.getBuildCraftPlayer(world), world, xSlot,
-					ySlot - 1, zSlot, 1);
+			stackToPlace.getItem().onItemUse(stackToPlace, BuildCraftAPI.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
+					zSlot, 1);
 		}
 
 		return !found;
 	}
 
-	public boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax,
-			int zMax, World world) {
+	public boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world) {
 		boolean found = false;
 		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
@@ -84,8 +80,7 @@ public abstract class FillerPattern implements IFillerPattern {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (!BuildCraftAPI.softBlock(world.getBlockId(x, y, z))
-							&& !BuildCraftAPI.unbreakableBlock(world
-									.getBlockId(x, y, z))) {
+							&& !BuildCraftAPI.unbreakableBlock(world.getBlockId(x, y, z))) {
 						found = true;
 						lastX = x;
 						lastY = y;

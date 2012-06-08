@@ -17,6 +17,7 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 
 public class TriggerInventory extends Trigger {
+
 	public enum State {
 		Empty, Contains, Space, Full
 	};
@@ -72,8 +73,7 @@ public class TriggerInventory extends Trigger {
 		if (parameter != null)
 			searchedStack = parameter.getItem();
 
-		if (tile instanceof IInventory
-				&& ((IInventory) tile).getSizeInventory() > 0) {
+		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
 			IInventory inv = Utils.getInventory(((IInventory) tile));
 
 			boolean foundItems = false;
@@ -83,21 +83,17 @@ public class TriggerInventory extends Trigger {
 				ItemStack stack = inv.getStackInSlot(i);
 
 				if (parameter == null || parameter.stack == null)
-					foundItems = foundItems || stack != null
-							&& stack.stackSize > 0;
+					foundItems = foundItems || stack != null && stack.stackSize > 0;
 				else if (stack != null && stack.stackSize > 0)
 					foundItems = foundItems
-							|| (stack.itemID == parameter.stack.itemID && stack
-									.getItemDamage() == parameter.stack
+							|| (stack.itemID == parameter.stack.itemID && stack.getItemDamage() == parameter.stack
 									.getItemDamage());
 
 				if (stack == null || stack.stackSize == 0)
 					foundSpace = true;
 				else if (searchedStack != null)
-					if (stack.stackSize < stack.getMaxStackSize()
-							&& stack.itemID == searchedStack.itemID
-							&& stack.getItemDamage() == searchedStack
-									.getItemDamage())
+					if (stack.stackSize < stack.getMaxStackSize() && stack.itemID == searchedStack.itemID
+							&& stack.getItemDamage() == searchedStack.getItemDamage())
 						foundSpace = true;
 			}
 

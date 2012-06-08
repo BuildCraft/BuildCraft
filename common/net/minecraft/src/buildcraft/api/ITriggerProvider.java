@@ -25,7 +25,6 @@ public interface ITriggerProvider {
 	/**
 	 * Returns the list of triggers available to a gate next to the given block.
 	 */
-	public abstract LinkedList<Trigger> getNeighborTriggers(Block block,
-			TileEntity tile);
+	public abstract LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity tile);
 
 }

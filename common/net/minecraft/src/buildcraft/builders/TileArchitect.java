@@ -63,8 +63,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		super.initialize();
 
 		if (!box.isInitialized()) {
-			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
-					yCoord, zCoord);
+			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
 			if (a != null) {
 				box.initialize(a);
@@ -104,8 +103,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		result.anchorY = yCoord - box.yMin;
 		result.anchorZ = zCoord - box.zMin;
 
-		Orientations o = Orientations.values()[worldObj.getBlockMetadata(
-				xCoord, yCoord, zCoord)].reverse();
+		Orientations o = Orientations.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].reverse();
 
 		if (o == Orientations.XPos) {
 			// Do nothing
@@ -122,14 +120,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 		ItemStack stack = items[0].copy();
 
-		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(
-				lastBptId))) {
-			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(
-					lastBptId);
+		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
+			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
 			stack.setItemDamage(lastBptId);
 		} else {
-			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(
-					result);
+			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
 			stack.setItemDamage(bptId);
 			lastBptId = bptId;
 		}
@@ -153,11 +148,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
 					if (worldObj.getBlockId(x, y, z) != 0) {
-						result.setBlockId(x - box.xMin, y - box.yMin, z
-								- box.zMin, mask1);
+						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask1);
 					} else {
-						result.setBlockId(x - box.xMin, y - box.yMin, z
-								- box.zMin, mask0);
+						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask0);
 					}
 				}
 			}
@@ -167,8 +160,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	private BptBase createBptBlueprint() {
-		BptBlueprint result = new BptBlueprint(box.sizeX(), box.sizeY(),
-				box.sizeZ());
+		BptBlueprint result = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		BptContext context = new BptContext(worldObj, result, box);
 
@@ -258,8 +250,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
 		items = new ItemStack[getSizeInventory()];
 		for (int i = 0; i < nbttaglist.tagCount(); i++) {
-			NBTTagCompound nbttagcompound1 = (NBTTagCompound) nbttaglist
-					.tagAt(i);
+			NBTTagCompound nbttagcompound1 = (NBTTagCompound) nbttaglist.tagAt(i);
 			int j = nbttagcompound1.getByte("Slot") & 0xff;
 			if (j >= 0 && j < items.length) {
 				items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
@@ -313,8 +304,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		if (!box.isInitialized()) {
 			return;
 		} else if (!isComputing) {
-			if (items[0] != null && items[0].getItem() instanceof ItemBptBase
-					&& items[1] == null) {
+			if (items[0] != null && items[0].getItem() instanceof ItemBptBase && items[1] == null) {
 				isComputing = true;
 				computingTime = 0;
 			} else {
@@ -322,8 +312,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 				computingTime = 0;
 			}
 		} else {
-			if (items[0] == null
-					|| !(items[0].getItem() instanceof ItemBptBase)) {
+			if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
 				isComputing = false;
 				computingTime = 0;
 			}

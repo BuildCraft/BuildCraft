@@ -40,56 +40,28 @@ public class BuildCraftConfiguration extends Configuration {
 				fileinputstream.close();
 			}
 
-			getOrCreateProperty("stonePipe.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("stonePipe.blockId"));
-			getOrCreateProperty("woodenPipe.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("woodenPipe.blockId"));
-			getOrCreateProperty("ironPipe.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("ironPipe.blockId"));
-			getOrCreateProperty("goldenPipe.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("goldenPipe.blockId"));
-			getOrCreateProperty("diamondPipe.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("diamondPipe.blockId"));
-			getOrCreateProperty("obsidianPipe.id",
-					Configuration.CATEGORY_BLOCK,
-					props.getProperty("obsidianPipeBlock.blockId"));
-			getOrCreateProperty("autoWorkbench.id",
-					Configuration.CATEGORY_BLOCK,
-					props.getProperty("autoWorkbench.blockId"));
-			getOrCreateProperty("miningWell.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("miningWell.blockId"));
-			getOrCreateProperty("quarry.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("quarry.blockId"));
-			getOrCreateProperty("drill.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("drill.blockId"));
-			getOrCreateProperty("frame.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("frame.blockId"));
-			getOrCreateProperty("marker.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("marker.blockId"));
-			getOrCreateProperty("filler.id", Configuration.CATEGORY_BLOCK,
-					props.getProperty("filler.blockId"));
+			getOrCreateProperty("stonePipe.id", Configuration.CATEGORY_BLOCK, props.getProperty("stonePipe.blockId"));
+			getOrCreateProperty("woodenPipe.id", Configuration.CATEGORY_BLOCK, props.getProperty("woodenPipe.blockId"));
+			getOrCreateProperty("ironPipe.id", Configuration.CATEGORY_BLOCK, props.getProperty("ironPipe.blockId"));
+			getOrCreateProperty("goldenPipe.id", Configuration.CATEGORY_BLOCK, props.getProperty("goldenPipe.blockId"));
+			getOrCreateProperty("diamondPipe.id", Configuration.CATEGORY_BLOCK, props.getProperty("diamondPipe.blockId"));
+			getOrCreateProperty("obsidianPipe.id", Configuration.CATEGORY_BLOCK, props.getProperty("obsidianPipeBlock.blockId"));
+			getOrCreateProperty("autoWorkbench.id", Configuration.CATEGORY_BLOCK, props.getProperty("autoWorkbench.blockId"));
+			getOrCreateProperty("miningWell.id", Configuration.CATEGORY_BLOCK, props.getProperty("miningWell.blockId"));
+			getOrCreateProperty("quarry.id", Configuration.CATEGORY_BLOCK, props.getProperty("quarry.blockId"));
+			getOrCreateProperty("drill.id", Configuration.CATEGORY_BLOCK, props.getProperty("drill.blockId"));
+			getOrCreateProperty("frame.id", Configuration.CATEGORY_BLOCK, props.getProperty("frame.blockId"));
+			getOrCreateProperty("marker.id", Configuration.CATEGORY_BLOCK, props.getProperty("marker.blockId"));
+			getOrCreateProperty("filler.id", Configuration.CATEGORY_BLOCK, props.getProperty("filler.blockId"));
 
-			getOrCreateProperty("woodenGearItem.id",
-					Configuration.CATEGORY_ITEM,
-					props.getProperty("woodenGearItem.id"));
-			getOrCreateProperty("stoneGearItem.id",
-					Configuration.CATEGORY_ITEM,
-					props.getProperty("stoneGearItem.id"));
-			getOrCreateProperty("ironGearItem.id", Configuration.CATEGORY_ITEM,
-					props.getProperty("ironGearItem.id"));
-			getOrCreateProperty("goldenGearItem.id",
-					Configuration.CATEGORY_ITEM,
-					props.getProperty("goldGearItem.id"));
-			getOrCreateProperty("diamondGearItem.id",
-					Configuration.CATEGORY_ITEM,
-					props.getProperty("diamondGearItem.id"));
+			getOrCreateProperty("woodenGearItem.id", Configuration.CATEGORY_ITEM, props.getProperty("woodenGearItem.id"));
+			getOrCreateProperty("stoneGearItem.id", Configuration.CATEGORY_ITEM, props.getProperty("stoneGearItem.id"));
+			getOrCreateProperty("ironGearItem.id", Configuration.CATEGORY_ITEM, props.getProperty("ironGearItem.id"));
+			getOrCreateProperty("goldenGearItem.id", Configuration.CATEGORY_ITEM, props.getProperty("goldGearItem.id"));
+			getOrCreateProperty("diamondGearItem.id", Configuration.CATEGORY_ITEM, props.getProperty("diamondGearItem.id"));
 
-			getOrCreateProperty("mining.enabled",
-					Configuration.CATEGORY_GENERAL,
-					props.getProperty("mining.enabled"));
-			getOrCreateProperty("current.continuous",
-					Configuration.CATEGORY_GENERAL,
-					props.getProperty("current.continous"));
+			getOrCreateProperty("mining.enabled", Configuration.CATEGORY_GENERAL, props.getProperty("mining.enabled"));
+			getOrCreateProperty("current.continuous", Configuration.CATEGORY_GENERAL, props.getProperty("current.continous"));
 
 			cfgfile.delete();
 		} catch (IOException e) {

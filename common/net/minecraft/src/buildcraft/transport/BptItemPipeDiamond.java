@@ -21,12 +21,10 @@ import net.minecraft.src.buildcraft.core.BptItem;
 
 public class BptItemPipeDiamond extends BptItem {
 
-	public BptItemPipeDiamond() {
-	}
+	public BptItemPipeDiamond() {}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
 
 	}
 
@@ -50,18 +48,15 @@ public class BptItemPipeDiamond extends BptItem {
 	}
 
 	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context,
-			int x, int y, int z) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(
-				x, y, z);
+	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
+		IInventory inventory = (IInventory) context.world().getBlockTileEntity(x, y, z);
 
 		BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
 	}
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(
-				slot.x, slot.y, slot.z);
+		IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
 
 		BptBlockUtils.buildInventoryContents(slot, context, inventory);
 	}

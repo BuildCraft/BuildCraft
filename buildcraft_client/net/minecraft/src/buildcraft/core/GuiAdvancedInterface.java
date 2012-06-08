@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 	public abstract class AdvancedSlot {
+
 		final public int x, y;
 
 		public AdvancedSlot(int x, int y) {
@@ -19,8 +20,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		public String getDescription() {
 			if (getItemStack() != null)
-				return getItemStack().getItem().getItemDisplayName(
-						getItemStack());
+				return getItemStack().getItem().getItemDisplayName(getItemStack());
 			else
 				return "";
 		}
@@ -52,8 +52,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 					int textureI = getTextureIndex() >> 4;
 					int textureJ = getTextureIndex() - textureI * 16;
 
-					drawTexturedModalRect(cornerX + x, cornerY + y,
-							16 * textureJ, 16 * textureI, 16, 16);
+					drawTexturedModalRect(cornerX + x, cornerY + y, 16 * textureJ, 16 * textureI, 16, 16);
 				}
 		}
 
@@ -63,16 +62,15 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				int cornerY = (height - ySize) / 2;
 
 				itemRenderer.zLevel = 200F;
-				itemRenderer.renderItemIntoGUI(fontRenderer, mc.renderEngine,
-						item, cornerX + x, cornerY + y);
-				itemRenderer.renderItemOverlayIntoGUI(fontRenderer,
-						mc.renderEngine, item, cornerX + x, cornerY + y);
+				itemRenderer.renderItemIntoGUI(fontRenderer, mc.renderEngine, item, cornerX + x, cornerY + y);
+				itemRenderer.renderItemOverlayIntoGUI(fontRenderer, mc.renderEngine, item, cornerX + x, cornerY + y);
 				itemRenderer.zLevel = 0.0F;
 			}
 		}
 	}
 
 	public class ItemSlot extends AdvancedSlot {
+
 		public ItemStack stack;
 
 		public ItemSlot(int x, int y) {
@@ -132,8 +130,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
 		int i1 = 240;
 		int k1 = 240;
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,
-				i1 / 1.0F, k1 / 1.0F);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, i1 / 1.0F, k1 / 1.0F);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		for (int s = 0; s < slots.length; ++s) {
@@ -165,8 +162,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			int i2 = (lastX - cornerX) + 12;
 			int k2 = lastY - cornerY - 12;
 			int l2 = fontRenderer.getStringWidth(s);
-			drawGradientRect(i2 - 3, k2 - 3, i2 + l2 + 3, k2 + 8 + 3,
-					0xc0000000, 0xc0000000);
+			drawGradientRect(i2 - 3, k2 - 3, i2 + l2 + 3, k2 + 8 + 3, 0xc0000000, 0xc0000000);
 			fontRenderer.drawStringWithShadow(s, i2, k2, -1);
 		}
 	}

@@ -81,8 +81,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 				BlockIndex index = getNextIndexToPump(false);
 
 				if (isPumpableLiquid(index)) {
-					int liquidToPump = Utils.liquidId(worldObj.getBlockId(
-							index.i, index.j, index.k));
+					int liquidToPump = Utils.liquidId(worldObj.getBlockId(index.i, index.j, index.k));
 
 					if (internalLiquid == 0 || liquidId == liquidToPump) {
 						liquidId = liquidToPump;
@@ -90,10 +89,8 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 						if (powerProvider.useEnergy(10, 10, true) == 10) {
 							index = getNextIndexToPump(true);
 
-							if (liquidId != Block.waterStill.blockID
-									|| BuildCraftCore.consumeWaterSources) {
-								worldObj.setBlockWithNotify(index.i, index.j,
-										index.k, 0);
+							if (liquidId != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
+								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
 							}
 
 							internalLiquid = internalLiquid += BuildCraftAPI.BUCKET_VOLUME;
@@ -114,8 +111,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 								if (isLiquid(new BlockIndex(xCoord, y, zCoord))) {
 									aimY = y;
 									return;
-								} else if (worldObj.getBlockId(xCoord, y,
-										zCoord) != 0) {
+								} else if (worldObj.getBlockId(xCoord, y, zCoord) != 0) {
 									return;
 								}
 							}
@@ -127,17 +123,13 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 		if (internalLiquid >= 0) {
 			for (int i = 0; i < 6; ++i) {
-				Position p = new Position(xCoord, yCoord, zCoord,
-						Orientations.values()[i]);
+				Position p = new Position(xCoord, yCoord, zCoord, Orientations.values()[i]);
 				p.moveForwards(1);
 
-				TileEntity tile = worldObj.getBlockTileEntity((int) p.x,
-						(int) p.y, (int) p.z);
+				TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
 
 				if (tile instanceof ILiquidContainer) {
-					internalLiquid -= ((ILiquidContainer) tile).fill(
-							p.orientation.reverse(), internalLiquid, liquidId,
-							true);
+					internalLiquid -= ((ILiquidContainer) tile).fill(p.orientation.reverse(), internalLiquid, liquidId, true);
 
 					if (internalLiquid <= 0) {
 						break;
@@ -220,27 +212,17 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 			return;
 		}
 
-		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound,
-				pumpList, liquidId);
+		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList, liquidId);
 
 		while (lastFound.size() > 0) {
-			TreeSet<BlockIndex> visitIteration = new TreeSet<BlockIndex>(
-					lastFound);
+			TreeSet<BlockIndex> visitIteration = new TreeSet<BlockIndex>(lastFound);
 			lastFound.clear();
 
 			for (BlockIndex index : visitIteration) {
-				addToPumpIfLiquid(
-						new BlockIndex(index.i + 1, index.j, index.k),
-						markedBlocks, lastFound, pumpList, liquidId);
-				addToPumpIfLiquid(
-						new BlockIndex(index.i - 1, index.j, index.k),
-						markedBlocks, lastFound, pumpList, liquidId);
-				addToPumpIfLiquid(
-						new BlockIndex(index.i, index.j, index.k + 1),
-						markedBlocks, lastFound, pumpList, liquidId);
-				addToPumpIfLiquid(
-						new BlockIndex(index.i, index.j, index.k - 1),
-						markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i + 1, index.j, index.k), markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i - 1, index.j, index.k), markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k + 1), markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j, index.k - 1), markedBlocks, lastFound, pumpList, liquidId);
 
 				if (!blocksToPump.containsKey(index.j + 1)) {
 					blocksToPump.put(index.j + 1, new LinkedList<BlockIndex>());
@@ -248,15 +230,12 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 				pumpList = blocksToPump.get(index.j + 1);
 
-				addToPumpIfLiquid(
-						new BlockIndex(index.i, index.j + 1, index.k),
-						markedBlocks, lastFound, pumpList, liquidId);
+				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList, liquidId);
 			}
 		}
 	}
 
-	public void addToPumpIfLiquid(BlockIndex index,
-			TreeSet<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound,
+	public void addToPumpIfLiquid(BlockIndex index, TreeSet<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound,
 			LinkedList<BlockIndex> pumpList, int liquidId) {
 
 		if (liquidId != worldObj.getBlockId(index.i, index.j, index.k)) {
@@ -266,8 +245,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		if (!markedBlocks.contains(index)) {
 			markedBlocks.add(index);
 
-			if ((index.i - xCoord) * (index.i - xCoord) + (index.k - zCoord)
-					* (index.k - zCoord) > 64 * 64) {
+			if ((index.i - xCoord) * (index.i - xCoord) + (index.k - zCoord) * (index.k - zCoord) > 64 * 64) {
 				return;
 			}
 
@@ -282,14 +260,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	}
 
 	private boolean isPumpableLiquid(BlockIndex index) {
-		return isLiquid(index)
-				&& worldObj.getBlockMetadata(index.i, index.j, index.k) == 0;
+		return isLiquid(index) && worldObj.getBlockMetadata(index.i, index.j, index.k) == 0;
 	}
 
 	private boolean isLiquid(BlockIndex index) {
-		return index != null
-				&& (Utils.liquidId(worldObj.getBlockId(index.i, index.j,
-						index.k)) != 0);
+		return index != null && (Utils.liquidId(worldObj.getBlockId(index.i, index.j, index.k)) != 0);
 	}
 
 	@Override
@@ -341,8 +316,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	}
 
 	@Override
-	public void doWork() {
-	}
+	public void doWork() {}
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
@@ -364,8 +338,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 			tube.kSize = Utils.pipeMaxPos - Utils.pipeMinPos;
 			tube.jSize = yCoord - tube.posY;
 
-			tube.setPosition(xCoord + Utils.pipeMinPos, tubeY, zCoord
-					+ Utils.pipeMinPos);
+			tube.setPosition(xCoord + Utils.pipeMinPos, tubeY, zCoord + Utils.pipeMinPos);
 		}
 	}
 

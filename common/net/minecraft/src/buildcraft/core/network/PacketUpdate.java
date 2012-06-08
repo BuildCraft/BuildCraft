@@ -14,15 +14,13 @@ public class PacketUpdate extends BuildCraftPacket {
 
 	public PacketPayload payload;
 
-	public PacketUpdate() {
-	}
+	public PacketUpdate() {}
 
 	public PacketUpdate(int packetId, PacketPayload payload) {
 		this(packetId, 0, 0, 0, payload);
 	}
 
-	public PacketUpdate(int packetId, int posX, int posY, int posZ,
-			PacketPayload payload) {
+	public PacketUpdate(int packetId, int posX, int posY, int posZ, PacketPayload payload) {
 		this(packetId);
 
 		this.posX = posX;

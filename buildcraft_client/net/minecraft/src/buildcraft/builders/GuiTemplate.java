@@ -35,10 +35,8 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString(template.getInvName(),
-				getCenteredOffset(template.getInvName()), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
-				ySize - 152, 0x404040);
+		fontRenderer.drawString(template.getInvName(), getCenteredOffset(template.getInvName()), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 152, 0x404040);
 
 		if (editMode && ((new Date()).getTime() / 100) % 8 >= 4)
 			fontRenderer.drawString(template.name + "|", 51, 62, 0x404040);
@@ -48,8 +46,7 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine
-				.getTexture("/net/minecraft/src/buildcraft/builders/gui/template_gui.png");
+		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/template_gui.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
@@ -84,8 +81,7 @@ public class GuiTemplate extends GuiBuildCraft {
 				return;
 			} else if (c == 8) {
 				if (template.name.length() > 0)
-					template.name = template.name.substring(0,
-							template.name.length() - 1);
+					template.name = template.name.substring(0, template.name.length() - 1);
 
 				return;
 			} else if (Character.isLetterOrDigit(c) || c == ' ') {

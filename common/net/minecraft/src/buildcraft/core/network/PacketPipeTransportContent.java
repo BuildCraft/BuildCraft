@@ -9,8 +9,7 @@ public class PacketPipeTransportContent extends PacketUpdate {
 		super(PacketIds.PIPE_CONTENTS);
 	}
 
-	public PacketPipeTransportContent(int x, int y, int z,
-			EntityPassiveItem item, Orientations orientation) {
+	public PacketPipeTransportContent(int x, int y, int z, EntityPassiveItem item, Orientations orientation) {
 		this();
 
 		this.posX = x;

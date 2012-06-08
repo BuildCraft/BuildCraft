@@ -26,8 +26,7 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 
-public class PipeTransportLiquids extends PipeTransport implements
-		ILiquidContainer {
+public class PipeTransportLiquids extends PipeTransport implements ILiquidContainer {
 
 	/**
 	 * The amount of liquid contained by a pipe section. For simplicity, all
@@ -39,6 +38,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 	public int flowRate = 20;
 
 	public class LiquidBuffer {
+
 		short[] in = new short[travelDelay];
 		short ready;
 		short[] out = new short[travelDelay];
@@ -138,14 +138,11 @@ public class PipeTransportLiquids extends PipeTransport implements
 					if (isInput[orientation])
 						extracted = center.fill(out[date], true, liquidId);
 					if (isOutput[orientation]) {
-						Position p = new Position(xCoord, yCoord, zCoord,
-								Orientations.values()[orientation]);
+						Position p = new Position(xCoord, yCoord, zCoord, Orientations.values()[orientation]);
 						p.moveForwards(1);
 
-						ILiquidContainer nextPipe = (ILiquidContainer) container
-								.getTile(Orientations.values()[orientation]);
-						extracted = nextPipe.fill(p.orientation.reverse(),
-								out[date], liquidId, true);
+						ILiquidContainer nextPipe = (ILiquidContainer) container.getTile(Orientations.values()[orientation]);
+						extracted = nextPipe.fill(p.orientation.reverse(), out[date], liquidId, true);
 
 						if (extracted == 0) {
 							totalBounced++;
@@ -164,8 +161,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 						if (isOutput[i])
 							outputNumber++;
 
-					filled = new boolean[] { false, false, false, false, false,
-							false };
+					filled = new boolean[] { false, false, false, false, false, false };
 
 					// try first, to detect filled outputs
 					extracted = splitLiquid(out[date], outputNumber);
@@ -179,8 +175,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 							if (isOutput[i] && !filled[i])
 								outputNumber++;
 
-						extracted += splitLiquid(out[date] - extracted,
-								outputNumber);
+						extracted += splitLiquid(out[date] - extracted, outputNumber);
 					}
 				}
 
@@ -203,14 +198,12 @@ public class PipeTransportLiquids extends PipeTransport implements
 		private int splitLiquid(int quantity, int outputNumber) {
 			int extracted = 0;
 
-			int slotExtract = (int) Math
-					.ceil(((double) quantity / (double) outputNumber));
+			int slotExtract = (int) Math.ceil(((double) quantity / (double) outputNumber));
 
 			int[] splitVector = getSplitVector(worldObj);
 
 			for (int r = 0; r < 6; ++r) {
-				int toExtract = slotExtract <= quantity ? slotExtract
-						: quantity;
+				int toExtract = slotExtract <= quantity ? slotExtract : quantity;
 
 				int i = splitVector[r];
 
@@ -258,8 +251,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 	boolean[] isInput = new boolean[6];
 
 	// Computed at each update
-	boolean isOutput[] = new boolean[] { false, false, false, false, false,
-			false };
+	boolean isOutput[] = new boolean[] { false, false, false, false, false, false };
 
 	public PipeTransportLiquids() {
 		for (int j = 0; j < 6; ++j) {
@@ -301,8 +293,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 
 		for (int i = 0; i < 6; ++i) {
 			if (nbttagcompound.hasKey("side[" + i + "]"))
-				side[i].readFromNBT(nbttagcompound.getCompoundTag("side[" + i
-						+ "]"));
+				side[i].readFromNBT(nbttagcompound.getCompoundTag("side[" + i + "]"));
 
 			isInput[i] = nbttagcompound.getBoolean("isInput[" + i + "]");
 		}
@@ -332,8 +323,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 		nbttagcompound.setTag("center", sub);
 	}
 
-	protected void doWork() {
-	}
+	protected void doWork() {}
 
 	public void onDropped(EntityItem item) {
 
@@ -347,8 +337,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 		isInput[from.ordinal()] = true;
 
 		if (this.container.pipe instanceof IPipeTransportLiquidsHook)
-			return ((IPipeTransportLiquidsHook) this.container.pipe).fill(from,
-					quantity, id, doFill);
+			return ((IPipeTransportLiquidsHook) this.container.pipe).fill(from, quantity, id, doFill);
 		else
 			return side[from.ordinal()].fill(quantity, doFill, (short) id);
 	}
@@ -408,8 +397,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 		int outputNumber = 0;
 
 		for (Orientations o : Orientations.dirs()) {
-			isOutput[o.ordinal()] = container.pipe.outputOpen(o)
-					&& canReceiveLiquid(o) && !isInput[o.ordinal()];
+			isOutput[o.ordinal()] = container.pipe.outputOpen(o) && canReceiveLiquid(o) && !isInput[o.ordinal()];
 
 			if (isOutput[o.ordinal()])
 				outputNumber++;
@@ -452,8 +440,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 		super.onNeighborBlockChange(blockId);
 
 		for (int i = 0; i < 6; ++i)
-			if (!Utils.checkPipesConnections(
-					container.getTile(Orientations.values()[i]), container))
+			if (!Utils.checkPipesConnections(container.getTile(Orientations.values()[i]), container))
 				side[i].reset();
 	}
 
@@ -471,9 +458,7 @@ public class PipeTransportLiquids extends PipeTransport implements
 				return true;
 		}
 
-		return tile instanceof TileGenericPipe
-				|| (tile instanceof IMachine && ((IMachine) tile)
-						.manageLiquids());
+		return tile instanceof TileGenericPipe || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
 	}
 
 	private static long lastSplit = -1;

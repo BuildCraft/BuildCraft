@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 
 public class TriggerLiquidContainer extends Trigger {
+
 	public enum State {
 		Empty, Contains, Space, Full
 	};
@@ -73,8 +74,7 @@ public class TriggerLiquidContainer extends Trigger {
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = BuildCraftAPI
-						.getLiquidForFilledItem(parameter.getItem());
+				seachedLiquidId = BuildCraftAPI.getLiquidForFilledItem(parameter.getItem());
 
 			LiquidSlot[] liquids = container.getLiquidSlots();
 
@@ -95,8 +95,7 @@ public class TriggerLiquidContainer extends Trigger {
 			case Contains:
 				for (LiquidSlot c : liquids)
 					if (c.getLiquidQty() != 0)
-						if (seachedLiquidId == 0
-								|| seachedLiquidId == c.getLiquidId())
+						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquidId())
 							return true;
 
 				return false;
@@ -106,8 +105,7 @@ public class TriggerLiquidContainer extends Trigger {
 					if (c.getLiquidQty() == 0)
 						return true;
 					else if (c.getLiquidQty() < c.getCapacity())
-						if (seachedLiquidId == 0
-								|| seachedLiquidId == c.getLiquidId())
+						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquidId())
 							return true;
 
 				return false;

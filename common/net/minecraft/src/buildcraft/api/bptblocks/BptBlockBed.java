@@ -24,8 +24,7 @@ public class BptBlockBed extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		if ((slot.meta & 8) == 0) {
 			requirements.add(new ItemStack(Item.bed));
 		}
@@ -58,8 +57,7 @@ public class BptBlockBed extends BptBlock {
 			return;
 		}
 
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.blockId, slot.meta);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
 
 		int x2 = slot.x;
 		int z2 = slot.z;
@@ -79,8 +77,7 @@ public class BptBlockBed extends BptBlock {
 			break;
 		}
 
-		context.world().setBlockAndMetadataWithNotify(x2, slot.y, z2,
-				slot.blockId, slot.meta + 8);
+		context.world().setBlockAndMetadataWithNotify(x2, slot.y, z2, slot.blockId, slot.meta + 8);
 	}
 
 	@Override

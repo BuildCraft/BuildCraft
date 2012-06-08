@@ -43,14 +43,11 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		String title = StringUtil.localize("tile.builderBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 12, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.building.resources"),
-				8, 60, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
-				ySize - 97, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.building.resources"), 8, 60, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		if (builder.isBuildingBlueprint())
-			fontRenderer.drawString(StringUtil.localize("gui.needed"), 185, 7,
-					0x404040);
+			fontRenderer.drawString(StringUtil.localize("gui.needed"), 185, 7, 0x404040);
 
 		drawForegroundSelection();
 	}
@@ -63,12 +60,10 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		int realXSize = 0;
 
 		if (builder.isBuildingBlueprint()) {
-			i = mc.renderEngine
-					.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder_blueprint.png");
+			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder_blueprint.png");
 			realXSize = 256;
 		} else {
-			i = mc.renderEngine
-					.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder.png");
+			i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/builders/gui/builder.png");
 			realXSize = 176;
 		}
 

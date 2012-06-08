@@ -26,8 +26,7 @@ public class TileEntityPickupFX extends EntityFX {
 	private double yDestination;
 
 	public TileEntityPickupFX(World world, EntityItem entity, TileEntity entity1) {
-		super(world, entity.posX, entity.posY, entity.posZ, entity.motionX,
-				entity.motionY, entity.motionZ);
+		super(world, entity.posX, entity.posY, entity.posZ, entity.motionX, entity.motionY, entity.motionZ);
 		field_678_p = 0;
 		field_677_q = 0;
 		field_675_a = entity;
@@ -38,8 +37,7 @@ public class TileEntityPickupFX extends EntityFX {
 	}
 
 	@Override
-	public void renderParticle(Tessellator tessellator, float f, float f1,
-			float f2, float f3, float f4, float f5) {
+	public void renderParticle(Tessellator tessellator, float f, float f1, float f2, float f3, float f4, float f5) {
 		float f6 = (field_678_p + f) / field_677_q;
 		f6 *= f6;
 		double d = field_675_a.posX;
@@ -61,8 +59,7 @@ public class TileEntityPickupFX extends EntityFX {
 		GL11.glColor4f(f7, f7, f7, 1.0F);
 
 		if (RenderManager.instance.renderEngine != null)
-			RenderManager.instance.renderEntityWithPosYaw(field_675_a,
-					(float) d6, (float) d7, (float) d8,
+			RenderManager.instance.renderEntityWithPosYaw(field_675_a, (float) d6, (float) d7, (float) d8,
 					field_675_a.rotationYaw, f);
 	}
 

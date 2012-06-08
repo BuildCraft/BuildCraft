@@ -17,8 +17,7 @@ import net.minecraft.src.buildcraft.api.IBox;
 public class FillerFillStairs extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box,
-			ItemStack stackToPlace) {
+	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -119,11 +118,9 @@ public class FillerFillStairs extends FillerPattern {
 		}
 
 		if (kind == 0) {
-			while (x2 - x1 + 1 > 0 && z2 - z1 + 1 > 0 && x2 - x1 < sizeX
-					&& z2 - z1 < sizeZ && height >= yMin && height <= yMax) {
+			while (x2 - x1 + 1 > 0 && z2 - z1 + 1 > 0 && x2 - x1 < sizeX && z2 - z1 < sizeZ && height >= yMin && height <= yMax) {
 
-				if (!fill(x1, height, z1, x2, height, z2, stackToPlace,
-						tile.worldObj)) {
+				if (!fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj)) {
 					return false;
 				}
 
@@ -142,8 +139,7 @@ public class FillerFillStairs extends FillerPattern {
 				height += heightStep;
 			}
 		} else if (kind == 1) {
-			while (dimX >= 0 && dimX < sizeX && dimZ >= 0 && dimZ < sizeZ
-					&& height >= yMin && height <= yMax) {
+			while (dimX >= 0 && dimX < sizeX && dimZ >= 0 && dimZ < sizeZ && height >= yMin && height <= yMax) {
 
 				if (heightStep == 1) {
 					if (tile.xCoord >= xMax) {
@@ -180,8 +176,7 @@ public class FillerFillStairs extends FillerPattern {
 
 				}
 
-				if (!fill(x1, height, z1, x2, height, z2, stackToPlace,
-						tile.worldObj)) {
+				if (!fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj)) {
 					return false;
 				}
 

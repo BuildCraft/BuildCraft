@@ -13,11 +13,9 @@ import net.minecraft.src.forge.IPacketHandler;
 public class PacketHandler implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager network, String channel,
-			byte[] bytes) {
+	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
 
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(
-				bytes));
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
 		try {
 			NetClientHandler net = (NetClientHandler) network.getNetHandler();
 

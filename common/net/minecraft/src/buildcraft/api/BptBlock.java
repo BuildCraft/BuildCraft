@@ -66,8 +66,7 @@ public class BptBlock {
 	 * requirements are met, they will be removed all at once from the builder,
 	 * before calling buildBlock.
 	 */
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		if (slot.blockId != 0) {
 			if (slot.storedRequirements.size() != 0) {
 				requirements.addAll(slot.storedRequirements);
@@ -91,11 +90,9 @@ public class BptBlock {
 	 * for updating req (with the remaining requirements if any) and stack
 	 * (after usage)
 	 */
-	public void useItem(BptSlotInfo slot, IBptContext context, ItemStack req,
-			ItemStack stack) {
+	public void useItem(BptSlotInfo slot, IBptContext context, ItemStack req, ItemStack stack) {
 		if (stack.isItemStackDamageable()) {
-			if (req.getItemDamage() + stack.getItemDamage() <= stack
-					.getMaxDamage()) {
+			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
 				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
 				req.stackSize = 0;
 			}
@@ -128,8 +125,7 @@ public class BptBlock {
 	 * subprogram is permissive and doesn't take into account metadata.
 	 */
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		return slot.blockId == context.world().getBlockId(slot.x, slot.y,
-				slot.z);
+		return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z);
 	}
 
 	/**
@@ -144,14 +140,11 @@ public class BptBlock {
 	 */
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.blockId, slot.meta);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z,
-				slot.meta);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
 
 		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
-			TileEntity tile = context.world().getBlockTileEntity(slot.x,
-					slot.y, slot.z);
+			TileEntity tile = context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
 
 			slot.cpt.setInteger("x", slot.x);
 			slot.cpt.setInteger("y", slot.y);
@@ -180,8 +173,7 @@ public class BptBlock {
 	 * By default, if the block is a BlockContainer, tile information will be to
 	 * save / load the block.
 	 */
-	public void initializeFromWorld(BptSlotInfo slot, IBptContext context,
-			int x, int y, int z) {
+	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
 		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
 			TileEntity tile = context.world().getBlockTileEntity(x, y, z);
 
@@ -191,9 +183,8 @@ public class BptBlock {
 		}
 
 		if (Block.blocksList[slot.blockId] != null) {
-			ArrayList<ItemStack> req = Block.blocksList[slot.blockId]
-					.getBlockDropped(context.world(), x, y, z, context.world()
-							.getBlockMetadata(x, y, z), 0);
+			ArrayList<ItemStack> req = Block.blocksList[slot.blockId].getBlockDropped(context.world(), x, y, z, context.world()
+					.getBlockMetadata(x, y, z), 0);
 
 			if (req != null) {
 				slot.storedRequirements.addAll(req);
@@ -252,10 +243,8 @@ public class BptBlock {
 
 		BlockSignature inst = BuildCraftAPI.getBlockSignature(block);
 
-		return starMatch(sig.blockName, inst.blockName)
-				&& starMatch(sig.blockClassName, inst.blockClassName)
-				&& starMatch(sig.tileClassName, inst.tileClassName)
-				&& starMatch(sig.customField, inst.customField)
+		return starMatch(sig.blockName, inst.blockName) && starMatch(sig.blockClassName, inst.blockClassName)
+				&& starMatch(sig.tileClassName, inst.tileClassName) && starMatch(sig.customField, inst.customField)
 				&& starMatch(sig.mod, inst.mod);
 	}
 

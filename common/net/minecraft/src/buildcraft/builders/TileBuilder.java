@@ -44,8 +44,7 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
-public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
-		IPowerReceptor, IMachine {
+public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 
 	private final ItemStack items[] = new ItemStack[28];
 
@@ -63,6 +62,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	private EntityRobot builderRobot;
 
 	private class PathIterator {
+
 		public Iterator<BlockIndex> currentIterator;
 		public double cx, cy, cz;
 		public float ix, iy, iz;
@@ -90,8 +90,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			iy = from.j;
 			iz = from.k;
 
-			lastDistance = (ix - to.i) * (ix - to.i) + (iy - to.j)
-					* (iy - to.j) + (iz - to.k) * (iz - to.k);
+			lastDistance = (ix - to.i) * (ix - to.i) + (iy - to.j) * (iy - to.j) + (iz - to.k) * (iz - to.k);
 
 			if (Math.abs(dx) > Math.abs(dz)) {
 				if (dx > 0) {
@@ -127,8 +126,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 				AxisAlignedBB boundingBox = bpt.getBoundingBox();
 
-				if (oldBoundingBox == null
-						|| !collision(oldBoundingBox, boundingBox)) {
+				if (oldBoundingBox == null || !collision(oldBoundingBox, boundingBox)) {
 
 					oldBoundingBox = boundingBox;
 
@@ -141,8 +139,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 				iy += cy;
 				iz += cz;
 
-				double distance = (ix - to.i) * (ix - to.i) + (iy - to.j)
-						* (iy - to.j) + (iz - to.k) * (iz - to.k);
+				double distance = (ix - to.i) * (ix - to.i) + (iy - to.j) * (iy - to.j) + (iz - to.k) * (iz - to.k);
 
 				if (distance > lastDistance) {
 					return null;
@@ -203,10 +200,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 						for (BlockIndex b : path) {
 							worldObj.setBlockWithNotify(b.i, b.j, b.k, 0);
 
-							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
-									worldObj, b.i, b.j, b.k,
-									BuildCraftBuilders.pathMarkerBlock.blockID,
-									0);
+							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.i, b.j, b.k,
+									BuildCraftBuilders.pathMarkerBlock.blockID, 0);
 						}
 
 						break;
@@ -234,8 +229,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			if (previous != null) {
 				EntityLaser laser = new EntityLaser(worldObj);
 
-				laser.setPositions(previous.i + 0.5, previous.j + 0.5,
-						previous.k + 0.5, b.i + 0.5, b.j + 0.5, b.k + 0.5);
+				laser.setPositions(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5, b.i + 0.5, b.j + 0.5, b.k + 0.5);
 				laser.setTexture("/net/minecraft/src/buildcraft/core/gui/stripes.png");
 				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);
@@ -245,10 +239,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 		}
 	}
 
-	public BptBuilderBase instanciateBluePrint(int x, int y, int z,
-			Orientations o) {
-		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(
-				items[0].getItemDamage());
+	public BptBuilderBase instanciateBluePrint(int x, int y, int z, Orientations o) {
+		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(items[0].getItemDamage());
 
 		if (bpt == null) {
 			return null;
@@ -256,8 +248,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 		bpt = bpt.clone();
 
-		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos(x,
-				y, z));
+		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos(x, y, z));
 
 		if (o == Orientations.XPos) {
 			// Do nothing
@@ -275,8 +266,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 		if (items[0].getItem() instanceof ItemBptTemplate) {
 			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
 		} else if (items[0].getItem() instanceof ItemBptBluePrint) {
-			return new BptBuilderBlueprint((BptBlueprint) bpt, worldObj, x, y,
-					z);
+			return new BptBuilderBlueprint((BptBlueprint) bpt, worldObj, x, y, z);
 		} else {
 			return null;
 		}
@@ -314,9 +304,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 			box.createLasers(worldObj, LaserKind.Stripes);
 
-			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(
-					worldObj, new SurroundingInventory(worldObj, xCoord,
-							yCoord, zCoord)), bluePrintBuilder.getContext());
+			builderRobot.scheduleContruction(
+					bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
+					bluePrintBuilder.getContext());
 		}
 	}
 
@@ -385,10 +375,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 					done = true;
 					bluePrintBuilder = null;
 				} else {
-					bluePrintBuilder = instanciateBluePrint(xCoord, yCoord,
-							zCoord,
-							Orientations.values()[worldObj.getBlockMetadata(
-									xCoord, yCoord, zCoord)].reverse());
+					bluePrintBuilder = instanciateBluePrint(xCoord, yCoord, zCoord,
+							Orientations.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].reverse());
 
 					if (bluePrintBuilder != null) {
 						box.initialize(bluePrintBuilder);
@@ -588,8 +576,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 
 		super.updateEntity();
 
-		if ((bluePrintBuilder == null || bluePrintBuilder.done)
-				&& box.isInitialized()
+		if ((bluePrintBuilder == null || bluePrintBuilder.done) && box.isInitialized()
 				&& (builderRobot == null || builderRobot.done())) {
 
 			box.deleteLasers();
@@ -602,8 +589,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 			return;
 		}
 
-		if (!box.isInitialized() && bluePrintBuilder == null
-				&& builderRobot != null) {
+		if (!box.isInitialized() && bluePrintBuilder == null && builderRobot != null) {
 			builderRobot.setDead();
 			builderRobot = null;
 		}
@@ -635,8 +621,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory,
 	}
 
 	public boolean isBuildingBlueprint() {
-		return getStackInSlot(0) != null
-				&& getStackInSlot(0).getItem() instanceof ItemBptBluePrint;
+		return getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBptBluePrint;
 	}
 
 	public Collection<ItemStack> getNeededItems() {

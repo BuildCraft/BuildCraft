@@ -140,8 +140,7 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 	}
 
 	@Override
-	public void onInventoryChanged() {
-	}
+	public void onInventoryChanged() {}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
@@ -149,12 +148,10 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 	}
 
 	@Override
-	public void openChest() {
-	}
+	public void openChest() {}
 
 	@Override
-	public void closeChest() {
-	}
+	public void closeChest() {}
 
 	@Override
 	public boolean isBuildingMaterial(int i) {
@@ -165,8 +162,7 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 
 			if (size > i)
 				if (inv instanceof IBuilderInventory)
-					return ((IBuilderInventory) inv).isBuildingMaterial(i
-							- lastSize);
+					return ((IBuilderInventory) inv).isBuildingMaterial(i - lastSize);
 				else
 					return true;
 

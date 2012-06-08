@@ -29,14 +29,14 @@ import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.IMachine;
 
-public class TileRefinery extends TileMachine implements ILiquidContainer,
-		IPowerReceptor, IInventory, IMachine {
+public class TileRefinery extends TileMachine implements ILiquidContainer, IPowerReceptor, IInventory, IMachine {
 
 	private int[] filters = new int[2];
 
 	public static int LIQUID_PER_SLOT = BuildCraftAPI.BUCKET_VOLUME * 4;
 
 	public static class Slot {
+
 		@TileNetworkData
 		public int liquidId = 0;
 		@TileNetworkData
@@ -226,9 +226,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	public void updateEntity() {
 		if (APIProxy.isClient(worldObj)) {
 			simpleAnimationIterate();
-		} else if (APIProxy.isServerSide()
-				&& updateNetworkTime.markTimeIfDelay(worldObj,
-						2 * BuildCraftCore.updateFactor)) {
+		} else if (APIProxy.isServerSide() && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 
@@ -236,8 +234,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 
 		RefineryRecipe currentRecipe = null;
 
-		currentRecipe = BuildCraftAPI.findRefineryRecipe(slot1.liquidId,
-				slot1.quantity, slot2.liquidId, slot2.quantity);
+		currentRecipe = BuildCraftAPI.findRefineryRecipe(slot1.liquidId, slot1.quantity, slot2.liquidId, slot2.quantity);
 
 		if (currentRecipe == null) {
 			decreaseAnimation();
@@ -268,19 +265,16 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 		}
 
 		if (!containsInput(currentRecipe.sourceId1, currentRecipe.sourceQty1)
-				|| !containsInput(currentRecipe.sourceId2,
-						currentRecipe.sourceQty2)) {
+				|| !containsInput(currentRecipe.sourceId2, currentRecipe.sourceQty2)) {
 			decreaseAnimation();
 			return;
 		}
 
-		float energyUsed = powerProvider.useEnergy(currentRecipe.energy,
-				currentRecipe.energy, true);
+		float energyUsed = powerProvider.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
 
 		if (energyUsed != 0) {
 			if (consumeInput(currentRecipe.sourceId1, currentRecipe.sourceQty1)
-					&& consumeInput(currentRecipe.sourceId2,
-							currentRecipe.sourceQty2)) {
+					&& consumeInput(currentRecipe.sourceId2, currentRecipe.sourceQty2)) {
 				result.liquidId = currentRecipe.resultId;
 				result.quantity += currentRecipe.resultQty;
 			}
@@ -288,8 +282,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 	}
 
 	private boolean containsInput(int id, int qty) {
-		return id == 0 || (slot1.liquidId == id && slot1.quantity >= qty)
-				|| (slot2.liquidId == id && slot2.quantity >= qty);
+		return id == 0 || (slot1.liquidId == id && slot1.quantity >= qty) || (slot2.liquidId == id && slot2.quantity >= qty);
 	}
 
 	private boolean consumeInput(int id, int qty) {
@@ -426,11 +419,9 @@ public class TileRefinery extends TileMachine implements ILiquidContainer,
 
 	@Override
 	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot[] {
-				new LiquidSlot(slot1.liquidId, slot1.quantity, LIQUID_PER_SLOT),
+		return new LiquidSlot[] { new LiquidSlot(slot1.liquidId, slot1.quantity, LIQUID_PER_SLOT),
 				new LiquidSlot(slot2.liquidId, slot2.quantity, LIQUID_PER_SLOT),
-				new LiquidSlot(result.liquidId, result.quantity,
-						LIQUID_PER_SLOT) };
+				new LiquidSlot(result.liquidId, result.quantity, LIQUID_PER_SLOT) };
 	}
 
 	public void setFilter(int number, int liquidId) {

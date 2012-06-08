@@ -22,11 +22,9 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
-public class RenderEngine extends TileEntitySpecialRenderer implements
-		IInventoryRenderer {
+public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private ModelBase model = new ModelBase() {
-	};
+	private ModelBase model = new ModelBase() {};
 
 	private ModelRenderer box;
 	private ModelRenderer trunk;
@@ -73,18 +71,15 @@ public class RenderEngine extends TileEntitySpecialRenderer implements
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
-			double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
 		Engine engine = ((IEngineProvider) tileentity).getEngine();
 
 		if (engine != null)
-			render(engine.getEnergyStage(), engine.progress,
-					engine.orientation, engine.getTextureFile(), x, y, z);
+			render(engine.getEnergyStage(), engine.progress, engine.orientation, engine.getTextureFile(), x, y, z);
 	}
 
-	private void render(EnergyStage energy, float progress,
-			Orientations orientation, String baseTexture, double x, double y,
+	private void render(EnergyStage energy, float progress, Orientations orientation, String baseTexture, double x, double y,
 			double z) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
@@ -154,26 +149,21 @@ public class RenderEngine extends TileEntitySpecialRenderer implements
 
 		box.render(factor);
 
-		GL11.glTranslatef(translate[0] * translatefact, translate[1]
-				* translatefact, translate[2] * translatefact);
+		GL11.glTranslatef(translate[0] * translatefact, translate[1] * translatefact, translate[2] * translatefact);
 		movingBox.render(factor);
-		GL11.glTranslatef(-translate[0] * translatefact, -translate[1]
-				* translatefact, -translate[2] * translatefact);
+		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		MinecraftForgeClient
-				.bindTexture("/net/minecraft/src/buildcraft/energy/gui/chamber.png");
+		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/energy/gui/chamber.png");
 
 		float chamberf = 2F / 16F;
 
 		for (int i = 0; i <= step + 2; i += 2) {
 			chamber.render(factor);
-			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf,
-					translate[2] * chamberf);
+			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf, translate[2] * chamberf);
 		}
 
 		for (int i = 0; i <= step + 2; i += 2)
-			GL11.glTranslatef(-translate[0] * chamberf, -translate[1]
-					* chamberf, -translate[2] * chamberf);
+			GL11.glTranslatef(-translate[0] * chamberf, -translate[1] * chamberf, -translate[2] * chamberf);
 
 		String texture = "";
 

@@ -12,11 +12,9 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
-public class RenderHopper extends TileEntitySpecialRenderer implements
-		IInventoryRenderer {
+public class RenderHopper extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private ModelBase model = new ModelBase() {
-	};
+	private ModelBase model = new ModelBase() {};
 
 	private final ModelRenderer top;
 	private final ModelFrustum middle;
@@ -28,8 +26,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements
 		top.rotationPointX = 8F;
 		top.rotationPointY = 8F;
 		top.rotationPointZ = 8F;
-		middle = new ModelFrustum(top, 32, 0, 0, 3, 0, 8, 8, 16, 16, 7,
-				1F / 16F);
+		middle = new ModelFrustum(top, 32, 0, 0, 3, 0, 8, 8, 16, 16, 7, 1F / 16F);
 		bottom = new ModelRenderer(model, 0, 23);
 		bottom.addBox(-3F, -8F, -3F, 6, 3, 6);
 		bottom.rotationPointX = 8F;
@@ -43,8 +40,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity var1, double x, double y,
-			double z, float f) {
+	public void renderTileEntityAt(TileEntity var1, double x, double y, double z, float f) {
 		render(x, y, z);
 	}
 
@@ -56,12 +52,10 @@ public class RenderHopper extends TileEntitySpecialRenderer implements
 		GL11.glDisable(GL11.GL_LIGHTING);
 
 		GL11.glTranslated(x, y, z);
-		MinecraftForgeClient
-				.bindTexture("/net/minecraft/src/buildcraft/factory/gui/hopper.png");
+		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/factory/gui/hopper.png");
 		top.render((float) (1.0 / 16.0));
 		bottom.render((float) (1.0 / 16.0));
-		MinecraftForgeClient
-				.bindTexture("/net/minecraft/src/buildcraft/factory/gui/hopper_middle.png");
+		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/factory/gui/hopper_middle.png");
 		middle.render(Tessellator.instance, 1F / 16F);
 
 		GL11.glEnable(GL11.GL_LIGHTING);

@@ -23,8 +23,7 @@ public class BptBlockRotateMeta extends BptBlock {
 
 	int infoMask = 0;
 
-	public BptBlockRotateMeta(int blockId, int[] rotations,
-			boolean rotateForward) {
+	public BptBlockRotateMeta(int blockId, int[] rotations, boolean rotateForward) {
 		super(blockId);
 
 		rot = rotations;
@@ -43,15 +42,13 @@ public class BptBlockRotateMeta extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		requirements.add(new ItemStack(slot.blockId, 1, 0));
 	}
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		return slot.blockId == context.world().getBlockId(slot.x, slot.y,
-				slot.z);
+		return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z);
 	}
 
 	@Override

@@ -38,8 +38,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i,
-			int j, int k) {
+	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
 		int meta = world.getBlockMetadata(i, j, k);
 
 		double w = 0.15;
@@ -47,23 +46,17 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 
 		switch (meta) {
 		case 0:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 1 - h,
-					k + 0.5 - w, i + 0.5 + w, j + 1, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 1 - h, k + 0.5 - w, i + 0.5 + w, j + 1, k + 0.5 + w);
 		case 5:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j, k + 0.5
-					- w, i + 0.5 + w, j + h, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j, k + 0.5 - w, i + 0.5 + w, j + h, k + 0.5 + w);
 		case 3:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5
-					- w, k, i + 0.5 + w, j + 0.5 + w, k + h);
+			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5 - w, k, i + 0.5 + w, j + 0.5 + w, k + h);
 		case 4:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5
-					- w, k + 1 - h, i + 0.5 + w, j + 0.5 + w, k + 1);
+			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5 - w, k + 1 - h, i + 0.5 + w, j + 0.5 + w, k + 1);
 		case 1:
-			return AxisAlignedBB.getBoundingBoxFromPool(i, j + 0.5 - w, k + 0.5
-					- w, i + h, j + 0.5 + w, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBoxFromPool(i, j + 0.5 - w, k + 0.5 - w, i + h, j + 0.5 + w, k + 0.5 + w);
 		default:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 1 - h, j + 0.5 - w,
-					k + 0.5 - w, i + 1, j + 0.5 + w, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBoxFromPool(i + 1 - h, j + 0.5 - w, k + 0.5 - w, i + 1, j + 0.5 + w, k + 0.5 + w);
 		}
 	}
 
@@ -82,8 +75,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
 		return true;
 	}
@@ -96,8 +88,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i,
-			int j, int k) {
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
 		return null;
 	}
 
@@ -137,16 +128,14 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 				flag = true;
 			}
 			if (flag) {
-				dropBlockAsItem(world, i, j, k,
-						BuildCraftBuilders.markerBlock.blockID, 0);
+				dropBlockAsItem(world, i, j, k, BuildCraftBuilders.markerBlock.blockID, 0);
 				world.setBlockWithNotify(i, j, k, 0);
 			}
 		}
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j,
-			int k, Vec3D vec3d, Vec3D vec3d1) {
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
 		return Block.torchWood.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
 	}
 
@@ -219,8 +208,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 
 	private boolean dropTorchIfCantStay(World world, int i, int j, int k) {
 		if (!canPlaceBlockAt(world, i, j, k)) {
-			dropBlockAsItem(world, i, j, k,
-					BuildCraftBuilders.markerBlock.blockID, 0);
+			dropBlockAsItem(world, i, j, k, BuildCraftBuilders.markerBlock.blockID, 0);
 			world.setBlockWithNotify(i, j, k, 0);
 			return false;
 		} else {

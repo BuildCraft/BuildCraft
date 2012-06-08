@@ -111,10 +111,8 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void openChest() {
-	}
+	public void openChest() {}
 
 	@Override
-	public void closeChest() {
-	}
+	public void closeChest() {}
 }

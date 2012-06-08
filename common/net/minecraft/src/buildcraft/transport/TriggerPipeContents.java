@@ -80,11 +80,9 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 				return transportItems.travelingEntities.isEmpty();
 			else if (kind == Kind.ContainsItems)
 				if (parameter != null && parameter.getItem() != null) {
-					for (EntityData data : transportItems.travelingEntities
-							.values())
+					for (EntityData data : transportItems.travelingEntities.values())
 						if (data.item.item.itemID == parameter.getItem().itemID
-								&& data.item.item.getItemDamage() == parameter
-										.getItem().getItemDamage())
+								&& data.item.item.getItemDamage() == parameter.getItem().getItemDamage())
 							return true;
 				} else
 					return !transportItems.travelingEntities.isEmpty();
@@ -94,8 +92,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = BuildCraftAPI
-						.getLiquidForFilledItem(parameter.getItem());
+				seachedLiquidId = BuildCraftAPI.getLiquidForFilledItem(parameter.getItem());
 
 			if (kind == Kind.Empty) {
 				for (LiquidBuffer b : transportLiquids.side)
@@ -106,8 +103,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			} else {
 				for (LiquidBuffer b : transportLiquids.side)
 					if (b.average != 0)
-						if (seachedLiquidId == 0
-								|| b.liquidId == seachedLiquidId)
+						if (seachedLiquidId == 0 || b.liquidId == seachedLiquidId)
 							return true;
 
 				return false;

@@ -50,8 +50,7 @@ public class TilePacketWrapper {
 		buf.writeInt(tile.zCoord);
 
 		try {
-			rootMappings[0].setData(tile, buf, payload.floatPayload,
-					payload.stringPayload, new Indexes(0, 0));
+			rootMappings[0].setData(tile, buf, payload.floatPayload, payload.stringPayload, new Indexes(0, 0));
 
 			payload.intPayload = buf.readIntArray();
 
@@ -95,8 +94,7 @@ public class TilePacketWrapper {
 			Indexes ind = new Indexes(0, 0);
 
 			for (int i = 0; i < rootMappings.length; ++i)
-				rootMappings[i].setData(obj[i], buf, payload.floatPayload,
-						payload.stringPayload, ind);
+				rootMappings[i].setData(obj[i], buf, payload.floatPayload, payload.stringPayload, ind);
 
 			payload.intPayload = buf.readIntArray();
 
@@ -117,8 +115,7 @@ public class TilePacketWrapper {
 			buf.readInt();
 			buf.readInt();
 
-			rootMappings[0].updateFromData(tile, buf, packet.floatPayload,
-					packet.stringPayload, new Indexes(0, 0));
+			rootMappings[0].updateFromData(tile, buf, packet.floatPayload, packet.stringPayload, new Indexes(0, 0));
 
 			packet.intPayload = buf.readIntArray();
 		} catch (Exception e) {
@@ -141,8 +138,7 @@ public class TilePacketWrapper {
 			Indexes ind = new Indexes(0, 0);
 
 			for (int i = 0; i < rootMappings.length; ++i)
-				rootMappings[i].updateFromData(obj[i], buf,
-						packet.floatPayload, packet.stringPayload, ind);
+				rootMappings[i].updateFromData(obj[i], buf, packet.floatPayload, packet.stringPayload, ind);
 
 			packet.intPayload = buf.readIntArray();
 		} catch (Exception e) {

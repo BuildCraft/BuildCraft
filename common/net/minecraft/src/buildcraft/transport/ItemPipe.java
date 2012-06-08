@@ -27,8 +27,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer,
-			World world, int i, int j, int k, int l) {
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l) {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
 
 		if (world.getBlockId(i, j, k) == Block.snow.blockID)
@@ -53,8 +52,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			BlockGenericPipe.createPipe(world, i, j, k, shiftedIndex);
 			if (world.setBlockAndMetadataWithNotify(i, j, k, blockID, 0)) {
 				Block.blocksList[blockID].onBlockPlaced(world, i, j, k, l);
-				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k,
-						entityplayer);
+				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
 				// To move to a proxt
 				// world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F,
 				// (float)k + 0.5F, block.stepSound.func_1145_d(),

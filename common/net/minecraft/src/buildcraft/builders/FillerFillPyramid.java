@@ -17,8 +17,7 @@ import net.minecraft.src.buildcraft.api.IBox;
 public class FillerFillPyramid extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box,
-			ItemStack stackToPlace) {
+	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -47,10 +46,8 @@ public class FillerFillPyramid extends FillerPattern {
 			height = yMax;
 		}
 
-		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin
-				&& height <= yMax) {
-			if (!fill(xMin + step, height, zMin + step, xMax - step, height,
-					zMax - step, stackToPlace, tile.worldObj)) {
+		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
+			if (!fill(xMin + step, height, zMin + step, xMax - step, height, zMax - step, stackToPlace, tile.worldObj)) {
 				return false;
 			}
 

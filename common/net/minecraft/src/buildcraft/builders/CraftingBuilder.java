@@ -28,16 +28,14 @@ class CraftingBuilder extends BuildCraftContainer {
 
 		for (int k = 0; k < 3; k++) {
 			for (int j1 = 0; j1 < 9; j1++) {
-				addSlot(new Slot(builder, 1 + j1 + k * 9, 8 + j1 * 18,
-						72 + k * 18));
+				addSlot(new Slot(builder, 1 + j1 + k * 9, 8 + j1 * 18, 72 + k * 18));
 			}
 
 		}
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
-				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18,
-						140 + l * 18));
+				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 140 + l * 18));
 			}
 
 		}

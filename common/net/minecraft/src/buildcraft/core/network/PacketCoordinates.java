@@ -12,8 +12,7 @@ public class PacketCoordinates extends BuildCraftPacket {
 	public int posY;
 	public int posZ;
 
-	public PacketCoordinates() {
-	}
+	public PacketCoordinates() {}
 
 	public PacketCoordinates(int id, int x, int y, int z) {
 

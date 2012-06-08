@@ -10,8 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderRobot extends Render {
 
-	protected ModelBase model = new ModelBase() {
-	};
+	protected ModelBase model = new ModelBase() {};
 	private ModelRenderer box;
 
 	public RenderRobot() {
@@ -23,20 +22,17 @@ public class RenderRobot extends Render {
 	}
 
 	@Override
-	public void doRender(Entity entity, double x, double y, double z, float f,
-			float f1) {
+	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
 		doRender((EntityRobot) entity, x, y, z, f, f1);
 	}
 
-	private void doRender(EntityRobot laser, double x, double y, double z,
-			float f, float f1) {
+	private void doRender(EntityRobot laser, double x, double y, double z, float f, float f1) {
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 		GL11.glTranslated(x, y, z);
 
-		MinecraftForgeClient
-				.bindTexture("/net/minecraft/src/buildcraft/core/gui/robot.png");
+		MinecraftForgeClient.bindTexture("/net/minecraft/src/buildcraft/core/gui/robot.png");
 
 		float factor = (float) (1.0 / 16.0);
 

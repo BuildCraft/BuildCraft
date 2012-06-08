@@ -19,8 +19,7 @@ import net.minecraft.src.forge.NetworkMod;
 
 import org.lwjgl.opengl.GL11;
 
-public class mod_BuildCraftTransport extends NetworkMod implements
-		IItemRenderer {
+public class mod_BuildCraftTransport extends NetworkMod implements IItemRenderer {
 
 	public static mod_BuildCraftTransport instance;
 
@@ -36,48 +35,28 @@ public class mod_BuildCraftTransport extends NetworkMod implements
 		// CoreProxy.registerGUI(this,
 		// Utils.packetIdToInt(PacketIds.DiamondPipeGUI));
 
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsWood.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsCobblestone.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsStone.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsIron.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsGold.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsDiamond.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsObsidian.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStone.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsIron.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsGold.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsDiamond.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsObsidian.shiftedIndex, this);
 
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeLiquidsWood.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeLiquidsCobblestone.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeLiquidsStone.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeLiquidsIron.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeLiquidsGold.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsWood.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsCobblestone.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsStone.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsIron.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsGold.shiftedIndex, this);
 
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipePowerWood.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipePowerStone.shiftedIndex, this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipePowerGold.shiftedIndex, this);
-		MinecraftForgeClient
-				.registerItemRenderer(
-						BuildCraftTransport.pipeStructureCobblestone.shiftedIndex,
-						this);
-		MinecraftForgeClient.registerItemRenderer(
-				BuildCraftTransport.pipeItemsStipes.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerWood.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerStone.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerGold.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeStructureCobblestone.shiftedIndex, this);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStipes.shiftedIndex, this);
 	}
 
-	public static void registerTilePipe(Class<? extends TileEntity> clas,
-			String name) {
+	public static void registerTilePipe(Class<? extends TileEntity> clas, String name) {
 		ModLoader.registerTileEntity(clas, name, new RenderPipe());
 	}
 
@@ -97,20 +76,17 @@ public class mod_BuildCraftTransport extends NetworkMod implements
 		return false;
 	}
 
-	private void renderPipeItem(RenderBlocks render, ItemStack item,
-			float translateX, float translateY, float translateZ) {
+	private void renderPipeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 
 		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 10);
 		Tessellator tessellator = Tessellator.instance;
 
 		Block block = BuildCraftTransport.genericPipeBlock;
-		int textureID = ((ItemPipe) Item.itemsList[item.itemID])
-				.getTextureIndex();
+		int textureID = ((ItemPipe) Item.itemsList[item.itemID]).getTextureIndex();
 		if (textureID > 255)
 			textureID -= 256;
 
-		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos,
-				Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
@@ -209,8 +185,7 @@ public class mod_BuildCraftTransport extends NetworkMod implements
 	}
 
 	@Override
-	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
-			ItemRendererHelper helper) {
+	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
 		return true;
 	}
 

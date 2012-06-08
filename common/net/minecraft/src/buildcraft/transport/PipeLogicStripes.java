@@ -24,8 +24,7 @@ public class PipeLogicStripes extends PipeLogic {
 		if (BuildCraftTransport.alwaysConnectPipes)
 			return super.isPipeConnected(tile);
 		else
-			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicStripes)
-					&& !(pipe2.logic instanceof PipeLogicObsidian))
+			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicStripes) && !(pipe2.logic instanceof PipeLogicObsidian))
 					&& super.isPipeConnected(tile);
 	}
 

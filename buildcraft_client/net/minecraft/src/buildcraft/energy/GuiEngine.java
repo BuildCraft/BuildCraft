@@ -33,22 +33,13 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			if (!isFullyOpened())
 				return;
 
-			fontRenderer.drawStringWithShadow(
-					StringUtil.localize("gui.energy"), x + 22, y + 8,
-					headerColour);
-			fontRenderer.drawStringWithShadow(
-					StringUtil.localize("gui.currentOutput") + ":", x + 22,
-					y + 20, subheaderColour);
-			fontRenderer.drawString(engine.getCurrentOutput() + " MJ/t",
-					x + 22, y + 32, textColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.stored")
-					+ ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(engine.getEnergyStored() + " MJ", x + 22,
-					y + 56, textColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.heat")
-					+ ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(((double) engine.getHeat() / (double) 10)
-					+ " °C", x + 22, y + 80, textColour);
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
+			fontRenderer.drawString(engine.getCurrentOutput() + " MJ/t", x + 22, y + 32, textColour);
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRenderer.drawString(engine.getEnergyStored() + " MJ", x + 22, y + 56, textColour);
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
+			fontRenderer.drawString(((double) engine.getHeat() / (double) 10) + " °C", x + 22, y + 80, textColour);
 
 		}
 

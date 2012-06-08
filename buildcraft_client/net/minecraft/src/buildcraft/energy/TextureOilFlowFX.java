@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.client.FMLTextureFX;
 
 public class TextureOilFlowFX extends FMLTextureFX {
+
 	public TextureOilFlowFX() {
 		super(BuildCraftEnergy.oilMoving.blockIndexInTexture + 1);
 
@@ -37,8 +38,7 @@ public class TextureOilFlowFX extends FMLTextureFX {
 
 	@Override
 	public void bindImage(RenderEngine renderengine) {
-		GL11.glBindTexture(3553,
-				renderengine.getTexture(BuildCraftCore.customBuildCraftTexture));
+		GL11.glBindTexture(3553, renderengine.getTexture(BuildCraftCore.customBuildCraftTexture));
 	}
 
 	@Override
@@ -53,14 +53,12 @@ public class TextureOilFlowFX extends FMLTextureFX {
 					f += field_1138_g[k1 + i2 * tileSizeBase];
 				}
 
-				field_1137_h[i + k * tileSizeBase] = f / 3.2F
-						+ field_1136_i[i + k * tileSizeBase] * 0.8F;
+				field_1137_h[i + k * tileSizeBase] = f / 3.2F + field_1136_i[i + k * tileSizeBase] * 0.8F;
 			}
 
 		for (int j = 0; j < tileSizeBase; j++)
 			for (int l = 0; l < tileSizeBase; l++) {
-				field_1136_i[j + l * tileSizeBase] += field_1135_j[j + l
-						* tileSizeBase] * 0.05F;
+				field_1136_i[j + l * tileSizeBase] += field_1135_j[j + l * tileSizeBase] * 0.05F;
 				if (field_1136_i[j + l * tileSizeBase] < 0.0F)
 					field_1136_i[j + l * tileSizeBase] = 0.0F;
 				field_1135_j[j + l * tileSizeBase] -= 0.3F;
@@ -72,8 +70,7 @@ public class TextureOilFlowFX extends FMLTextureFX {
 		field_1137_h = field_1138_g;
 		field_1138_g = af;
 		for (int i1 = 0; i1 < tileSizeSquare; i1++) {
-			float f1 = field_1138_g[i1 - field_1134_k * tileSizeBase
-					& tileSizeSquareMask];
+			float f1 = field_1138_g[i1 - field_1134_k * tileSizeBase & tileSizeSquareMask];
 			if (f1 > 1.0F)
 				f1 = 1.0F;
 			if (f1 < 0.0F)

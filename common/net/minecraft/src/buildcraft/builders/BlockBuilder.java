@@ -72,17 +72,14 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
 			return false;
 
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer
-				.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench
-				&& ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
 
 			int meta = world.getBlockMetadata(i, j, k);
 
@@ -107,23 +104,19 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 		} else {
 
 			if (!APIProxy.isClient(world))
-				entityplayer.openGui(mod_BuildCraftBuilders.instance,
-						GuiIds.BUILDER, world, i, j, k);
+				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			return true;
 
 		}
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k,
-			EntityLiving entityliving) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
-		Orientations orientation = Utils.get2dOrientation(new Position(
-				entityliving.posX, entityliving.posY, entityliving.posZ),
+		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
-				.ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
 	@Override

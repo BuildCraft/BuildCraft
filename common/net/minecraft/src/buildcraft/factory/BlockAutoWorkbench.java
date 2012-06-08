@@ -26,7 +26,7 @@ import net.minecraft.src.buildcraft.core.IItemPipe;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockAutoWorkbench extends BlockBuildCraft {
+public class BlockAutoWorkbench extends BlockContainer implements ITextureProvider {
 
 	int topTexture;
 	int sideTexture;
@@ -48,8 +48,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
 
 		// Drop through if the player is sneaking
@@ -63,8 +62,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		}
 
 		if (!APIProxy.isClient(world))
-			entityplayer.openGui(mod_BuildCraftFactory.instance,
-					GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
+			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 
 		return true;
 	}

@@ -67,8 +67,7 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k,
-			EntityPlayer entityplayer) {
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
@@ -76,10 +75,8 @@ public class BlockEngine extends BlockContainer {
 			return false;
 
 		// Switch orientation if whacked with a wrench.
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer
-				.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench
-				&& ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
 
 			tile.switchOrientation();
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
@@ -94,14 +91,12 @@ public class BlockEngine extends BlockContainer {
 
 			if (tile.engine instanceof EngineStone) {
 				if (!APIProxy.isClient(tile.worldObj))
-					entityplayer.openGui(mod_BuildCraftEnergy.instance,
-							GuiIds.ENGINE_STONE, world, i, j, k);
+					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
 				if (!APIProxy.isClient(tile.worldObj))
-					entityplayer.openGui(mod_BuildCraftEnergy.instance,
-							GuiIds.ENGINE_IRON, world, i, j, k);
+					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				return true;
 			}
 
@@ -124,8 +119,7 @@ public class BlockEngine extends BlockContainer {
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public void randomDisplayTick(World world, int i, int j, int k,
-			Random random) {
+	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 
 		if (!tile.isBurning()) {

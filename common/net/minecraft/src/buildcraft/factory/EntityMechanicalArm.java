@@ -36,8 +36,7 @@ public class EntityMechanicalArm extends Entity {
 		super(world);
 	}
 
-	public EntityMechanicalArm(World world, double i, double j, double k,
-			double width, double height) {
+	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height) {
 		super(world);
 
 		setPosition(i, j, k);
@@ -82,8 +81,7 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	@Override
-	protected void entityInit() {
-	}
+	protected void entityInit() {}
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
@@ -195,8 +193,7 @@ public class EntityMechanicalArm extends Entity {
 		super.onUpdate();
 
 		if (inProgressionXZ) {
-			if (Math.abs(targetX - headPosX) < instantSpeed * 2
-					&& Math.abs(targetZ - headPosZ) < instantSpeed * 2) {
+			if (Math.abs(targetX - headPosX) < instantSpeed * 2 && Math.abs(targetZ - headPosZ) < instantSpeed * 2) {
 				headPosX = targetX;
 				headPosZ = targetZ;
 

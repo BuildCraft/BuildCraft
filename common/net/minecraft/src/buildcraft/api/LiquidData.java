@@ -34,8 +34,7 @@ public class LiquidData {
 		this.container = new ItemStack(Item.bucketEmpty);
 	}
 
-	public LiquidData(int liquidId, int movingLiquidId, ItemStack filled,
-			ItemStack container) {
+	public LiquidData(int liquidId, int movingLiquidId, ItemStack filled, ItemStack container) {
 		this.liquidId = liquidId;
 		this.movingLiquidId = movingLiquidId;
 		this.filled = filled;

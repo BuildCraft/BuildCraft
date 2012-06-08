@@ -35,8 +35,7 @@ import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
-public class TileFiller extends TileBuildCraft implements ISpecialInventory,
-		IPowerReceptor, IMachine, IActionReceptor {
+public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor, IMachine, IActionReceptor {
 
 	public @TileNetworkData
 	Box box = new Box();
@@ -65,8 +64,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 		super.initialize();
 
 		if (!APIProxy.isClient(worldObj)) {
-			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
-					yCoord, zCoord);
+			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
 			if (a != null) {
 				box.initialize(a);
@@ -121,8 +119,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 			int stackId = 0;
 
 			for (int s = 9; s < getSizeInventory(); ++s) {
-				if (getStackInSlot(s) != null
-						&& getStackInSlot(s).stackSize > 0) {
+				if (getStackInSlot(s) != null && getStackInSlot(s).stackSize > 0) {
 
 					stack = contents[s];
 					stackId = s;
@@ -163,8 +160,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 			return;
 		}
 
-		IFillerPattern newPattern = FillerManager.registry
-				.findMatchingRecipe(this);
+		IFillerPattern newPattern = FillerManager.registry.findMatchingRecipe(this);
 
 		if (newPattern == currentPattern) {
 			return;
@@ -289,8 +285,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory,
 		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
 			return false;
 		}
-		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D,
-				zCoord + 0.5D) <= 64D;
+		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
 	}
 
 	@Override

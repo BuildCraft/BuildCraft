@@ -20,6 +20,7 @@ import net.minecraft.src.buildcraft.api.TileNetworkData;
 public class ClassMapping {
 
 	public static class Reporter {
+
 		Class<? extends Object> clas;
 		int occurences = 0;
 		int dataInt = 0;
@@ -29,8 +30,8 @@ public class ClassMapping {
 
 		@Override
 		public String toString() {
-			String res = clas + ": " + occurences + " times (" + dataInt + ", "
-					+ dataFloat + ", " + dataString + " = " + bytes + ")";
+			String res = clas + ": " + occurences + " times (" + dataInt + ", " + dataFloat + ", " + dataString + " = " + bytes
+					+ ")";
 
 			return res;
 		}
@@ -76,6 +77,7 @@ public class ClassMapping {
 	private Class<? extends Object> clas;
 
 	public static class Indexes {
+
 		public Indexes(int initFloat, int initString) {
 			floatIndex = initFloat;
 			stringIndex = initString;
@@ -106,8 +108,7 @@ public class ClassMapping {
 						sizeBytes += 2;
 						shortFields.add(f);
 					} else if (fieldClass.equals(int.class)) {
-						TileNetworkData updateAnnotation = f
-								.getAnnotation(TileNetworkData.class);
+						TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 						if (updateAnnotation.intKind() == TileNetworkData.UNSIGNED_BYTE) {
 							sizeBytes += 1;
@@ -146,12 +147,10 @@ public class ClassMapping {
 					}
 				}
 				if (t instanceof Class && ((Class) t).isArray()) {
-					TileNetworkData updateAnnotation = f
-							.getAnnotation(TileNetworkData.class);
+					TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 					if (updateAnnotation.staticSize() == -1)
-						throw new RuntimeException(
-								"arrays must be provided with an explicit size");
+						throw new RuntimeException("arrays must be provided with an explicit size");
 
 					Class fieldClass = (Class) t;
 
@@ -164,8 +163,7 @@ public class ClassMapping {
 						sizeBytes += updateAnnotation.staticSize() * 2;
 						shortArrayFields.add(f);
 					} else if (cptClass.equals(int.class)) {
-						updateAnnotation = f
-								.getAnnotation(TileNetworkData.class);
+						updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 						if (updateAnnotation.intKind() == TileNetworkData.UNSIGNED_BYTE) {
 							sizeBytes += updateAnnotation.staticSize();
@@ -188,12 +186,9 @@ public class ClassMapping {
 																	// null /
 																	// not null.
 
-						sizeBytes += updateAnnotation.staticSize()
-								* mapping.sizeBytes;
-						sizeFloat += updateAnnotation.staticSize()
-								* mapping.sizeFloat;
-						sizeString += updateAnnotation.staticSize()
-								* mapping.sizeString;
+						sizeBytes += updateAnnotation.staticSize() * mapping.sizeBytes;
+						sizeFloat += updateAnnotation.staticSize() * mapping.sizeFloat;
+						sizeString += updateAnnotation.staticSize() * mapping.sizeString;
 					}
 				}
 			}
@@ -204,15 +199,13 @@ public class ClassMapping {
 	}
 
 	private boolean isSynchronizedField(Field f) {
-		TileNetworkData updateAnnotation = f
-				.getAnnotation(TileNetworkData.class);
+		TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 		return updateAnnotation != null;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void setData(Object obj, ByteBuffer byteBuffer, float[] floatValues,
-			String[] stringValues, Indexes index)
+	public void setData(Object obj, ByteBuffer byteBuffer, float[] floatValues, String[] stringValues, Indexes index)
 			throws IllegalArgumentException, IllegalAccessException {
 
 		Reporter r = null;
@@ -303,8 +296,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : doubleArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				floatValues[index.floatIndex] = (float) ((double[]) f.get(obj))[i];
@@ -315,8 +307,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : shortArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				byteBuffer.writeShort(((short[]) f.get(obj))[i]);
@@ -326,8 +317,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : intArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				byteBuffer.writeInt(((int[]) f.get(obj))[i]);
@@ -337,20 +327,17 @@ public class ClassMapping {
 		}
 
 		for (Field f : booleanArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
-				byteBuffer.writeUnsignedByte(((boolean[]) f.get(obj))[i] ? 1
-						: 0);
+				byteBuffer.writeUnsignedByte(((boolean[]) f.get(obj))[i] ? 1 : 0);
 				r.bytes += 1;
 				r.dataInt += 1;
 			}
 		}
 
 		for (Field f : unsignedByteFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				byteBuffer.writeUnsignedByte(((int[]) f.get(obj))[i]);
@@ -360,8 +347,7 @@ public class ClassMapping {
 		}
 
 		for (ClassMapping c : objectArrayFields) {
-			TileNetworkData updateAnnotation = c.field
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = c.field.getAnnotation(TileNetworkData.class);
 
 			Object[] cpts = (Object[]) c.field.get(obj);
 
@@ -382,15 +368,13 @@ public class ClassMapping {
 					r.bytes += 1;
 					r.dataInt += 1;
 
-					c.setData(cpts[i], byteBuffer, floatValues, stringValues,
-							index);
+					c.setData(cpts[i], byteBuffer, floatValues, stringValues, index);
 				}
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void updateFromData(Object obj, ByteBuffer byteBuffer,
-			float[] floatValues, String[] stringValues, Indexes index)
+	public void updateFromData(Object obj, ByteBuffer byteBuffer, float[] floatValues, String[] stringValues, Indexes index)
 			throws IllegalArgumentException, IllegalAccessException {
 
 		Reporter r = null;
@@ -425,9 +409,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : enumFields) {
-			f.set(obj,
-					((Class) f.getGenericType()).getEnumConstants()[byteBuffer
-							.readUnsignedByte()]);
+			f.set(obj, ((Class) f.getGenericType()).getEnumConstants()[byteBuffer.readUnsignedByte()]);
 			r.bytes += 1;
 			r.dataInt += 1;
 		}
@@ -471,13 +453,11 @@ public class ClassMapping {
 				index.floatIndex += c.sizeFloat;
 				index.stringIndex += c.sizeString;
 			} else
-				c.updateFromData(c.field.get(obj), byteBuffer, floatValues,
-						stringValues, index);
+				c.updateFromData(c.field.get(obj), byteBuffer, floatValues, stringValues, index);
 		}
 
 		for (Field f : doubleArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				((double[]) f.get(obj))[i] = floatValues[index.floatIndex];
@@ -488,8 +468,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : shortArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				((short[]) f.get(obj))[i] = byteBuffer.readShort();
@@ -500,8 +479,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : intArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				((int[]) f.get(obj))[i] = byteBuffer.readInt();
@@ -512,8 +490,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : booleanArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				((boolean[]) f.get(obj))[i] = byteBuffer.readUnsignedByte() == 1;
@@ -523,8 +500,7 @@ public class ClassMapping {
 		}
 
 		for (Field f : unsignedByteArrayFields) {
-			TileNetworkData updateAnnotation = f
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
 			for (int i = 0; i < updateAnnotation.staticSize(); ++i) {
 				((int[]) f.get(obj))[i] = byteBuffer.readUnsignedByte();
@@ -534,8 +510,7 @@ public class ClassMapping {
 		}
 
 		for (ClassMapping c : objectArrayFields) {
-			TileNetworkData updateAnnotation = c.field
-					.getAnnotation(TileNetworkData.class);
+			TileNetworkData updateAnnotation = c.field.getAnnotation(TileNetworkData.class);
 
 			Object[] cpts = (Object[]) c.field.get(obj);
 
@@ -551,8 +526,7 @@ public class ClassMapping {
 					index.floatIndex += c.sizeFloat;
 					index.stringIndex += c.sizeString;
 				} else
-					c.updateFromData(cpts[i], byteBuffer, floatValues,
-							stringValues, index);
+					c.updateFromData(cpts[i], byteBuffer, floatValues, stringValues, index);
 			}
 		}
 	}

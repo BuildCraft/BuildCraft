@@ -28,14 +28,12 @@ public class BptBlockDelegate extends BptBlock {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context,
-			LinkedList<ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		BptSlotInfo newSlot = slot.clone();
 		slot.blockId = delegateTo;
 
 		if (BuildCraftAPI.blockBptProps[delegateTo] != null) {
-			BuildCraftAPI.blockBptProps[delegateTo].addRequirements(newSlot,
-					context, requirements);
+			BuildCraftAPI.blockBptProps[delegateTo].addRequirements(newSlot, context, requirements);
 		} else {
 			super.addRequirements(newSlot, context, requirements);
 		}
@@ -47,8 +45,7 @@ public class BptBlockDelegate extends BptBlock {
 		slot.blockId = delegateTo;
 
 		if (BuildCraftAPI.blockBptProps[delegateTo] != null) {
-			return BuildCraftAPI.blockBptProps[delegateTo].isValid(newSlot,
-					context);
+			return BuildCraftAPI.blockBptProps[delegateTo].isValid(newSlot, context);
 		} else {
 			return super.isValid(newSlot, context);
 		}
@@ -60,8 +57,7 @@ public class BptBlockDelegate extends BptBlock {
 		slot.blockId = delegateTo;
 
 		if (BuildCraftAPI.blockBptProps[delegateTo] != null) {
-			BuildCraftAPI.blockBptProps[delegateTo]
-					.rotateLeft(newSlot, context);
+			BuildCraftAPI.blockBptProps[delegateTo].rotateLeft(newSlot, context);
 		} else {
 			super.rotateLeft(newSlot, context);
 		}

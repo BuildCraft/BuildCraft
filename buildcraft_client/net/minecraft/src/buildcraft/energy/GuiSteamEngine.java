@@ -25,14 +25,12 @@ public class GuiSteamEngine extends GuiEngine {
 		super.drawGuiContainerForegroundLayer();
 		String title = StringUtil.localize("tile.engineStone");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8,
-				(ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine
-				.getTexture("/net/minecraft/src/buildcraft/energy/gui/steam_engine_gui.png");
+		int i = mc.renderEngine.getTexture("/net/minecraft/src/buildcraft/energy/gui/steam_engine_gui.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
@@ -43,8 +41,7 @@ public class GuiSteamEngine extends GuiEngine {
 		if (engine.getScaledBurnTime(12) > 0) {
 			int l = engine.getScaledBurnTime(12);
 
-			drawTexturedModalRect(j + 80, (k + 24 + 12) - l, 176, 12 - l, 14,
-					l + 2);
+			drawTexturedModalRect(j + 80, (k + 24 + 12) - l, 176, 12 - l, 14, l + 2);
 		}
 	}
 }

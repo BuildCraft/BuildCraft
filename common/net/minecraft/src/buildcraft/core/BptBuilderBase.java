@@ -74,8 +74,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	public AxisAlignedBB getBoundingBox() {
-		return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(),
-				yMax(), zMax());
+		return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
 	}
 
 	public void postProcessing(World world) {

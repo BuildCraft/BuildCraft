@@ -10,8 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderLaser extends Render {
 
-	protected ModelBase model = new ModelBase() {
-	};
+	protected ModelBase model = new ModelBase() {};
 	private ModelRenderer box;
 
 	public RenderLaser() {
@@ -23,15 +22,13 @@ public class RenderLaser extends Render {
 	}
 
 	@Override
-	public void doRender(Entity entity, double x, double y, double z, float f,
-			float f1) {
+	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
 		doRender((EntityLaser) entity, x, y, z, f, f1);
 
 		entity.setAngles(45, 180);
 	}
 
-	private void doRender(EntityLaser laser, double x, double y, double z,
-			float f, float f1) {
+	private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1) {
 
 		if (laser.hidden)
 			return;

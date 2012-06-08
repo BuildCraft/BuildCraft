@@ -25,8 +25,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		public void add(Ledger ledger) {
 			this.ledgers.add(ledger);
-			if (SessionVars.getOpenedLedger() != null
-					&& ledger.getClass().equals(SessionVars.getOpenedLedger()))
+			if (SessionVars.getOpenedLedger() != null && ledger.getClass().equals(SessionVars.getOpenedLedger()))
 				ledger.setFullyOpen();
 		}
 
@@ -80,9 +79,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 				String tooltip = ledger.getTooltip();
 				int textWidth = fontRenderer.getStringWidth(tooltip);
-				drawGradientRect(startX - 3, startY - 3,
-						startX + textWidth + 3, startY + 8 + 3, 0xc0000000,
-						0xc0000000);
+				drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
 				fontRenderer.drawStringWithShadow(tooltip, startX, startY, -1);
 			}
 		}
@@ -95,8 +92,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 				// Default action only if the mouse click was not handled by the
 				// ledger itself.
-				if (ledger != null
-						&& !ledger.handleMouseClicked(x, y, mouseButton)) {
+				if (ledger != null && !ledger.handleMouseClicked(x, y, mouseButton)) {
 
 					for (Ledger other : ledgers)
 						if (other != ledger && other.isOpen())
@@ -113,6 +109,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	 * Side ledger for guis
 	 */
 	protected abstract class Ledger {
+
 		private boolean open;
 
 		protected int overlayColor = 0xffffff;
@@ -155,11 +152,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			return false;
 		}
 
-		public boolean intersectsWith(int mouseX, int mouseY, int shiftX,
-				int shiftY) {
+		public boolean intersectsWith(int mouseX, int mouseY, int shiftX, int shiftY) {
 
-			if (mouseX >= shiftX && mouseX <= shiftX + currentWidth
-					&& mouseY >= shiftY && mouseY <= shiftY + getHeight())
+			if (mouseX >= shiftX && mouseX <= shiftX + currentWidth && mouseY >= shiftY && mouseY <= shiftY + getHeight())
 				return true;
 
 			return false;
@@ -203,15 +198,12 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
 
 			mc.renderEngine.bindTexture(texture);
-			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4,
-					currentHeight);
-			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0,
-					currentWidth - 4, 4);
+			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
+			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
 			// Add in top left corner again
 			drawTexturedModalRect(x, y, 0, 0, 4, 4);
 
-			drawTexturedModalRect(x + 4, y + 4, 256 - currentWidth + 4,
-					256 - currentHeight + 4, currentWidth - 4,
+			drawTexturedModalRect(x + 4, y + 4, 256 - currentWidth + 4, 256 - currentHeight + 4, currentWidth - 4,
 					currentHeight - 4);
 
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
@@ -224,8 +216,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			mc.renderEngine.bindTexture(tex);
 			int textureRow = iconIndex >> 4;
 			int textureColumn = iconIndex - 16 * textureRow;
-			drawTexturedModalRect(x, y, 16 * textureColumn, 16 * textureRow,
-					16, 16);
+			drawTexturedModalRect(x, y, 16 * textureColumn, 16 * textureRow, 16, 16);
 
 		}
 	}
@@ -241,8 +232,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		initLedgers(container.inventory);
 	}
 
-	protected void initLedgers(IInventory inventory) {
-	}
+	protected void initLedgers(IInventory inventory) {}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {

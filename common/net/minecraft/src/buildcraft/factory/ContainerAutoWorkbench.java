@@ -30,12 +30,11 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	public IInventory craftResult;
 
 	public class SlotAutoCrafting extends Slot {
+
 		private final IInventory craftMatrix;
 		private EntityPlayer thePlayer;
 
-		public SlotAutoCrafting(EntityPlayer entityplayer,
-				IInventory iinventory, IInventory iinventory1, int i, int j,
-				int k) {
+		public SlotAutoCrafting(EntityPlayer entityplayer, IInventory iinventory, IInventory iinventory1, int i, int j, int k) {
 			super(iinventory1, i, j, k);
 			thePlayer = entityplayer;
 			craftMatrix = iinventory;
@@ -48,8 +47,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 
 		@Override
 		public void onPickupFromSlot(ItemStack itemstack) {
-			CoreProxy
-					.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
+			CoreProxy.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
 			if (itemstack.itemID == Block.workbench.blockID) {
 				thePlayer.addStat(AchievementList.buildWorkBench, 1);
 			} else if (itemstack.itemID == Item.pickaxeWood.shiftedIndex) {
@@ -79,14 +77,12 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 
 	}
 
-	public ContainerAutoWorkbench(InventoryPlayer inventoryplayer,
-			TileAutoWorkbench tile) {
+	public ContainerAutoWorkbench(InventoryPlayer inventoryplayer, TileAutoWorkbench tile) {
 		super(tile);
 
 		craftResult = new InventoryCraftResult();
 		this.tile = tile;
-		addSlot(new SlotAutoCrafting(inventoryplayer.player, tile, craftResult,
-				0, 124, 35));
+		addSlot(new SlotAutoCrafting(inventoryplayer.player, tile, craftResult, 0, 124, 35));
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 3; k1++) {
 				addSlot(new Slot(tile, k1 + l * 3, 30 + k1 * 18, 17 + l * 18));
@@ -96,8 +92,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 
 		for (int i1 = 0; i1 < 3; i1++) {
 			for (int l1 = 0; l1 < 9; l1++) {
-				addSlot(new Slot(inventoryplayer, l1 + i1 * 9 + 9, 8 + l1 * 18,
-						84 + i1 * 18));
+				addSlot(new Slot(inventoryplayer, l1 + i1 * 9 + 9, 8 + l1 * 18, 84 + i1 * 18));
 			}
 
 		}
@@ -116,8 +111,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	}
 
 	@Override
-	public ItemStack slotClick(int i, int j, boolean flag,
-			EntityPlayer entityplayer) {
+	public ItemStack slotClick(int i, int j, boolean flag, EntityPlayer entityplayer) {
 		// This call ensures that the ouptut is correctly computed
 		craftResult.setInventorySlotContents(0, tile.findRecipe());
 

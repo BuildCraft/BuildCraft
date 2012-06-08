@@ -22,8 +22,7 @@ public class PersistentWorld {
 
 	private TreeMap<BlockIndex, PersistentTile> tiles = new TreeMap<BlockIndex, PersistentTile>();
 
-	public PersistentTile createTile(PersistentTile defaultTile,
-			BlockIndex index) {
+	public PersistentTile createTile(PersistentTile defaultTile, BlockIndex index) {
 		PersistentTile result = null;
 
 		if (!tiles.containsKey(index)) {

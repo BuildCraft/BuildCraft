@@ -51,12 +51,9 @@ public class Localization {
 		defaultMappings.clear();
 		mappings.clear();
 		try {
-			InputStream langStream = Localization.class
-					.getResourceAsStream("/lang/buildcraft/" + newLanguage
-							+ ".properties");
-			InputStream defaultLangStream = Localization.class
-					.getResourceAsStream("/lang/buildcraft/" + DEFAULT_LANGUAGE
-							+ ".properties");
+			InputStream langStream = Localization.class.getResourceAsStream("/lang/buildcraft/" + newLanguage + ".properties");
+			InputStream defaultLangStream = Localization.class.getResourceAsStream("/lang/buildcraft/" + DEFAULT_LANGUAGE
+					+ ".properties");
 			mappings.load((langStream == null) ? defaultLangStream : langStream);
 			defaultMappings.load(defaultLangStream);
 

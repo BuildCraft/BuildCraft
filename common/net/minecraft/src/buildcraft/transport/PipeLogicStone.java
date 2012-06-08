@@ -24,8 +24,7 @@ public class PipeLogicStone extends PipeLogic {
 		if (BuildCraftTransport.alwaysConnectPipes)
 			return super.isPipeConnected(tile);
 		else
-			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicCobblestone))
-					&& super.isPipeConnected(tile);
+			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicCobblestone)) && super.isPipeConnected(tile);
 	}
 
 }

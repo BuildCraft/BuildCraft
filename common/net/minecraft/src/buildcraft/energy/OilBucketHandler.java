@@ -18,8 +18,7 @@ public class OilBucketHandler implements IBucketHandler {
 
 	@Override
 	public ItemStack fillCustomBucket(World w, int i, int j, int k) {
-		if ((w.getBlockId(i, j, k) == BuildCraftEnergy.oilStill.blockID || w
-				.getBlockId(i, j, k) == BuildCraftEnergy.oilMoving.blockID)
+		if ((w.getBlockId(i, j, k) == BuildCraftEnergy.oilStill.blockID || w.getBlockId(i, j, k) == BuildCraftEnergy.oilMoving.blockID)
 				&& w.getBlockMetadata(i, j, k) == 0) {
 
 			w.setBlockWithNotify(i, j, k, 0);

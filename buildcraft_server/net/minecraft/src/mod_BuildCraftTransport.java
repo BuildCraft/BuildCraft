@@ -21,12 +21,12 @@ public class mod_BuildCraftTransport extends NetworkMod {
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		super.modsLoaded();
 		BuildCraftTransport.initialize();
 	}
 
-	public static void registerTilePipe (Class <? extends TileEntity> clas, String name) {
+	public static void registerTilePipe(Class<? extends TileEntity> clas, String name) {
 		ModLoader.registerTileEntity(clas, name);
 	}
 
@@ -40,7 +40,14 @@ public class mod_BuildCraftTransport extends NetworkMod {
 		BuildCraftTransport.load();
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 
 }

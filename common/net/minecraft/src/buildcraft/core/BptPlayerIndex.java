@@ -11,13 +11,13 @@ import java.io.OutputStreamWriter;
 import java.util.TreeMap;
 
 public class BptPlayerIndex {
+
 	private TreeMap<String, File> bluePrintsFile = new TreeMap<String, File>();
 
 	private File baseDir;
 	private File file;
 
-	public BptPlayerIndex(String filename, BptRootIndex rootIndex)
-			throws IOException {
+	public BptPlayerIndex(String filename, BptRootIndex rootIndex) throws IOException {
 		baseDir = new File(CoreProxy.getBuildCraftBase(), "blueprints/");
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
@@ -36,8 +36,7 @@ public class BptPlayerIndex {
 	public void loadIndex() throws IOException {
 		FileInputStream input = new FileInputStream(file);
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input,
-				"8859_1"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "8859_1"));
 
 		while (true) {
 			String line = reader.readLine();
@@ -63,8 +62,7 @@ public class BptPlayerIndex {
 
 	public void saveIndex() throws IOException {
 		FileOutputStream output = new FileOutputStream(file);
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-				output, "8859_1"));
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
 		for (String line : bluePrintsFile.keySet()) {
 			writer.write(line);

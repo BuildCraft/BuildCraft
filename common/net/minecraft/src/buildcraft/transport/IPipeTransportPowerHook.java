@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public interface IPipeTransportPowerHook {
+
 	public void receiveEnergy(Orientations from, double val);
 
 	public void requestEnergy(Orientations from, int i);

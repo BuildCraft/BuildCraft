@@ -17,8 +17,7 @@ import net.minecraft.src.buildcraft.api.IBox;
 public class FillerRemover extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box,
-			ItemStack stackToPlace) {
+	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
