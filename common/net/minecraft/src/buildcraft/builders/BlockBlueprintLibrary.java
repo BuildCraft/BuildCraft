@@ -12,7 +12,6 @@ package net.minecraft.src.buildcraft.builders;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;

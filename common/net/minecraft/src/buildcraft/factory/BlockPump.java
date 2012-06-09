@@ -12,7 +12,6 @@ package net.minecraft.src.buildcraft.factory;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;

@@ -11,7 +11,6 @@ package net.minecraft.src.buildcraft.factory;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.ItemStack;

@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.silicon;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;

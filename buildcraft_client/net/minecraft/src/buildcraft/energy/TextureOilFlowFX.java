@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.energy;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.buildcraft.core.DefaultProps;

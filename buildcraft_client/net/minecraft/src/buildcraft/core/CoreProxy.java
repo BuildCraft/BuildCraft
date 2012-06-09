@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;

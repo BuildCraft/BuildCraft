@@ -11,8 +11,6 @@ package net.minecraft.src.buildcraft.factory;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -23,8 +21,6 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.BlockBuildCraft;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.IItemPipe;
-import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
