@@ -10,7 +10,6 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;

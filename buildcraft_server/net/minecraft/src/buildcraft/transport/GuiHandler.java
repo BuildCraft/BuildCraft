@@ -1,8 +1,6 @@
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.GuiIds;

@@ -449,6 +449,10 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		if (arm != null) {
 			arm.setDead();
 		}
+		
+		if (builder != null){
+			builder.setDead();
+		}
 
 		box.deleteLasers();
 		arm = null;

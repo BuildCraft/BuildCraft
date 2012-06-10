@@ -10,8 +10,6 @@
 package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.PacketIds;
-import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.forge.NetworkMod;
 
 public class mod_BuildCraftSilicon extends NetworkMod {

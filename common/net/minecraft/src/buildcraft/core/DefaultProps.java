@@ -19,7 +19,7 @@ public class DefaultProps {
 
 	public static String TEXTURE_PATH_GUI = "/gfx/buildcraft/gui";
 	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";
-	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entitites";
+	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entities";
 	
 	public static String TEXTURE_BLOCKS = TEXTURE_PATH_BLOCKS + "/blocks.png";
 	public static String TEXTURE_EXTERNAL = TEXTURE_PATH_BLOCKS + "/external.png";

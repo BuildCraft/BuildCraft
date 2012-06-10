@@ -10,7 +10,6 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Render;

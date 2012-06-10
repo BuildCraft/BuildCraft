@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IBox;
