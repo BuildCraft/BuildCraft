@@ -456,8 +456,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 	}
 
 	@Override
-	public void invalidate () {		
-		System.out.println("hi");
+	public void invalidate () {
 		destroy ();
 	}
 

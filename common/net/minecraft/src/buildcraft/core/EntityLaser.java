@@ -155,9 +155,7 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 	
 	public void show() {
-		System.out.println("showing");
 		dataWatcher.updateObject(14, Byte.valueOf((byte) 1));
-		System.out.println(isVisible());
 	}
 	
 	public void hide() {
