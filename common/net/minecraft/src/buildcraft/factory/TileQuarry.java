@@ -163,11 +163,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine,
 			return;
 		}
 
-		if (inProcess) {
-			return;
-		}
-
-		if (!isDigging) {
+		if (inProcess || !isDigging) {
 			return;
 		}
 

@@ -79,8 +79,11 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 		setPosition(destX, destY, destZ);
 
-		laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
-		worldObj.spawnEntityInWorld(laser);
+		if (!APIProxy.isClient(worldObj)) {
+		
+			laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
+			worldObj.spawnEntityInWorld(laser);
+		}
 	}
 
 	@Override
@@ -251,23 +254,21 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 	private void updateLaser() {
 		
-		if (APIProxy.isClient(worldObj)) {
+		if (APIProxy.isClient(worldObj))
 			return;
-		}
-		
+			
 		if (targets.size() > 0) {
 			
 			Action a = targets.getFirst();
 			BptSlotInfo target = a.slot;
 
-			laser.setPositions(new Position(posX, posY, posZ),
-								new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
+			laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
+			laser.show();
 		}
 		else {
-			//laser.hide();
+			laser.hide();
 		}
-
-		laser.updateGraphicData();
+		
 		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
 	}
 
@@ -275,7 +276,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 		if (slot != null) {
 			targets.add(new Action(slot, context));
-			laser.show();
+			
 		}
 	}
 

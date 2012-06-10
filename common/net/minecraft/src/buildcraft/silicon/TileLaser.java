@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -139,10 +140,14 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i,
 				b.j, b.k);
 
+		if (APIProxy.isClient(worldObj))
+			return;
+		
 		if (laser == null) {
-			laser = new EntityEnergyLaser(worldObj);
+			laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
 			setLaserPosition();
 			worldObj.spawnEntityInWorld(laser);
+			laser.show();
 		} else {
 			setLaserPosition();
 		}
