@@ -123,9 +123,12 @@ public class BptBlock {
 	 * Return true if the block on the world correspond to the block stored in
 	 * the blueprint at the location given by the slot. By default, this
 	 * subprogram is permissive and doesn't take into account metadata.
+	 * 
+	 * Added metadata sensitivity //Krapht
 	 */
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z);
+		return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) 
+				&& slot.meta == context.world().getBlockMetadata(slot.x, slot.y, slot.z);
 	}
 
 	/**
