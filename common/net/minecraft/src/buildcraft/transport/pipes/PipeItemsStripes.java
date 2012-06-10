@@ -102,7 +102,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	public boolean convertPipe(PipeTransportItems pipe, EntityData data) {
 		if (data.item.item.getItem() instanceof ItemPipe)
 			if (!(data.item.item.itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
-				Pipe newPipe = BlockGenericPipe.createPipe(worldObj, xCoord, yCoord, zCoord, data.item.item.itemID);
+				Pipe newPipe = BlockGenericPipe.createPipe(data.item.item.itemID); //XXX make sure this works
 				newPipe.setTile(this.container);
 				newPipe.setWorld(worldObj);
 				this.container.pipe = newPipe;

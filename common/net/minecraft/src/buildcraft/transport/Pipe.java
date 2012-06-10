@@ -33,7 +33,6 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 import net.minecraft.src.buildcraft.core.ActionRedstoneOutput;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
-import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
@@ -41,7 +40,7 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 import net.minecraft.src.buildcraft.transport.Gate.GateConditional;
 
-public class Pipe extends PersistentTile implements IPipe, IDropControlInventory {
+public class Pipe implements IPipe, IDropControlInventory {
 
 	public int[] signalStrength = new int[] { 0, 0, 0, 0 };
 
@@ -91,7 +90,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 
 	}
 
-	public void setPosition(int xCoord, int yCoord, int zCoord) {
+	public void setPosition(int xCoord, int yCoord, int zCoord) { //XXX make it private
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
@@ -100,7 +99,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 		logic.setPosition(xCoord, yCoord, zCoord);
 	}
 
-	public void setWorld(World worldObj) {
+	public void setWorld(World worldObj) { //XXX make it private
 		if (worldObj != null && this.worldObj == null) {
 			this.worldObj = worldObj;
 			transport.setWorld(worldObj);
@@ -108,10 +107,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 		}
 	}
 
-	@Override
 	public void setTile(TileEntity tile) {
-		super.setTile(tile);
-
 		this.container = (TileGenericPipe) tile;
 
 		transport.setTile((TileGenericPipe) tile);
@@ -662,5 +658,9 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 	@Override
 	public boolean doDrop() {
 		return logic.doDrop();
+	}
+	
+	public boolean isValid() {
+		return container != null && !container.isInvalid();
 	}
 }
