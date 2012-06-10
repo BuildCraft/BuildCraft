@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.factory;
 import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 
@@ -31,12 +32,14 @@ public class EntityMechanicalArm extends Entity {
 	public IArmListener listener;
 	boolean inProgressionXZ = false;
 	boolean inProgressionY = false;
-
+	
+	protected TileEntity parent;
+	
 	public EntityMechanicalArm(World world) {
 		super(world);
 	}
 
-	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height) {
+	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height, TileEntity parent) {
 		super(world);
 
 		setPosition(i, j, k);
@@ -78,6 +81,8 @@ public class EntityMechanicalArm extends Entity {
 		head.shadowSize = 1.0F;
 
 		updatePosition();
+		
+		this.parent = parent;
 	}
 
 	@Override
@@ -184,6 +189,12 @@ public class EntityMechanicalArm extends Entity {
 
 	@Override
 	public void onUpdate() {
+		
+		if (parent != null && worldObj.getBlockTileEntity(parent.xCoord, parent.yCoord, parent.zCoord) != parent) {
+			setDead();
+			return;
+		}
+		
 		if (speed > 0) {
 			doMove(speed);
 		}

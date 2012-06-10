@@ -13,8 +13,10 @@ import java.util.LinkedList;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
@@ -25,10 +27,10 @@ import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 public class TileLaser extends TileEntity implements IPowerReceptor {
 
 	private EntityEnergyLaser laser = null;
-
-	private SafeTimeTracker laserTickTracker = new SafeTimeTracker();
-	private SafeTimeTracker searchTracker = new SafeTimeTracker();
-
+	
+	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
+	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
+	
 	private TileAssemblyTable assemblyTable;
 
 	private PowerProvider powerProvider;
@@ -135,10 +137,14 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
 		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
 
+		if (APIProxy.isClient(worldObj))
+			return;
+		
 		if (laser == null) {
-			laser = new EntityEnergyLaser(worldObj);
+			laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
 			setLaserPosition();
 			worldObj.spawnEntityInWorld(laser);
+			laser.show();
 		} else {
 			setLaserPosition();
 		}
@@ -168,10 +174,14 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			pz = 0.3;
 			break;
 		}
-
-		laser.setPositions(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz,
-				assemblyTable.xCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, assemblyTable.yCoord + 9F / 16F,
+		
+		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
+		Position tail = new Position(
+				assemblyTable.xCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F,
+				assemblyTable.yCoord + 9F / 16F, 
 				assemblyTable.zCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
+		
+		laser.setPositions(head, tail);
 	}
 
 	@Override
