@@ -52,7 +52,7 @@ public class TilePathMarker extends TileMarker {
 				new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
 		laser.show();
 		
-		laser.setTexture("/net/minecraft/src/buildcraft/core/gui/laser_1.png");
+		laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
 		worldObj.spawnEntityInWorld(laser);
 
 		connect(pathMarker, laser);
