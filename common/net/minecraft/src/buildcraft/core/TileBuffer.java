@@ -23,51 +23,49 @@ public class TileBuffer {
 	private World world;
 	int x, y, z;
 
-
-	public void initialize (World world, int x, int y, int z) {
+	public void initialize(World world, int x, int y, int z) {
 		this.world = world;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 
-		refresh ();
+		refresh();
 	}
 
-	public void refresh () {
+	public void refresh() {
 		tile = null;
 		blockID = world.getBlockId(this.x, this.y, this.z);
 
-		if (Block.blocksList [blockID] instanceof BlockContainer)
+		if (Block.blocksList[blockID] instanceof BlockContainer)
 			tile = world.getBlockTileEntity(this.x, this.y, this.z);
 	}
 
-	public void set (int blockID, TileEntity tile) {
+	public void set(int blockID, TileEntity tile) {
 		this.blockID = blockID;
 		this.tile = tile;
 		tracker.markTime(world);
 	}
 
-	public int getBlockID () {
+	public int getBlockID() {
 		if (tile != null && !tile.isInvalid())
 			return blockID;
 		else {
 			if (tracker.markTimeIfDelay(world, 20))
-				refresh ();
+				refresh();
 
 			return blockID;
 		}
 	}
 
-	public TileEntity getTile () {
+	public TileEntity getTile() {
 		if (tile != null && !tile.isInvalid())
 			return tile;
 		else {
 			if (tracker.markTimeIfDelay(world, 20))
-				refresh ();
+				refresh();
 
 			return tile;
 		}
 	}
-
 
 }

@@ -7,16 +7,17 @@ import java.io.IOException;
 public class PacketCoordinates extends BuildCraftPacket {
 
 	private int id;
-	
+
 	public int posX;
 	public int posY;
 	public int posZ;
 
 	public PacketCoordinates() {}
+
 	public PacketCoordinates(int id, int x, int y, int z) {
-		
+
 		this.id = id;
-		
+
 		this.posX = x;
 		this.posY = y;
 		this.posZ = z;
@@ -25,9 +26,9 @@ public class PacketCoordinates extends BuildCraftPacket {
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 
-        data.writeInt(posX);
-        data.writeInt(posY);
-        data.writeInt(posZ);
+		data.writeInt(posX);
+		data.writeInt(posY);
+		data.writeInt(posZ);
 	}
 
 	@Override

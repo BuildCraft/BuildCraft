@@ -24,12 +24,11 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		super.modsLoaded();
 		BuildCraftEnergy.initialize();
 
-		ModLoader.registerTileEntity(TileEngine.class,
-				"net.minecraft.src.buildcraft.energy.Engine");
+		ModLoader.registerTileEntity(TileEngine.class, "net.minecraft.src.buildcraft.energy.Engine");
 	}
 
 	@Override
@@ -38,16 +37,23 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 	}
 
 	@Override
-    public void generateSurface(World world, Random random, int i, int j) {
-    	BuildCraftEnergy.generateSurface (world, random, i, j);
-    }
+	public void generateSurface(World world, Random random, int i, int j) {
+		BuildCraftEnergy.generateSurface(world, random, i, j);
+	}
 
 	@Override
 	public void load() {
 		BuildCraftEnergy.load();
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 
 }

@@ -16,10 +16,10 @@ public interface IPipe {
 	enum DrawingState {
 		DrawingPipe, DrawingRedWire, DrawingBlueWire, DrawingGreenWire, DrawingYellowWire, DrawingGate
 	}
-	
+
 	enum WireColor {
 		Red, Blue, Green, Yellow;
-		
+
 		public WireColor reverse() {
 			switch (this) {
 			case Red:
@@ -33,21 +33,21 @@ public interface IPipe {
 			}
 		}
 	}
-	
+
 	/**
-	 * With special kind of pipes, connectors texture has to vary (e.g. 
-	 * diamond or iron pipes. 
+	 * With special kind of pipes, connectors texture has to vary (e.g. diamond
+	 * or iron pipes.
 	 */
-	public void prepareTextureFor (Orientations connection);
-	
-	public void setDrawingState (DrawingState state);
-	
-	public boolean isWired (WireColor color);
-	
-	public boolean hasInterface ();
-	
-	public TileEntity getContainer ();
-	
-	public boolean isWireConnectedTo (TileEntity tile, WireColor color);
-	
+	public void prepareTextureFor(Orientations connection);
+
+	public void setDrawingState(DrawingState state);
+
+	public boolean isWired(WireColor color);
+
+	public boolean hasInterface();
+
+	public TileEntity getContainer();
+
+	public boolean isWireConnectedTo(TileEntity tile, WireColor color);
+
 }

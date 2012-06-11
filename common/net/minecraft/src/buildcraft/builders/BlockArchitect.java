@@ -12,7 +12,6 @@ package net.minecraft.src.buildcraft.builders;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
@@ -26,6 +25,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
@@ -37,8 +37,7 @@ public class BlockArchitect extends BlockContainer implements ITextureProvider {
 	int blockTextureTopPos;
 	int blockTextureTopNeg;
 	int blockTextureTopArchitect;
-	
-	
+
 	public BlockArchitect(int i) {
 		super(i, Material.iron);
 		setHardness(0.5F);
@@ -51,24 +50,24 @@ public class BlockArchitect extends BlockContainer implements ITextureProvider {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override
 	public TileEntity getBlockEntity() {
 		return new TileArchitect();
 	}
-	
+
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		
+
 		// Drop through if the player is sneaking
-		if(entityplayer.isSneaking())
+		if (entityplayer.isSneaking())
 			return false;
-		
+
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)){
-			
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+
 			int meta = world.getBlockMetadata(i, j, k);
 
 			switch (Orientations.values()[meta]) {
@@ -85,82 +84,79 @@ public class BlockArchitect extends BlockContainer implements ITextureProvider {
 				world.setBlockMetadata(i, j, k, Orientations.XPos.ordinal());
 				break;
 			}
-			
+
 			world.markBlockNeedsUpdate(i, j, k);
-			((IToolWrench)equipped).wrenchUsed(entityplayer, i, j, k);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
 			return true;
 		} else {
-			
-			if(!APIProxy.isClient(world))
+
+			if (!APIProxy.isClient(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, i, j, k);
 			return true;
-			
+
 		}
-	}	
-	
+	}
+
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {		
+	public void onBlockRemoval(World world, int i, int j, int k) {
 		Utils.preDestroyBlock(world, i, j, k);
-		
+
 		super.onBlockRemoval(world, i, j, k);
 	}
-	
+
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k,
-			EntityLiving entityliving) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-		Orientations orientation = Utils.get2dOrientation(new Position(
-				entityliving.posX, entityliving.posY, entityliving.posZ),
+		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse()
-				.ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
-	
+
 	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
-					    	
-    	if (l == 1) {
-//    		boolean isPowered = false;
-//    		
-//			if (iblockaccess == null) {
-//				return getBlockTextureFromSideAndMetadata(l, m);
-//			} else if (iblockaccess instanceof World) {
-//				isPowered = ((World) iblockaccess)
-//						.isBlockIndirectlyGettingPowered(i, j, k);
-//			}
-//    		    		
-//    		if (!isPowered) {
-//    			return blockTextureTopPos;
-//    		} else {
-//    			return blockTextureTopNeg;
-//    		}
-    		
-    		return blockTextureTopArchitect;
-    	}
 
-    	return getBlockTextureFromSideAndMetadata(l, m);
-	}	
-	
+		if (l == 1) {
+			// boolean isPowered = false;
+			//
+			// if (iblockaccess == null) {
+			// return getBlockTextureFromSideAndMetadata(l, m);
+			// } else if (iblockaccess instanceof World) {
+			// isPowered = ((World) iblockaccess)
+			// .isBlockIndirectlyGettingPowered(i, j, k);
+			// }
+			//
+			// if (!isPowered) {
+			// return blockTextureTopPos;
+			// } else {
+			// return blockTextureTopNeg;
+			// }
+
+			return blockTextureTopArchitect;
+		}
+
+		return getBlockTextureFromSideAndMetadata(l, m);
+	}
+
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-    	if (j == 0 && i == 3) {
+		if (j == 0 && i == 3) {
 			return blockTextureFront;
 		}
-    	
-    	if (i == 1) {
-    		return blockTextureTopArchitect;
-    	}
-		
+
+		if (i == 1) {
+			return blockTextureTopArchitect;
+		}
+
 		if (i == j) {
 			return blockTextureFront;
 		}
-		
-		return blockTextureSides;		
-    }
-	
+
+		return blockTextureSides;
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

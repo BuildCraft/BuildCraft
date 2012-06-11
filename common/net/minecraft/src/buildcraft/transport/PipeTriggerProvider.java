@@ -17,22 +17,22 @@ public class PipeTriggerProvider implements ITriggerProvider {
 		if (iPipe instanceof IOverrideDefaultTriggers)
 			return ((IOverrideDefaultTriggers) iPipe).getTriggers();
 
-		LinkedList <Trigger> result = new LinkedList <Trigger> ();
+		LinkedList<Trigger> result = new LinkedList<Trigger>();
 
 		Pipe pipe = (Pipe) iPipe;
 
-		if(pipe.hasGate())
+		if (pipe.hasGate())
 			pipe.gate.addTrigger(result);
 
 		if (pipe.transport instanceof PipeTransportItems) {
-			result.add (BuildCraftTransport.triggerPipeEmpty);
-			result.add (BuildCraftTransport.triggerPipeItems);
+			result.add(BuildCraftTransport.triggerPipeEmpty);
+			result.add(BuildCraftTransport.triggerPipeItems);
 		} else if (pipe.transport instanceof PipeTransportPower) {
-			result.add (BuildCraftTransport.triggerPipeEmpty);
-			result.add (BuildCraftTransport.triggerPipeEnergy);
+			result.add(BuildCraftTransport.triggerPipeEmpty);
+			result.add(BuildCraftTransport.triggerPipeEnergy);
 		} else if (pipe.transport instanceof PipeTransportLiquids) {
-			result.add (BuildCraftTransport.triggerPipeEmpty);
-			result.add (BuildCraftTransport.triggerPipeLiquids);
+			result.add(BuildCraftTransport.triggerPipeEmpty);
+			result.add(BuildCraftTransport.triggerPipeLiquids);
 		}
 
 		return result;

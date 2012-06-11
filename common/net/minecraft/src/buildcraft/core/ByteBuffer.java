@@ -13,30 +13,30 @@ import java.util.LinkedList;
 
 public class ByteBuffer {
 
-	LinkedList <Integer> bytes = new LinkedList <Integer> ();
+	LinkedList<Integer> bytes = new LinkedList<Integer>();
 
-	public void writeUnsignedByte (int s) {
-		bytes.add (s - Byte.MAX_VALUE);
+	public void writeUnsignedByte(int s) {
+		bytes.add(s - Byte.MAX_VALUE);
 	}
 
-	public void writeUnsignedShort (int s) {
+	public void writeUnsignedShort(int s) {
 		writeUnsignedByte(s & 0xFF);
 		writeUnsignedByte((s >> 8) & 0xFF);
 	}
 
-	public void writeShort (short s) {
+	public void writeShort(short s) {
 		writeUnsignedByte(s & 0xFF);
 		writeUnsignedByte((s >> 8) & 0xFF);
 	}
 
-	public void writeInt (int i) {
-		writeUnsignedByte (i & 0xFF);
-		writeUnsignedByte ((i >> 8) & 0xFF);
-		writeUnsignedByte ((i >> 16) & 0xFF);
-		writeUnsignedByte ((i >> 24) & 0xFF);
+	public void writeInt(int i) {
+		writeUnsignedByte(i & 0xFF);
+		writeUnsignedByte((i >> 8) & 0xFF);
+		writeUnsignedByte((i >> 16) & 0xFF);
+		writeUnsignedByte((i >> 24) & 0xFF);
 	}
 
-	public short readUnsignedByte () {
+	public short readUnsignedByte() {
 		short res = 0;
 
 		if (bytes.size() == 0)
@@ -47,7 +47,7 @@ public class ByteBuffer {
 		return res;
 	}
 
-	public int readUnsignedShort () {
+	public int readUnsignedShort() {
 		int res = 0;
 
 		if (bytes.size() == 0)
@@ -59,7 +59,7 @@ public class ByteBuffer {
 		return res;
 	}
 
-	public short readShort () {
+	public short readShort() {
 		short res = 0;
 
 		if (bytes.size() == 0)
@@ -71,7 +71,7 @@ public class ByteBuffer {
 		return res;
 	}
 
-	public int readInt () {
+	public int readInt() {
 		int res = 0;
 
 		if (bytes.size() == 0)
@@ -85,26 +85,25 @@ public class ByteBuffer {
 		return res;
 	}
 
-	public int [] readIntArray () {
-		LinkedList <Integer> ints = new LinkedList<Integer> ();
+	public int[] readIntArray() {
+		LinkedList<Integer> ints = new LinkedList<Integer>();
 
 		while (bytes.size() > 0)
-			ints.add(readInt ());
+			ints.add(readInt());
 
-		int [] res = new int [ints.size()];
+		int[] res = new int[ints.size()];
 
 		int index = 0;
 
 		for (Integer val : ints) {
-			res [index] = val;
+			res[index] = val;
 			index++;
 		}
-
 
 		return res;
 	}
 
-	public void writeIntArray (int [] arr) {
+	public void writeIntArray(int[] arr) {
 		for (int i : arr)
 			writeInt(i);
 	}

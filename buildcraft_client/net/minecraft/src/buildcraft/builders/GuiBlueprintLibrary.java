@@ -12,10 +12,10 @@ package net.minecraft.src.buildcraft.builders;
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiContainer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.buildcraft.core.BptBase;
 import net.minecraft.src.buildcraft.core.BptPlayerIndex;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiBuildCraft;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 
@@ -65,31 +65,32 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		controlList.add(prevPageButton);
 		controlList.add(nextPageButton);
 
-//		if (library.owner.equals(player.username)) {
-			deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtil.localize("gui.del"));
-			controlList.add(deleteButton);
+		// if (library.owner.equals(player.username)) {
+		deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtil.localize("gui.del"));
+		controlList.add(deleteButton);
 
-			lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
-			controlList.add(lockButton);
+		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
+		controlList.add(lockButton);
 
-			if (library.locked)
-				lockButton.displayString = StringUtil.localize("gui.unlock");
-			else lockButton.displayString = StringUtil.localize("gui.lock");
+		if (library.locked)
+			lockButton.displayString = StringUtil.localize("gui.unlock");
+		else
+			lockButton.displayString = StringUtil.localize("gui.lock");
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-//		fontRenderer.drawString(library.owner + "'s Library", 6, 6, 0x404040);
+		// fontRenderer.drawString(library.owner + "'s Library", 6, 6,
+		// 0x404040);
 		String title = StringUtil.localize("tile.libraryBlock");
-        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
 		for (BptBase bpt : container.contents) {
 			if (bpt == library.selected) {
 				int l1 = 8;
 				int i2 = 24;
-				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff,
-						0x80ffffff);
+				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
 			}
 			String name = bpt.getName();
 
@@ -104,13 +105,12 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		int i = 0;
-//		if (library.owner.equals(player.username)) {
-			i = mc.renderEngine
-					.getTexture("/net/minecraft/src/buildcraft/builders/gui/library_rw.png");
-//		} else {
-//			i = mc.renderEngine
-//					.getTexture("/net/minecraft/src/buildcraft/builders/gui/library_r.png");
-//		}
+		// if (library.owner.equals(player.username)) {
+		i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
+		// } else {
+		// i = mc.renderEngine
+		// .getTexture("/net/minecraft/src/buildcraft/builders/gui/library_r.png");
+		// }
 
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
@@ -128,8 +128,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 			if (container.contents.size() == 0)
 				container.contents = library.getNextPage(null);
 			else
-				container.contents = library.getNextPage(index
-						.prevBpt(container.contents.getFirst().file.getName()));
+				container.contents = library.getNextPage(index.prevBpt(container.contents.getFirst().file.getName()));
 
 			computeInput = false;
 		}
@@ -159,7 +158,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				container.contents = library.getNextPage(container.contents.getLast().file.getName());
 			else
 				container.contents = library.getNextPage(null);
-		}  else if (prevPageButton.mousePressed(ModLoader.getMinecraftInstance(), i, j)) {
+		} else if (prevPageButton.mousePressed(ModLoader.getMinecraftInstance(), i, j)) {
 			if (container.contents.size() > 0)
 				container.contents = library.getPrevPage(container.contents.getFirst().file.getName());
 			else
@@ -173,7 +172,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				lockButton.displayString = StringUtil.localize("gui.lock");
 		} else if (deleteButton != null && deleteButton.mousePressed(ModLoader.getMinecraftInstance(), i, j))
 			if (library.selected != null) {
-				index.deleteBluePrint (library.selected.file.getName());
+				index.deleteBluePrint(library.selected.file.getName());
 				if (container.contents.size() > 0)
 					container.contents = library.getNextPage(index.prevBpt(container.contents.getFirst().file.getName()));
 				else

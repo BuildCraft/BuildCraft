@@ -20,46 +20,46 @@ import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.IBptContext;
 import net.minecraft.src.buildcraft.api.Orientations;
 
-public class BptBlockSign extends BptBlock  {
-	
+public class BptBlockSign extends BptBlock {
+
 	boolean isWall;
-		
-	public BptBlockSign (int blockId, boolean isWall) {
-		super (blockId);
-		
+
+	public BptBlockSign(int blockId, boolean isWall) {
+		super(blockId);
+
 		this.isWall = isWall;
 	}
-	
+
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
-		requirements.add (new ItemStack (Item.sign));
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(Item.sign));
 	}
-	
+
 	@Override
-	public void rotateLeft (BptSlotInfo slot, IBptContext context) {
+	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		if (!isWall) {
-			double angle = ((double)(slot.meta) * 360.0) / 16.0;
+			double angle = ((slot.meta) * 360.0) / 16.0;
 			angle += 90.0;
 			if (angle >= 360) {
 				angle -= 360;
 			}
-			slot.meta = (int)(angle / 360.0 * 16.0);
+			slot.meta = (int) (angle / 360.0 * 16.0);
 		} else {
 			slot.meta = Orientations.values()[slot.meta].rotateLeft().ordinal();
 		}
 	}
-	
+
 	@Override
-	public BlockSignature getSignature (Block block) {
+	public BlockSignature getSignature(Block block) {
 		BlockSignature sig = super.getSignature(block);
-		
+
 		if (isWall) {
 			sig.customField = "wall";
 		} else {
 			sig.customField = "floor";
 		}
-		
+
 		return sig;
 	}
-	
+
 }

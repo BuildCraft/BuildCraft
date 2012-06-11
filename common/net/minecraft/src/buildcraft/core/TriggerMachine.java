@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
@@ -18,14 +17,14 @@ public class TriggerMachine extends Trigger {
 
 	boolean active;
 
-	public TriggerMachine (int id, boolean active) {
-		super (id);
+	public TriggerMachine(int id, boolean active) {
+		super(id);
 
 		this.active = active;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		if (active)
 			return 4 * 16 + 0;
 		else
@@ -33,7 +32,7 @@ public class TriggerMachine extends Trigger {
 	}
 
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		if (active)
 			return "Work Scheduled";
 		else
@@ -41,7 +40,7 @@ public class TriggerMachine extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive (TileEntity tile, TriggerParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, TriggerParameter parameter) {
 		if (tile instanceof IMachine) {
 			IMachine machine = (IMachine) tile;
 
@@ -56,6 +55,6 @@ public class TriggerMachine extends Trigger {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

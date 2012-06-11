@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.core;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BptSlot.Mode;
 import net.minecraft.src.forge.ISpawnHandler;
 
@@ -36,15 +38,15 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	public LinkedList<Action> targets = new LinkedList<Action>();
 	public static int MAX_TARGETS = 20;
 	public int wait = 0;
-	
+
 	private class Action {
-		
-		public Action (BptSlot slot, BptContext context) {
+
+		public Action(BptSlot slot, BptContext context) {
 			this.slot = slot;
 			this.context = context;
 		}
 
-		public Action (BptBuilderBase builder) {
+		public Action(BptBuilderBase builder) {
 			this.builder = builder;
 		}
 
@@ -58,15 +60,15 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	public EntityRobot(World world, Box box) {
-		
+
 		super(world);
-		
+
 		this.box = box;
 		init();
 	}
-	
+
 	protected void init() {
-		
+
 		destX = (int) box.centerX();
 		destY = (int) box.centerY();
 		destZ = (int) box.centerZ();
@@ -76,16 +78,17 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		motionZ = 0;
 
 		setPosition(destX, destY, destZ);
-		laser = new EntityEnergyLaser(worldObj);
-		laser.hidden = true;
-		laser.setPositions(posX, posY, posZ, posX, posY, posZ);
 
-		worldObj.spawnEntityInWorld(laser);
+		if (!APIProxy.isClient(worldObj)) {
+		
+			laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
+			worldObj.spawnEntityInWorld(laser);
+		}
 	}
-	
+
 	@Override
 	public void writeSpawnData(DataOutputStream data) throws IOException {
-		
+
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
 		data.writeInt(box.zMin);
@@ -96,7 +99,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 	@Override
 	public void readSpawnData(DataInputStream data) throws IOException {
-		
+
 		box = new Box();
 		box.xMin = data.readInt();
 		box.yMin = data.readInt();
@@ -104,7 +107,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		box.xMax = data.readInt();
 		box.yMax = data.readInt();
 		box.zMax = data.readInt();
-		
+
 		init();
 	}
 
@@ -116,109 +119,108 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
-	
+
 	@Override
 	public void onUpdate() {
-		
+
 		move();
 		build();
 		updateLaser();
 	}
-	
+
 	protected void move() {
-		
-		if (!reachedDesination()) {
-			
-			setPosition(posX + motionX, 
-						posY + motionY, 
-						posZ + motionZ);
-			
-			return;
-		}
-		
+
+		//System.out.println("move: " + new Position(motionX, motionY, motionZ));
+		setPosition(posX + motionX, posY + motionY, posZ + motionZ);
+
 		if (APIProxy.isClient(worldObj))
 			return;
+
+		if (reachedDesination()) {
+
+			BlockIndex newDesination = getNewDesination();
+			if (newDesination != null) {
+				setDestination(newDesination.i, newDesination.j, newDesination.k);
+			}
 		
-		BlockIndex newDesination = getNewDesination();
-		if (newDesination != null) {
-			
-			setDestination(newDesination.i, newDesination.j, newDesination.k);
 		}
-		
+
 	}
-	
+
 	protected BlockIndex getNewDesination() {
-		
+
 		Box movementBoundary = new Box();
 		movementBoundary.initialize(box);
 		movementBoundary.expand(1);
-		
+
 		Box moveArea = new Box();
 		moveArea.initialize(destX, destY, destZ, 1);
-		
+
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
-			
+
 			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj)) && movementBoundary.contains(blockIndex)) {
 				potentialDestinations.add(blockIndex);
 			}
 		}
-		
+
 		if (!potentialDestinations.isEmpty()) {
-			
+
 			int i = worldObj.rand.nextInt(potentialDestinations.size());
 			return potentialDestinations.get(i);
 		}
-		
+
 		return null;
 	}
-	
-	protected void setDestination (int x, int y, int z) {
-		
+
+	protected void setDestination(int x, int y, int z) {
+
 		destX = x;
 		destY = y;
 		destZ = z;
 
-		//TODO: apply power modifier
-		motionX = (destX - posX) / 75 * 1;
-		motionY = (destY - posY) / 75 * 1;
-		motionZ = (destZ - posZ) / 75 * 1;
-	}
-	
-	protected boolean reachedDesination() {
+		// TODO: apply power modifier
+		motionX = new BigDecimal((float) (destX - posX) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		motionY = new BigDecimal((float) (destY - posY) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		motionZ = new BigDecimal((float) (destZ - posZ) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
 		
+		//System.out.println("setDest: " + new Position(motionX, motionY, motionZ));
+	}
+
+	protected boolean reachedDesination() {
+
 		if (getDistance(destX, destY, destZ) <= .2)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	protected void build() {
-	
+
 		updateWait();
-		
-		//TODO: rewrite
+
+		// TODO: possible rewrite
 		if (targets.size() > 0) {
-			
+
 			Action a = targets.getFirst();
 			if (a.slot != null) {
-				
+
 				BptSlot target = a.slot;
 				if (wait <= 0) {
-					
+
 					if (target.mode == Mode.ClearIfInvalid) {
-						
+
 						if (!target.isValid(a.context))
 							worldObj.setBlockAndMetadataWithNotify(target.x, target.y, target.z, 0, 0);
-						
+
 					} else if (target.stackToUse != null) {
-						
+
 						worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
 						target.stackToUse.getItem().onItemUse(target.stackToUse,
 								BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
 								target.z, 1);
 					} else {
-						
+
 						try {
 							target.buildBlock(a.context);
 						} catch (Throwable t) {
@@ -230,17 +232,16 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 					targets.pop();
 				}
-				
+
 			} else if (a.builder != null) {
 				a.builder.postProcessing(worldObj);
 				targets.pop();
 			}
-		} else
-			laser.hidden = true;
+		}
 	}
 
-	public void updateWait () {
-		
+	public void updateWait() {
+
 		if (targets.size() > 0)
 			if (wait == 0)
 				wait = MAX_TARGETS - targets.size() + 2;
@@ -248,56 +249,59 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 				wait--;
 	}
 
-	private void updateLaser () {
+	private void updateLaser() {
 		
-		BptSlotInfo target = null;
-
+		if (APIProxy.isClient(worldObj))
+			return;
+			
 		if (targets.size() > 0) {
+			
 			Action a = targets.getFirst();
-			target = a.slot;
+			BptSlotInfo target = a.slot;
+
+			laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
+			laser.show();
 		}
-
-		if (target != null)
-			laser.setPositions (posX, posY, posZ, target.x + 0.5, target.y + 0.5, target.z + 0.5);
-		else
-			laser.hidden = true;
-
-		laser.pushPower (((float) targets.size ()) / ((float) MAX_TARGETS) * 4F);
-	}
-
-	public void scheduleContruction (BptSlot slot, BptContext context) {
+		else {
+			laser.hide();
+		}
 		
+		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
+	}
+
+	public void scheduleContruction(BptSlot slot, BptContext context) {
+
 		if (slot != null) {
-			targets.add(new Action (slot, context));
-			laser.hidden = false;
+			targets.add(new Action(slot, context));
+			
 		}
 	}
 
-	public void markEndOfBlueprint (BptBuilderBase builder) {
-		targets.add(new Action (builder));
+	public void markEndOfBlueprint(BptBuilderBase builder) {
+		targets.add(new Action(builder));
 	}
 
-	public boolean readyToBuild () {
+	public boolean readyToBuild() {
 		return targets.size() < MAX_TARGETS;
 	}
 
-	public boolean done () {
+	public boolean done() {
 		return targets.isEmpty();
 	}
 
 	public void setBox(Box box) {
-		
+
 		this.box = box;
 		setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
 	}
 
 	@Override
 	public void setDead() {
-		
+
 		if (laser != null)
 			laser.setDead();
 
 		super.setDead();
 	}
-	
+
 }

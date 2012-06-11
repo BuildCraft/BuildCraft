@@ -13,8 +13,10 @@ import java.util.LinkedList;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
@@ -26,62 +28,61 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 
 	private EntityEnergyLaser laser = null;
 	
-	private SafeTimeTracker laserTickTracker = new SafeTimeTracker();
-	private SafeTimeTracker searchTracker = new SafeTimeTracker();
+	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
+	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
 	
 	private TileAssemblyTable assemblyTable;
-	 
+
 	private PowerProvider powerProvider;
-	
+
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 200;
-	
-	public TileLaser () {
+
+	public TileLaser() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, 1000);
 	}
-		
+
 	@Override
-	public void updateEntity () {
+	public void updateEntity() {
 		if (powerProvider.energyStored == 0) {
 			if (laser != null) {
 				deleteLaser();
 			}
-			
+
 			return;
 		}
-		
+
 		if (searchTracker.markTimeIfDelay(worldObj, nextLaserSearch)) {
-			aim ();
+			aim();
 			nextLaserSearch = 190 + worldObj.rand.nextInt(20);
 		}
-		
+
 		if (assemblyTable != null && (assemblyTable.isInvalid() || assemblyTable.currentRecipe == null)) {
 			deleteLaser();
-		}		
-		
+		}
+
 		if (laser != null && laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate)) {
 			setLaserPosition();
 			nextLaserUpdate = 5 + worldObj.rand.nextInt(10);
 		}
-		
+
 		if (assemblyTable != null) {
 			float p = powerProvider.useEnergy(0, 4, true);
 			laser.pushPower(p);
 			assemblyTable.receiveLaserEnergy(p);
 		}
 	}
-	
-	private void deleteLaser () {
+
+	private void deleteLaser() {
 		if (laser != null) {
 			laser.setDead();
 			laser = null;
 			assemblyTable = null;
 		}
 	}
-	
-	
-	public void aim () {		
+
+	public void aim() {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		int minX = xCoord - 5;
@@ -90,8 +91,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 		int maxX = xCoord + 5;
 		int maxY = yCoord + 5;
 		int maxZ = zCoord + 5;
-		
-		
+
 		switch (Orientations.values()[meta]) {
 		case XNeg:
 			maxX = xCoord;
@@ -113,7 +113,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			break;
 		}
 
-		LinkedList <BlockIndex> targets = new LinkedList <BlockIndex> ();
+		LinkedList<BlockIndex> targets = new LinkedList<BlockIndex>();
 
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
@@ -121,37 +121,41 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
 					if (tile instanceof TileAssemblyTable) {
 						TileAssemblyTable table = (TileAssemblyTable) tile;
-						
+
 						if (table.currentRecipe != null) {
 							targets.add(new BlockIndex(x, y, z));
 						}
 					}
 				}
-			}	
+			}
 		}
-		
+
 		if (targets.size() == 0) {
 			return;
 		}
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
 		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
-				
+
+		if (APIProxy.isClient(worldObj))
+			return;
+		
 		if (laser == null) {
-			laser = new EntityEnergyLaser(worldObj);
+			laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
 			setLaserPosition();
 			worldObj.spawnEntityInWorld(laser);
+			laser.show();
 		} else {
-			setLaserPosition();	
+			setLaserPosition();
 		}
 	}
 
-	private void setLaserPosition () {
+	private void setLaserPosition() {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		double px = 0, py = 0, pz = 0;
-		
+
 		switch (Orientations.values()[meta]) {
-		case XNeg:			
+		case XNeg:
 			px = -0.3;
 			break;
 		case XPos:
@@ -171,19 +175,19 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			break;
 		}
 		
-		laser.setPositions(
-				xCoord + 0.5 + px,
-				yCoord + 0.5 + py,
-				zCoord + 0.5 + pz,
+		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
+		Position tail = new Position(
 				assemblyTable.xCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F,
 				assemblyTable.yCoord + 9F / 16F, 
 				assemblyTable.zCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
+		
+		laser.setPositions(head, tail);
 	}
-	
+
 	@Override
 	public void setPowerProvider(PowerProvider provider) {
 		powerProvider = provider;
-		
+
 	}
 
 	@Override
@@ -194,7 +198,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 	@Override
 	public void doWork() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -205,27 +209,27 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 			return 0;
 		}
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		
+
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
 		powerProvider.configure(20, 25, 25, 25, 1000);
 	}
 
 	@Override
-    public void writeToNBT(NBTTagCompound nbttagcompound) {
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
-		
+
 		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
-    }
-	
-	@Override
-	public void invalidate () {
-		super.invalidate();
-		
-		deleteLaser ();
 	}
-	
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+
+		deleteLaser();
+	}
+
 }

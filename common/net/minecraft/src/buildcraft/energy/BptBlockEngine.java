@@ -18,46 +18,43 @@ import net.minecraft.src.buildcraft.api.IBptContext;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public class BptBlockEngine extends BptBlock {
-	
+
 	public BptBlockEngine(int blockId) {
 		super(blockId);
 	}
 
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int o = slot.cpt.getInteger ("orientation");
-		
+		int o = slot.cpt.getInteger("orientation");
+
 		o = Orientations.values()[o].rotateLeft().ordinal();
-		
+
 		slot.cpt.setInteger("orientation", o);
 	}
-	
+
 	@Override
 	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
-		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(
-				x, y, z);
-		
+		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(x, y, z);
+
 		bptSlot.cpt.setInteger("orientation", engine.engine.orientation.ordinal());
 	}
-	
+
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y,
-				slot.z, slot.blockId, slot.meta);
-		
-		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(
-				slot.x, slot.y, slot.z);
-		
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+
+		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+
 		engine.orientation = slot.cpt.getInteger("orientation");
 	}
-	
+
 	@Override
-	public BlockSignature getSignature (Block block) {
+	public BlockSignature getSignature(Block block) {
 		BlockSignature sig = super.getSignature(block);
-		
+
 		sig.mod = "BuildCraftEnergy";
 		sig.modVersion = mod_BuildCraftEnergy.instance.getVersion();
-		
+
 		return sig;
-	}	
+	}
 }

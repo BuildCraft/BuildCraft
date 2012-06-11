@@ -17,16 +17,16 @@ public abstract class PersistentTile {
 
 	public BlockIndex index;
 
-	public void setTile (TileEntity tile) {
+	public void setTile(TileEntity tile) {
 		this.tile = tile;
-		index = new BlockIndex(tile.xCoord , tile.yCoord, tile.zCoord);
+		index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 
 	public void destroy() {
 
 	}
 
-	public boolean isValid () {
+	public boolean isValid() {
 		return tile != null && !tile.isInvalid();
 	}
 

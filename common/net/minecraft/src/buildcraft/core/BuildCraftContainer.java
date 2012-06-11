@@ -18,32 +18,28 @@ public abstract class BuildCraftContainer extends Container {
 
 	public IInventory inventory;
 
-	public BuildCraftContainer (IInventory inventory) {
+	public BuildCraftContainer(IInventory inventory) {
 		this.inventory = inventory;
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(int i)
-	{
-        ItemStack itemstack = null;
-        Slot slot = (Slot)inventorySlots.get(i);
-        if(slot != null && slot.getHasStack())
-        {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
-            if(i < inventory.getSizeInventory())
-            {
-                if(!mergeItemStack(itemstack1, inventory.getSizeInventory(), inventorySlots.size(), true))
+	public ItemStack transferStackInSlot(int i) {
+		ItemStack itemstack = null;
+		Slot slot = (Slot) inventorySlots.get(i);
+		if (slot != null && slot.getHasStack()) {
+			ItemStack itemstack1 = slot.getStack();
+			itemstack = itemstack1.copy();
+			if (i < inventory.getSizeInventory()) {
+				if (!mergeItemStack(itemstack1, inventory.getSizeInventory(), inventorySlots.size(), true))
 					return null;
-            } else
-            if(!mergeItemStack(itemstack1, 0, inventory.getSizeInventory(), false))
+			} else if (!mergeItemStack(itemstack1, 0, inventory.getSizeInventory(), false))
 				return null;
-            if(itemstack1.stackSize == 0)
+			if (itemstack1.stackSize == 0)
 				slot.putStack(null);
 			else
 				slot.onSlotChanged();
-        }
-        return itemstack;
+		}
+		return itemstack;
 	}
 
 }

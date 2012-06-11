@@ -25,7 +25,7 @@ public class EnergyPulser {
 		pulseSpeed = getPulseSpeed();
 
 		// Check if we are already running
-		if(progressPart != 0) {
+		if (progressPart != 0) {
 
 			progress += pulseSpeed;
 
@@ -35,14 +35,14 @@ public class EnergyPulser {
 				powerReceptor.getPowerProvider().receiveEnergy(1, Orientations.XNeg);
 
 				// Heat up
-				if(heat < maxHeat)
+				if (heat < maxHeat)
 					heat++;
 
 			} else if (progress >= 1) {
 				progress = 0;
 				progressPart = 0;
 			}
-		} else if(isActive)
+		} else if (isActive)
 			progressPart = 1;
 		else
 			// Cool down when deactivated
@@ -76,7 +76,7 @@ public class EnergyPulser {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("Heat", heat);
 		nbttagcompound.setBoolean("IsActive", isActive);
-		nbttagcompound.setShort("ProgressPart", (short)progressPart);
+		nbttagcompound.setShort("ProgressPart", (short) progressPart);
 		nbttagcompound.setFloat("Progress", progress);
 	}
 

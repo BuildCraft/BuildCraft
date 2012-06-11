@@ -4,11 +4,11 @@ import net.minecraft.src.ItemStack;
 
 public class AssemblyRecipe {
 
-	public final ItemStack [] input;
+	public final ItemStack[] input;
 	public final ItemStack output;
 	public final float energy;
 
-	public AssemblyRecipe (ItemStack [] input, int energy, ItemStack output) {
+	public AssemblyRecipe(ItemStack[] input, int energy, ItemStack output) {
 		this.input = input;
 		this.output = output;
 		this.energy = energy;
@@ -18,23 +18,27 @@ public class AssemblyRecipe {
 
 		for (ItemStack in : input) {
 
-			if(in == null)
-				continue; //Optimisation, reduces calculation on a null ingredient
+			if (in == null)
+				continue; // Optimisation, reduces calculation on a null
+							// ingredient
 
-			int found = 0; //Amount of ingredient found in inventory
+			int found = 0; // Amount of ingredient found in inventory
 
-			for(ItemStack item : items) {
-				if(item == null)
-					continue; //Broken out of large if statement, increases clarity
+			for (ItemStack item : items) {
+				if (item == null)
+					continue; // Broken out of large if statement, increases
+								// clarity
 
-				if(item.isItemEqual(in))
-					found += item.stackSize; //Adds quantity of stack to amount found
+				if (item.isItemEqual(in))
+					found += item.stackSize; // Adds quantity of stack to amount
+												// found
 			}
 
-			if(found < in.stackSize)
-				return false; //Return false if the amount of ingredient found is not enough
+			if (found < in.stackSize)
+				return false; // Return false if the amount of ingredient found
+								// is not enough
 		}
 
-		return true; //Otherwise, returns true
+		return true; // Otherwise, returns true
 	}
 }

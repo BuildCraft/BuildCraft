@@ -5,7 +5,10 @@ import java.util.TreeSet;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BlockIndex;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.EntityLaser;
 import net.minecraft.src.buildcraft.core.WorldIterator;
 import net.minecraft.src.buildcraft.core.WorldIteratorRadius;
@@ -13,10 +16,10 @@ import net.minecraft.src.buildcraft.core.WorldIteratorRadius;
 public class TilePathMarker extends TileMarker {
 
 	public EntityLaser lasers[] = new EntityLaser[2];
-	
+
 	public int x0, y0, z0, x1, y1, z1;
 	public boolean loadLink0 = false, loadLink1 = false;
-	
+
 	public TilePathMarker links[] = new TilePathMarker[2];
 
 	public static int searchSize = 64;
@@ -40,10 +43,15 @@ public class TilePathMarker extends TileMarker {
 	}
 	
 	public void createLaserAndConnect (TilePathMarker pathMarker) {
-		EntityLaser laser = new EntityLaser(worldObj);
-		laser.setPositions(xCoord + 0.5, yCoord + 0.5,
-				zCoord + 0.5, pathMarker.xCoord + 0.5,
-				pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5);
+		
+		if (APIProxy.isClient(worldObj))
+			return;
+		
+		EntityLaser laser = new EntityLaser(worldObj, 
+				new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5),
+				new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+		laser.show();
+		
 		laser.setTexture("/net/minecraft/src/buildcraft/core/gui/laser_1.png");
 		worldObj.spawnEntityInWorld(laser);
 
@@ -60,8 +68,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (currentWorldIterator == null) {
-			currentWorldIterator = new WorldIteratorRadius(worldObj, xCoord,
-					yCoord, zCoord, searchSize);
+			currentWorldIterator = new WorldIteratorRadius(worldObj, xCoord, yCoord, zCoord, searchSize);
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
@@ -69,7 +76,7 @@ public class TilePathMarker extends TileMarker {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		
+
 		if (currentWorldIterator != null) {
 			for (int i = 0; i < 1000; ++i) {
 				BlockIndex b = currentWorldIterator.iterate();
@@ -85,7 +92,7 @@ public class TilePathMarker extends TileMarker {
 				}
 
 				TileEntity tile = null;
-				
+
 				try {
 					tile = worldObj.getBlockTileEntity(b.i, b.j, b.k);
 				} catch (Throwable t) {
@@ -96,8 +103,7 @@ public class TilePathMarker extends TileMarker {
 				if (tile instanceof TilePathMarker) {
 					TilePathMarker pathMarker = (TilePathMarker) tile;
 
-					if (!pathMarker.isFullyConnected()
-							&& !isLinkedTo(pathMarker)) {
+					if (!pathMarker.isFullyConnected() && !isLinkedTo(pathMarker)) {
 						createLaserAndConnect(pathMarker);
 
 						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
@@ -108,59 +114,62 @@ public class TilePathMarker extends TileMarker {
 			}
 		}
 	}
-	
-	public LinkedList <BlockIndex> getPath () {
-		TreeSet<BlockIndex> visitedPaths = new TreeSet <BlockIndex> ();
-		LinkedList <BlockIndex> res = new LinkedList <BlockIndex> ();
-		
+
+	public LinkedList<BlockIndex> getPath() {
+		TreeSet<BlockIndex> visitedPaths = new TreeSet<BlockIndex>();
+		LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
+
 		TilePathMarker nextTile = this;
-		
+
 		while (nextTile != null) {
-			BlockIndex b = new BlockIndex (nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
-			
+			BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
+
 			visitedPaths.add(b);
-			res.add(b);			
-			
-			if (nextTile.links [0] != null && !visitedPaths.contains(new BlockIndex(nextTile.links [0].xCoord, nextTile.links [0].yCoord, nextTile.links [0].zCoord))) {
-				nextTile = nextTile.links [0];
-			} else if (nextTile.links [1] != null && !visitedPaths.contains(new BlockIndex(nextTile.links [1].xCoord, nextTile.links [1].yCoord, nextTile.links [1].zCoord))) {
-				nextTile = nextTile.links [1];
+			res.add(b);
+
+			if (nextTile.links[0] != null
+					&& !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord,
+							nextTile.links[0].zCoord))) {
+				nextTile = nextTile.links[0];
+			} else if (nextTile.links[1] != null
+					&& !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord,
+							nextTile.links[1].zCoord))) {
+				nextTile = nextTile.links[1];
 			} else {
 				nextTile = null;
 			}
 		}
-		
-		return res;		
-		
+
+		return res;
+
 	}
 
 	@Override
-	public void invalidate () {
+	public void invalidate() {
 		super.invalidate();
-		
-		if (lasers [0] != null) {
-			links [0].unlink (this);
-			lasers [0].setDead();
+
+		if (lasers[0] != null) {
+			links[0].unlink(this);
+			lasers[0].setDead();
 		}
-		
-		if (lasers [1] != null) {
-			links [1].unlink (this);
-			lasers [1].setDead();
+
+		if (lasers[1] != null) {
+			links[1].unlink(this);
+			lasers[1].setDead();
 		}
-		
-		lasers = new EntityLaser [2];
-		links = new TilePathMarker [2];
+
+		lasers = new EntityLaser[2];
+		links = new TilePathMarker[2];
 	}
-	
+
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
 
 		if (loadLink0) {
 			TileEntity e0 = worldObj.getBlockTileEntity(x0, y0, z0);
 
-			if (links[0] != e0 && links[1] != e0
-					&& e0 instanceof TilePathMarker) {
+			if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e0);
 			}
 
@@ -170,8 +179,7 @@ public class TilePathMarker extends TileMarker {
 		if (loadLink1) {
 			TileEntity e1 = worldObj.getBlockTileEntity(x1, y1, z1);
 
-			if (links[0] != e1 && links[1] != e1
-					&& e1 instanceof TilePathMarker) {
+			if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e1);
 			}
 
@@ -180,52 +188,52 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	private void unlink(TilePathMarker tile) {
-		if (links [0] == tile) {
-			lasers [0] = null;
-			links [0] = null;
+		if (links[0] == tile) {
+			lasers[0] = null;
+			links[0] = null;
 		}
-		
-		if (links [1] == tile) {
-			lasers [1] = null;
-			links [1] = null;
-		}				
+
+		if (links[1] == tile) {
+			lasers[1] = null;
+			links[1] = null;
+		}
 	}
-	
+
 	@Override
-	 public void readFromNBT(NBTTagCompound nbttagcompound) {
-		 super.readFromNBT(nbttagcompound);
-		 
-		 if (nbttagcompound.hasKey("x0")) {
-			 x0 = nbttagcompound.getInteger("x0");
-			 y0 = nbttagcompound.getInteger("y0");
-			 z0 = nbttagcompound.getInteger("z0");
-			 
-			 loadLink0 = true;
-		 }
-		 
-		 if (nbttagcompound.hasKey("x1")) {
-			 x1 = nbttagcompound.getInteger("x1");
-			 y1 = nbttagcompound.getInteger("y1");
-			 z1 = nbttagcompound.getInteger("z1");
-			 
-			 loadLink1 = true;
-		 }
-	 }
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+
+		if (nbttagcompound.hasKey("x0")) {
+			x0 = nbttagcompound.getInteger("x0");
+			y0 = nbttagcompound.getInteger("y0");
+			z0 = nbttagcompound.getInteger("z0");
+
+			loadLink0 = true;
+		}
+
+		if (nbttagcompound.hasKey("x1")) {
+			x1 = nbttagcompound.getInteger("x1");
+			y1 = nbttagcompound.getInteger("y1");
+			z1 = nbttagcompound.getInteger("z1");
+
+			loadLink1 = true;
+		}
+	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		 if (links [0] != null) {
-			 nbttagcompound.setInteger("x0", links [0].xCoord);
-			 nbttagcompound.setInteger("y0", links [0].yCoord);
-			 nbttagcompound.setInteger("z0", links [0].zCoord);
-		 }
-		 
-		 if (links [1] != null) {
-			 nbttagcompound.setInteger("x0", links [1].xCoord);
-			 nbttagcompound.setInteger("y0", links [1].yCoord);
-			 nbttagcompound.setInteger("z0", links [1].zCoord);
-		 }
+		if (links[0] != null) {
+			nbttagcompound.setInteger("x0", links[0].xCoord);
+			nbttagcompound.setInteger("y0", links[0].yCoord);
+			nbttagcompound.setInteger("z0", links[0].zCoord);
+		}
+
+		if (links[1] != null) {
+			nbttagcompound.setInteger("x0", links[1].xCoord);
+			nbttagcompound.setInteger("y0", links[1].yCoord);
+			nbttagcompound.setInteger("z0", links[1].zCoord);
+		}
 	}
 }

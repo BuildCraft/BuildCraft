@@ -15,7 +15,7 @@ import net.minecraft.src.World;
 public class BuildersProxy {
 
 	public static boolean canPlaceTorch(World world, int i, int j, int k) {
-		Block block = Block.blocksList [world.getBlockId(i, j, k)];
+		Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
 		if (block == null || !block.renderAsNormalBlock())
 			return false;
@@ -23,7 +23,7 @@ public class BuildersProxy {
 			return true;
 	}
 
-	public static String getOwner (TileBlueprintLibrary library) {
+	public static String getOwner(TileBlueprintLibrary library) {
 		return library.owner;
 	}
 

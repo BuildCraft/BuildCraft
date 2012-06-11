@@ -15,8 +15,8 @@ import net.minecraft.src.World;
 
 public class BuildersProxy {
 
-	public static boolean canPlaceTorch (World w, int i, int j, int k) {
-		Block block = Block.blocksList [w.getBlockId(i, j, k)];
+	public static boolean canPlaceTorch(World w, int i, int j, int k) {
+		Block block = Block.blocksList[w.getBlockId(i, j, k)];
 
 		if (block == null || !block.renderAsNormalBlock())
 			return false;
@@ -24,7 +24,7 @@ public class BuildersProxy {
 			return true;
 	}
 
-	public static String getOwner (TileBlueprintLibrary library) {
+	public static String getOwner(TileBlueprintLibrary library) {
 		return ModLoader.getMinecraftInstance().thePlayer.username;
 	}
 

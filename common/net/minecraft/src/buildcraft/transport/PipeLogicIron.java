@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
@@ -24,8 +23,7 @@ public class PipeLogicIron extends PipeLogic {
 	boolean lastPower = false;
 
 	public void switchPower() {
-		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord,
-				yCoord, zCoord);
+		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 
 		if (currentPower != lastPower) {
 			switchPosition();
@@ -40,7 +38,7 @@ public class PipeLogicIron extends PipeLogic {
 		int nextMetadata = metadata;
 
 		for (int l = 0; l < 6; ++l) {
-			nextMetadata ++;
+			nextMetadata++;
 
 			if (nextMetadata > 5)
 				nextMetadata = 0;
@@ -51,9 +49,7 @@ public class PipeLogicIron extends PipeLogic {
 				if (((TileGenericPipe) tile).pipe.logic instanceof PipeLogicWood)
 					continue;
 
-			if (tile instanceof IPipeEntry
-					|| tile instanceof IInventory
-					|| tile instanceof ILiquidContainer
+			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ILiquidContainer
 					|| tile instanceof TileGenericPipe) {
 
 				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
@@ -63,31 +59,30 @@ public class PipeLogicIron extends PipeLogic {
 	}
 
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
 
-		lastPower = worldObj.isBlockIndirectlyGettingPowered(xCoord,
-				yCoord, zCoord);
+		lastPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
 
 	@Override
-	public void onBlockPlaced()
-    {
+	public void onBlockPlaced() {
 		super.onBlockPlaced();
 
 		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 1);
 		switchPosition();
-    }
+	}
 
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		super.blockActivated(entityplayer);
-		
+
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)){
+		if (equipped instanceof IToolWrench
+				&& ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
 			switchPosition();
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-			((IToolWrench)equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
 
 			return true;
 		}
@@ -104,8 +99,7 @@ public class PipeLogicIron extends PipeLogic {
 
 	@Override
 	public boolean outputOpen(Orientations to) {
-		return to.ordinal() == worldObj
-				.getBlockMetadata(xCoord, yCoord, zCoord);
+		return to.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 	}
 
 }

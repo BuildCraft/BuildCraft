@@ -18,8 +18,8 @@ public class BptError extends Exception {
 	 */
 	private static final long serialVersionUID = 3579188081467555542L;
 
-	public BptError (String str) {
-		super (str);
+	public BptError(String str) {
+		super(str);
 
 		ModLoader.getLogger().fine("BLUEPRINT ERROR:" + str);
 

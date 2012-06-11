@@ -18,7 +18,7 @@ public abstract class Gate {
 		None, Single, AND_2, OR_2, AND_3, OR_3, AND_4, OR_4;
 
 		public static GateKind getKindFromDamage(ItemStack itemstack) {
-			switch(itemstack.getItemDamage()) {
+			switch (itemstack.getItemDamage()) {
 			case 0:
 				return Single;
 			case 1:
@@ -46,7 +46,7 @@ public abstract class Gate {
 	protected Pipe pipe;
 	public GateKind kind;
 
-	/// CONSTRUCTOR
+	// / CONSTRUCTOR
 	public Gate(Pipe pipe) {
 		this.pipe = pipe;
 	}
@@ -57,46 +57,52 @@ public abstract class Gate {
 		kind = GateKind.getKindFromDamage(stack);
 	}
 
-	/// SAVING & LOADING
+	// / SAVING & LOADING
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("Kind", kind.ordinal());
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		kind = Gate.GateKind.values() [nbttagcompound.getInteger("Kind")];
+		kind = Gate.GateKind.values()[nbttagcompound.getInteger("Kind")];
 	}
 
-	/// SMP
+	// / SMP
 	public PacketPayload toPayload() {
 		PacketPayload payload = new PacketPayload(1, 0, 0);
 		payload.intPayload[0] = kind.ordinal();
 		return payload;
 	}
-	
+
 	public void fromPayload(PacketPayload payload, IndexInPayload index) {
 		kind = GateKind.values()[payload.intPayload[index.intIndex + 0]];
 	}
-	
+
 	// GUI
 	public abstract void openGui(EntityPlayer player);
 
-	/// UPDATING
+	// / UPDATING
 	public abstract void update();
+
 	public abstract void dropGate(World world, int i, int j, int k);
 
-	/// INFORMATION
+	// / INFORMATION
 	public abstract String getName();
+
 	public abstract GateConditional getConditional();
 
-	/// ACTIONS
+	// / ACTIONS
 	public abstract void addActions(LinkedList<Action> list);
+
 	public abstract void startResolution();
+
 	public abstract boolean resolveAction(Action action);
 
-	/// TRIGGERS
+	// / TRIGGERS
 	public abstract void addTrigger(LinkedList<Trigger> list);
-	/// TEXTURES
+
+	// / TEXTURES
 	public abstract int getTexture(boolean isSignalActive);
+
 	public abstract String getGuiFile();
 
 	public static boolean isGateItem(ItemStack stack) {

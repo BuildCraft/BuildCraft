@@ -17,28 +17,27 @@ import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.IBptContext;
 
 public class BptBlockLiquid extends BptBlock {
-	
+
 	private final ItemStack bucketStack;
-	
-	public BptBlockLiquid (int blockId, ItemStack bucketStack) {
-		super (blockId);
-		
+
+	public BptBlockLiquid(int blockId, ItemStack bucketStack) {
+		super(blockId);
+
 		this.bucketStack = bucketStack;
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
-		if (slot.meta == 0) {		
-			requirements.add (bucketStack.copy());
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+		if (slot.meta == 0) {
+			requirements.add(bucketStack.copy());
 		}
 	}
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
 		if (slot.meta == 0) {
-			return slot.blockId == context.world().getBlockId(slot.x,
-					slot.y, slot.z)
-			&& context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
+			return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z)
+					&& context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
 		} else {
 			return true;
 		}
@@ -48,19 +47,17 @@ public class BptBlockLiquid extends BptBlock {
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 
 	}
-	
+
 	@Override
 	public boolean ignoreBuilding(BptSlotInfo slot) {
 		return slot.meta != 0;
 	}
-	
+
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		if (slot.meta == 0) {
-			context.world().setBlockAndMetadataWithNotify(slot.x, slot.y,
-					slot.z, slot.blockId, 0);
+			context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, 0);
 		}
 	}
 
-	
 }

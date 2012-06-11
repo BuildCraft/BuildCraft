@@ -19,19 +19,19 @@ import net.minecraft.src.WorldClient;
 
 public class APIProxy {
 
-	public static boolean isClient (World world) {
+	public static boolean isClient(World world) {
 		return world instanceof WorldClient;
 	}
 
-	public static boolean isServerSide () {
+	public static boolean isServerSide() {
 		return false;
 	}
 
 	public static boolean isRemote() {
 		return ModLoader.getMinecraftInstance().theWorld.isRemote;
 	}
-	
-	public static void removeEntity (Entity entity) {
+
+	public static void removeEntity(Entity entity) {
 		entity.setDead();
 
 		if (entity.worldObj instanceof WorldClient)
@@ -39,10 +39,10 @@ public class APIProxy {
 	}
 
 	public static Random createNewRandom(World world) {
-		return new Random (world.getSeed());
+		return new Random(world.getSeed());
 	}
 
-	public static EntityPlayer createNewPlayer (World world) {
+	public static EntityPlayer createNewPlayer(World world) {
 		return new EntityPlayer(world) {
 
 			@Override

@@ -9,10 +9,10 @@
 
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IBox;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class FillerFillAll extends FillerPattern {
 
@@ -31,7 +31,7 @@ public class FillerFillAll extends FillerPattern {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override

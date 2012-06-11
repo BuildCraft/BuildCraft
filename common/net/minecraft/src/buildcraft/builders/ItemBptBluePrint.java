@@ -13,11 +13,11 @@ import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.buildcraft.core.BptBase;
 
 public class ItemBptBluePrint extends ItemBptBase {
-	
+
 	public ItemBptBluePrint(int i) {
-		super(i);	
+		super(i);
 	}
-	
+
 	@Override
 	public int getIconFromDamage(int i) {
 		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(i);
@@ -25,6 +25,6 @@ public class ItemBptBluePrint extends ItemBptBase {
 			return 5 * 16 + 2;
 		} else {
 			return 5 * 16 + 3;
-		}		
+		}
 	}
 }

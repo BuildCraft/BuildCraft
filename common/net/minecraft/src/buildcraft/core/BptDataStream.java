@@ -20,11 +20,11 @@ public class BptDataStream implements DataInput, DataOutput {
 	Writer writer;
 	Reader reader;
 
-	public BptDataStream (Writer writer) {
+	public BptDataStream(Writer writer) {
 		this.writer = writer;
 	}
 
-	public BptDataStream (Reader reader) {
+	public BptDataStream(Reader reader) {
 		this.reader = reader;
 	}
 
@@ -32,12 +32,12 @@ public class BptDataStream implements DataInput, DataOutput {
 
 	@Override
 	public void readFully(byte[] b) throws IOException {
-		char [] c = new char [b.length];
+		char[] c = new char[b.length];
 
 		reader.read(c);
 
 		for (int i = 0; i < b.length; ++i)
-			b [i] = (byte) c [i];
+			b[i] = (byte) c[i];
 	}
 
 	@Override
@@ -48,29 +48,29 @@ public class BptDataStream implements DataInput, DataOutput {
 
 	@Override
 	public int skipBytes(int n) throws IOException {
-		return reader.read(new char [n]);
+		return reader.read(new char[n]);
 	}
 
 	@Override
 	public boolean readBoolean() throws IOException {
 		String s = readUTF();
 
-		return "T".equals (s);
+		return "T".equals(s);
 	}
 
 	@Override
 	public byte readByte() throws IOException {
-		return (byte) readLong ();
+		return (byte) readLong();
 	}
 
 	@Override
 	public int readUnsignedByte() throws IOException {
-		return (short) readLong ();
+		return (short) readLong();
 	}
 
 	@Override
 	public short readShort() throws IOException {
-		return (short) readLong ();
+		return (short) readLong();
 	}
 
 	@Override
@@ -80,12 +80,12 @@ public class BptDataStream implements DataInput, DataOutput {
 
 	@Override
 	public char readChar() throws IOException {
-		return readUTF ().charAt(0);
+		return readUTF().charAt(0);
 	}
 
 	@Override
 	public int readInt() throws IOException {
-		return (int) readLong ();
+		return (int) readLong();
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class BptDataStream implements DataInput, DataOutput {
 		boolean exit = false;
 
 		while (!exit) {
-			int i = reader.read ();
+			int i = reader.read();
 			if (i < 0)
 				break;
 
@@ -115,7 +115,7 @@ public class BptDataStream implements DataInput, DataOutput {
 
 	@Override
 	public float readFloat() throws IOException {
-		return (float) readDouble ();
+		return (float) readDouble();
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class BptDataStream implements DataInput, DataOutput {
 		boolean exit = false;
 
 		while (!exit) {
-			int i = reader.read ();
+			int i = reader.read();
 			if (i < 0)
 				break;
 
@@ -165,7 +165,7 @@ public class BptDataStream implements DataInput, DataOutput {
 
 			switch (c) {
 			case '\\':
-				c = (char) reader.read ();
+				c = (char) reader.read();
 
 				switch (c) {
 				case 'n':
@@ -185,7 +185,7 @@ public class BptDataStream implements DataInput, DataOutput {
 			}
 		}
 
-		int i = reader.read ();
+		int i = reader.read();
 		c = (char) i;
 
 		if (c != ',' && i > 0)
@@ -227,7 +227,7 @@ public class BptDataStream implements DataInput, DataOutput {
 
 	@Override
 	public void writeShort(int v) throws IOException {
-		writeLong (v);
+		writeLong(v);
 	}
 
 	@Override
@@ -238,36 +238,36 @@ public class BptDataStream implements DataInput, DataOutput {
 
 	@Override
 	public void writeInt(int v) throws IOException {
-		writeLong (v);
+		writeLong(v);
 	}
 
 	@Override
 	public void writeLong(long v) throws IOException {
-		handleWriteComma ();
+		handleWriteComma();
 
 		writer.append(Long.toString(v));
 	}
 
 	@Override
 	public void writeFloat(float v) throws IOException {
-		writeDouble (v);
+		writeDouble(v);
 	}
 
 	@Override
 	public void writeDouble(double v) throws IOException {
-		handleWriteComma ();
+		handleWriteComma();
 
 		writer.append(Double.toString(v));
 	}
 
 	@Override
 	public void writeBytes(String s) throws IOException {
-		writeUTF (s);
+		writeUTF(s);
 	}
 
 	@Override
 	public void writeChars(String s) throws IOException {
-		writeUTF (s);
+		writeUTF(s);
 	}
 
 	@Override
@@ -293,7 +293,7 @@ public class BptDataStream implements DataInput, DataOutput {
 		writer.write("\"");
 	}
 
-	private void handleWriteComma () throws IOException {
+	private void handleWriteComma() throws IOException {
 		if (!isFirst)
 			writer.append(",");
 

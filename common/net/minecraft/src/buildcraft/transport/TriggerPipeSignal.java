@@ -9,25 +9,25 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 
 	boolean active;
 	IPipe.WireColor color;
 
-	public TriggerPipeSignal (int id, boolean active, IPipe.WireColor color) {
-		super (id);
+	public TriggerPipeSignal(int id, boolean active, IPipe.WireColor color) {
+		super(id);
 
 		this.active = active;
 		this.color = color;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		if (active)
 			switch (color) {
 			case Red:
@@ -55,7 +55,7 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean hasParameter () {
+	public boolean hasParameter() {
 		return false;
 	}
 
@@ -90,13 +90,13 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 	@Override
 	public boolean isTriggerActive(Pipe pipe, TriggerParameter parameter) {
 		if (active)
-			return pipe.signalStrength [color.ordinal()] > 0;
+			return pipe.signalStrength[color.ordinal()] > 0;
 		else
-			return pipe.signalStrength [color.ordinal()] == 0;
+			return pipe.signalStrength[color.ordinal()] == 0;
 	}
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

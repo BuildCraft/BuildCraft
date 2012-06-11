@@ -14,13 +14,11 @@ import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Slot;
 import net.minecraft.src.buildcraft.core.BuildCraftContainer;
 
-public class ContainerEngineRoot extends BuildCraftContainer
-{
+public class ContainerEngineRoot extends BuildCraftContainer {
 
-	public ContainerEngineRoot(InventoryPlayer inventoryplayer,
-			TileEngine tileEngine) {
-		super (tileEngine);
-		
+	public ContainerEngineRoot(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
+		super(tileEngine);
+
 		engine = tileEngine;
 
 		if (tileEngine.engine instanceof EngineStone) {
@@ -31,8 +29,7 @@ public class ContainerEngineRoot extends BuildCraftContainer
 
 		for (int i = 0; i < 3; i++) {
 			for (int k = 0; k < 9; k++) {
-				addSlot(new Slot(inventoryplayer, k + i * 9 + 9, 8 + k * 18,
-						84 + i * 18));
+				addSlot(new Slot(inventoryplayer, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
 			}
 
 		}
@@ -42,12 +39,11 @@ public class ContainerEngineRoot extends BuildCraftContainer
 		}
 	}
 
-    public boolean isUsableByPlayer(EntityPlayer entityplayer)
-    {
-        return engine.isUseableByPlayer(entityplayer);
-    }
+	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+		return engine.isUseableByPlayer(entityplayer);
+	}
 
-    protected TileEngine engine;
+	protected TileEngine engine;
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {

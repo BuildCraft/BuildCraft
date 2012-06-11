@@ -20,8 +20,7 @@ public class ConnectionHandler implements IConnectionHandler {
 	}
 
 	@Override
-	public void onDisconnect(NetworkManager network, String message,
-			Object[] args) {
+	public void onDisconnect(NetworkManager network, String message, Object[] args) {
 		// TODO Auto-generated method stub
 
 	}

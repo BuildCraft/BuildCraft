@@ -16,30 +16,29 @@ import net.minecraft.src.buildcraft.core.ClassMapping.Indexes;
 
 public class TilePacketWrapper {
 
-	ClassMapping rootMappings [];
+	ClassMapping rootMappings[];
 
 	@SuppressWarnings("rawtypes")
-	public TilePacketWrapper (Class c) {
-		this (new Class [] {c});
+	public TilePacketWrapper(Class c) {
+		this(new Class[] { c });
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public TilePacketWrapper (Class c []) {
-		rootMappings = new ClassMapping [c.length];
+	public TilePacketWrapper(Class c[]) {
+		rootMappings = new ClassMapping[c.length];
 
 		for (int i = 0; i < c.length; ++i)
-			rootMappings [i] = new ClassMapping(c [i]);
+			rootMappings[i] = new ClassMapping(c[i]);
 	}
-
 
 	public PacketPayload toPayload(TileEntity tile) {
 		int sizeF = 0, sizeS = 0;
 
 		for (int i = 0; i < rootMappings.length; ++i) {
-			int [] size = rootMappings [i].getSize();
+			int[] size = rootMappings[i].getSize();
 
-			sizeF += size [1];
-			sizeS += size [2];
+			sizeF += size[1];
+			sizeS += size[2];
 		}
 
 		PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
@@ -51,8 +50,7 @@ public class TilePacketWrapper {
 		buf.writeInt(tile.zCoord);
 
 		try {
-			rootMappings [0].setData(tile, buf, payload.floatPayload,
-					payload.stringPayload, new Indexes(0, 0));
+			rootMappings[0].setData(tile, buf, payload.floatPayload, payload.stringPayload, new Indexes(0, 0));
 
 			payload.intPayload = buf.readIntArray();
 
@@ -66,21 +64,22 @@ public class TilePacketWrapper {
 	}
 
 	public PacketPayload toPayload(Object obj) {
-		return toPayload(0, 0, 0, new Object [] {obj});
-	}
-	public PacketPayload toPayload(int x, int y, int z, Object obj) {
-		return toPayload(x, y, z, new Object [] {obj});
+		return toPayload(0, 0, 0, new Object[] { obj });
 	}
 
-	public PacketPayload toPayload(int x, int y, int z, Object [] obj) {
+	public PacketPayload toPayload(int x, int y, int z, Object obj) {
+		return toPayload(x, y, z, new Object[] { obj });
+	}
+
+	public PacketPayload toPayload(int x, int y, int z, Object[] obj) {
 
 		int sizeF = 0, sizeS = 0;
 
 		for (int i = 0; i < rootMappings.length; ++i) {
-			int [] size = rootMappings [i].getSize();
+			int[] size = rootMappings[i].getSize();
 
-			sizeF += size [1];
-			sizeS += size [2];
+			sizeF += size[1];
+			sizeS += size[2];
 		}
 
 		PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
@@ -95,8 +94,7 @@ public class TilePacketWrapper {
 			Indexes ind = new Indexes(0, 0);
 
 			for (int i = 0; i < rootMappings.length; ++i)
-				rootMappings [i].setData(obj [i], buf, payload.floatPayload,
-						payload.stringPayload, ind);
+				rootMappings[i].setData(obj[i], buf, payload.floatPayload, payload.stringPayload, ind);
 
 			payload.intPayload = buf.readIntArray();
 
@@ -109,7 +107,6 @@ public class TilePacketWrapper {
 		}
 	}
 
-
 	public void fromPayload(TileEntity tile, PacketPayload packet) {
 		try {
 			ByteBuffer buf = new ByteBuffer();
@@ -118,8 +115,7 @@ public class TilePacketWrapper {
 			buf.readInt();
 			buf.readInt();
 
-			rootMappings [0].updateFromData(tile, buf, packet.floatPayload,
-					packet.stringPayload, new Indexes(0, 0));
+			rootMappings[0].updateFromData(tile, buf, packet.floatPayload, packet.stringPayload, new Indexes(0, 0));
 
 			packet.intPayload = buf.readIntArray();
 		} catch (Exception e) {
@@ -128,10 +124,10 @@ public class TilePacketWrapper {
 	}
 
 	public void fromPayload(Object obj, PacketPayload packet) {
-		fromPayload(new Object [] {obj}, packet);
+		fromPayload(new Object[] { obj }, packet);
 	}
 
-	public void fromPayload(Object [] obj, PacketPayload packet) {
+	public void fromPayload(Object[] obj, PacketPayload packet) {
 		try {
 			ByteBuffer buf = new ByteBuffer();
 			buf.writeIntArray(packet.intPayload);
@@ -142,8 +138,7 @@ public class TilePacketWrapper {
 			Indexes ind = new Indexes(0, 0);
 
 			for (int i = 0; i < rootMappings.length; ++i)
-				rootMappings [i].updateFromData(obj [i], buf, packet.floatPayload,
-						packet.stringPayload, ind);
+				rootMappings[i].updateFromData(obj[i], buf, packet.floatPayload, packet.stringPayload, ind);
 
 			packet.intPayload = buf.readIntArray();
 		} catch (Exception e) {

@@ -9,25 +9,30 @@
 
 package net.minecraft.src.buildcraft.energy;
 
-import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.core.ItemBlockBuildCraft;
 
-public class ItemEngine extends ItemBlockBuildCraft
-{
+public class ItemEngine extends ItemBlockBuildCraft {
 
-    public ItemEngine(int i) {
-        super(i, "engine");
-    }
+	public ItemEngine(int i) {
+		super(i, "engine");
+		setMaxDamage(0);
+		setHasSubtypes(true);
+	}
 
-    @SuppressWarnings({ "all" })
-    public String getItemNameIS(ItemStack itemstack) {
-    	if (itemstack.getItemDamage() == 0) {
-    		return "tile.engineWood";
-    	} else if (itemstack.getItemDamage() == 1) {
-    		return "tile.engineStone";
-    	} else {
-    		return "tile.engineIron";
-    	}
-    }
+	@Override
+	public int getMetadata(int i) {
+		return i;
+	}
+
+	@SuppressWarnings({ "all" })
+	public String getItemNameIS(ItemStack itemstack) {
+		if (itemstack.getItemDamage() == 0) {
+			return "tile.engineWood";
+		} else if (itemstack.getItemDamage() == 1) {
+			return "tile.engineStone";
+		} else {
+			return "tile.engineIron";
+		}
+	}
 }

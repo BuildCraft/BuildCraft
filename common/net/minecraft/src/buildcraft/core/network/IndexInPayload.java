@@ -4,10 +4,9 @@ package net.minecraft.src.buildcraft.core.network;
  * Keeps track of the indices to use when writing data to payload arrays.
  * Internal use only.
  */
-public class IndexInPayload
-{
-	public IndexInPayload (int intIndex, int floatIndex, int stringIndex)
-	{
+public class IndexInPayload {
+
+	public IndexInPayload(int intIndex, int floatIndex, int stringIndex) {
 		this.intIndex = intIndex;
 		this.floatIndex = floatIndex;
 		this.stringIndex = stringIndex;

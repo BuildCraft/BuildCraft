@@ -9,22 +9,22 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.IPipe;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class ActionSignalOutput extends Action {
 
 	public IPipe.WireColor color;
 
-	public ActionSignalOutput (int id, IPipe.WireColor color) {
-		super (id);
+	public ActionSignalOutput(int id, IPipe.WireColor color) {
+		super(id);
 
 		this.color = color;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		switch (color) {
 		case Red:
 			return 0 * 16 + 3;
@@ -40,7 +40,7 @@ public class ActionSignalOutput extends Action {
 	}
 
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		switch (color) {
 		case Red:
 			return "Red Pipe Signal";
@@ -57,6 +57,6 @@ public class ActionSignalOutput extends Action {
 
 	@Override
 	public String getTexture() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

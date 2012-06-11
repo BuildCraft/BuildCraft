@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
@@ -17,18 +16,21 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 
 public class TriggerInventory extends Trigger {
-	public enum State {Empty, Contains, Space, Full};
+
+	public enum State {
+		Empty, Contains, Space, Full
+	};
 
 	public State state;
 
-	public TriggerInventory (int id, State state) {
-		super (id);
+	public TriggerInventory(int id, State state) {
+		super(id);
 
 		this.state = state;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		switch (state) {
 		case Empty:
 			return 2 * 16 + 4;
@@ -42,7 +44,7 @@ public class TriggerInventory extends Trigger {
 	}
 
 	@Override
-	public boolean hasParameter () {
+	public boolean hasParameter() {
 		if (state == State.Contains || state == State.Space)
 			return true;
 		else
@@ -64,7 +66,7 @@ public class TriggerInventory extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive (TileEntity tile, TriggerParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, TriggerParameter parameter) {
 		ItemStack searchedStack = null;
 
 		if (parameter != null)
@@ -83,15 +85,13 @@ public class TriggerInventory extends Trigger {
 					foundItems = foundItems || stack != null && stack.stackSize > 0;
 				else if (stack != null && stack.stackSize > 0)
 					foundItems = foundItems
-					|| (stack.itemID == parameter.stack.itemID && stack
-							.getItemDamage() == parameter.stack
-							.getItemDamage());
+							|| (stack.itemID == parameter.stack.itemID && stack.getItemDamage() == parameter.stack
+									.getItemDamage());
 
 				if (stack == null || stack.stackSize == 0)
 					foundSpace = true;
 				else if (searchedStack != null)
-					if (stack.stackSize < stack.getMaxStackSize()
-							&& stack.itemID == searchedStack.itemID
+					if (stack.stackSize < stack.getMaxStackSize() && stack.itemID == searchedStack.itemID
 							&& stack.getItemDamage() == searchedStack.getItemDamage())
 						foundSpace = true;
 			}
@@ -113,6 +113,6 @@ public class TriggerInventory extends Trigger {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

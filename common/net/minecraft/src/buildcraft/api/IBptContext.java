@@ -42,10 +42,10 @@ public interface IBptContext {
 	 * only needed when writing ids that are e.g. in inventory stacks.
 	 */
 	public void storeId(int worldId);
-	
-	public Position rotatePositionLeft (Position pos);
-	
-	public IBox surroundingBox ();
-	
-	public World world ();
+
+	public Position rotatePositionLeft(Position pos);
+
+	public IBox surroundingBox();
+
+	public World world();
 }

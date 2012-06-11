@@ -13,17 +13,11 @@ public enum PacketIds {
 
 	// General packets
 
-	TileDescription,
-	TileUpdate,
+	TileDescription, TileUpdate,
 
 	// Transport packets
 
-	PipeItem,
-	DiamondPipeContents,
-	AssemblyTableSelect,
-	AssemblyTableGetSelection,
-	DiamondPipeGUI,
-	AssemblyTableGUI,
+	PipeItem, DiamondPipeContents, AssemblyTableSelect, AssemblyTableGetSelection, DiamondPipeGUI, AssemblyTableGUI,
 
 	// Factory packets
 
@@ -31,13 +25,10 @@ public enum PacketIds {
 
 	// Builders packets
 
-	FillerGUI,
-	TemplateGUI,
-	BuilderGUI,
+	FillerGUI, TemplateGUI, BuilderGUI,
 
 	// Energy packets
 
-	EngineSteamGUI,
-	EngineCombustionGUI
+	EngineSteamGUI, EngineCombustionGUI
 
 }

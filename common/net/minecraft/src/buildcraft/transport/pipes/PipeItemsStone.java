@@ -22,7 +22,7 @@ import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 
 	public PipeItemsStone(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicStone (), itemID);
+		super(new PipeTransportItems(), new PipeLogicStone(), itemID);
 
 	}
 
@@ -32,7 +32,7 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public void readjustSpeed (EntityPassiveItem item) {
+	public void readjustSpeed(EntityPassiveItem item) {
 		if (item.speed > Utils.pipeNormalSpeed)
 			item.speed = item.speed - Utils.pipeNormalSpeed / 2.0F;
 
@@ -41,8 +41,7 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public LinkedList<Orientations> filterPossibleMovements(
-			LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
 			EntityPassiveItem item) {
 		return possibleOrientations;
 	}

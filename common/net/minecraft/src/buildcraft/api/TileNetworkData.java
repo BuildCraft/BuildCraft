@@ -19,11 +19,10 @@ public @interface TileNetworkData {
 
 	public static int DEFAULT = 0;
 	public static int UNSIGNED_BYTE = 1;
-	public static int UNSIGNED_SHORT = 2;	
-	
-	int staticSize () default -1;	
-	int intKind () default DEFAULT;
-	
-	
+	public static int UNSIGNED_SHORT = 2;
+
+	int staticSize() default -1;
+
+	int intKind() default DEFAULT;
 
 }

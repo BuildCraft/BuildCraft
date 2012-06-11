@@ -20,14 +20,14 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	public boolean done;
 	protected BptContext context;
 
-	public BptBuilderBase (BptBase bluePrint, World world, int x, int y, int z) {
+	public BptBuilderBase(BptBase bluePrint, World world, int x, int y, int z) {
 		this.bluePrint = bluePrint;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		done = false;
 
-		Box box = new Box ();
+		Box box = new Box();
 		box.initialize(this);
 
 		if (bluePrint instanceof BptBlueprint)
@@ -36,7 +36,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 			context = new BptContext(world, null, box);
 	}
 
-	public abstract BptSlot getNextBlock (World world, IBuilderInventory inv);
+	public abstract BptSlot getNextBlock(World world, IBuilderInventory inv);
 
 	@Override
 	public int xMin() {
@@ -73,15 +73,15 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	}
 
-	public AxisAlignedBB getBoundingBox () {
-		return AxisAlignedBB.getBoundingBox (xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
+	public AxisAlignedBB getBoundingBox() {
+		return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
 	}
 
 	public void postProcessing(World world) {
 
 	}
 
-	public BptContext getContext () {
+	public BptContext getContext() {
 		return context;
 	}
 }

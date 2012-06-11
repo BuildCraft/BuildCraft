@@ -1,22 +1,23 @@
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.Action;
 
 public class ActionMachineControl extends Action {
 
-	public enum Mode {Unknown, On, Off, Loop};
+	public enum Mode {
+		Unknown, On, Off, Loop
+	};
 
 	Mode mode;
 
-	public ActionMachineControl (int id, Mode mode) {
-		super (id);
+	public ActionMachineControl(int id, Mode mode) {
+		super(id);
 
 		this.mode = mode;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		switch (mode) {
 		case On:
 			return 4 * 16 + 2;
@@ -45,7 +46,7 @@ public class ActionMachineControl extends Action {
 
 	@Override
 	public String getTexture() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 
 }

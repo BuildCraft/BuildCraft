@@ -9,18 +9,18 @@ import net.minecraft.src.World;
 public class WorldIteratorRadius extends WorldIterator {
 
 	@SuppressWarnings("unchecked")
-	private static LinkedList <BlockIndex> [] lists = new LinkedList [65];
+	private static LinkedList<BlockIndex>[] lists = new LinkedList[65];
 
 	public WorldIteratorRadius(World world, int px, int py, int pz, int radius) {
 		super(world, px, py, pz);
 
 		createPrecomputedList(radius);
 
-		iterator = lists [radius].iterator();
+		iterator = lists[radius].iterator();
 	}
 
 	@Override
-	public BlockIndex iterate () {
+	public BlockIndex iterate() {
 		if (iterator.hasNext()) {
 			BlockIndex b = iterator.next();
 
@@ -29,16 +29,16 @@ public class WorldIteratorRadius extends WorldIterator {
 			return null;
 	}
 
-	public static void createPrecomputedList (int radius) {
-		if (lists [radius] == null) {
-			lists [radius] = new LinkedList <BlockIndex> ();
+	public static void createPrecomputedList(int radius) {
+		if (lists[radius] == null) {
+			lists[radius] = new LinkedList<BlockIndex>();
 
 			for (int i = -radius; i <= radius; ++i)
 				for (int j = -radius; j <= radius; ++j)
 					for (int k = -radius; k <= radius; ++k)
-						lists [radius].add(new BlockIndex(i, j, k));
+						lists[radius].add(new BlockIndex(i, j, k));
 
-			Collections.sort(lists [radius], new Comparator <BlockIndex> () {
+			Collections.sort(lists[radius], new Comparator<BlockIndex>() {
 
 				@Override
 				public int compare(BlockIndex o1, BlockIndex o2) {
@@ -51,7 +51,8 @@ public class WorldIteratorRadius extends WorldIterator {
 						return 1;
 					else
 						return 0;
-				}});
+				}
+			});
 		}
 	}
 }

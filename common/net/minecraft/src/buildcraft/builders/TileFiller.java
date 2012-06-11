@@ -26,7 +26,6 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.filler.FillerManager;
 import net.minecraft.src.buildcraft.api.filler.IFillerPattern;
-import net.minecraft.src.buildcraft.api.filler.IFillerRegistry;
 import net.minecraft.src.buildcraft.core.ActionMachineControl;
 import net.minecraft.src.buildcraft.core.ActionMachineControl.Mode;
 import net.minecraft.src.buildcraft.core.Box;
@@ -34,59 +33,60 @@ import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor, IMachine, IActionReceptor {
-	
-	public @TileNetworkData Box box = new Box ();
-	public @TileNetworkData int currentPatternId = 0;
-	public @TileNetworkData	boolean done = true;
-	
+
+	public @TileNetworkData
+	Box box = new Box();
+	public @TileNetworkData
+	int currentPatternId = 0;
+	public @TileNetworkData
+	boolean done = true;
+
 	IFillerPattern currentPattern;
-	
+
 	boolean forceDone = false;
-    private ItemStack contents[];
-    PowerProvider powerProvider;
-    
+	private ItemStack contents[];
+	PowerProvider powerProvider;
+
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
-    public TileFiller() {
-        contents = new ItemStack[getSizeInventory()];
-        powerProvider = PowerFramework.currentFramework.createPowerProvider();
-        powerProvider.configure(10, 25, 100, 25, 100);
-        powerProvider.configurePowerPerdition(25, 40);
-    }
-    
-    @Override
-    public void initialize () {
-    	super.initialize();
-    	
-    	if (!APIProxy.isClient(worldObj)) {
-    		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-    				zCoord);
+	public TileFiller() {
+		contents = new ItemStack[getSizeInventory()];
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider.configure(10, 25, 100, 25, 100);
+		powerProvider.configurePowerPerdition(25, 40);
+	}
 
-    		if (a != null) {
-    			box.initialize(a);				
+	@Override
+	public void initialize() {
+		super.initialize();
 
-    			if (a instanceof TileMarker) {
-    				((TileMarker) a).removeFromWorld();
-    			}
-    			
+		if (!APIProxy.isClient(worldObj)) {
+			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
+
+			if (a != null) {
+				box.initialize(a);
+
+				if (a instanceof TileMarker) {
+					((TileMarker) a).removeFromWorld();
+				}
+
 				if (!APIProxy.isClient(worldObj) && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
-    			sendNetworkUpdate();
-    		}
-    	}
-    	
-		computeRecipe ();
-    }
-    
-    @Override
-	public void updateEntity () {		
+				sendNetworkUpdate();
+			}
+		}
+
+		computeRecipe();
+	}
+
+	@Override
+	public void updateEntity() {
 		super.updateEntity();
-		
+
 		if (done) {
 			if (lastMode == Mode.Loop) {
 				done = false;
@@ -94,233 +94,225 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 				return;
 			}
 		}
-		
+
 		if (powerProvider.energyStored > 25) {
 			doWork();
-		}				
+		}
 	}
-	
+
 	@Override
-	public void doWork () {
+	public void doWork() {
 		if (APIProxy.isClient(worldObj)) {
 			return;
 		}
-		
+
 		if (lastMode == Mode.Off) {
 			return;
 		}
-		
+
 		if (powerProvider.useEnergy(25, 25, true) < 25) {
 			return;
 		}
-		
+
 		if (box.isInitialized() && currentPattern != null && !done) {
 			ItemStack stack = null;
 			int stackId = 0;
-			
-			for (int s = 9; s < getSizeInventory(); ++s) {
-				if (getStackInSlot(s) != null
-						&& getStackInSlot(s).stackSize > 0) {
 
-					stack = contents [s];
+			for (int s = 9; s < getSizeInventory(); ++s) {
+				if (getStackInSlot(s) != null && getStackInSlot(s).stackSize > 0) {
+
+					stack = contents[s];
 					stackId = s;
 
 					break;
 				}
 			}
-			
+
 			done = currentPattern.iteratePattern(this, box, stack);
-			
+
 			if (stack != null && stack.stackSize == 0) {
-				contents [stackId] = null;
+				contents[stackId] = null;
 			}
-			
+
 			if (done) {
 				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 				sendNetworkUpdate();
-			}			
+			}
 		}
-		
+
 		if (powerProvider.energyStored > 25) {
 			doWork();
 		}
-	}	
+	}
 
 	@Override
-    public int getSizeInventory() {
-        return 36;
-    }
+	public int getSizeInventory() {
+		return 36;
+	}
 
 	@Override
-    public ItemStack getStackInSlot(int i) {
-        return contents[i];
-    }
+	public ItemStack getStackInSlot(int i) {
+		return contents[i];
+	}
 
-    public void computeRecipe () {
-    	if (APIProxy.isClient(worldObj)) {
-    		return;
-    	}
-    	
-    	IFillerPattern newPattern = FillerManager.registry.findMatchingRecipe(this);
-    	
-    	if (newPattern == currentPattern) {
-    		return;
-    	}
-    	
-    	currentPattern = newPattern;
-    	
-    	if (currentPattern == null || forceDone) {
-    		done = lastMode != Mode.Loop;
-    		forceDone = false;
-    	} else {
-    		done = false;
-    	}
-    	
-    	if (worldObj != null) {
-    		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-    	}
-    	
-    	if (currentPattern == null) {
-    		currentPatternId = 0;
-    	} else {
-    		currentPatternId = currentPattern.getId();
-    	}
-    	
-		if (APIProxy.isServerSide()) {
-			sendNetworkUpdate ();
+	public void computeRecipe() {
+		if (APIProxy.isClient(worldObj)) {
+			return;
 		}
-    }
-    
-    @Override
-    public ItemStack decrStackSize(int i, int j)
-    {
-        if(contents[i] != null) {
-            if(contents[i].stackSize <= j) {
-                ItemStack itemstack = contents[i];
-                contents[i] = null;
-//                onInventoryChanged();
-                
-                computeRecipe ();
-                                
-                return itemstack;
-            }
-            
-            ItemStack itemstack1 = contents[i].splitStack(j);
-            
-            if(contents[i].stackSize == 0) {
-                contents[i] = null;
-            }
-//            onInventoryChanged();
-            
-            computeRecipe ();
-            
-            return itemstack1;
-        } else
-        {
-            return null;
-        }
-    }
 
-    @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack)
-    {
-        contents[i] = itemstack;
-        if(itemstack != null && itemstack.stackSize > getInventoryStackLimit())
-        {
-            itemstack.stackSize = getInventoryStackLimit();
-        }
-        
-        computeRecipe ();     
-//        onInventoryChanged();
-    }
+		IFillerPattern newPattern = FillerManager.registry.findMatchingRecipe(this);
 
-    @Override
+		if (newPattern == currentPattern) {
+			return;
+		}
+
+		currentPattern = newPattern;
+
+		if (currentPattern == null || forceDone) {
+			done = lastMode != Mode.Loop;
+			forceDone = false;
+		} else {
+			done = false;
+		}
+
+		if (worldObj != null) {
+			worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+		}
+
+		if (currentPattern == null) {
+			currentPatternId = 0;
+		} else {
+			currentPatternId = currentPattern.getId();
+		}
+
+		if (APIProxy.isServerSide()) {
+			sendNetworkUpdate();
+		}
+	}
+
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		if (contents[i] != null) {
+			if (contents[i].stackSize <= j) {
+				ItemStack itemstack = contents[i];
+				contents[i] = null;
+				// onInventoryChanged();
+
+				computeRecipe();
+
+				return itemstack;
+			}
+
+			ItemStack itemstack1 = contents[i].splitStack(j);
+
+			if (contents[i].stackSize == 0) {
+				contents[i] = null;
+			}
+			// onInventoryChanged();
+
+			computeRecipe();
+
+			return itemstack1;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		contents[i] = itemstack;
+		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
+			itemstack.stackSize = getInventoryStackLimit();
+		}
+
+		computeRecipe();
+		// onInventoryChanged();
+	}
+
+	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if(contents[slot] == null)
+		if (contents[slot] == null)
 			return null;
 		ItemStack toReturn = contents[slot];
 		contents[slot] = null;
 		return toReturn;
-	}	
+	}
 
-    @Override
-    public String getInvName()
-    {
-        return "Filler";
-    }
+	@Override
+	public String getInvName() {
+		return "Filler";
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        
-        Utils.readStacksFromNBT(nbttagcompound, "Items", contents);
-        
-        if (nbttagcompound.hasKey("box")) {
-        	box.initialize(nbttagcompound.getCompoundTag("box"));
-        }        
-        
-        done = nbttagcompound.getBoolean("done");
-        lastMode = Mode.values() [nbttagcompound.getByte("lastMode")];
-        
-        forceDone = done;
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
-        
-        Utils.writeStacksToNBT(nbttagcompound, "Items", contents);
-        
-        if (box != null) {
-        	NBTTagCompound boxStore = new NBTTagCompound();
-        	box.writeToNBT(boxStore);
-        	nbttagcompound.setTag("box", boxStore);
-        }
-        
-        nbttagcompound.setBoolean("done", done);
-        nbttagcompound.setByte("lastMode", (byte) lastMode.ordinal());
-    }
+		Utils.readStacksFromNBT(nbttagcompound, "Items", contents);
 
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
+		if (nbttagcompound.hasKey("box")) {
+			box.initialize(nbttagcompound.getCompoundTag("box"));
+		}
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        if(worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
-            return false;
-        }
-        return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
-    }
-    
-    @Override
-    public void invalidate () {
-    	destroy ();
-    }
-    
-    @Override
-    public void destroy () {
-    	if (box != null) {
-    		box.deleteLasers();
-    	}
-    }
+		done = nbttagcompound.getBoolean("done");
+		lastMode = Mode.values()[nbttagcompound.getByte("lastMode")];
+
+		forceDone = done;
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+
+		Utils.writeStacksToNBT(nbttagcompound, "Items", contents);
+
+		if (box != null) {
+			NBTTagCompound boxStore = new NBTTagCompound();
+			box.writeToNBT(boxStore);
+			nbttagcompound.setTag("box", boxStore);
+		}
+
+		nbttagcompound.setBoolean("done", done);
+		nbttagcompound.setByte("lastMode", (byte) lastMode.ordinal());
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
+			return false;
+		}
+		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
+	}
+
+	@Override
+	public void invalidate() {
+		destroy();
+	}
+
+	@Override
+	public void destroy() {
+		if (box != null) {
+			box.deleteLasers();
+		}
+	}
 
 	@Override
 	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
 		StackUtil stackUtil = new StackUtil(stack);
-		
+
 		boolean added = false;
-		
-		for (int i = 9; i < contents.length;++i) {
+
+		for (int i = 9; i < contents.length; ++i) {
 			if (stackUtil.tryAdding(this, i, doAdd, false)) {
 				added = true;
 				break;
 			}
 		}
-		
+
 		if (added) {
 			if (!doAdd) {
 				return true;
@@ -328,20 +320,20 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 				return true;
 			} else {
 				addItem(stack, added, from);
-				
+
 				return true;
 			}
 		}
-		
+
 		if (!added) {
-			for (int i = 9; i < contents.length;++i) {
+			for (int i = 9; i < contents.length; ++i) {
 				if (stackUtil.tryAdding(this, i, doAdd, true)) {
 					added = true;
 					break;
 				}
 			}
 		}
-		
+
 		if (added) {
 			if (!doAdd) {
 				return true;
@@ -349,52 +341,52 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 				return true;
 			} else {
 				addItem(stack, added, from);
-				
+
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
 	@Override
 	public ItemStack extractItem(boolean doRemove, Orientations from) {
 		for (int i = 9; i < contents.length; ++i) {
-			if (contents [i] != null) {
+			if (contents[i] != null) {
 				if (doRemove) {
 					return decrStackSize(i, 1);
 				} else {
-					return contents [i];
+					return contents[i];
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
-		
-		super.handleDescriptionPacket(packet);		
-		
-		currentPattern = FillerManager.registry.getPattern(currentPatternId);		
+
+		super.handleDescriptionPacket(packet);
+
+		currentPattern = FillerManager.registry.getPattern(currentPatternId);
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-		
+
 		if (!initialized && box.isInitialized()) {
-			box.createLasers(worldObj, LaserKind.Stripes);			
+			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
-		
+
 		super.handleUpdatePacket(packet);
-		
+
 		currentPattern = FillerManager.registry.getPattern(currentPatternId);
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-		
+
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
@@ -402,7 +394,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void setPowerProvider(PowerProvider provider) {
-		powerProvider = provider;		
+		powerProvider = provider;
 	}
 
 	@Override
@@ -427,21 +419,21 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void openChest() {
-		
+
 	}
 
 	@Override
 	public void closeChest() {
-		
+
 	}
-	
+
 	@Override
 	public int powerRequest() {
 		if (isActive()) {
 			return powerProvider.maxEnergyReceived;
 		} else {
 			return 0;
-		}		
+		}
 	}
 
 	@Override
@@ -452,11 +444,11 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			lastMode = ActionMachineControl.Mode.Off;
 		} else if (action == BuildCraftCore.actionLoop) {
 			lastMode = ActionMachineControl.Mode.Loop;
-		}		
+		}
 	}
 
 	@Override
-	public boolean allowActions () {
+	public boolean allowActions() {
 		return true;
 	}
 }

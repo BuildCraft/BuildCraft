@@ -23,13 +23,13 @@ public abstract class PipeTransport {
 	public World worldObj;
 	public TileGenericPipe container;
 
-	public void setPosition (int xCoord, int yCoord, int zCoord) {
+	public void setPosition(int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
 	}
 
-	public void setWorld (World worldObj) {
+	public void setWorld(World worldObj) {
 		this.worldObj = worldObj;
 	}
 

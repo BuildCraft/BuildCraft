@@ -61,16 +61,15 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		super.updateEntity();
 
 		for (Orientations o : Orientations.dirs())
-			if (Utils.checkPipesConnections(container,
-					container.getTile(o))) {
+			if (Utils.checkPipesConnections(container, container.getTile(o))) {
 				TileEntity tile = container.getTile(o);
 
 				if (tile instanceof TileGenericPipe) {
 					if (((TileGenericPipe) tile).pipe == null) {
 						System.out.println("PipePowerWood.pipe was null, this used to cause a NPE crash)");
-						continue;	//Null pointer protection
+						continue; // Null pointer protection
 					}
-					
+
 					PipeTransportPower pow = (PipeTransportPower) ((TileGenericPipe) tile).pipe.transport;
 
 					float energyToRemove = 0;
@@ -84,8 +83,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 					float energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
 
-					pow.receiveEnergy(o.reverse(),
-							energyUsed);
+					pow.receiveEnergy(o.reverse(), energyUsed);
 
 					((PipeTransportPower) transport).displayPower[o.ordinal()] += energyUsed;
 				}

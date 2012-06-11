@@ -19,17 +19,16 @@ import net.minecraft.src.buildcraft.api.IBptContext;
 public class BptBlockCustomStack extends BptBlock {
 
 	final ItemStack customStack;
-	
-	public BptBlockCustomStack (int blockId, ItemStack customStack) {
-		super (blockId);
-		
+
+	public BptBlockCustomStack(int blockId, ItemStack customStack) {
+		super(blockId);
+
 		this.customStack = customStack;
 	}
-	
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
-		requirements.add (customStack.copy());
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(customStack.copy());
 	}
-	
+
 }

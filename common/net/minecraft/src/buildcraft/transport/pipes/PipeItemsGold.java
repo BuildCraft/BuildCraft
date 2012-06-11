@@ -30,9 +30,7 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public int getMainBlockTexture() {
-		if (worldObj != null
-				&& worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord,
-						zCoord))
+		if (worldObj != null && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
 			return 1 * 16 + 14;
 		else
 			return 1 * 16 + 4;
@@ -51,13 +49,11 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 		if (BuildCraftTransport.alwaysConnectPipes)
 			return super.isPipeConnected(tile);
 		else
-			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold))
-					&& super.isPipeConnected(tile);
+			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
 	}
 
 	@Override
-	public LinkedList<Orientations> filterPossibleMovements(
-			LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
 			EntityPassiveItem item) {
 		return possibleOrientations;
 	}

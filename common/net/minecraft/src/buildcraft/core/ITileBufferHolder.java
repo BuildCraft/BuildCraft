@@ -14,12 +14,12 @@ import net.minecraft.src.buildcraft.api.Orientations;
 
 public interface ITileBufferHolder {
 
-	public void blockRemoved (Orientations from);
+	public void blockRemoved(Orientations from);
 
-	public void blockCreated (Orientations from, int blockID, TileEntity tile);
+	public void blockCreated(Orientations from, int blockID, TileEntity tile);
 
-	public int getBlockId (Orientations to);
+	public int getBlockId(Orientations to);
 
-	public TileEntity getTile (Orientations to);
+	public TileEntity getTile(Orientations to);
 
 }

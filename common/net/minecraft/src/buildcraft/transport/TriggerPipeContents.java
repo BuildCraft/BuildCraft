@@ -9,25 +9,27 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.PipeTransportLiquids.LiquidBuffer;
 
 public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 
-	public enum Kind {Empty, ContainsItems, ContainsLiquids, ContainsEnergy};
+	public enum Kind {
+		Empty, ContainsItems, ContainsLiquids, ContainsEnergy
+	};
 
 	Kind kind;
 
-	public TriggerPipeContents (int id, Kind kind) {
-		super (id);
+	public TriggerPipeContents(int id, Kind kind) {
+		super(id);
 		this.kind = kind;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		switch (kind) {
 		case Empty:
 			return 3 * 16 + 0;
@@ -42,7 +44,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean hasParameter () {
+	public boolean hasParameter() {
 		switch (kind) {
 		case ContainsItems:
 		case ContainsLiquids:
@@ -78,12 +80,9 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 				return transportItems.travelingEntities.isEmpty();
 			else if (kind == Kind.ContainsItems)
 				if (parameter != null && parameter.getItem() != null) {
-					for (EntityData data : transportItems.travelingEntities
-							.values())
-						if (data.item.item.itemID == parameter.getItem()
-								.itemID
-								&& data.item.item.getItemDamage() == parameter
-										.getItem().getItemDamage())
+					for (EntityData data : transportItems.travelingEntities.values())
+						if (data.item.item.itemID == parameter.getItem().itemID
+								&& data.item.item.getItemDamage() == parameter.getItem().getItemDamage())
 							return true;
 				} else
 					return !transportItems.travelingEntities.isEmpty();
@@ -132,7 +131,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 
 }

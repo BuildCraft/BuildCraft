@@ -9,21 +9,22 @@
 
 package net.minecraft.src.buildcraft.api;
 
-public abstract class Action {	
+public abstract class Action {
+
 	public int id;
-	
-	public Action (int id) {
+
+	public Action(int id) {
 		this.id = id;
-		BuildCraftAPI.actions [id] = this;
+		BuildCraftAPI.actions[id] = this;
 	}
-	
-	public abstract String getTexture ();
-	
-	public int getIndexInTexture () {
+
+	public abstract String getTexture();
+
+	public int getIndexInTexture() {
 		return 0;
 	}
-	
-	public boolean hasParameter () {
+
+	public boolean hasParameter() {
 		return false;
 	}
 

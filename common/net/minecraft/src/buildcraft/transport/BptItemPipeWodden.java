@@ -24,7 +24,7 @@ public class BptItemPipeWodden extends BptItem {
 	}
 
 	@Override
-	public void addRequirements(BptSlotInfo slot, LinkedList <ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
 
 	}
 
@@ -38,8 +38,7 @@ public class BptItemPipeWodden extends BptItem {
 		int orientation = slot.meta & 7;
 		int others = slot.meta - orientation;
 
-		slot.meta = Orientations.values()[orientation].rotateLeft().ordinal()
-				+ others;
+		slot.meta = Orientations.values()[orientation].rotateLeft().ordinal() + others;
 	}
 
 }

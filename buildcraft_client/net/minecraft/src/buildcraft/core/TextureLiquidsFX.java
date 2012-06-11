@@ -9,17 +9,17 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import cpw.mods.fml.client.FMLTextureFX;
 import net.minecraft.src.RenderEngine;
-import net.minecraft.src.TextureFX;
 import net.minecraft.src.forge.MinecraftForgeClient;
+import cpw.mods.fml.client.FMLTextureFX;
 
 public class TextureLiquidsFX extends FMLTextureFX {
+
 	private final int redMin, redMax, greenMin, greenMax, blueMin, blueMax;
 	private final String texture;
 
-	public TextureLiquidsFX(int redMin, int redMax, int greenMin, int greenMax,
-			int blueMin, int blueMax, int spriteIndex, String texture) {
+	public TextureLiquidsFX(int redMin, int redMax, int greenMin, int greenMax, int blueMin, int blueMax, int spriteIndex,
+			String texture) {
 		super(spriteIndex);
 
 		this.redMin = redMin;
@@ -35,13 +35,13 @@ public class TextureLiquidsFX extends FMLTextureFX {
 	@Override
 	public void setup() {
 		super.setup();
-		
+
 		red = new float[tileSizeSquare];
 		green = new float[tileSizeSquare];
 		blue = new float[tileSizeSquare];
 		alpha = new float[tileSizeSquare];
 	}
-	
+
 	@Override
 	public void bindImage(RenderEngine renderengine) {
 		MinecraftForgeClient.bindTexture(texture);
@@ -49,34 +49,34 @@ public class TextureLiquidsFX extends FMLTextureFX {
 
 	@Override
 	public void onTick() {
-		
-        for (int i = 0; i < tileSizeBase; ++i) {
-            for (int j = 0; j < tileSizeBase; ++j) {
-                float var3 = 0.0F;
 
-                for (int k = i - 1; k <= i + 1; ++k) {
-                    int r = k & tileSizeMask;
-                    int g = j & tileSizeMask;
-                    var3 += this.red[r + g * tileSizeBase];
-                }
+		for (int i = 0; i < tileSizeBase; ++i) {
+			for (int j = 0; j < tileSizeBase; ++j) {
+				float var3 = 0.0F;
 
-                this.green[i + j * tileSizeBase] = var3 / 3.3F + this.blue[i + j * tileSizeBase] * 0.8F;
-            }
-        }
+				for (int k = i - 1; k <= i + 1; ++k) {
+					int r = k & tileSizeMask;
+					int g = j & tileSizeMask;
+					var3 += this.red[r + g * tileSizeBase];
+				}
 
-        for (int i = 0; i < tileSizeBase; ++i) {
-            for (int j = 0; j < tileSizeBase; ++j) {
-                this.blue[i + j * tileSizeBase] += this.alpha[i + j * tileSizeBase] * 0.05F;
+				this.green[i + j * tileSizeBase] = var3 / 3.3F + this.blue[i + j * tileSizeBase] * 0.8F;
+			}
+		}
 
-                if (this.blue[i + j * tileSizeBase] < 0.0F)
-                    this.blue[i + j * tileSizeBase] = 0.0F;
+		for (int i = 0; i < tileSizeBase; ++i) {
+			for (int j = 0; j < tileSizeBase; ++j) {
+				this.blue[i + j * tileSizeBase] += this.alpha[i + j * tileSizeBase] * 0.05F;
 
-                this.alpha[i + j * tileSizeBase] -= 0.1F;
+				if (this.blue[i + j * tileSizeBase] < 0.0F)
+					this.blue[i + j * tileSizeBase] = 0.0F;
 
-                if (Math.random() < 0.05D)
-                    this.alpha[i + j * tileSizeBase] = 0.5F;
-            }
-        }
+				this.alpha[i + j * tileSizeBase] -= 0.1F;
+
+				if (Math.random() < 0.05D)
+					this.alpha[i + j * tileSizeBase] = 0.5F;
+			}
+		}
 
 		float af[] = green;
 		green = red;

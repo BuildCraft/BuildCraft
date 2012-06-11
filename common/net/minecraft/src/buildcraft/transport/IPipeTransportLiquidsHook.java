@@ -12,5 +12,6 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.buildcraft.api.Orientations;
 
 public interface IPipeTransportLiquidsHook {
+
 	public int fill(Orientations from, int quantity, int id, boolean doFill);
 }

@@ -28,47 +28,44 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	final static private int displayStages = 100;
 
-	private HashMap<Integer, int []> stage = new HashMap<Integer, int []> ();
+	private HashMap<Integer, int[]> stage = new HashMap<Integer, int[]>();
 
-    private int [] getDisplayLists(int liquidId, World world) {
+	private int[] getDisplayLists(int liquidId, World world) {
 
-    	if (stage.containsKey(liquidId))
+		if (stage.containsKey(liquidId))
 			return stage.get(liquidId);
 
-    	int [] d = new int [displayStages];
-    	stage.put(liquidId, d);
+		int[] d = new int[displayStages];
+		stage.put(liquidId, d);
 
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
-			block.texture = Block.blocksList [liquidId].blockIndexInTexture;
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
+			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 		else
-			block.texture = Item.itemsList [liquidId].getIconFromDamage(0);
+			block.texture = Item.itemsList[liquidId].getIconFromDamage(0);
 
-    	for (int s = 0; s < displayStages; ++s) {
-    		d [s] = GLAllocation.generateDisplayLists(1);
-    		GL11.glNewList(d [s], 4864 /*GL_COMPILE*/);
+		for (int s = 0; s < displayStages; ++s) {
+			d[s] = GLAllocation.generateDisplayLists(1);
+			GL11.glNewList(d[s], 4864 /* GL_COMPILE */);
 
-    		block.minX = 0.125 + 0.01;
-    		block.minY = 0;
-    		block.minZ = 0.125 + 0.01;
+			block.minX = 0.125 + 0.01;
+			block.minY = 0;
+			block.minZ = 0.125 + 0.01;
 
-    		block.maxX = 0.875 - 0.01;
-    		block.maxY = (float) s / (float) displayStages;
-    		block.maxZ = 0.875 - 0.01;
+			block.maxX = 0.875 - 0.01;
+			block.maxY = (float) s / (float) displayStages;
+			block.maxZ = 0.875 - 0.01;
 
-    		RenderEntityBlock.renderBlock(block, world, 0,
-    				0, 0, false, true);
+			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
 
-    		GL11.glEndList();
-    	}
+			GL11.glEndList();
+		}
 
-    	return d;
-    }
+		return d;
+	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
-			double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
 		TileTank tank = ((TileTank) tileentity);
 
@@ -77,31 +74,28 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		if (tank.getLiquidQuantity() == 0 || liquidId == 0)
 			return;
 
-		int [] d = getDisplayLists(tank.getLiquidId(), tileentity.worldObj);
+		int[] d = getDisplayLists(tank.getLiquidId(), tileentity.worldObj);
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /*GL_LIGHTING*/);
+		GL11.glDisable(2896 /* GL_LIGHTING */);
 
 		Object o = null;
 
-		if (liquidId < Block.blocksList.length
-				&& Block.blocksList[liquidId] != null)
-			o = Block.blocksList [liquidId];
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
+			o = Block.blocksList[liquidId];
 		else
-			o = Item.itemsList [liquidId];
+			o = Item.itemsList[liquidId];
 
 		if (o instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o)
-					.getTextureFile());
+			MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
 		else
 			MinecraftForgeClient.bindTexture("/terrain.png");
 
-		GL11.glTranslatef((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);
+		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 
-		GL11.glCallList(d[(int) ((float) tank.getLiquidQuantity()
-				/ (float) (tank.getTankCapacity()) * (displayStages - 1))]);
+		GL11.glCallList(d[(int) ((float) tank.getLiquidQuantity() / (float) (tank.getTankCapacity()) * (displayStages - 1))]);
 
-		GL11.glEnable(2896 /*GL_LIGHTING*/);
+		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
 	}
 }

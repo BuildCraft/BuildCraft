@@ -35,48 +35,48 @@ public class EntityBlock extends Entity {
 		super(world);
 		setPosition(xPos, yPos, zPos);
 	}
-    public EntityBlock (World world, double i, double j, double k, double iSize, double jSize, double kSize) {
-    	this (world);
 
-        motionX = 0.0D;
-        motionY = 0.0D;
-        motionZ = 0.0D;
-        prevPosX = i;
-        prevPosY = j;
-        prevPosZ = k;
-        this.iSize = iSize;
-        this.jSize = jSize;
-        this.kSize = kSize;
+	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
+		this(world);
 
-        setPosition(i, j, k);
-    }
+		motionX = 0.0D;
+		motionY = 0.0D;
+		motionZ = 0.0D;
+		prevPosX = i;
+		prevPosY = j;
+		prevPosZ = k;
+		this.iSize = iSize;
+		this.jSize = jSize;
+		this.kSize = kSize;
 
-	public EntityBlock(World world, double i, double j, double k, double iSize,
-			double jSize, double kSize, int textureID) {
-    	this (world, i, j, k, iSize, jSize, kSize);
+		setPosition(i, j, k);
+	}
 
-    	texture = textureID;
-    }
+	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, int textureID) {
+		this(world, i, j, k, iSize, jSize, kSize);
 
-    @Override
-    public void setPosition(double d, double d1, double d2) {
-    	posX = d;
-    	posY = d1;
-    	posZ = d2;
+		texture = textureID;
+	}
 
-        boundingBox.minX = posX;
-        boundingBox.minY = posY;
-        boundingBox.minZ = posZ;
+	@Override
+	public void setPosition(double d, double d1, double d2) {
+		posX = d;
+		posY = d1;
+		posZ = d2;
 
-        boundingBox.maxX = posX + iSize;
-        boundingBox.maxY = posY + jSize;
-        boundingBox.maxZ = posZ + kSize;
-    }
+		boundingBox.minX = posX;
+		boundingBox.minY = posY;
+		boundingBox.minZ = posZ;
 
-    @Override
-    public void moveEntity(double d, double d1, double d2) {
-    	setPosition (posX + d, posY + d1, posZ + d2);
-    }
+		boundingBox.maxX = posX + iSize;
+		boundingBox.maxY = posY + jSize;
+		boundingBox.maxZ = posZ + kSize;
+	}
+
+	@Override
+	public void moveEntity(double d, double d1, double d2) {
+		setPosition(posX + d, posY + d1, posZ + d2);
+	}
 
 	@Override
 	protected void entityInit() {
@@ -99,7 +99,7 @@ public class EntityBlock extends Entity {
 	}
 
 	@Override
-    public boolean canBeCollidedWith() {
-        return !isDead;
-    }
+	public boolean canBeCollidedWith() {
+		return !isDead;
+	}
 }

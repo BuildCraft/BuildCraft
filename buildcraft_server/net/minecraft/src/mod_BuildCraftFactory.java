@@ -21,7 +21,7 @@ public class mod_BuildCraftFactory extends NetworkMod {
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		super.modsLoaded();
 
 		BuildCraftFactory.initialize();
@@ -37,6 +37,13 @@ public class mod_BuildCraftFactory extends NetworkMod {
 		BuildCraftFactory.load();
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 }

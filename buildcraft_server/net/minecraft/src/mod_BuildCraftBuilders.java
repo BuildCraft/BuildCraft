@@ -16,7 +16,7 @@ public class mod_BuildCraftBuilders extends NetworkMod {
 
 	public static mod_BuildCraftBuilders instance;
 
-	public mod_BuildCraftBuilders () {
+	public mod_BuildCraftBuilders() {
 		instance = this;
 	}
 
@@ -26,7 +26,7 @@ public class mod_BuildCraftBuilders extends NetworkMod {
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		super.modsLoaded();
 
 		BuildCraftBuilders.initialize();
@@ -37,6 +37,13 @@ public class mod_BuildCraftBuilders extends NetworkMod {
 		return DefaultProps.VERSION;
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 }

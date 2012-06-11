@@ -21,7 +21,7 @@ public class BptContext implements IBptContext {
 	private Box box;
 	private World world;
 
-	public BptContext (World world, BptBlueprint bpt, Box box) {
+	public BptContext(World world, BptBlueprint bpt, Box box) {
 		this.bpt = bpt;
 		this.box = box;
 		this.world = world;
@@ -51,7 +51,7 @@ public class BptContext implements IBptContext {
 
 	@Override
 	public Position rotatePositionLeft(Position pos) {
-		return new Position ((box.sizeZ() - 1) - pos.z, pos.y, pos.x);
+		return new Position((box.sizeZ() - 1) - pos.z, pos.y, pos.x);
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class BptContext implements IBptContext {
 		return world;
 	}
 
-	public void rotateLeft () {
+	public void rotateLeft() {
 		box = box.rotateLeft();
 	}
 }

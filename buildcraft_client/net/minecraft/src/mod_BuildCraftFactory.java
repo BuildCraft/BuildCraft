@@ -34,31 +34,26 @@ public class mod_BuildCraftFactory extends NetworkMod {
 	}
 
 	@Override
-	public void modsLoaded () {
+	public void modsLoaded() {
 		super.modsLoaded();
 
 		BuildCraftFactory.initialize();
 
-		//CoreProxy.registerGUI(this, Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
+		// CoreProxy.registerGUI(this,
+		// Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
 
-		ModLoader
-		.registerTileEntity(TileTank.class,
-				"net.minecraft.src.buildcraft.factory.TileTank",
-				new RenderTank());
+		ModLoader.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank", new RenderTank());
 
-		ModLoader.registerTileEntity(TileRefinery.class,
-				"net.minecraft.src.buildcraft.factory.Refinery",
+		ModLoader.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery", new RenderRefinery());
+
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0),
 				new RenderRefinery());
 
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
-				BuildCraftFactory.refineryBlock, 0), new RenderRefinery());
-		
 		ModLoader.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper", new RenderHopper());
-		
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(
-				BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 
-		//Detect the presence of NEI and add overlay for the Autocrafting Table
+		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
+
+		// Detect the presence of NEI and add overlay for the Autocrafting Table
 		try {
 			Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
 			Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
@@ -67,8 +62,9 @@ public class mod_BuildCraftFactory extends NetworkMod {
 		} catch (Exception e) {
 			ModLoader.getLogger().fine("NEI not detected.");
 		}
-		//Direct call (for reference)
-		//DefaultOverlayRenderer.registerGuiOverlay(GuiAutoCrafting.class, "crafting", 5, 11);
+		// Direct call (for reference)
+		// DefaultOverlayRenderer.registerGuiOverlay(GuiAutoCrafting.class,
+		// "crafting", 5, 11);
 
 	}
 
@@ -80,28 +76,29 @@ public class mod_BuildCraftFactory extends NetworkMod {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void addRenderer(Map map) {
-    	map.put (EntityMechanicalArm.class, new RenderVoid());
-    }
+		map.put(EntityMechanicalArm.class, new RenderVoid());
+	}
 
 	/*
-	@Override
-    public GuiScreen handleGUI(int i) {
-    	if (Utils.intToPacketId(i) == PacketIds.AutoCraftingGUI) {
-			return new GuiAutoCrafting(
-					ModLoader.getMinecraftInstance().thePlayer.inventory,
-					ModLoader.getMinecraftInstance().theWorld,
-					new TileAutoWorkbench());
-    	} else {
-    		return null;
-    	}
-    }
-    */
+	 * @Override public GuiScreen handleGUI(int i) { if (Utils.intToPacketId(i)
+	 * == PacketIds.AutoCraftingGUI) { return new GuiAutoCrafting(
+	 * ModLoader.getMinecraftInstance().thePlayer.inventory,
+	 * ModLoader.getMinecraftInstance().theWorld, new TileAutoWorkbench()); }
+	 * else { return null; } }
+	 */
 
 	@Override
 	public void load() {
 		BuildCraftFactory.load();
 	}
 
-	@Override public boolean clientSideRequired() { return true; }
-	@Override public boolean serverSideRequired() { return true; }
+	@Override
+	public boolean clientSideRequired() {
+		return true;
+	}
+
+	@Override
+	public boolean serverSideRequired() {
+		return true;
+	}
 }

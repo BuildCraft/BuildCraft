@@ -15,16 +15,14 @@ import net.minecraft.src.buildcraft.api.IBptContext;
 public class BptBlockPiston extends BptBlockRotateMeta {
 
 	public BptBlockPiston(int blockId) {
-		super(blockId, new int [] {2, 5, 3, 4}, true);
+		super(blockId, new int[] { 2, 5, 3, 4 }, true);
 	}
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		int meta = slot.meta & 7;
 
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y,
-				slot.z, slot.blockId, meta);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, meta);
 	}
-
 
 }

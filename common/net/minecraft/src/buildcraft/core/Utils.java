@@ -47,16 +47,16 @@ public class Utils {
 	 * Depending on the kind of item in the pipe, set the floor at a different
 	 * level to optimize graphical aspect.
 	 */
-	public static float getPipeFloorOf (ItemStack item) {
+	public static float getPipeFloorOf(ItemStack item) {
 		return pipeMinPos;
 	}
 
-	public static Orientations get2dOrientation (Position pos1, Position pos2) {
+	public static Orientations get2dOrientation(Position pos1, Position pos2) {
 		double Dx = pos1.x - pos2.x;
-    	double Dz = pos1.z - pos2.z;
-    	double angle = Math.atan2(Dz, Dx) / Math.PI * 180 + 180;
+		double Dz = pos1.z - pos2.z;
+		double angle = Math.atan2(Dz, Dx) / Math.PI * 180 + 180;
 
-    	if (angle < 45 || angle > 315)
+		if (angle < 45 || angle > 315)
 			return Orientations.XPos;
 		else if (angle < 135)
 			return Orientations.ZPos;
@@ -66,12 +66,12 @@ public class Utils {
 			return Orientations.ZNeg;
 	}
 
-	public static Orientations get3dOrientation (Position pos1, Position pos2) {
+	public static Orientations get3dOrientation(Position pos1, Position pos2) {
 		double Dx = pos1.x - pos2.x;
-    	double Dy = pos1.y - pos2.y;
-    	double angle = Math.atan2(Dy, Dx) / Math.PI * 180 + 180;
+		double Dy = pos1.y - pos2.y;
+		double angle = Math.atan2(Dy, Dx) / Math.PI * 180 + 180;
 
-    	if (angle > 45 && angle < 135)
+		if (angle > 45 && angle < 135)
 			return Orientations.YPos;
 		else if (angle > 225 && angle < 315)
 			return Orientations.YNeg;
@@ -80,28 +80,26 @@ public class Utils {
 	}
 
 	/**
-	 * Look around the tile given in parameter in all 6 position, tries to
-	 * add the items to a random pipe entry around. Will make sure that the
-	 * location from which the items are coming from (identified by the from
-	 * parameter) isn't used again so that entities doesn't go backwards.
-	 * Returns true if successful, false otherwise.
+	 * Look around the tile given in parameter in all 6 position, tries to add
+	 * the items to a random pipe entry around. Will make sure that the location
+	 * from which the items are coming from (identified by the from parameter)
+	 * isn't used again so that entities doesn't go backwards. Returns true if
+	 * successful, false otherwise.
 	 */
-	public static boolean addToRandomPipeEntry (TileEntity tile, Orientations from, ItemStack items) {
+	public static boolean addToRandomPipeEntry(TileEntity tile, Orientations from, ItemStack items) {
 		World w = tile.worldObj;
 
-		LinkedList <Orientations> possiblePipes = new LinkedList <Orientations> ();
+		LinkedList<Orientations> possiblePipes = new LinkedList<Orientations>();
 
 		for (int j = 0; j < 6; ++j) {
 			if (from.reverse().ordinal() == j)
 				continue;
 
-			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
-					Orientations.values()[j]);
+			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, Orientations.values()[j]);
 
 			pos.moveForwards(1.0);
 
-			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems())
 				possiblePipes.add(Orientations.values()[j]);
@@ -110,10 +108,8 @@ public class Utils {
 		if (possiblePipes.size() > 0) {
 			int choice = w.rand.nextInt(possiblePipes.size());
 
-			Position entityPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
-					possiblePipes.get(choice));
-			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord,
-					possiblePipes.get(choice));
+			Position entityPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
+			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
 
 			entityPos.x += 0.5;
 			entityPos.y += getPipeFloorOf(items);
@@ -123,11 +119,9 @@ public class Utils {
 
 			pipePos.moveForwards(1.0);
 
-			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity(
-					(int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
+			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity((int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
 
-			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x,
-					entityPos.y, entityPos.z, items);
+			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, items);
 
 			pipeEntry.entityEntering(entity, entityPos.orientation);
 			items.stackSize = 0;
@@ -136,91 +130,88 @@ public class Utils {
 			return false;
 	}
 
-	public static void dropItems (World world, ItemStack stack, int i, int j, int k) {
+	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-		EntityItem entityitem = new EntityItem(world, i + d,
-				j + d1, k + d2, stack);
+		EntityItem entityitem = new EntityItem(world, i + d, j + d1, k + d2, stack);
 		entityitem.delayBeforeCanPickup = 10;
 
 		world.spawnEntityInWorld(entityitem);
 	}
 
-	public static void dropItems (World world, IInventory inventory, int i, int j, int k) {
+	public static void dropItems(World world, IInventory inventory, int i, int j, int k) {
 		for (int l = 0; l < inventory.getSizeInventory(); ++l) {
 			ItemStack items = inventory.getStackInSlot(l);
 
 			if (items != null && items.stackSize > 0)
-				dropItems (world, inventory.getStackInSlot(l).copy(), i, j, k);
-    	}
+				dropItems(world, inventory.getStackInSlot(l).copy(), i, j, k);
+		}
 	}
 
-
-    public static TileEntity getTile (World world, Position pos, Orientations step) {
-    	Position tmp = new Position (pos);
-    	tmp.orientation = step;
-    	tmp.moveForwards(1.0);
+	public static TileEntity getTile(World world, Position pos, Orientations step) {
+		Position tmp = new Position(pos);
+		tmp.orientation = step;
+		tmp.moveForwards(1.0);
 
 		return world.getBlockTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
-    }
+	}
 
 	public static IInventory getInventory(IInventory inv) {
-		if(inv instanceof TileEntityChest)
-		{
-			TileEntityChest chest = (TileEntityChest)inv;
-			Position pos = new Position (chest.xCoord, chest.yCoord, chest.zCoord);
+		if (inv instanceof TileEntityChest) {
+			TileEntityChest chest = (TileEntityChest) inv;
+			Position pos = new Position(chest.xCoord, chest.yCoord, chest.zCoord);
 			TileEntity tile;
 			IInventory chest2 = null;
 			tile = Utils.getTile(chest.worldObj, pos, Orientations.XNeg);
 			if (tile instanceof TileEntityChest)
-				chest2 = (IInventory)tile;
+				chest2 = (IInventory) tile;
 			tile = Utils.getTile(chest.worldObj, pos, Orientations.XPos);
 			if (tile instanceof TileEntityChest)
-				chest2 = (IInventory)tile;
+				chest2 = (IInventory) tile;
 			tile = Utils.getTile(chest.worldObj, pos, Orientations.ZNeg);
 			if (tile instanceof TileEntityChest)
-				chest2 = (IInventory)tile;
+				chest2 = (IInventory) tile;
 			tile = Utils.getTile(chest.worldObj, pos, Orientations.ZPos);
 			if (tile instanceof TileEntityChest)
-				chest2 = (IInventory)tile;
-			if(chest2 != null) return new InventoryLargeChest("", inv, chest2);
+				chest2 = (IInventory) tile;
+			if (chest2 != null)
+				return new InventoryLargeChest("", inv, chest2);
 		}
 		return inv;
 	}
 
-    public static IAreaProvider getNearbyAreaProvider (World world, int i, int j, int k) {
-    	TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
-    	TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);
-    	TileEntity a3 = world.getBlockTileEntity(i, j, k + 1);
-    	TileEntity a4 = world.getBlockTileEntity(i, j, k - 1);
-    	TileEntity a5 = world.getBlockTileEntity(i, j + 1, k);
-    	TileEntity a6 = world.getBlockTileEntity(i, j - 1, k);
+	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
+		TileEntity a1 = world.getBlockTileEntity(i + 1, j, k);
+		TileEntity a2 = world.getBlockTileEntity(i - 1, j, k);
+		TileEntity a3 = world.getBlockTileEntity(i, j, k + 1);
+		TileEntity a4 = world.getBlockTileEntity(i, j, k - 1);
+		TileEntity a5 = world.getBlockTileEntity(i, j + 1, k);
+		TileEntity a6 = world.getBlockTileEntity(i, j - 1, k);
 
-    	if (a1 instanceof IAreaProvider)
+		if (a1 instanceof IAreaProvider)
 			return (IAreaProvider) a1;
 
-    	if (a2 instanceof IAreaProvider)
+		if (a2 instanceof IAreaProvider)
 			return (IAreaProvider) a2;
 
-    	if (a3 instanceof IAreaProvider)
+		if (a3 instanceof IAreaProvider)
 			return (IAreaProvider) a3;
 
-    	if (a4 instanceof IAreaProvider)
+		if (a4 instanceof IAreaProvider)
 			return (IAreaProvider) a4;
 
-    	if (a5 instanceof IAreaProvider)
+		if (a5 instanceof IAreaProvider)
 			return (IAreaProvider) a5;
 
-    	if (a6 instanceof IAreaProvider)
+		if (a6 instanceof IAreaProvider)
 			return (IAreaProvider) a6;
 
-    	return null;
-    }
+		return null;
+	}
 
-	public static EntityBlock createLaser(World world, Position p1, Position p2,
-			LaserKind kind) {
+	public static EntityBlock createLaser(World world, Position p1, Position p2, LaserKind kind) {
 		if (p1.equals(p2))
 			return null;
 
@@ -258,58 +249,57 @@ public class Utils {
 		int texture = BuildCraftCore.redLaserTexture;
 
 		switch (kind) {
-			case Blue:
-				texture = BuildCraftCore.blueLaserTexture;
-				break;
+		case Blue:
+			texture = BuildCraftCore.blueLaserTexture;
+			break;
 
-			case Red:
-				texture = BuildCraftCore.redLaserTexture;
-				break;
+		case Red:
+			texture = BuildCraftCore.redLaserTexture;
+			break;
 
-			case Stripes:
-				texture = BuildCraftCore.stripesLaserTexture;
-				break;
+		case Stripes:
+			texture = BuildCraftCore.stripesLaserTexture;
+			break;
 		}
 
-		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize,
-				kSize, texture);
+		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize, kSize, texture);
 
 		world.spawnEntityInWorld(block);
 
 		return block;
 	}
 
-	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin,
-			double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
-		EntityBlock lasers [] = new EntityBlock [12];
-		Position [] p = new Position [8];
+	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax,
+			double zMax, LaserKind kind) {
+		EntityBlock lasers[] = new EntityBlock[12];
+		Position[] p = new Position[8];
 
-		p [0] = new Position(xMin, yMin, zMin);
-		p [1] = new Position(xMax, yMin, zMin);
-		p [2] = new Position(xMin, yMax, zMin);
-		p [3] = new Position(xMax, yMax, zMin);
-		p [4] = new Position(xMin, yMin, zMax);
-		p [5] = new Position(xMax, yMin, zMax);
-		p [6] = new Position(xMin, yMax, zMax);
-		p [7] = new Position(xMax, yMax, zMax);
+		p[0] = new Position(xMin, yMin, zMin);
+		p[1] = new Position(xMax, yMin, zMin);
+		p[2] = new Position(xMin, yMax, zMin);
+		p[3] = new Position(xMax, yMax, zMin);
+		p[4] = new Position(xMin, yMin, zMax);
+		p[5] = new Position(xMax, yMin, zMax);
+		p[6] = new Position(xMin, yMax, zMax);
+		p[7] = new Position(xMax, yMax, zMax);
 
-		lasers [0] = Utils.createLaser(world, p [0], p [1], kind);
-		lasers [1] = Utils.createLaser(world, p [0], p [2], kind);
-		lasers [2] = Utils.createLaser(world, p [2], p [3], kind);
-		lasers [3] = Utils.createLaser(world, p [1], p [3], kind);
-		lasers [4] = Utils.createLaser(world, p [4], p [5], kind);
-		lasers [5] = Utils.createLaser(world, p [4], p [6], kind);
-		lasers [6] = Utils.createLaser(world, p [5], p [7], kind);
-		lasers [7] = Utils.createLaser(world, p [6], p [7], kind);
-		lasers [8] = Utils.createLaser(world, p [0], p [4], kind);
-		lasers [9] = Utils.createLaser(world, p [1], p [5], kind);
-		lasers [10] = Utils.createLaser(world, p [2], p [6], kind);
-		lasers [11] = Utils.createLaser(world, p [3], p [7], kind);
+		lasers[0] = Utils.createLaser(world, p[0], p[1], kind);
+		lasers[1] = Utils.createLaser(world, p[0], p[2], kind);
+		lasers[2] = Utils.createLaser(world, p[2], p[3], kind);
+		lasers[3] = Utils.createLaser(world, p[1], p[3], kind);
+		lasers[4] = Utils.createLaser(world, p[4], p[5], kind);
+		lasers[5] = Utils.createLaser(world, p[4], p[6], kind);
+		lasers[6] = Utils.createLaser(world, p[5], p[7], kind);
+		lasers[7] = Utils.createLaser(world, p[6], p[7], kind);
+		lasers[8] = Utils.createLaser(world, p[0], p[4], kind);
+		lasers[9] = Utils.createLaser(world, p[1], p[5], kind);
+		lasers[10] = Utils.createLaser(world, p[2], p[6], kind);
+		lasers[11] = Utils.createLaser(world, p[3], p[7], kind);
 
 		return lasers;
 	}
 
-	public static void handleBufferedDescription (ISynchronizedTile tileSynch) {
+	public static void handleBufferedDescription(ISynchronizedTile tileSynch) {
 		TileEntity tile = (TileEntity) tileSynch;
 		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);
 
@@ -323,20 +313,18 @@ public class Utils {
 		}
 	}
 
-	public static int liquidId (int blockId) {
-		if (blockId == Block.waterStill.blockID
-				|| blockId == Block.waterMoving.blockID)
+	public static int liquidId(int blockId) {
+		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID)
 			return Block.waterStill.blockID;
-		else if (blockId == Block.lavaStill.blockID
-				|| blockId == Block.lavaMoving.blockID)
+		else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID)
 			return Block.lavaStill.blockID;
-		else if (Block.blocksList [blockId] instanceof ILiquid)
-			return ((ILiquid) Block.blocksList [blockId]).stillLiquidId();
+		else if (Block.blocksList[blockId] instanceof ILiquid)
+			return ((ILiquid) Block.blocksList[blockId]).stillLiquidId();
 		else
 			return 0;
 	}
 
-	public static int packetIdToInt (PacketIds id) {
+	public static int packetIdToInt(PacketIds id) {
 		switch (id) {
 		case DiamondPipeGUI:
 			return 70;
@@ -359,7 +347,7 @@ public class Utils {
 		}
 	}
 
-	public static PacketIds intToPacketId (int id) {
+	public static PacketIds intToPacketId(int id) {
 		switch (id) {
 		case 70:
 			return PacketIds.DiamondPipeGUI;
@@ -382,7 +370,7 @@ public class Utils {
 		}
 	}
 
-	public static void preDestroyBlock (World world, int i, int j, int k) {
+	public static void preDestroyBlock(World world, int i, int j, int k) {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 
 		if (tile instanceof IInventory && !APIProxy.isClient(world))
@@ -415,12 +403,10 @@ public class Utils {
 		else if (tile1.zCoord + 1 == tile2.zCoord)
 			o = Orientations.ZPos;
 
-		if (tile1 instanceof IPipeConnection
-				&& !((IPipeConnection) tile1).isPipeConnected(o))
+		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o))
 			return false;
 
-		if (tile2 instanceof IPipeConnection
-				&& !((IPipeConnection) tile2).isPipeConnected(o.reverse()))
+		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.reverse()))
 			return false;
 
 		return true;
@@ -432,57 +418,53 @@ public class Utils {
 		return checkPipesConnections(tile1, tile2);
 	}
 
-	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1,
-			int y1, int z1, int x2, int y2, int z2) {
+	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
 
-		Block b1 = Block.blocksList [blockAccess.getBlockId(x1, y1, z1)];
-		Block b2 = Block.blocksList [blockAccess.getBlockId(x2, y2, z2)];
+		Block b1 = Block.blocksList[blockAccess.getBlockId(x1, y1, z1)];
+		Block b2 = Block.blocksList[blockAccess.getBlockId(x2, y2, z2)];
 
 		if (!(b1 instanceof ILegacyPipeConnection) && !(b2 instanceof ILegacyPipeConnection))
 			return false;
 
 		if (b1 instanceof ILegacyPipeConnection
-				&& !((ILegacyPipeConnection) b1).isPipeConnected(blockAccess, x1, y1,
-						z1, x2, y2, z2))
+				&& !((ILegacyPipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2))
 			return false;
 
 		if (b2 instanceof ILegacyPipeConnection
-				&& !((ILegacyPipeConnection) b2).isPipeConnected(blockAccess, x2, y2,
-						z2, x1, y1, z1))
+				&& !((ILegacyPipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1))
 			return false;
 
 		return true;
 
 	}
 
-	public static void readStacksFromNBT (NBTTagCompound nbt, String name, ItemStack [] stacks) {
+	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = nbt.getTagList(name);
 
 		for (int i = 0; i < stacks.length; ++i)
 			if (i < nbttaglist.tagCount()) {
-				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist
-				.tagAt(i);
+				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(i);
 
 				stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
 			} else
 				stacks[i] = null;
 	}
 
-	public static void writeStacksToNBT (NBTTagCompound nbt, String name, ItemStack [] stacks) {
+	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
 
-    	for (int i = 0; i < stacks.length; ++i) {
-    		NBTTagCompound cpt = new NBTTagCompound ();
-    		nbttaglist.appendTag(cpt);
-    		if (stacks [i] != null)
-				stacks [i].writeToNBT(cpt);
+		for (int i = 0; i < stacks.length; ++i) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			nbttaglist.appendTag(cpt);
+			if (stacks[i] != null)
+				stacks[i].writeToNBT(cpt);
 
-    	}
+		}
 
-    	nbt.setTag(name, nbttaglist);
+		nbt.setTag(name, nbttaglist);
 	}
 
-	public static ItemStack consumeItem (ItemStack stack) {
+	public static ItemStack consumeItem(ItemStack stack) {
 		if (stack.stackSize == 1) {
 			if (stack.getItem().getContainerItem() != null)
 				return new ItemStack(stack.getItem().getContainerItem(), 1);
@@ -495,21 +477,22 @@ public class Utils {
 		}
 	}
 
-
 	public static <T> T[] concat(T[] first, T[] second) {
-		  T[] result = Arrays.copyOf(first, first.length + second.length);
-		  System.arraycopy(second, 0, result, first.length, second.length);
-		  return result;
+		T[] result = Arrays.copyOf(first, first.length + second.length);
+		System.arraycopy(second, 0, result, first.length, second.length);
+		return result;
 	}
+
 	public static int[] concat(int[] first, int[] second) {
-		  int[] result = Arrays.copyOf(first, first.length + second.length);
-		  System.arraycopy(second, 0, result, first.length, second.length);
-		  return result;
+		int[] result = Arrays.copyOf(first, first.length + second.length);
+		System.arraycopy(second, 0, result, first.length, second.length);
+		return result;
 	}
+
 	public static float[] concat(float[] first, float[] second) {
-		  float[] result = Arrays.copyOf(first, first.length + second.length);
-		  System.arraycopy(second, 0, result, first.length, second.length);
-		  return result;
+		float[] result = Arrays.copyOf(first, first.length + second.length);
+		System.arraycopy(second, 0, result, first.length, second.length);
+		return result;
 	}
 
 }

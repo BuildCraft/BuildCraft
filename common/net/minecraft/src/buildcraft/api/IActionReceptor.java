@@ -11,6 +11,6 @@ package net.minecraft.src.buildcraft.api;
 
 public interface IActionReceptor {
 
-	public void actionActivated (Action action);
-	
+	public void actionActivated(Action action);
+
 }

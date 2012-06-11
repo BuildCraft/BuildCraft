@@ -20,9 +20,8 @@ public class PacketHandler implements IPacketHandler {
 	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
 
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
-		try
-		{
-			NetClientHandler net = (NetClientHandler)network.getNetHandler();
+		try {
+			NetClientHandler net = (NetClientHandler) network.getNetHandler();
 
 			int packetID = data.read();
 			switch (packetID) {
@@ -32,7 +31,7 @@ public class PacketHandler implements IPacketHandler {
 				onSelectionUpdate(packetT);
 				break;
 			}
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
@@ -41,13 +40,13 @@ public class PacketHandler implements IPacketHandler {
 	private void onSelectionUpdate(PacketUpdate packet) {
 
 		GuiScreen screen = ModLoader.getMinecraftInstance().currentScreen;
-		
+
 		if (screen instanceof GuiAssemblyTable) {
 			GuiAssemblyTable gui = (GuiAssemblyTable) screen;
 			SelectionMessage message = new SelectionMessage();
 
 			TileAssemblyTable.selectionMessageWrapper.fromPayload(message, packet.payload);
-			gui.handleSelectionMessage (message);
+			gui.handleSelectionMessage(message);
 		}
 	}
 

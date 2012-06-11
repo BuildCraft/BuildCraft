@@ -20,33 +20,32 @@ import net.minecraft.src.buildcraft.api.IBptContext;
 public class BptBlockDelegate extends BptBlock {
 
 	final int delegateTo;
-	
-	public BptBlockDelegate (int blockId, int delegateTo) {
-		super (blockId);
-		
+
+	public BptBlockDelegate(int blockId, int delegateTo) {
+		super(blockId);
+
 		this.delegateTo = delegateTo;
 	}
-	
+
 	@Override
-	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList <ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
 		BptSlotInfo newSlot = slot.clone();
 		slot.blockId = delegateTo;
-		
-		if (BuildCraftAPI.blockBptProps [delegateTo] != null) {
-			BuildCraftAPI.blockBptProps [delegateTo].addRequirements(newSlot, context, requirements);
+
+		if (BuildCraftAPI.blockBptProps[delegateTo] != null) {
+			BuildCraftAPI.blockBptProps[delegateTo].addRequirements(newSlot, context, requirements);
 		} else {
 			super.addRequirements(newSlot, context, requirements);
 		}
 	}
 
 	@Override
-	public boolean isValid(BptSlotInfo slot,IBptContext context) {
+	public boolean isValid(BptSlotInfo slot, IBptContext context) {
 		BptSlotInfo newSlot = slot.clone();
 		slot.blockId = delegateTo;
-		
-		if (BuildCraftAPI.blockBptProps [delegateTo] != null) {
-			return BuildCraftAPI.blockBptProps[delegateTo].isValid(
-					newSlot, context);
+
+		if (BuildCraftAPI.blockBptProps[delegateTo] != null) {
+			return BuildCraftAPI.blockBptProps[delegateTo].isValid(newSlot, context);
 		} else {
 			return super.isValid(newSlot, context);
 		}
@@ -56,12 +55,12 @@ public class BptBlockDelegate extends BptBlock {
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		BptSlotInfo newSlot = slot.clone();
 		slot.blockId = delegateTo;
-		
-		if (BuildCraftAPI.blockBptProps [delegateTo] != null) {
-			BuildCraftAPI.blockBptProps [delegateTo].rotateLeft(newSlot, context);
+
+		if (BuildCraftAPI.blockBptProps[delegateTo] != null) {
+			BuildCraftAPI.blockBptProps[delegateTo].rotateLeft(newSlot, context);
 		} else {
 			super.rotateLeft(newSlot, context);
 		}
 	}
-	
+
 }

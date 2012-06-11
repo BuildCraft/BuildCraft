@@ -15,8 +15,7 @@ public class DefaultAreaProvider implements IAreaProvider {
 
 	int xMin, yMin, zMin, xMax, yMax, zMax;
 
-	public DefaultAreaProvider(int xMin, int yMin, int zMin, int xMax,
-			int yMax, int zMax) {
+	public DefaultAreaProvider(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 
 		this.xMin = xMin;
 		this.xMax = xMax;
@@ -57,7 +56,7 @@ public class DefaultAreaProvider implements IAreaProvider {
 	}
 
 	@Override
-	public void removeFromWorld () {
+	public void removeFromWorld() {
 
 	}
 }

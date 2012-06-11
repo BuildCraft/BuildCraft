@@ -12,19 +12,19 @@ package net.minecraft.src.buildcraft.api;
 import net.minecraft.src.World;
 
 public interface IBox {
-	
+
 	public void expand(int amount);
-	
+
 	public void contract(int amount);
-	
+
 	public boolean contains(int x, int y, int z);
-	
-	public Position pMin ();
-	
-	public Position pMax ();
-	
-	public void createLasers (World world, LaserKind kind);
-	
-	public void deleteLasers ();
-	
+
+	public Position pMin();
+
+	public Position pMax();
+
+	public void createLasers(World world, LaserKind kind);
+
+	public void deleteLasers();
+
 }

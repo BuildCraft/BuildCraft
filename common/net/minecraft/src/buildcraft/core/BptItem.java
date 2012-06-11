@@ -17,7 +17,7 @@ import net.minecraft.src.buildcraft.api.IBptContext;
 
 public class BptItem {
 
-	public void addRequirements(BptSlotInfo slot, LinkedList <ItemStack> requirements) {
+	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
 
 	}
 

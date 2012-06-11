@@ -9,22 +9,22 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 
 	boolean active;
 
-	public TriggerRedstoneInput (int id, boolean active) {
-		super (id);
+	public TriggerRedstoneInput(int id, boolean active) {
+		super(id);
 
 		this.active = active;
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		if (active)
 			return 0 * 16 + 0;
 		else
@@ -32,7 +32,7 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		if (active)
 			return "Redstone Signal On";
 		else
@@ -42,15 +42,13 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 	@Override
 	public boolean isTriggerActive(Pipe pipe, TriggerParameter parameter) {
 		if (active)
-			return pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord,
-					pipe.yCoord, pipe.zCoord);
+			return pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 		else
-			return !pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord,
-					pipe.yCoord, pipe.zCoord);
+			return !pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

@@ -17,6 +17,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.network.PacketCoordinates;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
@@ -50,8 +51,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		}
 	}
 
-	public GuiAssemblyTable(IInventory playerInventory,
-			TileAssemblyTable assemblyTable) {
+	public GuiAssemblyTable(IInventory playerInventory, TileAssemblyTable assemblyTable) {
 		super(new ContainerAssemblyTable(playerInventory, assemblyTable));
 
 		this.playerInventory = playerInventory;
@@ -70,14 +70,15 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			}
 
 		updateRecipes();
-		
+
 		// Request current selection from server
-		CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord, assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
+		if(APIProxy.isRemote())
+			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
+				assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
 	}
 
 	public void updateRecipes() {
-		LinkedList<AssemblyRecipe> potentialRecipes = assemblyTable
-				.getPotentialOutputs();
+		LinkedList<AssemblyRecipe> potentialRecipes = assemblyTable.getPotentialOutputs();
 		Iterator<AssemblyRecipe> cur = potentialRecipes.iterator();
 
 		for (int p = 0; p < 8; ++p)
@@ -90,7 +91,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
 		String title = StringUtil.localize("tile.assemblyTableBlock");
-        fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
+		fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection();
@@ -98,8 +99,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine
-				.getTexture("/net/minecraft/src/buildcraft/factory/gui/assembly_table.png");
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i);
 		int cornerX = (width - xSize) / 2;
@@ -109,20 +109,17 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		updateRecipes();
 
 		for (int s = 0; s < slots.length; ++s) {
-			RecipeSlot slot = (RecipeSlot) slots [s];
+			RecipeSlot slot = (RecipeSlot) slots[s];
 
 			if (assemblyTable.isAssembling(slot.recipe))
-				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196,
-						1, 16, 16);
+				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 196, 1, 16, 16);
 			else if (assemblyTable.isPlanned(slot.recipe))
-				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 177,
-						1, 16, 16);
+				drawTexturedModalRect(cornerX + slot.x, cornerY + slot.y, 177, 1, 16, 16);
 		}
 
 		int height = (int) assemblyTable.getCompletionRatio(70);
 
-		drawTexturedModalRect(cornerX + 95, cornerY + 36 + 70 - height, 176,
-				18, 4, height);
+		drawTexturedModalRect(cornerX + 95, cornerY + 36 + 70 - height, 176, 18, 4, height);
 
 		drawBackgroundSlots();
 	}
@@ -137,7 +134,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		int position = getSlotAtLocation(i - cornerX, j - cornerY);
 
 		if (position != -1) {
-			RecipeSlot slot = (RecipeSlot) slots [position];
+			RecipeSlot slot = (RecipeSlot) slots[position];
 
 			SelectionMessage message = new SelectionMessage();
 
@@ -152,16 +149,17 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			message.itemID = slot.recipe.output.itemID;
 			message.itemDmg = slot.recipe.output.getItemDamage();
 
-			ContainerAssemblyTable container = (ContainerAssemblyTable)inventorySlots;
+			ContainerAssemblyTable container = (ContainerAssemblyTable) inventorySlots;
 
-			if(APIProxy.isRemote()) {
-				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,container.z, message);
+			if (APIProxy.isRemote()) {
+				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,
+						container.z, message);
 
 				PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, payload);
 				packet.posX = assemblyTable.xCoord;
 				packet.posY = assemblyTable.yCoord;
 				packet.posZ = assemblyTable.zCoord;
-			
+
 				CoreProxy.sendToServer(packet.getPacket());
 			}
 		}

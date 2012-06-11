@@ -9,10 +9,10 @@
 
 package net.minecraft.src.buildcraft.builders;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IBox;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class FillerRemover extends FillerPattern {
 
@@ -21,17 +21,17 @@ public class FillerRemover extends FillerPattern {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
-		
+
 		int xMax = (int) box.pMax().x;
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
-						
-		return empty (xMin, yMin, zMin, xMax, yMax, zMax, tile.worldObj);
+
+		return empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.worldObj);
 	}
 
 	@Override
 	public String getTextureFile() {
-		return BuildCraftCore.customBuildCraftTexture;
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override

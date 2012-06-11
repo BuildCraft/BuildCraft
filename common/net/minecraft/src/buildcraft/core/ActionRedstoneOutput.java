@@ -9,27 +9,26 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.buildcraft.api.Action;
 
 public class ActionRedstoneOutput extends Action {
 
-	public ActionRedstoneOutput (int id) {
-		super (id);
+	public ActionRedstoneOutput(int id) {
+		super(id);
 	}
 
 	@Override
-	public int getIndexInTexture () {
+	public int getIndexInTexture() {
 		return 0 * 16 + 0;
 	}
 
 	@Override
-	public String getDescription () {
+	public String getDescription() {
 		return "Redstone Signal";
 	}
 
 	@Override
 	public String getTexture() {
-		return BuildCraftCore.triggerTextures;
+		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

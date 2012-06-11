@@ -36,10 +36,10 @@ public class PersistentWorld {
 			} else if (!result.getClass().equals(defaultTile.getClass())) {
 				tiles.remove(index);
 				tiles.put(index, defaultTile);
-				result.destroy ();
+				result.destroy();
 				result = defaultTile;
 			} else
-				defaultTile.destroy ();
+				defaultTile.destroy();
 		}
 
 		return result;
@@ -47,7 +47,7 @@ public class PersistentWorld {
 
 	public void storeTile(PersistentTile tile, BlockIndex index) {
 		if (tiles.containsKey(index)) {
-			PersistentTile old = tiles.get (index);
+			PersistentTile old = tiles.get(index);
 
 			if (old == tile)
 				return;
@@ -64,10 +64,10 @@ public class PersistentWorld {
 
 	public void removeTile(BlockIndex index) {
 		if (tiles.containsKey(index))
-			tiles.remove(index).destroy ();
+			tiles.remove(index).destroy();
 	}
 
-	public static PersistentWorld getWorld (IBlockAccess blockAccess) {
+	public static PersistentWorld getWorld(IBlockAccess blockAccess) {
 		Long hash = CoreProxy.getHash(blockAccess);
 		if (!hash.equals(lastBlockAccess)) {
 			if (!worlds.containsKey(hash))

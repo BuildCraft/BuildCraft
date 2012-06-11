@@ -29,7 +29,6 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 		super(new PipeTransportItems(), new PipeLogicDiamond(), itemID);
 	}
 
-
 	@Override
 	public int getMainBlockTexture() {
 		return nextTexture;
@@ -49,7 +48,7 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 		LinkedList<Orientations> filteredOrientations = new LinkedList<Orientations>();
 		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
 
-		//Filtered outputs
+		// Filtered outputs
 		for (Orientations dir : possibleOrientations) {
 			boolean foundFilter = false;
 
@@ -65,25 +64,22 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 				if (stack != null && stack.itemID == item.item.itemID)
 					if ((Item.itemsList[item.item.itemID].isDamageable()))
 						filteredOrientations.add(dir);
-					else if (stack.getItemDamage() == item.item
-							.getItemDamage())
+					else if (stack.getItemDamage() == item.item.getItemDamage())
 						filteredOrientations.add(dir);
 			}
 			if (!foundFilter)
 				defaultOrientations.add(dir);
 		}
-		if(filteredOrientations.size() != 0)
+		if (filteredOrientations.size() != 0)
 			return filteredOrientations;
 		else
 			return defaultOrientations;
 	}
 
-
 	@Override
 	public void entityEntered(EntityPassiveItem item, Orientations orientation) {
 
 	}
-
 
 	@Override
 	public void readjustSpeed(EntityPassiveItem item) {

@@ -10,35 +10,36 @@
 package net.minecraft.src.buildcraft.api;
 
 public class ItemSignature {
+
 	public String itemClassName;
 	public String itemName;
-	
-	public ItemSignature (String str) {
-		String [] values = str.split("/");
-		
-		itemClassName = values [1];
-		itemName = values [2];
-		
+
+	public ItemSignature(String str) {
+		String[] values = str.split("/");
+
+		itemClassName = values[1];
+		itemName = values[2];
+
 		replaceNullWithStar();
-		
+
 	}
-	
-	public ItemSignature () {		
+
+	public ItemSignature() {
 		replaceNullWithStar();
 	}
-	
+
 	@Override
 	public String toString() {
 		replaceNullWithStar();
-		
+
 		return "#I/" + itemClassName + "/" + itemName;
 	}
 
-	public void replaceNullWithStar () {
+	public void replaceNullWithStar() {
 		if (itemClassName == null) {
 			itemClassName = "*";
 		}
-		
+
 		if (itemName == null) {
 			itemName = "*";
 		}
