@@ -90,7 +90,7 @@ public class Pipe implements IPipe, IDropControlInventory {
 
 	}
 
-	public void setPosition(int xCoord, int yCoord, int zCoord) { //XXX make it private
+	private void setPosition(int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
@@ -99,7 +99,7 @@ public class Pipe implements IPipe, IDropControlInventory {
 		logic.setPosition(xCoord, yCoord, zCoord);
 	}
 
-	public void setWorld(World worldObj) { //XXX make it private
+	private void setWorld(World worldObj) {
 		if (worldObj != null && this.worldObj == null) {
 			this.worldObj = worldObj;
 			transport.setWorld(worldObj);
@@ -114,6 +114,7 @@ public class Pipe implements IPipe, IDropControlInventory {
 		logic.setTile((TileGenericPipe) tile);
 
 		setPosition(tile.xCoord, tile.yCoord, tile.zCoord);
+		setWorld(tile.worldObj);
 	}
 
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {

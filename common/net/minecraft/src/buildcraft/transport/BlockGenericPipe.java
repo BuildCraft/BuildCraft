@@ -174,7 +174,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 		return r;
 	}
 
-	public static void removePipe(Pipe pipe) { //XXX See what else it does and probably remove it
+	public static void removePipe(Pipe pipe) {
 		if (pipe == null)
 			return;
 
@@ -186,16 +186,12 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 		if (world == null)
 			return;
 
-		int i = pipe.xCoord;
-		int j = pipe.yCoord;
-		int k = pipe.zCoord;
-
 		if (lastRemovedDate != world.getWorldTime()) {
 			lastRemovedDate = world.getWorldTime();
 			pipeRemoved.clear();
 		}
 
-		pipeRemoved.put(new BlockIndex(i, j, k), pipe);
+		pipeRemoved.put(new BlockIndex(pipe.xCoord, pipe.yCoord, pipe.zCoord), pipe);
 	}
 
 	@Override
@@ -475,7 +471,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
 
-	static long lastRemovedDate = -1; //XXX Remove it
+	static long lastRemovedDate = -1;
 	public static TreeMap<BlockIndex, Pipe> pipeRemoved = new TreeMap<BlockIndex, Pipe>();
 
 	public static Item registerPipe(int key, Class<? extends Pipe> clas) {

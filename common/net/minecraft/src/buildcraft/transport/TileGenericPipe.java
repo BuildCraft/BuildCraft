@@ -65,7 +65,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	int key; 
 
 	@TileNetworkData
-	public int pipeId = -1;
+	public int pipeId = -1; //Useless variable?
 
 	public TileGenericPipe() {
 
@@ -91,9 +91,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		pipe = BlockGenericPipe.createPipe(key);
 
 		if (pipe != null) {
-			//pipe.setTile(this);
 			pipe.readFromNBT(nbttagcompound);
-			//this.initialize(pipe);
 		} else {
 			//Perhaps remove it from the world
 		}
@@ -181,21 +179,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 	private void bindPipe() {
 		if (!pipeBound) {
-			/*if (pipe == null) { //XXX change
-				PersistentTile tile = PersistentWorld.getWorld(worldObj).getTile(new BlockIndex(xCoord, yCoord, zCoord));
-
-				if (tile != null && tile instanceof Pipe)
-					pipe = (Pipe) tile;
-			}*/
-
 			if (pipe != null) {
-				pipe.setTile(this);
-				pipe.setWorld(worldObj);
-
 				if (worldObj == null)
 					throw new NullPointerException();
+				
+				pipe.setTile(this);
 
-				//PersistentWorld.getWorld(worldObj).storeTile(pipe, new BlockIndex(xCoord, yCoord, zCoord));
 				pipeId = pipe.itemID;
 				pipeBound = true;
 			}
@@ -367,12 +356,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
 		if (pipe == null && packet.payload.intPayload[0] != 0) {
-			pipe = BlockGenericPipe.createPipe(packet.payload.intPayload[0]);
-			pipeBound = false;
-			bindPipe(); //XXX Initialize on smp
-
-			if (pipe != null)
-				pipe.initialize();
+			initialize(BlockGenericPipe.createPipe(packet.payload.intPayload[0]));
 
 			// Check for wire information
 			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
