@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipe.DrawingState;
 import net.minecraft.src.buildcraft.api.IPipeTile;
@@ -133,6 +134,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 			if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized())
 				pipeRender(renderblocks, iblockaccess, tile, block, l);
+			else
+				legacyPipeRender(renderblocks, iblockaccess, i, j, k, block, l);	//Still used for Quarry Frame and Mining Pipe
 		} else if (block.getRenderType() == BuildCraftCore.oilModel)
 			renderblocks.renderBlockFluids(block, i, j, k);
 
@@ -392,6 +395,55 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
 		}
+	}
+	
+	private void legacyPipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
+		float minSize = Utils.pipeMinPos;
+		float maxSize = Utils.pipeMaxPos;
+
+		((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.Unknown);
+		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
+		renderblocks.renderStandardBlock(block, i, j, k);
+
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.XNeg);
+			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.XPos);
+			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.YNeg);
+			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.YPos);
+			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.ZNeg);
+			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
+			((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.ZPos);
+			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
+			renderblocks.renderStandardBlock(block, i, j, k);
+		}
+
+		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+
+		((IBlockPipe) block).prepareTextureFor(iblockaccess, i, j, k, Orientations.Unknown);
 	}
 
 	RenderItem itemRenderer = new RenderItem();
