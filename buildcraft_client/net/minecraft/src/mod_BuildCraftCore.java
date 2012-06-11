@@ -396,7 +396,7 @@ public class mod_BuildCraftCore extends NetworkMod {
 			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
 		}
 	}
-	
+
 	private void legacyPipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;
