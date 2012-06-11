@@ -83,6 +83,10 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 	}
 
 	public void aim() {
+		
+		if (APIProxy.isClient(worldObj))
+			return;
+		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		int minX = xCoord - 5;
@@ -136,9 +140,6 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
 		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
-
-		if (APIProxy.isClient(worldObj))
-			return;
 		
 		if (laser == null) {
 			laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));

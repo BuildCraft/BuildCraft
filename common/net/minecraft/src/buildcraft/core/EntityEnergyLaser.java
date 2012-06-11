@@ -50,7 +50,7 @@ public class EntityEnergyLaser extends EntityLaser {
 	public String getTexture () {
 		
 		if (getPowerAverage () <= 1.0)
-			return "/net/minecraft/src/buildcraft/core/gui/laser_1.png";
+			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png";
 		else if (getPowerAverage() <= 2.0)
 			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png";
 		else if (getPowerAverage() <= 3.0)
