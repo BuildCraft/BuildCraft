@@ -467,7 +467,6 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	}
 
 	/** Registration *********************************************************/
-	//TODO these calls should be move in another class
 
 	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
 
