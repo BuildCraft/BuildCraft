@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.core;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BptSlot.Mode;
 import net.minecraft.src.forge.ISpawnHandler;
 
@@ -76,11 +78,12 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		motionZ = 0;
 
 		setPosition(destX, destY, destZ);
-		laser = new EntityEnergyLaser(worldObj);
-		laser.hidden = true;
-		laser.setPositions(posX, posY, posZ, posX, posY, posZ);
 
-		worldObj.spawnEntityInWorld(laser);
+		if (!APIProxy.isClient(worldObj)) {
+		
+			laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
+			worldObj.spawnEntityInWorld(laser);
+		}
 	}
 
 	@Override
@@ -127,20 +130,19 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 	protected void move() {
 
-		if (!reachedDesination()) {
-
-			setPosition(posX + motionX, posY + motionY, posZ + motionZ);
-
-			return;
-		}
+		//System.out.println("move: " + new Position(motionX, motionY, motionZ));
+		setPosition(posX + motionX, posY + motionY, posZ + motionZ);
 
 		if (APIProxy.isClient(worldObj))
 			return;
 
-		BlockIndex newDesination = getNewDesination();
-		if (newDesination != null) {
+		if (reachedDesination()) {
 
-			setDestination(newDesination.i, newDesination.j, newDesination.k);
+			BlockIndex newDesination = getNewDesination();
+			if (newDesination != null) {
+				setDestination(newDesination.i, newDesination.j, newDesination.k);
+			}
+		
 		}
 
 	}
@@ -178,9 +180,11 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		destZ = z;
 
 		// TODO: apply power modifier
-		motionX = (destX - posX) / 75 * 1;
-		motionY = (destY - posY) / 75 * 1;
-		motionZ = (destZ - posZ) / 75 * 1;
+		motionX = new BigDecimal((float) (destX - posX) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		motionY = new BigDecimal((float) (destY - posY) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		motionZ = new BigDecimal((float) (destZ - posZ) / 75 * 1).setScale(4, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		
+		//System.out.println("setDest: " + new Position(motionX, motionY, motionZ));
 	}
 
 	protected boolean reachedDesination() {
@@ -195,7 +199,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 		updateWait();
 
-		// TODO: rewrite
+		// TODO: possible rewrite
 		if (targets.size() > 0) {
 
 			Action a = targets.getFirst();
@@ -212,8 +216,9 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 					} else if (target.stackToUse != null) {
 
 						worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
-						target.stackToUse.getItem().onItemUse(target.stackToUse, BuildCraftAPI.getBuildCraftPlayer(worldObj),
-								worldObj, target.x, target.y - 1, target.z, 1);
+						target.stackToUse.getItem().onItemUse(target.stackToUse,
+								BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
+								target.z, 1);
 					} else {
 
 						try {
@@ -232,8 +237,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 				a.builder.postProcessing(worldObj);
 				targets.pop();
 			}
-		} else
-			laser.hidden = true;
+		}
 	}
 
 	public void updateWait() {
@@ -246,19 +250,22 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	private void updateLaser() {
-
-		BptSlotInfo target = null;
-
+		
+		if (APIProxy.isClient(worldObj))
+			return;
+			
 		if (targets.size() > 0) {
+			
 			Action a = targets.getFirst();
-			target = a.slot;
+			BptSlotInfo target = a.slot;
+
+			laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
+			laser.show();
 		}
-
-		if (target != null)
-			laser.setPositions(posX, posY, posZ, target.x + 0.5, target.y + 0.5, target.z + 0.5);
-		else
-			laser.hidden = true;
-
+		else {
+			laser.hide();
+		}
+		
 		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
 	}
 
@@ -266,7 +273,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 		if (slot != null) {
 			targets.add(new Action(slot, context));
-			laser.hidden = false;
+			
 		}
 	}
 

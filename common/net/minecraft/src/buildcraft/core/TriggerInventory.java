@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;

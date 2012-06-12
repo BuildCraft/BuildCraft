@@ -21,7 +21,6 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
-import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.network.BuildCraftPacket;
 import net.minecraft.src.forge.NetworkMod;

@@ -12,10 +12,9 @@ import net.minecraft.src.buildcraft.core.network.PacketCoordinates;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketSlotChange;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
-import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
+import net.minecraft.src.buildcraft.transport.CraftingGateInterface;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.buildcraft.transport.CraftingGateInterface;
 import net.minecraft.src.forge.IPacketHandler;
 
 public class PacketHandler implements IPacketHandler {

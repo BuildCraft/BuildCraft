@@ -24,6 +24,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
@@ -35,6 +36,7 @@ import net.minecraft.src.buildcraft.core.BptBuilderBase;
 import net.minecraft.src.buildcraft.core.BptBuilderBlueprint;
 import net.minecraft.src.buildcraft.core.BptBuilderTemplate;
 import net.minecraft.src.buildcraft.core.BptContext;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.EntityLaser;
 import net.minecraft.src.buildcraft.core.EntityRobot;
 import net.minecraft.src.buildcraft.core.IBuilderInventory;
@@ -227,10 +229,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 		for (BlockIndex b : path) {
 			if (previous != null) {
-				EntityLaser laser = new EntityLaser(worldObj);
-
-				laser.setPositions(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5, b.i + 0.5, b.j + 0.5, b.k + 0.5);
-				laser.setTexture("/net/minecraft/src/buildcraft/core/gui/stripes.png");
+				
+				EntityLaser laser = new EntityLaser(worldObj,
+						new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5),
+						new Position(b.i + 0.5, b.j + 0.5, b.k + 0.5));
+				
+				laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
 				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);
 			}

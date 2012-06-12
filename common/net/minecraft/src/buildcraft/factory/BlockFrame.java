@@ -41,101 +41,13 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 	}
 
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		byte width = 1;
-		int width2 = width + 1;
-
-		if (world.isRemote)
-			return;
-
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
-			return;
-
-		Position[] targets = new Position[] { new Position(i + 1, j, k), new Position(i - 1, j, k), new Position(i, j + 1, k),
-				new Position(i, j - 1, k), new Position(i, j, k + 1), new Position(i, j, k - 1) };
-
-		for (Position pos : targets) {
-			int x = (int) pos.x;
-			int y = (int) pos.y;
-			int z = (int) pos.z;
-			int blockID = world.getBlockId(x, y, z);
-
-			if (blockID == BuildCraftFactory.frameBlock.blockID) {
-				int meta = world.getBlockMetadata(x, y, z);
-				world.setBlockMetadata(x, y, z, meta | 8);
-			}
-		}
-	}
-
-	@Override
 	public void updateTick(World world, int i, int j, int k, Random random) {
-
 		if (world.isRemote)
 			return;
-
+		
 		int meta = world.getBlockMetadata(i, j, k);
-
-		if ((meta & 8) != 0 && (meta & 4) == 0) {
-			byte width = 4;
-			int width2 = width + 1;
-			byte yFactor = 32;
-			int zFactor = yFactor * yFactor;
-			int xFactor = yFactor / 2;
-
-			int[] adjacentFrameBlocks = new int[yFactor * yFactor * yFactor];
-
-			if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
-				for (int z = -width; z <= width; ++z) {
-					for (int y = -width; y <= width; ++y) {
-						for (int x = -width; x <= width; ++x) {
-							int blockID = world.getBlockId(i + z, j + y, k + x);
-
-							if (blockID == BuildCraftFactory.quarryBlock.blockID)
-								adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] = 0;
-
-							else if (blockID == BuildCraftFactory.frameBlock.blockID)
-								adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] = -2;
-							else
-								adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] = -1;
-						}
-					}
-				}
-
-				for (int type = 1; type <= 4; ++type) {
-					for (int z = -width; z <= width; ++z) {
-						for (int y = -width; y <= width; ++y) {
-							for (int x = -width; x <= width; ++x) {
-								if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor] == type - 1) {
-									if (adjacentFrameBlocks[(z + xFactor - 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor - 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] = type;
-
-									if (adjacentFrameBlocks[(z + xFactor + 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor + 1) * zFactor + (y + xFactor) * yFactor + x + xFactor] = type;
-
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor - 1) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor - 1) * yFactor + x + xFactor] = type;
-
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor + 1) * yFactor + x + xFactor] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor + 1) * yFactor + x + xFactor] = type;
-
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + (x + xFactor - 1)] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + (x + xFactor - 1)] = type;
-
-									if (adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor + 1] == -2)
-										adjacentFrameBlocks[(z + xFactor) * zFactor + (y + xFactor) * yFactor + x + xFactor + 1] = type;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			int var12 = adjacentFrameBlocks[xFactor * zFactor + xFactor * yFactor + xFactor];
-
-			if (var12 >= 0)
-				world.setBlockMetadata(i, j, k, meta & -9);
-			else
-				world.setBlockWithNotify(i, j, k, 0);
+		if (meta == 1 && random.nextInt(10) > 5){
+			world.setBlockWithNotify(i, j, k, 0);
 		}
 	}
 

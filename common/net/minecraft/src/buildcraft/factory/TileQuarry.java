@@ -115,9 +115,11 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	private boolean loadDefaultBoundaries = false;
 
 	private void createArm() {
-		arm = new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos, yCoord + bluePrintBuilder.bluePrint.sizeY - 1
-				+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos, bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
-				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2);
+		arm = new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos,
+				yCoord + bluePrintBuilder.bluePrint.sizeY - 1
+						+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,
+				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
+				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2, this);
 
 		arm.listener = this;
 		loadArm = true;
@@ -159,11 +161,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 			return;
 		}
 
-		if (inProcess) {
-			return;
-		}
-
-		if (!isDigging) {
+		if (inProcess || !isDigging) {
 			return;
 		}
 
@@ -440,14 +438,18 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	@Override
-	public void invalidate() {
-		destroy();
+	public void invalidate () {
+		destroy ();
 	}
 
 	@Override
 	public void destroy() {
 		if (arm != null) {
 			arm.setDead();
+		}
+		
+		if (builder != null){
+			builder.setDead();
 		}
 
 		box.deleteLasers();
