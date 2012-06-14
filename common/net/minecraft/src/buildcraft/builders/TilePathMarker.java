@@ -231,9 +231,9 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (links[1] != null) {
-			nbttagcompound.setInteger("x0", links[1].xCoord);
-			nbttagcompound.setInteger("y0", links[1].yCoord);
-			nbttagcompound.setInteger("z0", links[1].zCoord);
+			nbttagcompound.setInteger("x1", links[1].xCoord);
+			nbttagcompound.setInteger("y1", links[1].yCoord);
+			nbttagcompound.setInteger("z1", links[1].zCoord);
 		}
 	}
 }
