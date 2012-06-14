@@ -62,7 +62,6 @@ import net.minecraft.src.buildcraft.core.BptPlayerIndex;
 import net.minecraft.src.buildcraft.core.BptRootIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.WorldIteratorRadius;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
@@ -280,9 +279,6 @@ public class BuildCraftBuilders {
 		new BptBlockWallSide(markerBlock.blockID);
 		new BptBlockWallSide(pathMarkerBlock.blockID);
 		new BptBlockFiller(fillerBlock.blockID);
-
-		// Optimization
-		WorldIteratorRadius.createPrecomputedList(TilePathMarker.searchSize);
 
 		if (BuildCraftCore.loadDefaultRecipes)
 			loadRecipes();

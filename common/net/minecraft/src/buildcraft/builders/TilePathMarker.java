@@ -73,11 +73,6 @@ public class TilePathMarker extends TileMarker {
 		double nearestDistance = 0, distance;	//The initialization of nearestDistance is only to make the compiler shut up
 
 		for (TilePathMarker t : availableMarkers) {
-			if (t.isFullyConnected()) {
-				System.err.printf("Removing the non-available path markers isn't correct\n");
-				continue;
-			}
-
 			if (t == this || t == this.links[0] || t == this.links[1])
 				continue;
 
@@ -101,7 +96,7 @@ public class TilePathMarker extends TileMarker {
 			return;
 		}
 
-		tryingToConnect = true;
+		tryingToConnect = !tryingToConnect;	//Allow the user to stop the path marker from searching for new path markers to connect
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 
