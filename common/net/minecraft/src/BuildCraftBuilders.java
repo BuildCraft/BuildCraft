@@ -40,6 +40,7 @@ import net.minecraft.src.buildcraft.builders.BlockFiller;
 import net.minecraft.src.buildcraft.builders.BlockMarker;
 import net.minecraft.src.buildcraft.builders.BlockPathMarker;
 import net.minecraft.src.buildcraft.builders.BptBlockFiller;
+import net.minecraft.src.buildcraft.builders.BuildersSaveManager;
 import net.minecraft.src.buildcraft.builders.FillerFillAll;
 import net.minecraft.src.buildcraft.builders.FillerFillPyramid;
 import net.minecraft.src.buildcraft.builders.FillerFillStairs;
@@ -96,6 +97,9 @@ public class BuildCraftBuilders {
 
 		// Register gui handler
 		MinecraftForge.setGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
+		
+		// Register save handler
+		MinecraftForge.registerSaveHandler(new BuildersSaveManager());
 	}
 
 	public static void initialize() {
