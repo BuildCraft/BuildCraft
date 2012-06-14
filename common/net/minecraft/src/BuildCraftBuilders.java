@@ -40,6 +40,7 @@ import net.minecraft.src.buildcraft.builders.BlockFiller;
 import net.minecraft.src.buildcraft.builders.BlockMarker;
 import net.minecraft.src.buildcraft.builders.BlockPathMarker;
 import net.minecraft.src.buildcraft.builders.BptBlockFiller;
+import net.minecraft.src.buildcraft.builders.BuildersSaveManager;
 import net.minecraft.src.buildcraft.builders.FillerFillAll;
 import net.minecraft.src.buildcraft.builders.FillerFillPyramid;
 import net.minecraft.src.buildcraft.builders.FillerFillStairs;
@@ -61,7 +62,6 @@ import net.minecraft.src.buildcraft.core.BptPlayerIndex;
 import net.minecraft.src.buildcraft.core.BptRootIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.WorldIteratorRadius;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
@@ -96,6 +96,9 @@ public class BuildCraftBuilders {
 
 		// Register gui handler
 		MinecraftForge.setGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
+		
+		// Register save handler
+		MinecraftForge.registerSaveHandler(new BuildersSaveManager());
 	}
 
 	public static void initialize() {
@@ -276,9 +279,6 @@ public class BuildCraftBuilders {
 		new BptBlockWallSide(markerBlock.blockID);
 		new BptBlockWallSide(pathMarkerBlock.blockID);
 		new BptBlockFiller(fillerBlock.blockID);
-
-		// Optimization
-		WorldIteratorRadius.createPrecomputedList(TilePathMarker.searchSize);
 
 		if (BuildCraftCore.loadDefaultRecipes)
 			loadRecipes();

@@ -1,3 +1,4 @@
+
 package net.minecraft.src.buildcraft.builders;
 
 import java.util.LinkedList;
@@ -10,8 +11,6 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.EntityLaser;
-import net.minecraft.src.buildcraft.core.WorldIterator;
-import net.minecraft.src.buildcraft.core.WorldIteratorRadius;
 
 public class TilePathMarker extends TileMarker {
 
@@ -19,10 +18,18 @@ public class TilePathMarker extends TileMarker {
 
 	public int x0, y0, z0, x1, y1, z1;
 	public boolean loadLink0 = false, loadLink1 = false;
+	public boolean tryingToConnect = false;
 
 	public TilePathMarker links[] = new TilePathMarker[2];
+	public static int searchSize = 64;	//TODO: this should be moved to default props
+	
+	//A list with the pathMarkers that aren't fully connected
+	//It only contains markers within the loaded chunks
+	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
 
-	public static int searchSize = 64;
+	public TilePathMarker() {
+		availableMarkers.add(this);
+	}
 
 	public boolean isFullyConnected() {
 		return lasers[0] != null && lasers[1] != null;
@@ -40,18 +47,19 @@ public class TilePathMarker extends TileMarker {
 			lasers[1] = laser;
 			links[1] = marker;
 		}
+
+		if (isFullyConnected())
+			availableMarkers.remove(this);
 	}
-	
-	public void createLaserAndConnect (TilePathMarker pathMarker) {
-		
+
+	public void createLaserAndConnect(TilePathMarker pathMarker) {
+
 		if (APIProxy.isClient(worldObj))
 			return;
-		
-		EntityLaser laser = new EntityLaser(worldObj, 
-				new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5),
-				new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+
+		EntityLaser laser = new EntityLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
 		laser.show();
-		
+
 		laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
 		worldObj.spawnEntityInWorld(laser);
 
@@ -59,7 +67,28 @@ public class TilePathMarker extends TileMarker {
 		pathMarker.connect(this, laser);
 	}
 
-	WorldIterator currentWorldIterator;
+	//Searches the availableMarkers list for the nearest available that is within searchSize
+	private TilePathMarker findNearestAvailablePathMarker() {
+		TilePathMarker nearestAvailable = null;
+		double nearestDistance = 0, distance;	//The initialization of nearestDistance is only to make the compiler shut up
+
+		for (TilePathMarker t : availableMarkers) {
+			if (t == this || t == this.links[0] || t == this.links[1])
+				continue;
+
+			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
+
+			if (distance > searchSize)
+				continue;
+
+			if (nearestAvailable == null || distance < nearestDistance) {
+				nearestAvailable = t;
+				nearestDistance = distance;
+			}
+		}
+
+		return nearestAvailable;
+	}
 
 	@Override
 	public void tryConnection() {
@@ -67,50 +96,21 @@ public class TilePathMarker extends TileMarker {
 			return;
 		}
 
-		if (currentWorldIterator == null) {
-			currentWorldIterator = new WorldIteratorRadius(worldObj, xCoord, yCoord, zCoord, searchSize);
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
+		tryingToConnect = !tryingToConnect;	//Allow the user to stop the path marker from searching for new path markers to connect
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (currentWorldIterator != null) {
-			for (int i = 0; i < 1000; ++i) {
-				BlockIndex b = currentWorldIterator.iterate();
+		if (tryingToConnect) {
+			TilePathMarker nearestPathMarker = findNearestAvailablePathMarker();
 
-				if (b == null) {
-					currentWorldIterator = null;
-					worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-					break;
-				}
-
-				if (b.i == xCoord && b.j == yCoord && b.k == zCoord) {
-					continue;
-				}
-
-				TileEntity tile = null;
-
-				try {
-					tile = worldObj.getBlockTileEntity(b.i, b.j, b.k);
-				} catch (Throwable t) {
-					// sometimes, tile can't be loaded. Just carry on the
-					// analysis. We don't even need to log these
-				}
-
-				if (tile instanceof TilePathMarker) {
-					TilePathMarker pathMarker = (TilePathMarker) tile;
-
-					if (!pathMarker.isFullyConnected() && !isLinkedTo(pathMarker)) {
-						createLaserAndConnect(pathMarker);
-
-						worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-						currentWorldIterator = null;
-						return;
-					}
-				}
+			if (nearestPathMarker != null) {
+				createLaserAndConnect(nearestPathMarker);
+				tryingToConnect = false;
+				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 			}
 		}
 	}
@@ -127,13 +127,9 @@ public class TilePathMarker extends TileMarker {
 			visitedPaths.add(b);
 			res.add(b);
 
-			if (nextTile.links[0] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord,
-							nextTile.links[0].zCoord))) {
+			if (nextTile.links[0] != null && !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
 				nextTile = nextTile.links[0];
-			} else if (nextTile.links[1] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord,
-							nextTile.links[1].zCoord))) {
+			} else if (nextTile.links[1] != null && !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
 				nextTile = nextTile.links[1];
 			} else {
 				nextTile = null;
@@ -160,6 +156,9 @@ public class TilePathMarker extends TileMarker {
 
 		lasers = new EntityLaser[2];
 		links = new TilePathMarker[2];
+
+		availableMarkers.remove(this);
+		tryingToConnect = false;
 	}
 
 	@Override
@@ -197,6 +196,9 @@ public class TilePathMarker extends TileMarker {
 			lasers[1] = null;
 			links[1] = null;
 		}
+
+		if (!isFullyConnected() && !availableMarkers.contains(this))
+			availableMarkers.add(this);
 	}
 
 	@Override
@@ -231,9 +233,18 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (links[1] != null) {
-			nbttagcompound.setInteger("x0", links[1].xCoord);
-			nbttagcompound.setInteger("y0", links[1].yCoord);
-			nbttagcompound.setInteger("z0", links[1].zCoord);
+			nbttagcompound.setInteger("x1", links[1].xCoord);
+			nbttagcompound.setInteger("y1", links[1].yCoord);
+			nbttagcompound.setInteger("z1", links[1].zCoord);
 		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		availableMarkers.remove(this);
+	}
+
+	public static void clearAvailableMarkersList() {
+		availableMarkers.clear();
 	}
 }
