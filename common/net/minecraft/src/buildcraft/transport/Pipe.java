@@ -90,7 +90,7 @@ public class Pipe implements IPipe, IDropControlInventory {
 
 	}
 
-	public void setPosition(int xCoord, int yCoord, int zCoord) {
+	private void setPosition(int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
@@ -99,7 +99,7 @@ public class Pipe implements IPipe, IDropControlInventory {
 		logic.setPosition(xCoord, yCoord, zCoord);
 	}
 
-	public void setWorld(World worldObj) {
+	private void setWorld(World worldObj) {
 		if (worldObj != null && this.worldObj == null) {
 			this.worldObj = worldObj;
 			transport.setWorld(worldObj);

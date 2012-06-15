@@ -107,7 +107,6 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 				
 				Pipe newPipe = BlockGenericPipe.createPipe(data.item.item.itemID);
 				newPipe.setTile(this.container);
-				newPipe.setWorld(worldObj);
 				this.container.pipe = newPipe;
 				((PipeTransportItems) newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
 						.clone();

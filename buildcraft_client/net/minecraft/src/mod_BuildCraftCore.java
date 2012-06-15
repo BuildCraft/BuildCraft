@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipe.DrawingState;
+import net.minecraft.src.buildcraft.api.IPipeTile;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.ClassMapping;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -31,6 +32,7 @@ import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderLaser;
 import net.minecraft.src.buildcraft.core.RenderRobot;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
 
@@ -133,11 +135,13 @@ public class mod_BuildCraftCore extends NetworkMod {
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
 			
 			TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
-
-			if (tile == null || !(tile instanceof IPipe))
+			
+			if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized()) {
+				pipeRender(renderblocks, iblockaccess, tile, block, l);
+			}
+			else {
 				legacyPipeRender(renderblocks, iblockaccess, i, j, k, block, l);
-			else
-				pipeRender(renderblocks, iblockaccess, tile, (IPipe) tile, block, l);
+			}
 			
 		} else if (block.getRenderType() == BuildCraftCore.oilModel)
 			renderblocks.renderBlockFluids(block, i, j, k);
@@ -145,12 +149,15 @@ public class mod_BuildCraftCore extends NetworkMod {
 		return true;
 	}
 
-	private void pipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe, Block block, int l) {
+	private void pipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, Block block, int l) {
+		
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
 
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;
 
+		IPipe pipe = ((TileGenericPipe)tile).pipe;
+		
 		pipe.setDrawingState(DrawingState.DrawingPipe);
 
 		pipe.prepareTextureFor(Orientations.Unknown);
