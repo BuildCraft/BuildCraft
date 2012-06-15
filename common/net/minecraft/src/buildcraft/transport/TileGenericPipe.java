@@ -119,7 +119,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		if (pipe == null)
 			return;
 		
-		initialize(pipe);
+		if (!initialized)
+			initialize(pipe);
 
 		if (!BlockGenericPipe.isValid(pipe))
 			return;
@@ -141,9 +142,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	}
 
 	public void initialize(Pipe pipe) {
-		
-		if (initialized)
-			return;
 		
 		this.pipe = pipe;
 		
@@ -361,8 +359,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		
 		if (pipe == null && packet.payload.intPayload[0] != 0) {
 			
-			pipe = BlockGenericPipe.createPipe(packet.payload.intPayload[0]);
-			initialize(pipe);
+			initialize(BlockGenericPipe.createPipe(packet.payload.intPayload[0]));
 
 			// Check for wire information
 			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
