@@ -24,8 +24,17 @@
     
     <target name="setup">
         
-        <unzip src="mcp.zip" dest="${mcp.dir}"/>
-        <unzip src="minecraftforge.zip" dest="${mcp.dir}"/>
+        <unzip dest="${mcp.dir}">
+            <fileset dir=".">
+                <include name="mcp*.zip"/>
+            </fileset>
+        </unzip>
+        
+        <unzip dest="${mcp.dir}">
+            <fileset dir=".">
+                <include name="minecraftforge-src-*.zip"/>
+            </fileset>
+        </unzip>
         
         <chmod file="${mcp.dir}/updatemd5.sh" perm="+x"/>
         <chmod file="${mcp.dir}/recompile.sh" perm="+x"/>
