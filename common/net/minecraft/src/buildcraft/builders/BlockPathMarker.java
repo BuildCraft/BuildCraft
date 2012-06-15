@@ -42,7 +42,7 @@ public class BlockPathMarker extends BlockMarker {
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		TilePathMarker marker = (TilePathMarker) iblockaccess.getBlockTileEntity(i, j, k);
 
-		if (l == 1 || (marker != null && marker.currentWorldIterator != null)) {
+		if (l == 1 || (marker != null && marker.tryingToConnect)) {
 			return 3 * 16 + 11;
 		} else {
 			return 3 * 16 + 10;
