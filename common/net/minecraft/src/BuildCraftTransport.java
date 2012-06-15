@@ -27,8 +27,6 @@ import net.minecraft.src.buildcraft.transport.BptItemPipeIron;
 import net.minecraft.src.buildcraft.transport.BptItemPipeWodden;
 import net.minecraft.src.buildcraft.transport.GuiHandler;
 import net.minecraft.src.buildcraft.transport.ItemGate;
-import net.minecraft.src.buildcraft.transport.LegacyBlock;
-import net.minecraft.src.buildcraft.transport.LegacyTile;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTriggerProvider;
@@ -152,10 +150,6 @@ public class BuildCraftTransport {
 		initialized = true;
 
 		mod_BuildCraftCore.initialize();
-
-		Property loadLegacyPipes = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("loadLegacyPipes",
-				Configuration.CATEGORY_GENERAL, true);
-		loadLegacyPipes.comment = "set to true to load pre 2.2.5 worlds pipes";
 
 		Property alwaysConnect = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("pipes.alwaysConnect",
 				Configuration.CATEGORY_GENERAL, DefaultProps.PIPES_ALWAYS_CONNECT);
@@ -289,34 +283,6 @@ public class BuildCraftTransport {
 		pipeGateAutarchic.setItemName("pipeGateAutarchic");
 
 		alwaysConnectPipes = Boolean.parseBoolean(alwaysConnect.value);
-
-		if (loadLegacyPipes.value.equals("true")) {
-			Property woodenPipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("woodenPipe.id",
-					DefaultProps.WOODEN_PIPE_ID);
-			Property stonePipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("stonePipe.id",
-					DefaultProps.STONE_PIPE_ID);
-			Property ironPipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("ironPipe.id",
-					DefaultProps.IRON_PIPE_ID);
-			Property goldenPipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("goldenPipe.id",
-					DefaultProps.GOLDEN_PIPE_ID);
-			Property diamondPipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("diamondPipe.id",
-					DefaultProps.DIAMOND_PIPE_ID);
-			Property obsidianPipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("obsidianPipe.id",
-					DefaultProps.OBSIDIAN_PIPE_ID);
-			Property cobblestonePipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("cobblestonePipe.id",
-					DefaultProps.COBBLESTONE_PIPE_ID);
-
-			CoreProxy.registerBlock(new LegacyBlock(Integer.parseInt(woodenPipeId.value), pipeItemsWood.shiftedIndex));
-			CoreProxy.registerBlock(new LegacyBlock(Integer.parseInt(stonePipeId.value), pipeItemsStone.shiftedIndex));
-			CoreProxy.registerBlock(new LegacyBlock(Integer.parseInt(ironPipeId.value), pipeItemsIron.shiftedIndex));
-			CoreProxy.registerBlock(new LegacyBlock(Integer.parseInt(goldenPipeId.value), pipeItemsGold.shiftedIndex));
-			CoreProxy.registerBlock(new LegacyBlock(Integer.parseInt(diamondPipeId.value), pipeItemsDiamond.shiftedIndex));
-			CoreProxy.registerBlock(new LegacyBlock(Integer.parseInt(obsidianPipeId.value), pipeItemsObsidian.shiftedIndex));
-			CoreProxy
-					.registerBlock(new LegacyBlock(Integer.parseInt(cobblestonePipeId.value), pipeItemsCobblestone.shiftedIndex));
-
-			CoreProxy.registerTileEntity(LegacyTile.class, "net.buildcraft.src.buildcraft.transport.legacy.LegacyTile");
-		}
 
 		BuildCraftCore.mainConfiguration.save();
 

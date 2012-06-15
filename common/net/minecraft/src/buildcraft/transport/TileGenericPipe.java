@@ -34,13 +34,10 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
 import net.minecraft.src.buildcraft.core.ITileBufferHolder;
-import net.minecraft.src.buildcraft.core.PersistentTile;
-import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.TileBuffer;
 import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
@@ -88,6 +85,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		}
 
 		if (pipe != null) {
+			
 			pipe.setTile(this);
 			pipe.readFromNBT(nbttagcompound);
 		}
@@ -102,13 +100,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 	@Override
 	public void invalidate() {
+		
 		super.invalidate();
 
 		if (BlockGenericPipe.isValid(pipe))
 			BlockGenericPipe.removePipe(pipe);
-
-		// Clean the persistent world in case the tile is still here.
-		PersistentWorld.getWorld(worldObj).removeTile(new BlockIndex(xCoord, yCoord, zCoord));
 	}
 
 	@Override
@@ -120,16 +116,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 	@Override
 	public void updateEntity() {
-		if (!initialized) {
-			initialize();
-
-			initialized = true;
-		}
+		
+		if (pipe == null)
+			return;
+		
+		initialize(pipe);
 
 		if (!BlockGenericPipe.isValid(pipe))
 			return;
 
 		if (blockNeighborChange) {
+			
 			computeConnections();
 			pipe.onNeighborBlockChange(0);
 			blockNeighborChange = false;
@@ -144,7 +141,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			pipe.updateEntity();
 	}
 
-	private void initialize() {
+	public void initialize(Pipe pipe) {
+		
+		if (initialized)
+			return;
+		
+		this.pipe = pipe;
+		
 		tileBuffer = new TileBuffer[6];
 
 		for (Orientations o : Orientations.dirs()) {
@@ -168,30 +171,20 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 		if (pipe != null)
 			pipe.initialize();
+		
+		initialized = true;
 	}
 
 	private void bindPipe() {
-		if (!pipeBound) {
-			if (pipe == null) {
-				PersistentTile tile = PersistentWorld.getWorld(worldObj).getTile(new BlockIndex(xCoord, yCoord, zCoord));
-
-				if (tile != null && tile instanceof Pipe)
-					pipe = (Pipe) tile;
-			}
-
-			if (pipe != null) {
-				pipe.setTile(this);
-				pipe.setWorld(worldObj);
-
-				if (worldObj == null)
-					throw new NullPointerException();
-
-				PersistentWorld.getWorld(worldObj).storeTile(pipe, new BlockIndex(xCoord, yCoord, zCoord));
-				pipeId = pipe.itemID;
-				pipeBound = true;
-			}
+		
+		if (!pipeBound && pipe != null) {
+			
+			pipe.setTile(this);
+			pipe.setWorld(worldObj);
+			
+			pipeId = pipe.itemID;
+			pipeBound = true;
 		}
-
 	}
 
 	@Override

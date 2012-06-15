@@ -46,11 +46,15 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			if (l == 5)
 				i++;
 		}
+		
 		if (itemstack.stackSize == 0)
 			return false;
+		
 		if (world.canBlockBePlacedAt(blockID, i, j, k, false, l)) {
-			BlockGenericPipe.createPipe(world, i, j, k, shiftedIndex);
-			if (world.setBlockAndMetadataWithNotify(i, j, k, blockID, 0)) {
+			
+			Pipe pipe = BlockGenericPipe.createPipe(shiftedIndex);
+			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
+				
 				Block.blocksList[blockID].onBlockPlaced(world, i, j, k, l);
 				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
 				// To move to a proxt

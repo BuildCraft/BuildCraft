@@ -33,7 +33,6 @@ import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 import net.minecraft.src.buildcraft.core.ActionRedstoneOutput;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
-import net.minecraft.src.buildcraft.core.PersistentTile;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
@@ -41,7 +40,7 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 import net.minecraft.src.buildcraft.transport.Gate.GateConditional;
 
-public class Pipe extends PersistentTile implements IPipe, IDropControlInventory {
+public class Pipe implements IPipe, IDropControlInventory {
 
 	public int[] signalStrength = new int[] { 0, 0, 0, 0 };
 
@@ -108,9 +107,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 		}
 	}
 
-	@Override
 	public void setTile(TileEntity tile) {
-		super.setTile(tile);
 
 		this.container = (TileGenericPipe) tile;
 
@@ -118,6 +115,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 		logic.setTile((TileGenericPipe) tile);
 
 		setPosition(tile.xCoord, tile.yCoord, tile.zCoord);
+		setWorld(tile.worldObj);
 	}
 
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
@@ -187,6 +185,7 @@ public class Pipe extends PersistentTile implements IPipe, IDropControlInventory
 	}
 
 	public void updateEntity() {
+		
 		transport.updateEntity();
 		logic.updateEntity();
 

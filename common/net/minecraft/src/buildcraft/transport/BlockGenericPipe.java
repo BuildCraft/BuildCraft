@@ -35,8 +35,6 @@ import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.PersistentTile;
-import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -198,8 +196,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 		}
 
 		pipeRemoved.put(new BlockIndex(i, j, k), pipe);
-
-		PersistentWorld.getWorld(world).removeTile(new BlockIndex(i, j, k));
+		world.removeBlockTileEntity(i, j, k);
 	}
 
 	@Override
@@ -490,6 +487,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	}
 
 	public static Pipe createPipe(int key) {
+		
 		try {
 			return pipes.get(key).getConstructor(int.class).newInstance(key);
 		} catch (Throwable t) {
@@ -498,21 +496,28 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 		return null;
 	}
-
-	public static Pipe createPipe(IBlockAccess blockAccess, int i, int j, int k, int key) {
-		Pipe pipe = createPipe(key);
-		pipe.setPosition(i, j, k);
-
-		return (Pipe) PersistentWorld.getWorld(blockAccess).createTile(pipe, new BlockIndex(i, j, k));
+	
+	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockId, int meta) {
+		
+		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta);
+		
+		if (placed) {
+			
+			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
+			tile.initialize(pipe);
+		}
+		
+		return placed;
 	}
 
 	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
-		PersistentTile tile = PersistentWorld.getWorld(blockAccess).getTile(new BlockIndex(i, j, k));
+		
+		TileGenericPipe tile = (TileGenericPipe) blockAccess.getBlockTileEntity(i, j, k);
 
-		if (tile == null || !tile.isValid() || !(tile instanceof Pipe))
-			return null;
-		else
-			return (Pipe) tile;
+		if (tile != null && !tile.isInvalid())
+			return tile.pipe;
+		
+		return null;
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {
@@ -520,6 +525,6 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	}
 
 	public static boolean isValid(Pipe pipe) {
-		return isFullyDefined(pipe) && pipe.isValid();
+		return isFullyDefined(pipe);
 	}
 }

@@ -18,7 +18,6 @@ import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipe.DrawingState;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ClassMapping;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.EntityBlock;
@@ -27,8 +26,6 @@ import net.minecraft.src.buildcraft.core.EntityLaser;
 import net.minecraft.src.buildcraft.core.EntityRobot;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.ITileBufferHolder;
-import net.minecraft.src.buildcraft.core.PersistentTile;
-import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.RenderEnergyLaser;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderLaser;
@@ -125,19 +122,23 @@ public class mod_BuildCraftCore extends NetworkMod {
 			// renderblocks.renderStandardBlock(block, i, j, k);
 
 		} else if (block.getRenderType() == BuildCraftCore.markerModel) {
+			
 			Tessellator tessellator = Tessellator.instance;
 			float f = block.getBlockBrightness(iblockaccess, i, j, k);
 			if (Block.lightValue[block.blockID] > 0)
 				f = 1.0F;
 			tessellator.setColorOpaque_F(f, f, f);
 			renderMarkerWithMeta(iblockaccess, block, i, j, k, iblockaccess.getBlockMetadata(i, j, k));
+			
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
-			PersistentTile tile = PersistentWorld.getWorld(iblockaccess).getTile(new BlockIndex(i, j, k));
+			
+			TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
 
 			if (tile == null || !(tile instanceof IPipe))
 				legacyPipeRender(renderblocks, iblockaccess, i, j, k, block, l);
 			else
-				pipeRender(renderblocks, iblockaccess, tile.tile, (IPipe) tile, block, l);
+				pipeRender(renderblocks, iblockaccess, tile, (IPipe) tile, block, l);
+			
 		} else if (block.getRenderType() == BuildCraftCore.oilModel)
 			renderblocks.renderBlockFluids(block, i, j, k);
 

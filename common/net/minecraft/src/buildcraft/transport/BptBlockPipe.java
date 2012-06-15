@@ -79,7 +79,7 @@ public class BptBlockPipe extends BptBlock {
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		int pipeId = slot.cpt.getInteger("pipeId");
 
-		Pipe pipe = BlockGenericPipe.createPipe(context.world(), slot.x, slot.y, slot.z, pipeId);
+		Pipe pipe = BlockGenericPipe.createPipe(pipeId);
 
 		for (int i = 0; i < pipe.wireSet.length; ++i)
 			if (slot.cpt.hasKey("wire" + i))
@@ -109,8 +109,7 @@ public class BptBlockPipe extends BptBlock {
 			}
 		}
 
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
+		BlockGenericPipe.placePipe(pipe, context.world(), slot.x, slot.y, slot.z, slot.blockId, slot.meta);
 
 		if (BuildCraftCore.itemBptProps[pipeId] != null)
 			BuildCraftCore.itemBptProps[pipeId].buildBlock(slot, context);
