@@ -60,6 +60,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	private boolean blockNeighborChange = false;
 	private boolean pipeBound = false;
 
+	//Store the pipe key to prevent losing pipes when a user forgets to include an addon
+	int key; 
+
 	@TileNetworkData
 	public int pipeId = -1;
 
@@ -74,7 +77,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		if (pipe != null) {
 			nbttagcompound.setInteger("pipeId", pipe.itemID);
 			pipe.writeToNBT(nbttagcompound);
-		}
+		} else
+			nbttagcompound.setInteger("pipeId", key);
 	}
 
 	@Override
@@ -82,7 +86,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		super.readFromNBT(nbttagcompound);
 		
 
-		int key = nbttagcompound.getInteger("pipeId");
+		key = nbttagcompound.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe(key);
 
 		if (pipe != null) {
