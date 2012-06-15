@@ -489,7 +489,13 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	public static Pipe createPipe(int key) {
 		
 		try {
-			return pipes.get(key).getConstructor(int.class).newInstance(key);
+			Class<? extends Pipe> pipe = pipes.get(key);
+			if (pipe != null) {
+				return pipe.getConstructor(int.class).newInstance(key);
+			} else {
+				System.err.printf("Detected pipe with unknown key. Did you remove a buildcraft addon?\n"); 
+			}
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
