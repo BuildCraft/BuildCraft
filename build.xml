@@ -49,6 +49,13 @@
         <exec dir="${forge.dir}" executable="sh" osfamily="unix">
             <arg value="install.sh" />
         </exec>
+    	
+		<!-- Copy jar files -->
+        <copy todir="${mcp.dir}/jars/bin">
+            <fileset dir="bin"/>
+        </copy>
+		
+		<copy file="minecraft_server.jar" todir="${mcp.dir}/jars"/>
         
         <!-- Copy BC source -->
         <copy todir="${clientsrc.dir}">
