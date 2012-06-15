@@ -17,8 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipe.DrawingState;
+import net.minecraft.src.buildcraft.api.IPipeTile;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.ClassMapping;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.EntityBlock;
@@ -27,8 +27,6 @@ import net.minecraft.src.buildcraft.core.EntityLaser;
 import net.minecraft.src.buildcraft.core.EntityRobot;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.core.ITileBufferHolder;
-import net.minecraft.src.buildcraft.core.PersistentTile;
-import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.RenderEnergyLaser;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderLaser;
@@ -132,20 +130,21 @@ public class mod_BuildCraftCore extends NetworkMod {
 			tessellator.setColorOpaque_F(f, f, f);
 			renderMarkerWithMeta(iblockaccess, block, i, j, k, iblockaccess.getBlockMetadata(i, j, k));
 		} else if (block.getRenderType() == BuildCraftCore.pipeModel) {
-			PersistentTile tile = PersistentWorld.getWorld(iblockaccess).getTile(new BlockIndex(i, j, k));
+			TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
 
-			if (tile == null || !(tile instanceof IPipe))
-				legacyPipeRender(renderblocks, iblockaccess, i, j, k, block, l);
+			if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized())
+				pipeRender(renderblocks, iblockaccess, tile, block, l);
 			else
-				pipeRender(renderblocks, iblockaccess, tile.tile, (IPipe) tile, block, l);
+				legacyPipeRender(renderblocks, iblockaccess, i, j, k, block, l);	//Still used for Quarry Frame and Mining Pipe
 		} else if (block.getRenderType() == BuildCraftCore.oilModel)
 			renderblocks.renderBlockFluids(block, i, j, k);
 
 		return true;
 	}
 
-	private void pipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe, Block block, int l) {
+	private void pipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, Block block, int l) {
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
+		IPipe pipe = ((IPipeTile)tile).getPipe();
 
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;

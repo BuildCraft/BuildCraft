@@ -23,8 +23,10 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
+import net.minecraft.src.buildcraft.api.IPipeTile;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
@@ -39,8 +41,6 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
 import net.minecraft.src.buildcraft.core.ITileBufferHolder;
-import net.minecraft.src.buildcraft.core.PersistentTile;
-import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.TileBuffer;
 import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
@@ -50,7 +50,7 @@ import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, ISpecialInventory, IPipeEntry,
-		ISynchronizedTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory {
+		IPipeTile, ISynchronizedTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory {
 
 	public TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
@@ -60,9 +60,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	public Pipe pipe;
 	private boolean blockNeighborChange = false;
 	private boolean pipeBound = false;
+	
+	//Store the pipe key to prevent losing pipes when a user forgets to include an addon
+	int key; 
 
 	@TileNetworkData
-	public int pipeId = -1;
+	public int pipeId = -1; //Useless variable?
 
 	public TileGenericPipe() {
 
@@ -75,6 +78,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		if (pipe != null) {
 			nbttagcompound.setInteger("pipeId", pipe.itemID);
 			pipe.writeToNBT(nbttagcompound);
+		} else {
+			nbttagcompound.setInteger("pipeId", key);
 		}
 	}
 
@@ -82,14 +87,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		int key = nbttagcompound.getInteger("pipeId");
-		if (key > 0) {
-			pipe = BlockGenericPipe.createPipe(key);
-		}
+		key = nbttagcompound.getInteger("pipeId");
+		pipe = BlockGenericPipe.createPipe(key);
 
 		if (pipe != null) {
-			pipe.setTile(this);
 			pipe.readFromNBT(nbttagcompound);
+		} else {
+			//Perhaps remove it from the world
 		}
 	}
 
@@ -106,9 +110,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 		if (BlockGenericPipe.isValid(pipe))
 			BlockGenericPipe.removePipe(pipe);
-
-		// Clean the persistent world in case the tile is still here.
-		PersistentWorld.getWorld(worldObj).removeTile(new BlockIndex(xCoord, yCoord, zCoord));
 	}
 
 	@Override
@@ -121,9 +122,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public void updateEntity() {
 		if (!initialized) {
-			initialize();
-
-			initialized = true;
+			//This is here because worldobj is not initialized when readFromNBT 
+			//is called, so have to wait till update entity is called to initialize
+			if (pipe != null) 
+				initialize(pipe);
+			else 
+				return;
 		}
 
 		if (!BlockGenericPipe.isValid(pipe))
@@ -144,7 +148,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			pipe.updateEntity();
 	}
 
-	private void initialize() {
+	public void initialize(Pipe pipe) {
+		this.pipe = pipe;
 		tileBuffer = new TileBuffer[6];
 
 		for (Orientations o : Orientations.dirs()) {
@@ -168,25 +173,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 		if (pipe != null)
 			pipe.initialize();
+		
+		initialized = true;
 	}
 
 	private void bindPipe() {
 		if (!pipeBound) {
-			if (pipe == null) {
-				PersistentTile tile = PersistentWorld.getWorld(worldObj).getTile(new BlockIndex(xCoord, yCoord, zCoord));
-
-				if (tile != null && tile instanceof Pipe)
-					pipe = (Pipe) tile;
-			}
-
 			if (pipe != null) {
-				pipe.setTile(this);
-				pipe.setWorld(worldObj);
-
 				if (worldObj == null)
 					throw new NullPointerException();
+				
+				pipe.setTile(this);
 
-				PersistentWorld.getWorld(worldObj).storeTile(pipe, new BlockIndex(xCoord, yCoord, zCoord));
 				pipeId = pipe.itemID;
 				pipeBound = true;
 			}
@@ -358,12 +356,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
 		if (pipe == null && packet.payload.intPayload[0] != 0) {
-			pipe = BlockGenericPipe.createPipe(packet.payload.intPayload[0]);
-			pipeBound = false;
-			bindPipe();
-
-			if (pipe != null)
-				pipe.initialize();
+			initialize(BlockGenericPipe.createPipe(packet.payload.intPayload[0]));
 
 			// Check for wire information
 			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
@@ -521,5 +514,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			return pipe.doDrop();
 		else
 			return false;
+	}
+
+	@Override
+	public IPipe getPipe() {
+		return pipe;
+	}
+
+	@Override
+	public boolean isInitialized() {
+		return initialized;
 	}
 }

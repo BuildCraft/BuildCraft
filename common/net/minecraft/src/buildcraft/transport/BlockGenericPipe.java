@@ -35,8 +35,6 @@ import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.PersistentTile;
-import net.minecraft.src.buildcraft.core.PersistentWorld;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -188,18 +186,12 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 		if (world == null)
 			return;
 
-		int i = pipe.xCoord;
-		int j = pipe.yCoord;
-		int k = pipe.zCoord;
-
 		if (lastRemovedDate != world.getWorldTime()) {
 			lastRemovedDate = world.getWorldTime();
 			pipeRemoved.clear();
 		}
 
-		pipeRemoved.put(new BlockIndex(i, j, k), pipe);
-
-		PersistentWorld.getWorld(world).removeTile(new BlockIndex(i, j, k));
+		pipeRemoved.put(new BlockIndex(pipe.xCoord, pipe.yCoord, pipe.zCoord), pipe);
 	}
 
 	@Override
@@ -491,7 +483,15 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	public static Pipe createPipe(int key) {
 		try {
-			return pipes.get(key).getConstructor(int.class).newInstance(key);
+			Class<? extends Pipe> pipe = pipes.get(key);
+			if (pipe != null) {
+				return pipe.getConstructor(int.class).newInstance(key);
+			} else {
+				//Perhaps throw an exception here to prevent people from losing
+				//their pipes when this happens, and have an option in the
+				//configuration to allow execution even with a missing addon
+				System.err.printf("Detected pipe with unknown key. Did you remove a buildcraft addon?\n"); 
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -499,20 +499,30 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 		return null;
 	}
 
-	public static Pipe createPipe(IBlockAccess blockAccess, int i, int j, int k, int key) {
-		Pipe pipe = createPipe(key);
-		pipe.setPosition(i, j, k);
+	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockID, int meta) {
+		boolean ret = world.setBlockAndMetadataWithNotify(i, j, k, blockID, meta); //The blockID is the same for all right? Perhaps it should read it from the config instead passing it in createAndPlacePipe as a parameter
 
-		return (Pipe) PersistentWorld.getWorld(blockAccess).createTile(pipe, new BlockIndex(i, j, k));
+		if (ret) {
+			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
+			if (tile != null) {
+				tile.initialize(pipe);
+			}
+		}
+		return ret;
+	}
+
+	public static boolean createAndPlacePipe(World world, int i, int j, int k, int key, int blockID, int meta) {
+		Pipe pipe = createPipe(key);
+
+		return placePipe(pipe, world, i, j, k, blockID, meta);
 	}
 
 	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
-		PersistentTile tile = PersistentWorld.getWorld(blockAccess).getTile(new BlockIndex(i, j, k));
+		TileGenericPipe tile = (TileGenericPipe) blockAccess.getBlockTileEntity(i, j, k);
 
-		if (tile == null || !tile.isValid() || !(tile instanceof Pipe))
-			return null;
-		else
-			return (Pipe) tile;
+		if (tile != null && !tile.isInvalid())
+			return tile.pipe;
+		return null;
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {
