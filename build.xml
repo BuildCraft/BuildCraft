@@ -2,19 +2,24 @@
     
     <!-- Properties -->
     
-    <property name="build.dir"     value="build"/>
-    <property name="classes.dir"   value="${build.dir}/classes"/>
-    <property name="jar.dir"       value="${build.dir}/jar"/>
+    <property name="build.dir"           value="build"/>
+    <property name="src.dir"             value="src"/>
     
-    <property name="src.dir"       value="src"/>
+    <property name="download.dir"        value="${build.dir}/download"/>
+    <property name="files.minecraft.dir" value="jars"/>
     
-    <property name="mcp.dir"       value="${build.dir}/mcp"/>
-    <property name="forge.dir"     value="${mcp.dir}/forge"/>
-    
-    <property name="clientsrc.dir" value="${mcp.dir}/src/minecraft"/>
-    <property name="serversrc.dir" value="${mcp.dir}/src/minecraft_server"/>
-    
-    <property name="version"       value="3.2"/>
+    <property name="classes.dir"         value="${build.dir}/classes"/>
+    <property name="jar.dir"             value="${build.dir}/dist"/>
+          
+    <property name="mcp.dir"             value="${build.dir}/mcp"/>
+    <property name="forge.dir"           value="${mcp.dir}/forge"/>
+      
+    <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
+    <property name="serversrc.dir"       value="${mcp.dir}/src/minecraft_server"/>
+          
+    <property name="mcp.version"         value="62"/>
+    <property name="forge.version"       value="3.3.7.135"/>
+    <property name="bc.version"          value="3.2"/>
     
     <!-- Targets -->
     
@@ -24,17 +29,27 @@
     
     <target name="setup">
         
+        <mkdir dir="${download.dir}"/>
+        
+        <get src="http://mcp.ocean-labs.de/files/mcp${mcp.version}.zip" dest="${download.dir}"/>
+        <get src="https://dl.dropbox.com/u/28221422/MinecraftForge/forge-${forge.version}/minecraftforge-src-${forge.version}.zip" 
+            dest="${download.dir}"/>
+        
         <unzip dest="${mcp.dir}">
-            <fileset dir=".">
+            <fileset dir="${download.dir}">
                 <include name="mcp*.zip"/>
             </fileset>
         </unzip>
         
         <unzip dest="${mcp.dir}">
-            <fileset dir=".">
+            <fileset dir="${download.dir}">
                 <include name="minecraftforge-src-*.zip"/>
             </fileset>
         </unzip>
+        
+        <copy todir="${mcp.dir}/jars">
+            <fileset dir="${files.minecraft.dir}"/>
+        </copy>
         
         <chmod file="${mcp.dir}/updatemd5.sh" perm="+x"/>
         <chmod file="${mcp.dir}/recompile.sh" perm="+x"/>
@@ -58,7 +73,7 @@
         </copy>
         <copy todir="${clientsrc.dir}">
             <fileset dir="${src.dir}/common">
-                <exclude name="**/buildcraft/devel/*"/>
+                <exclude name="**/buildcraft/devel"/>
             </fileset>
         </copy>
         <copy todir="${serversrc.dir}">
@@ -68,7 +83,7 @@
         </copy>
         <copy todir="${serversrc.dir}">
             <fileset dir="${src.dir}/common">
-                <exclude name="**/buildcraft/devel/*"/>
+                <exclude name="**/buildcraft/devel"/>
             </fileset>
         </copy>
         
@@ -116,8 +131,8 @@
     
     <target name="package" depends="compile">
         
-        <jar destfile="${jar.dir}/buildcraft-client-${version}.jar" basedir="${classes.dir}/client"/>
-        <jar destfile="${jar.dir}/buildcraft-server-${version}.jar" basedir="${classes.dir}/server"/>
+        <jar destfile="${jar.dir}/buildcraft-client-${bc.version}.jar" basedir="${classes.dir}/client"/>
+        <jar destfile="${jar.dir}/buildcraft-server-${bc.version}.jar" basedir="${classes.dir}/server"/>
         
     </target>
     
