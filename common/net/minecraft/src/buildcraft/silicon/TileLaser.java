@@ -45,7 +45,9 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 
 	@Override
 	public void updateEntity() {
+		
 		if (powerProvider.energyStored == 0) {
+			
 			if (laser != null) {
 				deleteLaser();
 			}
@@ -75,6 +77,7 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 	}
 
 	private void deleteLaser() {
+		
 		if (laser != null) {
 			laser.setDead();
 			laser = null;
@@ -142,38 +145,42 @@ public class TileLaser extends TileEntity implements IPowerReceptor {
 		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
 		
 		if (laser == null) {
+			
 			laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
 			setLaserPosition();
 			worldObj.spawnEntityInWorld(laser);
 			laser.show();
+			
 		} else {
 			setLaserPosition();
 		}
 	}
 
 	private void setLaserPosition() {
+		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		double px = 0, py = 0, pz = 0;
-
+		
 		switch (Orientations.values()[meta]) {
-		case XNeg:
-			px = -0.3;
-			break;
-		case XPos:
-			px = 0.3;
-			break;
-		case YNeg:
-			py = -0.3;
-			break;
-		case YPos:
-			py = 0.3;
-			break;
-		case ZNeg:
-			pz = -0.3;
-			break;
-		case ZPos:
-			pz = 0.3;
-			break;
+		
+			case XNeg:
+				px = -0.3;
+				break;
+			case XPos:
+				px = 0.3;
+				break;
+			case YNeg:
+				py = -0.3;
+				break;
+			case YPos:
+				py = 0.3;
+				break;
+			case ZNeg:
+				pz = -0.3;
+				break;
+			case ZPos:
+				pz = 0.3;
+				break;
 		}
 		
 		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);

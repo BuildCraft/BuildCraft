@@ -28,8 +28,6 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	protected double angleY = 0;
 	protected double angleZ = 0;
 	protected String texture;
-	
-	double lastY;
 
 	public EntityLaser(World world) {
 
@@ -42,6 +40,8 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 
 		this.head = head;
 		this.tail = tail;
+		
+		setPosition(head.x, head.y, head.z);
 
 		init();
 	}
@@ -63,8 +63,6 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		dataWatcher.addObject(13, Integer.valueOf(encodeDouble(tail.z)));
 		
 		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
-		
-		lastY = head.y;
 	}
 
 	@Override
@@ -103,17 +101,14 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		boundingBox.maxX = Math.max(head.x, tail.x);
 		boundingBox.maxY = Math.max(head.y, tail.y);
 		boundingBox.maxZ = Math.max(head.z, tail.z);
+		
+		boundingBox.minX--;
+		boundingBox.minY--;
+		boundingBox.minZ--;
 
-		if (!APIProxy.isClient(worldObj)) {
-			
-			boundingBox.minX--;
-			boundingBox.minY--;
-			boundingBox.minZ--;
-	
-			boundingBox.maxX++;
-			boundingBox.maxY++;
-			boundingBox.maxZ++;
-		}
+		boundingBox.maxX++;
+		boundingBox.maxY++;
+		boundingBox.maxZ++;
 		
 		double dx = head.x - tail.x;
 		double dy = head.y - tail.y;
@@ -138,6 +133,11 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	@Override
 	public void setPosition(double x, double y, double z) {
 
+		if (x == 0)
+			new Exception().printStackTrace();
+		
+		System.out.println(new Position(x, y, z));
+		
 		posX = x;
 		posY = y;
 		posZ = z;
