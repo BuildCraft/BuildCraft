@@ -12,6 +12,7 @@ import net.minecraft.src.mod_BuildCraftSilicon;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiIds;
+import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -49,6 +50,12 @@ public class BlockAssemblyTable extends BlockContainer implements ITextureProvid
 		if (!APIProxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
 		return true;
+	}
+	
+	@Override
+	public void onBlockRemoval(World world, int i, int j, int k) {
+		Utils.preDestroyBlock(world, i, j, k);
+		super.onBlockRemoval(world, i, j, k);
 	}
 
 	@Override
