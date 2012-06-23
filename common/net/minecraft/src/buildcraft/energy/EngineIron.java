@@ -35,7 +35,7 @@ public class EngineIron extends Engine {
 
 	int heat = 0;
 
-	public int penatlyCooling = 0;
+	public int penaltyCooling = 0;
 
 	boolean lastPowered = false;
 
@@ -79,7 +79,7 @@ public class EngineIron extends Engine {
 
 	@Override
 	public boolean isBurning() {
-		return liquidQty > 0 && penatlyCooling == 0 && tile.isRedstonePowered;
+		return liquidQty > 0 && penaltyCooling == 0 && tile.isRedstonePowered;
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class EngineIron extends Engine {
 			return;
 		}
 
-		if (penatlyCooling <= 0 && tile.isRedstonePowered) {
+		if (penaltyCooling <= 0 && tile.isRedstonePowered) {
 
 			lastPowered = true;
 
@@ -107,10 +107,10 @@ public class EngineIron extends Engine {
 				addEnergy(currentFuel.powerPerCycle);
 				heat += currentFuel.powerPerCycle;
 			}
-		} else if (penatlyCooling <= 0) {
+		} else if (penaltyCooling <= 0) {
 			if (lastPowered) {
 				lastPowered = false;
-				penatlyCooling = 1 * 20;
+				penaltyCooling = 30 * 20;
 				// 30 sec of penalty on top of the cooling
 			}
 		}
@@ -146,13 +146,13 @@ public class EngineIron extends Engine {
 			}
 		}
 
-		if (heat > 0 && (penatlyCooling > 0 || !tile.isRedstonePowered)) {
+		if (heat > 0 && (penaltyCooling > 0 || !tile.isRedstonePowered)) {
 			heat -= 10;
 
 		}
 
-		if (heat <= 0 && penatlyCooling > 0) {
-			penatlyCooling--;
+		if (heat <= 0 && penaltyCooling > 0) {
+			penaltyCooling--;
 		}
 	}
 
@@ -244,7 +244,7 @@ public class EngineIron extends Engine {
 		coolantId = nbttagcompound.getInteger("coolantId");
 		coolantQty = nbttagcompound.getInteger("coolantQty");
 		heat = nbttagcompound.getInteger("heat");
-		penatlyCooling = nbttagcompound.getInteger("penaltyCooling");
+		penaltyCooling = nbttagcompound.getInteger("penaltyCooling");
 	}
 
 	@Override
@@ -255,7 +255,7 @@ public class EngineIron extends Engine {
 		nbttagcompound.setInteger("coolantId", coolantId);
 		nbttagcompound.setInteger("coolantQty", coolantQty);
 		nbttagcompound.setInteger("heat", heat);
-		nbttagcompound.setInteger("penaltyCooling", penatlyCooling);
+		nbttagcompound.setInteger("penaltyCooling", penaltyCooling);
 	}
 
 	public int getScaledCoolant(int i) {
@@ -313,7 +313,7 @@ public class EngineIron extends Engine {
 
 	@Override
 	public boolean isActive() {
-		return penatlyCooling <= 0;
+		return penaltyCooling <= 0;
 	}
 
 	@Override

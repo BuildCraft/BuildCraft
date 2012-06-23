@@ -67,9 +67,7 @@
         
         <!-- Copy BC source -->
         <copy todir="${clientsrc.dir}">
-            <fileset dir="${src.dir}/buildcraft_client">
-                <exclude name="**/mod_BuildCraftDevel.*"/>
-            </fileset>
+            <fileset dir="${src.dir}/buildcraft_client"/>
         </copy>
         <copy todir="${clientsrc.dir}">
             <fileset dir="${src.dir}/common">
@@ -81,9 +79,7 @@
         </copy>
         
         <copy todir="${serversrc.dir}">
-            <fileset dir="${src.dir}/buildcraft_server">
-                <exclude name="**/mod_BuildCraftDevel.*"/>
-            </fileset>
+            <fileset dir="${src.dir}/buildcraft_server/>
         </copy>
         <copy todir="${serversrc.dir}">
             <fileset dir="${src.dir}/common">
