@@ -11,7 +11,7 @@ package net.minecraft.src.buildcraft.core;
 
 public class DefaultProps {
 
-	public static final String VERSION = "3.x SVN r2";
+	public static final String VERSION = "@VERSION@";
 
 	public static int WORLD_HEIGHT = 256;
 	public static String NET_CHANNEL_NAME = "BC";
