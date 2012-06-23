@@ -19,7 +19,7 @@
           
     <property name="mcp.version"         value="62"/>
     <property name="forge.version"       value="3.3.7.135"/>
-    <property name="bc.version"          value="3.2"/>
+    <property name="bc.version"          value="3.2dev"/>
     
     <!-- Targets -->
     
@@ -75,7 +75,11 @@
             <fileset dir="${src.dir}/common">
                 <exclude name="**/buildcraft/devel"/>
             </fileset>
+            <filterset>
+                <filter token="VERSION" value="${bc.version}" />
+            </filterset>
         </copy>
+        
         <copy todir="${serversrc.dir}">
             <fileset dir="${src.dir}/buildcraft_server">
                 <exclude name="**/mod_BuildCraftDevel.*"/>
@@ -85,6 +89,9 @@
             <fileset dir="${src.dir}/common">
                 <exclude name="**/buildcraft/devel"/>
             </fileset>
+            <filterset>
+                <filter token="VERSION" value="${bc.version}" />
+            </filterset>
         </copy>
         
     </target>
