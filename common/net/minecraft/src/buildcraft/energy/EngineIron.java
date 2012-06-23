@@ -110,7 +110,7 @@ public class EngineIron extends Engine {
 		} else if (penatlyCooling <= 0) {
 			if (lastPowered) {
 				lastPowered = false;
-				penatlyCooling = 30 * 20;
+				penatlyCooling = 1 * 20;
 				// 30 sec of penalty on top of the cooling
 			}
 		}
