@@ -132,11 +132,8 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 
 	@Override
 	public void setPosition(double x, double y, double z) {
-
-		if (x == 0)
-			new Exception().printStackTrace();
 		
-		System.out.println(new Position(x, y, z));
+		//System.out.println(new Position(x, y, z));
 		
 		posX = x;
 		posY = y;
@@ -156,6 +153,8 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		dataWatcher.updateObject(11, Integer.valueOf(encodeDouble(tail.x)));
 		dataWatcher.updateObject(12, Integer.valueOf(encodeDouble(tail.y)));
 		dataWatcher.updateObject(13, Integer.valueOf(encodeDouble(tail.z)));
+		
+		onUpdate();
 	}
 	
 	public void show() {
@@ -187,13 +186,31 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	protected void entityInit() {
+	protected void entityInit() {}
+
+	@Override
+	protected void readEntityFromNBT(NBTTagCompound nbt) {
+		
+		double headX = nbt.getDouble("headX");
+		double headY = nbt.getDouble("headZ");
+		double headZ = nbt.getDouble("headY");
+		head = new Position(headX, headY, headZ);
+		
+		double tailX = nbt.getDouble("tailX");
+		double tailY = nbt.getDouble("tailZ");
+		double tailZ = nbt.getDouble("tailY");
+		tail = new Position(tailX, tailY, tailZ);
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
+	protected void writeEntityToNBT(NBTTagCompound nbt) {
+		
+		nbt.setDouble("headX", head.x);
+		nbt.setDouble("headY", head.y);
+		nbt.setDouble("headZ", head.z);
+		
+		nbt.setDouble("tailX", tail.x);
+		nbt.setDouble("tailY", tail.y);
+		nbt.setDouble("tailZ", tail.z);
 	}
-
-	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
 }
