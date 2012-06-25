@@ -18,9 +18,11 @@
     <property name="serversrc.dir"       value="${mcp.dir}/src/minecraft_server"/>
           
     <property name="mcp.version"         value="62"/>
-    <property name="forge.version"       value="3.3.7.135"/>
-    <property name="bc.version"          value="3.2dev"/>
+    <property name="forge.version"       value="3.3.8.152"/>
+    <property name="bc.version"          value="3.2"/>
     
+    <echo message="Starting build for ${bc.version}"/>
+	
     <!-- Targets -->
     
     <target name="clean">
