@@ -21,6 +21,11 @@ public class DefaultProps {
 	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";
 	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entities";
 	
+	public static final int QUARRY_PULL_RADIOUS	= 5;
+	//This is the factor which is multiplied with the head speed to determine 
+	//the speed at which items will move towards the head
+	public static final float QUARRY_PULL_SPEED	= 3;
+
 	public static String TEXTURE_BLOCKS = TEXTURE_PATH_BLOCKS + "/blocks.png";
 	public static String TEXTURE_EXTERNAL = TEXTURE_PATH_BLOCKS + "/external.png";
 	public static String TEXTURE_ITEMS = "/gfx/buildcraft/items/items.png";

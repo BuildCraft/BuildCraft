@@ -377,25 +377,10 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			worldObj.setBlockWithNotify(i, j, k, 0);
 		}
-
-		// Collect any lost items laying around
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(arm.headPosX - 1.5, arm.headPosY, arm.headPosZ - 1.5,
-				arm.headPosX + 2.5, arm.headPosY + 2.5, arm.headPosZ + 2.5);
-		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-		for (int ii = 0; ii < result.size(); ii++) {
-			if (result.get(ii) instanceof EntityItem) {
-				EntityItem entity = (EntityItem) result.get(ii);
-				if (entity.isDead)
-					continue;
-				if (entity.item.stackSize <= 0)
-					continue;
-				APIProxy.removeEntity(entity);
-				mineStack(entity.item);
-			}
-		}
 	}
 
-	private void mineStack(ItemStack s) {
+	//Had to turn it into public to reference it from the arm entity. Perhaps it should be added to the IArmListener
+	public void mineStack(ItemStack s) {
 		boolean added = false;
 
 		// First, try to add to a nearby chest
