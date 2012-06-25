@@ -19,9 +19,10 @@
           
     <property name="mcp.version"         value="62"/>
     <property name="forge.version"       value="3.3.8.152"/>
-    <property name="bc.version"          value="3.2.0"/>
+    <property name="bc.version"          value="3.1.6"/>
+    <property name="bc.version.full"     value="${bc.version}.${BUILD_NUMBER}"/>
     
-    <echo message="Starting build for ${bc.version}"/>
+    <echo message="Starting build for ${bc.version.full}"/>
 	
     <!-- Targets -->
     
@@ -136,8 +137,8 @@
     
     <target name="package" depends="compile">
         
-        <jar destfile="${jar.dir}/buildcraft-client-${bc.version}.jar" basedir="${classes.dir}/client"/>
-        <jar destfile="${jar.dir}/buildcraft-server-${bc.version}.jar" basedir="${classes.dir}/server"/>
+        <jar destfile="${jar.dir}/buildcraft-client-${bc.version.full}.jar" basedir="${classes.dir}/client"/>
+        <jar destfile="${jar.dir}/buildcraft-server-${bc.version.full}.jar" basedir="${classes.dir}/server"/>
         
     </target>
     
