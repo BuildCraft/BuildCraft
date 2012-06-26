@@ -18,9 +18,8 @@ public abstract class PowerProvider {
 	public int minEnergyReceived;
 	public int maxEnergyReceived;
 	public int maxEnergyStored;
-	public int minActivationEnergy;
-	public @TileNetworkData
-	float energyStored = 0;
+	public @TileNetworkData int minActivationEnergy;
+	public @TileNetworkData float energyStored = 0;
 
 	protected int powerLoss = 1;
 	protected int powerLossRegularity = 100;

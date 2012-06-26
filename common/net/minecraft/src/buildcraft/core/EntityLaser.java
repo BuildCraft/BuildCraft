@@ -133,8 +133,6 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	@Override
 	public void setPosition(double x, double y, double z) {
 		
-		//System.out.println(new Position(x, y, z));
-		
 		posX = x;
 		posY = y;
 		posZ = z;

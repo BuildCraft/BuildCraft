@@ -170,6 +170,7 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	public void setTarget(double x, double y, double z) {
+		
 		targetX = x;
 		targetY = y;
 		targetZ = z;
