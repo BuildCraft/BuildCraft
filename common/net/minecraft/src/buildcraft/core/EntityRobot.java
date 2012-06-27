@@ -126,7 +126,6 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 
 	protected void move() {
 
-		//System.out.println("move: " + new Position(motionX, motionY, motionZ));
 		setPosition(posX + motionX, posY + motionY, posZ + motionZ);
 
 		if (reachedDesination()) {

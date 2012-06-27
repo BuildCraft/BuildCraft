@@ -198,7 +198,6 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	
 	protected void buildFrame() {
 		
-		System.out.println(powerProvider.energyStored);
 		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 		if (powerProvider.useEnergy(25, 25, true) != 25) {
 			return;
