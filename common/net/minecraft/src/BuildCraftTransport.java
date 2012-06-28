@@ -42,6 +42,7 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsIron;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsObsidian;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsSandstone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStripes;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsVoid;
@@ -49,6 +50,7 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeItemsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsIron;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsSandstone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsVoid;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
@@ -87,6 +89,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsDiamond;
 	public static Item pipeItemsObsidian;
 	public static Item pipeItemsVoid;
+	public static Item pipeItemsSandstone;
 
 	public static Item pipeLiquidsWood;
 	public static Item pipeLiquidsCobblestone;
@@ -94,6 +97,7 @@ public class BuildCraftTransport {
 	public static Item pipeLiquidsIron;
 	public static Item pipeLiquidsGold;
 	public static Item pipeLiquidsVoid;
+	public static Item pipeLiquidsSandstone;
 
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
@@ -249,7 +253,12 @@ public class BuildCraftTransport {
 
 		pipeLiquidsVoid = createPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeLiquidsVoid.class, "Void Waterproof Pipe",
 				pipeWaterproof, pipeItemsVoid, null);
-				
+		
+		pipeItemsSandstone = createPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe",
+				Block.sandStone, Block.glass, Block.sandStone);
+		
+		pipeLiquidsSandstone = createPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeLiquidsSandstone.class, "Sandstone Waterproof Pipe",
+				pipeWaterproof, pipeItemsSandstone, null);
 
 		// dockingStationBlock = new
 		// BlockDockingStation(Integer.parseInt(dockingStationId.value));

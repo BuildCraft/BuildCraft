@@ -77,6 +77,8 @@ public class DefaultProps {
 	public static int PIPE_STRUCTURE_COBBLESTONE_ID = 4072;
 	public static int PIPE_ITEMS_VOID_ID = 19150;
 	public static int PIPE_LIQUIDS_VOID_ID = 19151;
+	public static int PIPE_ITEMS_SANDSTONE_ID = 19152;
+	public static int PIPE_LIQUIDS_SANDSTONE_ID = 19153;
 
 	public static int WOODEN_PIPE_ID = 145; // LEGACY
 	public static int STONE_PIPE_ID = 146; // LEGACY
