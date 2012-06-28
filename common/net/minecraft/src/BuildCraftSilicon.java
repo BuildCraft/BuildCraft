@@ -170,6 +170,47 @@ public class BuildCraftSilicon {
 				new Object[] { "ORO", "ODO", "OGO", Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),
 						Item.redstone, Character.valueOf('D'), Item.diamond, Character.valueOf('G'),
 						BuildCraftCore.diamondGearItem, });
+		
+		//Add reverse recipies for all gates
+		
+		//Iron
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGate, 1, 2), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGate, 1, 1)});
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGate, 1, 1), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGate, 1, 2)});
+		
+		//Gold
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGate, 1, 4), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGate, 1, 3)});
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGate, 1, 3), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGate, 1, 4)});
+
+		//Diamond
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGate, 1, 6), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGate, 1, 5)});
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGate, 1, 5), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGate, 1, 6)});
+		
+		//Iron - Autarchic
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1)});
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 1), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 2)});
+		
+		//Gold - Autarchic
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3)});
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 3), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 4)});
+
+		//Diamond - Autarchic
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5)});
+		craftingmanager.addShapelessRecipe(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 5), 
+				new Object[]{new ItemStack(redstoneChipset, 1, 0), new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, 6)});
+		
+		
+
 	}
 
 	public static void initializeModel(BaseMod mod) {
