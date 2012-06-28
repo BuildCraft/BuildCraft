@@ -44,11 +44,13 @@ import net.minecraft.src.buildcraft.transport.pipes.PipeItemsIron;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsObsidian;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsStripes;
+import net.minecraft.src.buildcraft.transport.pipes.PipeItemsVoid;
 import net.minecraft.src.buildcraft.transport.pipes.PipeItemsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsCobblestone;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsIron;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsStone;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsVoid;
 import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerGold;
 import net.minecraft.src.buildcraft.transport.pipes.PipePowerStone;
@@ -84,12 +86,14 @@ public class BuildCraftTransport {
 	public static Item pipeItemsGold;
 	public static Item pipeItemsDiamond;
 	public static Item pipeItemsObsidian;
+	public static Item pipeItemsVoid;
 
 	public static Item pipeLiquidsWood;
 	public static Item pipeLiquidsCobblestone;
 	public static Item pipeLiquidsStone;
 	public static Item pipeLiquidsIron;
 	public static Item pipeLiquidsGold;
+	public static Item pipeLiquidsVoid;
 
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
@@ -239,6 +243,13 @@ public class BuildCraftTransport {
 		// Fix the recipe
 		pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe",
 				new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
+		
+		pipeItemsVoid = createPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe",
+				new ItemStack(Item.dyePowder, 1, 0), Block.glass, Item.redstone);
+
+		pipeLiquidsVoid = createPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeLiquidsVoid.class, "Void Waterproof Pipe",
+				pipeWaterproof, pipeItemsVoid, null);
+				
 
 		// dockingStationBlock = new
 		// BlockDockingStation(Integer.parseInt(dockingStationId.value));
