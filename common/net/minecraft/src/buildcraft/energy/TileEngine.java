@@ -46,6 +46,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	int progressPart = 0;
 	public @TileNetworkData
 	float serverPistonSpeed = 0;
+	public @TileNetworkData
+	boolean isActive = false; // Used for SMP synch
 
 	boolean lastPower = false;
 
@@ -88,13 +90,21 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 				if (engine.progress > 1) {
 					progressPart = 0;
+					engine.progress = 0;
 				}
-			}
+			} else if(this.isActive)
+				progressPart = 1;
 
 			return;
 		}
 
 		engine.update();
+
+		float newPistonSpeed = engine.getPistonSpeed();
+		if (newPistonSpeed != serverPistonSpeed) {
+			serverPistonSpeed = newPistonSpeed;
+			sendNetworkUpdate();
+		}
 
 		if (progressPart != 0) {
 			engine.progress += engine.getPistonSpeed();
@@ -121,6 +131,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				progressPart = 0;
 			}
 		} else if (isRedstonePowered && engine.isActive()) {
+			
 			Position pos = new Position(xCoord, yCoord, zCoord, engine.orientation);
 			pos.moveForwards(1.0);
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
@@ -131,26 +142,26 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				if (engine.extractEnergy(receptor.getPowerProvider().minEnergyReceived,
 						receptor.getPowerProvider().maxEnergyReceived, false) > 0) {
 					progressPart = 1;
-
-					if (APIProxy.isServerSide()) {
-						sendNetworkUpdate();
-					}
-				}
-			}
-		} else {
-			// If we're not in an active movement process, update the client
-			// from time to time in order to e.g. display proper color.
-
-			if (APIProxy.isServerSide()) {
-				if (worldObj.getWorldTime() % 20 * 10 == 0) {
-					sendNetworkUpdate();
-				}
-			}
-		}
+					setActive(true);
+				} else
+					setActive(false);
+			} else
+				setActive(false);
+			
+		} else
+			setActive(false);
 
 		engine.burn();
 	}
 
+	private void setActive(boolean isActive) {
+		if(this.isActive == isActive)
+			return;
+		
+		this.isActive = isActive;
+		sendNetworkUpdate();
+	}
+	
 	private void createEngineIfNeeded() {
 		if (engine == null) {
 			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
