@@ -246,9 +246,12 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 			
 			Action a = targets.getFirst();
 			BptSlotInfo target = a.slot;
-
-			laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
-			laser.show();
+			
+			if (target != null) {
+			
+				laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
+				laser.show();
+			}
 		}
 		else {
 			laser.hide();
