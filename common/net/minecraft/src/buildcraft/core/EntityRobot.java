@@ -171,9 +171,9 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		destY = y;
 		destZ = z;
 
-		motionX = (destX - posX) / 75 * laser.getPowerAverage() / 2;
-		motionY = (destY - posY) / 75 * laser.getPowerAverage() / 2;
-		motionZ = (destZ - posZ) / 75 * laser.getPowerAverage() / 2;
+		motionX = (destX - posX) / 75 * (laser.getPowerAverage() / 2 + 1);
+		motionY = (destY - posY) / 75 * (laser.getPowerAverage() / 2 + 1);
+		motionZ = (destZ - posZ) / 75 * (laser.getPowerAverage() / 2 + 1);
 	}
 
 	protected boolean reachedDesination() {
