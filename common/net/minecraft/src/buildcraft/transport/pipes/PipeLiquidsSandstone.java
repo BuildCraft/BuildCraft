@@ -28,8 +28,11 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 
 	@Override
 	public int fill(Orientations from, int quantity, int id, boolean doFill) {
+		if (container.tileBuffer == null || container.tileBuffer[from.ordinal()] == null)
+			return 0;
+		
 		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe)) 
-				return 0;
+			return 0;
 		
 		return ((PipeTransportLiquids)this.transport).side[from.ordinal()].fill(quantity, doFill, (short) id);
 	}
