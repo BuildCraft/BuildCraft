@@ -171,9 +171,9 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 		destY = y;
 		destZ = z;
 
-		motionX = (destX - posX) / 75 * laser.getPowerAverage() / 2;
-		motionY = (destY - posY) / 75 * laser.getPowerAverage() / 2;
-		motionZ = (destZ - posZ) / 75 * laser.getPowerAverage() / 2;
+		motionX = (destX - posX) / 75 * (laser.getPowerAverage() / 2 + 1);
+		motionY = (destY - posY) / 75 * (laser.getPowerAverage() / 2 + 1);
+		motionZ = (destZ - posZ) / 75 * (laser.getPowerAverage() / 2 + 1);
 	}
 
 	protected boolean reachedDesination() {
@@ -246,9 +246,12 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 			
 			Action a = targets.getFirst();
 			BptSlotInfo target = a.slot;
-
-			laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
-			laser.show();
+			
+			if (target != null) {
+			
+				laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
+				laser.show();
+			}
 		}
 		else {
 			laser.hide();

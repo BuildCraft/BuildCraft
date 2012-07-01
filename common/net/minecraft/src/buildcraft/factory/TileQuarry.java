@@ -456,12 +456,15 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	@Override
-	public void invalidate () {
-		destroy ();
+	public void invalidate() {
+		
+		super.invalidate();
+		destroy();
 	}
 
 	@Override
 	public void destroy() {
+		
 		if (arm != null) {
 			arm.setDead();
 		}
