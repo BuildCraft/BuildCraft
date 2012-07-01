@@ -5,7 +5,7 @@
     <property name="build.dir"           value="build"/>
     <property name="src.dir"             value="src"/>
     
-    <property name="download.dir"        value="${build.dir}/download"/>
+    <property name="download.dir"        value="download"/>
     <property name="files.minecraft.dir" value="jars"/>
     
     <property name="classes.dir"         value="${build.dir}/classes"/>
@@ -34,9 +34,9 @@
         
         <mkdir dir="${download.dir}"/>
         
-        <get src="http://mcp.ocean-labs.de/files/mcp${mcp.version}.zip" dest="${download.dir}"/>
+        <get src="http://mcp.ocean-labs.de/files/mcp${mcp.version}.zip" dest="${download.dir}" usetimestamp="True"/>
         <get src="https://dl.dropbox.com/u/28221422/MinecraftForge/forge-${forge.version}/minecraftforge-src-${forge.version}.zip" 
-            dest="${download.dir}"/>
+            dest="${download.dir}" usetimestamp="True"/>
         
         <unzip dest="${mcp.dir}">
             <fileset dir="${download.dir}">
