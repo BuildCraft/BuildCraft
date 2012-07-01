@@ -60,7 +60,7 @@ public class CoreProxy {
 	}
 
 	public static void setField804(EntityItem item, float value) {
-		item.hoverStart = value;
+		item.field_804_d = value;
 	}
 
 	public static File getPropertyFile() {
