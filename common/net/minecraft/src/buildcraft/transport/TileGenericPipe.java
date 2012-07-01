@@ -106,8 +106,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		
 		super.invalidate();
 
-		if (BlockGenericPipe.isValid(pipe))
-			BlockGenericPipe.removePipe(pipe);
+//		if (BlockGenericPipe.isValid(pipe))
+//			BlockGenericPipe.removePipe(pipe);
 	}
 
 	@Override
