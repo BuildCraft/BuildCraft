@@ -42,6 +42,9 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 1, 1, 1, 1);
 		powerProvider.configurePowerPerdition(1, 1);
+		
+		((PipeTransportLiquids) transport).flowRate = 80;
+		((PipeTransportLiquids) transport).travelDelay = 2;
 	}
 
 	/**
