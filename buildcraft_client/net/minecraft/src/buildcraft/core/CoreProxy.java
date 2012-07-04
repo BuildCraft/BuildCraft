@@ -59,8 +59,8 @@ public class CoreProxy {
 		stack.onCrafting(world, player, stack.stackSize);
 	}
 
-	public static void setField804(EntityItem item, float value) {
-		item.field_804_d = value;
+	public static void setHoverStart(EntityItem item, float value) {
+		item.hoverStart = value;
 	}
 
 	public static File getPropertyFile() {

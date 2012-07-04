@@ -43,8 +43,8 @@ public class CoreProxy {
 		ModLoader.registerTileEntity(clas, ident);
 	}
 
-	public static void setField804(EntityItem item, float value) {
-		item.field_432_ae = value;
+	public static void setHoverStart(EntityItem item, float value) {
+		item.hoverStart = value;
 	}
 
 	public static void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
