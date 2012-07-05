@@ -291,7 +291,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 						if (blockDig(blockId)) {
 							blockedColumns[searchX][searchZ] = true;
 						} else if (canDig(blockId)) {
-							if (doSet) {
+							if (doSet && arm != null) {
 								arm.setTarget(bx, by + 1, bz);
 
 								targetX = (int) arm.targetX;
