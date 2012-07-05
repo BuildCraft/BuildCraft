@@ -80,6 +80,7 @@ public class BuildCraftBuilders {
 	public static BlockBlueprintLibrary libraryBlock;
 	public static ItemBptTemplate templateItem;
 	public static ItemBptBluePrint blueprintItem;
+	public static boolean fillerDestroy;
 
 	private static boolean initialized = false;
 
@@ -123,6 +124,11 @@ public class BuildCraftBuilders {
 				DefaultProps.ARCHITECT_ID);
 		Property libraryId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("blueprintLibrary.id",
 				DefaultProps.BLUEPRINT_LIBRARY_ID);
+
+		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("filler.destroy",
+				Configuration.CATEGORY_GENERAL, DefaultProps.FILLER_DESTROY);
+		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
+		fillerDestroy = Boolean.parseBoolean(fillerDestroyProp.value);
 
 		BuildCraftCore.mainConfiguration.save();
 
