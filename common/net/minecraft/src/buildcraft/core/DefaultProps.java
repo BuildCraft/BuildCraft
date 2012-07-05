@@ -111,6 +111,7 @@ public class DefaultProps {
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;
+	public static boolean FILLER_DESTROY = false;
 
 	public static int TRIGGER_REDSTONE_ACTIVE = 1;
 	public static int TRIGGER_REDSTONE_INACTIVE = 2;

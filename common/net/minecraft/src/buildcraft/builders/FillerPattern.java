@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.BuildCraftBlockUtil;
+import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -95,7 +96,11 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (lastX != Integer.MAX_VALUE) {
-			BuildCraftBlockUtil.breakBlock(world, lastX, lastY, lastZ);
+			if (BuildCraftBuilders.fillerDestroy) {
+				world.setBlockWithNotify(lastX, lastY, lastZ, 0);
+			} else {
+				BuildCraftBlockUtil.breakBlock(world, lastX, lastY, lastZ);
+			}
 		}
 
 		return lastX == Integer.MAX_VALUE;
