@@ -70,6 +70,8 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public @TileNetworkData PowerProvider powerProvider;
 
 	public static int MAX_ENERGY = 7000;
+	
+	NBTTagCompound armStore = null;
 
 	public TileQuarry() {
 		
@@ -95,7 +97,16 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		if (builderDone) {
 			
 			box.deleteLasers();
+			
+			if (armStore != null){
+				arm = new EntityMechanicalArm(worldObj);
+				arm.readFromNBT(armStore);
+				arm.listener = this;
 
+				loadArm = true;
+				armStore = null;
+			}
+			
 			if (arm == null) {
 				createArm();
 			}
@@ -332,12 +343,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		targetZ = nbttagcompound.getInteger("targetZ");
 
 		if (nbttagcompound.getBoolean("hasArm")) {
-			NBTTagCompound armStore = nbttagcompound.getCompoundTag("arm");
-			arm = new EntityMechanicalArm(worldObj);
-			arm.readFromNBT(armStore);
-			arm.listener = this;
-
-			loadArm = true;
+			armStore = nbttagcompound.getCompoundTag("arm");
 		}
 
 	}
