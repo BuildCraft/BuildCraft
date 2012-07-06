@@ -533,7 +533,12 @@ public class Pipe implements IPipe, IDropControlInventory {
 	public void resetGate() {
 		gate = null;
 		activatedTriggers = new Trigger[activatedTriggers.length];
+        triggerParameters = new TriggerParameter[triggerParameters.length];
+        activatedActions = new Action[activatedActions.length];
+        broadcastSignal = new boolean[] { false, false, false, false };
+        broadcastRedstone = false;
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+        worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
 	}
 
 	private void resolveActions() {
