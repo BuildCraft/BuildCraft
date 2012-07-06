@@ -24,12 +24,12 @@ import org.lwjgl.opengl.GL11;
 public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 	IInventory playerInventory;
-	TileGenericPipe filterInventory;
+	PipeLogicDiamond filterInventory;
 
-	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe filterInventory) {
-		super(new CraftingDiamondPipe(playerInventory, filterInventory));
+	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe tile) {
+		super(new CraftingDiamondPipe(playerInventory, (IInventory)tile.pipe.logic), (IInventory)tile.pipe.logic);
 		this.playerInventory = playerInventory;
-		this.filterInventory = filterInventory;
+		this.filterInventory = (PipeLogicDiamond)tile.pipe.logic;
 		xSize = 175;
 		ySize = 225;
 
@@ -39,7 +39,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 			for (int j1 = 0; j1 < 9; j1++) {
 				int id = k * 9 + j1;
 				slots[id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18, filterInventory, j1 + k * 9);
-			}
+			}		
 	}
 
 	@Override

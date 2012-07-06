@@ -32,7 +32,6 @@ import org.lwjgl.opengl.GL11;
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	TileAssemblyTable assemblyTable;
-	private IInventory playerInventory;
 
 	class RecipeSlot extends AdvancedSlot {
 
@@ -52,9 +51,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	public GuiAssemblyTable(IInventory playerInventory, TileAssemblyTable assemblyTable) {
-		super(new ContainerAssemblyTable(playerInventory, assemblyTable));
+		super(new ContainerAssemblyTable(playerInventory, assemblyTable), assemblyTable);
 
-		this.playerInventory = playerInventory;
 		this.assemblyTable = assemblyTable;
 		xSize = 175;
 		ySize = 207;

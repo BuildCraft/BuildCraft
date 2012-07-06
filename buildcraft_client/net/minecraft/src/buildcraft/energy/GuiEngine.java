@@ -50,8 +50,8 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 	}
 
-	public GuiEngine(BuildCraftContainer container) {
-		super(container);
+	public GuiEngine(BuildCraftContainer container, IInventory inventory) {
+		super(container, inventory);
 	}
 
 	@Override

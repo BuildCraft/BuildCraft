@@ -20,7 +20,7 @@ class CraftingFiller extends BuildCraftContainer {
 	IInventory fillerInventory;
 
 	public CraftingFiller(IInventory playerInventory, IInventory fillerInventory) {
-		super(fillerInventory);
+		super(fillerInventory.getSizeInventory());
 		this.playerIInventory = playerInventory;
 		this.fillerInventory = fillerInventory;
 

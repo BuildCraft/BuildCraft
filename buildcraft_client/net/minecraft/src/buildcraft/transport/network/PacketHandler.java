@@ -13,6 +13,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
+import net.minecraft.src.buildcraft.core.network.PacketNBT;
 import net.minecraft.src.buildcraft.core.network.PacketPipeDescription;
 import net.minecraft.src.buildcraft.core.network.PacketPipeTransportContent;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
@@ -36,9 +37,9 @@ public class PacketHandler implements IPacketHandler {
 			PacketUpdate packet = new PacketUpdate();
 			switch (packetID) {
 			case PacketIds.DIAMOND_PIPE_CONTENTS:
-				packet = new PacketUpdate(packetID);
-				packet.readData(data);
-				onDiamondContents(packet);
+				PacketNBT packetN = new PacketNBT();
+				packetN.readData(data);
+				onDiamondContents(packetN);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PacketPipeDescription packetU = new PacketPipeDescription();
@@ -161,7 +162,7 @@ public class PacketHandler implements IPacketHandler {
 	 * 
 	 * @param packet
 	 */
-	private void onDiamondContents(PacketUpdate packet) {
+	private void onDiamondContents(PacketNBT packet) {
 
 		World world = ModLoader.getMinecraftInstance().theWorld;
 
@@ -179,16 +180,17 @@ public class PacketHandler implements IPacketHandler {
 		if (!(pipe.pipe.logic instanceof PipeLogicDiamond))
 			return;
 
-		((PipeLogicDiamond) pipe.pipe.logic).handleContentsPacket(packet);
+		((PipeLogicDiamond) pipe.pipe.logic).handleFilterSet(packet);
 
 		// / FIXME: Unsure how to handle this
+		/*
 		BlockIndex index = new BlockIndex(packet.posX, packet.posY, packet.posZ);
 
 		if (BuildCraftCore.bufferedDescriptions.containsKey(index))
 			BuildCraftCore.bufferedDescriptions.remove(index);
 
 		BuildCraftCore.bufferedDescriptions.put(index, packet);
-
+		*/
 	}
 
 }

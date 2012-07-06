@@ -17,7 +17,7 @@ import net.minecraft.src.buildcraft.core.BuildCraftContainer;
 public class ContainerEngineRoot extends BuildCraftContainer {
 
 	public ContainerEngineRoot(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
-		super(tileEngine);
+		super(tileEngine.getSizeInventory());
 
 		engine = tileEngine;
 

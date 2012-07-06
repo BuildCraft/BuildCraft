@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiSteamEngine extends GuiEngine {
 
 	public GuiSteamEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
-		super(new ContainerEngine(inventoryplayer, tileEngine));
+		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
 	}
 
 	@Override

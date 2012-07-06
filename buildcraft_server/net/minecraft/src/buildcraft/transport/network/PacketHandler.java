@@ -129,7 +129,7 @@ public class PacketHandler implements IPacketHandler {
 		if (!(pipe.pipe.logic instanceof PipeLogicDiamond))
 			return;
 
-		pipe.pipe.logic.setInventorySlotContents(packet.slot, packet.stack);
+		((PipeLogicDiamond)pipe.pipe.logic).setInventorySlotContents(packet.slot, packet.stack);
 	}
 
 }

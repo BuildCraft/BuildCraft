@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiAutoCrafting extends GuiBuildCraft {
 
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
-		super(new ContainerAutoWorkbench(inventoryplayer, tile));
+		super(new ContainerAutoWorkbench(inventoryplayer, tile), tile);
 	}
 
 	@Override

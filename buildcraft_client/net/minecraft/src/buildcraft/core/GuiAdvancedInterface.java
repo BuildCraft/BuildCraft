@@ -113,8 +113,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 	public AdvancedSlot[] slots;
 
-	public GuiAdvancedInterface(BuildCraftContainer container) {
-		super(container);
+	public GuiAdvancedInterface(BuildCraftContainer container, IInventory inventory) {
+		super(container, inventory);
 	}
 
 	public int getSlotAtLocation(int i, int j) {

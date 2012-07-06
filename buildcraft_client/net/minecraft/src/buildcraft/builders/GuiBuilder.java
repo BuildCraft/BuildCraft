@@ -25,7 +25,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 	TileBuilder builder;
 
 	public GuiBuilder(IInventory playerInventory, TileBuilder builder) {
-		super(new CraftingBuilder(playerInventory, builder));
+		super(new CraftingBuilder(playerInventory, builder), builder);
 		this.playerInventory = playerInventory;
 		this.builder = builder;
 		xSize = 176;

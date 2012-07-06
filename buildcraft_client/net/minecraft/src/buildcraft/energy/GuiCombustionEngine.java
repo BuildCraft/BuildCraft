@@ -22,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiCombustionEngine extends GuiEngine {
 
 	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
-		super(new ContainerEngine(inventoryplayer, tileEngine));
+		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
 	}
 
 	@Override

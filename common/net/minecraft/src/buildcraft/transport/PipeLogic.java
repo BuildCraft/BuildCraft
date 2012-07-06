@@ -30,94 +30,26 @@ public class PipeLogic implements IDropControlInventory {
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
 	}
+	public void setWorld(World worldObj) { this.worldObj = worldObj; }
+	public void setTile(TileGenericPipe tile) { this.container = tile; }
 
-	public void setWorld(World worldObj) {
-		this.worldObj = worldObj;
-	}
+	/* SAVING & LOADING */
+	public void writeToNBT(NBTTagCompound nbttagcompound) {}
+	public void readFromNBT(NBTTagCompound nbttagcompound) {}
 
-	public boolean blockActivated(EntityPlayer entityplayer) {
-
-		return false;
-	}
-
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-
-	}
-
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-
-	}
-
-	public void setTile(TileGenericPipe tile) {
-		this.container = tile;
-	}
-
-	public boolean isPipeConnected(TileEntity tile) {
-		return true;
-	}
-
-	public void onNeighborBlockChange(int blockId) {
-
-	}
-
-	public void onBlockPlaced() {
-
-	}
-
-	public void initialize() {
-
-	}
-
-	public boolean inputOpen(Orientations from) {
-		return true;
-	}
-
-	public boolean outputOpen(Orientations to) {
-		return true;
-	}
-
-	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		return false;
-	}
-
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		return null;
-	}
-
-	public int getSizeInventory() {
-		return 0;
-	}
-
-	public ItemStack getStackInSlot(int i) {
-		return null;
-	}
-
-	public ItemStack decrStackSize(int i, int j) {
-		return null;
-	}
-
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-
-	}
-
-	public String getInvName() {
-		return null;
-	}
-
-	public int getInventoryStackLimit() {
-		return 0;
-	}
-
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return true;
-	}
-
-	public void updateEntity() {
-
-	}
-
-	@Override
-	public boolean doDrop() {
-		return true;
-	}
+	/* PIPE LOGIC */
+	public void initialize() {}
+	public void updateEntity() {}
+	
+	public boolean blockActivated(EntityPlayer entityplayer) { return false; }
+	
+	public boolean isPipeConnected(TileEntity tile) { return true; }
+	public void onNeighborBlockChange(int blockId) {}
+	public void onBlockPlaced() {}
+	
+	public boolean inputOpen(Orientations from) { return true; }
+	public boolean outputOpen(Orientations to) { return true; }
+	
+	/* IDROPCONTROLINVENTORY */
+	@Override public boolean doDrop() { return true; }
 }

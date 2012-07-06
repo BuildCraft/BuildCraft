@@ -22,7 +22,7 @@ public class GuiFiller extends GuiBuildCraft {
 	TileFiller filler;
 
 	public GuiFiller(IInventory playerInventory, TileFiller filler) {
-		super(new CraftingFiller(playerInventory, filler));
+		super(new CraftingFiller(playerInventory, filler), filler);
 		this.playerInventory = playerInventory;
 		this.filler = filler;
 		xSize = 175;

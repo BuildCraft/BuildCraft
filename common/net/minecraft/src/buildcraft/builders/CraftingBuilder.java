@@ -20,7 +20,7 @@ class CraftingBuilder extends BuildCraftContainer {
 	TileBuilder builder;
 
 	public CraftingBuilder(IInventory playerInventory, TileBuilder builder) {
-		super(builder);
+		super(builder.getSizeInventory());
 		this.playerIInventory = playerInventory;
 		this.builder = builder;
 

@@ -44,7 +44,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	private boolean isNetInitialized = false;
 
 	public CraftingGateInterface(IInventory playerInventory, Pipe pipe) {
-		super(pipe.container);
+		super(0);
 		this.playerIInventory = playerInventory;
 
 		for (int l = 0; l < 3; l++)
@@ -86,7 +86,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return pipe.container.isUseableByPlayer(entityplayer);
+		return true;
 	}
 
 	/** CLIENT SIDE **/

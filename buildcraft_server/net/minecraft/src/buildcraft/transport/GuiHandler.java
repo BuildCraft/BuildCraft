@@ -23,7 +23,7 @@ public class GuiHandler implements IGuiHandler {
 		switch (ID) {
 
 		case GuiIds.PIPE_DIAMOND:
-			return new CraftingDiamondPipe(player.inventory, pipe);
+			return new CraftingDiamondPipe(player.inventory, (PipeLogicDiamond)pipe.pipe.logic);
 
 		case GuiIds.GATES:
 			return new CraftingGateInterface(player.inventory, pipe.pipe);

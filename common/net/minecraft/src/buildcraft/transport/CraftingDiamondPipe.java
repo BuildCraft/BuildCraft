@@ -20,7 +20,7 @@ class CraftingDiamondPipe extends BuildCraftContainer {
 	IInventory filterIInventory;
 
 	public CraftingDiamondPipe(IInventory playerInventory, IInventory filterInventory) {
-		super(filterInventory);
+		super(filterInventory.getSizeInventory());
 		this.playerIInventory = playerInventory;
 		this.filterIInventory = filterInventory;
 

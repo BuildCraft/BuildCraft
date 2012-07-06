@@ -48,7 +48,7 @@ import net.minecraft.src.buildcraft.core.network.PacketPipeDescription;
 import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, ISpecialInventory, IPipeEntry,
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, IPipeEntry,
 		IPipeTile, ISynchronizedTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory {
 
 	public TileBuffer[] tileBuffer;
@@ -255,92 +255,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	}
 
 	@Override
-	public int getSizeInventory() {
-		if (BlockGenericPipe.isFullyDefined(pipe))
-			return pipe.logic.getSizeInventory();
-		else
-			return 0;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		if (BlockGenericPipe.isFullyDefined(pipe))
-			return pipe.logic.getStackInSlot(i);
-		else
-			return null;
-	}
-
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		if (BlockGenericPipe.isFullyDefined(pipe))
-			return pipe.logic.decrStackSize(i, j);
-		else
-			return null;
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		if (BlockGenericPipe.isFullyDefined(pipe))
-			pipe.logic.setInventorySlotContents(i, itemstack);
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (!BlockGenericPipe.isFullyDefined(pipe))
-			return null;
-
-		if (pipe.logic.getStackInSlot(slot) == null)
-			return null;
-
-		ItemStack toReturn = pipe.logic.getStackInSlot(slot);
-		pipe.logic.setInventorySlotContents(slot, null);
-		return toReturn;
-	}
-
-	@Override
-	public String getInvName() {
-		if (BlockGenericPipe.isFullyDefined(pipe))
-			return pipe.logic.getInvName();
-		else
-			return "";
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		if (BlockGenericPipe.isFullyDefined(pipe))
-			return pipe.logic.getInventoryStackLimit();
-		else
-			return 0;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
-			return false;
-
-		if (BlockGenericPipe.isFullyDefined(pipe))
-			return pipe.logic.canInteractWith(entityplayer);
-		else
-			return false;
-	}
-
-	@Override
-	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		if (BlockGenericPipe.isValid(pipe))
-			return pipe.logic.addItem(stack, doAdd, from);
-		else
-			return false;
-	}
-
-	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		if (BlockGenericPipe.isValid(pipe))
-			return pipe.logic.extractItem(doRemove, from);
-		else
-			return null;
-	}
-
-	@Override
 	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
 		if (BlockGenericPipe.isValid(pipe))
 			pipe.transport.entityEntering(item, orientation);
@@ -403,16 +317,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public PacketPayload getPacketPayload() {
 		return pipe.getNetworkPacket();
-	}
-
-	@Override
-	public void openChest() {
-
-	}
-
-	@Override
-	public void closeChest() {
-
 	}
 
 	@Override

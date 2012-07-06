@@ -35,7 +35,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	BptPlayerIndex index;
 
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
-		super(new ContainerBlueprintLibrary(player, library));
+		super(new ContainerBlueprintLibrary(player, library), library);
 		this.player = player;
 		xSize = 176;
 		ySize = 225;

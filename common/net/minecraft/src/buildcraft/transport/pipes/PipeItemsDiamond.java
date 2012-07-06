@@ -55,8 +55,9 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 			// NB: if there's several of the same match, the probability
 			// to use that filter is higher, this is why there are
 			// no breaks here.
+			PipeLogicDiamond diamondLogic = (PipeLogicDiamond)logic;
 			for (int slot = 0; slot < 9; ++slot) {
-				ItemStack stack = logic.getStackInSlot(dir.ordinal() * 9 + slot);
+				ItemStack stack = diamondLogic.getStackInSlot(dir.ordinal() * 9 + slot);
 
 				if (stack != null)
 					foundFilter = true;

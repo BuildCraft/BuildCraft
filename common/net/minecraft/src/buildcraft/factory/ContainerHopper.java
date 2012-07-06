@@ -12,7 +12,7 @@ public class ContainerHopper extends BuildCraftContainer {
 	TileHopper hopper;
 
 	public ContainerHopper(InventoryPlayer inventory, TileHopper tile) {
-		super(tile);
+		super(tile.getSizeInventory());
 		playerIInventory = inventory;
 		hopper = tile;
 

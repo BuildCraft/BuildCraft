@@ -223,13 +223,13 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	protected TileEntity tile;
 
-	public GuiBuildCraft(BuildCraftContainer container) {
+	public GuiBuildCraft(BuildCraftContainer container, IInventory inventory) {
 		super(container);
 
-		if (container.inventory instanceof TileEntity)
-			tile = (TileEntity) container.inventory;
+		if (inventory instanceof TileEntity)
+			tile = (TileEntity) inventory;
 
-		initLedgers(container.inventory);
+		initLedgers(inventory);
 	}
 
 	protected void initLedgers(IInventory inventory) {}

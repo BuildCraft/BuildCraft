@@ -25,7 +25,7 @@ class ContainerAssemblyTable extends BuildCraftContainer {
 	boolean networkSynchronized = false;
 
 	public ContainerAssemblyTable(IInventory playerInventory, TileAssemblyTable table) {
-		super(table);
+		super(table.getSizeInventory());
 		this.playerIInventory = playerInventory;
 
 		for (int l = 0; l < 4; l++) {

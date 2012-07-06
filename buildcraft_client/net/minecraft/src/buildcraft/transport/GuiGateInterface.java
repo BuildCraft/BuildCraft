@@ -160,7 +160,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
-		super(new CraftingGateInterface(playerInventory, pipe));
+		super(new CraftingGateInterface(playerInventory, pipe), null);
 
 		_container = (CraftingGateInterface) this.inventorySlots;
 

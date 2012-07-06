@@ -27,7 +27,7 @@ public class GuiTemplate extends GuiBuildCraft {
 	boolean editMode = false;
 
 	public GuiTemplate(IInventory playerInventory, TileArchitect template) {
-		super(new CraftingTemplate(playerInventory, template));
+		super(new CraftingTemplate(playerInventory, template), template);
 		this.playerInventory = playerInventory;
 		this.template = template;
 		xSize = 175;
