@@ -383,6 +383,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 				&& !pipe1.transport.allowsConnect(pipe2.transport))
 			return false;
 
+		if (pipe2 != null && !( pipe2.isPipeConnected(this)))
+			return false;
+
 		return pipe1 != null ? pipe1.isPipeConnected(with) : false;
 	}
 
