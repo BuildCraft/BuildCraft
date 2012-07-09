@@ -334,6 +334,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	@Override
 	public void invalidate() {
+		super.invalidate();
 		destroy();
 	}
 
