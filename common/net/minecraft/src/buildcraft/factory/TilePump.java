@@ -344,6 +344,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 	@Override
 	public void invalidate() {
+		super.invalidate();
 		destroy();
 	}
 
@@ -352,6 +353,9 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		if (tube != null) {
 			APIProxy.removeEntity(tube);
 			tube = null;
+			tubeY = Double.NaN;
+			aimY = 0;
+			blocksToPump.clear();
 		}
 	}
 
