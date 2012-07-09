@@ -48,7 +48,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	@Override
 	public void updateEntity() {
-		if (!init) {
+		if (!init && !isInvalid()) {
 			initialize();
 			init = true;
 		}
@@ -58,6 +58,13 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 			receptor.getPowerProvider().update(receptor);
 		}
+	}
+	
+	@Override
+	public void invalidate()
+	{
+		init = false;
+		super.invalidate();
 	}
 
 	public void initialize() {

@@ -507,6 +507,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void invalidate() {
+		super.invalidate();
 		destroy();
 	}
 

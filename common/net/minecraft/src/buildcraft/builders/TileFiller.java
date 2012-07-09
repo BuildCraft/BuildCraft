@@ -290,6 +290,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void invalidate() {
+		super.invalidate();
 		destroy();
 	}
 

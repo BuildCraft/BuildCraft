@@ -518,12 +518,12 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
 		
-		TileGenericPipe tile = (TileGenericPipe) blockAccess.getBlockTileEntity(i, j, k);
-
-		if (tile != null && !tile.isInvalid())
-			return tile.pipe;
+		TileEntity tile = blockAccess.getBlockTileEntity(i, j, k);
 		
-		return null;
+		if(!(tile instanceof TileGenericPipe) || tile.isInvalid())
+			return null;
+		
+		return ((TileGenericPipe)tile).pipe;
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {

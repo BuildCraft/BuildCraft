@@ -290,6 +290,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	@Override
 	public void invalidate() {
+		super.invalidate();
 		destroy();
 	}
 
