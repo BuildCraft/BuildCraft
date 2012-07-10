@@ -68,7 +68,7 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftCore.pipeModel;
+		return BuildCraftCore.legacyPipeModel;
 	}
 
 	@Override

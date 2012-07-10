@@ -83,7 +83,7 @@ public class BuildCraftCore {
 	public static int transparentTexture;
 
 	public static int blockByEntityModel;
-	public static int pipeModel;
+	public static int legacyPipeModel;
 	public static int markerModel;
 	public static int oilModel;
 
@@ -296,7 +296,7 @@ public class BuildCraftCore {
 
 	public static void initializeModel(BaseMod mod) {
 		blockByEntityModel = ModLoader.getUniqueBlockModelID(mod, true);
-		pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
+		legacyPipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 		markerModel = ModLoader.getUniqueBlockModelID(mod, false);
 		oilModel = ModLoader.getUniqueBlockModelID(mod, false);
 	}

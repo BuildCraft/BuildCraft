@@ -133,6 +133,8 @@ public class BuildCraftTransport {
 	public static Action actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
 	public static Action actionYellowSignal = new ActionSignalOutput(DefaultProps.ACTION_YELLOW_SIGNAL, IPipe.WireColor.Yellow);
 	public static Action actionEnergyPulser = new ActionEnergyPulser(DefaultProps.ACTION_ENERGY_PULSER);
+	
+	public static int pipeModel;
 
 	private static class PipeRecipe {
 
@@ -365,5 +367,9 @@ public class BuildCraftTransport {
 		}
 
 		return res;
+	}
+
+	public static void initializeModel(mod_BuildCraftTransport mod) {
+		pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 	}
 }

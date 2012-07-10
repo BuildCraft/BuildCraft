@@ -49,7 +49,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftCore.pipeModel;
+		return BuildCraftTransport.pipeModel;
 	}
 
 	@Override
