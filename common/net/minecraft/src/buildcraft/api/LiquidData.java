@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.api;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 
+@Deprecated
 public class LiquidData {
 
 	public final int liquidId;

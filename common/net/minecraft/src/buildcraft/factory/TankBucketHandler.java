@@ -10,9 +10,11 @@
 package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.BuildCraftFactory;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.forge.IBucketHandler;
 
 public class TankBucketHandler implements IBucketHandler {
@@ -25,7 +27,7 @@ public class TankBucketHandler implements IBucketHandler {
 
 			int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
 
-			ItemStack filledBucket = BuildCraftAPI.fillLiquidContainer(tank.getLiquidId(), new ItemStack(Item.bucketEmpty));
+			ItemStack filledBucket = LiquidManager.fillLiquidContainer(tank.getLiquidId(), new ItemStack(Item.bucketEmpty));
 
 			if (qty >= BuildCraftAPI.BUCKET_VOLUME && filledBucket != null) {
 				tank.empty(BuildCraftAPI.BUCKET_VOLUME, true);
