@@ -11,6 +11,7 @@ package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.api.IPipeTile;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.transport.IPipeRenderState;
 import net.minecraft.src.buildcraft.transport.PipeItemRenderer;
 import net.minecraft.src.buildcraft.transport.PipeWorldRenderer;
 import net.minecraft.src.buildcraft.transport.RenderPipe;
@@ -89,9 +90,12 @@ public class mod_BuildCraftTransport extends NetworkMod {
 		
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		
-		if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized()) {
-			pipeWorldRenderer.pipeRender(renderer, world, tile, block, modelID);
+		if (tile instanceof IPipeRenderState){
+			pipeWorldRenderer.renderPipe(renderer, world, tile, block, ((IPipeRenderState)tile).getRenderState());
 		}
+//		if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized()) {
+//			pipeWorldRenderer.renderPipe(renderer, world, tile, block);
+//		}
 
 		return true;
 	}
