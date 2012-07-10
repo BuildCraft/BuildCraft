@@ -1,6 +1,10 @@
 ## Welcome to Buildcraft on GitHub
 
-## Compiling and packaging Buildcraft
+### Official Builds
+An official jenkins build server can be found [here](http://kyprusmc.game-host.org:8080/). Jenkins will generate a new 
+build every time a change is pushed to github.
+
+### Compiling and packaging Buildcraft
 1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) is installed correctly on your system.
  * Linux users will need the latest version of astyle installed as well.
 1. Create a base directory for the build
