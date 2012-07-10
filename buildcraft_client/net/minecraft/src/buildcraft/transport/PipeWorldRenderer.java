@@ -14,7 +14,7 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class PipeWorldRenderer {
 	
-	public void pipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, Block block, int l) {
+	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, Block block, PipeRenderState state) {
 		
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
 
@@ -72,34 +72,34 @@ public class PipeWorldRenderer {
 
 		if (pipe.isWired(IPipe.WireColor.Red)) {
 			pipe.setDrawingState(DrawingState.DrawingRedWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l, Utils.pipeMinPos, Utils.pipeMaxPos,
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMinPos, Utils.pipeMaxPos,
 					Utils.pipeMinPos, IPipe.WireColor.Red);
 		}
 
 		if (pipe.isWired(IPipe.WireColor.Blue)) {
 			pipe.setDrawingState(DrawingState.DrawingBlueWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l, Utils.pipeMaxPos, Utils.pipeMaxPos,
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMaxPos, Utils.pipeMaxPos,
 					Utils.pipeMaxPos, IPipe.WireColor.Blue);
 		}
 
 		if (pipe.isWired(IPipe.WireColor.Green)) {
 			pipe.setDrawingState(DrawingState.DrawingGreenWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l, Utils.pipeMaxPos, Utils.pipeMinPos,
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMaxPos, Utils.pipeMinPos,
 					Utils.pipeMinPos, IPipe.WireColor.Green);
 		}
 
 		if (pipe.isWired(IPipe.WireColor.Yellow)) {
 			pipe.setDrawingState(DrawingState.DrawingYellowWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, l, Utils.pipeMinPos, Utils.pipeMinPos,
+			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMinPos, Utils.pipeMinPos,
 					Utils.pipeMaxPos, IPipe.WireColor.Yellow);
 		}
 
 		if (pipe.hasInterface())
-			pipeInterfaceRender(renderblocks, iblockaccess, tile, pipe, block, l);
+			pipeInterfaceRender(renderblocks, iblockaccess, tile, pipe, block);
 	}
 	
-	private void pipeRedstoneRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe,
-			Block block, int l, float cx, float cy, float cz, IPipe.WireColor color) {
+	private void pipeRedstoneRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe, 
+			Block block, float cx, float cy, float cz, IPipe.WireColor color) {
 
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
 
@@ -224,8 +224,7 @@ public class PipeWorldRenderer {
 		return pipe.isWireConnectedTo(tile2, color);
 	}
 	
-	private void pipeInterfaceRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe,
-			Block block, int l) {
+	private void pipeInterfaceRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe,	Block block) {
 
 		ITileBufferHolder holder = (ITileBufferHolder) tile;
 

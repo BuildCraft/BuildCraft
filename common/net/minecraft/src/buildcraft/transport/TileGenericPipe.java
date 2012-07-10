@@ -49,7 +49,9 @@ import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, IPipeEntry,
-		IPipeTile, ISynchronizedTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory {
+		IPipeTile, ISynchronizedTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState {
+	
+	private final PipeRenderState renderState = new PipeRenderState();
 
 	public TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
@@ -429,5 +431,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			return pipe.doDrop();
 		else
 			return false;
+	}
+	
+	/** IPipeRenderState implementation **/
+
+	@Override
+	public PipeRenderState getRenderState() {
+		return renderState;
 	}
 }
