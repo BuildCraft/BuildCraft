@@ -65,6 +65,15 @@ public class BuildCraftAPI {
 
 		return null;
 	}
+	
+	public static ItemStack fillLiquidContainer(int liquidId, ItemStack emptyContainer){
+		for(LiquidData data : liquids) {
+			if(data.liquidId == liquidId && data.container.isItemEqual(emptyContainer)) {
+				return data.filled.copy();
+			}
+	        }
+	        return null;
+	}
 
 	public static boolean isLiquid(int blockId) {
 		if (blockId == 0) {
