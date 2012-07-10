@@ -9,8 +9,10 @@
 
 package net.minecraft.src;
 
+import net.minecraft.src.buildcraft.api.IPipeTile;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.PipeItemRenderer;
+import net.minecraft.src.buildcraft.transport.PipeWorldRenderer;
 import net.minecraft.src.buildcraft.transport.RenderPipe;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
@@ -18,7 +20,8 @@ import net.minecraft.src.forge.NetworkMod;
 public class mod_BuildCraftTransport extends NetworkMod {
 
 	public static mod_BuildCraftTransport instance;
-	public static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
+	public final static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
+	public final static PipeWorldRenderer pipeWorldRenderer = new PipeWorldRenderer();
 
 	public mod_BuildCraftTransport() {
 		instance = this;
@@ -28,6 +31,8 @@ public class mod_BuildCraftTransport extends NetworkMod {
 	public void modsLoaded() {
 		super.modsLoaded();
 		BuildCraftTransport.initialize();
+		
+		BuildCraftTransport.initializeModel(this);
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone.shiftedIndex, pipeItemRenderer);
@@ -75,6 +80,19 @@ public class mod_BuildCraftTransport extends NetworkMod {
 
 	@Override
 	public boolean serverSideRequired() {
+		return true;
+	}
+	
+	@Override
+	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
+		if (modelID != BuildCraftTransport.pipeModel) return true;
+		
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		
+		if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized()) {
+			pipeWorldRenderer.pipeRender(renderer, world, tile, block, modelID);
+		}
+
 		return true;
 	}
 

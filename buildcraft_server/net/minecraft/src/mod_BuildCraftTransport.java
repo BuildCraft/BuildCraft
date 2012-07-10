@@ -24,6 +24,7 @@ public class mod_BuildCraftTransport extends NetworkMod {
 	public void modsLoaded() {
 		super.modsLoaded();
 		BuildCraftTransport.initialize();
+		BuildCraftTransport.initializeModel(this);
 	}
 
 	public static void registerTilePipe(Class<? extends TileEntity> clas, String name) {
