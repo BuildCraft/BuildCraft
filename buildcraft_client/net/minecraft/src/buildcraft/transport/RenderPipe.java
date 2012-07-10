@@ -457,7 +457,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]));
 
 				for (int i = 0; i <= 1; ++i) {
-					int iconIndex = itemstack.getItem().func_46057_a(itemstack.getItemDamage(), i);
+					int iconIndex = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), i);
 					float scale = 1.0F;
 
 					if (true) {
