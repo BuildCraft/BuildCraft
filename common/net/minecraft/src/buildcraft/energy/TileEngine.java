@@ -264,7 +264,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public int getSizeInventory() {
-		if (engine instanceof EngineStone) {
+		if (engine instanceof EngineStone || engine instanceof EngineIron) {
 			return 1;
 		} else {
 			return 0;
