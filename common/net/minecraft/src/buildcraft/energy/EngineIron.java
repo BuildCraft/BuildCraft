@@ -124,7 +124,7 @@ public class EngineIron extends Engine {
 		super.update();
 
 		if (itemInInventory != null) {
-			int liquidId = LiquidManager.getLiquidForFilledItem(itemInInventory).itemID;
+			int liquidId = LiquidManager.getLiquidIDForFilledItem(itemInInventory);
 
 			if (liquidId != 0) {
 				if (fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, false) == BuildCraftAPI.BUCKET_VOLUME) {
