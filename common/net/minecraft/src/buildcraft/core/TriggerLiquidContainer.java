@@ -15,6 +15,7 @@ import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 
 public class TriggerLiquidContainer extends Trigger {
 
@@ -73,7 +74,7 @@ public class TriggerLiquidContainer extends Trigger {
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = BuildCraftAPI.getLiquidForFilledItem(parameter.getItem());
+				seachedLiquidId = LiquidManager.getLiquidForFilledItem(parameter.getItem()).itemID;
 
 			LiquidSlot[] liquids = container.getLiquidSlots();
 

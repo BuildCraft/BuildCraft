@@ -12,6 +12,7 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.PipeTransportLiquids.LiquidBuffer;
 
@@ -92,7 +93,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = BuildCraftAPI.getLiquidForFilledItem(parameter.getItem());
+				seachedLiquidId = LiquidManager.getLiquidForFilledItem(parameter.getItem()).itemID;
 
 			if (kind == Kind.Empty) {
 				for (LiquidBuffer b : transportLiquids.side)

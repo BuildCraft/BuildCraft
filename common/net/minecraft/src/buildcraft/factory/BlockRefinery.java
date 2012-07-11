@@ -25,6 +25,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -101,7 +102,7 @@ public class BlockRefinery extends BlockContainer {
 			return true;
 		} else {
 
-			int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
+			int liquidId = LiquidManager.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem()).itemID;
 
 			if (liquidId != 0) {
 				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(Orientations.Unknown,
