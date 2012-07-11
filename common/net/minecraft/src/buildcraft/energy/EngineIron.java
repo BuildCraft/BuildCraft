@@ -26,6 +26,8 @@ public class EngineIron extends Engine {
 	public static int MAX_HEAT = 100000;
 	public static int COOLANT_THRESHOLD = 49000;
 
+	private ItemStack itemInInventory;
+
 	int burnTime = 0;
 	int liquidQty = 0;
 	int liquidId = 0;
@@ -119,8 +121,6 @@ public class EngineIron extends Engine {
 	@Override
 	public void update() {
 		super.update();
-
-		ItemStack itemInInventory = tile.getStackInSlot(0);
 
 		if (itemInInventory != null) {
 			int liquidId = BuildCraftAPI.getLiquidForFilledItem(itemInInventory);
@@ -245,6 +245,12 @@ public class EngineIron extends Engine {
 		coolantQty = nbttagcompound.getInteger("coolantQty");
 		heat = nbttagcompound.getInteger("heat");
 		penaltyCooling = nbttagcompound.getInteger("penaltyCooling");
+				
+		if (nbttagcompound.hasKey("itemInInventory")) {
+			NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
+			itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
+		}
+
 	}
 
 	@Override
@@ -255,7 +261,14 @@ public class EngineIron extends Engine {
 		nbttagcompound.setInteger("coolantId", coolantId);
 		nbttagcompound.setInteger("coolantQty", coolantQty);
 		nbttagcompound.setInteger("heat", heat);
-		nbttagcompound.setInteger("penaltyCooling", penaltyCooling);
+		nbttagcompound.setInteger("penaltyCooling", penaltyCooling);	
+		
+		if (itemInInventory != null) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			itemInInventory.writeToNBT(cpt);
+			nbttagcompound.setTag("itemInInventory", cpt);
+		}
+
 	}
 
 	public int getScaledCoolant(int i) {
@@ -320,4 +333,34 @@ public class EngineIron extends Engine {
 	public int getHeat() {
 		return heat;
 	}
+	
+	/* IINVENTORY */
+	@Override public int getSizeInventory() { return 1; }
+	@Override public ItemStack getStackInSlot(int i) { return itemInInventory; }
+	@Override public void setInventorySlotContents(int i, ItemStack itemstack) { itemInInventory = itemstack; }
+
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		if (itemInInventory != null) {
+			ItemStack newStack = itemInInventory.splitStack(j);
+
+			if (itemInInventory.stackSize == 0) {
+				itemInInventory = null;
+			}
+
+			return newStack;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1) {
+		if (itemInInventory == null)
+			return null;
+		ItemStack toReturn = itemInInventory;
+		itemInInventory = null;
+		return toReturn;
+	}
+
 }

@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.ICrafting;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
@@ -164,5 +165,12 @@ public abstract class Engine {
 	public int getCurrentOutput() {
 		return currentOutput;
 	}
+
+	/* IINVENTORY */
+	public int getSizeInventory() { return 0; }
+	public ItemStack getStackInSlot(int i) { return null; }
+	public ItemStack decrStackSize(int i, int j) { return null; }
+	public ItemStack getStackInSlotOnClosing(int i) { return getStackInSlot(i); }
+	public void setInventorySlotContents(int i, ItemStack itemstack) {}
 
 }
