@@ -24,7 +24,6 @@ import net.minecraft.src.buildcraft.factory.BptBlockFrame;
 import net.minecraft.src.buildcraft.factory.BptBlockRefinery;
 import net.minecraft.src.buildcraft.factory.BptBlockTank;
 import net.minecraft.src.buildcraft.factory.GuiHandler;
-import net.minecraft.src.buildcraft.factory.TankBucketHandler;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.buildcraft.factory.TileHopper;
@@ -98,8 +97,6 @@ public class BuildCraftFactory {
 				false);
 
 		BuildCraftCore.mainConfiguration.save();
-
-		MinecraftForge.registerCustomBucketHandler(new TankBucketHandler());
 
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
 		CoreProxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
