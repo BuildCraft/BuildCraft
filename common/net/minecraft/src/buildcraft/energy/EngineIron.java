@@ -18,6 +18,7 @@ import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -124,7 +125,12 @@ public class EngineIron extends Engine {
 		super.update();
 
 		if (itemInInventory != null) {
-			int liquidId = LiquidManager.getLiquidForFilledItem(itemInInventory).itemID;
+
+			LiquidStack liquidForFilledItem = LiquidManager.getLiquidForFilledItem(itemInInventory);
+			if (liquidForFilledItem == null)
+				return;
+			
+			int liquidId = liquidForFilledItem.itemID;
 
 			if (liquidId != 0) {
 				if (fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, false) == BuildCraftAPI.BUCKET_VOLUME) {
