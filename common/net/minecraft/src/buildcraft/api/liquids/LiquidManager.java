@@ -18,6 +18,15 @@ public class LiquidManager {
 
 		return null;
 	}
+	
+	public static int getLiquidIDForFilledItem(ItemStack filledItem) {
+		LiquidStack liquidForFilledItem = getLiquidForFilledItem(filledItem);
+		
+		if (liquidForFilledItem == null)
+			return 0;
+		
+		return liquidForFilledItem.itemID;
+	}
 
 	public static ItemStack getFilledItemForLiquid(LiquidStack liquid) {
 		for (LiquidData data : liquids)
