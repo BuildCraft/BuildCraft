@@ -92,7 +92,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
 			
-			int liquidId = LiquidManager.getLiquidForFilledItem(current).itemID;
+			int liquidId = LiquidManager.getLiquidIDForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 

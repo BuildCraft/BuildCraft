@@ -141,6 +141,9 @@ public class PipeTransportPower extends PipeTransport {
 					if (entity instanceof TileGenericPipe) {
 						TileGenericPipe nearbyTile = (TileGenericPipe) entity;
 
+						if (nearbyTile.pipe == null)
+							continue;
+						
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
 						nearbyTransport.requestEnergy(Orientations.values()[i].reverse(), transferQuery[i]);

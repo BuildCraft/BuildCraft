@@ -93,7 +93,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = LiquidManager.getLiquidForFilledItem(parameter.getItem()).itemID;
+				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
 
 			if (kind == Kind.Empty) {
 				for (LiquidBuffer b : transportLiquids.side)

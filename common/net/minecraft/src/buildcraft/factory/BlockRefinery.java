@@ -102,7 +102,7 @@ public class BlockRefinery extends BlockContainer {
 			return true;
 		} else {
 
-			int liquidId = LiquidManager.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem()).itemID;
+			int liquidId = LiquidManager.getLiquidIDForFilledItem(entityplayer.getCurrentEquippedItem());
 
 			if (liquidId != 0) {
 				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(Orientations.Unknown,

@@ -74,7 +74,7 @@ public class TriggerLiquidContainer extends Trigger {
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = LiquidManager.getLiquidForFilledItem(parameter.getItem()).itemID;
+				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
 
 			LiquidSlot[] liquids = container.getLiquidSlots();
 
