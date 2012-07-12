@@ -13,6 +13,7 @@ import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.RefineryRecipe;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
@@ -77,7 +78,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			slot = slots[position];
 
 		if (slot != null) {
-			int liquidId = BuildCraftAPI.getLiquidForFilledItem(mc.thePlayer.inventory.getItemStack());
+			int liquidId = LiquidManager.getLiquidForFilledItem(mc.thePlayer.inventory.getItemStack()).itemID;
 
 			container.setFilter(position, liquidId, 0);
 		}

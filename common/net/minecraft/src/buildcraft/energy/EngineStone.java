@@ -24,6 +24,8 @@ public class EngineStone extends Engine {
 	int burnTime = 0;
 	int totalBurnTime = 0;
 
+	private ItemStack itemInInventory;
+
 	public EngineStone(TileEngine engine) {
 		super(engine);
 
@@ -112,16 +114,30 @@ public class EngineStone extends Engine {
 		}
 	}
 
+	/* SAVING & LOADING */
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		burnTime = nbttagcompound.getInteger("burnTime");
 		totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
+		
+		if (nbttagcompound.hasKey("itemInInventory")) {
+			NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
+			itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
+		}
+
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("burnTime", burnTime);
 		nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
+		
+		if (itemInInventory != null) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			itemInInventory.writeToNBT(cpt);
+			nbttagcompound.setTag("itemInInventory", cpt);
+		}
+
 	}
 
 	@Override
@@ -161,4 +177,34 @@ public class EngineStone extends Engine {
 	public int getHeat() {
 		return energy;
 	}
+	
+	/* IINVENTORY */
+	@Override public int getSizeInventory() { return 1; }
+	@Override public ItemStack getStackInSlot(int i) { return itemInInventory; }
+	@Override public void setInventorySlotContents(int i, ItemStack itemstack) { itemInInventory = itemstack; }
+
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		if (itemInInventory != null) {
+			ItemStack newStack = itemInInventory.splitStack(j);
+
+			if (itemInInventory.stackSize == 0) {
+				itemInInventory = null;
+			}
+
+			return newStack;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int var1) {
+		if (itemInInventory == null)
+			return null;
+		ItemStack toReturn = itemInInventory;
+		itemInInventory = null;
+		return toReturn;
+	}
+
 }

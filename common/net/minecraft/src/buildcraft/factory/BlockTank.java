@@ -20,6 +20,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -88,8 +89,10 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 
-		if (entityplayer.getCurrentEquippedItem() != null) {
-			int liquidId = BuildCraftAPI.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
+		ItemStack current = entityplayer.inventory.getCurrentItem();
+		if (current != null) {
+			
+			int liquidId = LiquidManager.getLiquidIDForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
@@ -98,10 +101,24 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-							Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
+							Utils.consumeItem(current));
 				}
 
 				return true;
+			} else {
+				ItemStack filled = LiquidManager.fillLiquidContainer(tank.getLiquidId(), current);
+				
+				int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
+					
+				if(filled != null && qty >= BuildCraftAPI.BUCKET_VOLUME){
+					if(current.stackSize > 1 && !entityplayer.inventory.addItemStackToInventory(filled)){
+						return false;
+					}
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+						Utils.consumeItem(current));
+					tank.empty(BuildCraftAPI.BUCKET_VOLUME, true);
+					return true;
+				}
 			}
 		}
 

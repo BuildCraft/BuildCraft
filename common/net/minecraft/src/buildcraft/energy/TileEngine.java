@@ -53,8 +53,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	public int orientation;
 
-	private ItemStack itemInInventory;
-
 	PowerProvider provider;
 
 	public boolean isRedstonePowered = false;
@@ -229,11 +227,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			engine.orientation = Orientations.values()[orientation];
 		}
 
-		if (nbttagcompound.hasKey("itemInInventory")) {
-			NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
-			itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
-		}
-
 		if (engine != null) {
 			engine.readFromNBT(nbttagcompound);
 		}
@@ -251,58 +244,48 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			nbttagcompound.setInteger("energy", engine.energy);
 		}
 
-		if (itemInInventory != null) {
-			NBTTagCompound cpt = new NBTTagCompound();
-			itemInInventory.writeToNBT(cpt);
-			nbttagcompound.setTag("itemInInventory", cpt);
-		}
-
 		if (engine != null) {
 			engine.writeToNBT(nbttagcompound);
 		}
 	}
 
+	/* IINVENTORY IMPLEMENTATION */
 	@Override
 	public int getSizeInventory() {
-		if (engine instanceof EngineStone) {
-			return 1;
-		} else {
+		if(engine != null)
+			return engine.getSizeInventory();
+		else
 			return 0;
-		}
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return itemInInventory;
+		if(engine != null)
+			return engine.getStackInSlot(i);
+		else
+			return null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		if (itemInInventory != null) {
-			ItemStack newStack = itemInInventory.splitStack(j);
-
-			if (itemInInventory.stackSize == 0) {
-				itemInInventory = null;
-			}
-
-			return newStack;
-		} else {
+		if(engine != null)
+			return engine.decrStackSize(i, j);
+		else
 			return null;
-		}
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int var1) {
-		if (itemInInventory == null)
+	public ItemStack getStackInSlotOnClosing(int i) {
+		if(engine != null)
+			return engine.getStackInSlotOnClosing(i);
+		else
 			return null;
-		ItemStack toReturn = itemInInventory;
-		itemInInventory = null;
-		return toReturn;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		itemInInventory = itemstack;
+		if(engine != null)
+			engine.setInventorySlotContents(i, itemstack);
 	}
 
 	@Override
@@ -320,6 +303,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
+	/* STATE INFORMATION */
 	public boolean isBurning() {
 		return engine != null && engine.isBurning();
 	}
@@ -332,6 +316,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 		}
 	}
 
+	/* SMP UPDATING */
 	@Override
 	public Packet getDescriptionPacket() {
 		createEngineIfNeeded();

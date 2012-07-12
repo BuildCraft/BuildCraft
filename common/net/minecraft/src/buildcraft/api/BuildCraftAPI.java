@@ -32,6 +32,7 @@ public class BuildCraftAPI {
 
 	// Other BuildCraft global data
 
+	@Deprecated
 	public static LinkedList<LiquidData> liquids = new LinkedList<LiquidData>();
 	public static HashMap<Integer, IronEngineFuel> ironEngineFuel = new HashMap<Integer, IronEngineFuel>();
 	public static Trigger[] triggers = new Trigger[1024];
@@ -42,6 +43,7 @@ public class BuildCraftAPI {
 	private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
 	private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
+	@Deprecated
 	public static int getLiquidForFilledItem(ItemStack filledItem) {
 		if (filledItem == null) {
 			return 0;
@@ -56,6 +58,7 @@ public class BuildCraftAPI {
 		return 0;
 	}
 
+	@Deprecated
 	public static ItemStack getFilledItemForLiquid(int liquidId) {
 		for (LiquidData d : liquids) {
 			if (d.liquidId == liquidId) {
@@ -65,7 +68,8 @@ public class BuildCraftAPI {
 
 		return null;
 	}
-
+	
+	@Deprecated
 	public static boolean isLiquid(int blockId) {
 		if (blockId == 0) {
 			return false;
