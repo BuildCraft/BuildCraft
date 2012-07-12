@@ -352,8 +352,12 @@ public class PipeTransportItems extends PipeTransport {
 			int i;
 
 			if (APIProxy.isClient(worldObj) || APIProxy.isServerSide())
+			{
 				i = Math.abs(data.item.entityId + xCoord + yCoord + zCoord + data.item.deterministicRandomization)
 						% listOfPossibleMovements.size();
+				data.item.deterministicRandomization*=11;
+						
+			}
 			else
 				i = worldObj.rand.nextInt(listOfPossibleMovements.size());
 
