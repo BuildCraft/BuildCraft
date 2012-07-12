@@ -3,105 +3,95 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.IPipe.DrawingState;
+import net.minecraft.src.buildcraft.api.IPipe.WireColor;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.core.ITileBufferHolder;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class PipeWorldRenderer {
 	
-	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, Block block, PipeRenderState state) {
+	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, Block block, PipeRenderState state, int x, int y, int z) {
 		
-		ITileBufferHolder holder = (ITileBufferHolder) tile;
-
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;
 
-		IPipe pipe = ((TileGenericPipe)tile).pipe;
+		MinecraftForgeClient.bindTexture(state.getTextureFile());
 		
-		pipe.setDrawingState(DrawingState.DrawingPipe);
-
-		pipe.prepareTextureFor(Orientations.Unknown);
+		state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.Unknown);
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
-		renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+		renderblocks.renderStandardBlock(block, x, y, z);
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.XNeg))) {
-			pipe.prepareTextureFor(Orientations.XNeg);
+		if (state.pipeConnectionMatrix.isConnected(Orientations.XNeg)) {
+			state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.XNeg);
 			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.XPos))) {
-			pipe.prepareTextureFor(Orientations.XPos);
+		if (state.pipeConnectionMatrix.isConnected(Orientations.XPos)) {
+			state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.XPos);
 			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.YNeg))) {
-			pipe.prepareTextureFor(Orientations.YNeg);
+		if (state.pipeConnectionMatrix.isConnected(Orientations.YNeg)) {
+			state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.YNeg);
 			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.YPos))) {
-			pipe.prepareTextureFor(Orientations.YPos);
+		if (state.pipeConnectionMatrix.isConnected(Orientations.YPos)) {
+			state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.YPos);
 			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZNeg))) {
-			pipe.prepareTextureFor(Orientations.ZNeg);
+		if (state.pipeConnectionMatrix.isConnected(Orientations.ZNeg)) {
+			state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.ZNeg);
 			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZPos))) {
-			pipe.prepareTextureFor(Orientations.ZPos);
+		if (state.pipeConnectionMatrix.isConnected(Orientations.ZPos)) {
+			state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.ZPos);
 			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-		pipe.prepareTextureFor(Orientations.Unknown);
 		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
 
-		if (pipe.isWired(IPipe.WireColor.Red)) {
-			pipe.setDrawingState(DrawingState.DrawingRedWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMinPos, Utils.pipeMaxPos,
-					Utils.pipeMinPos, IPipe.WireColor.Red);
+		if (state.wireMatrix.hasWire(WireColor.Red)) {
+			state.currentTextureIndex = state.wireMatrix.getTextureIndex(WireColor.Red);
+			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMaxPos,
+					Utils.pipeMinPos, IPipe.WireColor.Red, x, y, z);
 		}
 
-		if (pipe.isWired(IPipe.WireColor.Blue)) {
-			pipe.setDrawingState(DrawingState.DrawingBlueWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMaxPos, Utils.pipeMaxPos,
-					Utils.pipeMaxPos, IPipe.WireColor.Blue);
+		if (state.wireMatrix.hasWire(WireColor.Blue)) {
+			state.currentTextureIndex = state.wireMatrix.getTextureIndex(WireColor.Blue);
+			pipeWireRender(renderblocks, block, state, Utils.pipeMaxPos, Utils.pipeMaxPos,
+					Utils.pipeMaxPos, IPipe.WireColor.Blue, x, y, z);
 		}
 
-		if (pipe.isWired(IPipe.WireColor.Green)) {
-			pipe.setDrawingState(DrawingState.DrawingGreenWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMaxPos, Utils.pipeMinPos,
-					Utils.pipeMinPos, IPipe.WireColor.Green);
+		if (state.wireMatrix.hasWire(WireColor.Green)) {
+			state.currentTextureIndex = state.wireMatrix.getTextureIndex(WireColor.Green);
+			pipeWireRender(renderblocks, block, state, Utils.pipeMaxPos, Utils.pipeMinPos,
+					Utils.pipeMinPos, IPipe.WireColor.Green, x, y, z);
 		}
 
-		if (pipe.isWired(IPipe.WireColor.Yellow)) {
-			pipe.setDrawingState(DrawingState.DrawingYellowWire);
-			pipeRedstoneRender(renderblocks, iblockaccess, tile, pipe, block, Utils.pipeMinPos, Utils.pipeMinPos,
-					Utils.pipeMaxPos, IPipe.WireColor.Yellow);
+		if (state.wireMatrix.hasWire(WireColor.Yellow)) {
+			state.currentTextureIndex = state.wireMatrix.getTextureIndex(WireColor.Yellow);
+			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMinPos,
+					Utils.pipeMaxPos, IPipe.WireColor.Yellow, x, y, z);
 		}
 
-		if (pipe.hasInterface())
-			pipeInterfaceRender(renderblocks, iblockaccess, tile, pipe, block);
+		if (state.hasGate())
+			pipeGateRender(renderblocks, block, state, x, y, z);
 	}
 	
-	private void pipeRedstoneRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe, 
-			Block block, float cx, float cy, float cz, IPipe.WireColor color) {
-
-		ITileBufferHolder holder = (ITileBufferHolder) tile;
+	private void pipeWireRender(RenderBlocks renderblocks, Block block, PipeRenderState state, float cx, float cy, float cz, IPipe.WireColor color, int x, int y, int z) {
 
 		float minX = Utils.pipeMinPos;
 		float minY = Utils.pipeMinPos;
@@ -113,32 +103,32 @@ public class PipeWorldRenderer {
 
 		boolean foundX = false, foundY = false, foundZ = false;
 
-		if (isConnectedWiredPipe(pipe, holder.getTile(Orientations.XNeg), color)) {
+		if (state.wireMatrix.isWireConnected(color, Orientations.XNeg)) {
 			minX = 0;
 			foundX = true;
 		}
 
-		if (isConnectedWiredPipe(pipe, holder.getTile(Orientations.XPos), color)) {
+		if (state.wireMatrix.isWireConnected(color, Orientations.XPos)) {
 			maxX = 1;
 			foundX = true;
 		}
 
-		if (isConnectedWiredPipe(pipe, holder.getTile(Orientations.YNeg), color)) {
+		if (state.wireMatrix.isWireConnected(color, Orientations.YNeg)) {
 			minY = 0;
 			foundY = true;
 		}
 
-		if (isConnectedWiredPipe(pipe, holder.getTile(Orientations.YPos), color)) {
+		if (state.wireMatrix.isWireConnected(color, Orientations.YPos)) {
 			maxY = 1;
 			foundY = true;
 		}
 
-		if (isConnectedWiredPipe(pipe, holder.getTile(Orientations.ZNeg), color)) {
+		if (state.wireMatrix.isWireConnected(color, Orientations.ZNeg)) {
 			minZ = 0;
 			foundZ = true;
 		}
 
-		if (isConnectedWiredPipe(pipe, holder.getTile(Orientations.ZPos), color)) {
+		if (state.wireMatrix.isWireConnected(color, Orientations.ZPos)) {
 			maxZ = 1;
 			foundZ = true;
 		}
@@ -189,7 +179,7 @@ public class PipeWorldRenderer {
 			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, cy == Utils.pipeMinPos ? cy - 0.05F : cy, minZ,
 					cx == Utils.pipeMinPos ? cx : cx + 0.05F, cy == Utils.pipeMinPos ? cy : cy + 0.05F, maxZ);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		// X render
@@ -198,7 +188,7 @@ public class PipeWorldRenderer {
 			block.setBlockBounds(minX, cy == Utils.pipeMinPos ? cy - 0.05F : cy, cz == Utils.pipeMinPos ? cz - 0.05F : cz, maxX,
 					cy == Utils.pipeMinPos ? cy : cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		// Y render
@@ -207,7 +197,7 @@ public class PipeWorldRenderer {
 			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, minY, cz == Utils.pipeMinPos ? cz - 0.05F : cz,
 					cx == Utils.pipeMinPos ? cx : cx + 0.05F, maxY, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (center || !found) {
@@ -215,58 +205,46 @@ public class PipeWorldRenderer {
 					cz == Utils.pipeMinPos ? cz - 0.05F : cz, cx == Utils.pipeMinPos ? cx : cx + 0.05F,
 					cy == Utils.pipeMinPos ? cy : cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
 
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 	}
 	
-	private boolean isConnectedWiredPipe(IPipe pipe, TileEntity tile2, IPipe.WireColor color) {
-		return pipe.isWireConnectedTo(tile2, color);
-	}
-	
-	private void pipeInterfaceRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileEntity tile, IPipe pipe,	Block block) {
+	private void pipeGateRender(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
 
-		ITileBufferHolder holder = (ITileBufferHolder) tile;
-
-		pipe.setDrawingState(DrawingState.DrawingGate);
+		state.currentTextureIndex = state.getGateTextureIndex();
 
 		float min = Utils.pipeMinPos + 0.05F;
 		float max = Utils.pipeMaxPos - 0.05F;
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.XNeg))) {
+		if (!state.pipeConnectionMatrix.isConnected(Orientations.XNeg)) {
 			block.setBlockBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos, max, max);
-
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.XPos))) {
+		if (!state.pipeConnectionMatrix.isConnected(Orientations.XPos)) {
 			block.setBlockBounds(Utils.pipeMaxPos, min, min, Utils.pipeMaxPos + 0.10F, max, max);
-
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.YNeg))) {
+		if (!state.pipeConnectionMatrix.isConnected(Orientations.YNeg)) {
 			block.setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
-
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.YPos))) {
+		if (!state.pipeConnectionMatrix.isConnected(Orientations.YPos)) {
 			block.setBlockBounds(min, Utils.pipeMaxPos, min, max, Utils.pipeMaxPos + 0.10F, max);
-
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZNeg))) {
+		if (!state.pipeConnectionMatrix.isConnected(Orientations.ZNeg)) {
 			block.setBlockBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos);
-
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!Utils.checkPipesConnections(tile, holder.getTile(Orientations.ZPos))) {
+		if (!state.pipeConnectionMatrix.isConnected(Orientations.ZPos)) {
 			block.setBlockBounds(min, min, Utils.pipeMaxPos, max, max, Utils.pipeMaxPos + 0.10F);
-
-			renderblocks.renderStandardBlock(block, tile.xCoord, tile.yCoord, tile.zCoord);
+			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 	}
 }

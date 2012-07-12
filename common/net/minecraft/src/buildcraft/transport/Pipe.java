@@ -295,7 +295,9 @@ public class Pipe implements IPipe, IDropControlInventory {
 
 		if (!foundBiggerSignal && signalStrength[color.ordinal()] != 0) {
 			signalStrength[color.ordinal()] = 0;
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			container.scheduleRenderUpdate();
+			
 
 			for (Orientations o : Orientations.dirs()) {
 				TileEntity tile = container.getTile(o);
@@ -352,8 +354,11 @@ public class Pipe implements IPipe, IDropControlInventory {
 			signalStrength[color.ordinal()] = signal;
 			internalUpdateScheduled = true;
 
-			if (oldSignal == 0)
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			if (oldSignal == 0) {
+				//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				container.scheduleRenderUpdate();
+				
+			}
 
 			return true;
 		} else
@@ -432,9 +437,11 @@ public class Pipe implements IPipe, IDropControlInventory {
 
 	public void randomDisplayTick(Random random) {}
 
+	@Deprecated
 	private DrawingState drawingState = DrawingState.DrawingPipe;
 
 	@Override
+	@Deprecated
 	public void setDrawingState(DrawingState state) {
 		drawingState = state;
 	}
@@ -537,8 +544,9 @@ public class Pipe implements IPipe, IDropControlInventory {
         activatedActions = new Action[activatedActions.length];
         broadcastSignal = new boolean[] { false, false, false, false };
         broadcastRedstone = false;
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-        worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+		//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+        container.scheduleRenderUpdate();
+        //worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
 	}
 
 	private void resolveActions() {
@@ -594,13 +602,15 @@ public class Pipe implements IPipe, IDropControlInventory {
 		actionsActivated(actions);
 
 		if (oldBroadcastRedstone != broadcastRedstone) {
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			container.scheduleRenderUpdate();
+			//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
 		}
 
 		for (int i = 0; i < oldBroadcastSignal.length; ++i)
 			if (oldBroadcastSignal[i] != broadcastSignal[i]) {
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				container.scheduleRenderUpdate();
 				updateSignalState();
 				break;
 			}
@@ -666,5 +676,12 @@ public class Pipe implements IPipe, IDropControlInventory {
 	@Override
 	public boolean doDrop() {
 		return logic.doDrop();
+	}
+	
+	public boolean isGateActive(){
+		for (boolean b : broadcastSignal){
+			if (b) return true;
+		}
+		return broadcastRedstone;
 	}
 }
