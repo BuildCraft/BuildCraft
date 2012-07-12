@@ -24,9 +24,10 @@ import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
-import net.minecraft.src.buildcraft.api.RefineryRecipe;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.recipes.RefineryRecipe;
 import net.minecraft.src.buildcraft.core.IMachine;
 
 public class TileRefinery extends TileMachine implements ILiquidContainer, IPowerReceptor, IInventory, IMachine {
@@ -234,19 +235,19 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, IPowe
 
 		RefineryRecipe currentRecipe = null;
 
-		currentRecipe = BuildCraftAPI.findRefineryRecipe(slot1.liquidId, slot1.quantity, slot2.liquidId, slot2.quantity);
+		currentRecipe = RefineryRecipe.findRefineryRecipe(new LiquidStack(slot1.liquidId, slot1.quantity, 0), new LiquidStack(slot2.liquidId, slot2.quantity, 0));
 
 		if (currentRecipe == null) {
 			decreaseAnimation();
 			return;
 		}
 
-		if (result.quantity != 0 && result.liquidId != currentRecipe.resultId) {
+		if (result.quantity != 0 && result.liquidId != currentRecipe.result.itemID) {
 			decreaseAnimation();
 			return;
 		}
 
-		if (result.quantity + currentRecipe.resultQty > LIQUID_PER_SLOT) {
+		if (result.quantity + currentRecipe.result.amount > LIQUID_PER_SLOT) {
 			decreaseAnimation();
 			return;
 		}
@@ -264,8 +265,8 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, IPowe
 			return;
 		}
 
-		if (!containsInput(currentRecipe.sourceId1, currentRecipe.sourceQty1)
-				|| !containsInput(currentRecipe.sourceId2, currentRecipe.sourceQty2)) {
+		if (!containsInput(currentRecipe.ingredient1)
+				|| !containsInput(currentRecipe.ingredient2)) {
 			decreaseAnimation();
 			return;
 		}
@@ -273,29 +274,33 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, IPowe
 		float energyUsed = powerProvider.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
 
 		if (energyUsed != 0) {
-			if (consumeInput(currentRecipe.sourceId1, currentRecipe.sourceQty1)
-					&& consumeInput(currentRecipe.sourceId2, currentRecipe.sourceQty2)) {
-				result.liquidId = currentRecipe.resultId;
-				result.quantity += currentRecipe.resultQty;
+			if (consumeInput(currentRecipe.ingredient1)
+					&& consumeInput(currentRecipe.ingredient2)) {
+				result.liquidId = currentRecipe.result.itemID;
+				result.quantity += currentRecipe.result.amount;
 			}
 		}
 	}
 
-	private boolean containsInput(int id, int qty) {
-		return id == 0 || (slot1.liquidId == id && slot1.quantity >= qty) || (slot2.liquidId == id && slot2.quantity >= qty);
+	private boolean containsInput(LiquidStack liquid) {
+		if(liquid == null)
+			return true;
+		
+		return liquid.isLiquidEqual(new LiquidStack(slot1.liquidId, slot1.quantity, 0)) || liquid.isLiquidEqual(new LiquidStack(slot2.liquidId, slot2.quantity, 0));
 	}
 
-	private boolean consumeInput(int id, int qty) {
-		if (id == 0) {
+	private boolean consumeInput(LiquidStack liquid) {
+		if(liquid == null)
 			return true;
-		} else if (slot1.liquidId == id && slot1.quantity >= qty) {
-			slot1.quantity -= qty;
+		
+		if(liquid.isLiquidEqual(new LiquidStack(slot1.liquidId, slot1.quantity, 0))) {
+			slot1.quantity -= liquid.amount;
 			return true;
-		} else if (slot2.liquidId == id && slot2.quantity >= qty) {
-			slot2.quantity -= qty;
+		} else if(liquid.isLiquidEqual(new LiquidStack(slot2.liquidId, slot2.quantity, 0))) {
+			slot2.quantity -= liquid.amount;
 			return true;
 		}
-
+		
 		return false;
 	}
 

@@ -86,6 +86,9 @@ public class LiquidStack {
 	 * @return true if this LiquidStack contains the same liquid as the one passed in.
 	 */
 	public boolean isLiquidEqual(LiquidStack other) {
+		if(other == null)
+			return false;
+		
 		return itemID == other.itemID && itemMeta == other.itemMeta;
 	}
 
@@ -94,6 +97,9 @@ public class LiquidStack {
 	 * @return true if this LiquidStack contains the same liquid as the one passed in.
 	 */
 	public boolean isLiquidEqual(ItemStack other) {
+		if(other == null)
+			return false;
+		
 		return itemID == other.itemID && itemMeta == other.getItemDamage();
 	}
 

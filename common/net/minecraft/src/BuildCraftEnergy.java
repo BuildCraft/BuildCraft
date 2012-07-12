@@ -12,10 +12,12 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.IronEngineFuel;
-import net.minecraft.src.buildcraft.api.LiquidData;
-import net.minecraft.src.buildcraft.api.RefineryRecipe;
 import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.fuels.IronEngineFuel;
+import net.minecraft.src.buildcraft.api.liquids.LiquidData;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.recipes.RefineryRecipe;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -126,14 +128,14 @@ public class BuildCraftEnergy {
 				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
 		CoreProxy.addName(bucketFuel, "Fuel Bucket");
 
-		BuildCraftAPI.registerRefineryRecipe(new RefineryRecipe(oilStill.blockID, 1, 0, 0, 10, fuel.shiftedIndex, 1, 1));
+		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(new LiquidStack(oilStill.blockID, 1, 0), null, new LiquidStack(fuel.shiftedIndex, 1, 0), 10, 1));
 
-		BuildCraftAPI.ironEngineFuel.put(Block.lavaStill.blockID, new IronEngineFuel(oilStill.blockID, 1, 20000));
-		BuildCraftAPI.ironEngineFuel.put(oilStill.blockID, new IronEngineFuel(oilStill.blockID, 2, 10000));
-		BuildCraftAPI.ironEngineFuel.put(fuel.shiftedIndex, new IronEngineFuel(fuel.shiftedIndex, 5, 50000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 1, 20000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 2, 10000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(fuel.shiftedIndex, 5, 50000));
 
-		BuildCraftAPI.liquids.add(new LiquidData(oilStill.blockID, oilMoving.blockID, bucketOil));
-		BuildCraftAPI.liquids.add(new LiquidData(fuel.shiftedIndex, 0, bucketFuel));
+		LiquidManager.liquids.add(new LiquidData(oilStill.blockID, oilMoving.blockID, bucketOil));
+		LiquidManager.liquids.add(new LiquidData(fuel.shiftedIndex, 0, bucketFuel));
 
 		BuildCraftAPI.softBlocks[oilMoving.blockID] = true;
 		BuildCraftAPI.softBlocks[oilStill.blockID] = true;

@@ -9,6 +9,10 @@
 
 package net.minecraft.src.buildcraft.api;
 
+/**
+ * This does not do anything anymore. Use buildcraft.api.fuels.IronEngineFuel!
+ */
+@Deprecated
 public class IronEngineFuel {
 
 	public final int fuelId;

@@ -12,8 +12,9 @@ package net.minecraft.src.buildcraft.factory;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.RefineryRecipe;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.recipes.RefineryRecipe;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
@@ -100,11 +101,11 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		if (filter1 != null)
 			liquid1Id = filter1.itemID;
 
-		RefineryRecipe recipe = BuildCraftAPI.findRefineryRecipe(liquid0Id, BuildCraftAPI.BUCKET_VOLUME, liquid1Id,
-				BuildCraftAPI.BUCKET_VOLUME);
+		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(new LiquidStack(liquid0Id, BuildCraftAPI.BUCKET_VOLUME, 0),
+				new LiquidStack(liquid1Id, BuildCraftAPI.BUCKET_VOLUME, 0));
 
 		if (recipe != null)
-			((ItemSlot) slots[2]).stack = new ItemStack(recipe.resultId, 1, 0);
+			((ItemSlot) slots[2]).stack = recipe.result.asItemStack();
 		else
 			((ItemSlot) slots[2]).stack = null;
 	}

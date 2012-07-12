@@ -81,21 +81,9 @@ public class CoreProxy {
 		return new File("buildcraft/");
 	}
 
-	public static void addLocalization(String s1, String string) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static int addFuel(int id, int dmg) {
-		return ModLoader.addAllFuel(id, dmg);
-	}
+	public static void addLocalization(String s1, String string) {}
 
 	public static int addCustomTexture(String pathToTexture) {
-		return 0;
-	}
-
-	public static long getHash(IBlockAccess iBlockAccess) {
-		// return iBlockAccess.hashCode();
 		return 0;
 	}
 

@@ -32,17 +32,28 @@ public class BuildCraftAPI {
 
 	// Other BuildCraft global data
 
-	@Deprecated
-	public static LinkedList<LiquidData> liquids = new LinkedList<LiquidData>();
-	public static HashMap<Integer, IronEngineFuel> ironEngineFuel = new HashMap<Integer, IronEngineFuel>();
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
+	 */
+	@Deprecated public static LinkedList<LiquidData> liquids = new LinkedList<LiquidData>();
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.fuels.IronEngineFuel!
+	 */
+	@Deprecated public static HashMap<Integer, IronEngineFuel> ironEngineFuel = new HashMap<Integer, IronEngineFuel>();
 	public static Trigger[] triggers = new Trigger[1024];
 	public static Action[] actions = new Action[1024];
 
 	private static EntityPlayer buildCraftPlayer;
-	private static LinkedList<RefineryRecipe> refineryRecipe = new LinkedList<RefineryRecipe>();
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
+	 */
+	@Deprecated private static LinkedList<RefineryRecipe> refineryRecipe = new LinkedList<RefineryRecipe>();
 	private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
 	private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
+	 */
 	@Deprecated
 	public static int getLiquidForFilledItem(ItemStack filledItem) {
 		if (filledItem == null) {
@@ -58,6 +69,9 @@ public class BuildCraftAPI {
 		return 0;
 	}
 
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
+	 */
 	@Deprecated
 	public static ItemStack getFilledItemForLiquid(int liquidId) {
 		for (LiquidData d : liquids) {
@@ -69,6 +83,9 @@ public class BuildCraftAPI {
 		return null;
 	}
 	
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
+	 */
 	@Deprecated
 	public static boolean isLiquid(int blockId) {
 		if (blockId == 0) {
@@ -119,12 +136,20 @@ public class BuildCraftAPI {
 		return buildCraftPlayer;
 	}
 
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
+	 */
+	@Deprecated
 	public static void registerRefineryRecipe(RefineryRecipe recipe) {
 		if (!refineryRecipe.contains(recipe)) {
 			refineryRecipe.add(recipe);
 		}
 	}
 
+	/**
+	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
+	 */
+	@Deprecated
 	public static RefineryRecipe findRefineryRecipe(int liquid1, int qty1, int liquid2, int qty2) {
 		int l1 = qty1 > 0 ? liquid1 : 0;
 		int l2 = qty2 > 0 ? liquid2 : 0;

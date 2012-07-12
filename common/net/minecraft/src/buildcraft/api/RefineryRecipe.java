@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.api;
 
+@Deprecated
 public class RefineryRecipe {
 
 	public final int sourceId1;
