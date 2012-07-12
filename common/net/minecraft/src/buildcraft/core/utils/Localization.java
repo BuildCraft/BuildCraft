@@ -1,74 +1,102 @@
+
 package net.minecraft.src.buildcraft.core.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.Properties;
 
 import net.minecraft.src.buildcraft.core.CoreProxy;
 
 /**
  * Simple mod localization class.
- * 
+ *
  * @author Jimeo Wan
  * @license Public domain
  */
 public class Localization {
 
-	public static Localization instance = new Localization();
+	private static class modInfo {
 
-	private static final String DEFAULT_LANGUAGE = "en_US";
+		final String modName, defaultLanguage;
 
-	private String loadedLanguage = null;
-	private Properties defaultMappings = new Properties();
-	private Properties mappings = new Properties();
+		public modInfo(String modName, String defaultLanguage) {
+			this.modName = modName;
+			this.defaultLanguage = defaultLanguage;
+		}
+	}
+	private static String loadedLanguage = getCurrentLanguage();
+	private static Properties defaultMappings = new Properties();
+	private static Properties mappings = new Properties();
+	private static LinkedList<modInfo> mods = new LinkedList<modInfo>();
 
 	/**
-	 * Loads the mod's localization files. All language files must be stored in
-	 * "[modname]/lang/", in .properties files. (ex: for the mod 'invtweaks',
-	 * the french translation is in: "invtweaks/lang/fr_FR.properties")
-	 * 
-	 * @param modName
-	 *            The mod name
+	 * Adds localization from a given directory. The files must have the same
+	 * name as the corresponding language file in minecraft and a ".properties"
+	 * file extention e.g "en_US.properties"
+	 *
+	 * @param path The path to the localization files
+	 * @param defaultLanguage The default localization to be used when there is
+	 * no localization for the selected language or if a string is missing (e.g.
+	 * "en_US")
 	 */
-	public Localization() {
-		load(getCurrentLanguage());
+	public static void addLocalization(String path, String defaultLanguage) {
+		mods.add(new modInfo(path, defaultLanguage));
+		load(path, defaultLanguage);
 	}
 
 	/**
 	 * Get a string for the given key, in the currently active translation.
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
-	public synchronized String get(String key) {
-		String currentLanguage = getCurrentLanguage();
-		if (!currentLanguage.equals(loadedLanguage))
-			load(currentLanguage);
+	public static synchronized String get(String key) {
+		if (!getCurrentLanguage().equals(loadedLanguage)) {
+			defaultMappings.clear();
+			mappings.clear();
+			for (modInfo mInfo : mods) {
+				load(mInfo.modName, mInfo.defaultLanguage);
+			}
+			loadedLanguage = getCurrentLanguage();
+		}
 
 		return mappings.getProperty(key, defaultMappings.getProperty(key, key));
 	}
 
-	private void load(String newLanguage) {
-		defaultMappings.clear();
-		mappings.clear();
-		try {
-			InputStream langStream = Localization.class.getResourceAsStream("/lang/buildcraft/" + newLanguage + ".properties");
-			InputStream defaultLangStream = Localization.class.getResourceAsStream("/lang/buildcraft/" + DEFAULT_LANGUAGE
-					+ ".properties");
-			mappings.load((langStream == null) ? defaultLangStream : langStream);
-			defaultMappings.load(defaultLangStream);
+	private static void load(String path, String default_language) {
+		InputStream langStream = null;
+		Properties modMappings = new Properties();
 
+		try {
+			//Load the default language mappings
+			langStream = Localization.class.getResourceAsStream(path + default_language + ".properties");
+			modMappings.load(langStream);
+			defaultMappings.putAll(modMappings);
+			langStream.close();
+
+			//Try to load the current language mappings. 
+			//If the file doesn't exist use the default mappings.
+			langStream = Localization.class.getResourceAsStream(path + getCurrentLanguage() + ".properties");
 			if (langStream != null) {
-				langStream.close();
+				modMappings.clear();
+				modMappings.load(langStream);
 			}
-			defaultLangStream.close();
+			mappings.putAll(modMappings);
+
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (langStream != null)
+					langStream.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
-		loadedLanguage = newLanguage;
 	}
 
 	private static String getCurrentLanguage() {
 		return CoreProxy.getCurrentLanguage();
 	}
-
 }
