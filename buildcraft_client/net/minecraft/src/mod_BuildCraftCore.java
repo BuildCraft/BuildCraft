@@ -32,6 +32,7 @@ import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderLaser;
 import net.minecraft.src.buildcraft.core.RenderRobot;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.core.utils.Localization;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
@@ -87,6 +88,9 @@ public class mod_BuildCraftCore extends NetworkMod {
 			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
 			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
 			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_EXTERNAL);
+			
+			//Initialize localization
+			Localization.addLocalization("/lang/buildcraft/", DefaultProps.DEFAULT_LANGUAGE);
 
 			initialized = true;
 		}
