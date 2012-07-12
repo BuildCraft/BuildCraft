@@ -26,6 +26,8 @@ public class DefaultProps {
 	public static String TEXTURE_ITEMS = "/gfx/buildcraft/items/items.png";
 	public static String TEXTURE_ICONS = TEXTURE_PATH_GUI + "/icons.png";
 	public static String TEXTURE_TRIGGERS = TEXTURE_PATH_GUI + "/triggers.png";
+	
+	public static final String DEFAULT_LANGUAGE = "en_US";
 
 	public static int WOODEN_GEAR_ID = 3800;
 	public static int STONE_GEAR_ID = 3801;
