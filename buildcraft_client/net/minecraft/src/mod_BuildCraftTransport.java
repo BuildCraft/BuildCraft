@@ -9,12 +9,12 @@
 
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.api.IPipeTile;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.IPipeRenderState;
 import net.minecraft.src.buildcraft.transport.PipeItemRenderer;
 import net.minecraft.src.buildcraft.transport.PipeWorldRenderer;
 import net.minecraft.src.buildcraft.transport.RenderPipe;
+import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
 
@@ -90,8 +90,9 @@ public class mod_BuildCraftTransport extends NetworkMod {
 		
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		
-		if (tile instanceof IPipeRenderState){
-			pipeWorldRenderer.renderPipe(renderer, world, tile, block, ((IPipeRenderState)tile).getRenderState());
+		if (tile instanceof TileGenericPipe){
+			TileGenericPipe pipeTile = (TileGenericPipe) tile;
+			pipeWorldRenderer.renderPipe(renderer, world, block, ((IPipeRenderState)tile).getRenderState(), pipeTile.xCoord, pipeTile.yCoord, pipeTile.zCoord);
 		}
 //		if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized()) {
 //			pipeWorldRenderer.renderPipe(renderer, world, tile, block);

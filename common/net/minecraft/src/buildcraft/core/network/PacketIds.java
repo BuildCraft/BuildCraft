@@ -16,4 +16,6 @@ public class PacketIds {
 	public static final int GATE_SELECTION_CHANGE = 44;
 	public static final int GATE_TRIGGERS = 45;
 	public static final int REFINERY_FILTER_SET = 50;
+	
+	public static final int PIPE_RENDER_STATE = 60;
 }

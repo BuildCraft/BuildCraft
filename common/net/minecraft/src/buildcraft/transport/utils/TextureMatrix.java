@@ -6,19 +6,19 @@ import java.io.IOException;
 
 import net.minecraft.src.buildcraft.api.Orientations;
 
-public class ConnectionMatrix {
+public class TextureMatrix {
 	
-	private final boolean[] _connected = new boolean[Orientations.dirs().length];
+	private final int[] _textureIndexes = new int[Orientations.values().length];
 	
 	private boolean dirty = false;
 	
-	public boolean isConnected(Orientations direction){
-		return _connected[direction.ordinal()];
+	public int getTextureIndex(Orientations direction){
+		return _textureIndexes[direction.ordinal()];
 	}
 	
-	public void setConnected(Orientations direction, boolean value){
-		if (_connected[direction.ordinal()] != value){
-			_connected[direction.ordinal()] = value;
+	public void setTextureIndex(Orientations direction, int value){
+		if (_textureIndexes[direction.ordinal()] != value){
+			_textureIndexes[direction.ordinal()] = value;
 			dirty = true;
 		}
 	}
@@ -33,13 +33,13 @@ public class ConnectionMatrix {
 
 	public void writeData(DataOutputStream data) throws IOException {
 		for(int i = 0; i < Orientations.dirs().length; i++){
-			data.writeBoolean(_connected[i]);
+			data.writeInt(_textureIndexes[i]);
 		}
 	}
 
 	public void readData(DataInputStream data) throws IOException {
 		for (int i = 0; i < Orientations.dirs().length; i++){
-			_connected[i] = data.readBoolean();
+			_textureIndexes[i] = data.readInt();
 		}
 	}
 }
