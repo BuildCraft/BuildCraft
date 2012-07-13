@@ -8,7 +8,10 @@
 
 package net.minecraft.src;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
@@ -26,6 +29,7 @@ import net.minecraft.src.buildcraft.transport.BptItemPipeDiamond;
 import net.minecraft.src.buildcraft.transport.BptItemPipeIron;
 import net.minecraft.src.buildcraft.transport.BptItemPipeWodden;
 import net.minecraft.src.buildcraft.transport.GuiHandler;
+import net.minecraft.src.buildcraft.transport.ItemFacade;
 import net.minecraft.src.buildcraft.transport.ItemGate;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
@@ -102,6 +106,8 @@ public class BuildCraftTransport {
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
 	public static Item pipePowerGold;
+	
+	public static Item facadeItem;
 
 	public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
@@ -303,6 +309,10 @@ public class BuildCraftTransport {
 
 		pipeGateAutarchic = new ItemGate(DefaultProps.GATE_AUTARCHIC_ID, 1).setIconIndex(2 * 16 + 3);
 		pipeGateAutarchic.setItemName("pipeGateAutarchic");
+		
+		facadeItem = new ItemFacade(DefaultProps.PIPE_FACADE_ID);
+		facadeItem.setItemName("pipeFacade");
+		ItemFacade.initialize();
 
 		alwaysConnectPipes = Boolean.parseBoolean(alwaysConnect.value);
 
@@ -372,4 +382,6 @@ public class BuildCraftTransport {
 	public static void initializeModel(mod_BuildCraftTransport mod) {
 		pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 	}
+	
+	
 }

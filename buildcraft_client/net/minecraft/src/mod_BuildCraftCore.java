@@ -197,50 +197,50 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 	RenderItem itemRenderer = new RenderItem();
 
-//	@Override
-//	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i, int j) {
-//		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
-//
-//			EntityRenderIndex index = new EntityRenderIndex(block, i);
-//
-//			if (blockByEntityRenders.containsKey(index))
-//				blockByEntityRenders.get(index).inventoryRender(-0.5, -0.5, -0.5, 0, 0);
-//		} else if (block.getRenderType() == BuildCraftCore.markerModel) {
-//			// Do nothing here...
-//		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
-//			Tessellator tessellator = Tessellator.instance;
-//
-//			block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-//			block.setBlockBoundsForItemRender();
-//			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-//			tessellator.startDrawingQuads();
-//			tessellator.setNormal(0.0F, -1F, 0.0F);
-//			renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, i));
-//			tessellator.draw();
-//			tessellator.startDrawingQuads();
-//			tessellator.setNormal(0.0F, 1.0F, 0.0F);
-//			renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, i));
-//			tessellator.draw();
-//			tessellator.startDrawingQuads();
-//			tessellator.setNormal(0.0F, 0.0F, -1F);
-//			renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, i));
-//			tessellator.draw();
-//			tessellator.startDrawingQuads();
-//			tessellator.setNormal(0.0F, 0.0F, 1.0F);
-//			renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, i));
-//			tessellator.draw();
-//			tessellator.startDrawingQuads();
-//			tessellator.setNormal(-1F, 0.0F, 0.0F);
-//			renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, i));
-//			tessellator.draw();
-//			tessellator.startDrawingQuads();
-//			tessellator.setNormal(1.0F, 0.0F, 0.0F);
-//			renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, i));
-//			tessellator.draw();
-//			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-//			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-//		}
-//	}
+	@Override
+	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i, int j) {
+		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
+
+			EntityRenderIndex index = new EntityRenderIndex(block, i);
+
+			if (blockByEntityRenders.containsKey(index))
+				blockByEntityRenders.get(index).inventoryRender(-0.5, -0.5, -0.5, 0, 0);
+		} else if (block.getRenderType() == BuildCraftCore.markerModel) {
+			// Do nothing here...
+		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
+			Tessellator tessellator = Tessellator.instance;
+
+			block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+			block.setBlockBoundsForItemRender();
+			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+			tessellator.startDrawingQuads();
+			tessellator.setNormal(0.0F, -1F, 0.0F);
+			renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, i));
+			tessellator.draw();
+			tessellator.startDrawingQuads();
+			tessellator.setNormal(0.0F, 1.0F, 0.0F);
+			renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, i));
+			tessellator.draw();
+			tessellator.startDrawingQuads();
+			tessellator.setNormal(0.0F, 0.0F, -1F);
+			renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, i));
+			tessellator.draw();
+			tessellator.startDrawingQuads();
+			tessellator.setNormal(0.0F, 0.0F, 1.0F);
+			renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, i));
+			tessellator.draw();
+			tessellator.startDrawingQuads();
+			tessellator.setNormal(-1F, 0.0F, 0.0F);
+			renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, i));
+			tessellator.draw();
+			tessellator.startDrawingQuads();
+			tessellator.setNormal(1.0F, 0.0F, 0.0F);
+			renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, i));
+			tessellator.draw();
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		}
+	}
 
 	public static double frontX[][][] = new double[6][3][4];
 	public static double frontZ[][][] = new double[6][3][4];

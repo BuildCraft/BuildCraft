@@ -4,8 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.utils.ConnectionMatrix;
+import net.minecraft.src.buildcraft.transport.utils.FacadeMatrix;
 import net.minecraft.src.buildcraft.transport.utils.TextureMatrix;
 import net.minecraft.src.buildcraft.transport.utils.WireMatrix;
 
@@ -19,13 +21,25 @@ public class PipeRenderState {
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
 	
+	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
+	
+	
+	
+	
 	private boolean dirty = false;
 	
 	
-	/**This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will
-	 * then return the the WorldRenderer  
-     */
+	/*This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will
+	 * then return the the WorldRenderer */
 	public int currentTextureIndex;
+	
+	public PipeRenderState() {
+//		for (Orientations direction : Orientations.dirs()){
+//			facadeMatrix.setConnected(direction, true);
+//			facadeMatrix.setTextureFile(direction, "/terrain.png");
+//			facadeMatrix.setTextureIndex(direction, direction.ordinal());
+//		}
+	}
 		
 	
 	public void setTextureFile(String textureFile){
@@ -66,10 +80,11 @@ public class PipeRenderState {
 		pipeConnectionMatrix.clean();
 		textureMatrix.clean();
 		wireMatrix.clean();
+		facadeMatrix.clean();
 	}
 
 	public boolean isDirty(){
-		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty();
+		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty() || facadeMatrix.isDirty();
 	}
 
 	public void writeData(DataOutputStream data) throws IOException {
