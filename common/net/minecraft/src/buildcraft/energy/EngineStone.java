@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.energy;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.src.Block;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.Item;
@@ -94,24 +95,10 @@ public class EngineStone extends Engine {
 	}
 
 	private int getItemBurnTime(ItemStack itemstack) {
-		if (itemstack == null) {
+		if (itemstack == null)
 			return 0;
-		}
-		int i = itemstack.getItem().shiftedIndex;
-		if (i < Block.blocksList.length && Block.blocksList[i] != null && Block.blocksList[i].blockMaterial == Material.wood) {
-			return 300;
-		}
-		if (i == Item.stick.shiftedIndex) {
-			return 100;
-		}
-		if (i == Item.coal.shiftedIndex) {
-			return 1600;
-		}
-		if (i == Item.bucketLava.shiftedIndex) {
-			return 20000;
-		} else {
-			return i == Block.sapling.blockID ? 100 : CoreProxy.addFuel(i, itemstack.getItemDamage());
-		}
+		
+		return FMLCommonHandler.instance().fuelLookup(itemstack.getItem().shiftedIndex, itemstack.getItemDamage());
 	}
 
 	/* SAVING & LOADING */

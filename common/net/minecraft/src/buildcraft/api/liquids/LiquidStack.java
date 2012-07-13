@@ -6,9 +6,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 
 /**
- * 
- * Forestry internal ItemStack substitute for liquids
- * 
+ * ItemStack substitute for liquids
  * @author SirSengir
  */
 public class LiquidStack {
@@ -21,16 +19,16 @@ public class LiquidStack {
 	private LiquidStack() {
 	}
 
-	public LiquidStack(int itemID, int liquidAmount) {
-		this(itemID, liquidAmount, 0);
+	public LiquidStack(int itemID, int amount) {
+		this(itemID, amount, 0);
 	}
 
-	public LiquidStack(Item item, int liquidAmount) {
-		this(item.shiftedIndex, liquidAmount, 0);
+	public LiquidStack(Item item, int amount) {
+		this(item.shiftedIndex, amount, 0);
 	}
 
-	public LiquidStack(Block block, int liquidAmount) {
-		this(block.blockID, liquidAmount, 0);
+	public LiquidStack(Block block, int amount) {
+		this(block.blockID, amount, 0);
 	}
 
 	public LiquidStack(int itemID, int amount, int itemDamage) {
@@ -56,6 +54,9 @@ public class LiquidStack {
 			stackTagCompound = nbttagcompound.getCompoundTag("tag");
 	}
 
+	/**
+	 * @return A copy of this LiquidStack
+	 */
 	public LiquidStack copy() {
 		LiquidStack copy = new LiquidStack(itemID, amount, itemMeta);
 		if (stackTagCompound != null) {
@@ -66,24 +67,44 @@ public class LiquidStack {
 		return copy;
 	}
 
+	/**
+	 * @return NBTTagCompound associated with this LiquidStack
+	 */
 	public NBTTagCompound getTagCompound() {
 		return stackTagCompound;
 	}
 
+	/**
+	 * @param nbttagcompound Sets the NBTTagCompound on this LiquidStack
+	 */
 	public void setTagCompound(NBTTagCompound nbttagcompound) {
 		stackTagCompound = nbttagcompound;
 	}
 
+	/**
+	 * @param other 
+	 * @return true if this LiquidStack contains the same liquid as the one passed in.
+	 */
 	public boolean isLiquidEqual(LiquidStack other) {
+		if(other == null)
+			return false;
+		
 		return itemID == other.itemID && itemMeta == other.itemMeta;
 	}
 
+	/**
+	 * @param other ItemStack containing liquids. 
+	 * @return true if this LiquidStack contains the same liquid as the one passed in.
+	 */
 	public boolean isLiquidEqual(ItemStack other) {
+		if(other == null)
+			return false;
+		
 		return itemID == other.itemID && itemMeta == other.getItemDamage();
 	}
 
 	/**
-	 * @return An ItemStack representation of this LiquidStack
+	 * @return ItemStack representation of this LiquidStack
 	 */
 	public ItemStack asItemStack() {
 		return new ItemStack(itemID, 1, itemMeta);

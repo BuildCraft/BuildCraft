@@ -28,6 +28,7 @@ import net.minecraft.src.buildcraft.core.network.BuildCraftPacket;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
 import cpw.mods.fml.client.SpriteHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CoreProxy {
 
@@ -85,10 +86,6 @@ public class CoreProxy {
 
 	}
 
-	public static int addFuel(int id, int dmg) {
-		return ModLoader.addAllFuel(id, dmg);
-	}
-
 	/**
 	 * Adds an override to the buildcraft texture file, mainly to provide pipes
 	 * with icons.
@@ -102,11 +99,6 @@ public class CoreProxy {
 			registeredOverrideTextureMap = true;
 		}
 		return ModLoader.addOverride(DefaultProps.TEXTURE_EXTERNAL, pathToTexture) + 256;
-	}
-
-	public static long getHash(IBlockAccess iBlockAccess) {
-		// return iBlockAccess.func_48454_a(x, z).hashCode();
-		return 0;
 	}
 
 	public static void TakenFromCrafting(EntityPlayer entityplayer, ItemStack itemstack, IInventory iinventory) {

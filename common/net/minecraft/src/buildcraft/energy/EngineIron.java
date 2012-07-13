@@ -14,10 +14,11 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.fuels.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -75,9 +76,9 @@ public class EngineIron extends Engine {
 			return 0.06F;
 		case Red:
 			return 0.07F;
+		default:
+			return 0.0f;
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -88,7 +89,7 @@ public class EngineIron extends Engine {
 	@Override
 	public void burn() {
 		currentOutput = 0;
-		IronEngineFuel currentFuel = BuildCraftAPI.ironEngineFuel.get(liquidId);
+		IronEngineFuel currentFuel = IronEngineFuel.getFuelForLiquid(new LiquidStack(liquidId, liquidQty, 0));
 
 		if (currentFuel == null) {
 			return;
@@ -188,9 +189,8 @@ public class EngineIron extends Engine {
 			return 0;
 		}
 
-		if (!BuildCraftAPI.ironEngineFuel.containsKey(id)) {
+		if (IronEngineFuel.getFuelForLiquid(new LiquidStack(id, quantity, 0)) == null)
 			return 0;
-		}
 
 		if (liquidQty + quantity <= MAX_LIQUID) {
 			if (doFill) {
