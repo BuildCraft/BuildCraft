@@ -50,6 +50,7 @@ public class DefaultProps {
 
 	// Moving to safer id range
 	public static int GATE_AUTARCHIC_ID = 19000;
+	public static int PIPE_FACADE_ID = 19001;
 
 	public static int PIPE_ITEMS_WOOD_ID = 4050;
 	public static int PIPE_ITEMS_COBBLESTONE_ID = 4051;

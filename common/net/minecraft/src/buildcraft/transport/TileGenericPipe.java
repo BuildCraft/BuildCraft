@@ -11,6 +11,7 @@ package net.minecraft.src.buildcraft.transport;
 
 import java.util.LinkedList;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.NBTTagCompound;
@@ -63,6 +64,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
+	
+	private int[] facadeBlocks = new int[Orientations.dirs().length];
+	private int[] facadeMeta = new int[Orientations.dirs().length];
 	
 	//Store the pipe key to prevent losing pipes when a user forgets to include an addon
 	int key; 
@@ -210,7 +214,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		// Gate Textures
 		renderState.setHasGate(pipe.hasGate());
 		renderState.setGateTexture(!pipe.hasGate()?0:pipe.gate.getTexture(pipe.isGateActive()));
-				
+
+		// Facades
+		for (Orientations direction:Orientations.dirs()){
+			int blockId = this.facadeBlocks[direction.ordinal()];
+			renderState.facadeMatrix.setConnected(direction, blockId != 0 && Block.blocksList[blockId] != null);
+			if (Block.blocksList[blockId] != null){
+				Block block = Block.blocksList[blockId];
+				renderState.facadeMatrix.setTextureFile(direction, block.getTextureFile());
+				renderState.facadeMatrix.setTextureIndex(direction, block.getBlockTextureFromSideAndMetadata(direction.ordinal(), this.facadeMeta[direction.ordinal()]));
+			}
+		}
+		
+		
 		if (renderState.isDirty()){
 			//worldObj.markBlockAsNeedsUpdate(this.xCoord, this.yCoord, this.zCoord);
 			worldObj.markBlockNeedsUpdate(this.xCoord, this.yCoord, this.zCoord);
@@ -510,6 +526,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	
 	public void scheduleRenderUpdate(){
 		refreshRenderState = true;
+	}
+	
+	public void addFacade(Orientations direction, int blockid, int meta){
+		if (this.worldObj.isRemote) return;
+		
+		this.facadeBlocks[direction.ordinal()] = blockid;
+		this.facadeMeta[direction.ordinal()] = meta;
+		refreshRenderState();
 	}
 	
 	/** IPipeRenderState implementation **/

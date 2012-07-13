@@ -10,6 +10,7 @@
 package net.minecraft.src;
 
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.transport.FacadeItemRenderer;
 import net.minecraft.src.buildcraft.transport.IPipeRenderState;
 import net.minecraft.src.buildcraft.transport.PipeItemRenderer;
 import net.minecraft.src.buildcraft.transport.PipeWorldRenderer;
@@ -23,6 +24,7 @@ public class mod_BuildCraftTransport extends NetworkMod {
 	public static mod_BuildCraftTransport instance;
 	public final static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
 	public final static PipeWorldRenderer pipeWorldRenderer = new PipeWorldRenderer();
+	public final static FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
 
 	public mod_BuildCraftTransport() {
 		instance = this;
@@ -58,6 +60,8 @@ public class mod_BuildCraftTransport extends NetworkMod {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsVoid.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsSandstone.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsSandstone.shiftedIndex, pipeItemRenderer);
+		
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem.shiftedIndex, facadeItemRenderer);
 	}
 
 	public static void registerTilePipe(Class<? extends TileEntity> clas, String name) {
