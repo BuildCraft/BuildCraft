@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
@@ -35,20 +36,18 @@ import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.IPipe.DrawingState;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
 import net.minecraft.src.buildcraft.core.ITileBufferHolder;
 import net.minecraft.src.buildcraft.core.TileBuffer;
+import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPipeDescription;
 import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
-import net.minecraft.src.buildcraft.transport.network.PipeRenderStatePacket;
-import net.minecraft.src.buildcraft.transport.utils.WireMatrix;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, IPipeEntry,
 		IPipeTile, ISynchronizedTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState {
@@ -528,12 +527,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		refreshRenderState = true;
 	}
 	
-	public void addFacade(Orientations direction, int blockid, int meta){
-		if (this.worldObj.isRemote) return;
+	public boolean addFacade(Orientations direction, int blockid, int meta){
+		if (this.worldObj.isRemote) return false;
+		if (this.facadeBlocks[direction.ordinal()] == blockid) return false;
+		
+		if (this.facadeBlocks[direction.ordinal()] != 0){
+			Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+		}
 		
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
 		refreshRenderState();
+		return true;
 	}
 	
 	/** IPipeRenderState implementation **/

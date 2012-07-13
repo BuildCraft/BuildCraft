@@ -157,32 +157,32 @@ public class PipeWorldRenderer {
 		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
 		state.currentTextureIndex = 7 * 16 + 13; // Structure Pipe
 		
-		if (state.facadeMatrix.isConnected(Orientations.XNeg)){
+		if (state.facadeMatrix.isConnected(Orientations.XNeg) && !state.pipeConnectionMatrix.isConnected(Orientations.XNeg)){
 			block.setBlockBounds(0 + facadeThickness, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 		
-		if (state.facadeMatrix.isConnected(Orientations.XPos)){
+		if (state.facadeMatrix.isConnected(Orientations.XPos) && !state.pipeConnectionMatrix.isConnected(Orientations.XPos)){
 			block.setBlockBounds(Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMinPos, 1F - facadeThickness, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 		
-		if (state.facadeMatrix.isConnected(Orientations.YNeg)){
+		if (state.facadeMatrix.isConnected(Orientations.YNeg) && !state.pipeConnectionMatrix.isConnected(Orientations.YNeg)){
 			block.setBlockBounds(Utils.pipeMinPos, 0 + facadeThickness, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMaxPos);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 		
-		if (state.facadeMatrix.isConnected(Orientations.YPos)){
+		if (state.facadeMatrix.isConnected(Orientations.YPos) && !state.pipeConnectionMatrix.isConnected(Orientations.YPos)){
 			block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1F - facadeThickness, Utils.pipeMaxPos);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 		
-		if (state.facadeMatrix.isConnected(Orientations.ZNeg)){
+		if (state.facadeMatrix.isConnected(Orientations.ZNeg) && !state.pipeConnectionMatrix.isConnected(Orientations.ZNeg)){
 			block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0 + facadeThickness, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMinPos);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 	
-		if (state.facadeMatrix.isConnected(Orientations.ZPos)){
+		if (state.facadeMatrix.isConnected(Orientations.ZPos) && !state.pipeConnectionMatrix.isConnected(Orientations.ZPos)){
 			block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1F - facadeThickness);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}

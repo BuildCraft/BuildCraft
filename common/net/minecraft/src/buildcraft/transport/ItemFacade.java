@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
@@ -14,6 +15,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 
 public class ItemFacade extends ItemBuildCraft {
@@ -56,9 +58,12 @@ public class ItemFacade extends ItemBuildCraft {
 		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
 		if (!(tile instanceof TileGenericPipe)) return false;
 		
-		((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()));
+		if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
+			stack.stackSize--;	
+			return true;
+		}
 		
-		return true;
+		return false;
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -81,6 +86,12 @@ public class ItemFacade extends ItemBuildCraft {
 					&& Block.blocksList[blockId].renderAsNormalBlock())
 				{
 					allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(blockId, stack.getItemDamage())));
+					
+					ItemStack[] st = new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3)};
+					//3 Structurepipes + this block makes 6 facades
+					AssemblyRecipe r = new AssemblyRecipe(new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), new ItemStack(blockId, 1, stack.getItemDamage())}, 8000, new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(blockId,  stack.getItemDamage())));
+					
+					BuildCraftCore.assemblyRecipes.add(r);
 				}
 			}
 		}
