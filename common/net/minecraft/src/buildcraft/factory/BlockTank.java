@@ -21,6 +21,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -110,13 +111,14 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				
 				int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
 					
-				if(filled != null && qty >= BuildCraftAPI.BUCKET_VOLUME){
+				LiquidStack liquid = LiquidManager.getLiquidForFilledItem(filled);
+				if(liquid != null && qty >= liquid.amount){
 					if(current.stackSize > 1 && !entityplayer.inventory.addItemStackToInventory(filled)){
 						return false;
 					}
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
 						Utils.consumeItem(current));
-					tank.empty(BuildCraftAPI.BUCKET_VOLUME, true);
+					tank.empty(liquid.amount, true);
 					return true;
 				}
 			}
