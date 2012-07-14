@@ -79,7 +79,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			slot = slots[position];
 
 		if (slot != null) {
-			int liquidId = LiquidManager.getLiquidForFilledItem(mc.thePlayer.inventory.getItemStack()).itemID;
+			int liquidId = LiquidManager.getLiquidIDForFilledItem(mc.thePlayer.inventory.getItemStack());
 
 			container.setFilter(position, liquidId, 0);
 		}
