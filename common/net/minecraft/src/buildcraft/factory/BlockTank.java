@@ -110,13 +110,14 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				
 				int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
 					
-				if(filled != null && qty >= BuildCraftAPI.BUCKET_VOLUME){
+				LiquidStack liquid = LiquidManager.getLiquidForFilledItem(filled);
+				if(liquid != null && qty >= liquid.amount){
 					if(current.stackSize > 1 && !entityplayer.inventory.addItemStackToInventory(filled)){
 						return false;
 					}
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
 						Utils.consumeItem(current));
-					tank.empty(BuildCraftAPI.BUCKET_VOLUME, true);
+					tank.empty(liquid.amount, true);
 					return true;
 				}
 			}
