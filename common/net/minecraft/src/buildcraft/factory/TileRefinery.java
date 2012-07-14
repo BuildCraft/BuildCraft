@@ -286,7 +286,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, IPowe
 		if(liquid == null)
 			return true;
 		
-		return liquid.isLiquidEqual(new LiquidStack(slot1.liquidId, slot1.quantity, 0)) || liquid.isLiquidEqual(new LiquidStack(slot2.liquidId, slot2.quantity, 0));
+		return new LiquidStack(slot1.liquidId, slot1.quantity, 0).containsLiquid(liquid) || new LiquidStack(slot2.liquidId, slot2.quantity, 0).containsLiquid(liquid);
 	}
 
 	private boolean consumeInput(LiquidStack liquid) {

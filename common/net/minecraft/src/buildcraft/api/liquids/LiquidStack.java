@@ -93,6 +93,17 @@ public class LiquidStack {
 	}
 
 	/**
+	 * @param other
+	 * @return true if this LiquidStack contains the other liquid (liquids are equal and amount >= other.amount).
+	 */
+	public boolean containsLiquid(LiquidStack other) {
+		if(!isLiquidEqual(other))
+			return false;
+		
+		return amount >= other.amount;
+	}
+	
+	/**
 	 * @param other ItemStack containing liquids. 
 	 * @return true if this LiquidStack contains the same liquid as the one passed in.
 	 */
@@ -102,7 +113,7 @@ public class LiquidStack {
 		
 		return itemID == other.itemID && itemMeta == other.getItemDamage();
 	}
-
+	
 	/**
 	 * @return ItemStack representation of this LiquidStack
 	 */
