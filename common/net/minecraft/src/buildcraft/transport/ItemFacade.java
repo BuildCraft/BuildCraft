@@ -66,6 +66,22 @@ public class ItemFacade extends ItemBuildCraft {
 		return false;
 	}
 	
+	@Override
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side) {
+		if (worldObj.isRemote) return false;
+		if (!player.isSneaking()) return false;
+		
+		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+		if (!(tile instanceof TileGenericPipe)) return false;
+		
+		TileGenericPipe pipeTile = (TileGenericPipe)tile;
+		
+		if (!pipeTile.hasFacade(Orientations.dirs()[side])) return false;
+		
+		pipeTile.dropFacade(Orientations.dirs()[side]);
+		return true;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public static void initialize(){
 		List creativeItems = getCreativeContents();

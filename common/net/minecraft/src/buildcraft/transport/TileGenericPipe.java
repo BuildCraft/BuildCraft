@@ -531,14 +531,28 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		if (this.worldObj.isRemote) return false;
 		if (this.facadeBlocks[direction.ordinal()] == blockid) return false;
 		
-		if (this.facadeBlocks[direction.ordinal()] != 0){
-			Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+		if (hasFacade(direction)){
+			dropFacade(direction);
 		}
 		
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
 		refreshRenderState();
 		return true;
+	}
+	
+	public boolean hasFacade(Orientations direction){
+		if (this.worldObj.isRemote) return false;
+		return (this.facadeBlocks[direction.ordinal()] != 0);
+	}
+	
+	public void dropFacade(Orientations direction){
+		if (this.worldObj.isRemote) return;
+		if (!hasFacade(direction)) return;
+		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+		this.facadeBlocks[direction.ordinal()] = 0;
+		this.facadeMeta[direction.ordinal()] = 0;
+		refreshRenderState();
 	}
 	
 	/** IPipeRenderState implementation **/
