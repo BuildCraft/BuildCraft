@@ -92,12 +92,12 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
 			
-			int liquidId = LiquidManager.getLiquidIDForFilledItem(current);
+			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
-			if (liquidId != 0) {
-				int qty = tank.fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
+			if (liquid != null) {
+				int qty = tank.fill(Orientations.Unknown, liquid.amount, liquidId, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
@@ -110,7 +110,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				
 				int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
 					
-				LiquidStack liquid = LiquidManager.getLiquidForFilledItem(filled);
+				liquid = LiquidManager.getLiquidForFilledItem(filled);
 				if(liquid != null && qty >= liquid.amount){
 					if(current.stackSize > 1 && !entityplayer.inventory.addItemStackToInventory(filled)){
 						return false;
