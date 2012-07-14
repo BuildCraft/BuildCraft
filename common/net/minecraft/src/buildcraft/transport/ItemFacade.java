@@ -54,32 +54,23 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 	
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side) {
-		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe)) return false;
-		
-		if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
-			stack.stackSize--;	
-			return true;
-		}
-		
-		return false;
-	}
-	
-	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side) {
 		if (worldObj.isRemote) return false;
-		if (!player.isSneaking()) return false;
-		
 		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
 		if (!(tile instanceof TileGenericPipe)) return false;
-		
 		TileGenericPipe pipeTile = (TileGenericPipe)tile;
-		
-		if (!pipeTile.hasFacade(Orientations.dirs()[side])) return false;
-		
-		pipeTile.dropFacade(Orientations.dirs()[side]);
-		return true;
+
+		if (player.isSneaking()) { //Strip facade
+			if (!pipeTile.hasFacade(Orientations.dirs()[side])) return false;
+			pipeTile.dropFacade(Orientations.dirs()[side]);
+			return true;
+		} else {
+			if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
+				stack.stackSize--;	
+				return true;
+			}
+			return false;
+		}
 	}
 	
 	@SuppressWarnings("rawtypes")
