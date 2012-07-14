@@ -99,11 +99,7 @@ public class EngineStone extends Engine {
 		if (itemstack == null)
 			return 0;
 		
-		int vanillaBurnTime = TileEntityFurnace.getItemBurnTime(itemstack);
-		if(vanillaBurnTime > 0)
-			return vanillaBurnTime;
-		else
-			return FMLCommonHandler.instance().fuelLookup(itemstack.getItem().shiftedIndex, itemstack.getItemDamage());
+		return TileEntityFurnace.getItemBurnTime(itemstack);
 	}
 
 	/* SAVING & LOADING */
