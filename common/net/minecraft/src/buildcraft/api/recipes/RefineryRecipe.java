@@ -58,16 +58,16 @@ public class RefineryRecipe {
 				&& (liquid1 == null || liquid2 == null))
 			return false;
 		
-		if(liquid1 != null) {
+		if(ingredient1 != null) {
 			
-			if(liquid2 == null)
-				return liquid1.isLiquidEqual(ingredient1) || liquid1.isLiquidEqual(ingredient2);
+			if(ingredient2 == null)
+				return liquid1.isLiquidEqual(ingredient1) || liquid2.isLiquidEqual(ingredient1);
 			else
 				return (liquid1.isLiquidEqual(ingredient1) && liquid2.isLiquidEqual(ingredient2))
 						|| (liquid2.isLiquidEqual(ingredient1) && liquid1.isLiquidEqual(ingredient2));
 			
 		} else			
-			return liquid2.isLiquidEqual(ingredient1) || liquid2.isLiquidEqual(ingredient2);
+			return liquid1.isLiquidEqual(ingredient2) || liquid2.isLiquidEqual(ingredient2);
 		
 	}
 }
