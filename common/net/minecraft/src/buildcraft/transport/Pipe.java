@@ -484,6 +484,12 @@ public class Pipe implements IPipe, IDropControlInventory {
 
 		if (hasGate())
 			gate.dropGate(worldObj, xCoord, yCoord, zCoord);
+		
+		for (Orientations direction : Orientations.dirs()){
+			if (container.hasFacade(direction)){
+				container.dropFacade(direction);
+			}
+		}
 	}
 
 	public void setTrigger(int position, Trigger trigger) {
