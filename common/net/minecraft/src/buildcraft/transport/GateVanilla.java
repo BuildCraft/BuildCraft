@@ -95,9 +95,10 @@ public class GateVanilla extends Gate {
 			return "Golden OR Gate";
 		case OR_4:
 			return "Diamond OR Gate";
+		default:
+			return "";
 		}
 
-		return "";
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IActionReceptor;
@@ -170,6 +171,10 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			internalUpdateScheduled = false;
 		}
 
+		// Do not try to update gates client side.
+		if(APIProxy.isRemote())
+			return;
+		
 		if (actionTracker.markTimeIfDelay(worldObj, 10))
 			resolveActions();
 
