@@ -97,6 +97,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
+			// Handle filled containers
 			if (liquid != null) {
 				int qty = tank.fill(Orientations.Unknown, liquid.amount, liquid.itemID, true);
 
@@ -106,18 +107,28 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				}
 
 				return true;
+			
+			// Handle empty containers
 			} else {
-				ItemStack filled = LiquidManager.fillLiquidContainer(tank.getLiquidId(), current);
 				
-				int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
+				ItemStack filled = LiquidManager.fillLiquidContainer(new LiquidStack(tank.getLiquidId(),
+						tank.empty(BuildCraftAPI.BUCKET_VOLUME, false)), current);
 					
 				liquid = LiquidManager.getLiquidForFilledItem(filled);
-				if(liquid != null && qty >= liquid.amount){
-					if(current.stackSize > 1 && !entityplayer.inventory.addItemStackToInventory(filled)){
-						return false;
+				if(liquid != null) {
+					
+					if(current.stackSize > 1) {
+						if(!entityplayer.inventory.addItemStackToInventory(filled))
+							return false;
+						else
+							entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+									Utils.consumeItem(current));
+					} else {
+						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+								Utils.consumeItem(current));
+						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 					}
-					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-						Utils.consumeItem(current));
+					
 					tank.empty(liquid.amount, true);
 					return true;
 				}

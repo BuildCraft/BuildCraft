@@ -36,13 +36,14 @@ public class LiquidManager {
 		return null;
 	}
 	
-	public static ItemStack fillLiquidContainer(int liquidId, ItemStack emptyContainer) {
-		return fillLiquidContainer(new LiquidStack(liquidId, 1, 0), emptyContainer);
+	public static ItemStack fillLiquidContainer(int liquidId, int quantity, ItemStack emptyContainer) {
+		return fillLiquidContainer(new LiquidStack(liquidId, quantity, 0), emptyContainer);
 	}
 	
 	public static ItemStack fillLiquidContainer(LiquidStack liquid, ItemStack emptyContainer) {
 		for(LiquidData data : liquids)
-			if(data.stillLiquid.isLiquidEqual(liquid) && data.container.isItemEqual(emptyContainer))
+			if(liquid.containsLiquid(data.stillLiquid)
+					&& data.container.isItemEqual(emptyContainer))
 				return data.filled.copy();
         return null;
 	}

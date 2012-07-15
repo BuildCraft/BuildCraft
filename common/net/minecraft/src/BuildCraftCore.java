@@ -14,9 +14,11 @@ import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.LiquidData;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.liquids.LiquidData;
+import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.core.ActionMachineControl;
 import net.minecraft.src.buildcraft.core.ActionMachineControl.Mode;
 import net.minecraft.src.buildcraft.core.ActionRedstoneOutput;
@@ -208,8 +210,8 @@ public class BuildCraftCore {
 		wrenchItem = (new ItemWrench(Integer.parseInt(wrenchId.value))).setIconIndex(0 * 16 + 2).setItemName("wrenchItem");
 		CoreProxy.addName(wrenchItem, "Wrench");
 
-		BuildCraftAPI.liquids.add(new LiquidData(Block.waterStill.blockID, Block.waterMoving.blockID, Item.bucketWater));
-		BuildCraftAPI.liquids.add(new LiquidData(Block.lavaStill.blockID, Block.lavaMoving.blockID, Item.bucketLava));
+		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.waterStill, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, BuildCraftAPI.BUCKET_VOLUME), new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
+		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.lavaStill, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving, BuildCraftAPI.BUCKET_VOLUME), new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
 
 		BuildCraftAPI.softBlocks[Block.tallGrass.blockID] = true;
 		BuildCraftAPI.softBlocks[Block.snow.blockID] = true;

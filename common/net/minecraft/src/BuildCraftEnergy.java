@@ -134,8 +134,8 @@ public class BuildCraftEnergy {
 		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 2, 10000));
 		IronEngineFuel.fuels.add(new IronEngineFuel(fuel.shiftedIndex, 5, 50000));
 
-		LiquidManager.liquids.add(new LiquidData(oilStill.blockID, oilMoving.blockID, bucketOil));
-		LiquidManager.liquids.add(new LiquidData(fuel.shiftedIndex, 0, bucketFuel));
+		LiquidManager.liquids.add(new LiquidData(new LiquidStack(oilStill, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(oilMoving, BuildCraftAPI.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
+		LiquidManager.liquids.add(new LiquidData(new LiquidStack(fuel, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(fuel, BuildCraftAPI.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
 
 		BuildCraftAPI.softBlocks[oilMoving.blockID] = true;
 		BuildCraftAPI.softBlocks[oilStill.blockID] = true;
