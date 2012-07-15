@@ -51,23 +51,28 @@ public class RefineryRecipe {
 	}
 
 	public boolean matches(LiquidStack liquid1, LiquidStack liquid2) {
+		
+		// No inputs, return.
 		if(liquid1 == null && liquid2 == null)
 			return false;
-		
+
+		// Return if two ingredients are required but only one was supplied.
 		if((ingredient1 != null && ingredient2 != null)
 				&& (liquid1 == null || liquid2 == null))
 			return false;
 		
-		if(liquid1 != null) {
+		if(ingredient1 != null) {
 			
-			if(liquid2 == null)
-				return liquid1.isLiquidEqual(ingredient1) || liquid1.isLiquidEqual(ingredient2);
+			if(ingredient2 == null)
+				return ingredient1.isLiquidEqual(liquid1) || ingredient1.isLiquidEqual(liquid2);
 			else
-				return (liquid1.isLiquidEqual(ingredient1) && liquid2.isLiquidEqual(ingredient2))
-						|| (liquid2.isLiquidEqual(ingredient1) && liquid1.isLiquidEqual(ingredient2));
+				return (ingredient1.isLiquidEqual(liquid1) && ingredient2.isLiquidEqual(liquid2))
+						|| (ingredient2.isLiquidEqual(liquid1) && ingredient1.isLiquidEqual(liquid2));
 			
-		} else			
-			return liquid2.isLiquidEqual(ingredient1) || liquid2.isLiquidEqual(ingredient2);
-		
+		} else if(ingredient2 != null)
+			return ingredient2.isLiquidEqual(liquid1) || ingredient2.isLiquidEqual(liquid2);
+		else
+			return false;
+
 	}
 }
