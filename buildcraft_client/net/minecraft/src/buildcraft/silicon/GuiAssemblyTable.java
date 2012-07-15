@@ -133,6 +133,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		if (position != -1) {
 			RecipeSlot slot = (RecipeSlot) slots[position];
+			
+			if (slot.recipe == null)
+				return;
 
 			SelectionMessage message = new SelectionMessage();
 
