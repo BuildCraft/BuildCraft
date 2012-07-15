@@ -16,14 +16,12 @@ import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
-import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockPlainPipe extends Block implements ILegacyPipeConnection, IBlockPipe, ITextureProvider {
+public class BlockPlainPipe extends Block implements ILegacyPipeConnection, ITextureProvider {
 
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);
@@ -70,12 +68,6 @@ public class BlockPlainPipe extends Block implements ILegacyPipeConnection, IBlo
 
 	public float getHeightInPipe() {
 		return 0.5F;
-	}
-
-	@Override
-	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

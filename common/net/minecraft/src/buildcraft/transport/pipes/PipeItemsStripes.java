@@ -22,6 +22,7 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.EntityData;
@@ -46,9 +47,15 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 16 * 7 + 14;
 	}
+
 
 	@Override
 	public void doWork() {

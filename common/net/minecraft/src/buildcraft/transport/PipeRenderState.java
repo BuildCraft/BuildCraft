@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.utils.ConnectionMatrix;
 import net.minecraft.src.buildcraft.transport.utils.FacadeMatrix;

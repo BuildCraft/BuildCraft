@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;

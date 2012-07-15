@@ -31,6 +31,7 @@ import net.minecraft.src.buildcraft.transport.BptItemPipeWodden;
 import net.minecraft.src.buildcraft.transport.GuiHandler;
 import net.minecraft.src.buildcraft.transport.ItemFacade;
 import net.minecraft.src.buildcraft.transport.ItemGate;
+import net.minecraft.src.buildcraft.transport.ItemPipe;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTriggerProvider;
@@ -355,7 +356,7 @@ public class BuildCraftTransport {
 				defaultID);
 
 		int id = Integer.parseInt(prop.value);
-		Item res = BlockGenericPipe.registerPipe(id, clas);
+		ItemPipe res = BlockGenericPipe.registerPipe(id, clas);
 		res.setItemName(clas.getSimpleName());
 		CoreProxy.addName(res, descr);
 

@@ -9,6 +9,7 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicIron;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
@@ -17,31 +18,31 @@ public class PipeItemsIron extends Pipe {
 
 	private int baseTexture = 1 * 16 + 2;
 	private int plainTexture = 1 * 16 + 3;
-	private int nextTexture = baseTexture;
 
 	public PipeItemsIron(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicIron(), itemID);
 
 		((PipeTransportItems) transport).allowBouncing = true;
 	}
-
+	
 	@Override
-	public void prepareTextureFor(Orientations connection) {
-		if (connection == Orientations.Unknown)
-			nextTexture = baseTexture;
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
+		if (direction == Orientations.Unknown)
+			return baseTexture;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-			if (metadata == connection.ordinal())
-				nextTexture = baseTexture;
+			if (metadata == direction.ordinal())
+				return baseTexture;
 			else
-				nextTexture = plainTexture;
+				return plainTexture;
 		}
 	}
 
-	@Override
-	public int getMainBlockTexture() {
-		return nextTexture;
-	}
 
 }

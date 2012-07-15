@@ -34,14 +34,6 @@ public interface IPipe {
 		}
 	}
 
-	/**
-	 * With special kind of pipes, connectors texture has to vary (e.g. diamond
-	 * or iron pipes.
-	 */
-	public void prepareTextureFor(Orientations connection);
-
-	public void setDrawingState(DrawingState state);
-
 	public boolean isWired(WireColor color);
 
 	public boolean hasInterface();

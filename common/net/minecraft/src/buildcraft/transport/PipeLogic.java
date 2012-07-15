@@ -10,7 +10,6 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;

@@ -8,6 +8,8 @@
 
 package net.minecraft.src.buildcraft.transport.pipes;
 
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicStone;
 import net.minecraft.src.buildcraft.transport.PipeTransportPower;
@@ -16,12 +18,17 @@ public class PipePowerStone extends Pipe {
 
 	public PipePowerStone(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicStone(), itemID);
-
 	}
 
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 7 * 16 + 8;
 	}
+
 
 }

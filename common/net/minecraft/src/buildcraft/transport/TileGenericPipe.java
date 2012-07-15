@@ -172,8 +172,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		
 		// Pipe Textures
 		for(Orientations o: Orientations.values()){
-			pipe.prepareTextureFor(o);
-			renderState.textureMatrix.setTextureIndex(o, pipe.getMainBlockTexture());
+			renderState.textureMatrix.setTextureIndex(o, pipe.getTextureIndex(o));
 		}
 		
 		// WireState
@@ -258,8 +257,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		bindPipe();
 
 		computeConnections();
-		
-		refreshRenderState = true;
+		scheduleRenderUpdate();
 
 		if (pipe != null)
 			pipe.initialize();

@@ -8,6 +8,8 @@
 
 package net.minecraft.src.buildcraft.transport.pipes;
 
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicCobblestone;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
@@ -20,7 +22,12 @@ public class PipeItemsCobblestone extends Pipe {
 	}
 
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 1 * 16 + 1;
 	}
 

@@ -94,11 +94,12 @@ public class ItemFacade extends ItemBuildCraft {
 				{
 					allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(blockId, stack.getItemDamage())));
 					
-					ItemStack[] st = new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3)};
 					//3 Structurepipes + this block makes 6 facades
-					AssemblyRecipe r = new AssemblyRecipe(new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), new ItemStack(blockId, 1, stack.getItemDamage())}, 8000, new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(blockId,  stack.getItemDamage())));
-					
-					BuildCraftCore.assemblyRecipes.add(r);
+					BuildCraftCore.assemblyRecipes.add(
+							new AssemblyRecipe(
+									new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), new ItemStack(blockId, 1, stack.getItemDamage())}, 
+									8000, 
+									new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(blockId,  stack.getItemDamage()))));
 				}
 			}
 		}

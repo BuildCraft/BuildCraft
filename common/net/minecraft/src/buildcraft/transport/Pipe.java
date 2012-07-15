@@ -40,7 +40,7 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 import net.minecraft.src.buildcraft.transport.Gate.GateConditional;
 
-public class Pipe implements IPipe, IDropControlInventory {
+public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	public int[] signalStrength = new int[] { 0, 0, 0, 0 };
 
@@ -138,52 +138,28 @@ public class Pipe implements IPipe, IDropControlInventory {
 		return logic.isPipeConnected(tile) && transport.isPipeConnected(tile);
 	}
 
-	public final int getPipeTexture() {
-		if (drawingState == DrawingState.DrawingPipe)
-			return getMainBlockTexture();
-		else if (drawingState == DrawingState.DrawingRedWire) {
-			if (signalStrength[IPipe.WireColor.Red.ordinal()] > 0)
-				return 6;
-			else
-				return 5;
-		} else if (drawingState == DrawingState.DrawingBlueWire) {
-			if (signalStrength[IPipe.WireColor.Blue.ordinal()] > 0)
-				return 8;
-			else
-				return 7;
-		} else if (drawingState == DrawingState.DrawingGreenWire) {
-			if (signalStrength[IPipe.WireColor.Green.ordinal()] > 0)
-				return 10;
-			else
-				return 9;
-		} else if (drawingState == DrawingState.DrawingYellowWire) {
-			if (signalStrength[IPipe.WireColor.Yellow.ordinal()] > 0)
-				return 12;
-			else
-				return 11;
-		} else if (drawingState == DrawingState.DrawingGate) {
-			boolean activeSignal = false;
+	/**
+	 * Should return the texture file that is used to render this pipe
+	 */
+	public abstract String getTextureFile();
 
-			for (boolean b : broadcastSignal)
-				if (b)
-					activeSignal = true;
-
-			return gate.getTexture(activeSignal || broadcastRedstone);
-
-		}
-
-		return getPipeTexture();
+	/**
+	 * Should return the textureindex in the file specified by getTextureFile() 
+	 * @param direction The orientation for the texture that is requested. Unknown for the center pipe center 
+	 * @return the index in the texture sheet
+	 */
+	public abstract int getTextureIndex(Orientations direction);
+	
+	
+	/**
+	 *  Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default implementation might 
+	 *  not work if your getTextureIndex(Orienations.Unknown) has logic 
+	 * @return
+	 */
+	public int getTextureIndexForItem(){
+		return getTextureIndex(Orientations.Unknown);
 	}
-
-	public int getMainBlockTexture() {
-		return 1 * 16 + 0;
-	}
-
-	@Override
-	public void prepareTextureFor(Orientations connection) {
-
-	}
-
+	
 	public void updateEntity() {
 		
 		transport.updateEntity();
@@ -437,15 +413,6 @@ public class Pipe implements IPipe, IDropControlInventory {
 
 	public void randomDisplayTick(Random random) {}
 
-	@Deprecated
-	private DrawingState drawingState = DrawingState.DrawingPipe;
-
-	@Override
-	@Deprecated
-	public void setDrawingState(DrawingState state) {
-		drawingState = state;
-	}
-
 	// / @Override TODO: should be in IPipe
 	public boolean isWired() {
 		for (WireColor color : WireColor.values())
@@ -690,4 +657,5 @@ public class Pipe implements IPipe, IDropControlInventory {
 		}
 		return broadcastRedstone;
 	}
+
 }

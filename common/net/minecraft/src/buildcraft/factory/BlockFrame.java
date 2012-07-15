@@ -15,22 +15,18 @@ import java.util.Random;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
-import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPipe, ITextureProvider {
+public class BlockFrame extends Block implements ILegacyPipeConnection, ITextureProvider {
 
 	public BlockFrame(int i) {
 		super(i, Material.glass);
@@ -193,12 +189,6 @@ public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPi
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

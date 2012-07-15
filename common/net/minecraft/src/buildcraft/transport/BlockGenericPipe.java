@@ -15,7 +15,6 @@ import java.util.TreeMap;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
@@ -28,17 +27,14 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipe;
-import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.BlockIndex;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITextureProvider {
+public class BlockGenericPipe extends BlockContainer implements ITextureProvider {
 
 	/** Defined subprograms **************************************************/
 
@@ -409,17 +405,6 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	}
 
-	/**
-	 * Used by the legacyPipeRenderer
-	 */
-	@Override
-	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		Pipe pipe = getPipe(blockAccess, i, j, k);
-
-		if (isValid(pipe))
-			pipe.prepareTextureFor(connection);
-	}
-
 	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		
@@ -493,11 +478,17 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	static long lastRemovedDate = -1;
 	public static TreeMap<BlockIndex, Pipe> pipeRemoved = new TreeMap<BlockIndex, Pipe>();
 
-	public static Item registerPipe(int key, Class<? extends Pipe> clas) {
-		Item item = new ItemPipe(key);
+	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
+		ItemPipe item = new ItemPipe(key);
 
 		pipes.put(item.shiftedIndex, clas);
-
+		
+		Pipe dummyPipe = createPipe(item.shiftedIndex);
+		if (dummyPipe != null){
+			item.setTextureFile(DefaultProps.TEXTURE_BLOCKS);
+			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
+		}
+		
 		return item;
 	}
 

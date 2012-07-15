@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.IPipeTransportItemsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -27,7 +28,12 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 1 * 16 + 13;
 	}
 
