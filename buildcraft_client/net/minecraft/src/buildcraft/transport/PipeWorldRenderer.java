@@ -159,7 +159,7 @@ public class PipeWorldRenderer {
 	private void pipeFacadeRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
 		
 		float facadeThickness = 1F / 16F;
-		float zFightOffset = 1F / 8192F;
+		float zFightOffset = 1F / 4096F;
 		
 		float[][] zeroState = new float[3][2];
 		//X START - END
@@ -182,7 +182,7 @@ public class PipeWorldRenderer {
 					float[][] rotated = deepClone(zeroState);
 					rotated[2][0] = 0.0F;
 					rotated[2][1] = Utils.pipeMinPos; 
-					rotated[1][0] -= zFightOffset/2;
+					rotated[1][0] -= zFightOffset / 2;
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
@@ -197,6 +197,7 @@ public class PipeWorldRenderer {
 					rotated = deepClone(zeroState);
 					rotated[0][0] = 0.0F;
 					rotated[0][1] = Utils.pipeMinPos;
+					rotated[1][1] -= zFightOffset;
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
@@ -204,6 +205,7 @@ public class PipeWorldRenderer {
 					rotated = deepClone(zeroState);
 					rotated[0][0] = Utils.pipeMaxPos;
 					rotated[0][1] = 1F;
+					rotated[1][1] -= zFightOffset;
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 					renderblocks.renderStandardBlock(block, x, y, z);
