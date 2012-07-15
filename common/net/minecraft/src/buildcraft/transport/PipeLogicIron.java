@@ -53,6 +53,7 @@ public class PipeLogicIron extends PipeLogic {
 					|| tile instanceof TileGenericPipe) {
 
 				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
+				container.scheduleRenderUpdate();
 				return;
 			}
 		}
