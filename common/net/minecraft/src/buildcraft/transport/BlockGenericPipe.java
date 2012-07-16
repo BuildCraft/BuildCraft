@@ -485,7 +485,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 		
 		Pipe dummyPipe = createPipe(item.shiftedIndex);
 		if (dummyPipe != null){
-			item.setTextureFile(DefaultProps.TEXTURE_BLOCKS);
+			item.setTextureFile(dummyPipe.getTextureFile());
 			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
 		}
 		
