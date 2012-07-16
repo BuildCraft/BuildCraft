@@ -118,9 +118,10 @@ public class GateVanilla extends Gate {
 	 * @return
 	 */
 	private boolean addEnergyPulser(Pipe pipe) {
-		if (!(pipe instanceof IPowerReceptor))
+		if (!(pipe instanceof IPowerReceptor)){
+			pulser = new EnergyPulser(null);
 			return false;
-
+		}
 		pulser = new EnergyPulser((IPowerReceptor) pipe);
 
 		return true;

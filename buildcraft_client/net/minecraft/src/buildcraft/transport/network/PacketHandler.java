@@ -19,6 +19,7 @@ import net.minecraft.src.buildcraft.core.network.PacketPipeTransportContent;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.transport.CraftingGateInterface;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond;
+import net.minecraft.src.buildcraft.transport.PipeRenderState;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.IPacketHandler;
@@ -42,9 +43,12 @@ public class PacketHandler implements IPacketHandler {
 				onDiamondContents(packetN);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
-				PacketPipeDescription packetU = new PacketPipeDescription();
-				packetU.readData(data);
-				onPipeDescription(packetU);
+				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
+				descPacket.readData(data);
+				onPipeDescription(descPacket);
+//				PacketPipeDescription packetU = new PacketPipeDescription();
+//				packetU.readData(data);
+//				onPipeDescription(packetU);
 				break;
 			case PacketIds.PIPE_CONTENTS:
 				PacketPipeTransportContent packetC = new PacketPipeTransportContent();
@@ -116,20 +120,26 @@ public class PacketHandler implements IPacketHandler {
 	 * Handles a pipe description packet. (Creates the pipe object client side
 	 * if needed.)
 	 * 
-	 * @param packet
+	 * @param descPacket
 	 */
-	private void onPipeDescription(PacketPipeDescription packet) {
+	private void onPipeDescription(PipeRenderStatePacket descPacket) {
 		World world = ModLoader.getMinecraftInstance().theWorld;
 
-		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
+		if (!world.blockExists(descPacket.posX, descPacket.posY, descPacket.posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
-		if (!(entity instanceof ISynchronizedTile))
+		TileEntity entity = world.getBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ);
+		if (entity == null){
+			return;
+//			entity = new TileGenericPipeProxy();
+//			world.setBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ, entity);
+		}
+		
+		if (!(entity instanceof TileGenericPipe))
 			return;
 
-		ISynchronizedTile tile = (ISynchronizedTile) entity;
-		tile.handleDescriptionPacket(packet);
+		TileGenericPipe tile = (TileGenericPipe) entity;
+		tile.handleDescriptionPacket(descPacket);
 	}
 
 	/**

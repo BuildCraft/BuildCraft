@@ -20,6 +20,7 @@ public class EnergyPulser {
 	}
 
 	public void update() {
+		if (powerReceptor == null) return;
 
 		// Set current pulse speed
 		pulseSpeed = getPulseSpeed();

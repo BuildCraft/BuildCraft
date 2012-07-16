@@ -510,6 +510,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 	}
 	
 	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockId, int meta) {
+		if (world.isRemote) return true;
 		
 		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta);
 		

@@ -42,17 +42,17 @@ import net.minecraft.src.buildcraft.core.IDropControlInventory;
 import net.minecraft.src.buildcraft.core.ITileBufferHolder;
 import net.minecraft.src.buildcraft.core.TileBuffer;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPipeDescription;
 import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.transport.network.PipeRenderStatePacket;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, IPipeEntry,
-		IPipeTile, ISynchronizedTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState {
+		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState {
 	
-	private final PipeRenderState renderState = new PipeRenderState();
+	private PipeRenderState renderState = new PipeRenderState();
 
 	public TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
@@ -357,55 +357,48 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			return false;
 	}
 
-	/**
-	 * Description packets and update packets are handled differently. They
-	 * should be unified.
-	 */
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
-	
-		if (pipe == null && packet.payload.intPayload[0] != 0) {
-			
-			initialize(BlockGenericPipe.createPipe(packet.payload.intPayload[0]));
-
-			// Check for wire information
-			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
-			// Check for gate information
-			if (packet.payload.intPayload.length > 5)
-				pipe.handleGatePayload(packet.payload, new IndexInPayload(5, 0, 0));
+	public void handleDescriptionPacket(PipeRenderStatePacket packet) {
+		if (worldObj.isRemote){
+			if (pipe == null && packet.getPipeId() != 0){
+				initialize(BlockGenericPipe.createPipe(packet.getPipeId()));
+			}
+			renderState = packet.getRenderState();
+			worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		}
+		
+		
+		
+		return;	
+		
+	
+//		if (pipe == null && packet.payload.intPayload[0] != 0) {
+//			
+//			initialize(BlockGenericPipe.createPipe(packet.payload.intPayload[0]));
+//
+//			// Check for wire information
+//			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
+//			// Check for gate information
+//			if (packet.payload.intPayload.length > 5)
+//				pipe.handleGatePayload(packet.payload, new IndexInPayload(5, 0, 0));
+//		}
 	}
 
-	@Override
+	//@Override
 	public void handleUpdatePacket(PacketUpdate packet) {
 		if (BlockGenericPipe.isValid(pipe))
 			pipe.handlePacket(packet);
 	}
 
-	@Override
-	public void postPacketHandling(PacketUpdate packet) {}
-
-	@Override
+	//@Override
 	public Packet getUpdatePacket() {
-		return new PacketTileUpdate(this).getPacket();
+		return null;
+		//return new PacketTileUpdate(this).getPacket();
 	}
 
-	@Override
 	public Packet getDescriptionPacket() {
 		bindPipe();
-
-		PacketPipeDescription packet;
-		if (pipe != null)
-			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, pipe);
-		else
-			packet = new PacketPipeDescription(xCoord, yCoord, zCoord, null);
-
+		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord);
 		return packet.getPacket();
-	}
-
-	@Override
-	public PacketPayload getPacketPayload() {
-		return pipe.getNetworkPacket();
 	}
 
 	@Override
@@ -535,7 +528,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
-		refreshRenderState();
+		scheduleRenderUpdate();
+		//refreshRenderState();
 		return true;
 	}
 	
@@ -550,7 +544,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
-		refreshRenderState();
+		scheduleRenderUpdate();
+		//refreshRenderState();
 	}
 	
 	/** IPipeRenderState implementation **/

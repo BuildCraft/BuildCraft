@@ -88,16 +88,22 @@ public class PipeRenderState {
 
 	public void writeData(DataOutputStream data) throws IOException {
 		data.writeUTF(textureFile);
+		data.writeBoolean(hasGate);
+		data.writeInt(gateTextureIndex);
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
+		facadeMatrix.writeData(data);
 	}
 
 	public void readData(DataInputStream data) throws IOException {
 		textureFile = data.readUTF();
+		hasGate = data.readBoolean();
+		gateTextureIndex = data.readInt();
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);
+		facadeMatrix.readData(data);
 	}
 	
 }

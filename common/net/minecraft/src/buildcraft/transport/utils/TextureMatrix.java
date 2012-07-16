@@ -32,13 +32,13 @@ public class TextureMatrix {
 	}
 
 	public void writeData(DataOutputStream data) throws IOException {
-		for(int i = 0; i < Orientations.dirs().length; i++){
+		for(int i = 0; i < Orientations.values().length; i++){
 			data.writeInt(_textureIndexes[i]);
 		}
 	}
 
 	public void readData(DataInputStream data) throws IOException {
-		for (int i = 0; i < Orientations.dirs().length; i++){
+		for (int i = 0; i < Orientations.values().length; i++){
 			_textureIndexes[i] = data.readInt();
 		}
 	}

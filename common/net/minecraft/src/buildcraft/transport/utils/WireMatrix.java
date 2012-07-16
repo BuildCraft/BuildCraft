@@ -71,6 +71,7 @@ public class WireMatrix {
 		for (int i = 0; i < IPipe.WireColor.values().length; i++){
 			data.writeBoolean(_hasWire[i]);
 			_wires[i].writeData(data);
+			data.writeInt(_wireTextureIndex[i]);
 		}
 	}
 
@@ -78,6 +79,7 @@ public class WireMatrix {
 		for (int i = 0; i < IPipe.WireColor.values().length; i++){
 			_hasWire[i] = data.readBoolean();
 			_wires[i].readData(data);
+			_wireTextureIndex[i] = data.readInt();
 		}
 	}
 }

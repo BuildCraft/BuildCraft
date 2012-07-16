@@ -94,9 +94,9 @@ public class mod_BuildCraftTransport extends NetworkMod {
 		
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		
-		if (tile instanceof TileGenericPipe){
-			TileGenericPipe pipeTile = (TileGenericPipe) tile;
-			pipeWorldRenderer.renderPipe(renderer, world, block, ((IPipeRenderState)tile).getRenderState(), pipeTile.xCoord, pipeTile.yCoord, pipeTile.zCoord);
+		if (tile instanceof IPipeRenderState){
+			IPipeRenderState pipeTile = (IPipeRenderState) tile;
+			pipeWorldRenderer.renderPipe(renderer, world, block, pipeTile.getRenderState(), x, y, z);
 		}
 //		if (tile != null && tile instanceof IPipeTile && ((IPipeTile)tile).isInitialized()) {
 //			pipeWorldRenderer.renderPipe(renderer, world, tile, block);
