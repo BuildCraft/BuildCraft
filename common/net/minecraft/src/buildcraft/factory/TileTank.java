@@ -20,10 +20,13 @@ import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
-public class TileTank extends TileBuildCraft implements ILiquidContainer {
+public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankContainer {
 
 	public @TileNetworkData
 	int stored = 0;
@@ -210,6 +213,35 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 
 	@Override
 	public LiquidSlot[] getLiquidSlots() {
+		LiquidTank tank = getTanks()[0];
+		return new LiquidSlot[] { new LiquidSlot(tank.getLiquid().itemID, tank.getLiquid().amount, tank.getCapacity()) };
+	}
+
+	/* ITANKCONTAINER */
+	@Override
+	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+		return getBottomTank().actualFill(from, resource.amount, resource.itemID, doFill);
+	}
+
+	@Override
+	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
+		return getBottomTank().actualFill(Orientations.YPos, resource.amount, resource.itemID, doFill);
+	}
+
+	@Override
+	public LiquidStack drain(Orientations from, int maxEmpty, boolean doDrain) {
+		int drained = getBottomTank().actualEmtpy(maxEmpty, doDrain);
+		return new LiquidStack(liquidId, drained);
+	}
+
+	@Override
+	public LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain) {
+		int drained = getBottomTank().actualEmtpy(maxEmpty, doDrain);
+		return new LiquidStack(liquidId, drained);
+	}
+
+	@Override
+	public LiquidTank[] getTanks() {
 		int resultLiquidId = 0;
 		int resultLiquidQty = 0;
 		int resultCapacity = 0;
@@ -251,7 +283,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			resultCapacity += tank.getTankCapacity();
 		}
 
-		return new LiquidSlot[] { new LiquidSlot(resultLiquidId, resultLiquidQty, resultCapacity) };
+		return new LiquidTank[] { new LiquidTank(resultLiquidId, resultLiquidQty, resultCapacity) };
 	}
 
 }
