@@ -94,6 +94,7 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 				world.setBlockMetadata(i, j, k, Orientations.XNeg.ordinal());
 				break;
 			case ZPos:
+			default:
 				world.setBlockMetadata(i, j, k, Orientations.XPos.ordinal());
 				break;
 			}

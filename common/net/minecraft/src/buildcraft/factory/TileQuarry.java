@@ -542,6 +542,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 				zMin = zCoord + 1;
 				break;
 			case ZNeg:
+			default:
 				xMin = xCoord - 4 - 1;
 				zMin = zCoord - 9 - 2;
 				break;

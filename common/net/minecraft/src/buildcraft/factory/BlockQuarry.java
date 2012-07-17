@@ -108,6 +108,7 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 				case XPos:
 					searchFrames(world, i + 1, j, k);
 				case XNeg:
+				default:
 					searchFrames(world, i - 1, j, k);
 				}
 			}
