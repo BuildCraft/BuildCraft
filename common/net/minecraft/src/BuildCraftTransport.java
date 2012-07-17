@@ -14,7 +14,7 @@ import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.core.AssemblyRecipe;
+import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.ItemBuildCraft;
@@ -275,25 +275,25 @@ public class BuildCraftTransport {
 		redPipeWire = new ItemBuildCraft(DefaultProps.RED_PIPE_WIRE).setIconIndex(4 * 16 + 0);
 		redPipeWire.setItemName("redPipeWire");
 		CoreProxy.addName(redPipeWire, "Red Pipe Wire");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 1),
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 1),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(redPipeWire, 8)));
 
 		bluePipeWire = new ItemBuildCraft(DefaultProps.BLUE_PIPE_WIRE).setIconIndex(4 * 16 + 1);
 		bluePipeWire.setItemName("bluePipeWire");
 		CoreProxy.addName(bluePipeWire, "Blue Pipe Wire");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 4),
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 4),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(bluePipeWire, 8)));
 
 		greenPipeWire = new ItemBuildCraft(DefaultProps.GREEN_PIPE_WIRE).setIconIndex(4 * 16 + 2);
 		greenPipeWire.setItemName("greenPipeWire");
 		CoreProxy.addName(greenPipeWire, "Green Pipe Wire");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 2),
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 2),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(greenPipeWire, 8)));
 
 		yellowPipeWire = new ItemBuildCraft(DefaultProps.YELLOW_PIPE_WIRE).setIconIndex(4 * 16 + 3);
 		yellowPipeWire.setItemName("yellowPipeWire");
 		CoreProxy.addName(yellowPipeWire, "Yellow Pipe Wire");
-		BuildCraftCore.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 11),
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 11),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(yellowPipeWire, 8)));
 
 		pipeGate = new ItemGate(DefaultProps.GATE_ID, 0).setIconIndex(2 * 16 + 3);
