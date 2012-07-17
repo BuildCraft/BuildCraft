@@ -16,6 +16,10 @@ public class LiquidTank {
 		return this.liquid;
 	}
 	
+	public void setLiquid(LiquidStack liquid) {
+		this.liquid = liquid;
+	}
+	
 	public int getCapacity() {
 		return this.capacity;
 	}
