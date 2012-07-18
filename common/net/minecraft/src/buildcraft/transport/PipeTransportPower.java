@@ -23,8 +23,12 @@ import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.transport.network.PacketPowerUpdate;
 
 public class PipeTransportPower extends PipeTransport {
+	
+	@TileNetworkData(staticSize = 6)
+	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
 	public int[] powerQuery = new int[6];
 	public int[] nextPowerQuery = new int[6];
@@ -32,9 +36,6 @@ public class PipeTransportPower extends PipeTransport {
 
 	public double[] internalPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 	public double[] internalNextPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-	@TileNetworkData(staticSize = 6)
-	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
 	public double powerResitance = 0.01;
 
@@ -151,9 +152,13 @@ public class PipeTransportPower extends PipeTransport {
 				}
 
 		if (APIProxy.isServerSide())
-			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor))
-				CoreProxy.sendToPlayers(this.container.getUpdatePacket(), worldObj, xCoord, yCoord, zCoord,
+			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)){
+				
+				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
+				packet.displayPower = displayPower;
+				CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
 						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+			}
 
 	}
 
@@ -228,6 +233,14 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public boolean allowsConnect(PipeTransport with) {
 		return with instanceof PipeTransportPower;
+	}
+
+	/**
+	 * Client-side handler for receiving power updates from the server;
+	 * @param packetPower
+	 */
+	public void handlePowerPacket(PacketPowerUpdate packetPower) {
+		displayPower = packetPower.displayPower;
 	}
 
 }

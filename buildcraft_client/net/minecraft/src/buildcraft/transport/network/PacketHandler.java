@@ -21,6 +21,7 @@ import net.minecraft.src.buildcraft.transport.CraftingGateInterface;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond;
 import net.minecraft.src.buildcraft.transport.PipeRenderState;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
+import net.minecraft.src.buildcraft.transport.PipeTransportPower;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.IPacketHandler;
 
@@ -41,6 +42,11 @@ public class PacketHandler implements IPacketHandler {
 				PacketNBT packetN = new PacketNBT();
 				packetN.readData(data);
 				onDiamondContents(packetN);
+				break;
+			case PacketIds.PIPE_POWER:
+				PacketPowerUpdate packetPower= new PacketPowerUpdate();
+				packetPower.readData(data);
+				onPacketPower(packetPower);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
@@ -165,6 +171,32 @@ public class PacketHandler implements IPacketHandler {
 			return;
 
 		((PipeTransportItems) pipe.pipe.transport).handleItemPacket(packet);
+	}
+
+	/** 
+	 * Updates the display power on a power pipe 
+	 * @param packetPower
+	 */
+	private void onPacketPower(PacketPowerUpdate packetPower) {
+		World world = ModLoader.getMinecraftInstance().theWorld;
+		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ))
+			return;
+
+		TileEntity entity = world.getBlockTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
+		if (!(entity instanceof TileGenericPipe))
+			return;
+
+		TileGenericPipe pipe = (TileGenericPipe) entity;
+		if (pipe.pipe == null)
+			return;
+
+		if (!(pipe.pipe.transport instanceof PipeTransportPower))
+			return;
+
+		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
+
+		
+		
 	}
 
 	/**

@@ -101,13 +101,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		}
 	}
 
-	public void synchronizeIfDelay(int delay) {
-		if (APIProxy.isServerSide())
-			if (networkSyncTracker.markTimeIfDelay(worldObj, delay))
-				CoreProxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE,
-						mod_BuildCraftCore.instance);
-	}
-
 	@Override
 	public void invalidate() {
 		initialized = false;
@@ -369,30 +362,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		
 		
 		return;	
-		
-	
-//		if (pipe == null && packet.payload.intPayload[0] != 0) {
-//			
-//			initialize(BlockGenericPipe.createPipe(packet.payload.intPayload[0]));
-//
-//			// Check for wire information
-//			pipe.handleWirePayload(packet.payload, new IndexInPayload(1, 0, 0));
-//			// Check for gate information
-//			if (packet.payload.intPayload.length > 5)
-//				pipe.handleGatePayload(packet.payload, new IndexInPayload(5, 0, 0));
-//		}
-	}
-
-	//@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
-		if (BlockGenericPipe.isValid(pipe))
-			pipe.handlePacket(packet);
-	}
-
-	//@Override
-	public Packet getUpdatePacket() {
-		return null;
-		//return new PacketTileUpdate(this).getPacket();
 	}
 
 	public Packet getDescriptionPacket() {
@@ -495,7 +464,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 					Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[i]);
 					pos.moveForwards(1.0);
 					scheduleRenderUpdate();
-					//worldObj.markBlockAsNeedsUpdate((int) pos.x, (int) pos.y, (int) pos.z);
 				}
 		}
 	}

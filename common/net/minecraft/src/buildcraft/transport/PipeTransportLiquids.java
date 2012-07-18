@@ -283,8 +283,6 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 			return;
 
 		moveLiquids();
-
-		this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);
 	}
 
 	@Override

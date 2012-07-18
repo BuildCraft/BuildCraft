@@ -99,6 +99,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 					pow.receiveEnergy(o.reverse(), energyUsed);
 
+					if (worldObj.isRemote) return;
 					((PipeTransportPower) transport).displayPower[o.ordinal()] += energyUsed;
 				}
 
