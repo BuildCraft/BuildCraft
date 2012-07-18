@@ -13,12 +13,13 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTransportLiquids;
@@ -28,7 +29,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public @TileNetworkData
 	int liquidToExtract;
 
-	private PowerProvider powerProvider;
+	private IPowerProvider powerProvider;
 	private int baseTexture = 7 * 16 + 0;
 	private int plainTexture = 1 * 16 + 15;
 	private int nextTexture = baseTexture;
@@ -49,7 +50,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	 */
 	@Override
 	public void doWork() {
-		if (powerProvider.energyStored <= 0)
+		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
 		World w = worldObj;
@@ -74,12 +75,12 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -132,6 +133,6 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().maxEnergyReceived;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 }

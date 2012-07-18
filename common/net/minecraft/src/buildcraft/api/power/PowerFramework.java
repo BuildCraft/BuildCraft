@@ -7,22 +7,21 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.power;
 
 import net.minecraft.src.NBTTagCompound;
 
-@Deprecated
 public abstract class PowerFramework {
 
 	static private String baseNBTName = "net.minecraft.src.buildcarft.Power";
 
 	public static PowerFramework currentFramework;
 
-	public abstract PowerProvider createPowerProvider();
+	public abstract IPowerProvider createPowerProvider();
 
 	public void loadPowerProvider(IPowerReceptor receptor, NBTTagCompound compound) {
 
-		PowerProvider provider = createPowerProvider();
+		IPowerProvider provider = createPowerProvider();
 
 		if (compound.hasKey(baseNBTName)) {
 			NBTTagCompound cpt = compound.getCompoundTag(baseNBTName);
@@ -36,7 +35,7 @@ public abstract class PowerFramework {
 
 	public void savePowerProvider(IPowerReceptor receptor, NBTTagCompound compound) {
 
-		PowerProvider provider = receptor.getPowerProvider();
+		IPowerProvider provider = receptor.getPowerProvider();
 
 		if (provider == null) {
 			return;

@@ -15,12 +15,13 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
@@ -29,7 +30,7 @@ import net.minecraft.src.forge.ISidedInventory;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
-	private PowerProvider powerProvider;
+	private IPowerProvider powerProvider;
 
 	private int baseTexture = 1 * 16 + 0;
 	private int plainTexture = 1 * 16 + 15;
@@ -68,18 +69,18 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		provider = powerProvider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
 	@Override
 	public void doWork() {
-		if (powerProvider.energyStored <= 0)
+		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
 		World w = worldObj;
@@ -208,7 +209,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().maxEnergyReceived;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 
 }

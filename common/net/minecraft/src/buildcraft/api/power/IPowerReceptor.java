@@ -7,14 +7,14 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.power;
 
-@Deprecated
+
 public interface IPowerReceptor {
 
-	public void setPowerProvider(PowerProvider provider);
+	public void setPowerProvider(IPowerProvider provider);
 
-	public PowerProvider getPowerProvider();
+	public IPowerProvider getPowerProvider();
 
 	public void doWork();
 

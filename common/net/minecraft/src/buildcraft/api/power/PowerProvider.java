@@ -7,23 +7,21 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.power;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 
-@Deprecated
-public abstract class PowerProvider {
+public abstract class PowerProvider implements IPowerProvider {
 
-	public int latency;
-	public int minEnergyReceived;
-	public int maxEnergyReceived;
-	public int maxEnergyStored;
-	public @TileNetworkData int minActivationEnergy;
-	public @TileNetworkData float energyStored = 0;
+	protected int latency;
+	protected int minEnergyReceived;
+	protected int maxEnergyReceived;
+	protected int maxEnergyStored;
+	protected int minActivationEnergy;
+	protected float energyStored = 0;
 
 	protected int powerLoss = 1;
 	protected int powerLossRegularity = 100;
@@ -33,6 +31,16 @@ public abstract class PowerProvider {
 
 	public int[] powerSources = { 0, 0, 0, 0, 0, 0 };
 
+	@Override public SafeTimeTracker getTimeTracker() { return this.timeTracker; }
+	
+	@Override public int getLatency() { return this.latency; }
+	@Override public int getMinEnergyReceived() { return this.minEnergyReceived; }
+	@Override public int getMaxEnergyReceived() { return this.maxEnergyReceived; }
+	@Override public int getMaxEnergyStored() { return this.maxEnergyStored; }
+	@Override public int getActivationEnergy() { return this.minActivationEnergy; }
+	@Override public float getEnergyStored() { return this.energyStored; }
+	
+	@Override 
 	public void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
 		this.latency = latency;
 		this.minEnergyReceived = minEnergyReceived;
@@ -41,12 +49,14 @@ public abstract class PowerProvider {
 		this.minActivationEnergy = minActivationEnergy;
 	}
 
+	@Override 
 	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
 		this.powerLoss = powerLoss;
 		this.powerLossRegularity = powerLossRegularity;
 	}
 
-	public final boolean update(IPowerReceptor receptor) {
+	@Override
+	public boolean update(IPowerReceptor receptor) {
 		if (!preConditions(receptor)) {
 			return false;
 		}
@@ -83,10 +93,12 @@ public abstract class PowerProvider {
 		return result;
 	}
 
+	@Override
 	public boolean preConditions(IPowerReceptor receptor) {
 		return true;
 	}
 
+	@Override
 	public float useEnergy(float min, float max, boolean doUse) {
 		float result = 0;
 
@@ -107,6 +119,7 @@ public abstract class PowerProvider {
 		return result;
 	}
 
+	@Override 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		latency = nbttagcompound.getInteger("latency");
 		minEnergyReceived = nbttagcompound.getInteger("minEnergyReceived");
@@ -121,6 +134,7 @@ public abstract class PowerProvider {
 		}
 	}
 
+	@Override 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("latency", latency);
 		nbttagcompound.setInteger("minEnergyReceived", minEnergyReceived);
@@ -130,6 +144,7 @@ public abstract class PowerProvider {
 		nbttagcompound.setFloat("storedEnergy", energyStored);
 	}
 
+	@Override
 	public void receiveEnergy(float quantity, Orientations from) {
 		powerSources[from.ordinal()] = 2;
 
@@ -140,6 +155,7 @@ public abstract class PowerProvider {
 		}
 	}
 
+	@Override
 	public boolean isPowerSource(Orientations from) {
 		return powerSources[from.ordinal()] != 0;
 	}

@@ -27,15 +27,16 @@ import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.IPipeTile;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
@@ -137,7 +138,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			blockNeighborChange = false;
 		}
 
-		PowerProvider provider = getPowerProvider();
+		IPowerProvider provider = getPowerProvider();
 
 		if (provider != null)
 			provider.update(this);
@@ -199,14 +200,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
 			((IPowerReceptor) pipe).setPowerProvider(provider);
 
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
 			return ((IPowerReceptor) pipe).getPowerProvider();
 		else
@@ -322,7 +323,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().maxEnergyReceived;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 
 	@Override

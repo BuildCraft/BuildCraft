@@ -19,17 +19,18 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.api.recipes.RefineryRecipe;
 import net.minecraft.src.buildcraft.core.IMachine;
 
@@ -98,7 +99,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, ITank
 
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
 
-	PowerProvider powerProvider;
+	IPowerProvider powerProvider;
 
 	private boolean isActive;
 
@@ -151,12 +152,12 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, ITank
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -196,7 +197,7 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, ITank
 
 		isActive = true;
 
-		if (powerProvider.energyStored >= currentRecipe.energy) {
+		if (powerProvider.getEnergyStored() >= currentRecipe.energy) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();

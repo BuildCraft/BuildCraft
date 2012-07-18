@@ -17,15 +17,16 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.IActionReceptor;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.filler.FillerManager;
 import net.minecraft.src.buildcraft.api.filler.IFillerPattern;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.ActionMachineControl;
 import net.minecraft.src.buildcraft.core.ActionMachineControl.Mode;
 import net.minecraft.src.buildcraft.core.Box;
@@ -48,7 +49,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	boolean forceDone = false;
 	private ItemStack contents[];
-	PowerProvider powerProvider;
+	IPowerProvider powerProvider;
 
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
@@ -95,7 +96,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			}
 		}
 
-		if (powerProvider.energyStored > 25) {
+		if (powerProvider.getEnergyStored() > 25) {
 			doWork();
 		}
 	}
@@ -140,7 +141,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			}
 		}
 
-		if (powerProvider.energyStored > 25) {
+		if (powerProvider.getEnergyStored() > 25) {
 			doWork();
 		}
 	}
@@ -394,12 +395,12 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -431,7 +432,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	@Override
 	public int powerRequest() {
 		if (isActive()) {
-			return powerProvider.maxEnergyReceived;
+			return powerProvider.getMaxEnergyReceived();
 		} else {
 			return 0;
 		}

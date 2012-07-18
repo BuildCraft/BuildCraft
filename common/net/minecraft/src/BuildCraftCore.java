@@ -13,11 +13,11 @@ import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.LiquidData;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
 import net.minecraft.src.buildcraft.core.ActionMachineControl;
 import net.minecraft.src.buildcraft.core.ActionMachineControl.Mode;
 import net.minecraft.src.buildcraft.core.ActionRedstoneOutput;

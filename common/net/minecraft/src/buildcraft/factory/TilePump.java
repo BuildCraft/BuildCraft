@@ -20,14 +20,15 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
@@ -49,7 +50,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	public @TileNetworkData
 	int liquidId = 0;
 
-	private PowerProvider powerProvider;
+	private IPowerProvider powerProvider;
 
 	public TilePump() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
@@ -310,12 +311,12 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 

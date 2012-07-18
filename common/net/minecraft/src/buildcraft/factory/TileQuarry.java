@@ -24,12 +24,13 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.BptBlueprint;
 import net.minecraft.src.buildcraft.core.BptBuilderBase;
@@ -67,7 +68,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	BptBuilderBase bluePrintBuilder;
 
-	public @TileNetworkData PowerProvider powerProvider;
+	public IPowerProvider powerProvider;
 
 	public static int MAX_ENERGY = 7000;
 	
@@ -149,7 +150,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		if (inProcess && arm != null) {
 
 			arm.speed = 0;
-			float energyToUse = 2 + powerProvider.energyStored / 1000;
+			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
 
 			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
 
@@ -214,7 +215,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 			return;
 		}
 
-		powerProvider.timeTracker.markTime(worldObj);
+		powerProvider.getTimeTracker().markTime(worldObj);
 
 		if (builder == null) {
 			builder = new EntityRobot(worldObj, box);
@@ -385,7 +386,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		int blockId = worldObj.getBlockId(i, j, k);
 
 		if (canDig(blockId)) {
-			powerProvider.timeTracker.markTime(worldObj);
+			powerProvider.getTimeTracker().markTime(worldObj);
 
 			// Share this with mining well!
 
@@ -615,13 +616,13 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		provider = powerProvider;
 
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 

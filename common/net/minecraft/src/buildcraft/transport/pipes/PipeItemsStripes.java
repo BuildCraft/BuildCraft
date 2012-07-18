@@ -17,11 +17,12 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.EntityData;
@@ -33,7 +34,7 @@ import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 
 public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPowerReceptor {
 
-	private PowerProvider powerProvider;
+	private IPowerProvider powerProvider;
 
 	public PipeItemsStripes(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicStripes(), itemID);
@@ -125,18 +126,18 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().maxEnergyReceived;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 
 	@Override
