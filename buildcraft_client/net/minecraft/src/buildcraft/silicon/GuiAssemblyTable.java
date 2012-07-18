@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.core.AssemblyRecipe;
+import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
@@ -133,6 +133,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		if (position != -1) {
 			RecipeSlot slot = (RecipeSlot) slots[position];
+			
+			if (slot.recipe == null)
+				return;
 
 			SelectionMessage message = new SelectionMessage();
 

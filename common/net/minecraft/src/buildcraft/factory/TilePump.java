@@ -26,6 +26,8 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityBlock;
 import net.minecraft.src.buildcraft.core.IMachine;
@@ -127,13 +129,15 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 				p.moveForwards(1);
 
 				TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
-
-				if (tile instanceof ILiquidContainer) {
-					internalLiquid -= ((ILiquidContainer) tile).fill(p.orientation.reverse(), internalLiquid, liquidId, true);
-
-					if (internalLiquid <= 0) {
+				
+				if(tile instanceof ITankContainer) {
+					internalLiquid -= ((ITankContainer)tile).fill(p.orientation.reverse(), new LiquidStack(liquidId, internalLiquid), true);
+					if(internalLiquid <= 0)
 						break;
-					}
+				} else if (tile instanceof ILiquidContainer) {
+					internalLiquid -= ((ILiquidContainer) tile).fill(p.orientation.reverse(), internalLiquid, liquidId, true);
+					if (internalLiquid <= 0)
+						break;
 				}
 			}
 		}

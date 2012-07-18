@@ -16,6 +16,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntityFurnace;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -60,9 +61,9 @@ public class EngineStone extends Engine {
 			return 0.08F;
 		case Red:
 			return 0.16F;
+		default:
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -98,7 +99,7 @@ public class EngineStone extends Engine {
 		if (itemstack == null)
 			return 0;
 		
-		return FMLCommonHandler.instance().fuelLookup(itemstack.getItem().shiftedIndex, itemstack.getItemDamage());
+		return TileEntityFurnace.getItemBurnTime(itemstack);
 	}
 
 	/* SAVING & LOADING */

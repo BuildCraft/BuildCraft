@@ -2,7 +2,6 @@ package net.minecraft.src.buildcraft.factory;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -16,7 +15,7 @@ import net.minecraft.src.mod_BuildCraftSilicon;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.core.AssemblyRecipe;
+import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.StackUtil;
@@ -62,7 +61,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
 		LinkedList<AssemblyRecipe> result = new LinkedList<AssemblyRecipe>();
 
-		for (AssemblyRecipe recipe : BuildCraftCore.assemblyRecipes) {
+		for (AssemblyRecipe recipe : AssemblyRecipe.assemblyRecipes) {
 			if (recipe.canBeDone(items)) {
 				result.add(recipe);
 			}
@@ -257,7 +256,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 
 			ItemStack stack = ItemStack.loadItemStackFromNBT(cpt);
 
-			for (AssemblyRecipe r : BuildCraftCore.assemblyRecipes) {
+			for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
 					plannedOutput.add(r);
 				}
@@ -381,7 +380,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 	}
 
 	public void handleSelectionMessage(SelectionMessage message) {
-		for (AssemblyRecipe recipe : BuildCraftCore.assemblyRecipes) {
+		for (AssemblyRecipe recipe : AssemblyRecipe.assemblyRecipes) {
 			if (recipe.output.itemID == message.itemID && recipe.output.getItemDamage() == message.itemDmg) {
 				if (message.select) {
 					planOutput(recipe);
@@ -395,7 +394,7 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 	}
 
 	public void sendSelectionTo(EntityPlayer player) {
-		for (AssemblyRecipe r : BuildCraftCore.assemblyRecipes) {
+		for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 			SelectionMessage message = new SelectionMessage();
 
 			message.itemID = r.output.itemID;

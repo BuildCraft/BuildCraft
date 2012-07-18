@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.api;
 
+@Deprecated
 public interface ILiquidContainer {
 
 	public int fill(Orientations from, int quantity, int id, boolean doFill);

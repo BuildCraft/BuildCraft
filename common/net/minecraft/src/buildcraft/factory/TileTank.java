@@ -20,10 +20,14 @@ import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
-public class TileTank extends TileBuildCraft implements ILiquidContainer {
+public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankContainer {
 
 	public @TileNetworkData
 	int stored = 0;
@@ -33,64 +37,23 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	public boolean hasUpdate = false;
 	public SafeTimeTracker tracker = new SafeTimeTracker();
 
+	/* UPDATING */
 	@Override
-	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		TileTank lastTank = this;
-
-		for (int j = yCoord - 1; j > 1; --j) {
-			if (worldObj.getBlockTileEntity(xCoord, j, zCoord) instanceof TileTank) {
-				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j, zCoord);
-			} else {
-				break;
-			}
+	public void updateEntity() {
+		if (APIProxy.isServerSide() && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+			sendNetworkUpdate();
+			hasUpdate = false;
 		}
-
-		return lastTank.actualFill(from, quantity, id, doFill);
+		
+		if(APIProxy.isRemote())
+			return;
+		
+		// Have liquid flow down into tanks below if any.
+		if(stored > 0)
+			moveLiquidBelow();
 	}
 
-	private int actualFill(Orientations from, int quantity, int id, boolean doFill) {
-		if (stored != 0 && id != liquidId) {
-			return 0;
-		}
-
-		liquidId = id;
-
-		TileEntity above = worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord);
-
-		int used = 0;
-
-		if (stored + quantity <= getTankCapacity()) {
-			if (doFill) {
-				stored += quantity;
-				hasUpdate = true;
-			}
-
-			used = quantity;
-		} else if (stored <= getTankCapacity()) {
-			used = getTankCapacity() - stored;
-
-			if (doFill) {
-				stored = getTankCapacity();
-				hasUpdate = true;
-			}
-		}
-
-		if (used < quantity && above instanceof TileTank) {
-			used = used + ((TileTank) above).actualFill(from, quantity - used, id, doFill);
-		}
-
-		return used;
-	}
-
-	@Override
-	public int getLiquidQuantity() {
-		return stored;
-	}
-
-	public int getTankCapacity() {
-		return BuildCraftAPI.BUCKET_VOLUME * 16;
-	}
-
+	/* SAVING & LOADING */
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
@@ -111,22 +74,114 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 		nbttagcompound.setInteger("liquidId", liquidId);
 	}
 
-	@Override
-	public int empty(int quantityMax, boolean doEmpty) {
+	/* HELPER FUNCTIONS */
+	/**
+	 * @return Last tank block below this one or this one if it is the last.
+	 */
+	public TileTank getBottomTank() {
+		
 		TileTank lastTank = this;
 
-		for (int j = yCoord + 1; j <= DefaultProps.WORLD_HEIGHT; ++j) {
-			if (worldObj.getBlockTileEntity(xCoord, j, zCoord) instanceof TileTank) {
-				lastTank = (TileTank) worldObj.getBlockTileEntity(xCoord, j, zCoord);
-			} else {
+		while(true) {
+			TileTank below = getTankBelow(lastTank);
+			if(below != null) {
+				lastTank = below;
+			} else
 				break;
+		}
+		
+		return lastTank;
+	}
+	
+	public TileTank getTankBelow(TileTank tile) {
+		TileEntity below = worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord - 1, tile.zCoord);
+		if(below instanceof TileTank)
+			return(TileTank)below;
+		else
+			return null;
+			
+	}
+	
+	public TileTank getTankAbove(TileTank tile) {
+		TileEntity above = worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord + 1, tile.zCoord);
+		if(above instanceof TileTank)
+			return(TileTank)above;
+		else
+			return null;
+			
+	}
+	
+	public void moveLiquidBelow() {
+		TileTank below = getTankBelow(this);
+		if(below == null)
+			return;
+		if(below.stored >= below.getTankCapacity())
+			return;
+		if(below.liquidId > 0
+				&& below.liquidId != this.liquidId)
+			return;
+		
+		int toMove = Math.min(stored, 100);
+		int moved = Math.min(toMove, below.getTankCapacity() - below.stored);
+		stored -= moved;
+		below.liquidId = liquidId;
+		below.stored += moved;
+		
+	}
+	
+	/* ILIQUIDCONTAINER */	
+	@Override
+	public int fill(Orientations from, int quantity, int id, boolean doFill) {
+		return getBottomTank().actualFill(from, quantity, id, doFill);
+	}
+
+	private int actualFill(Orientations from, int quantity, int id, boolean doFill) {
+		if (stored != 0 && id != liquidId)
+			return 0;
+
+		liquidId = id;
+		int used = 0;
+
+		TileTank above = getTankAbove(this);
+
+		if (stored + quantity <= getTankCapacity()) {
+			if (doFill) {
+				stored += quantity;
+				hasUpdate = true;
+			}
+
+			used = quantity;
+		} else if (stored <= getTankCapacity()) {
+			used = getTankCapacity() - stored;
+
+			if (doFill) {
+				stored = getTankCapacity();
+				hasUpdate = true;
 			}
 		}
 
-		return lastTank.actualEmtpy(quantityMax, doEmpty);
+		if (used < quantity && above != null)
+			used = used + above.actualFill(from, quantity - used, id, doFill);
+
+		return used;
+	}
+
+	@Override
+	public int getLiquidQuantity() {
+		return stored;
+	}
+
+	public int getTankCapacity() {
+		return BuildCraftAPI.BUCKET_VOLUME * 16;
+	}
+
+	@Override
+	public int empty(int quantityMax, boolean doEmpty) {
+		return getBottomTank().actualEmtpy(quantityMax, doEmpty);
 	}
 
 	private int actualEmtpy(int quantityMax, boolean doEmpty) {
+		
 		if (stored >= quantityMax) {
 			if (doEmpty) {
 				stored -= quantityMax;
@@ -134,6 +189,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			}
 
 			return quantityMax;
+			
 		} else {
 			int result = stored;
 
@@ -142,11 +198,10 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 				hasUpdate = true;
 			}
 
-			TileEntity under = worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
+			TileTank below = getTankBelow(this);
 
-			if (under instanceof TileTank) {
-				result += ((TileTank) under).actualEmtpy(quantityMax - result, doEmpty);
-			}
+			if (below != null)
+				result += below.actualEmtpy(quantityMax - result, doEmpty);
 
 			return result;
 		}
@@ -158,15 +213,36 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 	}
 
 	@Override
-	public void updateEntity() {
-		if (APIProxy.isServerSide() && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-			sendNetworkUpdate();
-			hasUpdate = false;
-		}
+	public LiquidSlot[] getLiquidSlots() {
+		ILiquidTank tank = getTanks()[0];
+		return new LiquidSlot[] { new LiquidSlot(tank.getLiquid().itemID, tank.getLiquid().amount, tank.getCapacity()) };
+	}
+
+	/* ITANKCONTAINER */
+	@Override
+	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+		return getBottomTank().actualFill(from, resource.amount, resource.itemID, doFill);
 	}
 
 	@Override
-	public LiquidSlot[] getLiquidSlots() {
+	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
+		return getBottomTank().actualFill(Orientations.YPos, resource.amount, resource.itemID, doFill);
+	}
+
+	@Override
+	public LiquidStack drain(Orientations from, int maxEmpty, boolean doDrain) {
+		int drained = getBottomTank().actualEmtpy(maxEmpty, doDrain);
+		return new LiquidStack(liquidId, drained);
+	}
+
+	@Override
+	public LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain) {
+		int drained = getBottomTank().actualEmtpy(maxEmpty, doDrain);
+		return new LiquidStack(liquidId, drained);
+	}
+
+	@Override
+	public ILiquidTank[] getTanks() {
 		int resultLiquidId = 0;
 		int resultLiquidQty = 0;
 		int resultCapacity = 0;
@@ -208,6 +284,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer {
 			resultCapacity += tank.getTankCapacity();
 		}
 
-		return new LiquidSlot[] { new LiquidSlot(resultLiquidId, resultLiquidQty, resultCapacity) };
+		return new ILiquidTank[] { new LiquidTank(resultLiquidId, resultLiquidQty, resultCapacity) };
 	}
+
 }

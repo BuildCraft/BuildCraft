@@ -21,6 +21,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -92,12 +93,13 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
 			
-			int liquidId = LiquidManager.getLiquidIDForFilledItem(current);
+			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
-			if (liquidId != 0) {
-				int qty = tank.fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
+			// Handle filled containers
+			if (liquid != null) {
+				int qty = tank.fill(Orientations.Unknown, liquid.amount, liquid.itemID, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
@@ -105,18 +107,29 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				}
 
 				return true;
+			
+			// Handle empty containers
 			} else {
-				ItemStack filled = LiquidManager.fillLiquidContainer(tank.getLiquidId(), current);
 				
-				int qty = tank.empty(BuildCraftAPI.BUCKET_VOLUME, false);
+				ItemStack filled = LiquidManager.fillLiquidContainer(new LiquidStack(tank.getLiquidId(),
+						tank.empty(BuildCraftAPI.BUCKET_VOLUME, false)), current);
 					
-				if(filled != null && qty >= BuildCraftAPI.BUCKET_VOLUME){
-					if(current.stackSize > 1 && !entityplayer.inventory.addItemStackToInventory(filled)){
-						return false;
+				liquid = LiquidManager.getLiquidForFilledItem(filled);
+				if(liquid != null) {
+					
+					if(current.stackSize > 1) {
+						if(!entityplayer.inventory.addItemStackToInventory(filled))
+							return false;
+						else
+							entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+									Utils.consumeItem(current));
+					} else {
+						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+								Utils.consumeItem(current));
+						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 					}
-					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-						Utils.consumeItem(current));
-					tank.empty(BuildCraftAPI.BUCKET_VOLUME, true);
+					
+					tank.empty(liquid.amount, true);
 					return true;
 				}
 			}
