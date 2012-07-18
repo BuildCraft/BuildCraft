@@ -17,6 +17,7 @@ import net.minecraft.src.ItemStack;
  * Inventories implementing this interface will allow finer control over what
  * can be added / extracted and how.
  */
+@Deprecated
 public interface ISpecialInventory extends IInventory {
 
 	/**
