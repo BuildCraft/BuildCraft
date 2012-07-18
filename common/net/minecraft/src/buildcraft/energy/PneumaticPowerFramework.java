@@ -9,13 +9,14 @@
 
 package net.minecraft.src.buildcraft.energy;
 
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
 import net.minecraft.src.buildcraft.api.power.PowerProvider;
 
 public class PneumaticPowerFramework extends PowerFramework {
 
 	@Override
-	public PowerProvider createPowerProvider() {
+	public IPowerProvider createPowerProvider() {
 		return new PneumaticPowerProvider();
 	}
 
