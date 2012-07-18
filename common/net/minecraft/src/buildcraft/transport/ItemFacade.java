@@ -15,7 +15,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.core.AssemblyRecipe;
+import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 
 public class ItemFacade extends ItemBuildCraft {
@@ -95,7 +95,7 @@ public class ItemFacade extends ItemBuildCraft {
 					allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(blockId, stack.getItemDamage())));
 					
 					//3 Structurepipes + this block makes 6 facades
-					BuildCraftCore.assemblyRecipes.add(
+					AssemblyRecipe.assemblyRecipes.add(
 							new AssemblyRecipe(
 									new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), new ItemStack(blockId, 1, stack.getItemDamage())}, 
 									8000, 
