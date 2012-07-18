@@ -20,6 +20,7 @@ import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
@@ -213,7 +214,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankC
 
 	@Override
 	public LiquidSlot[] getLiquidSlots() {
-		LiquidTank tank = getTanks()[0];
+		ILiquidTank tank = getTanks()[0];
 		return new LiquidSlot[] { new LiquidSlot(tank.getLiquid().itemID, tank.getLiquid().amount, tank.getCapacity()) };
 	}
 
@@ -241,7 +242,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankC
 	}
 
 	@Override
-	public LiquidTank[] getTanks() {
+	public ILiquidTank[] getTanks() {
 		int resultLiquidId = 0;
 		int resultLiquidQty = 0;
 		int resultCapacity = 0;
@@ -283,7 +284,7 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankC
 			resultCapacity += tank.getTankCapacity();
 		}
 
-		return new LiquidTank[] { new LiquidTank(resultLiquidId, resultLiquidQty, resultCapacity) };
+		return new ILiquidTank[] { new LiquidTank(resultLiquidId, resultLiquidQty, resultCapacity) };
 	}
 
 }

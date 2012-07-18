@@ -24,23 +24,23 @@ public interface ITankContainer {
 	/**
 	 * Drains liquid out of internal tanks, distribution is left to the ITankContainer.
 	 * @param from Orientation the liquid is drained to.
-	 * @param maxEmpty Maximum amount of liquid to drain.
+	 * @param maxDrain Maximum amount of liquid to drain.
 	 * @param doDrain If false draining will only be simulated.
 	 * @return LiquidStack representing the liquid and amount actually drained from the ITankContainer
 	 */
-	LiquidStack drain(Orientations from, int maxEmpty, boolean doDrain);
+	LiquidStack drain(Orientations from, int maxDrain, boolean doDrain);
 	/**
 	 * Drains liquid out of the specified internal tank.
 	 * @param from Orientation the liquid is drained to.
-	 * @param maxEmpty Maximum amount of liquid to drain.
+	 * @param maxDrain Maximum amount of liquid to drain.
 	 * @param doDrain If false draining will only be simulated.
 	 * @return LiquidStack representing the liquid and amount actually drained from the ITankContainer
 	 */
-	LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain);
+	LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain);
 	
 	/**
 	 * @return Array of {@link LiquidTank}s contained in this ITankContainer
 	 */
-	LiquidTank[] getTanks();
+	ILiquidTank[] getTanks();
 	
 }

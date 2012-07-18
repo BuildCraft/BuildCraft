@@ -26,6 +26,7 @@ import net.minecraft.src.buildcraft.api.PowerFramework;
 import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
@@ -520,8 +521,8 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, ITank
 	}
 
 	@Override
-	public LiquidTank[] getTanks() {
-		return new LiquidTank[] {
+	public ILiquidTank[] getTanks() {
+		return new ILiquidTank[] {
 				new LiquidTank(slot1.liquidId, slot1.quantity, LIQUID_PER_SLOT),
 				new LiquidTank(slot2.liquidId, slot2.quantity, LIQUID_PER_SLOT),
 				new LiquidTank(result.liquidId, result.quantity, LIQUID_PER_SLOT),
