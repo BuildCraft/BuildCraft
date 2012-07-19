@@ -19,7 +19,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
@@ -134,10 +133,6 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 				if(tile instanceof ITankContainer) {
 					internalLiquid -= ((ITankContainer)tile).fill(p.orientation.reverse(), new LiquidStack(liquidId, internalLiquid), true);
 					if(internalLiquid <= 0)
-						break;
-				} else if (tile instanceof ILiquidContainer) {
-					internalLiquid -= ((ILiquidContainer) tile).fill(p.orientation.reverse(), internalLiquid, liquidId, true);
-					if (internalLiquid <= 0)
 						break;
 				}
 			}

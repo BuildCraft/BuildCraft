@@ -15,8 +15,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
@@ -27,7 +25,7 @@ import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 
-public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankContainer {
+public class TileTank extends TileBuildCraft implements ITankContainer {
 
 	public @TileNetworkData
 	int stored = 0;
@@ -128,95 +126,6 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankC
 		below.stored += moved;
 		
 	}
-	
-	/* ILIQUIDCONTAINER */	
-	@Override
-	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		return getBottomTank().actualFill(from, quantity, id, doFill);
-	}
-
-	private int actualFill(Orientations from, int quantity, int id, boolean doFill) {
-		if (stored != 0 && id != liquidId)
-			return 0;
-
-		liquidId = id;
-		int used = 0;
-
-		TileTank above = getTankAbove(this);
-
-		if (stored + quantity <= getTankCapacity()) {
-			if (doFill) {
-				stored += quantity;
-				hasUpdate = true;
-			}
-
-			used = quantity;
-		} else if (stored <= getTankCapacity()) {
-			used = getTankCapacity() - stored;
-
-			if (doFill) {
-				stored = getTankCapacity();
-				hasUpdate = true;
-			}
-		}
-
-		if (used < quantity && above != null)
-			used = used + above.actualFill(from, quantity - used, id, doFill);
-
-		return used;
-	}
-
-	@Override
-	public int getLiquidQuantity() {
-		return stored;
-	}
-
-	public int getTankCapacity() {
-		return BuildCraftAPI.BUCKET_VOLUME * 16;
-	}
-
-	@Override
-	public int empty(int quantityMax, boolean doEmpty) {
-		return getBottomTank().actualEmtpy(quantityMax, doEmpty);
-	}
-
-	private int actualEmtpy(int quantityMax, boolean doEmpty) {
-		
-		if (stored >= quantityMax) {
-			if (doEmpty) {
-				stored -= quantityMax;
-				hasUpdate = true;
-			}
-
-			return quantityMax;
-			
-		} else {
-			int result = stored;
-
-			if (doEmpty) {
-				stored = 0;
-				hasUpdate = true;
-			}
-
-			TileTank below = getTankBelow(this);
-
-			if (below != null)
-				result += below.actualEmtpy(quantityMax - result, doEmpty);
-
-			return result;
-		}
-	}
-
-	@Override
-	public int getLiquidId() {
-		return liquidId;
-	}
-
-	@Override
-	public LiquidSlot[] getLiquidSlots() {
-		ILiquidTank tank = getTanks()[0];
-		return new LiquidSlot[] { new LiquidSlot(tank.getLiquid().itemID, tank.getLiquid().amount, tank.getCapacity()) };
-	}
 
 	/* ITANKCONTAINER */
 	@Override
@@ -285,6 +194,72 @@ public class TileTank extends TileBuildCraft implements ILiquidContainer, ITankC
 		}
 
 		return new ILiquidTank[] { new LiquidTank(resultLiquidId, resultLiquidQty, resultCapacity) };
+	}
+	
+	private int actualFill(Orientations from, int quantity, int id, boolean doFill) {
+		if (stored != 0 && id != liquidId)
+			return 0;
+
+		liquidId = id;
+		int used = 0;
+
+		TileTank above = getTankAbove(this);
+
+		if (stored + quantity <= getTankCapacity()) {
+			if (doFill) {
+				stored += quantity;
+				hasUpdate = true;
+			}
+
+			used = quantity;
+		} else if (stored <= getTankCapacity()) {
+			used = getTankCapacity() - stored;
+
+			if (doFill) {
+				stored = getTankCapacity();
+				hasUpdate = true;
+			}
+		}
+
+		if (used < quantity && above != null)
+			used = used + above.actualFill(from, quantity - used, id, doFill);
+
+		return used;
+	}
+
+	public int getTankCapacity() {
+		return BuildCraftAPI.BUCKET_VOLUME * 16;
+	}
+	
+	public LiquidStack getLiquid() {
+		return new LiquidStack(liquidId, stored, 0);
+	}
+
+	private int actualEmtpy(int quantityMax, boolean doEmpty) {
+		
+		if (stored >= quantityMax) {
+			if (doEmpty) {
+				stored -= quantityMax;
+				hasUpdate = true;
+			}
+
+			return quantityMax;
+			
+		} else {
+			int result = stored;
+
+			if (doEmpty) {
+				stored = 0;
+				hasUpdate = true;
+			}
+
+			TileTank below = getTankBelow(this);
+
+			if (below != null)
+				result += below.actualEmtpy(quantityMax - result, doEmpty);
+
+			return result;
+		}
 	}
 
 }

@@ -15,14 +15,15 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.src.forge.ISidedInventory;
 
 public class StackUtil {
 
 	public ItemStack items;
+	public int itemsAdded;
 
 	public StackUtil(ItemStack stack) {
 		this.items = stack;
@@ -51,7 +52,7 @@ public class StackUtil {
 			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tileInventory instanceof ISpecialInventory)
-				if (((ISpecialInventory) tileInventory).addItem(items, false, from))
+				if (((ISpecialInventory) tileInventory).addItem(items, false, from) > 0)
 					possibleInventories.add(pos.orientation);
 
 			if (tileInventory instanceof IInventory)
@@ -87,8 +88,14 @@ public class StackUtil {
 	public boolean checkAvailableSlot(IInventory inventory, boolean add, Orientations from) {
 		// First, look for a similar pile
 
-		if (inventory instanceof ISpecialInventory)
-			return ((ISpecialInventory) inventory).addItem(items, add, from);
+		if (inventory instanceof ISpecialInventory) {
+			int used = ((ISpecialInventory) inventory).addItem(items, add, from);
+			if(used <= 0)
+				return false;
+			
+			items.stackSize -= used;
+			return true; 
+		}
 
 		boolean added = false;
 
@@ -136,7 +143,7 @@ public class StackUtil {
 		if (added)
 			if (!add)
 				return true;
-			else if (items.stackSize == 0)
+			else if (items.stackSize - itemsAdded == 0)
 				return true;
 			else {
 				checkAvailableSlot(inventory, added, from);
@@ -192,7 +199,7 @@ public class StackUtil {
 		if (added) {
 			if (!add)
 				return true;
-			else if (items.stackSize == 0)
+			else if (items.stackSize - itemsAdded == 0)
 				return true;
 			else {
 				checkAvailableSlot(inventory, added, from);
@@ -221,7 +228,7 @@ public class StackUtil {
 
 					if (doAdd) {
 						stack.stackSize++;
-						items.stackSize--;
+						itemsAdded++;
 					}
 
 					return true;
@@ -232,7 +239,7 @@ public class StackUtil {
 				stack = items.copy();
 				stack.stackSize = 1;
 
-				items.stackSize--;
+				itemsAdded++;
 				inventory.setInventorySlotContents(stackIndex, stack);
 			}
 

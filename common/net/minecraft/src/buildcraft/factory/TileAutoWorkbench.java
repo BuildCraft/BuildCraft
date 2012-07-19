@@ -19,9 +19,9 @@ import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -122,38 +122,6 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		Utils.writeStacksToNBT(nbttagcompound, "stackList", stackList);
 	}
 
-	@Override
-	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		StackUtil stackUtils = new StackUtil(stack);
-
-		int minSimilar = Integer.MAX_VALUE;
-		int minSlot = -1;
-
-		for (int j = 0; j < getSizeInventory(); ++j) {
-			ItemStack stackInInventory = getStackInSlot(j);
-
-			if (stackInInventory != null && stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID
-					&& stackInInventory.getItemDamage() == stack.getItemDamage() && stackInInventory.stackSize < minSimilar) {
-				minSimilar = stackInInventory.stackSize;
-				minSlot = j;
-			}
-		}
-
-		if (minSlot != -1) {
-			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
-				if (doAdd && stack.stackSize != 0) {
-					addItem(stack, doAdd, from);
-				}
-
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-
 	class StackPointer {
 
 		IInventory inventory;
@@ -227,11 +195,6 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		}
 
 		return resultStack;
-	}
-
-	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		return extractItem(doRemove, false);
 	}
 
 	public void resetPointers(LinkedList<StackPointer> pointers) {
@@ -314,6 +277,44 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	@Override
 	public void closeChest() {
 
+	}
+
+	/* ISPECIALINVENTORY */
+	@Override
+	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		StackUtil stackUtils = new StackUtil(stack);
+
+		int minSimilar = Integer.MAX_VALUE;
+		int minSlot = -1;
+
+		for (int j = 0; j < getSizeInventory(); ++j) {
+			ItemStack stackInInventory = getStackInSlot(j);
+
+			if (stackInInventory != null && stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID
+					&& stackInInventory.getItemDamage() == stack.getItemDamage() && stackInInventory.stackSize < minSimilar) {
+				minSimilar = stackInInventory.stackSize;
+				minSlot = j;
+			}
+		}
+
+		if (minSlot != -1) {
+			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
+				if (doAdd && stack.stackSize != 0) {
+					addItem(stack, doAdd, from);
+				}
+
+				return stackUtils.itemsAdded;
+			} else {
+				return stackUtils.itemsAdded;
+			}
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
+		return new ItemStack[] { extractItem(doRemove, false) };
 	}
 
 }

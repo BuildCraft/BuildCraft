@@ -6,7 +6,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.ITriggerProvider;
@@ -28,7 +28,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerFullInventory);
 		}
 
-		if (tile instanceof ILiquidContainer && ((ILiquidContainer) tile).getLiquidSlots().length > 0) {
+		if (tile instanceof ITankContainer && ((ITankContainer) tile).getTanks().length > 0) {
 			res.add(BuildCraftCore.triggerEmptyLiquid);
 			res.add(BuildCraftCore.triggerContainsLiquid);
 			res.add(BuildCraftCore.triggerSpaceLiquid);

@@ -6,8 +6,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.utils.InventoryUtil;
 import net.minecraft.src.buildcraft.core.utils.SidedInventoryAdapter;
@@ -48,7 +48,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		if (tile instanceof ISpecialInventory) {
 			ISpecialInventory special = (ISpecialInventory) tile;
 			ItemStack clonedStack = _inventory.getStackInSlot(internalSlot).copy().splitStack(1);
-			if (special.addItem(clonedStack, true, Orientations.YPos)) {
+			if (special.addItem(clonedStack, true, Orientations.YPos) > 0) {
 				_inventory.decrStackSize(internalSlot, 1);
 			}
 			return;
