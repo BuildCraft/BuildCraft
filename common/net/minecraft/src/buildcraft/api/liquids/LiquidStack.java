@@ -14,8 +14,6 @@ public class LiquidStack {
 	public int amount;
 	public int itemMeta;
 
-	public NBTTagCompound stackTagCompound;
-
 	private LiquidStack() {
 	}
 
@@ -41,8 +39,6 @@ public class LiquidStack {
 		nbttagcompound.setShort("Id", (short) itemID);
 		nbttagcompound.setInteger("Amount", amount);
 		nbttagcompound.setShort("Meta", (short) itemMeta);
-		if (stackTagCompound != null)
-			nbttagcompound.setTag("Tag", stackTagCompound);
 		return nbttagcompound;
 	}
 
@@ -50,35 +46,13 @@ public class LiquidStack {
 		itemID = nbttagcompound.getShort("Id");
 		amount = nbttagcompound.getInteger("Amount");
 		itemMeta = nbttagcompound.getShort("Meta");
-		if (nbttagcompound.hasKey("Tag"))
-			stackTagCompound = nbttagcompound.getCompoundTag("tag");
 	}
 
 	/**
 	 * @return A copy of this LiquidStack
 	 */
 	public LiquidStack copy() {
-		LiquidStack copy = new LiquidStack(itemID, amount, itemMeta);
-		if (stackTagCompound != null) {
-			copy.stackTagCompound = (NBTTagCompound) stackTagCompound.copy();
-			if (!copy.stackTagCompound.equals(stackTagCompound))
-				return copy;
-		}
-		return copy;
-	}
-
-	/**
-	 * @return NBTTagCompound associated with this LiquidStack
-	 */
-	public NBTTagCompound getTagCompound() {
-		return stackTagCompound;
-	}
-
-	/**
-	 * @param nbttagcompound Sets the NBTTagCompound on this LiquidStack
-	 */
-	public void setTagCompound(NBTTagCompound nbttagcompound) {
-		stackTagCompound = nbttagcompound;
+		return new LiquidStack(itemID, amount, itemMeta);
 	}
 
 	/**
@@ -132,5 +106,4 @@ public class LiquidStack {
 		liquidstack.readFromNBT(nbttagcompound);
 		return liquidstack.itemID == 0 ? null : liquidstack;
 	}
-
 }
