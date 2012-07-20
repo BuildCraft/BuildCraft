@@ -128,8 +128,9 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	 * on the position of the pipe.
 	 */
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, Orientations from) {
+		
+		/// ISPECIALINVENTORY
 		if (inventory instanceof ISpecialInventory)
-			// TAKE INTO ACCOUNT SPECIAL INVENTORIES!!!
 			return ((ISpecialInventory) inventory).extractItem(doRemove, from, 1);
 
 		if (inventory instanceof ISidedInventory) {

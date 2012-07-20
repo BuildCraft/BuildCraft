@@ -93,7 +93,8 @@ public class StackUtil {
 			if(used <= 0)
 				return false;
 			
-			items.stackSize -= used;
+			if(add)
+				items.stackSize -= used;
 			return true; 
 		}
 
@@ -132,7 +133,7 @@ public class StackUtil {
 		} else {
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
-
+			
 			for (int j = 0; j < inv.getSizeInventory(); ++j)
 				if (tryAdding(inv, j, add, false)) {
 					added = true;
@@ -143,12 +144,14 @@ public class StackUtil {
 		if (added)
 			if (!add)
 				return true;
-			else if (items.stackSize - itemsAdded == 0)
-				return true;
 			else {
-				checkAvailableSlot(inventory, added, from);
-
-				return true;
+				items.stackSize -= itemsAdded;
+				itemsAdded = 0;
+				if (items.stackSize == 0)
+					return true;
+				else
+					checkAvailableSlot(inventory, added, from);
+					return true;
 			}
 
 		// If none, then create a new thing
@@ -186,6 +189,7 @@ public class StackUtil {
 		} else {
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
+			System.out.println("Adding to generic inventory.");
 
 			for (int j = 0; j < inv.getSizeInventory(); ++j)
 				if (tryAdding(inv, j, add, true)) {
@@ -195,15 +199,17 @@ public class StackUtil {
 		}
 
 		// If the inventory if full, return false
-
 		if (added) {
 			if (!add)
 				return true;
-			else if (items.stackSize - itemsAdded == 0)
-				return true;
 			else {
-				checkAvailableSlot(inventory, added, from);
-				return true;
+				items.stackSize -= itemsAdded;
+				itemsAdded = 0;
+				if (items.stackSize == 0)
+					return true;
+				else
+					checkAvailableSlot(inventory, added, from);
+					return true;
 			}
 		} else
 			return false;
