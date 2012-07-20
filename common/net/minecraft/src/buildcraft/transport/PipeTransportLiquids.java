@@ -148,24 +148,27 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		for (Orientations direction : Orientations.values()) {
 			LiquidStack liquid = internalTanks[direction.ordinal()].getLiquid();
 			
-			if (liquid != null && renderCache[direction.ordinal()] != null){
-				 liquid.itemID = renderCache[direction.ordinal()].itemID;
-				 liquid.itemMeta = renderCache[direction.ordinal()].itemMeta;
+			if (liquid != null){
+				if (renderCache[direction.ordinal()] == null){
+					renderCache[direction.ordinal()] = liquid.copy();
+				} else {
+					renderCache[direction.ordinal()].itemID = liquid.itemID;
+					renderCache[direction.ordinal()].itemMeta = liquid.itemMeta;
+				}
 			}
 
 			if (renderCache[direction.ordinal()] != null){
 				renderCache[direction.ordinal()].amount = (short) ((renderCache[direction.ordinal()].amount * 39 + (liquid != null ? liquid.amount : 0)) / 40);
+				
+				//Uncomment to disable the avaraging
 				//renderCache[direction.ordinal()].amount = (liquid != null ? liquid.amount : 0);
 			}
-			
-			if (renderCache[direction.ordinal()] == null && liquid != null){
-				renderCache[direction.ordinal()] = liquid.copy();
-			}
-			//renderCache[direction.ordinal()] = internalTanks[direction.ordinal()].getLiquid();
-			
-			//renderAmmount[direction.ordinal()] = (short) ((renderAmmount[direction.ordinal()] * 39 + (liquid != null ? liquid.amount : 0)) / 40);
-			
-			//renderAmmount[direction.ordinal()] = (short) (liquid != null ? liquid.amount : 0);
+
+			//Uncomment to disable the renderstate and show actual values
+//			renderCache[direction.ordinal()] = internalTanks[direction.ordinal()].getLiquid();
+//			if (renderCache[direction.ordinal()] != null){
+//				renderCache[direction.ordinal()] = renderCache[direction.ordinal()].copy();
+//			}
 		}
 
 		this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);
