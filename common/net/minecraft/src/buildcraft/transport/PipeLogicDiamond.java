@@ -14,16 +14,21 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
+import net.minecraft.src.Packet;
 import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketNBT;
+import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.utils.SimpleInventory;
 
 public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
@@ -74,13 +79,12 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 
 	/* ISPECIALINVENTORY */
 	@Override
-	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		return false;
+	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		return 0;
 	}
-
 	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		return null;
+	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
+		return new ItemStack[0];
 	}
 
 	/* IINVENTORY IMPLEMENTATION */

@@ -20,14 +20,16 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
-import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
@@ -38,7 +40,7 @@ import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
 //TODO: All Engines need to take func_48081_b into account 
 
-public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInventory, ILiquidContainer, IEngineProvider,
+public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInventory, ITankContainer, IEngineProvider,
 		IOverrideDefaultTriggers, IPipeConnection, IBuilderInventory {
 
 	public @TileNetworkData
@@ -379,30 +381,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	@Override
-	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		if (engine instanceof EngineIron) {
-			return ((EngineIron) engine).fill(from, quantity, id, doFill);
-		} else {
-			return 0;
-		}
-	}
-
-	@Override
-	public int empty(int quantityMax, boolean doEmpty) {
-		return 0;
-	}
-
-	@Override
-	public int getLiquidQuantity() {
-		return 0;
-	}
-
-	@Override
-	public int getLiquidId() {
-		return 0;
-	}
-
-	@Override
 	public void openChest() {
 
 	}
@@ -447,15 +425,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	@Override
-	public LiquidSlot[] getLiquidSlots() {
-		if (engine == null) {
-			return new LiquidSlot[0];
-		} else {
-			return engine.getLiquidSlots();
-		}
-	}
-
-	@Override
 	public boolean isPipeConnected(Orientations with) {
 		if (engine instanceof EngineWood) {
 			return false;
@@ -472,4 +441,39 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	public void checkRedstonePower() {
 		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 	}
+
+	/* ILIQUIDCONTAINER */
+	@Override
+	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+		if (engine instanceof EngineIron) {
+			return ((EngineIron) engine).fill(from, resource, doFill);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public LiquidStack drain(Orientations from, int maxDrain, boolean doDrain) {
+		return null;
+	}
+	@Override
+	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
+		return null;
+	}
+	
+	@Override
+	public LiquidTank[] getTanks() {
+		if (engine == null) {
+			return new LiquidTank[0];
+		} else {
+			return engine.getLiquidSlots();
+		}
+	}
+
 }

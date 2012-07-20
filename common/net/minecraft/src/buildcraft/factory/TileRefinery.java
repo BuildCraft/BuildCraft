@@ -18,8 +18,6 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
@@ -34,7 +32,7 @@ import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.api.recipes.RefineryRecipe;
 import net.minecraft.src.buildcraft.core.IMachine;
 
-public class TileRefinery extends TileMachine implements ILiquidContainer, ITankContainer, IPowerReceptor, IInventory, IMachine {
+public class TileRefinery extends TileMachine implements ITankContainer, IPowerReceptor, IInventory, IMachine {
 
 	private int[] filters = new int[2];
 
@@ -387,76 +385,6 @@ public class TileRefinery extends TileMachine implements ILiquidContainer, ITank
 		iCrafting.updateCraftingInventoryInfo(container, 0, filters[0]);
 		iCrafting.updateCraftingInventoryInfo(container, 1, filters[1]);
 	}
-
-	/* ILIQUIDCONTAINER */
-	@Override
-	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		int used = 0;
-
-		if (filters[0] != 0 || filters[1] != 0) {
-			if (filters[0] == id) {
-				used += slot1.fill(from, quantity, id, doFill);
-			}
-
-			if (filters[1] == id) {
-				used += slot2.fill(from, quantity - used, id, doFill);
-			}
-		} else {
-			used += slot1.fill(from, quantity, id, doFill);
-			used += slot2.fill(from, quantity - used, id, doFill);
-		}
-
-		if (doFill && used > 0) {
-			updateNetworkTime.markTime(worldObj);
-			sendNetworkUpdate();
-		}
-
-		return used;
-	}
-
-	@Override
-	public int empty(int quantityMax, boolean doEmpty) {
-		int res = 0;
-
-		if (result.quantity >= quantityMax) {
-			res = quantityMax;
-
-			if (doEmpty) {
-				result.quantity -= quantityMax;
-			}
-		} else {
-			res = result.quantity;
-
-			if (doEmpty) {
-				result.quantity = 0;
-			}
-		}
-
-		if (doEmpty && res > 0) {
-			updateNetworkTime.markTime(worldObj);
-			sendNetworkUpdate();
-		}
-
-		return res;
-	}
-
-	@Override
-	public int getLiquidQuantity() {
-		return result.quantity;
-	}
-
-	@Override
-	public int getLiquidId() {
-		return result.liquidId;
-	}
-
-	@Override
-	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot[] { new LiquidSlot(slot1.liquidId, slot1.quantity, LIQUID_PER_SLOT),
-				new LiquidSlot(slot2.liquidId, slot2.quantity, LIQUID_PER_SLOT),
-				new LiquidSlot(result.liquidId, result.quantity, LIQUID_PER_SLOT) };
-	}
-
 
 	/* ITANKCONTAINER */
 	@Override

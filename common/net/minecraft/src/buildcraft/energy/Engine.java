@@ -13,9 +13,9 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
 
 public abstract class Engine {
 
@@ -146,10 +146,6 @@ public abstract class Engine {
 
 	}
 
-	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot[0];
-	}
-
 	public boolean isActive() {
 		return true;
 	}
@@ -164,6 +160,11 @@ public abstract class Engine {
 
 	public int getCurrentOutput() {
 		return currentOutput;
+	}
+
+	/* ILIQUIDCONTAINER */
+	public LiquidTank[] getLiquidSlots() {
+		return new LiquidTank[0];
 	}
 
 	/* IINVENTORY */

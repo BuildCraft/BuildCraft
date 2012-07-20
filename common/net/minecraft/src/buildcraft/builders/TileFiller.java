@@ -17,12 +17,12 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.IActionReceptor;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.filler.FillerManager;
 import net.minecraft.src.buildcraft.api.filler.IFillerPattern;
+import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
@@ -303,70 +303,6 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	@Override
-	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		StackUtil stackUtil = new StackUtil(stack);
-
-		boolean added = false;
-
-		for (int i = 9; i < contents.length; ++i) {
-			if (stackUtil.tryAdding(this, i, doAdd, false)) {
-				added = true;
-				break;
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return true;
-			} else if (stack.stackSize == 0) {
-				return true;
-			} else {
-				addItem(stack, added, from);
-
-				return true;
-			}
-		}
-
-		if (!added) {
-			for (int i = 9; i < contents.length; ++i) {
-				if (stackUtil.tryAdding(this, i, doAdd, true)) {
-					added = true;
-					break;
-				}
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return true;
-			} else if (stack.stackSize == 0) {
-				return true;
-			} else {
-				addItem(stack, added, from);
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		for (int i = 9; i < contents.length; ++i) {
-			if (contents[i] != null) {
-				if (doRemove) {
-					return decrStackSize(i, 1);
-				} else {
-					return contents[i];
-				}
-			}
-		}
-
-		return null;
-	}
-
-	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 
@@ -453,4 +389,70 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public boolean allowActions() {
 		return true;
 	}
+
+	/* ISPECIALINVENTORY */
+	@Override
+	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		StackUtil stackUtil = new StackUtil(stack);
+
+		boolean added = false;
+
+		for (int i = 9; i < contents.length; ++i) {
+			if (stackUtil.tryAdding(this, i, doAdd, false)) {
+				added = true;
+				break;
+			}
+		}
+
+		if (added) {
+			if (!doAdd) {
+				return stackUtil.itemsAdded;
+			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
+				return stackUtil.itemsAdded;
+			} else {
+				addItem(stack, added, from);
+
+				return stackUtil.itemsAdded;
+			}
+		}
+
+		if (!added) {
+			for (int i = 9; i < contents.length; ++i) {
+				if (stackUtil.tryAdding(this, i, doAdd, true)) {
+					added = true;
+					break;
+				}
+			}
+		}
+
+		if (added) {
+			if (!doAdd) {
+				return stackUtil.itemsAdded;
+			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
+				return stackUtil.itemsAdded;
+			} else {
+				addItem(stack, added, from);
+
+				return stackUtil.itemsAdded;
+			}
+		}
+
+		return 0;
+	}
+
+	@Override
+	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
+		for (int i = 9; i < contents.length; ++i) {
+			if (contents[i] != null) {
+				if (doRemove) {
+					return new ItemStack[] { decrStackSize(i, 1) };
+				} else {
+					return new ItemStack[] { contents[i] };
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

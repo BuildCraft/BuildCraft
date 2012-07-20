@@ -99,7 +99,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 
 			// Handle filled containers
 			if (liquid != null) {
-				int qty = tank.fill(Orientations.Unknown, liquid.amount, liquid.itemID, true);
+				int qty = tank.fill(Orientations.Unknown, liquid, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
@@ -111,8 +111,8 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 			// Handle empty containers
 			} else {
 				
-				ItemStack filled = LiquidManager.fillLiquidContainer(new LiquidStack(tank.getLiquidId(),
-						tank.empty(BuildCraftAPI.BUCKET_VOLUME, false)), current);
+				LiquidStack available = tank.drain(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, false);
+				ItemStack filled = LiquidManager.fillLiquidContainer(available, current);
 					
 				liquid = LiquidManager.getLiquidForFilledItem(filled);
 				if(liquid != null) {
@@ -129,7 +129,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 					}
 					
-					tank.empty(liquid.amount, true);
+					tank.drain(Orientations.Unknown, liquid.amount, true);
 					return true;
 				}
 			}

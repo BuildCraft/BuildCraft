@@ -48,6 +48,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	final static private int maxPower = 1000;
 
 	final static private int displayLiquidStages = 40;
+	
+	final static private int renderDistanceSq = 24 * 24;
+	
+	final static private int numItemsToRender = 10;
 
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
@@ -217,6 +221,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
 			return;
+			
+		if(tileentity.getDistanceFrom(tileEntityRenderer.playerX, tileEntityRenderer.playerY, tileEntityRenderer.playerZ) >= renderDistanceSq)
+			return;
 
 		initializeDisplayPowerList(tileentity.worldObj);
 
@@ -225,14 +232,15 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (pipe.pipe == null)
 			return;
 
-		if (pipe.pipe.transport instanceof PipeTransportLiquids)
-			renderLiquids(pipe.pipe, x, y, z);
-
-		if (pipe.pipe.transport instanceof PipeTransportItems)
+		if (pipe.pipe.transport instanceof PipeTransportItems) 
 			renderSolids(pipe.pipe, x, y, z);
 
-		if (pipe.pipe.transport instanceof PipeTransportPower)
+		else if (pipe.pipe.transport instanceof PipeTransportLiquids) 
+			renderLiquids(pipe.pipe, x, y, z);		
+		
+		else if (pipe.pipe.transport instanceof PipeTransportPower) 
 			renderPower(pipe.pipe, x, y, z);
+		
 	}
 
 	private void renderPower(Pipe pipe, double x, double y, double z) {
@@ -359,11 +367,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			o = Block.blocksList[liquidId];
 		else
 			o = Item.itemsList[liquidId];
-
-		if (o instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
-		else
-			MinecraftForgeClient.bindTexture("/terrain.png");
+			
+		// should be safe, items and block all implement ITextureProvider now
+		// and if o is null, something else is wrong somewhere
+		MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
 
 		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}
@@ -371,10 +378,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private void renderSolids(Pipe pipe, double x, double y, double z) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
+		
+		float light = pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 
-		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values())
+		int count = 0;
+		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
+			if(count >= numItemsToRender)
+				break;
+				
 			doRenderItem(data.item, x + data.item.posX - pipe.xCoord, y + data.item.posY - pipe.yCoord, z + data.item.posZ
-					- pipe.zCoord, pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord));
+					- pipe.zCoord, light);
+			count++;
+		}					
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
@@ -395,10 +410,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		byte quantity = 1;
 		if (entityitem.item.stackSize > 1)
 			quantity = 2;
-		if (entityitem.item.stackSize > 5)
-			quantity = 3;
-		if (entityitem.item.stackSize > 20)
-			quantity = 4;
 
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
 		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
