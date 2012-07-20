@@ -10,8 +10,9 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 
 public interface IPipeTransportLiquidsHook {
 
-	public int fill(Orientations from, int quantity, int id, boolean doFill);
+	public int fill(Orientations from, LiquidStack resource, boolean doFill);
 }

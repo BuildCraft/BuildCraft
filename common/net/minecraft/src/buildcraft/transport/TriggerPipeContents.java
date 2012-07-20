@@ -9,7 +9,6 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.TriggerParameter;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
@@ -74,60 +73,61 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 
 	@Override
 	public boolean isTriggerActive(Pipe pipe, TriggerParameter parameter) {
-		if (pipe.transport instanceof PipeTransportItems) {
-			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
-
-			if (kind == Kind.Empty)
-				return transportItems.travelingEntities.isEmpty();
-			else if (kind == Kind.ContainsItems)
-				if (parameter != null && parameter.getItem() != null) {
-					for (EntityData data : transportItems.travelingEntities.values())
-						if (data.item.item.itemID == parameter.getItem().itemID
-								&& data.item.item.getItemDamage() == parameter.getItem().getItemDamage())
-							return true;
-				} else
-					return !transportItems.travelingEntities.isEmpty();
-		} else if (pipe.transport instanceof PipeTransportLiquids) {
-			PipeTransportLiquids transportLiquids = (PipeTransportLiquids) pipe.transport;
-
-			int seachedLiquidId = 0;
-
-			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
-
-			if (kind == Kind.Empty) {
-				for (LiquidBuffer b : transportLiquids.side)
-					if (b.average != 0)
-						return false;
-
-				return true;
-			} else {
-				for (LiquidBuffer b : transportLiquids.side)
-					if (b.average != 0)
-						if (seachedLiquidId == 0 || b.liquidId == seachedLiquidId)
-							return true;
-
-				return false;
-			}
-		} else if (pipe.transport instanceof PipeTransportPower) {
-			PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
-
-			if (kind == Kind.Empty) {
-				for (short s : transportPower.displayPower)
-					if (s != 0)
-						return false;
-
-				return true;
-			} else {
-				for (short s : transportPower.displayPower)
-					if (s != 0)
-						return true;
-
-				return false;
-			}
-		}
-
 		return false;
+//		if (pipe.transport instanceof PipeTransportItems) {
+//			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
+//
+//			if (kind == Kind.Empty)
+//				return transportItems.travelingEntities.isEmpty();
+//			else if (kind == Kind.ContainsItems)
+//				if (parameter != null && parameter.getItem() != null) {
+//					for (EntityData data : transportItems.travelingEntities.values())
+//						if (data.item.item.itemID == parameter.getItem().itemID
+//								&& data.item.item.getItemDamage() == parameter.getItem().getItemDamage())
+//							return true;
+//				} else
+//					return !transportItems.travelingEntities.isEmpty();
+//		} else if (pipe.transport instanceof PipeTransportLiquids) {
+//			PipeTransportLiquids transportLiquids = (PipeTransportLiquids) pipe.transport;
+//
+//			int seachedLiquidId = 0;
+//
+//			if (parameter != null && parameter.getItem() != null)
+//				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
+//
+//			if (kind == Kind.Empty) {
+//				for (LiquidBuffer b : transportLiquids.side)
+//					if (b.average != 0)
+//						return false;
+//
+//				return true;
+//			} else {
+//				for (LiquidBuffer b : transportLiquids.side)
+//					if (b.average != 0)
+//						if (seachedLiquidId == 0 || b.liquidId == seachedLiquidId)
+//							return true;
+//
+//				return false;
+//			}
+//		} else if (pipe.transport instanceof PipeTransportPower) {
+//			PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
+//
+//			if (kind == Kind.Empty) {
+//				for (short s : transportPower.displayPower)
+//					if (s != 0)
+//						return false;
+//
+//				return true;
+//			} else {
+//				for (short s : transportPower.displayPower)
+//					if (s != 0)
+//						return true;
+//
+//				return false;
+//			}
+//		}
+//
+//		return false;
 	}
 
 	@Override

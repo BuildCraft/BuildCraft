@@ -28,6 +28,8 @@ import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
@@ -73,7 +75,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		renderBlocks = new RenderBlocks();
 	}
 
-	private DisplayLiquidList getDisplayLiquidLists(int liquidId, World world) {
+	private DisplayLiquidList getDisplayLiquidLists(int liquidId, int meta, World world) {
 		if (displayLiquidLists.containsKey(liquidId))
 			return displayLiquidLists.get(liquidId);
 
@@ -84,7 +86,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 		else
-			block.texture = Item.itemsList[liquidId].getIconFromDamage(0);
+			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
+	
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
 		// render size
@@ -280,14 +283,17 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		boolean sides = false, above = false;
 
-		for (int i = 0; i < 6; ++i)
-			if (liq.getSide(i) > 0) {
-				DisplayLiquidList d = getListFromBuffer(liq.side[i], pipe.worldObj);
+		for (int i = 0; i < 6; ++i) {
+			ILiquidTank tank = liq.getTanks()[i];
+			LiquidStack liquid = tank.getLiquid();
+			int amount = liquid != null ? liquid.amount : 0;
+			if ( amount > 0) {
+				DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 				if (d == null)
 					continue;
 
-				int stage = (int) ((float) liq.getSide(i) / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
@@ -315,14 +321,17 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}
-
+		}
 		// CENTER
+		ILiquidTank tank = liq.getTanks()[Orientations.Unknown.ordinal()];
+		LiquidStack liquid = tank.getLiquid();
 
-		if (liq.getCenter() > 0) {
-			DisplayLiquidList d = getListFromBuffer(liq.center, pipe.worldObj);
+		int amount = liquid != null ? liquid.amount : 0; 
+		if ( amount > 0) {
+			DisplayLiquidList d = getListFromBuffer(liq.getTanks()[Orientations.Unknown.ordinal()].getLiquid(), pipe.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) liq.getCenter() / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
@@ -337,9 +346,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	public DisplayLiquidList getListFromBuffer(LiquidBuffer buf, World world) {
+	public DisplayLiquidList getListFromBuffer(LiquidStack stack, World world) {
 
-		int liquidId = buf.liquidId;
+		int liquidId = stack.itemID;
 
 		if (liquidId == 0)
 			return null;
@@ -356,7 +365,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		else
 			MinecraftForgeClient.bindTexture("/terrain.png");
 
-		return getDisplayLiquidLists(liquidId, world);
+		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}
 
 	private void renderSolids(Pipe pipe, double x, double y, double z) {
