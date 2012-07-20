@@ -45,7 +45,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	final static private int maxPower = 1000;
 
-	final static private int displayLiquidStages = 40;
+	final static private int displayLiquidStages = 40;	
+	
+	final static private int renderDistanceSq = 1024; // 32 tiles
 
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
@@ -213,6 +215,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
+			return;
+			
+		if(tileentity.getDistanceFrom(tileEntityRenderer.playerX, tileEntityRenderer.playerY, tileEntityRenderer.playerZ) >= renderDistanceSq)
 			return;
 
 		initializeDisplayPowerList(tileentity.worldObj);
