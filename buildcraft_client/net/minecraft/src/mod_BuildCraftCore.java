@@ -594,6 +594,8 @@ public class mod_BuildCraftCore extends NetworkMod {
 		x += 0.5D;
 		z += 0.5D;
 
+		tessellator.setBrightness(block.getMixedBrightnessForBlock(iblockaccess, xCoord, yCoord, zCoord));
+
 		double s = 0.0625D;
 
 		if (meta == 5) {
