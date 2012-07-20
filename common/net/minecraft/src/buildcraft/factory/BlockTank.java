@@ -111,7 +111,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 			// Handle empty containers
 			} else {
 				
-				LiquidStack available = tank.drain(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, false);
+				LiquidStack available = tank.getTanks()[0].getLiquid();
 				ItemStack filled = LiquidManager.fillLiquidContainer(available, current);
 					
 				liquid = LiquidManager.getLiquidForFilledItem(filled);
