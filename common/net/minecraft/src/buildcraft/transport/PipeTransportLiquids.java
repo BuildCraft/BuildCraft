@@ -12,12 +12,10 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
@@ -34,7 +32,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	 */
 	public static int LIQUID_IN_PIPE = BuildCraftAPI.BUCKET_VOLUME / 4;
 
-	public short travelDelay = 8;
+	public short travelDelay = 12;
 	public short flowRate = 20;
 	
 	private final PipeSection[] internalTanks = new PipeSection[Orientations.values().length];
@@ -106,220 +104,12 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 	}
 
-	public class LiquidBuffer {
-		short[] in = new short[travelDelay];
-		short ready;
-		short[] out = new short[travelDelay];
-		short qty;
-		int orientation;
-
-		short[] lastQty = new short[100];
-		int lastTotal = 0;
-
-		int emptyTime = 0;
-
-		@TileNetworkData(intKind = TileNetworkData.UNSIGNED_BYTE)
-		public int average;
-		@TileNetworkData
-		public int liquidId = 0;
-
-		int totalBounced = 0;
-		boolean bouncing = false;
-
-		private boolean[] filled;
-
-		public LiquidBuffer(int o) {
-			this.orientation = o;
-
-			reset();
-		}
-
-		public void reset() {
-			for (int i = 0; i < travelDelay; ++i) {
-				in[i] = 0;
-				out[i] = 0;
-			}
-
-			for (int i = 0; i < lastQty.length; ++i)
-				lastQty[i] = 0;
-
-			ready = 0;
-			qty = 0;
-			liquidId = 0;
-			lastTotal = 0;
-			totalBounced = 0;
-			emptyTime = 0;
-		}
-
-		public int fill(int toFill, boolean doFill, int liquidId) {
-			if (worldObj == null)
-				return 0;
-
-			if (qty > 0 && this.liquidId != liquidId && this.liquidId != 0)
-				return 0;
-
-			if (this.liquidId != liquidId)
-				reset();
-
-			this.liquidId = liquidId;
-
-			int date = (int) (worldObj.getWorldTime() % travelDelay);
-			int newDate = date > 0 ? date - 1 : travelDelay - 1;
-
-			if (qty + toFill > LIQUID_IN_PIPE + flowRate)
-				toFill = LIQUID_IN_PIPE + flowRate - qty;
-
-			if (doFill) {
-				qty += toFill;
-				in[newDate] += toFill;
-			}
-
-			return toFill;
-		}
-
-		public int empty(int toEmpty) {
-			int date = (int) (worldObj.getWorldTime() % travelDelay);
-			int newDate = date > 0 ? date - 1 : travelDelay - 1;
-
-			if (ready - toEmpty < 0)
-				toEmpty = ready;
-
-			ready -= toEmpty;
-
-			out[newDate] += toEmpty;
-
-			return toEmpty;
-		}
-
-		public void update() {
-//			bouncing = false;
-//
-//			int date = (int) (worldObj.getWorldTime() % travelDelay);
-//
-//			ready += in[date];
-//			in[date] = 0;
-//
-//			if (out[date] != 0) {
-//				int extracted = 0;
-//
-//				if (orientation < 6) {
-//					if (isInput[orientation])
-//						extracted = center.fill(out[date], true, liquidId);
-//					if (isOutput[orientation]) {
-//						Position p = new Position(xCoord, yCoord, zCoord, Orientations.values()[orientation]);
-//						p.moveForwards(1);
-//
-//						ITankContainer nextPipe = (ITankContainer) container.getTile(Orientations.values()[orientation]);
-//						extracted = nextPipe.fill(p.orientation.reverse(), new LiquidStack(out[date], liquidId), true);
-//
-//						if (extracted == 0) {
-//							totalBounced++;
-//
-//							if (totalBounced > 20)
-//								bouncing = true;
-//
-//							extracted += center.fill(out[date], true, liquidId);
-//						} else
-//							totalBounced = 0;
-//					}
-//				} else {
-//					int outputNumber = 0;
-//
-//					for (int i = 0; i < 6; ++i)
-//						if (isOutput[i])
-//							outputNumber++;
-//
-//					filled = new boolean[] { false, false, false, false, false, false };
-//
-//					// try first, to detect filled outputs
-//					extracted = splitLiquid(out[date], outputNumber);
-//
-//					if (extracted < out[date]) {
-//						outputNumber = 0;
-//
-//						// try a second time, if to split the remaining in non
-//						// filled if any
-//						for (int i = 0; i < 6; ++i)
-//							if (isOutput[i] && !filled[i])
-//								outputNumber++;
-//
-//						extracted += splitLiquid(out[date] - extracted, outputNumber);
-//					}
-//				}
-//
-//				qty -= extracted;
-//				ready += out[date] - extracted;
-//				out[date] = 0;
-//			}
-//
-//			int avgDate = (int) (worldObj.getWorldTime() % lastQty.length);
-//
-//			lastTotal += qty - lastQty[avgDate];
-//			lastQty[avgDate] = qty;
-//
-//			average = lastTotal / lastQty.length;
-//
-//			if (qty != 0 && average == 0)
-//				average = 1;
-		}
-
-//		private int splitLiquid(int quantity, int outputNumber) {
-//			int extracted = 0;
-//
-//			int slotExtract = (int) Math.ceil(((double) quantity / (double) outputNumber));
-//
-//			int[] splitVector = getSplitVector(worldObj);
-//
-//			for (int r = 0; r < 6; ++r) {
-//				int toExtract = slotExtract <= quantity ? slotExtract : quantity;
-//
-//				int i = splitVector[r];
-//
-//				if (isOutput[i] && !filled[i]) {
-//					extracted += side[i].fill(toExtract, true, liquidId);
-//					quantity -= toExtract;
-//
-//					if (extracted != toExtract)
-//						filled[i] = true;
-//				}
-//			}
-//
-//			return extracted;
-//		}
-
-//		public void readFromNBT(NBTTagCompound nbttagcompound) {
-//			for (int i = 0; i < travelDelay; ++i) {
-//				in[i] = nbttagcompound.getShort("in[" + i + "]");
-//				out[i] = nbttagcompound.getShort("out[" + i + "]");
-//			}
-//
-//			ready = nbttagcompound.getShort("ready");
-//			qty = nbttagcompound.getShort("qty");
-//			liquidId = nbttagcompound.getInteger("liquidId");
-//		}
-//
-//		public void writeToNBT(NBTTagCompound nbttagcompound) {
-//			for (int i = 0; i < travelDelay; ++i) {
-//				nbttagcompound.setShort("in[" + i + "]", in[i]);
-//				nbttagcompound.setShort("out[" + i + "]", out[i]);
-//			}
-//
-//			nbttagcompound.setShort("ready", ready);
-//			nbttagcompound.setShort("qty", qty);
-//			nbttagcompound.setInteger("liquidId", liquidId);
-//		}
-
-	}
-
-//	public @TileNetworkData(staticSize = 6)
-//	LiquidBuffer[] side = new LiquidBuffer[6];
-//	public @TileNetworkData
-//	LiquidBuffer center;
-
 	boolean[] isInput = new boolean[] { false, false, false, false, false, false, false };
 
 	// Computed at each update
 	boolean isOutput[] = new boolean[] { false, false, false, false, false, false, false };
+	
+	short bounceCount[] = new short[] { 0, 0, 0, 0, 0, 0 };
 
 	public PipeTransportLiquids() {
 		for (Orientations direction : Orientations.values()) {
@@ -499,45 +289,21 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 					if (!(target instanceof ITankContainer)) continue;
 					
 					LiquidStack liquidToPush = internalTanks[o.ordinal()].drain(flowRate, false);
-					if (liquidToPush != null) {
+					if (liquidToPush != null && liquidToPush.amount > 0) {
 						int filled = ((ITankContainer)target).fill(o.reverse(), liquidToPush, true);
 						internalTanks[o.ordinal()].drain(filled, true);
+						if (filled == 0){
+							for (Orientations direction : Orientations.dirs()){
+								if (bounceCount[direction.ordinal()]++ > 30){
+									bounceCount[direction.ordinal()] = 0;
+									isInput[direction.ordinal()] = true;
+								}
+							}
+						}
 					}
 				}
 			}
 		}
-		
-
-//		int[] rndIt = getSplitVector(worldObj);
-//
-//		for (int r = 0; r < 6; ++r) {
-//			int i = rndIt[r];
-//
-//			side[i].empty(flowRate);
-//		}
-//
-//		center.empty(flowRate);
-//
-//		// APPLY SCHEDULED FILLED ORDERS
-//
-//		center.update();
-//
-//		for (int r = 0; r < 6; ++r) {
-//			int i = rndIt[r];
-//
-//			side[i].update();
-//
-//			if (side[i].qty != 0)
-//				side[i].emptyTime = 0;
-//
-//			if (side[i].bouncing)
-//				isInput[i] = true;
-//			else if (side[i].qty == 0)
-//				side[i].emptyTime++;
-//
-//			if (side[i].emptyTime > 20)
-//				isInput[i] = false;
-//		}
 	}
 
 	private short computeOutputs() {
@@ -552,20 +318,6 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 		return outputCount;
 	}
-
-//	public int getSide(int orientation) {
-//		if (side[orientation].average > LIQUID_IN_PIPE)
-//			return LIQUID_IN_PIPE;
-//		else
-//			return side[orientation].average;
-//	}
-//
-//	public int getCenter() {
-//		if (center.average > LIQUID_IN_PIPE)
-//			return LIQUID_IN_PIPE;
-//		else
-//			return center.average;
-//	}
 
 	@Override
 	public void onNeighborBlockChange(int blockId) {
@@ -590,33 +342,6 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		return tile instanceof TileGenericPipe || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
 	}
 
-	private static long lastSplit = -1;
-
-	private static int[] splitVector;
-
-	public static int[] getSplitVector(World worldObj) {
-		if (lastSplit == worldObj.getWorldTime())
-			return splitVector;
-
-		lastSplit = worldObj.getWorldTime();
-
-		splitVector = new int[6];
-
-		for (int i = 0; i < 6; ++i)
-			splitVector[i] = i;
-
-		for (int i = 0; i < 20; ++i) {
-			int a = worldObj.rand.nextInt(6);
-			int b = worldObj.rand.nextInt(6);
-
-			int tmp = splitVector[a];
-			splitVector[a] = splitVector[b];
-			splitVector[b] = tmp;
-		}
-
-		return splitVector;
-	}
-
 	public boolean isTriggerActive(Trigger trigger) {
 		return false;
 	}
@@ -635,12 +360,18 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	@Override
 	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
-		isInput[tankIndex] = true;
+		int filled = 0;
+		
 
 		if (this.container.pipe instanceof IPipeTransportLiquidsHook)
-			return ((IPipeTransportLiquidsHook) this.container.pipe).fill(Orientations.values()[tankIndex], resource, doFill);
+			filled = ((IPipeTransportLiquidsHook) this.container.pipe).fill(Orientations.values()[tankIndex], resource, doFill);
 		else
-			return internalTanks[tankIndex].fill(resource, doFill);
+			filled = internalTanks[tankIndex].fill(resource, doFill);
+		
+		if (filled > 0){
+			isInput[tankIndex] = true;
+		}
+		return filled;
 	}
 
 	@Override

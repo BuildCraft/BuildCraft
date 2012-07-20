@@ -34,7 +34,6 @@ import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.transport.PipeTransportLiquids.LiquidBuffer;
 import net.minecraft.src.forge.ForgeHooksClient;
 import net.minecraft.src.forge.IItemRenderer;
 import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
