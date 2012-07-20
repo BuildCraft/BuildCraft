@@ -7,12 +7,13 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.gates;
 
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.IPipe;
 
 public interface ITriggerProvider {
 

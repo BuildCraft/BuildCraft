@@ -7,8 +7,9 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.Action;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
 
@@ -91,11 +92,11 @@ public abstract class Gate {
 	public abstract GateConditional getConditional();
 
 	// / ACTIONS
-	public abstract void addActions(LinkedList<Action> list);
+	public abstract void addActions(LinkedList<IAction> list);
 
 	public abstract void startResolution();
 
-	public abstract boolean resolveAction(Action action);
+	public abstract boolean resolveAction(IAction action);
 
 	// / TRIGGERS
 	public abstract void addTrigger(LinkedList<Trigger> list);

@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.IPipe;
-import net.minecraft.src.buildcraft.api.ITriggerProvider;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.ITriggerProvider;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 
 public class PipeTriggerProvider implements ITriggerProvider {
 

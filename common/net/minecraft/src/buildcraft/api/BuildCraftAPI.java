@@ -18,6 +18,10 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.IActionProvider;
+import net.minecraft.src.buildcraft.api.gates.ITriggerProvider;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 
 public class BuildCraftAPI {
 
@@ -35,21 +39,18 @@ public class BuildCraftAPI {
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
 	 */
-	//@Deprecated public static LinkedList<LiquidData> liquids = new LinkedList<LiquidData>();
+	@Deprecated public static LinkedList<LiquidData> liquids = new LinkedList<LiquidData>();
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.fuels.IronEngineFuel!
 	 */
 	@Deprecated public static HashMap<Integer, IronEngineFuel> ironEngineFuel = new HashMap<Integer, IronEngineFuel>();
-	public static Trigger[] triggers = new Trigger[1024];
-	public static Action[] actions = new Action[1024];
-
 	private static EntityPlayer buildCraftPlayer;
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
 	 */
-	//@Deprecated private static LinkedList<RefineryRecipe> refineryRecipe = new LinkedList<RefineryRecipe>();
-	private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
-	private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
+	@Deprecated private static LinkedList<RefineryRecipe> refineryRecipe = new LinkedList<RefineryRecipe>();
+	@Deprecated public static Trigger[] triggers = new Trigger[1024];
+	@Deprecated public static Action[] actions = new Action[1024];
 
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
@@ -142,13 +143,12 @@ public class BuildCraftAPI {
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
 	 */
-	/*
 	@Deprecated
 	public static void registerRefineryRecipe(RefineryRecipe recipe) {
 		if (!refineryRecipe.contains(recipe)) {
 			refineryRecipe.add(recipe);
 		}
-	} */
+	}
 
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
@@ -199,13 +199,18 @@ public class BuildCraftAPI {
 
 		return sig;
 	}
+	
+	@Deprecated private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
+	@Deprecated private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
+	@Deprecated 
 	public static void registerTriggerProvider(ITriggerProvider provider) {
 		if (provider != null && !triggerProviders.contains(provider)) {
 			triggerProviders.add(provider);
 		}
 	}
 
+	@Deprecated 
 	public static LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity entity) {
 		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
 
@@ -224,12 +229,14 @@ public class BuildCraftAPI {
 		return triggers;
 	}
 
+	@Deprecated 
 	public static void registerActionProvider(IActionProvider provider) {
 		if (provider != null && !actionProviders.contains(provider)) {
 			actionProviders.add(provider);
 		}
 	}
 
+	@Deprecated 
 	public static LinkedList<Action> getNeighborActions(Block block, TileEntity entity) {
 		LinkedList<Action> actions = new LinkedList<Action>();
 
@@ -248,6 +255,7 @@ public class BuildCraftAPI {
 		return actions;
 	}
 
+	@Deprecated 
 	public static LinkedList<Trigger> getPipeTriggers(IPipe pipe) {
 		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
 
@@ -265,7 +273,7 @@ public class BuildCraftAPI {
 
 		return triggers;
 	}
-
+	
 	static {
 		for (int i = 0; i < softBlocks.length; ++i) {
 			softBlocks[i] = false;

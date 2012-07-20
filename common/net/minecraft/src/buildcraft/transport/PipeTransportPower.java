@@ -17,7 +17,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -221,7 +221,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
-	public boolean isTriggerActive(Trigger trigger) {
+	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
 	}
 

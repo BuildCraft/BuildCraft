@@ -10,10 +10,11 @@ package net.minecraft.src;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IPipe;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.ActionManager;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -314,7 +315,7 @@ public class BuildCraftTransport {
 		BuildCraftCore.itemBptProps[pipeLiquidsIron.shiftedIndex] = new BptItemPipeIron();
 		BuildCraftCore.itemBptProps[pipeItemsDiamond.shiftedIndex] = new BptItemPipeDiamond();
 
-		BuildCraftAPI.registerTriggerProvider(new PipeTriggerProvider());
+		ActionManager.registerTriggerProvider(new PipeTriggerProvider());
 
 		if (BuildCraftCore.loadDefaultRecipes)
 			loadRecipes();

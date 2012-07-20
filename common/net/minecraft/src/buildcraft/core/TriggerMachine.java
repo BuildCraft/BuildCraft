@@ -10,8 +10,8 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 
 public class TriggerMachine extends Trigger {
 
@@ -40,7 +40,7 @@ public class TriggerMachine extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, TriggerParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof IMachine) {
 			IMachine machine = (IMachine) tile;
 

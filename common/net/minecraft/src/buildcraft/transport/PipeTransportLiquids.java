@@ -22,7 +22,7 @@ import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -488,7 +488,7 @@ public class PipeTransportLiquids extends PipeTransport implements ILiquidContai
 		return splitVector;
 	}
 
-	public boolean isTriggerActive(Trigger trigger) {
+	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
 	}
 

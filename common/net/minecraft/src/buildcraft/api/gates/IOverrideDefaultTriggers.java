@@ -7,9 +7,10 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.gates;
 
 import java.util.LinkedList;
+
 
 /**
  * This interface has to be implemented by a TileEntity or a Pipe that wants to

@@ -12,8 +12,8 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.Trigger;
 import net.minecraft.src.buildcraft.api.fuels.IronEngineFuel;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.LiquidData;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;

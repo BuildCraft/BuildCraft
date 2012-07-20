@@ -10,9 +10,10 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.IPipe;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.GuiIds;
@@ -174,7 +175,7 @@ public class GateVanilla extends Gate {
 
 	// / ACTIONS
 	@Override
-	public void addActions(LinkedList<Action> list) {
+	public void addActions(LinkedList<IAction> list) {
 
 		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal())
 			list.add(BuildCraftTransport.actionRedSignal);
@@ -200,7 +201,7 @@ public class GateVanilla extends Gate {
 	}
 
 	@Override
-	public boolean resolveAction(Action action) {
+	public boolean resolveAction(IAction action) {
 
 		if (action instanceof ActionEnergyPulser) {
 			pulser.enablePulse();

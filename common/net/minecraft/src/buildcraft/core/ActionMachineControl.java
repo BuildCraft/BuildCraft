@@ -1,6 +1,6 @@
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.buildcraft.api.Action;
+import net.minecraft.src.buildcraft.api.gates.Action;
 
 public class ActionMachineControl extends Action {
 
