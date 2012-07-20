@@ -13,6 +13,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.gates.Action;
 import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -213,7 +214,7 @@ public class GateVanilla extends Gate {
 
 	// / TRIGGERS
 	@Override
-	public void addTrigger(LinkedList<Trigger> list) {
+	public void addTrigger(LinkedList<ITrigger> list) {
 
 		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal()) {
 			list.add(BuildCraftTransport.triggerRedSignalActive);

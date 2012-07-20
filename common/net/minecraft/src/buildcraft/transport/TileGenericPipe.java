@@ -33,6 +33,7 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
@@ -327,8 +328,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	}
 
 	@Override
-	public LinkedList<Trigger> getTriggers() {
-		LinkedList<Trigger> result = new LinkedList<Trigger>();
+	public LinkedList<ITrigger> getTriggers() {
+		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 
 		if (BlockGenericPipe.isFullyDefined(pipe) && pipe.hasGate()) {
 			result.add(BuildCraftCore.triggerRedstoneActive);

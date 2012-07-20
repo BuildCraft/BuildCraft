@@ -19,6 +19,6 @@ import java.util.LinkedList;
  */
 public interface IOverrideDefaultTriggers {
 
-	public abstract LinkedList<Trigger> getTriggers();
+	LinkedList<ITrigger> getTriggers();
 
 }

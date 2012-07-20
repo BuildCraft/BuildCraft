@@ -73,15 +73,15 @@ public class CraftingGateInterface extends BuildCraftContainer {
 				int blockID = pipe.worldObj.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
 				Block block = Block.blocksList[blockID];
 
-				LinkedList<Trigger> nearbyTriggers = ActionManager.getNeighborTriggers(block, tile);
+				LinkedList<ITrigger> nearbyTriggers = ActionManager.getNeighborTriggers(block, tile);
 
-				for (Trigger t : nearbyTriggers)
+				for (ITrigger t : nearbyTriggers)
 					if (!_potentialTriggers.contains(t))
 						_potentialTriggers.add(t);
 
-				LinkedList<Action> nearbyActions = ActionManager.getNeighborActions(block, tile);
+				LinkedList<IAction> nearbyActions = ActionManager.getNeighborActions(block, tile);
 
-				for (Action a : nearbyActions)
+				for (IAction a : nearbyActions)
 					if (!_potentialActions.contains(a))
 						_potentialActions.add(a);
 			}

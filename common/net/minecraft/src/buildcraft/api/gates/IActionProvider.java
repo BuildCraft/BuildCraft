@@ -19,6 +19,6 @@ public interface IActionProvider {
 	/**
 	 * Returns the list of actions available to a gate next to the given block.
 	 */
-	public abstract LinkedList<Action> getNeighborActions(Block block, TileEntity tile);
+	public abstract LinkedList<IAction> getNeighborActions(Block block, TileEntity tile);
 
 }

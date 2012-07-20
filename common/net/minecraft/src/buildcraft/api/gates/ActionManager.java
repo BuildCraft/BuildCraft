@@ -20,14 +20,14 @@ public class ActionManager {
 		}
 	}
 
-	public static LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity entity) {
-		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
+	public static LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity entity) {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			LinkedList<Trigger> toAdd = provider.getNeighborTriggers(block, entity);
+			LinkedList<ITrigger> toAdd = provider.getNeighborTriggers(block, entity);
 
 			if (toAdd != null) {
-				for (Trigger t : toAdd) {
+				for (ITrigger t : toAdd) {
 					if (!triggers.contains(t)) {
 						triggers.add(t);
 					}
@@ -44,14 +44,14 @@ public class ActionManager {
 		}
 	}
 
-	public static LinkedList<Action> getNeighborActions(Block block, TileEntity entity) {
-		LinkedList<Action> actions = new LinkedList<Action>();
+	public static LinkedList<IAction> getNeighborActions(Block block, TileEntity entity) {
+		LinkedList<IAction> actions = new LinkedList<IAction>();
 
 		for (IActionProvider provider : actionProviders) {
-			LinkedList<Action> toAdd = provider.getNeighborActions(block, entity);
+			LinkedList<IAction> toAdd = provider.getNeighborActions(block, entity);
 
 			if (toAdd != null) {
-				for (Action t : toAdd) {
+				for (IAction t : toAdd) {
 					if (!actions.contains(t)) {
 						actions.add(t);
 					}
@@ -62,14 +62,14 @@ public class ActionManager {
 		return actions;
 	}
 
-	public static LinkedList<Trigger> getPipeTriggers(IPipe pipe) {
-		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
+	public static LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			LinkedList<Trigger> toAdd = provider.getPipeTriggers(pipe);
+			LinkedList<ITrigger> toAdd = provider.getPipeTriggers(pipe);
 
 			if (toAdd != null) {
-				for (Trigger t : toAdd) {
+				for (ITrigger t : toAdd) {
 					if (!triggers.contains(t)) {
 						triggers.add(t);
 					}

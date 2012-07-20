@@ -9,6 +9,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.gates.Action;
 import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
@@ -99,7 +100,7 @@ public abstract class Gate {
 	public abstract boolean resolveAction(IAction action);
 
 	// / TRIGGERS
-	public abstract void addTrigger(LinkedList<Trigger> list);
+	public abstract void addTrigger(LinkedList<ITrigger> list);
 
 	// / TEXTURES
 	public abstract int getTexture(boolean isSignalActive);
