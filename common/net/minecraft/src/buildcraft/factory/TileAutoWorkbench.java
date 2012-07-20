@@ -1,6 +1,8 @@
 /** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
+ *
+ * Modifications copyright (c) Bart van Strien, 2012
  * 
  * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
@@ -24,8 +26,9 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.forge.ISidedInventory;
 
-public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
+public class TileAutoWorkbench extends TileEntity implements ISpecialInventory, ISidedInventory {
 
 	private ItemStack stackList[] = new ItemStack[9];
 
@@ -58,11 +61,16 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
+		if (i == 9)
+			return extractItem(false, false);
+
 		return stackList[i];
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
+		if (i == 9)
+			return extractItem(true, false);
 
 		ItemStack newStack = stackList[i].copy();
 		newStack.stackSize = j;
@@ -78,7 +86,17 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		stackList[i] = itemstack;
+		if (i != 9) {
+			stackList[i] = itemstack;
+			return;
+		}
+
+		if (itemstack.stackSize == 0)
+			extractItem(true, false);
+		else
+			// Never actually triggers with RP2
+			// since it's not a valid target
+			addItem(itemstack, true, Orientations.Unknown);
 	}
 
 	@Override
@@ -315,6 +333,24 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	@Override
 	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
 		return new ItemStack[] { extractItem(doRemove, false) };
+	}
+
+	// ISidedInventory
+
+	@Override
+	public int getStartInventorySide(int side) {
+		if (side == 1)
+			return 9;
+
+		return 0;
+	}
+
+	@Override
+	public int getSizeInventorySide(int side) {
+		if (side == 1)
+			return 1;
+
+		return 9;
 	}
 
 }
