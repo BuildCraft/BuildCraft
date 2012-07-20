@@ -422,23 +422,45 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 		
 		
+		int [] maxInput = new int[] {0,0,0,0,0,0};
+		int transferInCount = 0;
+		LiquidStack stackInCenter = internalTanks[Orientations.Unknown.ordinal()].drain(flowRate, false);
+		int spaceAvailable = internalTanks[Orientations.Unknown.ordinal()].getCapacity();
+		if (stackInCenter != null){
+			spaceAvailable -= stackInCenter.amount;
+		}
+		
+		
 		for (Orientations direction : Orientations.dirs()){
 			if (!container.pipe.outputOpen(direction)) continue;
-			//TODO: Grab equally from all non output sides
-			
+			LiquidStack testStack = internalTanks[direction.ordinal()].drain(flowRate, false);
+			if (testStack == null) continue;
+			if (stackInCenter != null && !stackInCenter.isLiquidEqual(testStack)) continue;
+			maxInput[direction.ordinal()] = testStack.amount;
+			transferInCount++;
+		}
+				
+		for (Orientations direction : Orientations.dirs()){
 			//Move liquid from non output sides to the center
-			if (!isOutput[direction.ordinal()]){
-				LiquidStack liquidToPush = internalTanks[direction.ordinal()].drain(flowRate, false);
+			if (!isOutput[direction.ordinal()] && maxInput[direction.ordinal()] > 0){
+				
+				int ammountToDrain = (int) ((double) maxInput[direction.ordinal()] / (double) flowRate / (double) transferInCount * (double) Math.min(flowRate, spaceAvailable));
+				if (ammountToDrain < 1){
+					ammountToDrain++;
+				}
+				
+				LiquidStack liquidToPush = internalTanks[direction.ordinal()].drain(ammountToDrain, false);
 				if (liquidToPush != null) {
 					int filled = internalTanks[Orientations.Unknown.ordinal()].fill(liquidToPush, true);
 					internalTanks[direction.ordinal()].drain(filled, true);
 				}
 			} 
 		}
-		
-		int[] maxOutput = new int[] {0,0,0,0,0,0};
 
-		int transferCount = 0;
+		
+		//Split liquids moving to output equally based on flowrate, how much each side can accept and available liquid
+		int[] maxOutput = new int[] {0,0,0,0,0,0};
+		int transferOutCount = 0;
 		LiquidStack pushStack = internalTanks[Orientations.Unknown.ordinal()].getLiquid();
 		int totalAvailable = internalTanks[Orientations.Unknown.ordinal()].getAvailable();
 		if (pushStack != null){
@@ -449,7 +471,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			
 				maxOutput[direction.ordinal()] = internalTanks[direction.ordinal()].fill(testStack, false);
 				if(maxOutput[direction.ordinal()] > 0){
-					transferCount++;
+					transferOutCount++;
 				}
 			}
 			//Move liquid from the center to the output sides
@@ -457,7 +479,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 				if (!container.pipe.outputOpen(direction)) continue;
 				if (isOutput[direction.ordinal()])	{
 					if (maxOutput[direction.ordinal()] == 0) continue;
-					int ammountToPush = (int) ((double) maxOutput[direction.ordinal()] / (double) flowRate / (double) transferCount * (double) Math.min(flowRate, totalAvailable));
+					int ammountToPush = (int) ((double) maxOutput[direction.ordinal()] / (double) flowRate / (double) transferOutCount * (double) Math.min(flowRate, totalAvailable));
 					if (ammountToPush < 1) ammountToPush++;
 					
 					LiquidStack liquidToPush = internalTanks[Orientations.Unknown.ordinal()].drain(ammountToPush, false);
