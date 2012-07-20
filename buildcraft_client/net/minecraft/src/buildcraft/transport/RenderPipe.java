@@ -45,9 +45,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	final static private int maxPower = 1000;
 
-	final static private int displayLiquidStages = 40;	
+	final static private int displayLiquidStages = 40;
 	
 	final static private int renderDistanceSq = 1024; // 32 tiles
+	
+	final static private int numItemsToRender = 3;
 
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
@@ -370,9 +372,15 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		
 		float light = pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 
-		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values())
+		int count = 0;
+		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
+			if(count >= numItemsToRender)
+				break;
+				
 			doRenderItem(data.item, x + data.item.posX - pipe.xCoord, y + data.item.posY - pipe.yCoord, z + data.item.posZ
 					- pipe.zCoord, light);
+			count++;
+		}					
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
