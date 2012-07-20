@@ -58,6 +58,10 @@
         <chmod file="${mcp.dir}/recompile.sh" perm="+x"/>
         <chmod file="${mcp.dir}/reobfuscate.sh" perm="+x"/>
         <chmod file="${forge.dir}/install.sh" perm="+x"/>
+
+        <!-- if your building on OSX these 2 should be executable -->
+        <chmod file="${mcp.dir}/runtime/bin/astyle-osx" perm="+x" />
+        <chmod file="${mcp.dir}/runtime/bin/jad-osx" perm="+x" />
         
         <!-- Install forge -->
         <exec dir="${forge.dir}" executable="cmd" osfamily="windows">
