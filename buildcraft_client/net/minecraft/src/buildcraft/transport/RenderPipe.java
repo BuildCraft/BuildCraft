@@ -62,7 +62,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		public int[] centerVertical = new int[displayLiquidStages];
 	}
 
-	private HashMap<Integer, DisplayLiquidList> displayLiquidLists = new HashMap<Integer, DisplayLiquidList>();
+	private HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
+	
 
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
@@ -79,11 +80,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	}
 
 	private DisplayLiquidList getDisplayLiquidLists(int liquidId, int meta, World world) {
-		if (displayLiquidLists.containsKey(liquidId))
-			return displayLiquidLists.get(liquidId);
+		if (displayLiquidLists.containsKey(liquidId)){
+			HashMap<Integer, DisplayLiquidList> x = displayLiquidLists.get(liquidId);
+			if (x.containsKey(meta)){
+				return x.get(meta);
+			}
+		} else {
+			displayLiquidLists.put(liquidId, new HashMap<Integer, DisplayLiquidList>());
+		}
+			
 
 		DisplayLiquidList d = new DisplayLiquidList();
-		displayLiquidLists.put(liquidId, d);
+		displayLiquidLists.get(liquidId).put(meta, d);
 
 		BlockInterface block = new BlockInterface();
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
@@ -291,16 +299,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		boolean sides = false, above = false;
 
 		for (int i = 0; i < 6; ++i) {
-			ILiquidTank tank = liq.getTanks()[i];
-			LiquidStack liquid = tank.getLiquid();
-			int amount = liquid != null ? liquid.amount : 0;
-			if ( amount > 0) {
+			//ILiquidTank tank = liq.getTanks()[i];
+			//LiquidStack liquid = tank.getLiquid();
+			LiquidStack liquid = liq.renderCache[i];
+			//int amount = liquid != null ? liquid.amount : 0;
+			//int amount = liquid != null ? liq.renderAmmount[i] : 0;
+			
+			if ( liquid != null && liquid.amount > 0) {
 				DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 				if (d == null)
 					continue;
 
-				int stage = (int) ((float) amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
@@ -330,15 +341,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 		}
 		// CENTER
-		ILiquidTank tank = liq.getTanks()[Orientations.Unknown.ordinal()];
-		LiquidStack liquid = tank.getLiquid();
+//		ILiquidTank tank = liq.getTanks()[Orientations.Unknown.ordinal()];
+//		LiquidStack liquid = tank.getLiquid();
+		LiquidStack liquid = liq.renderCache[Orientations.Unknown.ordinal()];
 
-		int amount = liquid != null ? liquid.amount : 0; 
-		if ( amount > 0) {
-			DisplayLiquidList d = getListFromBuffer(liq.getTanks()[Orientations.Unknown.ordinal()].getLiquid(), pipe.worldObj);
+		//int amount = liquid != null ? liquid.amount : 0; 
+		//int amount = liquid != null ? liq.renderAmmount[Orientations.Unknown.ordinal()] : 0;
+		if (liquid != null && liquid.amount > 0) {
+			//DisplayLiquidList d = getListFromBuffer(liq.getTanks()[Orientations.Unknown.ordinal()].getLiquid(), pipe.worldObj);
+			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
