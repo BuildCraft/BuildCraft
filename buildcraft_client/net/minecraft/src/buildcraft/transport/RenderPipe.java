@@ -49,7 +49,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	
 	final static private int renderDistanceSq = 24 * 24;
 	
-	final static private int numItemsToRender = 5;
+	final static private int numItemsToRender = 10;
 
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
