@@ -22,6 +22,8 @@ public class IronEngineFuel {
 	public static IronEngineFuel getFuelForLiquid(LiquidStack liquid) {
 		if(liquid == null)
 			return null;
+		if(liquid.itemID <= 0)
+			return null;
 		
 		for(IronEngineFuel fuel : fuels)
 			if(fuel.liquid.isLiquidEqual(liquid))
