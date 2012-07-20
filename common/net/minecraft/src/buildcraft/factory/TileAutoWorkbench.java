@@ -91,6 +91,9 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory, 
 			return;
 		}
 
+		if (itemstack == null)
+			return;
+
 		if (itemstack.stackSize == 0)
 			extractItem(true, false);
 		else
