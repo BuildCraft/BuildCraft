@@ -47,7 +47,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	final static private int displayLiquidStages = 40;
 	
-	final static private int renderDistanceSq = 256; // 16 tiles
+	final static private int renderDistanceSq = 24 * 24;
 	
 	final static private int numItemsToRender = 3;
 
