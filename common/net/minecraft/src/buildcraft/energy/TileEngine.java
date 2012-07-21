@@ -121,7 +121,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				if (isPoweredTile(tile)) {
 					IPowerReceptor receptor = (IPowerReceptor) tile;
 
-					int extracted = engine.extractEnergy(receptor.getPowerProvider().getMinEnergyReceived(),
+					float extracted = engine.extractEnergy(receptor.getPowerProvider().getMinEnergyReceived(),
 							receptor.getPowerProvider().getMaxEnergyReceived(), true);
 
 					if (extracted > 0) {
@@ -227,7 +227,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 		if (engine != null) {
 			engine.progress = nbttagcompound.getFloat("progress");
-			engine.energy = nbttagcompound.getInteger("energy");
+			engine.energy = nbttagcompound.getFloat("energyF");
 			engine.orientation = Orientations.values()[orientation];
 		}
 
@@ -245,7 +245,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 		if (engine != null) {
 			nbttagcompound.setInteger("orientation", orientation);
 			nbttagcompound.setFloat("progress", engine.progress);
-			nbttagcompound.setInteger("energy", engine.energy);
+			nbttagcompound.setFloat("energyF", engine.energy);
 		}
 
 		if (engine != null) {
