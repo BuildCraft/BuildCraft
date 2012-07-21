@@ -670,4 +670,20 @@ public class Pipe implements IPipe, IDropControlInventory {
 	public boolean doDrop() {
 		return logic.doDrop();
 	}
+
+	/**
+	 * Called when TileGenericPipe.invalidate() is called 
+	 */
+	public void invalidate() {}
+
+	/**
+	 * Called when TileGenericPipe.validate() is called
+	 */
+	public void validate() {}
+
+	
+	/**
+	 * Called when TileGenericPipe.onChunkUnload is called
+	 */
+	public void onChunkUnload() {}
 }

@@ -106,6 +106,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public void invalidate() {
 		initialized = false;
+		if (pipe != null){
+			pipe.invalidate();
+		}
 		super.invalidate();
 
 //		if (BlockGenericPipe.isValid(pipe))
@@ -116,6 +119,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	public void validate() {
 		super.validate();
 		bindPipe();
+		if (pipe != null) {
+			pipe.validate();
+		}
 	}
 
 	public boolean initialized = false;
@@ -431,5 +437,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			return pipe.doDrop();
 		else
 			return false;
+	}
+	
+	@Override
+	public void onChunkUnload() {
+		if (pipe != null){
+			pipe.onChunkUnload();
+		}
 	}
 }
