@@ -39,6 +39,10 @@ public abstract class PowerProvider implements IPowerProvider {
 	@Override public int getMaxEnergyStored() { return this.maxEnergyStored; }
 	@Override public int getActivationEnergy() { return this.minActivationEnergy; }
 	@Override public float getEnergyStored() { return this.energyStored; }
+
+	@Override public int getPowerRequest() {
+		return Math.max(Math.min(this.maxEnergyReceived, this.maxEnergyStored - Math.round(this.energyStored)),this.minEnergyReceived);
+	}
 	
 	@Override 
 	public void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {

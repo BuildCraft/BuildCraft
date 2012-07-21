@@ -18,6 +18,8 @@ public interface IPowerProvider {
 
 	float getEnergyStored();
 
+	int getPowerRequest();
+
 	void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy);
 
 	void configurePowerPerdition(int powerLoss, int powerLossRegularity);
