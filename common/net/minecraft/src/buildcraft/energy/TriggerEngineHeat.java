@@ -10,8 +10,8 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class TriggerEngineHeat extends Trigger {
@@ -53,7 +53,7 @@ public class TriggerEngineHeat extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, TriggerParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof TileEngine) {
 			Engine engine = ((TileEngine) tile).engine;
 

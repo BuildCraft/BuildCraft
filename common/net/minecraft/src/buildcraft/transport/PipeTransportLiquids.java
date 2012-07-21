@@ -16,7 +16,7 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
@@ -388,7 +388,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		return tile instanceof TileGenericPipe || (tile instanceof IMachine && ((IMachine) tile).manageLiquids());
 	}
 
-	public boolean isTriggerActive(Trigger trigger) {
+	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
 	}
 

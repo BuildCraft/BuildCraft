@@ -7,27 +7,37 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.gates;
 
-public abstract class Action {
 
-	public int id;
+public abstract class Action implements IAction {
+
+	protected int id;
 
 	public Action(int id) {
 		this.id = id;
-		BuildCraftAPI.actions[id] = this;
+		ActionManager.actions[id] = this;
 	}
 
+	@Override
+	public int getId() {
+		return this.id;
+	}
+	
+	@Override
 	public abstract String getTexture();
 
+	@Override
 	public int getIndexInTexture() {
 		return 0;
 	}
 
+	@Override
 	public boolean hasParameter() {
 		return false;
 	}
 
+	@Override
 	public String getDescription() {
 		return "";
 	}

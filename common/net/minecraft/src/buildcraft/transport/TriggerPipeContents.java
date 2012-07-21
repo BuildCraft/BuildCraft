@@ -9,8 +9,8 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
@@ -73,7 +73,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, TriggerParameter parameter) {
+	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
 		if (pipe.transport instanceof PipeTransportItems) {
 			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
 

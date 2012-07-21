@@ -20,12 +20,13 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
@@ -401,8 +402,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	@Override
-	public LinkedList<Trigger> getTriggers() {
-		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
+	public LinkedList<ITrigger> getTriggers() {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
 		triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);
 		triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);

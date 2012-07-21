@@ -7,15 +7,27 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.gates;
 
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 
-public class TriggerParameter {
+public class TriggerParameter implements ITriggerParameter {
 
-	public ItemStack stack;
+	protected ItemStack stack;
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#getItemStack()
+	 */
+	@Override
+	public ItemStack getItemStack() {
+		return stack;
+	}
+	
+	/* (non-Javadoc)
+	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#set(net.minecraft.src.ItemStack)
+	 */
+	@Override
 	public void set(ItemStack stack) {
 		if (stack != null) {
 			this.stack = stack.copy();
@@ -23,6 +35,10 @@ public class TriggerParameter {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#writeToNBT(net.minecraft.src.NBTTagCompound)
+	 */
+	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		if (stack != null) {
 			compound.setInteger("itemID", stack.itemID);
@@ -30,6 +46,10 @@ public class TriggerParameter {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#readFromNBT(net.minecraft.src.NBTTagCompound)
+	 */
+	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		int itemID = compound.getInteger("itemID");
 
@@ -38,6 +58,10 @@ public class TriggerParameter {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#getItem()
+	 */
+	@Override
 	public ItemStack getItem() {
 		return stack;
 	}

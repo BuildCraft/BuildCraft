@@ -32,9 +32,9 @@ public enum Orientations {
 			return Orientations.XNeg;
 		case XNeg:
 			return Orientations.XPos;
+		default:
+			return Orientations.Unknown;
 		}
-
-		return Orientations.Unknown;
 	}
 
 	public Orientations rotateLeft() {
@@ -47,9 +47,9 @@ public enum Orientations {
 			return ZNeg;
 		case ZPos:
 			return XNeg;
+		default:
+			return this;
 		}
-
-		return this;
 	}
 
 	public static Orientations[] dirs() {

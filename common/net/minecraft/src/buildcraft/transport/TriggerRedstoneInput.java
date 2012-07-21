@@ -9,8 +9,8 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
@@ -40,7 +40,7 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, TriggerParameter parameter) {
+	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
 		if (active)
 			return pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 		else

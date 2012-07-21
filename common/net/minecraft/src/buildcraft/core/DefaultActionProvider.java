@@ -5,14 +5,15 @@ import java.util.LinkedList;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.Action;
-import net.minecraft.src.buildcraft.api.IActionProvider;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.IActionProvider;
 
 public class DefaultActionProvider implements IActionProvider {
 
 	@Override
-	public LinkedList<Action> getNeighborActions(Block block, TileEntity tile) {
-		LinkedList<Action> res = new LinkedList<Action>();
+	public LinkedList<IAction> getNeighborActions(Block block, TileEntity tile) {
+		LinkedList<IAction> res = new LinkedList<IAction>();
 
 		res.add(BuildCraftCore.actionRedstone);
 

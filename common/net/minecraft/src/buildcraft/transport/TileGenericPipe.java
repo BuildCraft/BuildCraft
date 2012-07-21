@@ -20,7 +20,6 @@ import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -31,7 +30,9 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
@@ -105,6 +106,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public void invalidate() {
 		initialized = false;
+		if (pipe != null){
+			pipe.invalidate();
+		}
 		super.invalidate();
 
 //		if (BlockGenericPipe.isValid(pipe))
@@ -115,6 +119,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	public void validate() {
 		super.validate();
 		bindPipe();
+		if (pipe != null) {
+			pipe.validate();
+	}
 	}
 
 	public boolean initialized = false;
@@ -295,8 +302,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public LinkedList<Trigger> getTriggers() {
-		LinkedList<Trigger> result = new LinkedList<Trigger>();
+	public LinkedList<ITrigger> getTriggers() {
+		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 
 		if (BlockGenericPipe.isFullyDefined(pipe) && pipe.hasGate()) {
 			result.add(BuildCraftCore.triggerRedstoneActive);
@@ -393,6 +400,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return pipe.doDrop();
 		else
 			return false;
+	}
+	
+	@Override
+	public void onChunkUnload() {
+		if (pipe != null){
+			pipe.onChunkUnload();
+		}
 	}
 
 	
