@@ -22,6 +22,8 @@ public class IronEngineFuel {
 	public static IronEngineFuel getFuelForLiquid(LiquidStack liquid) {
 		if(liquid == null)
 			return null;
+		if(liquid.itemID <= 0)
+			return null;
 		
 		for(IronEngineFuel fuel : fuels)
 			if(fuel.liquid.isLiquidEqual(liquid))
@@ -31,13 +33,13 @@ public class IronEngineFuel {
 	}
 	
 	public final LiquidStack liquid;
-	public final int powerPerCycle;
+	public final float powerPerCycle;
 	public final int totalBurningTime;
 
-	public IronEngineFuel(int liquidId, int powerPerCycle, int totalBurningTime) {
+	public IronEngineFuel(int liquidId, float powerPerCycle, int totalBurningTime) {
 		this(new LiquidStack(liquidId, BuildCraftAPI.BUCKET_VOLUME, 0), powerPerCycle, totalBurningTime);
 	}
-	public IronEngineFuel(LiquidStack liquid, int powerPerCycle, int totalBurningTime) {
+	public IronEngineFuel(LiquidStack liquid, float powerPerCycle, int totalBurningTime) {
 		this.liquid = liquid;
 		this.powerPerCycle = powerPerCycle;
 		this.totalBurningTime = totalBurningTime;
