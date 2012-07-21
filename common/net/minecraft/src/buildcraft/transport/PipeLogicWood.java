@@ -20,6 +20,8 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsVoid;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 
 public class PipeLogicWood extends PipeLogic {
 
@@ -117,5 +119,14 @@ public class PipeLogicWood extends PipeLogic {
 
 		if (!APIProxy.isClient(worldObj))
 			switchSourceIfNeeded();
+	}
+	
+	@Override
+	public boolean outputOpen(Orientations to) {
+		if (this.container.pipe instanceof PipeLiquidsWood){
+			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			return meta != to.ordinal();
+		}
+		return super.outputOpen(to);
 	}
 }
