@@ -26,9 +26,15 @@ public class LiquidTank implements ILiquidTank {
 	}
 	
 	@Override
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+	
+	@Override
 	public int getCapacity() {
 		return this.capacity;
 	}
+	
 	@Override
 	public int fill(LiquidStack resource, boolean doFill) {
 		if(resource == null || resource.itemID <= 0)

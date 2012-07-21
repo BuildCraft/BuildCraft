@@ -9,6 +9,7 @@ public interface ILiquidTank {
 	 */
 	LiquidStack getLiquid();
 	void setLiquid(LiquidStack liquid);
+	void setCapacity(int capacity);
 	int getCapacity();
 
 	/**
