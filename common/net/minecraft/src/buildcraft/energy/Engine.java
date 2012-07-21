@@ -21,12 +21,12 @@ public abstract class Engine {
 
 	public int maxEnergy;
 
-	protected int currentOutput = 0;
+	protected float currentOutput = 0;
 	public @TileNetworkData
 	float progress;
 	public @TileNetworkData
 	Orientations orientation;
-	public int energy;
+	public float energy;
 	public @TileNetworkData
 	EnergyStage energyStage = EnergyStage.Blue;
 
@@ -84,7 +84,7 @@ public abstract class Engine {
 
 	public abstract void delete();
 
-	public void addEnergy(int addition) {
+	public void addEnergy(float addition) {
 		energy += addition;
 
 		if (getEnergyStage() == EnergyStage.Explosion) {
@@ -96,7 +96,7 @@ public abstract class Engine {
 		}
 	}
 
-	public int extractEnergy(int min, int max, boolean doExtract) {
+	public float extractEnergy(int min, int max, boolean doExtract) {
 		if (energy < min) {
 			return 0;
 		}
@@ -109,7 +109,7 @@ public abstract class Engine {
 			actualMax = max;
 		}
 
-		int extracted;
+		float extracted;
 
 		if (energy >= actualMax) {
 			extracted = actualMax;
@@ -154,11 +154,11 @@ public abstract class Engine {
 		return 0;
 	}
 
-	public int getEnergyStored() {
+	public float getEnergyStored() {
 		return energy;
 	}
 
-	public int getCurrentOutput() {
+	public float getCurrentOutput() {
 		return currentOutput;
 	}
 
