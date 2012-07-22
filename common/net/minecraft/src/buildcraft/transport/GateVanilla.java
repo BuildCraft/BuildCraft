@@ -23,6 +23,7 @@ import net.minecraft.src.buildcraft.core.Utils;
 public class GateVanilla extends Gate {
 
 	private EnergyPulser pulser;
+	private boolean isAutarchic;
 
 	public GateVanilla(Pipe pipe) {
 		super(pipe);
@@ -31,7 +32,9 @@ public class GateVanilla extends Gate {
 	public GateVanilla(Pipe pipe, ItemStack stack) {
 		super(pipe, stack);
 
-		if (stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex)
+		isAutarchic = (stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex);
+
+		if (isAutarchic)
 			addEnergyPulser(pipe);
 	}
 
@@ -165,7 +168,7 @@ public class GateVanilla extends Gate {
 		}
 
 		Item gateItem;
-		if (hasPulser())
+		if (isAutarchic)
 			gateItem = BuildCraftTransport.pipeGateAutarchic;
 		else
 			gateItem = BuildCraftTransport.pipeGate;
