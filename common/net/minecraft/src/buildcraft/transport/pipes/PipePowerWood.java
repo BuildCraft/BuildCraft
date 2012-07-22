@@ -9,10 +9,11 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -22,7 +23,7 @@ import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
-	private PowerProvider powerProvider;
+	private IPowerProvider powerProvider;
 
 	private int baseTexture = 7 * 16 + 6;
 	private int plainTexture = 1 * 16 + 15;
@@ -55,12 +56,12 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		provider = powerProvider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -88,10 +89,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 					float energyToRemove = 0;
 
-					if (powerProvider.energyStored > 40)
-						energyToRemove = powerProvider.energyStored / 40 + 4;
-					else if (powerProvider.energyStored > 10)
-						energyToRemove = powerProvider.energyStored / 10;
+					if (powerProvider.getEnergyStored() > 40)
+						energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
+					else if (powerProvider.getEnergyStored() > 10)
+						energyToRemove = powerProvider.getEnergyStored() / 10;
 					else
 						energyToRemove = 1;
 
@@ -108,7 +109,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().maxEnergyReceived;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 
 }

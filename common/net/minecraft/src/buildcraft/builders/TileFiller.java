@@ -14,18 +14,19 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.Action;
-import net.minecraft.src.buildcraft.api.IActionReceptor;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
-import net.minecraft.src.buildcraft.api.ISpecialInventory;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.filler.FillerManager;
 import net.minecraft.src.buildcraft.api.filler.IFillerPattern;
+import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.IActionReceptor;
+import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.ActionMachineControl;
 import net.minecraft.src.buildcraft.core.ActionMachineControl.Mode;
 import net.minecraft.src.buildcraft.core.Box;
@@ -48,7 +49,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	boolean forceDone = false;
 	private ItemStack contents[];
-	PowerProvider powerProvider;
+	IPowerProvider powerProvider;
 
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
@@ -95,7 +96,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			}
 		}
 
-		if (powerProvider.energyStored > 25) {
+		if (powerProvider.getEnergyStored() > 25) {
 			doWork();
 		}
 	}
@@ -140,7 +141,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			}
 		}
 
-		if (powerProvider.energyStored > 25) {
+		if (powerProvider.getEnergyStored() > 25) {
 			doWork();
 		}
 	}
@@ -302,70 +303,6 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	@Override
-	public boolean addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		StackUtil stackUtil = new StackUtil(stack);
-
-		boolean added = false;
-
-		for (int i = 9; i < contents.length; ++i) {
-			if (stackUtil.tryAdding(this, i, doAdd, false)) {
-				added = true;
-				break;
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return true;
-			} else if (stack.stackSize == 0) {
-				return true;
-			} else {
-				addItem(stack, added, from);
-
-				return true;
-			}
-		}
-
-		if (!added) {
-			for (int i = 9; i < contents.length; ++i) {
-				if (stackUtil.tryAdding(this, i, doAdd, true)) {
-					added = true;
-					break;
-				}
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return true;
-			} else if (stack.stackSize == 0) {
-				return true;
-			} else {
-				addItem(stack, added, from);
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	@Override
-	public ItemStack extractItem(boolean doRemove, Orientations from) {
-		for (int i = 9; i < contents.length; ++i) {
-			if (contents[i] != null) {
-				if (doRemove) {
-					return decrStackSize(i, 1);
-				} else {
-					return contents[i];
-				}
-			}
-		}
-
-		return null;
-	}
-
-	@Override
 	public void handleDescriptionPacket(PacketUpdate packet) {
 		boolean initialized = box.isInitialized();
 
@@ -394,12 +331,12 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -431,14 +368,14 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	@Override
 	public int powerRequest() {
 		if (isActive()) {
-			return powerProvider.maxEnergyReceived;
+			return powerProvider.getMaxEnergyReceived();
 		} else {
 			return 0;
 		}
 	}
 
 	@Override
-	public void actionActivated(Action action) {
+	public void actionActivated(IAction action) {
 		if (action == BuildCraftCore.actionOn) {
 			lastMode = ActionMachineControl.Mode.On;
 		} else if (action == BuildCraftCore.actionOff) {
@@ -452,4 +389,70 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public boolean allowActions() {
 		return true;
 	}
+
+	/* ISPECIALINVENTORY */
+	@Override
+	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
+		StackUtil stackUtil = new StackUtil(stack);
+
+		boolean added = false;
+
+		for (int i = 9; i < contents.length; ++i) {
+			if (stackUtil.tryAdding(this, i, doAdd, false)) {
+				added = true;
+				break;
+			}
+		}
+
+		if (added) {
+			if (!doAdd) {
+				return stackUtil.itemsAdded;
+			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
+				return stackUtil.itemsAdded;
+			} else {
+				addItem(stack, added, from);
+
+				return stackUtil.itemsAdded;
+			}
+		}
+
+		if (!added) {
+			for (int i = 9; i < contents.length; ++i) {
+				if (stackUtil.tryAdding(this, i, doAdd, true)) {
+					added = true;
+					break;
+				}
+			}
+		}
+
+		if (added) {
+			if (!doAdd) {
+				return stackUtil.itemsAdded;
+			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
+				return stackUtil.itemsAdded;
+			} else {
+				addItem(stack, added, from);
+
+				return stackUtil.itemsAdded;
+			}
+		}
+
+		return 0;
+	}
+
+	@Override
+	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
+		for (int i = 9; i < contents.length; ++i) {
+			if (contents[i] != null) {
+				if (doRemove) {
+					return new ItemStack[] { decrStackSize(i, 1) };
+				} else {
+					return new ItemStack[] { contents[i] };
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

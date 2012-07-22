@@ -12,13 +12,14 @@ import net.minecraft.src.Block;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
@@ -29,7 +30,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public @TileNetworkData
 	int liquidToExtract;
 
-	private PowerProvider powerProvider;
+	private IPowerProvider powerProvider;
 	private int baseTexture = 7 * 16 + 0;
 	private int plainTexture = 1 * 16 + 15;
 
@@ -49,7 +50,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	 */
 	@Override
 	public void doWork() {
-		if (powerProvider.energyStored <= 0)
+		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
 		World w = worldObj;
@@ -64,22 +65,22 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		int blockId = w.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-		if (tile == null || !(tile instanceof ILiquidContainer)
+		if (tile == null || !(tile instanceof ITankContainer)
 				|| PipeLogicWood.isExcludedFromExtraction(Block.blocksList[blockId]))
 			return;
 
-		if (tile instanceof ILiquidContainer)
+		if (tile instanceof ITankContainer)
 			if (liquidToExtract <= BuildCraftAPI.BUCKET_VOLUME)
 				liquidToExtract += powerProvider.useEnergy(1, 1, true) * BuildCraftAPI.BUCKET_VOLUME;
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -95,18 +96,18 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (tile instanceof ILiquidContainer) {
-				ILiquidContainer container = (ILiquidContainer) tile;
+			if (tile instanceof ITankContainer) {
+				ITankContainer container = (ITankContainer) tile;
 
 				int flowRate = ((PipeTransportLiquids) transport).flowRate;
 
-				int extracted = container.empty(liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
+				LiquidStack extracted = container.drain(pos.orientation.reverse(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
-				extracted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, container.getLiquidId(), true);
+				int inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
 
-				container.empty(extracted, true);
+				container.drain(pos.orientation.reverse(), inserted, true);
 
-				liquidToExtract -= extracted;
+				liquidToExtract -= inserted;
 			}
 		}
 	}
@@ -132,6 +133,6 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().maxEnergyReceived;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 }

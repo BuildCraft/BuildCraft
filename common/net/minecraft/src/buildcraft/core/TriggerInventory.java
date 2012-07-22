@@ -12,8 +12,8 @@ package net.minecraft.src.buildcraft.core;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 
 public class TriggerInventory extends Trigger {
 
@@ -66,7 +66,7 @@ public class TriggerInventory extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, TriggerParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
 		ItemStack searchedStack = null;
 
 		if (parameter != null)
@@ -81,11 +81,11 @@ public class TriggerInventory extends Trigger {
 			for (int i = 0; i < inv.getSizeInventory(); ++i) {
 				ItemStack stack = inv.getStackInSlot(i);
 
-				if (parameter == null || parameter.stack == null)
+				if (parameter == null || parameter.getItemStack() == null)
 					foundItems = foundItems || stack != null && stack.stackSize > 0;
 				else if (stack != null && stack.stackSize > 0)
 					foundItems = foundItems
-							|| (stack.itemID == parameter.stack.itemID && stack.getItemDamage() == parameter.stack
+							|| (stack.itemID == parameter.getItemStack().itemID && stack.getItemDamage() == parameter.getItemStack()
 									.getItemDamage());
 
 				if (stack == null || stack.stackSize == 0)

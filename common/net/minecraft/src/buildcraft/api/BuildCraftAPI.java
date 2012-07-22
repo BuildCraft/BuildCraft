@@ -18,6 +18,12 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.IActionProvider;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.ITriggerProvider;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 
 public class BuildCraftAPI {
 
@@ -40,20 +46,18 @@ public class BuildCraftAPI {
 	 * This does not do anything anymore. Use buildcraft.api.fuels.IronEngineFuel!
 	 */
 	@Deprecated public static HashMap<Integer, IronEngineFuel> ironEngineFuel = new HashMap<Integer, IronEngineFuel>();
-	public static Trigger[] triggers = new Trigger[1024];
-	public static Action[] actions = new Action[1024];
-
 	private static EntityPlayer buildCraftPlayer;
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
 	 */
 	@Deprecated private static LinkedList<RefineryRecipe> refineryRecipe = new LinkedList<RefineryRecipe>();
-	private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
-	private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
+	@Deprecated public static Trigger[] triggers = new Trigger[1024];
+	@Deprecated public static Action[] actions = new Action[1024];
 
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
 	 */
+	/*
 	@Deprecated
 	public static int getLiquidForFilledItem(ItemStack filledItem) {
 		if (filledItem == null) {
@@ -67,11 +71,12 @@ public class BuildCraftAPI {
 		}
 
 		return 0;
-	}
+	}*/
 
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
 	 */
+	/*
 	@Deprecated
 	public static ItemStack getFilledItemForLiquid(int liquidId) {
 		for (LiquidData d : liquids) {
@@ -81,11 +86,12 @@ public class BuildCraftAPI {
 		}
 
 		return null;
-	}
+	} */
 	
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.liquids.LiquidManager!
 	 */
+	/*
 	@Deprecated
 	public static boolean isLiquid(int blockId) {
 		if (blockId == 0) {
@@ -99,7 +105,7 @@ public class BuildCraftAPI {
 		}
 
 		return false;
-	}
+	} */
 
 	/**
 	 * Return true if the block given in parameter is pass through (e.g. air,
@@ -149,6 +155,7 @@ public class BuildCraftAPI {
 	/**
 	 * This does not do anything anymore. Use buildcraft.api.recipes.RefineryRecipe!
 	 */
+	/*
 	@Deprecated
 	public static RefineryRecipe findRefineryRecipe(int liquid1, int qty1, int liquid2, int qty2) {
 		int l1 = qty1 > 0 ? liquid1 : 0;
@@ -177,7 +184,8 @@ public class BuildCraftAPI {
 
 		return null;
 	}
-
+	*/
+	
 	public static BlockSignature getBlockSignature(Block block) {
 		return blockBptProps[0].getSignature(block);
 	}
@@ -193,21 +201,26 @@ public class BuildCraftAPI {
 
 		return sig;
 	}
+	
+	@Deprecated private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
+	@Deprecated private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
+	@Deprecated 
 	public static void registerTriggerProvider(ITriggerProvider provider) {
 		if (provider != null && !triggerProviders.contains(provider)) {
 			triggerProviders.add(provider);
 		}
 	}
 
-	public static LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity entity) {
-		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
+	@Deprecated 
+	public static LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity entity) {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			LinkedList<Trigger> toAdd = provider.getNeighborTriggers(block, entity);
+			LinkedList<ITrigger> toAdd = provider.getNeighborTriggers(block, entity);
 
 			if (toAdd != null) {
-				for (Trigger t : toAdd) {
+				for (ITrigger t : toAdd) {
 					if (!triggers.contains(t)) {
 						triggers.add(t);
 					}
@@ -218,20 +231,22 @@ public class BuildCraftAPI {
 		return triggers;
 	}
 
+	@Deprecated 
 	public static void registerActionProvider(IActionProvider provider) {
 		if (provider != null && !actionProviders.contains(provider)) {
 			actionProviders.add(provider);
 		}
 	}
 
-	public static LinkedList<Action> getNeighborActions(Block block, TileEntity entity) {
-		LinkedList<Action> actions = new LinkedList<Action>();
+	@Deprecated 
+	public static LinkedList<IAction> getNeighborActions(Block block, TileEntity entity) {
+		LinkedList<IAction> actions = new LinkedList<IAction>();
 
 		for (IActionProvider provider : actionProviders) {
-			LinkedList<Action> toAdd = provider.getNeighborActions(block, entity);
+			LinkedList<IAction> toAdd = provider.getNeighborActions(block, entity);
 
 			if (toAdd != null) {
-				for (Action t : toAdd) {
+				for (IAction t : toAdd) {
 					if (!actions.contains(t)) {
 						actions.add(t);
 					}
@@ -242,14 +257,15 @@ public class BuildCraftAPI {
 		return actions;
 	}
 
-	public static LinkedList<Trigger> getPipeTriggers(IPipe pipe) {
-		LinkedList<Trigger> triggers = new LinkedList<Trigger>();
+	@Deprecated 
+	public static LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			LinkedList<Trigger> toAdd = provider.getPipeTriggers(pipe);
+			LinkedList<ITrigger> toAdd = provider.getPipeTriggers(pipe);
 
 			if (toAdd != null) {
-				for (Trigger t : toAdd) {
+				for (ITrigger t : toAdd) {
 					if (!triggers.contains(t)) {
 						triggers.add(t);
 					}
@@ -259,7 +275,7 @@ public class BuildCraftAPI {
 
 		return triggers;
 	}
-
+	
 	static {
 		for (int i = 0; i < softBlocks.length; ++i) {
 			softBlocks[i] = false;

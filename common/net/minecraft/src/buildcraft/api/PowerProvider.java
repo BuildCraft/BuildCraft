@@ -11,7 +11,11 @@ package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 
+@Deprecated
 public abstract class PowerProvider {
 
 	public int latency;

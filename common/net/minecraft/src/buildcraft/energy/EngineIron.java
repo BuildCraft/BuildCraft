@@ -14,11 +14,12 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.fuels.IronEngineCoolant;
 import net.minecraft.src.buildcraft.api.fuels.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 
@@ -125,12 +126,11 @@ public class EngineIron extends Engine {
 		super.update();
 
 		if (itemInInventory != null) {
-			int liquidId = LiquidManager.getLiquidIDForFilledItem(itemInInventory);
+			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(itemInInventory); 
 
-			if (liquidId != 0) {
-				if (fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, false) == BuildCraftAPI.BUCKET_VOLUME) {
-					fill(Orientations.Unknown, BuildCraftAPI.BUCKET_VOLUME, liquidId, true);
-
+			if (liquid != null) {
+				if (fill(Orientations.Unknown, liquid, false) == BuildCraftAPI.BUCKET_VOLUME) {
+					fill(Orientations.Unknown, liquid, true);
 					tile.setInventorySlotContents(0, Utils.consumeItem(itemInInventory));
 				}
 			}
@@ -139,11 +139,12 @@ public class EngineIron extends Engine {
 		if (heat > COOLANT_THRESHOLD) {
 			int extraHeat = heat - COOLANT_THRESHOLD;
 
-			if (coolantQty > extraHeat) {
-				coolantQty -= extraHeat;
+			IronEngineCoolant currentCoolant = IronEngineCoolant.getCoolantForLiquid(new LiquidStack(coolantId, coolantQty, 0));
+			if(coolantQty * currentCoolant.coolingPerUnit > extraHeat) {
+				coolantQty -= Math.round(extraHeat / currentCoolant.coolingPerUnit);
 				heat = COOLANT_THRESHOLD;
 			} else {
-				heat -= coolantQty;
+				heat -= coolantQty * currentCoolant.coolingPerUnit;
 				coolantQty = 0;
 			}
 		}
@@ -176,65 +177,6 @@ public class EngineIron extends Engine {
 	@Override
 	public int getScaledBurnTime(int i) {
 		return (int) (((float) liquidQty / (float) (MAX_LIQUID)) * i);
-	}
-
-	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		if (id == Block.waterStill.blockID) {
-			return fillCoolant(from, quantity, id, doFill);
-		}
-
-		int res = 0;
-
-		if (liquidQty > 0 && liquidId != id) {
-			return 0;
-		}
-
-		if (IronEngineFuel.getFuelForLiquid(new LiquidStack(id, quantity, 0)) == null)
-			return 0;
-
-		if (liquidQty + quantity <= MAX_LIQUID) {
-			if (doFill) {
-				liquidQty += quantity;
-			}
-
-			res = quantity;
-		} else {
-			res = MAX_LIQUID - liquidQty;
-
-			if (doFill) {
-				liquidQty = MAX_LIQUID;
-			}
-		}
-
-		liquidId = id;
-
-		return res;
-	}
-
-	private int fillCoolant(Orientations from, int quantity, int id, boolean doFill) {
-		int res = 0;
-
-		if (coolantQty > 0 && coolantId != id) {
-			return 0;
-		}
-
-		if (coolantQty + quantity <= MAX_LIQUID) {
-			if (doFill) {
-				coolantQty += quantity;
-			}
-
-			res = quantity;
-		} else {
-			res = MAX_LIQUID - coolantQty;
-
-			if (doFill) {
-				coolantQty = MAX_LIQUID;
-			}
-		}
-
-		coolantId = id;
-
-		return res;
 	}
 
 	@Override
@@ -285,10 +227,10 @@ public class EngineIron extends Engine {
 	public void getGUINetworkData(int i, int j) {
 		switch (i) {
 		case 0:
-			energy = j;
+			energy = j / 10;
 			break;
 		case 1:
-			currentOutput = j;
+			currentOutput = j / 10;
 			break;
 		case 2:
 			heat = j;
@@ -310,19 +252,13 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, energy);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, Math.round(energy * 10));
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, Math.round(currentOutput * 10));
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, heat);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, liquidQty);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 4, liquidId);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 5, coolantQty);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 6, coolantId);
-	}
-
-	@Override
-	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot[] { new LiquidSlot(liquidId, liquidQty, MAX_LIQUID),
-				new LiquidSlot(coolantId, coolantQty, MAX_LIQUID) };
 	}
 
 	@Override
@@ -334,6 +270,71 @@ public class EngineIron extends Engine {
 	public int getHeat() {
 		return heat;
 	}
+	
+	/* ITANKCONTAINER */
+	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+		
+		// Handle coolant
+		if (IronEngineCoolant.getCoolantForLiquid(resource) != null)
+			return fillCoolant(from, resource, doFill);
+
+		int res = 0;
+
+		if (liquidQty > 0 && liquidId != resource.itemID) {
+			return 0;
+		}
+
+		if (IronEngineFuel.getFuelForLiquid(resource) == null)
+			return 0;
+
+		if (liquidQty + resource.amount <= MAX_LIQUID) {
+			if (doFill) {
+				liquidQty += resource.amount;
+			}
+
+			res = resource.amount;
+		} else {
+			res = MAX_LIQUID - liquidQty;
+
+			if (doFill) {
+				liquidQty = MAX_LIQUID;
+			}
+		}
+
+		liquidId = resource.itemID;
+
+		return res;
+	}
+
+	private int fillCoolant(Orientations from, LiquidStack resource, boolean doFill) {
+		int res = 0;
+
+		if (coolantQty > 0 && coolantId != resource.itemID)
+			return 0;
+
+		if (coolantQty + resource.amount <= MAX_LIQUID) {
+			if (doFill)
+				coolantQty += resource.amount;
+
+			res = resource.amount;
+		} else {
+			res = MAX_LIQUID - coolantQty;
+
+			if (doFill)
+				coolantQty = MAX_LIQUID;
+		}
+
+		coolantId = resource.itemID;
+
+		return res;
+	}
+
+	@Override
+	public LiquidTank[] getLiquidSlots() {
+		return new LiquidTank[] { new LiquidTank(liquidId, liquidQty, MAX_LIQUID),
+				new LiquidTank(coolantId, coolantQty, MAX_LIQUID) };
+	}
+
 	
 	/* IINVENTORY */
 	@Override public int getSizeInventory() { return 1; }

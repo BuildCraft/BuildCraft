@@ -9,6 +9,7 @@
 
 package net.minecraft.src.buildcraft.api;
 
+@Deprecated
 public interface IPowerReceptor {
 
 	public void setPowerProvider(PowerProvider provider);

@@ -7,12 +7,13 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.gates;
 
 import java.util.LinkedList;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.IPipe;
 
 public interface ITriggerProvider {
 
@@ -20,11 +21,11 @@ public interface ITriggerProvider {
 	 * Returns the list of triggers that are available from the pipe holding the
 	 * gate.
 	 */
-	public abstract LinkedList<Trigger> getPipeTriggers(IPipe pipe);
+	public abstract LinkedList<ITrigger> getPipeTriggers(IPipe pipe);
 
 	/**
 	 * Returns the list of triggers available to a gate next to the given block.
 	 */
-	public abstract LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity tile);
+	public abstract LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile);
 
 }

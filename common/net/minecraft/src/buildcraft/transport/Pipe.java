@@ -23,15 +23,19 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.Action;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.IActionReceptor;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.ActionManager;
+import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.IActionReceptor;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
+import net.minecraft.src.buildcraft.api.gates.TriggerParameter;
 import net.minecraft.src.buildcraft.core.ActionRedstoneOutput;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
 import net.minecraft.src.buildcraft.core.Utils;
@@ -67,9 +71,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 
-	Trigger[] activatedTriggers = new Trigger[8];
-	TriggerParameter[] triggerParameters = new TriggerParameter[8];
-	Action[] activatedActions = new Action[8];
+	ITrigger[] activatedTriggers = new Trigger[8];
+	ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
+	IAction[] activatedActions = new Action[8];
 
 	@TileNetworkData(intKind = TileNetworkData.UNSIGNED_BYTE)
 	public boolean broadcastSignal[] = new boolean[] { false, false, false, false };
@@ -203,8 +207,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			nbttagcompound.setBoolean("wireSet[" + i + "]", wireSet[i]);
 
 		for (int i = 0; i < 8; ++i) {
-			nbttagcompound.setInteger("action[" + i + "]", activatedActions[i] != null ? activatedActions[i].id : 0);
-			nbttagcompound.setInteger("trigger[" + i + "]", activatedTriggers[i] != null ? activatedTriggers[i].id : 0);
+			nbttagcompound.setInteger("action[" + i + "]", activatedActions[i] != null ? activatedActions[i].getId() : 0);
+			nbttagcompound.setInteger("trigger[" + i + "]", activatedTriggers[i] != null ? activatedTriggers[i].getId() : 0);
 		}
 
 		for (int i = 0; i < 8; ++i)
@@ -237,8 +241,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
 
 		for (int i = 0; i < 8; ++i) {
-			activatedActions[i] = BuildCraftAPI.actions[nbttagcompound.getInteger("action[" + i + "]")];
-			activatedTriggers[i] = BuildCraftAPI.triggers[nbttagcompound.getInteger("trigger[" + i + "]")];
+			activatedActions[i] = ActionManager.actions[nbttagcompound.getInteger("action[" + i + "]")];
+			activatedTriggers[i] = ActionManager.triggers[nbttagcompound.getInteger("trigger[" + i + "]")];
 		}
 
 		for (int i = 0; i < 8; ++i)
@@ -464,23 +468,23 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 	}
 
-	public void setTrigger(int position, Trigger trigger) {
+	public void setTrigger(int position, ITrigger trigger) {
 		activatedTriggers[position] = trigger;
 	}
 
-	public Trigger getTrigger(int position) {
+	public ITrigger getTrigger(int position) {
 		return activatedTriggers[position];
 	}
 
-	public void setTriggerParameter(int position, TriggerParameter p) {
+	public void setTriggerParameter(int position, ITriggerParameter p) {
 		triggerParameters[position] = p;
 	}
 
-	public TriggerParameter getTriggerParameter(int position) {
+	public ITriggerParameter getTriggerParameter(int position) {
 		return triggerParameters[position];
 	}
 
-	public boolean isNearbyTriggerActive(Trigger trigger, TriggerParameter parameter) {
+	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
 		if (trigger instanceof ITriggerPipe)
 			return ((ITriggerPipe) trigger).isTriggerActive(this, parameter);
 		else if (trigger != null)
@@ -494,12 +498,12 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return false;
 	}
 
-	public boolean isTriggerActive(Trigger trigger) {
+	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
 	}
 
-	public LinkedList<Action> getActions() {
-		LinkedList<Action> result = new LinkedList<Action>();
+	public LinkedList<IAction> getActions() {
+		LinkedList<IAction> result = new LinkedList<IAction>();
 
 		if (hasGate())
 			gate.addActions(result);
@@ -507,18 +511,18 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return result;
 	}
 
-	public Action getAction(int position) {
+	public IAction getAction(int position) {
 		return activatedActions[position];
 	}
 
-	public void setAction(int position, Action action) {
+	public void setAction(int position, IAction action) {
 		activatedActions[position] = action;
 	}
 
 	public void resetGate() {
 		gate = null;
 		activatedTriggers = new Trigger[activatedTriggers.length];
-        triggerParameters = new TriggerParameter[triggerParameters.length];
+        triggerParameters = new ITriggerParameter[triggerParameters.length];
         activatedActions = new Action[activatedActions.length];
         broadcastSignal = new boolean[] { false, false, false, false };
         broadcastRedstone = false;
@@ -544,17 +548,17 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		// Computes the actions depending on the triggers
 		for (int it = 0; it < 8; ++it) {
-			Trigger trigger = activatedTriggers[it];
-			Action action = activatedActions[it];
-			TriggerParameter parameter = triggerParameters[it];
+			ITrigger trigger = activatedTriggers[it];
+			IAction action = activatedActions[it];
+			ITriggerParameter parameter = triggerParameters[it];
 
 			if (trigger != null && action != null)
-				if (!actions.containsKey(action.id))
-					actions.put(action.id, isNearbyTriggerActive(trigger, parameter));
+				if (!actions.containsKey(action.getId()))
+					actions.put(action.getId(), isNearbyTriggerActive(trigger, parameter));
 				else if (gate.getConditional() == GateConditional.AND)
-					actions.put(action.id, actions.get(action.id) && isNearbyTriggerActive(trigger, parameter));
+					actions.put(action.getId(), actions.get(action.getId()) && isNearbyTriggerActive(trigger, parameter));
 				else
-					actions.put(action.id, actions.get(action.id) || isNearbyTriggerActive(trigger, parameter));
+					actions.put(action.getId(), actions.get(action.getId()) || isNearbyTriggerActive(trigger, parameter));
 		}
 
 		// Activate the actions
@@ -562,18 +566,18 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			if (actions.get(i)) {
 
 				// Custom gate actions take precedence over defaults.
-				if (gate.resolveAction(BuildCraftAPI.actions[i]))
+				if (gate.resolveAction(ActionManager.actions[i]))
 					continue;
 
-				if (BuildCraftAPI.actions[i] instanceof ActionRedstoneOutput)
+				if (ActionManager.actions[i] instanceof ActionRedstoneOutput)
 					broadcastRedstone = true;
-				else if (BuildCraftAPI.actions[i] instanceof ActionSignalOutput)
-					broadcastSignal[((ActionSignalOutput) BuildCraftAPI.actions[i]).color.ordinal()] = true;
+				else if (ActionManager.actions[i] instanceof ActionSignalOutput)
+					broadcastSignal[((ActionSignalOutput) ActionManager.actions[i]).color.ordinal()] = true;
 				else
 					for (int a = 0; a < container.tileBuffer.length; ++a)
 						if (container.tileBuffer[a].getTile() instanceof IActionReceptor) {
 							IActionReceptor recept = (IActionReceptor) container.tileBuffer[a].getTile();
-							recept.actionActivated(BuildCraftAPI.actions[i]);
+							recept.actionActivated(ActionManager.actions[i]);
 						}
 			}
 
@@ -663,4 +667,20 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return broadcastRedstone;
 	}
 
+
+	/**
+	 * Called when TileGenericPipe.invalidate() is called 
+	 */
+	public void invalidate() {}
+
+	/**
+	 * Called when TileGenericPipe.validate() is called
+	 */
+	public void validate() {}
+
+	
+	/**
+	 * Called when TileGenericPipe.onChunkUnload is called
+	 */
+	public void onChunkUnload() {}
 }

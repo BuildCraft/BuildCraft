@@ -20,9 +20,9 @@ import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.BlockSignature;
 import net.minecraft.src.buildcraft.api.BptBlock;
 import net.minecraft.src.buildcraft.api.BptSlotInfo;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IBptContext;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.ActionManager;
+import net.minecraft.src.buildcraft.api.gates.TriggerParameter;
 
 public class BptBlockPipe extends BptBlock {
 
@@ -93,7 +93,7 @@ public class BptBlockPipe extends BptBlock {
 
 			for (int i = 0; i < 8; ++i) {
 				if (slot.cpt.hasKey("trigger" + i))
-					pipe.activatedTriggers[i] = BuildCraftAPI.triggers[slot.cpt.getInteger("trigger" + i)];
+					pipe.activatedTriggers[i] = ActionManager.triggers[slot.cpt.getInteger("trigger" + i)];
 
 				if (slot.cpt.hasKey("triggerParameter" + i)) {
 					ItemStack s = ItemStack.loadItemStackFromNBT((NBTTagCompound) slot.cpt.getTag("triggerParameter" + i));
@@ -105,7 +105,7 @@ public class BptBlockPipe extends BptBlock {
 				}
 
 				if (slot.cpt.hasKey("action" + i))
-					pipe.activatedActions[i] = BuildCraftAPI.actions[slot.cpt.getInteger("action" + i)];
+					pipe.activatedActions[i] = ActionManager.actions[slot.cpt.getInteger("action" + i)];
 			}
 		}
 
@@ -132,17 +132,17 @@ public class BptBlockPipe extends BptBlock {
 
 				for (int i = 0; i < 8; ++i) {
 					if (pipe.activatedTriggers[i] != null)
-						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].id);
+						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].getId());
 
 					if (pipe.triggerParameters[i] != null) {
 						NBTTagCompound subCpt = new NBTTagCompound();
-						pipe.triggerParameters[i].stack.writeToNBT(subCpt);
+						pipe.triggerParameters[i].getItemStack().writeToNBT(subCpt);
 
 						bptSlot.cpt.setTag("triggerParameter" + i, subCpt);
 					}
 
 					if (pipe.activatedActions[i] != null)
-						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].id);
+						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].getId());
 				}
 			}
 

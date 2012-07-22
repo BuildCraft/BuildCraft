@@ -11,10 +11,10 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.LiquidSlot;
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 
 public class TriggerLiquidContainer extends Trigger {
@@ -67,16 +67,16 @@ public class TriggerLiquidContainer extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, TriggerParameter parameter) {
-		if (tile instanceof ILiquidContainer) {
-			ILiquidContainer container = (ILiquidContainer) tile;
+	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+		if (tile instanceof ITankContainer) {
+			ITankContainer container = (ITankContainer) tile;
 
 			int seachedLiquidId = 0;
 
 			if (parameter != null && parameter.getItem() != null)
 				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
 
-			LiquidSlot[] liquids = container.getLiquidSlots();
+			ILiquidTank[] liquids = container.getTanks();
 
 			if (liquids == null || liquids.length == 0)
 				return false;
@@ -85,33 +85,33 @@ public class TriggerLiquidContainer extends Trigger {
 			case Empty:
 
 				if (liquids != null && liquids.length > 0) {
-					for (LiquidSlot c : liquids)
-						if (c.getLiquidQty() != 0)
+					for (ILiquidTank c : liquids)
+						if (c.getLiquid().amount != 0)
 							return false;
 
 					return true;
 				} else
 					return false;
 			case Contains:
-				for (LiquidSlot c : liquids)
-					if (c.getLiquidQty() != 0)
-						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquidId())
+				for (ILiquidTank c : liquids)
+					if (c.getLiquid().amount != 0)
+						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquid().itemID)
 							return true;
 
 				return false;
 
 			case Space:
-				for (LiquidSlot c : liquids)
-					if (c.getLiquidQty() == 0)
+				for (ILiquidTank c : liquids)
+					if (c.getLiquid().amount == 0)
 						return true;
-					else if (c.getLiquidQty() < c.getCapacity())
-						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquidId())
+					else if (c.getLiquid().amount < c.getCapacity())
+						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquid().itemID)
 							return true;
 
 				return false;
 			case Full:
-				for (LiquidSlot c : liquids)
-					if (c.getLiquidQty() < c.getCapacity())
+				for (ILiquidTank c : liquids)
+					if (c.getLiquid().amount < c.getCapacity())
 						return false;
 
 				return true;

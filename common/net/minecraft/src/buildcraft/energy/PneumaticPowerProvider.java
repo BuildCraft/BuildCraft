@@ -9,7 +9,7 @@
 
 package net.minecraft.src.buildcraft.energy;
 
-import net.minecraft.src.buildcraft.api.PowerProvider;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 
 public class PneumaticPowerProvider extends PowerProvider {
 

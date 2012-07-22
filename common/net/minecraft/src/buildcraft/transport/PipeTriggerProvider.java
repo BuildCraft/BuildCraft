@@ -5,19 +5,20 @@ import java.util.LinkedList;
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.IPipe;
-import net.minecraft.src.buildcraft.api.ITriggerProvider;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.ITriggerProvider;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 
 public class PipeTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<Trigger> getPipeTriggers(IPipe iPipe) {
+	public LinkedList<ITrigger> getPipeTriggers(IPipe iPipe) {
 		if (iPipe instanceof IOverrideDefaultTriggers)
 			return ((IOverrideDefaultTriggers) iPipe).getTriggers();
 
-		LinkedList<Trigger> result = new LinkedList<Trigger>();
+		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 
 		Pipe pipe = (Pipe) iPipe;
 
@@ -39,7 +40,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity tile) {
+	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
 		return null;
 	}
 

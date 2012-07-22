@@ -14,13 +14,14 @@ import java.util.LinkedList;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityEnergyLaser;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
@@ -36,8 +37,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	
 	private TileAssemblyTable assemblyTable;
 
-	@TileNetworkData
-	public PowerProvider powerProvider;
+	public IPowerProvider powerProvider;
 
 	private int nextNetworkUpdate = 3;
 	private int nextLaserUpdate = 10;
@@ -51,7 +51,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 		
-		if (powerProvider.energyStored == 0) {
+		if (powerProvider.getEnergyStored() == 0) {
 			removeLaser();
 			return;
 		}
@@ -217,13 +217,13 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	}
 	
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -232,7 +232,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 	@Override
 	public int powerRequest() {
-		if (powerProvider.energyStored < 200 || laser != null) {
+		if (powerProvider.getEnergyStored() < 200 || laser != null) {
 			return 25;
 		} else {
 			return 0;

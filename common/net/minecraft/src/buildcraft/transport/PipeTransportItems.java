@@ -30,7 +30,7 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IMachine;
@@ -437,7 +437,7 @@ public class PipeTransportItems extends PipeTransport {
 		return true;
 	}
 
-	public boolean isTriggerActive(Trigger trigger) {
+	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
 	}
 

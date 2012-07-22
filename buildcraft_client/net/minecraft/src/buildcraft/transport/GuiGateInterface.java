@@ -13,9 +13,11 @@ import java.util.Iterator;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.api.Action;
-import net.minecraft.src.buildcraft.api.Trigger;
-import net.minecraft.src.buildcraft.api.TriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.gates.IAction;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.core.GuiAdvancedInterface;
 import net.minecraft.src.buildcraft.core.utils.StringUtil;
 import net.minecraft.src.buildcraft.transport.Gate.GateKind;
@@ -44,7 +46,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public String getDescription() {
-			Trigger trigger = pipe.getTrigger(slot);
+			ITrigger trigger = pipe.getTrigger(slot);
 			if (trigger != null)
 				return trigger.getDescription();
 			else
@@ -53,7 +55,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public String getTexture() {
-			Trigger trigger = pipe.getTrigger(slot);
+			ITrigger trigger = pipe.getTrigger(slot);
 			if (trigger != null)
 				return trigger.getTextureFile();
 			else
@@ -62,7 +64,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public int getTextureIndex() {
-			Trigger trigger = pipe.getTrigger(slot);
+			ITrigger trigger = pipe.getTrigger(slot);
 			if (trigger != null)
 				return trigger.getIndexInTexture();
 			else
@@ -74,7 +76,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			return pipe.getTrigger(slot) != null;
 		}
 
-		public Trigger getTrigger() {
+		public ITrigger getTrigger() {
 			return pipe.getTrigger(slot);
 		}
 	}
@@ -93,7 +95,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public String getDescription() {
-			Action action = pipe.getAction(slot);
+			IAction action = pipe.getAction(slot);
 			if (action != null)
 				return action.getDescription();
 			else
@@ -102,7 +104,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public String getTexture() {
-			Action action = pipe.getAction(slot);
+			IAction action = pipe.getAction(slot);
 			if (action != null)
 				return action.getTexture();
 			else
@@ -111,7 +113,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public int getTextureIndex() {
-			Action action = pipe.getAction(slot);
+			IAction action = pipe.getAction(slot);
 			if (action != null)
 				return action.getIndexInTexture();
 			else
@@ -123,7 +125,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			return pipe.getAction(slot) != null;
 		}
 
-		public Action getAction() {
+		public IAction getAction() {
 			return pipe.getAction(slot);
 		}
 	}
@@ -147,14 +149,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public ItemStack getItemStack() {
-			TriggerParameter parameter = pipe.getTriggerParameter(slot);
+			ITriggerParameter parameter = pipe.getTriggerParameter(slot);
 			if (parameter != null)
 				return parameter.getItem();
 			else
 				return null;
 		}
 
-		public TriggerParameter getTriggerParameter() {
+		public ITriggerParameter getTriggerParameter() {
 			return pipe.getTriggerParameter(slot);
 		}
 	}
@@ -262,10 +264,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			AdvancedSlot slot = slots[s];
 
 			if (slot instanceof TriggerSlot) {
-				Trigger trigger = ((TriggerSlot) slot).getTrigger();
+				ITrigger trigger = ((TriggerSlot) slot).getTrigger();
 
 				if (_container.getGateOrdinal() >= GateKind.AND_3.ordinal()) {
-					TriggerParameter parameter = null;
+					ITriggerParameter parameter = null;
 
 					if (slots[s + nbEntries * 2] != null && slots[s + nbEntries * 2].isDefined())
 						parameter = ((TriggerParameterSlot) slots[s + nbEntries * 2]).getTriggerParameter();
@@ -311,7 +313,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		if (slot instanceof TriggerSlot && _container.hasTriggers()) {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;
 
-			Trigger changed = null;
+			ITrigger changed = null;
 			if (triggerSlot.getTrigger() == null) {
 
 				if (k == 0)
@@ -320,10 +322,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 					changed = _container.getLastTrigger();
 
 			} else {
-				Iterator<Trigger> it = _container.getTriggerIterator(k != 0);
+				Iterator<ITrigger> it = _container.getTriggerIterator(k != 0);
 
 				for (; it.hasNext();) {
-					Trigger trigger = it.next();
+					ITrigger trigger = it.next();
 
 					if (!it.hasNext()) {
 						changed = null;
@@ -345,7 +347,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		} else if (slot instanceof ActionSlot) {
 			ActionSlot actionSlot = (ActionSlot) slot;
 
-			Action changed = null;
+			IAction changed = null;
 			if (actionSlot.getAction() == null) {
 
 				if (k == 0)
@@ -354,10 +356,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 					changed = _container.getLastAction();
 
 			} else {
-				Iterator<Action> it = _container.getActionIterator(k != 0);
+				Iterator<IAction> it = _container.getActionIterator(k != 0);
 
 				for (; it.hasNext();) {
-					Action action = it.next();
+					IAction action = it.next();
 
 					if (!it.hasNext()) {
 						changed = null;
@@ -376,7 +378,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			TriggerSlot trigger = (TriggerSlot) slots[position - nbEntries * 2];
 
 			if (trigger.isDefined() && trigger.getTrigger().hasParameter()) {
-				TriggerParameter param = trigger.getTrigger().createParameter();
+				ITriggerParameter param = trigger.getTrigger().createParameter();
 
 				if (param != null) {
 					param.set(mc.thePlayer.inventory.getItemStack());

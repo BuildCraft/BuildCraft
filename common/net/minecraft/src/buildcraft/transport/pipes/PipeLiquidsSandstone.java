@@ -11,6 +11,7 @@ package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.transport.IPipeTransportLiquidsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicSandstone;
@@ -34,13 +35,13 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 
 
 	@Override
-	public int fill(Orientations from, int quantity, int id, boolean doFill) {
+	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
 		if (container.tileBuffer == null || container.tileBuffer[from.ordinal()] == null)
 			return 0;
 		
 		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe)) 
 			return 0;
 		
-		return ((PipeTransportLiquids)this.transport).side[from.ordinal()].fill(quantity, doFill, (short) id);
+		return ((PipeTransportLiquids)this.transport).getTanks()[from.ordinal()].fill(resource, doFill);
 	}
 }

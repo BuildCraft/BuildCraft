@@ -21,13 +21,14 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerFramework;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
+import net.minecraft.src.buildcraft.api.power.PowerFramework;
+import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.BptBase;
@@ -55,7 +56,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public @TileNetworkData
 	Box box = new Box();
 
-	private PowerProvider powerProvider;
+	private IPowerProvider powerProvider;
 
 	private LinkedList<BlockIndex> path;
 
@@ -526,12 +527,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		return powerProvider;
 	}
 
@@ -570,7 +571,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	@Override
 	public int powerRequest() {
 		if ((bluePrintBuilder != null || currentPathIterator != null) && !done) {
-			return powerProvider.maxEnergyReceived;
+			return powerProvider.getMaxEnergyReceived();
 		} else {
 			return 0;
 		}

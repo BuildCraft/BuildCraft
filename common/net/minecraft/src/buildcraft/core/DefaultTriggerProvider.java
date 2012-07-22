@@ -6,20 +6,21 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.ITriggerProvider;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.IPipe;
-import net.minecraft.src.buildcraft.api.ITriggerProvider;
-import net.minecraft.src.buildcraft.api.Trigger;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<Trigger> getNeighborTriggers(Block block, TileEntity tile) {
+	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
 		if (tile instanceof IOverrideDefaultTriggers)
 			return ((IOverrideDefaultTriggers) tile).getTriggers();
 
-		LinkedList<Trigger> res = new LinkedList<Trigger>();
+		LinkedList<ITrigger> res = new LinkedList<ITrigger>();
 
 		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
 			res.add(BuildCraftCore.triggerEmptyInventory);
@@ -28,7 +29,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerFullInventory);
 		}
 
-		if (tile instanceof ILiquidContainer && ((ILiquidContainer) tile).getLiquidSlots().length > 0) {
+		if (tile instanceof ITankContainer && ((ITankContainer) tile).getTanks().length > 0) {
 			res.add(BuildCraftCore.triggerEmptyLiquid);
 			res.add(BuildCraftCore.triggerContainsLiquid);
 			res.add(BuildCraftCore.triggerSpaceLiquid);
@@ -49,7 +50,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public LinkedList<Trigger> getPipeTriggers(IPipe pipe) {
+	public LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
 		return null;
 	}
 

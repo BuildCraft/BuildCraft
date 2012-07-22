@@ -11,6 +11,7 @@ package net.minecraft.src.buildcraft.api;
 
 import net.minecraft.src.NBTTagCompound;
 
+@Deprecated
 public abstract class PowerFramework {
 
 	static private String baseNBTName = "net.minecraft.src.buildcarft.Power";

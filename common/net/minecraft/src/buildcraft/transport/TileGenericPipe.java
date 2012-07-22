@@ -22,20 +22,24 @@ import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
-import net.minecraft.src.buildcraft.api.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.IPipe.WireColor;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.IPipeTile;
-import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.LiquidSlot;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.PowerProvider;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
-import net.minecraft.src.buildcraft.api.Trigger;
+import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
+import net.minecraft.src.buildcraft.api.gates.ITrigger;
+import net.minecraft.src.buildcraft.api.gates.Trigger;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.power.IPowerProvider;
+import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IDropControlInventory;
@@ -49,7 +53,7 @@ import net.minecraft.src.buildcraft.core.network.PacketTileUpdate;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.transport.network.PipeRenderStatePacket;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiquidContainer, IPipeEntry,
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry,
 		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState {
 	
 	private PipeRenderState renderState = new PipeRenderState();
@@ -104,6 +108,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	@Override
 	public void invalidate() {
 		initialized = false;
+		if (pipe != null){
+			pipe.invalidate();
+		}
 		super.invalidate();
 
 //		if (BlockGenericPipe.isValid(pipe))
@@ -114,6 +121,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	public void validate() {
 		super.validate();
 		bindPipe();
+		if (pipe != null) {
+			pipe.validate();
+	}
 	}
 
 	public boolean initialized = false;
@@ -143,7 +153,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			refreshRenderState = false;
 		}
 
-		PowerProvider provider = getPowerProvider();
+		IPowerProvider provider = getPowerProvider();
 
 		if (provider != null)
 			provider.update(this);
@@ -280,14 +290,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	}
 
 	@Override
-	public void setPowerProvider(PowerProvider provider) {
+	public void setPowerProvider(IPowerProvider provider) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
 			((IPowerReceptor) pipe).setPowerProvider(provider);
 
 	}
 
 	@Override
-	public PowerProvider getPowerProvider() {
+	public IPowerProvider getPowerProvider() {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
 			return ((IPowerReceptor) pipe).getPowerProvider();
 		else
@@ -298,38 +308,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 	public void doWork() {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
 			((IPowerReceptor) pipe).doWork();
-	}
-
-	@Override
-	public int fill(Orientations from, int quantity, int id, boolean doFill) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ILiquidContainer)
-			return ((ILiquidContainer) pipe.transport).fill(from, quantity, id, doFill);
-		else
-			return 0;
-	}
-
-	@Override
-	public int empty(int quantityMax, boolean doEmpty) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ILiquidContainer)
-			return ((ILiquidContainer) pipe.transport).empty(quantityMax, doEmpty);
-		else
-			return 0;
-	}
-
-	@Override
-	public int getLiquidQuantity() {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ILiquidContainer)
-			return ((ILiquidContainer) pipe.transport).getLiquidQuantity();
-		else
-			return 0;
-	}
-
-	@Override
-	public int getLiquidId() {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ILiquidContainer)
-			return ((ILiquidContainer) pipe.transport).getLiquidId();
-		else
-			return 0;
 	}
 
 	public void scheduleNeighborChange() {
@@ -372,12 +350,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().maxEnergyReceived;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 
 	@Override
-	public LinkedList<Trigger> getTriggers() {
-		LinkedList<Trigger> result = new LinkedList<Trigger>();
+	public LinkedList<ITrigger> getTriggers() {
+		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 
 		if (BlockGenericPipe.isFullyDefined(pipe) && pipe.hasGate()) {
 			result.add(BuildCraftCore.triggerRedstoneActive);
@@ -385,11 +363,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 		}
 
 		return result;
-	}
-
-	@Override
-	public LiquidSlot[] getLiquidSlots() {
-		return new LiquidSlot[0];
 	}
 
 	@Override
@@ -479,6 +452,56 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ILiqu
 			return pipe.doDrop();
 		else
 			return false;
+	}
+	
+	@Override
+	public void onChunkUnload() {
+		if (pipe != null){
+			pipe.onChunkUnload();
+		}
+	}
+
+	
+	/** ITankContainer implementation **/
+	
+	@Override
+	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
+			return ((ITankContainer) pipe.transport).fill(from, resource, doFill);
+		else
+			return 0;
+	}
+
+	@Override
+	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
+			return ((ITankContainer) pipe.transport).fill(tankIndex, resource, doFill);
+		else
+			return 0;
+	}
+
+	@Override
+	public LiquidStack drain(Orientations from, int maxDrain, boolean doDrain) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
+			return ((ITankContainer) pipe.transport).drain(from, maxDrain, doDrain);
+		else
+			return null;
+	}
+
+	@Override
+	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
+			return ((ITankContainer) pipe.transport).drain(tankIndex, maxDrain, doDrain);
+		else
+			return null;
+	}
+
+	@Override
+	public ILiquidTank[] getTanks() {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
+			return ((ITankContainer) pipe.transport).getTanks();
+		else
+			return null;
 	}
 	
 	

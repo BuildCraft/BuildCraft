@@ -16,10 +16,12 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsVoid;
+import net.minecraft.src.buildcraft.transport.pipes.PipeLiquidsWood;
 
 public class PipeLogicWood extends PipeLogic {
 
@@ -50,7 +52,7 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	public boolean isInput(TileEntity tile) {
-		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof ILiquidContainer)
+		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof ITankContainer)
 				&& Utils.checkPipesConnections(container, tile);
 	}
 
@@ -118,5 +120,14 @@ public class PipeLogicWood extends PipeLogic {
 
 		if (!APIProxy.isClient(worldObj))
 			switchSourceIfNeeded();
+	}
+	
+	@Override
+	public boolean outputOpen(Orientations to) {
+		if (this.container.pipe instanceof PipeLiquidsWood){
+			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			return meta != to.ordinal();
+		}
+		return super.outputOpen(to);
 	}
 }
