@@ -132,7 +132,7 @@ public class BuildCraftEnergy {
 		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(new LiquidStack(oilStill.blockID, 1, 0), null, new LiquidStack(fuel.shiftedIndex, 1, 0), 10, 1));
 
 		// Iron Engine Fuels
-		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 1, 20000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(Block.lavaStill.blockID, 1, 20000));
 		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 2, 10000));
 		IronEngineFuel.fuels.add(new IronEngineFuel(fuel.shiftedIndex, 5, 50000));
 

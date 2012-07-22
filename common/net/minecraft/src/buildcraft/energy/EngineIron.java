@@ -227,10 +227,10 @@ public class EngineIron extends Engine {
 	public void getGUINetworkData(int i, int j) {
 		switch (i) {
 		case 0:
-			energy = j;
+			energy = j / 10;
 			break;
 		case 1:
-			currentOutput = j;
+			currentOutput = j / 10;
 			break;
 		case 2:
 			heat = j;
@@ -252,8 +252,8 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, energy);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, currentOutput);
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, Math.round(energy * 10));
+		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, Math.round(currentOutput * 10));
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, heat);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, liquidQty);
 		iCrafting.updateCraftingInventoryInfo(containerEngine, 4, liquidId);
