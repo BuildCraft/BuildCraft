@@ -205,7 +205,8 @@ public class GateVanilla extends Gate {
 	public boolean resolveAction(IAction action) {
 
 		if (action instanceof ActionEnergyPulser) {
-			pulser.enablePulse();
+			if (hasPulser())
+				pulser.enablePulse();
 			return true;
 		}
 
