@@ -12,17 +12,23 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_BuildCraftCore;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.SafeTimeTracker;
 import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
+import net.minecraft.src.buildcraft.core.CoreProxy;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.transport.network.PacketLiquidUpdate;
+import net.minecraft.src.buildcraft.transport.network.PacketPowerUpdate;
 
 public class PipeTransportLiquids extends PipeTransport implements ITankContainer {
 
@@ -130,7 +136,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	public short travelDelay = 12;
 	public short flowRate = 20;
-	public final LiquidStack[] renderCache = new LiquidStack[Orientations.values().length];
+	public LiquidStack[] renderCache = new LiquidStack[Orientations.values().length];
 	
 	private final PipeSection[] internalTanks = new PipeSection[Orientations.values().length];
 	
@@ -139,6 +145,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private final short[] inputTTL = new short[] { 0, 0, 0, 0, 0, 0 };
 	private final short[] outputTTL = new short[] { OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL };
 	private final short[] outputCooldown = new short[] {0, 0, 0, 0, 0, 0 };
+	
+	private final SafeTimeTracker tracker = new SafeTimeTracker();
 	
 	
 	public PipeTransportLiquids() {
@@ -204,7 +212,17 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 //			}
 		}
 
-		this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);
+		
+		if (APIProxy.isServerSide())
+			if (tracker.markTimeIfDelay(worldObj, 1 * BuildCraftCore.updateFactor)){
+				
+				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);
+				packet.displayLiquid = this.renderCache;
+				CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+			}
+		
+		//this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);
 	}
 
 	@Override
@@ -414,6 +432,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	@Override
 	public boolean allowsConnect(PipeTransport with) {
 		return with instanceof PipeTransportLiquids;
+	}
+	
+	public void handleLiquidPacket(PacketLiquidUpdate packetLiquid) {
+		this.renderCache = packetLiquid.displayLiquid;
+		
 	}
 	
 	/** ITankContainer implementation **/

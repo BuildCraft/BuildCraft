@@ -21,6 +21,7 @@ import net.minecraft.src.buildcraft.transport.CraftingGateInterface;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond;
 import net.minecraft.src.buildcraft.transport.PipeRenderState;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
+import net.minecraft.src.buildcraft.transport.PipeTransportLiquids;
 import net.minecraft.src.buildcraft.transport.PipeTransportPower;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.IPacketHandler;
@@ -47,6 +48,11 @@ public class PacketHandler implements IPacketHandler {
 				PacketPowerUpdate packetPower= new PacketPowerUpdate();
 				packetPower.readData(data);
 				onPacketPower(packetPower);
+				break;
+			case PacketIds.PIPE_LIQUID:
+				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
+				packetLiquid.readData(data);
+				onPacketLiquid(packetLiquid);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
@@ -197,6 +203,25 @@ public class PacketHandler implements IPacketHandler {
 
 		
 		
+	}
+
+	private void onPacketLiquid(PacketLiquidUpdate packetLiquid) {
+		World world = ModLoader.getMinecraftInstance().theWorld;
+		if (!world.blockExists(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ))
+			return;
+
+		TileEntity entity = world.getBlockTileEntity(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ);
+		if (!(entity instanceof TileGenericPipe))
+			return;
+
+		TileGenericPipe pipe = (TileGenericPipe) entity;
+		if (pipe.pipe == null)
+			return;
+
+		if (!(pipe.pipe.transport instanceof PipeTransportLiquids))
+			return;
+
+		((PipeTransportLiquids) pipe.pipe.transport).handleLiquidPacket(packetLiquid);
 	}
 
 	/**
