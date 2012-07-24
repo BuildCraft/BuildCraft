@@ -27,7 +27,6 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.LaserKind;
@@ -423,15 +422,15 @@ public class Utils {
 		Block b1 = Block.blocksList[blockAccess.getBlockId(x1, y1, z1)];
 		Block b2 = Block.blocksList[blockAccess.getBlockId(x2, y2, z2)];
 
-		if (!(b1 instanceof ILegacyPipeConnection) && !(b2 instanceof ILegacyPipeConnection))
+		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection))
 			return false;
 
-		if (b1 instanceof ILegacyPipeConnection
-				&& !((ILegacyPipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2))
+		if (b1 instanceof IFramePipeConnection
+				&& !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2))
 			return false;
 
-		if (b2 instanceof ILegacyPipeConnection
-				&& !((ILegacyPipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1))
+		if (b2 instanceof IFramePipeConnection
+				&& !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1))
 			return false;
 
 		return true;

@@ -23,14 +23,14 @@ import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IBlockPipe;
-import net.minecraft.src.buildcraft.api.ILegacyPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.IFramePipeConnection;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockFrame extends Block implements ILegacyPipeConnection, IBlockPipe, ITextureProvider {
+public class BlockFrame extends Block implements IFramePipeConnection, IBlockPipe, ITextureProvider {
 
 	public BlockFrame(int i) {
 		super(i, Material.glass);

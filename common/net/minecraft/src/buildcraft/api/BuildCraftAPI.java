@@ -37,12 +37,7 @@ public class BuildCraftAPI {
 	public static BptBlock[] blockBptProps = new BptBlock[Block.blocksList.length];
 
 	// Other BuildCraft global data
-
-	/**
-	 * This does not do anything anymore. Use buildcraft.api.fuels.IronEngineFuel!
-	 */
 	private static EntityPlayer buildCraftPlayer;
-
 
 	/**
 	 * Return true if the block given in parameter is pass through (e.g. air,
