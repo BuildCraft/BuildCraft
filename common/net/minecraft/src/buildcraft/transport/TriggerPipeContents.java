@@ -9,12 +9,12 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
+import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
+import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.core.DefaultProps;
-import net.minecraft.src.buildcraft.transport.PipeTransportLiquids.LiquidBuffer;
 
 public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 
@@ -90,21 +90,21 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 		} else if (pipe.transport instanceof PipeTransportLiquids) {
 			PipeTransportLiquids transportLiquids = (PipeTransportLiquids) pipe.transport;
 
-			int seachedLiquidId = 0;
+			LiquidStack searchedLiquid = null;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
+				searchedLiquid = LiquidManager.getLiquidForFilledItem(parameter.getItem());
 
 			if (kind == Kind.Empty) {
-				for (LiquidBuffer b : transportLiquids.side)
-					if (b.average != 0)
+				for (ILiquidTank b : transportLiquids.getTanks())
+					if (b.getLiquid() != null && b.getLiquid().amount != 0)
 						return false;
 
 				return true;
 			} else {
-				for (LiquidBuffer b : transportLiquids.side)
-					if (b.average != 0)
-						if (seachedLiquidId == 0 || b.liquidId == seachedLiquidId)
+				for (ILiquidTank b : transportLiquids.getTanks())
+					if (b.getLiquid() != null && b.getLiquid().amount != 0)
+						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(b.getLiquid()))
 							return true;
 
 				return false;

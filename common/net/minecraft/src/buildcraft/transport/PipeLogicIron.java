@@ -13,9 +13,9 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 
 public class PipeLogicIron extends PipeLogic {
@@ -49,7 +49,7 @@ public class PipeLogicIron extends PipeLogic {
 				if (((TileGenericPipe) tile).pipe.logic instanceof PipeLogicWood)
 					continue;
 
-			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ILiquidContainer
+			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer
 					|| tile instanceof TileGenericPipe) {
 
 				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
