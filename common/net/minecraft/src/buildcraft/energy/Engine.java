@@ -14,8 +14,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.liquids.LiquidTank;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 
 public abstract class Engine {
 

@@ -23,7 +23,6 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.gates.IOverrideDefaultTriggers;
 import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
@@ -38,6 +37,7 @@ import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.IBuilderInventory;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 
 //TODO: All Engines need to take func_48081_b into account 
 

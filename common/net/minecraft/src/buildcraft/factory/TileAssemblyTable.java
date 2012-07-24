@@ -14,7 +14,6 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftSilicon;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -23,6 +22,7 @@ import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
 public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection {

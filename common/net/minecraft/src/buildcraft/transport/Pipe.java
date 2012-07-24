@@ -25,7 +25,6 @@ import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.gates.Action;
 import net.minecraft.src.buildcraft.api.gates.ActionManager;
 import net.minecraft.src.buildcraft.api.gates.IAction;
@@ -40,6 +39,7 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.IndexInPayload;
 import net.minecraft.src.buildcraft.core.network.PacketPayload;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 import net.minecraft.src.buildcraft.transport.Gate.GateConditional;
 

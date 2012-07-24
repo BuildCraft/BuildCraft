@@ -7,7 +7,7 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.core.network;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;

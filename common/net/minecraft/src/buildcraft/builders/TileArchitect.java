@@ -19,7 +19,6 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.BptBase;
 import net.minecraft.src.buildcraft.core.BptBlueprint;
@@ -28,6 +27,7 @@ import net.minecraft.src.buildcraft.core.BptTemplate;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 
 public class TileArchitect extends TileBuildCraft implements IInventory {
 

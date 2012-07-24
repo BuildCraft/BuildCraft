@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.src.BuildCraftCore;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 
 public class ClassMapping {
 

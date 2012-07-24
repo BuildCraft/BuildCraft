@@ -17,7 +17,6 @@ import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
@@ -25,6 +24,7 @@ import net.minecraft.src.buildcraft.api.power.PowerProvider;
 import net.minecraft.src.buildcraft.core.BlockIndex;
 import net.minecraft.src.buildcraft.core.EntityEnergyLaser;
 import net.minecraft.src.buildcraft.core.TileBuildCraft;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 import net.minecraft.src.buildcraft.factory.TileAssemblyTable;
 
 public class TileLaser extends TileBuildCraft implements IPowerReceptor {

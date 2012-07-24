@@ -20,7 +20,6 @@ import net.minecraft.src.mod_BuildCraftTransport;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
-import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
@@ -28,6 +27,7 @@ import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketNBT;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 import net.minecraft.src.buildcraft.core.utils.SimpleInventory;
 
