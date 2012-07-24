@@ -90,6 +90,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			pipe.writeToNBT(nbttagcompound);
 		} else
 			nbttagcompound.setInteger("pipeId", key);
+		
+		for (int i = 0; i < Orientations.dirs().length; i++){
+			nbttagcompound.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
+			nbttagcompound.setInteger("facadeMeta[" + i + "]", facadeMeta[i]);
+		}
+
 	}
 
 	@Override
@@ -103,6 +109,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (pipe != null) {
 			pipe.readFromNBT(nbttagcompound);
 		}
+		
+		for (int i = 0; i < Orientations.dirs().length; i++){
+			facadeBlocks[i] = nbttagcompound.getInteger("facadeBlocks[" + i + "]");
+			facadeMeta[i] = nbttagcompound.getInteger("facadeMeta[" + i + "]");
+		}
+
 	}
 
 	@Override
