@@ -18,13 +18,14 @@ import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.IMachine;
 import net.minecraft.src.buildcraft.core.StackUtil;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.core.network.PacketIds;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.core.network.TilePacketWrapper;
 
-public class TileAssemblyTable extends TileEntity implements IInventory, IPipeConnection {
+public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection {
 
 	ItemStack[] items = new ItemStack[12];
 
@@ -431,6 +432,26 @@ public class TileAssemblyTable extends TileEntity implements IInventory, IPipeCo
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
 		iCrafting.updateCraftingInventoryInfo(container, 0, (int) currentRequiredEnergy);
 		iCrafting.updateCraftingInventoryInfo(container, 1, (int) energyStored);
+	}
+
+	@Override
+	public boolean isActive() {
+		return currentRecipe != null;
+	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return false;
+	}
+
+	@Override
+	public boolean allowActions() {
+		return false;
 	}
 
 }

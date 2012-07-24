@@ -102,6 +102,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			IInventory inventory = (IInventory) tile;
 
 			ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.reverse());
+			if (extracted == null)
+				return;
 
 			for(ItemStack stack : extracted) {
 			if (stack == null || stack.stackSize == 0) {
