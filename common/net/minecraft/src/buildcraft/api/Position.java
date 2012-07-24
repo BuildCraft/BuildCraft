@@ -66,6 +66,7 @@ public class Position {
 		case XNeg:
 			z = z - step;
 			break;
+		default:
 		}
 	}
 
@@ -93,6 +94,7 @@ public class Position {
 		case XNeg:
 			x = x - step;
 			break;
+		default:
 		}
 	}
 
@@ -108,6 +110,7 @@ public class Position {
 		case XNeg:
 			y = y + step;
 			break;
+		default:
 		}
 
 	}
