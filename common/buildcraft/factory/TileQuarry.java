@@ -237,7 +237,9 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 		if (!findTarget(true)) {
 			
-			arm.setTarget(box.xMin + arm.sizeX / 2, yCoord + 2, box.zMin + arm.sizeX / 2);
+			//I believe the issue is box going null becuase of bad chunkloader positioning
+			if (arm != null && box != null)
+				arm.setTarget(box.xMin + arm.sizeX / 2, yCoord + 2, box.zMin + arm.sizeX / 2);
 
 			isDigging = false;
 		}
