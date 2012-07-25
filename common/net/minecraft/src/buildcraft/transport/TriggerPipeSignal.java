@@ -9,9 +9,9 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
+import net.minecraft.src.buildcraft.api.transport.IPipe;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class TriggerPipeSignal extends Trigger implements ITriggerPipe {

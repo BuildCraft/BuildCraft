@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.IPipe;
+import net.minecraft.src.buildcraft.api.transport.IPipe;
 
 public interface ITriggerProvider {
 

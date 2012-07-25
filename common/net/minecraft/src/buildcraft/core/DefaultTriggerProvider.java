@@ -11,7 +11,7 @@ import net.minecraft.src.buildcraft.api.gates.ITrigger;
 import net.minecraft.src.buildcraft.api.gates.ITriggerProvider;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
-import net.minecraft.src.buildcraft.api.IPipe;
+import net.minecraft.src.buildcraft.api.transport.IPipe;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 

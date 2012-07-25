@@ -7,9 +7,12 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.transport;
 
-public interface IPipeConnection {
 
-	public boolean isPipeConnected(Orientations with);
+public interface IPipeTile {
+
+	IPipe getPipe();
+
+	boolean isInitialized();
 }

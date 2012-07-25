@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.gates.Action;
 import net.minecraft.src.buildcraft.api.gates.ActionManager;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
+import net.minecraft.src.buildcraft.api.transport.IPipe;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.ItemBuildCraft;

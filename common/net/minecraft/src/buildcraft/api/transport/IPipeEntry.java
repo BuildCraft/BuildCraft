@@ -7,9 +7,9 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.transport;
 
-import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+import net.minecraft.src.buildcraft.api.Orientations;
 
 /**
  * Interface used to put objects into pipes, implemented by pipe tile entities.

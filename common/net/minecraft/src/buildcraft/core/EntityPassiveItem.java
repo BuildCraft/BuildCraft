@@ -20,17 +20,16 @@ import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.IPassiveItemContribution;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.api.transport.IPassiveItemContribution;
 import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+import net.minecraft.src.buildcraft.api.transport.PipeManager;
 
 public class EntityPassiveItem implements IPipedItem {
 
 	private static TreeMap<String, IPassiveItemContribution> contributions = new TreeMap<String, IPassiveItemContribution>();
-	public static TreeMap<Integer, EntityPassiveItem> allEntities = new TreeMap<Integer, EntityPassiveItem>();
-
 	protected static int maxId = 0;
 	protected World worldObj;
 
@@ -53,7 +52,7 @@ public class EntityPassiveItem implements IPipedItem {
 
 	public EntityPassiveItem(World world, int id) {
 		setEntityId(id);
-		allEntities.put(getEntityId(), this);
+		PipeManager.allEntities.put(getEntityId(), this);
 		worldObj = world;
 	}
 
@@ -70,8 +69,8 @@ public class EntityPassiveItem implements IPipedItem {
 
 	/* CREATING & CACHING */
 	public static IPipedItem getOrCreate(World world, int id) {
-		if (allEntities.containsKey(id)) {
-			return allEntities.get(id);
+		if (PipeManager.allEntities.containsKey(id)) {
+			return PipeManager.allEntities.get(id);
 		} else {
 			return new EntityPassiveItem(world, id);
 		}
@@ -82,8 +81,8 @@ public class EntityPassiveItem implements IPipedItem {
 	 */
 	@Override
 	public void remove() {
-		if (allEntities.containsKey(getEntityId())) {
-			allEntities.remove(getEntityId());
+		if (PipeManager.allEntities.containsKey(getEntityId())) {
+			PipeManager.allEntities.remove(getEntityId());
 		}
 	}
 

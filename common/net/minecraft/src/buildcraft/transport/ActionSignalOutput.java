@@ -9,8 +9,8 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.IPipe;
 import net.minecraft.src.buildcraft.api.gates.Action;
+import net.minecraft.src.buildcraft.api.transport.IPipe;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class ActionSignalOutput extends Action {
