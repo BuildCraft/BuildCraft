@@ -55,6 +55,8 @@ public class BuildCraftEnergy {
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 
 	private static boolean initialized = false;
+	public static boolean Comb_Engines_Cooldown;
+	public static int Comb_Engine_Cooldown_Time;
 
 	public static Trigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.Blue);
 	public static Trigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT,
@@ -91,6 +93,13 @@ public class BuildCraftEnergy {
 				Configuration.CATEGORY_ITEM, DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("fuel.id", Configuration.CATEGORY_ITEM,
 				DefaultProps.FUEL_ID);
+		
+		Property Comb_Cool = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("energy.Combustions.Cool", Configuration.CATEGORY_GENERAL,
+				DefaultProps.COMB_ENGINE_COOL);
+		Comb_Cool.comment = "If set to true combustions engines will cool down instead of exploding. This is to solve the SMP water issues. For balance an additional cooldown penalty config is Combustion_Cool_Time.";
+		Property Comb_Cool_Time = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("energy.Combustions.Cool.Time", Configuration.CATEGORY_GENERAL,
+				DefaultProps.COMB_ENGINE_COOL_TIME);
+		Comb_Cool_Time.comment = "If Comb_Engines_Cool is set to true this defines the penalty time that the engine endures AFTER it finishs cooling to 0 heat (in seconds) before restarting";
 
 		BuildCraftCore.mainConfiguration.save();
 
@@ -147,6 +156,9 @@ public class BuildCraftEnergy {
 
 		new BptBlockEngine(engineBlock.blockID);
 
+		Comb_Engines_Cooldown = Boolean.parseBoolean(Comb_Cool.value);
+		Comb_Engine_Cooldown_Time = Integer.parseInt(Comb_Cool_Time.value);
+		
 		if (BuildCraftCore.loadDefaultRecipes)
 			loadRecipes();
 	}

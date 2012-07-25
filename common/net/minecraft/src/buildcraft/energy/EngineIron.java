@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BuildCraftEnergy;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -170,7 +171,12 @@ public class EngineIron extends Engine {
 		} else if (heat <= MAX_HEAT) {
 			energyStage = EnergyStage.Red;
 		} else {
-			energyStage = EnergyStage.Explosion;
+			if (!BuildCraftEnergy.Comb_Engines_Cooldown) {
+				energyStage = EnergyStage.Explosion;
+			} else {
+				heat = MAX_HEAT;
+				penaltyCooling = BuildCraftEnergy.Comb_Engine_Cooldown_Time * 20;
+			}
 		}
 	}
 
