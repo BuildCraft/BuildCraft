@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import net.minecraft.src.buildcraft.api.BptBlock;
+import net.minecraft.src.buildcraft.api.blueprints.BptBlock;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockBed;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockCustomStack;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockDelegate;

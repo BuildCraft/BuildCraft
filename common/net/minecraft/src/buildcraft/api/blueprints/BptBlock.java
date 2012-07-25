@@ -7,7 +7,7 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +17,7 @@ import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 
 /**
  * This class allow to specify specific behavior for blocks stored in
@@ -58,7 +59,7 @@ public class BptBlock {
 	public BptBlock(int blockId) {
 		this.blockId = blockId;
 
-		BuildCraftAPI.blockBptProps[blockId] = this;
+		BlueprintManager.blockBptProps[blockId] = this;
 	}
 
 	/**
@@ -244,7 +245,7 @@ public class BptBlock {
 			return false;
 		}
 
-		BlockSignature inst = BuildCraftAPI.getBlockSignature(block);
+		BlockSignature inst = BlueprintManager.getBlockSignature(block);
 
 		return starMatch(sig.blockName, inst.blockName) && starMatch(sig.blockClassName, inst.blockClassName)
 				&& starMatch(sig.tileClassName, inst.tileClassName) && starMatch(sig.customField, inst.customField)

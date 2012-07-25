@@ -13,9 +13,9 @@ import java.util.LinkedList;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.api.BptSlotInfo;
-import net.minecraft.src.buildcraft.api.IBptContext;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
+import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockUtils;
 import net.minecraft.src.buildcraft.core.BptItem;
 

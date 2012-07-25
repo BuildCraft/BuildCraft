@@ -12,9 +12,9 @@ package net.minecraft.src.buildcraft.transport;
 import java.util.LinkedList;
 
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.api.BptSlotInfo;
-import net.minecraft.src.buildcraft.api.IBptContext;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
+import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
 import net.minecraft.src.buildcraft.core.BptItem;
 
 public class BptItemPipeWodden extends BptItem {

@@ -7,10 +7,12 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.blueprints;
 
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.IBox;
+import net.minecraft.src.buildcraft.api.Position;
 
 /**
  * This interface provide contextual information when building or initializing

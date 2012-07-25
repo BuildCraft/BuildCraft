@@ -14,10 +14,10 @@ import java.util.LinkedList;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.buildcraft.api.blueprints.BlueprintManager;
+import net.minecraft.src.buildcraft.api.blueprints.BptBlock;
 import net.minecraft.src.buildcraft.api.gates.Action;
 import net.minecraft.src.buildcraft.api.gates.IAction;
 import net.minecraft.src.buildcraft.api.gates.IActionProvider;
@@ -31,12 +31,7 @@ public class BuildCraftAPI {
 	public static final int LAST_ORIGINAL_BLOCK = 122;
 	public static final int LAST_ORIGINAL_ITEM = 126;
 
-	// BuildCraft additional block and item data
-
 	public static boolean[] softBlocks = new boolean[Block.blocksList.length];
-	public static BptBlock[] blockBptProps = new BptBlock[Block.blocksList.length];
-
-	// Other BuildCraft global data
 	private static EntityPlayer buildCraftPlayer;
 
 	/**
@@ -74,29 +69,13 @@ public class BuildCraftAPI {
 		return buildCraftPlayer;
 	}
 
-	public static BlockSignature getBlockSignature(Block block) {
-		return blockBptProps[0].getSignature(block);
-	}
-
-	public static ItemSignature getItemSignature(Item item) {
-		ItemSignature sig = new ItemSignature();
-
-		if (item.shiftedIndex >= Block.blocksList.length + BuildCraftAPI.LAST_ORIGINAL_ITEM) {
-			sig.itemClassName = item.getClass().getSimpleName();
-		}
-
-		sig.itemName = item.getItemNameIS(new ItemStack(item));
-
-		return sig;
-	}
-	
 	static {
 		for (int i = 0; i < softBlocks.length; ++i) {
 			softBlocks[i] = false;
 		}
 
 		// Initialize defaults for block properties.
-		for (int i = 0; i < blockBptProps.length; ++i) {
+		for (int i = 0; i < BlueprintManager.blockBptProps.length; ++i) {
 			new BptBlock(i);
 		}
 	}

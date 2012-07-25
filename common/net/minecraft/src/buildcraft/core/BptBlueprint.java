@@ -24,12 +24,12 @@ import net.minecraft.src.NBTBase;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.BlockSignature;
-import net.minecraft.src.buildcraft.api.BptBlock;
-import net.minecraft.src.buildcraft.api.BptSlotInfo;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.IBptContext;
-import net.minecraft.src.buildcraft.api.ItemSignature;
+import net.minecraft.src.buildcraft.api.blueprints.BlockSignature;
+import net.minecraft.src.buildcraft.api.blueprints.BlueprintManager;
+import net.minecraft.src.buildcraft.api.blueprints.BptBlock;
+import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
+import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
+import net.minecraft.src.buildcraft.api.blueprints.ItemSignature;
 
 public class BptBlueprint extends BptBase {
 
@@ -115,9 +115,9 @@ public class BptBlueprint extends BptBase {
 
 		for (Integer id : idsToMap) {
 			if (id < Block.blocksList.length && Block.blocksList[id] != null)
-				writer.write(BuildCraftAPI.getBlockSignature(Block.blocksList[id]) + "=" + id);
+				writer.write(BlueprintManager.getBlockSignature(Block.blocksList[id]) + "=" + id);
 			else
-				writer.write(BuildCraftAPI.getItemSignature(Item.itemsList[id]) + "=" + id);
+				writer.write(BlueprintManager.getItemSignature(Item.itemsList[id]) + "=" + id);
 
 			writer.newLine();
 		}
@@ -224,9 +224,9 @@ public class BptBlueprint extends BptBase {
 
 				} else {
 					BlockSignature bptSignature = new BlockSignature(parts[0]);
-					BptBlock defaultBlock = BuildCraftAPI.blockBptProps[0];
+					BptBlock defaultBlock = BlueprintManager.blockBptProps[0];
 
-					BptBlock handlingBlock = BuildCraftAPI.blockBptProps[blockId];
+					BptBlock handlingBlock = BlueprintManager.blockBptProps[blockId];
 
 					if (handlingBlock == null)
 						handlingBlock = defaultBlock;
@@ -236,7 +236,7 @@ public class BptBlueprint extends BptBase {
 
 						for (int i = 0; i < Block.blocksList.length; ++i)
 							if (Block.blocksList[i] != null) {
-								handlingBlock = BuildCraftAPI.blockBptProps[i];
+								handlingBlock = BlueprintManager.blockBptProps[i];
 
 								if (handlingBlock == null)
 									handlingBlock = defaultBlock;

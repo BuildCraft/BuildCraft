@@ -9,8 +9,8 @@
 
 package net.minecraft.src.buildcraft.api.bptblocks;
 
-import net.minecraft.src.buildcraft.api.BptSlotInfo;
-import net.minecraft.src.buildcraft.api.IBptContext;
+import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
+import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockPiston extends BptBlockRotateMeta {
 

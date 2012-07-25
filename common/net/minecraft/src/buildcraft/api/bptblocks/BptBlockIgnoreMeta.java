@@ -12,9 +12,9 @@ package net.minecraft.src.buildcraft.api.bptblocks;
 import java.util.LinkedList;
 
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.api.BptBlock;
-import net.minecraft.src.buildcraft.api.BptSlotInfo;
-import net.minecraft.src.buildcraft.api.IBptContext;
+import net.minecraft.src.buildcraft.api.blueprints.BptBlock;
+import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
+import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
 
 public class BptBlockIgnoreMeta extends BptBlock {
 

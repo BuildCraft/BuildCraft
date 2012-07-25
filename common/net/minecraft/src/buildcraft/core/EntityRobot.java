@@ -21,9 +21,9 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
 import net.minecraft.src.buildcraft.core.BptSlot.Mode;
 import net.minecraft.src.forge.ISpawnHandler;
 
