@@ -22,6 +22,7 @@ import buildcraft.core.IMachine;
 import buildcraft.core.Utils;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.network.PacketPowerUpdate;
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
@@ -179,7 +180,10 @@ public class PipeTransportPower extends PipeTransport {
 		if (this.container.pipe instanceof IPipeTransportPowerHook)
 			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
 		else {
-			internalNextPower[from.ordinal()] += val * (1 - powerResitance);
+			if (BuildCraftTransport.usePipeLoss)
+				internalNextPower[from.ordinal()] += val * (1 - powerResitance);
+			else
+				internalNextPower[from.ordinal()] += val;
 
 			if (internalNextPower[from.ordinal()] >= 1000)
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2);

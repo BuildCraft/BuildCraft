@@ -114,6 +114,10 @@ public class DefaultProps {
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;
 	public static boolean FILLER_DESTROY = false;
+	public static boolean USE_PIPELOSS = true;
+	public static boolean COMB_ENGINE_COOL = false; //Instead of exploding the combustion engine have a cooldown (SMP water glitch solution)
+	
+	public static int COMB_ENGINE_COOL_TIME = 60 * 20; //60 seconds + the time it takes the engine to cool
 
 	public static int TRIGGER_REDSTONE_ACTIVE = 1;
 	public static int TRIGGER_REDSTONE_INACTIVE = 2;
