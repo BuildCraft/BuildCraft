@@ -11,7 +11,7 @@ package net.minecraft.src;
 import java.io.File;
 import java.util.TreeMap;
 
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.gates.Action;
 import net.minecraft.src.buildcraft.api.gates.ActionManager;
 import net.minecraft.src.buildcraft.api.gates.Trigger;

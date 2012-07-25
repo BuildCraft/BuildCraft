@@ -17,7 +17,7 @@ import net.minecraft.src.BuildCraftFactory;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;

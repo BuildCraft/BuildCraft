@@ -11,7 +11,7 @@ package net.minecraft.src;
 import java.util.Random;
 import java.util.TreeMap;
 
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.fuels.IronEngineCoolant;
 import net.minecraft.src.buildcraft.api.fuels.IronEngineFuel;
 import net.minecraft.src.buildcraft.api.gates.Trigger;

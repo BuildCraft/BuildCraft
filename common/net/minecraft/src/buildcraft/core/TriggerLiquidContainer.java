@@ -10,7 +10,7 @@
 package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.gates.ITriggerParameter;
 import net.minecraft.src.buildcraft.api.gates.Trigger;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;

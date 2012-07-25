@@ -11,7 +11,7 @@ package net.minecraft.src.buildcraft.factory;
 
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.liquids.LiquidManager;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.api.recipes.RefineryRecipe;

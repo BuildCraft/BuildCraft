@@ -16,7 +16,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.liquids.ITankContainer;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.Utils;

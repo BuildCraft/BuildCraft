@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.core.network.PacketCoordinates;
 import net.minecraft.src.buildcraft.core.network.PacketIds;

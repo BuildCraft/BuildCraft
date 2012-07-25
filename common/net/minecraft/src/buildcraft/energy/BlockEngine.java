@@ -22,7 +22,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_BuildCraftEnergy;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.GuiIds;
 import net.minecraft.src.buildcraft.core.IItemPipe;

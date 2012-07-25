@@ -5,9 +5,9 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.api.core.Orientations;
+import net.minecraft.src.buildcraft.api.core.Position;
+import net.minecraft.src.buildcraft.api.core.SafeTimeTracker;
 
 public interface IPipedItem {
 

@@ -12,7 +12,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftSilicon;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.src.buildcraft.api.transport.IPipeConnection;
 import net.minecraft.src.buildcraft.core.CoreProxy;

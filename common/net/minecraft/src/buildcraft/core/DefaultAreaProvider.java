@@ -9,7 +9,7 @@
 
 package net.minecraft.src.buildcraft.core;
 
-import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.core.IAreaProvider;
 
 public class DefaultAreaProvider implements IAreaProvider {
 

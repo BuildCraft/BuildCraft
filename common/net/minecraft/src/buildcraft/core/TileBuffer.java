@@ -13,7 +13,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.SafeTimeTracker;
+import net.minecraft.src.buildcraft.api.core.SafeTimeTracker;
 
 public class TileBuffer {
 

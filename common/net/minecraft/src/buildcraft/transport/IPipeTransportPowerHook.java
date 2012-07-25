@@ -9,7 +9,7 @@
 
 package net.minecraft.src.buildcraft.transport;
 
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 
 public interface IPipeTransportPowerHook {
 

@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.gates.Action;
 import net.minecraft.src.buildcraft.api.gates.ActionManager;
 import net.minecraft.src.buildcraft.api.gates.Trigger;

@@ -12,7 +12,7 @@ package net.minecraft.src.buildcraft.api.fuels;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 
 public class IronEngineFuel {

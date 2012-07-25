@@ -14,8 +14,8 @@ import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.IBox;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.IBox;
 import net.minecraft.src.buildcraft.api.filler.IFillerPattern;
 
 public abstract class FillerPattern implements IFillerPattern {

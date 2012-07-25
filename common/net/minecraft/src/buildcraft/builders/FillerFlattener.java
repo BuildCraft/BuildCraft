@@ -11,8 +11,8 @@ package net.minecraft.src.buildcraft.builders;
 
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.IBox;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.IBox;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 
 public class FillerFlattener extends FillerPattern {

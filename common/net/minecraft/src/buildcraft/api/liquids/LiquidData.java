@@ -11,7 +11,7 @@ package net.minecraft.src.buildcraft.api.liquids;
 
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 
 public class LiquidData {
 

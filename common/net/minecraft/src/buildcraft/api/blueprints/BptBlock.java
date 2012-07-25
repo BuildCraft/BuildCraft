@@ -17,7 +17,7 @@ import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 
 /**
  * This class allow to specify specific behavior for blocks stored in

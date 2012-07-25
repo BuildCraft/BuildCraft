@@ -11,9 +11,9 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IBox;
-import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
+import net.minecraft.src.buildcraft.api.core.IBox;
+import net.minecraft.src.buildcraft.api.core.Position;
 
 public class BptContext implements IBptContext {
 

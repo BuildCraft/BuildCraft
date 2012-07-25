@@ -13,7 +13,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.transport.IPipe;
 import net.minecraft.src.buildcraft.api.transport.IPipe.WireColor;
 import net.minecraft.src.buildcraft.core.DefaultProps;

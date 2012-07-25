@@ -11,7 +11,7 @@ package net.minecraft.src.buildcraft.core;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.IAreaProvider;
+import net.minecraft.src.buildcraft.api.core.IAreaProvider;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 

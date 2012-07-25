@@ -17,7 +17,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.core.Position;
 import net.minecraft.src.forge.ISpawnHandler;
 
 public class EntityLaser extends Entity implements ISpawnHandler {

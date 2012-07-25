@@ -1,6 +1,6 @@
 package net.minecraft.src.buildcraft.core.network;
 
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.transport.IPipedItem;
 
 public class PacketPipeTransportContent extends PacketUpdate {

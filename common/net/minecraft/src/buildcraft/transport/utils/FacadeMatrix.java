@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 
 public class FacadeMatrix extends ConnectionMatrix {
 	private String[] _textureFiles = new String[Orientations.dirs().length];

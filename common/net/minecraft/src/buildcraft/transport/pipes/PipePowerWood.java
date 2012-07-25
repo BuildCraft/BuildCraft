@@ -9,7 +9,7 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;

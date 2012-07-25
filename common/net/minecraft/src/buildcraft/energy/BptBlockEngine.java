@@ -11,11 +11,11 @@ package net.minecraft.src.buildcraft.energy;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.mod_BuildCraftEnergy;
-import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.blueprints.BlockSignature;
 import net.minecraft.src.buildcraft.api.blueprints.BptBlock;
 import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 
 public class BptBlockEngine extends BptBlock {
 

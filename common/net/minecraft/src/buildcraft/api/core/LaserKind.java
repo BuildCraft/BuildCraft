@@ -7,7 +7,7 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package net.minecraft.src.buildcraft.api;
+package net.minecraft.src.buildcraft.api.core;
 
 public enum LaserKind {
 	Red, Blue, Stripes

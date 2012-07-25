@@ -15,7 +15,7 @@ import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IInventoryRenderer;
 import net.minecraft.src.buildcraft.energy.Engine.EnergyStage;

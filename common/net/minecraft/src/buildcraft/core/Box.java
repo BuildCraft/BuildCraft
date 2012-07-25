@@ -15,10 +15,10 @@ import java.util.List;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.IAreaProvider;
-import net.minecraft.src.buildcraft.api.IBox;
-import net.minecraft.src.buildcraft.api.LaserKind;
-import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.core.IAreaProvider;
+import net.minecraft.src.buildcraft.api.core.IBox;
+import net.minecraft.src.buildcraft.api.core.LaserKind;
+import net.minecraft.src.buildcraft.api.core.Position;
 import net.minecraft.src.buildcraft.core.network.TileNetworkData;
 
 public class Box implements IBox {

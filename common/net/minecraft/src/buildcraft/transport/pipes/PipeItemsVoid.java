@@ -10,7 +10,7 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.EntityData;
 import net.minecraft.src.buildcraft.transport.IItemTravelingHook;

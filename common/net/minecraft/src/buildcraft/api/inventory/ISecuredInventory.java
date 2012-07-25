@@ -1,6 +1,6 @@
 package net.minecraft.src.buildcraft.api.inventory;
 
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 
 public interface ISecuredInventory {
 	

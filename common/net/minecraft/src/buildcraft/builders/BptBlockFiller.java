@@ -14,12 +14,12 @@ import java.util.LinkedList;
 import net.minecraft.src.BuildCraftBuilders;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.buildcraft.api.LaserKind;
-import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.blueprints.BptBlock;
 import net.minecraft.src.buildcraft.api.blueprints.BptSlotInfo;
 import net.minecraft.src.buildcraft.api.blueprints.IBptContext;
 import net.minecraft.src.buildcraft.api.bptblocks.BptBlockUtils;
+import net.minecraft.src.buildcraft.api.core.LaserKind;
+import net.minecraft.src.buildcraft.api.core.Position;
 import net.minecraft.src.buildcraft.core.Box;
 
 public class BptBlockFiller extends BptBlock {

@@ -9,7 +9,7 @@
 
 package net.minecraft.src;
 
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.NetworkMod;

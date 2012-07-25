@@ -10,8 +10,8 @@ package net.minecraft.src.buildcraft.transport.pipes;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.buildcraft.api.Orientations;
-import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.core.Orientations;
+import net.minecraft.src.buildcraft.api.core.Position;
 import net.minecraft.src.buildcraft.api.transport.IPipedItem;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;

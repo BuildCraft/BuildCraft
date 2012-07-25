@@ -9,7 +9,7 @@
 
 package net.minecraft.src.buildcraft.api.transport;
 
-import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.core.Orientations;
 
 /**
  * Interface used to put objects into pipes, implemented by pipe tile entities.

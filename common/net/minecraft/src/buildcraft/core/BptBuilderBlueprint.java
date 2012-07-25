@@ -18,7 +18,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.BuildCraftAPI;
+import net.minecraft.src.buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.buildcraft.core.BptSlot.Mode;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
