@@ -9,7 +9,10 @@
 
 package buildcraft.transport;
 
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftTransport;
 import buildcraft.mod_BuildCraftCore;
 import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
@@ -22,9 +25,6 @@ import buildcraft.core.IMachine;
 import buildcraft.core.Utils;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.network.PacketPowerUpdate;
-import net.minecraft.src.BuildCraftTransport;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
 
 public class PipeTransportPower extends PipeTransport {
 	
