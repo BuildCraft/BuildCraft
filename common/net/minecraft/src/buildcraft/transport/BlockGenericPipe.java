@@ -15,7 +15,6 @@ import java.util.TreeMap;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
@@ -28,17 +27,14 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.IBlockPipe;
 import net.minecraft.src.buildcraft.api.IPipe;
-import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.tools.IToolWrench;
 import net.minecraft.src.buildcraft.core.BlockIndex;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITextureProvider {
+public class BlockGenericPipe extends BlockContainer implements ITextureProvider {
 
 	/** Defined subprograms **************************************************/
 
@@ -49,7 +45,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftCore.pipeModel;
+		return BuildCraftTransport.pipeModel;
 	}
 
 	@Override
@@ -254,10 +250,10 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	/** Wrappers *************************************************************/
 
 	@Override
-	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-		super.onNeighborBlockChange(world, i, j, k, l);
+	public void onNeighborBlockChange(World world, int x, int y, int z, int l) {
+		super.onNeighborBlockChange(world, x, y, z, l);
 
-		Pipe pipe = getPipe(world, i, j, k);
+		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
 			pipe.container.scheduleNeighborChange();
@@ -272,7 +268,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 		if (isValid(pipe))
 			pipe.onBlockPlaced();
 	}
-
+	
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		super.blockActivated(world, i, j, k, entityplayer);
@@ -305,7 +301,8 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 				if (!pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
-					world.markBlockNeedsUpdate(i, j, k);
+					pipe.container.scheduleRenderUpdate();
+					//world.markBlockNeedsUpdate(i, j, k);
 
 					return true;
 				}
@@ -313,7 +310,8 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 				if (!pipe.wireSet[IPipe.WireColor.Blue.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
-					world.markBlockNeedsUpdate(i, j, k);
+					pipe.container.scheduleRenderUpdate();
+					//world.markBlockNeedsUpdate(i, j, k);
 
 					return true;
 				}
@@ -321,7 +319,8 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 				if (!pipe.wireSet[IPipe.WireColor.Green.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
-					world.markBlockNeedsUpdate(i, j, k);
+					pipe.container.scheduleRenderUpdate();
+					//world.markBlockNeedsUpdate(i, j, k);
 
 					return true;
 				}
@@ -329,7 +328,8 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 				if (!pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
-					world.markBlockNeedsUpdate(i, j, k);
+					pipe.container.scheduleRenderUpdate();
+					//world.markBlockNeedsUpdate(i, j, k);
 
 					return true;
 				}
@@ -339,7 +339,8 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 					pipe.gate = new GateVanilla(pipe, entityplayer.getCurrentEquippedItem());
 					entityplayer.getCurrentEquippedItem().splitStack(1);
-					world.markBlockNeedsUpdate(i, j, k);
+					pipe.container.scheduleRenderUpdate();
+					//world.markBlockNeedsUpdate(i, j, k);
 
 					return true;
 				}
@@ -363,7 +364,8 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 				if (!APIProxy.isRemote())
 					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 				pipe.wireSet[color.reverse().ordinal()] = false;
-				pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+				//pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+				pipe.container.scheduleRenderUpdate();
 				return true;
 			}
 
@@ -403,28 +405,26 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 
 	}
 
-	@Override
-	public void prepareTextureFor(IBlockAccess blockAccess, int i, int j, int k, Orientations connection) {
-		Pipe pipe = getPipe(blockAccess, i, j, k);
-
-		if (isValid(pipe))
-			pipe.prepareTextureFor(connection);
-	}
-
 	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		Pipe pipe = getPipe(iblockaccess, i, j, k);
-		if (!isValid(pipe)) {
-			CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-			return 0;
-		}
-		int pipeTexture = pipe.getPipeTexture();
-		if (pipeTexture > 255) {
-			CoreProxy.BindTexture(DefaultProps.TEXTURE_EXTERNAL);
-			return pipeTexture - 256;
-		}
-		CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-		return pipeTexture;
+		
+		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
+		if (!(tile instanceof IPipeRenderState)) return 0;
+		return ((IPipeRenderState)tile).getRenderState().currentTextureIndex;
+		
+		
+//		Pipe pipe = getPipe(iblockaccess, i, j, k);
+//		if (!isValid(pipe)) {
+//			CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
+//			return 0;
+//		}
+//		int pipeTexture = pipe.getPipeTexture();
+//		if (pipeTexture > 255) {
+//			CoreProxy.BindTexture(DefaultProps.TEXTURE_EXTERNAL);
+//			return pipeTexture - 256;
+//		}
+//		CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
+//		return pipeTexture;
 	}
 
 	@Override
@@ -478,11 +478,17 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	static long lastRemovedDate = -1;
 	public static TreeMap<BlockIndex, Pipe> pipeRemoved = new TreeMap<BlockIndex, Pipe>();
 
-	public static Item registerPipe(int key, Class<? extends Pipe> clas) {
-		Item item = new ItemPipe(key);
+	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
+		ItemPipe item = new ItemPipe(key);
 
 		pipes.put(item.shiftedIndex, clas);
-
+		
+		Pipe dummyPipe = createPipe(item.shiftedIndex);
+		if (dummyPipe != null){
+			item.setTextureFile(dummyPipe.getTextureFile());
+			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
+		}
+		
 		return item;
 	}
 
@@ -504,6 +510,7 @@ public class BlockGenericPipe extends BlockContainer implements IBlockPipe, ITex
 	}
 	
 	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockId, int meta) {
+		if (world.isRemote) return true;
 		
 		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta);
 		

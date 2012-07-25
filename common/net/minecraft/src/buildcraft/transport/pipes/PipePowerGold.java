@@ -8,6 +8,8 @@
 
 package net.minecraft.src.buildcraft.transport.pipes;
 
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicGold;
 import net.minecraft.src.buildcraft.transport.PipeTransportPower;
@@ -19,10 +21,16 @@ public class PipePowerGold extends Pipe {
 
 		((PipeTransportPower) transport).powerResitance = 0.001;
 	}
-
+	
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 7 * 16 + 10;
 	}
+
 
 }

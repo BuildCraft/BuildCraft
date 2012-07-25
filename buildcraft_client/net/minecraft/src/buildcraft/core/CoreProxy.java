@@ -86,21 +86,6 @@ public class CoreProxy {
 
 	}
 
-	/**
-	 * Adds an override to the buildcraft texture file, mainly to provide pipes
-	 * with icons.
-	 */
-	public static int addCustomTexture(String pathToTexture) {
-		if (!registeredOverrideTextureMap) {
-			char[] map = new char[256];
-			// every slot is free!
-			Arrays.fill(map, '1');
-			SpriteHelper.registerSpriteMapForFile(DefaultProps.TEXTURE_EXTERNAL, new String(map));
-			registeredOverrideTextureMap = true;
-		}
-		return ModLoader.addOverride(DefaultProps.TEXTURE_EXTERNAL, pathToTexture) + 256;
-	}
-
 	public static void TakenFromCrafting(EntityPlayer entityplayer, ItemStack itemstack, IInventory iinventory) {
 		ModLoader.takenFromCrafting(entityplayer, itemstack, iinventory);
 	}

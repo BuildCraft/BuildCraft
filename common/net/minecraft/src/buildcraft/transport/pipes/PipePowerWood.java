@@ -14,6 +14,7 @@ import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
 import net.minecraft.src.buildcraft.api.power.PowerProvider;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
@@ -26,7 +27,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	private int baseTexture = 7 * 16 + 6;
 	private int plainTexture = 1 * 16 + 15;
-	private int nextTexture = baseTexture;
 
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
@@ -37,8 +37,22 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int getMainBlockTexture() {
-		return nextTexture;
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
+		if (direction == Orientations.Unknown)
+			return baseTexture;
+		else {
+			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+			if (metadata == direction.ordinal())
+				return plainTexture;
+			else
+				return baseTexture;
+		}
 	}
 
 	@Override
@@ -86,24 +100,11 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 					pow.receiveEnergy(o.reverse(), energyUsed);
 
+					if (worldObj.isRemote) return;
 					((PipeTransportPower) transport).displayPower[o.ordinal()] += energyUsed;
 				}
 
 			}
-	}
-
-	@Override
-	public void prepareTextureFor(Orientations connection) {
-		if (connection == Orientations.Unknown)
-			nextTexture = baseTexture;
-		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == connection.ordinal())
-				nextTexture = plainTexture;
-			else
-				nextTexture = baseTexture;
-		}
 	}
 
 	@Override

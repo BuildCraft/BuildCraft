@@ -9,12 +9,14 @@
 
 package net.minecraft.src.buildcraft.api;
 
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+
 /**
  * Interface used to put objects into pipes, implemented by pipe tile entities.
  */
 public interface IPipeEntry {
 
-	public void entityEntering(EntityPassiveItem item, Orientations orientation);
+	public void entityEntering(IPipedItem item, Orientations orientation);
 
 	public boolean acceptItems();
 }

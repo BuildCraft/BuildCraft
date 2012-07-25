@@ -10,6 +10,8 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.EntityData;
 import net.minecraft.src.buildcraft.transport.IItemTravelingHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -24,14 +26,20 @@ public class PipeItemsVoid extends Pipe implements IItemTravelingHook{
 	}
 	
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 8 * 16 + 14;
 	}
+
 
 	//This is called if the void pipe is only connected to one pipe
 	@Override
 	public void drop(PipeTransportItems pipe, EntityData data) {
-		data.item.item.stackSize = 0;
+		data.item.getItemStack().stackSize = 0;
 	}
 
 	//This is called when the void pipe is connected to multiple pipes

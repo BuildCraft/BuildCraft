@@ -14,13 +14,14 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.IItemPipe;
 import net.minecraft.src.buildcraft.core.ItemBuildCraft;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	Pipe dummyPipe;
+	
+	private int textureIndex = 0;
 
 	protected ItemPipe(int i) {
 		super(i);
@@ -69,19 +70,13 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			return false;
 	}
 
-	@Override
-	public String getTextureFile() {
-		if (getTextureIndex() > 255) {
-			return DefaultProps.TEXTURE_EXTERNAL;
-		}
-		return DefaultProps.TEXTURE_BLOCKS;
+	public ItemPipe setTextureIndex(int textureIndex){
+		this.textureIndex = textureIndex;
+		return this;
 	}
-
+	
 	public int getTextureIndex() {
-		if (dummyPipe == null)
-			dummyPipe = BlockGenericPipe.createPipe(shiftedIndex);
-
-		return dummyPipe.getPipeTexture();
+		return textureIndex;
 	}
 
 }

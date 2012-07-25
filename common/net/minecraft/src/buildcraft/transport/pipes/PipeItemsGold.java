@@ -12,9 +12,10 @@ import java.util.LinkedList;
 
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.IPipeTransportItemsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -29,13 +30,18 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		if (worldObj != null && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
 			return 1 * 16 + 14;
 		else
 			return 1 * 16 + 4;
 	}
-
+	
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
 		if (!super.isPipeConnected(tile))
@@ -54,18 +60,18 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
-			EntityPassiveItem item) {
+			IPipedItem item) {
 		return possibleOrientations;
 	}
 
 	@Override
-	public void entityEntered(EntityPassiveItem item, Orientations orientation) {
+	public void entityEntered(IPipedItem item, Orientations orientation) {
 		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
-			item.speed = Utils.pipeNormalSpeed * 20F;
+			item.setSpeed(Utils.pipeNormalSpeed * 20F);
 	}
 
 	@Override
-	public void readjustSpeed(EntityPassiveItem item) {
+	public void readjustSpeed(IPipedItem item) {
 		((PipeTransportItems) transport).defaultReajustSpeed(item);
 	}
 }

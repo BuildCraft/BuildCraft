@@ -16,13 +16,15 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
 import net.minecraft.src.buildcraft.api.power.PowerProvider;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.EntityData;
@@ -47,9 +49,15 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 16 * 7 + 14;
 	}
+
 
 	@Override
 	public void doWork() {
@@ -66,7 +74,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 				if (stacks != null)
 					for (ItemStack s : stacks)
 						if (s != null) {
-							EntityPassiveItem newItem = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
+							IPipedItem newItem = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord
 									+ Utils.getPipeFloorOf(s), zCoord + 0.5, s);
 
 							this.container.entityEntering(newItem, o.reverse());
@@ -87,10 +95,10 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 			BuildCraftTransport.pipeItemsStipes.onItemUse(new ItemStack(BuildCraftTransport.pipeItemsStipes),
 					BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, (int) p.x, (int) p.y - 1, (int) p.z, 1);
 		else if (worldObj.getBlockId((int) p.x, (int) p.y, (int) p.z) == 0)
-			data.item.item.getItem().onItemUse(data.item.item, BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
+			data.item.getItemStack().getItem().onItemUse(data.item.getItemStack(), BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
 					(int) p.y - 1, (int) p.z, 1);
 		else
-			data.item.item.getItem().onItemUse(data.item.item, BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
+			data.item.getItemStack().getItem().onItemUse(data.item.getItemStack(), BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
 					(int) p.y, (int) p.z, 1);
 	}
 
@@ -102,20 +110,20 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	@SuppressWarnings("unchecked")
 	public boolean convertPipe(PipeTransportItems pipe, EntityData data) {
 		
-		if (data.item.item.getItem() instanceof ItemPipe)
+		if (data.item.getItemStack().getItem() instanceof ItemPipe)
 			
-			if (!(data.item.item.itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
+			if (!(data.item.getItemStack().itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
 				
-				Pipe newPipe = BlockGenericPipe.createPipe(data.item.item.itemID);
+				Pipe newPipe = BlockGenericPipe.createPipe(data.item.getItemStack().itemID);
 				newPipe.setTile(this.container);
 				this.container.pipe = newPipe;
 				((PipeTransportItems) newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
 						.clone();
 
-				data.item.item.stackSize--;
+				data.item.getItemStack().stackSize--;
 
-				if (data.item.item.stackSize <= 0)
-					((PipeTransportItems) newPipe.transport).travelingEntities.remove(data.item.entityId);
+				if (data.item.getItemStack().stackSize <= 0)
+					((PipeTransportItems) newPipe.transport).travelingEntities.remove(data.item.getEntityId());
 
 				pipe.scheduleRemoval(data.item);
 

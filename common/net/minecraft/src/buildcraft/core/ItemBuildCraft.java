@@ -18,16 +18,11 @@ public class ItemBuildCraft extends Item implements ITextureProvider {
 
 	public ItemBuildCraft(int i) {
 		super(i);
+		setTextureFile(DefaultProps.TEXTURE_ITEMS);
 	}
 
 	// @Override Client side only
 	public String getItemDisplayName(ItemStack itemstack) {
 		return StringUtil.localize(getItemNameIS(itemstack));
 	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_ITEMS;
-	}
-
 }

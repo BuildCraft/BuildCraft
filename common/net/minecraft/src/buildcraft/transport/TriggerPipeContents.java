@@ -82,8 +82,8 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			else if (kind == Kind.ContainsItems)
 				if (parameter != null && parameter.getItem() != null) {
 					for (EntityData data : transportItems.travelingEntities.values())
-						if (data.item.item.itemID == parameter.getItem().itemID
-								&& data.item.item.getItemDamage() == parameter.getItem().getItemDamage())
+						if (data.item.getItemStack().itemID == parameter.getItem().itemID
+								&& data.item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
 							return true;
 				} else
 					return !transportItems.travelingEntities.isEmpty();

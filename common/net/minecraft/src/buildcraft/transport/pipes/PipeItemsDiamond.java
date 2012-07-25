@@ -13,9 +13,10 @@ import java.util.LinkedList;
 import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.transport.IPipeTransportItemsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond;
@@ -23,28 +24,26 @@ import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 
 public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 
-	int nextTexture = 1 * 16 + 5;
-
 	public PipeItemsDiamond(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicDiamond(), itemID);
 	}
 
 	@Override
-	public int getMainBlockTexture() {
-		return nextTexture;
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
-
+	
 	@Override
-	public void prepareTextureFor(Orientations connection) {
-		if (connection == Orientations.Unknown)
-			nextTexture = 1 * 16 + 5;
-		else
-			nextTexture = BuildCraftTransport.diamondTextures[connection.ordinal()];
+	public int getTextureIndex(Orientations direction) {
+		if (direction == Orientations.Unknown){
+			return 1 * 16 + 5;
+		}
+		return BuildCraftTransport.diamondTextures[direction.ordinal()];
 	}
 
 	@Override
 	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
-			EntityPassiveItem item) {
+			IPipedItem item) {
 		LinkedList<Orientations> filteredOrientations = new LinkedList<Orientations>();
 		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
 
@@ -62,10 +61,10 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 				if (stack != null)
 					foundFilter = true;
 
-				if (stack != null && stack.itemID == item.item.itemID)
-					if ((Item.itemsList[item.item.itemID].isDamageable()))
+				if (stack != null && stack.itemID == item.getItemStack().itemID)
+					if ((Item.itemsList[item.getItemStack().itemID].isDamageable()))
 						filteredOrientations.add(dir);
-					else if (stack.getItemDamage() == item.item.getItemDamage())
+					else if (stack.getItemDamage() == item.getItemStack().getItemDamage())
 						filteredOrientations.add(dir);
 			}
 			if (!foundFilter)
@@ -78,12 +77,12 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public void entityEntered(EntityPassiveItem item, Orientations orientation) {
+	public void entityEntered(IPipedItem item, Orientations orientation) {
 
 	}
 
 	@Override
-	public void readjustSpeed(EntityPassiveItem item) {
+	public void readjustSpeed(IPipedItem item) {
 		((PipeTransportItems) transport).defaultReajustSpeed(item);
 	}
 

@@ -1,7 +1,7 @@
 package net.minecraft.src.buildcraft.core.network;
 
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
 
 public class PacketPipeTransportContent extends PacketUpdate {
 
@@ -9,7 +9,7 @@ public class PacketPipeTransportContent extends PacketUpdate {
 		super(PacketIds.PIPE_CONTENTS);
 	}
 
-	public PacketPipeTransportContent(int x, int y, int z, EntityPassiveItem item, Orientations orientation) {
+	public PacketPipeTransportContent(int x, int y, int z, IPipedItem item, Orientations orientation) {
 		this();
 
 		this.posX = x;
@@ -18,17 +18,17 @@ public class PacketPipeTransportContent extends PacketUpdate {
 
 		this.payload = new PacketPayload(6, 4, 0);
 
-		payload.intPayload[0] = item.entityId;
+		payload.intPayload[0] = item.getEntityId();
 		payload.intPayload[1] = orientation.ordinal();
-		payload.intPayload[2] = item.item.itemID;
-		payload.intPayload[3] = item.item.stackSize;
-		payload.intPayload[4] = item.item.getItemDamage();
-		payload.intPayload[5] = item.deterministicRandomization;
+		payload.intPayload[2] = item.getItemStack().itemID;
+		payload.intPayload[3] = item.getItemStack().stackSize;
+		payload.intPayload[4] = item.getItemStack().getItemDamage();
+		payload.intPayload[5] = item.getDeterministicRandomization();
 
-		payload.floatPayload[0] = (float) item.posX;
-		payload.floatPayload[1] = (float) item.posY;
-		payload.floatPayload[2] = (float) item.posZ;
-		payload.floatPayload[3] = item.speed;
+		payload.floatPayload[0] = (float) item.getPosition().x;
+		payload.floatPayload[1] = (float) item.getPosition().y;
+		payload.floatPayload[2] = (float) item.getPosition().z;
+		payload.floatPayload[3] = item.getSpeed();
 	}
 
 	public int getEntityId() {

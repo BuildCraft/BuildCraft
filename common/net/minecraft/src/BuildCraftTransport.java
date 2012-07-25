@@ -8,7 +8,10 @@
 
 package net.minecraft.src;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 import net.minecraft.src.buildcraft.api.BuildCraftAPI;
 import net.minecraft.src.buildcraft.api.IPipe;
@@ -27,7 +30,9 @@ import net.minecraft.src.buildcraft.transport.BptItemPipeDiamond;
 import net.minecraft.src.buildcraft.transport.BptItemPipeIron;
 import net.minecraft.src.buildcraft.transport.BptItemPipeWodden;
 import net.minecraft.src.buildcraft.transport.GuiHandler;
+import net.minecraft.src.buildcraft.transport.ItemFacade;
 import net.minecraft.src.buildcraft.transport.ItemGate;
+import net.minecraft.src.buildcraft.transport.ItemPipe;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTriggerProvider;
@@ -103,6 +108,8 @@ public class BuildCraftTransport {
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
 	public static Item pipePowerGold;
+	
+	public static Item facadeItem;
 
 	public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
@@ -134,6 +141,8 @@ public class BuildCraftTransport {
 	public static Action actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
 	public static Action actionYellowSignal = new ActionSignalOutput(DefaultProps.ACTION_YELLOW_SIGNAL, IPipe.WireColor.Yellow);
 	public static Action actionEnergyPulser = new ActionEnergyPulser(DefaultProps.ACTION_ENERGY_PULSER);
+	
+	public static int pipeModel;
 
 	private static class PipeRecipe {
 
@@ -302,6 +311,10 @@ public class BuildCraftTransport {
 
 		pipeGateAutarchic = new ItemGate(DefaultProps.GATE_AUTARCHIC_ID, 1).setIconIndex(2 * 16 + 3);
 		pipeGateAutarchic.setItemName("pipeGateAutarchic");
+		
+		facadeItem = new ItemFacade(DefaultProps.PIPE_FACADE_ID);
+		facadeItem.setItemName("pipeFacade");
+		ItemFacade.initialize();
 
 		alwaysConnectPipes = Boolean.parseBoolean(alwaysConnect.value);
 
@@ -344,7 +357,7 @@ public class BuildCraftTransport {
 				defaultID);
 
 		int id = Integer.parseInt(prop.value);
-		Item res = BlockGenericPipe.registerPipe(id, clas);
+		ItemPipe res = BlockGenericPipe.registerPipe(id, clas);
 		res.setItemName(clas.getSimpleName());
 		CoreProxy.addName(res, descr);
 
@@ -367,4 +380,10 @@ public class BuildCraftTransport {
 
 		return res;
 	}
+
+	public static void initializeModel(mod_BuildCraftTransport mod) {
+		pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
+	}
+	
+	
 }

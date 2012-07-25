@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.transport.pipes;
 
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.buildcraft.transport.IPipeTransportLiquidsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -22,10 +23,16 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 			super(new PipeTransportLiquids(), new PipeLogicSandstone(), itemID);
 	}
 	 
-	 @Override
-	public int getMainBlockTexture() {
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		 return 9 * 16 + 15;
 	}
+
 
 	@Override
 	public int fill(Orientations from, LiquidStack resource, boolean doFill) {

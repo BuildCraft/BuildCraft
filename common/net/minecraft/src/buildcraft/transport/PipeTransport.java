@@ -12,8 +12,8 @@ package net.minecraft.src.buildcraft.transport;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
 
 public abstract class PipeTransport {
 
@@ -77,7 +77,7 @@ public abstract class PipeTransport {
 		return false;
 	}
 
-	public void entityEntering(EntityPassiveItem item, Orientations orientation) {
+	public void entityEntering(IPipedItem item, Orientations orientation) {
 
 	}
 

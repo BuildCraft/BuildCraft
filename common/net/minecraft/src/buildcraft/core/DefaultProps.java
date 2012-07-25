@@ -22,7 +22,6 @@ public class DefaultProps {
 	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entities";
 	
 	public static String TEXTURE_BLOCKS = TEXTURE_PATH_BLOCKS + "/blocks.png";
-	public static String TEXTURE_EXTERNAL = TEXTURE_PATH_BLOCKS + "/external.png";
 	public static String TEXTURE_ITEMS = "/gfx/buildcraft/items/items.png";
 	public static String TEXTURE_ICONS = TEXTURE_PATH_GUI + "/icons.png";
 	public static String TEXTURE_TRIGGERS = TEXTURE_PATH_GUI + "/triggers.png";
@@ -50,6 +49,7 @@ public class DefaultProps {
 
 	// Moving to safer id range
 	public static int GATE_AUTARCHIC_ID = 19000;
+	public static int PIPE_FACADE_ID = 19001;
 
 	public static int PIPE_ITEMS_WOOD_ID = 4050;
 	public static int PIPE_ITEMS_COBBLESTONE_ID = 4051;

@@ -13,7 +13,6 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.inventory.ISpecialInventory;
@@ -22,6 +21,9 @@ import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
 import net.minecraft.src.buildcraft.api.power.PowerProvider;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
@@ -34,7 +36,6 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	private int baseTexture = 1 * 16 + 0;
 	private int plainTexture = 1 * 16 + 15;
-	private int nextTexture = baseTexture;
 
 	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
 		super(transport, new PipeLogicWood(), itemID);
@@ -49,23 +50,22 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int getMainBlockTexture() {
-		return nextTexture;
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
 	}
-
+	
 	@Override
-	public void prepareTextureFor(Orientations connection) {
-		if (connection == Orientations.Unknown)
-			nextTexture = baseTexture;
+	public int getTextureIndex(Orientations direction) {
+		if (direction == Orientations.Unknown)
+			return baseTexture;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-			if (metadata == connection.ordinal())
-				nextTexture = plainTexture;
+			if (metadata == direction.ordinal())
+				return plainTexture;
 			else
-				nextTexture = baseTexture;
+				return baseTexture;
 		}
-
 	}
 
 	@Override
@@ -107,21 +107,21 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 				return;
 
 			for(ItemStack stack : extracted) {
-				if (stack == null || stack.stackSize == 0) {
-					powerProvider.useEnergy(1, 1, false);
+			if (stack == null || stack.stackSize == 0) {
+				powerProvider.useEnergy(1, 1, false);
 					continue;
-				}
-
-				Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
-						pos.orientation.reverse());
-
-				entityPos.moveForwards(0.5);
-
-				EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
-
-				((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
 			}
+
+			Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
+					pos.orientation.reverse());
+
+			entityPos.moveForwards(0.5);
+
+			IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
+
+			((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
 		}
+	}
 	}
 
 	/**

@@ -25,7 +25,6 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import net.minecraft.src.World;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IAreaProvider;
 import net.minecraft.src.buildcraft.api.IPipeConnection;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -33,6 +32,7 @@ import net.minecraft.src.buildcraft.api.LaserKind;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.liquids.ILiquid;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
 import net.minecraft.src.buildcraft.core.network.ISynchronizedTile;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 
@@ -120,7 +120,7 @@ public class Utils {
 
 			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity((int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
 
-			EntityPassiveItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, items);
+			IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, items);
 
 			pipeEntry.entityEntering(entity, entityPos.orientation);
 			items.stackSize = 0;

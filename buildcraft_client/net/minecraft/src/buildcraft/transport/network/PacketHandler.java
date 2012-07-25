@@ -19,7 +19,10 @@ import net.minecraft.src.buildcraft.core.network.PacketPipeTransportContent;
 import net.minecraft.src.buildcraft.core.network.PacketUpdate;
 import net.minecraft.src.buildcraft.transport.CraftingGateInterface;
 import net.minecraft.src.buildcraft.transport.PipeLogicDiamond;
+import net.minecraft.src.buildcraft.transport.PipeRenderState;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
+import net.minecraft.src.buildcraft.transport.PipeTransportLiquids;
+import net.minecraft.src.buildcraft.transport.PipeTransportPower;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.forge.IPacketHandler;
 
@@ -41,10 +44,23 @@ public class PacketHandler implements IPacketHandler {
 				packetN.readData(data);
 				onDiamondContents(packetN);
 				break;
+			case PacketIds.PIPE_POWER:
+				PacketPowerUpdate packetPower= new PacketPowerUpdate();
+				packetPower.readData(data);
+				onPacketPower(packetPower);
+				break;
+			case PacketIds.PIPE_LIQUID:
+				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
+				packetLiquid.readData(data);
+				onPacketLiquid(packetLiquid);
+				break;
 			case PacketIds.PIPE_DESCRIPTION:
-				PacketPipeDescription packetU = new PacketPipeDescription();
-				packetU.readData(data);
-				onPipeDescription(packetU);
+				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
+				descPacket.readData(data);
+				onPipeDescription(descPacket);
+//				PacketPipeDescription packetU = new PacketPipeDescription();
+//				packetU.readData(data);
+//				onPipeDescription(packetU);
 				break;
 			case PacketIds.PIPE_CONTENTS:
 				PacketPipeTransportContent packetC = new PacketPipeTransportContent();
@@ -116,20 +132,26 @@ public class PacketHandler implements IPacketHandler {
 	 * Handles a pipe description packet. (Creates the pipe object client side
 	 * if needed.)
 	 * 
-	 * @param packet
+	 * @param descPacket
 	 */
-	private void onPipeDescription(PacketPipeDescription packet) {
+	private void onPipeDescription(PipeRenderStatePacket descPacket) {
 		World world = ModLoader.getMinecraftInstance().theWorld;
 
-		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
+		if (!world.blockExists(descPacket.posX, descPacket.posY, descPacket.posZ))
 			return;
 
-		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
-		if (!(entity instanceof ISynchronizedTile))
+		TileEntity entity = world.getBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ);
+		if (entity == null){
+			return;
+//			entity = new TileGenericPipeProxy();
+//			world.setBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ, entity);
+		}
+		
+		if (!(entity instanceof TileGenericPipe))
 			return;
 
-		ISynchronizedTile tile = (ISynchronizedTile) entity;
-		tile.handleDescriptionPacket(packet);
+		TileGenericPipe tile = (TileGenericPipe) entity;
+		tile.handleDescriptionPacket(descPacket);
 	}
 
 	/**
@@ -155,6 +177,51 @@ public class PacketHandler implements IPacketHandler {
 			return;
 
 		((PipeTransportItems) pipe.pipe.transport).handleItemPacket(packet);
+	}
+
+	/** 
+	 * Updates the display power on a power pipe 
+	 * @param packetPower
+	 */
+	private void onPacketPower(PacketPowerUpdate packetPower) {
+		World world = ModLoader.getMinecraftInstance().theWorld;
+		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ))
+			return;
+
+		TileEntity entity = world.getBlockTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
+		if (!(entity instanceof TileGenericPipe))
+			return;
+
+		TileGenericPipe pipe = (TileGenericPipe) entity;
+		if (pipe.pipe == null)
+			return;
+
+		if (!(pipe.pipe.transport instanceof PipeTransportPower))
+			return;
+
+		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
+
+		
+		
+	}
+
+	private void onPacketLiquid(PacketLiquidUpdate packetLiquid) {
+		World world = ModLoader.getMinecraftInstance().theWorld;
+		if (!world.blockExists(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ))
+			return;
+
+		TileEntity entity = world.getBlockTileEntity(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ);
+		if (!(entity instanceof TileGenericPipe))
+			return;
+
+		TileGenericPipe pipe = (TileGenericPipe) entity;
+		if (pipe.pipe == null)
+			return;
+
+		if (!(pipe.pipe.transport instanceof PipeTransportLiquids))
+			return;
+
+		((PipeTransportLiquids) pipe.pipe.transport).handleLiquidPacket(packetLiquid);
 	}
 
 	/**

@@ -19,13 +19,15 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.power.IPowerProvider;
 import net.minecraft.src.buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.power.PowerFramework;
 import net.minecraft.src.buildcraft.api.power.PowerProvider;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
+import net.minecraft.src.buildcraft.core.DefaultProps;
+import net.minecraft.src.buildcraft.core.EntityPassiveItem;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicObsidian;
@@ -53,9 +55,15 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int getMainBlockTexture() {
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+	
+	@Override
+	public int getTextureIndex(Orientations direction) {
 		return 1 * 16 + 12;
 	}
+
 
 	@Override
 	public void onEntityCollidedWithBlock(Entity entity) {
@@ -229,10 +237,10 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				APIProxy.removeEntity(entity);
 			}
 
-			EntityPassiveItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack),
+			IPipedItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack),
 					zCoord + 0.5, stack);
 
-			passive.speed = (float) speed;
+			passive.setSpeed((float) speed);
 
 			((PipeTransportItems) transport).entityEntering(passive, orientation);
 		}

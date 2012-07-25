@@ -26,10 +26,10 @@ import net.minecraft.src.Tessellator;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
-import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.liquids.ILiquidTank;
 import net.minecraft.src.buildcraft.api.liquids.LiquidStack;
+import net.minecraft.src.buildcraft.api.transport.IPipedItem;
 import net.minecraft.src.buildcraft.core.DefaultProps;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock;
 import net.minecraft.src.buildcraft.core.RenderEntityBlock.BlockInterface;
@@ -399,7 +399,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			if(count >= numItemsToRender)
 				break;
 				
-			doRenderItem(data.item, x + data.item.posX - pipe.xCoord, y + data.item.posY - pipe.yCoord, z + data.item.posZ
+			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z
 					- pipe.zCoord, light);
 			count++;
 		}					
@@ -410,18 +410,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	private Random random = new Random();
 
-	public void doRenderItem(EntityPassiveItem entityitem, double d, double d1, double d2, float f1) {
+	public void doRenderItem(IPipedItem entityitem, double d, double d1, double d2, float f1) {
 
-		if (entityitem == null || entityitem.item == null)
+		if (entityitem == null || entityitem.getItemStack() == null)
 			return;
 
-		ItemStack itemstack = entityitem.item;
+		ItemStack itemstack = entityitem.getItemStack();
 		random.setSeed(187L);
 
 		GL11.glPushMatrix();
 
 		byte quantity = 1;
-		if (entityitem.item.stackSize > 1)
+		if (entityitem.getItemStack().stackSize > 1)
 			quantity = 2;
 
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
