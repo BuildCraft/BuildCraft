@@ -10,6 +10,7 @@
 package net.minecraft.src.buildcraft.transport;
 
 import net.minecraft.src.BuildCraftCore;
+import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_BuildCraftCore;
@@ -179,7 +180,10 @@ public class PipeTransportPower extends PipeTransport {
 		if (this.container.pipe instanceof IPipeTransportPowerHook)
 			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
 		else {
-			internalNextPower[from.ordinal()] += val * (1 - powerResitance);
+			if (BuildCraftTransport.usePipeLoss)
+				internalNextPower[from.ordinal()] += val * (1 - powerResitance);
+			else
+				internalNextPower[from.ordinal()] += val;
 
 			if (internalNextPower[from.ordinal()] >= 1000)
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2);
