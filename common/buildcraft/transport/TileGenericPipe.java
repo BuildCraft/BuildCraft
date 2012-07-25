@@ -185,6 +185,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		}
 		
 		// Pipe Textures
+		renderState.setTextureFile(pipe.getTextureFile());
 		for(Orientations o: Orientations.values()){
 			renderState.textureMatrix.setTextureIndex(o, pipe.getTextureIndex(o));
 		}
