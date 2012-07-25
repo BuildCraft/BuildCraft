@@ -141,12 +141,15 @@ public class EngineIron extends Engine {
 			int extraHeat = heat - COOLANT_THRESHOLD;
 
 			IronEngineCoolant currentCoolant = IronEngineCoolant.getCoolantForLiquid(new LiquidStack(coolantId, coolantQty, 0));
-			if(coolantQty * currentCoolant.coolingPerUnit > extraHeat) {
-				coolantQty -= Math.round(extraHeat / currentCoolant.coolingPerUnit);
-				heat = COOLANT_THRESHOLD;
-			} else {
-				heat -= coolantQty * currentCoolant.coolingPerUnit;
-				coolantQty = 0;
+			if (currentCoolant != null)
+			{
+				if(coolantQty * currentCoolant.coolingPerUnit > extraHeat) {
+					coolantQty -= Math.round(extraHeat / currentCoolant.coolingPerUnit);
+					heat = COOLANT_THRESHOLD;
+				} else {
+					heat -= coolantQty * currentCoolant.coolingPerUnit;
+					coolantQty = 0;
+				}
 			}
 		}
 
