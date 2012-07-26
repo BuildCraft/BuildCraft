@@ -12,15 +12,24 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.BuildCraftFactory;
+import buildcraft.mod_BuildCraftEnergy;
 import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
+import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
 import buildcraft.core.Utils;
+import buildcraft.energy.EngineIron;
+import buildcraft.energy.EngineStone;
+import buildcraft.energy.TileEngine;
 import buildcraft.factory.BlockMachineRoot;
 
 import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
@@ -193,6 +202,27 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 //		}
 
 		super.onBlockRemoval(world, i, j, k);
+	}
+	
+	@Override
+	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+		TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
+
+		// Drop through if the player is sneaking
+		if (entityplayer.isSneaking())
+			return false;
+
+		// Restart the quarry if its a wrench
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+
+			tile.reinitalize();
+			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+			return true;
+
+		}
+
+		return false;
 	}
 
 	@Override

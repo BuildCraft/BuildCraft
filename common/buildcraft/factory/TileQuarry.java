@@ -617,6 +617,12 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 		sendNetworkUpdate();
 	}
+	
+	public void reinitalize() {
+		builderDone = false;
+		initializeBluePrintBuilder();
+		isDigging = true;
+	}
 
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
