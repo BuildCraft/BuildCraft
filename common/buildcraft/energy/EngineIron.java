@@ -130,7 +130,7 @@ public class EngineIron extends Engine {
 			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(itemInInventory); 
 
 			if (liquid != null) {
-				if (fill(Orientations.Unknown, liquid, false) == BuildCraftAPI.BUCKET_VOLUME) {
+				if (fill(Orientations.Unknown, liquid, false) == liquid.amount) {
 					fill(Orientations.Unknown, liquid, true);
 					tile.setInventorySlotContents(0, Utils.consumeItem(itemInInventory));
 				}
