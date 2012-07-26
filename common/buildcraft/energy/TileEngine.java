@@ -376,7 +376,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			IPowerReceptor receptor = (IPowerReceptor) tile;
 			IPowerProvider provider = receptor.getPowerProvider();
 
-			return provider != null && provider.getClass().equals(PneumaticPowerProvider.class);
+			return provider != null && provider.getClass().getSuperclass().equals(PowerProvider.class);
 		}
 
 		return false;
