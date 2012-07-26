@@ -14,6 +14,7 @@ import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IBlockExtractable;
 import buildcraft.core.Utils;
 import buildcraft.transport.pipes.PipeLiquidsVoid;
 import buildcraft.transport.pipes.PipeLiquidsWood;
@@ -22,6 +23,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 
 public class PipeLogicWood extends PipeLogic {
 
@@ -38,7 +40,7 @@ public class PipeLogicWood extends PipeLogic {
 			TileEntity tile = container.getTile(o);
 
 			if (isInput(tile))
-				if (!isExcludedFromExtraction(block)) {
+				if (!isExcludedFromExtraction(block, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)) {
 					newMeta = o.ordinal();
 					break;
 				}
@@ -56,15 +58,14 @@ public class PipeLogicWood extends PipeLogic {
 				&& Utils.checkPipesConnections(container, tile);
 	}
 
-	public static boolean isExcludedFromExtraction(Block block) {
+	public static boolean isExcludedFromExtraction(Block block, World world, int x, int y, int z) {
 		if (block == null)
 			return true;
 
-		for (String excluded : excludedBlocks)
-			if (excluded.equals(block.getBlockName()) || excluded.equals(Integer.toString(block.blockID)))
-				return true;
-
-		return false;
+		if(!(block instanceof IBlockExtractable))
+			return false;
+		
+		return !((IBlockExtractable)block).mayExtract(world, x, y, z);
 	}
 
 	@Override

@@ -66,7 +66,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 		if (tile == null || !(tile instanceof ITankContainer)
-				|| PipeLogicWood.isExcludedFromExtraction(Block.blocksList[blockId]))
+				|| PipeLogicWood.isExcludedFromExtraction(Block.blocksList[blockId], tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
 			return;
 
 		if (tile instanceof ITankContainer)
