@@ -131,6 +131,9 @@ public class Utils {
 	}
 
 	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
+		if(stack.stackSize <= 0)
+			return;
+			
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
