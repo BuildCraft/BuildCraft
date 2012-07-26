@@ -13,9 +13,9 @@ import java.util.LinkedList;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BptBlock;
+import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.bptblocks.BptBlockUtils;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;

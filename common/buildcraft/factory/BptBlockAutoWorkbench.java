@@ -12,9 +12,9 @@ package buildcraft.factory;
 import java.util.LinkedList;
 
 import buildcraft.api.blueprints.BptBlock;
+import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.bptblocks.BptBlockUtils;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;

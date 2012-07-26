@@ -11,9 +11,9 @@ package buildcraft.transport;
 
 import java.util.LinkedList;
 
+import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.bptblocks.BptBlockUtils;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.BptItem;
 

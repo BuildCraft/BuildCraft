@@ -7,12 +7,10 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package buildcraft.api.bptblocks;
+package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
-import buildcraft.api.blueprints.BptSlotInfo;
-import buildcraft.api.blueprints.IBptContext;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
