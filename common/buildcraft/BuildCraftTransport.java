@@ -21,6 +21,8 @@ import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IExtractionHandler;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
@@ -72,6 +74,7 @@ import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.World;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
@@ -170,6 +173,45 @@ public class BuildCraftTransport {
 		MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 	}
 
+   private static class ExtractionHandler implements IExtractionHandler {
+      private final String[] items;
+      private final String[] liquids;
+
+      public ExtractionHandler(String[] items, String[] liquids){
+         this.items = items;
+         this.liquids = liquids;
+      }
+      
+      @Override
+      public boolean canExtractItems(World world, int i, int j, int k) {
+         return testStrings(items, world, i, j, k);
+      }
+      
+      @Override
+      public boolean canExtractLiquids(World world, int i, int j, int k) {
+         return testStrings(liquids, world, i, j, k);
+      }
+
+      private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
+         int id = world.getBlockId(i, j, k);
+         Block block = Block.blocksList[id];
+         if(block == null)
+            return false;
+
+         int meta = world.getBlockMetadata(i, j, k);
+
+         for (String excluded : excludedBlocks) {
+            if (excluded.equals(block.getBlockName()))
+               return false;
+
+            String[] tokens = excluded.split(":");
+            if(tokens[0].equals(Integer.toString(id)) && (tokens.length == 1 || tokens[1].equals(Integer.toString(meta))))
+               return false;
+         }
+         return true;
+      }
+   }
+
 	public static void initialize() {
 		if (initialized)
 			return;
@@ -186,10 +228,19 @@ public class BuildCraftTransport {
 				Configuration.CATEGORY_GENERAL, DefaultProps.USE_PIPELOSS);
 		PipeLoss.comment = "Set to false to turn off energy loss over distance on all power pipes";
 
-		Property exclusionList = BuildCraftCore.mainConfiguration.getOrCreateProperty("woodenPipe.exclusion",
-				Configuration.CATEGORY_BLOCK, "");
+		Property exclusionItemList = BuildCraftCore.mainConfiguration.getOrCreateProperty("woodenPipe.item.exclusion", Configuration.CATEGORY_BLOCK, "");
 
-		PipeLogicWood.excludedBlocks = exclusionList.value.split(",");
+		String[] excludedItemBlocks = exclusionItemList.value.split(",");
+		for (int j = 0; j < excludedItemBlocks.length; ++j)
+			excludedItemBlocks[j] = excludedItemBlocks[j].trim();
+
+		Property exclusionLiquidList = BuildCraftCore.mainConfiguration.getOrCreateProperty("woodenPipe.liquid.exclusion", Configuration.CATEGORY_BLOCK, "");
+
+      String[] excludedLiquidBlocks = exclusionLiquidList.value.split(",");
+		for (int j = 0; j < excludedLiquidBlocks.length; ++j)
+			excludedLiquidBlocks[j] = excludedLiquidBlocks[j].trim();
+
+      PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedLiquidBlocks));
 
 		Property maxItemInPipesProp = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("pipes.maxItems",
 				Configuration.CATEGORY_GENERAL, 100);
@@ -206,8 +257,6 @@ public class BuildCraftTransport {
 		Property genericPipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("pipe.id",
 				DefaultProps.GENERIC_PIPE_ID);
 
-		for (int j = 0; j < PipeLogicWood.excludedBlocks.length; ++j)
-			PipeLogicWood.excludedBlocks[j] = PipeLogicWood.excludedBlocks[j].trim();
 
 		BuildCraftCore.mainConfiguration.save();
 

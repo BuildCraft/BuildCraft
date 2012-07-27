@@ -16,6 +16,7 @@ import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
@@ -62,16 +63,15 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 		Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
 		pos.moveForwards(1);
-		int blockId = w.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-		if (tile == null || !(tile instanceof ITankContainer)
-				|| PipeLogicWood.isExcludedFromExtraction(Block.blocksList[blockId], tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
-			return;
+		if (tile instanceof ITankContainer) {
+         if (!PipeManager.canExtractLiquids(w, (int) pos.x, (int) pos.y, (int) pos.z))
+            return;
 
-		if (tile instanceof ITankContainer)
-			if (liquidToExtract <= BuildCraftAPI.BUCKET_VOLUME)
-				liquidToExtract += powerProvider.useEnergy(1, 1, true) * BuildCraftAPI.BUCKET_VOLUME;
+         if (liquidToExtract <= BuildCraftAPI.BUCKET_VOLUME)
+            liquidToExtract += powerProvider.useEnergy(1, 1, true) * BuildCraftAPI.BUCKET_VOLUME;         
+      }
 	}
 
 	@Override
