@@ -9,22 +9,12 @@
 
 package buildcraft.api.core;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
 import buildcraft.api.APIProxy;
 import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.gates.Action;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerProvider;
-import buildcraft.api.gates.Trigger;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 public class BuildCraftAPI {
