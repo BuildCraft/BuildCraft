@@ -17,6 +17,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipedItem;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.Utils;
@@ -92,36 +93,34 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 		Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
 		pos.moveForwards(1);
-		int blockId = w.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-		if (tile == null || !(tile instanceof IInventory || tile instanceof ITankContainer)
-				|| PipeLogicWood.isExcludedFromExtraction(Block.blocksList[blockId], tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
-			return;
-
 		if (tile instanceof IInventory) {
-			IInventory inventory = (IInventory) tile;
+         if (!PipeManager.canExtractItems(w, (int) pos.x, (int) pos.y, (int) pos.z))
+            return;
 
-			ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.reverse());
-			if (extracted == null)
-				return;
+         IInventory inventory = (IInventory) tile;
 
-			for(ItemStack stack : extracted) {
-			if (stack == null || stack.stackSize == 0) {
-				powerProvider.useEnergy(1, 1, false);
-					continue;
-			}
+         ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.reverse());
+         if (extracted == null)
+            return;
 
-			Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
-					pos.orientation.reverse());
+         for(ItemStack stack : extracted) {
+            if (stack == null || stack.stackSize == 0) {
+               powerProvider.useEnergy(1, 1, false);
+                  continue;
+            }
 
-			entityPos.moveForwards(0.5);
+            Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
+                  pos.orientation.reverse());
 
-			IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
+            entityPos.moveForwards(0.5);
 
-			((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
-		}
-	}
+            IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
+
+            ((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
+         }
+      }
 	}
 
 	/**
