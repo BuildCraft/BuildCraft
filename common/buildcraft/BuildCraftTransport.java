@@ -183,12 +183,12 @@ public class BuildCraftTransport {
       }
       
       @Override
-      public boolean canExtractItems(World world, int i, int j, int k) {
+      public boolean canExtractItems(IPipe pipe, World world, int i, int j, int k) {
          return testStrings(items, world, i, j, k);
       }
       
       @Override
-      public boolean canExtractLiquids(World world, int i, int j, int k) {
+      public boolean canExtractLiquids(IPipe pipe, World world, int i, int j, int k) {
          return testStrings(liquids, world, i, j, k);
       }
 

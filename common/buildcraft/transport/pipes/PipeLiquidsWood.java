@@ -66,7 +66,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 		if (tile instanceof ITankContainer) {
-         if (!PipeManager.canExtractLiquids(w, (int) pos.x, (int) pos.y, (int) pos.z))
+         if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
             return;
 
          if (liquidToExtract <= BuildCraftAPI.BUCKET_VOLUME)
