@@ -25,7 +25,6 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.core.RenderEntityBlock;
 import buildcraft.core.RenderEntityBlock.BlockInterface;
-import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {
 
@@ -72,7 +71,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		TileTank tank = ((TileTank) tileentity);
 
-		LiquidStack liquid = tank.getLiquid();
+		LiquidStack liquid = tank.tank.getLiquid();
 
 		if (liquid == null || liquid.amount <= 0
 				|| liquid.itemID <= 0)
@@ -97,7 +96,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 
-		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.getTankCapacity()) * (displayStages - 1))]);
+		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (displayStages - 1))]);
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();

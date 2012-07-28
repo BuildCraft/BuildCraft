@@ -70,7 +70,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
             return;
 
          if (liquidToExtract <= BuildCraftAPI.BUCKET_VOLUME)
-            liquidToExtract += powerProvider.useEnergy(1, 1, true) * BuildCraftAPI.BUCKET_VOLUME;         
+            liquidToExtract += powerProvider.useEnergy(1, 1, true) * BuildCraftAPI.BUCKET_VOLUME;
       }
 	}
 
@@ -103,9 +103,12 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 				LiquidStack extracted = container.drain(pos.orientation.reverse(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
-				int inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
+                int inserted = 0;
+                if(extracted != null) {
+                    inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
 
-				container.drain(pos.orientation.reverse(), inserted, true);
+                    container.drain(pos.orientation.reverse(), inserted, true);
+                }
 
 				liquidToExtract -= inserted;
 			}
@@ -116,7 +119,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(Orientations direction) {
 		if (direction == Orientations.Unknown)
