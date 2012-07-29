@@ -14,6 +14,7 @@ import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.Utils;
 import buildcraft.transport.pipes.PipeLiquidsVoid;
@@ -38,7 +39,7 @@ public class PipeLogicWood extends PipeLogic {
 			TileEntity tile = container.getTile(o);
 
 			if (isInput(tile))
-				if (PipeManager.canExtractItems(tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) || PipeManager.canExtractLiquids(tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) ) {
+				if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) || PipeManager.canExtractLiquids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) ) {
 					newMeta = o.ordinal();
 					break;
 				}
