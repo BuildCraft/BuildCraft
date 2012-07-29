@@ -91,7 +91,8 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     public void writeToNBT(NBTTagCompound data)
     {
         super.writeToNBT(data);
-        data.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
+        if(tank.getLiquid() != null)
+            data.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
     }
 
     /* HELPER FUNCTIONS */
