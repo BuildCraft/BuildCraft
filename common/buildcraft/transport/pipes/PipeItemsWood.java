@@ -96,7 +96,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 		if (tile instanceof IInventory) {
-         if (!PipeManager.canExtractItems(w, (int) pos.x, (int) pos.y, (int) pos.z))
+         if (!PipeManager.canExtractItems(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
             return;
 
          IInventory inventory = (IInventory) tile;

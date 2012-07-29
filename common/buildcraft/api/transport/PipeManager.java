@@ -15,17 +15,17 @@ public abstract class PipeManager {
       extractionHandlers.add(handler);
    }
       
-   public static boolean canExtractItems(World world, int i, int j, int k) {
+   public static boolean canExtractItems(IPipe pipe, World world, int i, int j, int k) {
       for(IExtractionHandler handler : extractionHandlers)
-         if(!handler.canExtractItems(world, i, j, k))
+         if(!handler.canExtractItems(pipe, world, i, j, k))
             return false;
             
       return true;
    }
    
-   public static boolean canExtractLiquids(World world, int i, int j, int k) {
+   public static boolean canExtractLiquids(IPipe pipe, World world, int i, int j, int k) {
       for(IExtractionHandler handler : extractionHandlers)
-         if(!handler.canExtractLiquids(world, i, j, k))
+         if(!handler.canExtractLiquids(pipe, world, i, j, k))
             return false;
             
       return true;

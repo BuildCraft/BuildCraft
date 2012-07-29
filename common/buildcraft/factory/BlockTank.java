@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -93,7 +93,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
-			
+
 			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
@@ -108,31 +108,33 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 				}
 
 				return true;
-			
+
 			// Handle empty containers
 			} else {
-				
+
 				LiquidStack available = tank.getTanks()[0].getLiquid();
-				ItemStack filled = LiquidManager.fillLiquidContainer(available, current);
-					
-				liquid = LiquidManager.getLiquidForFilledItem(filled);
-				if(liquid != null) {
-					
-					if(current.stackSize > 1) {
-						if(!entityplayer.inventory.addItemStackToInventory(filled))
-							return false;
-						else
-							entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-									Utils.consumeItem(current));
-					} else {
-						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-								Utils.consumeItem(current));
-						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
-					}
-					
-					tank.drain(Orientations.Unknown, liquid.amount, true);
-					return true;
-				}
+                if(available != null){
+                    ItemStack filled = LiquidManager.fillLiquidContainer(available, current);
+
+                    liquid = LiquidManager.getLiquidForFilledItem(filled);
+                    if(liquid != null) {
+
+                        if(current.stackSize > 1) {
+                            if(!entityplayer.inventory.addItemStackToInventory(filled))
+                                return false;
+                            else
+                                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+                                        Utils.consumeItem(current));
+                        } else {
+                            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+                                    Utils.consumeItem(current));
+                            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
+                        }
+
+                        tank.drain(Orientations.Unknown, liquid.amount, true);
+                        return true;
+                    }
+                }
 			}
 		}
 
