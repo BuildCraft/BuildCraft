@@ -204,6 +204,27 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     @Override
     public ILiquidTank[] getTanks()
     {
-        return new ILiquidTank[]{tank};
+        ILiquidTank compositeTank = new LiquidTank(tank.getCapacity());
+
+        TileTank tile = getBottomTank();
+
+        if(tile != null && tile.tank.getLiquid() != null)
+            compositeTank.setLiquid(tile.tank.getLiquid().copy());
+        else
+            return new ILiquidTank[]{compositeTank};
+
+        tile = getTankAbove(tile);
+
+        while(tile != null){
+
+            if(tile.tank.getLiquid() == null || !compositeTank.getLiquid().isLiquidEqual(tile.tank.getLiquid()))
+                break;
+
+            compositeTank.getLiquid().amount += tile.tank.getLiquid().amount;
+
+            tile = getTankAbove(tile);
+        }
+
+        return new ILiquidTank[]{compositeTank};
     }
 }
