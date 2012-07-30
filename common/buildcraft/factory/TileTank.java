@@ -208,10 +208,13 @@ public class TileTank extends TileBuildCraft implements ITankContainer
 
         TileTank tile = getBottomTank();
 
-        if(tile != null && tile.tank.getLiquid() != null)
+        int capacity = tank.getCapacity();
+
+        if(tile != null && tile.tank.getLiquid() != null) {
             compositeTank.setLiquid(tile.tank.getLiquid().copy());
-        else
+        } else {
             return new ILiquidTank[]{compositeTank};
+        }
 
         tile = getTankAbove(tile);
 
@@ -221,10 +224,12 @@ public class TileTank extends TileBuildCraft implements ITankContainer
                 break;
 
             compositeTank.getLiquid().amount += tile.tank.getLiquid().amount;
+            capacity += tile.tank.getCapacity();
 
             tile = getTankAbove(tile);
         }
 
+        compositeTank.setCapacity(capacity);
         return new ILiquidTank[]{compositeTank};
     }
 }
