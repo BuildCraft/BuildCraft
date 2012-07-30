@@ -86,7 +86,7 @@ public class TriggerLiquidContainer extends Trigger {
 
 				if (liquids != null && liquids.length > 0) {
 					for (ILiquidTank c : liquids)
-						if (c.getLiquid().amount != 0)
+						if (c.getLiquid() != null && c.getLiquid().amount != 0)
 							return false;
 
 					return true;
@@ -94,7 +94,7 @@ public class TriggerLiquidContainer extends Trigger {
 					return false;
 			case Contains:
 				for (ILiquidTank c : liquids)
-					if (c.getLiquid().amount != 0)
+					if (c.getLiquid() != null && c.getLiquid().amount != 0)
 						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquid().itemID)
 							return true;
 
@@ -102,7 +102,7 @@ public class TriggerLiquidContainer extends Trigger {
 
 			case Space:
 				for (ILiquidTank c : liquids)
-					if (c.getLiquid().amount == 0)
+					if (c.getLiquid() == null || c.getLiquid().amount == 0)
 						return true;
 					else if (c.getLiquid().amount < c.getCapacity())
 						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquid().itemID)
@@ -111,7 +111,7 @@ public class TriggerLiquidContainer extends Trigger {
 				return false;
 			case Full:
 				for (ILiquidTank c : liquids)
-					if (c.getLiquid().amount < c.getCapacity())
+					if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
 						return false;
 
 				return true;
