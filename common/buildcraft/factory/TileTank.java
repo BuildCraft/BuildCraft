@@ -82,9 +82,18 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     public void readFromNBT(NBTTagCompound data)
     {
         super.readFromNBT(data);
-        LiquidStack liquid = new LiquidStack(0, 0, 0);
-        liquid.readFromNBT(data.getCompoundTag("tank"));
-        tank.setLiquid(liquid);
+        
+        if(data.hasKey("stored") && data.hasKey("liquidId"))
+        {
+	        LiquidStack liquid = new LiquidStack(data.getInteger("liquidId"), data.getInteger("stored"), 0);
+	        tank.setLiquid(liquid);
+        }
+        else
+        {        
+	        LiquidStack liquid = new LiquidStack(0, 0, 0);
+	        liquid.readFromNBT(data.getCompoundTag("tank"));
+	        tank.setLiquid(liquid);
+        }
     }
 
     @Override
