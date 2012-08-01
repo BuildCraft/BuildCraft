@@ -344,6 +344,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (worldObj.isRemote){
 			if (pipe == null && packet.getPipeId() != 0){
 				initialize(BlockGenericPipe.createPipe(packet.getPipeId()));
+				if (packet.gateKind != -1) {
+					ItemStack stack = new ItemStack(packet.gateId, 0, packet.gateKind);
+					pipe.gate = new GateVanilla(pipe, stack);
+					pipe.gate.kind = Gate.GateKind.values()[packet.gateKind];
+				}
 			}
 			renderState = packet.getRenderState();
 			worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
@@ -356,7 +361,18 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	public Packet getDescriptionPacket() {
 		bindPipe();
-		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord);
+		int gateId, gateKind;
+		if (pipe.gate == null) {
+			gateId = 0;
+			gateKind = -1;
+		} else {
+			gateId = BuildCraftTransport.pipeGate.shiftedIndex;
+			if (pipe.gate instanceof GateVanilla &&
+					((GateVanilla) pipe.gate).hasPulser())
+				gateId = BuildCraftTransport.pipeGateAutarchic.shiftedIndex;
+			gateKind = pipe.gate.kind.ordinal();
+		}
+		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord, gateId, gateKind);
 		return packet.getPacket();
 	}
 
