@@ -190,7 +190,7 @@ public class StackUtil {
 		} else {
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
-			System.out.println("Adding to generic inventory.");
+			//System.out.println("Adding to generic inventory.");
 
 			for (int j = 0; j < inv.getSizeInventory(); ++j)
 				if (tryAdding(inv, j, add, true)) {

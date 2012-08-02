@@ -500,7 +500,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 			if (pipe != null) {
 				return pipe.getConstructor(int.class).newInstance(key);
 			} else {
-				System.err.printf("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?\n"); 
+				System.err.printf("[BuildCraft] Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?\n"); 
 			}
 
 		} catch (Throwable t) {
