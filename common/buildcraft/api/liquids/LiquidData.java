@@ -29,6 +29,10 @@ public class LiquidData {
 		this(new LiquidStack(stillLiquidId, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(movingLiquidId, BuildCraftAPI.BUCKET_VOLUME), filled, new ItemStack(Item.bucketEmpty));
 	}
 
+	public LiquidData(LiquidStack stillLiquid, ItemStack filled, ItemStack container) {
+		this(stillLiquid, stillLiquid, filled, container);
+	}
+	
 	public LiquidData(LiquidStack stillLiquid, LiquidStack movingLiquid, ItemStack filled, ItemStack container) {
 		this.stillLiquid = stillLiquid;
 		this.movingLiquid = movingLiquid;
