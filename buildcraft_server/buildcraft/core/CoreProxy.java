@@ -46,10 +46,6 @@ public class CoreProxy {
 		ModLoader.registerTileEntity(clas, ident);
 	}
 
-	public static void setField804(EntityItem item, float value) {
-		item.hoverStart = value;
-	}
-
 	public static void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
 		stack.onCrafting(world, player, stack.stackSize);
 	}
@@ -83,9 +79,6 @@ public class CoreProxy {
 		player.playerNetServerHandler.sendPacket(packet.getPacket());
 	}
 
-	/**
-	 * Server side stub.
-	 */
 	public static void sendToServer(Packet packet) {}
 
 	public static File getBuildCraftBase() {
@@ -99,13 +92,7 @@ public class CoreProxy {
 	}
 
 	public static void TakenFromCrafting(EntityPlayer thePlayer, ItemStack itemstack, IInventory craftMatrix) {
-
 		ModLoader.takenFromCrafting(thePlayer, itemstack, craftMatrix);
-
-	}
-
-	public static void BindTexture(String texture) {
-
 	}
 
 	/* FORMER API PROXY */

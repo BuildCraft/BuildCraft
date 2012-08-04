@@ -67,10 +67,6 @@ public class CoreProxy {
 		stack.onCrafting(world, player, stack.stackSize);
 	}
 
-	public static void setField804(EntityItem item, float value) {
-		item.hoverStart = value;
-	}
-
 	public static File getPropertyFile() {
 		return new File(Minecraft.getMinecraftDir(), "/config/BuildCraft.cfg");
 	}
@@ -90,7 +86,6 @@ public class CoreProxy {
 
 	public static void addLocalization(String s1, String string) {
 		ModLoader.addLocalization(s1, string);
-
 	}
 
 	public static void TakenFromCrafting(EntityPlayer entityplayer, ItemStack itemstack, IInventory iinventory) {
@@ -99,11 +94,6 @@ public class CoreProxy {
 
 	public static String playerName() {
 		return ModLoader.getMinecraftInstance().thePlayer.username;
-	}
-
-	public static void BindTexture(String texture) {
-		MinecraftForgeClient.bindTexture(texture);
-
 	}
 
 	/* FORMER API PROXY */
