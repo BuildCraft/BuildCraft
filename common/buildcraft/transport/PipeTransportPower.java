@@ -14,7 +14,6 @@ import net.minecraft.src.TileEntity;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.mod_BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
@@ -54,7 +53,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (APIProxy.isClient(worldObj))
+		if (CoreProxy.isClient(worldObj))
 			return;
 
 		step();
@@ -152,7 +151,7 @@ public class PipeTransportPower extends PipeTransport {
 					}
 				}
 
-		if (APIProxy.isServerSide())
+		if (CoreProxy.isServerSide())
 			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)){
 				
 				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);

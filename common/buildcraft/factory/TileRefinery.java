@@ -10,7 +10,6 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
@@ -23,6 +22,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.api.recipes.RefineryRecipe;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.TileNetworkData;
 import net.minecraft.src.Container;
@@ -166,9 +166,9 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public void updateEntity() {
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			simpleAnimationIterate();
-		} else if (APIProxy.isServerSide() && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+		} else if (CoreProxy.isServerSide() && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 

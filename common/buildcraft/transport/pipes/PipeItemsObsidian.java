@@ -10,7 +10,6 @@ package buildcraft.transport.pipes;
 
 import java.util.List;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
@@ -18,6 +17,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipedItem;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.Utils;
@@ -202,7 +202,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
-		if (APIProxy.isClient(worldObj))
+		if (CoreProxy.isClient(worldObj))
 			return;
 
 		Orientations orientation = getOpenOrientation().reverse();
@@ -223,7 +223,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 				if (distance == 0 || energyUsed / distance == item.item.stackSize) {
 					stack = item.item;
-					APIProxy.removeEntity(entity);
+					CoreProxy.removeEntity(entity);
 				} else
 					stack = item.item.splitStack((int) (energyUsed / distance));
 
@@ -235,7 +235,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			} else if (entity instanceof EntityArrow) {
 				powerProvider.useEnergy(distance, distance, true);
 				stack = new ItemStack(Item.arrow, 1);
-				APIProxy.removeEntity(entity);
+				CoreProxy.removeEntity(entity);
 			}
 
 			IPipedItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack),

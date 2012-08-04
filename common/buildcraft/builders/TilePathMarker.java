@@ -4,9 +4,9 @@ package buildcraft.builders;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 
@@ -55,7 +55,7 @@ public class TilePathMarker extends TileMarker {
 
 	public void createLaserAndConnect(TilePathMarker pathMarker) {
 
-		if (APIProxy.isClient(worldObj))
+		if (CoreProxy.isClient(worldObj))
 			return;
 
 		EntityLaser laser = new EntityLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));

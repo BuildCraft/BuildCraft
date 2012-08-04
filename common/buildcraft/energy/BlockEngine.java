@@ -14,9 +14,9 @@ import java.util.Random;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftEnergy;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 
@@ -91,12 +91,12 @@ public class BlockEngine extends BlockContainer {
 					return false;
 
 			if (tile.engine instanceof EngineStone) {
-				if (!APIProxy.isClient(tile.worldObj))
+				if (!CoreProxy.isClient(tile.worldObj))
 					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
-				if (!APIProxy.isClient(tile.worldObj))
+				if (!CoreProxy.isClient(tile.worldObj))
 					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				return true;
 			}

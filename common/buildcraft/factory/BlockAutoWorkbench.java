@@ -12,8 +12,8 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftFactory;
-import buildcraft.api.APIProxy;
 import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 
@@ -58,7 +58,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 			}
 		}
 
-		if (!APIProxy.isClient(world))
+		if (!CoreProxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 
 		return true;

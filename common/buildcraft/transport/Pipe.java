@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Random;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
@@ -29,6 +28,7 @@ import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.ActionRedstoneOutput;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.Utils;
 import buildcraft.core.network.IndexInPayload;
@@ -177,7 +177,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 
 		// Do not try to update gates client side.
-		if(APIProxy.isRemote())
+		if(CoreProxy.isRemote())
 			return;
 		
 		if (actionTracker.markTimeIfDelay(worldObj, 10))

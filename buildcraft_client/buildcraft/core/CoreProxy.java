@@ -11,12 +11,14 @@ package buildcraft.core;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
 
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.network.BuildCraftPacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
@@ -27,6 +29,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
 import cpw.mods.fml.client.SpriteHelper;
@@ -101,5 +104,47 @@ public class CoreProxy {
 	public static void BindTexture(String texture) {
 		MinecraftForgeClient.bindTexture(texture);
 
+	}
+
+	/* FORMER API PROXY */
+	public static boolean isClient(World world) {
+		return world instanceof WorldClient;
+	}
+
+	public static boolean isServerSide() {
+		return false;
+	}
+
+	public static boolean isRemote() {
+		return ModLoader.getMinecraftInstance().theWorld.isRemote;
+	}
+
+	public static void removeEntity(Entity entity) {
+		entity.setDead();
+	
+		if (entity.worldObj instanceof WorldClient)
+			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
+	}
+
+	public static Random createNewRandom(World world) {
+		return new Random(world.getSeed());
+	}
+
+	/* BUILDCRAFT PLAYER */
+	private static EntityPlayer buildCraftPlayer;
+	
+	private static EntityPlayer createNewPlayer(World world) {
+		return new EntityPlayer(world) {
+			@Override
+			public void func_6420_o() {}
+		};
+	}
+
+	public static EntityPlayer getBuildCraftPlayer(World world) {
+		if (CoreProxy.buildCraftPlayer == null) {
+			CoreProxy.buildCraftPlayer = createNewPlayer(world);
+		}
+	
+		return CoreProxy.buildCraftPlayer;
 	}
 }

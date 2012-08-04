@@ -13,11 +13,11 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.mod_BuildCraftEnergy;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
@@ -135,7 +135,7 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {
 		
-		if (APIProxy.isRemote()){
+		if (CoreProxy.isRemote()){
 			return;
 		}
 		

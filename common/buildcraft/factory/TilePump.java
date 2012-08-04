@@ -14,7 +14,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
@@ -25,6 +24,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
 import buildcraft.core.Utils;
@@ -67,13 +67,13 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 			return;
 		}
 
-		if (!APIProxy.isClient(worldObj)) {
+		if (!CoreProxy.isClient(worldObj)) {
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
 
 				setTubePosition();
 
-				if (APIProxy.isServerSide()) {
+				if (CoreProxy.isServerSide()) {
 					sendNetworkUpdate();
 				}
 
@@ -98,7 +98,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 							internalLiquid = internalLiquid += BuildCraftAPI.BUCKET_VOLUME;
 
-							if (APIProxy.isServerSide()) {
+							if (CoreProxy.isServerSide()) {
 								sendNetworkUpdate();
 							}
 						}
@@ -161,7 +161,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 		worldObj.spawnEntityInWorld(tube);
 
-		if (APIProxy.isServerSide()) {
+		if (CoreProxy.isServerSide()) {
 			sendNetworkUpdate();
 		}
 	}
@@ -352,7 +352,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	@Override
 	public void destroy() {
 		if (tube != null) {
-			APIProxy.removeEntity(tube);
+			CoreProxy.removeEntity(tube);
 			tube = null;
 			tubeY = Double.NaN;
 			aimY = 0;

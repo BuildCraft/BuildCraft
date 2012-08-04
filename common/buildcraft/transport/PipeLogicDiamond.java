@@ -11,7 +11,6 @@ package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftTransport;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.inventory.ISpecialInventory;
@@ -44,7 +43,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe)
 				return false;
 
-		if (!APIProxy.isClient(container.worldObj))
+		if (!CoreProxy.isClient(container.worldObj))
 			entityplayer.openGui(mod_BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord,
 					container.yCoord, container.zCoord);
 
@@ -55,7 +54,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	@Override
 	public void updateEntity() {
 		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor))
-			if (APIProxy.isServerSide())
+			if (CoreProxy.isServerSide())
 				sendFilterSet();
 	}
 
@@ -97,7 +96,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public ItemStack decrStackSize(int i, int j) {
 		ItemStack stack = filters.decrStackSize(i, j);
 
-		if (APIProxy.isServerSide())
+		if (CoreProxy.isServerSide())
 			sendFilterSet();
 
 		return stack;
@@ -107,7 +106,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 
 		filters.setInventorySlotContents(i, itemstack);		
-		if (APIProxy.isServerSide())
+		if (CoreProxy.isServerSide())
 			sendFilterSet();
 		
 	}

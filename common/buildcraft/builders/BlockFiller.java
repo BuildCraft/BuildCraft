@@ -12,8 +12,8 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.api.APIProxy;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.Utils;
@@ -51,7 +51,7 @@ public class BlockFiller extends BlockContainer implements ITextureProvider {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!APIProxy.isClient(world))
+		if (!CoreProxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
 		return true;
 

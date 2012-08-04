@@ -11,7 +11,6 @@ package buildcraft.core;
 
 import java.util.TreeMap;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
@@ -289,7 +288,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 */
 	@Override
 	public EntityItem toEntityItem(Orientations dir) {
-		if (!APIProxy.isClient(worldObj)) {
+		if (!CoreProxy.isClient(worldObj)) {
 			if (getItemStack().stackSize <= 0) {
 				return null;
 			}

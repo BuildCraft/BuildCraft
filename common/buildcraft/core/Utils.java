@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Orientations;
@@ -376,7 +375,7 @@ public class Utils {
 	public static void preDestroyBlock(World world, int i, int j, int k) {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 
-		if (tile instanceof IInventory && !APIProxy.isClient(world))
+		if (tile instanceof IInventory && !CoreProxy.isClient(world))
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop())
 				dropItems(world, (IInventory) tile, i, j, k);
 

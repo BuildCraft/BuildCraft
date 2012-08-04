@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.mod_BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;

@@ -13,7 +13,7 @@ import java.util.Random;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.APIProxy;
+import buildcraft.core.CoreProxy;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
@@ -29,7 +29,7 @@ public class OilPopulate {
 		}
 
 		if (rand == null) {
-			rand = APIProxy.createNewRandom(world);
+			rand = CoreProxy.createNewRandom(world);
 		}
 
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);

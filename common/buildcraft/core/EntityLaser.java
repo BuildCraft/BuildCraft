@@ -13,7 +13,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Position;
 
 import net.minecraft.src.Entity;
@@ -91,7 +90,7 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		if (head == null || tail == null)
 			return;
 		
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			updateData();
 		}
 		

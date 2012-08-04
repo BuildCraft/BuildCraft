@@ -9,7 +9,6 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
@@ -17,6 +16,7 @@ import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.liquids.LiquidTank;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
@@ -34,12 +34,12 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     @Override
     public void updateEntity()
     {
-        if(APIProxy.isServerSide() && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+        if(CoreProxy.isServerSide() && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
             sendNetworkUpdate();
             hasUpdate = false;
         }
 
-        if(APIProxy.isRemote()) {
+        if(CoreProxy.isRemote()) {
             return;
         }
 

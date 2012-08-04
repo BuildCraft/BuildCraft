@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -28,6 +27,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipeConnection;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
@@ -68,7 +68,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public void initialize() {
-		if (!APIProxy.isClient(worldObj)) {
+		if (!CoreProxy.isClient(worldObj)) {
 			if (engine == null) {
 				createEngineIfNeeded();
 			}
@@ -87,7 +87,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			return;
 		}
 
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			if (progressPart != 0) {
 				engine.progress += serverPistonSpeed;
 
@@ -364,7 +364,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public void doWork() {
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			return;
 		}
 

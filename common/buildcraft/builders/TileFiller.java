@@ -10,7 +10,6 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Orientations;
@@ -25,6 +24,7 @@ import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.core.ActionMachineControl;
 import buildcraft.core.Box;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.IMachine;
 import buildcraft.core.StackUtil;
 import buildcraft.core.TileBuildCraft;
@@ -64,7 +64,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public void initialize() {
 		super.initialize();
 
-		if (!APIProxy.isClient(worldObj)) {
+		if (!CoreProxy.isClient(worldObj)) {
 			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
 			if (a != null) {
@@ -74,7 +74,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 					((TileMarker) a).removeFromWorld();
 				}
 
-				if (!APIProxy.isClient(worldObj) && box.isInitialized()) {
+				if (!CoreProxy.isClient(worldObj) && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
 				sendNetworkUpdate();
@@ -103,7 +103,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void doWork() {
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -157,7 +157,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	public void computeRecipe() {
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -186,7 +186,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			currentPatternId = currentPattern.getId();
 		}
 
-		if (APIProxy.isServerSide()) {
+		if (CoreProxy.isServerSide()) {
 			sendNetworkUpdate();
 		}
 	}

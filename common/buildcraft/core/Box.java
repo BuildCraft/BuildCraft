@@ -12,7 +12,6 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.LaserKind;
@@ -219,7 +218,7 @@ public class Box implements IBox {
 
 		if (lasers != null) {
 			for (EntityBlock b : lasers)
-				APIProxy.removeEntity(b);
+				CoreProxy.removeEntity(b);
 
 			lasers = null;
 		}

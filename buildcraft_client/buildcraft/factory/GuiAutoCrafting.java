@@ -28,7 +28,8 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	@Override
 	public void onGuiClosed() {
 		super.onGuiClosed();
-		inventorySlots.onCraftGuiClosed(mc.thePlayer);
+		if (this.mc.thePlayer != null)
+			inventorySlots.onCraftGuiClosed(mc.thePlayer);
 	}
 
 	@Override

@@ -12,10 +12,10 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.Utils;
@@ -105,7 +105,7 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 			return true;
 		} else {
 
-			if (!APIProxy.isClient(world))
+			if (!CoreProxy.isClient(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			return true;
 

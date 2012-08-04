@@ -8,7 +8,6 @@
  */
 package buildcraft.factory;
 
-import buildcraft.api.APIProxy;
 import buildcraft.core.BuildCraftContainer;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.network.PacketIds;
@@ -54,7 +53,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 		refinery.setFilter(slot, liquidId);
 
-		if (APIProxy.isRemote()) {
+		if (CoreProxy.isRemote()) {
 			PacketPayload payload = new PacketPayload(3, 0, 0);
 			payload.intPayload[0] = slot;
 			payload.intPayload[1] = liquidId;

@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
@@ -30,6 +29,7 @@ import buildcraft.core.BptBuilderBase;
 import buildcraft.core.BptBuilderBlueprint;
 import buildcraft.core.BptBuilderTemplate;
 import buildcraft.core.BptContext;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
@@ -280,7 +280,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void doWork() {
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -589,7 +589,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			box.deleteLasers();
 			box.reset();
 
-			if (APIProxy.isServerSide()) {
+			if (CoreProxy.isServerSide()) {
 				sendNetworkUpdate();
 			}
 

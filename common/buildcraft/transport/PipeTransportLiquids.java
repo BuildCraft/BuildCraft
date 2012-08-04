@@ -11,7 +11,6 @@ package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftCore;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
@@ -180,7 +179,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	@Override
 	public void updateEntity() {
-		if (APIProxy.isClient(worldObj))
+		if (CoreProxy.isClient(worldObj))
 			return;
 
 		moveLiquids();
@@ -215,7 +214,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 
 
-		if (APIProxy.isServerSide())
+		if (CoreProxy.isServerSide())
 			if (tracker.markTimeIfDelay(worldObj, 1 * BuildCraftCore.updateFactor)){
 
 				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);

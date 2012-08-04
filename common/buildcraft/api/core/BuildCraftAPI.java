@@ -9,12 +9,10 @@
 
 package buildcraft.api.core;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptBlock;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.World;
 
 public class BuildCraftAPI {
@@ -24,8 +22,6 @@ public class BuildCraftAPI {
 	public static final int LAST_ORIGINAL_ITEM = 126;
 
 	public static boolean[] softBlocks = new boolean[Block.blocksList.length];
-	private static EntityPlayer buildCraftPlayer;
-
 	/**
 	 * Return true if the block given in parameter is pass through (e.g. air,
 	 * water...)
@@ -51,14 +47,6 @@ public class BuildCraftAPI {
 		}
 
 		world.setBlockWithNotify(x, y, z, 0);
-	}
-
-	public static EntityPlayer getBuildCraftPlayer(World world) {
-		if (buildCraftPlayer == null) {
-			buildCraftPlayer = APIProxy.createNewPlayer(world);
-		}
-
-		return buildCraftPlayer;
 	}
 
 	static {

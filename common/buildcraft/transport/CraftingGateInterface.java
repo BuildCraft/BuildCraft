@@ -12,7 +12,6 @@ package buildcraft.transport;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
@@ -63,7 +62,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!APIProxy.isRemote()) {
+		if (!CoreProxy.isRemote()) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
 
@@ -201,13 +200,13 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	 */
 	public void synchronize() {
 
-		if (!isNetInitialized && APIProxy.isRemote()) {
+		if (!isNetInitialized && CoreProxy.isRemote()) {
 			isNetInitialized = true;
 			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord)
 					.getPacket());
 		}
 
-		if (!isSynchronized && APIProxy.isRemote()) {
+		if (!isSynchronized && CoreProxy.isRemote()) {
 			isSynchronized = true;
 			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord)
 					.getPacket());
@@ -376,13 +375,13 @@ public class CraftingGateInterface extends BuildCraftContainer {
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
 		pipe.setTrigger(position, trigger);
-		if (APIProxy.isRemote() && notify)
+		if (CoreProxy.isRemote() && notify)
 			sendSelectionChange(position);
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
 		pipe.setTriggerParameter(position, parameter);
-		if (APIProxy.isRemote() && notify)
+		if (CoreProxy.isRemote() && notify)
 			sendSelectionChange(position);
 	}
 
@@ -405,7 +404,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.setAction(position, action);
-		if (APIProxy.isRemote() && notify)
+		if (CoreProxy.isRemote() && notify)
 			sendSelectionChange(position);
 	}
 

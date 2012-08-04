@@ -10,12 +10,12 @@
 package buildcraft.transport;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.Utils;
 import buildcraft.transport.pipes.PipeLiquidsVoid;
 import buildcraft.transport.pipes.PipeLiquidsWood;
@@ -87,7 +87,7 @@ public class PipeLogicWood extends PipeLogic {
 	public void initialize() {
 		super.initialize();
 
-		if (!APIProxy.isClient(worldObj))
+		if (!CoreProxy.isClient(worldObj))
 			switchSourceIfNeeded();
 	}
 
@@ -108,7 +108,7 @@ public class PipeLogicWood extends PipeLogic {
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		if (!APIProxy.isClient(worldObj))
+		if (!CoreProxy.isClient(worldObj))
 			switchSourceIfNeeded();
 	}
 	

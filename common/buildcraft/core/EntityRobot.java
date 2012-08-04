@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
@@ -197,7 +196,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 				BptSlot target = a.slot;
 				if (wait <= 0) {
 
-					if (!APIProxy.isClient(worldObj)) {
+					if (!CoreProxy.isClient(worldObj)) {
 					
 						if (target.mode == Mode.ClearIfInvalid) {
 	
@@ -208,7 +207,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	
 							worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
 							target.stackToUse.getItem().onItemUse(target.stackToUse,
-									BuildCraftAPI.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
+									CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
 									target.z, 1);
 						} else {
 	

@@ -10,10 +10,10 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.Utils;
@@ -93,7 +93,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		if (signals != null) {
 			for (EntityBlock b : signals) {
 				if (b != null) {
-					APIProxy.removeEntity(b);
+					CoreProxy.removeEntity(b);
 				}
 			}
 
@@ -124,7 +124,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 		}
 
-		if (APIProxy.isServerSide()) {
+		if (CoreProxy.isServerSide()) {
 			sendNetworkUpdate();
 		}
 	}
@@ -153,7 +153,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	public void tryConnection() {
-		if (APIProxy.isClient(worldObj)) {
+		if (CoreProxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -240,7 +240,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		if (lasers != null) {
 			for (EntityBlock entity : lasers) {
 				if (entity != null) {
-					APIProxy.removeEntity(entity);
+					CoreProxy.removeEntity(entity);
 				}
 			}
 		}
@@ -394,7 +394,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 		signals = null;
 
-		if (APIProxy.isServerSide() && markerOrigin != null && markerOrigin != this) {
+		if (CoreProxy.isServerSide() && markerOrigin != null && markerOrigin != this) {
 			markerOrigin.sendNetworkUpdate();
 		}
 	}

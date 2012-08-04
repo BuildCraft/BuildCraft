@@ -3,7 +3,7 @@ package buildcraft.silicon;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftSilicon;
-import buildcraft.api.APIProxy;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.Utils;
@@ -48,7 +48,7 @@ public class BlockAssemblyTable extends BlockContainer implements ITextureProvid
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!APIProxy.isClient(world))
+		if (!CoreProxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
 		return true;
 	}

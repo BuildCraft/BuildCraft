@@ -18,7 +18,6 @@ import java.util.Vector;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.mod_BuildCraftTransport;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
@@ -92,7 +91,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (container.pipe instanceof IPipeTransportItemsHook)
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
 
-		if (APIProxy.isServerSide())
+		if (CoreProxy.isServerSide())
 			if (item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor))
 				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
 						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
@@ -250,7 +249,7 @@ public class PipeTransportItems extends PipeTransport {
 		} else if (tile instanceof IInventory) {
 			StackUtil utils = new StackUtil(data.item.getItemStack());
 
-			if (!APIProxy.isClient(worldObj))
+			if (!CoreProxy.isClient(worldObj))
 				if (utils.checkAvailableSlot((IInventory) tile, true, data.orientation.reverse()) && utils.items.stackSize == 0)
 					data.item.remove();
 				else {
@@ -353,7 +352,7 @@ public class PipeTransportItems extends PipeTransport {
 		else {
 			int i;
 
-			if (APIProxy.isClient(worldObj) || APIProxy.isServerSide())
+			if (CoreProxy.isClient(worldObj) || CoreProxy.isServerSide())
 			{
 				i = Math.abs(data.item.getEntityId() + xCoord + yCoord + zCoord + data.item.getDeterministicRandomization())
 						% listOfPossibleMovements.size();

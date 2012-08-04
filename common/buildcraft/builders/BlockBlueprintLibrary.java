@@ -12,7 +12,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.api.APIProxy;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 
@@ -47,7 +47,7 @@ public class BlockBlueprintLibrary extends BlockContainer implements ITexturePro
 		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
 
 		if (!tile.locked || entityplayer.username.equals(tile.owner))
-			if (!APIProxy.isClient(world))
+			if (!CoreProxy.isClient(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
 
 		return true;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftFactory;
-import buildcraft.api.APIProxy;
 import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 
@@ -61,7 +61,7 @@ public class BlockHopper extends BlockBuildCraft {
 			}
 		}
 
-		if (!APIProxy.isClient(world))
+		if (!CoreProxy.isClient(world))
 			entityPlayer.openGui(mod_BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
 
 		return true;

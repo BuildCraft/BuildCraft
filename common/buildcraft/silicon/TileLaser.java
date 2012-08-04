@@ -11,7 +11,6 @@ package buildcraft.silicon;
 
 import java.util.LinkedList;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
@@ -20,6 +19,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.TileNetworkData;
@@ -165,7 +165,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	
 	protected void createLaser() {
 		
-		if (APIProxy.isServerSide())
+		if (CoreProxy.isServerSide())
 			return;
 		
 		laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));

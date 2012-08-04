@@ -17,7 +17,6 @@ import net.minecraft.src.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.APIProxy;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
@@ -72,7 +71,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		updateRecipes();
 
 		// Request current selection from server
-		if(APIProxy.isRemote())
+		if(CoreProxy.isRemote())
 			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
 				assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
 	}
@@ -154,7 +153,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			ContainerAssemblyTable container = (ContainerAssemblyTable) inventorySlots;
 
-			if (APIProxy.isRemote()) {
+			if (CoreProxy.isRemote()) {
 				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,
 						container.z, message);
 

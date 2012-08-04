@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftFactory;
-import buildcraft.api.APIProxy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
 import buildcraft.core.Utils;
 
@@ -119,7 +119,7 @@ public class BlockRefinery extends BlockContainer {
 			}
 		}
 
-		if (!APIProxy.isClient(world))
+		if (!CoreProxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
 
 		return true;
