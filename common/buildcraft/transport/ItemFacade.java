@@ -9,6 +9,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.core.CoreProxy;
 import buildcraft.core.ItemBuildCraft;
 
 import net.minecraft.src.Block;
@@ -29,21 +30,24 @@ public class ItemFacade extends ItemBuildCraft {
 		setHasSubtypes(true);
 		setMaxDamage(0);
 	}
+	
+	@Override
+	public String getItemDisplayName(ItemStack itemstack) {
+		String name = super.getItemDisplayName(itemstack);
+		int decodedBlockId = ItemFacade.getBlockId(itemstack.getItemDamage());
+		int decodedMeta = ItemFacade.getMetaData(itemstack.getItemDamage());
+		ItemStack newStack = new ItemStack(decodedBlockId, 1, decodedMeta);
+		if (Item.itemsList[decodedBlockId] != null){
+			name += ": " + CoreProxy.getItemDisplayName(newStack);
+		} else {
+			name += " < BROKEN >";
+		}
+		return name; 
+	}
 
 	@Override
 	public String getItemNameIS(ItemStack itemstack) {
-		
-
-		//FIXME PROPER NAMES
-		int decodedBlockId = ItemFacade.getBlockId(itemstack.getItemDamage());
-		int decodedMeta = ItemFacade.getMetaData(itemstack.getItemDamage());
-		
-		if (Block.blocksList[decodedBlockId] == null) return "<BROKEN>";
-		
-		return "Block: " + decodedBlockId + "- Meta: " + decodedMeta; 
-		
-		
-		//return (new StringBuilder()).append(super.getItemName()).append(".").append(itemstack.getItemDamage()).toString();
+		return "item.Facade";
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

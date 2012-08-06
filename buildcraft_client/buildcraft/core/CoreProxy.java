@@ -137,4 +137,10 @@ public class CoreProxy {
 	
 		return CoreProxy.buildCraftPlayer;
 	}
+	
+	public static String getItemDisplayName(ItemStack stack){
+		if (Item.itemsList[stack.itemID] == null) return "";
+		
+		return Item.itemsList[stack.itemID].getItemDisplayName(stack);
+	}
 }
