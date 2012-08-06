@@ -38,6 +38,9 @@ public class LiquidData {
 		this.movingLiquid = movingLiquid;
 		this.filled = filled;
 		this.container = container;
+		
+		if(stillLiquid == null || filled == null || container == null)
+			throw new RuntimeException("stillLiquid, filled, or container is null, this is an error");
 	}
 
 }
