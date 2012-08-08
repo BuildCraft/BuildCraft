@@ -1,41 +1,47 @@
 package buildcraft.api.power;
 
+import net.minecraft.src.NBTTagCompound;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
-import net.minecraft.src.NBTTagCompound;
 
 public interface IPowerProvider {
 
-	int getLatency();
+    int getLatency();
 
-	int getMinEnergyReceived();
+    int getMinEnergyReceived();
 
-	int getMaxEnergyReceived();
+    int getMaxEnergyReceived();
 
-	int getMaxEnergyStored();
+    int getMaxEnergyStored();
 
-	int getActivationEnergy();
+    int getActivationEnergy();
 
-	float getEnergyStored();
+    float getEnergyStored();
 
-	void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy);
+    void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy);
 
-	void configurePowerPerdition(int powerLoss, int powerLossRegularity);
+    void configurePowerPerdition(int powerLoss, int powerLossRegularity);
 
-	boolean update(IPowerReceptor receptor);
+    boolean update(IPowerReceptor receptor);
 
-	boolean preConditions(IPowerReceptor receptor);
+    boolean preConditions(IPowerReceptor receptor);
 
-	float useEnergy(float min, float max, boolean doUse);
+    float useEnergy(float min, float max, boolean doUse);
 
-	void readFromNBT(NBTTagCompound nbttagcompound);
+    void readFromNBT(NBTTagCompound nbttagcompound);
 
-	void writeToNBT(NBTTagCompound nbttagcompound);
+    void writeToNBT(NBTTagCompound nbttagcompound);
 
-	void receiveEnergy(float quantity, Orientations from);
+    void receiveEnergy(float quantity, Orientations from);
 
-	boolean isPowerSource(Orientations from);
+    boolean isPowerSource(Orientations from);
 
-	SafeTimeTracker getTimeTracker();
+    SafeTimeTracker getTimeTracker();
+
+    float setEnergyStored(float quantity, boolean doSet);
+
+    void setEnergyStored(float quantity);
+
+    void addEnergy(float quantity);
 
 }
