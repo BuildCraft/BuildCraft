@@ -143,9 +143,59 @@ public class PipeTransportItems extends PipeTransport {
 			TileGenericPipe pipe = (TileGenericPipe) entity;
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
-		} else if (entity instanceof IInventory)
+		} else if (entity instanceof ISpecialInventory) {
+		
 			if (new StackUtil(item.getItemStack()).checkAvailableSlot((IInventory) entity, false, o.reverse()))
 				return true;
+		
+			// ------------------------------------------------------------
+			//	The following code requires a change to ISpecialInventory
+			// -------------------------------------------------------------
+			
+			/*
+			List<ItemStack> items = new ArrayList<ItemStack>();
+			items.add(item.getItemStack());
+
+			for (EntityData data : travelingEntities.values()) {
+				if(!data.toCenter && data.orientation == o) {
+					items.add(data.item.getItemStack());
+				}
+			}
+
+			int[] used = ((ISpecialInventory)entity).addItem(items.toArray(new ItemStack[items.size()]));
+
+			boolean isRoom = true;
+			for(int i = 0; i < items.size(); i++){
+				if(used[i] != items.get(i).stackSize) {
+					isRoom = false;
+					break;
+				}               
+			}
+
+			return isRoom;
+			*/
+			
+		} else if (entity instanceof IInventory) {
+			IInventory inv = (IInventory)entity;
+			
+			if(entity instanceof ISidedInventory) {
+				inv = new SidedInventoryAdapter(inv, o);
+			}
+		
+			InventoryUtil invUtil = new InventoryUtil(new InventoryCopy(inv));
+			
+			for (EntityData data : travelingEntities.values()) {
+				if(!data.toCenter && data.orientation == o) {
+					ItemStack remainder = invUtil.addToInventory(data.item.getItemStack());
+					if(remainder != null)
+						return false;
+				}
+			}
+			
+			ItemStack remainder = invUtil.addToInventory(data.item.getItemStack());
+			if(remainder != null)
+				return false;
+		}
 
 		return false;
 	}
