@@ -429,8 +429,11 @@ public class PipeTransportItems extends PipeTransport {
 
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
-		return tile instanceof TileGenericPipe || tile instanceof IPipeEntry || tile instanceof IInventory
-				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
+		return tile instanceof TileGenericPipe 
+			|| tile instanceof IPipeEntry 
+			|| tile instanceof ISpecialInventory
+			|| (tile instanceof IInventory && ((IInventory)tile).getSizeInventory() > 0)
+			|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 
 	@Override
