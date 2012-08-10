@@ -28,9 +28,30 @@ public abstract class LiquidDictionary
     {
         LiquidStack existing = liquids.get(name);
         if(existing != null) {
-            return existing;
+            return existing.copy();
         }
-        liquids.put(name, liquid);
+        liquids.put(name, liquid.copy());
+        return liquid;
+    }
+    
+    /**
+     * Returns the liquid matching the name,
+     * if such a liquid exists.
+     * 
+     * Can return null.
+     * 
+     * @param name the name of the liquid
+     * @param amount the amout of liquid
+     * @return
+     */
+    public static LiquidStack getLiquid(String name, int amount)
+    {
+        LiquidStack liquid = liquids.get(name);
+        if(liquid == null) 
+            return null;
+            
+        liquid = liquid.copy();
+        liquid.amount = amount;
         return liquid;
     }
 }
