@@ -33,4 +33,18 @@ public abstract class LiquidDictionary
         liquids.put(name, liquid);
         return liquid;
     }
+    
+    /**
+     * Returns the liquid matching the name,
+     * if such a liquid exists.
+     * 
+     * Can return null.
+     * 
+     * @param name the name of the liquid
+     * @return
+     */
+    public static LiquidStack getLiquid(String name)
+    {
+        return liquids.get(name);
+    }
 }
