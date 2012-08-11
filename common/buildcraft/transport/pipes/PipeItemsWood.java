@@ -137,8 +137,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (inventory instanceof ISidedInventory) {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 
-			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			int first = sidedInv.getStartInventorySide(from.toOrientation());
+			int last = first + sidedInv.getSizeInventorySide(from.toOrientation()) - 1;
 
 			IInventory inv = Utils.getInventory(inventory);
 
