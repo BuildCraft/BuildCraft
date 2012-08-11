@@ -30,20 +30,20 @@ class ContainerAssemblyTable extends BuildCraftContainer {
 
 		for (int l = 0; l < 4; l++) {
 			for (int k1 = 0; k1 < 3; k1++) {
-				addSlot(new Slot(table, k1 + l * 3, 8 + k1 * 18, 36 + l * 18));
+				addSlotToContainer(new Slot(table, k1 + l * 3, 8 + k1 * 18, 36 + l * 18));
 			}
 
 		}
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
-				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
 			}
 
 		}
 
 		for (int i1 = 0; i1 < 9; i1++) {
-			addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
+			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
 		}
 
 		this.table = table;

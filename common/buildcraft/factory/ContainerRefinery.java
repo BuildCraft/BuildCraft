@@ -28,12 +28,12 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
-				addSlot(new Slot(inventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+				addSlotToContainer(new Slot(inventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
 			}
 		}
 
 		for (int i1 = 0; i1 < 9; i1++) {
-			addSlot(new Slot(inventory, i1, 8 + i1 * 18, 181));
+			addSlotToContainer(new Slot(inventory, i1, 8 + i1 * 18, 181));
 		}
 
 		this.refinery = refinery;

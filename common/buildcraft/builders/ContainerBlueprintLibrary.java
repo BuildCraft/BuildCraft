@@ -31,20 +31,20 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		this.library = library;
 
 		// if (player.username.equals(library.owner)) {
-		addSlot(new Slot(library, 0, 153, 61));
-		addSlot(new Slot(library, 1, 109, 61));
+		addSlotToContainer(new Slot(library, 0, 153, 61));
+		addSlotToContainer(new Slot(library, 1, 109, 61));
 		// }
 
-		addSlot(new Slot(library, 2, 109, 79));
-		addSlot(new Slot(library, 3, 153, 79));
+		addSlotToContainer(new Slot(library, 2, 109, 79));
+		addSlotToContainer(new Slot(library, 3, 153, 79));
 
 		// Player inventory
 		for (int l = 0; l < 3; l++)
 			for (int k1 = 0; k1 < 9; k1++)
-				addSlot(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 140 + l * 18));
+				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 140 + l * 18));
 
 		for (int i1 = 0; i1 < 9; i1++)
-			addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 198));
+			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 198));
 	}
 
 	@Override
