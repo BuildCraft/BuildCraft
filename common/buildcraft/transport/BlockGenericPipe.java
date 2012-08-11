@@ -258,14 +258,15 @@ public class BlockGenericPipe extends BlockContainer {
 			pipe.container.scheduleNeighborChange();
 	}
 
-	@Override
-	public void onBlockPlaced(World world, int i, int j, int k, int l) {
-		super.onBlockPlaced(world, i, j, k, l);
 
-		Pipe pipe = getPipe(world, i, j, k);
+	@Override
+	public void updateBlockMetadata(World world, int x, int y, int z, int par5,	float par6, float par7, float par8) {
+		super.updateBlockMetadata(world, x, y, z, par5, par6, par7, par8);
+		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
 			pipe.onBlockPlaced();
+
 	}
 	
 	@Override

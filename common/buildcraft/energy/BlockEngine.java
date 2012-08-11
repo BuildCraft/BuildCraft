@@ -105,10 +105,10 @@ public class BlockEngine extends BlockContainer {
 
 		return false;
 	}
-
+	
 	@Override
-	public void onBlockPlaced(World world, int i, int j, int k, int l) {
-		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
+	public void updateBlockMetadata(World world, int x, int y, int z, int par5,	float par6, float par7, float par8) {
+		TileEngine tile = (TileEngine) world.getBlockTileEntity(x, y, z);
 		tile.orientation = Orientations.YPos.ordinal();
 		tile.switchOrientation();
 	}
