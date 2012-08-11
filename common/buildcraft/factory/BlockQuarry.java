@@ -36,7 +36,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
+public class BlockQuarry extends BlockMachineRoot {
 
 	int textureTop;
 	int textureFront;

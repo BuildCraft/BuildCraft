@@ -17,7 +17,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockAssemblyTable extends BlockContainer implements ITextureProvider {
+public class BlockAssemblyTable extends BlockContainer {
 
 	public BlockAssemblyTable(int i) {
 		super(i, Material.iron);

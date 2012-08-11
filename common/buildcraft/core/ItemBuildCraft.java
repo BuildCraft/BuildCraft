@@ -14,14 +14,14 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 
 
-public class ItemBuildCraft extends Item implements ITextureProvider {
+public class ItemBuildCraft extends Item {
 
 	public ItemBuildCraft(int i) {
 		super(i);
 		setTextureFile(DefaultProps.TEXTURE_ITEMS);
 	}
 
-	// @Override Client side only
+	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
 		return StringUtil.localize(getItemNameIS(itemstack));
 	}

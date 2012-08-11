@@ -28,7 +28,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockTank extends BlockContainer implements ITextureProvider {
+public class BlockTank extends BlockContainer {
 
 	public BlockTank(int i) {
 		super(i, Material.glass);

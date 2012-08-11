@@ -35,7 +35,7 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 
 
-public class BlockGenericPipe extends BlockContainer implements ITextureProvider {
+public class BlockGenericPipe extends BlockContainer {
 
 	/** Defined subprograms **************************************************/
 

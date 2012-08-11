@@ -7,7 +7,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.World;
 
 
-public abstract class BlockBuildCraft extends BlockContainer implements ITextureProvider {
+public abstract class BlockBuildCraft extends BlockContainer {
 
 	protected static boolean keepInventory = false;
 	protected Random rand;

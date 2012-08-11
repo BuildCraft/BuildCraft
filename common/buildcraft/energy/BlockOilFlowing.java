@@ -22,7 +22,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.World;
 
 
-public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILiquid {
+public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);

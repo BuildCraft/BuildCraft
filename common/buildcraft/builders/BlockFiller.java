@@ -27,7 +27,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockFiller extends BlockContainer implements ITextureProvider {
+public class BlockFiller extends BlockContainer {
 
 	int textureSides;
 	int textureTopOn;

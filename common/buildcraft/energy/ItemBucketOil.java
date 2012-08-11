@@ -16,7 +16,7 @@ import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemStack;
 
 
-public class ItemBucketOil extends ItemBucket implements ITextureProvider {
+public class ItemBucketOil extends ItemBucket {
 
 	public ItemBucketOil(int i) {
 		super(i, BuildCraftEnergy.oilMoving.blockID);

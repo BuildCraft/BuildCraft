@@ -22,7 +22,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 
 
-public class BlockPlainPipe extends Block implements IFramePipeConnection, ITextureProvider {
+public class BlockPlainPipe extends Block implements IFramePipeConnection {
 
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);

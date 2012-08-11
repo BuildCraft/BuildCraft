@@ -16,7 +16,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 
 
-public class BlockPollution extends BlockContainer implements ITextureProvider {
+public class BlockPollution extends BlockContainer {
 
 	public BlockPollution(int i) {
 		super(i, Material.air);

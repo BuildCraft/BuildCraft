@@ -29,7 +29,7 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 
 
-public class BlockMarker extends BlockContainer implements ITextureProvider {
+public class BlockMarker extends BlockContainer {
 
 	public BlockMarker(int i) {
 		super(i, Material.circuits);

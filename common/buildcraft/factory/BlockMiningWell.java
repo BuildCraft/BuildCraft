@@ -24,7 +24,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider {
+public class BlockMiningWell extends BlockMachineRoot {
 
 	int textureFront, textureSides, textureBack, textureTop;
 

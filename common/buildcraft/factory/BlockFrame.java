@@ -27,7 +27,7 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 
 
-public class BlockFrame extends Block implements IFramePipeConnection, ITextureProvider {
+public class BlockFrame extends Block implements IFramePipeConnection {
 
 	public BlockFrame(int i) {
 		super(i, Material.glass);

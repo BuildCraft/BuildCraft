@@ -21,7 +21,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockPump extends BlockContainer implements ITextureProvider {
+public class BlockPump extends BlockContainer {
 
 	public BlockPump(int i) {
 		super(i, Material.iron);

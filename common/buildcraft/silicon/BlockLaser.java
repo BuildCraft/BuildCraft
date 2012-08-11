@@ -22,7 +22,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockLaser extends BlockContainer implements ITextureProvider {
+public class BlockLaser extends BlockContainer {
 
 	public BlockLaser(int i) {
 		super(i, Material.iron);

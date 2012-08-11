@@ -30,7 +30,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockBuilder extends BlockContainer implements ITextureProvider {
+public class BlockBuilder extends BlockContainer {
 
 	int blockTextureTop;
 	int blockTextureSide;

@@ -25,7 +25,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockBlueprintLibrary extends BlockContainer implements ITextureProvider {
+public class BlockBlueprintLibrary extends BlockContainer {
 
 	public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);

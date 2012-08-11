@@ -18,7 +18,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.World;
 
 
-public class BlockOilStill extends BlockStationary implements ITextureProvider, ILiquid {
+public class BlockOilStill extends BlockStationary implements ILiquid {
 
 	public BlockOilStill(int i, Material material) {
 		super(i, material);

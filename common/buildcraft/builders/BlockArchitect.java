@@ -31,7 +31,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 
-public class BlockArchitect extends BlockContainer implements ITextureProvider {
+public class BlockArchitect extends BlockContainer {
 
 	int blockTextureSides;
 	int blockTextureFront;
