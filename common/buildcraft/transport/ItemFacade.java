@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
@@ -13,6 +16,7 @@ import buildcraft.core.CoreProxy;
 import buildcraft.core.ItemBuildCraft;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
@@ -50,12 +54,15 @@ public class ItemFacade extends ItemBuildCraft {
 		return "item.Facade";
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
+		super.getSubItems(par1, par2CreativeTabs, itemList);
 		for (ItemStack stack : allFacades){
 			itemList.add(stack.copy());
 		}
+
 	}
 	
 	@Override

@@ -1,9 +1,14 @@
 package buildcraft.transport;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import buildcraft.core.ItemBuildCraft;
 
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemStack;
 
 public class ItemGate extends ItemBuildCraft {
@@ -51,9 +56,10 @@ public class ItemGate extends ItemBuildCraft {
 		return (new StringBuilder()).append(super.getItemName()).append(".").append(itemstack.getItemDamage()).toString();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
+		super.getSubItems(par1, par2CreativeTabs, itemList);
 		itemList.add(new ItemStack(this, 1, 0));
 		itemList.add(new ItemStack(this, 1, 1));
 		itemList.add(new ItemStack(this, 1, 2));
