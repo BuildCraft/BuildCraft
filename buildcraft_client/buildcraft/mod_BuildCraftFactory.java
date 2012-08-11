@@ -26,7 +26,7 @@ import buildcraft.factory.TileTank;
 import buildcraft.mod_BuildCraftCore.EntityRenderIndex;
 
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.forge.NetworkMod;
+
 
 public class mod_BuildCraftFactory extends NetworkMod {
 

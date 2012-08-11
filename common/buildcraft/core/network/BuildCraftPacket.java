@@ -8,7 +8,7 @@ import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.forge.packets.ForgePacket;
+
 
 public abstract class BuildCraftPacket extends ForgePacket {
 

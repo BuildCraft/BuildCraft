@@ -13,7 +13,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
-import net.minecraft.src.forge.NetworkMod;
+
 
 import org.lwjgl.opengl.GL11;
 

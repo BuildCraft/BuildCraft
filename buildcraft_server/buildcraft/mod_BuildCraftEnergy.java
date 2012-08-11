@@ -16,7 +16,7 @@ import buildcraft.energy.TileEngine;
 
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.NetworkMod;
+
 
 public class mod_BuildCraftEnergy extends NetworkMod {
 

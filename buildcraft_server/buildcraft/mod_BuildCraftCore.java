@@ -16,7 +16,7 @@ import buildcraft.core.DefaultProps;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.forge.NetworkMod;
+
 
 public class mod_BuildCraftCore extends NetworkMod {
 

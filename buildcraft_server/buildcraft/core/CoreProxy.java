@@ -26,7 +26,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.NetworkMod;
+
 
 public class CoreProxy {
 

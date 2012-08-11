@@ -31,7 +31,7 @@ import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraft.src.forge.NetworkMod;
+
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 

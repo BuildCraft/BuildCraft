@@ -10,7 +10,7 @@
 package buildcraft;
 
 import buildcraft.core.DefaultProps;
-import net.minecraft.src.forge.NetworkMod;
+
 
 public class mod_BuildCraftSilicon extends NetworkMod {
 

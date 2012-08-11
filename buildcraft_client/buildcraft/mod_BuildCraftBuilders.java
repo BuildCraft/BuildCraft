@@ -12,7 +12,7 @@ package buildcraft;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.ClientBuilderHook;
 import buildcraft.core.DefaultProps;
-import net.minecraft.src.forge.NetworkMod;
+
 
 public class mod_BuildCraftBuilders extends NetworkMod {
 

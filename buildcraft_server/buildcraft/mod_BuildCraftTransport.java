@@ -12,7 +12,7 @@ package buildcraft;
 import buildcraft.core.DefaultProps;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.forge.NetworkMod;
+
 
 public class mod_BuildCraftTransport extends NetworkMod {
 

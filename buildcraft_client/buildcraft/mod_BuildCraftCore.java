@@ -21,7 +21,7 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderItem;
 import net.minecraft.src.Tessellator;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraft.src.forge.NetworkMod;
+
 
 import org.lwjgl.opengl.GL11;
 
