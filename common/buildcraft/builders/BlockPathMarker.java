@@ -32,12 +32,11 @@ public class BlockPathMarker extends BlockMarker {
 	}
 	
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		Utils.preDestroyBlock(world, i, j, k);
-
-		super.onBlockRemoval(world, i, j, k);
+	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		Utils.preDestroyBlock(world, x, y, z);
+		super.breakBlock(world, x, y, z, par5, par6);
 	}
-
+	
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {

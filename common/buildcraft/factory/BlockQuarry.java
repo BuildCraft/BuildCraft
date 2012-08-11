@@ -133,7 +133,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	}
 	
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
+	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
 		
 		if (CoreProxy.isRemote()){
 			return;
@@ -201,7 +201,7 @@ public class BlockQuarry extends BlockMachineRoot {
 //			}
 //		}
 
-		super.onBlockRemoval(world, i, j, k);
+		super.breakBlock(world, i, j, k, par5, par6);
 	}
 	
 	@Override
