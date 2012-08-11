@@ -407,8 +407,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 
 		// Collect any lost items laying around
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBoxFromPool(arm.headPosX - 1.5, arm.headPosY, arm.headPosZ - 1.5,
-				arm.headPosX + 2.5, arm.headPosY + 2.5, arm.headPosZ + 2.5);
+		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(arm.headPosX - 1.5, arm.headPosY, arm.headPosZ - 1.5,	arm.headPosX + 2.5, arm.headPosY + 2.5, arm.headPosZ + 2.5);
 		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
 		for (int ii = 0; ii < result.size(); ii++) {
 			if (result.get(ii) instanceof EntityItem) {
@@ -455,7 +454,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	private boolean blockDig(int blockID) {
 
-		if (Block.blocksList[blockID] != null && Block.blocksList[blockID].getHardness() == -1.0f)
+		if (Block.blocksList[blockID] != null && Block.blocksList[blockID].getBlockHardness(worldObj, xCoord, yCoord, zCoord)  == -1.0f)
 			return true;
 
 		return blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID;

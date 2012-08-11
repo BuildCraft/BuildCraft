@@ -96,7 +96,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 			zMax = 1.0F;
 		}
 
-		return AxisAlignedBB.getBoundingBoxFromPool((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
+		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
 				(double) j + yMax, (double) k + zMax);
 	}
 

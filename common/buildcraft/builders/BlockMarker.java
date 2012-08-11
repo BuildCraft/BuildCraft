@@ -49,17 +49,17 @@ public class BlockMarker extends BlockContainer {
 
 		switch (meta) {
 		case 0:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 1 - h, k + 0.5 - w, i + 0.5 + w, j + 1, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j + 1 - h, k + 0.5 - w, i + 0.5 + w, j + 1, k + 0.5 + w);
 		case 5:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j, k + 0.5 - w, i + 0.5 + w, j + h, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j, k + 0.5 - w, i + 0.5 + w, j + h, k + 0.5 + w);
 		case 3:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5 - w, k, i + 0.5 + w, j + 0.5 + w, k + h);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j + 0.5 - w, k, i + 0.5 + w, j + 0.5 + w, k + h);
 		case 4:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5 - w, k + 1 - h, i + 0.5 + w, j + 0.5 + w, k + 1);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j + 0.5 - w, k + 1 - h, i + 0.5 + w, j + 0.5 + w, k + 1);
 		case 1:
-			return AxisAlignedBB.getBoundingBoxFromPool(i, j + 0.5 - w, k + 0.5 - w, i + h, j + 0.5 + w, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i, j + 0.5 - w, k + 0.5 - w, i + h, j + 0.5 + w, k + 0.5 + w);
 		default:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 1 - h, j + 0.5 - w, k + 0.5 - w, i + 1, j + 0.5 + w, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i + 1 - h, j + 0.5 - w, k + 0.5 - w, i + 1, j + 0.5 + w, k + 0.5 + w);
 		}
 	}
 

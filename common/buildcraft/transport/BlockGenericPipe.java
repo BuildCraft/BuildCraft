@@ -128,7 +128,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1))
 			zMax = 1.0F;
 
-		return AxisAlignedBB.getBoundingBoxFromPool((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
+		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
 				(double) j + yMax, (double) k + zMax);
 	}
 

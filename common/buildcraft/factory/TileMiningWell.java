@@ -59,7 +59,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		if (depth < 0
 				|| (Block.blocksList[world.getBlockId(xCoord, depth, zCoord)] != null && Block.blocksList[world.getBlockId(
-						xCoord, depth, zCoord)].getHardness() == -1.0f)
+						xCoord, depth, zCoord)].getBlockHardness(world, xCoord, yCoord, zCoord) == -1.0f)
 				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
 				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
 

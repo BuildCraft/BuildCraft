@@ -433,8 +433,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (customRenderer != null) {
 
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
-			loadTexture("/terrain.png");
-			ForgeHooksClient.overrideTexture(itemstack.getItem());
+			ForgeHooksClient.bindTexture(itemstack.getItem().getTextureFile(), 0);
 			float f4 = 0.25F;
 			f4 = 0.5F;
 			GL11.glScalef(f4, f4, f4);
@@ -460,8 +459,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
 
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
-			loadTexture("/terrain.png");
-			ForgeHooksClient.overrideTexture(Block.blocksList[itemstack.itemID]);
+
+			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
 			float f4 = 0.25F;
 			int j = Block.blocksList[itemstack.itemID].getRenderType();
 			if (j == 1 || j == 19 || j == 12 || j == 2)
@@ -488,7 +487,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			if (itemstack.getItem().requiresMultipleRenderPasses()) {
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
-				this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]));
+				ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
 
 				for (int i = 0; i <= 1; ++i) {
 					int iconIndex = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), i);
@@ -509,11 +508,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 				int i = itemstack.getIconIndex();
 				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null) {
-					loadTexture("/terrain.png");
-					ForgeHooksClient.overrideTexture(Block.blocksList[itemstack.itemID]);
+					ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
 				} else {
-					loadTexture("/gui/items.png");
-					ForgeHooksClient.overrideTexture(Item.itemsList[itemstack.itemID]);
+					ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
 				}
 
 				drawItem(i, quantity);
@@ -554,10 +551,5 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			tesselator.draw();
 			GL11.glPopMatrix();
 		}
-	}
-
-	protected void loadTexture(String s) {
-		RenderEngine renderengine = RenderManager.instance.renderEngine;
-		renderengine.bindTexture(renderengine.getTexture(s));
 	}
 }
