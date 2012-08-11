@@ -27,10 +27,10 @@ public class BlockPathMarker extends BlockMarker {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TilePathMarker();
 	}
-
+	
 	@Override
 	public void onBlockRemoval(World world, int i, int j, int k) {
 		Utils.preDestroyBlock(world, i, j, k);

@@ -65,7 +65,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileAutoWorkbench();
 	}
 

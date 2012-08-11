@@ -53,11 +53,12 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		return true;
 	}
 
+	
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileBlueprintLibrary();
 	}
-
+	
 	@Override
 	public int getBlockTextureFromSide(int i) {
 		switch (i) {

@@ -69,11 +69,13 @@ public class BlockMiningWell extends BlockMachineRoot {
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
+	
+	
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileMiningWell();
 	}
-
+	
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;

@@ -60,10 +60,10 @@ public class BlockRefinery extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileRefinery();
 	}
-
+	
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);

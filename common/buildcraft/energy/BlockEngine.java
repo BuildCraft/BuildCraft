@@ -52,7 +52,7 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileEngine();
 	}
 

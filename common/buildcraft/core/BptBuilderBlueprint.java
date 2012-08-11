@@ -18,6 +18,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.BptSlot.Mode;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.EnumGameType;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
@@ -187,7 +188,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						result = slot;
 						break;
 					}
-				} else if (world.getWorldInfo().getGameType() == 1) {
+				} else if (world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
 					// In creative, we don't use blocks given in the builder
 
 					result = slot;

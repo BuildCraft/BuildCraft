@@ -71,12 +71,12 @@ public class BlockMarker extends BlockContainer {
 	public boolean isACube() {
 		return false;
 	}
-
+	
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileMarker();
 	}
-
+	
 	@Override
 	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();

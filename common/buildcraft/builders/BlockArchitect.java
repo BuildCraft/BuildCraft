@@ -55,7 +55,7 @@ public class BlockArchitect extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileArchitect();
 	}
 

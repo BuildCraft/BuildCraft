@@ -211,10 +211,10 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}
-
+	
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 

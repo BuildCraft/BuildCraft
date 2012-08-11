@@ -23,10 +23,10 @@ public class BlockHopper extends BlockBuildCraft {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileHopper();
 	}
-
+	
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;

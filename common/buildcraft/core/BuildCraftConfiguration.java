@@ -78,7 +78,7 @@ public class BuildCraftConfiguration extends Configuration {
 
 		if (!generalProperties.containsKey("version")) {
 			versionProp = new Property();
-			versionProp.name = "version";
+			versionProp.setName("version");
 			generalProperties.put("version", versionProp);
 		} else
 			versionProp = generalProperties.get("version");

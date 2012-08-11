@@ -14,6 +14,7 @@ import net.minecraft.src.BlockContainer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 
 
 public class BlockPollution extends BlockContainer {
@@ -39,10 +40,10 @@ public class BlockPollution extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TilePollution();
 	}
-
+	
 	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		return 5 * 16 + iblockaccess.getBlockMetadata(i, j, k);

@@ -85,7 +85,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileQuarry();
 	}
 
