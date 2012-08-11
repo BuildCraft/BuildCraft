@@ -89,7 +89,7 @@ public class BlockTank extends BlockContainer {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {

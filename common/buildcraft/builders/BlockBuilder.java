@@ -73,7 +73,7 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())

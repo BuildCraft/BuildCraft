@@ -48,21 +48,21 @@ public class BlockHopper extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer) {
-		super.blockActivated(world, x, y, z, entityPlayer);
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
 
 		// Drop through if the player is sneaking
-		if (entityPlayer.isSneaking())
+		if (entityplayer.isSneaking())
 			return false;
 
-		if (entityPlayer.getCurrentEquippedItem() != null) {
-			if (entityPlayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
+		if (entityplayer.getCurrentEquippedItem() != null) {
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
 				return false;
 			}
 		}
 
 		if (!CoreProxy.isClient(world))
-			entityPlayer.openGui(mod_BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
+			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
 
 		return true;
 	}
