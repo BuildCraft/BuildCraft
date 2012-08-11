@@ -263,7 +263,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 
@@ -382,9 +382,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			return null;
 
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			MinecraftForgeClient.bindTexture(Block.blocksList[liquidId].getTextureFile());
+			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
 		} else {
-			MinecraftForgeClient.bindTexture(Item.itemsList[liquidId].getTextureFile());
+			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
 		}
 		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}

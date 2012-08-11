@@ -13,6 +13,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
@@ -59,10 +60,10 @@ public class GuiCombustionEngine extends GuiEngine {
 		int liquidImgIndex = 0;
 
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			MinecraftForgeClient.bindTexture(Block.blocksList[liquidId].getTextureFile());
+			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
 			liquidImgIndex = Block.blocksList[liquidId].blockIndexInTexture;
 		} else if (Item.itemsList[liquidId] != null) {
-			MinecraftForgeClient.bindTexture(Item.itemsList[liquidId].getTextureFile());
+			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
 			liquidImgIndex = Item.itemsList[liquidId].getIconFromDamage(0);
 		} else {
 			return;			

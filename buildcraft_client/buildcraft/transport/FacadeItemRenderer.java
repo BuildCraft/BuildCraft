@@ -11,6 +11,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
 
@@ -30,7 +31,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		
 		//Render Facade
 		GL11.glPushMatrix();
-		MinecraftForgeClient.bindTexture(block.getTextureFile());
+		ForgeHooksClient.bindTexture(block.getTextureFile(), 0);
 		block.setBlockBounds(0F, 0F, 1F - 1F/16F, 1F, 1F, 1F);
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		
@@ -63,7 +64,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		
 		
 		//Render StructurePipe
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 		block = BuildCraftTransport.genericPipeBlock;
 		int textureID = 7 * 16 + 13; //Structure pipe
 		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F/16F);

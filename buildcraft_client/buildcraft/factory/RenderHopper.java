@@ -5,6 +5,7 @@ import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
@@ -54,10 +55,10 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		GL11.glDisable(GL11.GL_LIGHTING);
 
 		GL11.glTranslated(x, y, z);
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png");
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png", 0);
 		top.render((float) (1.0 / 16.0));
 		bottom.render((float) (1.0 / 16.0));
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png");
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png", 0);
 		middle.render(Tessellator.instance, 1F / 16F);
 
 		GL11.glEnable(GL11.GL_LIGHTING);

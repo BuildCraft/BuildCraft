@@ -13,6 +13,7 @@ import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
@@ -149,7 +150,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float factor = (float) (1.0 / 16.0);
 
-		MinecraftForgeClient.bindTexture(baseTexture);
+		ForgeHooksClient.bindTexture(baseTexture, 0);
 
 		box.render(factor);
 
@@ -157,7 +158,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png", 0);
 
 		float chamberf = 2F / 16F;
 
@@ -186,7 +187,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			break;
 		}
 
-		MinecraftForgeClient.bindTexture(texture);
+		ForgeHooksClient.bindTexture(texture, 0);
 
 		trunk.render(factor);
 

@@ -20,6 +20,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 public class PipeWorldRenderer {
@@ -81,8 +82,8 @@ public class PipeWorldRenderer {
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;
 
-		MinecraftForgeClient.bindTexture(state.getTextureFile());
-		
+		ForgeHooksClient.bindTexture(state.getTextureFile(), 0);
+	
 		state.currentTextureIndex = state.textureMatrix.getTextureIndex(Orientations.Unknown);
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
 		renderblocks.renderStandardBlock(block, x, y, z);
@@ -125,8 +126,8 @@ public class PipeWorldRenderer {
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
-
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
+		
 		if (state.wireMatrix.hasWire(WireColor.Red)) {
 			state.currentTextureIndex = state.wireMatrix.getTextureIndex(WireColor.Red);
 			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMaxPos,
@@ -176,7 +177,7 @@ public class PipeWorldRenderer {
 		
 		for (Orientations direction : Orientations.dirs()){
 			if (state.facadeMatrix.isConnected(direction)){
-				MinecraftForgeClient.bindTexture(state.facadeMatrix.getTextureFile(direction));
+				ForgeHooksClient.bindTexture(state.facadeMatrix.getTextureFile(direction), 0);
 				state.currentTextureIndex = state.facadeMatrix.getTextureIndex(direction);
 
 				//Hollow facade
@@ -230,7 +231,7 @@ public class PipeWorldRenderer {
 		zeroState[2][0] = Utils.pipeMinPos;
 		zeroState[2][1] = Utils.pipeMaxPos;
 		
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 		state.currentTextureIndex = 7 * 16 + 13; // Structure Pipe
 		
 		for (Orientations direction : Orientations.dirs()){

@@ -20,6 +20,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
 
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
@@ -175,7 +176,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		GL11.glRotatef(angle, 0, 1, 0);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png", 0);
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		tank.render(factor);
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);
@@ -251,9 +252,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 	public void setTextureFor(int liquidId) {
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			MinecraftForgeClient.bindTexture(Block.blocksList[liquidId].getTextureFile());
+			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
 		} else {
-			MinecraftForgeClient.bindTexture(Item.itemsList[liquidId].getTextureFile());
+			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
 		}
+		
 	}
 }

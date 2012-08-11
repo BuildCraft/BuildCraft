@@ -18,11 +18,13 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
 
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.api.liquids.LiquidStack;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.RenderEntityBlock;
 import buildcraft.core.RenderEntityBlock.BlockInterface;
 
@@ -83,9 +85,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
 		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
-			MinecraftForgeClient.bindTexture(Block.blocksList[liquid.itemID].getTextureFile());
+			ForgeHooksClient.bindTexture(Block.blocksList[liquid.itemID].getTextureFile(), 0);
 		} else {
-			MinecraftForgeClient.bindTexture(Item.itemsList[liquid.itemID].getTextureFile());
+			ForgeHooksClient.bindTexture(Item.itemsList[liquid.itemID].getTextureFile(), 0);
 		}
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);

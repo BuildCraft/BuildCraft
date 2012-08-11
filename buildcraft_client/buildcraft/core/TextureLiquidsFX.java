@@ -9,7 +9,9 @@
 
 package buildcraft.core;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.RenderEngine;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.FMLTextureFX;
 
@@ -44,7 +46,7 @@ public class TextureLiquidsFX extends FMLTextureFX {
 
 	@Override
 	public void bindImage(RenderEngine renderengine) {
-		MinecraftForgeClient.bindTexture(texture);
+		ForgeHooksClient.bindTexture(texture, 0);
 	}
 
 	@Override
