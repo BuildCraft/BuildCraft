@@ -16,7 +16,7 @@ import buildcraft.core.DefaultProps;
 import net.minecraft.src.BlockStationary;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
+
 
 public class BlockOilStill extends BlockStationary implements ITextureProvider, ILiquid {
 

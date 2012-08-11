@@ -14,7 +14,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtil;
 import net.minecraft.src.ItemBucket;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.forge.ITextureProvider;
+
 
 public class ItemBucketOil extends ItemBucket implements ITextureProvider {
 

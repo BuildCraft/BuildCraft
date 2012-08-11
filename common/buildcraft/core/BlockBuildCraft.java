@@ -5,7 +5,7 @@ import java.util.Random;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
+
 
 public abstract class BlockBuildCraft extends BlockContainer implements ITextureProvider {
 

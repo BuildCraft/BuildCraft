@@ -19,7 +19,7 @@ import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
+
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;

@@ -12,7 +12,7 @@ package buildcraft.core;
 import buildcraft.core.utils.StringUtil;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.forge.ITextureProvider;
+
 
 public class ItemBuildCraft extends Item implements ITextureProvider {
 

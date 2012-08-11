@@ -20,7 +20,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockFluid;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
+
 
 public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILiquid {
 

@@ -11,7 +11,7 @@ package buildcraft.energy;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.TextureLiquidsFX;
-import net.minecraft.src.forge.ITextureProvider;
+
 
 public class TextureOilFX extends TextureLiquidsFX {
 
