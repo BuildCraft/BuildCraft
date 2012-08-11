@@ -22,7 +22,7 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
 
 public class mod_BuildCraftTransport extends NetworkMod {

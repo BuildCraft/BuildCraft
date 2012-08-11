@@ -4,7 +4,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.Render;
-import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 

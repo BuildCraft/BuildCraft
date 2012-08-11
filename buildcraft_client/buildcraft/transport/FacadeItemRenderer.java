@@ -11,8 +11,8 @@ import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
-import net.minecraft.src.forge.IItemRenderer;
-import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 public class FacadeItemRenderer implements IItemRenderer {
 

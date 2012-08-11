@@ -11,7 +11,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
-import net.minecraft.src.forge.IItemRenderer;
+import net.minecraftforge.client.IItemRenderer;
 
 public class PipeItemRenderer implements IItemRenderer {
 	

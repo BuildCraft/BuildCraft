@@ -19,7 +19,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ISidedInventory;
+import net.minecraftforge.common.ISidedInventory;
 
 public class StackUtil {
 

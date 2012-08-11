@@ -13,7 +13,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.forge.ITextureProvider;
-import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 

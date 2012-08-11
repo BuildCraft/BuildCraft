@@ -42,9 +42,9 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.Configuration;
-import net.minecraft.src.forge.MinecraftForge;
-import net.minecraft.src.forge.Property;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
 
 public class BuildCraftEnergy {
 

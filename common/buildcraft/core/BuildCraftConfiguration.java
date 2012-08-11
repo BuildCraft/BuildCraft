@@ -17,8 +17,8 @@ import java.util.Properties;
 import buildcraft.mod_BuildCraftCore;
 import buildcraft.core.CoreProxy;
 
-import net.minecraft.src.forge.Configuration;
-import net.minecraft.src.forge.Property;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 
 public class BuildCraftConfiguration extends Configuration {
 

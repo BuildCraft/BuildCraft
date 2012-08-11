@@ -25,7 +25,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3D;
+import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -138,7 +138,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
 		return Block.torchWood.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
 	}
 

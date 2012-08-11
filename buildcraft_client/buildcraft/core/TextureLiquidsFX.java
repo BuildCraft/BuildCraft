@@ -10,7 +10,7 @@
 package buildcraft.core;
 
 import net.minecraft.src.RenderEngine;
-import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.FMLTextureFX;
 
 public class TextureLiquidsFX extends FMLTextureFX {

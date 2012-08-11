@@ -4,7 +4,7 @@ import buildcraft.api.core.Orientations;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.forge.ISidedInventory;
+import net.minecraftforge.common.ISidedInventory;
 
 /**
  * This class is responsible for abstracting an ISidedInventory as a normal

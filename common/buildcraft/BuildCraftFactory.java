@@ -40,9 +40,9 @@ import net.minecraft.src.Block;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.forge.Configuration;
-import net.minecraft.src.forge.MinecraftForge;
-import net.minecraft.src.forge.Property;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
 
 public class BuildCraftFactory {
 

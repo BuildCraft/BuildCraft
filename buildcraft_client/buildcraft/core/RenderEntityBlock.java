@@ -15,7 +15,7 @@ import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Render;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 

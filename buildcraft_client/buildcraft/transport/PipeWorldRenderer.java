@@ -20,7 +20,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 public class PipeWorldRenderer {
 	

@@ -31,7 +31,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3D;
+import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -139,7 +139,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);

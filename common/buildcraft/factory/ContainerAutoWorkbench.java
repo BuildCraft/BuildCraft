@@ -20,7 +20,7 @@ import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
-import net.minecraft.src.forge.ForgeHooks;
+import net.minecraftforge.common.ForgeHooks;
 
 public class ContainerAutoWorkbench extends BuildCraftContainer {
 
