@@ -25,7 +25,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ISpawnHandler;
+import net.minecraftforge.common.ISpawnHandler;
 
 public class EntityRobot extends Entity implements ISpawnHandler {
 
