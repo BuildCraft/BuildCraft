@@ -381,17 +381,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (liquidId == 0)
 			return null;
 
-		Object o = null;
-
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-			o = Block.blocksList[liquidId];
-		else
-			o = Item.itemsList[liquidId];
-			
-		// should be safe, items and block all implement ITextureProvider now
-		// and if o is null, something else is wrong somewhere
-		MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
-
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
+			MinecraftForgeClient.bindTexture(Block.blocksList[liquidId].getTextureFile());
+		} else {
+			MinecraftForgeClient.bindTexture(Item.itemsList[liquidId].getTextureFile());
+		}
 		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}
 

@@ -56,24 +56,17 @@ public class GuiCombustionEngine extends GuiEngine {
 	}
 
 	private void displayGauge(int j, int k, int line, int col, int squaled, int liquidId) {
-		Object o = null;
 		int liquidImgIndex = 0;
 
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			o = Block.blocksList[liquidId];
+			MinecraftForgeClient.bindTexture(Block.blocksList[liquidId].getTextureFile());
 			liquidImgIndex = Block.blocksList[liquidId].blockIndexInTexture;
 		} else if (Item.itemsList[liquidId] != null) {
-			o = Item.itemsList[liquidId];
+			MinecraftForgeClient.bindTexture(Item.itemsList[liquidId].getTextureFile());
 			liquidImgIndex = Item.itemsList[liquidId].getIconFromDamage(0);
+		} else {
+			return;			
 		}
-
-		if (o == null)
-			return;
-
-		if (o instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
-		else
-			MinecraftForgeClient.bindTexture("/terrain.png");
 
 		int imgLine = liquidImgIndex / 16;
 		int imgColumn = liquidImgIndex - imgLine * 16;

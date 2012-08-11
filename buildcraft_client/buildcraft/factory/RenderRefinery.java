@@ -250,16 +250,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	}
 
 	public void setTextureFor(int liquidId) {
-		Object o = null;
-
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-			o = Block.blocksList[liquidId];
-		else
-			o = Item.itemsList[liquidId];
-
-		if (o instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) o).getTextureFile());
-		else
-			MinecraftForgeClient.bindTexture("/terrain.png");
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
+			MinecraftForgeClient.bindTexture(Block.blocksList[liquidId].getTextureFile());
+		} else {
+			MinecraftForgeClient.bindTexture(Item.itemsList[liquidId].getTextureFile());
+		}
 	}
 }

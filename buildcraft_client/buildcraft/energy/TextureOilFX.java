@@ -16,7 +16,6 @@ import buildcraft.core.TextureLiquidsFX;
 public class TextureOilFX extends TextureLiquidsFX {
 
 	public TextureOilFX() {
-		super(10, 31, 10, 31, 10, 31, BuildCraftEnergy.oilStill.blockIndexInTexture,
-				((ITextureProvider) BuildCraftEnergy.oilStill).getTextureFile());
+		super(10, 31, 10, 31, 10, 31, BuildCraftEnergy.oilStill.blockIndexInTexture, BuildCraftEnergy.oilStill.getTextureFile());
 	}
 }

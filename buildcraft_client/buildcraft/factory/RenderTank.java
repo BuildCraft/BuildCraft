@@ -82,17 +82,11 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		Object obj = null;
-
-		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null)
-			obj = Block.blocksList[liquid.itemID];
-		else
-			obj = Item.itemsList[liquid.itemID];
-
-		if (obj instanceof ITextureProvider)
-			MinecraftForgeClient.bindTexture(((ITextureProvider) obj).getTextureFile());
-		else
-			MinecraftForgeClient.bindTexture("/terrain.png");
+		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
+			MinecraftForgeClient.bindTexture(Block.blocksList[liquid.itemID].getTextureFile());
+		} else {
+			MinecraftForgeClient.bindTexture(Item.itemsList[liquid.itemID].getTextureFile());
+		}
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 
