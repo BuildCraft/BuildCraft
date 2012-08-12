@@ -3,12 +3,14 @@ package buildcraft.transport.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.network.PacketPipeDescription;
 import buildcraft.core.network.PacketPipeTransportContent;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.transport.CraftingGateInterface;
@@ -26,18 +28,17 @@ import net.minecraft.src.Container;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.IPacketHandler;
 
 public class PacketHandler implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
-
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
+	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet2, Player player) {
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet2.data));
 		try {
-			NetClientHandler net = (NetClientHandler) network.getNetHandler();
+			//NetClientHandler net = (NetClientHandler) network.getNetHandler();
 
 			int packetID = data.read();
 
@@ -62,9 +63,6 @@ public class PacketHandler implements IPacketHandler {
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
 				descPacket.readData(data);
 				onPipeDescription(descPacket);
-//				PacketPipeDescription packetU = new PacketPipeDescription();
-//				packetU.readData(data);
-//				onPipeDescription(packetU);
 				break;
 			case PacketIds.PIPE_CONTENTS:
 				PacketPipeTransportContent packetC = new PacketPipeTransportContent();

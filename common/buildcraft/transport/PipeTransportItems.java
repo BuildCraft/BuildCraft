@@ -9,6 +9,7 @@
 
 package buildcraft.transport;
 
+import java.awt.Dimension;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -33,12 +34,15 @@ import buildcraft.core.Utils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPipeTransportContent;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
+import net.minecraft.src.ServerConfigurationManager;
 import net.minecraft.src.TileEntity;
 
 public class PipeTransportItems extends PipeTransport {
@@ -92,10 +96,16 @@ public class PipeTransportItems extends PipeTransport {
 		if (container.pipe instanceof IPipeTransportItemsHook)
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
 
-		if (CoreProxy.isServerSide())
-			if (item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor))
-				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
+		if (!worldObj.isRemote && item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {
+			int dimension = worldObj.provider.worldType;
+			MinecraftServer.getServer().getConfigurationManager().sendToAllNear(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(item, orientation));
+		}
+			
+//			for (Object player : MinecraftServer.getServer().getConfigurationManager().playerEntityList){
+//				
+//			}
+//				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
+//						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 
 		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
 			groupEntities();

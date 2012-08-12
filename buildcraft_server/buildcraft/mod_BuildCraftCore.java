@@ -18,7 +18,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 
 
-public class mod_BuildCraftCore extends NetworkMod {
+public class mod_BuildCraftCore {
 
 	public static mod_BuildCraftCore instance;
 
@@ -32,7 +32,7 @@ public class mod_BuildCraftCore extends NetworkMod {
 		BuildCraftCore.initialize();
 	}
 
-	@Override
+	//@Override
 	public void modsLoaded() {
 		mod_BuildCraftCore.initialize();
 		BuildCraftCore.initializeModel(this);
@@ -43,14 +43,14 @@ public class mod_BuildCraftCore extends NetworkMod {
 		return DefaultProps.VERSION;
 	}
 
-	@Override
+	//@Override
 	public String getVersion() {
 		return version();
 	}
 
 	long lastReport = 0;
 
-	@Override
+	//@Override
 	public boolean onTickInGame(MinecraftServer minecraftserver) {
 		if (BuildCraftCore.trackNetworkUsage) {
 			Date d = new Date();
@@ -66,17 +66,17 @@ public class mod_BuildCraftCore extends NetworkMod {
 		return true;
 	}
 
-	@Override
+	//@Override
 	public void load() {
 		BuildCraftCore.load();
 	}
 
-	@Override
+	//@Override
 	public boolean clientSideRequired() {
 		return true;
 	}
 
-	@Override
+	//@Override
 	public boolean serverSideRequired() {
 		return true;
 	}

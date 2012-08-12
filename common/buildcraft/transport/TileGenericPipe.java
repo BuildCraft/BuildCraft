@@ -39,7 +39,7 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.Utils;
 import buildcraft.core.network.IndexInPayload;
 import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPipeDescription;
+//import buildcraft.core.network.PacketPipeDescription;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
@@ -122,9 +122,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			pipe.invalidate();
 		}
 		super.invalidate();
-
-//		if (BlockGenericPipe.isValid(pipe))
-//			BlockGenericPipe.removePipe(pipe);
 	}
 
 	@Override
@@ -347,13 +344,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			renderState = packet.getRenderState();
 			worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		}
-		
-		
-		
 		return;	
 	}
 
-	public Packet getDescriptionPacket() {
+	@Override
+	public Packet getAuxillaryInfoPacket() {
 		bindPipe();
 		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord);
 		return packet.getPacket();

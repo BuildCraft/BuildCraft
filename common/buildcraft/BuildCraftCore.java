@@ -36,7 +36,7 @@ import buildcraft.core.TriggerInventory;
 import buildcraft.core.TriggerLiquidContainer;
 import buildcraft.core.TriggerMachine;
 import buildcraft.core.ActionMachineControl.Mode;
-import buildcraft.core.network.ConnectionHandler;
+//import buildcraft.core.network.ConnectionHandler;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.transport.TriggerRedstoneInput;
 
@@ -130,7 +130,7 @@ public class BuildCraftCore {
 
 	public static void load() {
 
-		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
+		//MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 	}
 
 	public static void initialize() {

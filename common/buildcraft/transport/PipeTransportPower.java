@@ -22,12 +22,10 @@ import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.Utils;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.network.PacketPowerUpdate;
 
 public class PipeTransportPower extends PipeTransport {
 	
-	@TileNetworkData(staticSize = 6)
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
 	public int[] powerQuery = new int[6];
@@ -146,18 +144,15 @@ public class PipeTransportPower extends PipeTransport {
 							continue;
 						
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
-
 						nearbyTransport.requestEnergy(Orientations.values()[i].reverse(), transferQuery[i]);
 					}
 				}
-
-		if (CoreProxy.isServerSide())
-			if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)){
-				
+		
+		if (!worldObj.isRemote && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 				packet.displayPower = displayPower;
-				CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+//				CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
+//						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
 			}
 
 	}

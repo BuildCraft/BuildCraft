@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.TreeMap;
 
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipe.WireColor;
@@ -20,10 +24,11 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
-public class PipeWorldRenderer {
+public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	
 	/**
 	 * Mirrors the array on the Y axis by calculating offsets from 0.5F
@@ -496,5 +501,34 @@ public class PipeWorldRenderer {
 			block.setBlockBounds(min, min, Utils.pipeMaxPos, max, max, Utils.pipeMaxPos + 0.10F);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
+	}
+
+	@Override
+	public void renderInventoryBlock(Block block, int metadata, int modelID,
+			RenderBlocks renderer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		
+		if (tile instanceof IPipeRenderState){
+			IPipeRenderState pipeTile = (IPipeRenderState) tile;
+			renderPipe(renderer, world, block, pipeTile.getRenderState(), x, y, z);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean shouldRender3DInInventory() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getRenderId() {
+		return BuildCraftTransport.pipeModel;
 	}
 }

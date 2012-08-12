@@ -43,8 +43,8 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 		}
 
 		if (block != null && block.canProvidePower()) {
-			res.add(BuildCraftCore.triggerRedstoneActive);
-			res.add(BuildCraftCore.triggerRedstoneInactive);
+//			res.add(BuildCraftCore.triggerRedstoneActive);
+//			res.add(BuildCraftCore.triggerRedstoneInactive);
 		}
 
 		return res;

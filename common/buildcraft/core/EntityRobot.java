@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
@@ -206,9 +208,10 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 						} else if (target.stackToUse != null) {
 	
 							worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
-							target.stackToUse.getItem().onItemUse(target.stackToUse,
-									CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
-									target.z, 1);
+							throw new RuntimeErrorException(null, "NOT IMPLEMENTED");
+//							target.stackToUse.getItem().onItemUse(target.stackToUse,
+//									CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
+//									target.z, 1);
 						} else {
 	
 							try {

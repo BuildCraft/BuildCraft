@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.TreeMap;
 
-import buildcraft.BuildCraftBuilders;
+//import buildcraft.BuildCraftBuilders;
 import buildcraft.core.CoreProxy;
 
 
@@ -90,8 +90,8 @@ public class BptRootIndex {
 
 				bluePrintsFile.put(maxBpt, newFile);
 
-				for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary.values())
-					playerIndex.addBlueprint(newFile);
+//				for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary.values())
+//					playerIndex.addBlueprint(newFile);
 			}
 		}
 

@@ -72,10 +72,10 @@ public class CoreProxy {
 	}
 
 	public static File getBuildCraftBase() {
-		return new File(Minecraft.getMinecraftDir(), "/buildcraft/");
+		return new File(Minecraft.getMinecraftDir(), "/config/buildcraft/");
 	}
 
-	public static void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance, NetworkMod mod) {}
+//	public static void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance, NetworkMod mod) {}
 
 	public static void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {}
 
@@ -126,7 +126,16 @@ public class CoreProxy {
 	private static EntityPlayer createNewPlayer(World world) {
 		return new EntityPlayer(world) {
 			@Override
-			public void func_6420_o() {}
+			public void sendChatToPlayer(String var1) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean canCommandSenderUseCommand(String var1) {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		};
 	}
 

@@ -9,6 +9,14 @@
 
 package buildcraft;
 
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.FacadeItemRenderer;
@@ -17,6 +25,7 @@ import buildcraft.transport.PipeItemRenderer;
 import buildcraft.transport.PipeWorldRenderer;
 import buildcraft.transport.RenderPipe;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.network.PacketHandler;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
@@ -25,7 +34,9 @@ import net.minecraft.src.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 
-public class mod_BuildCraftTransport extends NetworkMod {
+@Mod(version = "3.2", modid="BC|TRANSPORT", name = "Buildcraft Transport")
+@NetworkMod(channels={"BC"}, packetHandler = PacketHandler.class)
+public class mod_BuildCraftTransport {
 
 	public static mod_BuildCraftTransport instance;
 	public final static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
@@ -36,9 +47,9 @@ public class mod_BuildCraftTransport extends NetworkMod {
 		instance = this;
 	}
 
-	@Override
-	public void modsLoaded() {
-		super.modsLoaded();
+	//@Override
+	@Init
+	public void modsLoaded(FMLInitializationEvent event) {
 		BuildCraftTransport.initialize();
 		
 		BuildCraftTransport.initializeModel(this);
@@ -61,41 +72,45 @@ public class mod_BuildCraftTransport extends NetworkMod {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerStone.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerGold.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeStructureCobblestone.shiftedIndex, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStipes.shiftedIndex, pipeItemRenderer);
+		//MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStipes.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsVoid.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsVoid.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsSandstone.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsSandstone.shiftedIndex, pipeItemRenderer);
 		
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem.shiftedIndex, facadeItemRenderer);
+
+		RenderingRegistry.instance().registerBlockHandler(pipeWorldRenderer);
 	}
 
 	public static void registerTilePipe(Class<? extends TileEntity> clas, String name) {
 		ModLoader.registerTileEntity(clas, name, new RenderPipe());
 	}
 
-	@Override
+	//@Override
 	public String getVersion() {
 		return DefaultProps.VERSION;
 	}
 
-	@Override
-	public void load() {
+	//@Override
+	@PreInit
+	public void load(FMLPreInitializationEvent event) {
 		BuildCraftTransport.load();
 	}
 
-	@Override
+	//@Override
 	public boolean clientSideRequired() {
 		return true;
 	}
 
-	@Override
+	//@Override
 	public boolean serverSideRequired() {
 		return true;
 	}
 	
-	@Override
+	//@Override
 	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
+		//cpw.mods.fml.client.registry.RenderingRegistry.instance().registerBlockHandler(new isimpleblockrenderinghandler() {
 		if (modelID != BuildCraftTransport.pipeModel) return true;
 		
 		TileEntity tile = world.getBlockTileEntity(x, y, z);

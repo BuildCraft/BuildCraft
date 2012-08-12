@@ -25,6 +25,13 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ClassMapping;
 import buildcraft.core.DefaultProps;
@@ -38,9 +45,12 @@ import buildcraft.core.RenderEntityBlock;
 import buildcraft.core.RenderLaser;
 import buildcraft.core.RenderRobot;
 import buildcraft.core.Utils;
+import buildcraft.core.network.PacketHandler;
 import buildcraft.core.utils.Localization;
 
-public class mod_BuildCraftCore extends NetworkMod {
+@Mod(name="BuildCraftCore", version="3.2", useMetadata = false, modid = "BC|CORE")
+@NetworkMod(channels = {"bc|core"}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+public class mod_BuildCraftCore {
 
 	public static mod_BuildCraftCore instance;
 
@@ -96,24 +106,42 @@ public class mod_BuildCraftCore extends NetworkMod {
 		}
 	}
 
-	@Override
-	public void modsLoaded() {
-		mod_BuildCraftCore.initialize();
-		BuildCraftCore.initializeModel(this);
-		ModLoader.setInGameHook(this, true, true);
+/*
+	 * @Override public void handlePacket(Packet230ModLoader packet) { switch
+	 * (PacketIds.values()[packet.packetType]) { case TileDescription:
+	 * Utils.handleDescriptionPacket(packet,
+	 * ModLoader.getMinecraftInstance().theWorld); break; case TileUpdate:
+	 * Utils.handleUpdatePacket(packet,
+	 * ModLoader.getMinecraftInstance().theWorld); break;
+	 * 
+	 * } }
+	 */
+	
+	//@Override
+	@PreInit
+	public void load(FMLPreInitializationEvent event) {
+		BuildCraftCore.load();
 	}
 
-	@Override
-	public String getVersion() {
-		return version();
+	//	//@Override
+	@Init
+	public void modsLoaded(FMLInitializationEvent event) {
+		mod_BuildCraftCore.initialize();
+		//BuildCraftCore.initializeModel(this);
+//		ModLoader.setInGameHook(this, true, true);
 	}
+
+//	@Override
+//	public String getVersion() {
+//		return version();
+//	}
 
 	public static String version() {
 		return DefaultProps.VERSION;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
+//	@Override
 	public void addRenderer(Map map) {
 		map.put(EntityBlock.class, new RenderEntityBlock());
 		map.put(EntityLaser.class, new RenderLaser());
@@ -121,7 +149,7 @@ public class mod_BuildCraftCore extends NetworkMod {
 		map.put(EntityRobot.class, new RenderRobot());
 	}
 
-	@Override
+//	@Override
 	public boolean renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
@@ -188,7 +216,7 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 	RenderItem itemRenderer = new RenderItem();
 
-	@Override
+	//@Override
 	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i, int j) {
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 
@@ -419,7 +447,7 @@ public class mod_BuildCraftCore extends NetworkMod {
 
 	long lastReport = 0;
 
-	@Override
+	//@Override
 	public boolean onTickInGame(float f, Minecraft minecraft) {
 		if (BuildCraftCore.trackNetworkUsage) {
 			Date d = new Date();
@@ -446,17 +474,12 @@ public class mod_BuildCraftCore extends NetworkMod {
 	 * } }
 	 */
 
-	@Override
-	public void load() {
-		BuildCraftCore.load();
-	}
-
-	@Override
+	//@Override
 	public boolean clientSideRequired() {
 		return true;
 	}
 
-	@Override
+	//@Override
 	public boolean serverSideRequired() {
 		return true;
 	}

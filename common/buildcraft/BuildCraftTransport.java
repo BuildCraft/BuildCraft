@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import buildcraft.mod_BuildCraftCore;
 import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.core.BuildCraftAPI;
@@ -46,7 +48,6 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TriggerPipeContents;
 import buildcraft.transport.TriggerPipeSignal;
 import buildcraft.transport.TriggerPipeContents.Kind;
-import buildcraft.transport.network.ConnectionHandler;
 import buildcraft.transport.pipes.PipeItemsCobblestone;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsGold;
@@ -54,7 +55,7 @@ import buildcraft.transport.pipes.PipeItemsIron;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsSandstone;
 import buildcraft.transport.pipes.PipeItemsStone;
-import buildcraft.transport.pipes.PipeItemsStripes;
+//import buildcraft.transport.pipes.PipeItemsStripes;
 import buildcraft.transport.pipes.PipeItemsVoid;
 import buildcraft.transport.pipes.PipeItemsWood;
 import buildcraft.transport.pipes.PipeLiquidsCobblestone;
@@ -123,7 +124,7 @@ public class BuildCraftTransport {
 	
 	public static Item facadeItem;
 
-	public static Item pipeItemsStipes;
+	//public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
 
@@ -167,10 +168,10 @@ public class BuildCraftTransport {
 
 	public static void load() {
 		// Register connection handler
-		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
+		//MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
+		//MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 	}
 
    private static class ExtractionHandler implements IExtractionHandler {
@@ -317,8 +318,8 @@ public class BuildCraftTransport {
 				"Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone, null);
 
 		// Fix the recipe
-		pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe",
-				new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
+//		pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe",
+//				new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
 		
 		pipeItemsVoid = createPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe",
 				new ItemStack(Item.dyePowder, 1, 0), Block.glass, Item.redstone);
@@ -444,7 +445,8 @@ public class BuildCraftTransport {
 	}
 
 	public static void initializeModel(mod_BuildCraftTransport mod) {
-		pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
+		//pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
+		pipeModel = RenderingRegistry.instance().getNextAvailableRenderId();
 	}
 	
 	
