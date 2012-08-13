@@ -11,6 +11,8 @@ package buildcraft;
 import java.util.Random;
 import java.util.TreeMap;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
+
 import buildcraft.mod_BuildCraftEnergy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.fuels.IronEngineCoolant;
@@ -73,7 +75,7 @@ public class BuildCraftEnergy {
 
 	public static void load() {
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftEnergy.instance, new GuiHandler());
+		NetworkRegistry.instance().registerGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
 
 		// MinecraftForge.registerEntity(EntityMechanicalArm.class,
 		// mod_BuildCraftEnergy.instance, EntityIds.MECHANICAL_ARM, 50, 10,

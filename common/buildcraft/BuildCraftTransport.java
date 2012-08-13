@@ -8,16 +8,12 @@
 
 package buildcraft;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import buildcraft.mod_BuildCraftCore;
 import buildcraft.mod_BuildCraftTransport;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.Trigger;
@@ -35,12 +31,10 @@ import buildcraft.transport.BptBlockPipe;
 import buildcraft.transport.BptItemPipeDiamond;
 import buildcraft.transport.BptItemPipeIron;
 import buildcraft.transport.BptItemPipeWodden;
-import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGate;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicWood;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileDummyGenericPipe;
 import buildcraft.transport.TileDummyGenericPipe2;
@@ -71,13 +65,10 @@ import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
 public class BuildCraftTransport {

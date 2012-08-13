@@ -8,8 +8,9 @@
 
 package buildcraft;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import buildcraft.mod_BuildCraftCore;
-import buildcraft.mod_BuildCraftSilicon;
 import buildcraft.api.bptblocks.BptBlockInventory;
 import buildcraft.api.bptblocks.BptBlockRotateMeta;
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -19,14 +20,10 @@ import buildcraft.core.ItemRedstoneChipset;
 import buildcraft.silicon.BlockAssemblyTable;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.GuiHandler;
-import buildcraft.silicon.network.ConnectionHandler;
-import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
 public class BuildCraftSilicon {
@@ -40,11 +37,8 @@ public class BuildCraftSilicon {
 	private static boolean initialized = false;
 
 	public static void load() {
-		// Register connection handler
-		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
-
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftSilicon.instance, new GuiHandler());
+		NetworkRegistry.instance().registerGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
 	}
 
 	public static void initialize() {
@@ -221,7 +215,7 @@ public class BuildCraftSilicon {
 
 	}
 
-	public static void initializeModel(BaseMod mod) {
-		laserBlockModel = ModLoader.getUniqueBlockModelID(mod, true);
+	public static void initializeModel() {
+		laserBlockModel = RenderingRegistry.instance().getNextAvailableRenderId();
 	}
 }

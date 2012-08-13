@@ -11,7 +11,6 @@ package buildcraft.builders;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ISaveEventHandler;
 
 public class BuildersSaveManager implements ISaveEventHandler {
 

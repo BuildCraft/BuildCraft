@@ -9,12 +9,21 @@
 
 package buildcraft;
 
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.ClientBuilderHook;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.network.PacketHandler;
 
 
-public class mod_BuildCraftBuilders extends NetworkMod {
+@Mod(name="BuildCraft Builders", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|BUILDERS")
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+public class mod_BuildCraftBuilders {
 
 	public static mod_BuildCraftBuilders instance;
 
@@ -22,15 +31,13 @@ public class mod_BuildCraftBuilders extends NetworkMod {
 		instance = this;
 	}
 
-	@Override
-	public void load() {
+	@Init
+	public void init(FMLInitializationEvent event) {
 		BuildCraftBuilders.load();
 	}
 
-	@Override
-	public void modsLoaded() {
-		super.modsLoaded();
-
+	@PostInit
+	public void postInit(FMLPostInitializationEvent event) {
 		BuildCraftBuilders.addHook(new ClientBuilderHook());
 		BuildCraftBuilders.initialize();
 		// CoreProxy.registerGUI(this,
@@ -39,11 +46,6 @@ public class mod_BuildCraftBuilders extends NetworkMod {
 		// Utils.packetIdToInt(PacketIds.TemplateGUI));
 		// CoreProxy.registerGUI(this,
 		// Utils.packetIdToInt(PacketIds.BuilderGUI));
-	}
-
-	@Override
-	public String getVersion() {
-		return DefaultProps.VERSION;
 	}
 
 	/*
@@ -57,15 +59,5 @@ public class mod_BuildCraftBuilders extends NetworkMod {
 	 * GuiBuilder( ModLoader.getMinecraftInstance().thePlayer.inventory, tile);
 	 * default: return null; } }
 	 */
-
-	@Override
-	public boolean clientSideRequired() {
-		return true;
-	}
-
-	@Override
-	public boolean serverSideRequired() {
-		return true;
-	}
 
 }

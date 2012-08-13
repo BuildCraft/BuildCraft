@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 import buildcraft.mod_BuildCraftBuilders;
 import buildcraft.mod_BuildCraftCore;
@@ -105,7 +106,7 @@ public class BuildCraftBuilders {
 		FillerManager.registry = new FillerRegistry();
 
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
+		NetworkRegistry.instance().registerGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
 		
 		// Register save handler
 		MinecraftForge.registerSaveHandler(new BuildersSaveManager());

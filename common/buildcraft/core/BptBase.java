@@ -116,7 +116,7 @@ public abstract class BptBase {
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
-			writer.write("version:" + mod_BuildCraftCore.version());
+			writer.write("version:" + DefaultProps.VERSION);
 			writer.newLine();
 
 			if (this instanceof BptTemplate)

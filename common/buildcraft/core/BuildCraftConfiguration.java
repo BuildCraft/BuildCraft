@@ -83,7 +83,7 @@ public class BuildCraftConfiguration extends Configuration {
 		} else
 			versionProp = generalProperties.get("version");
 
-		versionProp.value = mod_BuildCraftCore.version();
+		versionProp.value = DefaultProps.VERSION;
 
 		super.save();
 	}

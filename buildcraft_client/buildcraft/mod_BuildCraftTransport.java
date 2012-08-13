@@ -9,13 +9,12 @@
 
 package buildcraft;
 
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
@@ -24,7 +23,6 @@ import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeItemRenderer;
 import buildcraft.transport.PipeWorldRenderer;
 import buildcraft.transport.RenderPipe;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.network.PacketHandler;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
@@ -34,8 +32,8 @@ import net.minecraft.src.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 
-@Mod(version = "3.2", modid="BC|TRANSPORT", name = "Buildcraft Transport")
-@NetworkMod(channels={"BC"}, packetHandler = PacketHandler.class)
+@Mod(version = DefaultProps.VERSION, modid="BC|TRANSPORT", name = "Buildcraft Transport")
+@NetworkMod(channels={DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class)
 public class mod_BuildCraftTransport {
 
 	public static mod_BuildCraftTransport instance;
@@ -47,9 +45,13 @@ public class mod_BuildCraftTransport {
 		instance = this;
 	}
 
-	//@Override
 	@Init
-	public void modsLoaded(FMLInitializationEvent event) {
+	public void init(FMLInitializationEvent event) {
+		BuildCraftTransport.load();
+	}
+
+	@PostInit
+	public void postInit(FMLPostInitializationEvent event) {
 		BuildCraftTransport.initialize();
 		
 		BuildCraftTransport.initializeModel(this);
@@ -87,27 +89,6 @@ public class mod_BuildCraftTransport {
 		ModLoader.registerTileEntity(clas, name, new RenderPipe());
 	}
 
-	//@Override
-	public String getVersion() {
-		return DefaultProps.VERSION;
-	}
-
-	//@Override
-	@PreInit
-	public void load(FMLPreInitializationEvent event) {
-		BuildCraftTransport.load();
-	}
-
-	//@Override
-	public boolean clientSideRequired() {
-		return true;
-	}
-
-	//@Override
-	public boolean serverSideRequired() {
-		return true;
-	}
-	
 	//@Override
 	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
 		//cpw.mods.fml.client.registry.RenderingRegistry.instance().registerBlockHandler(new isimpleblockrenderinghandler() {

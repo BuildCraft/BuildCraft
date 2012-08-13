@@ -10,7 +10,6 @@
 package buildcraft.core;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Random;
 
 import buildcraft.core.ItemBlockBuildCraft;
@@ -19,9 +18,7 @@ import buildcraft.core.network.BuildCraftPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
-import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -30,10 +27,6 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
-import net.minecraftforge.client.MinecraftForgeClient;
-
-import cpw.mods.fml.client.SpriteHelper;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class CoreProxy {
 

@@ -1,5 +1,6 @@
 package buildcraft.factory;
 
+import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.core.GuiIds;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileHopper;
@@ -7,12 +8,11 @@ import buildcraft.factory.TileRefinery;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 
 	@Override
-	public Object getGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 
 		if (!world.blockExists(x, y, z))
 			return null;
@@ -39,6 +39,13 @@ public class GuiHandler implements IGuiHandler {
 		default:
 			return null;
 		}
+	}
+
+	@Override
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
+			int x, int y, int z) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

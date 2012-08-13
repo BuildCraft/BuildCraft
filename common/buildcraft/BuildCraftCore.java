@@ -137,11 +137,11 @@ public class BuildCraftCore {
 		if (initialized)
 			return;
 
-		ModLoader.getLogger().fine("Starting BuildCraft " + mod_BuildCraftCore.version());
+		ModLoader.getLogger().fine("Starting BuildCraft " + DefaultProps.VERSION);
 		ModLoader.getLogger().fine("Copyright (c) SpaceToad, 2011");
 		ModLoader.getLogger().fine("http://www.mod-buildcraft.com");
 
-		System.out.println("Starting BuildCraft " + mod_BuildCraftCore.version());
+		System.out.println("Starting BuildCraft " + DefaultProps.VERSION);
 		System.out.println("Copyright (c) SpaceToad, 2011-2012");
 		System.out.println("http://www.mod-buildcraft.com");
 

@@ -17,13 +17,23 @@ import net.minecraft.src.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
+import buildcraft.core.network.PacketHandler;
 
-public class mod_BuildCraftSilicon extends NetworkMod {
+@Mod(name="BuildCraft Silicon", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|SILICON")
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+public class mod_BuildCraftSilicon {
 
 	public static mod_BuildCraftSilicon instance;
 
@@ -31,9 +41,13 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 		instance = this;
 	}
 
-	@Override
-	public void modsLoaded() {
-		super.modsLoaded();
+	@Init
+	public void load(FMLInitializationEvent event) {
+		BuildCraftSilicon.load();
+	}
+
+	@PostInit
+	public void postInit(FMLPostInitializationEvent event) {
 
 		// CoreProxy.registerGUI(this,
 		// Utils.packetIdToInt(PacketIds.AssemblyTableGUI));
@@ -41,15 +55,10 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 		BuildCraftTransport.initialize();
 		BuildCraftSilicon.initialize();
 
-		BuildCraftSilicon.initializeModel(this);
+		BuildCraftSilicon.initializeModel();
 	}
 
-	@Override
-	public String getVersion() {
-		return DefaultProps.VERSION;
-	}
-
-	@Override
+	//@Override
 	public boolean renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iblockaccess, int x, int y, int z, Block block, int l) {
 
 		int meta = iblockaccess.getBlockMetadata(x, y, z);
@@ -127,7 +136,7 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 
 	}
 
-	@Override
+	//@Override
 	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i, int j) {
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
@@ -175,11 +184,6 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 		tessellator.draw();
 	}
 
-	@Override
-	public void load() {
-		BuildCraftSilicon.load();
-	}
-
 	/*
 	 * @Override public GuiScreen handleGUI(int i) { switch
 	 * (Utils.intToPacketId(i)) { case AssemblyTableGUI: return new
@@ -203,15 +207,5 @@ public class mod_BuildCraftSilicon extends NetworkMod {
 	 * 
 	 * break; } }
 	 */
-
-	@Override
-	public boolean clientSideRequired() {
-		return true;
-	}
-
-	@Override
-	public boolean serverSideRequired() {
-		return true;
-	}
 
 }

@@ -6,16 +6,12 @@ import java.io.DataInputStream;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.BlockIndex;
-import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketPipeTransportContent;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.transport.CraftingGateInterface;
 import buildcraft.transport.PipeLogicDiamond;
-import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
@@ -26,7 +22,6 @@ import buildcraft.transport.network.PipeRenderStatePacket;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;

@@ -16,7 +16,6 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderItem;
 import net.minecraft.src.Tessellator;
@@ -27,9 +26,9 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
 import buildcraft.BuildCraftCore;
@@ -48,8 +47,8 @@ import buildcraft.core.Utils;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.utils.Localization;
 
-@Mod(name="BuildCraftCore", version="3.2", useMetadata = false, modid = "BC|CORE")
-@NetworkMod(channels = {"bc|core"}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+@Mod(name="BuildCraft", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|CORE")
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class mod_BuildCraftCore {
 
 	public static mod_BuildCraftCore instance;
@@ -90,6 +89,19 @@ public class mod_BuildCraftCore {
 		instance = this;
 	}
 
+	
+	@Init
+	public void init(FMLInitializationEvent event) {
+		BuildCraftCore.load();
+	}
+
+	@PostInit
+	public void postInit(FMLPostInitializationEvent event) {
+		mod_BuildCraftCore.initialize();
+		//BuildCraftCore.initializeModel(this);
+//		ModLoader.setInGameHook(this, true, true);
+	}
+
 	public static void initialize() {
 		BuildCraftCore.initialize();
 
@@ -116,29 +128,6 @@ public class mod_BuildCraftCore {
 	 * 
 	 * } }
 	 */
-	
-	//@Override
-	@PreInit
-	public void load(FMLPreInitializationEvent event) {
-		BuildCraftCore.load();
-	}
-
-	//	//@Override
-	@Init
-	public void modsLoaded(FMLInitializationEvent event) {
-		mod_BuildCraftCore.initialize();
-		//BuildCraftCore.initializeModel(this);
-//		ModLoader.setInGameHook(this, true, true);
-	}
-
-//	@Override
-//	public String getVersion() {
-//		return version();
-//	}
-
-	public static String version() {
-		return DefaultProps.VERSION;
-	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 //	@Override
@@ -473,15 +462,5 @@ public class mod_BuildCraftCore {
 	 * 
 	 * } }
 	 */
-
-	//@Override
-	public boolean clientSideRequired() {
-		return true;
-	}
-
-	//@Override
-	public boolean serverSideRequired() {
-		return true;
-	}
 
 }

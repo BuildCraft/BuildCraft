@@ -34,7 +34,6 @@ import buildcraft.factory.TilePump;
 import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
-import buildcraft.factory.network.ConnectionHandler;
 import buildcraft.silicon.TileLaser;
 import net.minecraft.src.Block;
 import net.minecraft.src.CraftingManager;
@@ -64,11 +63,8 @@ public class BuildCraftFactory {
 	public static boolean allowMining = true;
 
 	public static void load() {
-		// Register connection handler
-		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
-
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftFactory.instance, new GuiHandler());
+		//MinecraftForge.setGuiHandler(mod_BuildCraftFactory.instance, new GuiHandler());
 
 		// MinecraftForge.registerEntity(EntityMechanicalArm.class,
 		// mod_BuildCraftFactory.instance, EntityIds.MECHANICAL_ARM, 50, 10,

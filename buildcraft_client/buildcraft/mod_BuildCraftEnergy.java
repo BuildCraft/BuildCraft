@@ -11,8 +11,16 @@ package buildcraft;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.network.PacketHandler;
 import buildcraft.energy.RenderEngine;
 import buildcraft.energy.TextureFuelFX;
 import buildcraft.energy.TextureOilFX;
@@ -24,7 +32,9 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
 
-public class mod_BuildCraftEnergy extends NetworkMod {
+@Mod(name="BuildCraft Energy", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|ENERGY")
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+public class mod_BuildCraftEnergy {
 
 	public static mod_BuildCraftEnergy instance;
 
@@ -32,9 +42,14 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 		instance = this;
 	}
 
-	@Override
-	public void modsLoaded() {
-		super.modsLoaded();
+	@Init
+	public void init(FMLInitializationEvent event) {
+		BuildCraftEnergy.load();
+	}
+
+	@PostInit
+	public void postInit(FMLPostInitializationEvent event) {
+
 		BuildCraftEnergy.initialize();
 
 		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(
@@ -52,11 +67,6 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 
 	}
 
-	@Override
-	public String getVersion() {
-		return DefaultProps.VERSION;
-	}
-
 	/*
 	 * @Override public GuiScreen handleGUI(int i) { TileEngine tile = new
 	 * TileEngine();
@@ -70,24 +80,9 @@ public class mod_BuildCraftEnergy extends NetworkMod {
 	 * return null; } }
 	 */
 
-	@Override
+	//@Override
 	public void generateSurface(World world, Random random, int i, int j) {
 		BuildCraftEnergy.generateSurface(world, random, i, j);
-	}
-
-	@Override
-	public void load() {
-		BuildCraftEnergy.load();
-	}
-
-	@Override
-	public boolean clientSideRequired() {
-		return true;
-	}
-
-	@Override
-	public boolean serverSideRequired() {
-		return true;
 	}
 
 }
