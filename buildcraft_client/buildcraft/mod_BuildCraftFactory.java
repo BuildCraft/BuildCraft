@@ -31,13 +31,14 @@ import buildcraft.factory.RenderTank;
 import buildcraft.factory.TileHopper;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
+import buildcraft.factory.network.PacketHandlerFactory;
 import buildcraft.mod_BuildCraftCore.EntityRenderIndex;
 
 import net.minecraft.src.ModLoader;
 
 
 @Mod(name="BuildCraft Factory", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|FACTORY")
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
 public class mod_BuildCraftFactory {
 
 	public static mod_BuildCraftFactory instance;

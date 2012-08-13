@@ -3,6 +3,9 @@ package buildcraft.silicon.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
+
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.factory.TileAssemblyTable;
@@ -11,19 +14,16 @@ import buildcraft.silicon.GuiAssemblyTable;
 
 import net.minecraft.src.GuiScreen;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
-import net.minecraft.src.forge.IPacketHandler;
+import net.minecraft.src.Packet250CustomPayload;
 
-public class PacketHandler implements IPacketHandler {
+public class PacketHandlerSilicon implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
+	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player) {
 
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 		try {
-			NetClientHandler net = (NetClientHandler) network.getNetHandler();
-
 			int packetID = data.read();
 			switch (packetID) {
 			case PacketIds.SELECTION_ASSEMBLY:

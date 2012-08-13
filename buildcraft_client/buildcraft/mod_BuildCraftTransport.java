@@ -23,7 +23,7 @@ import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeItemRenderer;
 import buildcraft.transport.PipeWorldRenderer;
 import buildcraft.transport.RenderPipe;
-import buildcraft.transport.network.PacketHandler;
+import buildcraft.transport.network.PacketHandlerTransport;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ModLoader;
@@ -33,7 +33,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 
 @Mod(version = DefaultProps.VERSION, modid="BC|TRANSPORT", name = "Buildcraft Transport")
-@NetworkMod(channels={DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class)
+@NetworkMod(channels={DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class)
 public class mod_BuildCraftTransport {
 
 	public static mod_BuildCraftTransport instance;

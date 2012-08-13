@@ -27,7 +27,7 @@ import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
-public class PacketHandler implements IPacketHandler {
+public class PacketHandlerTransport implements IPacketHandler {
 
 	@Override
 	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet2, Player player) {

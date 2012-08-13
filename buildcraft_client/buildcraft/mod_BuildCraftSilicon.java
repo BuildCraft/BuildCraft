@@ -29,10 +29,10 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
-import buildcraft.core.network.PacketHandler;
+import buildcraft.silicon.network.PacketHandlerSilicon;
 
 @Mod(name="BuildCraft Silicon", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|SILICON")
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerSilicon.class, clientSideRequired = true, serverSideRequired = true)
 public class mod_BuildCraftSilicon {
 
 	public static mod_BuildCraftSilicon instance;
