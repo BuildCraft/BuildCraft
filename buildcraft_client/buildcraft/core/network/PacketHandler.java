@@ -3,19 +3,15 @@ package buildcraft.core.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
-
-import buildcraft.core.network.ISynchronizedTile;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketTileUpdate;
-
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.core.network.v2.ISyncedTile;
+import buildcraft.core.network.v2.PacketTileState;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 
 public class PacketHandler implements IPacketHandler {
 
@@ -45,6 +41,16 @@ public class PacketHandler implements IPacketHandler {
 				PacketTileUpdate packetT = new PacketTileUpdate();
 				packetT.readData(data);
 				onTileUpdate(packetT);
+				break;
+				
+			case PacketIds.STATE_UPDATE:
+				PacketTileState inPacket = new PacketTileState();
+				inPacket.readData(data);
+				World world = ModLoader.getMinecraftInstance().theWorld;
+				TileEntity tile = world.getBlockTileEntity(inPacket.posX, inPacket.posY, inPacket.posZ);
+				if (tile instanceof ISyncedTile){
+					inPacket.applyStates(data, (ISyncedTile) tile);
+				}
 				break;
 			}
 		} catch (Exception ex) {

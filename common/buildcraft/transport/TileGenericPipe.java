@@ -9,6 +9,9 @@
 
 package buildcraft.transport;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftCore;
@@ -43,6 +46,9 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.v2.IClientState;
+import buildcraft.core.network.v2.ISyncedTile;
+import buildcraft.core.network.v2.PacketTileState;
 import buildcraft.transport.network.PipeRenderStatePacket;
 
 import net.minecraft.src.Block;
@@ -52,9 +58,27 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry,
-		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState {
+		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState,
+		ISyncedTile	{
+	
+	private class CoreState implements IClientState {
+
+		public int pipeId;
+		
+		@Override
+		public void writeData(DataOutputStream data) throws IOException {
+			data.writeInt(pipeId);
+		}
+
+		@Override
+		public void readData(DataInputStream data) throws IOException {
+			pipeId = data.readInt();
+		}
+		
+	}
 	
 	private PipeRenderState renderState = new PipeRenderState();
+	private CoreState coreState = new CoreState();
 
 	public TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
@@ -350,7 +374,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public Packet getAuxillaryInfoPacket() {
 		bindPipe();
-		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord);
+		//		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord);
+		//		return packet.getPacket();
+		//return super.getAuxillaryInfoPacket();
+		
+		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
+		packet.addStateForSerialization((byte )0, coreState);
+		packet.addStateForSerialization((byte) 1, renderState);
 		return packet.getPacket();
 	}
 
@@ -550,5 +580,28 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public PipeRenderState getRenderState() {
 		return renderState;
+	}
+
+	@Override
+	public IClientState getStateInstance(byte stateId) {
+		switch(stateId){
+			case 0: return coreState;
+			case 1: return renderState;
+		}
+		throw new RuntimeException("Unknown state requested: " + stateId + " this is a bug!");
+	}
+
+	@Override
+	public void stateUpdated(byte stateId) {
+		if (!worldObj.isRemote) return;
+		
+		switch (stateId){
+			case 0:
+				if (pipe == null && coreState.pipeId != 0){
+					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
+				}
+				break;
+		}
+		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 }
