@@ -16,9 +16,11 @@ import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.FacadeItemRenderer;
+import buildcraft.transport.GuiHandler;
 import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeItemRenderer;
 import buildcraft.transport.PipeWorldRenderer;
@@ -55,6 +57,7 @@ public class mod_BuildCraftTransport {
 		BuildCraftTransport.initialize();
 		
 		BuildCraftTransport.initializeModel(this);
+		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone.shiftedIndex, pipeItemRenderer);

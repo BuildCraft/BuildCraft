@@ -58,6 +58,12 @@ public class ItemGate extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
+	public CreativeTabs getCreativeTab() {
+		return CreativeTabs.tabMisc;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
 		super.getSubItems(par1, par2CreativeTabs, itemList);
 		itemList.add(new ItemStack(this, 1, 0));

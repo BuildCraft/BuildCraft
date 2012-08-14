@@ -177,8 +177,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 
 		// Do not try to update gates client side.
-		if(CoreProxy.isRemote())
-			return;
+		if (worldObj.isRemote) return;
+//		if(CoreProxy.isRemote())
+//			return;
 		
 		if (actionTracker.markTimeIfDelay(worldObj, 10))
 			resolveActions();

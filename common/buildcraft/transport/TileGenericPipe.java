@@ -96,8 +96,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	//Store the pipe key to prevent losing pipes when a user forgets to include an addon
 	int key; 
 
-	@TileNetworkData
-	public int pipeId = -1;
+	//public int pipeId = -1;
 
 	public TileGenericPipe() {
 
@@ -306,7 +305,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			
 			pipe.setTile(this);
 			
-			pipeId = pipe.itemID;
+			coreState.pipeId = pipe.itemID;
 			pipeBound = true;
 		}
 	}

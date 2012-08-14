@@ -11,7 +11,6 @@ package buildcraft.api.core;
 
 import net.minecraftforge.common.Orientation;
 
-@Deprecated //- Convert to the forge orientation once proper support is added
 public enum Orientations {
 	YNeg, // 0
 	YPos, // 1
