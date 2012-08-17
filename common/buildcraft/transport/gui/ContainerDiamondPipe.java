@@ -14,12 +14,12 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 
-public class CraftingDiamondPipe extends BuildCraftContainer {
+public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	IInventory filterIInventory;
 
-	public CraftingDiamondPipe(IInventory playerInventory, IInventory filterInventory) {
+	public ContainerDiamondPipe(IInventory playerInventory, IInventory filterInventory) {
 		super(filterInventory.getSizeInventory());
 		this.playerIInventory = playerInventory;
 		this.filterIInventory = filterInventory;

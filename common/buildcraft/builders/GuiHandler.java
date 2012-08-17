@@ -2,9 +2,9 @@ package buildcraft.builders;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.builders.gui.ContainerBlueprintLibrary;
-import buildcraft.builders.gui.CraftingBuilder;
-import buildcraft.builders.gui.CraftingFiller;
-import buildcraft.builders.gui.CraftingTemplate;
+import buildcraft.builders.gui.ContainerBuilder;
+import buildcraft.builders.gui.ContainerFiller;
+import buildcraft.builders.gui.ContainerTemplate;
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiFiller;
@@ -66,7 +66,7 @@ public class GuiHandler implements IGuiHandler {
 		case GuiIds.ARCHITECT_TABLE:
 			if (!(tile instanceof TileArchitect))
 				return null;
-			return new CraftingTemplate(player.inventory, (TileArchitect) tile);
+			return new ContainerTemplate(player.inventory, (TileArchitect) tile);
 
 		case GuiIds.BLUEPRINT_LIBRARY:
 			if (!(tile instanceof TileBlueprintLibrary))
@@ -76,12 +76,12 @@ public class GuiHandler implements IGuiHandler {
 		case GuiIds.BUILDER:
 			if (!(tile instanceof TileBuilder))
 				return null;
-			return new CraftingBuilder(player.inventory, (TileBuilder) tile);
+			return new ContainerBuilder(player.inventory, (TileBuilder) tile);
 
 		case GuiIds.FILLER:
 			if (!(tile instanceof TileFiller))
 				return null;
-			return new CraftingFiller(player.inventory, (TileFiller) tile);
+			return new ContainerFiller(player.inventory, (TileFiller) tile);
 
 		default:
 			return null;

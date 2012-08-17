@@ -29,7 +29,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 	PipeLogicDiamond filterInventory;
 
 	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe tile) {
-		super(new CraftingDiamondPipe(playerInventory, (IInventory)tile.pipe.logic), (IInventory)tile.pipe.logic);
+		super(new ContainerDiamondPipe(playerInventory, (IInventory)tile.pipe.logic), (IInventory)tile.pipe.logic);
 		this.playerInventory = playerInventory;
 		this.filterInventory = (PipeLogicDiamond)tile.pipe.logic;
 		xSize = 175;

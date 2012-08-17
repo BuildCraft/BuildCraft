@@ -30,7 +30,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	IInventory playerInventory;
 
-	private final CraftingGateInterface _container;
+	private final ContainerGateInterface _container;
 
 	private int nbEntries;
 
@@ -164,9 +164,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
-		super(new CraftingGateInterface(playerInventory, pipe), null);
+		super(new ContainerGateInterface(playerInventory, pipe), null);
 
-		_container = (CraftingGateInterface) this.inventorySlots;
+		_container = (ContainerGateInterface) this.inventorySlots;
 
 		this.playerInventory = playerInventory;
 		xSize = 175;

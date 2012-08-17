@@ -16,13 +16,13 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 
-public class CraftingTemplate extends BuildCraftContainer {
+public class ContainerTemplate extends BuildCraftContainer {
 
 	protected IInventory playerIInventory;
 	protected TileArchitect template;
 	protected int computingTime = 0;
 
-	public CraftingTemplate(IInventory playerInventory, TileArchitect template) {
+	public ContainerTemplate(IInventory playerInventory, TileArchitect template) {
 		super(template.getSizeInventory());
 		this.playerIInventory = playerInventory;
 		this.template = template;

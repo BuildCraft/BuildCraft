@@ -14,12 +14,12 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 
-public class CraftingFiller extends BuildCraftContainer {
+public class ContainerFiller extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	IInventory fillerInventory;
 
-	public CraftingFiller(IInventory playerInventory, IInventory fillerInventory) {
+	public ContainerFiller(IInventory playerInventory, IInventory fillerInventory) {
 		super(fillerInventory.getSizeInventory());
 		this.playerIInventory = playerInventory;
 		this.fillerInventory = fillerInventory;

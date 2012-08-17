@@ -34,7 +34,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 import net.minecraft.src.TileEntity;
 
-public class CraftingGateInterface extends BuildCraftContainer {
+public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	Pipe pipe;
@@ -45,7 +45,7 @@ public class CraftingGateInterface extends BuildCraftContainer {
 	private boolean isSynchronized = false;
 	private boolean isNetInitialized = false;
 
-	public CraftingGateInterface(IInventory playerInventory, Pipe pipe) {
+	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(0);
 		this.playerIInventory = playerInventory;
 

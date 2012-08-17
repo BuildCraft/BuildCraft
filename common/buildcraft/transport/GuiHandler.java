@@ -3,8 +3,8 @@ package buildcraft.transport;
 import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.gui.CraftingDiamondPipe;
-import buildcraft.transport.gui.CraftingGateInterface;
+import buildcraft.transport.gui.ContainerDiamondPipe;
+import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiGateInterface;
 import net.minecraft.src.EntityPlayer;
@@ -27,10 +27,10 @@ public class GuiHandler implements IGuiHandler {
 		switch (ID) {
 
 		case GuiIds.PIPE_DIAMOND:
-			return new CraftingDiamondPipe(player.inventory, (PipeLogicDiamond)pipe.pipe.logic);
+			return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond)pipe.pipe.logic);
 
 		case GuiIds.GATES:
-			return new CraftingGateInterface(player.inventory, pipe.pipe);
+			return new ContainerGateInterface(player.inventory, pipe.pipe);
 
 		default:
 			return null;

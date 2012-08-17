@@ -15,7 +15,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.gui.CraftingGateInterface;
+import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.network.PacketLiquidUpdate;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.network.PipeRenderStatePacket;
@@ -91,10 +91,10 @@ public class PacketHandlerTransport implements IPacketHandler {
 	private void onGateActions(PacketUpdate packet) {
 		Container container = ModLoader.getMinecraftInstance().thePlayer.craftingInventory;
 
-		if (!(container instanceof CraftingGateInterface))
+		if (!(container instanceof ContainerGateInterface))
 			return;
 
-		((CraftingGateInterface) container).updateActions(packet);
+		((ContainerGateInterface) container).updateActions(packet);
 	}
 
 	/**
@@ -105,10 +105,10 @@ public class PacketHandlerTransport implements IPacketHandler {
 	private void onGateTriggers(PacketUpdate packet) {
 		Container container = ModLoader.getMinecraftInstance().thePlayer.craftingInventory;
 
-		if (!(container instanceof CraftingGateInterface))
+		if (!(container instanceof ContainerGateInterface))
 			return;
 
-		((CraftingGateInterface) container).updateTriggers(packet);
+		((ContainerGateInterface) container).updateTriggers(packet);
 	}
 
 	/**
@@ -119,10 +119,10 @@ public class PacketHandlerTransport implements IPacketHandler {
 	private void onGateSelection(PacketUpdate packet) {
 		Container container = ModLoader.getMinecraftInstance().thePlayer.craftingInventory;
 
-		if (!(container instanceof CraftingGateInterface))
+		if (!(container instanceof ContainerGateInterface))
 			return;
 
-		((CraftingGateInterface) container).setSelection(packet);
+		((ContainerGateInterface) container).setSelection(packet);
 	}
 
 	/**
