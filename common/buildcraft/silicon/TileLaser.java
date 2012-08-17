@@ -17,12 +17,10 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.factory.TileAssemblyTable;
 
 import net.minecraft.src.NBTTagCompound;
@@ -131,6 +129,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		case ZNeg:
 			maxZ = zCoord;
 			break;
+		default:
 		case ZPos:
 			minZ = zCoord;
 			break;
@@ -195,6 +194,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 				pz = -0.3;
 				break;
 			case ZPos:
+			default:
 				pz = 0.3;
 				break;
 		}

@@ -20,7 +20,6 @@ import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.BptBase;
