@@ -66,8 +66,8 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
-					zSlot, 1);
+			stackToPlace.getItem().tryPlaceIntoWorld(stackToPlace, CoreProxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
+					zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
 		return !found;

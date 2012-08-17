@@ -16,31 +16,34 @@ import net.minecraft.src.World;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 
-public class OilBucketHandler{
+public class OilBucketHandler {
 	
     @ForgeSubscribe
     public void onBucketFill(FillBucketEvent event){
-    	ItemStack result=fillCustomBucket(event.world,event.target);
-    	if(result==null)
-    	{
+    	
+    	ItemStack result = fillCustomBucket(event.world,event.target);
+    	
+    	if(result == null)
     		return;
-    	}
+
     	event.result=result;
     	event.setHandeled();
-    	return;
     	
     }
-	public ItemStack fillCustomBucket(World w,MovingObjectPosition pos) {
-		int blockID=w.getBlockId(pos.blockX,pos.blockY,pos.blockZ);
-		if (( blockID== BuildCraftEnergy.oilStill.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
-				&& w.getBlockMetadata(pos.blockX,pos.blockY,pos.blockZ) == 0) {
+    
+	public ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
+		
+		int blockID = world.getBlockId(pos.blockX,pos.blockY,pos.blockZ);
+		
+		if((blockID == BuildCraftEnergy.oilStill.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
+				&& world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
 
-			w.setBlockWithNotify(pos.blockX,pos.blockY,pos.blockZ, 0);
+			world.setBlockWithNotify(pos.blockX, pos.blockY, pos.blockZ, 0);
 
 			return new ItemStack(BuildCraftEnergy.bucketOil);
-		} else {
+		} else
 			return null;
-		}
+
 	}
 
 }

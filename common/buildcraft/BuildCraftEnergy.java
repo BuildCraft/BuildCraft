@@ -13,7 +13,6 @@ import java.util.TreeMap;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-import buildcraft.mod_BuildCraftEnergy;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
@@ -39,7 +38,6 @@ import buildcraft.energy.TriggerEngineHeat;
 import buildcraft.energy.Engine.EnergyStage;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -121,10 +119,11 @@ public class BuildCraftEnergy {
 		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
 		CoreProxy.registerBlock(oilStill);
 
+		// Oil and fuel
 		if (oilMoving.blockID + 1 != oilStill.blockID)
 			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
 
-		MinecraftForge.registerCustomBucketHandler(new OilBucketHandler());
+		MinecraftForge.EVENT_BUS.register(new OilBucketHandler());
 
 		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value))).setItemName("bucketOil").setContainerItem(
 				Item.bucketEmpty);

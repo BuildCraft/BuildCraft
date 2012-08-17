@@ -16,13 +16,11 @@ import java.util.LinkedList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.mod_BuildCraftCore;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.liquids.LiquidStack;
@@ -34,18 +32,11 @@ import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.IPipe.WireColor;
-import buildcraft.core.CoreProxy;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.Utils;
-import buildcraft.core.network.IndexInPayload;
-import buildcraft.core.network.PacketPayload;
-//import buildcraft.core.network.PacketPipeDescription;
-import buildcraft.core.network.PacketTileUpdate;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.v2.IClientState;
 import buildcraft.core.network.v2.ISyncedTile;
 import buildcraft.core.network.v2.PacketTileState;
@@ -345,10 +336,27 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		blockNeighborChange = true;
 	}
 
+	/* IPIPEENTRY */
 	@Override
 	public void entityEntering(IPipedItem item, Orientations orientation) {
 		if (BlockGenericPipe.isValid(pipe))
 			pipe.transport.entityEntering(item, orientation);
+	}
+
+	@Override
+	public void entityEntering(ItemStack payload, Orientations orientation) {
+		
+		/* FIXME: This is untested guesswork */
+		Position itemPos = new Position(xCoord, yCoord, zCoord, orientation);
+		itemPos.moveBackwards(1.0);
+		
+		itemPos.x += 0.5;
+		itemPos.y += 0.25;
+		itemPos.z += 0.5;
+		itemPos.moveForwards(0.5);
+		
+		EntityPassiveItem pipedItem = new EntityPassiveItem(worldObj, itemPos.x, itemPos.y, itemPos.z, payload);
+		entityEntering(pipedItem, orientation);
 	}
 
 	@Override
@@ -359,6 +367,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return false;
 	}
 
+	/* SMP */
 	public void handleDescriptionPacket(PipeRenderStatePacket packet) {
 		if (worldObj.isRemote){
 			if (pipe == null && packet.getPipeId() != 0){

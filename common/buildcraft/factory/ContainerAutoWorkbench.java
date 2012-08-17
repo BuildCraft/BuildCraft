@@ -20,7 +20,6 @@ import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
-import net.minecraftforge.common.ForgeHooks;
 
 public class ContainerAutoWorkbench extends BuildCraftContainer {
 
@@ -70,7 +69,8 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 				thePlayer.addStat(AchievementList.bookcase, 1);
 			}
 			CoreProxy.TakenFromCrafting(thePlayer, itemstack, craftMatrix);
-			ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
+			// FIXME: Autocrafting table should post a forge event.
+			//ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
 
 			tile.extractItem(true, true);
 		}

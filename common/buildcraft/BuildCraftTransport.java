@@ -309,8 +309,8 @@ public class BuildCraftTransport {
 				"Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone, null);
 
 		// Fix the recipe
-//		pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe",
-//				new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
+		//pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe",
+		//		new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
 		
 		pipeItemsVoid = createPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe",
 				new ItemStack(Item.dyePowder, 1, 0), Block.glass, Item.redstone);
@@ -437,7 +437,7 @@ public class BuildCraftTransport {
 
 	public static void initializeModel(mod_BuildCraftTransport mod) {
 		//pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
-		pipeModel = RenderingRegistry.instance().getNextAvailableRenderId();
+		pipeModel = RenderingRegistry.getNextAvailableRenderId();
 	}
 	
 	

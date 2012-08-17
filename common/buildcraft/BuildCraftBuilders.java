@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
 import buildcraft.mod_BuildCraftBuilders;
@@ -45,7 +44,7 @@ import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BptBlockFiller;
-import buildcraft.builders.BuildersSaveManager;
+import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.FillerFillAll;
 import buildcraft.builders.FillerFillPyramid;
 import buildcraft.builders.FillerFillStairs;
@@ -69,7 +68,6 @@ import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
@@ -109,7 +107,7 @@ public class BuildCraftBuilders {
 		NetworkRegistry.instance().registerGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
 		
 		// Register save handler
-		MinecraftForge.registerSaveHandler(new BuildersSaveManager());
+		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 	}
 
 	public static void initialize() {
@@ -246,7 +244,8 @@ public class BuildCraftBuilders {
 
 		new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));
 		new BptBlockCustomStack(Block.redstoneWire.blockID, new ItemStack(Item.redstone));
-		new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
+		// FIXME: Not sure what this has become
+		//new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
 		new BptBlockCustomStack(Block.cake.blockID, new ItemStack(Item.cake));
 		new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
 		new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));

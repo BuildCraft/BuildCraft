@@ -11,7 +11,6 @@ package buildcraft;
 import java.io.File;
 import java.util.TreeMap;
 
-import buildcraft.mod_BuildCraftCore;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
@@ -42,12 +41,10 @@ import buildcraft.transport.TriggerRedstoneInput;
 
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
 public class BuildCraftCore {

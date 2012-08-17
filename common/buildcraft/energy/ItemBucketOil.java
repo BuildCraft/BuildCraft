@@ -23,7 +23,7 @@ public class ItemBucketOil extends ItemBucket {
 		iconIndex = 0 * 16 + 1;
 	}
 
-	// @Override Client side only
+	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
 		return StringUtil.localize(getItemNameIS(itemstack));
 	}

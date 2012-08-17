@@ -22,12 +22,12 @@ public class SidedInventoryAdapter implements IInventory {
 	public SidedInventoryAdapter(ISidedInventory sidedInventory, Orientations side) {
 		_sidedInventory = sidedInventory;
 		_side = side;
-		_slotOffset = _sidedInventory.getStartInventorySide(side.toOrientation());
+		_slotOffset = _sidedInventory.getStartInventorySide(side.toDirection());
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return _sidedInventory.getSizeInventorySide(_side.toOrientation());
+		return _sidedInventory.getSizeInventorySide(_side.toDirection());
 	}
 
 	@Override

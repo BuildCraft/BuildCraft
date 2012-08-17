@@ -85,7 +85,7 @@ public class mod_BuildCraftTransport {
 		
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem.shiftedIndex, facadeItemRenderer);
 
-		RenderingRegistry.instance().registerBlockHandler(pipeWorldRenderer);
+		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
 	}
 
 	public static void registerTilePipe(Class<? extends TileEntity> clas, String name) {

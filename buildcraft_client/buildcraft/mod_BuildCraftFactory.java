@@ -22,7 +22,6 @@ import cpw.mods.fml.common.network.NetworkMod;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.RenderVoid;
-import buildcraft.core.network.PacketHandler;
 import buildcraft.factory.EntityMechanicalArm;
 import buildcraft.factory.GuiAutoCrafting;
 import buildcraft.factory.RenderHopper;

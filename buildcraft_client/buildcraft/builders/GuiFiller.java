@@ -97,7 +97,6 @@ public class GuiFiller extends GuiBuildCraft {
 
 	private int lastX = 0;
 	private int lastY = 0;
-	private int inventoryRows = 6;
 
 	public final int patternSymbolX = 125;
 	public final int patternSymbolY = 34;

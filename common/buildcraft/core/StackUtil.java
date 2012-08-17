@@ -105,8 +105,8 @@ public class StackUtil {
 			IInventory inv = Utils.getInventory(inventory);
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
-			int first = sidedInv.getStartInventorySide(from.toOrientation());
-			int last = first + sidedInv.getSizeInventorySide(from.toOrientation()) - 1;
+			int first = sidedInv.getStartInventorySide(from.toDirection());
+			int last = first + sidedInv.getSizeInventorySide(from.toDirection()) - 1;
 
 			for (int j = first; j <= last; ++j)
 				if (tryAdding(inv, j, add, false)) {
@@ -161,8 +161,8 @@ public class StackUtil {
 			IInventory inv = Utils.getInventory(inventory);
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
-			int first = sidedInv.getStartInventorySide(from.toOrientation());
-			int last = first + sidedInv.getSizeInventorySide(from.toOrientation()) - 1;
+			int first = sidedInv.getStartInventorySide(from.toDirection());
+			int last = first + sidedInv.getSizeInventorySide(from.toDirection()) - 1;
 
 			for (int j = first; j <= last; ++j)
 				if (tryAdding(inv, j, add, true)) {

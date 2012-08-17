@@ -21,7 +21,6 @@ import buildcraft.silicon.BlockAssemblyTable;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.GuiHandler;
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Property;
@@ -163,7 +162,6 @@ public class BuildCraftSilicon {
 	}
 
 	public static void loadRecipes() {
-		CraftingManager craftingmanager = CraftingManager.getInstance();
 
 		CoreProxy.addCraftingRecipe(new ItemStack(laserBlock), new Object[] { "ORR", "DDR", "ORR", Character.valueOf('O'),
 				Block.obsidian, Character.valueOf('R'), Item.redstone, Character.valueOf('D'), Item.diamond, });
@@ -216,6 +214,6 @@ public class BuildCraftSilicon {
 	}
 
 	public static void initializeModel() {
-		laserBlockModel = RenderingRegistry.instance().getNextAvailableRenderId();
+		laserBlockModel = RenderingRegistry.getNextAvailableRenderId();
 	}
 }

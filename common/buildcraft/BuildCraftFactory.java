@@ -9,7 +9,6 @@
 package buildcraft;
 
 import buildcraft.mod_BuildCraftCore;
-import buildcraft.mod_BuildCraftFactory;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.factory.BlockAutoWorkbench;
@@ -25,7 +24,6 @@ import buildcraft.factory.BptBlockAutoWorkbench;
 import buildcraft.factory.BptBlockFrame;
 import buildcraft.factory.BptBlockRefinery;
 import buildcraft.factory.BptBlockTank;
-import buildcraft.factory.GuiHandler;
 import buildcraft.factory.TileAssemblyTable;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileHopper;
@@ -36,11 +34,9 @@ import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.silicon.TileLaser;
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
 public class BuildCraftFactory {

@@ -9,7 +9,7 @@
 
 package buildcraft.api.core;
 
-import net.minecraftforge.common.Orientation;
+import net.minecraftforge.common.ForgeDirection;
 
 public enum Orientations {
 	YNeg, // 0
@@ -39,22 +39,22 @@ public enum Orientations {
 		}
 	}
 	
-	public Orientation toOrientation(){
+	public ForgeDirection toDirection(){
 		switch(this){
 		case YNeg:
-			return Orientation.DOWN;
+			return ForgeDirection.DOWN;
 		case YPos:
-			return Orientation.UP;
+			return ForgeDirection.UP;
 		case ZNeg:
-			return Orientation.NORTH;
+			return ForgeDirection.NORTH;
 		case ZPos:
-			return Orientation.SOUTH;
+			return ForgeDirection.SOUTH;
 		case XNeg:
-			return Orientation.WEST;
+			return ForgeDirection.WEST;
 		case XPos:
-			return Orientation.EAST;
+			return ForgeDirection.EAST;
 		default:
-			return Orientation.UNKNOWN;
+			return ForgeDirection.UNKNOWN;
 			
 		}
 	}
