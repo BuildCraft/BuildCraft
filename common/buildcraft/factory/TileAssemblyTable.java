@@ -408,7 +408,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				message.select = false;
 			}
 
-			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, selectionMessageWrapper.toPayload(xCoord,
+			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY_SEND, selectionMessageWrapper.toPayload(xCoord,
 					yCoord, zCoord, message));
 			packet.posX = xCoord;
 			packet.posY = yCoord;

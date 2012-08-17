@@ -9,6 +9,7 @@ public class PacketIds {
 	public static final int PIPE_POWER = 4;
 	public static final int SELECTION_ASSEMBLY_GET = 20;
 	public static final int SELECTION_ASSEMBLY = 21;
+	public static final int SELECTION_ASSEMBLY_SEND = 22;
 	public static final int DIAMOND_PIPE_CONTENTS = 30;
 	public static final int DIAMOND_PIPE_SELECT = 31;
 	public static final int GATE_ACTIONS = 40;

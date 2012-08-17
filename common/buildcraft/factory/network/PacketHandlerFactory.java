@@ -6,31 +6,29 @@ import java.io.DataInputStream;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.factory.TileRefinery;
-
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.NetServerHandler;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.IPacketHandler;
 
-public class PacketHandler implements IPacketHandler {
+public class PacketHandlerFactory implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager network, String channel, byte[] bytes) {
+	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player) {
 
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 		try {
-			NetServerHandler net = (NetServerHandler) network.getNetHandler();
-
 			int packetID = data.read();
-			PacketUpdate packet = new PacketUpdate();
+			PacketUpdate packetU = new PacketUpdate();
 
 			switch (packetID) {
 
 			case PacketIds.REFINERY_FILTER_SET:
-				packet.readData(data);
-				onRefinerySelect(net.getPlayerEntity(), packet);
+				packetU.readData(data);
+				onRefinerySelect((EntityPlayer)player, packetU);
 				break;
 
 			}
@@ -52,7 +50,7 @@ public class PacketHandler implements IPacketHandler {
 		return (TileRefinery) tile;
 	}
 
-	private void onRefinerySelect(EntityPlayerMP playerEntity, PacketUpdate packet) {
+	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) {
 
 		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
 		if (tile == null)
