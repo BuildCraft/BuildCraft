@@ -63,6 +63,7 @@ public class mod_BuildCraftEnergy {
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureFuelFX());
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
 
+		// FIXME: Needs to be seperate for server.
 		ModLoader.registerTileEntity(TileEngine.class, "net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
 
 	}
