@@ -3,6 +3,8 @@ package buildcraft.energy;
 import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.core.GuiIds;
 import buildcraft.energy.TileEngine;
+import buildcraft.energy.gui.GuiCombustionEngine;
+import buildcraft.energy.gui.GuiSteamEngine;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;

@@ -39,12 +39,12 @@ import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.RenderEnergyLaser;
-import buildcraft.core.RenderEntityBlock;
-import buildcraft.core.RenderLaser;
-import buildcraft.core.RenderRobot;
 import buildcraft.core.Utils;
 import buildcraft.core.network.PacketHandler;
+import buildcraft.core.render.RenderEnergyLaser;
+import buildcraft.core.render.RenderEntityBlock;
+import buildcraft.core.render.RenderLaser;
+import buildcraft.core.render.RenderRobot;
 import buildcraft.core.utils.Localization;
 
 @Mod(name="BuildCraft", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|CORE")

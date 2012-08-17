@@ -21,11 +21,11 @@ import cpw.mods.fml.common.network.NetworkMod;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.PacketHandler;
-import buildcraft.energy.RenderEngine;
-import buildcraft.energy.TextureFuelFX;
-import buildcraft.energy.TextureOilFX;
-import buildcraft.energy.TextureOilFlowFX;
 import buildcraft.energy.TileEngine;
+import buildcraft.energy.render.RenderEngine;
+import buildcraft.energy.render.TextureFuelFX;
+import buildcraft.energy.render.TextureOilFX;
+import buildcraft.energy.render.TextureOilFlowFX;
 import buildcraft.mod_BuildCraftCore.EntityRenderIndex;
 
 import net.minecraft.src.ModLoader;

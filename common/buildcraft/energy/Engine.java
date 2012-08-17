@@ -13,7 +13,7 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.LiquidTank;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.network.TileNetworkData;
-import buildcraft.energy.ContainerEngine;
+import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;

@@ -24,9 +24,9 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	
 	protected Position head, tail;
 
-	protected double renderSize = 0;
-	protected double angleY = 0;
-	protected double angleZ = 0;
+	public double renderSize = 0;
+	public double angleY = 0;
+	public double angleZ = 0;
 	protected String texture;
 
 	public EntityLaser(World world) {

@@ -21,16 +21,16 @@ import cpw.mods.fml.common.network.NetworkMod;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.RenderVoid;
+import buildcraft.core.render.RenderVoid;
 import buildcraft.factory.EntityMechanicalArm;
-import buildcraft.factory.GuiAutoCrafting;
-import buildcraft.factory.RenderHopper;
-import buildcraft.factory.RenderRefinery;
-import buildcraft.factory.RenderTank;
 import buildcraft.factory.TileHopper;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
+import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.network.PacketHandlerFactory;
+import buildcraft.factory.render.RenderHopper;
+import buildcraft.factory.render.RenderRefinery;
+import buildcraft.factory.render.RenderTank;
 import buildcraft.mod_BuildCraftCore.EntityRenderIndex;
 
 import net.minecraft.src.ModLoader;

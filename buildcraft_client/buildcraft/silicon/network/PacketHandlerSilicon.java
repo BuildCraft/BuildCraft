@@ -10,7 +10,7 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.factory.TileAssemblyTable;
 import buildcraft.factory.TileAssemblyTable.SelectionMessage;
-import buildcraft.silicon.GuiAssemblyTable;
+import buildcraft.silicon.gui.GuiAssemblyTable;
 
 import net.minecraft.src.GuiScreen;
 import net.minecraft.src.ModLoader;

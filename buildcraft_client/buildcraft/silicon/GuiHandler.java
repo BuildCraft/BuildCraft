@@ -3,6 +3,7 @@ package buildcraft.silicon;
 import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.core.GuiIds;
 import buildcraft.factory.TileAssemblyTable;
+import buildcraft.silicon.gui.GuiAssemblyTable;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;

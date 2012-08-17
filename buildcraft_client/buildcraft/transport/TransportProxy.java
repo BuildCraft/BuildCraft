@@ -9,6 +9,7 @@
 
 package buildcraft.transport;
 
+import buildcraft.transport.render.TileEntityPickupFX;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.TileEntity;

@@ -21,7 +21,6 @@ import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.core.ActionMachineControl;
 import buildcraft.core.Box;
 import buildcraft.core.CoreProxy;
@@ -45,7 +44,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public @TileNetworkData
 	boolean done = true;
 
-	IFillerPattern currentPattern;
+	public IFillerPattern currentPattern;
 
 	boolean forceDone = false;
 	private ItemStack contents[];

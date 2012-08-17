@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Random;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.Action;
@@ -28,7 +27,6 @@ import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.ActionRedstoneOutput;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.Utils;
 import buildcraft.core.network.IndexInPayload;
@@ -72,9 +70,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 
-	ITrigger[] activatedTriggers = new Trigger[8];
-	ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
-	IAction[] activatedActions = new Action[8];
+	public ITrigger[] activatedTriggers = new Trigger[8];
+	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
+	public IAction[] activatedActions = new Action[8];
 
 	@TileNetworkData(intKind = TileNetworkData.UNSIGNED_BYTE)
 	public boolean broadcastSignal[] = new boolean[] { false, false, false, false };

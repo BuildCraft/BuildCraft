@@ -12,7 +12,7 @@ package buildcraft.energy;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
-import buildcraft.energy.ContainerEngine;
+import buildcraft.energy.gui.ContainerEngine;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.src.Block;
 import net.minecraft.src.ICrafting;
