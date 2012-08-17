@@ -12,19 +12,13 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.mod_BuildCraftEnergy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
 import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
 import buildcraft.core.Utils;
-import buildcraft.energy.EngineIron;
-import buildcraft.energy.EngineStone;
-import buildcraft.energy.TileEngine;
 import buildcraft.factory.BlockMachineRoot;
 
 import net.minecraft.src.EntityLiving;

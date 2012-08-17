@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftFactory;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.liquids.LiquidManager;

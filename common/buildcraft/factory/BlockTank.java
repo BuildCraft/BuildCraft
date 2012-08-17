@@ -12,7 +12,6 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
