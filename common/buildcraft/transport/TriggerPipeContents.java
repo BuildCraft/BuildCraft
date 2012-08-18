@@ -50,9 +50,9 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 		case ContainsItems:
 		case ContainsLiquids:
 			return true;
+		default:
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override

@@ -3,9 +3,9 @@ package buildcraft.silicon;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftSilicon;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 import buildcraft.factory.TileAssemblyTable;
 
@@ -48,7 +48,7 @@ public class BlockAssemblyTable extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!CoreProxy.isClient(world))
+		if (!ProxyCore.proxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
 		return true;
 	}

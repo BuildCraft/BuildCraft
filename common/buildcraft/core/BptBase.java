@@ -21,7 +21,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
 import buildcraft.mod_BuildCraftCore;
-import buildcraft.core.CoreProxy;
 
 import net.minecraft.src.ModLoader;
 
@@ -105,7 +104,7 @@ public abstract class BptBase {
 
 	public File save() {
 		try {
-			File baseDir = CoreProxy.getBuildCraftBase();
+			File baseDir = ProxyCore.proxy.getBuildCraftBase();
 
 			baseDir.mkdir();
 

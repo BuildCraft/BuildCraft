@@ -9,16 +9,11 @@
 
 package buildcraft.energy;
 
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
 import buildcraft.energy.gui.ContainerEngine;
-import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.src.Block;
 import net.minecraft.src.ICrafting;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntityFurnace;
 

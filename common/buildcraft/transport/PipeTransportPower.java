@@ -13,14 +13,12 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.mod_BuildCraftCore;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.core.CoreProxy;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 
@@ -51,7 +49,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.isClient(worldObj))
+		if (ProxyCore.proxy.isClient(worldObj))
 			return;
 
 		step();

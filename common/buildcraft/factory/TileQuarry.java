@@ -21,17 +21,16 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.Box;
 import buildcraft.core.BptBlueprint;
 import buildcraft.core.BptBuilderBase;
 import buildcraft.core.BptBuilderBlueprint;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.StackUtil;
 import buildcraft.core.Utils;
 import buildcraft.core.network.PacketUpdate;
@@ -83,7 +82,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	public void createUtilsIfNeeded() {
 
-		if (!box.isInitialized() && CoreProxy.isClient(worldObj)) {
+		if (!box.isInitialized() && ProxyCore.proxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -169,7 +168,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 			speed = arm.speed;
 		}
 		
-		if (CoreProxy.isServerSide()) {
+		if (ProxyCore.proxy.isServerSide(worldObj)) {
 			sendNetworkUpdate();
 		}
 
@@ -249,7 +248,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	public boolean findTarget(boolean doSet) {
 		
-		if (CoreProxy.isClient(worldObj))
+		if (ProxyCore.proxy.isClient(worldObj))
 			return false;
 		
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
@@ -378,7 +377,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void positionReached(EntityMechanicalArm arm) {
 		inProcess = false;
 
-		if (CoreProxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -416,7 +415,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 					continue;
 				if (entity.item.stackSize <= 0)
 					continue;
-				CoreProxy.removeEntity(entity);
+				ProxyCore.proxy.removeEntity(entity);
 				mineStack(entity.item);
 			}
 		}
@@ -610,7 +609,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.isClient(worldObj)) {
+		if (!ProxyCore.proxy.isClient(worldObj)) {
 			createUtilsIfNeeded();
 		}
 

@@ -15,9 +15,9 @@ import buildcraft.mod_BuildCraftBuilders;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
@@ -105,7 +105,7 @@ public class BlockBuilder extends BlockContainer {
 			return true;
 		} else {
 
-			if (!CoreProxy.isClient(world))
+			if (!ProxyCore.proxy.isClient(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			return true;
 

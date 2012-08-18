@@ -218,7 +218,7 @@ public class Box implements IBox {
 
 		if (lasers != null) {
 			for (EntityBlock b : lasers)
-				CoreProxy.removeEntity(b);
+				ProxyCore.proxy.removeEntity(b);
 
 			lasers = null;
 		}

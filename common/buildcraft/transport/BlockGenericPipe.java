@@ -9,7 +9,6 @@
 
 package buildcraft.transport;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -18,8 +17,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
@@ -217,7 +216,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (CoreProxy.isClient(world))
+		if (ProxyCore.proxy.isClient(world))
 			return;
 
 		int i1 = quantityDropped(world.rand);
@@ -362,7 +361,7 @@ public class BlockGenericPipe extends BlockContainer {
 		// Try to strip wires first, starting with yellow.
 		for (IPipe.WireColor color : IPipe.WireColor.values())
 			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!CoreProxy.isRemote())
+				if (!ProxyCore.proxy.isRemote(pipe.worldObj))
 					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 				pipe.wireSet[color.reverse().ordinal()] = false;
 				//pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
@@ -372,7 +371,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
-			if (!CoreProxy.isRemote())
+			if (!ProxyCore.proxy.isRemote(pipe.worldObj))
 				pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 			pipe.resetGate();
 			return true;

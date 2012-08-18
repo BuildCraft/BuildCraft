@@ -14,9 +14,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import buildcraft.mod_BuildCraftCore;
-import buildcraft.core.CoreProxy;
-
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
@@ -30,7 +27,7 @@ public class BuildCraftConfiguration extends Configuration {
 	}
 
 	public void loadLegacyProperties() {
-		File cfgfile = CoreProxy.getPropertyFile();
+		File cfgfile = ProxyCore.proxy.getPropertyFile();
 		Properties props = new Properties();
 
 		try {

@@ -12,9 +12,9 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
@@ -48,7 +48,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
 
 		if (!tile.locked || entityplayer.username.equals(tile.owner))
-			if (!CoreProxy.isClient(world))
+			if (!ProxyCore.proxy.isClient(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
 
 		return true;

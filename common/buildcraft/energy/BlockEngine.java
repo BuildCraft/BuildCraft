@@ -16,9 +16,9 @@ import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftEnergy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
+import buildcraft.core.ProxyCore;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityPlayer;
@@ -91,12 +91,12 @@ public class BlockEngine extends BlockContainer {
 					return false;
 
 			if (tile.engine instanceof EngineStone) {
-				if (!CoreProxy.isClient(tile.worldObj))
+				if (!ProxyCore.proxy.isClient(tile.worldObj))
 					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
-				if (!CoreProxy.isClient(tile.worldObj))
+				if (!ProxyCore.proxy.isClient(tile.worldObj))
 					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				return true;
 			}

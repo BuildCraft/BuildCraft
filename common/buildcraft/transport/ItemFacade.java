@@ -8,12 +8,11 @@ import java.util.ListIterator;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ProxyCore;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
@@ -42,7 +41,7 @@ public class ItemFacade extends ItemBuildCraft {
 		int decodedMeta = ItemFacade.getMetaData(itemstack.getItemDamage());
 		ItemStack newStack = new ItemStack(decodedBlockId, 1, decodedMeta);
 		if (Item.itemsList[decodedBlockId] != null){
-			name += ": " + CoreProxy.getItemDisplayName(newStack);
+			name += ": " + ProxyCore.proxy.getItemDisplayName(newStack);
 		} else {
 			name += " < BROKEN >";
 		}

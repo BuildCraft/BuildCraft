@@ -18,7 +18,7 @@ import buildcraft.core.BptBase;
 import buildcraft.core.BptBlueprint;
 import buildcraft.core.BptContext;
 import buildcraft.core.BptTemplate;
-import buildcraft.core.CoreProxy;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.Utils;
 import buildcraft.core.network.PacketUpdate;
@@ -72,7 +72,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		if (!CoreProxy.isClient(worldObj) && box.isInitialized()) {
+		if (!ProxyCore.proxy.isClient(worldObj) && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 

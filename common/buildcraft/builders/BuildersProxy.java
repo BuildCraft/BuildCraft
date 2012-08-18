@@ -11,13 +11,12 @@ package buildcraft.builders;
 
 import buildcraft.builders.TileBlueprintLibrary;
 import net.minecraft.src.Block;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
 public class BuildersProxy {
 
-	public static boolean canPlaceTorch(World w, int i, int j, int k) {
-		Block block = Block.blocksList[w.getBlockId(i, j, k)];
+	public static boolean canPlaceTorch(World world, int i, int j, int k) {
+		Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
 		if (block == null || !block.renderAsNormalBlock())
 			return false;
@@ -26,7 +25,7 @@ public class BuildersProxy {
 	}
 
 	public static String getOwner(TileBlueprintLibrary library) {
-		return ModLoader.getMinecraftInstance().thePlayer.username;
+		return library.owner;
 	}
 
 }

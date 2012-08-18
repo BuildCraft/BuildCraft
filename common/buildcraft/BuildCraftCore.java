@@ -24,12 +24,12 @@ import buildcraft.core.ActionRedstoneOutput;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BptItem;
 import buildcraft.core.BuildCraftConfiguration;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultActionProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.DefaultTriggerProvider;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.TriggerInventory;
 import buildcraft.core.TriggerLiquidContainer;
@@ -144,7 +144,7 @@ public class BuildCraftCore {
 
 		initialized = true;
 
-		mainConfiguration = new BuildCraftConfiguration(new File(CoreProxy.getBuildCraftBase(), "config/buildcraft.cfg"), true);
+		mainConfiguration = new BuildCraftConfiguration(new File(ProxyCore.proxy.getBuildCraftBase(), "config/buildcraft.cfg"), true);
 		mainConfiguration.load();
 
 		redLaserTexture = 0 * 16 + 2;
@@ -210,7 +210,7 @@ public class BuildCraftCore {
 		initializeGears();
 
 		wrenchItem = (new ItemWrench(Integer.parseInt(wrenchId.value))).setIconIndex(0 * 16 + 2).setItemName("wrenchItem");
-		CoreProxy.addName(wrenchItem, "Wrench");
+		ProxyCore.proxy.addName(wrenchItem, "Wrench");
 
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.waterStill, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, BuildCraftAPI.BUCKET_VOLUME), new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.lavaStill, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving, BuildCraftAPI.BUCKET_VOLUME), new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
@@ -228,22 +228,22 @@ public class BuildCraftCore {
 
 	public static void loadRecipes() {
 
-		CoreProxy.addCraftingRecipe(new ItemStack(wrenchItem), new Object[] { "I I", " G ", " I ", Character.valueOf('I'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(wrenchItem), new Object[] { "I I", " G ", " I ", Character.valueOf('I'),
 				Item.ingotIron, Character.valueOf('G'), stoneGearItem });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(woodenGearItem), new Object[] { " S ", "S S", " S ", Character.valueOf('S'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), new Object[] { " S ", "S S", " S ", Character.valueOf('S'),
 				Item.stick });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(stoneGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
 				Block.cobblestone, Character.valueOf('G'), woodenGearItem });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(ironGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(ironGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
 				Item.ingotIron, Character.valueOf('G'), stoneGearItem });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(goldGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(goldGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
 				Item.ingotGold, Character.valueOf('G'), ironGearItem });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(diamondGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(diamondGearItem), new Object[] { " I ", "IGI", " I ", Character.valueOf('I'),
 				Item.diamond, Character.valueOf('G'), goldGearItem });
 	}
 
@@ -273,23 +273,23 @@ public class BuildCraftCore {
 
 		woodenGearItem = (new ItemBuildCraft(Integer.parseInt(woodenGearId.value))).setIconIndex(1 * 16 + 0).setItemName(
 				"woodenGearItem");
-		CoreProxy.addName(woodenGearItem, "Wooden Gear");
+		ProxyCore.proxy.addName(woodenGearItem, "Wooden Gear");
 
 		stoneGearItem = (new ItemBuildCraft(Integer.parseInt(stoneGearId.value))).setIconIndex(1 * 16 + 1).setItemName(
 				"stoneGearItem");
-		CoreProxy.addName(stoneGearItem, "Stone Gear");
+		ProxyCore.proxy.addName(stoneGearItem, "Stone Gear");
 
 		ironGearItem = (new ItemBuildCraft(Integer.parseInt(ironGearId.value))).setIconIndex(1 * 16 + 2).setItemName(
 				"ironGearItem");
-		CoreProxy.addName(ironGearItem, "Iron Gear");
+		ProxyCore.proxy.addName(ironGearItem, "Iron Gear");
 
 		goldGearItem = (new ItemBuildCraft(Integer.parseInt(goldenGearId.value))).setIconIndex(1 * 16 + 3).setItemName(
 				"goldGearItem");
-		CoreProxy.addName(goldGearItem, "Gold Gear");
+		ProxyCore.proxy.addName(goldGearItem, "Gold Gear");
 
 		diamondGearItem = (new ItemBuildCraft(Integer.parseInt(diamondGearId.value))).setIconIndex(1 * 16 + 4).setItemName(
 				"diamondGearItem");
-		CoreProxy.addName(diamondGearItem, "Diamond Gear");
+		ProxyCore.proxy.addName(diamondGearItem, "Diamond Gear");
 
 		BuildCraftCore.mainConfiguration.save();
 

@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftBuilders;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
@@ -51,7 +51,7 @@ public class BlockFiller extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!CoreProxy.isClient(world))
+		if (!ProxyCore.proxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
 		return true;
 

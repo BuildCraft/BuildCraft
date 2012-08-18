@@ -288,7 +288,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 */
 	@Override
 	public EntityItem toEntityItem(Orientations dir) {
-		if (!CoreProxy.isClient(worldObj)) {
+		if (!ProxyCore.proxy.isClient(worldObj)) {
 			if (getItemStack().stackSize <= 0) {
 				return null;
 			}

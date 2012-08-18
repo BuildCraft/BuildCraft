@@ -16,11 +16,9 @@ import net.minecraft.src.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.gates.Action;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.transport.Pipe;

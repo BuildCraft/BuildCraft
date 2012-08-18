@@ -14,8 +14,8 @@ import net.minecraft.src.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -91,10 +91,10 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 			filterInventory.setInventorySlotContents(position, newStack);
 
-			if (CoreProxy.isRemote()) {
+			if (ProxyCore.proxy.isRemote(filterInventory.worldObj)) {
 				PacketSlotChange packet = new PacketSlotChange(PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord,
 						filterInventory.yCoord, filterInventory.zCoord, position, newStack);
-				CoreProxy.sendToServer(packet.getPacket());
+				ProxyCore.proxy.sendToServer(packet.getPacket());
 			}
 		}
 	}

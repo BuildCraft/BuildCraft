@@ -19,7 +19,7 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
-import buildcraft.core.CoreProxy;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -60,7 +60,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!CoreProxy.isRemote()) {
+		if (!ProxyCore.proxy.isRemote(pipe.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
 
@@ -188,7 +188,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
 		}
 
-		CoreProxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload)
+		ProxyCore.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload)
 				.getPacket());
 	}
 
@@ -198,15 +198,15 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void synchronize() {
 
-		if (!isNetInitialized && CoreProxy.isRemote()) {
+		if (!isNetInitialized && ProxyCore.proxy.isRemote(pipe.worldObj)) {
 			isNetInitialized = true;
-			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord)
+			ProxyCore.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord)
 					.getPacket());
 		}
 
-		if (!isSynchronized && CoreProxy.isRemote()) {
+		if (!isSynchronized && ProxyCore.proxy.isRemote(pipe.worldObj)) {
 			isSynchronized = true;
-			CoreProxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord)
+			ProxyCore.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord)
 					.getPacket());
 		}
 
@@ -271,7 +271,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
 		// Send to player
-		CoreProxy.sendToPlayer(player, packet);
+		ProxyCore.proxy.sendToPlayer(player, packet);
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
 		// Send to player
-		CoreProxy.sendToPlayer(player, packet);
+		ProxyCore.proxy.sendToPlayer(player, packet);
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
 			}
 
-			CoreProxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord,
+			ProxyCore.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord,
 					payload));
 		}
 
@@ -374,13 +374,13 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
 		pipe.setTrigger(position, trigger);
-		if (CoreProxy.isRemote() && notify)
+		if (ProxyCore.proxy.isRemote(pipe.worldObj) && notify)
 			sendSelectionChange(position);
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
 		pipe.setTriggerParameter(position, parameter);
-		if (CoreProxy.isRemote() && notify)
+		if (ProxyCore.proxy.isRemote(pipe.worldObj) && notify)
 			sendSelectionChange(position);
 	}
 
@@ -403,7 +403,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.setAction(position, action);
-		if (CoreProxy.isRemote() && notify)
+		if (ProxyCore.proxy.isRemote(pipe.worldObj) && notify)
 			sendSelectionChange(position);
 	}
 

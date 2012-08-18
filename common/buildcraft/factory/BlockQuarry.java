@@ -16,8 +16,8 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 import buildcraft.factory.BlockMachineRoot;
 
@@ -129,7 +129,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	@Override
 	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
 		
-		if (CoreProxy.isRemote()){
+		if (ProxyCore.proxy.isRemote(world)){
 			return;
 		}
 		

@@ -18,8 +18,8 @@ import buildcraft.api.core.Position;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
@@ -118,7 +118,7 @@ public class BlockRefinery extends BlockContainer {
 			}
 		}
 
-		if (!CoreProxy.isClient(world))
+		if (!ProxyCore.proxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
 
 		return true;

@@ -14,10 +14,8 @@ import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.CoreProxy;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
-import buildcraft.core.network.PacketIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.utils.SimpleInventory;
 import net.minecraft.src.Block;
@@ -43,7 +41,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe)
 				return false;
 
-		if (!CoreProxy.isClient(container.worldObj))
+		if (!ProxyCore.proxy.isClient(container.worldObj))
 			entityplayer.openGui(mod_BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord,
 					container.yCoord, container.zCoord);
 
@@ -54,7 +52,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	@Override
 	public void updateEntity() {
 		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor))
-			if (CoreProxy.isServerSide())
+			if (ProxyCore.proxy.isServerSide(container.worldObj))
 				sendFilterSet();
 	}
 
@@ -96,7 +94,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public ItemStack decrStackSize(int i, int j) {
 		ItemStack stack = filters.decrStackSize(i, j);
 
-		if (CoreProxy.isServerSide())
+		if (ProxyCore.proxy.isServerSide(container.worldObj))
 			sendFilterSet();
 
 		return stack;
@@ -106,7 +104,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 
 		filters.setInventorySlotContents(i, itemstack);		
-		if (CoreProxy.isServerSide())
+		if (ProxyCore.proxy.isServerSide(container.worldObj))
 			sendFilterSet();
 		
 	}
@@ -115,7 +113,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public void sendFilterSet() {
 		NBTTagCompound nbttagcompound = new NBTTagCompound();
 		this.writeToNBT(nbttagcompound);
-		PacketNBT packet = new PacketNBT(PacketIds.DIAMOND_PIPE_CONTENTS, nbttagcompound, xCoord, yCoord, zCoord);
+		//PacketNBT packet = new PacketNBT(PacketIds.DIAMOND_PIPE_CONTENTS, nbttagcompound, xCoord, yCoord, zCoord);
 		//CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 	}
 

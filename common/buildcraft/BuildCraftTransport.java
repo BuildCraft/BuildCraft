@@ -21,9 +21,9 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ProxyCore;
 import buildcraft.transport.ActionEnergyPulser;
 import buildcraft.transport.ActionSignalOutput;
 import buildcraft.transport.BlockGenericPipe;
@@ -254,9 +254,9 @@ public class BuildCraftTransport {
 
 		pipeWaterproof = new ItemBuildCraft(DefaultProps.PIPE_WATERPROOF_ID).setIconIndex(2 * 16 + 1);
 		pipeWaterproof.setItemName("pipeWaterproof");
-		CoreProxy.addName(pipeWaterproof, "Pipe Waterproof");
+		ProxyCore.proxy.addName(pipeWaterproof, "Pipe Waterproof");
 		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
-		CoreProxy.registerBlock(genericPipeBlock);
+		ProxyCore.proxy.registerBlock(genericPipeBlock);
 
 		// Fixing retro-compatiblity
 		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe.class, "net.minecraft.src.buildcraft.GenericPipe");
@@ -338,25 +338,25 @@ public class BuildCraftTransport {
 
 		redPipeWire = new ItemBuildCraft(DefaultProps.RED_PIPE_WIRE).setIconIndex(4 * 16 + 0);
 		redPipeWire.setItemName("redPipeWire");
-		CoreProxy.addName(redPipeWire, "Red Pipe Wire");
+		ProxyCore.proxy.addName(redPipeWire, "Red Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 1),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(redPipeWire, 8)));
 
 		bluePipeWire = new ItemBuildCraft(DefaultProps.BLUE_PIPE_WIRE).setIconIndex(4 * 16 + 1);
 		bluePipeWire.setItemName("bluePipeWire");
-		CoreProxy.addName(bluePipeWire, "Blue Pipe Wire");
+		ProxyCore.proxy.addName(bluePipeWire, "Blue Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 4),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(bluePipeWire, 8)));
 
 		greenPipeWire = new ItemBuildCraft(DefaultProps.GREEN_PIPE_WIRE).setIconIndex(4 * 16 + 2);
 		greenPipeWire.setItemName("greenPipeWire");
-		CoreProxy.addName(greenPipeWire, "Green Pipe Wire");
+		ProxyCore.proxy.addName(greenPipeWire, "Green Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 2),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(greenPipeWire, 8)));
 
 		yellowPipeWire = new ItemBuildCraft(DefaultProps.YELLOW_PIPE_WIRE).setIconIndex(4 * 16 + 3);
 		yellowPipeWire.setItemName("yellowPipeWire");
-		CoreProxy.addName(yellowPipeWire, "Yellow Pipe Wire");
+		ProxyCore.proxy.addName(yellowPipeWire, "Yellow Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 11),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(yellowPipeWire, 8)));
 
@@ -392,15 +392,15 @@ public class BuildCraftTransport {
 	public static void loadRecipes() {
 
 		// Add base recipe for pipe waterproof.
-		CoreProxy.addCraftingRecipe(new ItemStack(pipeWaterproof, 1), new Object[] { "W ", "  ", Character.valueOf('W'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(pipeWaterproof, 1), new Object[] { "W ", "  ", Character.valueOf('W'),
 				new ItemStack(Item.dyePowder, 1, 2) });
 
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes)
 			if (pipe.isShapeless)
-				CoreProxy.addShapelessRecipe(pipe.result, pipe.input);
+				ProxyCore.proxy.addShapelessRecipe(pipe.result, pipe.input);
 			else
-				CoreProxy.addCraftingRecipe(pipe.result, pipe.input);
+				ProxyCore.proxy.addCraftingRecipe(pipe.result, pipe.input);
 	}
 
 	private static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1,
@@ -413,7 +413,7 @@ public class BuildCraftTransport {
 		int id = Integer.parseInt(prop.value);
 		ItemPipe res = BlockGenericPipe.registerPipe(id, clas);
 		res.setItemName(clas.getSimpleName());
-		CoreProxy.addName(res, descr);
+		ProxyCore.proxy.addName(res, descr);
 
 		// Add appropriate recipe to temporary list
 		PipeRecipe recipe = new PipeRecipe();

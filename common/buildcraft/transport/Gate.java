@@ -3,10 +3,8 @@ package buildcraft.transport;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.Action;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.network.IndexInPayload;
 import buildcraft.core.network.PacketPayload;
 

@@ -12,9 +12,7 @@ package buildcraft.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import buildcraft.mod_BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketTileUpdate;

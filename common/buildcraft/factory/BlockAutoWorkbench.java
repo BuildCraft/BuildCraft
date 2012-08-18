@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftFactory;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
+import buildcraft.core.ProxyCore;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
@@ -58,7 +58,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 			}
 		}
 
-		if (!CoreProxy.isClient(world))
+		if (!ProxyCore.proxy.isClient(world))
 			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 
 		return true;

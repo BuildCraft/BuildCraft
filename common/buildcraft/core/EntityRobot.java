@@ -198,7 +198,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 				BptSlot target = a.slot;
 				if (wait <= 0) {
 
-					if (!CoreProxy.isClient(worldObj)) {
+					if (!ProxyCore.proxy.isClient(worldObj)) {
 					
 						if (target.mode == Mode.ClearIfInvalid) {
 	

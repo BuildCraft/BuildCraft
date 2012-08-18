@@ -13,18 +13,14 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.CoreProxy;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
-import buildcraft.transport.pipes.PipeLiquidsVoid;
 import buildcraft.transport.pipes.PipeLiquidsWood;
-import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class PipeLogicWood extends PipeLogic {
 
@@ -35,7 +31,6 @@ public class PipeLogicWood extends PipeLogic {
 		for (int i = meta + 1; i <= meta + 6; ++i) {
 			Orientations o = Orientations.values()[i % 6];
 
-			Block block = Block.blocksList[container.getBlockId(o)];
 			TileEntity tile = container.getTile(o);
 
 			if (isInput(tile))
@@ -87,7 +82,7 @@ public class PipeLogicWood extends PipeLogic {
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.isClient(worldObj))
+		if (!ProxyCore.proxy.isClient(worldObj))
 			switchSourceIfNeeded();
 	}
 
@@ -108,7 +103,7 @@ public class PipeLogicWood extends PipeLogic {
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		if (!CoreProxy.isClient(worldObj))
+		if (!ProxyCore.proxy.isClient(worldObj))
 			switchSourceIfNeeded();
 	}
 	
