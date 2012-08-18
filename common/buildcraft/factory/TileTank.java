@@ -34,7 +34,7 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     @Override
     public void updateEntity()
     {
-        if(ProxyCore.proxy.isServerSide(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+        if(ProxyCore.proxy.isSimulating(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
             sendNetworkUpdate();
             hasUpdate = false;
         }

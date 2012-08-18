@@ -51,7 +51,7 @@ public class BlockFiller extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!ProxyCore.proxy.isClient(world))
+		if (!ProxyCore.proxy.isRemote(world))
 			entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
 		return true;
 

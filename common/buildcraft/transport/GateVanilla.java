@@ -62,7 +62,7 @@ public class GateVanilla extends Gate {
 	// GUI
 	@Override
 	public void openGui(EntityPlayer player) {
-		if (!ProxyCore.proxy.isClient(player.worldObj))
+		if (!ProxyCore.proxy.isRemote(player.worldObj))
 			player.openGui(mod_BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
 

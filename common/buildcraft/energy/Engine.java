@@ -58,7 +58,7 @@ public abstract class Engine {
 	}
 
 	public final EnergyStage getEnergyStage() {
-		if (!ProxyCore.proxy.isClient(tile.worldObj)) {
+		if (!ProxyCore.proxy.isRemote(tile.worldObj)) {
 			computeEnergyStage();
 		}
 

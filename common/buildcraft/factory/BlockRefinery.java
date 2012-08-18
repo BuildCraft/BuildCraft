@@ -118,7 +118,7 @@ public class BlockRefinery extends BlockContainer {
 			}
 		}
 
-		if (!ProxyCore.proxy.isClient(world))
+		if (!ProxyCore.proxy.isRemote(world))
 			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
 
 		return true;

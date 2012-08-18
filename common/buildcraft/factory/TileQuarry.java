@@ -82,7 +82,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	public void createUtilsIfNeeded() {
 
-		if (!box.isInitialized() && ProxyCore.proxy.isClient(worldObj)) {
+		if (!box.isInitialized() && ProxyCore.proxy.isRemote(worldObj)) {
 			return;
 		}
 
@@ -168,7 +168,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 			speed = arm.speed;
 		}
 		
-		if (ProxyCore.proxy.isServerSide(worldObj)) {
+		if (ProxyCore.proxy.isSimulating(worldObj)) {
 			sendNetworkUpdate();
 		}
 
@@ -248,7 +248,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	public boolean findTarget(boolean doSet) {
 		
-		if (ProxyCore.proxy.isClient(worldObj))
+		if (ProxyCore.proxy.isRemote(worldObj))
 			return false;
 		
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
@@ -377,7 +377,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void positionReached(EntityMechanicalArm arm) {
 		inProcess = false;
 
-		if (ProxyCore.proxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			return;
 		}
 
@@ -609,7 +609,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void initialize() {
 		super.initialize();
 
-		if (!ProxyCore.proxy.isClient(worldObj)) {
+		if (!ProxyCore.proxy.isRemote(worldObj)) {
 			createUtilsIfNeeded();
 		}
 

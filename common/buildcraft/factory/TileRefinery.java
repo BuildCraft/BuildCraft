@@ -165,9 +165,9 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public void updateEntity() {
-		if (ProxyCore.proxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			simpleAnimationIterate();
-		} else if (ProxyCore.proxy.isServerSide(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+		} else if (ProxyCore.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 

@@ -256,7 +256,7 @@ public class PipeTransportItems extends PipeTransport {
 		} else if (tile instanceof IInventory) {
 			StackUtil utils = new StackUtil(data.item.getItemStack());
 
-			if (!ProxyCore.proxy.isClient(worldObj))
+			if (!ProxyCore.proxy.isRemote(worldObj))
 				if (utils.checkAvailableSlot((IInventory) tile, true, data.orientation.reverse()) && utils.items.stackSize == 0)
 					data.item.remove();
 				else {
@@ -359,7 +359,7 @@ public class PipeTransportItems extends PipeTransport {
 		else {
 			int i;
 
-			if (ProxyCore.proxy.isClient(worldObj) || ProxyCore.proxy.isServerSide(worldObj))
+			if (ProxyCore.proxy.isRemote(worldObj) || ProxyCore.proxy.isSimulating(worldObj))
 			{
 				i = Math.abs(data.item.getEntityId() + xCoord + yCoord + zCoord + data.item.getDeterministicRandomization())
 						% listOfPossibleMovements.size();

@@ -41,7 +41,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe)
 				return false;
 
-		if (!ProxyCore.proxy.isClient(container.worldObj))
+		if (!ProxyCore.proxy.isRemote(container.worldObj))
 			entityplayer.openGui(mod_BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord,
 					container.yCoord, container.zCoord);
 
@@ -52,7 +52,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	@Override
 	public void updateEntity() {
 		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor))
-			if (ProxyCore.proxy.isServerSide(container.worldObj))
+			if (ProxyCore.proxy.isSimulating(container.worldObj))
 				sendFilterSet();
 	}
 
@@ -94,7 +94,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public ItemStack decrStackSize(int i, int j) {
 		ItemStack stack = filters.decrStackSize(i, j);
 
-		if (ProxyCore.proxy.isServerSide(container.worldObj))
+		if (ProxyCore.proxy.isSimulating(container.worldObj))
 			sendFilterSet();
 
 		return stack;
@@ -104,7 +104,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 
 		filters.setInventorySlotContents(i, itemstack);		
-		if (ProxyCore.proxy.isServerSide(container.worldObj))
+		if (ProxyCore.proxy.isSimulating(container.worldObj))
 			sendFilterSet();
 		
 	}

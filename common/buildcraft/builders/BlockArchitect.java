@@ -92,7 +92,7 @@ public class BlockArchitect extends BlockContainer {
 			return true;
 		} else {
 
-			if (!ProxyCore.proxy.isClient(world))
+			if (!ProxyCore.proxy.isRemote(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, i, j, k);
 			return true;
 

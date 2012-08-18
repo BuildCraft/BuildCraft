@@ -216,7 +216,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (ProxyCore.proxy.isClient(world))
+		if (ProxyCore.proxy.isRemote(world))
 			return;
 
 		int i1 = quantityDropped(world.rand);

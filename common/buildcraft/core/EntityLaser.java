@@ -90,7 +90,7 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 		if (head == null || tail == null)
 			return;
 		
-		if (ProxyCore.proxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			updateData();
 		}
 		

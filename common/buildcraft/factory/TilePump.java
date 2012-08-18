@@ -66,13 +66,13 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 			return;
 		}
 
-		if (!ProxyCore.proxy.isClient(worldObj)) {
+		if (!ProxyCore.proxy.isRemote(worldObj)) {
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
 
 				setTubePosition();
 
-				if (ProxyCore.proxy.isServerSide(worldObj)) {
+				if (ProxyCore.proxy.isSimulating(worldObj)) {
 					sendNetworkUpdate();
 				}
 
@@ -97,7 +97,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 							internalLiquid = internalLiquid += BuildCraftAPI.BUCKET_VOLUME;
 
-							if (ProxyCore.proxy.isServerSide(worldObj)) {
+							if (ProxyCore.proxy.isSimulating(worldObj)) {
 								sendNetworkUpdate();
 							}
 						}
@@ -160,7 +160,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 		worldObj.spawnEntityInWorld(tube);
 
-		if (ProxyCore.proxy.isServerSide(worldObj)) {
+		if (ProxyCore.proxy.isSimulating(worldObj)) {
 			sendNetworkUpdate();
 		}
 	}

@@ -37,7 +37,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (ProxyCore.proxy.isClient(worldObj) || worldObj.getWorldTime() % 5 != 0)
+		if (ProxyCore.proxy.isRemote(worldObj) || worldObj.getWorldTime() % 5 != 0)
 			return;
 		int internalSlot = _internalInventory.getIdForFirstSlot();
 		if (internalSlot < 0)

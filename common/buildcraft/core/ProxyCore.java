@@ -12,7 +12,6 @@ package buildcraft.core;
 import java.io.File;
 import java.util.Random;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.SidedProxy;
 
 import buildcraft.core.network.BuildCraftPacket;
@@ -36,11 +35,7 @@ public class ProxyCore {
 	public static ProxyCore proxy;
 	
 	/* SIMULATION */
-	public boolean isClient(World world) {
-		return isRemote(world);
-	}
-
-	public boolean isServerSide(World world) {
+	public boolean isSimulating(World world) {
 		return !world.isRemote;
 	}
 

@@ -279,7 +279,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void doWork() {
-		if (ProxyCore.proxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			return;
 		}
 
@@ -588,7 +588,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			box.deleteLasers();
 			box.reset();
 
-			if (ProxyCore.proxy.isServerSide(worldObj)) {
+			if (ProxyCore.proxy.isSimulating(worldObj)) {
 				sendNetworkUpdate();
 			}
 

@@ -48,7 +48,7 @@ public class BlockAssemblyTable extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!ProxyCore.proxy.isClient(world))
+		if (!ProxyCore.proxy.isRemote(world))
 			entityplayer.openGui(mod_BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
 		return true;
 	}

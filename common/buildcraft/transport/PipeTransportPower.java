@@ -49,7 +49,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (ProxyCore.proxy.isClient(worldObj))
+		if (ProxyCore.proxy.isRemote(worldObj))
 			return;
 
 		step();

@@ -177,7 +177,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	@Override
 	public void updateEntity() {
-		if (ProxyCore.proxy.isClient(worldObj))
+		if (ProxyCore.proxy.isRemote(worldObj))
 			return;
 
 		moveLiquids();
@@ -212,7 +212,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 
 
-		if (ProxyCore.proxy.isServerSide(worldObj))
+		if (ProxyCore.proxy.isSimulating(worldObj))
 			if (tracker.markTimeIfDelay(worldObj, 1 * BuildCraftCore.updateFactor)){
 
 				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);

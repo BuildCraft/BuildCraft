@@ -202,7 +202,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
-		if (ProxyCore.proxy.isClient(worldObj))
+		if (ProxyCore.proxy.isRemote(worldObj))
 			return;
 
 		Orientations orientation = getOpenOrientation().reverse();

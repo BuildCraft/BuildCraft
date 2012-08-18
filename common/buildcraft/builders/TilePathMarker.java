@@ -55,7 +55,7 @@ public class TilePathMarker extends TileMarker {
 
 	public void createLaserAndConnect(TilePathMarker pathMarker) {
 
-		if (ProxyCore.proxy.isClient(worldObj))
+		if (ProxyCore.proxy.isRemote(worldObj))
 			return;
 
 		EntityLaser laser = new EntityLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));

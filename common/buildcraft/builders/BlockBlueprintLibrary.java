@@ -48,7 +48,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
 
 		if (!tile.locked || entityplayer.username.equals(tile.owner))
-			if (!ProxyCore.proxy.isClient(world))
+			if (!ProxyCore.proxy.isRemote(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
 
 		return true;

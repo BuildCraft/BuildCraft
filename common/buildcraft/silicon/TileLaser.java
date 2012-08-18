@@ -164,7 +164,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	
 	protected void createLaser() {
 		
-		if (ProxyCore.proxy.isServerSide(worldObj))
+		if (ProxyCore.proxy.isSimulating(worldObj))
 			return;
 		
 		laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
