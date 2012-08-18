@@ -144,7 +144,7 @@ public class BuildCraftCore {
 
 		initialized = true;
 
-		mainConfiguration = new BuildCraftConfiguration(new File(ProxyCore.proxy.getBuildCraftBase(), "config/buildcraft.cfg"), true);
+		mainConfiguration = new BuildCraftConfiguration(new File(ProxyCore.proxy.getBuildCraftBase(), "config/buildcraft/main.conf"));
 		mainConfiguration.load();
 
 		redLaserTexture = 0 * 16 + 2;

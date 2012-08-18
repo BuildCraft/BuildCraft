@@ -9,8 +9,11 @@
 
 package buildcraft.core;
 
+import java.io.File;
+
 import buildcraft.transport.render.TileEntityPickupFX;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -60,6 +63,11 @@ public class ClientProxyCore extends ProxyCore {
 		ModLoader.getMinecraftInstance().getSendQueue().addToSendQueue(packet);
 	}
 
+	/* FILE SYSTEM */
+	public File getBuildCraftBase() {
+		return Minecraft.getMinecraftDir();
+	}
+	
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {

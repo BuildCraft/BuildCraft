@@ -82,10 +82,6 @@ public class ProxyCore {
 		ModLoader.addShapelessRecipe(result, recipe);
 	}
 
-	public File getPropertyFile() {
-		return new File("BuildCraft.cfg");
-	}
-
 	public void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance) {
 		if (packet != null) {
 			for (int j = 0; j < w.playerEntities.size(); j++) {
@@ -105,8 +101,9 @@ public class ProxyCore {
 
 	public void sendToServer(Packet packet) {}
 
+	/* FILE SYSTEM */
 	public File getBuildCraftBase() {
-		return new File("buildcraft/");
+		return new File("./");
 	}
 
 	public int addCustomTexture(String pathToTexture) {
