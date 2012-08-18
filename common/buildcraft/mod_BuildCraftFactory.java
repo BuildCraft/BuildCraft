@@ -23,15 +23,8 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderVoid;
 import buildcraft.factory.EntityMechanicalArm;
-import buildcraft.factory.TileHopper;
-import buildcraft.factory.TileRefinery;
-import buildcraft.factory.TileTank;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.network.PacketHandlerFactory;
-import buildcraft.factory.render.RenderHopper;
-import buildcraft.factory.render.RenderRefinery;
-import buildcraft.factory.render.RenderTank;
-import buildcraft.mod_BuildCraftCore.EntityRenderIndex;
 
 import net.minecraft.src.ModLoader;
 
@@ -58,17 +51,6 @@ public class mod_BuildCraftFactory {
 
 		// CoreProxy.registerGUI(this,
 		// Utils.packetIdToInt(PacketIds.AutoCraftingGUI));
-
-		ModLoader.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank", new RenderTank());
-
-		ModLoader.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery", new RenderRefinery());
-
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0),
-				new RenderRefinery());
-
-		ModLoader.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper", new RenderHopper());
-
-		mod_BuildCraftCore.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 
 		// Detect the presence of NEI and add overlay for the Autocrafting Table
 		try {
