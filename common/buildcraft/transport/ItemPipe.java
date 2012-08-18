@@ -9,11 +9,6 @@
 
 package buildcraft.transport;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;

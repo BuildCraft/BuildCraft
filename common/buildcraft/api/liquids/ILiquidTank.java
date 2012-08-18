@@ -1,7 +1,5 @@
 package buildcraft.api.liquids;
 
-import buildcraft.api.core.Orientations;
-
 public interface ILiquidTank {
 
 	/**

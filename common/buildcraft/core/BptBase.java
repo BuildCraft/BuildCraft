@@ -20,8 +20,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
-import buildcraft.mod_BuildCraftCore;
-
 import net.minecraft.src.ModLoader;
 
 public abstract class BptBase {

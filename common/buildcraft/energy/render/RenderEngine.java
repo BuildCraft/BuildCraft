@@ -14,7 +14,6 @@ import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 
@@ -130,6 +129,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			angle[0] = (float) -Math.PI / 2;
 			translate[2] = -1;
 			break;
+		default:
 		}
 
 		box.rotateAngleX = angle[0];

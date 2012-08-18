@@ -1,6 +1,5 @@
 package buildcraft.transport;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.common.Side;

@@ -68,8 +68,9 @@ public class PipeItemRenderer implements IItemRenderer {
 			return true;
 		case INVENTORY:
 			return true;
+		default:
+			return false;
 		}
-		return false;
 	}
 
 	@Override
@@ -89,6 +90,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		case INVENTORY:
 			renderPipeItem((RenderBlocks) data[0], item, -0.5f, -0.5f, -0.5f);
 			break;
+		default:
 		}
 	}
 

@@ -9,7 +9,6 @@
 
 package buildcraft.core;
 
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.liquids.ILiquidTank;

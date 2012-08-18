@@ -1,16 +1,9 @@
 package buildcraft.transport.render;
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.TreeMap;
-
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipe.WireColor;
@@ -21,13 +14,9 @@ import buildcraft.transport.PipeRenderState;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	

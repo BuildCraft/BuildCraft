@@ -45,9 +45,9 @@ public class EngineWood extends Engine {
 			return 0.04F;
 		case Red:
 			return 0.08F;
+		default:
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override

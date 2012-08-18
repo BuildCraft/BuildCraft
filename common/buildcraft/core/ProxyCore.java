@@ -12,6 +12,7 @@ package buildcraft.core;
 import java.io.File;
 import java.util.Random;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.SidedProxy;
 
 import buildcraft.core.network.BuildCraftPacket;

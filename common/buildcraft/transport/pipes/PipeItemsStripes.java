@@ -8,6 +8,7 @@
 
 package buildcraft.transport.pipes;
 
+/*
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -34,7 +35,6 @@ import buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 
-/*
 public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPowerReceptor {
 
 	private IPowerProvider powerProvider;

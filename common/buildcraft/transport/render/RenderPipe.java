@@ -18,7 +18,6 @@ import net.minecraft.src.GLAllocation;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TileEntity;
@@ -35,7 +34,6 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.api.core.Orientations;
-import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
@@ -341,6 +339,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					GL11.glRotatef(angleZ[i], 0, 0, 1);
 					list = d.sideHorizontal[stage];
 					break;
+				default:
 				}
 
 				GL11.glCallList(list);

@@ -13,7 +13,6 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 public class FacadeItemRenderer implements IItemRenderer {
 
@@ -106,8 +105,9 @@ public class FacadeItemRenderer implements IItemRenderer {
 			case ENTITY: return true;
 			case EQUIPPED: return true;
 			case INVENTORY: return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 
 	@Override
@@ -130,6 +130,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 			GL11.glScalef(1.1F, 1.1F, 1.1F);
 			renderFacadeItem((RenderBlocks) data[0], item, -0.3f, -0.35f, -0.7f);
 			break;
+		default:
 		}
 	}
 

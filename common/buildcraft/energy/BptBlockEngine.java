@@ -9,7 +9,6 @@
 
 package buildcraft.energy;
 
-import buildcraft.mod_BuildCraftEnergy;
 import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
