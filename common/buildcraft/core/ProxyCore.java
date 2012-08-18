@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.Random;
 
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 import buildcraft.core.network.BuildCraftPacket;
 
@@ -82,24 +83,20 @@ public class ProxyCore {
 		ModLoader.addShapelessRecipe(result, recipe);
 	}
 
-	public void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance) {
-		if (packet != null) {
-			for (int j = 0; j < w.playerEntities.size(); j++) {
-				EntityPlayerMP player = (EntityPlayerMP) w.playerEntities.get(j);
-
-				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance
-						&& Math.abs(player.posZ - z) <= maxDistance)
-					player.serverForThisPlayer.sendPacketToPlayer(packet);
-			}
-		}
+	public static void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance, String channel) {
+		if(packet!=null)
+		PacketDispatcher.sendPacketToAllAround(x, y, z, maxDistance, w.getWorldInfo().getDimension(), packet);
 	}
 
-	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
-		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-		player.serverForThisPlayer.sendPacketToPlayer(packet.getPacket());
+	public static void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
+		if(packet!=null)
+		PacketDispatcher.sendPacketToPlayer(packet.getPacket(), (Player)entityplayer);
 	}
 
-	public void sendToServer(Packet packet) {}
+	public static void sendToServer(Packet packet) {
+		PacketDispatcher.sendPacketToServer(packet);
+	}
+
 
 	/* FILE SYSTEM */
 	public File getBuildCraftBase() {
