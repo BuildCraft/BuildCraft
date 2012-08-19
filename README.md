@@ -1,7 +1,7 @@
 ## Welcome to Buildcraft on GitHub
 
 ### Official Builds
-An official jenkins build server can be found [here](http://kyprusmc.game-host.org:8080/). Jenkins will generate a new 
+An official jenkins build server can be found [here](http://jenkins.mc-epoch.com:8080/). Jenkins will generate a new 
 build every time a change is pushed to github.
 
 ### Compiling and packaging Buildcraft
