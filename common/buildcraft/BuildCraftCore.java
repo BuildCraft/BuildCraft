@@ -39,7 +39,6 @@ import buildcraft.core.ActionMachineControl.Mode;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.transport.TriggerRedstoneInput;
 
-import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -295,13 +294,6 @@ public class BuildCraftCore {
 
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
-	}
-
-	public static void initializeModel(BaseMod mod) {
-		blockByEntityModel = ModLoader.getUniqueBlockModelID(mod, true);
-		legacyPipeModel = ModLoader.getUniqueBlockModelID(mod, true);
-		markerModel = ModLoader.getUniqueBlockModelID(mod, false);
-		oilModel = ModLoader.getUniqueBlockModelID(mod, false);
 	}
 
 }
