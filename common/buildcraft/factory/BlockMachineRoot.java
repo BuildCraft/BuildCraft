@@ -11,6 +11,7 @@ package buildcraft.factory;
 
 import buildcraft.core.IMachine;
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
@@ -19,7 +20,7 @@ public abstract class BlockMachineRoot extends BlockContainer {
 
 	protected BlockMachineRoot(int i, Material material) {
 		super(i, material);
-		// TODO Auto-generated constructor stub
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override

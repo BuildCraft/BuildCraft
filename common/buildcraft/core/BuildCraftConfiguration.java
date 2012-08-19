@@ -10,9 +10,6 @@
 package buildcraft.core;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;

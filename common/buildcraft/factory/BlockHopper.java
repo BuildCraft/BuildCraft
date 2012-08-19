@@ -9,6 +9,7 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ProxyCore;
 
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -20,6 +21,7 @@ public class BlockHopper extends BlockBuildCraft {
 	public BlockHopper(int blockId) {
 		super(blockId, Material.iron);
 		setHardness(5F);
+		setCreativeTab(CreativeTabs.tabDeco);
 	}
 
 	@Override

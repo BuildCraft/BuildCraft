@@ -17,6 +17,7 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ProxyCore;
 
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -33,6 +34,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		topTexture = 2 * 16 + 11;
 		sideTexture = 2 * 16 + 12;
 		setHardness(1.0F);
+		setCreativeTab(CreativeTabs.tabDeco);
 	}
 
 	@Override

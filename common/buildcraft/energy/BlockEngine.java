@@ -9,7 +9,7 @@
 
 package buildcraft.energy;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import buildcraft.BuildCraftCore;
@@ -21,6 +21,7 @@ import buildcraft.core.IItemPipe;
 import buildcraft.core.ProxyCore;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -34,6 +35,7 @@ public class BlockEngine extends BlockContainer {
 		super(i, Material.iron);
 
 		setHardness(0.5F);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override
@@ -119,7 +121,7 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
+	@Override
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 
@@ -141,7 +143,7 @@ public class BlockEngine extends BlockContainer {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
+	public void getSubBlocks(int blockid, CreativeTabs par2CreativeTabs, List itemList) {
 		itemList.add(new ItemStack(this, 1, 0));
 		itemList.add(new ItemStack(this, 1, 1));
 		itemList.add(new ItemStack(this, 1, 2));
