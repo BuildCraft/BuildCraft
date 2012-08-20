@@ -79,6 +79,11 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
         //CoreProxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord,
         //        DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
 	}
+	
+	@Override
+	public Packet getAuxillaryInfoPacket() {
+		return new PacketTileUpdate(this).getPacket();
+	}
 
 	@Override
 	public Packet getDescriptionPacket() {
