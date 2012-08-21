@@ -12,8 +12,8 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import buildcraft.mod_BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ProxyCore;
-import buildcraft.core.render.BlockRenderingHandler;
-import buildcraft.core.render.BlockRenderingHandler.EntityRenderIndex;
+import buildcraft.core.render.RenderingEntityBlocks;
+import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFrame;
 import buildcraft.factory.BlockHopper;
@@ -157,12 +157,12 @@ public class BuildCraftFactory {
 		/// FIXME: Render registration needs to move into a client side proxy.
 		ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
-		BlockRenderingHandler.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0),
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0),
 				new RenderRefinery());
 
 		if(!hopperDisabled) {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileHopper.class, new RenderHopper());
-			BlockRenderingHandler.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
+			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 		}
 
 		

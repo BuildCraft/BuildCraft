@@ -32,11 +32,12 @@ import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.network.PacketHandler;
-import buildcraft.core.render.BlockRenderingHandler;
+import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderRobot;
+import buildcraft.core.render.RenderingOil;
 import buildcraft.core.utils.Localization;
 
 @Mod(name="BuildCraft", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|CORE")
@@ -74,7 +75,8 @@ public class mod_BuildCraftCore {
 			BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
 			BuildCraftCore.oilModel = RenderingRegistry.getNextAvailableRenderId();
 
-			RenderingRegistry.registerBlockHandler(new BlockRenderingHandler());
+			RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
+			RenderingRegistry.registerBlockHandler(new RenderingOil());
 
 			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
 			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);

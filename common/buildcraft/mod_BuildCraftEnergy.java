@@ -20,8 +20,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.PacketHandler;
-import buildcraft.core.render.BlockRenderingHandler;
-import buildcraft.core.render.BlockRenderingHandler.EntityRenderIndex;
+import buildcraft.core.render.RenderingEntityBlocks;
+import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.render.RenderEngine;
@@ -53,11 +53,11 @@ public class mod_BuildCraftEnergy {
 
 		BuildCraftEnergy.initialize();
 
-		BlockRenderingHandler.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(
 				DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"));
-		BlockRenderingHandler.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(
 				DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png"));
-		BlockRenderingHandler.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(
 				DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png"));
 
 		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());

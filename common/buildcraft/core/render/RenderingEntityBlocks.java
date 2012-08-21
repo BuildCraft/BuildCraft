@@ -13,7 +13,7 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
-public class BlockRenderingHandler implements ISimpleBlockRenderingHandler {
+public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 	public static class EntityRenderIndex {
 
@@ -43,7 +43,7 @@ public class BlockRenderingHandler implements ISimpleBlockRenderingHandler {
 
 	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 
-	public BlockRenderingHandler() {
+	public RenderingEntityBlocks() {
 		initializeMarkerMatrix();
 	}
 	
@@ -114,9 +114,8 @@ public class BlockRenderingHandler implements ISimpleBlockRenderingHandler {
 			
 				legacyPipeRender(renderer, world, x, y, z, block, modelId);
 			
-		} else if (block.getRenderType() == BuildCraftCore.oilModel)
-			renderer.renderBlockFluids(block, x, y, z);
-
+		}
+		
 		return true;
 	}
 
