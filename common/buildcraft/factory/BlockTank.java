@@ -74,18 +74,63 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 	}
 
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k,
+			int l) {
+		int index=10 * 16+0;
+		int blank=index+16+8;
+		int needsOffsetFix=0;
 		switch (l) {
-		case 0:
-		case 1:
-			return 6 * 16 + 2;
-		default:
-			if (iblockaccess.getBlockId(i, j - 1, k) == blockID) {
-				return 6 * 16 + 1;
-			} else {
-				return 6 * 16 + 0;
-			}
+		case 0: // top 
+			if (iblockaccess.getBlockId(i, j-1, k) == blockID)
+				return blank;
+			return index+8;
+		case 1: // bottom
+			if (iblockaccess.getBlockId(i, j+1, k) == blockID)
+				return blank;
+			return index + 8;
+		case 2: //east?
+			if (iblockaccess.getBlockId(i, j , k-1) == blockID)
+				return blank;
+			if (iblockaccess.getBlockId(i-1, j , k) == blockID)
+				{index+=1; needsOffsetFix++;}
+			if (iblockaccess.getBlockId(i+1, j , k) == blockID)
+				{index+=2; needsOffsetFix++;}
+			//return 11*16;
+			break;
+		case 3: // west?
+			if (iblockaccess.getBlockId(i, j , k+1) == blockID)
+				return blank;
+			if (iblockaccess.getBlockId(i+1, j , k) == blockID)
+				index+=1; 
+			if (iblockaccess.getBlockId(i-1, j , k) == blockID)
+				index+=2;
+			break;
+		case 4: // north?
+			if (iblockaccess.getBlockId(i-1, j , k) == blockID)
+				return blank;
+			if (iblockaccess.getBlockId(i, j , k+1) == blockID)
+				index+=1;
+			if (iblockaccess.getBlockId(i, j , k-1) == blockID)
+				index+=2;
+			break;
+		case 5: //south?
+			if (iblockaccess.getBlockId(i+1, j , k) == blockID)
+				return blank;
+			if (iblockaccess.getBlockId(i, j , k-1) == blockID)
+				{index+=1; needsOffsetFix++;}
+			if (iblockaccess.getBlockId(i, j , k+1) == blockID)
+				{index+=2; needsOffsetFix++;}
+				/**/
+			//return 11*16;
+			break;
+			default:
+				return 11*16;
 		}
+		if(needsOffsetFix==1)
+			index+=16;
+		if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
+			index+=4;
+		return index;
 	}
 
 	@Override
@@ -146,5 +191,34 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
 	}
+	
+	  /**
+     * Updates the blocks bounds based on its current state. Args: world, x, y, z
+     */
+	@Override 
+    public void setBlockBoundsBasedOnState(IBlockAccess blocks, int xCoord, int yCoord, int zCoord) {
+    	
+		boolean hasNorth=blocks.getBlockId(xCoord-1, yCoord , zCoord)==blockID;
+		boolean hasSouth=blocks.getBlockId(xCoord+1, yCoord , zCoord)== blockID;
+		boolean hasEast=blocks.getBlockId(xCoord, yCoord , zCoord-1)== blockID;
+		boolean hasWest=blocks.getBlockId(xCoord, yCoord , zCoord+1)== blockID;
 
+		if(hasNorth)
+			minX=0;
+		else
+			minX=.125;
+		if(hasSouth)
+			maxX=1;
+		else
+			maxX=0.875;
+		if(hasEast)
+			minZ=0;
+		else
+			minZ=.125;
+		if(hasWest)
+			maxZ=1;
+		else
+			maxZ=.875;
+		
+    }
 }

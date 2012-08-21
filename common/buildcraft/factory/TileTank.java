@@ -20,6 +20,7 @@ import buildcraft.core.CoreProxy;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import net.minecraft.src.Direction;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
@@ -43,10 +44,11 @@ public class TileTank extends TileBuildCraft implements ITankContainer
             return;
         }
 
-        // Have liquid flow down into tanks below if any.
-        if(tank.getLiquid() != null) {
-            moveLiquidBelow();
-        }
+        // Have liquid flow down into tanks below or adjacent, if any.
+		if(stored > 0){
+			moveLiquidBelow();
+			moveLiquidDiffuseSide();
+		}
     }
 
     /* NETWORK */
@@ -152,7 +154,15 @@ public class TileTank extends TileBuildCraft implements ITankContainer
             return null;
         }
     }
-
+    
+    public TileTank getTankBeside(TileTank tile,int XZDirection) {
+		
+		TileEntity next = worldObj.getBlockTileEntity(tile.xCoord+Direction.offsetX[XZDirection], tile.yCoord, tile.zCoord+Direction.offsetZ[XZDirection]);
+		if(next instanceof TileTank)
+			return(TileTank)next;
+		else
+			return null;			
+	}
     public void moveLiquidBelow()
     {
         TileTank below = getTankBelow(this);
@@ -164,6 +174,43 @@ public class TileTank extends TileBuildCraft implements ITankContainer
         tank.drain(used, true);
     }
 
+    
+	public void moveLiquidDiffuseSide() {
+		for(int i=0;i<4;i++){ // for each xz adjacent tank
+			LiquidStack src= this.tank.getLiquid();
+			if(src==null || src.amount==0)
+				break; // if we have no liquid, don't bother.
+			
+			TileTank next = getTankBeside(this,i);
+			if(next == null)
+				continue;
+	
+			LiquidStack target= next.tank.getLiquid();
+			LiquidStack toMove=src.copy(); // so that when we manipulate it, we don't damage this.
+                		toMove.amount=Math.min(toMove.amount,100); // maximum amount to move in 1 update.
+			if(target==null){ // if there is nothing in the target
+				target=src.copy(); // we know what liquid we want to move
+				target.amount=0; // but there's n
+			} else{
+				if(src.amount >= target.amount-1) // -1 is so that small deltas don't trigger endless packets.
+					continue; // don't diffuse to tanks with more liquid
+			
+			if(src.isLiquidEqual(target)==false)
+				continue; // don't diffuse to a tank with something different
+			}
+			if(target.amount==0 && src.amount<10){
+				// if there's only a small amount, and the next tank is empty, move it over to the next tank in 1 hit, as it might fall through to a lower tank
+				toMove.amount =src.amount;
+			} else
+			{
+				// div4 is because of 4 directions to diffuse, the +1 (div 5 instead of 4) is to make it not-instant, to prevent unstable slosh)
+				toMove.amount =Math.min(toMove.amount,(src.amount-target.amount)/5);
+			}
+			int moved = next.fill(toMove, true);
+			tank.drain(moved, true);
+		}
+		
+	}
     /* ITANKCONTAINER */
     @Override
     public int fill(Orientations from, LiquidStack resource, boolean doFill)
