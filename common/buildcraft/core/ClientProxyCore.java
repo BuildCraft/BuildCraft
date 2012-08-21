@@ -11,6 +11,12 @@ package buildcraft.core;
 
 import java.io.File;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
+
+import buildcraft.BuildCraftCore;
+import buildcraft.core.render.RenderingEntityBlocks;
+import buildcraft.core.render.RenderingMarkers;
+import buildcraft.core.render.RenderingOil;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 import net.minecraft.client.Minecraft;
@@ -25,6 +31,7 @@ import net.minecraft.src.StringTranslate;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 public class ClientProxyCore extends ProxyCore {
 
@@ -55,6 +62,26 @@ public class ClientProxyCore extends ProxyCore {
 		if (Item.itemsList[stack.itemID] == null) return "";
 		
 		return Item.itemsList[stack.itemID].getItemDisplayName(stack);
+	}
+
+	/* GFX */
+	@Override
+	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
+		ModLoader.getMinecraftInstance().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
+	}
+	public void initializeRendering() {
+		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.oilModel = RenderingRegistry.getNextAvailableRenderId();
+
+		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
+		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
+		RenderingRegistry.registerBlockHandler(new RenderingOil());
+		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+
+		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
+		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
 	}
 
 	/* NETWORKING */
@@ -90,8 +117,4 @@ public class ClientProxyCore extends ProxyCore {
 		return ProxyCore.buildCraftPlayer;
 	}
 
-	@Override
-	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
-		ModLoader.getMinecraftInstance().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
-	}
 }

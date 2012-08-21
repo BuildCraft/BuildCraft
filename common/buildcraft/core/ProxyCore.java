@@ -59,6 +59,7 @@ public class ProxyCore {
 
 	/* GFX */
 	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {}
+	public void initializeRendering() {}
 	
 	/* REGISTRATION */
 	public void registerBlock(Block block) {

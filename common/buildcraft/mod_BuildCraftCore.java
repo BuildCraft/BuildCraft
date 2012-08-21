@@ -13,10 +13,7 @@ import java.util.Date;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.MinecraftForgeClient;
 
-
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PostInit;
@@ -31,13 +28,12 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.network.PacketHandler;
-import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderRobot;
-import buildcraft.core.render.RenderingOil;
 import buildcraft.core.utils.Localization;
 
 @Mod(name="BuildCraft", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|CORE")
@@ -70,16 +66,9 @@ public class mod_BuildCraftCore {
 		BuildCraftCore.initialize();
 
 		if (!initialized) {
-			BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
-			BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
-			BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
-			BuildCraftCore.oilModel = RenderingRegistry.getNextAvailableRenderId();
 
-			RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
-			RenderingRegistry.registerBlockHandler(new RenderingOil());
-
-			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
-			MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
+			// Init rendering if applicable
+			ProxyCore.proxy.initializeRendering();
 			
 			//Initialize localization
 			Localization.addLocalization("/lang/buildcraft/", DefaultProps.DEFAULT_LANGUAGE);
