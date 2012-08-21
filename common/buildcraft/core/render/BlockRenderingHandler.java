@@ -45,7 +45,6 @@ public class BlockRenderingHandler implements ISimpleBlockRenderingHandler {
 
 	public BlockRenderingHandler() {
 		initializeMarkerMatrix();
-		System.out.println("BlockRenderingHandler registered");
 	}
 	
 	@Override

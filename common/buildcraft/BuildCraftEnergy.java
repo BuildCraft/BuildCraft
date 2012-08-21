@@ -8,7 +8,6 @@
 
 package buildcraft;
 
-import java.util.Random;
 import java.util.TreeMap;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -33,7 +32,6 @@ import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
-import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
 import buildcraft.energy.Engine.EnergyStage;
 
@@ -41,7 +39,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
@@ -169,11 +166,6 @@ public class BuildCraftEnergy {
 		ProxyCore.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
 				Item.ingotIron, Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem,
 				Character.valueOf('p'), Block.pistonBase });
-	}
-
-	public static void generateSurface(World world, Random random, int i, int j) {
-		OilPopulate.doPopulate(world, i, j);
-
 	}
 
 	// public static int createPollution (World world, int i, int j, int k, int

@@ -9,20 +9,20 @@
 
 package buildcraft;
 
-import java.util.Random;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.render.BlockRenderingHandler;
 import buildcraft.core.render.BlockRenderingHandler.EntityRenderIndex;
+import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.render.RenderEngine;
 import buildcraft.energy.render.TextureFuelFX;
@@ -30,7 +30,6 @@ import buildcraft.energy.render.TextureOilFX;
 import buildcraft.energy.render.TextureOilFlowFX;
 
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.World;
 
 
 @Mod(name="BuildCraft Energy", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|ENERGY")
@@ -46,6 +45,7 @@ public class mod_BuildCraftEnergy {
 	@Init
 	public void init(FMLInitializationEvent event) {
 		BuildCraftEnergy.load();
+		GameRegistry.registerWorldGenerator(new OilPopulate());
 	}
 
 	@PostInit
@@ -81,10 +81,5 @@ public class mod_BuildCraftEnergy {
 	 * ModLoader.getMinecraftInstance().thePlayer.inventory, tile); default:
 	 * return null; } }
 	 */
-
-	//@Override
-	public void generateSurface(World world, Random random, int i, int j) {
-		BuildCraftEnergy.generateSurface(world, random, i, j);
-	}
 
 }
