@@ -40,6 +40,7 @@ import buildcraft.core.Utils;
 import buildcraft.core.network.v2.IClientState;
 import buildcraft.core.network.v2.ISyncedTile;
 import buildcraft.core.network.v2.PacketTileState;
+import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 
 import net.minecraft.src.Block;
@@ -54,16 +55,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	
 	private class CoreState implements IClientState {
 
-		public int pipeId;
+		public int pipeId = -1;
+		public int gateKind = 0;
 		
 		@Override
 		public void writeData(DataOutputStream data) throws IOException {
 			data.writeInt(pipeId);
+			data.writeInt(gateKind);
 		}
 
 		@Override
 		public void readData(DataInputStream data) throws IOException {
 			pipeId = data.readInt();
+			gateKind = data.readInt();
 		}
 		
 	}
@@ -84,11 +88,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	private int[] facadeBlocks = new int[Orientations.dirs().length];
 	private int[] facadeMeta = new int[Orientations.dirs().length];
 	
-	//Store the pipe key to prevent losing pipes when a user forgets to include an addon
-	int key; 
-
-	//public int pipeId = -1;
-
 	public TileGenericPipe() {
 
 	}
@@ -101,7 +100,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			nbttagcompound.setInteger("pipeId", pipe.itemID);
 			pipe.writeToNBT(nbttagcompound);
 		} else
-			nbttagcompound.setInteger("pipeId", key);
+			nbttagcompound.setInteger("pipeId", coreState.pipeId);
 		
 		for (int i = 0; i < Orientations.dirs().length; i++){
 			nbttagcompound.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
@@ -114,9 +113,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		
-
-		key = nbttagcompound.getInteger("pipeId");
-		pipe = BlockGenericPipe.createPipe(key);
+		coreState.pipeId = nbttagcompound.getInteger("pipeId");
+		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
 
 		if (pipe != null) {
 			pipe.readFromNBT(nbttagcompound);
@@ -144,7 +142,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		bindPipe();
 		if (pipe != null) {
 			pipe.validate();
-	}
+		}
 	}
 
 	public boolean initialized = false;
@@ -251,7 +249,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		
 		
 		if (renderState.isDirty()){
-			//worldObj.markBlockAsNeedsUpdate(this.xCoord, this.yCoord, this.zCoord);
 			worldObj.markBlockNeedsUpdate(this.xCoord, this.yCoord, this.zCoord);
 			renderState.clean();
 		}
@@ -382,12 +379,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public Packet getAuxillaryInfoPacket() {
 		bindPipe();
-		//		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord);
-		//		return packet.getPacket();
-		//return super.getAuxillaryInfoPacket();
 		
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
-		packet.addStateForSerialization((byte )0, coreState);
+		if (pipe != null && pipe.gate != null){
+			coreState.gateKind = pipe.gate.kind.ordinal();
+		} else {
+			coreState.gateKind = 0;
+		}
+		packet.addStateForSerialization((byte) 0, coreState);
 		packet.addStateForSerialization((byte) 1, renderState);
 		return packet.getPacket();
 	}
@@ -564,7 +563,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
 		scheduleRenderUpdate();
-		//refreshRenderState();
 		return true;
 	}
 	
@@ -580,7 +578,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
 		scheduleRenderUpdate();
-		//refreshRenderState();
 	}
 	
 	/** IPipeRenderState implementation **/
@@ -600,13 +597,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public void stateUpdated(byte stateId) {
+	public void afterStateUpdated(byte stateId) {
 		if (!worldObj.isRemote) return;
 		
 		switch (stateId){
 			case 0:
 				if (pipe == null && coreState.pipeId != 0){
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
+				}
+				if (pipe != null) {
+					if (pipe.gate == null) {
+						pipe.gate = new GateVanilla(pipe);
+					}
+					pipe.gate.kind = GateKind.values()[coreState.gateKind];
 				}
 				break;
 		}

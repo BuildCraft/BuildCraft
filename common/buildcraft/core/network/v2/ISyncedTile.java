@@ -18,5 +18,5 @@ public interface ISyncedTile {
 	 * Called after a state has been updated
 	 * @param stateId
 	 */
-	public void stateUpdated(byte stateId);
+	public void afterStateUpdated(byte stateId);
 }

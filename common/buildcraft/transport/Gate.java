@@ -74,10 +74,6 @@ public abstract class Gate {
 		return payload;
 	}
 
-	public void fromPayload(PacketPayload payload, IndexInPayload index) {
-		kind = GateKind.values()[payload.intPayload[index.intIndex + 0]];
-	}
-
 	// GUI
 	public abstract void openGui(EntityPlayer player);
 

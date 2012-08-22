@@ -320,8 +320,6 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
@@ -329,8 +327,6 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.shiftedIndex
@@ -340,8 +336,6 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.gate = new GateVanilla(pipe, entityplayer.getCurrentEquippedItem());
 					entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
 					return true;
 				}
 

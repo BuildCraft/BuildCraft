@@ -52,7 +52,7 @@ public class PacketTileState extends PacketCoordinates {
 		for (int i = 0; i < stateCount; i++) {
 			byte stateId = data.readByte();
 			tile.getStateInstance(stateId).readData(data);
-			tile.stateUpdated(stateId);
+			tile.afterStateUpdated(stateId);
 		}
 	}
 	
