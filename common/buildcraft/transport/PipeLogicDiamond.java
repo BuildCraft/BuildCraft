@@ -14,8 +14,10 @@ import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.ProxyCore;
+import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.utils.SimpleInventory;
 import net.minecraft.src.Block;
@@ -113,8 +115,8 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public void sendFilterSet() {
 		NBTTagCompound nbttagcompound = new NBTTagCompound();
 		this.writeToNBT(nbttagcompound);
-		//PacketNBT packet = new PacketNBT(PacketIds.DIAMOND_PIPE_CONTENTS, nbttagcompound, xCoord, yCoord, zCoord);
-		//CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
+		PacketNBT packet = new PacketNBT(PacketIds.DIAMOND_PIPE_CONTENTS, nbttagcompound, xCoord, yCoord, zCoord);
+		ProxyCore.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
 	}
 
 	/* CLIENT SIDE */
