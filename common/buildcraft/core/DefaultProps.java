@@ -11,7 +11,10 @@ package buildcraft.core;
 
 public class DefaultProps {
 
-	public static final String VERSION = "@VERSION@";
+	public static final String VERSION = "4";
+
+	public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@"+VERSION;
+	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@"+VERSION;
 
 	public static int WORLD_HEIGHT = 256;
 	public static final String NET_CHANNEL_NAME = "BC";
@@ -20,12 +23,12 @@ public class DefaultProps {
 	public static String TEXTURE_PATH_GUI = "/gfx/buildcraft/gui";
 	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";
 	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entities";
-	
+
 	public static String TEXTURE_BLOCKS = TEXTURE_PATH_BLOCKS + "/blocks.png";
 	public static String TEXTURE_ITEMS = "/gfx/buildcraft/items/items.png";
 	public static String TEXTURE_ICONS = TEXTURE_PATH_GUI + "/icons.png";
 	public static String TEXTURE_TRIGGERS = TEXTURE_PATH_GUI + "/triggers.png";
-	
+
 	public static final String DEFAULT_LANGUAGE = "en_US";
 
 	public static int WOODEN_GEAR_ID = 3800;

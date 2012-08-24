@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -31,7 +31,7 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftSilicon.laserBlockModel;
+		return SiliconProxyClient.laserBlockModel;
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class BlockLaser extends BlockContainer {
 
 	}
 
-	
+
 	@Override
 	public void updateBlockMetadata(World world, int x, int y, int z, int par5,	float par6, float par7, float par8) {
 		super.updateBlockMetadata(world, x, y, z, par5, par6, par7, par8);
@@ -80,7 +80,7 @@ public class BlockLaser extends BlockContainer {
 		}
 		world.setBlockMetadataWithNotify(x, y, z, i1);
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

@@ -321,10 +321,10 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	/* SMP UPDATING */
 	@Override
-	public Packet getDescriptionPacket() {
+	public Packet getAuxillaryInfoPacket() {
 		createEngineIfNeeded();
 
-		return super.getDescriptionPacket();
+		return super.getAuxillaryInfoPacket();
 	}
 
 	@Override

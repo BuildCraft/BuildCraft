@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -11,18 +11,17 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import buildcraft.mod_BuildCraftFactory;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.ProxyCore;
-
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
+import buildcraft.core.ProxyCore;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
@@ -61,7 +60,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		}
 
 		if (!ProxyCore.proxy.isRemote(world))
-			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
+			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 
 		return true;
 	}

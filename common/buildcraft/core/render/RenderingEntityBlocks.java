@@ -14,7 +14,6 @@ import net.minecraft.src.Tessellator;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
-
 	public static class EntityRenderIndex {
 
 		public EntityRenderIndex(Block block, int damage) {
@@ -46,13 +45,13 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelID,
 			RenderBlocks renderer) {
-		
+
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 
 			EntityRenderIndex index = new EntityRenderIndex(block, metadata);
 			if (blockByEntityRenders.containsKey(index))
 				blockByEntityRenders.get(index).inventoryRender(-0.5, -0.5, -0.5, 0, 0);
-			
+
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
 			Tessellator tessellator = Tessellator.instance;
 
@@ -96,11 +95,11 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 			// renderblocks.renderStandardBlock(block, i, j, k);
 
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
-			
+
 				legacyPipeRender(renderer, world, x, y, z, block, modelId);
-			
+
 		}
-		
+
 		return true;
 	}
 

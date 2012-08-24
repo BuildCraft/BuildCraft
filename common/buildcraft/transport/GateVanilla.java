@@ -3,7 +3,6 @@ package buildcraft.transport;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
@@ -63,7 +62,7 @@ public class GateVanilla extends Gate {
 	@Override
 	public void openGui(EntityPlayer player) {
 		if (!ProxyCore.proxy.isRemote(player.worldObj))
-			player.openGui(mod_BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
 
 	// / UPDATING
@@ -114,7 +113,7 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Tries to add an energy pulser to gates that accept energy.
-	 * 
+	 *
 	 * @param pipe
 	 * @return
 	 */
@@ -130,7 +129,7 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Drops a gate item of the specified kind.
-	 * 
+	 *
 	 * @param kind
 	 * @param world
 	 * @param i

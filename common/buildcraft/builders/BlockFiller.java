@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -11,13 +11,6 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
-import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
-
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
@@ -25,6 +18,12 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
+import buildcraft.core.Utils;
 
 
 public class BlockFiller extends BlockContainer {
@@ -52,7 +51,7 @@ public class BlockFiller extends BlockContainer {
 			return false;
 
 		if (!ProxyCore.proxy.isRemote(world))
-			entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
+			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
 		return true;
 
 	}

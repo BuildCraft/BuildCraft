@@ -1,5 +1,9 @@
 package buildcraft.energy;
 
+import buildcraft.BuildCraftEnergy;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.render.RenderingEntityBlocks;
+import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.energy.render.RenderEngine;
 import buildcraft.energy.render.TextureFuelFX;
 import buildcraft.energy.render.TextureOilFX;
@@ -21,5 +25,15 @@ public class EnergyProxyClient extends EnergyProxy {
 		renderEngine.registerTextureFX(new TextureOilFX());
 		renderEngine.registerTextureFX(new TextureFuelFX());
 		renderEngine.registerTextureFX(new TextureOilFlowFX());
+	}
+
+	@Override
+	public void registerBlockRenderers() {
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0),
+				new RenderEngine(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1),
+				new RenderEngine(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png"));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2),
+				new RenderEngine(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png"));
 	}
 }

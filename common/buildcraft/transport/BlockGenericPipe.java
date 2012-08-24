@@ -46,7 +46,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftTransport.pipeModel;
+		return TransportProxyClient.pipeModel;
 	}
 
 	@Override
@@ -202,7 +202,7 @@ public class BlockGenericPipe extends BlockContainer {
 		removePipe(getPipe(world, x, y, z));
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
@@ -212,7 +212,7 @@ public class BlockGenericPipe extends BlockContainer {
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}
-	
+
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
@@ -268,7 +268,7 @@ public class BlockGenericPipe extends BlockContainer {
 			pipe.onBlockPlaced();
 
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
@@ -376,7 +376,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	/**
 	 * Drops a pipe wire item of the passed color.
-	 * 
+	 *
 	 * @param color
 	 */
 	private void dropWire(IPipe.WireColor color, World world, int i, int j, int k) {
@@ -401,12 +401,12 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		
+
 		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
 		if (!(tile instanceof IPipeRenderState)) return 0;
 		return ((IPipeRenderState)tile).getRenderState().currentTextureIndex;
-		
-		
+
+
 //		Pipe pipe = getPipe(iblockaccess, i, j, k);
 //		if (!isValid(pipe)) {
 //			CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
@@ -476,24 +476,24 @@ public class BlockGenericPipe extends BlockContainer {
 		ItemPipe item = new ItemPipe(key);
 
 		pipes.put(item.shiftedIndex, clas);
-		
+
 		Pipe dummyPipe = createPipe(item.shiftedIndex);
 		if (dummyPipe != null){
 			item.setTextureFile(dummyPipe.getTextureFile());
 			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
 		}
-		
+
 		return item;
 	}
 
 	public static Pipe createPipe(int key) {
-		
+
 		try {
 			Class<? extends Pipe> pipe = pipes.get(key);
 			if (pipe != null) {
 				return pipe.getConstructor(int.class).newInstance(key);
 			} else {
-				System.err.printf("[BuildCraft] Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?\n"); 
+				System.err.printf("[BuildCraft] Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?\n");
 			}
 
 		} catch (Throwable t) {
@@ -502,28 +502,28 @@ public class BlockGenericPipe extends BlockContainer {
 
 		return null;
 	}
-	
+
 	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockId, int meta) {
 		if (world.isRemote) return true;
-		
+
 		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta);
-		
+
 		if (placed) {
-			
+
 			TileGenericPipe tile = (TileGenericPipe) world.getBlockTileEntity(i, j, k);
 			tile.initialize(pipe);
 		}
-		
+
 		return placed;
 	}
 
 	public static Pipe getPipe(IBlockAccess blockAccess, int i, int j, int k) {
-		
+
 		TileEntity tile = blockAccess.getBlockTileEntity(i, j, k);
-		
+
 		if(!(tile instanceof TileGenericPipe) || tile.isInvalid())
 			return null;
-		
+
 		return ((TileGenericPipe)tile).pipe;
 	}
 
