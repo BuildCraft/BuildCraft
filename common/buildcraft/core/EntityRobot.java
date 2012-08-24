@@ -9,14 +9,16 @@
 
 package buildcraft.core;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.management.RuntimeErrorException;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.BuildCraftAPI;
@@ -27,9 +29,8 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraftforge.common.ISpawnHandler;
 
-public class EntityRobot extends Entity implements ISpawnHandler {
+public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 	private Box box;
 	private int destX, destY, destZ;
@@ -85,8 +86,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	public void writeSpawnData(DataOutputStream data) throws IOException {
-
+	public void writeSpawnData(ByteArrayDataOutput data) {
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
 		data.writeInt(box.zMin);
@@ -96,7 +96,7 @@ public class EntityRobot extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	public void readSpawnData(DataInputStream data) throws IOException {
+	public void readSpawnData(ByteArrayDataInput data) {
 
 		box = new Box();
 		box.xMin = data.readInt();

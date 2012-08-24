@@ -9,18 +9,18 @@
 
 package buildcraft.core;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 import buildcraft.api.core.Position;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraftforge.common.ISpawnHandler;
 
-public class EntityLaser extends Entity implements ISpawnHandler {
+public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
 	
 	protected Position head, tail;
 
@@ -66,8 +66,7 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	public void writeSpawnData(DataOutputStream data) throws IOException {
-
+	public void writeSpawnData(ByteArrayDataOutput data) {
 		data.writeDouble(head.x);
 		data.writeDouble(head.y);
 		data.writeDouble(head.z);
@@ -77,13 +76,12 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	public void readSpawnData(DataInputStream data) throws IOException {
-
+	public void readSpawnData(ByteArrayDataInput data) {
 		head = new Position(data.readDouble(), data.readDouble(), data.readDouble());
 		tail = new Position(data.readDouble(), data.readDouble(), data.readDouble());
 		init();
 	}
-	
+
 	@Override
 	public void onUpdate() {
 		
