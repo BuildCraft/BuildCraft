@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.Random;
 
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 import buildcraft.core.network.BuildCraftPacket;
 
@@ -24,7 +25,6 @@ import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -33,7 +33,7 @@ public class ProxyCore {
 
 	@SidedProxy(clientSide="buildcraft.core.ClientProxyCore", serverSide="buildcraft.core.ProxyCore")
 	public static ProxyCore proxy;
-	
+
 	/* SIMULATION */
 	public boolean isSimulating(World world) {
 		return !world.isRemote;
@@ -61,7 +61,7 @@ public class ProxyCore {
 	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {}
 	public void initializeRendering() {}
 	public void initializeEntityRendering() {}
-	
+
 	/* REGISTRATION */
 	public void registerBlock(Block block) {
 		Item.itemsList[block.blockID] = null;
@@ -69,19 +69,19 @@ public class ProxyCore {
 	}
 
 	public void registerTileEntity(Class clas, String ident) {
-		ModLoader.registerTileEntity(clas, ident);
+		GameRegistry.registerTileEntity(clas, ident);
 	}
 
 	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
 		stack.onCrafting(world, player, stack.stackSize);
 	}
-	
+
 	public void addCraftingRecipe(ItemStack result, Object[] recipe) {
-		ModLoader.addRecipe(result, recipe);
+		GameRegistry.addRecipe(result, recipe);
 	}
-	
+
 	public void addShapelessRecipe(ItemStack result, Object[] recipe) {
-		ModLoader.addShapelessRecipe(result, recipe);
+		GameRegistry.addShapelessRecipe(result, recipe);
 	}
 
 	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
@@ -113,7 +113,7 @@ public class ProxyCore {
 	}
 
 	public void TakenFromCrafting(EntityPlayer thePlayer, ItemStack itemstack, IInventory craftMatrix) {
-		ModLoader.takenFromCrafting(thePlayer, itemstack, craftMatrix);
+		GameRegistry.onItemCrafted(thePlayer, itemstack, craftMatrix);
 	}
 
 	public Random createNewRandom(World world) {
@@ -122,7 +122,7 @@ public class ProxyCore {
 
 	/* BUILDCRAFT PLAYER */
 	protected static EntityPlayer buildCraftPlayer;
-	
+
 	public String playerName() { return ""; }
 	private EntityPlayer createNewPlayer(World world) {
 		return new EntityPlayer(world) {
@@ -143,7 +143,7 @@ public class ProxyCore {
 		if (ProxyCore.buildCraftPlayer == null) {
 			ProxyCore.buildCraftPlayer = createNewPlayer(world);
 		}
-	
+
 		return ProxyCore.buildCraftPlayer;
 	}
 

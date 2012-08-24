@@ -3,6 +3,7 @@ package buildcraft.silicon.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -15,7 +16,6 @@ import buildcraft.silicon.gui.GuiAssemblyTable;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiScreen;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
@@ -56,7 +56,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	private void onSelectionUpdate(PacketUpdate packet) {
 
-		GuiScreen screen = ModLoader.getMinecraftInstance().currentScreen;
+		GuiScreen screen = FMLClientHandler.instance().getClient().currentScreen;
 
 		if (screen instanceof GuiAssemblyTable) {
 			GuiAssemblyTable gui = (GuiAssemblyTable) screen;
@@ -82,7 +82,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	/**
 	 * Sends the current selection on the assembly table to a player.
-	 * 
+	 *
 	 * @param player
 	 * @param packet
 	 */
@@ -97,7 +97,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	/**
 	 * Sets the selection on an assembly table according to player request.
-	 * 
+	 *
 	 * @param player
 	 * @param packet
 	 */

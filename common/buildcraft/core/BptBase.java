@@ -20,7 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
-import net.minecraft.src.ModLoader;
+import buildcraft.BuildCraftCore;
 
 public abstract class BptBase {
 
@@ -78,7 +78,7 @@ public abstract class BptBase {
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							ModLoader.getLogger().throwing("BptBase", "rotateLeft", t);
+							BuildCraftCore.bcLog.throwing("BptBase", "rotateLeft", t);
 						}
 				}
 

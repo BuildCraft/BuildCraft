@@ -14,13 +14,13 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.BptSlot.Mode;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
@@ -178,7 +178,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				ModLoader.getLogger().throwing("BptBuilderBlueprint", "internalGetBlock", t);
+				BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "internalGetBlock", t);
 				getNext = false;
 			}
 
@@ -222,7 +222,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			ModLoader.getLogger().throwing("BptBuilderBlueprint", "checkRequirements", t);
+			BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "checkRequirements", t);
 		}
 
 		int size = inv.getSizeInventory();
@@ -246,7 +246,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
-						ModLoader.getLogger().throwing("BptBuilderBlueprint", "checkRequirements", t);
+						BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "checkRequirements", t);
 					}
 
 					if (reqStk.stackSize == 0)
@@ -273,7 +273,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			ModLoader.getLogger().throwing("BptBuilderBlueprint", "useRequirements", t);
+			BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "useRequirements", t);
 
 		}
 
@@ -296,7 +296,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
-						ModLoader.getLogger().throwing("BptBuilderBlueprint", "useRequirements", t);
+						BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "useRequirements", t);
 					}
 
 					if (invStk.stackSize == 0)
@@ -345,7 +345,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				ModLoader.getLogger().throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
+				BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
 			}
 
 			for (ItemStack stack : stacks) {
@@ -398,7 +398,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
 				t.printStackTrace();
-				ModLoader.getLogger().throwing("BptBuilderBlueprint", "postProcessing", t);
+				BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "postProcessing", t);
 			}
 	}
 

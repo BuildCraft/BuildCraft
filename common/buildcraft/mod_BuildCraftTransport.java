@@ -28,7 +28,6 @@ import buildcraft.transport.render.PipeWorldRenderer;
 import buildcraft.transport.render.RenderPipe;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -55,7 +54,7 @@ public class mod_BuildCraftTransport {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event) {
 		BuildCraftTransport.initialize();
-		
+
 		BuildCraftTransport.initializeModel(this);
 		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
 
@@ -82,23 +81,19 @@ public class mod_BuildCraftTransport {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsVoid.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsSandstone.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsSandstone.shiftedIndex, pipeItemRenderer);
-		
+
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem.shiftedIndex, facadeItemRenderer);
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
-	}
-
-	public static void registerTilePipe(Class<? extends TileEntity> clas, String name) {
-		ModLoader.registerTileEntity(clas, name, new RenderPipe());
 	}
 
 	//@Override
 	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
 		//cpw.mods.fml.client.registry.RenderingRegistry.instance().registerBlockHandler(new isimpleblockrenderinghandler() {
 		if (modelID != BuildCraftTransport.pipeModel) return true;
-		
+
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		
+
 		if (tile instanceof IPipeRenderState){
 			IPipeRenderState pipeTile = (IPipeRenderState) tile;
 			pipeWorldRenderer.renderPipe(renderer, world, block, pipeTile.getRenderState(), x, y, z);
@@ -110,6 +105,6 @@ public class mod_BuildCraftTransport {
 		return true;
 	}
 
-	
+
 
 }

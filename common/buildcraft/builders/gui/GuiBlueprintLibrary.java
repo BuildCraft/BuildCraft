@@ -9,11 +9,13 @@
 
 package buildcraft.builders.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiButton;
-import net.minecraft.src.ModLoader;
 
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.client.FMLClientHandler;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
@@ -143,6 +145,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	protected void mouseClicked(int i, int j, int k) {
 		super.mouseClicked(i, j, k);
 
+		Minecraft client = FMLClientHandler.instance().getClient();
 		int xMin = (width - xSize) / 2;
 		int yMin = (height - ySize) / 2;
 
@@ -155,24 +158,24 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 			if (ySlot >= 0 && ySlot <= 11)
 				if (ySlot < container.contents.size())
 					library.selected = container.contents.get(ySlot);
-		} else if (nextPageButton.mousePressed(ModLoader.getMinecraftInstance(), i, j)) {
+		} else if (nextPageButton.mousePressed(client, i, j)) {
 			if (container.contents.size() > 0)
 				container.contents = library.getNextPage(container.contents.getLast().file.getName());
 			else
 				container.contents = library.getNextPage(null);
-		} else if (prevPageButton.mousePressed(ModLoader.getMinecraftInstance(), i, j)) {
+		} else if (prevPageButton.mousePressed(client, i, j)) {
 			if (container.contents.size() > 0)
 				container.contents = library.getPrevPage(container.contents.getFirst().file.getName());
 			else
 				container.contents = library.getNextPage(null);
-		} else if (lockButton != null && lockButton.mousePressed(ModLoader.getMinecraftInstance(), i, j)) {
+		} else if (lockButton != null && lockButton.mousePressed(client, i, j)) {
 			library.locked = !library.locked;
 
 			if (library.locked)
 				lockButton.displayString = StringUtil.localize("gui.unlock");
 			else
 				lockButton.displayString = StringUtil.localize("gui.lock");
-		} else if (deleteButton != null && deleteButton.mousePressed(ModLoader.getMinecraftInstance(), i, j))
+		} else if (deleteButton != null && deleteButton.mousePressed(client, i, j))
 			if (library.selected != null) {
 				index.deleteBluePrint(library.selected.file.getName());
 				if (container.contents.size() > 0)

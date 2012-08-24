@@ -11,7 +11,9 @@ package buildcraft.core;
 
 import java.io.File;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.render.RenderEnergyLaser;
@@ -29,7 +31,6 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.TileEntity;
@@ -43,7 +44,7 @@ public class ClientProxyCore extends ProxyCore {
 	@Override
 	public void removeEntity(Entity entity) {
 		super.removeEntity(entity);
-	
+
 		if (isRemote(entity.worldObj))
 			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
 	}
@@ -55,25 +56,25 @@ public class ClientProxyCore extends ProxyCore {
 	}
 	@Override
 	public void addName(Object obj, String s) {
-		ModLoader.addName(obj, s);
+		LanguageRegistry.addName(obj, s);
 	}
 	@Override
 	public void addLocalization(String s1, String string) {
-		ModLoader.addLocalization(s1, string);
-	}	
+		LanguageRegistry.instance().addStringLocalization(s1, string);
+	}
 	@Override
 	public String getItemDisplayName(ItemStack stack){
 		if (Item.itemsList[stack.itemID] == null) return "";
-		
+
 		return Item.itemsList[stack.itemID].getItemDisplayName(stack);
 	}
 
 	/* GFX */
 	@Override
 	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
-		ModLoader.getMinecraftInstance().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
+		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
 	}
-	
+
 	@Override
 	public void initializeRendering() {
 		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
@@ -89,7 +90,7 @@ public class ClientProxyCore extends ProxyCore {
 		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
 		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
 	}
-	
+
 	@Override
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, new RenderEntityBlock());
@@ -102,18 +103,18 @@ public class ClientProxyCore extends ProxyCore {
 	/* NETWORKING */
 	@Override
 	public void sendToServer(Packet packet) {
-		ModLoader.getMinecraftInstance().getSendQueue().addToSendQueue(packet);
+		FMLClientHandler.instance().getClient().getSendQueue().addToSendQueue(packet);
 	}
 
 	/* FILE SYSTEM */
 	public File getBuildCraftBase() {
 		return Minecraft.getMinecraftDir();
 	}
-	
+
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
-		return ModLoader.getMinecraftInstance().thePlayer.username;
+		return FMLClientHandler.instance().getClient().thePlayer.username;
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
@@ -128,7 +129,7 @@ public class ClientProxyCore extends ProxyCore {
 		if (ProxyCore.buildCraftPlayer == null) {
 			ProxyCore.buildCraftPlayer = createNewPlayer(world);
 		}
-	
+
 		return ProxyCore.buildCraftPlayer;
 	}
 

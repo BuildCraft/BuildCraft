@@ -20,13 +20,13 @@ import com.google.common.io.ByteArrayDataOutput;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
 import buildcraft.core.BptSlot.Mode;
 
 import net.minecraft.src.Entity;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 
@@ -80,17 +80,17 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		motionZ = 0;
 
 		setPosition(destX, destY, destZ);
-		
+
 		laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
 		worldObj.spawnEntityInWorld(laser);
 	}
 
 	@Override
 	public void writeSpawnData(ByteArrayDataOutput data) {
-		
+
 		if(box == null)
 			box = new Box();
-		
+
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
 		data.writeInt(box.zMin);
@@ -140,7 +140,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 			if (newDesination != null) {
 				setDestination(newDesination.i, newDesination.j, newDesination.k);
 			}
-		
+
 		}
 
 	}
@@ -203,27 +203,27 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 				if (wait <= 0) {
 
 					if (!ProxyCore.proxy.isRemote(worldObj)) {
-					
+
 						if (target.mode == Mode.ClearIfInvalid) {
-	
+
 							if (!target.isValid(a.context))
 								worldObj.setBlockAndMetadataWithNotify(target.x, target.y, target.z, 0, 0);
-	
+
 						} else if (target.stackToUse != null) {
-	
+
 							worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
 							throw new RuntimeErrorException(null, "NOT IMPLEMENTED");
 //							target.stackToUse.getItem().onItemUse(target.stackToUse,
 //									CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
 //									target.z, 1);
 						} else {
-	
+
 							try {
 								target.buildBlock(a.context);
 							} catch (Throwable t) {
 								// Defensive code against errors in implementers
 								t.printStackTrace();
-								ModLoader.getLogger().throwing("EntityRobot", "update", t);
+								BuildCraftCore.bcLog.throwing("EntityRobot", "update", t);
 							}
 						}
 					}
@@ -248,17 +248,17 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	private void updateLaser() {
-		
+
 		if(laser == null)
 			return;
-		
+
 		if (targets.size() > 0) {
-			
+
 			Action a = targets.getFirst();
 			BptSlotInfo target = a.slot;
-			
+
 			if (target != null) {
-			
+
 				laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
 				laser.show();
 			}
@@ -266,7 +266,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		else {
 			laser.hide();
 		}
-		
+
 		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
 	}
 
@@ -274,7 +274,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 		if (slot != null) {
 			targets.add(new Action(slot, context));
-			
+
 		}
 	}
 

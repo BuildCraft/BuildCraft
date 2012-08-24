@@ -10,6 +10,9 @@ package buildcraft;
 
 import java.io.File;
 import java.util.TreeMap;
+import java.util.logging.Logger;
+
+import cpw.mods.fml.common.FMLLog;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.Action;
@@ -42,7 +45,6 @@ import buildcraft.transport.TriggerRedstoneInput;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
@@ -124,6 +126,7 @@ public class BuildCraftCore {
 
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
+	public static Logger bcLog = Logger.getLogger("Buildcraft");
 	public static void load() {
 
 		//MinecraftForge.registerConnectionHandler(new ConnectionHandler());
@@ -133,13 +136,10 @@ public class BuildCraftCore {
 		if (initialized)
 			return;
 
-		ModLoader.getLogger().fine("Starting BuildCraft " + DefaultProps.VERSION);
-		ModLoader.getLogger().fine("Copyright (c) SpaceToad, 2011");
-		ModLoader.getLogger().fine("http://www.mod-buildcraft.com");
-
-		System.out.println("Starting BuildCraft " + DefaultProps.VERSION);
-		System.out.println("Copyright (c) SpaceToad, 2011-2012");
-		System.out.println("http://www.mod-buildcraft.com");
+		bcLog.setParent(FMLLog.getLogger());
+		bcLog.info("Starting BuildCraft " + DefaultProps.VERSION);
+		bcLog.info("Copyright (c) SpaceToad, 2011");
+		bcLog.info("http://www.mod-buildcraft.com");
 
 		initialized = true;
 

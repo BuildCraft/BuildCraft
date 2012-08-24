@@ -39,6 +39,7 @@ import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileDummyGenericPipe;
 import buildcraft.transport.TileDummyGenericPipe2;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TransportProxy;
 import buildcraft.transport.TriggerPipeContents;
 import buildcraft.transport.TriggerPipeSignal;
 import buildcraft.transport.TriggerPipeContents.Kind;
@@ -112,7 +113,7 @@ public class BuildCraftTransport {
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
 	public static Item pipePowerGold;
-	
+
 	public static Item facadeItem;
 
 	//public static Item pipeItemsStipes;
@@ -145,7 +146,7 @@ public class BuildCraftTransport {
 	public static Action actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
 	public static Action actionYellowSignal = new ActionSignalOutput(DefaultProps.ACTION_YELLOW_SIGNAL, IPipe.WireColor.Yellow);
 	public static Action actionEnergyPulser = new ActionEnergyPulser(DefaultProps.ACTION_ENERGY_PULSER);
-	
+
 	public static int pipeModel;
 
 	private static class PipeRecipe {
@@ -173,12 +174,12 @@ public class BuildCraftTransport {
          this.items = items;
          this.liquids = liquids;
       }
-      
+
       @Override
       public boolean canExtractItems(IPipe pipe, World world, int i, int j, int k) {
          return testStrings(items, world, i, j, k);
       }
-      
+
       @Override
       public boolean canExtractLiquids(IPipe pipe, World world, int i, int j, int k) {
          return testStrings(liquids, world, i, j, k);
@@ -215,7 +216,7 @@ public class BuildCraftTransport {
 		Property alwaysConnect = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("pipes.alwaysConnect",
 				Configuration.CATEGORY_GENERAL, DefaultProps.PIPES_ALWAYS_CONNECT);
 		alwaysConnect.comment = "set to false to deactivate pipe connection rules, true by default";
-		
+
 		Property PipeLoss = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("power.usePipeLoss",
 				Configuration.CATEGORY_GENERAL, DefaultProps.USE_PIPELOSS);
 		PipeLoss.comment = "Set to false to turn off energy loss over distance on all power pipes";
@@ -258,13 +259,9 @@ public class BuildCraftTransport {
 		genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
 		ProxyCore.proxy.registerBlock(genericPipeBlock);
 
+		TransportProxy.proxy.registerTileEntities();
+
 		// Fixing retro-compatiblity
-		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe.class, "net.minecraft.src.buildcraft.GenericPipe");
-		mod_BuildCraftTransport.registerTilePipe(TileDummyGenericPipe2.class,
-				"net.minecraft.src.buildcraft.transport.TileGenericPipe");
-
-		mod_BuildCraftTransport.registerTilePipe(TileGenericPipe.class, "net.minecraft.src.buildcraft.transport.GenericPipe");
-
 		pipeItemsWood = createPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks,
 				Block.glass, Block.planks);
 		pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class,
@@ -311,16 +308,16 @@ public class BuildCraftTransport {
 		// Fix the recipe
 		//pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe",
 		//		new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
-		
+
 		pipeItemsVoid = createPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe",
 				new ItemStack(Item.dyePowder, 1, 0), Block.glass, Item.redstone);
 
 		pipeLiquidsVoid = createPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeLiquidsVoid.class, "Void Waterproof Pipe",
 				pipeWaterproof, pipeItemsVoid, null);
-		
+
 		pipeItemsSandstone = createPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe",
 				Block.sandStone, Block.glass, Block.sandStone);
-		
+
 		pipeLiquidsSandstone = createPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeLiquidsSandstone.class, "Sandstone Waterproof Pipe",
 				pipeWaterproof, pipeItemsSandstone, null);
 
@@ -365,7 +362,7 @@ public class BuildCraftTransport {
 
 		pipeGateAutarchic = new ItemGate(DefaultProps.GATE_AUTARCHIC_ID, 1).setIconIndex(2 * 16 + 3);
 		pipeGateAutarchic.setItemName("pipeGateAutarchic");
-		
+
 		facadeItem = new ItemFacade(DefaultProps.PIPE_FACADE_ID);
 		facadeItem.setItemName("pipeFacade");
 		ItemFacade.initialize();
@@ -439,6 +436,6 @@ public class BuildCraftTransport {
 		//pipeModel = ModLoader.getUniqueBlockModelID(mod, true);
 		pipeModel = RenderingRegistry.getNextAvailableRenderId();
 	}
-	
-	
+
+
 }

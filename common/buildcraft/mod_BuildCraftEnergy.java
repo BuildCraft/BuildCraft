@@ -19,17 +19,17 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
+import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.render.RenderEngine;
 import buildcraft.energy.render.TextureFuelFX;
 import buildcraft.energy.render.TextureOilFX;
 import buildcraft.energy.render.TextureOilFlowFX;
-
-import net.minecraft.src.ModLoader;
 
 
 @Mod(name="BuildCraft Energy", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|ENERGY")
@@ -60,19 +60,14 @@ public class mod_BuildCraftEnergy {
 		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(
 				DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png"));
 
-		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFX());
-		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureFuelFX());
-		ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(new TextureOilFlowFX());
-
-		// FIXME: Needs to be seperate for server.
-		ModLoader.registerTileEntity(TileEngine.class, "net.minecraft.src.buildcraft.energy.Engine", new RenderEngine());
-
+		EnergyProxy.proxy.registerTileEntities();
+		EnergyProxy.proxy.registerTextureFX();
 	}
 
 	/*
 	 * @Override public GuiScreen handleGUI(int i) { TileEngine tile = new
 	 * TileEngine();
-	 * 
+	 *
 	 * switch (Utils.intToPacketId(i)) { case EngineSteamGUI: tile.engine = new
 	 * EngineStone(tile); return new GuiSteamEngine(
 	 * ModLoader.getMinecraftInstance().thePlayer.inventory, tile); case

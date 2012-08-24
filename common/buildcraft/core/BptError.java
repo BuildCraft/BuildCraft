@@ -9,7 +9,7 @@
 
 package buildcraft.core;
 
-import net.minecraft.src.ModLoader;
+import buildcraft.BuildCraftCore;
 
 public class BptError extends Exception {
 
@@ -21,7 +21,7 @@ public class BptError extends Exception {
 	public BptError(String str) {
 		super(str);
 
-		ModLoader.getLogger().fine("BLUEPRINT ERROR:" + str);
+		BuildCraftCore.bcLog.fine("BLUEPRINT ERROR:" + str);
 
 	}
 

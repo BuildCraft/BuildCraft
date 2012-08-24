@@ -26,8 +26,6 @@ import buildcraft.factory.EntityMechanicalArm;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.network.PacketHandlerFactory;
 
-import net.minecraft.src.ModLoader;
-
 
 @Mod(name="BuildCraft Factory", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|FACTORY")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
@@ -57,9 +55,9 @@ public class mod_BuildCraftFactory {
 			Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
 			Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
 			method.invoke(null, GuiAutoCrafting.class, "crafting", 5, 11);
-			ModLoader.getLogger().fine("NEI detected, adding NEI overlay");
+			BuildCraftCore.bcLog.fine("NEI detected, adding NEI overlay");
 		} catch (Exception e) {
-			ModLoader.getLogger().fine("NEI not detected.");
+			BuildCraftCore.bcLog.fine("NEI not detected.");
 		}
 		// Direct call (for reference)
 		// DefaultOverlayRenderer.registerGuiOverlay(GuiAutoCrafting.class,

@@ -5,11 +5,11 @@ import java.io.DataInputStream;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
@@ -22,6 +22,7 @@ import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -74,7 +75,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 				packet.readData(data);
 				onGateSelection(packet);
 				break;
-				
+
 			/** SERVER SIDE **/
 			case PacketIds.DIAMOND_PIPE_SELECT:
 				PacketSlotChange packet1 = new PacketSlotChange();
@@ -100,8 +101,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 				onGateSelectionChange((EntityPlayerMP) player, packet3);
 				break;
 			}
-			
-			
+
+
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -110,11 +111,11 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received list of potential actions on a gate
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onGateActions(PacketUpdate packet) {
-		Container container = ModLoader.getMinecraftInstance().thePlayer.craftingInventory;
+		Container container = FMLClientHandler.instance().getClient().thePlayer.craftingInventory;
 
 		if (!(container instanceof ContainerGateInterface))
 			return;
@@ -124,11 +125,11 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received list of potential triggers on a gate.
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onGateTriggers(PacketUpdate packet) {
-		Container container = ModLoader.getMinecraftInstance().thePlayer.craftingInventory;
+		Container container = FMLClientHandler.instance().getClient().thePlayer.craftingInventory;
 
 		if (!(container instanceof ContainerGateInterface))
 			return;
@@ -138,11 +139,11 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received current gate selection on a gate
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onGateSelection(PacketUpdate packet) {
-		Container container = ModLoader.getMinecraftInstance().thePlayer.craftingInventory;
+		Container container = FMLClientHandler.instance().getClient().thePlayer.craftingInventory;
 
 		if (!(container instanceof ContainerGateInterface))
 			return;
@@ -153,11 +154,11 @@ public class PacketHandlerTransport implements IPacketHandler {
 	/**
 	 * Handles a pipe description packet. (Creates the pipe object client side
 	 * if needed.)
-	 * 
+	 *
 	 * @param descPacket
 	 */
 	private void onPipeDescription(PipeRenderStatePacket descPacket) {
-		World world = ModLoader.getMinecraftInstance().theWorld;
+		World world = FMLClientHandler.instance().getClient().theWorld;
 
 		if (!world.blockExists(descPacket.posX, descPacket.posY, descPacket.posZ))
 			return;
@@ -168,7 +169,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 //			entity = new TileGenericPipeProxy();
 //			world.setBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ, entity);
 		}
-		
+
 		if (!(entity instanceof TileGenericPipe))
 			return;
 
@@ -178,11 +179,11 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Updates items in a pipe.
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onPipeContentUpdate(PacketPipeTransportContent packet) {
-		World world = ModLoader.getMinecraftInstance().theWorld;
+		World world = FMLClientHandler.instance().getClient().theWorld;
 
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
@@ -201,12 +202,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 		((PipeTransportItems) pipe.pipe.transport).handleItemPacket(packet);
 	}
 
-	/** 
-	 * Updates the display power on a power pipe 
+	/**
+	 * Updates the display power on a power pipe
 	 * @param packetPower
 	 */
 	private void onPacketPower(PacketPowerUpdate packetPower) {
-		World world = ModLoader.getMinecraftInstance().theWorld;
+		World world = FMLClientHandler.instance().getClient().theWorld;
 		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ))
 			return;
 
@@ -223,12 +224,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
 
-		
-		
+
+
 	}
 
 	private void onPacketLiquid(PacketLiquidUpdate packetLiquid) {
-		World world = ModLoader.getMinecraftInstance().theWorld;
+		World world = FMLClientHandler.instance().getClient().theWorld;
 		if (!world.blockExists(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ))
 			return;
 
@@ -248,12 +249,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Updates contents of a diamond pipe.
-	 * 
+	 *
 	 * @param packet
 	 */
 	private void onDiamondContents(PacketNBT packet) {
 
-		World world = ModLoader.getMinecraftInstance().theWorld;
+		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
 
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
@@ -281,12 +282,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 		BuildCraftCore.bufferedDescriptions.put(index, packet);
 		*/
 	}
-	
+
 	/********************       SERVER         ******************** **/
-	
+
 	/**
 	 * Handles selection changes on a gate.
-	 * 
+	 *
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -299,7 +300,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles gate gui (current) selection requests.
-	 * 
+	 *
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -312,7 +313,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received gate gui initialization requests.
-	 * 
+	 *
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -325,7 +326,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Retrieves pipe at specified coordinates if any.
-	 * 
+	 *
 	 * @param world
 	 * @param x
 	 * @param y
@@ -345,7 +346,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles selection changes on diamond pipe guis.
-	 * 
+	 *
 	 * @param player
 	 * @param packet
 	 */
@@ -359,6 +360,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 		((PipeLogicDiamond)pipe.pipe.logic).setInventorySlotContents(packet.slot, packet.stack);
 	}
-	
+
 
 }
