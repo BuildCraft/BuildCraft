@@ -14,6 +14,10 @@ import java.io.File;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.render.RenderEnergyLaser;
+import buildcraft.core.render.RenderEntityBlock;
+import buildcraft.core.render.RenderLaser;
+import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.render.RenderingOil;
@@ -69,6 +73,8 @@ public class ClientProxyCore extends ProxyCore {
 	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
 		ModLoader.getMinecraftInstance().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
 	}
+	
+	@Override
 	public void initializeRendering() {
 		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
@@ -83,6 +89,15 @@ public class ClientProxyCore extends ProxyCore {
 		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
 		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
 	}
+	
+	@Override
+	public void initializeEntityRendering() {
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, new RenderEntityBlock());
+		RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());
+		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
+		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
+	}
+
 
 	/* NETWORKING */
 	@Override

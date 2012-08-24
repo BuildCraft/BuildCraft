@@ -10,7 +10,6 @@
 package buildcraft;
 
 import java.util.Date;
-import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 
@@ -24,16 +23,8 @@ import cpw.mods.fml.common.network.NetworkMod;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ClassMapping;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.EntityRobot;
 import buildcraft.core.ProxyCore;
 import buildcraft.core.network.PacketHandler;
-import buildcraft.core.render.RenderEnergyLaser;
-import buildcraft.core.render.RenderEntityBlock;
-import buildcraft.core.render.RenderLaser;
-import buildcraft.core.render.RenderRobot;
 import buildcraft.core.utils.Localization;
 
 @Mod(name="BuildCraft", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|CORE")
@@ -58,7 +49,6 @@ public class mod_BuildCraftCore {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event) {
 		mod_BuildCraftCore.initialize();
-		//BuildCraftCore.initializeModel(this);
 //		ModLoader.setInGameHook(this, true, true);
 	}
 
@@ -69,32 +59,13 @@ public class mod_BuildCraftCore {
 
 			// Init rendering if applicable
 			ProxyCore.proxy.initializeRendering();
+			ProxyCore.proxy.initializeEntityRendering();
 			
 			//Initialize localization
 			Localization.addLocalization("/lang/buildcraft/", DefaultProps.DEFAULT_LANGUAGE);
 
 			initialized = true;
 		}
-	}
-
-/*
-	 * @Override public void handlePacket(Packet230ModLoader packet) { switch
-	 * (PacketIds.values()[packet.packetType]) { case TileDescription:
-	 * Utils.handleDescriptionPacket(packet,
-	 * ModLoader.getMinecraftInstance().theWorld); break; case TileUpdate:
-	 * Utils.handleUpdatePacket(packet,
-	 * ModLoader.getMinecraftInstance().theWorld); break;
-	 * 
-	 * } }
-	 */
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	@Override
-	public void addRenderer(Map map) {
-		map.put(EntityBlock.class, new RenderEntityBlock());
-		map.put(EntityLaser.class, new RenderLaser());
-		map.put(EntityEnergyLaser.class, new RenderEnergyLaser());
-		map.put(EntityRobot.class, new RenderRobot());
 	}
 
 	long lastReport = 0;
@@ -114,16 +85,5 @@ public class mod_BuildCraftCore {
 
 		return true;
 	}
-
-	/*
-	 * @Override public void handlePacket(Packet230ModLoader packet) { switch
-	 * (PacketIds.values()[packet.packetType]) { case TileDescription:
-	 * Utils.handleDescriptionPacket(packet,
-	 * ModLoader.getMinecraftInstance().theWorld); break; case TileUpdate:
-	 * Utils.handleUpdatePacket(packet,
-	 * ModLoader.getMinecraftInstance().theWorld); break;
-	 * 
-	 * } }
-	 */
 
 }

@@ -60,6 +60,7 @@ public class ProxyCore {
 	/* GFX */
 	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {}
 	public void initializeRendering() {}
+	public void initializeEntityRendering() {}
 	
 	/* REGISTRATION */
 	public void registerBlock(Block block) {
@@ -83,10 +84,10 @@ public class ProxyCore {
 		ModLoader.addShapelessRecipe(result, recipe);
 	}
 
-	public void sendToPlayers(Packet packet, World w, int x, int y, int z, int maxDistance) {
+	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
 		if (packet != null) {
-			for (int j = 0; j < w.playerEntities.size(); j++) {
-				EntityPlayerMP player = (EntityPlayerMP) w.playerEntities.get(j);
+			for (int j = 0; j < world.playerEntities.size(); j++) {
+				EntityPlayerMP player = (EntityPlayerMP) world.playerEntities.get(j);
 
 				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance
 						&& Math.abs(player.posZ - z) <= maxDistance)
