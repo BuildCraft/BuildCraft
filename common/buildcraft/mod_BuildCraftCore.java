@@ -19,11 +19,16 @@ import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.EntityRegistry;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ClassMapping;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityEnergyLaser;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.EntityRobot;
 import buildcraft.core.ProxyCore;
+import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.utils.Localization;
 
@@ -57,6 +62,10 @@ public class mod_BuildCraftCore {
 
 		if (!initialized) {
 
+			EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
+			EntityRegistry.registerModEntity(EntityLaser.class, "bcLaser", EntityIds.LASER, instance, 50, 1, true);
+			EntityRegistry.registerModEntity(EntityEnergyLaser.class, "bcEnergyLaser", EntityIds.ENERGY_LASER, instance, 50, 1, true);
+			
 			// Init rendering if applicable
 			ProxyCore.proxy.initializeRendering();
 			ProxyCore.proxy.initializeEntityRendering();

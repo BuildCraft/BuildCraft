@@ -87,6 +87,10 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 	@Override
 	public void writeSpawnData(ByteArrayDataOutput data) {
+		
+		if(box == null)
+			box = new Box();
+		
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
 		data.writeInt(box.zMin);
@@ -244,7 +248,10 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	private void updateLaser() {
-			
+		
+		if(laser == null)
+			return;
+		
 		if (targets.size() > 0) {
 			
 			Action a = targets.getFirst();
