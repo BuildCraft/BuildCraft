@@ -68,7 +68,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
-		provider = powerProvider;
+		powerProvider = provider;
 	}
 
 	@Override
