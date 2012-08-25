@@ -21,6 +21,7 @@ import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.CoreProxy;
