@@ -10,6 +10,7 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.APIProxy;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Orientations;
@@ -24,7 +25,6 @@ import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.core.ActionMachineControl;
 import buildcraft.core.Box;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.IMachine;
 import buildcraft.core.StackUtil;
 import buildcraft.core.TileBuildCraft;
@@ -64,7 +64,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.isClient(worldObj)) {
+		if (!APIProxy.isClient(worldObj)) {
 			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
 			if (a != null) {
@@ -74,7 +74,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 					((TileMarker) a).removeFromWorld();
 				}
 
-				if (!CoreProxy.isClient(worldObj) && box.isInitialized()) {
+				if (!APIProxy.isClient(worldObj) && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
 				sendNetworkUpdate();
@@ -103,7 +103,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void doWork() {
-		if (CoreProxy.isClient(worldObj)) {
+		if (APIProxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -157,7 +157,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	public void computeRecipe() {
-		if (CoreProxy.isClient(worldObj)) {
+		if (APIProxy.isClient(worldObj)) {
 			return;
 		}
 
@@ -186,7 +186,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			currentPatternId = currentPattern.getId();
 		}
 
-		if (CoreProxy.isServerSide()) {
+		if (APIProxy.isServerSide()) {
 			sendNetworkUpdate();
 		}
 	}
@@ -395,49 +395,31 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
 		StackUtil stackUtil = new StackUtil(stack);
 
-		boolean added = false;
+		for (int i = 9; i < contents.length; ++i) {
+			if (!(stackUtil.checkRoomForItem(this, i, false) && stackUtil.checkRoomForItem(this, i, true)))
+				break;
+		}
+
+		if (!doAdd)
+			return stackUtil.canAdd;
 
 		for (int i = 9; i < contents.length; ++i) {
-			if (stackUtil.tryAdding(this, i, doAdd, false)) {
-				added = true;
-				break;
+			while (stackUtil.tryAdding(this, i, doAdd, false)) {
+				if (stackUtil.itemsAdded == stackUtil.items.stackSize)
+					return stackUtil.itemsAdded;
+
 			}
 		}
 
-		if (added) {
-			if (!doAdd) {
-				return stackUtil.itemsAdded;
-			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
-				return stackUtil.itemsAdded;
-			} else {
-				addItem(stack, added, from);
+		for (int i = 9; i < contents.length; ++i) {
+			while (stackUtil.tryAdding(this, i, doAdd, true)) {
+				if (stackUtil.itemsAdded == stackUtil.items.stackSize)
+					return stackUtil.itemsAdded;
 
-				return stackUtil.itemsAdded;
 			}
 		}
 
-		if (!added) {
-			for (int i = 9; i < contents.length; ++i) {
-				if (stackUtil.tryAdding(this, i, doAdd, true)) {
-					added = true;
-					break;
-				}
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return stackUtil.itemsAdded;
-			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
-				return stackUtil.itemsAdded;
-			} else {
-				addItem(stack, added, from);
-
-				return stackUtil.itemsAdded;
-			}
-		}
-
-		return 0;
+		return stackUtil.itemsAdded;
 	}
 
 	@Override
