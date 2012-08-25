@@ -33,37 +33,26 @@ public class EntityBlock extends Entity {
 
 	public EntityBlock(World world, double xPos, double yPos, double zPos) {
 		super(world);
-		setPosition(xPos, yPos, zPos);
+		setPositionAndRotation(xPos, yPos, zPos, 0, 0);
 	}
 
 	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
 		this(world);
-
-		motionX = 0.0D;
-		motionY = 0.0D;
-		motionZ = 0.0D;
-		prevPosX = i;
-		prevPosY = j;
-		prevPosZ = k;
 		this.iSize = iSize;
 		this.jSize = jSize;
 		this.kSize = kSize;
-
-		setPosition(i, j, k);
+		setPositionAndRotation(i, j, k, 0, 0);
+		setVelocity(0, 0, 0);
 	}
 
 	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, int textureID) {
 		this(world, i, j, k, iSize, jSize, kSize);
-
 		texture = textureID;
 	}
 
 	@Override
 	public void setPosition(double d, double d1, double d2) {
-		posX = d;
-		posY = d1;
-		posZ = d2;
-
+		super.setPosition(d, d1, d2);
 		boundingBox.minX = posX;
 		boundingBox.minY = posY;
 		boundingBox.minZ = posZ;

@@ -64,15 +64,11 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public @TileNetworkData
 	boolean builderDone = false;
 
-	boolean loadArm = false;
-
 	BptBuilderBase bluePrintBuilder;
 
 	public IPowerProvider powerProvider;
 
 	public static int MAX_ENERGY = 7000;
-
-	NBTTagCompound armStore = null;
 
 	public TileQuarry() {
 
@@ -81,11 +77,6 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	public void createUtilsIfNeeded() {
-
-		if (!box.isInitialized() && ProxyCore.proxy.isRemote(worldObj)) {
-			return;
-		}
-
 		if (bluePrintBuilder == null) {
 
 			if (!box.isInitialized()) {
@@ -99,26 +90,12 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			box.deleteLasers();
 
-			if (armStore != null){
-				arm = new EntityMechanicalArm(worldObj);
-				arm.readFromNBT(armStore);
-				arm.listener = this;
-
-				loadArm = true;
-				armStore = null;
-			}
-
 			if (arm == null) {
 				createArm();
 			}
 
-			if (loadArm) {
-				arm.joinToWorld(worldObj);
-				loadArm = false;
-
-				if (findTarget(false)) {
-					isDigging = true;
-				}
+			if (findTarget(false)) {
+				isDigging = true;
 			}
 
 		} else {
@@ -132,27 +109,28 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	private void createArm() {
 
-		arm = new EntityMechanicalArm(worldObj,
+		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj,
 				box.xMin + Utils.pipeMaxPos,
 				yCoord + bluePrintBuilder.bluePrint.sizeY - 1 + Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,
 				bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2,
-				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2, this);
+				bluePrintBuilder.bluePrint.sizeZ - 2 + Utils.pipeMinPos * 2, this));
+	}
 
+	// Callback from the arm once it's created
+	public void setArm(EntityMechanicalArm arm)
+	{
+		this.arm = arm;
 		arm.listener = this;
-		loadArm = true;
+		isDigging = true;
 	}
 
 	@Override
 	public void updateEntity() {
-		if (worldObj!=null && worldObj.isRemote)
-		{
-			return;
-		}
 		super.updateEntity();
 
 		if (inProcess && arm != null) {
 
-			arm.speed = 0;
+			arm.setArmSpeed(0);
 			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
 
 			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
@@ -163,18 +141,17 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 
 		if (arm != null) {
+			double[] head = arm.getHead();
+			headPosX = head[0];
+			headPosY = head[1];
+			headPosZ = head[2];
 
-			headPosX = arm.headPosX;
-			headPosY = arm.headPosY;
-			headPosZ = arm.headPosZ;
-
-			speed = arm.speed;
+			speed = arm.getArmSpeed();
 		}
 
 		if (ProxyCore.proxy.isSimulating(worldObj)) {
 			sendNetworkUpdate();
 		}
-
 		if (inProcess || !isDigging) {
 			return;
 		}
@@ -201,7 +178,6 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 
 		if (builder == null) {
-
 			dig();
 		}
 
@@ -241,7 +217,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			//I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null)
-				arm.setTarget(box.xMin + arm.sizeX / 2, yCoord + 2, box.zMin + arm.sizeX / 2);
+				arm.setTarget((double)box.xMin + (box.xMax - box.xMin) / 2D, yCoord + 2D, (double)box.zMin + ( box.zMax - box.zMin) / 2D);
 
 			isDigging = false;
 		}
@@ -251,7 +227,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	public boolean findTarget(boolean doSet) {
 
-		if (ProxyCore.proxy.isRemote(worldObj))
+		if (worldObj.isRemote)
 			return false;
 
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
@@ -299,10 +275,6 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 						} else if (canDig(blockId)) {
 							if (doSet && arm != null) {
 								arm.setTarget(bx, by + 1, bz);
-
-								targetX = (int) arm.targetX;
-								targetY = (int) arm.targetY;
-								targetZ = (int) arm.targetZ;
 							}
 
 							return true;
@@ -347,11 +319,9 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		targetX = nbttagcompound.getInteger("targetX");
 		targetY = nbttagcompound.getInteger("targetY");
 		targetZ = nbttagcompound.getInteger("targetZ");
-
-		if (nbttagcompound.getBoolean("hasArm")) {
-			armStore = nbttagcompound.getCompoundTag("arm");
-		}
-
+		headPosX = nbttagcompound.getDouble("headPosX");
+		headPosY = nbttagcompound.getDouble("headPosY");
+		headPosZ = nbttagcompound.getDouble("headPosZ");
 	}
 
 	@Override
@@ -363,13 +333,9 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);
 		nbttagcompound.setInteger("targetZ", targetZ);
-		nbttagcompound.setBoolean("hasArm", arm != null);
-
-		if (arm != null) {
-			NBTTagCompound armStore = new NBTTagCompound();
-			nbttagcompound.setTag("arm", armStore);
-			arm.writeToNBT(armStore);
-		}
+		nbttagcompound.setDouble("headPosX", headPosX);
+		nbttagcompound.setDouble("headPosY", headPosY);
+		nbttagcompound.setDouble("headPosZ", headPosZ);
 
 		NBTTagCompound boxTag = new NBTTagCompound();
 		box.writeToNBT(boxTag);
@@ -380,9 +346,14 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void positionReached(EntityMechanicalArm arm) {
 		inProcess = false;
 
-		if (ProxyCore.proxy.isRemote(worldObj)) {
+		if (worldObj.isRemote) {
 			return;
 		}
+
+		double[] targ = arm.getTarget();
+		targetX = (int)targ[0];
+		targetY = (int)targ[1];
+		targetZ = (int)targ[2];
 
 		int i = targetX;
 		int j = targetY - 1;
@@ -409,7 +380,8 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 
 		// Collect any lost items laying around
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(arm.headPosX - 1.5, arm.headPosY, arm.headPosZ - 1.5,	arm.headPosX + 2.5, arm.headPosY + 2.5, arm.headPosZ + 2.5);
+		double[] armHead = arm.getHead();
+		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(armHead[0] - 1.5, armHead[1], armHead[2] - 1.5,	armHead[0] + 2.5, armHead[1] + 2.5, armHead[2] + 2.5);
 		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
 		for (int ii = 0; ii < result.size(); ii++) {
 			if (result.get(ii) instanceof EntityItem) {
@@ -470,6 +442,11 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void invalidate() {
 
 		super.invalidate();
+		destroy();
+	}
+
+	@Override
+	public void onChunkUnload() {
 		destroy();
 	}
 
@@ -600,11 +577,11 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		super.postPacketHandling(packet);
 
 		createUtilsIfNeeded();
-
+//
 		if (arm != null) {
-			arm.setHeadPosition(headPosX, headPosY, headPosZ);
-			arm.setTarget(targetX, targetY, targetZ);
-			arm.speed = speed;
+			arm.setHead(headPosX, headPosY, headPosZ);
+//			arm.setTarget(targetX, targetY, targetZ);
+//			arm.setArmSpeed(speed);
 		}
 	}
 
@@ -612,9 +589,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void initialize() {
 		super.initialize();
 
-		if (!ProxyCore.proxy.isRemote(worldObj)) {
-			createUtilsIfNeeded();
-		}
+		createUtilsIfNeeded();
 
 		sendNetworkUpdate();
 	}

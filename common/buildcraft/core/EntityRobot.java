@@ -79,7 +79,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		motionY = 0;
 		motionZ = 0;
 
-		setPosition(destX, destY, destZ);
+		setLocationAndAngles(destX, destY, destZ, 0, 0);
 
 		laser = new EntityEnergyLaser(worldObj, new Position(posX, posY, posZ), new Position(posX, posY, posZ));
 		worldObj.spawnEntityInWorld(laser);

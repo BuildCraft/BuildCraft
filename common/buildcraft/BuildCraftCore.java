@@ -40,6 +40,7 @@ import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.DefaultActionProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.DefaultTriggerProvider;
+import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
@@ -59,6 +60,7 @@ import buildcraft.core.utils.Localization;
 import buildcraft.transport.TriggerRedstoneInput;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.EntityList;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
@@ -238,6 +240,12 @@ public class BuildCraftCore {
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
 		EntityRegistry.registerModEntity(EntityLaser.class, "bcLaser", EntityIds.LASER, instance, 50, 1, true);
 		EntityRegistry.registerModEntity(EntityEnergyLaser.class, "bcEnergyLaser", EntityIds.ENERGY_LASER, instance, 50, 1, true);
+		EntityList.classToStringMapping.remove(EntityRobot.class);
+		EntityList.classToStringMapping.remove(EntityLaser.class);
+		EntityList.classToStringMapping.remove(EntityEnergyLaser.class);
+		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcRobot");
+		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
+		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 
 		ProxyCore.proxy.initializeRendering();
 		ProxyCore.proxy.initializeEntityRendering();

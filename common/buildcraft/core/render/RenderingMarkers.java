@@ -8,10 +8,10 @@ import net.minecraft.src.Tessellator;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RenderingMarkers implements ISimpleBlockRenderingHandler {
-	
+
 	public RenderingMarkers() {
 		initializeMarkerMatrix();
-	}	
+	}
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelID,
@@ -20,16 +20,13 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
 			Block block, int modelId, RenderBlocks renderer) {
-		
-		if (block.getRenderType() == BuildCraftCore.markerModel)
-			return true;
-		
+
 		Tessellator tessellator = Tessellator.instance;
 		float f = block.getBlockBrightness(world, x, y, z);
 		if (Block.lightValue[block.blockID] > 0)
 			f = 1.0F;
 		tessellator.setColorOpaque_F(f, f, f);
-		renderMarkerWithMeta(world, block, x, y, z, world.getBlockMetadata(x, y, z));		
+		renderMarkerWithMeta(world, block, x, y, z, world.getBlockMetadata(x, y, z));
 
 		return true;
 	}

@@ -95,7 +95,7 @@ public class BuildCraftFactory {
 	public void load(FMLInitializationEvent evt) {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
-		EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
+//		EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 
 		ProxyCore.proxy.registerTileEntity(TileQuarry.class, "Machine");
 		ProxyCore.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
