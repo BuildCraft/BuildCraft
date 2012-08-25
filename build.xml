@@ -34,7 +34,7 @@
         <mkdir dir="${download.dir}"/>
         
         <get src="http://mcp.ocean-labs.de/files/mcp${mcp.version}.zip" dest="${download.dir}" usetimestamp="True"/>
-        <get src="https://dl.dropbox.com/u/28221422/MinecraftForge/forge-${forge.version}/minecraftforge-src-${forge.version}.zip" 
+        <get src="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip" 
             dest="${download.dir}" usetimestamp="True"/>
         
         <unzip dest="${mcp.dir}">
