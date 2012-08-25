@@ -9,7 +9,6 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
@@ -254,7 +253,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 */
 	private void onDiamondContents(PacketNBT packet) {
 
-		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
+		World world = FMLClientHandler.instance().getClient().theWorld;
 
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;

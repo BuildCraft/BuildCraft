@@ -7,7 +7,6 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
 import buildcraft.core.network.v2.ISyncedTile;
 import buildcraft.core.network.v2.PacketTileState;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -17,7 +16,7 @@ import cpw.mods.fml.common.network.Player;
 public class PacketHandler implements IPacketHandler {
 
 	private void onTileUpdate(PacketTileUpdate packet) {
-		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
+		World world = FMLClientHandler.instance().getClient().theWorld;
 
 		if (!packet.targetExists(world))
 			return;
