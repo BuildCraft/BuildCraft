@@ -1,6 +1,5 @@
 package buildcraft.energy;
 
-import buildcraft.energy.render.RenderEngine;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 

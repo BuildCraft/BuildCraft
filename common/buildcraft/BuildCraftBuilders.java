@@ -51,7 +51,6 @@ import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BptBlockFiller;
-import buildcraft.builders.ClientBuilderHook;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.FillerFillAll;
 import buildcraft.builders.FillerFillPyramid;

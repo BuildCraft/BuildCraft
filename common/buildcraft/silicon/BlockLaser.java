@@ -11,7 +11,6 @@ package buildcraft.silicon;
 
 import java.util.ArrayList;
 
-import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 

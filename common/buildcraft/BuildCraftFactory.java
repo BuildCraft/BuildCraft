@@ -10,7 +10,6 @@ package buildcraft;
 
 import java.lang.reflect.Method;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -25,8 +24,6 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ProxyCore;
 import buildcraft.core.network.EntityIds;
-import buildcraft.core.render.RenderingEntityBlocks;
-import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFrame;
 import buildcraft.factory.BlockHopper;
@@ -53,9 +50,6 @@ import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.network.PacketHandlerFactory;
-import buildcraft.factory.render.RenderHopper;
-import buildcraft.factory.render.RenderRefinery;
-import buildcraft.factory.render.RenderTank;
 import buildcraft.silicon.TileLaser;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;

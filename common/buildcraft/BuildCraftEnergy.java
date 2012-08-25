@@ -34,8 +34,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ProxyCore;
 import buildcraft.core.network.PacketHandler;
-import buildcraft.core.render.RenderingEntityBlocks;
-import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BlockOilFlowing;
 import buildcraft.energy.BlockOilStill;
@@ -48,7 +46,6 @@ import buildcraft.energy.OilBucketHandler;
 import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
 import buildcraft.energy.Engine.EnergyStage;
-import buildcraft.energy.render.RenderEngine;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
@@ -76,8 +73,6 @@ public class BuildCraftEnergy {
 	public static Item fuel;
 
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
-
-	private static boolean initialized = false;
 
 	public static Trigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.Blue);
 	public static Trigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT,

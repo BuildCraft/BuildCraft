@@ -9,9 +9,6 @@
 
 package buildcraft.transport;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -32,14 +29,8 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.core.ActionRedstoneOutput;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.Utils;
-import buildcraft.core.network.IndexInPayload;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.TilePacketWrapper;
-import buildcraft.core.network.v2.IClientState;
 import buildcraft.transport.Gate.GateConditional;
-import buildcraft.transport.Gate.GateKind;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -62,8 +53,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public final PipeTransport transport;
 	public final PipeLogic logic;
 	public final int itemID;
-
-	private TilePacketWrapper networkPacket;
 
 	private boolean internalUpdateScheduled = false;
 
@@ -92,8 +81,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			networkWrappers
 					.put(this.getClass(), new TilePacketWrapper(new Class[] { TileGenericPipe.class, this.transport.getClass(),
 							this.logic.getClass() }));
-
-		this.networkPacket = networkWrappers.get(this.getClass());
 
 	}
 

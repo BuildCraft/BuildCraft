@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.core.network.IndexInPayload;
 import buildcraft.core.network.PacketPayload;
 
 import net.minecraft.src.EntityPlayer;

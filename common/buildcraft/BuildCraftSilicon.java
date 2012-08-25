@@ -23,7 +23,6 @@ import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.GuiHandler;
 import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.network.PacketHandlerSilicon;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;

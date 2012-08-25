@@ -3,7 +3,6 @@ package buildcraft.transport.render;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipe.WireColor;

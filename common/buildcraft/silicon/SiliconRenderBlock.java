@@ -18,20 +18,10 @@ import net.minecraft.src.Tessellator;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 
-import buildcraft.BuildCraftSilicon;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
 import buildcraft.silicon.SiliconProxyClient;
-import buildcraft.silicon.network.PacketHandlerSilicon;
 
 public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 	@Override

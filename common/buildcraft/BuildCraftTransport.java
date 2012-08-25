@@ -10,7 +10,6 @@ package buildcraft;
 
 import java.util.LinkedList;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -31,7 +30,6 @@ import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.ProxyCore;
 import buildcraft.transport.ActionEnergyPulser;
 import buildcraft.transport.ActionSignalOutput;
 import buildcraft.transport.BlockGenericPipe;
@@ -45,9 +43,6 @@ import buildcraft.transport.ItemGate;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTriggerProvider;
-import buildcraft.transport.TileDummyGenericPipe;
-import buildcraft.transport.TileDummyGenericPipe2;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.TriggerPipeContents;
 import buildcraft.transport.TriggerPipeSignal;
