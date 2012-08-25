@@ -9,13 +9,11 @@
 
 package buildcraft.factory;
 
-import com.google.common.collect.SetMultimap;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Position;
 import buildcraft.core.EntityBlock;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;

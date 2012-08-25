@@ -40,7 +40,6 @@ import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.DefaultActionProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.DefaultTriggerProvider;
-import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
