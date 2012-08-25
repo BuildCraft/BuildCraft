@@ -21,7 +21,7 @@ public interface ISynchronizedTile {
 
 	public Packet getUpdatePacket();
 
-	public Packet getDescriptionPacket();
+	public Packet getAuxillaryInfoPacket();
 
 	public PacketPayload getPacketPayload();
 }

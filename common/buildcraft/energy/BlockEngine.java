@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -12,14 +12,6 @@ package buildcraft.energy;
 import java.util.List;
 import java.util.Random;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.mod_BuildCraftEnergy;
-import buildcraft.api.core.Orientations;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.ProxyCore;
-
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
@@ -28,6 +20,13 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.Orientations;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
+import buildcraft.core.ProxyCore;
 
 public class BlockEngine extends BlockContainer {
 
@@ -67,10 +66,10 @@ public class BlockEngine extends BlockContainer {
 		}
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		
+
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
@@ -94,12 +93,12 @@ public class BlockEngine extends BlockContainer {
 
 			if (tile.engine instanceof EngineStone) {
 				if (!ProxyCore.proxy.isRemote(tile.worldObj))
-					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
+					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
 				if (!ProxyCore.proxy.isRemote(tile.worldObj))
-					entityplayer.openGui(mod_BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
+					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				return true;
 			}
 
@@ -107,7 +106,7 @@ public class BlockEngine extends BlockContainer {
 
 		return false;
 	}
-	
+
 	@Override
 	public void updateBlockMetadata(World world, int x, int y, int z, int par5,	float par6, float par7, float par8) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(x, y, z);

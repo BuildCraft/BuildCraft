@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -71,11 +71,11 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public IPowerProvider powerProvider;
 
 	public static int MAX_ENERGY = 7000;
-	
+
 	NBTTagCompound armStore = null;
 
 	public TileQuarry() {
-		
+
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 	}
@@ -87,7 +87,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 
 		if (bluePrintBuilder == null) {
-			
+
 			if (!box.isInitialized()) {
 				setBoundaries(loadDefaultBoundaries);
 			}
@@ -96,9 +96,9 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 
 		if (builderDone) {
-			
+
 			box.deleteLasers();
-			
+
 			if (armStore != null){
 				arm = new EntityMechanicalArm(worldObj);
 				arm.readFromNBT(armStore);
@@ -107,7 +107,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 				loadArm = true;
 				armStore = null;
 			}
-			
+
 			if (arm == null) {
 				createArm();
 			}
@@ -120,9 +120,9 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 					isDigging = true;
 				}
 			}
-			
+
 		} else {
-			
+
 			box.createLasers(worldObj, LaserKind.Stripes);
 			isDigging = true;
 		}
@@ -131,7 +131,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	private boolean loadDefaultBoundaries = false;
 
 	private void createArm() {
-		
+
 		arm = new EntityMechanicalArm(worldObj,
 				box.xMin + Utils.pipeMaxPos,
 				yCoord + bluePrintBuilder.bluePrint.sizeY - 1 + Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,
@@ -144,9 +144,12 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	@Override
 	public void updateEntity() {
-		
+		if (worldObj!=null && worldObj.isRemote)
+		{
+			return;
+		}
 		super.updateEntity();
-		
+
 		if (inProcess && arm != null) {
 
 			arm.speed = 0;
@@ -167,7 +170,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			speed = arm.speed;
 		}
-		
+
 		if (ProxyCore.proxy.isSimulating(worldObj)) {
 			sendNetworkUpdate();
 		}
@@ -182,14 +185,14 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			builderDone = bluePrintBuilder.done;
 			if (!builderDone) {
-				
+
 				buildFrame();
 				return;
 
 			} else {
 
 				if (builder != null && builder.done()) {
-					
+
 					box.deleteLasers();
 					builder.setDead();
 					builder = null;
@@ -198,18 +201,18 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 
 		if (builder == null) {
-			
+
 			dig();
 		}
-		
-		
+
+
 	}
 
 	@Override
 	public void doWork() {}
-	
+
 	protected void buildFrame() {
-		
+
 		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 		if (powerProvider.useEnergy(25, 25, true) != 25) {
 			return;
@@ -226,16 +229,16 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 			builder.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, this), bluePrintBuilder.getContext());
 		}
 	}
-	
+
 	protected void dig() {
-		
+
 		powerProvider.configure(20, 30, 200, 50, MAX_ENERGY);
 		if (powerProvider.useEnergy(30, 30, true) != 30) {
 			return;
 		}
 
 		if (!findTarget(true)) {
-			
+
 			//I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null)
 				arm.setTarget(box.xMin + arm.sizeX / 2, yCoord + 2, box.zMin + arm.sizeX / 2);
@@ -247,10 +250,10 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	public boolean findTarget(boolean doSet) {
-		
+
 		if (ProxyCore.proxy.isRemote(worldObj))
 			return false;
-		
+
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
 
 		for (int searchX = 0; searchX < bluePrintBuilder.bluePrint.sizeX - 2; ++searchX) {
@@ -465,18 +468,18 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	@Override
 	public void invalidate() {
-		
+
 		super.invalidate();
 		destroy();
 	}
 
 	@Override
 	public void destroy() {
-		
+
 		if (arm != null) {
 			arm.setDead();
 		}
-		
+
 		if (builder != null){
 			builder.setDead();
 		}
@@ -491,7 +494,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	private void setBoundaries(boolean useDefault) {
-		
+
 		IAreaProvider a = null;
 
 		if (!useDefault) {
@@ -593,7 +596,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	@Override
 	public void postPacketHandling(PacketUpdate packet) {
-		
+
 		super.postPacketHandling(packet);
 
 		createUtilsIfNeeded();
@@ -615,7 +618,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 		sendNetworkUpdate();
 	}
-	
+
 	public void reinitalize() {
 		builderDone = false;
 		initializeBluePrintBuilder();

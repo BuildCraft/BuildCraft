@@ -15,4 +15,7 @@ public class EnergyProxy {
 
 	public void registerTextureFX() {
 	}
+
+	public void registerBlockRenderers() {
+	}
 }

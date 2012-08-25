@@ -7,7 +7,7 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package buildcraft;
+package buildcraft.silicon;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
@@ -17,6 +17,7 @@ import net.minecraft.src.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PostInit;
@@ -29,37 +30,20 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
+import buildcraft.silicon.SiliconProxyClient;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 
-@Mod(name="BuildCraft Silicon", version=DefaultProps.VERSION, useMetadata = false, modid = "BC|SILICON")
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerSilicon.class, clientSideRequired = true, serverSideRequired = true)
-public class mod_BuildCraftSilicon {
-
-	public static mod_BuildCraftSilicon instance;
-
-	public mod_BuildCraftSilicon() {
-		instance = this;
+public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
+	@Override
+	public int getRenderId() {
+		return SiliconProxyClient.laserBlockModel;
 	}
-
-	@Init
-	public void load(FMLInitializationEvent event) {
-		BuildCraftSilicon.load();
+	@Override
+	public boolean shouldRender3DInInventory() {
+		return true;
 	}
-
-	@PostInit
-	public void postInit(FMLPostInitializationEvent event) {
-
-		// CoreProxy.registerGUI(this,
-		// Utils.packetIdToInt(PacketIds.AssemblyTableGUI));
-
-		BuildCraftTransport.initialize();
-		BuildCraftSilicon.initialize();
-
-		BuildCraftSilicon.initializeModel();
-	}
-
-	//@Override
-	public boolean renderWorldBlock(RenderBlocks renderblocks, IBlockAccess iblockaccess, int x, int y, int z, Block block, int l) {
+	@Override
+	public boolean renderWorldBlock(IBlockAccess iblockaccess, int x, int y, int z, Block block, int l, RenderBlocks renderblocks) {
 
 		int meta = iblockaccess.getBlockMetadata(x, y, z);
 
@@ -136,8 +120,8 @@ public class mod_BuildCraftSilicon {
 
 	}
 
-	//@Override
-	public void renderInvBlock(RenderBlocks renderblocks, Block block, int i, int j) {
+	@Override
+	public void renderInventoryBlock(Block block, int i, int j, RenderBlocks renderblocks) {
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
@@ -195,16 +179,16 @@ public class mod_BuildCraftSilicon {
 	 * @Override public void handlePacket(Packet230ModLoader packet) { switch
 	 * (PacketIds.values()[packet.packetType]) { case AssemblyTableSelect:
 	 * GuiScreen screen = ModLoader.getMinecraftInstance().currentScreen;
-	 * 
+	 *
 	 * if (screen instanceof GuiAssemblyTable) { GuiAssemblyTable gui =
 	 * (GuiAssemblyTable) screen; SelectionMessage message = new
 	 * SelectionMessage();
-	 * 
+	 *
 	 * TileAssemblyTable.selectionMessageWrapper.updateFromPacket(message,
 	 * packet);
-	 * 
+	 *
 	 * gui.handleSelectionMessage (message); }
-	 * 
+	 *
 	 * break; } }
 	 */
 

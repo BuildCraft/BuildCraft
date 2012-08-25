@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -10,15 +10,6 @@
 package buildcraft.builders;
 
 import java.util.ArrayList;
-
-import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.api.core.Orientations;
-import buildcraft.api.core.Position;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
@@ -28,6 +19,14 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.Orientations;
+import buildcraft.api.core.Position;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
+import buildcraft.core.Utils;
 
 
 public class BlockBuilder extends BlockContainer {
@@ -48,7 +47,7 @@ public class BlockBuilder extends BlockContainer {
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileBuilder();
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
@@ -106,7 +105,7 @@ public class BlockBuilder extends BlockContainer {
 		} else {
 
 			if (!ProxyCore.proxy.isRemote(world))
-				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			return true;
 
 		}
@@ -120,7 +119,7 @@ public class BlockBuilder extends BlockContainer {
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
-	
+
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);

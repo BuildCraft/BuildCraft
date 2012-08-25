@@ -2,19 +2,18 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.mod_BuildCraftFactory;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.ProxyCore;
-
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.GuiIds;
+import buildcraft.core.IItemPipe;
+import buildcraft.core.ProxyCore;
 
 public class BlockHopper extends BlockBuildCraft {
 
@@ -28,7 +27,7 @@ public class BlockHopper extends BlockBuildCraft {
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileHopper();
 	}
-	
+
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
@@ -64,7 +63,7 @@ public class BlockHopper extends BlockBuildCraft {
 		}
 
 		if (!ProxyCore.proxy.isRemote(world))
-			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
+			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
 
 		return true;
 	}

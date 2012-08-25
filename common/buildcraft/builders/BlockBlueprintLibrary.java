@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -11,11 +11,6 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
-import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
@@ -23,6 +18,10 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 
 
 public class BlockBlueprintLibrary extends BlockContainer {
@@ -49,17 +48,17 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 		if (!tile.locked || entityplayer.username.equals(tile.owner))
 			if (!ProxyCore.proxy.isRemote(world))
-				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
 
 		return true;
 	}
 
-	
+
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileBlueprintLibrary();
 	}
-	
+
 	@Override
 	public int getBlockTextureFromSide(int i) {
 		switch (i) {

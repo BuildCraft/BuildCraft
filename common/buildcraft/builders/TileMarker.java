@@ -460,9 +460,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public Packet getAuxillaryInfoPacket() {
 		if (origin.vectO.getMarker(worldObj) == this) {
-			return super.getDescriptionPacket();
+			return super.getAuxillaryInfoPacket();
 		} else {
 			return null;
 		}

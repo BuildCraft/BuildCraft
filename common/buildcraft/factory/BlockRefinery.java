@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -10,17 +10,6 @@
 package buildcraft.factory;
 
 import java.util.ArrayList;
-
-import buildcraft.BuildCraftCore;
-import buildcraft.mod_BuildCraftFactory;
-import buildcraft.api.core.Orientations;
-import buildcraft.api.core.Position;
-import buildcraft.api.liquids.LiquidManager;
-import buildcraft.api.liquids.LiquidStack;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
@@ -30,6 +19,16 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.Orientations;
+import buildcraft.api.core.Position;
+import buildcraft.api.liquids.LiquidManager;
+import buildcraft.api.liquids.LiquidStack;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
+import buildcraft.core.Utils;
 
 public class BlockRefinery extends BlockContainer {
 
@@ -62,7 +61,7 @@ public class BlockRefinery extends BlockContainer {
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileRefinery();
 	}
-	
+
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
@@ -119,7 +118,7 @@ public class BlockRefinery extends BlockContainer {
 		}
 
 		if (!ProxyCore.proxy.isRemote(world))
-			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
+			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
 
 		return true;
 	}

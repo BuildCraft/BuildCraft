@@ -1,9 +1,9 @@
 [
 {
-  "modid": "mod_BuildCraftCore",
-  "name": "BuildCraft 3",
+  "modid": "BuildCraft|Core",
+  "name": "BuildCraft",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more!",
-  "version": "",
+  "version": "4",
   "credits": "Created by SpaceToad",
   "logoFile": "/gfx/buildcraft/logo.png",
   "mcversion": "",
@@ -17,7 +17,7 @@
   ]
 },
 {
-  "modid": "mod_BuildCraftBuilders",
+  "modid": "BuildCraft|Builders",
   "name": "BC Builders",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Builders Component)",
   "version": "",
@@ -27,14 +27,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authors": [ "SpaceToad", "Krapht", "SirSengir", "Others" ],
-  "parent": "mod_BuildCraftCore",
+  "parent": "BuildCraft|Core",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "mod_BuildCraftEnergy",
+  "modid": "BuildCraft|Energy",
   "name": "BC Energy",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Energy Component)",
   "version": "",
@@ -44,14 +44,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authors": [ "SpaceToad", "Krapht", "SirSengir", "Others" ],
-  "parent": "mod_BuildCraftCore",
+  "parent": "BuildCraft|Core",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "mod_BuildCraftFactory",
+  "modid": "BuildCraft|Factory",
   "name": "BC Factory",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Factory Component)",
   "version": "",
@@ -61,14 +61,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authors": [ "SpaceToad", "Krapht", "SirSengir", "Others" ],
-  "parent": "mod_BuildCraftCore",
+  "parent": "BuildCraft|Core",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "mod_BuildCraftSilicon",
+  "modid": "BuildCraft|Silicon",
   "name": "BC Silicon",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Silicon Component)",
   "version": "",
@@ -78,14 +78,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authors": [ "SpaceToad", "Krapht", "SirSengir", "Others" ],
-  "parent": "mod_BuildCraftCore",
+  "parent": "BuildCraft|Core",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "mod_BuildCraftTransport",
+  "modid": "BuildCraf|tTransport",
   "name": "BC Transport",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Transport Component)",
   "version": "",
@@ -95,7 +95,7 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authors": [ "SpaceToad", "Krapht", "SirSengir", "Others" ],
-  "parent": "mod_BuildCraftCore",
+  "parent": "BuildCraft|Core",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
