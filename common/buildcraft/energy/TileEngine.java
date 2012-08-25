@@ -366,7 +366,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			return;
 		}
 
-		engine.addEnergy((int) (provider.useEnergy(1, engine.maxEnergyReceived(), true) * 0.95F));
+		engine.addEnergy(provider.useEnergy(1, engine.maxEnergyReceived(), true) * 0.95F);
 	}
 
 	public boolean isPoweredTile(TileEntity tile) {
