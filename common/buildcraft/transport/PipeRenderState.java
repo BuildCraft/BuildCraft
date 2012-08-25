@@ -5,13 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import buildcraft.core.DefaultProps;
+import buildcraft.core.network.v2.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 
 
-public class PipeRenderState {
+public class PipeRenderState implements IClientState {
 
 	private String textureFile = DefaultProps.TEXTURE_BLOCKS;
 	private boolean hasGate = false;
@@ -87,6 +88,7 @@ public class PipeRenderState {
 		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty() || facadeMatrix.isDirty();
 	}
 
+	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		data.writeUTF(textureFile);
 		data.writeBoolean(hasGate);
@@ -97,6 +99,7 @@ public class PipeRenderState {
 		facadeMatrix.writeData(data);
 	}
 
+	@Override
 	public void readData(DataInputStream data) throws IOException {
 		textureFile = data.readUTF();
 		hasGate = data.readBoolean();

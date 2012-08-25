@@ -22,7 +22,6 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeLogicWood;
 import buildcraft.transport.PipeTransportLiquids;
-import net.minecraft.src.Block;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 

@@ -8,10 +8,12 @@
 
 package buildcraft;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
 import buildcraft.mod_BuildCraftCore;
-import buildcraft.mod_BuildCraftFactory;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ProxyCore;
+import buildcraft.core.render.RenderingEntityBlocks;
+import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFrame;
 import buildcraft.factory.BlockHopper;
@@ -25,7 +27,6 @@ import buildcraft.factory.BptBlockAutoWorkbench;
 import buildcraft.factory.BptBlockFrame;
 import buildcraft.factory.BptBlockRefinery;
 import buildcraft.factory.BptBlockTank;
-import buildcraft.factory.GuiHandler;
 import buildcraft.factory.TileAssemblyTable;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileHopper;
@@ -34,15 +35,15 @@ import buildcraft.factory.TilePump;
 import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
-import buildcraft.factory.network.ConnectionHandler;
+import buildcraft.factory.render.RenderHopper;
+import buildcraft.factory.render.RenderRefinery;
+import buildcraft.factory.render.RenderTank;
 import buildcraft.silicon.TileLaser;
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.forge.Configuration;
-import net.minecraft.src.forge.MinecraftForge;
-import net.minecraft.src.forge.Property;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 
 public class BuildCraftFactory {
 
@@ -64,11 +65,8 @@ public class BuildCraftFactory {
 	public static boolean allowMining = true;
 
 	public static void load() {
-		// Register connection handler
-		MinecraftForge.registerConnectionHandler(new ConnectionHandler());
-
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftFactory.instance, new GuiHandler());
+		//MinecraftForge.setGuiHandler(mod_BuildCraftFactory.instance, new GuiHandler());
 
 		// MinecraftForge.registerEntity(EntityMechanicalArm.class,
 		// mod_BuildCraftFactory.instance, EntityIds.MECHANICAL_ARM, 50, 10,
@@ -105,57 +103,69 @@ public class BuildCraftFactory {
 		BuildCraftCore.mainConfiguration.save();
 
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
-		CoreProxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
-		CoreProxy.addName(miningWellBlock, "Mining Well");
+		ProxyCore.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
+		ProxyCore.proxy.addName(miningWellBlock, "Mining Well");
 
 		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(plainPipeId.value));
-		CoreProxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
-		CoreProxy.addName(plainPipeBlock, "Mining Pipe");
+		ProxyCore.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+		ProxyCore.proxy.addName(plainPipeBlock, "Mining Pipe");
 
 		autoWorkbenchBlock = new BlockAutoWorkbench(Integer.parseInt(autoWorkbenchId.value));
-		CoreProxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
-		CoreProxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
+		ProxyCore.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+		ProxyCore.proxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
 
 		frameBlock = new BlockFrame(Integer.parseInt(frameId.value));
-		CoreProxy.registerBlock(frameBlock.setBlockName("frameBlock"));
-		CoreProxy.addName(frameBlock, "Frame");
+		ProxyCore.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
+		ProxyCore.proxy.addName(frameBlock, "Frame");
 
 		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
-		CoreProxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
-		CoreProxy.addName(quarryBlock, "Quarry");
+		ProxyCore.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+		ProxyCore.proxy.addName(quarryBlock, "Quarry");
 
 		tankBlock = new BlockTank(Integer.parseInt(tankId.value));
-		CoreProxy.registerBlock(tankBlock.setBlockName("tankBlock"));
-		CoreProxy.addName(tankBlock, "Tank");
+		ProxyCore.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+		ProxyCore.proxy.addName(tankBlock, "Tank");
 
 		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
-		CoreProxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
-		CoreProxy.addName(pumpBlock, "Pump");
+		ProxyCore.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+		ProxyCore.proxy.addName(pumpBlock, "Pump");
 
 		refineryBlock = new BlockRefinery(Integer.parseInt(refineryId.value));
-		CoreProxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
-		CoreProxy.addName(refineryBlock, "Refinery");
+		ProxyCore.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+		ProxyCore.proxy.addName(refineryBlock, "Refinery");
 
 		hopperDisabled = Boolean.parseBoolean(hopperDisable.value);
 		if (!hopperDisabled) {
 			hopperBlock = new BlockHopper(Integer.parseInt(hopperId.value));
-			CoreProxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
-			CoreProxy.addName(hopperBlock, "Hopper");
+			ProxyCore.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+			ProxyCore.proxy.addName(hopperBlock, "Hopper");
 		}
 
-		CoreProxy.registerTileEntity(TileQuarry.class, "Machine");
-		CoreProxy.registerTileEntity(TileMiningWell.class, "MiningWell");
-		CoreProxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
-		CoreProxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
-		CoreProxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
-		CoreProxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
-		CoreProxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
-		CoreProxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
+		ProxyCore.proxy.registerTileEntity(TileQuarry.class, "Machine");
+		ProxyCore.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
+		ProxyCore.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
+		ProxyCore.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
+		ProxyCore.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
+		ProxyCore.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
+		ProxyCore.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
+		ProxyCore.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 
 		if (!hopperDisabled) {
-			CoreProxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+			ProxyCore.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
 		}
 
+		/// FIXME: Render registration needs to move into a client side proxy.
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0),
+				new RenderRefinery());
+
+		if(!hopperDisabled) {
+			ClientRegistry.bindTileEntitySpecialRenderer(TileHopper.class, new RenderHopper());
+			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
+		}
+
+		
 		drillTexture = 2 * 16 + 1;
 
 		BuildCraftCore.mainConfiguration.save();
@@ -172,31 +182,31 @@ public class BuildCraftFactory {
 	public static void loadRecipes() {
 
 		if (allowMining) {
-			CoreProxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
+			ProxyCore.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
 					new Object[] { "ipi", "igi", "iPi", Character.valueOf('p'), Item.redstone, Character.valueOf('i'),
 							Item.ingotIron, Character.valueOf('g'), BuildCraftCore.ironGearItem, Character.valueOf('P'),
 							Item.pickaxeSteel });
 
-			CoreProxy.addCraftingRecipe(new ItemStack(quarryBlock), new Object[] { "ipi", "gig", "dDd", Character.valueOf('i'),
+			ProxyCore.proxy.addCraftingRecipe(new ItemStack(quarryBlock), new Object[] { "ipi", "gig", "dDd", Character.valueOf('i'),
 					BuildCraftCore.ironGearItem, Character.valueOf('p'), Item.redstone, Character.valueOf('g'),
 					BuildCraftCore.goldGearItem, Character.valueOf('d'), BuildCraftCore.diamondGearItem, Character.valueOf('D'),
 					Item.pickaxeDiamond, });
 		}
 
-		CoreProxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), new Object[] { " g ", "gwg", " g ", Character.valueOf('w'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), new Object[] { " g ", "gwg", " g ", Character.valueOf('w'),
 				Block.workbench, Character.valueOf('g'), BuildCraftCore.woodenGearItem });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock,
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock,
 				Character.valueOf('W'), miningWellBlock, });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(tankBlock), new Object[] { "ggg", "g g", "ggg", Character.valueOf('g'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(tankBlock), new Object[] { "ggg", "g g", "ggg", Character.valueOf('g'),
 				Block.glass, });
 
-		CoreProxy.addCraftingRecipe(new ItemStack(refineryBlock), new Object[] { "   ", "RTR", "TGT", Character.valueOf('T'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(refineryBlock), new Object[] { "   ", "RTR", "TGT", Character.valueOf('T'),
 				tankBlock, Character.valueOf('G'), BuildCraftCore.diamondGearItem, Character.valueOf('R'),
 				Block.torchRedstoneActive, });
 		if (!hopperDisabled) {
-			CoreProxy.addCraftingRecipe(new ItemStack(hopperBlock), new Object[] { "ICI", "IGI", " I ", Character.valueOf('I'),
+			ProxyCore.proxy.addCraftingRecipe(new ItemStack(hopperBlock), new Object[] { "ICI", "IGI", " I ", Character.valueOf('I'),
 					Item.ingotIron, Character.valueOf('C'), Block.chest, Character.valueOf('G'), BuildCraftCore.stoneGearItem });
 		}
 

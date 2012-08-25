@@ -11,22 +11,39 @@ package buildcraft.energy;
 
 import buildcraft.BuildCraftEnergy;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.IBucketHandler;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.player.FillBucketEvent;
 
-public class OilBucketHandler implements IBucketHandler {
+public class OilBucketHandler {
+	
+    @ForgeSubscribe
+    public void onBucketFill(FillBucketEvent event){
+    	
+    	ItemStack result = fillCustomBucket(event.world,event.target);
+    	
+    	if(result == null)
+    		return;
 
-	@Override
-	public ItemStack fillCustomBucket(World w, int i, int j, int k) {
-		if ((w.getBlockId(i, j, k) == BuildCraftEnergy.oilStill.blockID || w.getBlockId(i, j, k) == BuildCraftEnergy.oilMoving.blockID)
-				&& w.getBlockMetadata(i, j, k) == 0) {
+    	event.result=result;
+    	event.setHandeled();
+    	
+    }
+    
+	public ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
+		
+		int blockID = world.getBlockId(pos.blockX,pos.blockY,pos.blockZ);
+		
+		if((blockID == BuildCraftEnergy.oilStill.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
+				&& world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
 
-			w.setBlockWithNotify(i, j, k, 0);
+			world.setBlockWithNotify(pos.blockX, pos.blockY, pos.blockZ, 0);
 
 			return new ItemStack(BuildCraftEnergy.bucketOil);
-		} else {
+		} else
 			return null;
-		}
+
 	}
 
 }

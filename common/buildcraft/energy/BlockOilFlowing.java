@@ -20,19 +20,19 @@ import net.minecraft.src.Block;
 import net.minecraft.src.BlockFluid;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILiquid {
+
+public class BlockOilFlowing extends BlockFluid implements ILiquid {
+
+	int numAdjacentSources = 0;
+	boolean isOptimalFlowDirection[] = new boolean[4];
+	int flowCost[] = new int[4];
 
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);
 		
 		setHardness(100F);
 		setLightOpacity(3);
-		
-		numAdjacentSources = 0;
-		isOptimalFlowDirection = new boolean[4];
-		flowCost = new int[4];
 	}
 
 	@Override
@@ -254,10 +254,6 @@ public class BlockOilFlowing extends BlockFluid implements ITextureProvider, ILi
 			world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
 		}
 	}
-
-	int numAdjacentSources;
-	boolean isOptimalFlowDirection[];
-	int flowCost[];
 
 	@Override
 	public int stillLiquidId() {

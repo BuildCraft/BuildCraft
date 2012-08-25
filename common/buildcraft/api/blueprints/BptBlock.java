@@ -219,7 +219,8 @@ public class BptBlock {
 			sig.blockClassName = block.getClass().getSimpleName();
 
 			if (block instanceof BlockContainer) {
-				TileEntity tile = ((BlockContainer) block).getBlockEntity();
+				//TODO: Try to see if we can get a world instance to call with instead of null
+				TileEntity tile = ((BlockContainer) block).createNewTileEntity(null);
 
 				if (tile != null) {
 					sig.tileClassName = tile.getClass().getSimpleName();

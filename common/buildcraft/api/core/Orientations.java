@@ -9,6 +9,8 @@
 
 package buildcraft.api.core;
 
+import net.minecraftforge.common.ForgeDirection;
+
 public enum Orientations {
 	YNeg, // 0
 	YPos, // 1
@@ -34,6 +36,26 @@ public enum Orientations {
 			return Orientations.XPos;
 		default:
 			return Orientations.Unknown;
+		}
+	}
+	
+	public ForgeDirection toDirection(){
+		switch(this){
+		case YNeg:
+			return ForgeDirection.DOWN;
+		case YPos:
+			return ForgeDirection.UP;
+		case ZNeg:
+			return ForgeDirection.NORTH;
+		case ZPos:
+			return ForgeDirection.SOUTH;
+		case XNeg:
+			return ForgeDirection.WEST;
+		case XPos:
+			return ForgeDirection.EAST;
+		default:
+			return ForgeDirection.UNKNOWN;
+			
 		}
 	}
 

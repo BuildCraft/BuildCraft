@@ -20,9 +20,9 @@ import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockPlainPipe extends Block implements IFramePipeConnection, ITextureProvider {
+
+public class BlockPlainPipe extends Block implements IFramePipeConnection {
 
 	public BlockPlainPipe(int i) {
 		super(i, Material.glass);

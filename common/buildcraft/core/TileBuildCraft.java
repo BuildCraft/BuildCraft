@@ -12,9 +12,7 @@ package buildcraft.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import buildcraft.mod_BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketTileUpdate;
@@ -78,8 +76,13 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	public void sendNetworkUpdate() {
-        CoreProxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord,
-                DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+		if(ProxyCore.proxy.isSimulating(worldObj))
+			ProxyCore.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+	}
+	
+	@Override
+	public Packet getAuxillaryInfoPacket() {
+		return new PacketTileUpdate(this).getPacket();
 	}
 
 	@Override

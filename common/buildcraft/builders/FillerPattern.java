@@ -14,7 +14,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.core.CoreProxy;
+import buildcraft.core.ProxyCore;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -66,8 +66,8 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
-					zSlot, 1);
+			stackToPlace.getItem().tryPlaceIntoWorld(stackToPlace, ProxyCore.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
+					zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
 		return !found;

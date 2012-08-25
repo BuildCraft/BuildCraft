@@ -12,7 +12,6 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
 import buildcraft.transport.Pipe;

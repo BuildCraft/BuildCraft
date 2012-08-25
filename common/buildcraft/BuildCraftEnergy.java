@@ -8,10 +8,10 @@
 
 package buildcraft;
 
-import java.util.Random;
 import java.util.TreeMap;
 
-import buildcraft.mod_BuildCraftEnergy;
+import cpw.mods.fml.common.network.NetworkRegistry;
+
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
@@ -21,9 +21,9 @@ import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ProxyCore;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BlockOilFlowing;
 import buildcraft.energy.BlockOilStill;
@@ -32,19 +32,16 @@ import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
-import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
 import buildcraft.energy.Engine.EnergyStage;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.World;
-import net.minecraft.src.forge.Configuration;
-import net.minecraft.src.forge.MinecraftForge;
-import net.minecraft.src.forge.Property;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
 
 public class BuildCraftEnergy {
 
@@ -73,7 +70,7 @@ public class BuildCraftEnergy {
 
 	public static void load() {
 		// Register gui handler
-		MinecraftForge.setGuiHandler(mod_BuildCraftEnergy.instance, new GuiHandler());
+		NetworkRegistry.instance().registerGuiHandler(mod_BuildCraftBuilders.instance, new GuiHandler());
 
 		// MinecraftForge.registerEntity(EntityMechanicalArm.class,
 		// mod_BuildCraftEnergy.instance, EntityIds.MECHANICAL_ARM, 50, 10,
@@ -107,33 +104,34 @@ public class BuildCraftEnergy {
 		Item.itemsList[engineBlock.blockID] = null;
 		Item.itemsList[engineBlock.blockID] = (new ItemEngine(engineBlock.blockID - 256));
 
-		CoreProxy.addName(new ItemStack(engineBlock, 1, 0), "Redstone Engine");
-		CoreProxy.addName(new ItemStack(engineBlock, 1, 1), "Steam Engine");
-		CoreProxy.addName(new ItemStack(engineBlock, 1, 2), "Combustion Engine");
+		ProxyCore.proxy.addName(new ItemStack(engineBlock, 1, 0), "Redstone Engine");
+		ProxyCore.proxy.addName(new ItemStack(engineBlock, 1, 1), "Steam Engine");
+		ProxyCore.proxy.addName(new ItemStack(engineBlock, 1, 2), "Combustion Engine");
 
 		oilMoving = (new BlockOilFlowing(Integer.parseInt(oilMovingId.value), Material.water)).setBlockName("oil");
-		CoreProxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
-		CoreProxy.registerBlock(oilMoving);
+		ProxyCore.proxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
+		ProxyCore.proxy.registerBlock(oilMoving);
 
 		oilStill = (new BlockOilStill(Integer.parseInt(oilStillId.value), Material.water)).setBlockName("oil");
-		CoreProxy.addName(oilStill.setBlockName("oilStill"), "Oil");
-		CoreProxy.registerBlock(oilStill);
+		ProxyCore.proxy.addName(oilStill.setBlockName("oilStill"), "Oil");
+		ProxyCore.proxy.registerBlock(oilStill);
 
+		// Oil and fuel
 		if (oilMoving.blockID + 1 != oilStill.blockID)
 			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
 
-		MinecraftForge.registerCustomBucketHandler(new OilBucketHandler());
+		MinecraftForge.EVENT_BUS.register(new OilBucketHandler());
 
 		bucketOil = (new ItemBucketOil(Integer.parseInt(bucketOilId.value))).setItemName("bucketOil").setContainerItem(
 				Item.bucketEmpty);
-		CoreProxy.addName(bucketOil, "Oil Bucket");
+		ProxyCore.proxy.addName(bucketOil, "Oil Bucket");
 
 		fuel = new ItemBuildCraft(Integer.parseInt(itemFuelId.value)).setItemName("fuel");
-		CoreProxy.addName(fuel, "Fuel");
+		ProxyCore.proxy.addName(fuel, "Fuel");
 
 		bucketFuel = new ItemBuildCraft(Integer.parseInt(bucketFuelId.value)).setIconIndex(0 * 16 + 3).setItemName("bucketFuel")
 				.setMaxStackSize(1).setContainerItem(Item.bucketEmpty);
-		CoreProxy.addName(bucketFuel, "Fuel Bucket");
+		ProxyCore.proxy.addName(bucketFuel, "Fuel Bucket");
 
 		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(new LiquidStack(oilStill.blockID, 1, 0), null, new LiquidStack(fuel.shiftedIndex, 1, 0), 10, 1));
 
@@ -159,20 +157,15 @@ public class BuildCraftEnergy {
 
 	public static void loadRecipes() {
 
-		CoreProxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
 				Block.planks, Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.woodenGearItem,
 				Character.valueOf('p'), Block.pistonBase });
-		CoreProxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
 				Block.cobblestone, Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem,
 				Character.valueOf('p'), Block.pistonBase });
-		CoreProxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
+		ProxyCore.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
 				Item.ingotIron, Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem,
 				Character.valueOf('p'), Block.pistonBase });
-	}
-
-	public static void generateSurface(World world, Random random, int i, int j) {
-		OilPopulate.doPopulate(world, i, j);
-
 	}
 
 	// public static int createPollution (World world, int i, int j, int k, int

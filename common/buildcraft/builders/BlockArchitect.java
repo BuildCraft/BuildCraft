@@ -15,9 +15,9 @@ import buildcraft.mod_BuildCraftBuilders;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
@@ -29,9 +29,9 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockArchitect extends BlockContainer implements ITextureProvider {
+
+public class BlockArchitect extends BlockContainer {
 
 	int blockTextureSides;
 	int blockTextureFront;
@@ -55,12 +55,12 @@ public class BlockArchitect extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileArchitect();
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
@@ -92,7 +92,7 @@ public class BlockArchitect extends BlockContainer implements ITextureProvider {
 			return true;
 		} else {
 
-			if (!CoreProxy.isClient(world))
+			if (!ProxyCore.proxy.isRemote(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, i, j, k);
 			return true;
 
@@ -100,10 +100,10 @@ public class BlockArchitect extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
+	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
 		Utils.preDestroyBlock(world, i, j, k);
 
-		super.onBlockRemoval(world, i, j, k);
+		super.breakBlock(world, i, j, k, par5, par6);
 	}
 
 	@Override

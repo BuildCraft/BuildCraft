@@ -1,6 +1,7 @@
 package buildcraft.core.network;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -8,14 +9,15 @@ import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.forge.packets.ForgePacket;
 
-public abstract class BuildCraftPacket extends ForgePacket {
+
+public abstract class BuildCraftPacket {
 
 	protected boolean isChunkDataPacket = false;
 	protected String channel = DefaultProps.NET_CHANNEL_NAME;
+	
+	public abstract int getID();
 
-	@Override
 	public Packet getPacket() {
 
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -34,4 +36,7 @@ public abstract class BuildCraftPacket extends ForgePacket {
 		return packet;
 	}
 
+	public abstract void readData(DataInputStream data) throws IOException;
+
+	public abstract void writeData(DataOutputStream data) throws IOException;
 }

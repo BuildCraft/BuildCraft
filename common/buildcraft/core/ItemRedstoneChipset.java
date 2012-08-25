@@ -1,7 +1,11 @@
 package buildcraft.core;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemStack;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
@@ -35,9 +39,13 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		return (new StringBuilder()).append(super.getItemName()).append(".").append(itemstack.getItemDamage()).toString();
 	}
 
+	
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		for (int i = 0; i < 5; i++)
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
+		super.getSubItems(par1, par2CreativeTabs, itemList);
+		for (int i = 0; i < 5; i++) {
 			itemList.add(new ItemStack(this, 1, i));
+		}
 	}
 }

@@ -19,7 +19,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ISidedInventory;
+import net.minecraftforge.common.ISidedInventory;
 
 public class StackUtil {
 
@@ -105,8 +105,8 @@ public class StackUtil {
 			IInventory inv = Utils.getInventory(inventory);
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
-			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			int first = sidedInv.getStartInventorySide(from.toDirection());
+			int last = first + sidedInv.getSizeInventorySide(from.toDirection()) - 1;
 
 			for (int j = first; j <= last; ++j)
 				if (tryAdding(inv, j, add, false)) {
@@ -161,8 +161,8 @@ public class StackUtil {
 			IInventory inv = Utils.getInventory(inventory);
 			ISidedInventory sidedInv = (ISidedInventory) inv;
 
-			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			int first = sidedInv.getStartInventorySide(from.toDirection());
+			int last = first + sidedInv.getSizeInventorySide(from.toDirection()) - 1;
 
 			for (int j = first; j <= last; ++j)
 				if (tryAdding(inv, j, add, true)) {

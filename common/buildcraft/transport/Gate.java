@@ -3,10 +3,8 @@ package buildcraft.transport;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.Action;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.network.IndexInPayload;
 import buildcraft.core.network.PacketPayload;
 
@@ -74,10 +72,6 @@ public abstract class Gate {
 		PacketPayload payload = new PacketPayload(1, 0, 0);
 		payload.intPayload[0] = kind.ordinal();
 		return payload;
-	}
-
-	public void fromPayload(PacketPayload payload, IndexInPayload index) {
-		kind = GateKind.values()[payload.intPayload[index.intIndex + 0]];
 	}
 
 	// GUI

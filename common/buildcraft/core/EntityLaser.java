@@ -9,24 +9,24 @@
 
 package buildcraft.core;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 import buildcraft.api.core.Position;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ISpawnHandler;
 
-public class EntityLaser extends Entity implements ISpawnHandler {
+public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
 	
 	protected Position head, tail;
 
-	protected double renderSize = 0;
-	protected double angleY = 0;
-	protected double angleZ = 0;
+	public double renderSize = 0;
+	public double angleY = 0;
+	public double angleZ = 0;
 	protected String texture;
 
 	public EntityLaser(World world) {
@@ -66,8 +66,7 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	public void writeSpawnData(DataOutputStream data) throws IOException {
-
+	public void writeSpawnData(ByteArrayDataOutput data) {
 		data.writeDouble(head.x);
 		data.writeDouble(head.y);
 		data.writeDouble(head.z);
@@ -77,20 +76,19 @@ public class EntityLaser extends Entity implements ISpawnHandler {
 	}
 
 	@Override
-	public void readSpawnData(DataInputStream data) throws IOException {
-
+	public void readSpawnData(ByteArrayDataInput data) {
 		head = new Position(data.readDouble(), data.readDouble(), data.readDouble());
 		tail = new Position(data.readDouble(), data.readDouble(), data.readDouble());
 		init();
 	}
-	
+
 	@Override
 	public void onUpdate() {
 		
 		if (head == null || tail == null)
 			return;
 		
-		if (CoreProxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			updateData();
 		}
 		

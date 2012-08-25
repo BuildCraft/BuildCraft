@@ -11,11 +11,9 @@ package buildcraft.transport.pipes;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
@@ -24,12 +22,11 @@ import buildcraft.core.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeLogicWood;
 import buildcraft.transport.PipeTransportItems;
-import net.minecraft.src.Block;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ISidedInventory;
+import net.minecraftforge.common.ISidedInventory;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
@@ -71,7 +68,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
-		provider = powerProvider;
+		powerProvider = provider;
 	}
 
 	@Override
@@ -137,8 +134,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (inventory instanceof ISidedInventory) {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 
-			int first = sidedInv.getStartInventorySide(from.ordinal());
-			int last = first + sidedInv.getSizeInventorySide(from.ordinal()) - 1;
+			int first = sidedInv.getStartInventorySide(from.toDirection());
+			int last = first + sidedInv.getSizeInventorySide(from.toDirection()) - 1;
 
 			IInventory inv = Utils.getInventory(inventory);
 

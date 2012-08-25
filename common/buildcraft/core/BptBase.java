@@ -20,10 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
-import buildcraft.mod_BuildCraftCore;
-import buildcraft.core.CoreProxy;
-
-import net.minecraft.src.ModLoader;
+import buildcraft.BuildCraftCore;
 
 public abstract class BptBase {
 
@@ -81,7 +78,7 @@ public abstract class BptBase {
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
-							ModLoader.getLogger().throwing("BptBase", "rotateLeft", t);
+							BuildCraftCore.bcLog.throwing("BptBase", "rotateLeft", t);
 						}
 				}
 
@@ -105,7 +102,7 @@ public abstract class BptBase {
 
 	public File save() {
 		try {
-			File baseDir = CoreProxy.getBuildCraftBase();
+			File baseDir = ProxyCore.proxy.getBuildCraftBase();
 
 			baseDir.mkdir();
 
@@ -116,7 +113,7 @@ public abstract class BptBase {
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
-			writer.write("version:" + mod_BuildCraftCore.version());
+			writer.write("version:" + DefaultProps.VERSION);
 			writer.newLine();
 
 			if (this instanceof BptTemplate)

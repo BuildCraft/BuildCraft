@@ -12,9 +12,9 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import buildcraft.mod_BuildCraftBuilders;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.EntityLiving;
@@ -23,9 +23,9 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockBlueprintLibrary extends BlockContainer implements ITextureProvider {
+
+public class BlockBlueprintLibrary extends BlockContainer {
 
 	public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
@@ -38,7 +38,8 @@ public class BlockBlueprintLibrary extends BlockContainer implements ITexturePro
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
@@ -47,17 +48,18 @@ public class BlockBlueprintLibrary extends BlockContainer implements ITexturePro
 		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
 
 		if (!tile.locked || entityplayer.username.equals(tile.owner))
-			if (!CoreProxy.isClient(world))
+			if (!ProxyCore.proxy.isRemote(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
 
 		return true;
 	}
 
+	
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileBlueprintLibrary();
 	}
-
+	
 	@Override
 	public int getBlockTextureFromSide(int i) {
 		switch (i) {

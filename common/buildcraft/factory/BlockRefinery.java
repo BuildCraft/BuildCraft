@@ -13,14 +13,13 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.mod_BuildCraftFactory;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
@@ -60,10 +59,10 @@ public class BlockRefinery extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileRefinery();
 	}
-
+	
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
@@ -75,7 +74,7 @@ public class BlockRefinery extends BlockContainer {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
 			return false;
@@ -119,7 +118,7 @@ public class BlockRefinery extends BlockContainer {
 			}
 		}
 
-		if (!CoreProxy.isClient(world))
+		if (!ProxyCore.proxy.isRemote(world))
 			entityplayer.openGui(mod_BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
 
 		return true;

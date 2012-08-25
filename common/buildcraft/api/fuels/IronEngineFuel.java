@@ -9,7 +9,6 @@
 
 package buildcraft.api.fuels;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import buildcraft.api.core.BuildCraftAPI;

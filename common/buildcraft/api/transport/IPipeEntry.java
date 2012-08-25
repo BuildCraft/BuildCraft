@@ -9,6 +9,7 @@
 
 package buildcraft.api.transport;
 
+import net.minecraft.src.ItemStack;
 import buildcraft.api.core.Orientations;
 
 /**
@@ -16,7 +17,9 @@ import buildcraft.api.core.Orientations;
  */
 public interface IPipeEntry {
 
-	public void entityEntering(IPipedItem item, Orientations orientation);
+	void entityEntering(ItemStack payload, Orientations orientation);
+	void entityEntering(IPipedItem item, Orientations orientation);
 
-	public boolean acceptItems();
+	boolean acceptItems();
+
 }

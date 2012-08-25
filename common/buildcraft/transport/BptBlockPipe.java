@@ -13,13 +13,13 @@ import java.util.LinkedList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.TriggerParameter;
+import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
@@ -165,7 +165,7 @@ public class BptBlockPipe extends BptBlock {
 		BlockSignature sig = super.getSignature(block);
 
 		sig.mod = "BuildCraftTransport";
-		sig.modVersion = mod_BuildCraftTransport.instance.getVersion();
+		sig.modVersion = DefaultProps.VERSION;
 
 		return sig;
 	}

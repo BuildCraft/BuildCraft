@@ -25,9 +25,9 @@ public class ActionMachineControl extends Action {
 			return 4 * 16 + 3;
 		case Loop:
 			return 4 * 16 + 4;
+		default:
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -39,9 +39,9 @@ public class ActionMachineControl extends Action {
 			return "Off";
 		case Loop:
 			return "Loop";
+		default:
+			return "";
 		}
-
-		return "";
 	}
 
 	@Override

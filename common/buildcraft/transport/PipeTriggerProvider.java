@@ -6,7 +6,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.transport.IPipe;
 
 import net.minecraft.src.Block;

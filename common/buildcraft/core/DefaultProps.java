@@ -14,7 +14,7 @@ public class DefaultProps {
 	public static final String VERSION = "@VERSION@";
 
 	public static int WORLD_HEIGHT = 256;
-	public static String NET_CHANNEL_NAME = "BC";
+	public static final String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 128;
 
 	public static String TEXTURE_PATH_GUI = "/gfx/buildcraft/gui";

@@ -17,7 +17,6 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
 import buildcraft.core.StackUtil;
@@ -59,7 +58,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		if (depth < 0
 				|| (Block.blocksList[world.getBlockId(xCoord, depth, zCoord)] != null && Block.blocksList[world.getBlockId(
-						xCoord, depth, zCoord)].getHardness() == -1.0f)
+						xCoord, depth, zCoord)].getBlockHardness(world, xCoord, yCoord, zCoord) == -1.0f)
 				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
 				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
 

@@ -4,7 +4,7 @@ import buildcraft.api.core.Orientations;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.forge.ISidedInventory;
+import net.minecraftforge.common.ISidedInventory;
 
 /**
  * This class is responsible for abstracting an ISidedInventory as a normal
@@ -22,12 +22,12 @@ public class SidedInventoryAdapter implements IInventory {
 	public SidedInventoryAdapter(ISidedInventory sidedInventory, Orientations side) {
 		_sidedInventory = sidedInventory;
 		_side = side;
-		_slotOffset = _sidedInventory.getStartInventorySide(side.ordinal());
+		_slotOffset = _sidedInventory.getStartInventorySide(side.toDirection());
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return _sidedInventory.getSizeInventorySide(_side.ordinal());
+		return _sidedInventory.getSizeInventorySide(_side.toDirection());
 	}
 
 	@Override

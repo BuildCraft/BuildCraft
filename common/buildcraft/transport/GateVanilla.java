@@ -4,15 +4,13 @@ import java.util.LinkedList;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.mod_BuildCraftTransport;
-import buildcraft.api.gates.Action;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.transport.IPipe;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.EntityPlayer;
@@ -64,7 +62,7 @@ public class GateVanilla extends Gate {
 	// GUI
 	@Override
 	public void openGui(EntityPlayer player) {
-		if (!CoreProxy.isClient(player.worldObj))
+		if (!ProxyCore.proxy.isRemote(player.worldObj))
 			player.openGui(mod_BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
 
@@ -163,6 +161,7 @@ public class GateVanilla extends Gate {
 			gateDamage = 5;
 			break;
 		case OR_4:
+		default:
 			gateDamage = 6;
 			break;
 		}

@@ -15,22 +15,21 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.TreeSet;
 
+import net.minecraft.src.Block;
+import net.minecraft.src.BlockContainer;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTBase;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
+import net.minecraft.src.TileEntity;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.blueprints.ItemSignature;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.TileEntity;
 
 public class BptBlueprint extends BptBase {
 
@@ -75,7 +74,7 @@ public class BptBlueprint extends BptBase {
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
-			ModLoader.getLogger().throwing("BptBlueprint", "readFromWorld", t);
+			BuildCraftCore.bcLog.throwing("BptBlueprint", "readFromWorld", t);
 
 		}
 	}

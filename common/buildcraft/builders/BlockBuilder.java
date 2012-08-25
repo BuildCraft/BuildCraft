@@ -15,9 +15,9 @@ import buildcraft.mod_BuildCraftBuilders;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
@@ -28,9 +28,9 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockBuilder extends BlockContainer implements ITextureProvider {
+
+public class BlockBuilder extends BlockContainer {
 
 	int blockTextureTop;
 	int blockTextureSide;
@@ -45,10 +45,10 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileBuilder();
 	}
-
+	
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
@@ -73,7 +73,7 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking())
@@ -105,7 +105,7 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 			return true;
 		} else {
 
-			if (!CoreProxy.isClient(world))
+			if (!ProxyCore.proxy.isRemote(world))
 				entityplayer.openGui(mod_BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			return true;
 
@@ -120,11 +120,11 @@ public class BlockBuilder extends BlockContainer implements ITextureProvider {
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
-
+	
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		Utils.preDestroyBlock(world, i, j, k);
-		super.onBlockRemoval(world, i, j, k);
+	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		Utils.preDestroyBlock(world, x, y, z);
+		super.breakBlock(world, x, y, z, par5, par6);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

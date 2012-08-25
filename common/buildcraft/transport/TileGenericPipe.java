@@ -9,17 +9,18 @@
 
 package buildcraft.transport;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.mod_BuildCraftCore;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.liquids.LiquidStack;
@@ -31,18 +32,15 @@ import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.IPipe.WireColor;
-import buildcraft.core.CoreProxy;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.Utils;
-import buildcraft.core.network.IndexInPayload;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketPipeDescription;
-import buildcraft.core.network.PacketTileUpdate;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.network.v2.IClientState;
+import buildcraft.core.network.v2.ISyncedTile;
+import buildcraft.core.network.v2.PacketTileState;
+import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 
 import net.minecraft.src.Block;
@@ -52,9 +50,30 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry,
-		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState {
+		IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder, IPipeConnection, IDropControlInventory, IPipeRenderState,
+		ISyncedTile	{
+	
+	private class CoreState implements IClientState {
+
+		public int pipeId = -1;
+		public int gateKind = 0;
+		
+		@Override
+		public void writeData(DataOutputStream data) throws IOException {
+			data.writeInt(pipeId);
+			data.writeInt(gateKind);
+		}
+
+		@Override
+		public void readData(DataInputStream data) throws IOException {
+			pipeId = data.readInt();
+			gateKind = data.readInt();
+		}
+		
+	}
 	
 	private PipeRenderState renderState = new PipeRenderState();
+	private CoreState coreState = new CoreState();
 
 	public TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
@@ -69,12 +88,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	private int[] facadeBlocks = new int[Orientations.dirs().length];
 	private int[] facadeMeta = new int[Orientations.dirs().length];
 	
-	//Store the pipe key to prevent losing pipes when a user forgets to include an addon
-	int key; 
-
-	@TileNetworkData
-	public int pipeId = -1;
-
 	public TileGenericPipe() {
 
 	}
@@ -87,7 +100,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			nbttagcompound.setInteger("pipeId", pipe.itemID);
 			pipe.writeToNBT(nbttagcompound);
 		} else
-			nbttagcompound.setInteger("pipeId", key);
+			nbttagcompound.setInteger("pipeId", coreState.pipeId);
 		
 		for (int i = 0; i < Orientations.dirs().length; i++){
 			nbttagcompound.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
@@ -100,9 +113,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		
-
-		key = nbttagcompound.getInteger("pipeId");
-		pipe = BlockGenericPipe.createPipe(key);
+		coreState.pipeId = nbttagcompound.getInteger("pipeId");
+		pipe = BlockGenericPipe.createPipe(coreState.pipeId);
 
 		if (pipe != null) {
 			pipe.readFromNBT(nbttagcompound);
@@ -122,9 +134,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			pipe.invalidate();
 		}
 		super.invalidate();
-
-//		if (BlockGenericPipe.isValid(pipe))
-//			BlockGenericPipe.removePipe(pipe);
 	}
 
 	@Override
@@ -133,7 +142,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		bindPipe();
 		if (pipe != null) {
 			pipe.validate();
-	}
+		}
 	}
 
 	public boolean initialized = false;
@@ -240,7 +249,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		
 		
 		if (renderState.isDirty()){
-			//worldObj.markBlockAsNeedsUpdate(this.xCoord, this.yCoord, this.zCoord);
 			worldObj.markBlockNeedsUpdate(this.xCoord, this.yCoord, this.zCoord);
 			renderState.clean();
 		}
@@ -285,7 +293,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			
 			pipe.setTile(this);
 			
-			pipeId = pipe.itemID;
+			coreState.pipeId = pipe.itemID;
 			pipeBound = true;
 		}
 	}
@@ -325,10 +333,27 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		blockNeighborChange = true;
 	}
 
+	/* IPIPEENTRY */
 	@Override
 	public void entityEntering(IPipedItem item, Orientations orientation) {
 		if (BlockGenericPipe.isValid(pipe))
 			pipe.transport.entityEntering(item, orientation);
+	}
+
+	@Override
+	public void entityEntering(ItemStack payload, Orientations orientation) {
+		
+		/* FIXME: This is untested guesswork */
+		Position itemPos = new Position(xCoord, yCoord, zCoord, orientation);
+		itemPos.moveBackwards(1.0);
+		
+		itemPos.x += 0.5;
+		itemPos.y += 0.25;
+		itemPos.z += 0.5;
+		itemPos.moveForwards(0.5);
+		
+		EntityPassiveItem pipedItem = new EntityPassiveItem(worldObj, itemPos.x, itemPos.y, itemPos.z, payload);
+		entityEntering(pipedItem, orientation);
 	}
 
 	@Override
@@ -339,6 +364,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return false;
 	}
 
+	/* SMP */
 	public void handleDescriptionPacket(PipeRenderStatePacket packet) {
 		if (worldObj.isRemote){
 			if (pipe == null && packet.getPipeId() != 0){
@@ -347,15 +373,21 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			renderState = packet.getRenderState();
 			worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 		}
-		
-		
-		
 		return;	
 	}
 
-	public Packet getDescriptionPacket() {
+	@Override
+	public Packet getAuxillaryInfoPacket() {
 		bindPipe();
-		PipeRenderStatePacket packet = new PipeRenderStatePacket(this.renderState, this.pipeId, xCoord, yCoord, zCoord);
+		
+		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
+		if (pipe != null && pipe.gate != null){
+			coreState.gateKind = pipe.gate.kind.ordinal();
+		} else {
+			coreState.gateKind = 0;
+		}
+		packet.addStateForSerialization((byte) 0, coreState);
+		packet.addStateForSerialization((byte) 1, renderState);
 		return packet.getPacket();
 	}
 
@@ -531,7 +563,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
 		scheduleRenderUpdate();
-		//refreshRenderState();
 		return true;
 	}
 	
@@ -547,7 +578,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
 		scheduleRenderUpdate();
-		//refreshRenderState();
 	}
 	
 	/** IPipeRenderState implementation **/
@@ -555,5 +585,34 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public PipeRenderState getRenderState() {
 		return renderState;
+	}
+
+	@Override
+	public IClientState getStateInstance(byte stateId) {
+		switch(stateId){
+			case 0: return coreState;
+			case 1: return renderState;
+		}
+		throw new RuntimeException("Unknown state requested: " + stateId + " this is a bug!");
+	}
+
+	@Override
+	public void afterStateUpdated(byte stateId) {
+		if (!worldObj.isRemote) return;
+		
+		switch (stateId){
+			case 0:
+				if (pipe == null && coreState.pipeId != 0){
+					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
+				}
+				if (pipe != null) {
+					if (pipe.gate == null) {
+						pipe.gate = new GateVanilla(pipe);
+					}
+					pipe.gate.kind = GateKind.values()[coreState.gateKind];
+				}
+				break;
+		}
+		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 	}
 }

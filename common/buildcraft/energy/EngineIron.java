@@ -18,8 +18,7 @@ import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.liquids.LiquidTank;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
-import buildcraft.energy.ContainerEngine;
-import net.minecraft.src.Block;
+import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -34,10 +33,10 @@ public class EngineIron extends Engine {
 
 	int burnTime = 0;
 	int liquidQty = 0;
-	int liquidId = 0;
+	public int liquidId = 0;
 
 	int coolantQty = 0;
-	int coolantId = 0;
+	public int coolantId = 0;
 
 	int heat = 0;
 

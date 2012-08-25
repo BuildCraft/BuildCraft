@@ -9,7 +9,7 @@
 
 package buildcraft.transport;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -17,8 +17,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
@@ -31,11 +31,11 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3D;
+import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockGenericPipe extends BlockContainer implements ITextureProvider {
+
+public class BlockGenericPipe extends BlockContainer {
 
 	/** Defined subprograms **************************************************/
 
@@ -65,40 +65,40 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void getCollidingBoundingBoxes(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
+	public void addCollidingBlockToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
 		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-		super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+		super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
 
 		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
@@ -128,7 +128,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1))
 			zMax = 1.0F;
 
-		return AxisAlignedBB.getBoundingBoxFromPool((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
+		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
 				(double) j + yMax, (double) k + zMax);
 	}
 
@@ -139,7 +139,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
@@ -197,28 +197,26 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 	}
 
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		Utils.preDestroyBlock(world, i, j, k);
-
-		removePipe(getPipe(world, i, j, k));
-
-		super.onBlockRemoval(world, i, j, k);
+	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		Utils.preDestroyBlock(world, x, y, z);
+		removePipe(getPipe(world, x, y, z));
+		super.breakBlock(world, x, y, z, par5, par6);
 	}
-
+	
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}
-
+	
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (CoreProxy.isClient(world))
+		if (ProxyCore.proxy.isRemote(world))
 			return;
 
 		int i1 = quantityDropped(world.rand);
@@ -260,19 +258,20 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 			pipe.container.scheduleNeighborChange();
 	}
 
-	@Override
-	public void onBlockPlaced(World world, int i, int j, int k, int l) {
-		super.onBlockPlaced(world, i, j, k, l);
 
-		Pipe pipe = getPipe(world, i, j, k);
+	@Override
+	public void updateBlockMetadata(World world, int x, int y, int z, int par5,	float par6, float par7, float par8) {
+		super.updateBlockMetadata(world, x, y, z, par5, par6, par7, par8);
+		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
 			pipe.onBlockPlaced();
+
 	}
 	
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		super.blockActivated(world, i, j, k, entityplayer);
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 
 		world.notifyBlocksOfNeighborChange(i, j, k, BuildCraftTransport.genericPipeBlock.blockID);
 
@@ -321,8 +320,6 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
@@ -330,8 +327,6 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
 					entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.shiftedIndex
@@ -341,8 +336,6 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 					pipe.gate = new GateVanilla(pipe, entityplayer.getCurrentEquippedItem());
 					entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
 					return true;
 				}
 
@@ -362,7 +355,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 		// Try to strip wires first, starting with yellow.
 		for (IPipe.WireColor color : IPipe.WireColor.values())
 			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!CoreProxy.isRemote())
+				if (!ProxyCore.proxy.isRemote(pipe.worldObj))
 					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 				pipe.wireSet[color.reverse().ordinal()] = false;
 				//pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
@@ -372,7 +365,7 @@ public class BlockGenericPipe extends BlockContainer implements ITextureProvider
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
-			if (!CoreProxy.isRemote())
+			if (!ProxyCore.proxy.isRemote(pipe.worldObj))
 				pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 			pipe.resetGate();
 			return true;

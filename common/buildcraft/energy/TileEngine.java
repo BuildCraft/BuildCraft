@@ -17,8 +17,6 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.Trigger;
-import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.liquids.LiquidTank;
@@ -27,8 +25,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipeConnection;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.IBuilderInventory;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
@@ -68,7 +66,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public void initialize() {
-		if (!CoreProxy.isClient(worldObj)) {
+		if (!ProxyCore.proxy.isRemote(worldObj)) {
 			if (engine == null) {
 				createEngineIfNeeded();
 			}
@@ -87,7 +85,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			return;
 		}
 
-		if (CoreProxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			if (progressPart != 0) {
 				engine.progress += serverPistonSpeed;
 
@@ -364,11 +362,11 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public void doWork() {
-		if (CoreProxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			return;
 		}
 
-		engine.addEnergy((int) (provider.useEnergy(1, engine.maxEnergyReceived(), true) * 0.95F));
+		engine.addEnergy(provider.useEnergy(1, engine.maxEnergyReceived(), true) * 0.95F);
 	}
 
 	public boolean isPoweredTile(TileEntity tile) {

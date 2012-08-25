@@ -11,7 +11,6 @@ package buildcraft.core;
 
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 
 public class RedstonePowerFramework extends PowerFramework {
 

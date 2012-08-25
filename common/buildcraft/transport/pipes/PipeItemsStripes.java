@@ -8,6 +8,7 @@
 
 package buildcraft.transport.pipes;
 
+/*
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -20,7 +21,6 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.Utils;
@@ -96,11 +96,11 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 			BuildCraftTransport.pipeItemsStipes.onItemUse(new ItemStack(BuildCraftTransport.pipeItemsStipes),
 					CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x, (int) p.y - 1, (int) p.z, 1);
 		else if (worldObj.getBlockId((int) p.x, (int) p.y, (int) p.z) == 0)
-			data.item.getItemStack().getItem().onItemUse(data.item.getItemStack(), CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
-					(int) p.y - 1, (int) p.z, 1);
+			data.item.getItemStack().getItem().tryPlaceIntoWorld(data.item.getItemStack(), CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
+					(int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
 		else
-			data.item.getItemStack().getItem().onItemUse(data.item.getItemStack(), CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
-					(int) p.y, (int) p.z, 1);
+			data.item.getItemStack().getItem().tryPlaceIntoWorld(data.item.getItemStack(), CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
+					(int) p.y, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
 	}
 
 	@Override
@@ -154,3 +154,4 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 
 	}
 }
+*/

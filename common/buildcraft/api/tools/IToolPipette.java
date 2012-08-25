@@ -1,6 +1,5 @@
 package buildcraft.api.tools;
 
-import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.LiquidStack;
 import net.minecraft.src.ItemStack;
 

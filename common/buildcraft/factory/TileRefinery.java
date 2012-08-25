@@ -20,10 +20,9 @@ import buildcraft.api.liquids.LiquidTank;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.power.PowerProvider;
 import buildcraft.api.recipes.RefineryRecipe;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.IMachine;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.network.TileNetworkData;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
@@ -166,9 +165,9 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.isClient(worldObj)) {
+		if (ProxyCore.proxy.isRemote(worldObj)) {
 			simpleAnimationIterate();
-		} else if (CoreProxy.isServerSide() && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+		} else if (ProxyCore.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 

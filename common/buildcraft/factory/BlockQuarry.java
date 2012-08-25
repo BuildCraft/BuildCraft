@@ -12,19 +12,13 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.mod_BuildCraftEnergy;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
-import buildcraft.energy.EngineIron;
-import buildcraft.energy.EngineStone;
-import buildcraft.energy.TileEngine;
 import buildcraft.factory.BlockMachineRoot;
 
 import net.minecraft.src.EntityLiving;
@@ -34,9 +28,9 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
+
+public class BlockQuarry extends BlockMachineRoot {
 
 	int textureTop;
 	int textureFront;
@@ -85,7 +79,7 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileQuarry();
 	}
 
@@ -133,9 +127,9 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 	}
 	
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
+	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
 		
-		if (CoreProxy.isRemote()){
+		if (ProxyCore.proxy.isRemote(world)){
 			return;
 		}
 		
@@ -201,11 +195,11 @@ public class BlockQuarry extends BlockMachineRoot implements ITextureProvider {
 //			}
 //		}
 
-		super.onBlockRemoval(world, i, j, k);
+		super.breakBlock(world, i, j, k, par5, par6);
 	}
 	
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking

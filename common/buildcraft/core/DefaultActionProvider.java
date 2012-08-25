@@ -3,7 +3,6 @@ package buildcraft.core;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.gates.Action;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 

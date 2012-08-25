@@ -11,17 +11,31 @@ package buildcraft.energy;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.IWorldGenerator;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.core.CoreProxy;
+import buildcraft.core.ProxyCore;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
+import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.World;
 
-public class OilPopulate {
+public class OilPopulate implements IWorldGenerator {
 
 	public static Random rand = null;
+
+	@Override
+	public void generate(Random random, int chunkX, int chunkZ, World world,
+			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+		
+		// shift to world coordinates
+		chunkX = chunkX << 4;
+		chunkZ = chunkZ << 4;
+
+		doPopulate(world, chunkX, chunkZ);
+	}
 
 	public static void doPopulate(World world, int x, int z) {
 		if (!BuildCraftCore.modifyWorld) {
@@ -29,7 +43,7 @@ public class OilPopulate {
 		}
 
 		if (rand == null) {
-			rand = CoreProxy.createNewRandom(world);
+			rand = ProxyCore.proxy.createNewRandom(world);
 		}
 
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);

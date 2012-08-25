@@ -12,7 +12,6 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
@@ -26,9 +25,9 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockTank extends BlockContainer implements ITextureProvider {
+
+public class BlockTank extends BlockContainer {
 
 	public BlockTank(int i) {
 		super(i, Material.glass);
@@ -53,10 +52,10 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileTank();
 	}
-
+	
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
@@ -89,7 +88,7 @@ public class BlockTank extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {

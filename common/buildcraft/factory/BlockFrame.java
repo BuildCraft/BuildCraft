@@ -10,6 +10,7 @@
 package buildcraft.factory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import buildcraft.BuildCraftCore;
@@ -19,15 +20,16 @@ import buildcraft.core.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.Vec3D;
+import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockFrame extends Block implements IFramePipeConnection, ITextureProvider {
+
+public class BlockFrame extends Block implements IFramePipeConnection {
 
 	public BlockFrame(int i) {
 		super(i, Material.glass);
@@ -96,7 +98,7 @@ public class BlockFrame extends Block implements IFramePipeConnection, ITextureP
 			zMax = 1.0F;
 		}
 
-		return AxisAlignedBB.getBoundingBoxFromPool((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
+		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
 				(double) j + yMax, (double) k + zMax);
 	}
 
@@ -108,45 +110,45 @@ public class BlockFrame extends Block implements IFramePipeConnection, ITextureP
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void getCollidingBoundingBoxes(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
+	public void addCollidingBlockToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
 		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-		super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+		super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
-			super.getCollidingBoundingBoxes(world, i, j, k, axisalignedbb, arraylist);
+			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {

@@ -17,21 +17,22 @@ import java.util.Vector;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.mod_BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.CoreProxy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IMachine;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.StackUtil;
 import buildcraft.core.Utils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPipeTransportContent;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -91,10 +92,16 @@ public class PipeTransportItems extends PipeTransport {
 		if (container.pipe instanceof IPipeTransportItemsHook)
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
 
-		if (CoreProxy.isServerSide())
-			if (item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor))
-				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
+		if (!worldObj.isRemote && item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {
+			int dimension = worldObj.provider.worldType;
+			MinecraftServer.getServer().getConfigurationManager().sendToAllNear(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(item, orientation));
+		}
+			
+//			for (Object player : MinecraftServer.getServer().getConfigurationManager().playerEntityList){
+//				
+//			}
+//				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
+//						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 
 		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
 			groupEntities();
@@ -249,7 +256,7 @@ public class PipeTransportItems extends PipeTransport {
 		} else if (tile instanceof IInventory) {
 			StackUtil utils = new StackUtil(data.item.getItemStack());
 
-			if (!CoreProxy.isClient(worldObj))
+			if (!ProxyCore.proxy.isRemote(worldObj))
 				if (utils.checkAvailableSlot((IInventory) tile, true, data.orientation.reverse()) && utils.items.stackSize == 0)
 					data.item.remove();
 				else {
@@ -352,7 +359,7 @@ public class PipeTransportItems extends PipeTransport {
 		else {
 			int i;
 
-			if (CoreProxy.isClient(worldObj) || CoreProxy.isServerSide())
+			if (ProxyCore.proxy.isRemote(worldObj) || ProxyCore.proxy.isSimulating(worldObj))
 			{
 				i = Math.abs(data.item.getEntityId() + xCoord + yCoord + zCoord + data.item.getDeterministicRandomization())
 						% listOfPossibleMovements.size();

@@ -25,11 +25,11 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3D;
+import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockMarker extends BlockContainer implements ITextureProvider {
+
+public class BlockMarker extends BlockContainer {
 
 	public BlockMarker(int i) {
 		super(i, Material.circuits);
@@ -49,17 +49,17 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 
 		switch (meta) {
 		case 0:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 1 - h, k + 0.5 - w, i + 0.5 + w, j + 1, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j + 1 - h, k + 0.5 - w, i + 0.5 + w, j + 1, k + 0.5 + w);
 		case 5:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j, k + 0.5 - w, i + 0.5 + w, j + h, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j, k + 0.5 - w, i + 0.5 + w, j + h, k + 0.5 + w);
 		case 3:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5 - w, k, i + 0.5 + w, j + 0.5 + w, k + h);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j + 0.5 - w, k, i + 0.5 + w, j + 0.5 + w, k + h);
 		case 4:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 0.5 - w, j + 0.5 - w, k + 1 - h, i + 0.5 + w, j + 0.5 + w, k + 1);
+			return AxisAlignedBB.getBoundingBox(i + 0.5 - w, j + 0.5 - w, k + 1 - h, i + 0.5 + w, j + 0.5 + w, k + 1);
 		case 1:
-			return AxisAlignedBB.getBoundingBoxFromPool(i, j + 0.5 - w, k + 0.5 - w, i + h, j + 0.5 + w, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i, j + 0.5 - w, k + 0.5 - w, i + h, j + 0.5 + w, k + 0.5 + w);
 		default:
-			return AxisAlignedBB.getBoundingBoxFromPool(i + 1 - h, j + 0.5 - w, k + 0.5 - w, i + 1, j + 0.5 + w, k + 0.5 + w);
+			return AxisAlignedBB.getBoundingBox(i + 1 - h, j + 0.5 - w, k + 0.5 - w, i + 1, j + 0.5 + w, k + 0.5 + w);
 		}
 	}
 
@@ -71,25 +71,24 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 	public boolean isACube() {
 		return false;
 	}
-
+	
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileMarker();
 	}
-
+	
 	@Override
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
 		return true;
 	}
 
 	@Override
-	public void onBlockRemoval(World world, int i, int j, int k) {
-		Utils.preDestroyBlock(world, i, j, k);
-
-		super.onBlockRemoval(world, i, j, k);
+	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		Utils.preDestroyBlock(world, x, y, z);
+		super.breakBlock(world, x, y, z, par5, par6);
 	}
-
+	
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
 		return null;
@@ -138,7 +137,7 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1) {
+	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
 		return Block.torchWood.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
 	}
 
@@ -164,30 +163,30 @@ public class BlockMarker extends BlockContainer implements ITextureProvider {
 	}
 
 	@Override
-	public void onBlockPlaced(World world, int i, int j, int k, int l) {
-		super.onBlockPlaced(world, i, j, k, l);
-		int i1 = world.getBlockMetadata(i, j, k);
-		if (l == 1 && BuildersProxy.canPlaceTorch(world, i, j - 1, k)) {
+	public void updateBlockMetadata(World world, int x, int y, int z, int par5, float par6, float par7, float par8) {
+		super.updateBlockMetadata(world, x, y, z, par5, par6, par7, par8);
+		int i1 = world.getBlockMetadata(x, y, z);
+		if (par5 == 1 && BuildersProxy.canPlaceTorch(world, x, y - 1, z)) {
 			i1 = 5;
 		}
-		if (l == 2 && BuildersProxy.canPlaceTorch(world, i, j, k + 1)) {
+		if (par5 == 2 && BuildersProxy.canPlaceTorch(world, x, y, z + 1)) {
 			i1 = 4;
 		}
-		if (l == 3 && BuildersProxy.canPlaceTorch(world, i, j, k - 1)) {
+		if (par5 == 3 && BuildersProxy.canPlaceTorch(world, x, y, z - 1)) {
 			i1 = 3;
 		}
-		if (l == 4 && BuildersProxy.canPlaceTorch(world, i + 1, j, k)) {
+		if (par5 == 4 && BuildersProxy.canPlaceTorch(world, x + 1, y, z)) {
 			i1 = 2;
 		}
-		if (l == 5 && BuildersProxy.canPlaceTorch(world, i - 1, j, k)) {
+		if (par5 == 5 && BuildersProxy.canPlaceTorch(world, x - 1, y, z)) {
 			i1 = 1;
 		}
-		if (l == 0 && BuildersProxy.canPlaceTorch(world, i, j + 1, k)) {
+		if (par5 == 0 && BuildersProxy.canPlaceTorch(world, x, y + 1, z)) {
 			i1 = 0;
 		}
-		world.setBlockMetadataWithNotify(i, j, k, i1);
+		world.setBlockMetadataWithNotify(x, y, z, i1);
 	}
-
+	
 	@Override
 	public void onBlockAdded(World world, int i, int j, int k) {
 		super.onBlockAdded(world, i, j, k);

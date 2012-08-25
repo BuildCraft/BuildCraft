@@ -22,9 +22,9 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockMiningWell extends BlockMachineRoot implements ITextureProvider {
+
+public class BlockMiningWell extends BlockMachineRoot {
 
 	int textureFront, textureSides, textureBack, textureTop;
 
@@ -69,11 +69,13 @@ public class BlockMiningWell extends BlockMachineRoot implements ITextureProvide
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
+	
+	
 	@Override
-	public TileEntity getBlockEntity() {
+	public TileEntity createNewTileEntity(World var1) {
 		return new TileMiningWell();
 	}
-
+	
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
