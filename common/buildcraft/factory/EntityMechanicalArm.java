@@ -42,7 +42,6 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 
 	public EntityMechanicalArm(World world) {
 		super(world);
-		Thread.dumpStack();
 		makeParts(world);
 		// Head X, Y, Z
 		dataWatcher.addObject(2, 1);
