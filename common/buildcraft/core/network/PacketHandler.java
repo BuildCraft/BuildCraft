@@ -3,20 +3,20 @@ package buildcraft.core.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import buildcraft.core.network.v2.ISyncedTile;
 import buildcraft.core.network.v2.PacketTileState;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
 public class PacketHandler implements IPacketHandler {
 
-	private void onTileUpdate(PacketTileUpdate packet) {
-		World world = FMLClientHandler.instance().getClient().theWorld;
+	private void onTileUpdate( EntityPlayer player, PacketTileUpdate packet) {
+		World world = player.worldObj;
 
 		if (!packet.targetExists(world))
 			return;
@@ -40,13 +40,13 @@ public class PacketHandler implements IPacketHandler {
 			case PacketIds.TILE_UPDATE:
 				PacketTileUpdate packetT = new PacketTileUpdate();
 				packetT.readData(data);
-				onTileUpdate(packetT);
+				onTileUpdate((EntityPlayer)player, packetT);
 				break;
 
 			case PacketIds.STATE_UPDATE:
 				PacketTileState inPacket = new PacketTileState();
 				inPacket.readData(data);
-				World world = FMLClientHandler.instance().getClient().theWorld;
+				World world = ((EntityPlayer)player).worldObj;
 				TileEntity tile = world.getBlockTileEntity(inPacket.posX, inPacket.posY, inPacket.posZ);
 				if (tile instanceof ISyncedTile){
 					inPacket.applyStates(data, (ISyncedTile) tile);

@@ -166,9 +166,4 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		}
 
 	}
-
-	public void handleSelectionMessage(SelectionMessage message) {
-		assemblyTable.handleSelectionMessage(message);
-
-	}
 }

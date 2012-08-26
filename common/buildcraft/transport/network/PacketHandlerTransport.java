@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
 import net.minecraft.src.Container;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
@@ -21,7 +22,6 @@ import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -40,52 +40,52 @@ public class PacketHandlerTransport implements IPacketHandler {
 			case PacketIds.DIAMOND_PIPE_CONTENTS:
 				PacketNBT packetN = new PacketNBT();
 				packetN.readData(data);
-				onDiamondContents(packetN);
+				onDiamondContents((EntityPlayer)player, packetN);
 				break;
 			case PacketIds.PIPE_POWER:
 				PacketPowerUpdate packetPower= new PacketPowerUpdate();
 				packetPower.readData(data);
-				onPacketPower(packetPower);
+				onPacketPower((EntityPlayer)player, packetPower);
 				break;
 			case PacketIds.PIPE_LIQUID:
 				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
 				packetLiquid.readData(data);
-				onPacketLiquid(packetLiquid);
+				onPacketLiquid((EntityPlayer)player, packetLiquid);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
 				descPacket.readData(data);
-				onPipeDescription(descPacket);
+				onPipeDescription((EntityPlayer)player, descPacket);
 				break;
 			case PacketIds.PIPE_CONTENTS:
 				PacketPipeTransportContent packetC = new PacketPipeTransportContent();
 				packetC.readData(data);
-				onPipeContentUpdate(packetC);
+				onPipeContentUpdate((EntityPlayer)player, packetC);
 				break;
 			case PacketIds.GATE_ACTIONS:
 				packet.readData(data);
-				onGateActions(packet);
+				onGateActions((EntityPlayer)player, packet);
 				break;
 			case PacketIds.GATE_TRIGGERS:
 				packet.readData(data);
-				onGateTriggers(packet);
+				onGateTriggers((EntityPlayer)player, packet);
 				break;
 			case PacketIds.GATE_SELECTION:
 				packet.readData(data);
-				onGateSelection(packet);
+				onGateSelection((EntityPlayer)player, packet);
 				break;
 
 			/** SERVER SIDE **/
 			case PacketIds.DIAMOND_PIPE_SELECT:
 				PacketSlotChange packet1 = new PacketSlotChange();
 				packet1.readData(data);
-				onDiamondPipeSelect((EntityPlayerMP) player, packet1);
+				onDiamondPipeSelect((EntityPlayer) player, packet1);
 				break;
 
 			case PacketIds.GATE_REQUEST_INIT:
 				PacketCoordinates packetU = new PacketCoordinates();
 				packetU.readData(data);
-				onGateInitRequest((EntityPlayerMP) player, packetU);
+				onGateInitRequest((EntityPlayer) player, packetU);
 				break;
 
 			case PacketIds.GATE_REQUEST_SELECTION:
@@ -113,8 +113,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 *
 	 * @param packet
 	 */
-	private void onGateActions(PacketUpdate packet) {
-		Container container = FMLClientHandler.instance().getClient().thePlayer.craftingInventory;
+	private void onGateActions(EntityPlayer player, PacketUpdate packet) {
+		Container container = player.craftingInventory;
 
 		if (!(container instanceof ContainerGateInterface))
 			return;
@@ -127,8 +127,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 *
 	 * @param packet
 	 */
-	private void onGateTriggers(PacketUpdate packet) {
-		Container container = FMLClientHandler.instance().getClient().thePlayer.craftingInventory;
+	private void onGateTriggers(EntityPlayer player, PacketUpdate packet) {
+		Container container = player.craftingInventory;
 
 		if (!(container instanceof ContainerGateInterface))
 			return;
@@ -141,8 +141,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 *
 	 * @param packet
 	 */
-	private void onGateSelection(PacketUpdate packet) {
-		Container container = FMLClientHandler.instance().getClient().thePlayer.craftingInventory;
+	private void onGateSelection(EntityPlayer player, PacketUpdate packet) {
+		Container container = player.craftingInventory;
 
 		if (!(container instanceof ContainerGateInterface))
 			return;
@@ -156,8 +156,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 *
 	 * @param descPacket
 	 */
-	private void onPipeDescription(PipeRenderStatePacket descPacket) {
-		World world = FMLClientHandler.instance().getClient().theWorld;
+	private void onPipeDescription(EntityPlayer player, PipeRenderStatePacket descPacket) {
+		World world = player.worldObj;
 
 		if (!world.blockExists(descPacket.posX, descPacket.posY, descPacket.posZ))
 			return;
@@ -181,8 +181,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 *
 	 * @param packet
 	 */
-	private void onPipeContentUpdate(PacketPipeTransportContent packet) {
-		World world = FMLClientHandler.instance().getClient().theWorld;
+	private void onPipeContentUpdate(EntityPlayer player, PacketPipeTransportContent packet) {
+		World world = player.worldObj;
 
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
@@ -205,8 +205,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * Updates the display power on a power pipe
 	 * @param packetPower
 	 */
-	private void onPacketPower(PacketPowerUpdate packetPower) {
-		World world = FMLClientHandler.instance().getClient().theWorld;
+	private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
+		World world = player.worldObj;
 		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ))
 			return;
 
@@ -227,8 +227,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	}
 
-	private void onPacketLiquid(PacketLiquidUpdate packetLiquid) {
-		World world = FMLClientHandler.instance().getClient().theWorld;
+	private void onPacketLiquid(EntityPlayer player, PacketLiquidUpdate packetLiquid) {
+		World world = player.worldObj;
 		if (!world.blockExists(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ))
 			return;
 
@@ -251,9 +251,9 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 *
 	 * @param packet
 	 */
-	private void onDiamondContents(PacketNBT packet) {
+	private void onDiamondContents(EntityPlayer player, PacketNBT packet) {
 
-		World world = FMLClientHandler.instance().getClient().theWorld;
+		World world = player.worldObj;
 
 		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
 			return;
@@ -290,7 +290,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param playerEntity
 	 * @param packet
 	 */
-	private void onGateSelectionChange(EntityPlayerMP playerEntity, PacketUpdate packet) {
+	private void onGateSelectionChange(EntityPlayer playerEntity, PacketUpdate packet) {
 		if (!(playerEntity.craftingInventory instanceof ContainerGateInterface))
 			return;
 
@@ -303,7 +303,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param playerEntity
 	 * @param packet
 	 */
-	private void onGateSelectionRequest(EntityPlayerMP playerEntity, PacketCoordinates packet) {
+	private void onGateSelectionRequest(EntityPlayer playerEntity, PacketCoordinates packet) {
 		if (!(playerEntity.craftingInventory instanceof ContainerGateInterface))
 			return;
 
@@ -316,7 +316,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param playerEntity
 	 * @param packet
 	 */
-	private void onGateInitRequest(EntityPlayerMP playerEntity, PacketCoordinates packet) {
+	private void onGateInitRequest(EntityPlayer playerEntity, PacketCoordinates packet) {
 		if (!(playerEntity.craftingInventory instanceof ContainerGateInterface))
 			return;
 
@@ -349,7 +349,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param player
 	 * @param packet
 	 */
-	private void onDiamondPipeSelect(EntityPlayerMP player, PacketSlotChange packet) {
+	private void onDiamondPipeSelect(EntityPlayer player, PacketSlotChange packet) {
 		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
 		if (pipe == null)
 			return;

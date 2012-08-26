@@ -10,6 +10,7 @@
 package buildcraft.core;
 
 import java.io.File;
+import java.util.List;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -26,6 +27,7 @@ import buildcraft.core.render.RenderingOil;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -40,6 +42,15 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 public class ClientProxyCore extends ProxyCore {
 
+	/* INSTANCES */
+	public Object getClient() {
+		return FMLClientHandler.instance().getClient();
+	}
+	
+	public World getClientWorld() {
+		return FMLClientHandler.instance().getClient().theWorld;
+	}
+
 	/* ENTITY HANDLING */
 	@Override
 	public void removeEntity(Entity entity) {
@@ -49,6 +60,11 @@ public class ClientProxyCore extends ProxyCore {
 			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
 	}
 
+	/* WRAPPER */
+	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
+		
+	}
+	
 	/* LOCALIZATION */
 	@Override
 	public String getCurrentLanguage() {

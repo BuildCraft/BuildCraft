@@ -11,6 +11,7 @@ package buildcraft.silicon.gui;
 
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.factory.TileAssemblyTable;
+import buildcraft.factory.TileAssemblyTable.SelectionMessage;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
@@ -54,7 +55,11 @@ public class ContainerAssemblyTable extends BuildCraftContainer {
 		return table.isUseableByPlayer(entityplayer);
 	}
 
-	// @Override client side only
+	public void handleSelectionMessage(SelectionMessage message) {
+		table.handleSelectionMessage(message);
+	}
+
+	@Override
 	public void updateProgressBar(int i, int j) {
 		table.getGUINetworkData(i, j);
 	}

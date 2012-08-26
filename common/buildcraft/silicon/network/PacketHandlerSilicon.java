@@ -3,7 +3,6 @@ package buildcraft.silicon.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -12,10 +11,10 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.factory.TileAssemblyTable;
 import buildcraft.factory.TileAssemblyTable.SelectionMessage;
-import buildcraft.silicon.gui.GuiAssemblyTable;
+import buildcraft.silicon.gui.ContainerAssemblyTable;
 
+import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.GuiScreen;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
@@ -33,7 +32,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 			case PacketIds.SELECTION_ASSEMBLY_SEND:
 				PacketUpdate packetT = new PacketUpdate();
 				packetT.readData(data);
-				onSelectionUpdate(packetT);
+				onSelectionUpdate((EntityPlayer)player, packetT);
 				break;
 
 			case PacketIds.SELECTION_ASSEMBLY:
@@ -54,16 +53,14 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	}
 
-	private void onSelectionUpdate(PacketUpdate packet) {
+	private void onSelectionUpdate(EntityPlayer player, PacketUpdate packet) {
 
-		GuiScreen screen = FMLClientHandler.instance().getClient().currentScreen;
+		Container container = player.craftingInventory;
 
-		if (screen instanceof GuiAssemblyTable) {
-			GuiAssemblyTable gui = (GuiAssemblyTable) screen;
+		if (container instanceof ContainerAssemblyTable) {
 			SelectionMessage message = new SelectionMessage();
-
 			TileAssemblyTable.selectionMessageWrapper.fromPayload(message, packet.payload);
-			gui.handleSelectionMessage(message);
+			((ContainerAssemblyTable)container).handleSelectionMessage(message);
 		}
 	}
 

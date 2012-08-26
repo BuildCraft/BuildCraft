@@ -10,6 +10,7 @@
 package buildcraft.core;
 
 import java.io.File;
+import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.common.SidedProxy;
@@ -18,6 +19,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import buildcraft.core.network.BuildCraftPacket;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -34,6 +36,10 @@ public class ProxyCore {
 	@SidedProxy(clientSide="buildcraft.core.ClientProxyCore", serverSide="buildcraft.core.ProxyCore")
 	public static ProxyCore proxy;
 
+	/* INSTANCES */
+	public Object getClient() { return null; }	
+	public World getClientWorld() { return null; }
+	
 	/* SIMULATION */
 	public boolean isSimulating(World world) {
 		return !world.isRemote;
@@ -52,6 +58,9 @@ public class ProxyCore {
 		entity.setDead();
 	}
 
+	/* WRAPPER */
+	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {}
+	
 	/* LOCALIZATION */
 	public void addName(Object obj, String s) {}
 	public void addLocalization(String s1, String string) {}

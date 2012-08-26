@@ -124,7 +124,7 @@ public class ItemFacade extends ItemBuildCraft {
         {
             if (block != null)
             {
-            	block.getSubBlocks(block.blockID, null, itemList);
+            	ProxyCore.proxy.feedSubBlocks(block.blockID, null, itemList);
             }
         }
         return itemList;
