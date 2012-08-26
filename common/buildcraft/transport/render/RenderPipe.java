@@ -454,9 +454,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glPopMatrix();
 			}
 
-		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
+		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null 
+				&& Block.blocksList[itemstack.itemID].blockID != 0
 				&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
-
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
 
 			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
@@ -506,7 +506,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 				int i = itemstack.getIconIndex();
-				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null) {
+				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
+						&& Block.blocksList[itemstack.itemID].blockID != 0) {
 					ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
 				} else {
 					ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
