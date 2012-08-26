@@ -4,11 +4,17 @@ import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
+
 import net.minecraft.src.World;
 
 public abstract class PipeManager {
 
-	public static TreeMap<Integer, IPipedItem> allEntities = new TreeMap<Integer, IPipedItem>();   
+	private static TreeMap<Integer, IPipedItem> allServerEntities = new TreeMap<Integer, IPipedItem>();
+	private static TreeMap<Integer, IPipedItem> allClientEntities = new TreeMap<Integer, IPipedItem>();
+	
 	public static List<IExtractionHandler> extractionHandlers = new ArrayList<IExtractionHandler>();
 
 	public static void registerExtractionHandler(IExtractionHandler handler) {
@@ -29,5 +35,12 @@ public abstract class PipeManager {
 				return false;
 
 		return true;
+	}
+	
+	public static TreeMap<Integer, IPipedItem> getAllEntities(){
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			return allClientEntities;
+		}
+		return allServerEntities;
 	}
 }

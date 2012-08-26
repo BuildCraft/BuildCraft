@@ -52,7 +52,7 @@ public class EntityPassiveItem implements IPipedItem {
 
 	public EntityPassiveItem(World world, int id) {
 		setEntityId(id);
-		PipeManager.allEntities.put(getEntityId(), this);
+		PipeManager.getAllEntities().put(getEntityId(), this);
 		worldObj = world;
 	}
 
@@ -69,8 +69,8 @@ public class EntityPassiveItem implements IPipedItem {
 
 	/* CREATING & CACHING */
 	public static IPipedItem getOrCreate(World world, int id) {
-		if (PipeManager.allEntities.containsKey(id)) {
-			return PipeManager.allEntities.get(id);
+		if (PipeManager.getAllEntities().containsKey(id)) {
+			return PipeManager.getAllEntities().get(id);
 		} else {
 			return new EntityPassiveItem(world, id);
 		}
@@ -81,8 +81,8 @@ public class EntityPassiveItem implements IPipedItem {
 	 */
 	@Override
 	public void remove() {
-		if (PipeManager.allEntities.containsKey(getEntityId())) {
-			PipeManager.allEntities.remove(getEntityId());
+		if (PipeManager.getAllEntities().containsKey(getEntityId())) {
+			PipeManager.getAllEntities().remove(getEntityId());
 		}
 	}
 
