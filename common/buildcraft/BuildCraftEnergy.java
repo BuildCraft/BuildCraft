@@ -81,7 +81,7 @@ public class BuildCraftEnergy {
 			EnergyStage.Yellow);
 	public static Trigger triggerRedEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_RED_ENGINE_HEAT, EnergyStage.Red);
 
-	@Instance
+	@Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
 	@Init

@@ -143,7 +143,7 @@ public class BuildCraftTransport {
 	public static Action actionYellowSignal = new ActionSignalOutput(DefaultProps.ACTION_YELLOW_SIGNAL, IPipe.WireColor.Yellow);
 	public static Action actionEnergyPulser = new ActionEnergyPulser(DefaultProps.ACTION_ENERGY_PULSER);
 
-	@Instance
+	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 
 	private static class PipeRecipe {

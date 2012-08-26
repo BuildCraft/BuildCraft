@@ -39,7 +39,7 @@ public class BuildCraftSilicon {
 	public static BlockLaser laserBlock;
 	public static BlockAssemblyTable assemblyTableBlock;
 
-	@Instance
+	@Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
 
 	@Init

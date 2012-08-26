@@ -73,7 +73,7 @@ public class BuildCraftFactory {
 
 	public static boolean allowMining = true;
 
-	@Instance
+	@Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
 
 	@PostInit

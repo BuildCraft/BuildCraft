@@ -133,7 +133,7 @@ public class BuildCraftCore {
 
 	public static Logger bcLog = Logger.getLogger("Buildcraft");
 
-	@Instance
+	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
 	@PreInit

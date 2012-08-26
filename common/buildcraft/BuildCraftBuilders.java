@@ -106,7 +106,7 @@ public class BuildCraftBuilders {
 
 	private static LinkedList<IBuilderHook> hooks = new LinkedList<IBuilderHook>();
 
-	@Instance
+	@Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
 	@Init
