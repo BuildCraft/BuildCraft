@@ -42,7 +42,9 @@ public class EntityBlock extends Entity {
 		this.jSize = jSize;
 		this.kSize = kSize;
 		setPositionAndRotation(i, j, k, 0, 0);
-		setVelocity(0, 0, 0);
+		this.motionX = 0.0;
+		this.motionY = 0.0;
+		this.motionZ = 0.0;
 	}
 
 	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, int textureID) {

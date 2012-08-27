@@ -232,12 +232,12 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
 
-		for (int searchX = 0; searchX < bluePrintBuilder.bluePrint.sizeX - 2; ++searchX) {
-			for (int searchZ = 0; searchZ < bluePrintBuilder.bluePrint.sizeZ - 2; ++searchZ) {
-				blockedColumns[searchX][searchZ] = false;
-			}
-		}
-
+//		for (int searchX = 0; searchX < bluePrintBuilder.bluePrint.sizeX - 2; ++searchX) {
+//			for (int searchZ = 0; searchZ < bluePrintBuilder.bluePrint.sizeZ - 2; ++searchZ) {
+//				blockedColumns[searchX][searchZ] = false;
+//			}
+//		}
+//
 		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
 			int startX, endX, incX;
 
@@ -270,9 +270,9 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 						int blockId = worldObj.getBlockId(bx, by, bz);
 
-						if (blockDig(blockId)) {
+						if (isUnquarriableBlock(blockId, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (canDig(blockId)) {
+						} else if (isQuarriableBlock(blockId, bx, by + 1, bz)) {
 							if (doSet && arm != null) {
 								arm.setTarget(bx, by + 1, bz);
 							}
@@ -361,7 +361,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 		int blockId = worldObj.getBlockId(i, j, k);
 
-		if (canDig(blockId)) {
+		if (isQuarriableBlock(blockId, i, j, k)) {
 			powerProvider.getTimeTracker().markTime(worldObj);
 
 			// Share this with mining well!
@@ -426,16 +426,16 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 	}
 
-	private boolean blockDig(int blockID) {
+	private boolean isUnquarriableBlock(int blockID, int bx, int by, int bz) {
 
-		if (Block.blocksList[blockID] != null && Block.blocksList[blockID].getBlockHardness(worldObj, xCoord, yCoord, zCoord)  == -1.0f)
+		if (Block.blocksList[blockID] != null && Block.blocksList[blockID].getBlockHardness(worldObj, bx, by, bz)  == -1.0f)
 			return true;
 
 		return blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID;
 	}
 
-	private boolean canDig(int blockID) {
-		return !blockDig(blockID) && !BuildCraftAPI.softBlock(blockID);
+	private boolean isQuarriableBlock(int blockID, int bx, int by, int bz) {
+		return !isUnquarriableBlock(blockID, bx, by, bz) && !BuildCraftAPI.softBlock(blockID);
 	}
 
 	@Override

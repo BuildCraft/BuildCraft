@@ -63,7 +63,9 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 		this.xRoot = i;
 		this.yRoot = j;
 		this.zRoot = k;
-		setVelocity(0, 0, 0);
+		this.motionX = 0.0;
+		this.motionY = 0.0;
+		this.motionZ = 0.0;
 		setArmSize(width, height);
 		setHead(i, j - 2, k);
 		setTarget(i, j - 2, k);
