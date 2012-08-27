@@ -84,7 +84,7 @@ public class GuiCombustionEngine extends GuiEngine {
 				squaled = 0;
 			}
 
-			drawTexturedModalRect(j + col, k + line + 58 - x - start, imgColumn * 16, imgLine * 16, 16, 16 - (16 - x));
+			drawTexturedModalRect(j + col, k + line + 58 - x - start, imgColumn * 16, imgLine * 16 + (16 - x), 16, 16 - (16 - x));
 			start = start + 16;
 
 			if (x == 0 || squaled == 0)
