@@ -25,6 +25,7 @@ public class StackUtil {
 
 	public ItemStack items;
 	public int itemsAdded;
+	public int canAdd;
 
 	public StackUtil(ItemStack stack) {
 		this.items = stack;
@@ -234,6 +235,8 @@ public class StackUtil {
 						&& stack.stackSize + 1 <= inventory.getInventoryStackLimit()) {
 
 					if (doAdd) {
+						if (itemsAdded >= items.stackSize)
+							return false;
 						stack.stackSize++;
 						itemsAdded++;
 					}
@@ -242,6 +245,8 @@ public class StackUtil {
 				}
 		} else if (stack == null) {
 			if (doAdd) {
+				if (itemsAdded >= items.stackSize)
+					return false;
 				// need to to a copy to keep NBT with enchantements
 				stack = items.copy();
 				stack.stackSize = 1;
@@ -254,6 +259,23 @@ public class StackUtil {
 		}
 
 		return false;
+	}
+
+	public boolean checkRoomForItem(IInventory inventory, int stackIndex, boolean addInEmpty) {
+		ItemStack stack = inventory.getStackInSlot(stackIndex);
+
+		if (!addInEmpty) {
+			if (stack != null)
+				if (stack.getItem() == items.getItem() && stack.getItemDamage() == items.getItemDamage() && stack.stackSize > 0) {
+					canAdd += Math.min(stack.getMaxStackSize(),inventory.getInventoryStackLimit()) - stack.stackSize;
+				}
+		} else if (stack == null) {
+			canAdd += Math.min(items.getMaxStackSize(),inventory.getInventoryStackLimit());
+		}
+		if (canAdd > items.stackSize){
+			canAdd = items.stackSize;
+		}
+		return canAdd < items.stackSize;
 	}
 
 }

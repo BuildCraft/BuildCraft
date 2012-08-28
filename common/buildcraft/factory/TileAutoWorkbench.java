@@ -285,32 +285,31 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
 		StackUtil stackUtils = new StackUtil(stack);
 
-		int minSimilar = Integer.MAX_VALUE;
-		int minSlot = -1;
-
 		for (int j = 0; j < getSizeInventory(); ++j) {
-			ItemStack stackInInventory = getStackInSlot(j);
-
-			if (stackInInventory != null && stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID
-					&& stackInInventory.getItemDamage() == stack.getItemDamage() && stackInInventory.stackSize < minSimilar) {
-				minSimilar = stackInInventory.stackSize;
-				minSlot = j;
-			}
+			if (!stackUtils.checkRoomForItem(this, j, false))
+				break;
 		}
 
-		if (minSlot != -1) {
-			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
-				if (doAdd && stack.stackSize != 0) {
-					addItem(stack, doAdd, from);
+		if (!doAdd)
+			return stackUtils.canAdd;
+
+		for (int i = 0; i < stackUtils.canAdd; i++) {
+			int minSimilar = Integer.MAX_VALUE;
+			int minSlot = -1;
+			for (int j = 0; j < getSizeInventory(); ++j) {
+				ItemStack stackInInventory = getStackInSlot(j);
+
+				if (stackInInventory != null && stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID
+						&& stackInInventory.getItemDamage() == stack.getItemDamage() && stackInInventory.stackSize < minSimilar) {
+					minSimilar = stackInInventory.stackSize;
+					minSlot = j;
 				}
-
-				return stackUtils.itemsAdded;
-			} else {
-				return stackUtils.itemsAdded;
 			}
-		} else {
-			return 0;
+			if (minSlot == -1  || !stackUtils.tryAdding(this, minSlot, doAdd, false))
+				return stackUtils.itemsAdded;
 		}
+
+		return stackUtils.itemsAdded;
 	}
 
 	@Override
