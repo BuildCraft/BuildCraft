@@ -24,5 +24,11 @@ public class BlueprintManager {
 	public static BlockSignature getBlockSignature(Block block) {
 		return BlueprintManager.blockBptProps[0].getSignature(block);
 	}
-
+	
+	static {
+		// Initialize defaults for block properties.
+		for (int i = 0; i < BlueprintManager.blockBptProps.length; ++i) {
+			new BptBlock(i);
+		}
+	}
 }
