@@ -9,9 +9,6 @@
 
 package buildcraft.api.core;
 
-import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.BptBlock;
-
 import net.minecraft.src.Block;
 import net.minecraft.src.World;
 
