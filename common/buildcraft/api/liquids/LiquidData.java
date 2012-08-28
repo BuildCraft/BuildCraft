@@ -9,7 +9,6 @@
 
 package buildcraft.api.liquids;
 
-import buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 
@@ -22,11 +21,11 @@ public class LiquidData {
 	public final ItemStack container;
 
 	public LiquidData(int stillLiquidId, int movingLiquidId, Item filled) {
-		this(new LiquidStack(stillLiquidId, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(movingLiquidId, BuildCraftAPI.BUCKET_VOLUME), new ItemStack(filled, 1), new ItemStack(Item.bucketEmpty));
+		this(new LiquidStack(stillLiquidId, LiquidManager.BUCKET_VOLUME), new LiquidStack(movingLiquidId, LiquidManager.BUCKET_VOLUME), new ItemStack(filled, 1), new ItemStack(Item.bucketEmpty));
 	}
 
 	public LiquidData(int stillLiquidId, int movingLiquidId, ItemStack filled) {
-		this(new LiquidStack(stillLiquidId, BuildCraftAPI.BUCKET_VOLUME), new LiquidStack(movingLiquidId, BuildCraftAPI.BUCKET_VOLUME), filled, new ItemStack(Item.bucketEmpty));
+		this(new LiquidStack(stillLiquidId, LiquidManager.BUCKET_VOLUME), new LiquidStack(movingLiquidId, LiquidManager.BUCKET_VOLUME), filled, new ItemStack(Item.bucketEmpty));
 	}
 
 	public LiquidData(LiquidStack stillLiquid, ItemStack filled, ItemStack container) {

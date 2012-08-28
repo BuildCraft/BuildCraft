@@ -9,14 +9,13 @@
 
 package buildcraft.api.core;
 
-import buildcraft.api.blueprints.BlueprintManager;
-import buildcraft.api.blueprints.BptBlock;
-
 import net.minecraft.src.Block;
 import net.minecraft.src.World;
 
 public class BuildCraftAPI {
-
+	
+	@Deprecated
+	// To be removed, see LiquidManager
 	public static final int BUCKET_VOLUME = 1000;
 	public static final int LAST_ORIGINAL_BLOCK = 122;
 	public static final int LAST_ORIGINAL_ITEM = 126;
@@ -52,11 +51,6 @@ public class BuildCraftAPI {
 	static {
 		for (int i = 0; i < softBlocks.length; ++i) {
 			softBlocks[i] = false;
-		}
-
-		// Initialize defaults for block properties.
-		for (int i = 0; i < BlueprintManager.blockBptProps.length; ++i) {
-			new BptBlock(i);
 		}
 	}
 }
