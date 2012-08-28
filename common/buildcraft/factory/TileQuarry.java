@@ -109,6 +109,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 	private void createArm() {
 
+//		worldObj.getEntitiesWithinAABB(EntityMechanicalArm.class, AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord));
 		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj,
 				box.xMin + Utils.pipeMaxPos,
 				yCoord + bluePrintBuilder.bluePrint.sizeY - 1 + Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,

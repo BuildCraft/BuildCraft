@@ -17,13 +17,14 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 
 public class PipeTransportPower extends PipeTransport {
-	
+
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
 	public int[] powerQuery = new int[6];
@@ -140,17 +141,17 @@ public class PipeTransportPower extends PipeTransport {
 
 						if (nearbyTile.pipe == null)
 							continue;
-						
+
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 						nearbyTransport.requestEnergy(Orientations.values()[i].reverse(), transferQuery[i]);
 					}
 				}
-		
+
 		if (!worldObj.isRemote && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 				packet.displayPower = displayPower;
-//				CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-//						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+				ProxyCore.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE);
 			}
 
 	}

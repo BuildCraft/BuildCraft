@@ -15,6 +15,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import cpw.mods.fml.common.network.PacketDispatcher;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
@@ -94,11 +96,11 @@ public class PipeTransportItems extends PipeTransport {
 
 		if (!worldObj.isRemote && item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {
 			int dimension = worldObj.provider.worldType;
-			MinecraftServer.getServer().getConfigurationManager().sendToAllNear(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(item, orientation));
+			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(item, orientation));
 		}
-			
+
 //			for (Object player : MinecraftServer.getServer().getConfigurationManager().playerEntityList){
-//				
+//
 //			}
 //				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
 //						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
@@ -364,7 +366,7 @@ public class PipeTransportItems extends PipeTransport {
 				i = Math.abs(data.item.getEntityId() + xCoord + yCoord + zCoord + data.item.getDeterministicRandomization())
 						% listOfPossibleMovements.size();
 				data.item.setDeterministicRandomization(data.item.getDeterministicRandomization() * 11);
-						
+
 			}
 			else
 				i = worldObj.rand.nextInt(listOfPossibleMovements.size());
@@ -377,7 +379,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	/**
 	 * Handles a packet describing a stack of items inside a pipe.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void handleItemPacket(PacketPipeTransportContent packet) {
@@ -408,7 +410,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	/**
 	 * Creates a packet describing a stack of items inside a pipe.
-	 * 
+	 *
 	 * @param item
 	 * @param orientation
 	 * @return
@@ -436,8 +438,8 @@ public class PipeTransportItems extends PipeTransport {
 
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
-		return tile instanceof TileGenericPipe 
-			|| tile instanceof IPipeEntry 
+		return tile instanceof TileGenericPipe
+			|| tile instanceof IPipeEntry
 			|| tile instanceof ISpecialInventory
 			|| (tile instanceof IInventory && ((IInventory)tile).getSizeInventory() > 0)
 			|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());

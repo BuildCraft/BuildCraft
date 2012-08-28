@@ -19,6 +19,7 @@ import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.liquids.LiquidTank;
 import buildcraft.api.transport.IPipeEntry;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.ProxyCore;
 import buildcraft.core.Utils;
@@ -217,8 +218,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);
 				packet.displayLiquid = this.renderCache;
-//				CoreProxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-//						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftCore.instance);
+				ProxyCore.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
+						DefaultProps.NETWORK_UPDATE_RANGE);
 			}
 
 		//this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);

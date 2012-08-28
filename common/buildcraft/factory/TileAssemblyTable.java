@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipeConnection;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
+import buildcraft.core.ProxyCore;
 import buildcraft.core.StackUtil;
 import buildcraft.core.Utils;
 import buildcraft.core.network.PacketIds;
@@ -411,8 +413,8 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
 			// FIXME: This needs to be switched over to new synch system.
-			//CoreProxy.sendToPlayers(packet.getPacket(), worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
-			//		DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftSilicon.instance);
+			ProxyCore.proxy.sendToPlayers(packet.getPacket(), worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
+					DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
 
