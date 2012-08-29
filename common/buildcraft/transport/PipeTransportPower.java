@@ -96,6 +96,7 @@ public class PipeTransportPower extends PipeTransport {
 						} else if (tiles[j] instanceof IPowerReceptor) {
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
 
+       							watts = Math.min(watts, pow.getPowerProvider().getMaxEnergyReceived());
 							pow.getPowerProvider().receiveEnergy((float) watts, Orientations.values()[j].reverse());
 
 							displayPower[j] += watts / 2F;
