@@ -12,6 +12,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
@@ -41,6 +42,7 @@ public class BlockArchitect extends BlockContainer {
 	public BlockArchitect(int i) {
 		super(i, Material.iron);
 		setHardness(0.5F);
+		setCreativeTab(CreativeTabs.tabRedstone);
 		blockTextureSides = 3 * 16 + 0;
 		blockTextureTopNeg = 3 * 16 + 1;
 		blockTextureTopPos = 3 * 16 + 2;

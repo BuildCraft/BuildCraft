@@ -15,6 +15,7 @@ import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
@@ -26,6 +27,7 @@ public class BlockLaser extends BlockContainer {
 	public BlockLaser(int i) {
 		super(i, Material.iron);
 		setHardness(0.5F);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override

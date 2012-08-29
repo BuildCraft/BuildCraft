@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
@@ -244,6 +247,18 @@ public class BlockGenericPipe extends BlockContainer {
 	public int idDropped(int meta, Random rand, int dmg) {
 		// Returns 0 to be safe - the id does not depend on the meta
 		return 0;
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public int idPicked(World world, int i, int j, int k)
+	{
+		Pipe pipe = getPipe(world, i, j, k);
+		
+		if (pipe == null)
+			return 0;
+		else
+			return pipe.itemID;
 	}
 
 	/** Wrappers *************************************************************/

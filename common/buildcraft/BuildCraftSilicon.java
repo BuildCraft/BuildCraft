@@ -11,6 +11,7 @@ package buildcraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 import buildcraft.api.bptblocks.BptBlockInventory;
 import buildcraft.api.bptblocks.BptBlockRotateMeta;
@@ -60,6 +61,8 @@ public class BuildCraftSilicon {
 		Property laserId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("laser.id", DefaultProps.LASER_ID);
 
 		Property assemblyTableId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("assemblyTable.id", DefaultProps.ASSEMBLY_TABLE_ID);
+		
+		Property redstoneChipsetId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("redstoneChipset.id", Configuration.CATEGORY_ITEM, DefaultProps.REDSTONE_CHIPSET);
 
 		BuildCraftCore.mainConfiguration.save();
 
@@ -71,7 +74,7 @@ public class BuildCraftSilicon {
 		ProxyCore.proxy.addName(assemblyTableBlock.setBlockName("assemblyTableBlock"), "Assembly Table");
 		ProxyCore.proxy.registerBlock(assemblyTableBlock);
 
-		redstoneChipset = new ItemRedstoneChipset(DefaultProps.REDSTONE_CHIPSET);
+		redstoneChipset = new ItemRedstoneChipset(Integer.parseInt(redstoneChipsetId.value));
 		redstoneChipset.setItemName("redstoneChipset");
 
 	}
