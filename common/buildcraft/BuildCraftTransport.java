@@ -314,39 +314,48 @@ public class BuildCraftTransport {
 			diamondTextures[j] = 1 * 16 + 6 + j;
 		}
 
-		redPipeWire = new ItemBuildCraft(DefaultProps.RED_PIPE_WIRE).setIconIndex(4 * 16 + 0);
+		Property redPipeWireId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("redPipeWire.id", Configuration.CATEGORY_ITEM, DefaultProps.RED_PIPE_WIRE);
+		redPipeWire = new ItemBuildCraft(Integer.parseInt(redPipeWireId.value)).setIconIndex(4 * 16 + 0);
 		redPipeWire.setItemName("redPipeWire");
 		LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 1),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(redPipeWire, 8)));
 
-		bluePipeWire = new ItemBuildCraft(DefaultProps.BLUE_PIPE_WIRE).setIconIndex(4 * 16 + 1);
+		Property bluePipeWireId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("bluePipeWire.id", Configuration.CATEGORY_ITEM, DefaultProps.BLUE_PIPE_WIRE);
+		bluePipeWire = new ItemBuildCraft(Integer.parseInt(bluePipeWireId.value)).setIconIndex(4 * 16 + 1);
 		bluePipeWire.setItemName("bluePipeWire");
 		LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 4),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(bluePipeWire, 8)));
 
-		greenPipeWire = new ItemBuildCraft(DefaultProps.GREEN_PIPE_WIRE).setIconIndex(4 * 16 + 2);
+		Property greenPipeWireId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("greenPipeWire.id", Configuration.CATEGORY_ITEM, DefaultProps.GREEN_PIPE_WIRE);
+		greenPipeWire = new ItemBuildCraft(Integer.parseInt(greenPipeWireId.value)).setIconIndex(4 * 16 + 2);
 		greenPipeWire.setItemName("greenPipeWire");
 		LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 2),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(greenPipeWire, 8)));
 
-		yellowPipeWire = new ItemBuildCraft(DefaultProps.YELLOW_PIPE_WIRE).setIconIndex(4 * 16 + 3);
+		Property yellowPipeWireId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("yellowPipeWire.id", Configuration.CATEGORY_ITEM, DefaultProps.YELLOW_PIPE_WIRE);
+		yellowPipeWire = new ItemBuildCraft(Integer.parseInt(yellowPipeWireId.value)).setIconIndex(4 * 16 + 3);
 		yellowPipeWire.setItemName("yellowPipeWire");
 		LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 11),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(yellowPipeWire, 8)));
 
-		pipeGate = new ItemGate(DefaultProps.GATE_ID, 0).setIconIndex(2 * 16 + 3);
+		Property pipeGateId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("pipeGate.id", Configuration.CATEGORY_ITEM, DefaultProps.GATE_ID);
+		pipeGate = new ItemGate(Integer.parseInt(pipeGateId.value), 0).setIconIndex(2 * 16 + 3);
 		pipeGate.setItemName("pipeGate");
 
-		pipeGateAutarchic = new ItemGate(DefaultProps.GATE_AUTARCHIC_ID, 1).setIconIndex(2 * 16 + 3);
+		Property pipeGateAutarchicId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("pipeGateAutarchic.id", Configuration.CATEGORY_ITEM, DefaultProps.GATE_AUTARCHIC_ID);
+		pipeGateAutarchic = new ItemGate(Integer.parseInt(pipeGateAutarchicId.value), 1).setIconIndex(2 * 16 + 3);
 		pipeGateAutarchic.setItemName("pipeGateAutarchic");
 
-		facadeItem = new ItemFacade(DefaultProps.PIPE_FACADE_ID);
+		Property pipeFacadeId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("pipeFacade.id", Configuration.CATEGORY_ITEM, DefaultProps.PIPE_FACADE_ID);
+		facadeItem = new ItemFacade(Integer.parseInt(pipeFacadeId.value));
 		facadeItem.setItemName("pipeFacade");
 		ItemFacade.initialize();
+		
+		BuildCraftCore.mainConfiguration.save();
 
 		new BptBlockPipe(genericPipeBlock.blockID);
 
