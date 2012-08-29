@@ -85,7 +85,7 @@
   ]
 },
 {
-  "modid": "BuildCraf|tTransport",
+  "modid": "BuildCraft|Transport",
   "name": "BC Transport",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Transport Component)",
   "version": "",
