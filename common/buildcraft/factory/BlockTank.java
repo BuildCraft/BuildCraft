@@ -19,6 +19,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
@@ -31,10 +32,9 @@ public class BlockTank extends BlockContainer {
 
 	public BlockTank(int i) {
 		super(i, Material.glass);
-
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override

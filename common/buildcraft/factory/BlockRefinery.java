@@ -12,6 +12,7 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
@@ -36,6 +37,7 @@ public class BlockRefinery extends BlockContainer {
 		super(i, Material.iron);
 
 		setHardness(0.5F);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override

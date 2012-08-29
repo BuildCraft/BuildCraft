@@ -12,6 +12,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
@@ -37,6 +38,7 @@ public class BlockFiller extends BlockContainer {
 		super(i, Material.iron);
 
 		setHardness(0.5F);
+		setCreativeTab(CreativeTabs.tabRedstone);
 
 		textureSides = 4 * 16 + 2;
 		textureTopOn = 4 * 16 + 0;
