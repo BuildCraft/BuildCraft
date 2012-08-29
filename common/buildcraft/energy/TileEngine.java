@@ -100,6 +100,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 		}
 
 		engine.update();
+		provider.update(this);
 
 		float newPistonSpeed = engine.getPistonSpeed();
 		if (newPistonSpeed != serverPistonSpeed) {
