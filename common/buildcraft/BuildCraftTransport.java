@@ -71,6 +71,7 @@ import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
@@ -240,6 +241,7 @@ public class BuildCraftTransport {
 
 			pipeWaterproof = new ItemBuildCraft(Integer.parseInt(pipeWaterproofId.value)).setIconIndex(2 * 16 + 1);
 			pipeWaterproof.setItemName("pipeWaterproof");
+			pipeWaterproof.setTabToDisplayOn(CreativeTabs.tabMaterials);
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Waterproof");
 			genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
 			GameRegistry.registerBlock(genericPipeBlock);

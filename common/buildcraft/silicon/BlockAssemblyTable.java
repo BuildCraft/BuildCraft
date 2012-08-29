@@ -3,6 +3,7 @@ package buildcraft.silicon;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -24,6 +25,7 @@ public class BlockAssemblyTable extends BlockContainer {
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(0.5F);
+		setCreativeTab(CreativeTabs.tabRedstone);
 
 	}
 

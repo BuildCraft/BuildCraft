@@ -15,6 +15,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.Utils;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
@@ -25,9 +26,8 @@ public class BlockPump extends BlockContainer {
 
 	public BlockPump(int i) {
 		super(i, Material.iron);
-
 		setHardness(5F);
-		// TODO Auto-generated constructor stub
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override
