@@ -151,6 +151,18 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 		}
 	}
+	
+	public void updateEntity() {
+		if(worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)){
+			if(signals == null){
+				switchSignals();
+			}
+		}else{
+			if(signals != null){
+				switchSignals();
+			}
+		}
+	}
 
 	public void tryConnection() {
 		if (ProxyCore.proxy.isRemote(worldObj)) {
