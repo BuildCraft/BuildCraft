@@ -615,4 +615,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		}
 		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
 	}
+	
+	@Override
+	public double getRenderDistance() {
+		return 24;
+	}
 }
