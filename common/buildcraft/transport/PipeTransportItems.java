@@ -153,7 +153,7 @@ public class PipeTransportItems extends PipeTransport {
 				return false;
 			return ((PipeTransportItems)pipe.pipe.transport).inputOpen(o);
 		} else if (entity instanceof IPipeEntry){
-			return true;
+			return ((IPipeEntry) entity).acceptItems();
 		} else if (entity instanceof IInventory)
 			if (new StackUtil(item.getItemStack()).checkAvailableSlot((IInventory) entity, false, o.reverse()))
 				return true;
