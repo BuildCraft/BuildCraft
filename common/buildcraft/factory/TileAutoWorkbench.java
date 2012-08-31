@@ -300,14 +300,14 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 		if (minSlot != -1) {
 			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
+				if(doAdd)
+					stack.stackSize--;
+				
 				if (doAdd && stack.stackSize != 0) {
 					addItem(stack, doAdd, from);
 				}
-
-				return stackUtils.itemsAdded;
-			} else {
-				return stackUtils.itemsAdded;
 			}
+			return stackUtils.itemsAdded;
 		} else {
 			return 0;
 		}
