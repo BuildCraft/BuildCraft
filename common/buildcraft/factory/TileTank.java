@@ -161,7 +161,12 @@ public class TileTank extends TileBuildCraft implements ITankContainer
         }
 
         int used = below.tank.fill(tank.getLiquid(), true);
-        tank.drain(used, true);
+        if(used>0) {
+            hasUpdate= true; // not redundant because tank.drain operates on an ILiquidTank, not a tile
+            below.hasUpdate=true; // redundant because below.fill sets hasUpdate
+
+            tank.drain(used, true);
+        }
     }
 
     /* ITANKCONTAINER */
@@ -183,9 +188,14 @@ public class TileTank extends TileBuildCraft implements ITankContainer
         while(tankToFill != null && resource.amount > 0){
             int used = tankToFill.tank.fill(resource, doFill);
             resource.amount -= used;
+            if(used>0)
+                tankToFill.hasUpdate=true;
+
             totalUsed += used;
             tankToFill = getTankAbove(tankToFill);
         }
+        if(totalUsed>0)
+            hasUpdate= true;
         return totalUsed;
     }
 
@@ -198,7 +208,9 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     @Override
     public LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain)
     {
-        return getBottomTank().tank.drain(maxEmpty, doDrain);
+        TileTank bottom=getBottomTank();
+    	bottom.hasUpdate=true;
+        return bottom.tank.drain(maxEmpty, doDrain);
     }
 
     @Override
