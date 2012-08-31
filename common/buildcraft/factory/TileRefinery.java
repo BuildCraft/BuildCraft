@@ -233,10 +233,10 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		if(liquid == null)
 			return true;
 		
-		if(liquid.isLiquidEqual(new LiquidStack(slot1.liquidId, slot1.quantity, 0))) {
+		if(liquid.containsLiquid(new LiquidStack(slot1.liquidId, slot1.quantity, 0))) {
 			slot1.quantity -= liquid.amount;
 			return true;
-		} else if(liquid.isLiquidEqual(new LiquidStack(slot2.liquidId, slot2.quantity, 0))) {
+		} else if(liquid.containsLiquid(new LiquidStack(slot2.liquidId, slot2.quantity, 0))) {
 			slot2.quantity -= liquid.amount;
 			return true;
 		}
