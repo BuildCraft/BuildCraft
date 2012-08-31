@@ -108,7 +108,7 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-		((TileMarker) world.getBlockTileEntity(i, j, k)).switchSignals();
+		((TileMarker) world.getBlockTileEntity(i, j, k)).updateSignals();
 
 		if (dropTorchIfCantStay(world, i, j, k)) {
 			int i1 = world.getBlockMetadata(i, j, k);
