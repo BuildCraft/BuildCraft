@@ -146,7 +146,8 @@ public abstract class PowerProvider implements IPowerProvider {
 
 	@Override
 	public void receiveEnergy(float quantity, Orientations from) {
-		powerSources[from.ordinal()] = 2;
+		if(from != Orientations.Unknown)
+			powerSources[from.ordinal()] = 2;
 
 		energyStored += quantity;
 
