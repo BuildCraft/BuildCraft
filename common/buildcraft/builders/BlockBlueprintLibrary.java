@@ -12,6 +12,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import net.minecraft.src.BlockContainer;
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
@@ -28,6 +29,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 	public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
+		setCreativeTab(CreativeTabs.tabRedstone);
 		setHardness(0.7F);
 	}
 
