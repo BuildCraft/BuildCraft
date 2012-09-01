@@ -6,7 +6,6 @@ import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.event.FMLConstructionEvent;
 
 import net.minecraft.src.World;
 

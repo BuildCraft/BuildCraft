@@ -14,10 +14,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.liquids.ITankContainer;
+import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -95,7 +95,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
 							}
 
-							internalLiquid = internalLiquid += BuildCraftAPI.BUCKET_VOLUME;
+							internalLiquid = internalLiquid += LiquidManager.BUCKET_VOLUME;
 
 							if (ProxyCore.proxy.isSimulating(worldObj)) {
 								sendNetworkUpdate();

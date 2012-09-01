@@ -10,11 +10,11 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
+import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.liquids.LiquidTank;
 import buildcraft.api.power.IPowerProvider;
@@ -35,7 +35,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	private int[] filters = new int[2];
 
-	public static int LIQUID_PER_SLOT = BuildCraftAPI.BUCKET_VOLUME * 4;
+	public static int LIQUID_PER_SLOT = LiquidManager.BUCKET_VOLUME * 4;
 
 	public static class Slot {
 

@@ -9,11 +9,11 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
+import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.liquids.LiquidTank;
 import buildcraft.core.ProxyCore;
@@ -26,7 +26,7 @@ import net.minecraft.src.TileEntity;
 public class TileTank extends TileBuildCraft implements ITankContainer
 {
 
-    public final ILiquidTank tank = new LiquidTank(BuildCraftAPI.BUCKET_VOLUME * 16);
+    public final ILiquidTank tank = new LiquidTank(LiquidManager.BUCKET_VOLUME * 16);
     public boolean hasUpdate = false;
     public SafeTimeTracker tracker = new SafeTimeTracker();
 

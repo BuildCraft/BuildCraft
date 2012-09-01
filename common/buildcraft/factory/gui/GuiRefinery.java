@@ -14,7 +14,6 @@ import net.minecraft.src.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.recipes.RefineryRecipe;
@@ -103,8 +102,8 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		if (filter1 != null)
 			liquid1Id = filter1.itemID;
 
-		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(new LiquidStack(liquid0Id, BuildCraftAPI.BUCKET_VOLUME, 0),
-				new LiquidStack(liquid1Id, BuildCraftAPI.BUCKET_VOLUME, 0));
+		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(new LiquidStack(liquid0Id, LiquidManager.BUCKET_VOLUME, 0),
+				new LiquidStack(liquid1Id, LiquidManager.BUCKET_VOLUME, 0));
 
 		if (recipe != null)
 			((ItemSlot) slots[2]).stack = recipe.result.asItemStack();
