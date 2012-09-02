@@ -1,0 +1,125 @@
+<project name="Buildcraft" basedir="../../" default="main">
+    
+    <!-- Properties -->
+    
+    <property name="build.dir"           value="build"/>
+	<property name="src.dir"			 value="buildcraft.131" />
+	<property name="resource.dir"		 value="mc.devel" />
+    
+    <property name="classes.dir"         value="${build.dir}/classes"/>
+    <property name="jar.dir"             value="${build.dir}/dist"/>
+          
+    <property name="mcp.dir"             value="${build.dir}/mcp"/>
+    <property name="forge.dir"           value="${mcp.dir}/forge"/>
+      
+    <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
+          
+	<property name="mc.version"			value="1.3.2"/>
+    <property name="mcp.version"         value="72"/>
+    <property name="forge.version"       value="4.0.0.232"/>
+    <property name="bc.version"          value="3.2.0"/>
+    <property name="bc.version.full"     value="${bc.version}pre1"/>
+    
+    <echo message="Starting build for ${bc.version.full}"/>
+	
+    <!-- Targets -->
+    
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+    
+    <target name="setup">
+        
+		<!-- Setup MCP -->
+		<unzip dest="${mcp.dir}">
+			<fileset dir="${resource.dir}">
+				<include name="mcp${mcp.version}.zip" />
+			</fileset>
+		</unzip>
+		
+        <unzip dest="${mcp.dir}">
+            <fileset dir="${resource.dir}">
+                <include name="minecraftforge-src-${forge.version}.zip"/>
+            </fileset>
+        </unzip>
+
+		<unzip dest="${mcp.dir}/jars">
+			<fileset dir="${resource.dir}">
+				<include name="mc-jars-${mc.version}.zip"/>
+			</fileset>
+		</unzip>	
+
+        <chmod file="${mcp.dir}/updatemd5.sh" perm="+x"/>
+        <chmod file="${mcp.dir}/decompile.sh" perm="+x"/>
+        <chmod file="${mcp.dir}/recompile.sh" perm="+x"/>
+        <chmod file="${mcp.dir}/reobfuscate.sh" perm="+x"/>
+        <chmod file="${forge.dir}/install.sh" perm="+x"/>
+    	
+        <!-- if your building on OSX these 2 should be executable -->
+        <chmod file="${mcp.dir}/runtime/bin/astyle-osx" perm="+x" />
+        <chmod file="${mcp.dir}/runtime/bin/jad-osx" perm="+x" />
+                
+        <!-- Install forge -->
+        <exec dir="${forge.dir}" executable="cmd" osfamily="windows">
+            <arg line="/c install.cmd"/>
+        </exec>
+        
+        <exec dir="${forge.dir}" executable="sh" osfamily="unix">
+            <arg value="install.sh" />
+        </exec>
+
+        <!-- Copy BC source -->
+        <copy todir="${clientsrc.dir}">
+            <fileset dir="${src.dir}/common">
+                <exclude name="**/buildcraft/devel"/>
+            </fileset>
+            <filterset>
+                <filter token="VERSION" value="${bc.version}" />
+            </filterset>
+        </copy>
+        
+    </target>
+    
+    <target name="compile" depends="setup">
+        
+        <!-- Recompile -->
+        <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+            <arg line="/c recompile.bat"/>
+        </exec>
+        
+        <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+            <arg value="recompile.sh" />
+        </exec>
+        
+        <!-- Reobf -->
+        <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+            <arg line="/c reobfuscate.bat"/>
+        </exec>
+        
+        <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+            <arg value="reobfuscate.sh" />
+        </exec>
+        
+        <!-- Copy BC classes -->
+        <copy todir="${classes.dir}/client">
+            <fileset dir="${mcp.dir}/reobf/minecraft"/>
+        </copy>
+        
+        <!-- Copy resoucres -->
+        <copy todir="${classes.dir}/client">
+            <fileset dir="${src.dir}/buildcraft_resources">
+                <exclude name="build.xml"/>
+        	</fileset>
+        </copy>
+        
+    </target>
+    
+    <target name="package" depends="compile">
+        
+        <jar destfile="${jar.dir}/buildcraft-A-${bc.version.full}.jar" basedir="${classes.dir}/client"/>
+        
+    </target>
+    
+    <target name="main" depends="clean,package"/>
+
+</project>
