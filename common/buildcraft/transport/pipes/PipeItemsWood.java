@@ -198,10 +198,12 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 				ItemStack slot = inventory.getStackInSlot(k);
 
-				if (slot != null && slot.stackSize > 0)
-					if (doRemove)
+				if (slot != null)
+					if (slot.stackSize > 0 && doRemove)
 						return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
-					else
+					else if (slot.stackSize < 0)
+						{ItemStack k=slot.copy(); k.stackSize=1; return k;}
+					else if (!doRemove)
 						return slot;
 			}
 
