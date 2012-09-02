@@ -88,19 +88,25 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	private EntityBlock[] lasers;
 	private EntityBlock[] signals;
+	public @TileNetworkData boolean showSignals = false;
 
-	public void switchSignals() {
+	public void updateSignals() {
+		if (ProxyCore.proxy.isSimulating(worldObj)) {
+			showSignals = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+			sendNetworkUpdate();
+		}
+	}
+	
+	private void switchSignals(){
 		if (signals != null) {
 			for (EntityBlock b : signals) {
 				if (b != null) {
 					ProxyCore.proxy.removeEntity(b);
 				}
 			}
-
 			signals = null;
 		}
-
-		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
+		if(showSignals){
 			signals = new EntityBlock[6];
 			if (!origin.isSet() || !origin.vect[0].isSet()) {
 				signals[0] = Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord + maxSize - 1,
@@ -123,10 +129,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 						yCoord, zCoord), LaserKind.Blue);
 			}
 		}
-
-		if (ProxyCore.proxy.isSimulating(worldObj)) {
-			sendNetworkUpdate();
-		}
 	}
 
 	private Position initVectO, initVect[];
@@ -135,7 +137,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	public void initialize() {
 		super.initialize();
 
-		switchSignals();
+		updateSignals();
 
 		if (initVectO != null) {
 			origin = new Origin();
@@ -230,8 +232,8 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 
 		origin.vectO.getMarker(worldObj).createLasers();
-		switchSignals();
-		marker.switchSignals();
+		updateSignals();
+		marker.updateSignals();
 
 		return true;
 	}
@@ -377,11 +379,11 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 				TileMarker mark = wrapper.getMarker(worldObj);
 
 				if (mark != null) {
-					mark.switchSignals();
+					mark.updateSignals();
 				}
 			}
 
-			markerOrigin.switchSignals();
+			markerOrigin.updateSignals();
 		}
 
 		if (signals != null) {
@@ -484,15 +486,17 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	@Override
 	public void postPacketHandling(PacketUpdate packet) {
 		super.postPacketHandling(packet);
+		
+		switchSignals();
 
 		if (origin.vectO.isSet()) {
-			origin.vectO.getMarker(worldObj).switchSignals();
+			origin.vectO.getMarker(worldObj).updateSignals();
 
 			for (TileWrapper w : origin.vect) {
 				TileMarker m = w.getMarker(worldObj);
 
 				if (m != null) {
-					m.switchSignals();
+					m.updateSignals();
 				}
 			}
 		}
