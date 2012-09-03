@@ -36,7 +36,7 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.BptBlockPipe;
 import buildcraft.transport.BptItemPipeDiamond;
 import buildcraft.transport.BptItemPipeIron;
-import buildcraft.transport.BptItemPipeWodden;
+import buildcraft.transport.BptItemPipeWooden;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGate;
@@ -363,8 +363,8 @@ public class BuildCraftTransport {
 
 		new BptBlockPipe(genericPipeBlock.blockID);
 
-		BuildCraftCore.itemBptProps[pipeItemsWood.shiftedIndex] = new BptItemPipeWodden();
-		BuildCraftCore.itemBptProps[pipeLiquidsWood.shiftedIndex] = new BptItemPipeWodden();
+		BuildCraftCore.itemBptProps[pipeItemsWood.shiftedIndex] = new BptItemPipeWooden();
+		BuildCraftCore.itemBptProps[pipeLiquidsWood.shiftedIndex] = new BptItemPipeWooden();
 		BuildCraftCore.itemBptProps[pipeItemsIron.shiftedIndex] = new BptItemPipeIron();
 		BuildCraftCore.itemBptProps[pipeLiquidsIron.shiftedIndex] = new BptItemPipeIron();
 		BuildCraftCore.itemBptProps[pipeItemsDiamond.shiftedIndex] = new BptItemPipeDiamond();

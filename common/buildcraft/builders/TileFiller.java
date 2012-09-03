@@ -95,7 +95,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			}
 		}
 
-		if (powerProvider.getEnergyStored() > 25) {
+		if (powerProvider.getEnergyStored() >= 25) {
 			doWork();
 		}
 	}
@@ -140,7 +140,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			}
 		}
 
-		if (powerProvider.getEnergyStored() > 25) {
+		if (powerProvider.getEnergyStored() >= 25) {
 			doWork();
 		}
 	}
