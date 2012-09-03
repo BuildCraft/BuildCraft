@@ -29,6 +29,7 @@ public class OilPopulate implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+		if (world.getWorldInfo().getDimension() != 0) return; // We're not in the overworld, don't generate oil.
 		
 		// shift to world coordinates
 		chunkX = chunkX << 4;
