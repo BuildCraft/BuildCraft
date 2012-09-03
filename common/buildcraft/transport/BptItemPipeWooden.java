@@ -18,9 +18,9 @@ import buildcraft.core.BptItem;
 
 import net.minecraft.src.ItemStack;
 
-public class BptItemPipeWodden extends BptItem {
+public class BptItemPipeWooden extends BptItem {
 
-	public BptItemPipeWodden() {
+	public BptItemPipeWooden() {
 
 	}
 
