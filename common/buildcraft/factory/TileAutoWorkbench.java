@@ -285,6 +285,18 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
 		StackUtil stackUtils = new StackUtil(stack);
 
+		if(stack.stackSize>1 && doAdd){
+			ItemStack clonedStack = stack.copy();
+			int added =0;
+			while(clonedStack.stackSize>1){
+				ItemStack oneStack = clonedStack.splitStack(1);
+				added +=addItem(oneStack,doAdd,from);
+			}
+			added +=addItem(clonedStack,doAdd,from);
+			return added;
+			
+		}		
+		
 		int minSimilar = Integer.MAX_VALUE;
 		int minSlot = -1;
 		int space=0;
@@ -307,15 +319,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			return Math.min(space,stack.stackSize);
 		
 		if (minSlot != -1) {
-			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
-				if (doAdd && stack.stackSize != 0) {
-					addItem(stack, doAdd, from);
-				}
-
-				return stackUtils.itemsAdded;
-			} else {
-				return stackUtils.itemsAdded;
-			}
+			return stackUtils.tryAdding(this, minSlot, doAdd, false)?1:0;			
 		} else {
 			return 0;
 		}
