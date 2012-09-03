@@ -29,7 +29,6 @@ public class OilPopulate implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		if (world.getWorldInfo().getDimension() != 0) return; // We're not in the overworld, don't generate oil.
 		
 		// shift to world coordinates
 		chunkX = chunkX << 4;
@@ -50,7 +49,7 @@ public class OilPopulate implements IWorldGenerator {
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);
 
 		// Do not generate oil in the End
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID)
+		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID)
 			return;
 
 		if (biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97) {
