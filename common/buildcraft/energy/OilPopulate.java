@@ -49,7 +49,7 @@ public class OilPopulate implements IWorldGenerator {
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);
 
 		// Do not generate oil in the End
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID)
+		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID)
 			return;
 
 		if (biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97) {
