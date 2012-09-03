@@ -235,8 +235,9 @@ public class StackUtil {
 
 					if (doAdd) {
 						stack.stackSize++;
-						itemsAdded++;
 					}
+					itemsAdded++;
+					
 
 					return true;
 				}
