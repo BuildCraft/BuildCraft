@@ -134,10 +134,13 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 			arm.setArmSpeed(0);
 			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
 
-			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
+			boolean enoughStep=(0.015 + energyToUse / 200F)>(1F/32F); // (otherwise the movement is rounded to 0 and the energy absorbed with no movement)
+			if(enoughStep){
+				float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
 
-			if (energy > 0) {
-				arm.doMove(0.015 + energy / 200F);
+				if (energy > 0) {
+					arm.doMove(0.015 + energy / 200F);
+				}
 			}
 		}
 
