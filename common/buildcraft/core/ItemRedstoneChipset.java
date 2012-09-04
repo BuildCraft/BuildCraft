@@ -15,10 +15,11 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
+		setTabToDisplayOn(CreativeTabs.tabRedstone);
 	}
 
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
+	@Override
 	public int getIconFromDamage(int i) {
 		switch (i) {
 		case 0:
