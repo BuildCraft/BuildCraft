@@ -24,7 +24,6 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Gate;
 import buildcraft.transport.GateVanilla;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.Gate.GateKind;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
