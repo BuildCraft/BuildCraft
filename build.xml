@@ -34,10 +34,10 @@
         <mkdir dir="${download.dir}"/>
         
         <get src="http://mcp.ocean-labs.de/files/mcp${mcp.version}.zip" dest="${download.dir}" usetimestamp="True"/>
-        <get src="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip" 
+        <getMethod url="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip" 
             dest="${download.dir}" usetimestamp="True">
         	<header name="User-Agent" value="Ant-${ant.version}/${ant.java.version}" />
-    	</get>
+    	</getMethod>
         
         <unzip dest="${mcp.dir}">
             <fileset dir="${download.dir}">

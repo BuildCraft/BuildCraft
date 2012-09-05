@@ -34,7 +34,7 @@ import net.minecraft.src.World;
 
 public class CoreProxy {
 
-	@SidedProxy(clientSide="buildcraft.core.ClientProxyCore", serverSide="buildcraft.core.ProxyCore")
+	@SidedProxy(clientSide="buildcraft.core.proxy.CoreProxyClient", serverSide="buildcraft.core.proxy.CoreProxy")
 	public static CoreProxy proxy;
 
 	/* INSTANCES */
