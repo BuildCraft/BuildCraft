@@ -62,7 +62,7 @@ public class ClientProxyCore extends ProxyCore {
 
 	/* WRAPPER */
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
-		
+		itemList.add(new ItemStack(id, 1, 0));
 	}
 	
 	/* LOCALIZATION */
