@@ -121,12 +121,9 @@ public class ItemFacade extends ItemBuildCraft {
 		List itemList = new ArrayList();
 		
 		for (Block block : Block.blocksList)
-        {
             if (block != null)
-            {
             	ProxyCore.proxy.feedSubBlocks(block.blockID, null, itemList);
-            }
-        }
+
         return itemList;
 	}
 	

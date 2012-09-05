@@ -27,6 +27,7 @@ import buildcraft.core.render.RenderingOil;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -62,7 +63,10 @@ public class ClientProxyCore extends ProxyCore {
 
 	/* WRAPPER */
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
+		if(Block.blocksList[id] == null)
+			return;
 		
+		Block.blocksList[id].getSubBlocks(id, tab, itemList);
 	}
 	
 	/* LOCALIZATION */
