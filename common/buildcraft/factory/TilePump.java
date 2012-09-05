@@ -25,10 +25,10 @@ import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.NBTTagCompound;
@@ -66,13 +66,13 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 			return;
 		}
 
-		if (!ProxyCore.proxy.isRemote(worldObj)) {
+		if (!CoreProxy.proxy.isRemote(worldObj)) {
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
 
 				setTubePosition();
 
-				if (ProxyCore.proxy.isSimulating(worldObj)) {
+				if (CoreProxy.proxy.isSimulating(worldObj)) {
 					sendNetworkUpdate();
 				}
 
@@ -97,7 +97,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 							internalLiquid = internalLiquid += LiquidManager.BUCKET_VOLUME;
 
-							if (ProxyCore.proxy.isSimulating(worldObj)) {
+							if (CoreProxy.proxy.isSimulating(worldObj)) {
 								sendNetworkUpdate();
 							}
 						}
@@ -160,7 +160,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 		worldObj.spawnEntityInWorld(tube);
 
-		if (ProxyCore.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
 			sendNetworkUpdate();
 		}
 	}
@@ -351,7 +351,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	@Override
 	public void destroy() {
 		if (tube != null) {
-			ProxyCore.proxy.removeEntity(tube);
+			CoreProxy.proxy.removeEntity(tube);
 			tube = null;
 			tubeY = Double.NaN;
 			aimY = 0;

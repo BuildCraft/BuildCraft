@@ -17,7 +17,6 @@ import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicDiamond;
 import buildcraft.transport.PipeTransportItems;
 
 import net.minecraft.src.Item;

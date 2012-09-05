@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import buildcraft.api.core.Orientations;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import buildcraft.silicon.SiliconProxyClient;
 
 public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {

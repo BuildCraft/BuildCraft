@@ -8,7 +8,7 @@ import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -55,7 +55,7 @@ public class TilePathMarker extends TileMarker {
 
 	public void createLaserAndConnect(TilePathMarker pathMarker) {
 
-		if (ProxyCore.proxy.isRemote(worldObj))
+		if (CoreProxy.proxy.isRemote(worldObj))
 			return;
 
 		EntityLaser laser = new EntityLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));

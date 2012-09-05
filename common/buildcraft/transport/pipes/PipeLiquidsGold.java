@@ -11,7 +11,6 @@ package buildcraft.transport.pipes;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicGold;
 import buildcraft.transport.PipeTransportLiquids;
 
 public class PipeLiquidsGold extends Pipe {

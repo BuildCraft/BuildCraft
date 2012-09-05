@@ -21,8 +21,8 @@ import buildcraft.api.liquids.LiquidTank;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketLiquidUpdate;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -178,7 +178,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	@Override
 	public void updateEntity() {
-		if (ProxyCore.proxy.isRemote(worldObj))
+		if (CoreProxy.proxy.isRemote(worldObj))
 			return;
 
 		moveLiquids();
@@ -213,12 +213,12 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 
 
-		if (ProxyCore.proxy.isSimulating(worldObj))
+		if (CoreProxy.proxy.isSimulating(worldObj))
 			if (tracker.markTimeIfDelay(worldObj, 1 * BuildCraftCore.updateFactor)){
 
 				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);
 				packet.displayLiquid = this.renderCache;
-				ProxyCore.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
+				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
 						DefaultProps.NETWORK_UPDATE_RANGE);
 			}
 

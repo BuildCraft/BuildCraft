@@ -14,8 +14,8 @@ import java.util.LinkedList;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.StackUtil;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.StackUtil;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.CraftingManager;

@@ -12,8 +12,8 @@ import net.minecraft.src.World;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.factory.TileAssemblyTable;
 
 
@@ -49,7 +49,7 @@ public class BlockAssemblyTable extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!ProxyCore.proxy.isRemote(world))
+		if (!CoreProxy.proxy.isRemote(world))
 			entityplayer.openGui(BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
 		return true;
 	}

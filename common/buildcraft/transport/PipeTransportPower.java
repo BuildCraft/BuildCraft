@@ -19,8 +19,8 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 
 public class PipeTransportPower extends PipeTransport {
@@ -50,7 +50,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (ProxyCore.proxy.isRemote(worldObj))
+		if (CoreProxy.proxy.isRemote(worldObj))
 			return;
 
 		step();
@@ -150,7 +150,7 @@ public class PipeTransportPower extends PipeTransport {
 		if (!worldObj.isRemote && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 				packet.displayPower = displayPower;
-				ProxyCore.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
+				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
 						DefaultProps.NETWORK_UPDATE_RANGE);
 			}
 

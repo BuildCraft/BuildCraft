@@ -16,7 +16,7 @@ import java.util.Random;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IFramePipeConnection;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;

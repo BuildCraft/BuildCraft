@@ -4,15 +4,15 @@ import java.io.IOException;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.IBuilderHook;
-import buildcraft.core.BptPlayerIndex;
-import buildcraft.core.BptRootIndex;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.blueprints.BptPlayerIndex;
+import buildcraft.core.blueprints.BptRootIndex;
+import buildcraft.core.proxy.CoreProxy;
 
 public class ClientBuilderHook implements IBuilderHook {
 
 	@Override
 	public void rootIndexInitialized(BptRootIndex rootBptIndex) throws IOException {
-		BptPlayerIndex playerIndex = new BptPlayerIndex(ProxyCore.proxy.playerName() + ".list", rootBptIndex);
-		BuildCraftBuilders.playerLibrary.put(ProxyCore.proxy.playerName(), playerIndex);
+		BptPlayerIndex playerIndex = new BptPlayerIndex(CoreProxy.proxy.playerName() + ".list", rootBptIndex);
+		BuildCraftBuilders.playerLibrary.put(CoreProxy.proxy.playerName(), playerIndex);
 	}
 }

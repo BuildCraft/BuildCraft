@@ -14,10 +14,9 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicStone;
 import buildcraft.transport.PipeTransportItems;
 
 

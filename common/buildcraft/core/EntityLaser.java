@@ -15,6 +15,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 import buildcraft.api.core.Position;
+import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
@@ -88,7 +89,7 @@ public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
 		if (head == null || tail == null)
 			return;
 
-		if (ProxyCore.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRemote(worldObj)) {
 			updateData();
 		}
 

@@ -9,8 +9,9 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.triggers.ActionEnergyPulser;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
@@ -61,7 +62,7 @@ public class GateVanilla extends Gate {
 	// GUI
 	@Override
 	public void openGui(EntityPlayer player) {
-		if (!ProxyCore.proxy.isRemote(player.worldObj))
+		if (!CoreProxy.proxy.isRemote(player.worldObj))
 			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
 

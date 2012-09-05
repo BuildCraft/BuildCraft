@@ -23,8 +23,8 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 
 
 public class BlockFiller extends BlockContainer {
@@ -52,7 +52,7 @@ public class BlockFiller extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!ProxyCore.proxy.isRemote(world))
+		if (!CoreProxy.proxy.isRemote(world))
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
 		return true;
 

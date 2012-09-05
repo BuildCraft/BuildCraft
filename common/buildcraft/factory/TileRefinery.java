@@ -22,8 +22,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
@@ -165,9 +165,9 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public void updateEntity() {
-		if (ProxyCore.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRemote(worldObj)) {
 			simpleAnimationIterate();
-		} else if (ProxyCore.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+		} else if (CoreProxy.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			sendNetworkUpdate();
 		}
 

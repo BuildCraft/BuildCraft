@@ -19,9 +19,9 @@ import cpw.mods.fml.client.FMLClientHandler;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.core.BptBase;
-import buildcraft.core.BptPlayerIndex;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtil;
 

@@ -27,8 +27,8 @@ import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 
 
 public class BlockArchitect extends BlockContainer {
@@ -93,7 +93,7 @@ public class BlockArchitect extends BlockContainer {
 			return true;
 		} else {
 
-			if (!ProxyCore.proxy.isRemote(world))
+			if (!CoreProxy.proxy.isRemote(world))
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, i, j, k);
 			return true;
 

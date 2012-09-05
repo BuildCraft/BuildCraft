@@ -32,31 +32,31 @@ import buildcraft.api.liquids.LiquidData;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.core.ActionMachineControl;
-import buildcraft.core.ActionRedstoneOutput;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.BptItem;
 import buildcraft.core.BuildCraftConfiguration;
-import buildcraft.core.DefaultActionProvider;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.DefaultTriggerProvider;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.RedstonePowerFramework;
-import buildcraft.core.TriggerInventory;
-import buildcraft.core.TriggerLiquidContainer;
-import buildcraft.core.TriggerMachine;
-import buildcraft.core.ActionMachineControl.Mode;
+import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
 //import buildcraft.core.network.ConnectionHandler;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.core.triggers.DefaultActionProvider;
+import buildcraft.core.triggers.DefaultTriggerProvider;
+import buildcraft.core.triggers.TriggerInventory;
+import buildcraft.core.triggers.TriggerLiquidContainer;
+import buildcraft.core.triggers.TriggerMachine;
+import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Localization;
-import buildcraft.transport.TriggerRedstoneInput;
+import buildcraft.transport.triggers.TriggerRedstoneInput;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityList;
@@ -246,8 +246,8 @@ public class BuildCraftCore {
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 
-		ProxyCore.proxy.initializeRendering();
-		ProxyCore.proxy.initializeEntityRendering();
+		CoreProxy.proxy.initializeRendering();
+		CoreProxy.proxy.initializeEntityRendering();
 
 		Localization.addLocalization("/lang/buildcraft/", DefaultProps.DEFAULT_LANGUAGE);
 

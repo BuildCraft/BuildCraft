@@ -24,7 +24,11 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
-import buildcraft.core.BptSlot.Mode;
+import buildcraft.core.blueprints.BptBuilderBase;
+import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.BptSlot;
+import buildcraft.core.blueprints.BptSlot.Mode;
+import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
@@ -202,7 +206,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 				BptSlot target = a.slot;
 				if (wait <= 0) {
 
-					if (!ProxyCore.proxy.isRemote(worldObj)) {
+					if (!CoreProxy.proxy.isRemote(worldObj)) {
 
 						if (target.mode == Mode.ClearIfInvalid) {
 

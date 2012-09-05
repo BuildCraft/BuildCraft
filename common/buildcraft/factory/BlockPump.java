@@ -12,7 +12,7 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.CreativeTabs;

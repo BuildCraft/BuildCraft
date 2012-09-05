@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Properties;
 
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 
 /**
@@ -98,6 +98,6 @@ public class Localization {
 	}
 
 	private static String getCurrentLanguage() {
-		return ProxyCore.proxy.getCurrentLanguage();
+		return CoreProxy.proxy.getCurrentLanguage();
 	}
 }

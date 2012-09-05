@@ -8,11 +8,11 @@
  */
 package buildcraft.factory.gui;
 
-import buildcraft.core.ProxyCore;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
@@ -54,12 +54,12 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 		refinery.setFilter(slot, liquidId);
 
-		if (ProxyCore.proxy.isRemote(refinery.worldObj)) {
+		if (CoreProxy.proxy.isRemote(refinery.worldObj)) {
 			PacketPayload payload = new PacketPayload(3, 0, 0);
 			payload.intPayload[0] = slot;
 			payload.intPayload[1] = liquidId;
 			payload.intPayload[2] = liquidMeta;
-			ProxyCore.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord,
+			CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord,
 					refinery.zCoord, payload).getPacket());
 		}
 	}

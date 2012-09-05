@@ -26,11 +26,13 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
-import buildcraft.core.ActionRedstoneOutput;
 import buildcraft.core.IDropControlInventory;
-import buildcraft.core.Utils;
 import buildcraft.core.network.TilePacketWrapper;
+import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
+import buildcraft.transport.pipes.PipeLogic;
+import buildcraft.transport.triggers.ActionSignalOutput;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;

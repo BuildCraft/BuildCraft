@@ -28,11 +28,11 @@ import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.StackUtil;
-import buildcraft.core.Utils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPipeTransportContent;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.StackUtil;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
@@ -257,7 +257,7 @@ public class PipeTransportItems extends PipeTransport {
 		} else if (tile instanceof IInventory) {
 			StackUtil utils = new StackUtil(data.item.getItemStack());
 
-			if (!ProxyCore.proxy.isRemote(worldObj))
+			if (!CoreProxy.proxy.isRemote(worldObj))
 				if (utils.checkAvailableSlot((IInventory) tile, true, data.orientation.reverse()) && utils.items.stackSize == 0)
 					data.item.remove();
 				else {
@@ -360,7 +360,7 @@ public class PipeTransportItems extends PipeTransport {
 		else {
 			int i;
 
-			if (ProxyCore.proxy.isRemote(worldObj) || ProxyCore.proxy.isSimulating(worldObj))
+			if (CoreProxy.proxy.isRemote(worldObj) || CoreProxy.proxy.isSimulating(worldObj))
 			{
 				i = Math.abs(data.item.getEntityId() + xCoord + yCoord + zCoord + data.item.getDeterministicRandomization())
 						% listOfPossibleMovements.size();

@@ -16,12 +16,12 @@ import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketPipeTransportContent;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.transport.PipeLogicDiamond;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
+import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 

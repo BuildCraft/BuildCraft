@@ -12,7 +12,7 @@ package buildcraft.builders.gui;
 import java.util.LinkedList;
 
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.core.BptBase;
+import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.gui.BuildCraftContainer;
 
 import net.minecraft.src.EntityPlayer;

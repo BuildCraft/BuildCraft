@@ -1,6 +1,6 @@
 package buildcraft.core.network;
 
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 
 public class PacketPayload {
 

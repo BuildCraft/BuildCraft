@@ -18,10 +18,9 @@ import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicObsidian;
 import buildcraft.transport.PipeTransportItems;
 
 import net.minecraft.src.AxisAlignedBB;
@@ -202,7 +201,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
-		if (ProxyCore.proxy.isRemote(worldObj))
+		if (CoreProxy.proxy.isRemote(worldObj))
 			return;
 
 		Orientations orientation = getOpenOrientation().reverse();
@@ -217,13 +216,13 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 			if (entity instanceof EntityItem) {
 				EntityItem item = (EntityItem) entity;
-				ProxyCore.proxy.obsidianPipePickup(worldObj, item, this.container);
+				CoreProxy.proxy.obsidianPipePickup(worldObj, item, this.container);
 
 				float energyUsed = powerProvider.useEnergy(distance, item.item.stackSize * distance, true);
 
 				if (distance == 0 || energyUsed / distance == item.item.stackSize) {
 					stack = item.item;
-					ProxyCore.proxy.removeEntity(entity);
+					CoreProxy.proxy.removeEntity(entity);
 				} else
 					stack = item.item.splitStack((int) (energyUsed / distance));
 
@@ -235,7 +234,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			} else if (entity instanceof EntityArrow) {
 				powerProvider.useEnergy(distance, distance, true);
 				stack = new ItemStack(Item.arrow, 1);
-				ProxyCore.proxy.removeEntity(entity);
+				CoreProxy.proxy.removeEntity(entity);
 			}
 
 			IPipedItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack),

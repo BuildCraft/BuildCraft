@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;

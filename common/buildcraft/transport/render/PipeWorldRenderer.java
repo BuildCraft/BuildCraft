@@ -7,7 +7,7 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TransportProxyClient;

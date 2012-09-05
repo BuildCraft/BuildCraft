@@ -23,18 +23,18 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.Box;
-import buildcraft.core.BptBlueprint;
-import buildcraft.core.BptBuilderBase;
-import buildcraft.core.BptBuilderBlueprint;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.StackUtil;
-import buildcraft.core.Utils;
+import buildcraft.core.blueprints.BptBlueprint;
+import buildcraft.core.blueprints.BptBuilderBase;
+import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.StackUtil;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -153,7 +153,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 			speed = arm.getArmSpeed();
 		}
 
-		if (ProxyCore.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
 			sendNetworkUpdate();
 		}
 		if (inProcess || !isDigging) {
@@ -394,7 +394,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 					continue;
 				if (entity.item.stackSize <= 0)
 					continue;
-				ProxyCore.proxy.removeEntity(entity);
+				CoreProxy.proxy.removeEntity(entity);
 				mineStack(entity.item);
 			}
 		}

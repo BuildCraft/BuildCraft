@@ -32,8 +32,8 @@ import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.network.PacketHandler;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BlockOilFlowing;
 import buildcraft.energy.BlockOilStill;
@@ -162,13 +162,13 @@ public class BuildCraftEnergy {
 	}
 
 	public static void loadRecipes() {
-		ProxyCore.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
 				Block.planks, Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.woodenGearItem,
 				Character.valueOf('p'), Block.pistonBase });
-		ProxyCore.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
 				Block.cobblestone, Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem,
 				Character.valueOf('p'), Block.pistonBase });
-		ProxyCore.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'),
 				Item.ingotIron, Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem,
 				Character.valueOf('p'), Block.pistonBase });
 	}

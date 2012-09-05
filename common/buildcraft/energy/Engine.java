@@ -11,8 +11,8 @@ package buildcraft.energy;
 
 import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.LiquidTank;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
@@ -58,7 +58,7 @@ public abstract class Engine {
 	}
 
 	public final EnergyStage getEnergyStage() {
-		if (!ProxyCore.proxy.isRemote(tile.worldObj)) {
+		if (!CoreProxy.proxy.isRemote(tile.worldObj)) {
 			computeEnergyStage();
 		}
 

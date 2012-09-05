@@ -14,11 +14,11 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityBlock;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.Utils;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.World;
@@ -91,7 +91,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	public @TileNetworkData boolean showSignals = false;
 
 	public void updateSignals() {
-		if (ProxyCore.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
 			showSignals = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 			sendNetworkUpdate();
 		}
@@ -101,7 +101,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		if (signals != null) {
 			for (EntityBlock b : signals) {
 				if (b != null) {
-					ProxyCore.proxy.removeEntity(b);
+					CoreProxy.proxy.removeEntity(b);
 				}
 			}
 			signals = null;
@@ -155,7 +155,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	public void tryConnection() {
-		if (ProxyCore.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRemote(worldObj)) {
 			return;
 		}
 
@@ -242,7 +242,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		if (lasers != null) {
 			for (EntityBlock entity : lasers) {
 				if (entity != null) {
-					ProxyCore.proxy.removeEntity(entity);
+					CoreProxy.proxy.removeEntity(entity);
 				}
 			}
 		}
@@ -396,7 +396,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 		signals = null;
 
-		if (ProxyCore.proxy.isSimulating(worldObj) && markerOrigin != null && markerOrigin != this) {
+		if (CoreProxy.proxy.isSimulating(worldObj) && markerOrigin != null && markerOrigin != this) {
 			markerOrigin.sendNetworkUpdate();
 		}
 	}

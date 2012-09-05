@@ -26,7 +26,7 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 public class BlockEngine extends BlockContainer {
 
@@ -92,12 +92,12 @@ public class BlockEngine extends BlockContainer {
 					return false;
 
 			if (tile.engine instanceof EngineStone) {
-				if (!ProxyCore.proxy.isRemote(tile.worldObj))
+				if (!CoreProxy.proxy.isRemote(tile.worldObj))
 					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
-				if (!ProxyCore.proxy.isRemote(tile.worldObj))
+				if (!CoreProxy.proxy.isRemote(tile.worldObj))
 					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				return true;
 			}

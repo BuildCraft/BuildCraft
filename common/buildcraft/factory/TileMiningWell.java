@@ -19,8 +19,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
-import buildcraft.core.StackUtil;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.StackUtil;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
