@@ -35,7 +35,9 @@
         
         <get src="http://mcp.ocean-labs.de/files/mcp${mcp.version}.zip" dest="${download.dir}" usetimestamp="True"/>
         <get src="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip" 
-            dest="${download.dir}" usetimestamp="True"/>
+            dest="${download.dir}" usetimestamp="True">
+        	<header name="User-Agent" value="Ant-${ant.version}/${ant.java.version}" />
+    	</get>
         
         <unzip dest="${mcp.dir}">
             <fileset dir="${download.dir}">
