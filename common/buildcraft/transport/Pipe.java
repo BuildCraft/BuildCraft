@@ -393,6 +393,18 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public boolean hasGate() {
 		return gate != null;
 	}
+	
+	protected void updateNeighbors(boolean needSelf) {
+		if (needSelf) {
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+		}
+		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord - 1, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord + 1, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+		worldObj.notifyBlocksOfNeighborChange(xCoord - 1, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+		worldObj.notifyBlocksOfNeighborChange(xCoord + 1, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord - 1, BuildCraftTransport.genericPipeBlock.blockID);
+		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord + 1, BuildCraftTransport.genericPipeBlock.blockID);
+	}
 
 	public void onBlockRemoval() {
 		if (wireSet[IPipe.WireColor.Red.ordinal()])
@@ -414,6 +426,10 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			if (container.hasFacade(direction)){
 				container.dropFacade(direction);
 			}
+		}
+		
+		if (broadcastRedstone) {
+			updateNeighbors(false); // self will update due to block id changing
 		}
 	}
 
@@ -474,10 +490,12 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
         triggerParameters = new ITriggerParameter[triggerParameters.length];
         activatedActions = new Action[activatedActions.length];
         broadcastSignal = new boolean[] { false, false, false, false };
+        if (broadcastRedstone) {
+        	updateNeighbors(true);
+        }
         broadcastRedstone = false;
 		//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
         container.scheduleRenderUpdate();
-        //worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
 	}
 
 	private void resolveActions() {
@@ -534,8 +552,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		if (oldBroadcastRedstone != broadcastRedstone) {
 			container.scheduleRenderUpdate();
-			//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
+			updateNeighbors(true);
 		}
 
 		for (int i = 0; i < oldBroadcastSignal.length; ++i)
