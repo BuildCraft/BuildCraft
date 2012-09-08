@@ -24,12 +24,13 @@ import buildcraft.api.power.PowerFramework;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
-import buildcraft.core.utils.StackUtil;
 import buildcraft.core.utils.Utils;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
@@ -392,51 +393,11 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	/* ISPECIALINVENTORY */
 	@Override
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		StackUtil stackUtil = new StackUtil(stack);
-
-		boolean added = false;
-
-		for (int i = 9; i < contents.length; ++i) {
-			if (stackUtil.tryAdding(this, i, doAdd, false)) {
-				added = true;
-				break;
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return stackUtil.itemsAdded;
-			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
-				return stackUtil.itemsAdded;
-			} else {
-				addItem(stack, added, from);
-
-				return stackUtil.itemsAdded;
-			}
-		}
-
-		if (!added) {
-			for (int i = 9; i < contents.length; ++i) {
-				if (stackUtil.tryAdding(this, i, doAdd, true)) {
-					added = true;
-					break;
-				}
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return stackUtil.itemsAdded;
-			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
-				return stackUtil.itemsAdded;
-			} else {
-				addItem(stack, added, from);
-
-				return stackUtil.itemsAdded;
-			}
-		}
-
-		return 0;
+		
+		ITransactor transactor = new TransactorSimple(this);
+		ItemStack added = transactor.add(stack, from, doAdd);
+		return added.stackSize;
+		
 	}
 
 	@Override
