@@ -12,7 +12,6 @@ package buildcraft.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.BuildCraftBlockUtil;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
@@ -33,6 +32,7 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
@@ -369,7 +369,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			// Share this with mining well!
 
-			ArrayList<ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, i, j, k);
+			ArrayList<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, i, j, k);
 
 			if (stacks != null) {
 				for (ItemStack s : stacks) {

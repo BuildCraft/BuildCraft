@@ -6,15 +6,17 @@
  * granted by the copyright holder.
  */
 
-package buildcraft;
+package buildcraft.core.utils;
 
 import java.util.ArrayList;
+
+import buildcraft.BuildCraftCore;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
-public class BuildCraftBlockUtil {
+public class BlockUtil {
 
 	public static ArrayList<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];

@@ -11,7 +11,6 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import buildcraft.BuildCraftBlockUtil;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.power.IPowerProvider;
@@ -19,6 +18,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Block;
@@ -67,7 +67,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		int blockId = world.getBlockId(xCoord, depth, zCoord);
 
-		ArrayList<ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
+		ArrayList<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
 		world.setBlockWithNotify(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
