@@ -131,7 +131,9 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int)powerProvider.getEnergyStored());
 			if (stacks != null && doRemove) {
 				for (ItemStack stack : stacks) {
-					powerProvider.useEnergy(stack.stackSize, stack.stackSize, true);
+					if (stack != null) {
+						powerProvider.useEnergy(stack.stackSize, stack.stackSize, true);
+					}
 				}
 			}
 			return stacks;
