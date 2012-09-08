@@ -38,9 +38,10 @@ public class StackUtil {
 	 * successful, false otherwise.
 	 */
 	public boolean addToRandomInventory(TileEntity tile, Orientations from) {
-		World w = tile.worldObj;
+		World world = tile.worldObj;
 
 		LinkedList<Orientations> possibleInventories = new LinkedList<Orientations>();
+		int currentItemsAdded = itemsAdded;
 
 		for (int j = 0; j < 6; ++j) {
 			if (from.reverse().ordinal() == j)
@@ -50,7 +51,7 @@ public class StackUtil {
 
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tileInventory instanceof ISpecialInventory)
 				if (((ISpecialInventory) tileInventory).addItem(items, false, from) > 0)
@@ -62,14 +63,15 @@ public class StackUtil {
 					possibleInventories.add(pos.orientation);
 		}
 
+		itemsAdded = currentItemsAdded; // FIXME: Workaround for the fact that tryAdd(false) will increment itemsAdded.
 		if (possibleInventories.size() > 0) {
-			int choice = w.rand.nextInt(possibleInventories.size());
+			int choice = world.rand.nextInt(possibleInventories.size());
 
 			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possibleInventories.get(choice));
 
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			checkAvailableSlot((IInventory) tileInventory, true, pos.orientation.reverse());
 
