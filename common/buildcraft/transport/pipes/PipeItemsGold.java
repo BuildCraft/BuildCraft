@@ -36,7 +36,7 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	
 	@Override
 	public int getTextureIndex(Orientations direction) {
-		if (worldObj != null && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
+		if (broadcastRedstone || worldObj != null && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
 			return 1 * 16 + 14;
 		else
 			return 1 * 16 + 4;
@@ -66,7 +66,7 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public void entityEntered(IPipedItem item, Orientations orientation) {
-		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
+		if (broadcastRedstone || worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
 			item.setSpeed(Utils.pipeNormalSpeed * 20F);
 	}
 
