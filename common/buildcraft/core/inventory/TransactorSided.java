@@ -16,8 +16,11 @@ public class TransactorSided extends TransactorSimple {
 	@Override
 	protected int getPartialSlot(ItemStack stack, Orientations orientation, int skipAhead) {
 		
-		if(skipAhead < sided.getStartInventorySide(orientation.toDirection())
-				|| skipAhead > sided.getStartInventorySide(orientation.toDirection()) + sided.getSizeInventorySide(orientation.toDirection()))
+		// If skipAhead is below the minimum required, we skip ahead to the first valid slot.
+		if(skipAhead < sided.getStartInventorySide(orientation.toDirection()))
+			skipAhead = sided.getStartInventorySide(orientation.toDirection());
+			
+		if(skipAhead > sided.getStartInventorySide(orientation.toDirection()) + sided.getSizeInventorySide(orientation.toDirection()))
 			return -1;
 		
 		return getPartialSlot(stack, skipAhead, sided.getStartInventorySide(orientation.toDirection()) + sided.getSizeInventorySide(orientation.toDirection()));

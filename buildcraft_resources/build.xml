@@ -18,7 +18,7 @@
     <property name="mcp.version"         value="72"/>
     <property name="forge.version"       value="4.0.0.232"/>
     <property name="bc.version"          value="3.2.0"/>
-    <property name="bc.version.full"     value="${bc.version}pre3"/>
+    <property name="bc.version.full"     value="${bc.version}pre4"/>
     
     <echo message="Starting build for ${bc.version.full}"/>
 	
