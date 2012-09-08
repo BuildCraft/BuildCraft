@@ -17,8 +17,10 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.ServerStarting;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -34,6 +36,7 @@ import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BuildCraftConfiguration;
+import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
@@ -41,10 +44,10 @@ import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
+import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
-//import buildcraft.core.network.ConnectionHandler;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
@@ -59,13 +62,14 @@ import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.CommandHandler;
 import net.minecraft.src.EntityList;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
-@Mod(name="BuildCraft", version=DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core")
+@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {
@@ -138,8 +142,11 @@ public class BuildCraftCore {
 
 	@PreInit
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
+		
+		Version.versionCheck();
+		
 		bcLog.setParent(FMLLog.getLogger());
-		bcLog.info("Starting BuildCraft " + DefaultProps.VERSION);
+		bcLog.info("Starting BuildCraft " + Version.getVersion());
 		bcLog.info("Copyright (c) SpaceToad, 2011");
 		bcLog.info("http://www.mod-buildcraft.com");
 
@@ -253,6 +260,12 @@ public class BuildCraftCore {
 
 	}
 
+	@ServerStarting
+	public void serverStarting(FMLServerStartingEvent event) {
+		CommandHandler commandManager = (CommandHandler)event.getServer().getCommandManager();
+		commandManager.registerCommand(new CommandBuildCraft());
+	}
+	
 	public void loadRecipes() {
 		GameRegistry.addRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('G'), stoneGearItem);
 		GameRegistry.addRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", Character.valueOf('S'), Item.stick);

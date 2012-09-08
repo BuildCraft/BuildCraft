@@ -18,6 +18,7 @@ import buildcraft.api.bptblocks.BptBlockRotateMeta;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemRedstoneChipset;
+import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.BlockAssemblyTable;
 import buildcraft.silicon.BlockLaser;
@@ -33,7 +34,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-@Mod(name="BuildCraft Silicon", version=DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
+@Mod(name="BuildCraft Silicon", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerSilicon.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftSilicon {
 	public static Item redstoneChipset;

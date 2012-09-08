@@ -19,7 +19,7 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.TriggerParameter;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Gate;
 import buildcraft.transport.GateVanilla;
@@ -169,7 +169,7 @@ public class BptBlockPipe extends BptBlock {
 		BlockSignature sig = super.getSignature(block);
 
 		sig.mod = "BuildCraftTransport";
-		sig.modVersion = DefaultProps.VERSION;
+		sig.modVersion = Version.VERSION;
 
 		return sig;
 	}

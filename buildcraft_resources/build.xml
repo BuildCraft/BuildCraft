@@ -68,6 +68,9 @@
             <arg value="install.sh" />
         </exec>
 
+		<!-- Set build number -->
+		<buildnumber file="${src.dir}/buildcraft_resources/build.number"/>
+		
         <!-- Copy BC source -->
         <copy todir="${clientsrc.dir}">
             <fileset dir="${src.dir}/common">
@@ -75,6 +78,7 @@
             </fileset>
             <filterset>
                 <filter token="VERSION" value="${bc.version}" />
+           		<filter token="BUILD_NUMBER" value="${build.number}" />
             </filterset>
         </copy>
         

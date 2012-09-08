@@ -14,7 +14,7 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.core.Orientations;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.Version;
 import net.minecraft.src.Block;
 
 public class BptBlockEngine extends BptBlock {
@@ -53,7 +53,7 @@ public class BptBlockEngine extends BptBlock {
 		BlockSignature sig = super.getSignature(block);
 
 		sig.mod = "BuildCraftEnergy";
-		sig.modVersion = DefaultProps.VERSION;
+		sig.modVersion = Version.VERSION;
 
 		return sig;
 	}

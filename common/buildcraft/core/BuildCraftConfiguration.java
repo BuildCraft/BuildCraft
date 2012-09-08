@@ -31,7 +31,7 @@ public class BuildCraftConfiguration extends Configuration {
 		} else
 			versionProp = generalProperties.get("version");
 
-		versionProp.value = DefaultProps.VERSION;
+		versionProp.value = Version.VERSION;
 
 		super.save();
 	}

@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 
 public abstract class BptBase {
@@ -116,7 +116,7 @@ public abstract class BptBase {
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
-			writer.write("version:" + DefaultProps.VERSION);
+			writer.write("version:" + Version.VERSION);
 			writer.newLine();
 
 			if (this instanceof BptTemplate)
