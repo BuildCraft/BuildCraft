@@ -6,8 +6,9 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.ISidedInventory;
 
-public abstract class Transactor {
+public abstract class Transactor implements ITransactor {
 
+	@Override
 	public ItemStack add(ItemStack stack, Orientations orientation, boolean doAdd) {
 		ItemStack added = stack.copy();
 		added.stackSize = inject(stack, orientation, doAdd);	
@@ -16,7 +17,7 @@ public abstract class Transactor {
 	
 	public abstract int inject(ItemStack stack, Orientations orientation, boolean doAdd);
 	
-	public static Transactor getTransactorFor(Object object) {
+	public static ITransactor getTransactorFor(Object object) {
 		
 		if(object instanceof ISpecialInventory)
 			return new TransactorSpecial((ISpecialInventory)object);

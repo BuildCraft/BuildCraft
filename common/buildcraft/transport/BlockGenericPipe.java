@@ -136,7 +136,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
+	@Override
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
 		return getCollisionBoundingBoxFromPool(world, i, j, k);
 	}
@@ -472,7 +472,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
+	@Override
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		Pipe pipe = getPipe(world, i, j, k);
 
