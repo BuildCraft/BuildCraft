@@ -51,6 +51,16 @@ public class Utils {
 	public static final float pipeMaxPos = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
 
+	/**
+	 * Tries to add the passed stack to any valid inventories around the given coordinates.
+	 * @param stack
+	 * @param world
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param from
+	 * @return ItemStack representing what was added.
+	 */
 	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z, Orientations from) {
 		LinkedList<ITransactor> possibleInventories = new LinkedList<ITransactor>();
 

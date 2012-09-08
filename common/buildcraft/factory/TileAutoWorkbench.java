@@ -14,7 +14,8 @@ import java.util.LinkedList;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.utils.StackUtil;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Container;
@@ -283,7 +284,8 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	/* ISPECIALINVENTORY */
 	@Override
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		StackUtil stackUtils = new StackUtil(stack);
+		
+		ITransactor transactor = new TransactorSimple(this);
 
 		int minSimilar = Integer.MAX_VALUE;
 		int minSlot = -1;
@@ -299,18 +301,17 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		}
 
 		if (minSlot != -1) {
-			if (stackUtils.tryAdding(this, minSlot, doAdd, false)) {
-				if (doAdd && stack.stackSize != 0) {
-					addItem(stack, doAdd, from);
-				}
-
-				return stackUtils.itemsAdded;
-			} else {
-				return stackUtils.itemsAdded;
-			}
-		} else {
+			ItemStack added = transactor.add(stack, from, doAdd);
+			ItemStack remaining = stack.copy();
+			remaining.stackSize -= added.stackSize;
+			
+			if(doAdd && remaining.stackSize >= 0)
+				added.stackSize += addItem(remaining, doAdd, from);
+			
+			return added.stackSize;
+		} else
 			return 0;
-		}
+
 	}
 
 	@Override
