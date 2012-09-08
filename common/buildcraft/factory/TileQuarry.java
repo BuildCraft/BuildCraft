@@ -33,7 +33,6 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StackUtil;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
@@ -400,27 +399,23 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		}
 	}
 
-	private void mineStack(ItemStack s) {
-		boolean added = false;
-
+	private void mineStack(ItemStack stack) {
+		
 		// First, try to add to a nearby chest
+		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+		stack.stackSize -= added.stackSize;
 
-		StackUtil stackUtils = new StackUtil(s);
+		// Second, try to add to adjacent pipes
+		if (stack.stackSize > 0)
+			Utils.addToRandomPipeEntry(this, Orientations.Unknown, stack);
 
-		added = stackUtils.addToRandomInventory(this, Orientations.Unknown);
-
-		if (!added || stackUtils.items.stackSize > 0) {
-			added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, stackUtils.items);
-		}
-
-		// Last, throw the object away
-
-		if (!added) {
+		// Lastly, throw the object away
+		if (stack.stackSize > 0) {
 			float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 			float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 
-			EntityItem entityitem = new EntityItem(worldObj, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stackUtils.items);
+			EntityItem entityitem = new EntityItem(worldObj, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3;

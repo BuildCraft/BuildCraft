@@ -27,6 +27,8 @@ import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
@@ -49,6 +51,35 @@ public class Utils {
 	public static final float pipeMaxPos = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
 
+	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z, Orientations from) {
+		LinkedList<ITransactor> possibleInventories = new LinkedList<ITransactor>();
+
+		// Determine inventories which can accept (at least part of) this stack.
+		for(Orientations orientation : Orientations.values()) {
+			if(from.reverse() == orientation)
+				continue;
+			
+			Position pos = new Position(x, y, z, orientation);
+			pos.moveForwards(1.0);
+
+			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
+			if(transactor != null
+					&& transactor.add(stack, from, false).stackSize > 0)
+				possibleInventories.add(transactor);
+		}
+		
+		if (possibleInventories.size() > 0) {
+			int choice = world.rand.nextInt(possibleInventories.size());
+			return possibleInventories.get(choice).add(stack, from, true);
+		}
+		
+		ItemStack added = stack.copy();
+		added.stackSize = 0;
+		return added;
+		
+	}
+	
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different
 	 * level to optimize graphical aspect.

@@ -12,7 +12,6 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StackUtil;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Container;
@@ -147,14 +146,14 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 					}
 				}
 
-				StackUtil stackUtils = new StackUtil(currentRecipe.output.copy());
-				boolean added = stackUtils.addToRandomInventory(this, Orientations.Unknown);
+				ItemStack remaining = currentRecipe.output.copy();
+				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+				remaining.stackSize -= added.stackSize;
 
-				if (!added || stackUtils.items.stackSize > 0) {
-					added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, stackUtils.items);
-				}
+				if (remaining.stackSize > 0)
+					Utils.addToRandomPipeEntry(this, Orientations.Unknown, remaining);
 
-				if (!added) {
+				if (remaining.stackSize > 0) {
 					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
 							currentRecipe.output.copy());
 
