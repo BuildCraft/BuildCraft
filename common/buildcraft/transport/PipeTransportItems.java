@@ -28,10 +28,10 @@ import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IMachine;
+import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPipeTransportContent;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StackUtil;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.EntityItem;
@@ -152,7 +152,7 @@ public class PipeTransportItems extends PipeTransport {
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
 		} else if (entity instanceof IInventory)
-			if (new StackUtil(item.getItemStack()).checkAvailableSlot((IInventory) entity, false, o.reverse()))
+			if(Transactor.getTransactorFor(entity).add(item.getItemStack(), o.reverse(), false).stackSize > 0)
 				return true;
 
 		return false;
@@ -255,13 +255,13 @@ public class PipeTransportItems extends PipeTransport {
 
 			((PipeTransportItems) pipe.pipe.transport).entityEntering(data.item, data.orientation);
 		} else if (tile instanceof IInventory) {
-			StackUtil utils = new StackUtil(data.item.getItemStack());
+			ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.orientation.reverse(), true);
 
 			if (!CoreProxy.proxy.isRemote(worldObj))
-				if (utils.checkAvailableSlot((IInventory) tile, true, data.orientation.reverse()) && utils.items.stackSize == 0)
+				if(added.stackSize >= data.item.getItemStack().stackSize)
 					data.item.remove();
 				else {
-					data.item.setItemStack(utils.items);
+					data.item.getItemStack().stackSize -= added.stackSize;
 					EntityItem dropped = data.item.toEntityItem(data.orientation);
 
 					if (dropped != null)

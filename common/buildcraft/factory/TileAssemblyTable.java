@@ -148,7 +148,6 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				}
 
 				StackUtil stackUtils = new StackUtil(currentRecipe.output.copy());
-
 				boolean added = stackUtils.addToRandomInventory(this, Orientations.Unknown);
 
 				if (!added || stackUtils.items.stackSize > 0) {
