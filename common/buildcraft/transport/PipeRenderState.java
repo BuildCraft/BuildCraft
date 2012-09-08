@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.network.v2.IClientState;
+import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
 import buildcraft.transport.utils.TextureMatrix;

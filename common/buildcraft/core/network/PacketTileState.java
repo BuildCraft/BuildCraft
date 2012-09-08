@@ -1,4 +1,4 @@
-package buildcraft.core.network.v2;
+package buildcraft.core.network;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
 
 public class PacketTileState extends PacketCoordinates {
 	

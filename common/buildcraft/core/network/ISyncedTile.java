@@ -1,4 +1,4 @@
-package buildcraft.core.network.v2;
+package buildcraft.core.network;
 
 /**
  * Implemented by TileEntites
