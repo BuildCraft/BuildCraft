@@ -6,9 +6,7 @@ public class FactoryProxy {
 	@SidedProxy(clientSide = "buildcraft.factory.FactoryProxyClient", serverSide = "buildcraft.factory.FactoryProxy")
 	public static FactoryProxy proxy;
 
-	public void initializeTileEntities() {
-	}
-
-	public void initializeEntityRenders() {
-	}
+	public void initializeTileEntities() {}
+	public void initializeEntityRenders() {}
+	public void initializeNEIIntegration() {}
 }

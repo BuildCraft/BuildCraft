@@ -1,9 +1,13 @@
 package buildcraft.factory;
 
+import java.lang.reflect.Method;
+
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.render.RenderVoid;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
+import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderHopper;
 import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
@@ -28,5 +32,17 @@ public class FactoryProxyClient extends FactoryProxy {
 	@Override
 	public void initializeEntityRenders() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
+	}
+	
+	@Override
+	public void initializeNEIIntegration() {
+		try {
+			Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
+			Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
+			method.invoke(null, GuiAutoCrafting.class, "crafting", 5, 11);
+			BuildCraftCore.bcLog.fine("NEI detected, adding NEI overlay");
+		} catch (Exception e) {
+			BuildCraftCore.bcLog.fine("NEI not detected.");
+		}
 	}
 }

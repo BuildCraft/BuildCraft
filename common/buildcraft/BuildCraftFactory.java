@@ -8,8 +8,6 @@
 
 package buildcraft;
 
-import java.lang.reflect.Method;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -46,7 +44,6 @@ import buildcraft.factory.TilePump;
 import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
-import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.network.PacketHandlerFactory;
 import buildcraft.silicon.TileLaser;
 import net.minecraft.src.Block;
@@ -78,16 +75,8 @@ public class BuildCraftFactory {
 	public static BuildCraftFactory instance;
 
 	@PostInit
-	public void postInit(FMLPostInitializationEvent evt)
-	{
-		try {
-			Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
-			Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
-			method.invoke(null, GuiAutoCrafting.class, "crafting", 5, 11);
-			BuildCraftCore.bcLog.fine("NEI detected, adding NEI overlay");
-		} catch (Exception e) {
-			BuildCraftCore.bcLog.fine("NEI not detected.");
-		}
+	public void postInit(FMLPostInitializationEvent evt) {
+		FactoryProxy.proxy.initializeNEIIntegration();
 	}
 	@Init
 	public void load(FMLInitializationEvent evt) {
