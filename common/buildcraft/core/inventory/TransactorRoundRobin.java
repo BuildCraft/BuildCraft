@@ -21,7 +21,7 @@ public class TransactorRoundRobin extends TransactorSimple {
 			int minSimilar = Integer.MAX_VALUE;
 			int minSlot = -1;
 			
-			for (int j = 0; j < inventory.getSizeInventory() && minSlot > 1; ++j) {
+			for (int j = 0; j < inventory.getSizeInventory() && minSimilar > 1; ++j) {
 				ItemStack stackInInventory = inventory.getStackInSlot(j);
 
 				if(stackInInventory == null)
