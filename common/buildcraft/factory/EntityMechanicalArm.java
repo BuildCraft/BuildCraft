@@ -20,10 +20,9 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
-public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpawnData {
+public class EntityMechanicalArm extends Entity {
 	EntityBlock xArm, yArm, zArm, head;
 
-	public IArmListener listener;
 	boolean inProgressionXZ = false;
 	boolean inProgressionY = false;
 
@@ -31,30 +30,16 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 
 	private double armSizeX;
 	private double armSizeZ;
-
 	private double xRoot;
-
 	private double yRoot;
-
 	private double zRoot;
-
 	private double angle;
+
+	private int headX, headY, headZ;
 
 	public EntityMechanicalArm(World world) {
 		super(world);
 		makeParts(world);
-		// Head X, Y, Z
-		dataWatcher.addObject(2, 1);
-		dataWatcher.addObject(3, 1);
-		dataWatcher.addObject(4, 1);
-
-		// Target X, Y, Z
-		dataWatcher.addObject(5, 1);
-		dataWatcher.addObject(6, 1);
-		dataWatcher.addObject(7, 1);
-
-		// Speed
-		dataWatcher.addObject(8, (int)(0.03 * 8000D));
 	}
 
 	public EntityMechanicalArm(World world, double i, double j, double k, double width, double height, TileQuarry parent) {
@@ -68,38 +53,19 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 		this.motionZ = 0.0;
 		setArmSize(width, height);
 		setHead(i, j - 2, k);
-		setTarget(i, j - 2, k);
 
 		noClip = true;
-		inProgressionXZ = false;
-		inProgressionY = false;
 
 		this.parent = parent;
 		parent.setArm(this);
 		updatePosition();
 	}
 
-	public void setArmSpeed(double speed)
-	{
-		dataWatcher.updateObject(8, (int)(speed * 8000D));
-	}
-
-	public double getArmSpeed()
-	{
-		return dataWatcher.getWatchableObjectInt(8) / 8000D;
-	}
-
 	void setHead(double x, double y, double z)
 	{
-		dataWatcher.updateObject(2, ((int)(x * 32D)));
-		dataWatcher.updateObject(3, ((int)(y * 32D)));
-		dataWatcher.updateObject(4, ((int)(z * 32D)));
-	}
-
-	void setTarget(double x, double y, double z) {
-		dataWatcher.updateObject(5, ((int)(x * 32D)));
-		dataWatcher.updateObject(6, ((int)(y * 32D)));
-		dataWatcher.updateObject(7, ((int)(z * 32D)));
+		this.headX = (int) (x * 32D);
+		this.headY = (int) (y * 32D);
+		this.headZ = (int) (z * 32D);
 	}
 
 	private void setArmSize(double x, double z)
@@ -151,7 +117,6 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 		{
 			parent = (TileQuarry) te;
 			parent.setArm(this);
-
 		}
 		else
 		{
@@ -170,13 +135,8 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 
 	@Override
 	public void onUpdate() {
-		if (worldObj.isRemote)
-		{
-			super.onUpdate();
-			updatePosition();
-			return;
-		}
 		super.onUpdate();
+		updatePosition();
 		if (parent == null)
 		{
 			findAndJoinQuarry();
@@ -187,69 +147,6 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 			setDead();
 			return;
 		}
-
-		double[] target = getTarget();
-		double[] head = getHead();
-
-		double dX = target[0] - head[0];
-		double dY = target[1] - head[1];
-		double dZ = target[2] - head[2];
-
-		if (dX != 0 || dY != 0 || dZ != 0)
-		{
-			angle = Math.atan2(target[2]-head[2], target[0]-head[0]);
-			inProgressionXZ = true;
-			inProgressionY = true;
-		}
-
-		if (getArmSpeed() > 0) {
-			doMove(getArmSpeed());
-		}
-	}
-
-	public void doMove(double instantSpeed) {
-		double[] target = getTarget();
-		double[] head = getHead();
-
-		if (inProgressionXZ) {
-			if (Math.abs(target[0] - head[0]) < instantSpeed * 2 && Math.abs(target[2] - head[2]) < instantSpeed * 2) {
-				head[0] = target[0];
-				head[2] = target[2];
-
-				inProgressionXZ = false;
-
-				if (listener != null && !inProgressionY) {
-					listener.positionReached(this);
-					head[1] = target[1];
-				}
-			} else {
-				head[0] += Math.cos(angle) * instantSpeed;
-				head[2] += Math.sin(angle) * instantSpeed;
-			}
-			setHead(head[0], head[1], head[2]);
-		}
-
-		if (inProgressionY) {
-			if (Math.abs(target[1] - head[1]) < instantSpeed * 2) {
-				head[1] = target[1];
-
-				inProgressionY = false;
-
-				if (listener != null && !inProgressionXZ) {
-					listener.positionReached(this);
-					head[0] = target[0];
-					head[2] = target[2];
-				}
-			} else {
-				if (target[1] > head[1]) {
-					head[1] += instantSpeed / 2;
-				} else {
-					head[1] -= instantSpeed / 2;
-				}
-			}
-			setHead(head[0],head[1],head[2]);
-		}
-		updatePosition();
 	}
 
 	public void updatePosition() {
@@ -261,13 +158,6 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 		this.head.setPosition(head[0] + 0.4, head[1], head[2] + 0.4);
 	}
 
-
-	public void joinToWorld(World w) {
-		if (!w.isRemote)
-		{
-			w.spawnEntityInWorld(this);
-		}
-	}
 
 	@Override
 	public void setDead() {
@@ -281,27 +171,8 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 		super.setDead();
 	}
 
-	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
-		data.writeDouble(armSizeX);
-		data.writeDouble(armSizeZ);
-	}
-
-	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
-		armSizeX = data.readDouble();
-		armSizeZ = data.readDouble();
-		setArmSize(armSizeX, armSizeZ);
-		updatePosition();
-	}
-
-	public double[] getTarget()
+	private double[] getHead()
 	{
-		return new double[] { this.dataWatcher.getWatchableObjectInt(5) / 32D, this.dataWatcher.getWatchableObjectInt(6) / 32D, this.dataWatcher.getWatchableObjectInt(7) / 32D };
-	}
-
-	public double[] getHead()
-	{
-		return new double[] { this.dataWatcher.getWatchableObjectInt(2) / 32D, this.dataWatcher.getWatchableObjectInt(3) / 32D, this.dataWatcher.getWatchableObjectInt(4) / 32D };
+		return new double[] { this.headX / 32D, this.headY / 32D, this.headZ / 32D };
 	}
 }
