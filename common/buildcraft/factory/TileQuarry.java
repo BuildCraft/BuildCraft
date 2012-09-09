@@ -40,37 +40,36 @@ import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.MathHelper;
 import net.minecraft.src.NBTTagCompound;
 
-public class TileQuarry extends TileMachine implements IArmListener, IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
-
-	boolean isDigging = false;
-
+public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 	public @TileNetworkData
 	Box box = new Box();
 	public @TileNetworkData
 	boolean inProcess = false;
-
-	public EntityMechanicalArm arm;
 	public @TileNetworkData
 	int targetX, targetY, targetZ;
 	public @TileNetworkData
 	double headPosX, headPosY, headPosZ;
 	public @TileNetworkData
 	double speed = 0.03;
-
-	public EntityRobot builder;
 	public @TileNetworkData
 	boolean builderDone = false;
 
+
+	public EntityRobot builder;
 	BptBuilderBase bluePrintBuilder;
 
+	public EntityMechanicalArm arm;
+
 	public IPowerProvider powerProvider;
+
+	boolean isDigging = false;
 
 	public static int MAX_ENERGY = 7000;
 
 	public TileQuarry() {
-
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, MAX_ENERGY);
 	}
@@ -95,6 +94,10 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			if (findTarget(false)) {
 				isDigging = true;
+				if (box != null && (( headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax)))
+				{
+					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
+				}
 			}
 
 		} else {
@@ -105,10 +108,12 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	private boolean loadDefaultBoundaries = false;
+	private boolean movingHorizontally;
+	private boolean movingVertically;
+	private double headTrajectory;
 
 	private void createArm() {
 
-//		worldObj.getEntitiesWithinAABB(EntityMechanicalArm.class, AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord));
 		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj,
 				box.xMin + Utils.pipeMaxPos,
 				yCoord + bluePrintBuilder.bluePrint.sizeY - 1 + Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos,
@@ -120,36 +125,19 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	public void setArm(EntityMechanicalArm arm)
 	{
 		this.arm = arm;
-		arm.listener = this;
-		isDigging = true;
 	}
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-
-		if (inProcess && arm != null) {
-
-			arm.setArmSpeed(0);
+		if (inProcess) {
 			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
 
-			boolean enoughStep=(0.015 + energyToUse / 200F)>(1F/32F); // (otherwise the movement is rounded to 0 and the energy absorbed with no movement)
-			if(enoughStep){
-				float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
+			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
 
-				if (energy > 0) {
-					arm.doMove(0.015 + energy / 200F);
-				}
+			if (energy > 0) {
+				moveHead(0.05 + energy / 200F);
 			}
-		}
-
-		if (arm != null) {
-			double[] head = arm.getHead();
-			headPosX = head[0];
-			headPosY = head[1];
-			headPosZ = head[2];
-
-			speed = arm.getArmSpeed();
 		}
 
 		if (CoreProxy.proxy.isSimulating(worldObj)) {
@@ -210,7 +198,6 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	protected void dig() {
-
 		powerProvider.configure(20, 30, 200, 50, MAX_ENERGY);
 		if (powerProvider.useEnergy(30, 30, true) != 30) {
 			return;
@@ -220,13 +207,19 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 
 			//I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null)
-				arm.setTarget((double)box.xMin + (box.xMax - box.xMin) / 2D, yCoord + 2D, (double)box.zMin + ( box.zMax - box.zMin) / 2D);
+				setTarget(box.xMin + 1, yCoord + 2, box.zMin + 1);
 
 			isDigging = false;
 		}
 
 		inProcess = true;
+		movingHorizontally = true;
+		movingVertically = true;
+		double[] head = getHead();
+		int[] target = getTarget();
+		headTrajectory = Math.atan2(target[2] -head[2], target[0] -head[0]);
 	}
+
 
 	public boolean findTarget(boolean doSet) {
 
@@ -276,8 +269,8 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 						if (isUnquarriableBlock(blockId, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
 						} else if (isQuarriableBlock(blockId, bx, by + 1, bz)) {
-							if (doSet && arm != null) {
-								arm.setTarget(bx, by + 1, bz);
+							if (doSet) {
+								setTarget(bx, by + 1, bz);
 							}
 
 							return true;
@@ -345,18 +338,13 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		nbttagcompound.setTag("box", boxTag);
 	}
 
-	@Override
-	public void positionReached(EntityMechanicalArm arm) {
+	public void positionReached() {
 		inProcess = false;
+		System.out.println("PositionReached!" + Thread.currentThread());
 
 		if (worldObj.isRemote) {
 			return;
 		}
-
-		double[] targ = arm.getTarget();
-		targetX = (int)targ[0];
-		targetY = (int)targ[1];
-		targetZ = (int)targ[2];
 
 		int i = targetX;
 		int j = targetY - 1;
@@ -379,12 +367,13 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 				}
 			}
 
+            worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
 			worldObj.setBlockWithNotify(i, j, k, 0);
 		}
 
 		// Collect any lost items laying around
-		double[] armHead = arm.getHead();
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(armHead[0] - 1.5, armHead[1], armHead[2] - 1.5,	armHead[0] + 2.5, armHead[1] + 2.5, armHead[2] + 2.5);
+		double[] head = getHead();
+		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 1.5, head[1], head[2] - 1.5,	head[0] + 2.5, head[1] + 2.5, head[2] + 2.5);
 		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
 		for (int ii = 0; ii < result.size(); ii++) {
 			if (result.get(ii) instanceof EntityItem) {
@@ -400,7 +389,7 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	}
 
 	private void mineStack(ItemStack stack) {
-		
+
 		// First, try to add to a nearby chest
 		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
 		stack.stackSize -= added.stackSize;
@@ -576,11 +565,10 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		super.postPacketHandling(packet);
 
 		createUtilsIfNeeded();
-//
+
 		if (arm != null) {
 			arm.setHead(headPosX, headPosY, headPosZ);
-//			arm.setTarget(targetX, targetY, targetZ);
-//			arm.setArmSpeed(speed);
+			arm.updatePosition();
 		}
 	}
 
@@ -679,6 +667,78 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 	@Override
 	public boolean allowActions() {
 		return false;
+	}
+
+	public void moveHead(double instantSpeed) {
+		int[] target = getTarget();
+		double[] head = getHead();
+
+		if (movingHorizontally) {
+			if (Math.abs(target[0] - head[0]) < instantSpeed * 2 && Math.abs(target[2] - head[2]) < instantSpeed * 2) {
+				head[0] = target[0];
+				head[2] = target[2];
+
+				movingHorizontally = false;
+
+				if (!movingVertically) {
+					positionReached();
+					head[1] = target[1];
+				}
+			} else {
+				head[0] += Math.cos(headTrajectory) * instantSpeed;
+				head[2] += Math.sin(headTrajectory) * instantSpeed;
+			}
+			setHead(head[0], head[1], head[2]);
+		}
+
+		if (movingVertically) {
+			if (Math.abs(target[1] - head[1]) < instantSpeed * 2) {
+				head[1] = target[1];
+
+				movingVertically = false;
+				if (!movingHorizontally) {
+					positionReached();
+					head[0] = target[0];
+					head[2] = target[2];
+				}
+			} else {
+				if (target[1] > head[1]) {
+					head[1] += instantSpeed;
+				} else {
+					head[1] -= instantSpeed;
+				}
+			}
+			setHead(head[0],head[1],head[2]);
+		}
+
+		updatePosition();
+	}
+
+	private void updatePosition() {
+		if (arm!=null && worldObj.isRemote)
+		{
+			arm.setHead(headPosX, headPosY, headPosZ);
+			arm.updatePosition();
+		}
+	}
+
+	private void setHead(double x, double y, double z) {
+		this.headPosX = x;
+		this.headPosY = y;
+		this.headPosZ = z;
+	}
+
+	private double[] getHead() {
+		return new double[] { headPosX, headPosY, headPosZ };
+	}
+
+	private int[] getTarget() {
+		return new int[] { targetX, targetY, targetZ };
+	}
+	private void setTarget(int x, int y, int z) {
+		this.targetX = x;
+		this.targetY = y;
+		this.targetZ = z;
 	}
 
 }
