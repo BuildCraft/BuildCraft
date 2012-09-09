@@ -17,6 +17,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPassiveItemContribution;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.Item;
@@ -288,7 +289,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 */
 	@Override
 	public EntityItem toEntityItem(Orientations dir) {
-		if (!ProxyCore.proxy.isRemote(worldObj)) {
+		if (!CoreProxy.proxy.isRemote(worldObj)) {
 			if (getItemStack().stackSize <= 0) {
 				return null;
 			}

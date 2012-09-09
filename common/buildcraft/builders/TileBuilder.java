@@ -22,23 +22,23 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
-import buildcraft.core.BptBase;
-import buildcraft.core.BptBlueprint;
-import buildcraft.core.BptBuilderBase;
-import buildcraft.core.BptBuilderBlueprint;
-import buildcraft.core.BptBuilderTemplate;
-import buildcraft.core.BptContext;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.SurroundingInventory;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.Utils;
+import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.blueprints.BptBlueprint;
+import buildcraft.core.blueprints.BptBuilderBase;
+import buildcraft.core.blueprints.BptBuilderBlueprint;
+import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.SurroundingInventory;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.EntityPlayer;
@@ -279,7 +279,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void doWork() {
-		if (ProxyCore.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRemote(worldObj)) {
 			return;
 		}
 
@@ -588,7 +588,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			box.deleteLasers();
 			box.reset();
 
-			if (ProxyCore.proxy.isSimulating(worldObj)) {
+			if (CoreProxy.proxy.isSimulating(worldObj)) {
 				sendNetworkUpdate();
 			}
 

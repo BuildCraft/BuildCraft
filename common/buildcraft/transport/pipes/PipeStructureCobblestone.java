@@ -3,7 +3,6 @@ package buildcraft.transport.pipes;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicCobblestone;
 import buildcraft.transport.PipeTransportStructure;
 
 public class PipeStructureCobblestone extends Pipe {

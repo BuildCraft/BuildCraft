@@ -3,7 +3,7 @@ package buildcraft.transport.render;
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemPipe;
 
 import net.minecraft.src.Block;

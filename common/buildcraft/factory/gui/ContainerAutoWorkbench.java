@@ -9,8 +9,8 @@
 
 package buildcraft.factory.gui;
 
-import buildcraft.core.ProxyCore;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileAutoWorkbench;
 import net.minecraft.src.AchievementList;
 import net.minecraft.src.Block;
@@ -47,7 +47,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 
 		@Override
 		public void onPickupFromSlot(ItemStack itemstack) {
-			ProxyCore.proxy.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
+			CoreProxy.proxy.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
 			if (itemstack.itemID == Block.workbench.blockID) {
 				thePlayer.addStat(AchievementList.buildWorkBench, 1);
 			} else if (itemstack.itemID == Item.pickaxeWood.shiftedIndex) {
@@ -69,7 +69,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			} else if (itemstack.itemID == Block.bookShelf.blockID) {
 				thePlayer.addStat(AchievementList.bookcase, 1);
 			}
-			ProxyCore.proxy.TakenFromCrafting(thePlayer, itemstack, craftMatrix);
+			CoreProxy.proxy.TakenFromCrafting(thePlayer, itemstack, craftMatrix);
 			// FIXME: Autocrafting table should post a forge event.
 			//ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
 

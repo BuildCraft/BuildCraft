@@ -2,8 +2,8 @@ package buildcraft.factory;
 
 import buildcraft.api.core.Orientations;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.InventoryUtil;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.SimpleInventory;
@@ -37,7 +37,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (ProxyCore.proxy.isRemote(worldObj) || worldObj.getWorldTime() % 5 != 0)
+		if (CoreProxy.proxy.isRemote(worldObj) || worldObj.getWorldTime() % 5 != 0)
 			return;
 		int internalSlot = _internalInventory.getIdForFirstSlot();
 		if (internalSlot < 0)

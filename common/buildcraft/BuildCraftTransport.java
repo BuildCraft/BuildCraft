@@ -30,13 +30,8 @@ import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.transport.ActionEnergyPulser;
-import buildcraft.transport.ActionSignalOutput;
+import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.BptBlockPipe;
-import buildcraft.transport.BptItemPipeDiamond;
-import buildcraft.transport.BptItemPipeIron;
-import buildcraft.transport.BptItemPipeWooden;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGate;
@@ -44,9 +39,10 @@ import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
-import buildcraft.transport.TriggerPipeContents;
-import buildcraft.transport.TriggerPipeSignal;
-import buildcraft.transport.TriggerPipeContents.Kind;
+import buildcraft.transport.blueprints.BptBlockPipe;
+import buildcraft.transport.blueprints.BptItemPipeDiamond;
+import buildcraft.transport.blueprints.BptItemPipeIron;
+import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeItemsCobblestone;
 import buildcraft.transport.pipes.PipeItemsDiamond;
@@ -69,6 +65,11 @@ import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
+import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionSignalOutput;
+import buildcraft.transport.triggers.TriggerPipeContents;
+import buildcraft.transport.triggers.TriggerPipeSignal;
+import buildcraft.transport.triggers.TriggerPipeContents.Kind;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
@@ -78,7 +79,7 @@ import net.minecraft.src.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
-@Mod(version = DefaultProps.VERSION, modid="BuildCraft|Transport", name = "Buildcraft Transport", dependencies=DefaultProps.DEPENDENCY_CORE)
+@Mod(version = Version.VERSION, modid="BuildCraft|Transport", name = "Buildcraft Transport", dependencies=DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels={DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class)
 public class BuildCraftTransport {
 	public static BlockGenericPipe genericPipeBlock;

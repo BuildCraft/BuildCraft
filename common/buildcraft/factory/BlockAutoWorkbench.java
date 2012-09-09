@@ -21,7 +21,7 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
@@ -59,7 +59,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 			}
 		}
 
-		if (!ProxyCore.proxy.isRemote(world))
+		if (!CoreProxy.proxy.isRemote(world))
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
 
 		return true;

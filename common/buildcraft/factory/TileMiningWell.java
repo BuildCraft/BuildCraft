@@ -11,7 +11,6 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import buildcraft.BuildCraftBlockUtil;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.power.IPowerProvider;
@@ -19,8 +18,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
-import buildcraft.core.StackUtil;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
@@ -68,7 +67,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		int blockId = world.getBlockId(xCoord, depth, zCoord);
 
-		ArrayList<ItemStack> stacks = BuildCraftBlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
+		ArrayList<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
 		world.setBlockWithNotify(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
@@ -80,16 +79,14 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			return;
 		}
 
-		for (ItemStack s : stacks) {
-			StackUtil stackUtil = new StackUtil(s);
+		for (ItemStack stack : stacks) {
 
-			if (stackUtil.addToRandomInventory(this, Orientations.Unknown) && stackUtil.items.stackSize == 0) {
-				// The object has been added to a nearby chest.
-				return;
-			}
+			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+			stack.stackSize -= added.stackSize;
+			if (stack.stackSize <= 0)
+				continue;
 
-			if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, s) && stackUtil.items.stackSize == 0) {
-				// The object has been added to a nearby pipe.
+			if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, stack) && stack.stackSize <= 0) {
 				return;
 			}
 
@@ -100,7 +97,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stackUtil.items);
+			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) world.rand.nextGaussian() * f3;

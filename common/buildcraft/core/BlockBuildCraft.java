@@ -2,6 +2,8 @@ package buildcraft.core;
 
 import java.util.Random;
 
+import buildcraft.core.utils.Utils;
+
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;

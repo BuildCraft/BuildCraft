@@ -11,10 +11,10 @@ package buildcraft.core;
 
 public class DefaultProps {
 
-	public static final String VERSION = "@VERSION@";
+	public static final String MOD = "BuildCraft";
 
-	public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@"+VERSION;
-	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@"+VERSION;
+	public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@"+Version.VERSION;
+	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@"+Version.VERSION;
 
 	public static int WORLD_HEIGHT = 256;
 	public static final String NET_CHANNEL_NAME = "BC";

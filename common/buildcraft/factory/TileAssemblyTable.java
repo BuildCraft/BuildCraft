@@ -7,13 +7,12 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.StackUtil;
-import buildcraft.core.Utils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.TilePacketWrapper;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityItem;
@@ -147,15 +146,14 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 					}
 				}
 
-				StackUtil stackUtils = new StackUtil(currentRecipe.output.copy());
+				ItemStack remaining = currentRecipe.output.copy();
+				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+				remaining.stackSize -= added.stackSize;
 
-				boolean added = stackUtils.addToRandomInventory(this, Orientations.Unknown);
+				if (remaining.stackSize > 0)
+					Utils.addToRandomPipeEntry(this, Orientations.Unknown, remaining);
 
-				if (!added || stackUtils.items.stackSize > 0) {
-					added = Utils.addToRandomPipeEntry(this, Orientations.Unknown, stackUtils.items);
-				}
-
-				if (!added) {
+				if (remaining.stackSize > 0) {
 					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
 							currentRecipe.output.copy());
 
@@ -413,7 +411,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
 			// FIXME: This needs to be switched over to new synch system.
-			ProxyCore.proxy.sendToPlayers(packet.getPacket(), worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
+			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, (int) player.posX, (int) player.posY, (int) player.posZ,
 					DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}

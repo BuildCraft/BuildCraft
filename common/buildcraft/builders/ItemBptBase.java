@@ -12,8 +12,8 @@ package buildcraft.builders;
 import java.util.List;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.core.BptBase;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.blueprints.BptBase;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.ItemStack;

@@ -9,12 +9,12 @@
 
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBlockUtil;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -66,7 +66,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().tryPlaceIntoWorld(stackToPlace, ProxyCore.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
+			stackToPlace.getItem().tryPlaceIntoWorld(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
 					zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
@@ -100,7 +100,7 @@ public abstract class FillerPattern implements IFillerPattern {
 			if (BuildCraftBuilders.fillerDestroy) {
 				world.setBlockWithNotify(lastX, lastY, lastZ, 0);
 			} else {
-				BuildCraftBlockUtil.breakBlock(world, lastX, lastY, lastZ);
+				BlockUtil.breakBlock(world, lastX, lastY, lastZ);
 			}
 		}
 

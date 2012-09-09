@@ -10,8 +10,7 @@
 package buildcraft.core.network;
 
 import buildcraft.core.ByteBuffer;
-import buildcraft.core.ClassMapping;
-import buildcraft.core.ClassMapping.Indexes;
+import buildcraft.core.network.ClassMapping.Indexes;
 import net.minecraft.src.TileEntity;
 
 public class TilePacketWrapper {

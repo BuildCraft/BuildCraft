@@ -37,9 +37,9 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.Utils;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
@@ -450,8 +450,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 
 		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null 
-				&& Block.blocksList[itemstack.itemID].blockID != 0
-				&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
+				&& Block.blocksList[itemstack.itemID].blockID != 0) {
+				//&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
 
 			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);

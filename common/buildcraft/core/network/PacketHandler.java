@@ -8,8 +8,6 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import buildcraft.core.network.v2.ISyncedTile;
-import buildcraft.core.network.v2.PacketTileState;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 

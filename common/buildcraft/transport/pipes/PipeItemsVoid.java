@@ -14,7 +14,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicVoid;
 import buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.TileEntity;
 

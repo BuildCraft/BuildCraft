@@ -21,8 +21,8 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
@@ -136,7 +136,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
+	@Override
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
 		return getCollisionBoundingBoxFromPool(world, i, j, k);
 	}
@@ -219,7 +219,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (ProxyCore.proxy.isRemote(world))
+		if (CoreProxy.proxy.isRemote(world))
 			return;
 
 		int i1 = quantityDropped(world.rand);
@@ -370,7 +370,7 @@ public class BlockGenericPipe extends BlockContainer {
 		// Try to strip wires first, starting with yellow.
 		for (IPipe.WireColor color : IPipe.WireColor.values())
 			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!ProxyCore.proxy.isRemote(pipe.worldObj))
+				if (!CoreProxy.proxy.isRemote(pipe.worldObj))
 					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 				pipe.wireSet[color.reverse().ordinal()] = false;
 				//pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
@@ -380,7 +380,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
-			if (!ProxyCore.proxy.isRemote(pipe.worldObj))
+			if (!CoreProxy.proxy.isRemote(pipe.worldObj))
 				pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 			pipe.resetGate();
 			return true;
@@ -472,7 +472,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
+	@Override
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		Pipe pipe = getPipe(world, i, j, k);
 

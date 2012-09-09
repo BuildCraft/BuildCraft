@@ -19,12 +19,12 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.factory.TileAssemblyTable;
 import buildcraft.factory.TileAssemblyTable.SelectionMessage;
@@ -70,8 +70,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		updateRecipes();
 
 		// Request current selection from server
-		if(ProxyCore.proxy.isRemote(assemblyTable.worldObj))
-			ProxyCore.proxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
+		if(CoreProxy.proxy.isRemote(assemblyTable.worldObj))
+			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
 				assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
 	}
 
@@ -152,7 +152,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			ContainerAssemblyTable container = (ContainerAssemblyTable) inventorySlots;
 
-			if (ProxyCore.proxy.isRemote(assemblyTable.worldObj)) {
+			if (CoreProxy.proxy.isRemote(assemblyTable.worldObj)) {
 				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,
 						container.z, message);
 
@@ -161,7 +161,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 				packet.posY = assemblyTable.yCoord;
 				packet.posZ = assemblyTable.zCoord;
 
-				ProxyCore.proxy.sendToServer(packet.getPacket());
+				CoreProxy.proxy.sendToServer(packet.getPacket());
 			}
 		}
 

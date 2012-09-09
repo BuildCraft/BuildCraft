@@ -13,7 +13,7 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 public class BlockHopper extends BlockBuildCraft {
 
@@ -62,7 +62,7 @@ public class BlockHopper extends BlockBuildCraft {
 			}
 		}
 
-		if (!ProxyCore.proxy.isRemote(world))
+		if (!CoreProxy.proxy.isRemote(world))
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
 
 		return true;

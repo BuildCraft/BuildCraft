@@ -15,7 +15,7 @@ import cpw.mods.fml.common.IWorldGenerator;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
@@ -43,7 +43,7 @@ public class OilPopulate implements IWorldGenerator {
 		}
 
 		if (rand == null) {
-			rand = ProxyCore.proxy.createNewRandom(world);
+			rand = CoreProxy.proxy.createNewRandom(world);
 		}
 
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);

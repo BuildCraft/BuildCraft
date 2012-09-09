@@ -22,7 +22,7 @@ import net.minecraft.src.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 
 public class BlockBlueprintLibrary extends BlockContainer {
@@ -49,7 +49,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
 
 		if (!tile.locked || entityplayer.username.equals(tile.owner))
-			if (!ProxyCore.proxy.isRemote(world))
+			if (!CoreProxy.proxy.isRemote(world))
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
 
 		return true;

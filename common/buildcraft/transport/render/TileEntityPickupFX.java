@@ -20,7 +20,7 @@ import net.minecraft.src.World;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 
 public class TileEntityPickupFX extends EntityFX {
 

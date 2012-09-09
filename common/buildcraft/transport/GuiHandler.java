@@ -7,6 +7,7 @@ import buildcraft.transport.gui.ContainerDiamondPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiGateInterface;
+import buildcraft.transport.pipes.PipeLogicDiamond;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;

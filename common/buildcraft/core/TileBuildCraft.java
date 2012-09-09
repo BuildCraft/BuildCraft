@@ -18,6 +18,8 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
@@ -76,8 +78,8 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	public void sendNetworkUpdate() {
-		if(ProxyCore.proxy.isSimulating(worldObj))
-			ProxyCore.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+		if(CoreProxy.proxy.isSimulating(worldObj))
+			CoreProxy.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
 	}
 
 	@Override

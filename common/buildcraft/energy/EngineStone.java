@@ -10,7 +10,7 @@
 package buildcraft.energy;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;

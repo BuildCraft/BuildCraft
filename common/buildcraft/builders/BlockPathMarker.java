@@ -11,7 +11,7 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;

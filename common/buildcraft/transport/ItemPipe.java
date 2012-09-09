@@ -30,35 +30,34 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	}
 	
 	@Override
-	public boolean tryPlaceIntoWorld(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l, float par8, float par9, float par10) {
+	public boolean tryPlaceIntoWorld(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
 
 		if (world.getBlockId(i, j, k) == Block.snow.blockID)
-			l = 0;
+			side = 0;
 		else {
-			if (l == 0)
+			if (side == 0)
 				j--;
-			if (l == 1)
+			if (side == 1)
 				j++;
-			if (l == 2)
+			if (side == 2)
 				k--;
-			if (l == 3)
+			if (side == 3)
 				k++;
-			if (l == 4)
+			if (side == 4)
 				i--;
-			if (l == 5)
+			if (side == 5)
 				i++;
 		}
 		
 		if (itemstack.stackSize == 0)
 			return false;
-		if (entityplayer.canPlayerEdit(i, j, k)){
-//		if (world.canBlockBePlacedAt(blockID, i, j, k, false, l)) {
+		if (entityplayer.canPlayerEdit(i, j, k)
+				&& world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
 			
 			Pipe pipe = BlockGenericPipe.createPipe(shiftedIndex);
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
 				
-				//Block.blocksList[blockID].onBlockPlaced(world, i, j, k, l);
 				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
 				// To move to a proxt
 				// world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F,

@@ -19,8 +19,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileAssemblyTable;
 
 import net.minecraft.src.NBTTagCompound;
@@ -164,7 +164,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	
 	protected void createLaser() {
 		
-		if (ProxyCore.proxy.isSimulating(worldObj))
+		if (CoreProxy.proxy.isSimulating(worldObj))
 			return;
 		
 		laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));

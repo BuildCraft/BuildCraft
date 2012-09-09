@@ -21,16 +21,17 @@ import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.core.ActionMachineControl;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
-import buildcraft.core.ProxyCore;
-import buildcraft.core.StackUtil;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.Utils;
-import buildcraft.core.ActionMachineControl.Mode;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.triggers.ActionMachineControl.Mode;
+import buildcraft.core.utils.Utils;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -63,7 +64,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public void initialize() {
 		super.initialize();
 
-		if (!ProxyCore.proxy.isRemote(worldObj)) {
+		if (!CoreProxy.proxy.isRemote(worldObj)) {
 			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
 			if (a != null) {
@@ -73,7 +74,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 					((TileMarker) a).removeFromWorld();
 				}
 
-				if (!ProxyCore.proxy.isRemote(worldObj) && box.isInitialized()) {
+				if (!CoreProxy.proxy.isRemote(worldObj) && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
 				sendNetworkUpdate();
@@ -102,7 +103,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void doWork() {
-		if (ProxyCore.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRemote(worldObj)) {
 			return;
 		}
 
@@ -156,7 +157,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	public void computeRecipe() {
-		if (ProxyCore.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRemote(worldObj)) {
 			return;
 		}
 
@@ -185,7 +186,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			currentPatternId = currentPattern.getId();
 		}
 
-		if (ProxyCore.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
 			sendNetworkUpdate();
 		}
 	}
@@ -392,51 +393,11 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	/* ISPECIALINVENTORY */
 	@Override
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		StackUtil stackUtil = new StackUtil(stack);
-
-		boolean added = false;
-
-		for (int i = 9; i < contents.length; ++i) {
-			if (stackUtil.tryAdding(this, i, doAdd, false)) {
-				added = true;
-				break;
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return stackUtil.itemsAdded;
-			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
-				return stackUtil.itemsAdded;
-			} else {
-				addItem(stack, added, from);
-
-				return stackUtil.itemsAdded;
-			}
-		}
-
-		if (!added) {
-			for (int i = 9; i < contents.length; ++i) {
-				if (stackUtil.tryAdding(this, i, doAdd, true)) {
-					added = true;
-					break;
-				}
-			}
-		}
-
-		if (added) {
-			if (!doAdd) {
-				return stackUtil.itemsAdded;
-			} else if (stack.stackSize - stackUtil.itemsAdded <= 0) {
-				return stackUtil.itemsAdded;
-			} else {
-				addItem(stack, added, from);
-
-				return stackUtil.itemsAdded;
-			}
-		}
-
-		return 0;
+		
+		ITransactor transactor = new TransactorSimple(this);
+		ItemStack added = transactor.add(stack, from, doAdd);
+		return added.stackSize;
+		
 	}
 
 	@Override

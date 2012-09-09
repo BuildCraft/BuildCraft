@@ -5,9 +5,9 @@ import java.util.LinkedList;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.BuildersProxy;
-import buildcraft.core.BptBase;
-import buildcraft.core.BptPlayerIndex;
-import buildcraft.core.Utils;
+import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.blueprints.BptPlayerIndex;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;

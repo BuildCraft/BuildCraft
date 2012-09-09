@@ -12,7 +12,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.ProxyCore;
+import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
@@ -42,7 +42,7 @@ public class ItemFacade extends ItemBuildCraft {
 		int decodedMeta = ItemFacade.getMetaData(itemstack.getItemDamage());
 		ItemStack newStack = new ItemStack(decodedBlockId, 1, decodedMeta);
 		if (Item.itemsList[decodedBlockId] != null){
-			name += ": " + ProxyCore.proxy.getItemDisplayName(newStack);
+			name += ": " + CoreProxy.proxy.getItemDisplayName(newStack);
 		} else {
 			name += " < BROKEN (" + decodedBlockId + ":"+ decodedMeta +" )>";
 		}
@@ -121,12 +121,9 @@ public class ItemFacade extends ItemBuildCraft {
 		List itemList = new ArrayList();
 		
 		for (Block block : Block.blocksList)
-        {
             if (block != null)
-            {
-            	ProxyCore.proxy.feedSubBlocks(block.blockID, null, itemList);
-            }
-        }
+            	CoreProxy.proxy.feedSubBlocks(block.blockID, null, itemList);
+
         return itemList;
 	}
 	

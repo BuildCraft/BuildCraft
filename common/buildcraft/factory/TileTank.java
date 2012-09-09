@@ -16,11 +16,10 @@ import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.liquids.LiquidTank;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
-import net.minecraft.src.Direction;
+import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
@@ -35,12 +34,12 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     @Override
     public void updateEntity()
     {
-        if(ProxyCore.proxy.isSimulating(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+        if(CoreProxy.proxy.isSimulating(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
             sendNetworkUpdate();
             hasUpdate = false;
         }
 
-        if(ProxyCore.proxy.isRemote(worldObj)) {
+        if(CoreProxy.proxy.isRemote(worldObj)) {
             return;
         }
 

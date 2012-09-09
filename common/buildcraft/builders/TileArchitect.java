@@ -14,15 +14,15 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Orientations;
 import buildcraft.core.Box;
-import buildcraft.core.BptBase;
-import buildcraft.core.BptBlueprint;
-import buildcraft.core.BptContext;
-import buildcraft.core.BptTemplate;
-import buildcraft.core.ProxyCore;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.Utils;
+import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.blueprints.BptBlueprint;
+import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.BptTemplate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -72,7 +72,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		if (!ProxyCore.proxy.isRemote(worldObj) && box.isInitialized()) {
+		if (!CoreProxy.proxy.isRemote(worldObj) && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 

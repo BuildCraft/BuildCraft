@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade;
 
 import net.minecraft.src.Block;

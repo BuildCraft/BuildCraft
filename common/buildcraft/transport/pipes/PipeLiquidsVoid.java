@@ -14,7 +14,6 @@ import buildcraft.api.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.IPipeTransportLiquidsHook;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicVoid;
 import buildcraft.transport.PipeTransportLiquids;
 
 public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook{

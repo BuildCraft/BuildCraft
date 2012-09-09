@@ -36,10 +36,10 @@ import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
-import buildcraft.core.Utils;
-import buildcraft.core.network.v2.IClientState;
-import buildcraft.core.network.v2.ISyncedTile;
-import buildcraft.core.network.v2.PacketTileState;
+import buildcraft.core.network.IClientState;
+import buildcraft.core.network.ISyncedTile;
+import buildcraft.core.network.PacketTileState;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 

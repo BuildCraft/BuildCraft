@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.Utils;
+import buildcraft.core.utils.Utils;
 import buildcraft.factory.BlockMachineRoot;
 
 import net.minecraft.src.EntityLiving;

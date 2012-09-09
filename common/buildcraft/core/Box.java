@@ -17,6 +17,8 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
@@ -218,7 +220,7 @@ public class Box implements IBox {
 
 		if (lasers != null) {
 			for (EntityBlock b : lasers)
-				ProxyCore.proxy.removeEntity(b);
+				CoreProxy.proxy.removeEntity(b);
 
 			lasers = null;
 		}
