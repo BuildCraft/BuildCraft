@@ -450,8 +450,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 
 		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null 
-				&& Block.blocksList[itemstack.itemID].blockID != 0
-				&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
+				&& Block.blocksList[itemstack.itemID].blockID != 0) {
+				//&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
 
 			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
