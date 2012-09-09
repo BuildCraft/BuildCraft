@@ -248,6 +248,30 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		}
 	};
 
+	/* NETWORK */
+	@Override
+	public PacketPayload getPacketPayload()
+	{
+		PacketPayload payload = new PacketPayload(0, 1, 0);
+	        payload.floatPayload[0] = powerProvider.getEnergyStored();
+        	return payload;
+    	}
+
+   	@Override
+    	public void handleUpdatePacket(PacketUpdate packet)
+    	{
+		powerProvider.receiveEnergy(powerProvider.getEnergyStored() - packet.payload.floatPayload[0], Orientations.Unknown);
+        	if(powerProvider.getEnergyStored() > 0) {
+        		if(laser == null) {
+        			createLaser();
+        		}
+        		updateLaser();
+        		
+	        } else {
+			removeLaser();
+	        }
+	}
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
