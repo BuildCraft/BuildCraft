@@ -14,8 +14,7 @@ import java.util.LinkedList;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.TransactorSimple;
+import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Container;
@@ -271,47 +270,13 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		return null;
 	}
 
-	@Override
-	public void openChest() {
-
-	}
-
-	@Override
-	public void closeChest() {
-
-	}
+	@Override public void openChest() {}
+	@Override public void closeChest() {}
 
 	/* ISPECIALINVENTORY */
 	@Override
-	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		
-		ITransactor transactor = new TransactorSimple(this);
-
-		int minSimilar = Integer.MAX_VALUE;
-		int minSlot = -1;
-
-		for (int j = 0; j < getSizeInventory(); ++j) {
-			ItemStack stackInInventory = getStackInSlot(j);
-
-			if (stackInInventory != null && stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID
-					&& stackInInventory.getItemDamage() == stack.getItemDamage() && stackInInventory.stackSize < minSimilar) {
-				minSimilar = stackInInventory.stackSize;
-				minSlot = j;
-			}
-		}
-
-		if (minSlot != -1) {
-			ItemStack added = transactor.add(stack, from, doAdd);
-			ItemStack remaining = stack.copy();
-			remaining.stackSize -= added.stackSize;
-			
-			if(doAdd && remaining.stackSize >= 0)
-				added.stackSize += addItem(remaining, doAdd, from);
-			
-			return added.stackSize;
-		} else
-			return 0;
-
+	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {		
+		return new TransactorRoundRobin(this).add(stack, from, doAdd).stackSize;
 	}
 
 	@Override

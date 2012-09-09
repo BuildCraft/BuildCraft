@@ -6,7 +6,7 @@ import buildcraft.api.core.Orientations;
 
 public class TransactorSimple extends Transactor {
 
-	private IInventory inventory;
+	protected IInventory inventory;
 	
 	public TransactorSimple(IInventory inventory) {
 		this.inventory = inventory;
