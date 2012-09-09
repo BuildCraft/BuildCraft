@@ -53,7 +53,7 @@ public class GateVanilla extends Gate {
 		// Load pulser if any
 		if (nbttagcompound.hasKey("Pulser")) {
 			NBTTagCompound nbttagcompoundP = nbttagcompound.getCompoundTag("Pulser");
-			pulser = new EnergyPulser((IPowerReceptor) pipe);
+			addEnergyPulser(pipe);
 			pulser.readFromNBT(nbttagcompoundP);
 		}
 
