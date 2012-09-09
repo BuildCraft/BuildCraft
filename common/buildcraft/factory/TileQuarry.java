@@ -131,14 +131,19 @@ public class TileQuarry extends TileMachine implements IArmListener, IMachine, I
 		if (inProcess && arm != null) {
 
 			arm.setArmSpeed(0);
-			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
+			// 3.2 energy/tick = 1/32 /tick , 9.5 = 2, 16 = 3
+			float energyRequested = 2 + powerProvider.getEnergyStored() / 500; // max movement of 3 with a divisor of 500
 
-			boolean enoughStep=(0.015 + energyToUse / 200F)>(1F/32F); // (otherwise the movement is rounded to 0 and the energy absorbed with no movement)
-			if(enoughStep){
-				float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
+			float minimumVelocity = arm.getMinimumVelocity();
+			double requestedVelocity = 0.015 + energyRequested / 200F;
+			float actualVelocity = ((int)(requestedVelocity / minimumVelocity)) * minimumVelocity; // typically 0,1,or 2x minimum
+			if(actualVelocity > 0){
+				float actualEnergy = (actualVelocity - 0.015F) * 200F;
+
+				float energy = powerProvider.useEnergy(actualEnergy, actualEnergy, true);
 
 				if (energy > 0) {
-					arm.doMove(0.015 + energy / 200F);
+					arm.doMove(actualVelocity + .00001); // + a delta just to check if the difference in speed between the + and - direction is due to rounding (it isn't)
 				}
 			}
 		}
