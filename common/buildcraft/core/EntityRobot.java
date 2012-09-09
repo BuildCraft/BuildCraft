@@ -140,7 +140,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 		if (reachedDesination()) {
 
-			BlockIndex newDesination = getNewDesination();
+			BlockIndex newDesination = getNewDestination();
 			if (newDesination != null) {
 				setDestination(newDesination.i, newDesination.j, newDesination.k);
 			}
@@ -149,7 +149,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 	}
 
-	protected BlockIndex getNewDesination() {
+	protected BlockIndex getNewDestination() {
 
 		Box movementBoundary = new Box();
 		movementBoundary.initialize(box);
@@ -206,7 +206,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 				BptSlot target = a.slot;
 				if (wait <= 0) {
 
-					if (!CoreProxy.proxy.isRemote(worldObj)) {
+					if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 
 						if (target.mode == Mode.ClearIfInvalid) {
 

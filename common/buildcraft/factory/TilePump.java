@@ -66,7 +66,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 			return;
 		}
 
-		if (!CoreProxy.proxy.isRemote(worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
 

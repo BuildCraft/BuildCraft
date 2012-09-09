@@ -41,7 +41,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	private int nextNetworkUpdate = 3;
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 10;
-
+	
 	public TileLaser() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, 1000);
@@ -50,37 +50,42 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 		
+		if(!CoreProxy.proxy.isSimulating(worldObj))
+			return;
+		
+		// Disable the laser and do nothing if no energy is available.
 		if (powerProvider.getEnergyStored() == 0) {
 			removeLaser();
 			return;
 		}
 		
-		if (!isValidTable()) {
-			
-			if (canFindTable()) {
+		// Check for available tables if none is linked to this laser.
+		if (!isValidTable())
+			if (canFindTable())
 				findTable();
-			}
-		}
 		
+		// If we still don't have a valid table or the existing has
+		// become invalid, we disable the laser and do nothing.
 		if (!isValidTable()) {
 			removeLaser();
 			return;
 		}
 		
-		if (laser == null) {
+		// We have a table and can work, so we create a laser if
+		// necessary.
+		if (laser == null)
 			createLaser();
-		}
 	
-		if (laser != null && canUpdateLaser()) {
+		// We have a laser and may update it
+		if (laser != null && canUpdateLaser())
 			updateLaser();
-		}
 
-		float p = powerProvider.useEnergy(0, 4, true);
-		assemblyTable.receiveLaserEnergy(p);
+		// Consume power and transfer it to the table.
+		float power = powerProvider.useEnergy(0, 4, true);
+		assemblyTable.receiveLaserEnergy(power);
 		
-		if (laser != null) {
-			laser.pushPower(p);
-		}
+		if (laser != null)
+			laser.pushPower(power);
 		
 		sendNetworkUpdate();
 	}
@@ -95,9 +100,8 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	
 	protected boolean isValidTable() {
 		
-		if (assemblyTable == null || assemblyTable.isInvalid() || assemblyTable.currentRecipe == null) {
+		if (assemblyTable == null || assemblyTable.isInvalid() || assemblyTable.currentRecipe == null)
 			return false;
-		}
 		
 		return true;
 	}
@@ -164,9 +168,6 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	
 	protected void createLaser() {
 		
-		if (CoreProxy.proxy.isSimulating(worldObj))
-			return;
-		
 		laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
 		worldObj.spawnEntityInWorld(laser);
 	}
@@ -220,7 +221,6 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
-
 	}
 
 	@Override
@@ -241,11 +241,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	}
 	
 	@Override
-	public void sendNetworkUpdate() {
-		
-		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate)) {
+	public void sendNetworkUpdate() {		
+		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate))
 			super.sendNetworkUpdate();
-		}
 	};
 
 	@Override

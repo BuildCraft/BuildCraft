@@ -91,7 +91,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 			filterInventory.setInventorySlotContents(position, newStack);
 
-			if (CoreProxy.proxy.isRemote(filterInventory.worldObj)) {
+			if (CoreProxy.proxy.isRenderWorld(filterInventory.worldObj)) {
 				PacketSlotChange packet = new PacketSlotChange(PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord,
 						filterInventory.yCoord, filterInventory.zCoord, position, newStack);
 				CoreProxy.proxy.sendToServer(packet.getPacket());

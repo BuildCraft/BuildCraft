@@ -14,11 +14,12 @@ import net.minecraft.src.World;
 
 public class EntityEnergyLaser extends EntityLaser {
 
+	public static final short POWER_AVERAGING = 100;
 	public int displayStage = 0;
 
-	private final float power [] = new float [100];
+	private final float power [] = new float [POWER_AVERAGING];
 	private int powerIndex = 0;
-	public float powerAverage = 0;
+	private float powerAverage = 0;
 
 	public EntityEnergyLaser(World world) {
 		super(world);
@@ -26,16 +27,13 @@ public class EntityEnergyLaser extends EntityLaser {
 
 	public EntityEnergyLaser(World world, Position head, Position tail) {
 		super(world, head, tail);
-
-		for (int j = 0; j < power.length; ++j)
-			power [j] = 0;
 	}
 
-	public void pushPower (float p) {
+	public void pushPower (float received) {
 
 		powerAverage -= power [powerIndex];
-		powerAverage += p;
-		power[powerIndex] = p;
+		powerAverage += received;
+		power[powerIndex] = received;
 		powerIndex++;
 
 		if (powerIndex == power.length)
@@ -43,7 +41,7 @@ public class EntityEnergyLaser extends EntityLaser {
 	}
 
 	public float getPowerAverage() {
-		return powerAverage / power.length;
+		return powerAverage / POWER_AVERAGING;
 	}
 
 	@Override

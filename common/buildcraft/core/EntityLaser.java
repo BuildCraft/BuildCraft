@@ -9,11 +9,6 @@
 
 package buildcraft.core;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-
 import buildcraft.api.core.Position;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -21,7 +16,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 
-public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
+public class EntityLaser extends Entity {
 
 	protected Position head, tail;
 
@@ -31,8 +26,9 @@ public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
 	protected String texture;
 
 	public EntityLaser(World world) {
-
 		super(world);
+
+		initClientSide();
 	}
 
 	public EntityLaser(World world, Position head, Position tail) {
@@ -44,10 +40,26 @@ public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
 
 		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
 
-		init();
+		initServerSide();
 	}
 
-	protected void init() {
+	protected void initClientSide() {
+		
+		head = new Position(0, 0, 0);
+		tail = new Position(0, 0, 0);
+		
+		dataWatcher.addObject(8 , Integer.valueOf(0));
+		dataWatcher.addObject(9 , Integer.valueOf(0));
+		dataWatcher.addObject(10, Integer.valueOf(0));
+		dataWatcher.addObject(11, Integer.valueOf(0));
+		dataWatcher.addObject(12, Integer.valueOf(0));
+		dataWatcher.addObject(13, Integer.valueOf(0));
+
+		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
+		
+	}
+	
+	protected void initServerSide() {
 
 		preventEntitySpawning = false;
 		noClip = true;
@@ -67,31 +79,13 @@ public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	@Override
-	public void writeSpawnData(ByteArrayDataOutput data) {
-		data.writeDouble(head.x);
-		data.writeDouble(head.y);
-		data.writeDouble(head.z);
-		data.writeDouble(tail.x);
-		data.writeDouble(tail.y);
-		data.writeDouble(tail.z);
-	}
-
-	@Override
-	public void readSpawnData(ByteArrayDataInput data) {
-		head = new Position(data.readDouble(), data.readDouble(), data.readDouble());
-		tail = new Position(data.readDouble(), data.readDouble(), data.readDouble());
-		init();
-	}
-
-	@Override
 	public void onUpdate() {
 
 		if (head == null || tail == null)
 			return;
 
-		if (CoreProxy.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			updateData();
-		}
 
 		boundingBox.minX = Math.min(head.x, tail.x);
 		boundingBox.minY = Math.min(head.y, tail.y);
@@ -128,15 +122,7 @@ public class EntityLaser extends Entity implements IEntityAdditionalSpawnData {
 		tail.y = decodeDouble(dataWatcher.getWatchableObjectInt(12));
 		tail.z = decodeDouble(dataWatcher.getWatchableObjectInt(13));
 	}
-//
-//	@Override
-//	public void setPosition(double x, double y, double z) {
-//
-//		posX = x;
-//		posY = y;
-//		posZ = z;
-//	}
-//
+
 	public void setPositions(Position head, Position tail) {
 
 		this.head = head;

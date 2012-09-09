@@ -104,7 +104,7 @@ public class BlockBuilder extends BlockContainer {
 			return true;
 		} else {
 
-			if (!CoreProxy.proxy.isRemote(world))
+			if (!CoreProxy.proxy.isRenderWorld(world))
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
 			return true;
 

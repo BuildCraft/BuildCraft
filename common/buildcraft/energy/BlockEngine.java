@@ -92,12 +92,12 @@ public class BlockEngine extends BlockContainer {
 					return false;
 
 			if (tile.engine instanceof EngineStone) {
-				if (!CoreProxy.proxy.isRemote(tile.worldObj))
+				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj))
 					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
-				if (!CoreProxy.proxy.isRemote(tile.worldObj))
+				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj))
 					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				return true;
 			}

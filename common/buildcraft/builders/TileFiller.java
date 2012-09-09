@@ -64,7 +64,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.proxy.isRemote(worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
 			if (a != null) {
@@ -74,7 +74,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 					((TileMarker) a).removeFromWorld();
 				}
 
-				if (!CoreProxy.proxy.isRemote(worldObj) && box.isInitialized()) {
+				if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized()) {
 					box.createLasers(worldObj, LaserKind.Stripes);
 				}
 				sendNetworkUpdate();
@@ -103,7 +103,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 
 	@Override
 	public void doWork() {
-		if (CoreProxy.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			return;
 		}
 
@@ -157,7 +157,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	}
 
 	public void computeRecipe() {
-		if (CoreProxy.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			return;
 		}
 

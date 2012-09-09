@@ -70,7 +70,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		updateRecipes();
 
 		// Request current selection from server
-		if(CoreProxy.proxy.isRemote(assemblyTable.worldObj))
+		if(CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj))
 			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ASSEMBLY_GET, assemblyTable.xCoord,
 				assemblyTable.yCoord, assemblyTable.zCoord).getPacket());
 	}
@@ -152,7 +152,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			ContainerAssemblyTable container = (ContainerAssemblyTable) inventorySlots;
 
-			if (CoreProxy.proxy.isRemote(assemblyTable.worldObj)) {
+			if (CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj)) {
 				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,
 						container.z, message);
 

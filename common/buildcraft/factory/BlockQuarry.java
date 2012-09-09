@@ -129,7 +129,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	@Override
 	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
 		
-		if (CoreProxy.proxy.isRemote(world)){
+		if (CoreProxy.proxy.isRenderWorld(world)){
 			return;
 		}
 		

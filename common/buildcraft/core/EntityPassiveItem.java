@@ -289,7 +289,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 */
 	@Override
 	public EntityItem toEntityItem(Orientations dir) {
-		if (!CoreProxy.proxy.isRemote(worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			if (getItemStack().stackSize <= 0) {
 				return null;
 			}

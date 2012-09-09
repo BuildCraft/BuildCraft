@@ -66,7 +66,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public void initialize() {
-		if (!CoreProxy.proxy.isRemote(worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			if (engine == null) {
 				createEngineIfNeeded();
 			}
@@ -85,7 +85,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			return;
 		}
 
-		if (CoreProxy.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			if (progressPart != 0) {
 				engine.progress += serverPistonSpeed;
 
@@ -362,7 +362,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public void doWork() {
-		if (CoreProxy.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			return;
 		}
 

@@ -83,7 +83,7 @@ public class PipeLogicWood extends PipeLogic {
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.proxy.isRemote(worldObj))
+		if (!CoreProxy.proxy.isRenderWorld(worldObj))
 			switchSourceIfNeeded();
 	}
 
@@ -104,7 +104,7 @@ public class PipeLogicWood extends PipeLogic {
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		if (!CoreProxy.proxy.isRemote(worldObj))
+		if (!CoreProxy.proxy.isRenderWorld(worldObj))
 			switchSourceIfNeeded();
 	}
 	

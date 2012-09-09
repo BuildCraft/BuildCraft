@@ -219,7 +219,7 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
 
-		if (CoreProxy.proxy.isRemote(world))
+		if (CoreProxy.proxy.isRenderWorld(world))
 			return;
 
 		int i1 = quantityDropped(world.rand);
@@ -370,7 +370,7 @@ public class BlockGenericPipe extends BlockContainer {
 		// Try to strip wires first, starting with yellow.
 		for (IPipe.WireColor color : IPipe.WireColor.values())
 			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!CoreProxy.proxy.isRemote(pipe.worldObj))
+				if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj))
 					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 				pipe.wireSet[color.reverse().ordinal()] = false;
 				//pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
@@ -380,7 +380,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
-			if (!CoreProxy.proxy.isRemote(pipe.worldObj))
+			if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj))
 				pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
 			pipe.resetGate();
 			return true;

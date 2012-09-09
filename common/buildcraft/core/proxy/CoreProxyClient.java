@@ -20,7 +20,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.EntityLaser;
+import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.render.RenderEnergyLaser;
 import buildcraft.core.render.RenderEntityBlock;
@@ -62,7 +62,7 @@ public class CoreProxyClient extends CoreProxy {
 	public void removeEntity(Entity entity) {
 		super.removeEntity(entity);
 
-		if (isRemote(entity.worldObj))
+		if (isRenderWorld(entity.worldObj))
 			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
 	}
 
@@ -119,7 +119,7 @@ public class CoreProxyClient extends CoreProxy {
 	@Override
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, new RenderEntityBlock());
-		RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());
+		RenderingRegistry.registerEntityRenderingHandler(EntityPowerLaser.class, new RenderLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 	}

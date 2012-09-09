@@ -72,7 +72,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			}
 		}
 
-		if (!CoreProxy.proxy.isRemote(worldObj) && box.isInitialized()) {
+		if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
 		}
 

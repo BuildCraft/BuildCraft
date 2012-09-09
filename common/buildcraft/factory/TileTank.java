@@ -39,7 +39,7 @@ public class TileTank extends TileBuildCraft implements ITankContainer
             hasUpdate = false;
         }
 
-        if(CoreProxy.proxy.isRemote(worldObj)) {
+        if(CoreProxy.proxy.isRenderWorld(worldObj)) {
             return;
         }
 

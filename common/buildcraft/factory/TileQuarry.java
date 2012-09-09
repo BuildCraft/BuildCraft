@@ -40,7 +40,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.MathHelper;
 import net.minecraft.src.NBTTagCompound;
 
 public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
@@ -88,9 +87,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 			box.deleteLasers();
 
-			if (arm == null) {
+			if (arm == null)
 				createArm();
-			}
 
 			if (findTarget(false)) {
 				isDigging = true;
@@ -340,7 +338,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	public void positionReached() {
 		inProcess = false;
-		System.out.println("PositionReached!" + Thread.currentThread());
 
 		if (worldObj.isRemote) {
 			return;

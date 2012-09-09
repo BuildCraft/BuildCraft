@@ -60,7 +60,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!CoreProxy.proxy.isRemote(pipe.worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
 
@@ -198,13 +198,13 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void synchronize() {
 
-		if (!isNetInitialized && CoreProxy.proxy.isRemote(pipe.worldObj)) {
+		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			isNetInitialized = true;
 			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord)
 					.getPacket());
 		}
 
-		if (!isSynchronized && CoreProxy.proxy.isRemote(pipe.worldObj)) {
+		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			isSynchronized = true;
 			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord)
 					.getPacket());
@@ -374,13 +374,13 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
 		pipe.setTrigger(position, trigger);
-		if (CoreProxy.proxy.isRemote(pipe.worldObj) && notify)
+		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify)
 			sendSelectionChange(position);
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
 		pipe.setTriggerParameter(position, parameter);
-		if (CoreProxy.proxy.isRemote(pipe.worldObj) && notify)
+		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify)
 			sendSelectionChange(position);
 	}
 
@@ -403,7 +403,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.setAction(position, action);
-		if (CoreProxy.proxy.isRemote(pipe.worldObj) && notify)
+		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify)
 			sendSelectionChange(position);
 	}
 

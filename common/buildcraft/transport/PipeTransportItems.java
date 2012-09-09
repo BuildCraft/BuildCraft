@@ -257,7 +257,7 @@ public class PipeTransportItems extends PipeTransport {
 		} else if (tile instanceof IInventory) {
 			ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.orientation.reverse(), true);
 
-			if (!CoreProxy.proxy.isRemote(worldObj))
+			if (!CoreProxy.proxy.isRenderWorld(worldObj))
 				if(added.stackSize >= data.item.getItemStack().stackSize)
 					data.item.remove();
 				else {
@@ -360,7 +360,7 @@ public class PipeTransportItems extends PipeTransport {
 		else {
 			int i;
 
-			if (CoreProxy.proxy.isRemote(worldObj) || CoreProxy.proxy.isSimulating(worldObj))
+			if (CoreProxy.proxy.isRenderWorld(worldObj) || CoreProxy.proxy.isSimulating(worldObj))
 			{
 				i = Math.abs(data.item.getEntityId() + xCoord + yCoord + zCoord + data.item.getDeterministicRandomization())
 						% listOfPossibleMovements.size();

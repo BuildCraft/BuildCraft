@@ -54,7 +54,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 		refinery.setFilter(slot, liquidId);
 
-		if (CoreProxy.proxy.isRemote(refinery.worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(refinery.worldObj)) {
 			PacketPayload payload = new PacketPayload(3, 0, 0);
 			payload.intPayload[0] = slot;
 			payload.intPayload[1] = liquidId;

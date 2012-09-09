@@ -44,7 +44,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe)
 				return false;
 
-		if (!CoreProxy.proxy.isRemote(container.worldObj))
+		if (!CoreProxy.proxy.isRenderWorld(container.worldObj))
 			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
 
 		return true;

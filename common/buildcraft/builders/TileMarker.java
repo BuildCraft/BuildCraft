@@ -155,7 +155,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	public void tryConnection() {
-		if (CoreProxy.proxy.isRemote(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			return;
 		}
 

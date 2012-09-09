@@ -178,7 +178,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRemote(worldObj))
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
 		moveLiquids();

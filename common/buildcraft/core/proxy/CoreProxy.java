@@ -48,7 +48,7 @@ public class CoreProxy {
 		return !world.isRemote;
 	}
 
-	public boolean isRemote(World world) {
+	public boolean isRenderWorld(World world) {
 		return world.isRemote;
 	}
 
