@@ -30,6 +30,16 @@ public class TransactorSimple extends Transactor {
 		return injected;
 	}
 	
+	@Override
+	public int injectSpecific(ItemStack stack, int slot,Orientations orientation, boolean doAdd) {
+		
+		int injected = 0;
+		
+		injected += addToSlot(slot, stack, injected, doAdd);
+		
+		return injected;
+	}
+	
 	protected int getPartialSlot(ItemStack stack, Orientations orientation, int skipAhead) {
 		return getPartialSlot(stack, skipAhead, inventory.getSizeInventory());
 	}

@@ -15,7 +15,15 @@ public abstract class Transactor implements ITransactor {
 		return added;
 	}
 	
+	@Override
+	public ItemStack addSpecific(ItemStack stack,int slot, Orientations orientation, boolean doAdd) {
+		ItemStack added = stack.copy();
+		added.stackSize = injectSpecific(stack,slot, orientation, doAdd);	
+		return added;
+	}
+	
 	public abstract int inject(ItemStack stack, Orientations orientation, boolean doAdd);
+	public abstract int injectSpecific(ItemStack stack,int slot, Orientations orientation, boolean doAdd);
 	
 	public static ITransactor getTransactorFor(Object object) {
 		

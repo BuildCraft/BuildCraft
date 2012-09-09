@@ -286,7 +286,22 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
 		
 		ITransactor transactor = new TransactorSimple(this);
-
+		if(stack.stackSize > 1){ // then we need to split into 1's and add them seperatly, so that each can goto the minimum sized pile
+			// without this code a large stack will go into 1 slot, even when there are multiple slots available.
+			ItemStack remaining = stack.copy();
+			int total = 0;
+			while(remaining.stackSize > 1){
+				ItemStack oneItem = remaining.splitStack(1); // de-increments remaining
+				int added = addItem(oneItem,doAdd,from);
+				total += added;
+				if(added == 0)
+					return total; // don't fall through, there might be more than 1 item left, which would just call addItem and infinite recurse.
+			}
+			total +=addItem(remaining,doAdd,from);
+			return total;
+			
+		}		
+		
 		int minSimilar = Integer.MAX_VALUE;
 		int minSlot = -1;
 
@@ -301,14 +316,8 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		}
 
 		if (minSlot != -1) {
-			ItemStack added = transactor.add(stack, from, doAdd);
-			ItemStack remaining = stack.copy();
-			remaining.stackSize -= added.stackSize;
-			
-			if(doAdd && remaining.stackSize > 0)
-				added.stackSize += addItem(remaining, doAdd, from);
-			
-			return added.stackSize;
+			ItemStack added = transactor.addSpecific(stack,minSlot, from, doAdd);
+			return added.stackSize; // guaranteed to be 1.
 		} else
 			return 0;
 
