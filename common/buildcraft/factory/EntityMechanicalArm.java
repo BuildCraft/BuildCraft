@@ -242,9 +242,9 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 				}
 			} else {
 				if (target[1] > head[1]) {
-					head[1] += instantSpeed / 2;
+					head[1] += instantSpeed;
 				} else {
-					head[1] -= instantSpeed / 2;
+					head[1] -= instantSpeed;
 				}
 			}
 			setHead(head[0],head[1],head[2]);
