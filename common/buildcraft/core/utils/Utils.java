@@ -208,6 +208,11 @@ public class Utils {
 		return world.getBlockTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
 	}
 
+	/**
+	 * Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
+	 * @param inv
+	 * @return Modified inventory if double chest, unmodified otherwise.
+	 */
 	public static IInventory getInventory(IInventory inv) {
 		if (inv instanceof TileEntityChest) {
 			TileEntityChest chest = (TileEntityChest) inv;
