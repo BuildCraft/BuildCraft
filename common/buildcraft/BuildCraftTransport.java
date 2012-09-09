@@ -411,7 +411,7 @@ public class BuildCraftTransport {
 
 		if (ingredient1 != null && ingredient2 != null && ingredient3 != null) {
 			recipe.result = new ItemStack(res, 8);
-			recipe.input = new Object[] { "   ", "ABC", "   ", Character.valueOf('A'), ingredient1, Character.valueOf('B'), ingredient2, Character.valueOf('C'), ingredient3 };
+			recipe.input = new Object[] { "ABC", Character.valueOf('A'), ingredient1, Character.valueOf('B'), ingredient2, Character.valueOf('C'), ingredient3 };
 
 			pipeRecipes.add(recipe);
 		} else if (ingredient1 != null && ingredient2 != null) {
