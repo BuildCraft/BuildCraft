@@ -44,8 +44,10 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		BlockInterface block = new BlockInterface();
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
 			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
-		else
+		else if(Item.itemsList[liquidId] != null)
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
+		else
+			return null;
 
 		for (int s = 0; s < displayStages; ++s) {
 			d[s] = GLAllocation.generateDisplayLists(1);
@@ -79,6 +81,8 @@ public class RenderTank extends TileEntitySpecialRenderer {
 			return;
 
 		int[] displayList = getDisplayLists(liquid.itemID, liquid.itemMeta, tileentity.worldObj);
+		if(displayList == null)
+			return;
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
