@@ -26,7 +26,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	
 	protected ItemPipe(int i) {
 		super(i);
-		this.setTabToDisplayOn(CreativeTabs.tabMisc);
+		this.setTabToDisplayOn(CreativeTabs.tabTransport);
 	}
 	
 	@Override

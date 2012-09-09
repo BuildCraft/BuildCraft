@@ -21,10 +21,11 @@ public class ItemGate extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
+		setTabToDisplayOn(CreativeTabs.tabRedstone);
 	}
 
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
+	@Override
 	public int getIconFromDamage(int i) {
 		int n = 0;
 		if (series > 0)
@@ -53,12 +54,6 @@ public class ItemGate extends ItemBuildCraft {
 	@Override
 	public String getItemNameIS(ItemStack itemstack) {
 		return (new StringBuilder()).append(super.getItemName()).append(".").append(itemstack.getItemDamage()).toString();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public CreativeTabs getCreativeTab() {
-		return CreativeTabs.tabMisc;
 	}
 
 	@Override

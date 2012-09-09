@@ -41,6 +41,7 @@ public class StackUtil {
 		World w = tile.worldObj;
 
 		LinkedList<Orientations> possibleInventories = new LinkedList<Orientations>();
+		int currentItemsAdded = itemsAdded;
 
 		for (int j = 0; j < 6; ++j) {
 			if (from.reverse().ordinal() == j)
@@ -61,6 +62,8 @@ public class StackUtil {
 						&& checkAvailableSlot((IInventory) tileInventory, false, pos.orientation.reverse()))
 					possibleInventories.add(pos.orientation);
 		}
+
+		itemsAdded = currentItemsAdded; // because tryAdd(false) might increment it, and we don't want to increment it again when we actually suceed later
 
 		if (possibleInventories.size() > 0) {
 			int choice = w.rand.nextInt(possibleInventories.size());
