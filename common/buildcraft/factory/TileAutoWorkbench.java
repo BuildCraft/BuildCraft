@@ -305,7 +305,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			ItemStack remaining = stack.copy();
 			remaining.stackSize -= added.stackSize;
 			
-			if(doAdd && remaining.stackSize >= 0)
+			if(doAdd && remaining.stackSize > 0)
 				added.stackSize += addItem(remaining, doAdd, from);
 			
 			return added.stackSize;
