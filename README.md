@@ -32,3 +32,8 @@ Your directory structure should look like this:
      |- ...
 
 ***
+
+### Localizations
+
+Localizations can be submitted [here](https://github.com/SirSengir/BuildCraft-Localization). Localization PRs against
+this repository will have to be rejected.
