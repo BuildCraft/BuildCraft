@@ -16,6 +16,7 @@ import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.gui.BuildCraftContainer;
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 
@@ -25,6 +26,8 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 
 	protected IInventory playerInventory;
 	protected TileBlueprintLibrary library;
+	
+	private int progressIn, progressOut;
 
 	public ContainerBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(library.getSizeInventory());
@@ -47,6 +50,30 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		for (int i1 = 0; i1 < 9; i1++)
 			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 198));
 	}
+
+	@Override
+	public void updateCraftingResults() {
+		super.updateCraftingResults();
+		for (int i = 0; i < crafters.size(); i++) {
+			ICrafting icrafting = (ICrafting) crafters.get(i);
+			if (progressIn != library.progressIn)
+				icrafting.updateCraftingInventoryInfo(this, 0, library.progressIn);
+			if (progressOut != library.progressOut)
+				icrafting.updateCraftingInventoryInfo(this, 1, library.progressOut);
+		}
+
+		progressIn = library.progressIn;
+		progressOut = library.progressOut;
+	}
+	
+	@Override
+	public void updateProgressBar(int i, int j) {
+		if (i == 0)
+			library.progressIn = j;
+		else if(i == 1)
+			library.progressOut = j;
+	}
+
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
