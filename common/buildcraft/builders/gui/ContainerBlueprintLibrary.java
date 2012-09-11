@@ -16,6 +16,7 @@ import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.gui.BuildCraftContainer;
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 
@@ -25,6 +26,8 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 
 	protected IInventory playerInventory;
 	protected TileBlueprintLibrary library;
+	
+	private int progressIn, progressOut;
 
 	public ContainerBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
 		super(library.getSizeInventory());
