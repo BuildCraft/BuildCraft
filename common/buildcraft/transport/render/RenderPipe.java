@@ -488,10 +488,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					float scale = 1.0F;
 
 					if (true) {
-						int var17 = Item.itemsList[itemstack.itemID].getColorFromDamage(itemstack.getItemDamage(), i);
-						float var18 = (var17 >> 16 & 255) / 255.0F;
-						float var19 = (var17 >> 8 & 255) / 255.0F;
-						float var20 = (var17 & 255) / 255.0F;
+						int itemColour = Item.itemsList[itemstack.itemID].getColorFromDamage(itemstack.getItemDamage(), i);
+						float var18 = (itemColour >> 16 & 255) / 255.0F;
+						float var19 = (itemColour >> 8 & 255) / 255.0F;
+						float var20 = (itemColour & 255) / 255.0F;
 						GL11.glColor4f(var18 * scale, var19 * scale, var20 * scale, 1.0F);
 					}
 
@@ -502,11 +502,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 				int i = itemstack.getIconIndex();
 				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
-						&& Block.blocksList[itemstack.itemID].blockID != 0) {
+						&& Block.blocksList[itemstack.itemID].blockID != 0)
 					ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
-				} else {
+				else
 					ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
-				}
 
 				drawItem(i, quantity);
 			}

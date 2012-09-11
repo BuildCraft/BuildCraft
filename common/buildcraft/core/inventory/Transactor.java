@@ -5,6 +5,7 @@ import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.utils.Utils;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.TileEntityFurnace;
 import net.minecraftforge.common.ISidedInventory;
 
 public abstract class Transactor implements ITransactor {
@@ -22,6 +23,10 @@ public abstract class Transactor implements ITransactor {
 		
 		if(object instanceof ISpecialInventory)
 			return new TransactorSpecial((ISpecialInventory)object);
+		
+		// Furnaces need to be special cased to prevent vanilla XP exploits.
+		else if(object instanceof TileEntityFurnace)
+			return new TransactorFurnace((ISidedInventory)object);
 		
 		else if(object instanceof ISidedInventory)
 			return new TransactorSided((ISidedInventory)object);
