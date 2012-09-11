@@ -49,6 +49,30 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 	}
 
 	@Override
+	public void updateCraftingResults() {
+		super.updateCraftingResults();
+		for (int i = 0; i < crafters.size(); i++) {
+			ICrafting icrafting = (ICrafting) crafters.get(i);
+			if (progressIn != library.progressIn)
+				icrafting.updateCraftingInventoryInfo(this, 0, library.progressIn);
+			if (progressOut != library.progressOut)
+				icrafting.updateCraftingInventoryInfo(this, 1, library.progressOut);
+		}
+
+		progressIn = library.progressIn;
+		progressOut = library.progressOut;
+	}
+	
+	@Override
+	public void updateProgressBar(int i, int j) {
+		if (i == 0)
+			library.progressIn = j;
+		else if(i == 1)
+			library.progressOut = j;
+	}
+
+
+	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return library.isUseableByPlayer(entityplayer);
 	}
