@@ -4,6 +4,7 @@
     
     <property name="build.dir"           value="build"/>
 	<property name="src.dir"			 value="buildcraft.131" />
+	<property name="lang.dir"			 value="buildcraft.localization" />
 	<property name="resource.dir"		 value="mc.devel" />
     
     <property name="classes.dir"         value="${build.dir}/classes"/>
@@ -109,12 +110,18 @@
             <fileset dir="${mcp.dir}/reobf/minecraft"/>
         </copy>
         
-        <!-- Copy resoucres -->
+        <!-- Copy resources -->
         <copy todir="${classes.dir}/client">
             <fileset dir="${src.dir}/buildcraft_resources">
                 <exclude name="build.xml"/>
         	</fileset>
         </copy>
+    	<!-- Copy localizations -->
+    	<copy todir="${classes.dir}/client">
+    		<fileset dir="${lang.dir}">
+                <exclude name="README.md"/>
+    		</fileset>
+    	</copy>
         
     </target>
     

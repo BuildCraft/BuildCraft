@@ -483,7 +483,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 				ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
 
-				for (int i = 0; i <= 1; ++i) {
+				for (int i = 0; i <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++i) {
 					int iconIndex = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), i);
 					float scale = 1.0F;
 
