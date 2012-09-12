@@ -9,7 +9,9 @@ import buildcraft.builders.BuildersProxy;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
+import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.EntityPlayer;
@@ -19,6 +21,10 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
+	public static final int COMMAND_NEXT = 1,
+			COMMAND_PREV = 2,
+			COMMAND_LOCK_UPDATE = 3,
+			COMMAND_DELETE = 4;
 
 	public ItemStack[] stack = new ItemStack[4];
 
@@ -28,15 +34,24 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public String owner = "";
 
 	private ArrayList<BptBase> currentPage;
+
 	public @TileNetworkData(staticSize=BuildCraftBuilders.LIBRARY_PAGE_SIZE) String[] currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
 	public @TileNetworkData int selected = -1;
 
 	public @TileNetworkData boolean locked = false;
+	
+	public TileBlueprintLibrary(){
+		for(int i = 0; i < currentNames.length; i++){
+			currentNames[i] = "";
+		}
+	}
 
 	@Override
 	public void initialize() {
 		super.initialize();
-		setCurrentPage(getNextPage(null));
+		if(CoreProxy.proxy.isSimulating(worldObj)){
+			setCurrentPage(getNextPage(null));
+		}
 	}
 
 	public ArrayList<BptBase> getNextPage(String after) {
@@ -89,8 +104,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	
 	public void updateCurrentNames(){
 		currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
-		for(int i = 0; i < currentNames.length; i++){
+		for(int i = 0; i < currentPage.size(); i++){
 			currentNames[i] = currentPage.get(i).getName();
+		}
+		for(int i = currentPage.size(); i < currentNames.length; i++){
+			currentNames[i] = "";
 		}
 		sendNetworkUpdate();
 	}
@@ -101,12 +119,25 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	
 	public void setCurrentPage(ArrayList<BptBase> newPage){
 		currentPage = newPage;
+		selected = -1;
 		updateCurrentNames();
 	}
 	
-	public void deleteSelectedBpt(EntityPlayer player){
-		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(player.username);
-		if (selected > -1) {
+	public void setCurrentPage(boolean nextPage) {
+		int index = 0;
+		if (nextPage) {
+			index = currentPage.size() - 1;
+		}
+		if (currentPage.size() > 0) {
+			setCurrentPage(getNextPage(currentPage.get(index).file.getName()));
+		} else {
+			setCurrentPage(getNextPage(null));
+		}
+	}
+		
+	public void deleteSelectedBpt(){
+		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
+		if (selected > -1 && selected < currentPage.size()) {
 			index.deleteBluePrint(currentPage.get(selected).file.getName());
 			if (currentPage.size() > 0) {
 				currentPage = getNextPage(index.prevBpt(currentPage.get(0).file.getName()));
@@ -216,6 +247,9 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public void updateEntity() {
+		super.updateEntity();
+		if(CoreProxy.proxy.isRenderWorld(worldObj)) return;
+		
 		if (progressIn > 0 && progressIn < 100) {
 			progressIn++;
 		}
@@ -234,6 +268,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 				try {
 					index.addBlueprint(bpt.file);
+					setCurrentPage(true);
+					setCurrentPage(false);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -241,7 +277,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		}
 
 		if (progressOut == 100 && stack[3] == null) {
-			if (selected > -1) {
+			if (selected > -1 && selected < currentPage.size()) {
 				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, currentPage.get(selected).position));
 			} else {
 				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, 0));

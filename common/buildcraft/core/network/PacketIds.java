@@ -20,10 +20,8 @@ public class PacketIds {
 	public static final int GATE_TRIGGERS = 45;
 	public static final int REFINERY_FILTER_SET = 50;
 	public static final int ARCHITECT_NAME = 60;
-	public static final int LIBRARY_COMMAND = 61;
-	public static final int LIBRARY_LOCK_UPDATE = 62;
-	public static final int LIBRARY_DELETE = 63;
-	public static final int LIBRARY_SELECT = 64;
+	public static final int LIBRARY_ACTION = 61;
+	public static final int LIBRARY_SELECT = 62;
 
 	public static final int STATE_UPDATE = 100;
 }
