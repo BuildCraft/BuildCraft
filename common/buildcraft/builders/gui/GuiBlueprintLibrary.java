@@ -23,6 +23,11 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.network.PacketCoordinates;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
@@ -47,7 +52,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		this.library = library;
 		container = (ContainerBlueprintLibrary) inventorySlots;
 
-		container.contents = library.getNextPage(null);
 		index = BuildCraftBuilders.getPlayerIndex(player.username);
 	}
 
@@ -75,11 +79,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
 		controlList.add(lockButton);
-
-		if (library.locked)
-			lockButton.displayString = StringUtil.localize("gui.unlock");
-		else
-			lockButton.displayString = StringUtil.localize("gui.lock");
 	}
 
 	@Override
@@ -90,16 +89,15 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
-		for (BptBase bpt : container.contents) {
-			if (bpt == library.selected) {
+		String[] currentNames = library.currentNames;
+		for (int i = 0; i < currentNames.length; i++) {
+			if (i == library.selected) {
 				int l1 = 8;
 				int i2 = 24;
 				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
 			}
-			String name = bpt.getName();
-
-			while (fontRenderer.getStringWidth(name) > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE)
-				name = name.substring(0, name.length() - 1);
+			String name = currentNames[i];
+			name = name.substring(0, BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 
 			fontRenderer.drawString(name, 9, 25 + 9 * c, 0x404040);
 			c++;
@@ -125,20 +123,42 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		int inP = (int) (library.progressIn / 100.0 * 22.0);
 		int outP = (int) (library.progressOut / 100.0 * 22.0);
 
-		if (inP != 0)
-			computeInput = true;
-		else if (computeInput) {
-			// In this case, there was a store computation that has finished.
-			if (container.contents.size() == 0)
-				container.contents = library.getNextPage(null);
-			else
-				container.contents = library.getNextPage(index.prevBpt(container.contents.getFirst().file.getName()));
-
-			computeInput = false;
-		}
-
 		drawTexturedModalRect(j + 128 + 22 - inP, k + 61, 176 + 22 - inP, 16, inP, 16);
 		drawTexturedModalRect(j + 128, k + 78, 176, 0, outP, 16);
+	}
+	
+	@Override
+	public void updateScreen(){
+		if (library.locked) {
+			lockButton.displayString = StringUtil.localize("gui.unlock");
+		} else {
+			lockButton.displayString = StringUtil.localize("gui.lock");
+		}
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		if (button == nextPageButton) {
+			PacketUpdate packet = new PacketUpdate(PacketIds.LIBRARY_COMMAND);
+			PacketPayload payload = new PacketPayload();
+			packet.payload = payload;
+			payload.intPayload = new int[]{0};
+			CoreProxy.proxy.sendToServer(packet.getPacket());
+		} else if (button == prevPageButton) {
+			PacketUpdate packet = new PacketUpdate(PacketIds.LIBRARY_COMMAND);
+			PacketPayload payload = new PacketPayload();
+			packet.payload = payload;
+			payload.intPayload = new int[]{1};
+			CoreProxy.proxy.sendToServer(packet.getPacket());
+		} else if (lockButton != null && button == lockButton) {
+			PacketCoordinates packet = new PacketCoordinates(PacketIds.LIBRARY_LOCK_UPDATE,
+					library.xCoord, library.yCoord, library.zCoord);
+			CoreProxy.proxy.sendToServer(packet.getPacket());
+		} else if (deleteButton != null && button == deleteButton) {
+			PacketCoordinates packet = new PacketCoordinates(PacketIds.LIBRARY_DELETE,
+					library.xCoord, library.yCoord, library.zCoord);
+			CoreProxy.proxy.sendToServer(packet.getPacket());
+		}
 	}
 
 	@Override
@@ -155,35 +175,15 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		if (x >= 8 && x <= 88) {
 			int ySlot = (y - 24) / 9;
 
-			if (ySlot >= 0 && ySlot <= 11)
-				if (ySlot < container.contents.size())
-					library.selected = container.contents.get(ySlot);
-		} else if (nextPageButton.mousePressed(client, i, j)) {
-			if (container.contents.size() > 0)
-				container.contents = library.getNextPage(container.contents.getLast().file.getName());
-			else
-				container.contents = library.getNextPage(null);
-		} else if (prevPageButton.mousePressed(client, i, j)) {
-			if (container.contents.size() > 0)
-				container.contents = library.getPrevPage(container.contents.getFirst().file.getName());
-			else
-				container.contents = library.getNextPage(null);
-		} else if (lockButton != null && lockButton.mousePressed(client, i, j)) {
-			library.locked = !library.locked;
-
-			if (library.locked)
-				lockButton.displayString = StringUtil.localize("gui.unlock");
-			else
-				lockButton.displayString = StringUtil.localize("gui.lock");
-		} else if (deleteButton != null && deleteButton.mousePressed(client, i, j))
-			if (library.selected != null) {
-				index.deleteBluePrint(library.selected.file.getName());
-				if (container.contents.size() > 0)
-					container.contents = library.getNextPage(index.prevBpt(container.contents.getFirst().file.getName()));
-				else
-					container.contents = library.getNextPage(null);
-
-				library.selected = null;
+			if (ySlot >= 0 && ySlot <= 11){
+				if (ySlot < library.currentNames.length){
+					PacketUpdate packet = new PacketUpdate(PacketIds.LIBRARY_SELECT);
+					PacketPayload payload = new PacketPayload();
+					packet.payload = payload;
+					payload.intPayload = new int[]{ySlot};
+					CoreProxy.proxy.sendToServer(packet.getPacket());
+				}
 			}
+		}
 	}
 }

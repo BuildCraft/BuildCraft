@@ -69,6 +69,7 @@ import buildcraft.builders.TileBuilder;
 import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
+import buildcraft.builders.network.PacketHandlerBuilders;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptPlayerIndex;
@@ -84,12 +85,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 
 @Mod(name="BuildCraft Builders", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftBuilders {
 
 	public static final int LIBRARY_PAGE_SIZE = 12;
 
-	public static final int MAX_BLUEPRINTS_NAME_SIZE = 88;
+	public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
 
 	public static BlockMarker markerBlock;
 	public static BlockPathMarker pathMarkerBlock;

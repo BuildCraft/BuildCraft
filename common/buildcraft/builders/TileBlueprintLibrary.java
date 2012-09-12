@@ -1,12 +1,15 @@
 package buildcraft.builders;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.BuildersProxy;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
+import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.EntityPlayer;
@@ -15,7 +18,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
-public class TileBlueprintLibrary extends TileEntity implements IInventory {
+public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	public ItemStack[] stack = new ItemStack[4];
 
@@ -24,12 +27,20 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 
 	public String owner = "";
 
-	public BptBase selected = null;
+	private ArrayList<BptBase> currentPage;
+	public @TileNetworkData(staticSize=BuildCraftBuilders.LIBRARY_PAGE_SIZE) String[] currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
+	public @TileNetworkData int selected = -1;
 
-	public boolean locked = false;
+	public @TileNetworkData boolean locked = false;
 
-	public LinkedList<BptBase> getNextPage(String after) {
-		LinkedList<BptBase> result = new LinkedList<BptBase>();
+	@Override
+	public void initialize() {
+		super.initialize();
+		setCurrentPage(getNextPage(null));
+	}
+
+	public ArrayList<BptBase> getNextPage(String after) {
+		ArrayList<BptBase> result = new ArrayList<BptBase>();
 
 		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
@@ -52,8 +63,8 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 		return result;
 	}
 
-	public LinkedList<BptBase> getPrevPage(String before) {
-		LinkedList<BptBase> result = new LinkedList<BptBase>();
+	public ArrayList<BptBase> getPrevPage(String before) {
+		ArrayList<BptBase> result = new ArrayList<BptBase>();
 
 		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
@@ -74,6 +85,37 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 		}
 
 		return result;
+	}
+	
+	public void updateCurrentNames(){
+		currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
+		for(int i = 0; i < currentNames.length; i++){
+			currentNames[i] = currentPage.get(i).getName();
+		}
+		sendNetworkUpdate();
+	}
+	
+	public ArrayList<BptBase> getCurrentPage(){
+		return currentPage;
+	}
+	
+	public void setCurrentPage(ArrayList<BptBase> newPage){
+		currentPage = newPage;
+		updateCurrentNames();
+	}
+	
+	public void deleteSelectedBpt(EntityPlayer player){
+		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(player.username);
+		if (selected > -1) {
+			index.deleteBluePrint(currentPage.get(selected).file.getName());
+			if (currentPage.size() > 0) {
+				currentPage = getNextPage(index.prevBpt(currentPage.get(0).file.getName()));
+			} else {
+				currentPage = getNextPage(null);
+			}
+			selected = -1;
+			updateCurrentNames();
+		}
 	}
 
 	@Override
@@ -199,8 +241,8 @@ public class TileBlueprintLibrary extends TileEntity implements IInventory {
 		}
 
 		if (progressOut == 100 && stack[3] == null) {
-			if (selected != null) {
-				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, selected.position));
+			if (selected > -1) {
+				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, currentPage.get(selected).position));
 			} else {
 				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, 0));
 			}
