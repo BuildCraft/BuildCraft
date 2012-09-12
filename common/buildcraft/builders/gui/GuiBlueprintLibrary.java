@@ -19,6 +19,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.builders.network.PacketLibraryAction;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
@@ -34,8 +35,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	EntityPlayer player;
 	TileBlueprintLibrary library;
-
-	int highlighted;
 
 	ContainerBlueprintLibrary container;
 
@@ -79,6 +78,11 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
 		controlList.add(lockButton);
+		if (library.locked) {
+			lockButton.displayString = StringUtil.localize("gui.unlock");
+		} else {
+			lockButton.displayString = StringUtil.localize("gui.lock");
+		}
 	}
 
 	@Override
@@ -91,13 +95,17 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		int c = 0;
 		String[] currentNames = library.currentNames;
 		for (int i = 0; i < currentNames.length; i++) {
+			String name = currentNames[i];
+			if(name == null) break;
+			if(name.length() > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE){
+				name = name.substring(0, BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
+			}
+
 			if (i == library.selected) {
 				int l1 = 8;
 				int i2 = 24;
 				drawGradientRect(l1, i2 + 9 * c, l1 + 88, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
 			}
-			String name = currentNames[i];
-			name = name.substring(0, BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 
 			fontRenderer.drawString(name, 9, 25 + 9 * c, 0x404040);
 			c++;
@@ -138,27 +146,18 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	
 	@Override
 	protected void actionPerformed(GuiButton button) {
+		PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION, 
+				library.xCoord, library.yCoord, library.zCoord);
 		if (button == nextPageButton) {
-			PacketUpdate packet = new PacketUpdate(PacketIds.LIBRARY_COMMAND);
-			PacketPayload payload = new PacketPayload();
-			packet.payload = payload;
-			payload.intPayload = new int[]{0};
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			packet.actionId = TileBlueprintLibrary.COMMAND_NEXT;
 		} else if (button == prevPageButton) {
-			PacketUpdate packet = new PacketUpdate(PacketIds.LIBRARY_COMMAND);
-			PacketPayload payload = new PacketPayload();
-			packet.payload = payload;
-			payload.intPayload = new int[]{1};
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			packet.actionId = TileBlueprintLibrary.COMMAND_PREV;
 		} else if (lockButton != null && button == lockButton) {
-			PacketCoordinates packet = new PacketCoordinates(PacketIds.LIBRARY_LOCK_UPDATE,
-					library.xCoord, library.yCoord, library.zCoord);
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			packet.actionId = TileBlueprintLibrary.COMMAND_LOCK_UPDATE;
 		} else if (deleteButton != null && button == deleteButton) {
-			PacketCoordinates packet = new PacketCoordinates(PacketIds.LIBRARY_DELETE,
-					library.xCoord, library.yCoord, library.zCoord);
-			CoreProxy.proxy.sendToServer(packet.getPacket());
+			packet.actionId = TileBlueprintLibrary.COMMAND_DELETE;
 		}
+		CoreProxy.proxy.sendToServer(packet.getPacket());
 	}
 
 	@Override
@@ -177,10 +176,11 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 			if (ySlot >= 0 && ySlot <= 11){
 				if (ySlot < library.currentNames.length){
-					PacketUpdate packet = new PacketUpdate(PacketIds.LIBRARY_SELECT);
 					PacketPayload payload = new PacketPayload();
-					packet.payload = payload;
 					payload.intPayload = new int[]{ySlot};
+					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, 
+							library.xCoord, library.yCoord, library.zCoord);
+					packet.actionId = ySlot;
 					CoreProxy.proxy.sendToServer(packet.getPacket());
 				}
 			}

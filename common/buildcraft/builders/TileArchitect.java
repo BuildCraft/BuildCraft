@@ -177,18 +177,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 		return result;
 	}
-	
-	public void sendClientInput(char c){
-		PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME);
-		PacketPayload payload = new PacketPayload();
-		packet.payload = payload;
-		packet.posX = xCoord;
-		packet.posY = yCoord;
-		packet.posZ = zCoord;
-		payload.intPayload = new int[]{c};
-		CoreProxy.proxy.sendToServer(packet.getPacket());
-	}
-	
+		
 	public void handleClientInput(char c){
 		if (c == 8) {
 			if (name.length() > 0)
