@@ -21,9 +21,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 
 public class ContainerBlueprintLibrary extends BuildCraftContainer {
-
-	public LinkedList<BptBase> contents = new LinkedList<BptBase>();
-
+	
 	protected IInventory playerInventory;
 	protected TileBlueprintLibrary library;
 	
