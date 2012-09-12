@@ -19,6 +19,9 @@ public class PacketIds {
 	public static final int GATE_SELECTION_CHANGE = 44;
 	public static final int GATE_TRIGGERS = 45;
 	public static final int REFINERY_FILTER_SET = 50;
-	
+	public static final int ARCHITECT_NAME = 60;
+	public static final int LIBRARY_ACTION = 61;
+	public static final int LIBRARY_SELECT = 62;
+
 	public static final int STATE_UPDATE = 100;
 }
