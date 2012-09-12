@@ -19,10 +19,13 @@ import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.BptTemplate;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import buildcraft.factory.TileAssemblyTable;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -39,7 +42,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	private boolean isComputing = false;
 	public int computingTime = 0;
 
-	public String name = "";
+	public @TileNetworkData String name = "";
 
 	// Use that field to avoid creating several times the same template if
 	// they're the same!
@@ -49,7 +52,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (isComputing) {
+		if (CoreProxy.proxy.isSimulating(worldObj) && isComputing) {
 			if (computingTime < 200) {
 				computingTime++;
 			} else {
@@ -173,6 +176,28 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		}
 
 		return result;
+	}
+	
+	public void sendClientInput(char c){
+		PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME);
+		PacketPayload payload = new PacketPayload();
+		packet.payload = payload;
+		packet.posX = xCoord;
+		packet.posY = yCoord;
+		packet.posZ = zCoord;
+		payload.intPayload = new int[]{c};
+		CoreProxy.proxy.sendToServer(packet.getPacket());
+	}
+	
+	public void handleClientInput(char c){
+		if (c == 8) {
+			if (name.length() > 0)
+				name = name.substring(0, name.length() - 1);
+		} else if (Character.isLetterOrDigit(c) || c == ' ') {
+			if (name.length() < BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE)
+				name += c;
+		}
+		sendNetworkUpdate();
 	}
 
 	@Override
