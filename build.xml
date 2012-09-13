@@ -1,15 +1,10 @@
 <project name="Buildcraft" basedir="../" default="main">
-    <taskdef resource="net/sf/antcontrib/antlib.xml">
-        <classpath>
-            <pathelement location="/usr/share/java/ant-contrib.jar"/>
-            <pathelement location="/usr/share/java/commons-httpclient.jar"/>
-        </classpath>
-    </taskdef>
     <property environment="env" />
     <!-- Properties -->
 
     <property name="build.dir"           value="build"/>
-    <property name="src.dir"             value="src"/>
+    <property name="src.dir"             value="BuildCraft"/>
+    <property name="lang.dir"            value="BuildCraft-Localization"/>
 
     <property name="download.dir"        value="download"/>
     <property name="files.minecraft.dir" value="jars"/>
@@ -20,12 +15,15 @@
     <property name="mcp.dir"             value="${build.dir}/mcp"/>
     <property name="forge.dir"           value="${mcp.dir}/forge"/>
 
-    <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
+    <property name="mcpsrc.dir"          value="${mcp.dir}/src/minecraft"/>
 
     <property name="mcp.version"         value="72"/>
     <property name="forge.version"       value="4.0.0.232"/>
     <property name="bc.version"          value="3.1.8"/>
     <property name="bc.version.full"     value="${bc.version}.${env.BUILD_NUMBER}"/>
+
+    <available property="ant-contrib-exists" file="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
+
 
     <echo message="Starting build for ${bc.version.full}"/>
 
@@ -35,14 +33,39 @@
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="setup">
+    <!-- Download ant-contrib and requirements -->
+    <target name="download-ant-contrib" unless="ant-contrib-exists">
+        <mkdir dir="${download.dir}/tmp"/>
 
-        <mkdir dir="${download.dir}"/>
+        <get src="http://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download" dest="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip"/>
+        <get src="http://apache.cc.uoc.gr/commons/codec/binaries/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp/commons-codec-1.6-bin.zip"/>
+
+        <unzip src="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip" dest="${download.dir}"/>
+        <unzip src="${download.dir}/tmp/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp"/>
+
+        <move todir="${download.dir}/ant-contrib/lib">
+            <fileset file="${download.dir}/tmp/commons-codec-1.6/commons-codec-1.6.jar"/>
+        </move>
+
+        <delete dir="${download.dir}/ant-contrib/docs"/>
+        <delete dir="${download.dir}/tmp"/>
+    </target>
+
+    <target name="setup" depends="download-ant-contrib">
+
+        <taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement location="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
+                <fileset dir="${download.dir}/ant-contrib/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
 
         <get src="http://mcp.ocean-labs.de/files/mcp${mcp.version}.zip" dest="${download.dir}" usetimestamp="True"/>
         <getMethod url="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip"
-            responseDataFile="${download.dir}/minecraftforge-src-${forge.version}.zip">
-            <header name="User-Agent" value="Ant-${ant.version}/${ant.java.version}" />
+                   responseDataFile="${download.dir}/minecraftforge-src-${forge.version}.zip">
+            <header name="User-Agent" value="Ant-${ant.version}/${ant.java.version}"/>
         </getMethod>
 
         <unzip dest="${mcp.dir}">
@@ -80,7 +103,7 @@
         </exec>
 
         <!-- Copy BC source -->
-        <copy todir="${clientsrc.dir}">
+        <copy todir="${mcpsrc.dir}">
             <fileset dir="${src.dir}/common">
                 <exclude name="**/buildcraft/devel"/>
             </fileset>
@@ -112,20 +135,27 @@
         </exec>
 
         <!-- Copy BC classes -->
-        <copy todir="${classes.dir}/client">
+        <copy todir="${classes.dir}">
             <fileset dir="${mcp.dir}/reobf/minecraft"/>
         </copy>
 
         <!-- Copy resoucres -->
-        <copy todir="${classes.dir}/client">
+        <copy todir="${classes.dir}">
             <fileset dir="${src.dir}/buildcraft_resources"/>
+        </copy>
+
+        <!-- Copy localizations -->
+        <copy todir="${classes.dir}">
+            <fileset dir="${lang.dir}">
+                <exclude name="README.md"/>
+            </fileset>
         </copy>
 
     </target>
 
     <target name="package" depends="compile">
 
-        <jar destfile="${jar.dir}/buildcraft-A-${bc.version.full}.jar" basedir="${classes.dir}/client"/>
+        <jar destfile="${jar.dir}/buildcraft-A-${bc.version.full}.jar" basedir="${classes.dir}"/>
 
     </target>
 
