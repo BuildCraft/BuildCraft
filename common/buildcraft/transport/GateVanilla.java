@@ -74,7 +74,7 @@ public class GateVanilla extends Gate {
 	}
 
 	// / INFORMATION
-	private boolean hasPulser() {
+	public boolean hasPulser() {
 		return pulser != null;
 	}
 
