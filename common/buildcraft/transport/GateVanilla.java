@@ -74,7 +74,7 @@ public class GateVanilla extends Gate {
 	}
 
 	// / INFORMATION
-	private boolean hasPulser() {
+	public boolean hasPulser() {
 		return pulser != null;
 	}
 
@@ -118,7 +118,7 @@ public class GateVanilla extends Gate {
 	 * @param pipe
 	 * @return
 	 */
-	private boolean addEnergyPulser(Pipe pipe) {
+	public boolean addEnergyPulser(Pipe pipe) {
 		if (!(pipe instanceof IPowerReceptor)){
 			pulser = new EnergyPulser(null);
 			return false;
