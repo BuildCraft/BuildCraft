@@ -1,8 +1,8 @@
 <project name="Buildcraft" basedir="../" default="main">
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
-            <pathelement location="../contrib/ant-contrib.jar"/>
-            <pathelement location="../contrib/commons-httpclient.jar"/>
+            <pathelement location="contrib/ant-contrib.jar"/>
+            <pathelement location="contrib/commons-httpclient.jar"/>
             <pathelement location="/usr/share/java/ant-contrib.jar"/>
             <pathelement location="/usr/share/java/commons-httpclient.jar"/>
         </classpath>
