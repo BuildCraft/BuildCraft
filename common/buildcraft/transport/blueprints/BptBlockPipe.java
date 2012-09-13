@@ -55,7 +55,7 @@ public class BptBlockPipe extends BptBlock {
 
 		if (slot.cpt.hasKey("gate")) {
 			int gateId = slot.cpt.getInteger("gate");
-			if(slot.cpt.hasKey("hasPulser") & slot.cpt.getBoolean("hasPulser"))
+			if(slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser"))
 				requirements.add(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
 			else
 				requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
@@ -99,7 +99,7 @@ public class BptBlockPipe extends BptBlock {
 			GateVanilla newGate= new GateVanilla(pipe);
 			pipe.gate = newGate;
 			newGate.kind = Gate.GateKind.values()[gateId];
-			if(slot.cpt.hasKey("hasPulser") & slot.cpt.getBoolean("hasPulser")){
+			if(slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser")){
 				newGate.addEnergyPulser(pipe);
 			}
 				
