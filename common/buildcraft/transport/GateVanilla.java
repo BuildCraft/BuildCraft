@@ -11,6 +11,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.StringUtil;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 
 import net.minecraft.src.EntityPlayer;
@@ -80,22 +81,21 @@ public class GateVanilla extends Gate {
 
 	@Override
 	public String getName() {
-
 		switch (kind) {
 		case Single:
-			return "Gate";
+			return StringUtil.localize("item.pipeGate.0");
 		case AND_2:
-			return "Iron AND Gate";
+			return StringUtil.localize("item.pipeGate.1");
 		case AND_3:
-			return "Golden AND Gate";
+			return StringUtil.localize("item.pipeGate.3");
 		case AND_4:
-			return "Diamond AND Gate";
+			return StringUtil.localize("item.pipeGate.5");
 		case OR_2:
-			return "Iron OR Gate";
+			return StringUtil.localize("item.pipeGate.2");
 		case OR_3:
-			return "Golden OR Gate";
+			return StringUtil.localize("item.pipeGate.4");
 		case OR_4:
-			return "Diamond OR Gate";
+			return StringUtil.localize("item.pipeGate.6");
 		default:
 			return "";
 		}
