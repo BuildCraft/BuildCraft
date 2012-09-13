@@ -55,7 +55,10 @@ public class BptBlockPipe extends BptBlock {
 
 		if (slot.cpt.hasKey("gate")) {
 			int gateId = slot.cpt.getInteger("gate");
-			requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
+			if(slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser"))
+				requirements.add(new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
+			else
+				requirements.add(new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
 		}
 
 		if (BuildCraftCore.itemBptProps[pipeId] != null)
@@ -93,8 +96,12 @@ public class BptBlockPipe extends BptBlock {
 		if (slot.cpt.hasKey("gate")) {
 			// / TODO: Does not save/load custom gates
 			int gateId = slot.cpt.getInteger("gate");
-			pipe.gate = new GateVanilla(pipe);
-			pipe.gate.kind = Gate.GateKind.values()[gateId];
+			GateVanilla newGate;
+			if(slot.cpt.hasKey("hasPulser") && slot.cpt.getBoolean("hasPulser"))
+				newGate= new GateVanilla(pipe,new ItemStack(BuildCraftTransport.pipeGateAutarchic, 1, gateId - 1));
+			else
+				newGate= new GateVanilla(pipe,new ItemStack(BuildCraftTransport.pipeGate, 1, gateId - 1));
+			pipe.gate = newGate;				
 
 			for (int i = 0; i < 8; ++i) {
 				if (slot.cpt.hasKey("trigger" + i))
@@ -134,6 +141,8 @@ public class BptBlockPipe extends BptBlock {
 			// / TODO: Does not save/load custom gates
 			if (pipe.hasGate()) {
 				bptSlot.cpt.setInteger("gate", pipe.gate.kind.ordinal());
+				if(pipe.gate instanceof GateVanilla)
+				bptSlot.cpt.setBoolean("hasPulser", ((GateVanilla)pipe.gate).hasPulser());
 
 				for (int i = 0; i < 8; ++i) {
 					if (pipe.activatedTriggers[i] != null)
