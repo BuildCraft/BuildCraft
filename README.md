@@ -15,7 +15,7 @@ features or change existing behaivour, please discuss it with Sengir or Krapht b
 1. Clone the Buildcraft repository into `basedir/BuildCraft/`
  * Optional: Copy BuildCraft localization repository into `basedir/BuildCraft-Localization`
 1. Copy the minecraft bin dir and minecraft_server.jar into `basedir/jars/`
-1. Navigate to basedir/Buildcraft in a shell and run `ant clean package` (this will take 2-5 minutes)
+1. Navigate to basedir/Buildcraft in a shell and run `ant` (this will take 2-5 minutes)
 1. The compiled and obfuscated jar will be in basedir/build/dist
 
 Your directory structure should look like this:
