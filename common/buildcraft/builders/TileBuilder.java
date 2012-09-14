@@ -237,6 +237,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 						new Position(b.i + 0.5, b.j + 0.5, b.k + 0.5));
 				
 				laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+				laser.show();
 				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);
 			}
