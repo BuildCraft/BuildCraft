@@ -42,7 +42,8 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
-		fontRenderer.drawString(template.getInvName(), getCenteredOffset(template.getInvName()), 6, 0x404040);
+		String title = StringUtil.localize("tile.architectBlock");
+		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 152, 0x404040);
 
 		if (editMode && ((new Date()).getTime() / 100) % 8 >= 4)
