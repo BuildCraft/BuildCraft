@@ -21,7 +21,6 @@ import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.Gate;
 import buildcraft.transport.GateVanilla;
 import buildcraft.transport.Pipe;
 

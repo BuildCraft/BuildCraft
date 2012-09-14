@@ -74,7 +74,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.blueprints.BptRootIndex;
-import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.Block;

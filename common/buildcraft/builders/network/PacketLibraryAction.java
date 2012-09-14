@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketPayload;
 
 public class PacketLibraryAction extends PacketCoordinates {
 

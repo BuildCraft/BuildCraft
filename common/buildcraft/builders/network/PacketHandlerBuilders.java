@@ -9,7 +9,6 @@ import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import cpw.mods.fml.common.network.IPacketHandler;

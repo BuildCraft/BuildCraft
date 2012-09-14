@@ -15,7 +15,6 @@ import net.minecraft.src.IInventory;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
