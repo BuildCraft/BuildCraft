@@ -50,8 +50,9 @@ public class BptSlot extends BptSlotInfo {
 		BlueprintManager.blockBptProps[blockId].buildBlock(this, context);
 	}
 
-	public void useItem(IBptContext context, ItemStack req, ItemStack stack) {
-		BlueprintManager.blockBptProps[blockId].useItem(this, context, req, stack);
+	// returns what was used
+	public ItemStack useItem(IBptContext context, ItemStack req, ItemStack stack) {
+		return BlueprintManager.blockBptProps[blockId].useItem(this, context, req, stack);
 	}
 
 	@SuppressWarnings("unchecked")

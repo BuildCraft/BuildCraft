@@ -11,6 +11,7 @@ package buildcraft.core.blueprints;
 
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -48,7 +49,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				return -1;
 			else if (o1.getItemDamage() < o2.getItemDamage())
 				return 1;
-
+				
 			return 0;
 		}
 	});
@@ -239,10 +240,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			for (ItemStack invStk : tmpInv)
 				if (invStk != null && reqStk.itemID == invStk.itemID && invStk.stackSize > 0) {
 
-					if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage()))
-						continue;
+					if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage())){
+						continue; // it doesn't match, try again
+					}
 
 					try {
+						
 						slot.useItem(context, reqStk, invStk);
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
@@ -278,7 +281,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		}
 
-		for (ItemStack reqStk : tmpReq) {
+		ListIterator<ItemStack> itr = tmpReq.listIterator();
+		
+		while(itr.hasNext()) {
+			ItemStack reqStk = itr.next();
+			boolean smallStack = reqStk.stackSize == 1;
+			ItemStack usedStack = reqStk;
 			int size = inv.getSizeInventory();
 			for (int i = 0; i <= size; ++i) {
 				if (!inv.isBuildingMaterial(i)) {
@@ -293,7 +301,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						continue;
 
 					try {
-						slot.useItem(context, reqStk, invStk);
+						usedStack = slot.useItem(context, reqStk, invStk);
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
@@ -312,6 +320,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (reqStk.stackSize != 0)
 				return;
+			if(smallStack)
+				itr.set(usedStack); // set to the actual item used.
 		}
 
 		return;
@@ -332,7 +342,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					return 1;
 				else if (o1.getItemDamage() < o2.getItemDamage())
 					return -1;
-
+				
 				return 0;
 			}
 		});
