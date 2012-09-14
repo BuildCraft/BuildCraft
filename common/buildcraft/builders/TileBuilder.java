@@ -193,6 +193,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public void initialize() {
 		super.initialize();
 
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
+		
 		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
 			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
 				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
@@ -342,7 +345,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 
 		if (bluePrintBuilder == null || bluePrintBuilder.done) {
-			if (path != null) {
+			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
 					BlockIndex start = it.next();
