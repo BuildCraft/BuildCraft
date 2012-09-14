@@ -160,11 +160,11 @@ public class EntityLaser extends Entity {
 		return texture;
 	}
 
-	private int encodeDouble(double d) {
+	protected int encodeDouble(double d) {
 		return (int) (d * 8000);
 	}
 
-	private double decodeDouble(int i) {
+	protected double decodeDouble(int i) {
 		return (i / 8000D);
 	}
 

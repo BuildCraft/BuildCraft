@@ -56,4 +56,29 @@ public class EntityEnergyLaser extends EntityLaser {
 		else
 			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png";
 	}
+	
+	@Override
+	protected void updateData() {
+		super.updateData();
+		
+		powerAverage = (float)decodeDouble(dataWatcher.getWatchableObjectInt(15));
+	}
+	
+	@Override
+	public void setPositions(Position head, Position tail) {
+		super.setPositions(head, tail);
+		dataWatcher.updateObject(15, Integer.valueOf(encodeDouble((double)powerAverage)));
+	}
+	
+	@Override
+	protected void initClientSide() {
+		super.initClientSide();
+		dataWatcher.addObject(15, Integer.valueOf(0));
+	}
+	
+	@Override
+	protected void initServerSide() {
+		super.initServerSide();
+		dataWatcher.addObject(15, encodeDouble((double)powerAverage));
+	}
 }
