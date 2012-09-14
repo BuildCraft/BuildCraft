@@ -24,6 +24,7 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
+import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
@@ -231,7 +232,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		for (BlockIndex b : path) {
 			if (previous != null) {
 				
-				EntityLaser laser = new EntityLaser(worldObj,
+				EntityLaser laser = new EntityPowerLaser(worldObj,
 						new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5),
 						new Position(b.i + 0.5, b.j + 0.5, b.k + 0.5));
 				
