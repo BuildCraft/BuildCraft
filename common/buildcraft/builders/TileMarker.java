@@ -20,7 +20,6 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
@@ -459,28 +458,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 
 		}
-	}
-
-	@Override
-	public Packet getAuxillaryInfoPacket() {
-		if (origin.vectO.getMarker(worldObj) == this) {
-			return super.getAuxillaryInfoPacket();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public Packet getUpdatePacket() {
-		TileMarker marker = origin.vectO.getMarker(worldObj);
-
-		if (marker == this || marker == null) {
-			return super.getUpdatePacket();
-		} else if (marker != null) {
-			marker.sendNetworkUpdate();
-		}
-
-		return null;
 	}
 
 	@Override
