@@ -57,6 +57,7 @@ public class EntityLaser extends Entity {
 
 		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
 		
+		dataWatcher.addObject(16, "");
 	}
 	
 	protected void initServerSide() {
@@ -76,6 +77,8 @@ public class EntityLaser extends Entity {
 		dataWatcher.addObject(13, Integer.valueOf(encodeDouble(tail.z)));
 
 		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
+		
+		dataWatcher.addObject(16, "");
 	}
 
 	@Override
@@ -121,6 +124,7 @@ public class EntityLaser extends Entity {
 		tail.x = decodeDouble(dataWatcher.getWatchableObjectInt(11));
 		tail.y = decodeDouble(dataWatcher.getWatchableObjectInt(12));
 		tail.z = decodeDouble(dataWatcher.getWatchableObjectInt(13));
+		texture = dataWatcher.getWatchableObjectString(16);
 	}
 
 	public void setPositions(Position head, Position tail) {
@@ -154,6 +158,7 @@ public class EntityLaser extends Entity {
 
 	public void setTexture(String texture) {
 		this.texture = texture;
+		dataWatcher.updateObject(16, texture);
 	}
 
 	public String getTexture() {

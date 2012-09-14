@@ -16,7 +16,13 @@ public class EventHandlerBuilders {
 	@ForgeSubscribe
 	public void handleWorldLoad(WorldEvent.Load event) {
 		//When a world loads clean the list of available markers
-		TilePathMarker.clearAvailableMarkersList();
+		
+		//For some reason, when loading a world this gets called 3 times from the
+		//server and one from the client. We don't want the client to clear the
+		//list because it happens after the initializations and therefore it re-
+		//moves the loaded path markers.
+		if (!event.world.getClass().equals(net.minecraft.src.WorldClient.class))
+			TilePathMarker.clearAvailableMarkersList();
 	}
 	
 }

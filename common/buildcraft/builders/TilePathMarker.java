@@ -8,6 +8,9 @@ import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
+import buildcraft.core.EntityPowerLaser;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.NBTTagCompound;
@@ -19,7 +22,7 @@ public class TilePathMarker extends TileMarker {
 
 	public int x0, y0, z0, x1, y1, z1;
 	public boolean loadLink0 = false, loadLink1 = false;
-	public boolean tryingToConnect = false;
+	public @TileNetworkData boolean tryingToConnect = false;
 
 	public TilePathMarker links[] = new TilePathMarker[2];
 	public static int searchSize = 64;	//TODO: this should be moved to default props
@@ -28,9 +31,6 @@ public class TilePathMarker extends TileMarker {
 	//It only contains markers within the loaded chunks
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
 
-	public TilePathMarker() {
-		availableMarkers.add(this);
-	}
 
 	public boolean isFullyConnected() {
 		return lasers[0] != null && lasers[1] != null;
@@ -58,7 +58,7 @@ public class TilePathMarker extends TileMarker {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
-		EntityLaser laser = new EntityLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+		EntityLaser laser = new EntityPowerLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
 		laser.show();
 
 		laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
@@ -93,17 +93,20 @@ public class TilePathMarker extends TileMarker {
 
 	@Override
 	public void tryConnection() {
-		if (isFullyConnected()) {
+		
+		if (CoreProxy.proxy.isRenderWorld(worldObj) || isFullyConnected())
 			return;
-		}
 
 		tryingToConnect = !tryingToConnect;	//Allow the user to stop the path marker from searching for new path markers to connect
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		sendNetworkUpdate();
 	}
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
+		
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
 
 		if (tryingToConnect) {
 			TilePathMarker nearestPathMarker = findNearestAvailablePathMarker();
@@ -111,7 +114,7 @@ public class TilePathMarker extends TileMarker {
 			if (nearestPathMarker != null) {
 				createLaserAndConnect(nearestPathMarker);
 				tryingToConnect = false;
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				sendNetworkUpdate();
 			}
 		}
 	}
@@ -155,9 +158,6 @@ public class TilePathMarker extends TileMarker {
 			lasers[1].setDead();
 		}
 
-		lasers = new EntityLaser[2];
-		links = new TilePathMarker[2];
-
 		availableMarkers.remove(this);
 		tryingToConnect = false;
 	}
@@ -166,6 +166,9 @@ public class TilePathMarker extends TileMarker {
 	public void initialize() {
 		super.initialize();
 
+		if (CoreProxy.proxy.isSimulating(worldObj))
+				availableMarkers.add(this);
+		
 		if (loadLink0) {
 			TileEntity e0 = worldObj.getBlockTileEntity(x0, y0, z0);
 
@@ -197,8 +200,8 @@ public class TilePathMarker extends TileMarker {
 			lasers[1] = null;
 			links[1] = null;
 		}
-
-		if (!isFullyConnected() && !availableMarkers.contains(this))
+		
+		if (!isFullyConnected() && !availableMarkers.contains(this) && CoreProxy.proxy.isSimulating(worldObj))
 			availableMarkers.add(this);
 	}
 
@@ -247,5 +250,16 @@ public class TilePathMarker extends TileMarker {
 
 	public static void clearAvailableMarkersList() {
 		availableMarkers.clear();
+	}
+	
+	@Override
+	public void handleUpdatePacket(PacketUpdate packet) {
+		boolean previousState = tryingToConnect;
+		
+		super.handleUpdatePacket(packet);
+		
+		if (previousState != tryingToConnect) {
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		}
 	}
 }
