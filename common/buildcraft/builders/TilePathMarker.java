@@ -12,7 +12,6 @@ import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -158,9 +157,6 @@ public class TilePathMarker extends TileMarker {
 			links[1].unlink(this);
 			lasers[1].setDead();
 		}
-
-		lasers = new EntityLaser[2];
-		links = new TilePathMarker[2];
 
 		availableMarkers.remove(this);
 		tryingToConnect = false;
