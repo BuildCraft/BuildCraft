@@ -33,7 +33,7 @@ public class RenderLaser extends Render {
 
 	private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1) {
 		
-		if (!laser.isVisible())
+		if (!laser.isVisible() || laser.getTexture() == null)
 			return;
 
 		GL11.glPushMatrix();

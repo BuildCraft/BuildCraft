@@ -9,25 +9,19 @@
 
 package buildcraft.builders.gui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiButton;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.network.PacketLibraryAction;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
 
@@ -164,7 +158,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	protected void mouseClicked(int i, int j, int k) {
 		super.mouseClicked(i, j, k);
 
-		Minecraft client = FMLClientHandler.instance().getClient();
 		int xMin = (width - xSize) / 2;
 		int yMin = (height - ySize) / 2;
 

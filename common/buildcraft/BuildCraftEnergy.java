@@ -120,12 +120,12 @@ public class BuildCraftEnergy {
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 2), "Combustion Engine");
 
 		oilStill = (new BlockOilStill(oilStillId.getInt(DefaultProps.OIL_STILL_ID), Material.water)).setBlockName("oil");
-		LanguageRegistry.addName(oilStill.setBlockName("oilStill"), "Oil");
-		GameRegistry.registerBlock(oilStill);
+		CoreProxy.proxy.addName(oilStill.setBlockName("oilStill"), "Oil");
+		CoreProxy.proxy.registerBlock(oilStill);
 
 		oilMoving = (new BlockOilFlowing(oilMovingId.getInt(DefaultProps.OIL_MOVING_ID), Material.water)).setBlockName("oil");
-		LanguageRegistry.addName(oilMoving.setBlockName("oilMoving"), "Oil");
-		GameRegistry.registerBlock(oilMoving);
+		CoreProxy.proxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
+		CoreProxy.proxy.registerBlock(oilMoving);
 
 		// Oil and fuel
 		if (oilMoving.blockID + 1 != oilStill.blockID)

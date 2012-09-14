@@ -24,6 +24,7 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
+import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
@@ -192,6 +193,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public void initialize() {
 		super.initialize();
 
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
+		
 		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
 			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
 				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
@@ -231,11 +235,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		for (BlockIndex b : path) {
 			if (previous != null) {
 				
-				EntityLaser laser = new EntityLaser(worldObj,
+				EntityLaser laser = new EntityPowerLaser(worldObj,
 						new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5),
 						new Position(b.i + 0.5, b.j + 0.5, b.k + 0.5));
 				
 				laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+				laser.show();
 				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);
 			}
@@ -340,7 +345,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 
 		if (bluePrintBuilder == null || bluePrintBuilder.done) {
-			if (path != null) {
+			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
 					Iterator<BlockIndex> it = path.iterator();
 					BlockIndex start = it.next();
