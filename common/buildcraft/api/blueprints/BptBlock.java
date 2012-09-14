@@ -91,11 +91,15 @@ public class BptBlock {
 	 * fullfilled, and once with the real inventory. Implementer is responsible
 	 * for updating req (with the remaining requirements if any) and stack
 	 * (after usage)
+	 * 
+	 * returns: what was used (similer to req, but created from stack, so that any NBT based differences are drawn from the correct source)
 	 */
-	public void useItem(BptSlotInfo slot, IBptContext context, ItemStack req, ItemStack stack) {
+	public ItemStack useItem(BptSlotInfo slot, IBptContext context, ItemStack req, ItemStack stack) {
+		ItemStack result = stack.copy();
 		if (stack.isItemStackDamageable()) {
 			if (req.getItemDamage() + stack.getItemDamage() <= stack.getMaxDamage()) {
 				stack.setItemDamage(req.getItemDamage() + stack.getItemDamage());
+				result.setItemDamage(req.getItemDamage());
 				req.stackSize = 0;
 			}
 
@@ -104,6 +108,7 @@ public class BptBlock {
 			}
 		} else {
 			if (stack.stackSize >= req.stackSize) {
+				result.stackSize = req.stackSize;
 				stack.stackSize -= req.stackSize;
 				req.stackSize = 0;
 			} else {
@@ -119,6 +124,7 @@ public class BptBlock {
 			stack.stackSize = 1;
 			stack.setItemDamage(0);
 		}
+		return result;
 	}
 
 	/**
