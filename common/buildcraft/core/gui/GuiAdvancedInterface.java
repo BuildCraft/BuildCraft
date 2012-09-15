@@ -166,11 +166,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		if (s.length() > 0) {
-			int i2 = (lastX - cornerX) + 12;
-			int k2 = lastY - cornerY - 12;
-			int l2 = fontRenderer.getStringWidth(s);
-			drawGradientRect(i2 - 3, k2 - 3, i2 + l2 + 3, k2 + 8 + 3, 0xc0000000, 0xc0000000);
-			fontRenderer.drawStringWithShadow(s, i2, k2, -1);
+			int i2 = (lastX - cornerX);
+			int k2 = lastY - cornerY;
+			func_74190_a(s, i2, k2);
 		}
 	}
 
