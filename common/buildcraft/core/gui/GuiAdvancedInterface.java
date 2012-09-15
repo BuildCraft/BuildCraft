@@ -46,8 +46,6 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			if (!isDefined())
 				return;
 
-			GL11.glDisable(GL11.GL_LIGHTING);
-
 			if (getItemStack() != null)
 				drawStack(getItemStack());
 			else if (getTexture() != null && !getTexture().equals("")) {
@@ -60,7 +58,6 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				drawTexturedModalRect(cornerX + x, cornerY + y, 16 * textureJ, 16 * textureI, 16, 16);
 			}
 			
-			GL11.glEnable(GL11.GL_LIGHTING);
 		}
 
 		public void drawStack(ItemStack item) {
