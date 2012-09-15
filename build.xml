@@ -188,9 +188,6 @@
 				<exclude name="build.xml"/>
 				<exclude name="build.number"/>
 			</fileset>
-			<filterset>
-				<filter token="VERSION" value="${bc.version.full}" />
-			</filterset>
 		</copy>
 
 		<!-- Copy localizations -->
