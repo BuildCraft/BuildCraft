@@ -18,7 +18,7 @@
 	<property name="mcpsrc.dir"          value="${mcp.dir}/src/minecraft"/>
 
 	<property name="mcp.version"         value="72"/>
-	<property name="forge.version"       value="4.0.0.232"/>
+	<property name="forge.version"       value="4.1.1.251"/>
 	<property name="bc.version"          value="3.1.8"/>
 
 	<available property="forge-exists" file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
@@ -63,7 +63,7 @@
 		<mkdir dir="${download.dir}/tmp"/>
 
 		<get src="http://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download" dest="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip"/>
-		<get src="http://apache.cc.uoc.gr/commons/codec/binaries/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp/commons-codec-1.6-bin.zip"/>
+		<get src="http://archive.apache.org/dist/commons/codec/binaries/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp/commons-codec-1.6-bin.zip"/>
 
 		<unzip src="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip" dest="${download.dir}"/>
 		<unzip src="${download.dir}/tmp/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp"/>
@@ -189,6 +189,7 @@
 				<exclude name="build.number"/>
 			</fileset>
 		</copy>
+		<replace file="${classes.dir}/mcmod.info" token="@VERSION@" value="${bc.version.full}"/>
 
 		<!-- Copy localizations -->
 		<copy todir="${classes.dir}">
