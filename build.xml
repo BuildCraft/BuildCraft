@@ -189,7 +189,6 @@
 				<exclude name="build.number"/>
 			</fileset>
 		</copy>
-		<replace file="${classes.dir}/mcmod.info" token="@VERSION@" value="${bc.version.full}"/>
 
 		<!-- Copy localizations -->
 		<copy todir="${classes.dir}">
