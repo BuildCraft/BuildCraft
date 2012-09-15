@@ -63,13 +63,13 @@
 		<mkdir dir="${download.dir}/tmp"/>
 
 		<get src="http://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download" dest="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip"/>
-		<get src="http://apache.cc.uoc.gr/commons/codec/binaries/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp/commons-codec-1.6-bin.zip"/>
+		<get src="http://apache.cc.uoc.gr/commons/codec/binaries/commons-codec-1.7-bin.zip" dest="${download.dir}/tmp/commons-codec-1.7-bin.zip"/>
 
 		<unzip src="${download.dir}/tmp/ant-contrib-1.0b3-bin.zip" dest="${download.dir}"/>
-		<unzip src="${download.dir}/tmp/commons-codec-1.6-bin.zip" dest="${download.dir}/tmp"/>
+		<unzip src="${download.dir}/tmp/commons-codec-1.7-bin.zip" dest="${download.dir}/tmp"/>
 
 		<move todir="${download.dir}/ant-contrib/lib">
-			<fileset file="${download.dir}/tmp/commons-codec-1.6/commons-codec-1.6.jar"/>
+			<fileset file="${download.dir}/tmp/commons-codec-1.7/commons-codec-1.7.jar"/>
 		</move>
 
 		<!-- Delete useless files -->
