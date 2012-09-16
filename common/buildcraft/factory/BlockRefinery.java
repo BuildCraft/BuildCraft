@@ -110,7 +110,7 @@ public class BlockRefinery extends BlockContainer {
 			if (liquid != null) {
 				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(Orientations.Unknown, liquid, true);
 
-				if (qty != 0 && !BuildCraftCore.debugMode) {
+				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
 							Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
 				}
