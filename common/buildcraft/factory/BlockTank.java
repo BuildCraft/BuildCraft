@@ -101,7 +101,7 @@ public class BlockTank extends BlockContainer {
 			if (liquid != null) {
 				int qty = tank.fill(Orientations.Unknown, liquid, true);
 
-				if (qty != 0 && !BuildCraftCore.debugMode) {
+				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
 							Utils.consumeItem(current));
 				}
