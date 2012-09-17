@@ -21,7 +21,7 @@ public class ItemGate extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setTabToDisplayOn(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@SuppressWarnings({ "all" })

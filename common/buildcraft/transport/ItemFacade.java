@@ -32,7 +32,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		this.setTabToDisplayOn(CreativeTabs.tabMisc);
+		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 	
 	@Override
@@ -77,8 +77,7 @@ public class ItemFacade extends ItemBuildCraft {
 			return true;
 		} else {
 			if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
-				if (!player.capabilities.isCreativeMode)
-					stack.stackSize--;	
+				stack.stackSize--;	
 				return true;
 			}
 			return false;

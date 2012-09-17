@@ -94,7 +94,7 @@ public class PipeTransportItems extends PipeTransport {
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
 
 		if (!worldObj.isRemote && item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {
-			int dimension = worldObj.provider.worldType;
+			int dimension = worldObj.provider.dimensionId;
 			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(item, orientation));
 		}
 
