@@ -15,7 +15,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setTabToDisplayOn(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@SuppressWarnings({ "all" })
@@ -40,7 +40,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		return (new StringBuilder()).append(super.getItemName()).append(".").append(itemstack.getItemDamage()).toString();
 	}
 
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {

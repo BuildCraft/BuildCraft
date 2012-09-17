@@ -40,9 +40,9 @@ public class CoreProxy {
 	public String getMinecraftVersion() { return "1.3.2"; }
 
 	/* INSTANCES */
-	public Object getClient() { return null; }	
+	public Object getClient() { return null; }
 	public World getClientWorld() { return null; }
-	
+
 	/* SIMULATION */
 	public boolean isSimulating(World world) {
 		return !world.isRemote;
@@ -63,7 +63,7 @@ public class CoreProxy {
 
 	/* WRAPPER */
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {}
-	
+
 	/* LOCALIZATION */
 	public void addName(Object obj, String s) {}
 	public void addLocalization(String s1, String string) {}
@@ -103,14 +103,14 @@ public class CoreProxy {
 
 				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance
 						&& Math.abs(player.posZ - z) <= maxDistance)
-					player.serverForThisPlayer.sendPacketToPlayer(packet);
+					player.playerNetServerHandler.sendPacketToPlayer(packet);
 			}
 		}
 	}
 
 	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
 		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-		player.serverForThisPlayer.sendPacketToPlayer(packet.getPacket());
+		player.playerNetServerHandler.sendPacketToPlayer(packet.getPacket());
 	}
 
 	public void sendToServer(Packet packet) {}

@@ -21,16 +21,16 @@ import net.minecraft.src.World;
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	Pipe dummyPipe;
-	
+
 	private int textureIndex = 0;
-	
+
 	protected ItemPipe(int i) {
 		super(i);
-		this.setTabToDisplayOn(CreativeTabs.tabTransport);
+		this.setCreativeTab(CreativeTabs.tabTransport);
 	}
-	
+
 	@Override
-	public boolean tryPlaceIntoWorld(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
 
 		if (world.getBlockId(i, j, k) == Block.snow.blockID)
@@ -49,15 +49,15 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			if (side == 5)
 				i++;
 		}
-		
+
 		if (itemstack.stackSize == 0)
 			return false;
 		if (entityplayer.canPlayerEdit(i, j, k)
 				&& world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
-			
+
 			Pipe pipe = BlockGenericPipe.createPipe(shiftedIndex);
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
-				
+
 				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
 				// To move to a proxt
 				// world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F,
@@ -75,7 +75,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		this.textureIndex = textureIndex;
 		return this;
 	}
-	
+
 	public int getTextureIndex() {
 		return textureIndex;
 	}
