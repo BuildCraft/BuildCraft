@@ -101,7 +101,7 @@ public class BlockTank extends BlockContainer {
 			if (liquid != null) {
 				int qty = tank.fill(Orientations.Unknown, liquid, true);
 
-				if (qty != 0 && !BuildCraftCore.debugMode) {
+				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
 							Utils.consumeItem(current));
 				}
@@ -116,8 +116,9 @@ public class BlockTank extends BlockContainer {
                     ItemStack filled = LiquidManager.fillLiquidContainer(available, current);
 
                     liquid = LiquidManager.getLiquidForFilledItem(filled);
+                   
                     if(liquid != null) {
-
+			if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode){
                         if(current.stackSize > 1) {
                             if(!entityplayer.inventory.addItemStackToInventory(filled))
                                 return false;
@@ -129,7 +130,7 @@ public class BlockTank extends BlockContainer {
                                     Utils.consumeItem(current));
                             entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
                         }
-
+			}
                         tank.drain(Orientations.Unknown, liquid.amount, true);
                         return true;
                     }
