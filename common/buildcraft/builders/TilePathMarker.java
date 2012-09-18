@@ -1,6 +1,7 @@
 
 package buildcraft.builders;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -15,6 +16,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 
 public class TilePathMarker extends TileMarker {
 
@@ -26,7 +28,7 @@ public class TilePathMarker extends TileMarker {
 
 	public TilePathMarker links[] = new TilePathMarker[2];
 	public static int searchSize = 64;	//TODO: this should be moved to default props
-	
+
 	//A list with the pathMarkers that aren't fully connected
 	//It only contains markers within the loaded chunks
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
@@ -74,7 +76,7 @@ public class TilePathMarker extends TileMarker {
 		double nearestDistance = 0, distance;	//The initialization of nearestDistance is only to make the compiler shut up
 
 		for (TilePathMarker t : availableMarkers) {
-			if (t == this || t == this.links[0] || t == this.links[1])
+			if (t == this || t == this.links[0] || t == this.links[1] || t.worldObj.provider.worldType != this.worldObj.provider.worldType)
 				continue;
 
 			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
@@ -93,7 +95,7 @@ public class TilePathMarker extends TileMarker {
 
 	@Override
 	public void tryConnection() {
-		
+
 		if (CoreProxy.proxy.isRenderWorld(worldObj) || isFullyConnected())
 			return;
 
@@ -104,7 +106,7 @@ public class TilePathMarker extends TileMarker {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		
+
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
@@ -166,9 +168,9 @@ public class TilePathMarker extends TileMarker {
 	public void initialize() {
 		super.initialize();
 
-		if (CoreProxy.proxy.isSimulating(worldObj))
+		if (CoreProxy.proxy.isSimulating(worldObj) && !isFullyConnected())
 				availableMarkers.add(this);
-		
+
 		if (loadLink0) {
 			TileEntity e0 = worldObj.getBlockTileEntity(x0, y0, z0);
 
@@ -200,7 +202,7 @@ public class TilePathMarker extends TileMarker {
 			lasers[1] = null;
 			links[1] = null;
 		}
-		
+
 		if (!isFullyConnected() && !availableMarkers.contains(this) && CoreProxy.proxy.isSimulating(worldObj))
 			availableMarkers.add(this);
 	}
@@ -251,13 +253,22 @@ public class TilePathMarker extends TileMarker {
 	public static void clearAvailableMarkersList() {
 		availableMarkers.clear();
 	}
-	
+
+	public static void clearAvailableMarkersList(World w) {
+		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
+			TilePathMarker t = it.next();
+			if (t.worldObj.provider.worldType != w.provider.worldType) {
+				it.remove();
+			}
+		}
+	}
+
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) {
 		boolean previousState = tryingToConnect;
-		
+
 		super.handleUpdatePacket(packet);
-		
+
 		if (previousState != tryingToConnect) {
 			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}

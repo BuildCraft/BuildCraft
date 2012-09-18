@@ -8,6 +8,8 @@
 
 package buildcraft.builders;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -15,14 +17,20 @@ public class EventHandlerBuilders {
 
 	@ForgeSubscribe
 	public void handleWorldLoad(WorldEvent.Load event) {
-		//When a world loads clean the list of available markers
-		
-		//For some reason, when loading a world this gets called 3 times from the
-		//server and one from the client. We don't want the client to clear the
-		//list because it happens after the initializations and therefore it re-
-		//moves the loaded path markers.
-		if (!event.world.isRemote)
-			TilePathMarker.clearAvailableMarkersList();
+		//Temporary solution
+		//Please remove the world Load event when world Unload event gets implimented
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+			TilePathMarker.clearAvailableMarkersList(event.world);
+		}
+	}
+
+	@ForgeSubscribe
+	public void handleWorldUnload(WorldEvent.Unload event) {
+		// When a world unloads clean from the list of available markers the ones
+		// that were on the unloaded world
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+			TilePathMarker.clearAvailableMarkersList(event.world);
+		}
 	}
 	
 }
