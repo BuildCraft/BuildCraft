@@ -36,7 +36,9 @@ public class TileBuffer {
 		tile = null;
 		blockID = world.getBlockId(this.x, this.y, this.z);
 
-		if (Block.blocksList[blockID] instanceof BlockContainer)
+		Block block = Block.blocksList[blockID];
+		if (block != null
+				&& block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z)))
 			tile = world.getBlockTileEntity(this.x, this.y, this.z);
 	}
 
