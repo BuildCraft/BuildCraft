@@ -168,7 +168,7 @@ public class TilePathMarker extends TileMarker {
 	public void initialize() {
 		super.initialize();
 
-		if (CoreProxy.proxy.isSimulating(worldObj))
+		if (CoreProxy.proxy.isSimulating(worldObj) && !isFullyConnected())
 				availableMarkers.add(this);
 
 		if (loadLink0) {
