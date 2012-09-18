@@ -29,7 +29,6 @@ import net.minecraft.src.NBTTagCompound;
 public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 
 	private SimpleInventory filters = new SimpleInventory(54, "items", 1);
-	private final SafeTimeTracker tracker = new SafeTimeTracker();
 
 	/* PIPE LOGIC */
 	@Override
@@ -48,14 +47,6 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
 
 		return true;
-	}
-
-	/* UPDATING */
-	@Override
-	public void updateEntity() {
-		if (tracker.markTimeIfDelay(worldObj, 20 * BuildCraftCore.updateFactor))
-			if (CoreProxy.proxy.isSimulating(container.worldObj))
-				sendFilterSet();
 	}
 
 	/* SAVING & LOADING */
@@ -96,8 +87,8 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public ItemStack decrStackSize(int i, int j) {
 		ItemStack stack = filters.decrStackSize(i, j);
 
-		if (CoreProxy.proxy.isSimulating(container.worldObj))
-			sendFilterSet();
+		if (CoreProxy.proxy.isSimulating(worldObj))
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 
 		return stack;
 	}
@@ -106,22 +97,9 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 
 		filters.setInventorySlotContents(i, itemstack);
-		if (CoreProxy.proxy.isSimulating(container.worldObj))
-			sendFilterSet();
+		if (CoreProxy.proxy.isSimulating(worldObj))
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 
-	}
-
-	/* SERVER SIDE */
-	public void sendFilterSet() {
-		NBTTagCompound nbttagcompound = new NBTTagCompound();
-		this.writeToNBT(nbttagcompound);
-		PacketNBT packet = new PacketNBT(PacketIds.DIAMOND_PIPE_CONTENTS, nbttagcompound, xCoord, yCoord, zCoord);
-		CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
-	}
-
-	/* CLIENT SIDE */
-	public void handleFilterSet(PacketNBT packet) {
-		this.readFromNBT(packet.getTagCompound());
 	}
 
 }

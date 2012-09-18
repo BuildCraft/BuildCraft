@@ -8,21 +8,28 @@
 
 package buildcraft.transport.pipes;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 
+import cpw.mods.fml.common.FMLLog;
+
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTBase;
+import net.minecraft.src.NBTTagCompound;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.network.IClientState;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-
-public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
+public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, IClientState {
 
 	public PipeItemsDiamond(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicDiamond(), itemID);
@@ -84,6 +91,22 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook {
 	@Override
 	public void readjustSpeed(IPipedItem item) {
 		((PipeTransportItems) transport).defaultReajustSpeed(item);
+	}
+
+	// ICLIENTSTATE
+	@Override
+	public void writeData(DataOutputStream data) throws IOException {
+		NBTTagCompound nbt = new NBTTagCompound();
+		((PipeLogicDiamond) logic).writeToNBT(nbt);
+		NBTBase.writeNamedTag(nbt, data);
+	}
+
+	@Override
+	public void readData(DataInputStream data) throws IOException {
+		NBTBase nbt = NBTBase.readNamedTag(data);
+		if (nbt instanceof NBTTagCompound) {
+			logic.readFromNBT((NBTTagCompound) nbt);
+		}
 	}
 
 }
