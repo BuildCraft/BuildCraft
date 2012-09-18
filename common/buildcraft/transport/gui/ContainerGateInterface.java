@@ -16,6 +16,7 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
@@ -63,6 +64,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
+
+			TileEntity ptile = pipe.worldObj.getBlockTileEntity(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			if (ptile instanceof IOverrideDefaultTriggers)
+				_potentialTriggers.addAll( ((IOverrideDefaultTriggers)ptile).getTriggers());
 
 			for (Orientations o : Orientations.dirs()) {
 				Position pos = new Position(pipe.xCoord, pipe.yCoord, pipe.zCoord, o);

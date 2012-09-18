@@ -21,7 +21,7 @@ public class EventHandlerBuilders {
 		//server and one from the client. We don't want the client to clear the
 		//list because it happens after the initializations and therefore it re-
 		//moves the loaded path markers.
-		if (!event.world.getClass().equals(net.minecraft.src.WorldClient.class))
+		if (!event.world.isRemote)
 			TilePathMarker.clearAvailableMarkersList();
 	}
 	
