@@ -18,6 +18,7 @@ import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -365,6 +366,11 @@ public class BuildCraftBuilders {
 	public static void addHook(IBuilderHook hook) {
 		if (!hooks.contains(hook))
 			hooks.add(hook);
+	}
+
+	@Mod.ServerStopping
+	public void ServerStop(FMLServerStoppingEvent event) {
+		TilePathMarker.clearAvailableMarkersList();
 	}
 
 }
