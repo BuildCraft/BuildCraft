@@ -15,6 +15,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 
+import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
