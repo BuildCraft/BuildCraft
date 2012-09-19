@@ -164,8 +164,10 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		if (!Utils.checkPipesConnections(container, entity))
 			return false;
 
-		if (entity instanceof TileGenericPipe){
-			if (!((TileGenericPipe)entity).pipe.inputOpen(o.reverse())){
+		if (entity instanceof TileGenericPipe) {
+			Pipe pipe = ((TileGenericPipe) entity).pipe;
+
+			if (pipe == null || !pipe.inputOpen(o.reverse())) {
 				return false;
 			}
 		}
