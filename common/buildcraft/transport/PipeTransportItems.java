@@ -41,7 +41,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
-import net.minecraftforge.common.ISidedInventory;
 
 public class PipeTransportItems extends PipeTransport {
 
@@ -438,10 +437,6 @@ public class PipeTransportItems extends PipeTransport {
 
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
-		if( tile instanceof ISidedInventory ){
-			Orientations or = Utils.get3dOrientation(new Position(container), new Position(tile));
-			return ((ISidedInventory) tile).getSizeInventorySide(or.toDirection()) > 0;
-		}
 		return tile instanceof TileGenericPipe
 			|| tile instanceof IPipeEntry
 			|| tile instanceof ISpecialInventory
