@@ -57,7 +57,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 				drawTexturedModalRect(cornerX + x, cornerY + y, 16 * textureJ, 16 * textureI, 16, 16);
 			}
-			
+
 		}
 
 		public void drawStack(ItemStack item) {
@@ -165,7 +165,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		if (s.length() > 0) {
 			int i2 = (lastX - cornerX);
 			int k2 = lastY - cornerY;
-			func_74190_a(s, i2, k2);
+			drawCreativeTabHoveringText(s, i2, k2);
 		}
 	}
 
