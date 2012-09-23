@@ -52,6 +52,7 @@ import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsSandstone;
 import buildcraft.transport.pipes.PipeItemsStone;
 //import buildcraft.transport.pipes.PipeItemsStripes;
+import buildcraft.transport.pipes.PipeItemsStripes;
 import buildcraft.transport.pipes.PipeItemsVoid;
 import buildcraft.transport.pipes.PipeItemsWood;
 import buildcraft.transport.pipes.PipeLiquidsCobblestone;
@@ -122,7 +123,7 @@ public class BuildCraftTransport {
 
 	public static Item facadeItem;
 
-	//public static Item pipeItemsStipes;
+	public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
 
@@ -276,7 +277,7 @@ public class BuildCraftTransport {
 			pipeStructureCobblestone = createPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone, null);
 
 			// Fix the recipe
-			//pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
+			pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack(Item.dyePowder, 1, 0), Block.glass, new ItemStack(Item.dyePowder, 1, 11));
 
 			pipeItemsVoid = createPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", new ItemStack(Item.dyePowder, 1, 0), Block.glass, Item.redstone);
 
