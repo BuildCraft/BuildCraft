@@ -12,6 +12,8 @@ package buildcraft.factory;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.common.FMLLog;
+
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
@@ -37,10 +39,14 @@ import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.ForgeChunkManager.Type;
 
 public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 	public @TileNetworkData
@@ -109,6 +115,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	private boolean movingHorizontally;
 	private boolean movingVertically;
 	private double headTrajectory;
+	private Ticket chunkTicket;
 
 	private void createArm() {
 
@@ -386,7 +393,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void mineStack(ItemStack stack) {
-
+		System.out.printf("Mining stack %d\n", stack.itemID);
 		// First, try to add to a nearby chest
 		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
 		stack.stackSize -= added.stackSize;
@@ -425,6 +432,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void invalidate() {
+		ForgeChunkManager.releaseTicket(chunkTicket);
 
 		super.invalidate();
 		destroy();
@@ -456,6 +464,11 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void setBoundaries(boolean useDefault) {
+		chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
+		chunkTicket.getModData().setInteger("quarryX", xCoord);
+		chunkTicket.getModData().setInteger("quarryY", yCoord);
+		chunkTicket.getModData().setInteger("quarryZ", zCoord);
+		ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 
 		IAreaProvider a = null;
 
@@ -473,7 +486,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int ySize = a.yMax() - a.yMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
-		if (xSize < 3 || zSize < 3) {
+		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 4) >= chunkTicket.getMaxChunkListDepth())
+		{
+			FMLLog.info("Quarry size is outside of bounds %d %d (%d)", xSize, zSize, chunkTicket.getMaxChunkListDepth());
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
 			useDefault = true;
@@ -519,10 +534,10 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		a.removeFromWorld();
+		forceChunkLoading(chunkTicket);
 	}
 
 	private void initializeBluePrintBuilder() {
-
 		BptBlueprint bluePrint = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int i = 0; i < bluePrint.sizeX; ++i) {
@@ -572,6 +587,11 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	@Override
 	public void initialize() {
 		super.initialize();
+
+		if (CoreProxy.proxy.isSimulating(this.worldObj) && !box.initialized)
+		{
+			setBoundaries(false);
+		}
 
 		createUtilsIfNeeded();
 
@@ -736,6 +756,24 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		this.targetX = x;
 		this.targetY = y;
 		this.targetZ = z;
+	}
+
+	public void forceChunkLoading(Ticket ticket) {
+		if (chunkTicket == null)
+		{
+			chunkTicket = ticket;
+		}
+
+		ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
+
+		for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4; chunkX ++)
+		{
+			for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ ++)
+			{
+				FMLLog.info("Forcing chunk %d %d", chunkX, chunkZ);
+				ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(chunkX, chunkZ));
+			}
+		}
 	}
 
 }

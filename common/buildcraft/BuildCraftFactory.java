@@ -8,6 +8,8 @@
 
 package buildcraft;
 
+import java.util.List;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -49,7 +51,10 @@ import buildcraft.silicon.TileLaser;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.World;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.Property;
 
 @Mod(name="BuildCraft Factory", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -77,6 +82,28 @@ public class BuildCraftFactory {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
+		ForgeChunkManager.setForcedChunkLoadingCallback(instance,new QuarryChunkloadCallback());
+	}
+
+	public class QuarryChunkloadCallback implements ForgeChunkManager.LoadingCallback
+	{
+		@Override
+		public void ticketsLoaded(List<Ticket> tickets, World world) {
+			for (Ticket ticket : tickets)
+			{
+				int quarryX = ticket.getModData().getInteger("quarryX");
+				int quarryY = ticket.getModData().getInteger("quarryY");
+				int quarryZ = ticket.getModData().getInteger("quarryZ");
+
+				int blId = world.getBlockId(quarryX, quarryY, quarryZ);
+				if (blId == quarryBlock.blockID)
+				{
+					TileQuarry tq = (TileQuarry) world.getBlockTileEntity(quarryX, quarryY, quarryZ);
+					tq.forceChunkLoading(ticket);
+				}
+			}
+		}
+
 	}
 	@Init
 	public void load(FMLInitializationEvent evt) {

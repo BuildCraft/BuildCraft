@@ -83,7 +83,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public Packet getAuxillaryInfoPacket() {
+	public Packet getDescriptionPacket() {
 		return new PacketTileUpdate(this).getPacket();
 	}
 
