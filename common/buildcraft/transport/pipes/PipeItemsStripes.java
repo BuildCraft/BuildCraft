@@ -52,7 +52,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(25, 0, powerToBreakABlock/2, powerToBreakABlock, powerToBreakABlock*10);
-		powerProvider.configurePowerPerdition(1, 1);
+		//powerProvider.configurePowerPerdition(1, 1);
 	}
 
 	@Override
