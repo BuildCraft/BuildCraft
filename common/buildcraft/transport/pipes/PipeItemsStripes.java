@@ -8,11 +8,11 @@
 
 package buildcraft.transport.pipes;
 
-/*
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
-import buildcraft.BuildCraftBlockUtil;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
@@ -23,15 +23,20 @@ import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
-import buildcraft.core.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeLogicStripes;
+import buildcraft.transport.pipes.PipeLogicStripes;
 import buildcraft.transport.PipeTransportItems;
 
+import net.minecraft.src.AxisAlignedBB;
+import net.minecraft.src.Block;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 
@@ -69,7 +74,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 				Position p = new Position(xCoord, yCoord, zCoord, o);
 				p.moveForwards(1.0);
 
-				ArrayList<ItemStack> stacks = BuildCraftBlockUtil
+				ArrayList<ItemStack> stacks = BlockUtil
 						.getItemStackFromBlock(worldObj, (int) p.x, (int) p.y, (int) p.z);
 
 				if (stacks != null)
@@ -92,48 +97,60 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 		Position p = new Position(xCoord, yCoord, zCoord, data.orientation);
 		p.moveForwards(1.0);
 
-		if (convertPipe(pipe, data))
-			BuildCraftTransport.pipeItemsStipes.onItemUse(new ItemStack(BuildCraftTransport.pipeItemsStipes),
-					CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x, (int) p.y - 1, (int) p.z, 1);
-		else if (worldObj.getBlockId((int) p.x, (int) p.y, (int) p.z) == 0)
-			data.item.getItemStack().getItem().tryPlaceIntoWorld(data.item.getItemStack(), CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
+/*		if (convertPipe(pipe, data))
+			if(CoreProxy.proxy.isSimulating(worldObj))
+			BuildCraftTransport.pipeItemsStipes.onItemUseFirst(new ItemStack(BuildCraftTransport.pipeItemsStipes),
+					CoreProxy.proxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x, (int) p.y - 1, (int) p.z, 1);
+		else */
+		if (worldObj.getBlockId((int) p.x, (int) p.y, (int) p.z) == 0)
+			data.item.getItemStack().getItem().tryPlaceIntoWorld(data.item.getItemStack(), CoreProxy.proxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
 					(int) p.y - 1, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
 		else
-			data.item.getItemStack().getItem().tryPlaceIntoWorld(data.item.getItemStack(), CoreProxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
+			data.item.getItemStack().getItem().tryPlaceIntoWorld(data.item.getItemStack(), CoreProxy.proxy.getBuildCraftPlayer(worldObj), worldObj, (int) p.x,
 					(int) p.y, (int) p.z, 1, 0.0f, 0.0f, 0.0f);
 	}
 
 	@Override
 	public void centerReached(PipeTransportItems pipe, EntityData data) {
-		convertPipe(pipe, data);
+		//convertPipe(pipe, data); removed because it is buggy - it does not sync the pipe change
 	}
-
+/*
 	@SuppressWarnings("unchecked")
 	public boolean convertPipe(PipeTransportItems pipe, EntityData data) {
 		
-		if (data.item.getItemStack().getItem() instanceof ItemPipe)
-			
+		if (data.item.getItemStack().getItem() instanceof ItemPipe) {
 			if (!(data.item.getItemStack().itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
 				
 				Pipe newPipe = BlockGenericPipe.createPipe(data.item.getItemStack().itemID);
-				newPipe.setTile(this.container);
-				this.container.pipe = newPipe;
-				((PipeTransportItems) newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
-						.clone();
+				if(newPipe.transport instanceof PipeTransportItems) {
+					newPipe.setTile(this.container);
+					this.container.pipe = newPipe;
+					((PipeTransportItems) newPipe.transport).travelingEntities = (TreeMap<Integer, EntityData>) pipe.travelingEntities
+							.clone();
+	
+					
+	
+					int blockID = BuildCraftTransport.genericPipeBlock.blockID;
+						if (BlockGenericPipe.placePipe(newPipe, worldObj, xCoord, yCoord, zCoord, blockID, 0)) {
+							
+							//Block.blocksList[blockID].onBlockPlacedBy(worldObj, xCoord, yCoord, zCoord, entityplayer);
 
-				data.item.getItemStack().stackSize--;
-
-				if (data.item.getItemStack().stackSize <= 0)
-					((PipeTransportItems) newPipe.transport).travelingEntities.remove(data.item.getEntityId());
-
-				pipe.scheduleRemoval(data.item);
-
-				return true;
+							data.item.getItemStack().stackSize--;
+						}
+						if (data.item.getItemStack().stackSize <= 0){
+							((PipeTransportItems) newPipe.transport).travelingEntities.remove(data.item.getEntityId());
+		
+							pipe.scheduleRemoval(data.item);
+						}
+	
+	
+					return true;
+				}								
 			}
-
+		}
 		return false;
 	}
-
+*/
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
@@ -154,4 +171,3 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 
 	}
 }
-*/
