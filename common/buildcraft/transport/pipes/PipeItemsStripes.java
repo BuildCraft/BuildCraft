@@ -42,6 +42,7 @@ import net.minecraft.src.TileEntity;
 
 public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPowerReceptor {
 
+	private static final int powerToBreakABlock=50;
 	private IPowerProvider powerProvider;
 
 	public PipeItemsStripes(int itemID) {
@@ -50,7 +51,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 		((PipeTransportItems) transport).travelHook = this;
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(25, 1, 1, 1, 1);
+		powerProvider.configure(25, 0, powerToBreakABlock/2, powerToBreakABlock, powerToBreakABlock*10);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 
@@ -67,7 +68,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 
 	@Override
 	public void doWork() {
-		if (powerProvider.useEnergy(1, 1, true) == 1) {
+		if (powerProvider.useEnergy(powerToBreakABlock, powerToBreakABlock, true) == powerToBreakABlock) {
 			Orientations o = getOpenOrientation();
 
 			if (o != Orientations.Unknown) {
