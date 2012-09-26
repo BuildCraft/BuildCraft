@@ -10,6 +10,8 @@ package buildcraft;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -85,10 +87,17 @@ public class BuildCraftFactory {
 		ForgeChunkManager.setForcedChunkLoadingCallback(instance,new QuarryChunkloadCallback());
 	}
 
-	public class QuarryChunkloadCallback implements ForgeChunkManager.LoadingCallback
+	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback
 	{
 		@Override
 		public void ticketsLoaded(List<Ticket> tickets, World world) {
+			// NO OP for OrderedLoadingCallback
+		}
+
+		@Override
+		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world,
+				int maxTicketCount) {
+			List<Ticket> validTickets = Lists.newArrayList();
 			for (Ticket ticket : tickets)
 			{
 				int quarryX = ticket.getModData().getInteger("quarryX");
@@ -100,8 +109,10 @@ public class BuildCraftFactory {
 				{
 					TileQuarry tq = (TileQuarry) world.getBlockTileEntity(quarryX, quarryY, quarryZ);
 					tq.forceChunkLoading(ticket);
+					validTickets.add(ticket);
 				}
 			}
+			return validTickets;
 		}
 
 	}

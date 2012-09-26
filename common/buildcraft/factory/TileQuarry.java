@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
@@ -44,6 +45,7 @@ import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet3Chat;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
@@ -116,6 +118,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	private boolean movingVertically;
 	private double headTrajectory;
 	private Ticket chunkTicket;
+	private boolean isAlive;
 
 	private void createArm() {
 
@@ -134,6 +137,10 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void updateEntity() {
+		if (!isAlive && CoreProxy.proxy.isSimulating(worldObj))
+		{
+			return;
+		}
 		super.updateEntity();
 		if (inProcess) {
 			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
@@ -464,7 +471,16 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void setBoundaries(boolean useDefault) {
-		chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
+		if (chunkTicket == null)
+		{
+			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
+		}
+		if (chunkTicket == null)
+		{
+			isAlive = false;
+			PacketDispatcher.sendPacketToAllPlayers(new Packet3Chat(String.format("[BUILDCRAFT] Chunkloading capabilities exhausted. The quarry at %d, %d, %d will not work. Remove some quarries!", xCoord, yCoord, zCoord)));
+			return;
+		}
 		chunkTicket.getModData().setInteger("quarryX", xCoord);
 		chunkTicket.getModData().setInteger("quarryY", yCoord);
 		chunkTicket.getModData().setInteger("quarryZ", zCoord);
@@ -486,7 +502,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int ySize = a.yMax() - a.yMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
-		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 4) >= chunkTicket.getMaxChunkListDepth())
+		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())
 		{
 			FMLLog.info("Quarry size is outside of bounds %d %d (%d)", xSize, zSize, chunkTicket.getMaxChunkListDepth());
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
@@ -764,13 +780,13 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			chunkTicket = ticket;
 		}
 
+		isAlive = true;
 		ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 
 		for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4; chunkX ++)
 		{
 			for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ ++)
 			{
-				FMLLog.info("Forcing chunk %d %d", chunkX, chunkZ);
 				ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(chunkX, chunkZ));
 			}
 		}
