@@ -32,7 +32,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		this.setTabToDisplayOn(CreativeTabs.tabMisc);
+		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 	
 	@Override

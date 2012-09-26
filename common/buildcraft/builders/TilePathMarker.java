@@ -76,7 +76,7 @@ public class TilePathMarker extends TileMarker {
 		double nearestDistance = 0, distance;	//The initialization of nearestDistance is only to make the compiler shut up
 
 		for (TilePathMarker t : availableMarkers) {
-			if (t == this || t == this.links[0] || t == this.links[1] || t.worldObj.provider.worldType != this.worldObj.provider.worldType)
+			if (t == this || t == this.links[0] || t == this.links[1] || t.worldObj.provider.dimensionId != this.worldObj.provider.dimensionId)
 				continue;
 
 			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
@@ -257,7 +257,7 @@ public class TilePathMarker extends TileMarker {
 	public static void clearAvailableMarkersList(World w) {
 		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
 			TilePathMarker t = it.next();
-			if (t.worldObj.provider.worldType != w.provider.worldType) {
+			if (t.worldObj.provider.dimensionId != w.provider.dimensionId) {
 				it.remove();
 			}
 		}

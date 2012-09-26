@@ -33,7 +33,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		topTexture = 2 * 16 + 11;
 		sideTexture = 2 * 16 + 12;
 		setHardness(1.0F);
-		setCreativeTab(CreativeTabs.tabDeco);
+		setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override

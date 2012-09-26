@@ -27,7 +27,7 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 
 		maxStackSize = 1;
 		iconIndex = 5 * 16 + 0;
-		this.setTabToDisplayOn(CreativeTabs.tabMisc);
+		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@SuppressWarnings({ "all" })

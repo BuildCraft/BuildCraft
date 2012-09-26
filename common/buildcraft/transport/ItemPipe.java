@@ -26,11 +26,11 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	
 	protected ItemPipe(int i) {
 		super(i);
-		this.setTabToDisplayOn(CreativeTabs.tabTransport);
+		this.setCreativeTab(CreativeTabs.tabTransport);
 	}
 	
 	@Override
-	public boolean tryPlaceIntoWorld(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
 
 		if (world.getBlockId(i, j, k) == Block.snow.blockID)

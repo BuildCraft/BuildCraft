@@ -103,14 +103,14 @@ public class CoreProxy {
 
 				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance
 						&& Math.abs(player.posZ - z) <= maxDistance)
-					player.serverForThisPlayer.sendPacketToPlayer(packet);
+					player.playerNetServerHandler.sendPacketToPlayer(packet);
 			}
 		}
 	}
 
 	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
 		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-		player.serverForThisPlayer.sendPacketToPlayer(packet.getPacket());
+		player.playerNetServerHandler.sendPacketToPlayer(packet.getPacket());
 	}
 
 	public void sendToServer(Packet packet) {}

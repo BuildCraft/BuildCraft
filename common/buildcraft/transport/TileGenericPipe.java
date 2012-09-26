@@ -377,7 +377,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public Packet getAuxillaryInfoPacket() {
+	public Packet getDescriptionPacket() {
 		bindPipe();
 		
 		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);

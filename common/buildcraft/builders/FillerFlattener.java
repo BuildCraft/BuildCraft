@@ -64,7 +64,7 @@ public class FillerFlattener extends FillerPattern {
 		}
 
 		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
-			stackToPlace.getItem().tryPlaceIntoWorld(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(tile.worldObj), tile.worldObj,
+			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(tile.worldObj), tile.worldObj,
 					lastX, lastY - 1, lastZ, 1, 0.0f, 0.0f, 0.0f);
 		}
 
