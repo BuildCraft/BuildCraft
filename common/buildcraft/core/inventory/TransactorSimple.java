@@ -40,7 +40,7 @@ public class TransactorSimple extends Transactor {
 			if(inventory.getStackInSlot(i) == null)
 				continue;
 			
-			if(!inventory.getStackInSlot(i).isItemEqual(stack))
+			if(!inventory.getStackInSlot(i).isItemEqual(stack) || !ItemStack.func_77970_a(inventory.getStackInSlot(i), stack))
 				continue;
 			
 			if(inventory.getStackInSlot(i).stackSize >= inventory.getStackInSlot(i).getMaxStackSize())
@@ -75,7 +75,7 @@ public class TransactorSimple extends Transactor {
 			return remaining;
 		}
 		
-		if(!inventory.getStackInSlot(slot).isItemEqual(stack))
+		if(!inventory.getStackInSlot(slot).isItemEqual(stack) || !ItemStack.func_77970_a(inventory.getStackInSlot(slot), stack))
 			return 0;
 		
 		int space = inventory.getStackInSlot(slot).getMaxStackSize() - inventory.getStackInSlot(slot).stackSize;
