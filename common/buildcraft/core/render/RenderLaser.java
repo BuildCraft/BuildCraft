@@ -1,5 +1,6 @@
 package buildcraft.core.render;
 
+import buildcraft.api.core.Position;
 import net.minecraft.src.Entity;
 import net.minecraft.src.ModelBase;
 import net.minecraft.src.ModelRenderer;
@@ -38,7 +39,9 @@ public class RenderLaser extends Render {
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
-		GL11.glTranslated(x, y, z);
+
+		Position offset = laser.renderOffset();
+		GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
 
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
