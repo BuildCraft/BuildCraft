@@ -16,19 +16,22 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.World;
 
-public class EntityLaser extends Entity {
+public abstract class EntityLaser extends Entity {
 
 	protected Position head, tail;
 
 	public double renderSize = 0;
 	public double angleY = 0;
 	public double angleZ = 0;
-	protected String texture;
+
+	private boolean isVisible = false;
+	protected boolean needsUpdate = true;
 
 	public EntityLaser(World world) {
 		super(world);
 
-		initClientSide();
+		head = new Position(0, 0, 0);
+		tail = new Position(0, 0, 0);
 	}
 
 	public EntityLaser(World world, Position head, Position tail) {
@@ -39,46 +42,23 @@ public class EntityLaser extends Entity {
 		this.tail = tail;
 
 		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
-
-		initServerSide();
+		setSize(10, 10);
 	}
 
-	protected void initClientSide() {
-		
-		head = new Position(0, 0, 0);
-		tail = new Position(0, 0, 0);
-		
-		dataWatcher.addObject(8 , Integer.valueOf(0));
-		dataWatcher.addObject(9 , Integer.valueOf(0));
+	@Override
+	protected void entityInit() {
+		preventEntitySpawning = false;
+		noClip = true;
+		isImmuneToFire = true;
+
+		dataWatcher.addObject(8, Integer.valueOf(0));
+		dataWatcher.addObject(9, Integer.valueOf(0));
 		dataWatcher.addObject(10, Integer.valueOf(0));
 		dataWatcher.addObject(11, Integer.valueOf(0));
 		dataWatcher.addObject(12, Integer.valueOf(0));
 		dataWatcher.addObject(13, Integer.valueOf(0));
 
 		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
-		
-		dataWatcher.addObject(16, "");
-	}
-	
-	protected void initServerSide() {
-
-		preventEntitySpawning = false;
-		noClip = true;
-		isImmuneToFire = true;
-
-		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
-		setSize(10, 10);
-
-		dataWatcher.addObject(8 , Integer.valueOf(encodeDouble(head.x)));
-		dataWatcher.addObject(9 , Integer.valueOf(encodeDouble(head.y)));
-		dataWatcher.addObject(10, Integer.valueOf(encodeDouble(head.z)));
-		dataWatcher.addObject(11, Integer.valueOf(encodeDouble(tail.x)));
-		dataWatcher.addObject(12, Integer.valueOf(encodeDouble(tail.y)));
-		dataWatcher.addObject(13, Integer.valueOf(encodeDouble(tail.z)));
-
-		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
-		
-		dataWatcher.addObject(16, "");
 	}
 
 	@Override
@@ -87,8 +67,13 @@ public class EntityLaser extends Entity {
 		if (head == null || tail == null)
 			return;
 
+		if (CoreProxy.proxy.isSimulating(worldObj) && needsUpdate) {
+			updateDataServer();
+			needsUpdate = false;
+		}
+
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
-			updateData();
+			updateDataClient();
 
 		boundingBox.minX = Math.min(head.x, tail.x);
 		boundingBox.minY = Math.min(head.y, tail.y);
@@ -116,66 +101,62 @@ public class EntityLaser extends Entity {
 		angleY = -Math.atan2(dy, dx) * 180 / Math.PI;
 	}
 
-	protected void updateData() {
-
+	protected void updateDataClient() {
 		head.x = decodeDouble(dataWatcher.getWatchableObjectInt(8));
 		head.y = decodeDouble(dataWatcher.getWatchableObjectInt(9));
 		head.z = decodeDouble(dataWatcher.getWatchableObjectInt(10));
 		tail.x = decodeDouble(dataWatcher.getWatchableObjectInt(11));
 		tail.y = decodeDouble(dataWatcher.getWatchableObjectInt(12));
 		tail.z = decodeDouble(dataWatcher.getWatchableObjectInt(13));
-		texture = dataWatcher.getWatchableObjectString(16);
+
+		isVisible = (dataWatcher.getWatchableObjectByte(14) == 1);
 	}
 
-	public void setPositions(Position head, Position tail) {
-
-		this.head = head;
-		this.tail = tail;
-
-		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
-
-		dataWatcher.updateObject(8 , Integer.valueOf(encodeDouble(head.x)));
-		dataWatcher.updateObject(9 , Integer.valueOf(encodeDouble(head.y)));
+	protected void updateDataServer() {
+		dataWatcher.updateObject(8, Integer.valueOf(encodeDouble(head.x)));
+		dataWatcher.updateObject(9, Integer.valueOf(encodeDouble(head.y)));
 		dataWatcher.updateObject(10, Integer.valueOf(encodeDouble(head.z)));
 		dataWatcher.updateObject(11, Integer.valueOf(encodeDouble(tail.x)));
 		dataWatcher.updateObject(12, Integer.valueOf(encodeDouble(tail.y)));
 		dataWatcher.updateObject(13, Integer.valueOf(encodeDouble(tail.z)));
 
-		onUpdate();
+		dataWatcher.updateObject(14, Byte.valueOf((byte) (isVisible ? 1 : 0)));
+	}
+
+	public void setPositions(Position head, Position tail) {
+		this.head = head;
+		this.tail = tail;
+
+		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
+
+		needsUpdate = true;
 	}
 
 	public void show() {
-		dataWatcher.updateObject(14, Byte.valueOf((byte) 1));
+		isVisible = true;
+		needsUpdate = true;
 	}
 
 	public void hide() {
-		dataWatcher.updateObject(14, Byte.valueOf((byte) 0));
+		isVisible = false;
+		needsUpdate = true;
 	}
 
 	public boolean isVisible() {
-		return dataWatcher.getWatchableObjectByte(14) == 0 ? false : true;
+		return this.isVisible;
 	}
 
-	public void setTexture(String texture) {
-		this.texture = texture;
-		dataWatcher.updateObject(16, texture);
-	}
-
-	public String getTexture() {
-		return texture;
-	}
+	public abstract String getTexture();
 
 	protected int encodeDouble(double d) {
-		return (int) (d * 8000);
+		return (int) (d * 8192);
 	}
 
 	protected double decodeDouble(int i) {
-		return (i / 8000D);
+		return (i / 8192D);
 	}
 
-	@Override
-	protected void entityInit() {}
-
+	//The read/write to nbt seem to be useless
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbt) {
 
@@ -200,5 +181,10 @@ public class EntityLaser extends Entity {
 		nbt.setDouble("tailX", tail.x);
 		nbt.setDouble("tailY", tail.y);
 		nbt.setDouble("tailZ", tail.z);
+	}
+
+	//Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
+	public Position renderOffset() {
+		return new Position(head.x - posX, head.y - posY, head.z - posZ);
 	}
 }
