@@ -235,7 +235,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		for (BlockIndex b : path) {
 			if (previous != null) {
 				
-				EntityLaser laser = new EntityPowerLaser(worldObj,
+				EntityPowerLaser laser = new EntityPowerLaser(worldObj,
 						new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5),
 						new Position(b.i + 0.5, b.j + 0.5, b.k + 0.5));
 				

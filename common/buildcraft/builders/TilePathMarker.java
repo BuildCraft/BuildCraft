@@ -60,7 +60,7 @@ public class TilePathMarker extends TileMarker {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
-		EntityLaser laser = new EntityPowerLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+		EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
 		laser.show();
 
 		laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
