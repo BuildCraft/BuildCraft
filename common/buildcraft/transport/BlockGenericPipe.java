@@ -1,5 +1,5 @@
 /**
- * Copyright (c) SpaceToad, 2011
+ *Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
