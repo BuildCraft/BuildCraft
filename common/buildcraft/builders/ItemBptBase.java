@@ -14,9 +14,11 @@ import java.util.List;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
@@ -37,11 +39,27 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
 	public void addInformation(ItemStack itemstack, List list) {
-		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(itemstack.getItemDamage());
-		if (bpt != null) {
-			list.add(bpt.getName());
+		if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("BptName")) {
+			list.add(itemstack.getTagCompound().getString("BptName"));
 		}
 	}
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
+		if(CoreProxy.proxy.isSimulating(world)) {
+			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(itemStack.getItemDamage());
+			if(bpt != null) {
+				return BuildCraftBuilders
+					.getBptItemStack(itemStack.itemID, itemStack.getItemDamage(), bpt.getName());
+			}
+		}
+		return itemStack;
+    }
+
+    @Override
+    public boolean getShareTag() {
+		return true;
+    }
 
 	@Override
 	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {}

@@ -275,9 +275,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 		if (progressOut == 100 && stack[3] == null) {
 			if (selected > -1 && selected < currentPage.size()) {
-				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, currentPage.get(selected).position));
+				BptBase bpt = currentPage.get(selected);
+				setInventorySlotContents(3,
+						BuildCraftBuilders.getBptItemStack(stack[2].itemID, bpt.position, bpt.getName()));
 			} else {
-				setInventorySlotContents(3, new ItemStack(stack[2].itemID, 1, 0));
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, 0, null));
 			}
 			setInventorySlotContents(2, null);
 		}

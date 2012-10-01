@@ -20,8 +20,7 @@ public class ItemBptBluePrint extends ItemBptBase {
 
 	@Override
 	public int getIconFromDamage(int i) {
-		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(i);
-		if (bpt == null) {
+		if (i == 0) {
 			return 5 * 16 + 2;
 		} else {
 			return 5 * 16 + 3;
