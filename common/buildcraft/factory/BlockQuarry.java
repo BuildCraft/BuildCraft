@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -10,6 +10,8 @@
 package buildcraft.factory;
 
 import java.util.ArrayList;
+
+import com.google.common.math.IntMath;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Orientations;
@@ -57,6 +59,11 @@ public class BlockQuarry extends BlockMachineRoot {
 				new Position(i, j, k));
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
+		if (entityliving instanceof EntityPlayer)
+		{
+			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i,j,k);
+			tq.placedBy = (EntityPlayer) entityliving;
+		}
 	}
 
 	@Override
@@ -125,46 +132,48 @@ public class BlockQuarry extends BlockMachineRoot {
 			world.setBlockMetadata(x, y, z, 1);
 		}
 	}
-	
+
 	@Override
 	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
-		
-		if (CoreProxy.proxy.isRenderWorld(world)){
+
+		if (!CoreProxy.proxy.isSimulating(world)){
 			return;
 		}
-		
+
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 		if (tile instanceof TileQuarry){
 			TileQuarry quarry = (TileQuarry)tile;
 			Box box = quarry.box;
-			
-			//X - Axis
-			for (int x = box.xMin; x <= box.xMax; x++) {
-				markFrameForDecay(world, x, box.yMin, box.zMin);
-				markFrameForDecay(world, x, box.yMax, box.zMin);
-				markFrameForDecay(world, x, box.yMin, box.zMax);
-				markFrameForDecay(world, x, box.yMax, box.zMax);
-			}
-			
-			//Z - Axis
-			for (int z = box.zMin + 1; z <= box.zMax - 1; z++) {
-				markFrameForDecay(world, box.xMin, box.yMin, z);
-				markFrameForDecay(world, box.xMax, box.yMin, z);
-				markFrameForDecay(world, box.xMin, box.yMax, z);
-				markFrameForDecay(world, box.xMax, box.yMax, z);
-			}
-			
-			//Y - Axis
-			for (int y = box.yMin + 1; y <= box.yMax -1; y++) {
-				
-				markFrameForDecay(world, box.xMin, y, box.zMin);
-				markFrameForDecay(world, box.xMax, y, box.zMin);
-				markFrameForDecay(world, box.xMin, y, box.zMax);
-				markFrameForDecay(world, box.xMax, y, box.zMax);
+			if (box.isInitialized() && Integer.MAX_VALUE != box.xMax)
+			{
+				//X - Axis
+				for (int x = box.xMin; x <= box.xMax; x++) {
+					markFrameForDecay(world, x, box.yMin, box.zMin);
+					markFrameForDecay(world, x, box.yMax, box.zMin);
+					markFrameForDecay(world, x, box.yMin, box.zMax);
+					markFrameForDecay(world, x, box.yMax, box.zMax);
+				}
+
+				//Z - Axis
+				for (int z = box.zMin + 1; z <= box.zMax - 1; z++) {
+					markFrameForDecay(world, box.xMin, box.yMin, z);
+					markFrameForDecay(world, box.xMax, box.yMin, z);
+					markFrameForDecay(world, box.xMin, box.yMax, z);
+					markFrameForDecay(world, box.xMax, box.yMax, z);
+				}
+
+				//Y - Axis
+				for (int y = box.yMin + 1; y <= box.yMax -1; y++) {
+
+					markFrameForDecay(world, box.xMin, y, box.zMin);
+					markFrameForDecay(world, box.xMax, y, box.zMin);
+					markFrameForDecay(world, box.xMin, y, box.zMax);
+					markFrameForDecay(world, box.xMax, y, box.zMax);
+				}
 			}
 			quarry.destroy();
 		}
-		
+
 		Utils.preDestroyBlock(world, i, j, k);
 
 //		byte width = 1;
@@ -197,7 +206,7 @@ public class BlockQuarry extends BlockMachineRoot {
 
 		super.breakBlock(world, i, j, k, par5, par6);
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);

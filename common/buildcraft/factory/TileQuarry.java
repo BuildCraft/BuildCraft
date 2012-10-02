@@ -11,9 +11,13 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
@@ -42,6 +46,7 @@ import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
@@ -118,7 +123,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	private boolean movingVertically;
 	private double headTrajectory;
 	private Ticket chunkTicket;
-	private boolean isAlive;
+	public @TileNetworkData boolean isAlive;
+	public EntityPlayer placedBy;
 
 	private void createArm() {
 
@@ -139,6 +145,12 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public void updateEntity() {
 		if (!isAlive && CoreProxy.proxy.isSimulating(worldObj))
 		{
+			super.updateEntity();
+			return;
+		}
+		if (!CoreProxy.proxy.isSimulating(worldObj) && isAlive)
+		{
+			super.updateEntity();
 			return;
 		}
 		super.updateEntity();
@@ -152,7 +164,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			}
 		}
 
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj) && inProcess) {
 			sendNetworkUpdate();
 		}
 		if (inProcess || !isDigging) {
@@ -400,7 +412,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void mineStack(ItemStack stack) {
-		System.out.printf("Mining stack %d\n", stack.itemID);
 		// First, try to add to a nearby chest
 		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
 		stack.stackSize -= added.stackSize;
@@ -478,7 +489,11 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		if (chunkTicket == null)
 		{
 			isAlive = false;
-			PacketDispatcher.sendPacketToAllPlayers(new Packet3Chat(String.format("[BUILDCRAFT] Chunkloading capabilities exhausted. The quarry at %d, %d, %d will not work. Remove some quarries!", xCoord, yCoord, zCoord)));
+			if (placedBy!=null && CoreProxy.proxy.isSimulating(worldObj))
+			{
+				PacketDispatcher.sendPacketToPlayer(new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available", xCoord, yCoord, zCoord)), (Player) placedBy);
+			}
+			sendNetworkUpdate();
 			return;
 		}
 		chunkTicket.getModData().setInteger("quarryX", xCoord);
@@ -504,7 +519,10 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())
 		{
-			FMLLog.info("Quarry size is outside of bounds %d %d (%d)", xSize, zSize, chunkTicket.getMaxChunkListDepth());
+			if (placedBy != null)
+			{
+				PacketDispatcher.sendPacketToPlayer(new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize, chunkTicket.getMaxChunkListDepth())),(Player) placedBy);
+			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
 			useDefault = true;
@@ -589,11 +607,18 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void postPacketHandling(PacketUpdate packet) {
-
 		super.postPacketHandling(packet);
 
-		createUtilsIfNeeded();
-
+		if (isAlive)
+		{
+			createUtilsIfNeeded();
+		}
+		else
+		{
+			box.deleteLasers();
+			box.reset();
+			return;
+		}
 		if (arm != null) {
 			arm.setHead(headPosX, headPosY, headPosZ);
 			arm.updatePosition();
@@ -780,16 +805,26 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			chunkTicket = ticket;
 		}
 
+		Set<ChunkCoordIntPair> chunks = Sets.newHashSet();
 		isAlive = true;
-		ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
+		ChunkCoordIntPair quarryChunk = new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
+		chunks.add(quarryChunk);
+		ForgeChunkManager.forceChunk(ticket, quarryChunk);
 
 		for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4; chunkX ++)
 		{
 			for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ ++)
 			{
-				ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(chunkX, chunkZ));
+				ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
+				ForgeChunkManager.forceChunk(ticket, chunk);
+				chunks.add(chunk);
 			}
 		}
+		if (placedBy != null)
+		{
+			PacketDispatcher.sendPacketToPlayer(new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",xCoord, yCoord, zCoord, chunks.size())),(Player) placedBy);
+		}
+		sendNetworkUpdate();
 	}
 
 }

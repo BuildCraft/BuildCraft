@@ -91,12 +91,19 @@ public class BuildCraftFactory {
 	{
 		@Override
 		public void ticketsLoaded(List<Ticket> tickets, World world) {
-			// NO OP for OrderedLoadingCallback
+			for (Ticket ticket : tickets)
+			{
+				int quarryX = ticket.getModData().getInteger("quarryX");
+				int quarryY = ticket.getModData().getInteger("quarryY");
+				int quarryZ = ticket.getModData().getInteger("quarryZ");
+				TileQuarry tq = (TileQuarry) world.getBlockTileEntity(quarryX, quarryY, quarryZ);
+				tq.forceChunkLoading(ticket);
+
+			}
 		}
 
 		@Override
-		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world,
-				int maxTicketCount) {
+		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount) {
 			List<Ticket> validTickets = Lists.newArrayList();
 			for (Ticket ticket : tickets)
 			{
@@ -107,8 +114,6 @@ public class BuildCraftFactory {
 				int blId = world.getBlockId(quarryX, quarryY, quarryZ);
 				if (blId == quarryBlock.blockID)
 				{
-					TileQuarry tq = (TileQuarry) world.getBlockTileEntity(quarryX, quarryY, quarryZ);
-					tq.forceChunkLoading(ticket);
 					validTickets.add(ticket);
 				}
 			}
