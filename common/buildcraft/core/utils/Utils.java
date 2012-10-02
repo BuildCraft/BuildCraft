@@ -68,28 +68,28 @@ public class Utils {
 		for(Orientations orientation : Orientations.values()) {
 			if(from.reverse() == orientation)
 				continue;
-			
+
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
 			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
-			if(transactor != null
+			if(transactor != null && !(tileInventory instanceof TileBuildCraft)
 					&& transactor.add(stack, from, false).stackSize > 0)
 				possibleInventories.add(transactor);
 		}
-		
+
 		if (possibleInventories.size() > 0) {
 			int choice = world.rand.nextInt(possibleInventories.size());
 			return possibleInventories.get(choice).add(stack, from, true);
 		}
-		
+
 		ItemStack added = stack.copy();
 		added.stackSize = 0;
 		return added;
-		
+
 	}
-	
+
 	/**
 	 * Depending on the kind of item in the pipe, set the floor at a different
 	 * level to optimize graphical aspect.
@@ -180,7 +180,7 @@ public class Utils {
 	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
 		if(stack.stackSize <= 0)
 			return;
-			
+
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
