@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -136,7 +136,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 			}
 
 			if (done) {
-				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 				sendNetworkUpdate();
 			}
 		}
@@ -177,7 +177,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		}
 
 		if (worldObj != null) {
-			worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 
 		if (currentPattern == null) {
@@ -309,7 +309,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		super.handleDescriptionPacket(packet);
 
 		currentPattern = FillerManager.registry.getPattern(currentPatternId);
-		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
@@ -323,7 +323,7 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		super.handleUpdatePacket(packet);
 
 		currentPattern = FillerManager.registry.getPattern(currentPatternId);
-		worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
@@ -393,11 +393,11 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 	/* ISPECIALINVENTORY */
 	@Override
 	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
-		
+
 		ITransactor transactor = new TransactorSimple(this);
 		ItemStack added = transactor.add(stack, from, doAdd);
 		return added.stackSize;
-		
+
 	}
 
 	@Override

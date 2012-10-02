@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -38,7 +38,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 
-//TODO: All Engines need to take func_48081_b into account 
+//TODO: All Engines need to take func_48081_b into account
 
 public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInventory, ITankContainer, IEngineProvider,
 		IOverrideDefaultTriggers, IPipeConnection, IBuilderInventory {
@@ -132,7 +132,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				progressPart = 0;
 			}
 		} else if (isRedstonePowered && engine.isActive()) {
-			
+
 			Position pos = new Position(xCoord, yCoord, zCoord, engine.orientation);
 			pos.moveForwards(1.0);
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
@@ -148,7 +148,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 					setActive(false);
 			} else
 				setActive(false);
-			
+
 		} else
 			setActive(false);
 
@@ -158,11 +158,11 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	private void setActive(boolean isActive) {
 		if(this.isActive == isActive)
 			return;
-		
+
 		this.isActive = isActive;
 		sendNetworkUpdate();
 	}
-	
+
 	private void createEngineIfNeeded() {
 		if (engine == null) {
 			int kind = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
@@ -189,8 +189,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 					engine.orientation = o;
 				}
 				orientation = o.ordinal();
-				worldObj.markBlockAsNeedsUpdate(xCoord, yCoord, zCoord);
-
+				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
 				break;
 			}
 		}
@@ -466,7 +466,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
 		return null;
 	}
-	
+
 	@Override
 	public LiquidTank[] getTanks() {
 		if (engine == null) {
