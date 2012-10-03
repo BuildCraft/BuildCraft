@@ -572,9 +572,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	public void dropFacade(Orientations direction){
+		dropFacae(direction, null);
+	}
+	public void dropFacade(Orientations direction, EntityPlayer player){
 		if (this.worldObj.isRemote) return;
 		if (!hasFacade(direction)) return;
-		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+		if(player==null || !player.capabilities.isCreativeMode)
+			Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
 		scheduleRenderUpdate();

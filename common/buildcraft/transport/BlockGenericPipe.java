@@ -315,7 +315,8 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
-					entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!entityplayer.capabilities.isCreativeMode)
+						entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
 					//world.markBlockNeedsUpdate(i, j, k);
 
@@ -324,7 +325,8 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Blue.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
-					entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!entityplayer.capabilities.isCreativeMode)
+						entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
 					//world.markBlockNeedsUpdate(i, j, k);
 
@@ -333,14 +335,16 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Green.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
-					entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!entityplayer.capabilities.isCreativeMode)
+						entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
-					entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!entityplayer.capabilities.isCreativeMode)
+						entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
@@ -349,7 +353,8 @@ public class BlockGenericPipe extends BlockContainer {
 				if (!pipe.hasInterface()) {
 
 					pipe.gate = new GateVanilla(pipe, entityplayer.getCurrentEquippedItem());
-					entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!entityplayer.capabilities.isCreativeMode)
+						entityplayer.getCurrentEquippedItem().splitStack(1);
 					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
