@@ -17,12 +17,14 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.Orientations;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.render.PipeWorldRenderer;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.BlockContainer;
@@ -73,6 +75,7 @@ public class BlockGenericPipe extends BlockContainer {
 		super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
+		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
 		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
@@ -104,41 +107,93 @@ public class BlockGenericPipe extends BlockContainer {
 			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
+		if (tileG != null) {
+			float facadeThickness = PipeWorldRenderer.facadeThickness;
+
+			if (tileG.hasFacade(Orientations.XPos)) {
+				setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			}
+
+			if (tileG.hasFacade(Orientations.XNeg)) {
+				setBlockBounds(0.0F, 0.0F, 0.0F, facadeThickness, 1.0F, 1.0F);
+				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			}
+
+			if (tileG.hasFacade(Orientations.YPos)) {
+				setBlockBounds(0.0F, 1 - facadeThickness, 0.0F,  1.0F, 1.0F, 1.0F);
+				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			}
+
+			if (tileG.hasFacade(Orientations.YNeg)) {
+				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, facadeThickness, 1.0F);
+				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			}
+
+			if (tileG.hasFacade(Orientations.ZPos)) {
+				setBlockBounds(0.0F, 0.0F, 1 - facadeThickness,  1.0F, 1.0F, 1.0F);
+				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			}
+
+			if (tileG.hasFacade(Orientations.ZNeg)) {
+				setBlockBounds(0.0F, 0.0F, 0.0F,  1.0F, 1.0F, facadeThickness);
+				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			}
+		}
+
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
+	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
+		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
-		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k))
+		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || (tileG != null && tileG.hasFacade(Orientations.XNeg)))
 			xMin = 0.0F;
 
-		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k))
+		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k) || (tileG != null && tileG.hasFacade(Orientations.XPos)))
 			xMax = 1.0F;
 
-		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k))
+		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k) || (tileG != null && tileG.hasFacade(Orientations.YNeg)))
 			yMin = 0.0F;
 
-		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k))
+		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k) || (tileG != null && tileG.hasFacade(Orientations.YPos)))
 			yMax = 1.0F;
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1))
+		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1) || (tileG != null && tileG.hasFacade(Orientations.ZNeg)))
 			zMin = 0.0F;
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1))
+		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1) || (tileG != null && tileG.hasFacade(Orientations.ZPos)))
 			zMax = 1.0F;
+
+		if (tileG != null) {
+			if (tileG.hasFacade(Orientations.XPos) || tileG.hasFacade(Orientations.XNeg)) {
+				yMin = 0.0F;
+				yMax = 1.0F;
+				zMin = 0.0F;
+				zMax = 1.0F;
+			}
+
+			if (tileG.hasFacade(Orientations.YPos) || tileG.hasFacade(Orientations.YNeg)) {
+				xMin = 0.0F;
+				xMax = 1.0F;
+				zMin = 0.0F;
+				zMax = 1.0F;
+			}
+
+			if (tileG.hasFacade(Orientations.ZPos) || tileG.hasFacade(Orientations.ZNeg)) {
+				xMin = 0.0F;
+				xMax = 1.0F;
+				yMin = 0.0F;
+				yMax = 1.0F;
+			}
+		}
 
 		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
 				(double) j + yMax, (double) k + zMax);
-	}
-
-	@SuppressWarnings({ "all" })
-	@Override
-	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
-		return getCollisionBoundingBoxFromPool(world, i, j, k);
 	}
 
 	@Override
