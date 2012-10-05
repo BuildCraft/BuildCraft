@@ -80,6 +80,7 @@ import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
@@ -361,6 +362,16 @@ public class BuildCraftBuilders {
 			}
 
 		return rootBptIndex;
+	}
+
+	public static ItemStack getBptItemStack(int id, int damage, String name) {
+		ItemStack stack = new ItemStack(id, 1, damage);
+		NBTTagCompound nbt = new NBTTagCompound();
+		if(name != null && !"".equals(name)) {
+			nbt.setString("BptName", name);
+			stack.setTagCompound(nbt);
+		}
+		return stack;
 	}
 
 	public static void addHook(IBuilderHook hook) {
