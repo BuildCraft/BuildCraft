@@ -13,10 +13,11 @@ import buildcraft.api.core.Orientations;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.PipeTransportSandStone;
 
 public class PipeItemsSandstone extends Pipe{
 	public PipeItemsSandstone(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicSandstone(), itemID);
+		super(new PipeTransportSandStone(), new PipeLogicSandstone(), itemID);
 	}
 	 
 	@Override
