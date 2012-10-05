@@ -69,7 +69,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
-@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core")
+@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[4.1.4.285,)")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {
@@ -142,9 +142,9 @@ public class BuildCraftCore {
 
 	@PreInit
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		
+
 		Version.versionCheck();
-		
+
 		bcLog.setParent(FMLLog.getLogger());
 		bcLog.info("Starting BuildCraft " + Version.getVersion());
 		bcLog.info("Copyright (c) SpaceToad, 2011");
@@ -266,7 +266,7 @@ public class BuildCraftCore {
 		CommandHandler commandManager = (CommandHandler)event.getServer().getCommandManager();
 		commandManager.registerCommand(new CommandBuildCraft());
 	}
-	
+
 	public void loadRecipes() {
 		GameRegistry.addRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('G'), stoneGearItem);
 		GameRegistry.addRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", Character.valueOf('S'), Item.stick);

@@ -8,7 +8,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	public ItemWrench(int i) {
 		super(i);
-		setTabToDisplayOn(CreativeTabs.tabTools);
+		setCreativeTab(CreativeTabs.tabTools);
 	}
 
 	@Override

@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -18,7 +18,9 @@ import buildcraft.api.liquids.LiquidTank;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
+import net.minecraft.src.Block;
 import net.minecraft.src.ICrafting;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 
@@ -125,7 +127,15 @@ public class EngineIron extends Engine {
 		super.update();
 
 		if (itemInInventory != null) {
-			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(itemInInventory); 
+			LiquidStack liquid = null;
+			if (Block.ice.blockID == itemInInventory.itemID && heat > COOLANT_THRESHOLD)
+			{
+				liquid = LiquidManager.getLiquidForFilledItem(new ItemStack(Item.bucketWater));
+			}
+			else
+			{
+				liquid = LiquidManager.getLiquidForFilledItem(itemInInventory);
+			}
 
 			if (liquid != null) {
 				if (fill(Orientations.Unknown, liquid, false) == liquid.amount) {
@@ -190,7 +200,7 @@ public class EngineIron extends Engine {
 		coolantQty = nbttagcompound.getInteger("coolantQty");
 		heat = nbttagcompound.getInteger("heat");
 		penaltyCooling = nbttagcompound.getInteger("penaltyCooling");
-				
+
 		if (nbttagcompound.hasKey("itemInInventory")) {
 			NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
 			itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
@@ -206,8 +216,8 @@ public class EngineIron extends Engine {
 		nbttagcompound.setInteger("coolantId", coolantId);
 		nbttagcompound.setInteger("coolantQty", coolantQty);
 		nbttagcompound.setInteger("heat", heat);
-		nbttagcompound.setInteger("penaltyCooling", penaltyCooling);	
-		
+		nbttagcompound.setInteger("penaltyCooling", penaltyCooling);
+
 		if (itemInInventory != null) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			itemInInventory.writeToNBT(cpt);
@@ -272,10 +282,10 @@ public class EngineIron extends Engine {
 	public int getHeat() {
 		return heat;
 	}
-	
+
 	/* ITANKCONTAINER */
 	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
-		
+
 		// Handle coolant
 		if (IronEngineCoolant.getCoolantForLiquid(resource) != null)
 			return fillCoolant(from, resource, doFill);
@@ -337,7 +347,7 @@ public class EngineIron extends Engine {
 				new LiquidTank(coolantId, coolantQty, MAX_LIQUID) };
 	}
 
-	
+
 	/* IINVENTORY */
 	@Override public int getSizeInventory() { return 1; }
 	@Override public ItemStack getStackInSlot(int i) { return itemInInventory; }

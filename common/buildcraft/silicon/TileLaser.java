@@ -207,7 +207,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 				assemblyTable.zCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 		
 		laser.setPositions(head, tail);
-		laser.show();
+
+		if(!laser.isVisible())
+			laser.show();
 	}
 	
 	protected void removeLaser() {

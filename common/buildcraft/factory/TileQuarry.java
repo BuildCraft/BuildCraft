@@ -11,6 +11,13 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
@@ -37,10 +44,16 @@ import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet3Chat;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.ForgeChunkManager.Type;
 
 public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 	public @TileNetworkData
@@ -109,6 +122,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	private boolean movingHorizontally;
 	private boolean movingVertically;
 	private double headTrajectory;
+	private Ticket chunkTicket;
+	public @TileNetworkData boolean isAlive;
+	public EntityPlayer placedBy;
 
 	private void createArm() {
 
@@ -127,6 +143,16 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void updateEntity() {
+		if (!isAlive && CoreProxy.proxy.isSimulating(worldObj))
+		{
+			super.updateEntity();
+			return;
+		}
+		if (!CoreProxy.proxy.isSimulating(worldObj) && isAlive)
+		{
+			super.updateEntity();
+			return;
+		}
 		super.updateEntity();
 		if (inProcess) {
 			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
@@ -138,7 +164,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			}
 		}
 
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
+		if (CoreProxy.proxy.isSimulating(worldObj) && inProcess) {
 			sendNetworkUpdate();
 		}
 		if (inProcess || !isDigging) {
@@ -386,7 +412,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void mineStack(ItemStack stack) {
-
 		// First, try to add to a nearby chest
 		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
 		stack.stackSize -= added.stackSize;
@@ -425,6 +450,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void invalidate() {
+		ForgeChunkManager.releaseTicket(chunkTicket);
 
 		super.invalidate();
 		destroy();
@@ -456,6 +482,24 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void setBoundaries(boolean useDefault) {
+		if (chunkTicket == null)
+		{
+			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
+		}
+		if (chunkTicket == null)
+		{
+			isAlive = false;
+			if (placedBy!=null && CoreProxy.proxy.isSimulating(worldObj))
+			{
+				PacketDispatcher.sendPacketToPlayer(new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available", xCoord, yCoord, zCoord)), (Player) placedBy);
+			}
+			sendNetworkUpdate();
+			return;
+		}
+		chunkTicket.getModData().setInteger("quarryX", xCoord);
+		chunkTicket.getModData().setInteger("quarryY", yCoord);
+		chunkTicket.getModData().setInteger("quarryZ", zCoord);
+		ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 
 		IAreaProvider a = null;
 
@@ -473,7 +517,12 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int ySize = a.yMax() - a.yMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
-		if (xSize < 3 || zSize < 3) {
+		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())
+		{
+			if (placedBy != null)
+			{
+				PacketDispatcher.sendPacketToPlayer(new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize, chunkTicket.getMaxChunkListDepth())),(Player) placedBy);
+			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
 			useDefault = true;
@@ -519,10 +568,10 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		a.removeFromWorld();
+		forceChunkLoading(chunkTicket);
 	}
 
 	private void initializeBluePrintBuilder() {
-
 		BptBlueprint bluePrint = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int i = 0; i < bluePrint.sizeX; ++i) {
@@ -558,11 +607,18 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void postPacketHandling(PacketUpdate packet) {
-
 		super.postPacketHandling(packet);
 
-		createUtilsIfNeeded();
-
+		if (isAlive)
+		{
+			createUtilsIfNeeded();
+		}
+		else
+		{
+			box.deleteLasers();
+			box.reset();
+			return;
+		}
 		if (arm != null) {
 			arm.setHead(headPosX, headPosY, headPosZ);
 			arm.updatePosition();
@@ -572,6 +628,11 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	@Override
 	public void initialize() {
 		super.initialize();
+
+		if (CoreProxy.proxy.isSimulating(this.worldObj) && !box.initialized)
+		{
+			setBoundaries(false);
+		}
 
 		createUtilsIfNeeded();
 
@@ -736,6 +797,34 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		this.targetX = x;
 		this.targetY = y;
 		this.targetZ = z;
+	}
+
+	public void forceChunkLoading(Ticket ticket) {
+		if (chunkTicket == null)
+		{
+			chunkTicket = ticket;
+		}
+
+		Set<ChunkCoordIntPair> chunks = Sets.newHashSet();
+		isAlive = true;
+		ChunkCoordIntPair quarryChunk = new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
+		chunks.add(quarryChunk);
+		ForgeChunkManager.forceChunk(ticket, quarryChunk);
+
+		for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4; chunkX ++)
+		{
+			for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ ++)
+			{
+				ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
+				ForgeChunkManager.forceChunk(ticket, chunk);
+				chunks.add(chunk);
+			}
+		}
+		if (placedBy != null)
+		{
+			PacketDispatcher.sendPacketToPlayer(new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",xCoord, yCoord, zCoord, chunks.size())),(Player) placedBy);
+		}
+		sendNetworkUpdate();
 	}
 
 }
