@@ -1,8 +1,8 @@
-/**
+/** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -12,20 +12,16 @@ package buildcraft.builders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
-import buildcraft.api.core.Orientations;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.TransactorSimple;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
@@ -35,8 +31,10 @@ import buildcraft.core.utils.Utils;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 
-public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPowerReceptor, IMachine, IActionReceptor {
+public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
 
 	public @TileNetworkData
 	Box box = new Box();
@@ -390,29 +388,24 @@ public class TileFiller extends TileBuildCraft implements ISpecialInventory, IPo
 		return true;
 	}
 
-	/* ISPECIALINVENTORY */
-	@Override
-	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
+    /**
+     * Get the start of the side inventory.
+     * @param side The global side to get the start of range.
+     */
+    public int getStartInventorySide(ForgeDirection side){
+    	if(side==ForgeDirection.UP)
+    		return 0;
+		return 9;  
+    }
 
-		ITransactor transactor = new TransactorSimple(this);
-		ItemStack added = transactor.add(stack, from, doAdd);
-		return added.stackSize;
-
-	}
-
-	@Override
-	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
-		for (int i = 9; i < contents.length; ++i) {
-			if (contents[i] != null) {
-				if (doRemove) {
-					return new ItemStack[] { decrStackSize(i, 1) };
-				} else {
-					return new ItemStack[] { contents[i] };
-				}
-			}
-		}
-
-		return null;
-	}
-
+    /**
+     * Get the size of the side inventory.
+     * @param side The global side.
+     */
+    public int getSizeInventorySide(ForgeDirection side){
+    	if(side==ForgeDirection.UP)
+    		return 9;
+		return getSizeInventory()-9;
+    	
+    }
 }
