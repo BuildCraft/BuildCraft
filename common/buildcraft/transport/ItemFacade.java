@@ -73,11 +73,12 @@ public class ItemFacade extends ItemBuildCraft {
 
 		if (player.isSneaking()) { //Strip facade
 			if (!pipeTile.hasFacade(Orientations.dirs()[side])) return false;
-			pipeTile.dropFacade(Orientations.dirs()[side]);
+			pipeTile.dropFacade(Orientations.dirs()[side], player);
 			return true;
 		} else {
 			if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
-				stack.stackSize--;	
+				if (!entityplayer.capabilities.isCreativeMode)
+					stack.stackSize--;	
 				return true;
 			}
 			return false;
