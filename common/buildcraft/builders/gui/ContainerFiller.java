@@ -12,6 +12,7 @@ package buildcraft.builders.gui;
 import buildcraft.core.gui.BuildCraftContainer;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 
 public class ContainerFiller extends BuildCraftContainer {
@@ -51,6 +52,26 @@ public class ContainerFiller extends BuildCraftContainer {
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return fillerInventory.isUseableByPlayer(entityplayer);
+	}
+	
+	@Override
+	public ItemStack transferStackInSlot(int i) {
+		ItemStack itemstack = null;
+		Slot slot = (Slot) inventorySlots.get(i);
+		if (slot != null && slot.getHasStack()) {
+			ItemStack itemstack1 = slot.getStack();
+			itemstack = itemstack1.copy();
+			if (i < getInventorySize()) {
+				if (!mergeItemStack(itemstack1, getInventorySize(), inventorySlots.size(), true))
+					return null;
+			} else if (!mergeItemStack(itemstack1, 9, getInventorySize(), false))
+				return null;
+			if (itemstack1.stackSize == 0)
+				slot.putStack(null);
+			else
+				slot.onSlotChanged();
+		}
+		return itemstack;
 	}
 
 }
