@@ -41,4 +41,7 @@ public abstract class BuildCraftContainer extends Container {
 		return itemstack;
 	}
 
+	public int getInventorySize(){
+		return inventorySize;
+	}
 }
