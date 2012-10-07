@@ -54,7 +54,8 @@ public class ContainerEngine extends BuildCraftContainer {
 
 	@Override
 	public void updateProgressBar(int i, int j) {
-		engine.engine.getGUINetworkData(i, j);
+		if(engine.engine != null)
+			engine.engine.getGUINetworkData(i, j);
 	}
 
 	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
