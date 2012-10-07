@@ -118,14 +118,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			result.rotateLeft(context);
 		}
 
-		ItemStack stack = items[0].copy();
-
+		ItemStack stack;
 		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
 			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
-			stack.setItemDamage(lastBptId);
+			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, lastBptId, result.getName());
 		} else {
 			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
-			stack.setItemDamage(bptId);
+			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, bptId, result.getName());
 			lastBptId = bptId;
 		}
 
