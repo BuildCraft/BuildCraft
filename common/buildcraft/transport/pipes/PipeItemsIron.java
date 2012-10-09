@@ -43,5 +43,8 @@ public class PipeItemsIron extends Pipe {
 		}
 	}
 
-
+	@Override
+	public boolean canConnectRedstone() {	
+		return true;
+	}
 }
