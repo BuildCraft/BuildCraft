@@ -40,7 +40,7 @@ import net.minecraft.src.World;
 
 public class BlockGenericPipe extends BlockContainer {
 
-	/** Defined subprograms **************************************************/
+	/* Defined subprograms **************************************************/
 
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
@@ -261,7 +261,7 @@ public class BlockGenericPipe extends BlockContainer {
 			return pipe.itemID;
 	}
 
-	/** Wrappers *************************************************************/
+	/* Wrappers *************************************************************/
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int l) {
@@ -445,6 +445,17 @@ public class BlockGenericPipe extends BlockContainer {
 		if (isValid(pipe))
 			pipe.onEntityCollidedWithBlock(entity);
 	}
+	
+	@Override
+	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
+	{
+		Pipe pipe = getPipe(world, x, y, z);
+
+		if (isValid(pipe))
+			return pipe.canConnectRedstone()
+		else
+			return false;
+	}
 
 	@Override
 	public boolean isPoweringTo(IBlockAccess iblockaccess, int x, int y, int z, int l) {
@@ -480,7 +491,7 @@ public class BlockGenericPipe extends BlockContainer {
 			pipe.randomDisplayTick(random);
 	}
 
-	/** Registration *********************************************************/
+	/* Registration *********************************************************/
 
 	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
 

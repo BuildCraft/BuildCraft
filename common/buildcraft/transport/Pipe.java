@@ -351,6 +351,13 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public void onEntityCollidedWithBlock(Entity entity) {
 
 	}
+	
+	public boolean canConnectRedstone() {
+		if(hasGate())
+			return true;
+			
+		return false;
+	}
 
 	public boolean isPoweringTo(int l) {
 		if (!broadcastRedstone)
@@ -487,15 +494,15 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public void resetGate() {
 		gate = null;
 		activatedTriggers = new Trigger[activatedTriggers.length];
-        triggerParameters = new ITriggerParameter[triggerParameters.length];
-        activatedActions = new Action[activatedActions.length];
-        broadcastSignal = new boolean[] { false, false, false, false };
-        if (broadcastRedstone) {
-        	updateNeighbors(true);
-        }
-        broadcastRedstone = false;
+		triggerParameters = new ITriggerParameter[triggerParameters.length];
+		activatedActions = new Action[activatedActions.length];
+		broadcastSignal = new boolean[] { false, false, false, false };
+		if (broadcastRedstone) {
+			updateNeighbors(true);
+		}
+		broadcastRedstone = false;
 		//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-        container.scheduleRenderUpdate();
+		container.scheduleRenderUpdate();
 	}
 
 	private void resolveActions() {
