@@ -74,4 +74,9 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	public void readjustSpeed(IPipedItem item) {
 		((PipeTransportItems) transport).defaultReajustSpeed(item);
 	}
+	
+	@Override
+	public boolean canConnectRedstone() {	
+		return true;
+	}
 }

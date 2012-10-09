@@ -221,4 +221,10 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		return getPowerProvider().getMaxEnergyReceived();
 	}
 
+	@Override
+	public boolean canConnectRedstone() {	
+		if(PowerFramework.currentFramework instanceof RedstonePowerFramework)
+			return true;
+		return super.canConnectRedstone();
+	}
 }
