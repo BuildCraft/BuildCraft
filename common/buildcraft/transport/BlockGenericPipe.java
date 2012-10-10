@@ -452,7 +452,7 @@ public class BlockGenericPipe extends BlockContainer {
 		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
-			return pipe.canConnectRedstone()
+			return pipe.canConnectRedstone();
 		else
 			return false;
 	}
