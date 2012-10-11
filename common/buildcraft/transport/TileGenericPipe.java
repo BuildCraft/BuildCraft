@@ -388,6 +388,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		}
 		packet.addStateForSerialization((byte) 0, coreState);
 		packet.addStateForSerialization((byte) 1, renderState);
+		if (pipe instanceof IClientState) {
+			packet.addStateForSerialization((byte) 2, (IClientState) pipe);
+		}
 		return packet.getPacket();
 	}
 
@@ -593,6 +596,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		switch(stateId){
 			case 0: return coreState;
 			case 1: return renderState;
+			case 2: return (IClientState) pipe;
 		}
 		throw new RuntimeException("Unknown state requested: " + stateId + " this is a bug!");
 	}
