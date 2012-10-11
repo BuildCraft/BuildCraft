@@ -20,6 +20,8 @@ import net.minecraftforge.client.ForgeHooksClient;
 
 public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
+	public static final float facadeThickness = 1F / 16F;
+
 	/**
 	 * Mirrors the array on the Y axis by calculating offsets from 0.5F
 	 * @param targetArray
@@ -156,7 +158,6 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 	private void pipeFacadeRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
 
-		float facadeThickness = 1F / 16F;
 		float zFightOffset = 1F / 4096F;
 
 		float[][] zeroState = new float[3][2];

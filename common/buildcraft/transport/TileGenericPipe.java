@@ -567,7 +567,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	public boolean hasFacade(Orientations direction){
-		if (this.worldObj.isRemote) return false;
+		if (this.worldObj.isRemote)
+			return renderState.facadeMatrix.isConnected(direction);
 		return (this.facadeBlocks[direction.ordinal()] != 0);
 	}
 

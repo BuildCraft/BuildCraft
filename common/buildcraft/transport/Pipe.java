@@ -16,6 +16,7 @@ import java.util.Random;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
+import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
@@ -26,6 +27,7 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeConnection
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.triggers.ActionRedstoneOutput;
@@ -131,6 +133,11 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	public boolean isPipeConnected(TileEntity tile) {
+		if( tile instanceof IPipeConnection && !(tile instanceof TileGenericPipe) ){
+			Orientations or = Utils.get3dOrientation(new Position(this.container), new Position(tile));
+			if( !((IPipeConnection) tile).isPipeConnected(or) )
+				return false;
+		}
 		return logic.isPipeConnected(tile) && transport.isPipeConnected(tile);
 	}
 
