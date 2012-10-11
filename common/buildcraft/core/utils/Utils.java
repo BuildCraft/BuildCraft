@@ -148,8 +148,12 @@ public class Utils {
 
 			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems())
+			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems()) {
+				if( pipeEntry instanceof IPipeConnection )
+					if( !((IPipeConnection) pipeEntry).isPipeConnected(from.reverse()) )
+						continue;
 				possiblePipes.add(Orientations.values()[j]);
+			}
 		}
 
 		if (possiblePipes.size() > 0) {
