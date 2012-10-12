@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -16,7 +16,6 @@ import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPassiveItemContribution;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.EntityItem;
@@ -39,8 +38,10 @@ public class EntityPassiveItem implements IPipedItem {
 
 	protected TileEntity container;
 
+	@Deprecated
 	protected SafeTimeTracker synchroTracker = new SafeTimeTracker();
 
+	@Deprecated
 	protected int deterministicRandomization = 0;
 
 	protected Position position;
@@ -53,7 +54,7 @@ public class EntityPassiveItem implements IPipedItem {
 
 	public EntityPassiveItem(World world, int id) {
 		setEntityId(id);
-		PipeManager.getAllEntities().put(getEntityId(), this);
+//		PipeManager.getAllEntities().put(getEntityId(), this);
 		worldObj = world;
 	}
 
@@ -70,11 +71,11 @@ public class EntityPassiveItem implements IPipedItem {
 
 	/* CREATING & CACHING */
 	public static IPipedItem getOrCreate(World world, int id) {
-		if (PipeManager.getAllEntities().containsKey(id)) {
-			return PipeManager.getAllEntities().get(id);
-		} else {
+//		if (PipeManager.getAllEntities().containsKey(id)) {
+//			return PipeManager.getAllEntities().get(id);
+//		} else {
 			return new EntityPassiveItem(world, id);
-		}
+//		}
 	}
 
 	/* (non-Javadoc)
@@ -82,9 +83,9 @@ public class EntityPassiveItem implements IPipedItem {
 	 */
 	@Override
 	public void remove() {
-		if (PipeManager.getAllEntities().containsKey(getEntityId())) {
-			PipeManager.getAllEntities().remove(getEntityId());
-		}
+//		if (PipeManager.getAllEntities().containsKey(getEntityId())) {
+//			PipeManager.getAllEntities().remove(getEntityId());
+//		}
 	}
 
 	/* GETTING & SETTING */
@@ -103,7 +104,7 @@ public class EntityPassiveItem implements IPipedItem {
 	public Position getPosition() {
 		return position;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setPosition(double, double, double)
 	 */
@@ -164,6 +165,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getSynchroTracker()
 	 */
 	@Override
+	@Deprecated
 	public SafeTimeTracker getSynchroTracker() {
 		return synchroTracker;
 	}
@@ -172,6 +174,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setSynchroTracker(net.minecraft.src.buildcraft.api.SafeTimeTracker)
 	 */
 	@Override
+	@Deprecated
 	public void setSynchroTracker(SafeTimeTracker synchroTracker) {
 		this.synchroTracker = synchroTracker;
 	}
@@ -180,6 +183,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getDeterministicRandomization()
 	 */
 	@Override
+	@Deprecated
 	public int getDeterministicRandomization() {
 		return deterministicRandomization;
 	}
@@ -188,6 +192,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setDeterministicRandomization(int)
 	 */
 	@Override
+	@Deprecated
 	public void setDeterministicRandomization(int deterministicRandomization) {
 		this.deterministicRandomization = deterministicRandomization;
 	}
@@ -216,8 +221,8 @@ public class EntityPassiveItem implements IPipedItem {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		setPosition(nbttagcompound.getDouble("x"),
 					nbttagcompound.getDouble("y"),
-					nbttagcompound.getDouble("z"));		
-		
+					nbttagcompound.getDouble("z"));
+
 		setSpeed(nbttagcompound.getFloat("speed"));
 		setItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound.getCompoundTag("Item")));
 

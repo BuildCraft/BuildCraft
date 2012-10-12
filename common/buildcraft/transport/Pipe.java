@@ -27,7 +27,7 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeConnection
+import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.triggers.ActionRedstoneOutput;
