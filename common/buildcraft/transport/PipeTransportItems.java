@@ -13,7 +13,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
 
@@ -25,14 +27,15 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipedItem;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPipeTransportContent;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.network.PacketPipeTransportContent;
 
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
@@ -46,8 +49,8 @@ import net.minecraftforge.common.ISidedInventory;
 public class PipeTransportItems extends PipeTransport {
 
 	public boolean allowBouncing = false;
-	public TreeMap<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData>();
-	private final Vector<EntityData> entitiesToLoad = new Vector<EntityData>();
+	public Map<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData>();
+	private final List<EntityData> entitiesToLoad = new ArrayList<EntityData>();
 
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
@@ -77,8 +80,11 @@ public class PipeTransportItems extends PipeTransport {
 
 		readjustSpeed(item);
 
-		if (!travelingEntities.containsKey(new Integer(item.getEntityId()))) {
-			travelingEntities.put(new Integer(item.getEntityId()), new EntityData(item, orientation));
+		EntityData data = travelingEntities.get(item.getEntityId());
+
+		if (data == null) {
+			data = new EntityData(item, orientation);
+			travelingEntities.put(item.getEntityId(), data);
 
 			if (item.getContainer() != null && item.getContainer() != this.container)
 				((PipeTransportItems) ((TileGenericPipe) item.getContainer()).pipe.transport).scheduleRemoval(item);
@@ -91,19 +97,15 @@ public class PipeTransportItems extends PipeTransport {
 		if (orientation != Orientations.YPos && orientation != Orientations.YNeg)
 			item.setPosition(item.getPosition().x, yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
 
+		  if (!worldObj.isRemote)
+				data.output = resolveDestination(data);
+
 		if (container.pipe instanceof IPipeTransportItemsHook)
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
 
-		if (!worldObj.isRemote && item.getSynchroTracker().markTimeIfDelay(worldObj, 6 * BuildCraftCore.updateFactor)) {
-			int dimension = worldObj.provider.dimensionId;
-			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(item, orientation));
+		if (!worldObj.isRemote) {
+			sendItemPacket(data);
 		}
-
-//			for (Object player : MinecraftServer.getServer().getConfigurationManager().playerEntityList){
-//
-//			}
-//				CoreProxy.sendToPlayers(createItemPacket(item, orientation), worldObj, xCoord, yCoord, zCoord,
-//						DefaultProps.NETWORK_UPDATE_RANGE, mod_BuildCraftTransport.instance);
 
 		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
 			groupEntities();
@@ -113,29 +115,40 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 
+	public Orientations resolveDestination(EntityData data) {
+		LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(data);
+
+		if (listOfPossibleMovements.size() == 0)
+			return Orientations.Unknown;
+		else {
+			int i = worldObj.rand.nextInt(listOfPossibleMovements.size());
+			return listOfPossibleMovements.get(i);
+		}
+	}
+
 	/**
 	 * Returns a list of all possible movements, that is to say adjacent
 	 * implementers of IPipeEntry or TileEntityChest.
 	 */
-	public LinkedList<Orientations> getPossibleMovements(Position pos, IPipedItem item) {
+	public LinkedList<Orientations> getPossibleMovements(EntityData data) {
 		LinkedList<Orientations> result = new LinkedList<Orientations>();
 
+		data.blacklist.add(data.input.reverse());
+
 		for (Orientations o : Orientations.dirs())
-			if (o != pos.orientation.reverse() && container.pipe.outputOpen(o))
-				if (canReceivePipeObjects(o, item))
+			if (!data.blacklist.contains(o) && container.pipe.outputOpen(o))
+				if (canReceivePipeObjects(o, data.item))
 					result.add(o);
 
 		if (result.size() == 0 && allowBouncing) {
-			Position newPos = new Position(pos);
-			newPos.orientation = newPos.orientation.reverse();
-
-			if (canReceivePipeObjects(pos.orientation.reverse(), item))
-				result.add(pos.orientation.reverse());
-
+			if (canReceivePipeObjects(data.input.reverse(), data.item))
+				result.add(data.input.reverse());
 		}
 
-		if (this.container.pipe instanceof IPipeTransportItemsHook)
-			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
+		if (this.container.pipe instanceof IPipeTransportItemsHook) {
+			Position pos = new Position(xCoord, yCoord, zCoord, data.input);
+			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, data.item);
+		}
 
 		return result;
 	}
@@ -146,14 +159,15 @@ public class PipeTransportItems extends PipeTransport {
 		if (!Utils.checkPipesConnections(entity, container))
 			return false;
 
-		if (entity instanceof TileGenericPipe)
-			if (container.pipe.transport instanceof PipeTransportItems)
-				return container.pipe.transport.inputOpen(o);
-		if (entity instanceof IPipeEntry)
-			return ((IPipeEntry) entity).acceptItems();
-		if (entity instanceof IInventory)
+		if (entity instanceof IPipeEntry) {
+			return true;
+		} else if (entity instanceof TileGenericPipe) {
+			TileGenericPipe pipe = (TileGenericPipe) entity;
+			return pipe.pipe.transport instanceof PipeTransportItems;
+		} else if (entity instanceof IInventory) {
 			if(Transactor.getTransactorFor(entity).add(item.getItemStack(), o.reverse(), false).stackSize > 0)
 				return true;
+		}
 
 		return false;
 	}
@@ -166,19 +180,22 @@ public class PipeTransportItems extends PipeTransport {
 	HashSet<Integer> toRemove = new HashSet<Integer>();
 
 	public void scheduleRemoval(IPipedItem item) {
-		if (!toRemove.contains(item.getEntityId()))
-			toRemove.add(item.getEntityId());
+		toRemove.add(item.getEntityId());
+	}
+
+	public void unscheduleRemoval(IPipedItem item) {
+		toRemove.remove(item.getEntityId());
 	}
 
 	public void performRemoval() {
 		travelingEntities.keySet().removeAll(toRemove);
-		toRemove = new HashSet<Integer>();
+		toRemove.clear();
 	}
 
 	private void moveSolids() {
 		for (EntityData data : entitiesToLoad) {
 			data.item.setWorld(worldObj);
-			travelingEntities.put(new Integer(data.item.getEntityId()), data);
+			travelingEntities.put(data.item.getEntityId(), data);
 		}
 
 		entitiesToLoad.clear();
@@ -191,7 +208,7 @@ public class PipeTransportItems extends PipeTransport {
 				continue;
 			}
 
-			Position motion = new Position(0, 0, 0, data.orientation);
+			Position motion = new Position(0, 0, 0, data.toCenter ? data.input : data.output);
 			motion.moveForwards(data.item.getSpeed());
 
 			data.item.setPosition(data.item.getPosition().x + motion.x, data.item.getPosition().y + motion.y, data.item.getPosition().z + motion.z);
@@ -200,33 +217,28 @@ public class PipeTransportItems extends PipeTransport {
 				data.toCenter = false;
 
 				// Reajusting to the middle
+				data.item.setPosition(xCoord + 0.5, yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), zCoord + 0.5);
 
-				data.item.setPosition(xCoord + 0.5, yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), zCoord + +0.5);
-
-				Orientations nextOrientation = resolveDestination(data);
-
-				if (nextOrientation == Orientations.Unknown) {
+				if (data.output == Orientations.Unknown) {
 					if (travelHook != null)
 						travelHook.drop(this, data);
 
 					EntityItem dropped = null;
 
 					if (!toRemove.contains(data.item.getEntityId()))
-						dropped = data.item.toEntityItem(data.orientation);
+						dropped = data.item.toEntityItem(data.input);
 
 					scheduleRemoval(data.item);
 
 					if (dropped != null)
 						onDropped(dropped);
 				} else {
-					data.orientation = nextOrientation;
-
 					if (travelHook != null)
 						travelHook.centerReached(this, data);
 				}
 
 			} else if (!data.toCenter && endReached(data)) {
-				Position destPos = new Position(xCoord, yCoord, zCoord, data.orientation);
+				Position destPos = new Position(xCoord, yCoord, zCoord, data.output);
 
 				destPos.moveForwards(1.0);
 
@@ -249,31 +261,28 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void handleTileReached(EntityData data, TileEntity tile) {
 		if (tile instanceof IPipeEntry)
-			((IPipeEntry) tile).entityEntering(data.item, data.orientation);
+			((IPipeEntry) tile).entityEntering(data.item, data.output);
 		else if (tile instanceof TileGenericPipe && ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
 			TileGenericPipe pipe = (TileGenericPipe) tile;
-
-			((PipeTransportItems) pipe.pipe.transport).entityEntering(data.item, data.orientation);
+			((PipeTransportItems) pipe.pipe.transport).entityEntering(data.item, data.output);
 		} else if (tile instanceof IInventory) {
-			ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.orientation.reverse(), true);
+			if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+				ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.output.reverse(), true);
 
-			if (!CoreProxy.proxy.isRenderWorld(worldObj))
-				if(added.stackSize >= data.item.getItemStack().stackSize)
-					data.item.remove();
-				else {
-					data.item.getItemStack().stackSize -= added.stackSize;
-					EntityItem dropped = data.item.toEntityItem(data.orientation);
+				data.item.getItemStack().stackSize -= added.stackSize;
 
-					if (dropped != null)
-						// On SMP, the client side doesn't actually drops
-						// items
-						onDropped(dropped);
+				if(data.item.getItemStack().stackSize > 0) {
+					data.toCenter = true;
+					data.input = data.output.reverse();
+					unscheduleRemoval(data.item);
+					entityEntering(data.item, data.output.reverse());
 				}
+			}
 		} else {
 			if (travelHook != null)
 				travelHook.drop(this, data);
 
-			EntityItem dropped = data.item.toEntityItem(data.orientation);
+			EntityItem dropped = data.item.toEntityItem(data.output);
 
 			if (dropped != null)
 				// On SMP, the client side doesn't actually drops
@@ -304,17 +313,17 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
 
-		NBTTagList nbttaglist = nbttagcompound.getTagList("travelingEntities");
+		NBTTagList nbttaglist = nbt.getTagList("travelingEntities");
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j)
 			try {
-				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
+				NBTTagCompound dataTag = (NBTTagCompound) nbttaglist.tagAt(j);
 
 				IPipedItem entity = new EntityPassiveItem(null);
-				entity.readFromNBT(nbttagcompound2);
+				entity.readFromNBT(dataTag);
 
 				if (entity.isCorrupted()) {
 					entity.remove();
@@ -323,8 +332,9 @@ public class PipeTransportItems extends PipeTransport {
 
 				entity.setContainer(container);
 
-				EntityData data = new EntityData(entity, Orientations.values()[nbttagcompound2.getInteger("orientation")]);
-				data.toCenter = nbttagcompound2.getBoolean("toCenter");
+				EntityData data = new EntityData(entity, Orientations.values()[dataTag.getInteger("input")]);
+				data.output = Orientations.values()[dataTag.getInteger("output")];
+				data.toCenter = dataTag.getBoolean("toCenter");
 
 				entitiesToLoad.add(data);
 			} catch (Throwable t) {
@@ -335,43 +345,21 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
 
 		NBTTagList nbttaglist = new NBTTagList();
 
 		for (EntityData data : travelingEntities.values()) {
-			NBTTagCompound nbttagcompound2 = new NBTTagCompound();
-			nbttaglist.appendTag(nbttagcompound2);
-			data.item.writeToNBT(nbttagcompound2);
-			nbttagcompound2.setBoolean("toCenter", data.toCenter);
-			nbttagcompound2.setInteger("orientation", data.orientation.ordinal());
+			NBTTagCompound dataTag = new NBTTagCompound();
+			nbttaglist.appendTag(dataTag);
+			data.item.writeToNBT(dataTag);
+			dataTag.setBoolean("toCenter", data.toCenter);
+			dataTag.setInteger("input", data.input.ordinal());
+			dataTag.setInteger("output", data.output.ordinal());
 		}
 
-		nbttagcompound.setTag("travelingEntities", nbttaglist);
-	}
-
-	public Orientations resolveDestination(EntityData data) {
-		LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(new Position(xCoord, yCoord, zCoord,
-				data.orientation), data.item);
-
-		if (listOfPossibleMovements.size() == 0)
-			return Orientations.Unknown;
-		else {
-			int i;
-
-			if (CoreProxy.proxy.isRenderWorld(worldObj) || CoreProxy.proxy.isSimulating(worldObj))
-			{
-				i = Math.abs(data.item.getEntityId() + xCoord + yCoord + zCoord + data.item.getDeterministicRandomization())
-						% listOfPossibleMovements.size();
-				data.item.setDeterministicRandomization(data.item.getDeterministicRandomization() * 11);
-
-			}
-			else
-				i = worldObj.rand.nextInt(listOfPossibleMovements.size());
-
-			return listOfPossibleMovements.get(i);
-		}
+		nbt.setTag("travelingEntities", nbttaglist);
 	}
 
 	protected void doWork() {}
@@ -386,41 +374,46 @@ public class PipeTransportItems extends PipeTransport {
 		if (packet.getID() != PacketIds.PIPE_CONTENTS)
 			return;
 
-		IPipedItem item = EntityPassiveItem.getOrCreate(worldObj, packet.getEntityId());
+		EntityData data = travelingEntities.remove(packet.getEntityId());
+
+		IPipedItem item = null;
+		if(data == null) {
+			item = EntityPassiveItem.getOrCreate(worldObj, packet.getEntityId());
+		} else {
+			item = data.item;
+		}
 
 		item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
 
-		item.setPosition(packet.getPosX(), packet.getPosY(), packet.getPosZ());
+		if(item.getPosition() == null)
+			item.setPosition(packet.getPosX(), packet.getPosY(), packet.getPosZ());
+
 		item.setSpeed(packet.getSpeed());
-		item.setDeterministicRandomization(packet.getRandomization());
 
-		if (item.getContainer() != this.container || !travelingEntities.containsKey(item.getEntityId())) {
-
-			if (item.getContainer() != null)
-				((PipeTransportItems) ((TileGenericPipe) item.getContainer()).pipe.transport).scheduleRemoval(item);
-
-			travelingEntities.put(new Integer(item.getEntityId()), new EntityData(item, packet.getOrientation()));
+		if (item.getContainer() != null && item.getContainer() != container) {
+			((PipeTransportItems) ((TileGenericPipe) item.getContainer()).pipe.transport).scheduleRemoval(item);
 			item.setContainer(container);
+		}
 
-		} else
-			travelingEntities.get(new Integer(item.getEntityId())).orientation = packet.getOrientation();
-
+		data = new EntityData(item, packet.getInputOrientation());
+		data.output = packet.getOutputOrientation();
+		travelingEntities.put(item.getEntityId(), data);
 	}
 
 	/**
 	 * Creates a packet describing a stack of items inside a pipe.
 	 *
-	 * @param item
-	 * @param orientation
+	 * @param data
 	 * @return
 	 */
-	public Packet createItemPacket(IPipedItem item, Orientations orientation) {
-
-		item.setDeterministicRandomization(item.getDeterministicRandomization() + worldObj.rand.nextInt(6));
-		PacketPipeTransportContent packet = new PacketPipeTransportContent(container.xCoord, container.yCoord, container.zCoord,
-				item, orientation);
-
+	public Packet createItemPacket(EntityData data) {
+		PacketPipeTransportContent packet = new PacketPipeTransportContent(container.xCoord, container.yCoord, container.zCoord, data);
 		return packet.getPacket();
+	}
+
+	private void sendItemPacket(EntityData data) {
+		int dimension = worldObj.provider.dimensionId;
+		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(data));
 	}
 
 	public int getNumberOfItems() {
@@ -432,7 +425,6 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	protected void neighborChange() {
-
 	}
 
 	@Override
