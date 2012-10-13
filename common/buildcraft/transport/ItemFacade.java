@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -26,7 +29,7 @@ import net.minecraft.src.World;
 public class ItemFacade extends ItemBuildCraft {
 
 	public final static LinkedList<ItemStack> allFacades = new LinkedList<ItemStack>();
-	
+
 	public ItemFacade(int i) {
 		super(i);
 
@@ -34,7 +37,7 @@ public class ItemFacade extends ItemBuildCraft {
 		setMaxDamage(0);
 		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
-	
+
 	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
 		String name = super.getItemDisplayName(itemstack);
@@ -46,7 +49,7 @@ public class ItemFacade extends ItemBuildCraft {
 		} else {
 			name += " < BROKEN (" + decodedBlockId + ":"+ decodedMeta +" )>";
 		}
-		return name; 
+		return name;
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return "item.Facade";
 	}
 
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
@@ -63,7 +66,7 @@ public class ItemFacade extends ItemBuildCraft {
 			itemList.add(stack.copy());
 		}
 	}
-	
+
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side) {
 		if (worldObj.isRemote) return false;
@@ -77,68 +80,85 @@ public class ItemFacade extends ItemBuildCraft {
 			return true;
 		} else {
 			if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
-				stack.stackSize--;	
+				stack.stackSize--;
 				return true;
 			}
 			return false;
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static void initialize(){
 		List creativeItems = getCreativeContents();
 		ListIterator creativeIterator = creativeItems.listIterator();
-		
+
 		while(creativeIterator.hasNext()){
 			ItemStack stack = (ItemStack) creativeIterator.next();
 			if (stack.getItem() instanceof ItemBlock){
 				ItemBlock itemBlock = (ItemBlock) stack.getItem();
 				int blockId = itemBlock.getBlockID();
 				//Block certain IDs (Bedrock, leaves and spunge)
-				if (blockId == 7 || blockId == 18 || blockId == 19) continue; 
+				if (blockId == 7 || blockId == 18 || blockId == 19) continue;
 
-				if (Block.blocksList[blockId] != null 
-					&& Block.blocksList[blockId].isOpaqueCube() 
-					&& Block.blocksList[blockId].getBlockName() != null 
-					&& !Block.blocksList[blockId].hasTileEntity(0) 
+				if (Block.blocksList[blockId] != null
+					&& Block.blocksList[blockId].isOpaqueCube()
+					&& Block.blocksList[blockId].getBlockName() != null
+					&& !Block.blocksList[blockId].hasTileEntity(0)
 					&& Block.blocksList[blockId].renderAsNormalBlock())
 				{
 					allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(blockId, stack.getItemDamage())));
-					
+
 					//3 Structurepipes + this block makes 6 facades
 					AssemblyRecipe.assemblyRecipes.add(
 							new AssemblyRecipe(
-									new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), new ItemStack(blockId, 1, stack.getItemDamage())}, 
-									8000, 
+									new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), new ItemStack(blockId, 1, stack.getItemDamage())},
+									8000,
 									new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(blockId,  stack.getItemDamage()))));
 				}
 			}
 		}
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static List getCreativeContents(){
-		List itemList = new ArrayList();
-		
-		for (Block block : Block.blocksList)
-            if (block != null)
-            	CoreProxy.proxy.feedSubBlocks(block.blockID, null, itemList);
 
-        return itemList;
+	private static List<ItemStack> getCreativeContents() {
+		List<ItemStack> list = Lists.newArrayList();
+		for (Item i : Item.itemsList)
+		{
+			if (i instanceof ItemBlock)
+			{
+				int blId = ((ItemBlock) i).getBlockID();
+				ItemStack rootIS = new ItemStack(blId, 0, 0);
+				if (i.getHasSubtypes())
+				{
+					String base = i.getItemNameIS(rootIS);
+					for (int j = 0; j < 16; j++)
+					{
+						int md = i.getMetadata(j);
+						ItemStack comp = new ItemStack(blId, 0, j);
+						if (! base.equals(i.getItemNameIS(comp)) && !Strings.isNullOrEmpty(i.getItemNameIS(comp)))
+						{
+							list.add(comp);
+						}
+					}
+				}
+				list.add(rootIS);
+			}
+		}
+
+		return list;
 	}
-	
+
 	public static int encode(int blockId, int metaData){
 		return metaData + (blockId << 4);
 	}
-	
+
 	public static int getMetaData(int encoded){
 		return encoded & 0x0000F;
 	}
-	
+
 	public static int getBlockId(int encoded){
 		return encoded >>> 4;
 	}
-	
-	
+
+
 }
 
