@@ -25,16 +25,18 @@ public class GuiHandler implements IGuiHandler {
 
 		TileGenericPipe pipe = (TileGenericPipe) tile;
 
-		switch (ID) {
-
-		case GuiIds.PIPE_DIAMOND:
-			return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond)pipe.pipe.logic);
-
-		case GuiIds.GATES:
-			return new ContainerGateInterface(player.inventory, pipe.pipe);
-
-		default:
+		if (pipe.pipe == null)
 			return null;
+
+		switch (ID) {
+			case GuiIds.PIPE_DIAMOND:
+				return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond)pipe.pipe.logic);
+	
+			case GuiIds.GATES:
+				return new ContainerGateInterface(player.inventory, pipe.pipe);
+	
+			default:
+				return null;
 		}
 	}
 
@@ -49,16 +51,18 @@ public class GuiHandler implements IGuiHandler {
 
 		TileGenericPipe pipe = (TileGenericPipe) tile;
 
-		switch (ID) {
-
-		case GuiIds.PIPE_DIAMOND:
-			return new GuiDiamondPipe(player.inventory, pipe);
-
-		case GuiIds.GATES:
-			return new GuiGateInterface(player.inventory, pipe.pipe);
-
-		default:
+		if (pipe.pipe == null)
 			return null;
+
+		switch (ID) {
+			case GuiIds.PIPE_DIAMOND:
+				return new GuiDiamondPipe(player.inventory, pipe);
+	
+			case GuiIds.GATES:
+				return new GuiGateInterface(player.inventory, pipe.pipe);
+	
+			default:
+				return null;
 		}
 	}
 }
