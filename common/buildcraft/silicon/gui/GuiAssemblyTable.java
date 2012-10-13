@@ -91,6 +91,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		String title = StringUtil.localize("tile.assemblyTableBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		String recentEnergy = String.format("%2.2f MJ/tick",assemblyTable.getRecentEnergyAverage() / 100.0f);
+		fontRenderer.drawString(recentEnergy, xSize - fontRenderer.getStringWidth(recentEnergy) - 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection();
 	}
@@ -133,7 +135,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		if (position != -1) {
 			RecipeSlot slot = (RecipeSlot) slots[position];
-			
+
 			if (slot.recipe == null)
 				return;
 

@@ -34,6 +34,11 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	private float currentRequiredEnergy = 0;
 	private float energyStored = 0;
+	private float[] recentEnergy = new float[20];
+
+	private int tick = 0;
+
+	private int recentEnergyAverage;
 
 	public static class SelectionMessage {
 
@@ -72,6 +77,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	public void receiveLaserEnergy(float energy) {
 		energyStored += energy;
+		recentEnergy[tick] += energy;
 	}
 
 	@Override
@@ -86,6 +92,8 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				return;
 		}
 
+		tick = ++tick % recentEnergy.length;
+		recentEnergy[tick] = 0.0f;
 		if (energyStored >= currentRecipe.energy) {
 			energyStored = 0;
 
@@ -93,15 +101,13 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 				for (ItemStack in : currentRecipe.input) {
 					if (in == null)
-						continue; // Optimisation, reduces calculation for a
-									// null ingredient
+						continue; // Optimisation, reduces calculation for a null ingredient
 
 					int found = 0; // Amount of ingredient found in inventory
 
 					for (int i = 0; i < items.length; ++i) {
 						if (items[i] == null)
-							continue; // Broken out of large if statement,
-										// increases clarity
+							continue; // Broken out of large if statement, increases clarity
 
 						if (items[i].isItemEqual(in)) {
 
@@ -109,39 +115,11 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 							int toBeFound = in.stackSize - found;
 
 							if (supply >= toBeFound)
-								found += decrStackSize(i, toBeFound).stackSize; // Adds
-																				// the
-																				// amount
-																				// of
-																				// ingredient
-																				// taken
-																				// (in
-																				// this
-																				// case
-																				// the
-																				// total
-																				// still
-																				// needed)
+								found += decrStackSize(i, toBeFound).stackSize; // Adds the amount of ingredient taken (in this case the total still needed)
 							else
-								found += decrStackSize(i, supply).stackSize; // Adds
-																				// the
-																				// amount
-																				// of
-																				// ingredient
-																				// taken
-																				// (in
-																				// this
-																				// case
-																				// the
-																				// total
-																				// in
-																				// that
-																				// slot)
-
+								found += decrStackSize(i, supply).stackSize; // Adds the amount of ingredient taken (in this case the total in that slot)
 							if (found >= in.stackSize)
-								break; // Breaks out of the for loop when the
-										// required amount of ingredient has
-										// been taken
+								break; // Breaks out of the for loop when the required amount of ingredient has been taken
 						}
 					}
 				}
@@ -154,8 +132,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 					Utils.addToRandomPipeEntry(this, Orientations.Unknown, remaining);
 
 				if (remaining.stackSize > 0) {
-					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
-							currentRecipe.output.copy());
+					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5, currentRecipe.output.copy());
 
 					worldObj.spawnEntityInWorld(entityitem);
 				}
@@ -267,7 +244,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 			for (AssemblyRecipe r : plannedOutput) {
 				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
-					currentRecipe = r;
+					setCurrentRecipe(r);
 					break;
 				}
 			}
@@ -405,8 +382,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				message.select = false;
 			}
 
-			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY_SEND, selectionMessageWrapper.toPayload(xCoord,
-					yCoord, zCoord, message));
+			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY_SEND, selectionMessageWrapper.toPayload(xCoord, yCoord, zCoord, message));
 			packet.posX = xCoord;
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
@@ -418,19 +394,48 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	/* SMP GUI */
 	public void getGUINetworkData(int i, int j) {
+		int currentStored = (int)(energyStored * 100.0);
+		int requiredEnergy = (int)(currentRequiredEnergy * 100.0);
 		switch (i) {
 		case 0:
-			currentRequiredEnergy = j;
+			requiredEnergy = (requiredEnergy & 0xFFFF0000) | (j & 0xFFFF);
+			currentRequiredEnergy = (requiredEnergy / 100.0f);
 			break;
 		case 1:
-			energyStored = j;
+			currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
+			energyStored = (currentStored / 100.0f);
+			break;
+		case 2:
+			requiredEnergy = (requiredEnergy & 0xFFFF) | ( (j & 0xFFFF) << 16);
+			currentRequiredEnergy = (requiredEnergy / 100.0f);
+			break;
+		case 3:
+			currentStored = (currentStored & 0xFFFF) | ( (j & 0xFFFF) << 16);
+			energyStored = (currentStored / 100.0f);
+			break;
+		case 4:
+			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | ( j & 0xFFFF);
+			break;
+		case 5:
+			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ( (j & 0xFFFF) << 16);
 			break;
 		}
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(container, 0, (int) currentRequiredEnergy);
-		iCrafting.updateCraftingInventoryInfo(container, 1, (int) energyStored);
+		int requiredEnergy = (int)(currentRequiredEnergy * 100.0);
+		int currentStored = (int)(energyStored * 100.0);
+		int lRecentEnergy = 0;
+		for (int i = 0; i < recentEnergy.length; i++)
+		{
+			lRecentEnergy += (int)(recentEnergy[i] * 100.0 / recentEnergy.length);
+		}
+		iCrafting.updateCraftingInventoryInfo(container, 0, requiredEnergy & 0xFFFF);
+		iCrafting.updateCraftingInventoryInfo(container, 1, currentStored & 0xFFFF);
+		iCrafting.updateCraftingInventoryInfo(container, 2, (requiredEnergy >>> 16) & 0xFFFF);
+		iCrafting.updateCraftingInventoryInfo(container, 3, (currentStored >>> 16) & 0xFFFF);
+		iCrafting.updateCraftingInventoryInfo(container, 4, lRecentEnergy & 0xFFFF);
+		iCrafting.updateCraftingInventoryInfo(container, 5, (lRecentEnergy >>> 16) & 0xFFFF);
 	}
 
 	@Override
@@ -451,6 +456,10 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	@Override
 	public boolean allowActions() {
 		return false;
+	}
+
+	public int getRecentEnergyAverage() {
+		return recentEnergyAverage;
 	}
 
 }
