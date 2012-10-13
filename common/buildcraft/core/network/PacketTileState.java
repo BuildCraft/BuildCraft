@@ -33,6 +33,7 @@ public class PacketTileState extends PacketCoordinates {
 	 */
 	public PacketTileState(int x, int y, int z) {
 		super(PacketIds.STATE_UPDATE, x, y, z);
+		isChunkDataPacket = true;
 	}
 
 	@Override
