@@ -26,6 +26,7 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
+import buildcraft.energy.TileEngine;
 import buildcraft.factory.TileAssemblyTable;
 import buildcraft.factory.TileAssemblyTable.SelectionMessage;
 
@@ -33,6 +34,44 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	TileAssemblyTable assemblyTable;
 
+	class AssemblyLedger extends Ledger
+	{
+		int headerColour = 0xe1c92f;
+		int subheaderColour = 0xaaafb8;
+		int textColour = 0x000000;
+
+		public AssemblyLedger() {
+			maxHeight = 94;
+			overlayColor = 0xd46c1f;
+		}
+		@Override
+		public void draw(int x, int y) {
+
+			// Draw background
+			drawBackground(x, y);
+
+			// Draw icon
+			drawIcon(DefaultProps.TEXTURE_ICONS, 0, x + 3, y + 4);
+
+			if (!isFullyOpened())
+				return;
+
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getRequiredEnergy()), x + 22, y + 32, textColour);
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getStoredEnergy()), x + 22, y + 56, textColour);
+			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
+			fontRenderer.drawString(String.format("%3.2f MJ/t",assemblyTable.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
+
+		}
+
+		@Override
+		public String getTooltip() {
+			return String.format("%3.2f MJ/t",assemblyTable.getRecentEnergyAverage() / 100.0f);
+		}
+
+	}
 	class RecipeSlot extends AdvancedSlot {
 
 		public AssemblyRecipe recipe;
@@ -88,12 +127,10 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
+		super.drawGuiContainerForegroundLayer();
 		String title = StringUtil.localize("tile.assemblyTableBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
-		String recentEnergy = String.format("%2.2f MJ/tick",assemblyTable.getRecentEnergyAverage() / 100.0f);
-		fontRenderer.drawString(recentEnergy, xSize - fontRenderer.getStringWidth(recentEnergy) - 8, ySize - 97, 0x404040);
-
 		drawForegroundSelection();
 	}
 
@@ -167,5 +204,11 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			}
 		}
 
+	}
+
+	@Override
+	protected void initLedgers(IInventory inventory) {
+		super.initLedgers(inventory);
+		ledgerManager.add(new AssemblyLedger());
 	}
 }

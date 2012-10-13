@@ -82,6 +82,10 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	@Override
 	public void updateEntity() {
+		tick++;
+		tick = tick % recentEnergy.length;
+		recentEnergy[tick] = 0.0f;
+
 		if (currentRecipe == null)
 			return;
 
@@ -92,8 +96,6 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				return;
 		}
 
-		tick = ++tick % recentEnergy.length;
-		recentEnergy[tick] = 0.0f;
 		if (energyStored >= currentRecipe.energy) {
 			energyStored = 0;
 
@@ -428,7 +430,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		int lRecentEnergy = 0;
 		for (int i = 0; i < recentEnergy.length; i++)
 		{
-			lRecentEnergy += (int)(recentEnergy[i] * 100.0 / recentEnergy.length);
+			lRecentEnergy += (int)(recentEnergy[i] * 100.0 / (float)(recentEnergy.length - 1));
 		}
 		iCrafting.updateCraftingInventoryInfo(container, 0, requiredEnergy & 0xFFFF);
 		iCrafting.updateCraftingInventoryInfo(container, 1, currentStored & 0xFFFF);
@@ -460,6 +462,14 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	public int getRecentEnergyAverage() {
 		return recentEnergyAverage;
+	}
+
+	public float getStoredEnergy() {
+		return energyStored;
+	}
+
+	public float getRequiredEnergy() {
+		return currentRequiredEnergy;
 	}
 
 }
