@@ -40,7 +40,6 @@ import buildcraft.factory.BptBlockRefinery;
 import buildcraft.factory.BptBlockTank;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.GuiHandler;
-import buildcraft.factory.TileAssemblyTable;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileHopper;
 import buildcraft.factory.TileMiningWell;
@@ -49,7 +48,6 @@ import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
-import buildcraft.silicon.TileLaser;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -133,8 +131,6 @@ public class BuildCraftFactory {
 		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
 		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
-		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
-		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 
 		if (!hopperDisabled) {
 			CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");

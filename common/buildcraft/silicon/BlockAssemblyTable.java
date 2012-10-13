@@ -14,7 +14,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import buildcraft.factory.TileAssemblyTable;
 
 
 public class BlockAssemblyTable extends BlockContainer {

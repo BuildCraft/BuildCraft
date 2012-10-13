@@ -21,7 +21,6 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.factory.TileAssemblyTable;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -146,10 +145,10 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 				for (int z = minZ; z <= maxZ; ++z) {
 
 					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
-					if (tile instanceof TileAssemblyTable) {
+					if (tile instanceof ILaserTarget) {
 
-						TileAssemblyTable table = (TileAssemblyTable) tile;
-						if (table.currentRecipe != null) {
+						ILaserTarget table = (ILaserTarget) tile;
+						if (table.hasCurrentWork()) {
 							targets.add(new BlockIndex(x, y, z));
 						}
 					}
@@ -163,7 +162,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		}
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
-		laserTarget = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
+		laserTarget = (ILaserTarget) worldObj.getBlockTileEntity(b.i, b.j, b.k);
 	}
 
 	protected void createLaser() {

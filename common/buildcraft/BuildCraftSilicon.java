@@ -24,6 +24,8 @@ import buildcraft.silicon.BlockAssemblyTable;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.GuiHandler;
 import buildcraft.silicon.SiliconProxy;
+import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -47,6 +49,8 @@ public class BuildCraftSilicon {
 	@Init
 	public void load(FMLInitializationEvent evt) {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
+		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
 
 		new BptBlockRotateMeta(laserBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
 		new BptBlockInventory(assemblyTableBlock.blockID);
@@ -62,7 +66,7 @@ public class BuildCraftSilicon {
 		Property laserId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("laser.id", DefaultProps.LASER_ID);
 
 		Property assemblyTableId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("assemblyTable.id", DefaultProps.ASSEMBLY_TABLE_ID);
-		
+
 		Property redstoneChipsetId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("redstoneChipset.id", Configuration.CATEGORY_ITEM, DefaultProps.REDSTONE_CHIPSET);
 
 		BuildCraftCore.mainConfiguration.save();

@@ -9,8 +9,8 @@ import cpw.mods.fml.common.network.Player;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.factory.TileAssemblyTable;
-import buildcraft.factory.TileAssemblyTable.SelectionMessage;
+import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 
 import net.minecraft.src.Container;

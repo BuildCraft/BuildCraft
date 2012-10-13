@@ -27,8 +27,8 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.energy.TileEngine;
-import buildcraft.factory.TileAssemblyTable;
-import buildcraft.factory.TileAssemblyTable.SelectionMessage;
+import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 

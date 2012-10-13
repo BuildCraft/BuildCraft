@@ -10,8 +10,8 @@
 package buildcraft.silicon.gui;
 
 import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.factory.TileAssemblyTable;
-import buildcraft.factory.TileAssemblyTable.SelectionMessage;
+import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;

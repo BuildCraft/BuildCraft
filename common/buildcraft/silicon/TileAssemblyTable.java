@@ -1,4 +1,4 @@
-package buildcraft.factory;
+package buildcraft.silicon;
 
 import java.util.LinkedList;
 
@@ -13,7 +13,6 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import buildcraft.silicon.ILaserTarget;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityItem;
