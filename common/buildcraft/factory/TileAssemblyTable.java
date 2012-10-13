@@ -50,6 +50,12 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		public boolean select = true;
 
 		/**
+		 * If true, is the current recipe being crafted
+		 */
+		@TileNetworkData
+		public boolean current = false;
+
+		/**
 		 * Id of the item to be crafted
 		 */
 		@TileNetworkData
@@ -363,6 +369,9 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			if (recipe.output.itemID == message.itemID && recipe.output.getItemDamage() == message.itemDmg) {
 				if (message.select) {
 					planOutput(recipe);
+					if (message.current) {
+						setCurrentRecipe(recipe);
+					}
 				} else {
 					cancelPlanOutput(recipe);
 				}
@@ -379,11 +388,8 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			message.itemID = r.output.itemID;
 			message.itemDmg = r.output.getItemDamage();
 
-			if (isPlanned(r)) {
-				message.select = true;
-			} else {
-				message.select = false;
-			}
+			message.select = isPlanned(r);
+			message.current = isAssembling(r);
 
 			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY_SEND, selectionMessageWrapper.toPayload(xCoord, yCoord, zCoord, message));
 			packet.posX = xCoord;
