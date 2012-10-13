@@ -32,7 +32,6 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.energy.TileEngine;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
@@ -75,7 +74,7 @@ public class Utils {
 
 			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
-			if(transactor != null && !(tileInventory instanceof TileEngine)
+			if(transactor != null && !(tileInventory instanceof TileBuildCraft)
 					&& transactor.add(stack, from, false).stackSize > 0)
 				possibleInventories.add(transactor);
 		}
