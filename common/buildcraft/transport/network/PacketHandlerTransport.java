@@ -36,11 +36,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 			PacketUpdate packet = new PacketUpdate();
 			switch (packetID) {
-			case PacketIds.DIAMOND_PIPE_CONTENTS:
-				PacketNBT packetN = new PacketNBT();
-				packetN.readData(data);
-				onDiamondContents((EntityPlayer)player, packetN);
-				break;
 			case PacketIds.PIPE_POWER:
 				PacketPowerUpdate packetPower= new PacketPowerUpdate();
 				packetPower.readData(data);
@@ -243,42 +238,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		((PipeTransportLiquids) pipe.pipe.transport).handleLiquidPacket(packetLiquid);
-	}
-
-	/**
-	 * Updates contents of a diamond pipe.
-	 *
-	 * @param packet
-	 */
-	private void onDiamondContents(EntityPlayer player, PacketNBT packet) {
-
-		World world = player.worldObj;
-
-		if (!world.blockExists(packet.posX, packet.posY, packet.posZ))
-			return;
-
-		TileEntity entity = world.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
-		if (!(entity instanceof TileGenericPipe))
-			return;
-
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
-			return;
-
-		if (!(pipe.pipe.logic instanceof PipeLogicDiamond))
-			return;
-
-		((PipeLogicDiamond) pipe.pipe.logic).handleFilterSet(packet);
-
-		// / FIXME: Unsure how to handle this
-		/*
-		BlockIndex index = new BlockIndex(packet.posX, packet.posY, packet.posZ);
-
-		if (BuildCraftCore.bufferedDescriptions.containsKey(index))
-			BuildCraftCore.bufferedDescriptions.remove(index);
-
-		BuildCraftCore.bufferedDescriptions.put(index, packet);
-		*/
 	}
 
 	/********************       SERVER         ******************** **/
