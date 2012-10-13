@@ -9,6 +9,8 @@
 
 package buildcraft.transport;
 
+import java.util.Arrays;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
@@ -258,30 +260,15 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private void moveLiquids() {
 		short newTimeSlot =  (short) (worldObj.getWorldTime() % travelDelay);
 
-		//Processes all internal tanks
-		for (Orientations direction : Orientations.values()){
-			internalTanks[direction.ordinal()].setTime(newTimeSlot);
-			internalTanks[direction.ordinal()].moveLiquids();
-
-		}
-
-		for (Orientations direction : Orientations.dirs()){
-			if (transferState[direction.ordinal()] == TransferState.Input){
-				if ((inputTTL[direction.ordinal()]--) < 1){
-					transferState[direction.ordinal()] = TransferState.None;
-				}
-			}
-		}
-
-		short outputCount = computeOutputs();
+		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot);
 		moveFromPipe(outputCount);
-		moveFromCenter();
+		moveFromCenter(outputCount);
 		moveToCenter();
 	}
 
 	private void moveFromPipe(short outputCount) {
 		//Move liquid from the non-center to the connected output blocks
-		if (outputCount > 0){
+		if (outputCount > 0) {
 			for (Orientations o : Orientations.dirs()){
 				if (transferState[o.ordinal()] == TransferState.Output){
 					TileEntity target = this.container.getTile(o);
@@ -300,30 +287,19 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 	}
 
-	private void moveFromCenter() {
+	private void moveFromCenter(short outputCount) {
 		//Split liquids moving to output equally based on flowrate, how much each side can accept and available liquid
-		int[] maxOutput = new int[] {0,0,0,0,0,0};
-		int transferOutCount = 0;
 		LiquidStack pushStack = internalTanks[Orientations.Unknown.ordinal()].getLiquid();
 		int totalAvailable = internalTanks[Orientations.Unknown.ordinal()].getAvailable();
 		if (totalAvailable < 1) return;
-		if (pushStack != null){
+		if (pushStack != null) {
 			LiquidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
-			for (Orientations direction : Orientations.dirs()){
-				if (transferState[direction.ordinal()] != TransferState.Output ) continue;
-
-				maxOutput[direction.ordinal()] = internalTanks[direction.ordinal()].fill(testStack, false);
-				if(maxOutput[direction.ordinal()] > 0){
-					transferOutCount++;
-				}
-			}
-			if (transferOutCount <= 0) return;
 			//Move liquid from the center to the output sides
 			for (Orientations direction : Orientations.dirs()) {
 				if (transferState[direction.ordinal()] == TransferState.Output)	{
-					if (maxOutput[direction.ordinal()] == 0) continue;
-					int ammountToPush = (int) ((double) maxOutput[direction.ordinal()] / (double) flowRate / (double) transferOutCount * (double) Math.min(flowRate, totalAvailable));
+					int available = internalTanks[direction.ordinal()].fill(testStack, false);
+					int ammountToPush = (int) (available / (double) flowRate / (double) outputCount * (double) Math.min(flowRate, totalAvailable));
 					if (ammountToPush < 1) ammountToPush++;
 
 					LiquidStack liquidToPush = internalTanks[Orientations.Unknown.ordinal()].drain(ammountToPush, false);
@@ -372,33 +348,45 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 	}
 
-	private short computeOutputs() {
+	private short computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
 		short outputCount = 0;
 
-		for (Orientations o : Orientations.dirs()) {
-			if (transferState[o.ordinal()] == TransferState.Input) continue;
-			if (!container.pipe.outputOpen(o)){
-				transferState[o.ordinal()] = TransferState.None;
+		//Processes all internal tanks
+		for (Orientations direction : Orientations.values()) {
+			internalTanks[direction.ordinal()].setTime(newTimeSlot);
+			internalTanks[direction.ordinal()].moveLiquids();
+			// Input processing
+			if (direction == Orientations.Unknown)
+			{
 				continue;
 			}
-			if (outputCooldown[o.ordinal()] > 0){
-				outputCooldown[o.ordinal()]--;
-
+			if (transferState[direction.ordinal()] == TransferState.Input) {
+				inputTTL[direction.ordinal()]--;
+				if (inputTTL[direction.ordinal()] <= 0) {
+					transferState[direction.ordinal()] = TransferState.None;
+				}
 				continue;
 			}
-			if (outputTTL[o.ordinal()] <= 0){
-				transferState[o.ordinal()] = TransferState.None;
-				outputCooldown[o.ordinal()] = OUTPUT_COOLDOWN;
-				outputTTL[o.ordinal()] = OUTPUT_TTL;
+			if (!container.pipe.outputOpen(direction)) {
+				transferState[direction.ordinal()] = TransferState.None;
 				continue;
 			}
-
-			if (canReceiveLiquid(o)) {
-				transferState[o.ordinal()] = TransferState.Output;
+			if (outputCooldown[direction.ordinal()] > 0) {
+				outputCooldown[direction.ordinal()]--;
+				continue;
+			}
+			if (outputTTL[direction.ordinal()] <= 0) {
+				transferState[direction.ordinal()] = TransferState.None;
+				outputCooldown[direction.ordinal()] = OUTPUT_COOLDOWN;
+				outputTTL[direction.ordinal()] = OUTPUT_TTL;
+				continue;
+			}
+			if (canReceiveLiquid(direction)) {
+				transferState[direction.ordinal()] = TransferState.Output;
 				outputCount++;
 			}
 		}
-
+		System.out.printf("%d %d %d : %s\n", xCoord, yCoord, zCoord, Arrays.asList(transferState));
 		return outputCount;
 	}
 
