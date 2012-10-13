@@ -386,7 +386,6 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 				outputCount++;
 			}
 		}
-		System.out.printf("%d %d %d : %s\n", xCoord, yCoord, zCoord, Arrays.asList(transferState));
 		return outputCount;
 	}
 
