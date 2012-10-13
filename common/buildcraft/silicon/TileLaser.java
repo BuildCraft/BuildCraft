@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -29,19 +29,19 @@ import net.minecraft.src.TileEntity;
 public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 	private EntityEnergyLaser laser = null;
-	
+
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker();
-	
-	private TileAssemblyTable assemblyTable;
+
+	private ILaserTarget laserTarget;
 
 	public IPowerProvider powerProvider;
 
 	private int nextNetworkUpdate = 3;
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 10;
-	
+
 	public TileLaser() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 25, 25, 25, 1000);
@@ -49,65 +49,65 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 	@Override
 	public void updateEntity() {
-		
+
 		if(!CoreProxy.proxy.isSimulating(worldObj))
 			return;
-		
+
 		// Disable the laser and do nothing if no energy is available.
 		if (powerProvider.getEnergyStored() == 0) {
 			removeLaser();
 			return;
 		}
-		
+
 		// Check for available tables if none is linked to this laser.
 		if (!isValidTable())
 			if (canFindTable())
 				findTable();
-		
+
 		// If we still don't have a valid table or the existing has
 		// become invalid, we disable the laser and do nothing.
 		if (!isValidTable()) {
 			removeLaser();
 			return;
 		}
-		
+
 		// We have a table and can work, so we create a laser if
 		// necessary.
 		if (laser == null)
 			createLaser();
-	
+
 		// We have a laser and may update it
 		if (laser != null && canUpdateLaser())
 			updateLaser();
 
 		// Consume power and transfer it to the table.
 		float power = powerProvider.useEnergy(0, 4, true);
-		assemblyTable.receiveLaserEnergy(power);
-		
+		laserTarget.receiveLaserEnergy(power);
+
 		if (laser != null)
 			laser.pushPower(power);
-		
+
 		sendNetworkUpdate();
 	}
-	
+
 	protected boolean canFindTable() {
 		return searchTracker.markTimeIfDelay(worldObj, nextLaserSearch);
 	}
-	
+
 	protected boolean canUpdateLaser() {
 		return laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate);
 	}
-	
+
 	protected boolean isValidTable() {
-		
-		if (assemblyTable == null || assemblyTable.isInvalid() || assemblyTable.currentRecipe == null)
+
+		if (laserTarget == null || laserTarget.isInvalid() || !laserTarget.hasCurrentWork())
 			return false;
-		
+
 		return true;
 	}
-	
+
 	protected void findTable() {
-		
+
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		int minX = xCoord - 5;
@@ -144,16 +144,16 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
-					
+
 					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
 					if (tile instanceof TileAssemblyTable) {
-						
+
 						TileAssemblyTable table = (TileAssemblyTable) tile;
 						if (table.currentRecipe != null) {
 							targets.add(new BlockIndex(x, y, z));
 						}
 					}
-					
+
 				}
 			}
 		}
@@ -163,22 +163,22 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		}
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
-		assemblyTable = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
+		laserTarget = (TileAssemblyTable) worldObj.getBlockTileEntity(b.i, b.j, b.k);
 	}
-	
+
 	protected void createLaser() {
-		
+
 		laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
 		worldObj.spawnEntityInWorld(laser);
 	}
-	
+
 	protected void updateLaser() {
-		
+
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		double px = 0, py = 0, pz = 0;
-		
+
 		switch (Orientations.values()[meta]) {
-		
+
 			case XNeg:
 				px = -0.3;
 				break;
@@ -199,27 +199,27 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 				pz = 0.3;
 				break;
 		}
-		
+
 		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
 		Position tail = new Position(
-				assemblyTable.xCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F,
-				assemblyTable.yCoord + 9F / 16F, 
-				assemblyTable.zCoord + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
-		
+				laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F,
+				laserTarget.getYCoord() + 9F / 16F,
+				laserTarget.getZCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
+
 		laser.setPositions(head, tail);
 
 		if(!laser.isVisible())
 			laser.show();
 	}
-	
+
 	protected void removeLaser() {
-		
+
 		if (laser != null) {
 			laser.setDead();
 			laser = null;
 		}
 	}
-	
+
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
 		powerProvider = provider;
@@ -241,9 +241,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 			return 0;
 		}
 	}
-	
+
 	@Override
-	public void sendNetworkUpdate() {		
+	public void sendNetworkUpdate() {
 		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate))
 			super.sendNetworkUpdate();
 	};

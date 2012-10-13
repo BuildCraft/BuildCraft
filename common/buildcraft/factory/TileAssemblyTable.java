@@ -13,6 +13,7 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import buildcraft.silicon.ILaserTarget;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityItem;
@@ -24,7 +25,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 
-public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection {
+public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection, ILaserTarget {
 
 	ItemStack[] items = new ItemStack[12];
 
@@ -472,4 +473,23 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		return currentRequiredEnergy;
 	}
 
+	@Override
+	public boolean hasCurrentWork() {
+		return currentRecipe != null;
+	}
+
+	@Override
+	public int getXCoord() {
+		return xCoord;
+	}
+
+	@Override
+	public int getYCoord() {
+		return yCoord;
+	}
+
+	@Override
+	public int getZCoord() {
+		return zCoord;
+	}
 }
