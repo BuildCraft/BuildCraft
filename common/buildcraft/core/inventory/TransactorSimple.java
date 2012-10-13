@@ -66,29 +66,31 @@ public class TransactorSimple extends Transactor {
 	
 	protected int addToSlot(int slot, ItemStack stack, int injected, boolean doAdd) {
 		int remaining = stack.stackSize - injected;
-		
-		if(inventory.getStackInSlot(slot) == null) {
+
+		ItemStack stackInSlot = inventory.getStackInSlot(slot);
+		if(stackInSlot == null) {
 			if(doAdd) {
-				inventory.setInventorySlotContents(slot, stack.copy());
-				inventory.getStackInSlot(slot).stackSize = remaining;
+				stackInSlot = stack.copy();
+				stackInSlot.stackSize = remaining;
+				inventory.setInventorySlotContents(slot, stackInSlot);
 			}
 			return remaining;
 		}
-		
-		if(!inventory.getStackInSlot(slot).isItemEqual(stack) || !ItemStack.func_77970_a(inventory.getStackInSlot(slot), stack))
+
+		if(!stackInSlot.isItemEqual(stack) || !ItemStack.func_77970_a(stackInSlot, stack))
 			return 0;
-		
-		int space = inventory.getStackInSlot(slot).getMaxStackSize() - inventory.getStackInSlot(slot).stackSize;
+
+		int space = stackInSlot.getMaxStackSize() - stackInSlot.stackSize;
 		if(space <= 0)
 			return 0;
-		
+
 		if(space >= remaining) {
 			if(doAdd)
-				inventory.getStackInSlot(slot).stackSize += remaining;
+				stackInSlot.stackSize += remaining;
 			return remaining;
 		} else {
 			if(doAdd)
-				inventory.getStackInSlot(slot).stackSize = inventory.getStackInSlot(slot).getMaxStackSize();
+				stackInSlot.stackSize = stackInSlot.getMaxStackSize();
 			return space;
 		}
 	}
