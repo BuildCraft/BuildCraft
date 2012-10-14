@@ -80,7 +80,7 @@ public class ItemFacade extends ItemBuildCraft {
 			return true;
 		} else {
 			if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
-				if (!entityplayer.capabilities.isCreativeMode)
+				if (!player.capabilities.isCreativeMode)
 					stack.stackSize--;
 				return true;
 			}
