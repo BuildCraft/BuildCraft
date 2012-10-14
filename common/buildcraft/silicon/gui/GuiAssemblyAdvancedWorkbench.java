@@ -68,20 +68,17 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 
 	}
 
-	class RecipeSlot extends AdvancedSlot {
+	class OutputSlot extends AdvancedSlot {
 
 		public IRecipe recipe;
 
-		public RecipeSlot(int x, int y) {
+		public OutputSlot(int x, int y) {
 			super(x, y);
 		}
 
 		@Override
 		public ItemStack getItemStack() {
-			if (this.recipe != null)
-				return this.recipe.getRecipeOutput();
-			else
-				return null;
+			return workbench.getOutputSlot();
 		}
 	}
 
@@ -99,14 +96,10 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 		int id = 0;
 		for (int k = 0; k < 3; k++)
 			for (int j1 = 0; j1 < 3; j1++) {
-				slots[id++] = new IInventorySlot(31 + j1 * 18, 16 + k * 18, workbench, j1 + k * 3 + 27);
+				slots[id++] = new IInventorySlot(31 + j1 * 18, 16 + k * 18, workbench.getCraftingSlots(), j1 + k * 3);
 			}
 
-		slots[id] = new RecipeSlot(124, 35);
-		// Request current selection from server
-		if(CoreProxy.proxy.isRenderWorld(advancedWorkbench.worldObj))
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.SELECTION_ADVANCED_WORKBENCH_GET, advancedWorkbench.xCoord,
-				advancedWorkbench.yCoord, advancedWorkbench.zCoord).getPacket());
+		slots[id] = new OutputSlot(124, 35);
 	}
 
 
@@ -141,7 +134,7 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 
 		IInventorySlot slot = null;
 
-		if (position != -1)
+		if (position >= 0 && position < 9)
 			slot = (IInventorySlot) slots[position];
 
 		if (slot != null) {
@@ -153,13 +146,7 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 			else
 				newStack = null;
 
-			workbench.setInventorySlotContents(position, newStack);
-
-			if (CoreProxy.proxy.isRenderWorld(workbench.worldObj)) {
-				PacketSlotChange packet = new PacketSlotChange(PacketIds.SELECTION_ADVANCED_WORKBENCH_SEND, workbench.xCoord,
-						workbench.yCoord, workbench.zCoord, position, newStack);
-				CoreProxy.proxy.sendToServer(packet.getPacket());
-			}
+			workbench.updateCraftingMatrix(position, newStack);
 		}
 
 	}

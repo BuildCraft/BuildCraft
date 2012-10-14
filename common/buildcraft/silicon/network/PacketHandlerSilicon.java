@@ -47,7 +47,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 				packetC.readData(data);
 				onAssemblyGetSelection((EntityPlayer)player, packetC);
 				break;
-			case PacketIds.SELECTION_ADVANCED_WORKBENCH_SEND:
+			case PacketIds.ADVANCED_WORKBENCH_SETSLOT:
 				PacketSlotChange packet1 = new PacketSlotChange();
 				packet1.readData(data);
 				onAdvancedWorkbenchSet((EntityPlayer) player, packet1);
@@ -139,6 +139,6 @@ public class PacketHandlerSilicon implements IPacketHandler {
 		if (tile == null)
 			return;
 
-		tile.handleSlotChange(packet1);
+		tile.updateCraftingMatrix(packet1.slot, packet1.stack);
 	}
 }

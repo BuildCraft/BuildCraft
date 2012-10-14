@@ -1,8 +1,12 @@
 package buildcraft.silicon.gui;
 
+import java.util.Iterator;
+
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Slot;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.factory.gui.ContainerAutoWorkbench.SlotAutoCrafting;
@@ -47,4 +51,45 @@ public class ContainerAssemblyAdvancedWorkbench extends BuildCraftContainer {
 		return workbench.isUseableByPlayer(var1);
 	}
 
+	@Override
+	public void updateCraftingResults() {
+		super.updateCraftingResults();
+		for (int i=0; i<workbench.getCraftingSlots().getSizeInventory(); i++)
+		{
+	        Iterator var4 = this.crafters.iterator();
+
+	        while (var4.hasNext())
+	        {
+	            ICrafting var5 = (ICrafting)var4.next();
+	            var5.updateCraftingInventorySlot(this, -i-1, workbench.getCraftingSlots().getStackInSlot(i));
+	        }
+		}
+        Iterator var4 = this.crafters.iterator();
+
+        while (var4.hasNext())
+        {
+            ICrafting var5 = (ICrafting)var4.next();
+            var5.updateCraftingInventorySlot(this, -10, workbench.getOutputSlot());
+        }
+	}
+
+	@Override
+	public void putStackInSlot(int par1, ItemStack par2ItemStack) {
+		if (par1>=0) {
+			super.putStackInSlot(par1, par2ItemStack);
+		} else if (par1 == -10){
+			workbench.setOutputSlot(par2ItemStack);
+		} else {
+			workbench.getCraftingSlots().setInventorySlotContents(-1-par1, par2ItemStack);
+		}
+	}
+
+	@Override
+	public Slot getSlot(int par1) {
+		if (par1 >= 0) {
+			return super.getSlot(par1);
+		} else {
+			return null;
+		}
+	}
 }
