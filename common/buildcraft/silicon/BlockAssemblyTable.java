@@ -93,7 +93,7 @@ public class BlockAssemblyTable extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {
-		par3List.add(new ItemStack(this,0,0));
-		par3List.add(new ItemStack(this,0,1));
+		par3List.add(new ItemStack(this,1,0));
+		par3List.add(new ItemStack(this,1,1));
 	}
 }

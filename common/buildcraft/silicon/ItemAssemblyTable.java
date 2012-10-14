@@ -7,6 +7,7 @@ import net.minecraft.src.ItemStack;
 public class ItemAssemblyTable extends ItemBlock {
 	public ItemAssemblyTable(int par1) {
 		super(par1);
+		setMaxDamage(0);
 		setHasSubtypes(true);
 	}
 
@@ -17,6 +18,6 @@ public class ItemAssemblyTable extends ItemBlock {
 
 	@Override
 	public int getMetadata(int par1) {
-		return par1 > 0 && par1 < 2 ? par1 : 0;
+		return par1 == 1 ? 1 : 0;
 	}
 }
