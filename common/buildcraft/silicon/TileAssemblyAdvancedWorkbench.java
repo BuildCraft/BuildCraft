@@ -1,9 +1,13 @@
 package buildcraft.silicon;
 
+import java.util.Arrays;
+
+import buildcraft.api.core.Orientations;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
+import buildcraft.core.utils.Utils;
 import net.minecraft.src.Container;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
@@ -14,7 +18,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 
-public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInventory {
+public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInventory, ILaserTarget {
 	public TileAssemblyAdvancedWorkbench() {
 		craftingSlots = new SimpleInventory(9, "CraftingSlots", 1);
 		storageSlots = new ItemStack[27];
@@ -23,6 +27,9 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	private SimpleInventory craftingSlots;
 	private ItemStack[] storageSlots;
 	private ItemStack outputSlot;
+
+	private float storedEnergy;
+	private boolean craftable;
 
 	@Override
 	public int getSizeInventory() {
@@ -114,6 +121,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 
         par1nbtTagCompound.setTag("StorageSlots", var2);
         craftingSlots.writeToNBT(par1nbtTagCompound);
+        par1nbtTagCompound.setFloat("StoredEnergy", storedEnergy);
 	}
 
 	@Override
@@ -133,10 +141,18 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
             }
         }
         craftingSlots.readFromNBT(par1nbtTagCompound);
+        storedEnergy = par1nbtTagCompound.getFloat("StoredEnergy");
+        updateCraftingResults();
 	}
 	@Override
 	public String getInvName() {
 		return "AdvancedWorkbench";
+	}
+
+	@Override
+	public void onInventoryChanged() {
+		super.onInventoryChanged();
+		craftable = outputSlot!=null;
 	}
 
 	@Override
@@ -168,10 +184,70 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	}
 
 	public float getRequiredEnergy() {
-		// TODO Auto-generated method stub
-		return 0f;
+		return outputSlot != null ? 100f : 0f;
 	}
 
+	@Override
+	public void updateEntity() {
+		if (!CoreProxy.proxy.isSimulating(worldObj)) {
+			return;
+		}
+		while (storedEnergy >= getRequiredEnergy() && craftable)
+		{
+			ItemStack[] tempStorage = Arrays.copyOf(storageSlots, storageSlots.length);
+			for (int j = 0; j < craftingSlots.getSizeInventory(); j++)
+			{
+				if (craftingSlots.getStackInSlot(j) == null)
+				{
+					continue;
+				}
+				boolean matchedStorage = false;
+				for (int i = 0; i < tempStorage.length; i++)
+				{
+					if (craftingSlots.getStackInSlot(j)!=null && tempStorage[i]!=null && craftingSlots.getStackInSlot(j).isItemEqual(tempStorage[i]))
+					{
+						tempStorage[i] = Utils.consumeItem(tempStorage[i]);
+						matchedStorage = true;
+						break;
+					}
+				}
+				if (!matchedStorage)
+				{
+					craftable = false;
+					return;
+				}
+			}
+			storageSlots = tempStorage;
+			storedEnergy -= getRequiredEnergy();
+			ItemStack output = outputSlot.copy();
+			boolean putToPipe = Utils.addToRandomPipeEntry(this, Orientations.Unknown, output);
+			if (!putToPipe)
+			{
+				for (int i = 0; i < storageSlots.length; i++)
+				{
+					if (output.stackSize == 0) {
+						break;
+					}
+					if (storageSlots[i]!=null && output.isStackable() && output.isItemEqual(storageSlots[i]))
+					{
+						storageSlots[i].stackSize += output.stackSize;
+						if (storageSlots[i].stackSize > output.getMaxStackSize())
+						{
+							output.stackSize = storageSlots[i].stackSize - output.getMaxStackSize();
+							storageSlots[i].stackSize = output.getMaxStackSize();
+						}
+					} else if (storageSlots[i] == null) {
+						storageSlots[i] = output;
+						output.stackSize = 0;
+					}
+				}
+				if (output.stackSize > 0)
+				{
+					Utils.dropItems(worldObj, output, xCoord, yCoord, zCoord);
+				}
+			}
+		}
+	}
 	public void updateCraftingMatrix(int slot, ItemStack stack) {
 		System.out.printf("SL: %d IS: %s\n", slot, stack);
 		craftingSlots.setInventorySlotContents(slot, stack);
@@ -179,6 +255,8 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
 			CoreProxy.proxy.sendToServer(packet.getPacket());
+		} else {
+			System.out.printf("Server: Making %s\n", outputSlot);
 		}
 	}
 
@@ -209,6 +287,31 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 
 	public void setOutputSlot(ItemStack par2ItemStack) {
 		this.outputSlot = par2ItemStack;
+	}
+
+	@Override
+	public boolean hasCurrentWork() {
+		return craftable;
+	}
+
+	@Override
+	public void receiveLaserEnergy(float energy) {
+		storedEnergy += energy;
+	}
+
+	@Override
+	public int getXCoord() {
+		return xCoord;
+	}
+
+	@Override
+	public int getYCoord() {
+		return yCoord;
+	}
+
+	@Override
+	public int getZCoord() {
+		return zCoord;
 	}
 
 }
