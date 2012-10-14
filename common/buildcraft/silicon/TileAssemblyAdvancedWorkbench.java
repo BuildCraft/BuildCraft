@@ -249,14 +249,11 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		}
 	}
 	public void updateCraftingMatrix(int slot, ItemStack stack) {
-		System.out.printf("SL: %d IS: %s\n", slot, stack);
 		craftingSlots.setInventorySlotContents(slot, stack);
 		updateCraftingResults();
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
 			CoreProxy.proxy.sendToServer(packet.getPacket());
-		} else {
-			System.out.printf("Server: Making %s\n", outputSlot);
 		}
 	}
 
