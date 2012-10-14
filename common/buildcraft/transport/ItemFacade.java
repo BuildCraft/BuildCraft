@@ -135,9 +135,14 @@ public class ItemFacade extends ItemBuildCraft {
 					{
 						int md = i.getMetadata(j);
 						ItemStack comp = new ItemStack(blId, 0, j);
-						if (! base.equals(i.getItemNameIS(comp)) && !Strings.isNullOrEmpty(i.getItemNameIS(comp)))
+						try {
+							if (! base.equals(i.getItemNameIS(comp)) && !Strings.isNullOrEmpty(i.getItemNameIS(comp)))
+							{
+								list.add(comp);
+							}
+						} catch (Exception e)
 						{
-							list.add(comp);
+							break;
 						}
 					}
 				}
