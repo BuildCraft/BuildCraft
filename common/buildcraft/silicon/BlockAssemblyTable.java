@@ -1,6 +1,10 @@
 package buildcraft.silicon;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.CreativeTabs;
@@ -48,8 +52,10 @@ public class BlockAssemblyTable extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!CoreProxy.proxy.isRenderWorld(world))
-			entityplayer.openGui(BuildCraftSilicon.instance, GuiIds.ASSEMBLY_TABLE, world, i, j, k);
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
+			int meta = world.getBlockMetadata(i, j, k);
+			entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
+		}
 		return true;
 	}
 
@@ -66,13 +72,17 @@ public class BlockAssemblyTable extends BlockContainer {
 		} else if (i == 0) {
 			return 16 * 2 + 15;
 		} else {
-			return 16 * 6 + 11;
+			return j == 0 ? 16 * 6 + 11 : 2 * 16 + 12;
 		}
 	}
 
 	@Override
+	public TileEntity createNewTileEntity(World world, int metadata) {
+		return metadata == 0 ? new TileAssemblyTable() : new TileAssemblyAdvancedWorkbench();
+	}
+	@Override
 	public TileEntity createNewTileEntity(World var1) {
-		return new TileAssemblyTable();
+		return null;
 	}
 
 	@Override
@@ -80,9 +90,10 @@ public class BlockAssemblyTable extends BlockContainer {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
+	@SideOnly(Side.CLIENT)
+	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {
+		par3List.add(new ItemStack(this,0,0));
+		par3List.add(new ItemStack(this,0,1));
 	}
 }

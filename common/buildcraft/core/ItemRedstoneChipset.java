@@ -44,7 +44,6 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
-		super.getSubItems(par1, par2CreativeTabs, itemList);
 		for (int i = 0; i < 5; i++) {
 			itemList.add(new ItemStack(this, 1, i));
 		}

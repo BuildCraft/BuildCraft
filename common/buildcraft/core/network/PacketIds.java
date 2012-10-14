@@ -23,4 +23,8 @@ public class PacketIds {
 	public static final int LIBRARY_SELECT = 62;
 
 	public static final int STATE_UPDATE = 100;
+
+	public static final int SELECTION_ADVANCED_WORKBENCH_GET = 70;
+	public static final int SELECTION_ADVANCED_WORKBENCH = 71;
+	public static final int SELECTION_ADVANCED_WORKBENCH_SEND = 72;
 }

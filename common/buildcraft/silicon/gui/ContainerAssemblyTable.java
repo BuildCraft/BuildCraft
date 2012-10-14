@@ -18,11 +18,9 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Slot;
 
 public class ContainerAssemblyTable extends BuildCraftContainer {
-
 	IInventory playerIInventory;
 	TileAssemblyTable table;
 
-	int x = Integer.MAX_VALUE, y = Integer.MAX_VALUE, z = Integer.MAX_VALUE;
 	boolean networkSynchronized = false;
 
 	public ContainerAssemblyTable(IInventory playerInventory, TileAssemblyTable table) {

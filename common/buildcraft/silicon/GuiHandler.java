@@ -2,7 +2,9 @@ package buildcraft.silicon;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.core.GuiIds;
+import buildcraft.silicon.gui.ContainerAssemblyAdvancedWorkbench;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
+import buildcraft.silicon.gui.GuiAssemblyAdvancedWorkbench;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.TileEntity;
@@ -20,11 +22,15 @@ public class GuiHandler implements IGuiHandler {
 
 		switch (ID) {
 
-		case GuiIds.ASSEMBLY_TABLE:
+		case 0:
 			if (!(tile instanceof TileAssemblyTable))
 				return null;
 			return new GuiAssemblyTable(player.inventory, (TileAssemblyTable) tile);
 
+		case 1:
+			if (!(tile instanceof TileAssemblyAdvancedWorkbench))
+				return null;
+			return new GuiAssemblyAdvancedWorkbench(player.inventory, (TileAssemblyAdvancedWorkbench)tile);
 		default:
 			return null;
 		}
@@ -40,11 +46,15 @@ public class GuiHandler implements IGuiHandler {
 
 		switch (ID) {
 
-		case GuiIds.ASSEMBLY_TABLE:
+		case 0:
 			if (!(tile instanceof TileAssemblyTable))
 				return null;
 			return new ContainerAssemblyTable(player.inventory, (TileAssemblyTable) tile);
 
+		case 1:
+			if (!(tile instanceof TileAssemblyAdvancedWorkbench))
+				return null;
+			return new ContainerAssemblyAdvancedWorkbench(player.inventory, (TileAssemblyAdvancedWorkbench) tile);
 		default:
 			return null;
 		}

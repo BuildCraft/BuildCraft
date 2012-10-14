@@ -23,7 +23,9 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.BlockAssemblyTable;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.GuiHandler;
+import buildcraft.silicon.ItemAssemblyTable;
 import buildcraft.silicon.SiliconProxy;
+import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.network.PacketHandlerSilicon;
@@ -35,6 +37,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(name="BuildCraft Silicon", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerSilicon.class, clientSideRequired = true, serverSideRequired = true)
@@ -51,6 +55,7 @@ public class BuildCraftSilicon {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
 		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
+		CoreProxy.proxy.registerTileEntity(TileAssemblyAdvancedWorkbench.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 
 		new BptBlockRotateMeta(laserBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
 		new BptBlockInventory(assemblyTableBlock.blockID);
@@ -76,8 +81,10 @@ public class BuildCraftSilicon {
 		CoreProxy.proxy.registerBlock(laserBlock);
 
 		assemblyTableBlock = new BlockAssemblyTable(Integer.parseInt(assemblyTableId.value));
-		CoreProxy.proxy.addName(assemblyTableBlock.setBlockName("assemblyTableBlock"), "Assembly Table");
-		CoreProxy.proxy.registerBlock(assemblyTableBlock);
+		GameRegistry.registerBlock(assemblyTableBlock, ItemAssemblyTable.class);
+
+		LanguageRegistry.addName(new ItemStack(assemblyTableBlock,0,0),"Assembly Table");
+		LanguageRegistry.addName(new ItemStack(assemblyTableBlock,0,1),"Advanced Crafting Table");
 
 		redstoneChipset = new ItemRedstoneChipset(Integer.parseInt(redstoneChipsetId.value));
 		redstoneChipset.setItemName("redstoneChipset");
@@ -89,11 +96,15 @@ public class BuildCraftSilicon {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock), new Object[] { "ORR", "DDR", "ORR", Character.valueOf('O'),
 				Block.obsidian, Character.valueOf('R'), Item.redstone, Character.valueOf('D'), Item.diamond, });
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0),
 				new Object[] { "ORO", "ODO", "OGO", Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),
 						Item.redstone, Character.valueOf('D'), Item.diamond, Character.valueOf('G'),
 						BuildCraftCore.diamondGearItem, });
 
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1),
+				new Object[] { "OWO", "OCO", "ORO", Character.valueOf('O'), Block.obsidian, Character.valueOf('W'),
+						Block.workbench, Character.valueOf('C'), Block.chest, Character.valueOf('R'),
+						new ItemStack(redstoneChipset, 1, 0), });
 		//Add reverse recipies for all gates
 
 		//Iron

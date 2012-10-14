@@ -41,7 +41,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 			for (int j1 = 0; j1 < 9; j1++) {
 				int id = k * 9 + j1;
 				slots[id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18, filterInventory, j1 + k * 9);
-			}		
+			}
 	}
 
 	@Override

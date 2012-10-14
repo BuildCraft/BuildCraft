@@ -18,7 +18,7 @@ public class ItemBlockBuildCraft extends ItemBlock {
 		return i;
 	}
 
-	// @Override Client side only
+	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
 		return StringUtil.localize(getItemNameIS(itemstack));
 	}

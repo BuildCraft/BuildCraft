@@ -192,8 +192,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			ContainerAssemblyTable container = (ContainerAssemblyTable) inventorySlots;
 
 			if (CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj)) {
-				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(container.x, container.y,
-						container.z, message);
+				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(assemblyTable.xCoord, assemblyTable.yCoord,
+						assemblyTable.zCoord, message);
 
 				PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, payload);
 				packet.posX = assemblyTable.xCoord;
