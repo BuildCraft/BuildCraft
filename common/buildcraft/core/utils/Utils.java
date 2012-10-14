@@ -143,7 +143,8 @@ public class Utils {
 			if (from.reverse().ordinal() == j)
 				continue;
 
-			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, Orientations.values()[j]);
+			Orientations o = Orientations.values()[j];
+			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, o);
 
 			pos.moveForwards(1.0);
 
@@ -151,9 +152,9 @@ public class Utils {
 
 			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems()) {
 				if( pipeEntry instanceof IPipeConnection )
-					if( !((IPipeConnection) pipeEntry).isPipeConnected(from.reverse()) )
+					if( !((IPipeConnection) pipeEntry).isPipeConnected(o.reverse()) )
 						continue;
-				possiblePipes.add(Orientations.values()[j]);
+				possiblePipes.add(o);
 			}
 		}
 
