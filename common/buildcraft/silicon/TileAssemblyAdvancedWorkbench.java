@@ -231,6 +231,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 					if (storageSlots[i]!=null && output.isStackable() && output.isItemEqual(storageSlots[i]))
 					{
 						storageSlots[i].stackSize += output.stackSize;
+						output.stackSize = 0;
 						if (storageSlots[i].stackSize > output.getMaxStackSize())
 						{
 							output.stackSize = storageSlots[i].stackSize - output.getMaxStackSize();
