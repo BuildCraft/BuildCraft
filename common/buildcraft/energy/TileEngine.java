@@ -72,7 +72,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			}
 
 			engine.orientation = Orientations.values()[orientation];
-			provider.configure(0, 1, engine.maxEnergyReceived(), 1, engine.maxEnergy);
+			provider.configure(0, engine.minEnergyReceived(), engine.maxEnergyReceived(), 1, engine.maxEnergy);
 			checkRedstonePower();
 		}
 	}

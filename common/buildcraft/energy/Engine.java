@@ -77,6 +77,10 @@ public abstract class Engine {
 
 	public abstract int explosionRange();
 
+	public int minEnergyReceived() {
+		return 2;
+	}
+
 	public abstract int maxEnergyReceived();
 
 	public abstract float getPistonSpeed();
