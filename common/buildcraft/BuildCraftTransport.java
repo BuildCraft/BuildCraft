@@ -14,8 +14,10 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -51,7 +53,6 @@ import buildcraft.transport.pipes.PipeItemsIron;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsSandstone;
 import buildcraft.transport.pipes.PipeItemsStone;
-//import buildcraft.transport.pipes.PipeItemsStripes;
 import buildcraft.transport.pipes.PipeItemsVoid;
 import buildcraft.transport.pipes.PipeItemsWood;
 import buildcraft.transport.pipes.PipeLiquidsCobblestone;
@@ -155,43 +156,43 @@ public class BuildCraftTransport {
 	}
 
 	private static class ExtractionHandler implements IExtractionHandler {
-	      private final String[] items;
-	      private final String[] liquids;
+			private final String[] items;
+			private final String[] liquids;
 
-	      public ExtractionHandler(String[] items, String[] liquids){
-	         this.items = items;
-	         this.liquids = liquids;
-	      }
+			public ExtractionHandler(String[] items, String[] liquids){
+				this.items = items;
+				this.liquids = liquids;
+			}
 
-	      @Override
-	      public boolean canExtractItems(IPipe pipe, World world, int i, int j, int k) {
-	         return testStrings(items, world, i, j, k);
-	      }
+			@Override
+			public boolean canExtractItems(IPipe pipe, World world, int i, int j, int k) {
+				return testStrings(items, world, i, j, k);
+			}
 
-	      @Override
-	      public boolean canExtractLiquids(IPipe pipe, World world, int i, int j, int k) {
-	         return testStrings(liquids, world, i, j, k);
-	      }
+			@Override
+			public boolean canExtractLiquids(IPipe pipe, World world, int i, int j, int k) {
+				return testStrings(liquids, world, i, j, k);
+			}
 
-	      private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
-	         int id = world.getBlockId(i, j, k);
-	         Block block = Block.blocksList[id];
-	         if(block == null)
-	            return false;
+			private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
+				int id = world.getBlockId(i, j, k);
+				Block block = Block.blocksList[id];
+				if(block == null)
+					return false;
 
-	         int meta = world.getBlockMetadata(i, j, k);
+				int meta = world.getBlockMetadata(i, j, k);
 
-	         for (String excluded : excludedBlocks) {
-	            if (excluded.equals(block.getBlockName()))
-	               return false;
+				for (String excluded : excludedBlocks) {
+					if (excluded.equals(block.getBlockName()))
+						return false;
 
-	            String[] tokens = excluded.split(":");
-	            if(tokens[0].equals(Integer.toString(id)) && (tokens.length == 1 || tokens[1].equals(Integer.toString(meta))))
-	               return false;
-	         }
-	         return true;
-	      }
-	   }
+					String[] tokens = excluded.split(":");
+					if(tokens[0].equals(Integer.toString(id)) && (tokens.length == 1 || tokens[1].equals(Integer.toString(meta))))
+						return false;
+				}
+				return true;
+			}
+		}
 
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
@@ -291,6 +292,7 @@ public class BuildCraftTransport {
 			BuildCraftCore.mainConfiguration.save();
 		}
 	}
+
 	@Init
 	public void load(FMLInitializationEvent evt) {
 		// Register connection handler
@@ -354,7 +356,6 @@ public class BuildCraftTransport {
 		Property pipeFacadeId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("pipeFacade.id", Configuration.CATEGORY_ITEM, DefaultProps.PIPE_FACADE_ID);
 		facadeItem = new ItemFacade(Integer.parseInt(pipeFacadeId.value));
 		facadeItem.setItemName("pipeFacade");
-		ItemFacade.initialize();
 
 		BuildCraftCore.mainConfiguration.save();
 
@@ -377,7 +378,12 @@ public class BuildCraftTransport {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 	}
 
-   public void loadRecipes() {
+	@PostInit
+	public void postInit(FMLPostInitializationEvent evt) {
+		ItemFacade.initialize();
+	}
+
+	public void loadRecipes() {
 
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Item.dyePowder, 1, 2));
@@ -399,7 +405,7 @@ public class BuildCraftTransport {
 	private static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
 
-		Property prop = BuildCraftCore.mainConfiguration.getOrCreateIntProperty(name + ".id", Configuration.CATEGORY_ITEM, defaultID);
+		Property prop = BuildCraftCore.mainConfiguration.getItem(name + ".id", defaultID);
 
 		int id = prop.getInt(defaultID);
 		ItemPipe res = BlockGenericPipe.registerPipe(id, clas);
