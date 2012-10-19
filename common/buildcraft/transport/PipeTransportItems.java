@@ -122,6 +122,8 @@ public class PipeTransportItems extends PipeTransport {
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
 
+		unscheduleRemoval(data.item);
+
 		data.toCenter = true;
 		data.input = data.output.reverse();
 
@@ -300,7 +302,6 @@ public class PipeTransportItems extends PipeTransport {
 				data.item.getItemStack().stackSize -= added.stackSize;
 
 				if(data.item.getItemStack().stackSize > 0) {
-					unscheduleRemoval(data.item);
 					reverseItem(data);
 				}
 			}
