@@ -235,9 +235,11 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 						{
 							output.stackSize = storageSlots[i].stackSize - output.getMaxStackSize();
 							storageSlots[i].stackSize = output.getMaxStackSize();
+						} else {
+							output.stackSize = 0;
 						}
 					} else if (storageSlots[i] == null) {
-						storageSlots[i] = output;
+						storageSlots[i] = output.copy();
 						output.stackSize = 0;
 					}
 				}
