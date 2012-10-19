@@ -79,7 +79,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 				if (tile instanceof TileGenericPipe) {
 					if (((TileGenericPipe) tile).pipe == null) {
-						System.out.println("PipePowerWood.pipe was null, this used to cause a NPE crash)");
 						continue; // Null pointer protection
 					}
 
