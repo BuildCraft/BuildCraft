@@ -30,7 +30,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 1000, 1, 1000);
+		powerProvider.configure(50, 2, 1000, 1, 1000);
 		powerProvider.configurePowerPerdition(1, 100);
 	}
 
@@ -38,7 +38,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(Orientations direction) {
 		if (direction == Orientations.Unknown)
@@ -79,7 +79,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 				if (tile instanceof TileGenericPipe) {
 					if (((TileGenericPipe) tile).pipe == null) {
-						System.out.println("PipePowerWood.pipe was null, this used to cause a NPE crash)");
 						continue; // Null pointer protection
 					}
 

@@ -51,23 +51,29 @@ public class TileBuffer {
 	public int getBlockID() {
 		if (tile != null && !tile.isInvalid())
 			return blockID;
-		else {
-			if (tracker.markTimeIfDelay(world, 20))
-				refresh();
 
-			return blockID;
+		if (tracker.markTimeIfDelay(world, 20)) {
+			refresh();
+
+			if (tile != null && !tile.isInvalid())
+				return blockID;
 		}
+
+		return 0;
 	}
 
 	public TileEntity getTile() {
 		if (tile != null && !tile.isInvalid())
 			return tile;
-		else {
-			if (tracker.markTimeIfDelay(world, 20))
-				refresh();
 
-			return tile;
+		if (tracker.markTimeIfDelay(world, 20)) {
+			refresh();
+
+			if (tile != null && !tile.isInvalid())
+				return tile;
 		}
+
+		return null;
 	}
 
 }

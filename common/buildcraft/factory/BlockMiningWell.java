@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -15,7 +15,6 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
-import buildcraft.factory.BlockMachineRoot;
 
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.ItemStack;
@@ -69,13 +68,13 @@ public class BlockMiningWell extends BlockMachineRoot {
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
-	
-	
+
+
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileMiningWell();
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;

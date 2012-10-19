@@ -22,6 +22,7 @@ import buildcraft.core.blueprints.BptSlot.Mode;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EnumGameType;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
@@ -49,7 +50,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				return -1;
 			else if (o1.getItemDamage() < o2.getItemDamage())
 				return 1;
-				
+
 			return 0;
 		}
 	});
@@ -245,7 +246,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					}
 
 					try {
-						
+
 						slot.useItem(context, reqStk, invStk);
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
@@ -282,7 +283,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		ListIterator<ItemStack> itr = tmpReq.listIterator();
-		
+
 		while(itr.hasNext()) {
 			ItemStack reqStk = itr.next();
 			boolean smallStack = reqStk.stackSize == 1;
@@ -342,7 +343,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					return 1;
 				else if (o1.getItemDamage() < o2.getItemDamage())
 					return -1;
-				
+
 				return 0;
 			}
 		});
@@ -379,7 +380,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			LinkedList<ItemStack> stacks = slot.getRequirements(context);
 
 			for (ItemStack stack : stacks) {
-				if (stack == null || stack.itemID == 0 || stack.stackSize == 0)
+				if (stack == null || stack.itemID <= 0 || stack.itemID >= Item.itemsList.length || stack.stackSize == 0 || stack.getItem() == null)
 					continue;
 
 				if (!computeStacks.containsKey(stack))

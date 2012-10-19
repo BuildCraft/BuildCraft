@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -53,7 +53,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 
 	public TilePump() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(20, 10, 10, 10, 100);
+		powerProvider.configure(20, 1, 10, 10, 100);
 	}
 
 	// TODO, manage this by different levels (pump what's above first...)
@@ -129,7 +129,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 				p.moveForwards(1);
 
 				TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
-				
+
 				if(tile instanceof ITankContainer) {
 					internalLiquid -= ((ITankContainer)tile).fill(p.orientation.reverse(), new LiquidStack(liquidId, internalLiquid), true);
 					if(internalLiquid <= 0)
@@ -278,7 +278,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		liquidId = nbttagcompound.getInteger("liquidId");
 
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
-		powerProvider.configure(20, 10, 10, 10, 100);
+		powerProvider.configure(20, 1, 10, 10, 100);
 
 	}
 

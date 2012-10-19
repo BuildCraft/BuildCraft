@@ -19,7 +19,6 @@ import java.util.Map;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.Position;
@@ -27,7 +26,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IMachine;
@@ -111,6 +109,39 @@ public class PipeTransportItems extends PipeTransport {
 
 			if (travelingEntities.size() > BuildCraftTransport.maxItemsInPipes)
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 1);
+		}
+	}
+
+	/**
+	 * Bounces the item back into the pipe without changing the travelingEntities map.
+	 * @param data
+	 */
+	private void reverseItem(EntityData data) {
+		if (data.item.isCorrupted())
+			// Safe guard - if for any reason the item is corrupted at this
+			// stage, avoid adding it to the pipe to avoid further exceptions.
+			return;
+
+		unscheduleRemoval(data.item);
+
+		data.toCenter = true;
+		data.input = data.output.reverse();
+
+		readjustSpeed(data.item);
+
+		// Reajusting Ypos to make sure the object looks like sitting on the
+		// pipe.
+		if (data.input != Orientations.YPos && data.input != Orientations.YNeg)
+			data.item.setPosition(data.item.getPosition().x, yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), data.item.getPosition().z);
+
+		  if (!worldObj.isRemote)
+				data.output = resolveDestination(data);
+
+		if (container.pipe instanceof IPipeTransportItemsHook)
+			((IPipeTransportItemsHook) container.pipe).entityEntered(data.item, data.input);
+
+		if (!worldObj.isRemote) {
+			sendItemPacket(data);
 		}
 	}
 
@@ -271,10 +302,7 @@ public class PipeTransportItems extends PipeTransport {
 				data.item.getItemStack().stackSize -= added.stackSize;
 
 				if(data.item.getItemStack().stackSize > 0) {
-					data.toCenter = true;
-					data.input = data.output.reverse();
-					unscheduleRemoval(data.item);
-					entityEntering(data.item, data.output.reverse());
+					reverseItem(data);
 				}
 			}
 		} else {

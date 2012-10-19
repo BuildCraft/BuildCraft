@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -34,7 +34,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 	public TileMiningWell() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 25, 25, 25, 1000);
+		powerProvider.configure(50, 1, 25, 25, 1000);
 	}
 
 	/**
