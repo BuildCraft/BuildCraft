@@ -3,6 +3,7 @@ package buildcraft.silicon;
 import java.util.Arrays;
 
 import buildcraft.api.core.Orientations;
+import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
@@ -18,7 +19,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.TileEntity;
 
-public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInventory, ILaserTarget {
+public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInventory, ILaserTarget, IMachine {
 	public TileAssemblyAdvancedWorkbench() {
 		craftingSlots = new SimpleInventory(9, "CraftingSlots", 1);
 		storageSlots = new ItemStack[27];
@@ -33,7 +34,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 
 	@Override
 	public int getSizeInventory() {
-		return 27 + 9 + 1;
+		return 27;
 	}
 
 	@Override
@@ -220,7 +221,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 			storageSlots = tempStorage;
 			storedEnergy -= getRequiredEnergy();
 			ItemStack output = outputSlot.copy();
-			boolean putToPipe = Utils.addToRandomPipeEntry(this, Orientations.Unknown, output);
+			boolean putToPipe = Utils.addToRandomPipeEntry(this, Orientations.YPos, output);
 			if (!putToPipe)
 			{
 				for (int i = 0; i < storageSlots.length; i++)
@@ -309,6 +310,26 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	@Override
 	public int getZCoord() {
 		return zCoord;
+	}
+
+	@Override
+	public boolean isActive() {
+		return hasCurrentWork();
+	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return false;
+	}
+
+	@Override
+	public boolean allowActions() {
+		return true;
 	}
 
 }
