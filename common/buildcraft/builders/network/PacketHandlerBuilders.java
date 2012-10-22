@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import buildcraft.builders.TileArchitect;
@@ -17,7 +17,7 @@ import cpw.mods.fml.common.network.Player;
 public class PacketHandlerBuilders implements IPacketHandler {
 
 	@Override
-	public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player) {
+	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
 
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 		try {

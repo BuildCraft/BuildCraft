@@ -41,8 +41,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
-		super.drawGuiContainerForegroundLayer();
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		super.drawGuiContainerForegroundLayer(par1, par2);
 
 		String title = StringUtil.localize("tile.builderBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 12, 0x404040);

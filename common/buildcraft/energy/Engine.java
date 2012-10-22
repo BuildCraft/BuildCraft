@@ -93,7 +93,7 @@ public abstract class Engine {
 		energy += addition;
 
 		if (getEnergyStage() == EnergyStage.Explosion) {
-			tile.worldObj.createExplosion(null, tile.xCoord, tile.yCoord, tile.zCoord, explosionRange());
+			tile.worldObj.createExplosion(null, tile.xCoord, tile.yCoord, tile.zCoord, explosionRange(), true);
 		}
 
 		if (energy > maxEnergy) {

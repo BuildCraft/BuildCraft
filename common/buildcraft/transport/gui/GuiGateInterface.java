@@ -237,7 +237,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String name = _container.getGateName();
 
 		fontRenderer.drawString(name, getCenteredOffset(name), 15, 0x404040);

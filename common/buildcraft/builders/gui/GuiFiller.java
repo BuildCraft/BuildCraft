@@ -32,7 +32,7 @@ public class GuiFiller extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtil.localize("tile.fillerBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.filling.resources"), 8, 74, 0x404040);

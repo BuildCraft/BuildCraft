@@ -303,13 +303,13 @@ public class BlockGenericPipe extends BlockContainer {
 		// Returns 0 to be safe - the id does not depend on the meta
 		return 0;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int idPicked(World world, int i, int j, int k)
 	{
 		Pipe pipe = getPipe(world, i, j, k);
-		
+
 		if (pipe == null)
 			return 0;
 		else
@@ -505,7 +505,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (isValid(pipe))
 			pipe.onEntityCollidedWithBlock(entity);
 	}
-	
+
 	@Override
 	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
 	{
@@ -533,7 +533,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean isIndirectlyPoweringTo(World world, int i, int j, int k, int l) {
+	public boolean isIndirectlyPoweringTo(IBlockAccess world, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(world, i, j, k);
 
 		if (isValid(pipe))

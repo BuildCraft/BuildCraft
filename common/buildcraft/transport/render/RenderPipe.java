@@ -52,7 +52,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	final static private int maxPower = 1000;
 
 	final static private int displayLiquidStages = 40;
-	
+
 	final static private int numItemsToRender = 10;
 
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
@@ -66,7 +66,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	}
 
 	private HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
-	
+
 
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
@@ -91,7 +91,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		} else {
 			displayLiquidLists.put(liquidId, new HashMap<Integer, DisplayLiquidList>());
 		}
-			
+
 
 		DisplayLiquidList d = new DisplayLiquidList();
 		displayLiquidLists.get(liquidId).put(meta, d);
@@ -101,7 +101,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 		else
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
-	
+
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
 		// render size
@@ -239,15 +239,15 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (pipe.pipe == null)
 			return;
 
-		if (pipe.pipe.transport instanceof PipeTransportItems) 
+		if (pipe.pipe.transport instanceof PipeTransportItems)
 			renderSolids(pipe.pipe, x, y, z);
 
-		else if (pipe.pipe.transport instanceof PipeTransportLiquids) 
-			renderLiquids(pipe.pipe, x, y, z);		
-		
-		else if (pipe.pipe.transport instanceof PipeTransportPower) 
+		else if (pipe.pipe.transport instanceof PipeTransportLiquids)
+			renderLiquids(pipe.pipe, x, y, z);
+
+		else if (pipe.pipe.transport instanceof PipeTransportPower)
 			renderPower(pipe.pipe, x, y, z);
-		
+
 	}
 
 	private void renderPower(Pipe pipe, double x, double y, double z) {
@@ -304,7 +304,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			LiquidStack liquid = liq.renderCache[i];
 			//int amount = liquid != null ? liquid.amount : 0;
 			//int amount = liquid != null ? liq.renderAmmount[i] : 0;
-			
+
 			if ( liquid != null && liquid.amount > 0) {
 				DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
@@ -346,7 +346,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 //		LiquidStack liquid = tank.getLiquid();
 		LiquidStack liquid = liq.renderCache[Orientations.Unknown.ordinal()];
 
-		//int amount = liquid != null ? liquid.amount : 0; 
+		//int amount = liquid != null ? liquid.amount : 0;
 		//int amount = liquid != null ? liq.renderAmmount[Orientations.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
 			//DisplayLiquidList d = getListFromBuffer(liq.getTanks()[Orientations.Unknown.ordinal()].getLiquid(), pipe.worldObj);
@@ -386,18 +386,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private void renderSolids(Pipe pipe, double x, double y, double z) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
-		
+
 		float light = pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 
 		int count = 0;
 		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
 			if(count >= numItemsToRender)
 				break;
-				
+
 			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z
 					- pipe.zCoord, light);
 			count++;
-		}					
+		}
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
@@ -449,7 +449,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glPopMatrix();
 			}
 
-		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null 
+		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
 				&& Block.blocksList[itemstack.itemID].blockID != 0) {
 				//&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
@@ -488,7 +488,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					float scale = 1.0F;
 
 					if (true) {
-						int itemColour = Item.itemsList[itemstack.itemID].getColorFromDamage(itemstack.getItemDamage(), i);
+						int itemColour = Item.itemsList[itemstack.itemID].func_82790_a(itemstack, i);
 						float var18 = (itemColour >> 16 & 255) / 255.0F;
 						float var19 = (itemColour >> 8 & 255) / 255.0F;
 						float var20 = (itemColour & 255) / 255.0F;

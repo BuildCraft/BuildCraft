@@ -108,7 +108,7 @@ public class PipeTransportItems extends PipeTransport {
 			groupEntities();
 
 			if (travelingEntities.size() > BuildCraftTransport.maxItemsInPipes)
-				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 1);
+				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 1, false);
 		}
 	}
 

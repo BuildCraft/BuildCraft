@@ -33,7 +33,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		/**
 		 * Inserts a ledger into the next-to-last position.
-		 * 
+		 *
 		 * @param ledger
 		 */
 		public void insert(Ledger ledger) {
@@ -237,7 +237,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	protected void initLedgers(IInventory inventory) {}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		ledgerManager.drawLedgers(mouseX, mouseY);
 	}
 

@@ -80,7 +80,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		// fontRenderer.drawString(library.owner + "'s Library", 6, 6,
 		// 0x404040);
 		String title = StringUtil.localize("tile.libraryBlock");
@@ -128,7 +128,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		drawTexturedModalRect(j + 128 + 22 - inP, k + 61, 176 + 22 - inP, 16, inP, 16);
 		drawTexturedModalRect(j + 128, k + 78, 176, 0, outP, 16);
 	}
-	
+
 	@Override
 	public void updateScreen(){
 		if (library.locked) {
@@ -137,10 +137,10 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 			lockButton.displayString = StringUtil.localize("gui.lock");
 		}
 	}
-	
+
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION, 
+		PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION,
 				library.xCoord, library.yCoord, library.zCoord);
 		if (button == nextPageButton) {
 			packet.actionId = TileBlueprintLibrary.COMMAND_NEXT;
@@ -171,7 +171,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				if (ySlot < library.currentNames.length){
 					PacketPayload payload = new PacketPayload();
 					payload.intPayload = new int[]{ySlot};
-					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, 
+					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT,
 							library.xCoord, library.yCoord, library.zCoord);
 					packet.actionId = ySlot;
 					CoreProxy.proxy.sendToServer(packet.getPacket());

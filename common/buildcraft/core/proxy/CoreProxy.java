@@ -20,6 +20,7 @@ import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.network.BuildCraftPacket;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.ChunkCoordinates;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -144,8 +145,13 @@ public class CoreProxy {
 			}
 
 			@Override
-			public boolean canCommandSenderUseCommand(String var1) {
+			public boolean canCommandSenderUseCommand(int var1, String var2) {
 				return false;
+			}
+
+			@Override
+			public ChunkCoordinates func_82114_b() {
+				return null;
 			}
 
 		};

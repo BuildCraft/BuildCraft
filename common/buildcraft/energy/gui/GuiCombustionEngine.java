@@ -29,8 +29,8 @@ public class GuiCombustionEngine extends GuiEngine {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
-		super.drawGuiContainerForegroundLayer();
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		super.drawGuiContainerForegroundLayer(par1, par2);
 		String title = StringUtil.localize("tile.engineIron");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
@@ -65,7 +65,7 @@ public class GuiCombustionEngine extends GuiEngine {
 			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
 			liquidImgIndex = Item.itemsList[liquidId].getIconFromDamage(0);
 		} else {
-			return;			
+			return;
 		}
 
 		int imgLine = liquidImgIndex / 16;

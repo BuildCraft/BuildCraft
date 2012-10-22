@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -139,7 +139,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(craftMatrix);
+		ItemStack recipe = CraftingManager.getInstance().func_82787_a(craftMatrix, worldObj);
 
 		return recipe;
 	}
@@ -179,7 +179,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix);
+		ItemStack resultStack = CraftingManager.getInstance().func_82787_a(craftMatrix, worldObj);
 
 		if (resultStack == null || !doRemove) {
 			resetPointers(pointerList);
@@ -275,7 +275,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	/* ISPECIALINVENTORY */
 	@Override
-	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {		
+	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
 		return new TransactorRoundRobin(this).add(stack, from, doAdd).stackSize;
 	}
 

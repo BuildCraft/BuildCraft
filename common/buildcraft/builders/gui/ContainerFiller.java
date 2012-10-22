@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -53,9 +53,9 @@ public class ContainerFiller extends BuildCraftContainer {
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return fillerInventory.isUseableByPlayer(entityplayer);
 	}
-	
+
 	@Override
-	public ItemStack transferStackInSlot(int i) {
+	public ItemStack func_82846_b(EntityPlayer pl, int i) {
 		ItemStack itemstack = null;
 		Slot slot = (Slot) inventorySlots.get(i);
 		if (slot != null && slot.getHasStack()) {

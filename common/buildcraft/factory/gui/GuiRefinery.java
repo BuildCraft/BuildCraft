@@ -42,7 +42,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtil.localize("tile.refineryBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString("->", 63, 59, 0x404040);

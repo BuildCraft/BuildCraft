@@ -26,8 +26,8 @@ public class GuiHopper extends GuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
-		super.drawGuiContainerForegroundLayer();
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		super.drawGuiContainerForegroundLayer(par1, par2);
 	}
 
 }

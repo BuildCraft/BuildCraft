@@ -14,6 +14,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
@@ -622,7 +625,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public double getRenderDistance() {
-		return 24;
+	@SideOnly(Side.CLIENT)
+	public double func_82115_m() {
+		return 24 * 24;
 	}
 }

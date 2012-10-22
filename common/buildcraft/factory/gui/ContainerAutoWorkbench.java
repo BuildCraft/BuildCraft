@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -46,7 +46,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 		}
 
 		@Override
-		public void onPickupFromSlot(ItemStack itemstack) {
+		public void func_82870_a(EntityPlayer pl, ItemStack itemstack) {
 			CoreProxy.proxy.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
 			if (itemstack.itemID == Block.workbench.blockID) {
 				thePlayer.addStat(AchievementList.buildWorkBench, 1);
@@ -112,7 +112,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	}
 
 	@Override
-	public ItemStack slotClick(int i, int j, boolean flag, EntityPlayer entityplayer) {
+	public ItemStack slotClick(int i, int j, int flag, EntityPlayer entityplayer) {
 		// This call ensures that the ouptut is correctly computed
 		craftResult.setInventorySlotContents(0, tile.findRecipe());
 
@@ -128,7 +128,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(int i) {
+	public ItemStack func_82846_b(EntityPlayer pl, int i) {
 		ItemStack itemstack = null;
 		Slot slot = (Slot) inventorySlots.get(i);
 		if (slot != null && slot.getHasStack()) {
@@ -155,7 +155,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 				slot.onSlotChanged();
 			}
 			if (itemstack1.stackSize != itemstack.stackSize) {
-				slot.onPickupFromSlot(itemstack1);
+				slot.func_82870_a(pl, itemstack1);
 			} else {
 				return null;
 			}

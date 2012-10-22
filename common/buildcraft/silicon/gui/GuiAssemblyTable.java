@@ -126,8 +126,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer() {
-		super.drawGuiContainerForegroundLayer();
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		super.drawGuiContainerForegroundLayer(par1, par2);
 		String title = StringUtil.localize("tile.assemblyTableBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);

@@ -179,7 +179,7 @@ public class PipeTransportPower extends PipeTransport {
 				internalNextPower[from.ordinal()] += val;
 
 			if (internalNextPower[from.ordinal()] >= 1000)
-				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2);
+				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2, true);
 		}
 	}
 

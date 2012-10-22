@@ -33,6 +33,7 @@ import buildcraft.transport.render.TileEntityPickupFX;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
+import net.minecraft.src.ChunkCoordinates;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -52,7 +53,7 @@ public class CoreProxyClient extends CoreProxy {
 	public Object getClient() {
 		return FMLClientHandler.instance().getClient();
 	}
-	
+
 	public World getClientWorld() {
 		return FMLClientHandler.instance().getClient().theWorld;
 	}
@@ -70,10 +71,10 @@ public class CoreProxyClient extends CoreProxy {
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
 		if(Block.blocksList[id] == null)
 			return;
-		
+
 		Block.blocksList[id].getSubBlocks(id, tab, itemList);
 	}
-	
+
 	/* LOCALIZATION */
 	@Override
 	public String getCurrentLanguage() {
@@ -145,7 +146,14 @@ public class CoreProxyClient extends CoreProxy {
 	private EntityPlayer createNewPlayer(World world) {
 		return new EntityPlayer(world) {
 			@Override public void sendChatToPlayer(String var1) {}
-			@Override public boolean canCommandSenderUseCommand(String var1) { return false; }
+			@Override
+			public boolean canCommandSenderUseCommand(int var1, String var2) {
+				return false;
+			}
+			@Override
+			public ChunkCoordinates func_82114_b() {
+				return null;
+			}
 		};
 	}
 

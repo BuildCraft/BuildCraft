@@ -259,7 +259,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	}
 
 	private void updateCraftingResults() {
-		outputSlot = CraftingManager.getInstance().findMatchingRecipe(new InventoryCrafting(
+		outputSlot = CraftingManager.getInstance().func_82787_a(new InventoryCrafting(
 				new Container() {
 					@Override
 					public boolean canInteractWith(EntityPlayer var1) {
@@ -271,7 +271,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 			public ItemStack getStackInSlot(int par1) {
 				return craftingSlots.getStackInSlot(par1);
 			}
-		});
+		},worldObj);
 		onInventoryChanged();
 	}
 
