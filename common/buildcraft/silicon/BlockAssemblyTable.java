@@ -2,6 +2,7 @@ package buildcraft.silicon;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -88,6 +89,11 @@ public class BlockAssemblyTable extends BlockContainer {
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@Override
+	public int damageDropped(int par1) {
+		return par1;
 	}
 
 	@Override

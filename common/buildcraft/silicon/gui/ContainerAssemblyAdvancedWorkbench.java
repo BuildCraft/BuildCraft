@@ -2,6 +2,9 @@ package buildcraft.silicon.gui;
 
 import java.util.Iterator;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ICrafting;
 import net.minecraft.src.IInventory;
@@ -71,6 +74,8 @@ public class ContainerAssemblyAdvancedWorkbench extends BuildCraftContainer {
             ICrafting var5 = (ICrafting)var4.next();
             var5.updateCraftingInventorySlot(this, -10, workbench.getOutputSlot());
         }
+		for (int i = 0; i < crafters.size(); i++)
+			workbench.sendGUINetworkData(this, (ICrafting) crafters.get(i));
 	}
 
 	@Override
@@ -78,7 +83,7 @@ public class ContainerAssemblyAdvancedWorkbench extends BuildCraftContainer {
 		if (par1>=0) {
 			super.putStackInSlot(par1, par2ItemStack);
 		} else if (par1 == -10){
-			workbench.setOutputSlot(par2ItemStack);
+			workbench.craftResult.setInventorySlotContents(0, par2ItemStack);
 		} else {
 			workbench.getCraftingSlots().setInventorySlotContents(-1-par1, par2ItemStack);
 		}
@@ -92,4 +97,10 @@ public class ContainerAssemblyAdvancedWorkbench extends BuildCraftContainer {
 			return null;
 		}
 	}
+
+	@Override
+	public void updateProgressBar(int par1, int par2) {
+		workbench.getGUINetworkData(par1, par2);
+	}
+
 }
