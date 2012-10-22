@@ -68,7 +68,7 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side) {
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (worldObj.isRemote) return false;
 		TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
 		if (!(tile instanceof TileGenericPipe)) return false;
