@@ -219,16 +219,16 @@ public class BuildCraftBuilders {
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		Property templateItemId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("templateItem.id", Configuration.CATEGORY_ITEM, DefaultProps.TEMPLATE_ITEM_ID);
-		Property blueprintItemId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("blueprintItem.id", Configuration.CATEGORY_ITEM, DefaultProps.BLUEPRINT_ITEM_ID);
-		Property markerId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("marker.id", DefaultProps.MARKER_ID);
-		Property pathMarkerId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("pathMarker.id", DefaultProps.PATH_MARKER_ID);
-		Property fillerId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("filler.id", DefaultProps.FILLER_ID);
-		Property builderId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("builder.id", DefaultProps.BUILDER_ID);
-		Property architectId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("architect.id", DefaultProps.ARCHITECT_ID);
-		Property libraryId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
+		Property templateItemId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
+		Property blueprintItemId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
+		Property markerId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"marker.id", DefaultProps.MARKER_ID);
+		Property pathMarkerId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"pathMarker.id", DefaultProps.PATH_MARKER_ID);
+		Property fillerId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"filler.id", DefaultProps.FILLER_ID);
+		Property builderId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"builder.id", DefaultProps.BUILDER_ID);
+		Property architectId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"architect.id", DefaultProps.ARCHITECT_ID);
+		Property libraryId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
 
-		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("filler.destroy", Configuration.CATEGORY_GENERAL, DefaultProps.FILLER_DESTROY);
+		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
 

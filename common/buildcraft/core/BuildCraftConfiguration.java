@@ -24,12 +24,12 @@ public class BuildCraftConfiguration extends Configuration {
 	public void save() {
 		Property versionProp = null;
 
-		if (!generalProperties.containsKey("version")) {
+		if (!categories.get(CATEGORY_GENERAL).containsKey("version")) {
 			versionProp = new Property();
 			versionProp.setName("version");
-			generalProperties.put("version", versionProp);
+			categories.get(CATEGORY_GENERAL).put("version", versionProp);
 		} else
-			versionProp = generalProperties.get("version");
+			versionProp = categories.get(CATEGORY_GENERAL).get("version");
 
 		versionProp.value = Version.VERSION;
 

@@ -103,12 +103,12 @@ public class BuildCraftEnergy {
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		Property engineId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("engine.id", DefaultProps.ENGINE_ID);
-		Property oilStillId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("oilStill.id", DefaultProps.OIL_STILL_ID);
-		Property oilMovingId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("oilMoving.id", DefaultProps.OIL_MOVING_ID);
-		Property bucketOilId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("bucketOil.id", Configuration.CATEGORY_ITEM, DefaultProps.BUCKET_OIL_ID);
-		Property bucketFuelId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("bucketFuel.id", Configuration.CATEGORY_ITEM, DefaultProps.BUCKET_FUEL_ID);
-		Property itemFuelId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("fuel.id", Configuration.CATEGORY_ITEM, DefaultProps.FUEL_ID);
+		Property engineId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"engine.id", DefaultProps.ENGINE_ID);
+		Property oilStillId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"oilStill.id", DefaultProps.OIL_STILL_ID);
+		Property oilMovingId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"oilMoving.id", DefaultProps.OIL_MOVING_ID);
+		Property bucketOilId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"bucketOil.id", DefaultProps.BUCKET_OIL_ID);
+		Property bucketFuelId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"bucketFuel.id", DefaultProps.BUCKET_FUEL_ID);
+		Property itemFuelId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"fuel.id", DefaultProps.FUEL_ID);
 
 		BuildCraftCore.mainConfiguration.save();
 

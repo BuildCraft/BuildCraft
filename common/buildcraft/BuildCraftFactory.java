@@ -151,18 +151,18 @@ public class BuildCraftFactory {
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("mining.enabled", Configuration.CATEGORY_GENERAL, true).value);
+		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"mining.enabled", true).value);
 
-		Property minigWellId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("miningWell.id", DefaultProps.MINING_WELL_ID);
-		Property plainPipeId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("drill.id", DefaultProps.DRILL_ID);
-		Property autoWorkbenchId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("autoWorkbench.id", DefaultProps.AUTO_WORKBENCH_ID);
-		Property frameId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("frame.id", DefaultProps.FRAME_ID);
-		Property quarryId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("quarry.id", DefaultProps.QUARRY_ID);
-		Property pumpId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("pump.id", DefaultProps.PUMP_ID);
-		Property tankId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("tank.id", DefaultProps.TANK_ID);
-		Property refineryId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("refinery.id", DefaultProps.REFINERY_ID);
-		Property hopperId = BuildCraftCore.mainConfiguration.getOrCreateBlockIdProperty("hopper.id", DefaultProps.HOPPER_ID);
-		Property hopperDisable = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("hopper.disabled", "Block Savers", false);
+		Property minigWellId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"miningWell.id", DefaultProps.MINING_WELL_ID);
+		Property plainPipeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"drill.id", DefaultProps.DRILL_ID);
+		Property autoWorkbenchId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"autoWorkbench.id", DefaultProps.AUTO_WORKBENCH_ID);
+		Property frameId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"frame.id", DefaultProps.FRAME_ID);
+		Property quarryId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"quarry.id", DefaultProps.QUARRY_ID);
+		Property pumpId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"pump.id", DefaultProps.PUMP_ID);
+		Property tankId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"tank.id", DefaultProps.TANK_ID);
+		Property refineryId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"refinery.id", DefaultProps.REFINERY_ID);
+		Property hopperId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"hopper.id", DefaultProps.HOPPER_ID);
+		Property hopperDisable = BuildCraftCore.mainConfiguration.get( "Block Savers","hopper.disabled", false);
 
 		BuildCraftCore.mainConfiguration.save();
 

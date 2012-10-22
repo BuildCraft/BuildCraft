@@ -69,7 +69,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
-@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[4.1.4.285,)")
+@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[5.0,)")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {
@@ -160,20 +160,20 @@ public class BuildCraftCore {
 			stripesLaserTexture = 0 * 16 + 3;
 			transparentTexture = 0 * 16 + 0;
 
-			Property continuousCurrent = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("current.continuous", Configuration.CATEGORY_GENERAL, DefaultProps.CURRENT_CONTINUOUS);
+			Property continuousCurrent = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"current.continuous", DefaultProps.CURRENT_CONTINUOUS);
 			continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 			continuousCurrentModel = continuousCurrent.getBoolean(DefaultProps.CURRENT_CONTINUOUS);
 
-			Property trackNetwork = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("trackNetworkUsage", Configuration.CATEGORY_GENERAL, false);
+			Property trackNetwork = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"trackNetworkUsage", false);
 			trackNetworkUsage = trackNetwork.getBoolean(false);
 
-			Property dropBlock = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("dropBrokenBlocks", Configuration.CATEGORY_GENERAL, true);
+			Property dropBlock = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"dropBrokenBlocks", true);
 			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
 			dropBrokenBlocks = dropBlock.getBoolean(true);
 
-			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.getOrCreateProperty("power.framework", Configuration.CATEGORY_GENERAL, "buildcraft.energy.PneumaticPowerFramework");
+			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"power.framework", "buildcraft.energy.PneumaticPowerFramework");
 
-			Property factor = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("network.updateFactor", Configuration.CATEGORY_GENERAL, 10);
+			Property factor = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
 			updateFactor = factor.getInt(10);
 
@@ -189,17 +189,17 @@ public class BuildCraftCore {
 				PowerFramework.currentFramework = new RedstonePowerFramework();
 			}
 
-			Property wrenchId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("wrench.id", Configuration.CATEGORY_ITEM, DefaultProps.WRENCH_ID);
+			Property wrenchId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"wrench.id", DefaultProps.WRENCH_ID);
 
 			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setIconIndex(0 * 16 + 2).setItemName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
 
-			Property woodenGearId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("woodenGearItem.id", Configuration.CATEGORY_ITEM, DefaultProps.WOODEN_GEAR_ID);
-			Property stoneGearId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("stoneGearItem.id", Configuration.CATEGORY_ITEM, DefaultProps.STONE_GEAR_ID);
-			Property ironGearId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("ironGearItem.id", Configuration.CATEGORY_ITEM, DefaultProps.IRON_GEAR_ID);
-			Property goldenGearId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("goldenGearItem.id", Configuration.CATEGORY_ITEM, DefaultProps.GOLDEN_GEAR_ID);
-			Property diamondGearId = BuildCraftCore.mainConfiguration.getOrCreateIntProperty("diamondGearItem.id", Configuration.CATEGORY_ITEM, DefaultProps.DIAMOND_GEAR_ID);
-			Property modifyWorld = BuildCraftCore.mainConfiguration.getOrCreateBooleanProperty("modifyWorld", Configuration.CATEGORY_GENERAL, true);
+			Property woodenGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
+			Property stoneGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
+			Property ironGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"ironGearItem.id", DefaultProps.IRON_GEAR_ID);
+			Property goldenGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
+			Property diamondGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
+			Property modifyWorld = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"modifyWorld", true);
 			modifyWorld.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 
 			BuildCraftCore.modifyWorld = modifyWorld.getBoolean(true);

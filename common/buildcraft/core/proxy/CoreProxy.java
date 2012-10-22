@@ -13,6 +13,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -38,7 +40,7 @@ public class CoreProxy {
 	@SidedProxy(clientSide="buildcraft.core.proxy.CoreProxyClient", serverSide="buildcraft.core.proxy.CoreProxy")
 	public static CoreProxy proxy;
 
-	public String getMinecraftVersion() { return "1.3.2"; }
+	public String getMinecraftVersion() { return Loader.instance().getMinecraftModContainer().getVersion(); }
 
 	/* INSTANCES */
 	public Object getClient() { return null; }
