@@ -44,9 +44,11 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateBottom = 2;
 
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 4F / 16F, 1, 1);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F, 11F / 16F, 11F / 16F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.XNeg.ordinal()) {
 			renderblocks.uvRotateEast = 1;
@@ -55,18 +57,22 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateBottom = 1;
 
 			block.setBlockBounds(1F - 4F / 16F, 0.0F, 0.0F, 1, 1, 1);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F, 1F - 4F / 16F, 11F / 16F, 11F / 16F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.ZNeg.ordinal()) {
 			renderblocks.uvRotateSouth = 1;
 			renderblocks.uvRotateNorth = 2;
 
 			block.setBlockBounds(0.0F, 0.0F, 1F - 4F / 16F, 1, 1, 1);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F, 11F / 16F, 1F - 4F / 16F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.ZPos.ordinal()) {
 			renderblocks.uvRotateSouth = 2;
@@ -75,9 +81,11 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateBottom = 3;
 
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 1, 4F / 16F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F, 11F / 16F, 13F / 16F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.YNeg.ordinal()) {
 			renderblocks.uvRotateEast = 3;
@@ -86,15 +94,19 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateNorth = 3;
 
 			block.setBlockBounds(0.0F, 1.0F - 4F / 16F, 0.0F, 1.0F, 1.0F, 1.0F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F, 1F - 4F / 16F, 11F / 16F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == Orientations.YPos.ordinal()) {
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
@@ -116,9 +128,11 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
+        renderblocks.func_83018_a(block);
 		renderBlockInInv(renderblocks, block, 0);
 
 		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
+        renderblocks.func_83018_a(block);
 		renderBlockInInv(renderblocks, block, 1);
 
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);

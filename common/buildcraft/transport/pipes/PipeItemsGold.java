@@ -33,15 +33,15 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(Orientations direction) {
-		if (broadcastRedstone || worldObj != null && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
+		if (!broadcastRedstone && worldObj != null && !worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
 			return 1 * 16 + 14;
 		else
 			return 1 * 16 + 4;
 	}
-	
+
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
 		if (!super.isPipeConnected(tile))
@@ -66,7 +66,7 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public void entityEntered(IPipedItem item, Orientations orientation) {
-		if (broadcastRedstone || worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
+		if (!broadcastRedstone && !worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
 			item.setSpeed(Utils.pipeNormalSpeed * 20F);
 	}
 
@@ -74,9 +74,9 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	public void readjustSpeed(IPipedItem item) {
 		((PipeTransportItems) transport).defaultReajustSpeed(item);
 	}
-	
+
 	@Override
-	public boolean canConnectRedstone() {	
+	public boolean canConnectRedstone() {
 		return true;
 	}
 }

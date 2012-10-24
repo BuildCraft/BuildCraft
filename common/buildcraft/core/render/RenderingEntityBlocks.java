@@ -56,6 +56,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 			Tessellator tessellator = Tessellator.instance;
 
 			block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
+	        renderer.func_83018_a(block);
 			block.setBlockBoundsForItemRender();
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 			tessellator.startDrawingQuads();
@@ -119,35 +120,42 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		float maxSize = Utils.pipeMaxPos;
 
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
+        renderblocks.func_83018_a(block);
 		renderblocks.renderStandardBlock(block, i, j, k);
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
 			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
 			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
 			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
 			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
 			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
 			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
+	        renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 

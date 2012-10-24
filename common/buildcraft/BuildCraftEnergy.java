@@ -103,9 +103,9 @@ public class BuildCraftEnergy {
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		Property engineId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"engine.id", DefaultProps.ENGINE_ID);
-		Property oilStillId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"oilStill.id", DefaultProps.OIL_STILL_ID);
-		Property oilMovingId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"oilMoving.id", DefaultProps.OIL_MOVING_ID);
+		Property engineId = BuildCraftCore.mainConfiguration.getBlock("engine.id", DefaultProps.ENGINE_ID);
+		Property oilStillId = BuildCraftCore.mainConfiguration.getBlock("oilStill.id", DefaultProps.OIL_STILL_ID);
+		Property oilMovingId = BuildCraftCore.mainConfiguration.getBlock("oilMoving.id", DefaultProps.OIL_MOVING_ID);
 		Property bucketOilId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"bucketOil.id", DefaultProps.BUCKET_OIL_ID);
 		Property bucketFuelId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"bucketFuel.id", DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"fuel.id", DefaultProps.FUEL_ID);

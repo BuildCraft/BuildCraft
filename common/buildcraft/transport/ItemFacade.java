@@ -98,8 +98,8 @@ public class ItemFacade extends ItemBuildCraft {
 			if (stack.getItem() instanceof ItemBlock){
 				ItemBlock itemBlock = (ItemBlock) stack.getItem();
 				int blockId = itemBlock.getBlockID();
-				//Block certain IDs (Bedrock, leaves and spunge)
-				if (blockId == 7 || blockId == 18 || blockId == 19) continue;
+				//Block certain IDs (Bedrock, leaves, sponge, lockedchest)
+				if (blockId == 7 || blockId == 18 || blockId == 19 || blockId == 95) continue;
 
 				if (Block.blocksList[blockId] != null
 					&& Block.blocksList[blockId].isOpaqueCube()
@@ -154,7 +154,7 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static int encode(int blockId, int metaData){
-		return metaData + (blockId << 4);
+		return metaData & 0xF | ((blockId & 0xFFF) << 4);
 	}
 
 	public static int getMetaData(int encoded){
@@ -162,7 +162,7 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static int getBlockId(int encoded){
-		return encoded >>> 4;
+		return ((encoded & 0xFFF0) >>> 4);
 	}
 
 

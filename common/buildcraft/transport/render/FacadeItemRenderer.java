@@ -22,18 +22,19 @@ public class FacadeItemRenderer implements IItemRenderer {
 		int decodedBlockId = ItemFacade.getBlockId(item.getItemDamage());
 
 		Tessellator tessellator = Tessellator.instance;
-		
+
 		Block block = Block.blocksList[decodedBlockId];
 		if (block == null){
 			return;
 		}
-		
+
 		//Render Facade
 		GL11.glPushMatrix();
 		ForgeHooksClient.bindTexture(block.getTextureFile(), 0);
 		block.setBlockBounds(0F, 0F, 1F - 1F/16F, 1F, 1F, 1F);
+        render.func_83018_a(block);
 		GL11.glTranslatef(translateX, translateY, translateZ);
-		
+
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
 		render.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, decodedMeta));
@@ -60,16 +61,17 @@ public class FacadeItemRenderer implements IItemRenderer {
 		tessellator.draw();
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPopMatrix();
-		
-		
+
+
 		//Render StructurePipe
 		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 		block = BuildCraftTransport.genericPipeBlock;
 		int textureID = 7 * 16 + 13; //Structure pipe
 		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F/16F);
 		block.setBlockBoundsForItemRender();
+        render.func_83018_a(block);
 		GL11.glTranslatef(translateX, translateY, translateZ + 0.25F);
-		
+
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -0F, 0.0F);
 		render.renderBottomFace(block, 0.0D, 0.0D, 0.0D, textureID);
@@ -98,7 +100,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-	
+
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
 		switch (type){
@@ -117,7 +119,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-		
+
 		switch (type) {
 		case ENTITY:
 			GL11.glScalef(0.50F, 0.50F, 0.50F);

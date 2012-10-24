@@ -14,7 +14,7 @@ import net.minecraft.src.Tessellator;
 import net.minecraftforge.client.IItemRenderer;
 
 public class PipeItemRenderer implements IItemRenderer {
-	
+
 	private void renderPipeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 
 		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, 10);
@@ -27,6 +27,8 @@ public class PipeItemRenderer implements IItemRenderer {
 
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();
+        render.func_83018_a(block);
+
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
@@ -56,9 +58,9 @@ public class PipeItemRenderer implements IItemRenderer {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-	
+
 	/** IItemRenderer implementation **/
-	
+
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
 		switch (type) {

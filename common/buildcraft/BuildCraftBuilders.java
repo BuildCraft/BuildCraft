@@ -221,12 +221,12 @@ public class BuildCraftBuilders {
 	public void initialize(FMLPreInitializationEvent evt) {
 		Property templateItemId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
 		Property blueprintItemId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
-		Property markerId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"marker.id", DefaultProps.MARKER_ID);
-		Property pathMarkerId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"pathMarker.id", DefaultProps.PATH_MARKER_ID);
-		Property fillerId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"filler.id", DefaultProps.FILLER_ID);
-		Property builderId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"builder.id", DefaultProps.BUILDER_ID);
-		Property architectId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"architect.id", DefaultProps.ARCHITECT_ID);
-		Property libraryId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
+		Property markerId = BuildCraftCore.mainConfiguration.getBlock("marker.id", DefaultProps.MARKER_ID);
+		Property pathMarkerId = BuildCraftCore.mainConfiguration.getBlock("pathMarker.id", DefaultProps.PATH_MARKER_ID);
+		Property fillerId = BuildCraftCore.mainConfiguration.getBlock("filler.id", DefaultProps.FILLER_ID);
+		Property builderId = BuildCraftCore.mainConfiguration.getBlock("builder.id", DefaultProps.BUILDER_ID);
+		Property architectId = BuildCraftCore.mainConfiguration.getBlock("architect.id", DefaultProps.ARCHITECT_ID);
+		Property libraryId = BuildCraftCore.mainConfiguration.getBlock("blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
 
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
