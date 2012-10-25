@@ -149,8 +149,8 @@ public class BuildCraftEnergy {
 
 		// Iron Engine Fuels
 		IronEngineFuel.fuels.add(new IronEngineFuel(Block.lavaStill.blockID, 1, 20000));
-		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 2, 10000));
-		IronEngineFuel.fuels.add(new IronEngineFuel(fuel.shiftedIndex, 5, 50000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 3, 20000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(fuel.shiftedIndex, 6, 100000));
 
 		// Iron Engine Coolants
 		IronEngineCoolant.coolants.add(new IronEngineCoolant(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), 1.0f));
