@@ -9,13 +9,22 @@
 package buildcraft;
 
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.primitives.Ints;
 
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.IMCCallback;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -400,6 +409,31 @@ public class BuildCraftTransport {
 				GameRegistry.addRecipe(pipe.result, pipe.input);
 			}
 		}
+	}
+
+	@IMCCallback
+	public void processIMCRequests(FMLInterModComms.IMCEvent event)	{
+	    Splitter splitter = Splitter.on("@").trimResults();
+	    for (IMCMessage m : event.getMessages())
+	    {
+	        if ("add-facade".equals(m.key))
+	        {
+	            String[] array = Iterables.toArray(splitter.split(m.value), String.class);
+	            if (array.length!=2)
+	            {
+	                Logger.getLogger("Buildcraft").log(Level.INFO,String.format("Received an invalid add-facade request %s from mod %s",m.value,m.sender));
+	                continue;
+	            }
+                    Integer blId = Ints.tryParse(array[0]);
+                    Integer metaId = Ints.tryParse(array[1]);
+	            if (blId == null || metaId == null)
+	            {
+                        Logger.getLogger("Buildcraft").log(Level.INFO,String.format("Received an invalid add-facade request %s from mod %s",m.value,m.sender));
+                        continue;
+	            }
+	            ItemFacade.addFacade(new ItemStack(blId, 0, metaId));
+	        }
+	    }
 	}
 
 	private static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3) {

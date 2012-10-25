@@ -1,12 +1,16 @@
 package buildcraft.transport;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -90,67 +94,32 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@SuppressWarnings("rawtypes")
 	public static void initialize(){
-		List creativeItems = getCreativeContents();
-		ListIterator creativeIterator = creativeItems.listIterator();
-
-		while(creativeIterator.hasNext()){
-			ItemStack stack = (ItemStack) creativeIterator.next();
-			if (stack.getItem() instanceof ItemBlock){
-				ItemBlock itemBlock = (ItemBlock) stack.getItem();
-				int blockId = itemBlock.getBlockID();
-				//Block certain IDs (Bedrock, leaves, sponge, lockedchest)
-				if (blockId == 7 || blockId == 18 || blockId == 19 || blockId == 95) continue;
-
-				if (Block.blocksList[blockId] != null
-					&& Block.blocksList[blockId].isOpaqueCube()
-					&& Block.blocksList[blockId].getBlockName() != null
-					&& !Block.blocksList[blockId].hasTileEntity(0)
-					&& Block.blocksList[blockId].renderAsNormalBlock())
-				{
-					allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(blockId, stack.getItemDamage())));
-
-					//3 Structurepipes + this block makes 6 facades
-					AssemblyRecipe.assemblyRecipes.add(
-							new AssemblyRecipe(
-									new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), new ItemStack(blockId, 1, stack.getItemDamage())},
-									8000,
-									new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(blockId,  stack.getItemDamage()))));
-				}
-			}
-		}
-	}
-
-	private static List<ItemStack> getCreativeContents() {
-		List<ItemStack> list = Lists.newArrayList();
-		for (Item i : Item.itemsList)
+		for (Field f : Block.class.getDeclaredFields())
 		{
-			if (i instanceof ItemBlock)
-			{
-				int blId = ((ItemBlock) i).getBlockID();
-				ItemStack rootIS = new ItemStack(blId, 0, 0);
-				if (i.getHasSubtypes())
-				{
-					String base = i.getItemNameIS(rootIS);
-					for (int j = 0; j < 16; j++)
-					{
-						int md = i.getMetadata(j);
-						ItemStack comp = new ItemStack(blId, 0, j);
-						try {
-							if (! base.equals(i.getItemNameIS(comp)) && !Strings.isNullOrEmpty(i.getItemNameIS(comp)))
-							{
-								list.add(comp);
-							}
-						} catch (Exception e)
-						{
-							break;
-						}
-					}
-				}
-				list.add(rootIS);
-			}
+		    if (Modifier.isStatic(f.getModifiers()) && Block.class.isAssignableFrom(f.getType()))
+		    {
+		        Block b;
+                        try {
+                            b = (Block) f.get(null);
+                        } catch (Exception e) {
+                            continue;
+                        }
+                        if (b.blockID == 7 || b.blockID == 18 || b.blockID == 19 || b.blockID == 95) continue;
+                        if (!b.isOpaqueCube() || b.hasTileEntity(0)|| !b.renderAsNormalBlock()) continue;
+                        ItemStack base = new ItemStack(b,1);
+                        if (base.getHasSubtypes()) {
+                            Set<String> names = Sets.newHashSet();
+                            for (int meta = 0; meta < 15; meta++) {
+                                ItemStack is = new ItemStack(b, 1, meta);
+                                if (!Strings.isNullOrEmpty(is.getItemName()) && names.add(is.getItemName())) {
+                                    ItemFacade.addFacade(is);
+                                }
+                            }
+                        } else {
+                            ItemFacade.addFacade(base);
+                        }
+		    }
 		}
-
-		return list;
 	}
 
 	public static int encode(int blockId, int metaData){
@@ -165,6 +134,14 @@ public class ItemFacade extends ItemBuildCraft {
 		return ((encoded & 0xFFF0) >>> 4);
 	}
 
+        public static void addFacade(ItemStack itemStack) {
+            allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage())));
 
+            //3 Structurepipes + this block makes 6 facades
+            AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(
+                                            new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack},
+                                            8000,
+                                            new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID,  itemStack.getItemDamage()))));
+        }
 }
 
