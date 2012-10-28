@@ -281,7 +281,6 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		recentEnergy[tick] = 0.0f;
 		while (storedEnergy >= getRequiredEnergy() && craftResult.getStackInSlot(0)!=null)
 		{
-			System.out.println("Stored "+storedEnergy);
 			ItemStack[] tempStorage = Arrays.copyOf(storageSlots, storageSlots.length);
 			internalInventoryCrafting.tempStacks = tempStorage;
 			internalInventoryCrafting.hitCount=new int[27];
