@@ -13,7 +13,6 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeEntry;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -47,11 +46,9 @@ public class PipeLogicIron extends PipeLogic {
 
 			TileEntity tile = container.getTile(Orientations.values()[nextMetadata]);
 
-			if (tile instanceof TileGenericPipe) {
-				Pipe pipe = ((TileGenericPipe) tile).pipe;
-				if (pipe.logic instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone)
+			if (tile instanceof TileGenericPipe)
+				if (((TileGenericPipe) tile).pipe.logic instanceof PipeLogicWood)
 					continue;
-			}
 
 			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer
 					|| tile instanceof TileGenericPipe) {

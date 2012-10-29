@@ -45,15 +45,13 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 
 		@Override
 		public ItemStack getStackInSlot(int par1) {
-			if(tempStacks != null) {
-				if(par1 >= 0 && par1 < 9) {
-					if(bindings[par1] >= 0) {
-						return tempStacks[bindings[par1]];
-					}
-				}
+			if (tempStacks!=null && par1>=0) {
+				return tempStacks[bindings[par1]];
+			} else if (tempStacks!=null && par1<0) {
 				return null;
+			} else {
+				return craftingSlots.getStackInSlot(par1);
 			}
-			return craftingSlots.getStackInSlot(par1);
 		}
 
 		@Override
@@ -283,6 +281,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		recentEnergy[tick] = 0.0f;
 		while (storedEnergy >= getRequiredEnergy() && craftResult.getStackInSlot(0)!=null)
 		{
+			System.out.println("Stored "+storedEnergy);
 			ItemStack[] tempStorage = Arrays.copyOf(storageSlots, storageSlots.length);
 			internalInventoryCrafting.tempStacks = tempStorage;
 			internalInventoryCrafting.hitCount=new int[27];

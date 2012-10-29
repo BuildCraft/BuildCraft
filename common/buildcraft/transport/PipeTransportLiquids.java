@@ -9,6 +9,8 @@
 
 package buildcraft.transport;
 
+import java.util.Arrays;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
@@ -45,8 +47,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 		@Override
 		public int fill(LiquidStack resource, boolean doFill) {
-			if(resource == null)
-				return 0;
+            if(resource == null)
+                return 0;
 
 			int maxToFill = Math.min(resource.amount, flowRate - incomming[currentTime]);
 			if (maxToFill <= 0) return 0;
@@ -85,6 +87,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		public void reset(){
 			this.setLiquid(null);
 			incomming = new short[travelDelay];
+
 		}
 
 		public int getAvailable(){
@@ -114,6 +117,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			if (this.getLiquid() != null){
 				this.getLiquid().writeToNBT(subTag);
 			}
+
 		}
 	}
 
@@ -131,17 +135,14 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public static short OUTPUT_TTL = 80;	//80
 	public static short OUTPUT_COOLDOWN = 30;	//30
 
-	private static final Orientations[] directions = Orientations.dirs();
-	private static final Orientations[] orientations = Orientations.values();
-
 
 	public short travelDelay = 12;
 	public short flowRate = 20;
-	public LiquidStack[] renderCache = new LiquidStack[orientations.length];
+	public LiquidStack[] renderCache = new LiquidStack[Orientations.values().length];
 
-	private final PipeSection[] internalTanks = new PipeSection[orientations.length];
+	private final PipeSection[] internalTanks = new PipeSection[Orientations.values().length];
 
-	private final TransferState[] transferState = new TransferState[directions.length];
+	private final TransferState[] transferState = new TransferState[Orientations.dirs().length];
 
 	private final short[] inputTTL = new short[] { 0, 0, 0, 0, 0, 0 };
 	private final short[] outputTTL = new short[] { OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL };
@@ -151,7 +152,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 
 	public PipeTransportLiquids() {
-		for (Orientations direction : orientations) {
+		for (Orientations direction : Orientations.values()) {
 			internalTanks[direction.ordinal()] = new PipeSection();
 			if (direction != Orientations.Unknown){
 				transferState[direction.ordinal()] = TransferState.None;
@@ -185,7 +186,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			return;
 
 		moveLiquids();
-		for (Orientations direction : orientations) {
+		for (Orientations direction : Orientations.values()) {
 			LiquidStack liquid = internalTanks[direction.ordinal()].getLiquid();
 
 			if (liquid != null){
@@ -232,7 +233,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		for (Orientations direction : orientations) {
+		for (Orientations direction : Orientations.values()) {
 			if (nbttagcompound.hasKey("tank[" + direction.ordinal() + "]")){
 				internalTanks[direction.ordinal()].readFromNBT(nbttagcompound.getCompoundTag("tank[" + direction.ordinal() + "]"));
 			}
@@ -246,7 +247,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		for (Orientations direction : orientations) {
+		for (Orientations direction : Orientations.values()) {
 			NBTTagCompound subTag = new NBTTagCompound();
 			internalTanks[direction.ordinal()].writeToNBT(subTag);
 			nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
@@ -268,7 +269,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private void moveFromPipe(short outputCount) {
 		//Move liquid from the non-center to the connected output blocks
 		if (outputCount > 0) {
-			for (Orientations o : directions){
+			for (Orientations o : Orientations.dirs()){
 				if (transferState[o.ordinal()] == TransferState.Output){
 					TileEntity target = this.container.getTile(o);
 					if (!(target instanceof ITankContainer)) continue;
@@ -295,7 +296,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			LiquidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
 			//Move liquid from the center to the output sides
-			for (Orientations direction : directions) {
+			for (Orientations direction : Orientations.dirs()) {
 				if (transferState[direction.ordinal()] == TransferState.Output)	{
 					int available = internalTanks[direction.ordinal()].fill(testStack, false);
 					int ammountToPush = (int) (available / (double) flowRate / (double) outputCount * (double) Math.min(flowRate, totalAvailable));
@@ -321,7 +322,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 
 
-		for (Orientations direction : directions){
+		for (Orientations direction : Orientations.dirs()){
 			LiquidStack testStack = internalTanks[direction.ordinal()].drain(flowRate, false);
 			if (testStack == null) continue;
 			if (stackInCenter != null && !stackInCenter.isLiquidEqual(testStack)) continue;
@@ -329,7 +330,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			transferInCount++;
 		}
 
-		for (Orientations direction : directions){
+		for (Orientations direction : Orientations.dirs()){
 			//Move liquid from input sides to the center
 			if (transferState[direction.ordinal()] != TransferState.Output && maxInput[direction.ordinal()] > 0){
 
@@ -351,7 +352,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		short outputCount = 0;
 
 		//Processes all internal tanks
-		for (Orientations direction : orientations) {
+		for (Orientations direction : Orientations.values()) {
 			internalTanks[direction.ordinal()].setTime(newTimeSlot);
 			internalTanks[direction.ordinal()].moveLiquids();
 			// Input processing
@@ -392,8 +393,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		for (Orientations direction : directions){
-			if (!Utils.checkPipesConnections(container.getTile(orientations[direction.ordinal()]), container)) {
+		for (Orientations direction : Orientations.dirs()){
+			if (!Utils.checkPipesConnections(container.getTile(Orientations.values()[direction.ordinal()]), container)) {
 				internalTanks[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
 				renderCache[direction.ordinal()] = null;
@@ -424,6 +425,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	public void handleLiquidPacket(PacketLiquidUpdate packetLiquid) {
 		this.renderCache = packetLiquid.displayLiquid;
+
 	}
 
 	/** ITankContainer implementation **/
@@ -438,7 +440,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		int filled;
 
 		if (this.container.pipe instanceof IPipeTransportLiquidsHook)
-			filled = ((IPipeTransportLiquidsHook) this.container.pipe).fill(orientations[tankIndex], resource, doFill);
+			filled = ((IPipeTransportLiquidsHook) this.container.pipe).fill(Orientations.values()[tankIndex], resource, doFill);
 		else
 			filled = internalTanks[tankIndex].fill(resource, doFill);
 
