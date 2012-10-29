@@ -20,7 +20,7 @@ import cpw.mods.fml.client.FMLTextureFX;
 
 public class TextureFuelFlowFX extends FMLTextureFX {
 
-	public TextureOilFlowFX() {
+	public TextureFuelFlowFX() {
 		super(BuildCraftEnergy.fuelMoving.blockIndexInTexture + 1);
 
 		tileSize = 2;
