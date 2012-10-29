@@ -22,13 +22,13 @@ import net.minecraft.src.Material;
 import net.minecraft.src.World;
 
 
-public class BlockOilFlowing extends BlockFluid implements ILiquid {
+public class BlockFuelFlowing extends BlockFluid implements ILiquid {
 
 	int numAdjacentSources = 0;
 	boolean isOptimalFlowDirection[] = new boolean[4];
 	int flowCost[] = new int[4];
 
-	public BlockOilFlowing(int i, Material material) {
+	public BlockFuelFlowing(int i, Material material) {
 		super(i, material);
 		
 		setHardness(100F);
@@ -38,7 +38,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftCore.oilModel;
+		return BuildCraftCore.fuelModel;
 	}
 
 	@Override
@@ -258,7 +258,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	@Override
 	public int stillLiquidId() {
-		return BuildCraftEnergy.oilStill.blockID;
+		return BuildCraftEnergy.fuelStill.blockID;
 	}
 
 	@Override
@@ -275,12 +275,5 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	public boolean isBlockReplaceable(World world, int i, int j, int k) {
 		return true;
 	}
-	
-	@Override
-	public void onEntityCollidedWithBlock(World world, int x, int y,
-	        int z, Entity entity)
-	{
-	    entity.setInWeb();
-	}
-		
+
 }

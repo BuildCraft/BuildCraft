@@ -18,9 +18,9 @@ import net.minecraft.src.Material;
 import net.minecraft.src.World;
 
 
-public class BlockOilStill extends BlockStationary implements ILiquid {
+public class BlockFuelStill extends BlockStationary implements ILiquid {
 
-	public BlockOilStill(int i, Material material) {
+	public BlockFuelStill(int i, Material material) {
 		super(i, material);
 		
 		setHardness(100F);
@@ -30,7 +30,7 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftCore.oilModel;
+		return BuildCraftCore.fuelModel;
 	}
 
 	@Override
@@ -58,11 +58,4 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 		return true;
 	}
 
-	@Override
-	public void onEntityCollidedWithBlock(World world, int x, int y,
-	        int z, Entity entity)
-	{
-	    entity.setInWeb();
-	}
-	
 }
