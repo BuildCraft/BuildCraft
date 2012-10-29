@@ -38,12 +38,16 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BlockOilFlowing;
 import buildcraft.energy.BlockOilStill;
+import buildcraft.energy.BlockFuelFlowing;
+import buildcraft.energy.BlockFuelStill;
 import buildcraft.energy.BptBlockEngine;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketOil;
+import buildcraft.energy.ItemBucketFuel;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
+import buildcraft.energy.FuelBucketHandler;
 import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
 import buildcraft.energy.Engine.EnergyStage;
@@ -68,6 +72,8 @@ public class BuildCraftEnergy {
 
 	public static Block oilMoving;
 	public static Block oilStill;
+	public static Block fuelStill;
+	public static Block fuelMoving;
 	public static Item bucketOil;
 	public static Item bucketFuel;
 
@@ -104,6 +110,8 @@ public class BuildCraftEnergy {
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
 		Property engineId = BuildCraftCore.mainConfiguration.getBlock("engine.id", DefaultProps.ENGINE_ID);
+		Property fuelStillId = BuildCraftCore.mainConfiguration.getBlock("fuelStill.id", DefaultProps.FUEL_STILL_ID);
+		Property fuelMovingId = BuildCraftCore.mainConfiguration.getBlock("fuelMoving.id", DefaultProps.FUEL_MOVING_ID);
 		Property oilStillId = BuildCraftCore.mainConfiguration.getBlock("oilStill.id", DefaultProps.OIL_STILL_ID);
 		Property oilMovingId = BuildCraftCore.mainConfiguration.getBlock("oilMoving.id", DefaultProps.OIL_MOVING_ID);
 		Property bucketOilId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"bucketOil.id", DefaultProps.BUCKET_OIL_ID);
@@ -127,11 +135,26 @@ public class BuildCraftEnergy {
 		CoreProxy.proxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
 		CoreProxy.proxy.registerBlock(oilMoving);
 
+		fuelStill = (new BlockFuelStill(fuelStillId.getInt(DefaultProps.FUEL_STILL_ID), Material.water)).setBlockName("fuel");
+		CoreProxy.proxy.addName(fuelStill.setBlockName("fuelStill"), "Fuel");
+		CoreProxy.proxy.registerBlock(fuelStill);
+
+		fuelMoving = (new BlockFuelMoving(fuelMovingId.getInt(DefaultProps.FUEL_MOVING_ID), Material.water)).setBlockName("fuel");
+		CoreProxy.proxy.addName(fuelMoving.setBlockName("fuelMoving"), "Fuel");
+		CoreProxy.proxy.registerBlock(fuelMoving);
+
+
 		// Oil and fuel
 		if (oilMoving.blockID + 1 != oilStill.blockID)
 		{
 			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
 		}
+
+		if (fuelMoving.blockID + 1 != fuelStill.blockID)
+		{
+			throw new RuntimeException("Fuel Still id must be Fuel Moving id + 1");
+		}
+
 
 		fuel = new ItemBuildCraft(itemFuelId.getInt(DefaultProps.FUEL_ID)).setItemName("fuel");
 		LanguageRegistry.addName(fuel, "Fuel");
@@ -160,6 +183,8 @@ public class BuildCraftEnergy {
 
 		BuildCraftAPI.softBlocks[oilMoving.blockID] = true;
 		BuildCraftAPI.softBlocks[oilStill.blockID] = true;
+		BuildCraftAPI.softBlocks[fuelMoving.blockID] = true;
+		BuildCraftAPI.softBlocks[fuelStill.blockID] = true;
 	}
 
 	public static void loadRecipes() {
