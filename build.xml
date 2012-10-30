@@ -157,7 +157,7 @@
 
 	</target>
 
-	<target name="compile" depends="setup">
+	<target name="compile" depends="setup,localization-check">
 
 		<!-- Recompile -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
@@ -191,12 +191,22 @@
 		</copy>
 
 		<!-- Copy localizations -->
+		<antcall target="copy-localizations"/>
+		
+	</target>
+	
+	<target name="copy-localizations" depends="localization-check" if="localizations.exist">
 		<copy todir="${classes.dir}">
 			<fileset dir="${lang.dir}">
 				<exclude name="README.md"/>
 			</fileset>
 		</copy>
-
+	</target>
+	
+	<target name="localization-check">
+		<condition property="localizations.exist">
+			<available file="${lang.dir}" type="dir"/>
+		</condition>
 	</target>
 
 	<!-- Zip the compiled files -->
