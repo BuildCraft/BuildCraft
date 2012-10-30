@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -120,7 +120,7 @@ public class FillerFillStairs extends FillerPattern {
 		if (kind == 0) {
 			while (x2 - x1 + 1 > 0 && z2 - z1 + 1 > 0 && x2 - x1 < sizeX && z2 - z1 < sizeZ && height >= yMin && height <= yMax) {
 
-				if (!fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj)) {
+				if (fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj)) {
 					return false;
 				}
 
@@ -176,7 +176,7 @@ public class FillerFillStairs extends FillerPattern {
 
 				}
 
-				if (!fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj)) {
+				if (fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj)) {
 					return false;
 				}
 

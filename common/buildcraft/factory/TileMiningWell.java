@@ -21,7 +21,6 @@ import buildcraft.core.IMachine;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
@@ -55,12 +54,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			depth = depth - 1;
 		}
 
-		if (depth < 0
-				|| (Block.blocksList[world.getBlockId(xCoord, depth, zCoord)] != null && Block.blocksList[world.getBlockId(
-						xCoord, depth, zCoord)].getBlockHardness(world, xCoord, yCoord, zCoord) == -1.0f)
-				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaMoving.blockID
-				|| world.getBlockId(xCoord, depth, zCoord) == Block.lavaStill.blockID) {
-
+		if (depth < 0 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
 			isDigging = false;
 			return;
 		}
@@ -75,7 +69,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			return;
 		}
 
-		if (stacks == null || stacks.size() == 0) {
+		if (stacks == null || stacks.isEmpty()) {
 			return;
 		}
 
