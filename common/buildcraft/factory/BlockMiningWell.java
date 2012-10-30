@@ -9,6 +9,7 @@
 
 package buildcraft.factory;
 
+import buildcraft.BuildCraftFactory;
 import java.util.ArrayList;
 
 import buildcraft.api.core.Orientations;
@@ -68,7 +69,18 @@ public class BlockMiningWell extends BlockMachineRoot {
 		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
 	}
 
+	@Override
+	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
+		super.breakBlock(world, x, y, z, id, meta);
 
+		for(int depth = y - 1; depth > 0; depth--){
+			int pipeID = world.getBlockId(x, depth, z);
+			if(pipeID != BuildCraftFactory.plainPipeBlock.blockID){
+				break;
+			}
+			world.setBlockWithNotify(x, depth, z, 0);
+		}
+	}
 
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
