@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
 
+import buildcraft.BuildCraftEnergy;
+import buildcraft.BuildCraftFactory;
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
@@ -38,4 +40,29 @@ public class BlockUtil {
 		world.setBlockWithNotify(x, y, z, 0);
 	}
 
+	public static boolean canChangeBlock(World world, int x, int y, int z) {
+		if(world.isAirBlock(x, y, z)){
+			return true;
+		}
+
+		int blockID = world.getBlockId(x, y, z);
+		if(Block.blocksList[blockID] == null) {
+			return true;
+		}
+		Block block = Block.blocksList[blockID];
+
+		if(block.getBlockHardness(world, x, y, z) < 0) {
+			return false;
+		}
+
+		if(blockID == BuildCraftEnergy.oilMoving.blockID || blockID == BuildCraftEnergy.oilStill.blockID) {
+			return false;
+		}
+
+		if(blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID) {
+			return false;
+		}
+
+		return true;
+	}
 }

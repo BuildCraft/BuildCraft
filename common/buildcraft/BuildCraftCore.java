@@ -17,6 +17,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.Mod.ServerStarting;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -61,7 +62,11 @@ import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
 
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockFlower;
+import net.minecraft.src.BlockFluid;
+import net.minecraft.src.BlockGrass;
 import net.minecraft.src.CommandHandler;
 import net.minecraft.src.EntityList;
 import net.minecraft.src.Item;
@@ -232,11 +237,6 @@ public class BuildCraftCore {
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.lavaStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
 
-		BuildCraftAPI.softBlocks[Block.tallGrass.blockID] = true;
-		BuildCraftAPI.softBlocks[Block.snow.blockID] = true;
-		BuildCraftAPI.softBlocks[Block.waterMoving.blockID] = true;
-		BuildCraftAPI.softBlocks[Block.waterStill.blockID] = true;
-
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
@@ -260,6 +260,17 @@ public class BuildCraftCore {
 		Localization.addLocalization("/lang/buildcraft/", DefaultProps.DEFAULT_LANGUAGE);
 
 	}
+
+	@PostInit
+	public void postInit(FMLPostInitializationEvent event){
+		for(Block block : Block.blocksList) {
+			if(block instanceof BlockFluid || block instanceof BlockGrass){
+				BuildCraftAPI.softBlocks[block.blockID] = true;
+			}
+		}
+
+		BuildCraftAPI.softBlocks[Block.snow.blockID] = true;
+    }
 
 	@ServerStarting
 	public void serverStarting(FMLServerStartingEvent event) {

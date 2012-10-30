@@ -290,7 +290,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 						int blockId = worldObj.getBlockId(bx, by, bz);
 
-						if (isUnquarriableBlock(blockId, bx, by, bz)) {
+						if (!BlockUtil.canChangeBlock(worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
 						} else if (isQuarriableBlock(blockId, bx, by + 1, bz)) {
 							if (doSet) {
@@ -436,16 +436,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 	}
 
-	private boolean isUnquarriableBlock(int blockID, int bx, int by, int bz) {
-
-		if (Block.blocksList[blockID] != null && Block.blocksList[blockID].getBlockHardness(worldObj, bx, by, bz)  == -1.0f)
-			return true;
-
-		return blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID;
-	}
-
 	private boolean isQuarriableBlock(int blockID, int bx, int by, int bz) {
-		return !isUnquarriableBlock(blockID, bx, by, bz) && !BuildCraftAPI.softBlock(blockID);
+		return BlockUtil.canChangeBlock(worldObj, bx, by, bz) && !BuildCraftAPI.softBlock(blockID);
 	}
 
 	@Override

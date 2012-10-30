@@ -13,6 +13,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 
@@ -45,6 +46,9 @@ public class FillerFlattener extends FillerPattern {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
+					if(!BlockUtil.canChangeBlock(tile.worldObj, x, y, z)){
+						return true;
+					}
 					if (!blockedColumns[x - xMin][z - zMin]) {
 						if (!BuildCraftAPI.softBlock(tile.worldObj.getBlockId(x, y, z))) {
 							blockedColumns[x - xMin][z - zMin] = true;
@@ -72,7 +76,7 @@ public class FillerFlattener extends FillerPattern {
 			return false;
 		}
 
-		return empty(xMin, yMin, zMin, xMax, 64 * 2, zMax, tile.worldObj);
+		return !empty(xMin, yMin, zMin, xMax, 64 * 2, zMax, tile.worldObj);
 	}
 
 	@Override

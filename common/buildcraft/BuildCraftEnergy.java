@@ -157,9 +157,6 @@ public class BuildCraftEnergy {
 
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(oilStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(oilMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(fuel, LiquidManager.BUCKET_VOLUME), new LiquidStack(fuel, LiquidManager.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
-
-		BuildCraftAPI.softBlocks[oilMoving.blockID] = true;
-		BuildCraftAPI.softBlocks[oilStill.blockID] = true;
 	}
 
 	public static void loadRecipes() {

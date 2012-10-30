@@ -47,6 +47,12 @@ public abstract class FillerPattern implements IFillerPattern {
 		return this.id;
 	}
 
+	/**
+	 * Attempt to fill blocks in the area.
+	 *
+	 * Return false if the process failed.
+	 *
+	 */
 	public boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, ItemStack stackToPlace, World world) {
 		boolean found = false;
 		int xSlot = 0, ySlot = 0, zSlot = 0;
@@ -54,6 +60,9 @@ public abstract class FillerPattern implements IFillerPattern {
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {
+					if(!BlockUtil.canChangeBlock(world, x, y, z)){
+						return false;
+					}
 					if (BuildCraftAPI.softBlock(world.getBlockId(x, y, z))) {
 						xSlot = x;
 						ySlot = y;
@@ -70,9 +79,15 @@ public abstract class FillerPattern implements IFillerPattern {
 					zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
-		return !found;
+		return found;
 	}
 
+	/**
+	 * Attempt to remove the blocks in the area.
+	 *
+	 * Return false if is the process failed.
+	 *
+	 */
 	public boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world) {
 		boolean found = false;
 		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
@@ -81,8 +96,10 @@ public abstract class FillerPattern implements IFillerPattern {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if (!BuildCraftAPI.softBlock(world.getBlockId(x, y, z))
-							&& !BuildCraftAPI.unbreakableBlock(world.getBlockId(x, y, z))) {
+					if(!BlockUtil.canChangeBlock(world, x, y, z)){
+						return false;
+					}
+					if (!BuildCraftAPI.softBlock(world.getBlockId(x, y, z))) {
 						found = true;
 						lastX = x;
 						lastY = y;
@@ -102,9 +119,10 @@ public abstract class FillerPattern implements IFillerPattern {
 			} else {
 				BlockUtil.breakBlock(world, lastX, lastY, lastZ);
 			}
+			return true;
 		}
 
-		return lastX == Integer.MAX_VALUE;
+		return false;
 	}
 
 }
