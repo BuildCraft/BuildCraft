@@ -22,6 +22,7 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.DefaultProps;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
@@ -33,7 +34,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		topTexture = 2 * 16 + 11;
 		sideTexture = 2 * 16 + 12;
 		setHardness(1.0F);
-		setCreativeTab(CreativeTabs.tabDecorations);
+		setCreativeTab(DefaultProps.CREATIVE_TAB);
 	}
 
 	@Override

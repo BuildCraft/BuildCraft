@@ -29,7 +29,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 	public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DefaultProps.CREATIVE_TAB);
 		setHardness(0.7F);
 	}
 

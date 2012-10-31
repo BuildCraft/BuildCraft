@@ -142,7 +142,7 @@ public class BuildCraftEnergy {
 		LanguageRegistry.addName(bucketOil, "Oil Bucket");
 
 		bucketFuel = new ItemBuildCraft(Integer.parseInt(bucketFuelId.value)).setItemName("bucketFuel").setContainerItem(Item.bucketEmpty);
-		bucketFuel.setIconIndex(0 * 16 + 3).setMaxStackSize(1).setCreativeTab(CreativeTabs.tabMisc);
+		bucketFuel.setIconIndex(0 * 16 + 3).setMaxStackSize(1).setCreativeTab(DefaultProps.CREATIVE_TAB);
 		LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 
 		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(new LiquidStack(oilStill.blockID, 1, 0), null, new LiquidStack(fuel.shiftedIndex, 1, 0), 10, 1));
