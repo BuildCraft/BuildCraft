@@ -20,7 +20,7 @@ import buildcraft.api.core.Orientations;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.DefaultProps;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.EntityPlayer;
@@ -39,7 +39,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		this.setCreativeTab(DefaultProps.CREATIVE_TAB);
+		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override

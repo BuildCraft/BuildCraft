@@ -27,7 +27,7 @@ public class BlockPump extends BlockContainer {
 	public BlockPump(int i) {
 		super(i, Material.iron);
 		setHardness(5F);
-		setCreativeTab(DefaultProps.CREATIVE_TAB);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override

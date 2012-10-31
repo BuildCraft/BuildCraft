@@ -14,14 +14,13 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.DefaultProps;
 
 public class BlockHopper extends BlockBuildCraft {
 
 	public BlockHopper(int blockId) {
 		super(blockId, Material.iron);
 		setHardness(5F);
-		setCreativeTab(DefaultProps.CREATIVE_TAB);
+		setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override

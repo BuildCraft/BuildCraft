@@ -21,7 +21,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
-import buildcraft.core.DefaultProps;
+
 public abstract class ItemBptBase extends ItemBuildCraft {
 
 	public ItemBptBase(int i) {
@@ -29,7 +29,7 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 
 		maxStackSize = 1;
 		iconIndex = 5 * 16 + 0;
-		this.setCreativeTab(DefaultProps.CREATIVE_TAB);
+		this.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@SuppressWarnings({ "all" })

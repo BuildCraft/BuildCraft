@@ -29,7 +29,7 @@ public class BlockAssemblyTable extends BlockContainer {
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(0.5F);
-		setCreativeTab(DefaultProps.CREATIVE_TAB);
+		setCreativeTab(CreativeTabs.tabRedstone);
 
 	}
 

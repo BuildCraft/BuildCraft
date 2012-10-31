@@ -26,7 +26,6 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import buildcraft.core.DefaultProps;
 
 
 public class BlockTank extends BlockContainer {
@@ -35,7 +34,7 @@ public class BlockTank extends BlockContainer {
 		super(i, Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(DefaultProps.CREATIVE_TAB);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override

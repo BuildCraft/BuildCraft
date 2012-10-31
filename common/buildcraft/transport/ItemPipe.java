@@ -8,7 +8,7 @@
  */
 
 package buildcraft.transport;
-import buildcraft.core.DefaultProps;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
@@ -26,7 +26,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	protected ItemPipe(int i) {
 		super(i);
-		this.setCreativeTab(DefaultProps.CREATIVE_TAB);
+		this.setCreativeTab(CreativeTabs.tabTransport);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import java.util.List;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import buildcraft.core.DefaultProps;
+
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemStack;
 
@@ -15,7 +15,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(DefaultProps.CREATIVE_TAB);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@SuppressWarnings({ "all" })

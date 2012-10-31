@@ -15,13 +15,12 @@ import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
-import buildcraft.core.DefaultProps;
 
 public abstract class BlockMachineRoot extends BlockContainer {
 
 	protected BlockMachineRoot(int i, Material material) {
 		super(i, material);
-		setCreativeTab(DefaultProps.CREATIVE_TAB);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@Override

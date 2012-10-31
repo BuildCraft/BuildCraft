@@ -9,7 +9,7 @@ import buildcraft.core.ItemBuildCraft;
 
 import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.ItemStack;
-import buildcraft.core.DefaultProps;
+
 public class ItemGate extends ItemBuildCraft {
 
 	private int series;
@@ -21,7 +21,7 @@ public class ItemGate extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(DefaultProps.CREATIVE_TAB);
+		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@SuppressWarnings({ "all" })
