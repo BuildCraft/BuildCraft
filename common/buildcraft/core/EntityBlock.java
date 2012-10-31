@@ -89,8 +89,4 @@ public class EntityBlock extends Entity {
 		nbttagcompound.setDouble("kSize", kSize);
 	}
 
-	@Override
-	public boolean canBeCollidedWith() {
-		return !isDead;
-	}
 }
