@@ -30,7 +30,7 @@ public class DefaultProps {
 	public static String TEXTURE_TRIGGERS = TEXTURE_PATH_GUI + "/triggers.png";
 
 	public static final String DEFAULT_LANGUAGE = "en_US";
-
+	public static CreativeTabBC3 CREATIVE_TAB= new CreativeTabBC3("BuildCraft");
 	public static int WOODEN_GEAR_ID = 3800;
 	public static int STONE_GEAR_ID = 3801;
 	public static int IRON_GEAR_ID = 3802;

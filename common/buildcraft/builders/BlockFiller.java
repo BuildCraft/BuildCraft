@@ -38,7 +38,7 @@ public class BlockFiller extends BlockContainer {
 		super(i, Material.iron);
 
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DefaultProps.CREATIVE_TAB);
 
 		textureSides = 4 * 16 + 2;
 		textureTopOn = 4 * 16 + 0;

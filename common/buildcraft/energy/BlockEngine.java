@@ -27,6 +27,7 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.DefaultProps;
 
 public class BlockEngine extends BlockContainer {
 
@@ -34,7 +35,7 @@ public class BlockEngine extends BlockContainer {
 		super(i, Material.iron);
 
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DefaultProps.CREATIVE_TAB);
 	}
 
 	@Override
