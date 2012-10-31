@@ -30,7 +30,6 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-
 public class BlockArchitect extends BlockContainer {
 
 	int blockTextureSides;
@@ -42,7 +41,7 @@ public class BlockArchitect extends BlockContainer {
 	public BlockArchitect(int i) {
 		super(i, Material.iron);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DefaultProps.CREATIVE_TAB);
 		blockTextureSides = 3 * 16 + 0;
 		blockTextureTopNeg = 3 * 16 + 1;
 		blockTextureTopPos = 3 * 16 + 2;

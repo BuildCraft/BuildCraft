@@ -28,6 +28,7 @@ import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
+import buildcraft.core.DefaultProps;
 
 
 public class BlockMarker extends BlockContainer {
@@ -38,7 +39,7 @@ public class BlockMarker extends BlockContainer {
 		blockIndexInTexture = 3 * 16 + 9;
 
 		setLightValue(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DefaultProps.CREATIVE_TAB);
 	}
 
 	@SuppressWarnings({ "all" })

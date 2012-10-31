@@ -42,7 +42,7 @@ public class BlockBuilder extends BlockContainer {
 		blockTextureTop = 3 * 16 + 6;
 		blockTextureFront = 3 * 16 + 7;
 		setHardness(0.7F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(DefaultProps.CREATIVE_TAB);
 	}
 
 	@Override

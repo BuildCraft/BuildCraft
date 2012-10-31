@@ -252,7 +252,7 @@ public class BuildCraftTransport {
 
 			pipeWaterproof = new ItemBuildCraft(Integer.parseInt(pipeWaterproofId.value)).setIconIndex(2 * 16 + 1);
 			pipeWaterproof.setItemName("pipeWaterproof");
-			pipeWaterproof.setCreativeTab(CreativeTabs.tabMaterials);
+			pipeWaterproof.setCreativeTab(DefaultProps.CREATIVE_TAB);
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Waterproof");
 			genericPipeBlock = new BlockGenericPipe(Integer.parseInt(genericPipeId.value));
 			GameRegistry.registerBlock(genericPipeBlock);
@@ -327,28 +327,28 @@ public class BuildCraftTransport {
 		}
 
 		Property redPipeWireId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"redPipeWire.id", DefaultProps.RED_PIPE_WIRE);
-		redPipeWire = new ItemBuildCraft(Integer.parseInt(redPipeWireId.value)).setIconIndex(4 * 16 + 0).setCreativeTab(CreativeTabs.tabRedstone);
+		redPipeWire = new ItemBuildCraft(Integer.parseInt(redPipeWireId.value)).setIconIndex(4 * 16 + 0).setCreativeTab(DefaultProps.CREATIVE_TAB);
 		redPipeWire.setItemName("redPipeWire");
 		LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 1),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(redPipeWire, 8)));
 
 		Property bluePipeWireId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"bluePipeWire.id", DefaultProps.BLUE_PIPE_WIRE);
-		bluePipeWire = new ItemBuildCraft(Integer.parseInt(bluePipeWireId.value)).setIconIndex(4 * 16 + 1).setCreativeTab(CreativeTabs.tabRedstone);
+		bluePipeWire = new ItemBuildCraft(Integer.parseInt(bluePipeWireId.value)).setIconIndex(4 * 16 + 1).setCreativeTab(DefaultProps.CREATIVE_TAB);
 		bluePipeWire.setItemName("bluePipeWire");
 		LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 4),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(bluePipeWire, 8)));
 
 		Property greenPipeWireId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"greenPipeWire.id", DefaultProps.GREEN_PIPE_WIRE);
-		greenPipeWire = new ItemBuildCraft(Integer.parseInt(greenPipeWireId.value)).setIconIndex(4 * 16 + 2).setCreativeTab(CreativeTabs.tabRedstone);
+		greenPipeWire = new ItemBuildCraft(Integer.parseInt(greenPipeWireId.value)).setIconIndex(4 * 16 + 2).setCreativeTab(DefaultProps.CREATIVE_TAB);
 		greenPipeWire.setItemName("greenPipeWire");
 		LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 2),
 				new ItemStack(Item.redstone, 1), new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(greenPipeWire, 8)));
 
 		Property yellowPipeWireId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"yellowPipeWire.id", DefaultProps.YELLOW_PIPE_WIRE);
-		yellowPipeWire = new ItemBuildCraft(Integer.parseInt(yellowPipeWireId.value)).setIconIndex(4 * 16 + 3).setCreativeTab(CreativeTabs.tabRedstone);
+		yellowPipeWire = new ItemBuildCraft(Integer.parseInt(yellowPipeWireId.value)).setIconIndex(4 * 16 + 3).setCreativeTab(DefaultProps.CREATIVE_TAB);
 		yellowPipeWire.setItemName("yellowPipeWire");
 		LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 11),
