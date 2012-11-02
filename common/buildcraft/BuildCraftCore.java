@@ -264,7 +264,7 @@ public class BuildCraftCore {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event){
 		for(Block block : Block.blocksList) {
-			if(block instanceof BlockFluid || block instanceof BlockTallGrass){
+			if(block instanceof BlockFluid || block instanceof BlockTallGrass || block instanceof BlockFlower){
 				BuildCraftAPI.softBlocks[block.blockID] = true;
 			}
 		}
