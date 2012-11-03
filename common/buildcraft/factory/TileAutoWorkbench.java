@@ -139,7 +139,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack recipe = CraftingManager.getInstance().func_82787_a(craftMatrix, worldObj);
+		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);//findMatchingRecipe = func_82787_a
 
 		return recipe;
 	}
@@ -179,7 +179,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack resultStack = CraftingManager.getInstance().func_82787_a(craftMatrix, worldObj);
+		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
 
 		if (resultStack == null || !doRemove) {
 			resetPointers(pointerList);
