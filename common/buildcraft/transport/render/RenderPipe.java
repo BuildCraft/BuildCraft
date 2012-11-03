@@ -488,7 +488,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					float scale = 1.0F;
 
 					if (true) {
-						int itemColour = Item.itemsList[itemstack.itemID].func_82790_a(itemstack, i);
+						int itemColour = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, i);//getColorFromItemStack = func_82790_a
 						float var18 = (itemColour >> 16 & 255) / 255.0F;
 						float var19 = (itemColour >> 8 & 255) / 255.0F;
 						float var20 = (itemColour & 255) / 255.0F;

@@ -151,7 +151,7 @@ public class CoreProxyClient extends CoreProxy {
 				return false;
 			}
 			@Override
-			public ChunkCoordinates func_82114_b() {
+			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
 			}
 		};

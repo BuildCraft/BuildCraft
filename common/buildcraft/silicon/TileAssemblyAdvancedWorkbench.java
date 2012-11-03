@@ -88,7 +88,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		}
 
 		@Override
-		public ChunkCoordinates func_82114_b() {
+		public ChunkCoordinates getPlayerCoordinates() {
 			return null;
 		}
 	}
@@ -312,7 +312,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 					return;
 				}
 			}
-			craftSlot.func_82870_a(internalPlayer, craftResult.getStackInSlot(0));
+			craftSlot.onPickupFromSlot(internalPlayer, craftResult.getStackInSlot(0));
 			for (int i=0; i<tempStorage.length; i++) {
 				if (tempStorage[i]!=null && tempStorage[i].stackSize<=0) tempStorage[i]=null;
 			}
@@ -373,7 +373,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	}
 
 	private void updateCraftingResults() {
-		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().func_82787_a(internalInventoryCrafting, worldObj));
+		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(internalInventoryCrafting, worldObj));
 		onInventoryChanged();
 	}
 
