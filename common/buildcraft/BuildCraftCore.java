@@ -66,7 +66,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockFlower;
 import net.minecraft.src.BlockFluid;
-import net.minecraft.src.BlockGrass;
+import net.minecraft.src.BlockTallGrass;
 import net.minecraft.src.CommandHandler;
 import net.minecraft.src.EntityList;
 import net.minecraft.src.Item;
@@ -264,7 +264,7 @@ public class BuildCraftCore {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event){
 		for(Block block : Block.blocksList) {
-			if(block instanceof BlockFluid || block instanceof BlockGrass){
+			if(block instanceof BlockFluid || block instanceof BlockTallGrass || block instanceof BlockFlower){
 				BuildCraftAPI.softBlocks[block.blockID] = true;
 			}
 		}
