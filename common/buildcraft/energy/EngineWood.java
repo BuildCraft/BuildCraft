@@ -43,13 +43,13 @@ public class EngineWood extends Engine {
 	public float getPistonSpeed() {
 		switch (getEnergyStage()) {
 		case Blue:
-			return 0.01F;
-		case Green:
 			return 0.02F;
+		case Green:
+			return 0.03F;
 		case Yellow:
-			return 0.04F;
+			return 0.05F;
 		case Red:
-			return 0.08F;
+			return 0.10F;
 		default:
 			return 0;
 		}
