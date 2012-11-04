@@ -64,14 +64,13 @@ import buildcraft.transport.triggers.TriggerRedstoneInput;
 
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import net.minecraft.src.Block;
-import net.minecraft.src.BlockFlower;
 import net.minecraft.src.BlockFluid;
-import net.minecraft.src.BlockTallGrass;
 import net.minecraft.src.CommandHandler;
 import net.minecraft.src.EntityList;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Property;
 
 @Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[5.0,)")
