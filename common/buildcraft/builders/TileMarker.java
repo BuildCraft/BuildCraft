@@ -354,13 +354,21 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 						entity.setDead();
 					}
 				}
+				markerOrigin.lasers = null;
 			}
 
 			for (TileWrapper m : o.vect) {
 				TileMarker mark = m.getMarker(worldObj);
 
 				if (mark != null) {
-					mark.lasers = null;
+					if(mark.lasers != null) {
+						for (EntityBlock entity : mark.lasers) {
+							if (entity != null) {
+								entity.setDead();
+							}
+						}
+						mark.lasers = null;
+					}
 
 					if (mark != this) {
 						mark.origin = new Origin();
@@ -368,7 +376,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 				}
 			}
 
-			markerOrigin.lasers = null;
 
 			if (markerOrigin != this) {
 				markerOrigin.origin = new Origin();
