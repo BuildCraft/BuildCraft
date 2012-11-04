@@ -6,7 +6,7 @@ build every time a change is pushed to github.
 
 ### Contributing
 If you wish to submit a pull request to fix bugs or broken behaivor feel free to do so. If you would like to add 
-features or change existing behaivour, please discuss it with Sengir or Krapht before submiting the pull request.
+features or change existing behaivour or balance, please discuss it with Sengir or Krapht before submiting the pull request.
 
 ### Compiling and packaging Buildcraft
 1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) is installed correctly on your system.
