@@ -191,7 +191,7 @@
 		</copy>
 
 		<!-- Copy localizations -->
-		<copy todir="${classes.dir}">
+		<copy todir="${classes.dir}" failonerror="false">
 			<fileset dir="${lang.dir}">
 				<exclude name="README.md"/>
 			</fileset>
