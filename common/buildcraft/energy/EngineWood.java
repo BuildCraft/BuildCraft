@@ -61,7 +61,7 @@ public class EngineWood extends Engine {
 
 		if (tile.isRedstonePowered) {
 			if ((tile.worldObj.getWorldTime() % 20) == 0) {
-				energy++;
+				this.addEnergy(1.0F);
 			}
 		}
 	}
