@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) SpaceToad, 2011-2012
+ * http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ *
  * BuildCraft is open-source. It is distributed under the terms of the
  * BuildCraft Open Source License. It grants rights to read, modify, compile
  * or run the code. It does *NOT* grant the right to redistribute this software
@@ -6,11 +13,15 @@
  * granted by the copyright holder.
  */
 
+
+
 package buildcraft;
 
 import java.io.File;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import java.io.IOException;
+import java.util.LinkedList;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -25,6 +36,8 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.Action;
@@ -37,14 +50,12 @@ import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
-import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
@@ -60,6 +71,56 @@ import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
+import buildcraft.api.blueprints.BptBlock;
+import buildcraft.api.bptblocks.BptBlockBed;
+import buildcraft.api.bptblocks.BptBlockCustomStack;
+import buildcraft.api.bptblocks.BptBlockDelegate;
+import buildcraft.api.bptblocks.BptBlockDirt;
+import buildcraft.api.bptblocks.BptBlockDoor;
+import buildcraft.api.bptblocks.BptBlockIgnore;
+import buildcraft.api.bptblocks.BptBlockIgnoreMeta;
+import buildcraft.api.bptblocks.BptBlockInventory;
+import buildcraft.api.bptblocks.BptBlockLever;
+import buildcraft.api.bptblocks.BptBlockLiquid;
+import buildcraft.api.bptblocks.BptBlockPiston;
+import buildcraft.api.bptblocks.BptBlockPumpkin;
+import buildcraft.api.bptblocks.BptBlockRedstoneRepeater;
+import buildcraft.api.bptblocks.BptBlockRotateInventory;
+import buildcraft.api.bptblocks.BptBlockRotateMeta;
+import buildcraft.api.bptblocks.BptBlockSign;
+import buildcraft.api.bptblocks.BptBlockStairs;
+import buildcraft.api.bptblocks.BptBlockWallSide;
+import buildcraft.api.filler.FillerManager;
+import buildcraft.builders.BlockArchitect;
+import buildcraft.builders.BlockBlueprintLibrary;
+import buildcraft.builders.BlockBuilder;
+import buildcraft.builders.BlockFiller;
+import buildcraft.builders.BlockMarker;
+import buildcraft.builders.BlockPathMarker;
+import buildcraft.builders.BptBlockFiller;
+import buildcraft.builders.EventHandlerBuilders;
+import buildcraft.builders.FillerFillAll;
+import buildcraft.builders.FillerFillPyramid;
+import buildcraft.builders.FillerFillStairs;
+import buildcraft.builders.FillerFillWalls;
+import buildcraft.builders.FillerFlattener;
+import buildcraft.builders.FillerRegistry;
+import buildcraft.builders.FillerRemover;
+import buildcraft.builders.GuiHandler;
+import buildcraft.builders.IBuilderHook;
+import buildcraft.builders.ItemBptBluePrint;
+import buildcraft.builders.ItemBptTemplate;
+import buildcraft.builders.TileArchitect;
+import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.builders.TileBuilder;
+import buildcraft.builders.TileFiller;
+import buildcraft.builders.TileMarker;
+import buildcraft.builders.TilePathMarker;
+import buildcraft.builders.network.PacketHandlerBuilders;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.Version;
+import buildcraft.core.blueprints.BptPlayerIndex;
+import buildcraft.core.blueprints.BptRootIndex;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.CommandHandler;
@@ -68,6 +129,11 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
+import net.minecraft.src.Block;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
+
+
 
 @Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[5.0,)")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -279,92 +345,7 @@ public class BuildCraftCore {
 
 //Code to be Merged Below This
 
-/**
- * Copyright (c) SpaceToad, 2011-2012
- * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
 
-package buildcraft;
-
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.TreeMap;
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-
-import buildcraft.api.blueprints.BptBlock;
-import buildcraft.api.bptblocks.BptBlockBed;
-import buildcraft.api.bptblocks.BptBlockCustomStack;
-import buildcraft.api.bptblocks.BptBlockDelegate;
-import buildcraft.api.bptblocks.BptBlockDirt;
-import buildcraft.api.bptblocks.BptBlockDoor;
-import buildcraft.api.bptblocks.BptBlockIgnore;
-import buildcraft.api.bptblocks.BptBlockIgnoreMeta;
-import buildcraft.api.bptblocks.BptBlockInventory;
-import buildcraft.api.bptblocks.BptBlockLever;
-import buildcraft.api.bptblocks.BptBlockLiquid;
-import buildcraft.api.bptblocks.BptBlockPiston;
-import buildcraft.api.bptblocks.BptBlockPumpkin;
-import buildcraft.api.bptblocks.BptBlockRedstoneRepeater;
-import buildcraft.api.bptblocks.BptBlockRotateInventory;
-import buildcraft.api.bptblocks.BptBlockRotateMeta;
-import buildcraft.api.bptblocks.BptBlockSign;
-import buildcraft.api.bptblocks.BptBlockStairs;
-import buildcraft.api.bptblocks.BptBlockWallSide;
-import buildcraft.api.filler.FillerManager;
-import buildcraft.builders.BlockArchitect;
-import buildcraft.builders.BlockBlueprintLibrary;
-import buildcraft.builders.BlockBuilder;
-import buildcraft.builders.BlockFiller;
-import buildcraft.builders.BlockMarker;
-import buildcraft.builders.BlockPathMarker;
-import buildcraft.builders.BptBlockFiller;
-import buildcraft.builders.EventHandlerBuilders;
-import buildcraft.builders.FillerFillAll;
-import buildcraft.builders.FillerFillPyramid;
-import buildcraft.builders.FillerFillStairs;
-import buildcraft.builders.FillerFillWalls;
-import buildcraft.builders.FillerFlattener;
-import buildcraft.builders.FillerRegistry;
-import buildcraft.builders.FillerRemover;
-import buildcraft.builders.GuiHandler;
-import buildcraft.builders.IBuilderHook;
-import buildcraft.builders.ItemBptBluePrint;
-import buildcraft.builders.ItemBptTemplate;
-import buildcraft.builders.TileArchitect;
-import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.TileBuilder;
-import buildcraft.builders.TileFiller;
-import buildcraft.builders.TileMarker;
-import buildcraft.builders.TilePathMarker;
-import buildcraft.builders.network.PacketHandlerBuilders;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.Version;
-import buildcraft.core.blueprints.BptPlayerIndex;
-import buildcraft.core.blueprints.BptRootIndex;
-import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
 
 @Mod(name="BuildCraft Builders", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
