@@ -59,7 +59,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	private class CoreState implements IClientState {
 
 		public int pipeId = -1;
-		public int gateKind = 0;
+		public int gateKind = -1;
 
 		@Override
 		public void writeData(DataOutputStream data) throws IOException {
@@ -613,7 +613,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				if (pipe == null && coreState.pipeId != 0){
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
 				}
-				if (pipe != null) {
+				if (pipe != null && GateKind.values()[coreState.gateKind] != GateKind.None) {
 					if (pipe.gate == null) {
 						pipe.gate = new GateVanilla(pipe);
 					}
