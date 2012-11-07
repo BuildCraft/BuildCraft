@@ -146,6 +146,7 @@ public class BlockEngine extends BlockContainer {
 		itemList.add(new ItemStack(this, 1, 0));
 		itemList.add(new ItemStack(this, 1, 1));
 		itemList.add(new ItemStack(this, 1, 2));
+		itemList.add(new ItemStack(this, 1, 3));
 	}
 
 	@Override
