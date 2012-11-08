@@ -140,7 +140,7 @@ public class CoreProxy {
 
 	public String playerName() { return ""; }
 	private EntityPlayer createNewPlayer(World world) {
-		return new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world) {
 
 			@Override
 			public void sendChatToPlayer(String var1) {
@@ -157,6 +157,8 @@ public class CoreProxy {
 			}
 
 		};
+		player.username = "[BuildCraft]";
+		return player;
 	}
 
 	public EntityPlayer getBuildCraftPlayer(World world) {
