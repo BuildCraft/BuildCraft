@@ -481,8 +481,8 @@ public class Utils {
 
 	public static ItemStack consumeItem(ItemStack stack) {
 		if (stack.stackSize == 1) {
-			if (stack.getItem().getContainerItem() != null)
-				return new ItemStack(stack.getItem().getContainerItem(), 1);
+			if (stack.getItem().hasContainerItem())
+				return stack.getItem().getContainerItemStack(stack);
 			else
 				return null;
 		} else {
