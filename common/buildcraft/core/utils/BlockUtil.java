@@ -14,6 +14,7 @@ import buildcraft.BuildCraftCore;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
@@ -41,7 +42,7 @@ public class BlockUtil {
 	}
 
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
-		if(world.isAirBlock(x, y, z)){
+		if(world.isAirBlock(x, y, z)) {
 			return true;
 		}
 
@@ -64,5 +65,15 @@ public class BlockUtil {
 		}
 
 		return true;
+	}
+        
+	public static boolean isSoftBlock(World world, int x, int y, int z){
+		if(world.isAirBlock(x, y, z)) {
+			return true;
+		}
+
+		int blockId = world.getBlockId(x, y, z);
+
+		return BuildCraftAPI.softBlocks[blockId] || Block.blocksList[blockId] == null;
 	}
 }

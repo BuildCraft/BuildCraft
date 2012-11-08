@@ -29,6 +29,7 @@ import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.BptSlot;
 import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
 
 import net.minecraft.src.Entity;
 import net.minecraft.src.NBTTagCompound;
@@ -161,7 +162,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
 
-			if (BuildCraftAPI.softBlock(blockIndex.getBlockId(worldObj)) && movementBoundary.contains(blockIndex)) {
+			if (BlockUtil.isSoftBlock(worldObj, blockIndex.i, blockIndex.j, blockIndex.k) && movementBoundary.contains(blockIndex)) {
 				potentialDestinations.add(blockIndex);
 			}
 		}

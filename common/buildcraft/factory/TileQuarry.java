@@ -437,7 +437,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private boolean isQuarriableBlock(int blockID, int bx, int by, int bz) {
-		return BlockUtil.canChangeBlock(worldObj, bx, by, bz) && !BuildCraftAPI.softBlock(blockID);
+		return BlockUtil.canChangeBlock(worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(worldObj, bx, by, bz);
 	}
 
 	@Override

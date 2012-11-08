@@ -16,9 +16,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
+import buildcraft.core.utils.BlockUtil;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EnumGameType;
@@ -58,8 +58,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public BptBuilderBlueprint(BptBlueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j)
-			for (int i = 0; i < bluePrint.sizeX; ++i)
+		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
+			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
 					int xCoord = i + x - bluePrint.anchorX;
 					int yCoord = j + y - bluePrint.anchorY;
@@ -84,9 +84,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					clearList.add(slot);
 
 				}
+			}
+		}
 
-		for (int j = 0; j < bluePrint.sizeY; ++j)
-			for (int i = 0; i < bluePrint.sizeX; ++i)
+		for (int j = 0; j < bluePrint.sizeY; ++j) {
+			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
 					int xCoord = i + x - bluePrint.anchorX;
 					int yCoord = j + y - bluePrint.anchorY;
@@ -116,6 +118,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					if (slot.blockId != 0)
 						postProcessingList.add(slot.clone());
 				}
+			}
+		}
 
 		recomputeNeededItems();
 	}
@@ -187,7 +191,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (getNext)
 				if (slot.mode == Mode.ClearIfInvalid) {
-					if (!BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z))) {
+					if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 						result = slot;
 						break;
 					}
@@ -238,7 +242,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		for (ItemStack reqStk : tmpReq) {
-			for (ItemStack invStk : tmpInv)
+			for (ItemStack invStk : tmpInv) {
 				if (invStk != null && reqStk.itemID == invStk.itemID && invStk.stackSize > 0) {
 
 					if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage())){
@@ -257,6 +261,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					if (reqStk.stackSize == 0)
 						break;
 				}
+			}
 
 			if (reqStk.stackSize != 0)
 				return false;
@@ -404,7 +409,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	@Override
 	public void postProcessing(World world) {
-		for (BptSlot s : postProcessingList)
+		for (BptSlot s : postProcessingList) {
 			try {
 				s.postProcessing(context);
 			} catch (Throwable t) {
@@ -412,6 +417,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				t.printStackTrace();
 				BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "postProcessing", t);
 			}
+		}
 	}
 
 }

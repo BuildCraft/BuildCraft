@@ -117,6 +117,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		while (list.size() > 0) {
 			BptSlot slot = list.getFirst();
 
+			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
 			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z)))
 				list.removeFirst();
 			else if (slot.mode == Mode.ClearIfInvalid) {
