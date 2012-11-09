@@ -288,11 +288,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 					if (!blockedColumns[searchX][searchZ]) {
 						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
 
-						int blockId = worldObj.getBlockId(bx, by, bz);
-
 						if (!BlockUtil.canChangeBlock(worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (isQuarriableBlock(blockId, bx, by + 1, bz)) {
+						} else if (!BlockUtil.isSoftBlock(worldObj, bx, by, bz)) {
 							if (doSet) {
 								setTarget(bx, by + 1, bz);
 							}
@@ -375,7 +373,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 		int blockId = worldObj.getBlockId(i, j, k);
 
-		if (isQuarriableBlock(blockId, i, j, k)) {
+		if (isQuarriableBlock(i, j, k)) {
 			powerProvider.getTimeTracker().markTime(worldObj);
 
 			// Share this with mining well!
@@ -436,7 +434,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 	}
 
-	private boolean isQuarriableBlock(int blockID, int bx, int by, int bz) {
+	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		return BlockUtil.canChangeBlock(worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(worldObj, bx, by, bz);
 	}
 
