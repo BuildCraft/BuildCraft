@@ -370,7 +370,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		int i = targetX;
-		int j = targetY - 1;
+		int j = targetY;
 		int k = targetZ;
 
 		int blockId = worldObj.getBlockId(i, j, k);
@@ -732,7 +732,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 				if (!movingVertically) {
 					positionReached();
-					head[1] = target[1];
+					head[1] = target[1] + 1;
 				}
 			} else {
 				head[0] += Math.cos(headTrajectory) * instantSpeed;
@@ -742,8 +742,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		if (movingVertically) {
-			if (Math.abs(target[1] - head[1]) < instantSpeed * 2) {
-				head[1] = target[1];
+			if (Math.abs(target[1] - (head[1]-1)) < instantSpeed * 2) {
+				head[1] = target[1]+1;
 
 				movingVertically = false;
 				if (!movingHorizontally) {
