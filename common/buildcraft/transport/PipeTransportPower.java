@@ -9,8 +9,6 @@
 
 package buildcraft.transport;
 
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
@@ -22,8 +20,12 @@ import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
 
-public class PipeTransportPower extends PipeTransport {
+public class PipeTransportPower extends PipeTransport {	
+	
+	private static final Orientations[] orientations = Orientations.values();
 
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
@@ -37,8 +39,9 @@ public class PipeTransportPower extends PipeTransport {
 	public double powerResitance = 0.01;
 
 	public PipeTransportPower() {
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = 0;
+		}
 	}
 
 	SafeTimeTracker tracker = new SafeTimeTracker();
@@ -59,26 +62,28 @@ public class PipeTransportPower extends PipeTransport {
 
 		// Extract the nearby connected tiles
 
-		for (int i = 0; i < 6; ++i)
-			if (Utils.checkPipesConnections(container.getTile(Orientations.values()[i]), container))
-				tiles[i] = container.getTile(Orientations.values()[i]);
+		for (int i = 0; i < 6; ++i) {
+			if (Utils.checkPipesConnections(container.getTile(orientations[i]), container))
+				tiles[i] = container.getTile(orientations[i]);
+		}
 
 		// Send the power to nearby pipes who requested it
 
 		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
 				double div = 0;
 
-				for (int j = 0; j < 6; ++j)
+				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0)
 						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IPowerReceptor)
 							div += powerQuery[j];
+				}
 
 				double totalWatt = internalPower[i];
 
-				for (int j = 0; j < 6; ++j)
+				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
 						double watts = (totalWatt / div * powerQuery[j]);
 
@@ -87,7 +92,7 @@ public class PipeTransportPower extends PipeTransport {
 
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
-							nearbyTransport.receiveEnergy(Orientations.values()[j].reverse(), watts);
+							nearbyTransport.receiveEnergy(orientations[j].reverse(), watts);
 
 							displayPower[j] += watts / 2F;
 							displayPower[i] += watts / 2F;
@@ -96,7 +101,7 @@ public class PipeTransportPower extends PipeTransport {
 						} else if (tiles[j] instanceof IPowerReceptor) {
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
 
-							pow.getPowerProvider().receiveEnergy((float) watts, Orientations.values()[j].reverse());
+							pow.getPowerProvider().receiveEnergy((float) watts, orientations[j].reverse());
 
 							displayPower[j] += watts / 2F;
 							displayPower[i] += watts / 2F;
@@ -104,18 +109,21 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						}
 					}
+				}
 			}
+		}
 
 		// Compute the tiles requesting energy that are not pipes
 
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i) {
 			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
 				int request = receptor.powerRequest();
 
 				if (request > 0)
-					requestEnergy(Orientations.values()[i], request);
+					requestEnergy(orientations[i], request);
 			}
+		}
 
 		// Sum the amount of energy requested on each side
 
@@ -124,14 +132,15 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
 
-			for (int j = 0; j < 6; ++j)
+			for (int j = 0; j < 6; ++j) {
 				if (j != i)
 					transferQuery[i] += powerQuery[j];
+			}
 		}
 
 		// Transfer the requested energy to nearby pipes
 
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i) {
 			if (transferQuery[i] != 0)
 				if (tiles[i] != null) {
 					TileEntity entity = tiles[i];
@@ -143,9 +152,10 @@ public class PipeTransportPower extends PipeTransport {
 							continue;
 
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
-						nearbyTransport.requestEnergy(Orientations.values()[i].reverse(), transferQuery[i]);
+						nearbyTransport.requestEnergy(orientations[i].reverse(), transferQuery[i]);
 					}
 				}
+		}
 
 		if (!worldObj.isRemote && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
