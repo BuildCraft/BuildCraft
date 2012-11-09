@@ -14,6 +14,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Orientations;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
@@ -101,12 +102,16 @@ public class PipeTransportPower extends PipeTransport {
 						} else if (tiles[j] instanceof IPowerReceptor) {
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
 
-							pow.getPowerProvider().receiveEnergy((float) watts, orientations[j].reverse());
+							IPowerProvider prov = pow.getPowerProvider();
+							
+							if(prov != null) {
+								prov.receiveEnergy((float) watts, orientations[j].reverse());
 
-							displayPower[j] += watts / 2F;
-							displayPower[i] += watts / 2F;
+								displayPower[j] += watts / 2F;
+								displayPower[i] += watts / 2F;
 
-							internalPower[i] -= watts;
+								internalPower[i] -= watts;
+							}
 						}
 					}
 				}
