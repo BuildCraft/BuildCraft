@@ -38,7 +38,7 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public void addInformation(ItemStack itemstack, List list) {
+	public void addInformation(ItemStack itemstack, EntityPlayer player, List list, boolean advanced) {
 		if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("BptName")) {
 			list.add(itemstack.getTagCompound().getString("BptName"));
 		}
@@ -54,11 +54,6 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 			}
 		}
 		return itemStack;
-    }
-
-    @Override
-    public boolean getShareTag() {
-		return true;
     }
 
 	@Override
