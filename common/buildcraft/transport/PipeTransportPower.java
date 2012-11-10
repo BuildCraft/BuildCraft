@@ -196,8 +196,10 @@ public class PipeTransportPower extends PipeTransport {
 			else
 				internalNextPower[from.ordinal()] += val;
 
-			if (internalNextPower[from.ordinal()] >= MAX_POWER_INTERNAL)
-				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2, true);
+			if (internalNextPower[from.ordinal()] >= MAX_POWER_INTERNAL) {
+				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, false);
+				worldObj.setBlockWithNotify(xCoord, yCoord, zCoord, 0);
+			}
 		}
 	}
 
