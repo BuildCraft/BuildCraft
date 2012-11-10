@@ -124,6 +124,7 @@ public class BuildCraftEnergy {
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 0), "Redstone Engine");
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 1), "Steam Engine");
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 2), "Combustion Engine");
+		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 3), "Creative Engine");
 
 		oilStill = (new BlockOilStill(oilStillId.getInt(DefaultProps.OIL_STILL_ID), Material.water)).setBlockName("oil");
 		CoreProxy.proxy.addName(oilStill.setBlockName("oilStill"), "Oil");

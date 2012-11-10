@@ -31,8 +31,10 @@ public class ItemEngine extends ItemBlockBuildCraft {
 			return "tile.engineWood";
 		} else if (itemstack.getItemDamage() == 1) {
 			return "tile.engineStone";
-		} else {
+		} else if (itemstack.getItemDamage() == 2) {
 			return "tile.engineIron";
+		} else {
+			return "tile.engineCreative";
 		}
 	}
 }

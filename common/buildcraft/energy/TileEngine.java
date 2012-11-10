@@ -234,6 +234,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			return new EngineStone(this);
 		} else if (meta == 2) {
 			return new EngineIron(this);
+		} else if (meta == 3) {
+			return new EngineCreative(this);
 		} else {
 			return null;
 		}
