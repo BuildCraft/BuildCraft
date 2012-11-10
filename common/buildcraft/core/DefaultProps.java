@@ -113,6 +113,7 @@ public class DefaultProps {
 	public static int ASSEMBLY_TABLE_ID = 170;
 	public static int PATH_MARKER_ID = 171;
 	public static int HOPPER_ID = 172;
+	public static int POLLUTION_ID = 173;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;

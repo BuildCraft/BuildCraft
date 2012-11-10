@@ -31,6 +31,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -84,7 +85,31 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 		if (engine == null) {
 			return;
 		}
-
+		
+		if (engine.isBurning()) {
+			if (engine instanceof EngineStone)
+				BuildCraftEnergy.createPollution(
+					worldObj,
+					xCoord, yCoord+1, zCoord,
+					2);
+			else if (engine instanceof EngineIron) {
+				EngineIron ironEngine =	(EngineIron) engine;
+			 if (ironEngine.liquidId == Block.lavaStill.blockID)
+				 BuildCraftEnergy.createPollution(worldObj,
+						 xCoord, yCoord+1, zCoord,
+						 3);
+			 if (ironEngine.liquidId ==
+					 BuildCraftEnergy.oilStill.blockID)
+				 BuildCraftEnergy.createPollution(worldObj,
+						 xCoord, yCoord+1, zCoord,
+						 4);
+			 if (ironEngine.liquidId ==
+					 BuildCraftEnergy.fuel.shiftedIndex)
+				 BuildCraftEnergy.createPollution(worldObj,
+						 xCoord, yCoord+1, zCoord,
+						 5);
+			}
+		}
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			if (progressPart != 0) {
 				engine.progress += serverPistonSpeed;
