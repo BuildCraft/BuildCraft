@@ -18,8 +18,10 @@ import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockFluid;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
+import net.minecraftforge.common.ForgeDirection;
 
 
 public class BlockOilFlowing extends BlockFluid implements ILiquid {
@@ -54,6 +56,8 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	@Override
 	public void updateTick(World world, int i, int j, int k, Random random) {
+		if (random.nextInt() % 1/*change as you wish, SirSengir!*/ == 0)
+			BuildCraftEnergy.createPollution(world, i, j+1, k, 1);
 		int l = getFlowDecay(world, i, j, k);
 		byte byte0 = 1;
 		boolean flag = true;
@@ -274,5 +278,4 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	public boolean isBlockReplaceable(World world, int i, int j, int k) {
 		return true;
 	}
-
 }
