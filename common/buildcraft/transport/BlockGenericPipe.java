@@ -360,7 +360,9 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem() == null) {
 
 				// Fall through the end of the test
-
+			} else if (entityplayer.getCurrentEquippedItem().itemID == Item.sign.shiftedIndex){
+				// Sign will be placed anyway, so lets show the sign gui
+				return false;
 			} else if (entityplayer.getCurrentEquippedItem().getItem() instanceof ItemPipe)
 				return false;
 			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
