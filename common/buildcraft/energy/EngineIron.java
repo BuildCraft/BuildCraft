@@ -9,7 +9,7 @@
 
 package buildcraft.energy;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.liquids.LiquidManager;
@@ -138,8 +138,8 @@ public class EngineIron extends Engine {
 			}
 
 			if (liquid != null) {
-				if (fill(Orientations.Unknown, liquid, false) == liquid.amount) {
-					fill(Orientations.Unknown, liquid, true);
+				if (fill(ForgeDirection.UNKNOWN, liquid, false) == liquid.amount) {
+					fill(ForgeDirection.UNKNOWN, liquid, true);
 					tile.setInventorySlotContents(0, Utils.consumeItem(itemInInventory));
 				}
 			}
@@ -284,7 +284,7 @@ public class EngineIron extends Engine {
 	}
 
 	/* ITANKCONTAINER */
-	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 
 		// Handle coolant
 		if (IronEngineCoolant.getCoolantForLiquid(resource) != null)
@@ -318,7 +318,7 @@ public class EngineIron extends Engine {
 		return res;
 	}
 
-	private int fillCoolant(Orientations from, LiquidStack resource, boolean doFill) {
+	private int fillCoolant(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		int res = 0;
 
 		if (coolantQty > 0 && coolantId != resource.itemID)

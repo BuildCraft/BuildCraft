@@ -9,11 +9,11 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 
 public interface IPipeTransportPowerHook {
 
-	public void receiveEnergy(Orientations from, double val);
+	public void receiveEnergy(ForgeDirection from, double val);
 
-	public void requestEnergy(Orientations from, int i);
+	public void requestEnergy(ForgeDirection from, int i);
 }

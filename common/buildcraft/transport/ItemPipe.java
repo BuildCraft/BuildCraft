@@ -52,7 +52,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 		if (itemstack.stackSize == 0)
 			return false;
-		if (entityplayer.func_82246_f(i, j, k)
+		if (entityplayer.canCurrentToolHarvestBlock(i, j, k)
 				&& world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
 
 			Pipe pipe = BlockGenericPipe.createPipe(shiftedIndex);

@@ -1,6 +1,6 @@
 package buildcraft.transport;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerReceptor;
 import net.minecraft.src.NBTTagCompound;
 
@@ -33,7 +33,7 @@ public class EnergyPulser {
 			if (progress > 0.5 && progressPart == 1) {
 				progressPart = 2;
 				// Give off energy pulse!
-				powerReceptor.getPowerProvider().receiveEnergy(1, Orientations.XNeg);
+				powerReceptor.getPowerProvider().receiveEnergy(1, ForgeDirection.WEST);
 
 				// Heat up
 				if (heat < maxHeat)

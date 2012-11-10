@@ -9,7 +9,7 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.transport.IPipedItem;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
@@ -65,11 +65,11 @@ public abstract class PipeTransport {
 
 	}
 
-	public boolean inputOpen(Orientations from) {
+	public boolean inputOpen(ForgeDirection from) {
 		return true;
 	}
 
-	public boolean outputOpen(Orientations to) {
+	public boolean outputOpen(ForgeDirection to) {
 		return true;
 	}
 
@@ -77,7 +77,7 @@ public abstract class PipeTransport {
 		return false;
 	}
 
-	public void entityEntering(IPipedItem item, Orientations orientation) {
+	public void entityEntering(IPipedItem item, ForgeDirection orientation) {
 
 	}
 

@@ -8,7 +8,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportPower;
@@ -18,16 +18,16 @@ public class PipePowerGold extends Pipe {
 	public PipePowerGold(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicGold(), itemID);
 
-		((PipeTransportPower) transport).powerResitance = 0.001;
+		((PipeTransportPower) transport).powerResistance = 0.005;
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
-	public int getTextureIndex(Orientations direction) {
+	public int getTextureIndex(ForgeDirection direction) {
 		return 7 * 16 + 10;
 	}
 

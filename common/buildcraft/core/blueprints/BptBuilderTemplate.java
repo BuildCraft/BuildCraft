@@ -110,7 +110,6 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 		return null;
 	}
-
 	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list) {
 		BptSlot result = null;
 

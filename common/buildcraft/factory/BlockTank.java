@@ -12,7 +12,7 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
@@ -55,7 +55,7 @@ public class BlockTank extends BlockContainer {
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileTank();
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
@@ -99,7 +99,7 @@ public class BlockTank extends BlockContainer {
 
 			// Handle filled containers
 			if (liquid != null) {
-				int qty = tank.fill(Orientations.Unknown, liquid, true);
+				int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
@@ -116,7 +116,7 @@ public class BlockTank extends BlockContainer {
                     ItemStack filled = LiquidManager.fillLiquidContainer(available, current);
 
                     liquid = LiquidManager.getLiquidForFilledItem(filled);
-                   
+
                     if(liquid != null) {
 			if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode){
                         if(current.stackSize > 1) {
@@ -131,7 +131,7 @@ public class BlockTank extends BlockContainer {
                             entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
                         }
 			}
-                        tank.drain(Orientations.Unknown, liquid.amount, true);
+                        tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
                         return true;
                     }
                 }

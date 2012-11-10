@@ -12,7 +12,7 @@ package buildcraft.builders;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.Box;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
@@ -103,18 +103,18 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		result.anchorY = yCoord - box.yMin;
 		result.anchorZ = zCoord - box.zMin;
 
-		Orientations o = Orientations.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].reverse();
+		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
-		if (o == Orientations.XPos) {
+		if (o == ForgeDirection.EAST) {
 			// Do nothing
-		} else if (o == Orientations.ZPos) {
+		} else if (o == ForgeDirection.SOUTH) {
 			result.rotateLeft(context);
 			result.rotateLeft(context);
 			result.rotateLeft(context);
-		} else if (o == Orientations.XNeg) {
+		} else if (o == ForgeDirection.WEST) {
 			result.rotateLeft(context);
 			result.rotateLeft(context);
-		} else if (o == Orientations.ZNeg) {
+		} else if (o == ForgeDirection.NORTH) {
 			result.rotateLeft(context);
 		}
 

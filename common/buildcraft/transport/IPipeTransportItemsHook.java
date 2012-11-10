@@ -11,17 +11,17 @@ package buildcraft.transport;
 
 import java.util.LinkedList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
 
 
 public interface IPipeTransportItemsHook {
 
-	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
 			IPipedItem item);
 
-	public void entityEntered(IPipedItem item, Orientations orientation);
+	public void entityEntered(IPipedItem item, ForgeDirection orientation);
 
 	public void readjustSpeed(IPipedItem item);
 }

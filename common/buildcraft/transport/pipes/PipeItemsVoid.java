@@ -9,7 +9,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
@@ -30,7 +30,7 @@ public class PipeItemsVoid extends Pipe implements IItemTravelingHook{
 	}
 	
 	@Override
-	public int getTextureIndex(Orientations direction) {
+	public int getTextureIndex(ForgeDirection direction) {
 		return 8 * 16 + 14;
 	}
 

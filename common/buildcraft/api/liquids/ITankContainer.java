@@ -1,6 +1,6 @@
 package buildcraft.api.liquids;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 
 public interface ITankContainer {
 	
@@ -11,7 +11,7 @@ public interface ITankContainer {
 	 * @param doFill If false filling will only be simulated.
 	 * @return Amount of resource that was filled into internal tanks.
 	 */
-	int fill(Orientations from, LiquidStack resource, boolean doFill);
+	int fill(ForgeDirection from, LiquidStack resource, boolean doFill);
 	/**
 	 * Fills liquid into the specified internal tank. 
 	 * @param from Orientation the liquid is pumped in from.
@@ -28,7 +28,7 @@ public interface ITankContainer {
 	 * @param doDrain If false draining will only be simulated.
 	 * @return LiquidStack representing the liquid and amount actually drained from the ITankContainer
 	 */
-	LiquidStack drain(Orientations from, int maxDrain, boolean doDrain);
+	LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain);
 	/**
 	 * Drains liquid out of the specified internal tank.
 	 * @param from Orientation the liquid is drained to.

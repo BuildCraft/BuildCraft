@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import com.google.common.math.IntMath;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
@@ -55,10 +55,10 @@ public class BlockQuarry extends BlockMachineRoot {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
 		if (entityliving instanceof EntityPlayer)
 		{
 			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i,j,k);
@@ -105,21 +105,21 @@ public class BlockQuarry extends BlockMachineRoot {
 		if ((meta & 8) == 0) {
 			world.setBlockMetadata(i, j, k, meta | 8);
 
-			Orientations[] dirs = Orientations.dirs();
+			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
 
-			for (Orientations dir : dirs) {
+			for (ForgeDirection dir : dirs) {
 				switch (dir) {
-				case YPos:
+				case UP:
 					searchFrames(world, i, j + 1, k);
-				case YNeg:
+				case DOWN:
 					searchFrames(world, i, j - 1, k);
-				case ZPos:
+				case SOUTH:
 					searchFrames(world, i, j, k + 1);
-				case ZNeg:
+				case NORTH:
 					searchFrames(world, i, j, k - 1);
-				case XPos:
+				case EAST:
 					searchFrames(world, i + 1, j, k);
-				case XNeg:
+				case WEST:
 				default:
 					searchFrames(world, i - 1, j, k);
 				}

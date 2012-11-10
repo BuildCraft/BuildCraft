@@ -8,7 +8,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
@@ -25,7 +25,7 @@ public class PipeLiquidsCobblestone extends Pipe {
 	}
 	
 	@Override
-	public int getTextureIndex(Orientations direction) {
+	public int getTextureIndex(ForgeDirection direction) {
 		return 7 * 16 + 1;
 	}
 }

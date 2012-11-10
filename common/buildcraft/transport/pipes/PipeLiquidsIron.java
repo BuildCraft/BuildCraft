@@ -8,7 +8,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
@@ -26,10 +26,10 @@ public class PipeLiquidsIron extends Pipe {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
-	public int getTextureIndex(Orientations direction) {
-		if (direction == Orientations.Unknown)
+	public int getTextureIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
@@ -42,7 +42,7 @@ public class PipeLiquidsIron extends Pipe {
 	}
 
 	@Override
-	public boolean canConnectRedstone() {	
+	public boolean canConnectRedstone() {
 		return true;
 	}
 }

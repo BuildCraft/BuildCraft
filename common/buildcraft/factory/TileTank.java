@@ -9,7 +9,7 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
@@ -180,7 +180,7 @@ public class TileTank extends TileBuildCraft implements ITankContainer
 
     /* ITANKCONTAINER */
     @Override
-    public int fill(Orientations from, LiquidStack resource, boolean doFill)
+    public int fill(ForgeDirection from, LiquidStack resource, boolean doFill)
     {
         return fill(0, resource, doFill);
     }
@@ -209,7 +209,7 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     }
 
     @Override
-    public LiquidStack drain(Orientations from, int maxEmpty, boolean doDrain)
+    public LiquidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain)
     {
         return drain(0, maxEmpty, doDrain);
     }

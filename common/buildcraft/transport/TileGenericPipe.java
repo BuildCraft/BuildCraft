@@ -19,7 +19,7 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -88,8 +88,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
 
-	private int[] facadeBlocks = new int[Orientations.dirs().length];
-	private int[] facadeMeta = new int[Orientations.dirs().length];
+	private int[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
 	public TileGenericPipe() {
 
@@ -105,7 +105,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		} else
 			nbttagcompound.setInteger("pipeId", coreState.pipeId);
 
-		for (int i = 0; i < Orientations.dirs().length; i++){
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++){
 			nbttagcompound.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
 			nbttagcompound.setInteger("facadeMeta[" + i + "]", facadeMeta[i]);
 		}
@@ -123,7 +123,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			pipe.readFromNBT(nbttagcompound);
 		}
 
-		for (int i = 0; i < Orientations.dirs().length; i++){
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++){
 			facadeBlocks[i] = nbttagcompound.getInteger("facadeBlocks[" + i + "]");
 			facadeMeta[i] = nbttagcompound.getInteger("facadeMeta[" + i + "]");
 		}
@@ -191,20 +191,20 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (worldObj.isRemote) return;
 
 		// Pipe connections;
-		for(Orientations o : Orientations.dirs()){
+		for(ForgeDirection o : ForgeDirection.VALID_DIRECTIONS){
 			renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
 		}
 
 		// Pipe Textures
 		renderState.setTextureFile(pipe.getTextureFile());
-		for(Orientations o: Orientations.values()){
+		for(ForgeDirection o: ForgeDirection.values()){
 			renderState.textureMatrix.setTextureIndex(o, pipe.getTextureIndex(o));
 		}
 
 		// WireState
 		for (IPipe.WireColor color : IPipe.WireColor.values()){
 			renderState.wireMatrix.setWire(color, pipe.wireSet[color.ordinal()]);
-			for (Orientations direction : Orientations.dirs()){
+			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
 				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color));
 			}
 		}
@@ -240,7 +240,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		renderState.setGateTexture(!pipe.hasGate()?0:pipe.gate.getTexture(pipe.isGateActive()));
 
 		// Facades
-		for (Orientations direction:Orientations.dirs()){
+		for (ForgeDirection direction:ForgeDirection.VALID_DIRECTIONS){
 			int blockId = this.facadeBlocks[direction.ordinal()];
 			renderState.facadeMatrix.setConnected(direction, blockId != 0 && Block.blocksList[blockId] != null);
 			if (Block.blocksList[blockId] != null){
@@ -264,7 +264,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 		tileBuffer = new TileBuffer[6];
 
-		for (Orientations o : Orientations.dirs()) {
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			Position pos = new Position(xCoord, yCoord, zCoord, o);
 			pos.moveForwards(1.0);
 
@@ -272,7 +272,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			tileBuffer[o.ordinal()].initialize(worldObj, (int) pos.x, (int) pos.y, (int) pos.z);
 		}
 
-		for (Orientations o : Orientations.dirs()) {
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = getTile(o);
 
 			if (tile instanceof ITileBufferHolder)
@@ -338,13 +338,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	/* IPIPEENTRY */
 	@Override
-	public void entityEntering(IPipedItem item, Orientations orientation) {
+	public void entityEntering(IPipedItem item, ForgeDirection orientation) {
 		if (BlockGenericPipe.isValid(pipe))
 			pipe.transport.entityEntering(item, orientation);
 	}
 
 	@Override
-	public void entityEntering(ItemStack payload, Orientations orientation) {
+	public void entityEntering(ItemStack payload, ForgeDirection orientation) {
 
 		/* FIXME: This is untested guesswork */
 		Position itemPos = new Position(xCoord, yCoord, zCoord, orientation);
@@ -415,19 +415,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public void blockRemoved(Orientations from) {
+	public void blockRemoved(ForgeDirection from) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void blockCreated(Orientations from, int blockID, TileEntity tile) {
+	public void blockCreated(ForgeDirection from, int blockID, TileEntity tile) {
 		if (tileBuffer != null)
-			tileBuffer[from.reverse().ordinal()].set(blockID, tile);
+			tileBuffer[from.getOpposite().ordinal()].set(blockID, tile);
 	}
 
 	@Override
-	public int getBlockId(Orientations to) {
+	public int getBlockId(ForgeDirection to) {
 		if (tileBuffer != null)
 			return tileBuffer[to.ordinal()].getBlockID();
 		else
@@ -435,7 +435,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public TileEntity getTile(Orientations to) {
+	public TileEntity getTile(ForgeDirection to) {
 		if (tileBuffer != null)
 			return tileBuffer[to.ordinal()].getTile();
 		else
@@ -476,14 +476,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 					if (t.getTile() instanceof TileGenericPipe) {
 						TileGenericPipe pipe = (TileGenericPipe) t.getTile();
-						pipe.pipeConnectionsBuffer[Orientations.values()[i].reverse().ordinal()] = pipeConnectionsBuffer[i];
+						pipe.pipeConnectionsBuffer[ForgeDirection.values()[i].getOpposite().ordinal()] = pipeConnectionsBuffer[i];
 					}
 				}
 			}
 
 			for (int i = 0; i < tileBuffer.length; ++i)
 				if (oldConnections[i] != pipeConnectionsBuffer[i]) {
-					Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[i]);
+					Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[i]);
 					pos.moveForwards(1.0);
 					scheduleRenderUpdate();
 				}
@@ -491,7 +491,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public boolean isPipeConnected(Orientations with) {
+	public boolean isPipeConnected(ForgeDirection with) {
 		return pipeConnectionsBuffer[with.ordinal()];
 	}
 
@@ -514,7 +514,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	/** ITankContainer implementation **/
 
 	@Override
-	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
 			return ((ITankContainer) pipe.transport).fill(from, resource, doFill);
 		else
@@ -530,7 +530,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public LiquidStack drain(Orientations from, int maxDrain, boolean doDrain) {
+	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
 			return ((ITankContainer) pipe.transport).drain(from, maxDrain, doDrain);
 		else
@@ -558,7 +558,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		refreshRenderState = true;
 	}
 
-	public boolean addFacade(Orientations direction, int blockid, int meta){
+	public boolean addFacade(ForgeDirection direction, int blockid, int meta){
 		if (this.worldObj.isRemote) return false;
 		if (this.facadeBlocks[direction.ordinal()] == blockid) return false;
 
@@ -572,13 +572,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		return true;
 	}
 
-	public boolean hasFacade(Orientations direction){
+	public boolean hasFacade(ForgeDirection direction){
 		if (this.worldObj.isRemote)
 			return renderState.facadeMatrix.isConnected(direction);
 		return (this.facadeBlocks[direction.ordinal()] != 0);
 	}
 
-	public void dropFacade(Orientations direction){
+	public void dropFacade(ForgeDirection direction){
 		if (this.worldObj.isRemote) return;
 		if (!hasFacade(direction)) return;
 		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);

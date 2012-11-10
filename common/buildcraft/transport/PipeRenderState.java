@@ -35,7 +35,7 @@ public class PipeRenderState implements IClientState {
 	public int currentTextureIndex;
 	
 	public PipeRenderState() {
-//		for (Orientations direction : Orientations.dirs()){
+//		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
 //			facadeMatrix.setConnected(direction, true);
 //			facadeMatrix.setTextureFile(direction, "/terrain.png");
 //			facadeMatrix.setTextureIndex(direction, direction.ordinal());

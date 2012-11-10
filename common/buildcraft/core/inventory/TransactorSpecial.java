@@ -1,7 +1,7 @@
 package buildcraft.core.inventory;
 
 import net.minecraft.src.ItemStack;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.inventory.ISpecialInventory;
 
 public class TransactorSpecial extends Transactor {
@@ -13,7 +13,7 @@ public class TransactorSpecial extends Transactor {
 	}
 	
 	@Override
-	public int inject(ItemStack stack, Orientations orientation, boolean doAdd) {
+	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
 		return inventory.addItem(stack, doAdd, orientation);
 	}
 

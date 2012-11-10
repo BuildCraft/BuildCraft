@@ -9,7 +9,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.EntityPlayer;
@@ -47,8 +47,8 @@ public class PipeLogic implements IDropControlInventory {
 	public void onNeighborBlockChange(int blockId) {}
 	public void onBlockPlaced() {}
 	
-	public boolean inputOpen(Orientations from) { return true; }
-	public boolean outputOpen(Orientations to) { return true; }
+	public boolean inputOpen(ForgeDirection from) { return true; }
+	public boolean outputOpen(ForgeDirection to) { return true; }
 	
 	/* IDROPCONTROLINVENTORY */
 	@Override public boolean doDrop() { return true; }

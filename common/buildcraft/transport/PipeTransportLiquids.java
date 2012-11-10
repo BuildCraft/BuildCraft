@@ -10,7 +10,7 @@
 package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.liquids.ILiquidTank;
@@ -131,8 +131,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public static short OUTPUT_TTL = 80;	//80
 	public static short OUTPUT_COOLDOWN = 30;	//30
 
-	private static final Orientations[] directions = Orientations.dirs();
-	private static final Orientations[] orientations = Orientations.values();
+	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
+	private static final ForgeDirection[] orientations = ForgeDirection.values();
 
 
 	public short travelDelay = 12;
@@ -151,15 +151,15 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 
 	public PipeTransportLiquids() {
-		for (Orientations direction : orientations) {
+		for (ForgeDirection direction : orientations) {
 			internalTanks[direction.ordinal()] = new PipeSection();
-			if (direction != Orientations.Unknown){
+			if (direction != ForgeDirection.UNKNOWN){
 				transferState[direction.ordinal()] = TransferState.None;
 			}
 		}
 	}
 
-	public boolean canReceiveLiquid(Orientations o) {
+	public boolean canReceiveLiquid(ForgeDirection o) {
 		TileEntity entity = container.getTile(o);
 
 		if (!Utils.checkPipesConnections(container, entity))
@@ -168,7 +168,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		if (entity instanceof TileGenericPipe) {
 			Pipe pipe = ((TileGenericPipe) entity).pipe;
 
-			if (pipe == null || !pipe.inputOpen(o.reverse())) {
+			if (pipe == null || !pipe.inputOpen(o.getOpposite())) {
 				return false;
 			}
 		}
@@ -185,7 +185,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			return;
 
 		moveLiquids();
-		for (Orientations direction : orientations) {
+		for (ForgeDirection direction : orientations) {
 			LiquidStack liquid = internalTanks[direction.ordinal()].getLiquid();
 
 			if (liquid != null){
@@ -232,11 +232,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		for (Orientations direction : orientations) {
+		for (ForgeDirection direction : orientations) {
 			if (nbttagcompound.hasKey("tank[" + direction.ordinal() + "]")){
 				internalTanks[direction.ordinal()].readFromNBT(nbttagcompound.getCompoundTag("tank[" + direction.ordinal() + "]"));
 			}
-			if (direction != Orientations.Unknown){
+			if (direction != ForgeDirection.UNKNOWN){
 				transferState[direction.ordinal()] = TransferState.values()[nbttagcompound.getShort("transferState[" + direction.ordinal() + "]")];
 			}
 		}
@@ -246,11 +246,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		for (Orientations direction : orientations) {
+		for (ForgeDirection direction : orientations) {
 			NBTTagCompound subTag = new NBTTagCompound();
 			internalTanks[direction.ordinal()].writeToNBT(subTag);
 			nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
-			if (direction != Orientations.Unknown){
+			if (direction != ForgeDirection.UNKNOWN){
 				nbttagcompound.setShort("transferState[" + direction.ordinal() + "]", (short)transferState[direction.ordinal()].ordinal());
 			}
 		}
@@ -268,14 +268,14 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private void moveFromPipe(short outputCount) {
 		//Move liquid from the non-center to the connected output blocks
 		if (outputCount > 0) {
-			for (Orientations o : directions){
+			for (ForgeDirection o : directions){
 				if (transferState[o.ordinal()] == TransferState.Output){
 					TileEntity target = this.container.getTile(o);
 					if (!(target instanceof ITankContainer)) continue;
 
 					LiquidStack liquidToPush = internalTanks[o.ordinal()].drain(flowRate, false);
 					if (liquidToPush != null && liquidToPush.amount > 0) {
-						int filled = ((ITankContainer)target).fill(o.reverse(), liquidToPush, true);
+						int filled = ((ITankContainer)target).fill(o.getOpposite(), liquidToPush, true);
 						internalTanks[o.ordinal()].drain(filled, true);
 						if (filled <= 0){
 							outputTTL[o.ordinal()]--;
@@ -288,23 +288,23 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	private void moveFromCenter(short outputCount) {
 		//Split liquids moving to output equally based on flowrate, how much each side can accept and available liquid
-		LiquidStack pushStack = internalTanks[Orientations.Unknown.ordinal()].getLiquid();
-		int totalAvailable = internalTanks[Orientations.Unknown.ordinal()].getAvailable();
+		LiquidStack pushStack = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getLiquid();
+		int totalAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getAvailable();
 		if (totalAvailable < 1) return;
 		if (pushStack != null) {
 			LiquidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
 			//Move liquid from the center to the output sides
-			for (Orientations direction : directions) {
+			for (ForgeDirection direction : directions) {
 				if (transferState[direction.ordinal()] == TransferState.Output)	{
 					int available = internalTanks[direction.ordinal()].fill(testStack, false);
 					int ammountToPush = (int) (available / (double) flowRate / (double) outputCount * (double) Math.min(flowRate, totalAvailable));
 					if (ammountToPush < 1) ammountToPush++;
 
-					LiquidStack liquidToPush = internalTanks[Orientations.Unknown.ordinal()].drain(ammountToPush, false);
+					LiquidStack liquidToPush = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(ammountToPush, false);
 					if (liquidToPush != null) {
 						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
-						internalTanks[Orientations.Unknown.ordinal()].drain(filled, true);
+						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
 					}
 				}
 			}
@@ -314,14 +314,14 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private void moveToCenter() {
 		int [] maxInput = new int[] {0,0,0,0,0,0};
 		int transferInCount = 0;
-		LiquidStack stackInCenter = internalTanks[Orientations.Unknown.ordinal()].drain(flowRate, false);
-		int spaceAvailable = internalTanks[Orientations.Unknown.ordinal()].getCapacity();
+		LiquidStack stackInCenter = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(flowRate, false);
+		int spaceAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getCapacity();
 		if (stackInCenter != null){
 			spaceAvailable -= stackInCenter.amount;
 		}
 
 
-		for (Orientations direction : directions){
+		for (ForgeDirection direction : directions){
 			LiquidStack testStack = internalTanks[direction.ordinal()].drain(flowRate, false);
 			if (testStack == null) continue;
 			if (stackInCenter != null && !stackInCenter.isLiquidEqual(testStack)) continue;
@@ -329,7 +329,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			transferInCount++;
 		}
 
-		for (Orientations direction : directions){
+		for (ForgeDirection direction : directions){
 			//Move liquid from input sides to the center
 			if (transferState[direction.ordinal()] != TransferState.Output && maxInput[direction.ordinal()] > 0){
 
@@ -340,7 +340,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 				LiquidStack liquidToPush = internalTanks[direction.ordinal()].drain(ammountToDrain, false);
 				if (liquidToPush != null) {
-					int filled = internalTanks[Orientations.Unknown.ordinal()].fill(liquidToPush, true);
+					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
 					internalTanks[direction.ordinal()].drain(filled, true);
 				}
 			}
@@ -351,11 +351,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		short outputCount = 0;
 
 		//Processes all internal tanks
-		for (Orientations direction : orientations) {
+		for (ForgeDirection direction : orientations) {
 			internalTanks[direction.ordinal()].setTime(newTimeSlot);
 			internalTanks[direction.ordinal()].moveLiquids();
 			// Input processing
-			if (direction == Orientations.Unknown)
+			if (direction == ForgeDirection.UNKNOWN)
 			{
 				continue;
 			}
@@ -392,7 +392,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		for (Orientations direction : directions){
+		for (ForgeDirection direction : directions){
 			if (!Utils.checkPipesConnections(container.getTile(orientations[direction.ordinal()]), container)) {
 				internalTanks[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
@@ -429,7 +429,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	/** ITankContainer implementation **/
 
 	@Override
-	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		return fill(from.ordinal(), resource, doFill);
 	}
 
@@ -442,7 +442,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		else
 			filled = internalTanks[tankIndex].fill(resource, doFill);
 
-		if (filled > 0 && doFill && tankIndex != Orientations.Unknown.ordinal()){
+		if (filled > 0 && doFill && tankIndex != ForgeDirection.UNKNOWN.ordinal()){
 			transferState[tankIndex] = TransferState.Input;
 			inputTTL[tankIndex] = INPUT_TTL;
 		}
@@ -450,7 +450,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	}
 
 	@Override
-	public LiquidStack drain(Orientations from, int maxDrain, boolean doDrain) {
+	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 

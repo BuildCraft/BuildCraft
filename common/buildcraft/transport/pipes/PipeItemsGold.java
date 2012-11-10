@@ -11,7 +11,7 @@ package buildcraft.transport.pipes;
 import java.util.LinkedList;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
@@ -35,48 +35,39 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public int getTextureIndex(Orientations direction) {
-		if (!broadcastRedstone && worldObj != null && !worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
-			return 1 * 16 + 14;
-		else
-			return 1 * 16 + 4;
+	public int getTextureIndex(ForgeDirection direction) {
+		return 1 * 16 + 14;
 	}
 
+//	@Override
+//	public boolean isPipeConnected(TileEntity tile) {
+//		if (!super.isPipeConnected(tile))
+//			return false;
+//
+//		Pipe pipe2 = null;
+//
+//		if (tile instanceof TileGenericPipe)
+//			pipe2 = ((TileGenericPipe) tile).pipe;
+//
+//		if (BuildCraftTransport.alwaysConnectPipes)
+//			return super.isPipeConnected(tile);
+//		else
+//			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
+//	}
+
 	@Override
-	public boolean isPipeConnected(TileEntity tile) {
-		if (!super.isPipeConnected(tile))
-			return false;
-
-		Pipe pipe2 = null;
-
-		if (tile instanceof TileGenericPipe)
-			pipe2 = ((TileGenericPipe) tile).pipe;
-
-		if (BuildCraftTransport.alwaysConnectPipes)
-			return super.isPipeConnected(tile);
-		else
-			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
-	}
-
-	@Override
-	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
 			IPipedItem item) {
 		return possibleOrientations;
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, Orientations orientation) {
-		if (!broadcastRedstone && !worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
-			item.setSpeed(Utils.pipeNormalSpeed * 20F);
+	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
 	}
 
 	@Override
 	public void readjustSpeed(IPipedItem item) {
-		((PipeTransportItems) transport).defaultReajustSpeed(item);
-	}
-
-	@Override
-	public boolean canConnectRedstone() {
-		return true;
+		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
 	}
 }

@@ -12,7 +12,7 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -75,12 +75,12 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		for (ItemStack stack : stacks) {
 
-			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
 			stack.stackSize -= added.stackSize;
 			if (stack.stackSize <= 0)
 				continue;
 
-			if (Utils.addToRandomPipeEntry(this, Orientations.Unknown, stack) && stack.stackSize <= 0) {
+			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0) {
 				return;
 			}
 
@@ -127,7 +127,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	@Override
-	public boolean isPipeConnected(Orientations with) {
+	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 

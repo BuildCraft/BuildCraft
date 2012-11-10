@@ -9,7 +9,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.IPipeTransportLiquidsHook;
@@ -28,13 +28,13 @@ public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook{
 	}
 	
 	@Override
-	public int getTextureIndex(Orientations direction) {
+	public int getTextureIndex(ForgeDirection direction) {
 		return 9 * 16 + 14;
 	}
 
 
 	@Override
-	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		return resource.amount;
 	}
 }

@@ -11,7 +11,7 @@ package buildcraft.silicon;
 
 import java.util.ArrayList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.BlockContainer;
@@ -61,7 +61,7 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		if (i == Orientations.values()[j].reverse().ordinal()) {
+		if (i == ForgeDirection.values()[j].getOpposite().ordinal()) {
 			return 16 * 2 + 15;
 		} else if (i == j) {
 			return 16 * 2 + 14;
@@ -73,8 +73,8 @@ public class BlockLaser extends BlockContainer {
 
 
 	@Override
-	public void updateBlockMetadata(World world, int x, int y, int z, int par5,	float par6, float par7, float par8) {
-		super.updateBlockMetadata(world, x, y, z, par5, par6, par7, par8);
+	public void func_85105_g(World world, int x, int y, int z, int par5) {
+		super.func_85105_g(world, x, y, z, par5);
 		int i1 = world.getBlockMetadata(x, y, z);
 		if (par5 <= 6) {
 			i1 = par5;

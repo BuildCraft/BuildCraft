@@ -2,7 +2,7 @@ package buildcraft.silicon;
 
 import java.util.LinkedList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.DefaultProps;
@@ -127,11 +127,11 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				}
 
 				ItemStack remaining = currentRecipe.output.copy();
-				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
 				remaining.stackSize -= added.stackSize;
 
 				if (remaining.stackSize > 0)
-					Utils.addToRandomPipeEntry(this, Orientations.Unknown, remaining);
+					Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, remaining);
 
 				if (remaining.stackSize > 0) {
 					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5, currentRecipe.output.copy());
@@ -353,7 +353,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public boolean isPipeConnected(Orientations with) {
+	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 

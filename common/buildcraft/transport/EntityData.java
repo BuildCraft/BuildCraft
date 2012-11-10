@@ -1,6 +1,6 @@
 package buildcraft.transport;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.transport.IPipedItem;
 import java.util.EnumSet;
 
@@ -11,12 +11,12 @@ public class EntityData {
 	public boolean toCenter = true;
 	public IPipedItem item;
 
-	public Orientations input;
-	public Orientations output = Orientations.Unknown;
+	public ForgeDirection input;
+	public ForgeDirection output = ForgeDirection.UNKNOWN;
 
-	public EnumSet<Orientations> blacklist = EnumSet.noneOf(Orientations.class);
+	public EnumSet<ForgeDirection> blacklist = EnumSet.noneOf(ForgeDirection.class);
 
-	public EntityData(IPipedItem citem, Orientations orientation) {
+	public EntityData(IPipedItem citem, ForgeDirection orientation) {
 		item = citem;
 
 		this.input = orientation;

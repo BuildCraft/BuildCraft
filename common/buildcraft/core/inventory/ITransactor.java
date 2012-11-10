@@ -1,10 +1,10 @@
 package buildcraft.core.inventory;
 
 import net.minecraft.src.ItemStack;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 
 public interface ITransactor {
 
-	ItemStack add(ItemStack stack, Orientations orientation, boolean doAdd);
+	ItemStack add(ItemStack stack, ForgeDirection orientation, boolean doAdd);
 
 }

@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -13,7 +13,7 @@ import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.Version;
 import net.minecraft.src.Block;
 
@@ -27,7 +27,7 @@ public class BptBlockEngine extends BptBlock {
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		int o = slot.cpt.getInteger("orientation");
 
-		o = Orientations.values()[o].rotateLeft().ordinal();
+		o = ForgeDirection.values()[o].getLeftRotation().ordinal();
 
 		slot.cpt.setInteger("orientation", o);
 	}

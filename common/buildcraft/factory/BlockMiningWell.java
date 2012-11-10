@@ -12,7 +12,7 @@ package buildcraft.factory;
 import buildcraft.BuildCraftFactory;
 import java.util.ArrayList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
@@ -54,7 +54,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 			return textureBack;
 		} else if (i == j) {
 			return textureFront;
-		} else if (j >= 0 && j < 6 && Orientations.values()[j].reverse().ordinal() == i) {
+		} else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i) {
 			return textureBack;
 		} else {
 			return textureSides;
@@ -63,10 +63,10 @@ public class BlockMiningWell extends BlockMachineRoot {
 
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
 	}
 
 	@Override

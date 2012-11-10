@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Random;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
@@ -43,7 +43,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
 public abstract class Pipe implements IPipe, IDropControlInventory {
-	
+
 	public int[] signalStrength = new int[] { 0, 0, 0, 0 };
 
 	public int xCoord;
@@ -59,7 +59,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	private boolean internalUpdateScheduled = false;
 
 	public boolean[] wireSet = new boolean[] { false, false, false, false };
-	
+
 	public Gate gate;
 
 	@SuppressWarnings("rawtypes")
@@ -140,24 +140,24 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public abstract String getTextureFile();
 
 	/**
-	 * Should return the textureindex in the file specified by getTextureFile() 
-	 * @param direction The orientation for the texture that is requested. Unknown for the center pipe center 
+	 * Should return the textureindex in the file specified by getTextureFile()
+	 * @param direction The orientation for the texture that is requested. Unknown for the center pipe center
 	 * @return the index in the texture sheet
 	 */
-	public abstract int getTextureIndex(Orientations direction);
-	
-	
+	public abstract int getTextureIndex(ForgeDirection direction);
+
+
 	/**
-	 *  Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default implementation might 
-	 *  not work if your getTextureIndex(Orienations.Unknown) has logic 
+	 *  Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default implementation might
+	 *  not work if your getTextureIndex(Orienations.Unknown) has logic
 	 * @return
 	 */
 	public int getTextureIndexForItem(){
-		return getTextureIndex(Orientations.Unknown);
+		return getTextureIndex(ForgeDirection.UNKNOWN);
 	}
-	
+
 	public void updateEntity() {
-		
+
 		transport.updateEntity();
 		logic.updateEntity();
 
@@ -168,7 +168,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		// Do not try to update gates client side.
 		if (worldObj.isRemote) return;
-		
+
 		if (actionTracker.markTimeIfDelay(worldObj, 10))
 			resolveActions();
 
@@ -256,7 +256,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	private void readNearbyPipesSignal(WireColor color) {
 		boolean foundBiggerSignal = false;
 
-		for (Orientations o : Orientations.dirs()) {
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = container.getTile(o);
 
 			if (tile instanceof TileGenericPipe) {
@@ -272,9 +272,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			signalStrength[color.ordinal()] = 0;
 			//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 			container.scheduleRenderUpdate();
-			
 
-			for (Orientations o : Orientations.dirs()) {
+
+			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = container.getTile(o);
 
 				if (tile instanceof TileGenericPipe) {
@@ -306,7 +306,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		// STEP 2: transmit signal in nearby blocks
 
 		if (signalStrength[color.ordinal()] > 1)
-			for (Orientations o : Orientations.dirs()) {
+			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = container.getTile(o);
 
 				if (tile instanceof TileGenericPipe) {
@@ -332,7 +332,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			if (oldSignal == 0) {
 				//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 				container.scheduleRenderUpdate();
-				
+
 			}
 
 			return true;
@@ -340,22 +340,22 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			return false;
 	}
 
-	public boolean inputOpen(Orientations from) {
+	public boolean inputOpen(ForgeDirection from) {
 		return transport.inputOpen(from) && logic.inputOpen(from);
 	}
 
-	public boolean outputOpen(Orientations to) {
+	public boolean outputOpen(ForgeDirection to) {
 		return transport.outputOpen(to) && logic.outputOpen(to);
 	}
 
 	public void onEntityCollidedWithBlock(Entity entity) {
 
 	}
-	
+
 	public boolean canConnectRedstone() {
 		if(hasGate())
 			return true;
-			
+
 		return false;
 	}
 
@@ -363,7 +363,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		if (!broadcastRedstone)
 			return false;
 
-		Orientations o = Orientations.values()[l].reverse();
+		ForgeDirection o = ForgeDirection.values()[l].getOpposite();
 		TileEntity tile = container.getTile(o);
 
 		if (tile instanceof TileGenericPipe && Utils.checkPipesConnections(this.container, tile))
@@ -400,7 +400,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public boolean hasGate() {
 		return gate != null;
 	}
-	
+
 	protected void updateNeighbors(boolean needSelf) {
 		if (needSelf) {
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BuildCraftTransport.genericPipeBlock.blockID);
@@ -428,13 +428,13 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		if (hasGate())
 			gate.dropGate(worldObj, xCoord, yCoord, zCoord);
-		
-		for (Orientations direction : Orientations.dirs()){
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
 			if (container.hasFacade(direction)){
 				container.dropFacade(direction);
 			}
 		}
-		
+
 		if (broadcastRedstone) {
 			updateNeighbors(false); // self will update due to block id changing
 		}
@@ -460,7 +460,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		if (trigger instanceof ITriggerPipe)
 			return ((ITriggerPipe) trigger).isTriggerActive(this, parameter);
 		else if (trigger != null)
-			for (Orientations o : Orientations.dirs()) {
+			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = container.getTile(o);
 
 				if (tile != null && !(tile instanceof TileGenericPipe) && trigger.isTriggerActive(tile, parameter))
@@ -608,12 +608,12 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	/**
 	 * If this pipe is open on one side, return it.
 	 */
-	public Orientations getOpenOrientation() {
+	public ForgeDirection getOpenOrientation() {
 		int Connections_num = 0;
 
-		Orientations target_orientation = Orientations.Unknown;
+		ForgeDirection target_orientation = ForgeDirection.UNKNOWN;
 
-		for (Orientations o : Orientations.dirs())
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
 			if (Utils.checkPipesConnections(container.getTile(o), container)) {
 
 				Connections_num++;
@@ -623,16 +623,16 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			}
 
 		if (Connections_num > 1 || Connections_num == 0)
-			return Orientations.Unknown;
+			return ForgeDirection.UNKNOWN;
 
-		return target_orientation.reverse();
+		return target_orientation.getOpposite();
 	}
 
 	@Override
 	public boolean doDrop() {
 		return logic.doDrop();
 	}
-	
+
 	public boolean isGateActive(){
 		for (boolean b : broadcastSignal){
 			if (b) return true;
@@ -642,7 +642,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 
 	/**
-	 * Called when TileGenericPipe.invalidate() is called 
+	 * Called when TileGenericPipe.invalidate() is called
 	 */
 	public void invalidate() {}
 
@@ -651,11 +651,11 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	 */
 	public void validate() {}
 
-	
+
 	/**
 	 * Called when TileGenericPipe.onChunkUnload is called
 	 */
 	public void onChunkUnload() {}
-	
+
 }
 

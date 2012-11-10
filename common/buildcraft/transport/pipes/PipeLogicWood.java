@@ -10,7 +10,7 @@
 package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeManager;
@@ -30,7 +30,7 @@ public class PipeLogicWood extends PipeLogic {
 		int newMeta = 6;
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			Orientations o = Orientations.values()[i % 6];
+			ForgeDirection o = ForgeDirection.values()[i % 6];
 
 			TileEntity tile = container.getTile(o);
 
@@ -93,7 +93,7 @@ public class PipeLogicWood extends PipeLogic {
 		if (meta > 5)
 			switchSource();
 		else {
-			TileEntity tile = container.getTile(Orientations.values()[meta]);
+			TileEntity tile = container.getTile(ForgeDirection.values()[meta]);
 
 			if (!isInput(tile))
 				switchSource();
@@ -109,7 +109,7 @@ public class PipeLogicWood extends PipeLogic {
 	}
 	
 	@Override
-	public boolean outputOpen(Orientations to) {
+	public boolean outputOpen(ForgeDirection to) {
 		if (this.container.pipe instanceof PipeLiquidsWood){
 			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			return meta != to.ordinal();

@@ -11,7 +11,7 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.DefaultProps;
@@ -64,11 +64,11 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 
 	/* ISPECIALINVENTORY */
 	@Override
-	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
+	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
 		return 0;
 	}
 	@Override
-	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
+	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount) {
 		return new ItemStack[0];
 	}
 

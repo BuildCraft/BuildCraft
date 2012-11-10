@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.energy.Engine;
@@ -71,7 +71,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	@Override
 	public void inventoryRender(double x, double y, double z, float f, float f1) {
-		render(EnergyStage.Blue, 0.25F, Orientations.YPos, baseTexture, x, y, z);
+		render(EnergyStage.Blue, 0.25F, ForgeDirection.UP, baseTexture, x, y, z);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			render(engine.getEnergyStage(), engine.progress, engine.orientation, engine.getTextureFile(), x, y, z);
 	}
 
-	private void render(EnergyStage energy, float progress, Orientations orientation, String baseTexture, double x, double y,
+	private void render(EnergyStage energy, float progress, ForgeDirection orientation, String baseTexture, double x, double y,
 			double z) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
@@ -106,26 +106,26 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		float translatefact = step / 16;
 
 		switch (orientation) {
-		case XPos:
+		case EAST:
 			angle[2] = (float) -Math.PI / 2;
 			translate[0] = 1;
 			break;
-		case XNeg:
+		case WEST:
 			angle[2] = (float) Math.PI / 2;
 			translate[0] = -1;
 			break;
-		case YPos:
+		case UP:
 			translate[1] = 1;
 			break;
-		case YNeg:
+		case DOWN:
 			angle[2] = (float) Math.PI;
 			translate[1] = -1;
 			break;
-		case ZPos:
+		case SOUTH:
 			angle[0] = (float) Math.PI / 2;
 			translate[2] = 1;
 			break;
-		case ZNeg:
+		case NORTH:
 			angle[0] = (float) -Math.PI / 2;
 			translate[2] = -1;
 			break;

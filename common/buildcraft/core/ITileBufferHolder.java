@@ -9,17 +9,17 @@
 
 package buildcraft.core;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraft.src.TileEntity;
 
 public interface ITileBufferHolder {
 
-	public void blockRemoved(Orientations from);
+	public void blockRemoved(ForgeDirection from);
 
-	public void blockCreated(Orientations from, int blockID, TileEntity tile);
+	public void blockCreated(ForgeDirection from, int blockID, TileEntity tile);
 
-	public int getBlockId(Orientations to);
+	public int getBlockId(ForgeDirection to);
 
-	public TileEntity getTile(Orientations to);
+	public TileEntity getTile(ForgeDirection to);
 
 }

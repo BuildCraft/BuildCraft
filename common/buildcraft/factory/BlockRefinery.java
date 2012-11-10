@@ -22,7 +22,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.liquids.LiquidManager;
 import buildcraft.api.liquids.LiquidStack;
@@ -68,10 +68,10 @@ public class BlockRefinery extends BlockContainer {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-		Orientations orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
 				new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.reverse().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
 	}
 
 	@Override
@@ -85,19 +85,19 @@ public class BlockRefinery extends BlockContainer {
 
 			int meta = world.getBlockMetadata(i, j, k);
 
-			switch (Orientations.values()[meta]) {
-			case XNeg:
-				world.setBlockMetadata(i, j, k, Orientations.ZPos.ordinal());
+			switch (ForgeDirection.values()[meta]) {
+			case WEST:
+				world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
 				break;
-			case XPos:
-				world.setBlockMetadata(i, j, k, Orientations.ZNeg.ordinal());
+			case EAST:
+				world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
 				break;
-			case ZNeg:
-				world.setBlockMetadata(i, j, k, Orientations.XNeg.ordinal());
+			case NORTH:
+				world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
 				break;
-			case ZPos:
+			case SOUTH:
 			default:
-				world.setBlockMetadata(i, j, k, Orientations.XPos.ordinal());
+				world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
 				break;
 			}
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
@@ -108,7 +108,7 @@ public class BlockRefinery extends BlockContainer {
 			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
 
 			if (liquid != null) {
-				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(Orientations.Unknown, liquid, true);
+				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(ForgeDirection.UNKNOWN, liquid, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
 					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,

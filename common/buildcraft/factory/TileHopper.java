@@ -1,6 +1,6 @@
 package buildcraft.factory;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
@@ -48,7 +48,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		if (tile instanceof ISpecialInventory) {
 			ISpecialInventory special = (ISpecialInventory) tile;
 			ItemStack clonedStack = _inventory.getStackInSlot(internalSlot).copy().splitStack(1);
-			if (special.addItem(clonedStack, true, Orientations.YPos) > 0) {
+			if (special.addItem(clonedStack, true, ForgeDirection.UP) > 0) {
 				_inventory.decrStackSize(internalSlot, 1);
 			}
 			return;
@@ -58,7 +58,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			return;
 		IInventory inventory = (IInventory) tile;
 		if (tile instanceof ISidedInventory) {
-			inventory = new SidedInventoryAdapter((ISidedInventory) tile, Orientations.YPos);
+			inventory = new SidedInventoryAdapter((ISidedInventory) tile, ForgeDirection.UP);
 		}
 
 		InventoryUtil externalInventory = new InventoryUtil(inventory);

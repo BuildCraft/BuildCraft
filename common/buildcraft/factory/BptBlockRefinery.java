@@ -1,5 +1,5 @@
-/** 
- * BuildCraft is open-source. It is distributed under the terms of the 
+/**
+ * BuildCraft is open-source. It is distributed under the terms of the
  * BuildCraft Open Source License. It grants rights to read, modify, compile
  * or run the code. It does *NOT* grant the right to redistribute this software
  * or its modifications in any form, binary or source, except if expressively
@@ -11,7 +11,7 @@ package buildcraft.factory;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 
 public class BptBlockRefinery extends BptBlock {
 
@@ -21,7 +21,7 @@ public class BptBlockRefinery extends BptBlock {
 
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		slot.meta = Orientations.values()[slot.meta].rotateLeft().ordinal();
+		slot.meta = ForgeDirection.values()[slot.meta].getLeftRotation().ordinal();
 	}
 
 	@Override

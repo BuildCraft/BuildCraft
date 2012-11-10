@@ -23,7 +23,7 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -79,7 +79,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	boolean isDigging = false;
 
-	public static int MAX_ENERGY = 7000;
+	public static int MAX_ENERGY = 15000;
 
 	public TileQuarry() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
@@ -155,7 +155,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 		super.updateEntity();
 		if (inProcess) {
-			float energyToUse = 2 + powerProvider.getEnergyStored() / 1000;
+			float energyToUse = 2 + powerProvider.getEnergyStored() / 500;
 
 			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
 
@@ -222,8 +222,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	protected void dig() {
-		powerProvider.configure(20, 30, 200, 50, MAX_ENERGY);
-		if (powerProvider.useEnergy(30, 30, true) != 30) {
+		powerProvider.configure(20, 30, 500, 50, MAX_ENERGY);
+		if (powerProvider.useEnergy(60, 60, true) != 60) {
 			return;
 		}
 
@@ -411,12 +411,12 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	private void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
-		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
 		stack.stackSize -= added.stackSize;
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0)
-			Utils.addToRandomPipeEntry(this, Orientations.Unknown, stack);
+			Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack);
 
 		// Lastly, throw the object away
 		if (stack.stackSize > 0) {
@@ -532,22 +532,22 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		if (useDefault) {
 			int xMin = 0, zMin = 0;
 
-			Orientations o = Orientations.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].reverse();
+			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
 			switch (o) {
-			case XPos:
+			case EAST:
 				xMin = xCoord + 1;
 				zMin = zCoord - 4 - 1;
 				break;
-			case XNeg:
+			case WEST:
 				xMin = xCoord - 9 - 2;
 				zMin = zCoord - 4 - 1;
 				break;
-			case ZPos:
+			case SOUTH:
 				xMin = xCoord - 4 - 1;
 				zMin = zCoord + 1;
 				break;
-			case ZNeg:
+			case NORTH:
 			default:
 				xMin = xCoord - 4 - 1;
 				zMin = zCoord - 9 - 2;
@@ -657,7 +657,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	@Override
-	public boolean isPipeConnected(Orientations with) {
+	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 

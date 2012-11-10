@@ -1,6 +1,6 @@
 package buildcraft.core.inventory;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.ISidedInventory;
 
@@ -14,9 +14,9 @@ public class TransactorFurnace extends TransactorSided {
 	}
 
 	@Override
-	public int inject(ItemStack stack, Orientations orientation, boolean doAdd) {
-		if(orientation != Orientations.YNeg
-				&& orientation != Orientations.YPos)
+	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
+		if(orientation != ForgeDirection.DOWN
+				&& orientation != ForgeDirection.UP)
 			return 0;
 		
 		return super.inject(stack, orientation, doAdd);

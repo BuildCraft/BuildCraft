@@ -8,7 +8,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.liquids.LiquidManager;
@@ -60,7 +60,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
@@ -90,7 +90,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		if (liquidToExtract > 0 && meta < 6) {
-			Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
+			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
 			pos.moveForwards(1);
 
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
@@ -100,13 +100,13 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 				int flowRate = ((PipeTransportLiquids) transport).flowRate;
 
-				LiquidStack extracted = container.drain(pos.orientation.reverse(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
+				LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
                 int inserted = 0;
                 if(extracted != null) {
                     inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
 
-                    container.drain(pos.orientation.reverse(), inserted, true);
+                    container.drain(pos.orientation.getOpposite(), inserted, true);
                 }
 
 				liquidToExtract -= inserted;
@@ -120,8 +120,8 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int getTextureIndex(Orientations direction) {
-		if (direction == Orientations.Unknown)
+	public int getTextureIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
@@ -137,9 +137,9 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public int powerRequest() {
 		return getPowerProvider().getMaxEnergyReceived();
 	}
-	
+
 	@Override
-	public boolean canConnectRedstone() {	
+	public boolean canConnectRedstone() {
 		if(PowerFramework.currentFramework instanceof RedstonePowerFramework)
 			return true;
 		return super.canConnectRedstone();

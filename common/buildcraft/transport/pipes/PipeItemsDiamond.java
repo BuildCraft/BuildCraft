@@ -20,7 +20,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTBase;
 import net.minecraft.src.NBTTagCompound;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
@@ -39,23 +39,23 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
-	public int getTextureIndex(Orientations direction) {
-		if (direction == Orientations.Unknown){
+	public int getTextureIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN){
 			return 1 * 16 + 5;
 		}
 		return BuildCraftTransport.diamondTextures[direction.ordinal()];
 	}
 
 	@Override
-	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
 			IPipedItem item) {
-		LinkedList<Orientations> filteredOrientations = new LinkedList<Orientations>();
-		LinkedList<Orientations> defaultOrientations = new LinkedList<Orientations>();
+		LinkedList<ForgeDirection> filteredOrientations = new LinkedList<ForgeDirection>();
+		LinkedList<ForgeDirection> defaultOrientations = new LinkedList<ForgeDirection>();
 
 		// Filtered outputs
-		for (Orientations dir : possibleOrientations) {
+		for (ForgeDirection dir : possibleOrientations) {
 			boolean foundFilter = false;
 
 			// NB: if there's several of the same match, the probability
@@ -84,7 +84,7 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, Orientations orientation) {
+	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
 
 	}
 

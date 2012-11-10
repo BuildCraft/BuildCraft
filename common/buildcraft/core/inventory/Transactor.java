@@ -1,6 +1,6 @@
 package buildcraft.core.inventory;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.utils.Utils;
 import net.minecraft.src.IInventory;
@@ -11,13 +11,13 @@ import net.minecraftforge.common.ISidedInventory;
 public abstract class Transactor implements ITransactor {
 
 	@Override
-	public ItemStack add(ItemStack stack, Orientations orientation, boolean doAdd) {
+	public ItemStack add(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
 		ItemStack added = stack.copy();
 		added.stackSize = inject(stack, orientation, doAdd);	
 		return added;
 	}
 	
-	public abstract int inject(ItemStack stack, Orientations orientation, boolean doAdd);
+	public abstract int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd);
 	
 	public static ITransactor getTransactorFor(Object object) {
 		

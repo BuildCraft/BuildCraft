@@ -12,7 +12,7 @@ package buildcraft.transport.gui;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
@@ -69,7 +69,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			if (ptile instanceof IOverrideDefaultTriggers)
 				_potentialTriggers.addAll( ((IOverrideDefaultTriggers)ptile).getTriggers());
 
-			for (Orientations o : Orientations.dirs()) {
+			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				Position pos = new Position(pipe.xCoord, pipe.yCoord, pipe.zCoord, o);
 				pos.moveForwards(1.0);
 				TileEntity tile = pipe.worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);

@@ -14,7 +14,7 @@ import java.util.TreeMap;
 
 import buildcraft.BuildCraftBlockUtil;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -55,7 +55,7 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	}
 	
 	@Override
-	public int getTextureIndex(Orientations direction) {
+	public int getTextureIndex(ForgeDirection direction) {
 		return 16 * 7 + 14;
 	}
 
@@ -63,9 +63,9 @@ public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPower
 	@Override
 	public void doWork() {
 		if (powerProvider.useEnergy(1, 1, true) == 1) {
-			Orientations o = getOpenOrientation();
+			ForgeDirection o = getOpenOrientation();
 
-			if (o != Orientations.Unknown) {
+			if (o != ForgeDirection.Unknown) {
 				Position p = new Position(xCoord, yCoord, zCoord, o);
 				p.moveForwards(1.0);
 

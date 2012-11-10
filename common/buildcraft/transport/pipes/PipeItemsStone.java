@@ -10,7 +10,7 @@ package buildcraft.transport.pipes;
 
 import java.util.LinkedList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
@@ -33,7 +33,7 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	}
 	
 	@Override
-	public int getTextureIndex(Orientations direction) {
+	public int getTextureIndex(ForgeDirection direction) {
 		return 1 * 16 + 13;
 	}
 
@@ -47,13 +47,13 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
 			IPipedItem item) {
 		return possibleOrientations;
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, Orientations orientation) {
+	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
 
 	}
 

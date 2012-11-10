@@ -20,7 +20,7 @@ import java.util.Map;
 import cpw.mods.fml.common.network.PacketDispatcher;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.inventory.ISpecialInventory;
@@ -69,7 +69,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	@Override
-	public void entityEntering(IPipedItem item, Orientations orientation) {
+	public void entityEntering(IPipedItem item, ForgeDirection orientation) {
 		if (item.isCorrupted())
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
@@ -91,7 +91,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
-		if (orientation != Orientations.YPos && orientation != Orientations.YNeg)
+		if (orientation != ForgeDirection.UP && orientation != ForgeDirection.DOWN)
 			item.setPosition(item.getPosition().x, yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
 
 		  if (!worldObj.isRemote)
@@ -125,13 +125,13 @@ public class PipeTransportItems extends PipeTransport {
 		unscheduleRemoval(data.item);
 
 		data.toCenter = true;
-		data.input = data.output.reverse();
+		data.input = data.output.getOpposite();
 
 		readjustSpeed(data.item);
 
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
-		if (data.input != Orientations.YPos && data.input != Orientations.YNeg)
+		if (data.input != ForgeDirection.UP && data.input != ForgeDirection.DOWN)
 			data.item.setPosition(data.item.getPosition().x, yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), data.item.getPosition().z);
 
 		  if (!worldObj.isRemote)
@@ -145,11 +145,11 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 
-	public Orientations resolveDestination(EntityData data) {
-		LinkedList<Orientations> listOfPossibleMovements = getPossibleMovements(data);
+	public ForgeDirection resolveDestination(EntityData data) {
+		LinkedList<ForgeDirection> listOfPossibleMovements = getPossibleMovements(data);
 
 		if (listOfPossibleMovements.size() == 0)
-			return Orientations.Unknown;
+			return ForgeDirection.UNKNOWN;
 		else {
 			int i = worldObj.rand.nextInt(listOfPossibleMovements.size());
 			return listOfPossibleMovements.get(i);
@@ -160,19 +160,19 @@ public class PipeTransportItems extends PipeTransport {
 	 * Returns a list of all possible movements, that is to say adjacent
 	 * implementers of IPipeEntry or TileEntityChest.
 	 */
-	public LinkedList<Orientations> getPossibleMovements(EntityData data) {
-		LinkedList<Orientations> result = new LinkedList<Orientations>();
+	public LinkedList<ForgeDirection> getPossibleMovements(EntityData data) {
+		LinkedList<ForgeDirection> result = new LinkedList<ForgeDirection>();
 
-		data.blacklist.add(data.input.reverse());
+		data.blacklist.add(data.input.getOpposite());
 
-		for (Orientations o : Orientations.dirs())
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
 			if (!data.blacklist.contains(o) && container.pipe.outputOpen(o))
 				if (canReceivePipeObjects(o, data.item))
 					result.add(o);
 
 		if (result.size() == 0 && allowBouncing) {
-			if (canReceivePipeObjects(data.input.reverse(), data.item))
-				result.add(data.input.reverse());
+			if (canReceivePipeObjects(data.input.getOpposite(), data.item))
+				result.add(data.input.getOpposite());
 		}
 
 		if (this.container.pipe instanceof IPipeTransportItemsHook) {
@@ -183,7 +183,7 @@ public class PipeTransportItems extends PipeTransport {
 		return result;
 	}
 
-	public boolean canReceivePipeObjects(Orientations o, IPipedItem item) {
+	public boolean canReceivePipeObjects(ForgeDirection o, IPipedItem item) {
 		TileEntity entity = container.getTile(o);
 
 		if (!Utils.checkPipesConnections(entity, container))
@@ -196,7 +196,7 @@ public class PipeTransportItems extends PipeTransport {
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
 		} else if (entity instanceof IInventory)
-			if(Transactor.getTransactorFor(entity).add(item.getItemStack(), o.reverse(), false).stackSize > 0)
+			if(Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0)
 				return true;
 
 		return false;
@@ -249,7 +249,7 @@ public class PipeTransportItems extends PipeTransport {
 				// Reajusting to the middle
 				data.item.setPosition(xCoord + 0.5, yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), zCoord + 0.5);
 
-				if (data.output == Orientations.Unknown) {
+				if (data.output == ForgeDirection.UNKNOWN) {
 					if (travelHook != null)
 						travelHook.drop(this, data);
 
@@ -297,7 +297,7 @@ public class PipeTransportItems extends PipeTransport {
 			((PipeTransportItems) pipe.pipe.transport).entityEntering(data.item, data.output);
 		} else if (tile instanceof IInventory) {
 			if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-				ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.output.reverse(), true);
+				ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.output.getOpposite(), true);
 
 				data.item.getItemStack().stackSize -= added.stackSize;
 
@@ -359,8 +359,8 @@ public class PipeTransportItems extends PipeTransport {
 
 				entity.setContainer(container);
 
-				EntityData data = new EntityData(entity, Orientations.values()[dataTag.getInteger("input")]);
-				data.output = Orientations.values()[dataTag.getInteger("output")];
+				EntityData data = new EntityData(entity, ForgeDirection.values()[dataTag.getInteger("input")]);
+				data.output = ForgeDirection.values()[dataTag.getInteger("output")];
 				data.toCenter = dataTag.getBoolean("toCenter");
 
 				entitiesToLoad.add(data);

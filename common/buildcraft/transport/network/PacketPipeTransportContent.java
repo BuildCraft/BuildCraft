@@ -1,6 +1,6 @@
 package buildcraft.transport.network;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.transport.IPipedItem;
 
 import buildcraft.core.network.PacketIds;
@@ -43,12 +43,12 @@ public class PacketPipeTransportContent extends PacketUpdate {
 		return payload.intPayload[0];
 	}
 
-	public Orientations getInputOrientation() {
-		return Orientations.values()[payload.intPayload[1]];
+	public ForgeDirection getInputOrientation() {
+		return ForgeDirection.values()[payload.intPayload[1]];
 	}
 
-	public Orientations getOutputOrientation() {
-		return Orientations.values()[payload.intPayload[2]];
+	public ForgeDirection getOutputOrientation() {
+		return ForgeDirection.values()[payload.intPayload[2]];
 	}
 
 	public int getItemId() {

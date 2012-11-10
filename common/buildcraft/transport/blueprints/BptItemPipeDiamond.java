@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.blueprints.BptItem;
 
 import net.minecraft.src.IInventory;
@@ -39,7 +39,7 @@ public class BptItemPipeDiamond extends BptItem {
 				newInv[dir * 9 + s] = inv[dir * 9 + s];
 
 		for (int dir = 2; dir <= 5; ++dir) {
-			Orientations r = Orientations.values()[dir].rotateLeft();
+			ForgeDirection r = ForgeDirection.values()[dir].getLeftRotation();
 
 			for (int s = 0; s < 9; ++s)
 				newInv[r.ordinal() * 9 + s] = inv[dir * 9 + s];

@@ -11,7 +11,7 @@ package buildcraft.silicon;
 
 import java.util.LinkedList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IPowerProvider;
@@ -116,24 +116,24 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		int maxY = yCoord + 5;
 		int maxZ = zCoord + 5;
 
-		switch (Orientations.values()[meta]) {
-		case XNeg:
+		switch (ForgeDirection.values()[meta]) {
+		case WEST:
 			maxX = xCoord;
 			break;
-		case XPos:
+		case EAST:
 			minX = xCoord;
 			break;
-		case YNeg:
+		case DOWN:
 			maxY = yCoord;
 			break;
-		case YPos:
+		case UP:
 			minY = yCoord;
 			break;
-		case ZNeg:
+		case NORTH:
 			maxZ = zCoord;
 			break;
 		default:
-		case ZPos:
+		case SOUTH:
 			minZ = zCoord;
 			break;
 		}
@@ -176,24 +176,24 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		double px = 0, py = 0, pz = 0;
 
-		switch (Orientations.values()[meta]) {
+		switch (ForgeDirection.values()[meta]) {
 
-			case XNeg:
+			case WEST:
 				px = -0.3;
 				break;
-			case XPos:
+			case EAST:
 				px = 0.3;
 				break;
-			case YNeg:
+			case DOWN:
 				py = -0.3;
 				break;
-			case YPos:
+			case UP:
 				py = 0.3;
 				break;
-			case ZNeg:
+			case NORTH:
 				pz = -0.3;
 				break;
-			case ZPos:
+			case SOUTH:
 			default:
 				pz = 0.3;
 				break;

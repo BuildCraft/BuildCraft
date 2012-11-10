@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.LaserKind;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -73,7 +73,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		public BlockIndex to;
 		public double lastDistance;
 		AxisAlignedBB oldBoundingBox = null;
-		Orientations o = null;
+		ForgeDirection o = null;
 
 		public PathIterator(BlockIndex from, Iterator<BlockIndex> it) {
 			this.to = it.next();
@@ -98,15 +98,15 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 			if (Math.abs(dx) > Math.abs(dz)) {
 				if (dx > 0) {
-					o = Orientations.XPos;
+					o = ForgeDirection.EAST;
 				} else {
-					o = Orientations.XNeg;
+					o = ForgeDirection.WEST;
 				}
 			} else {
 				if (dz > 0) {
-					o = Orientations.ZPos;
+					o = ForgeDirection.SOUTH;
 				} else {
-					o = Orientations.ZNeg;
+					o = ForgeDirection.NORTH;
 				}
 			}
 		}
@@ -249,7 +249,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 	}
 
-	public BptBuilderBase instanciateBluePrint(int x, int y, int z, Orientations o) {
+	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
 		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(items[0].getItemDamage());
 
 		if (bpt == null) {
@@ -260,14 +260,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 		BptContext context = new BptContext(worldObj, null, bpt.getBoxForPos(x, y, z));
 
-		if (o == Orientations.XPos) {
+		if (o == ForgeDirection.EAST) {
 			// Do nothing
-		} else if (o == Orientations.ZPos) {
+		} else if (o == ForgeDirection.SOUTH) {
 			bpt.rotateLeft(context);
-		} else if (o == Orientations.XNeg) {
+		} else if (o == ForgeDirection.WEST) {
 			bpt.rotateLeft(context);
 			bpt.rotateLeft(context);
-		} else if (o == Orientations.ZNeg) {
+		} else if (o == ForgeDirection.NORTH) {
 			bpt.rotateLeft(context);
 			bpt.rotateLeft(context);
 			bpt.rotateLeft(context);
@@ -386,7 +386,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 					bluePrintBuilder = null;
 				} else {
 					bluePrintBuilder = instanciateBluePrint(xCoord, yCoord, zCoord,
-							Orientations.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].reverse());
+							ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
 
 					if (bluePrintBuilder != null) {
 						box.initialize(bluePrintBuilder);

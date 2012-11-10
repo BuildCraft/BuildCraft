@@ -33,7 +33,7 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
@@ -316,19 +316,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glPushMatrix();
 				int list = 0;
 
-				switch (Orientations.values()[i]) {
-				case YPos:
+				switch (ForgeDirection.values()[i]) {
+				case UP:
 					above = true;
 					list = d.sideVertical[stage];
 					break;
-				case YNeg:
+				case DOWN:
 					GL11.glTranslatef(0, -0.75F, 0);
 					list = d.sideVertical[stage];
 					break;
-				case XPos:
-				case XNeg:
-				case ZPos:
-				case ZNeg:
+				case EAST:
+				case WEST:
+				case SOUTH:
+				case NORTH:
 					sides = true;
 					GL11.glRotatef(angleY[i], 0, 1, 0);
 					GL11.glRotatef(angleZ[i], 0, 0, 1);
@@ -342,14 +342,14 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 		}
 		// CENTER
-//		ILiquidTank tank = liq.getTanks()[Orientations.Unknown.ordinal()];
+//		ILiquidTank tank = liq.getTanks()[ForgeDirection.Unknown.ordinal()];
 //		LiquidStack liquid = tank.getLiquid();
-		LiquidStack liquid = liq.renderCache[Orientations.Unknown.ordinal()];
+		LiquidStack liquid = liq.renderCache[ForgeDirection.UNKNOWN.ordinal()];
 
 		//int amount = liquid != null ? liquid.amount : 0;
-		//int amount = liquid != null ? liq.renderAmmount[Orientations.Unknown.ordinal()] : 0;
+		//int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
-			//DisplayLiquidList d = getListFromBuffer(liq.getTanks()[Orientations.Unknown.ordinal()].getLiquid(), pipe.worldObj);
+			//DisplayLiquidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getLiquid(), pipe.worldObj);
 			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 			if (d != null) {
@@ -488,7 +488,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					float scale = 1.0F;
 
 					if (true) {
-						int itemColour = Item.itemsList[itemstack.itemID].func_82790_a(itemstack, i);
+						int itemColour = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, i);
 						float var18 = (itemColour >> 16 & 255) / 255.0F;
 						float var19 = (itemColour >> 8 & 255) / 255.0F;
 						float var20 = (itemColour & 255) / 255.0F;

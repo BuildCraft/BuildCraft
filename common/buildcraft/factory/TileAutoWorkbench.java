@@ -11,7 +11,7 @@ package buildcraft.factory;
 
 import java.util.LinkedList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.TransactorRoundRobin;
@@ -139,7 +139,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack recipe = CraftingManager.getInstance().func_82787_a(craftMatrix, worldObj);
+		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
 
 		return recipe;
 	}
@@ -179,7 +179,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack resultStack = CraftingManager.getInstance().func_82787_a(craftMatrix, worldObj);
+		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
 
 		if (resultStack == null || !doRemove) {
 			resetPointers(pointerList);
@@ -213,32 +213,32 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	public StackPointer getNearbyItem(int itemId, int damage) {
 		StackPointer pointer = null;
 
-		pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.XNeg);
+		pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.WEST);
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.XPos);
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.EAST);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YNeg);
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.DOWN);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.YPos);
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.UP);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.ZNeg);
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.NORTH);
 		}
 
 		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, Orientations.ZPos);
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.SOUTH);
 		}
 
 		return pointer;
 	}
 
-	public StackPointer getNearbyItemFromOrientation(int itemId, int damage, Orientations orientation) {
+	public StackPointer getNearbyItemFromOrientation(int itemId, int damage, ForgeDirection orientation) {
 		Position p = new Position(xCoord, yCoord, zCoord, orientation);
 		p.moveForwards(1.0);
 
@@ -275,12 +275,12 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	/* ISPECIALINVENTORY */
 	@Override
-	public int addItem(ItemStack stack, boolean doAdd, Orientations from) {
+	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
 		return new TransactorRoundRobin(this).add(stack, from, doAdd).stackSize;
 	}
 
 	@Override
-	public ItemStack[] extractItem(boolean doRemove, Orientations from, int maxItemCount) {
+	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount) {
 		return new ItemStack[] { extractItem(doRemove, false) };
 	}
 

@@ -152,7 +152,7 @@ public class CoreProxy {
 			}
 
 			@Override
-			public ChunkCoordinates func_82114_b() {
+			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
 			}
 

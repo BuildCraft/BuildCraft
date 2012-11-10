@@ -8,7 +8,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.power.IPowerProvider;
@@ -51,10 +51,10 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
-	public int getTextureIndex(Orientations direction) {
-		if (direction == Orientations.Unknown)
+	public int getTextureIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
@@ -88,7 +88,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[meta]);
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
@@ -98,7 +98,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
          IInventory inventory = (IInventory) tile;
 
-         ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.reverse());
+         ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.getOpposite());
          if (extracted == null)
             return;
 
@@ -109,7 +109,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
             }
 
             Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
-                  pos.orientation.reverse());
+                  pos.orientation.getOpposite());
 
             entityPos.moveForwards(0.5);
 
@@ -125,8 +125,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	 * inventory, null if none. On certain cases, the extractable slot depends
 	 * on the position of the pipe.
 	 */
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, Orientations from) {
-		
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+
 		/// ISPECIALINVENTORY
 		if (inventory instanceof ISpecialInventory) {
 			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int)powerProvider.getEnergyStored());
@@ -143,8 +143,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (inventory instanceof ISidedInventory) {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 
-			int first = sidedInv.getStartInventorySide(from.toDirection());
-			int last = first + sidedInv.getSizeInventorySide(from.toDirection()) - 1;
+			int first = sidedInv.getStartInventorySide(from);
+			int last = first + sidedInv.getSizeInventorySide(from) - 1;
 
 			IInventory inv = Utils.getInventory(inventory);
 
@@ -157,7 +157,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			int slotIndex = 0;
 
-			if (from == Orientations.YNeg || from == Orientations.YPos)
+			if (from == ForgeDirection.DOWN || from == ForgeDirection.UP)
 				slotIndex = 0;
 			else
 				slotIndex = 1;
@@ -174,9 +174,9 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			int slotIndex = 0;
 
-			if (from == Orientations.YPos)
+			if (from == ForgeDirection.UP)
 				slotIndex = 0;
-			else if (from == Orientations.YNeg)
+			else if (from == ForgeDirection.DOWN)
 				slotIndex = 1;
 			else
 				slotIndex = 2;
@@ -201,7 +201,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		return null;
 	}
 
-	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, Orientations from, int start, int stop) {
+	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
 		for (int k = start; k <= stop; ++k)
 			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
 
@@ -223,7 +223,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public boolean canConnectRedstone() {	
+	public boolean canConnectRedstone() {
 		if(PowerFramework.currentFramework instanceof RedstonePowerFramework)
 			return true;
 		return super.canConnectRedstone();

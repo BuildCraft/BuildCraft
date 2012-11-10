@@ -8,7 +8,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -21,10 +21,14 @@ import net.minecraft.src.TileEntity;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
+	private static final int MAX_OVERHEAT_TICKS = 100;
+
 	private IPowerProvider powerProvider;
 
 	private int baseTexture = 7 * 16 + 6;
 	private int plainTexture = 1 * 16 + 15;
+
+	private int overheatTicks;
 
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
@@ -40,8 +44,8 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int getTextureIndex(Orientations direction) {
-		if (direction == Orientations.Unknown)
+	public int getTextureIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
@@ -60,6 +64,9 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public IPowerProvider getPowerProvider() {
+		if (overheatTicks > 0) {
+			return null;
+		}
 		return powerProvider;
 	}
 
@@ -72,8 +79,13 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
+		if (powerProvider.getEnergyStored() == powerProvider.getMaxEnergyStored()) {
+			overheatTicks+=overheatTicks<MAX_OVERHEAT_TICKS ? 1 : 0;
+		} else {
+			overheatTicks-=overheatTicks>0 ? 1 : 0;
+		}
 
-		for (Orientations o : Orientations.dirs())
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
 			if (Utils.checkPipesConnections(container, container.getTile(o))) {
 				TileEntity tile = container.getTile(o);
 
@@ -95,7 +107,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 					float energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
 
-					pow.receiveEnergy(o.reverse(), energyUsed);
+					pow.receiveEnergy(o.getOpposite(), energyUsed);
 
 					if (worldObj.isRemote) return;
 					((PipeTransportPower) transport).displayPower[o.ordinal()] += energyUsed;

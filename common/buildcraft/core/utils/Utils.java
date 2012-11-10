@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.liquids.ILiquid;
 import buildcraft.api.transport.IPipeConnection;
@@ -62,12 +62,12 @@ public class Utils {
 	 * @param from
 	 * @return ItemStack representing what was added.
 	 */
-	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z, Orientations from) {
+	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z, ForgeDirection from) {
 		LinkedList<ITransactor> possibleInventories = new LinkedList<ITransactor>();
 
 		// Determine inventories which can accept (at least part of) this stack.
-		for(Orientations orientation : Orientations.values()) {
-			if(from.reverse() == orientation)
+		for(ForgeDirection orientation : ForgeDirection.values()) {
+			if(from.getOpposite() == orientation)
 				continue;
 
 			Position pos = new Position(x, y, z, orientation);
@@ -99,30 +99,30 @@ public class Utils {
 		return pipeMinPos;
 	}
 
-	public static Orientations get2dOrientation(Position pos1, Position pos2) {
+	public static ForgeDirection get2dOrientation(Position pos1, Position pos2) {
 		double Dx = pos1.x - pos2.x;
 		double Dz = pos1.z - pos2.z;
 		double angle = Math.atan2(Dz, Dx) / Math.PI * 180 + 180;
 
 		if (angle < 45 || angle > 315)
-			return Orientations.XPos;
+			return ForgeDirection.EAST;
 		else if (angle < 135)
-			return Orientations.ZPos;
+			return ForgeDirection.SOUTH;
 		else if (angle < 225)
-			return Orientations.XNeg;
+			return ForgeDirection.WEST;
 		else
-			return Orientations.ZNeg;
+			return ForgeDirection.NORTH;
 	}
 
-	public static Orientations get3dOrientation(Position pos1, Position pos2) {
+	public static ForgeDirection get3dOrientation(Position pos1, Position pos2) {
 		double Dx = pos1.x - pos2.x;
 		double Dy = pos1.y - pos2.y;
 		double angle = Math.atan2(Dy, Dx) / Math.PI * 180 + 180;
 
 		if (angle > 45 && angle < 135)
-			return Orientations.YPos;
+			return ForgeDirection.UP;
 		else if (angle > 225 && angle < 315)
-			return Orientations.YNeg;
+			return ForgeDirection.DOWN;
 		else
 			return get2dOrientation(pos1, pos2);
 	}
@@ -134,16 +134,16 @@ public class Utils {
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static boolean addToRandomPipeEntry(TileEntity tile, Orientations from, ItemStack items) {
+	public static boolean addToRandomPipeEntry(TileEntity tile, ForgeDirection from, ItemStack items) {
 		World w = tile.worldObj;
 
-		LinkedList<Orientations> possiblePipes = new LinkedList<Orientations>();
+		LinkedList<ForgeDirection> possiblePipes = new LinkedList<ForgeDirection>();
 
 		for (int j = 0; j < 6; ++j) {
-			if (from.reverse().ordinal() == j)
+			if (from.getOpposite().ordinal() == j)
 				continue;
 
-			Orientations o = Orientations.values()[j];
+			ForgeDirection o = ForgeDirection.values()[j];
 			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, o);
 
 			pos.moveForwards(1.0);
@@ -152,7 +152,7 @@ public class Utils {
 
 			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems()) {
 				if( pipeEntry instanceof IPipeConnection )
-					if( !((IPipeConnection) pipeEntry).isPipeConnected(o.reverse()) )
+					if( !((IPipeConnection) pipeEntry).isPipeConnected(o.getOpposite()) )
 						continue;
 				possiblePipes.add(o);
 			}
@@ -206,7 +206,7 @@ public class Utils {
 		}
 	}
 
-	public static TileEntity getTile(World world, Position pos, Orientations step) {
+	public static TileEntity getTile(World world, Position pos, ForgeDirection step) {
 		Position tmp = new Position(pos);
 		tmp.orientation = step;
 		tmp.moveForwards(1.0);
@@ -225,16 +225,16 @@ public class Utils {
 			Position pos = new Position(chest.xCoord, chest.yCoord, chest.zCoord);
 			TileEntity tile;
 			IInventory chest2 = null;
-			tile = Utils.getTile(chest.worldObj, pos, Orientations.XNeg);
+			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.WEST);
 			if (tile instanceof TileEntityChest)
 				chest2 = (IInventory) tile;
-			tile = Utils.getTile(chest.worldObj, pos, Orientations.XPos);
+			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.EAST);
 			if (tile instanceof TileEntityChest)
 				chest2 = (IInventory) tile;
-			tile = Utils.getTile(chest.worldObj, pos, Orientations.ZNeg);
+			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.NORTH);
 			if (tile instanceof TileEntityChest)
 				chest2 = (IInventory) tile;
-			tile = Utils.getTile(chest.worldObj, pos, Orientations.ZPos);
+			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.SOUTH);
 			if (tile instanceof TileEntityChest)
 				chest2 = (IInventory) tile;
 			if (chest2 != null)
@@ -403,25 +403,25 @@ public class Utils {
 		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection))
 			return false;
 
-		Orientations o = Orientations.Unknown;
+		ForgeDirection o = ForgeDirection.UNKNOWN;
 
 		if (tile1.xCoord - 1 == tile2.xCoord)
-			o = Orientations.XNeg;
+			o = ForgeDirection.WEST;
 		else if (tile1.xCoord + 1 == tile2.xCoord)
-			o = Orientations.XPos;
+			o = ForgeDirection.EAST;
 		else if (tile1.yCoord - 1 == tile2.yCoord)
-			o = Orientations.YNeg;
+			o = ForgeDirection.DOWN;
 		else if (tile1.yCoord + 1 == tile2.yCoord)
-			o = Orientations.YPos;
+			o = ForgeDirection.UP;
 		else if (tile1.zCoord - 1 == tile2.zCoord)
-			o = Orientations.ZNeg;
+			o = ForgeDirection.NORTH;
 		else if (tile1.zCoord + 1 == tile2.zCoord)
-			o = Orientations.ZPos;
+			o = ForgeDirection.SOUTH;
 
 		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o))
 			return false;
 
-		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.reverse()))
+		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.getOpposite()))
 			return false;
 
 		return true;

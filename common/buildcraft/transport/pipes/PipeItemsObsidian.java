@@ -10,7 +10,7 @@ package buildcraft.transport.pipes;
 
 import java.util.List;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -56,9 +56,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
-	public int getTextureIndex(Orientations direction) {
+	public int getTextureIndex(ForgeDirection direction) {
 		return 1 * 16 + 12;
 	}
 
@@ -74,33 +74,33 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			pullItemIntoPipe(entity, 0);
 	}
 
-	private AxisAlignedBB getSuckingBox(Orientations orientation, int distance) {
-		if (orientation == Orientations.Unknown)
+	private AxisAlignedBB getSuckingBox(ForgeDirection orientation, int distance) {
+		if (orientation == ForgeDirection.UNKNOWN)
 			return null;
 		Position p1 = new Position(xCoord, yCoord, zCoord, orientation);
 		Position p2 = new Position(xCoord, yCoord, zCoord, orientation);
 
 		switch (orientation) {
-		case XPos:
+		case EAST:
 			p1.x += distance;
 			p2.x += 1 + distance;
 			break;
-		case XNeg:
+		case WEST:
 			p1.x -= (distance - 1);
 			p2.x -= distance;
 			break;
-		case YPos:
-		case YNeg:
+		case UP:
+		case DOWN:
 			p1.x += distance + 1;
 			p2.x -= distance;
 			p1.z += distance + 1;
 			p2.z -= distance;
 			break;
-		case ZPos:
+		case SOUTH:
 			p1.z += distance;
 			p2.z += distance + 1;
 			break;
-		case ZNeg:
+		case NORTH:
 		default:
 			p1.z -= (distance - 1);
 			p2.z -= distance;
@@ -108,23 +108,23 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		}
 
 		switch (orientation) {
-		case XPos:
-		case XNeg:
+		case EAST:
+		case WEST:
 			p1.y += distance + 1;
 			p2.y -= distance;
 			p1.z += distance + 1;
 			p2.z -= distance;
 			break;
-		case YPos:
+		case UP:
 			p1.y += distance + 1;
 			p2.y += distance;
 			break;
-		case YNeg:
+		case DOWN:
 			p1.y -= (distance - 1);
 			p2.y -= distance;
 			break;
-		case ZPos:
-		case ZNeg:
+		case SOUTH:
+		case NORTH:
 		default:
 			p1.y += distance + 1;
 			p2.y -= distance;
@@ -184,7 +184,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		return false;
 	}
 
-	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, Orientations from) {
+	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from) {
 		for (int k = 0; k < inventory.getSizeInventory(); ++k)
 			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
 
@@ -204,9 +204,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
-		Orientations orientation = getOpenOrientation().reverse();
+		ForgeDirection orientation = getOpenOrientation().getOpposite();
 
-		if (orientation != Orientations.Unknown) {
+		if (orientation != ForgeDirection.UNKNOWN) {
 			worldObj.playSoundAtEntity(entity, "random.pop", 0.2F,
 					((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 

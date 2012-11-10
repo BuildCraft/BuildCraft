@@ -16,7 +16,7 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
@@ -79,11 +79,11 @@ public class ItemFacade extends ItemBuildCraft {
 		TileGenericPipe pipeTile = (TileGenericPipe)tile;
 
 		if (player.isSneaking()) { //Strip facade
-			if (!pipeTile.hasFacade(Orientations.dirs()[side])) return false;
-			pipeTile.dropFacade(Orientations.dirs()[side]);
+			if (!pipeTile.hasFacade(ForgeDirection.VALID_DIRECTIONS[side])) return false;
+			pipeTile.dropFacade(ForgeDirection.VALID_DIRECTIONS[side]);
 			return true;
 		} else {
-			if (((TileGenericPipe)tile).addFacade(Orientations.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
+			if (((TileGenericPipe)tile).addFacade(ForgeDirection.values()[side], ItemFacade.getBlockId(stack.getItemDamage()), ItemFacade.getMetaData(stack.getItemDamage()))){
 				if (!player.capabilities.isCreativeMode)
 					stack.stackSize--;
 				return true;

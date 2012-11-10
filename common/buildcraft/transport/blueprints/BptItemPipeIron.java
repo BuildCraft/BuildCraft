@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.blueprints.BptItem;
 
 import net.minecraft.src.ItemStack;
@@ -39,7 +39,7 @@ public class BptItemPipeIron extends BptItem {
 		int orientation = slot.meta & 7;
 		int others = slot.meta - orientation;
 
-		slot.meta = Orientations.values()[orientation].rotateLeft().ordinal() + others;
+		slot.meta = ForgeDirection.values()[orientation].getLeftRotation().ordinal() + others;
 	}
 
 }

@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.transport.IPipe;
 
 
@@ -32,11 +32,11 @@ public class WireMatrix {
 		}
 	}
 	
-	public boolean isWireConnected(IPipe.WireColor color, Orientations direction){
+	public boolean isWireConnected(IPipe.WireColor color, ForgeDirection direction){
 		return _wires[color.ordinal()].isConnected(direction);
 	}
 	
-	public void setWireConnected(IPipe.WireColor color, Orientations direction, boolean value){
+	public void setWireConnected(IPipe.WireColor color, ForgeDirection direction, boolean value){
 		_wires[color.ordinal()].setConnected(direction, value);
 	}
 	

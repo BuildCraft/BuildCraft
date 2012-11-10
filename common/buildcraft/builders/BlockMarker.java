@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -73,12 +73,12 @@ public class BlockMarker extends BlockContainer {
 	public boolean isACube() {
 		return false;
 	}
-	
+
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileMarker();
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		((TileMarker) world.getBlockTileEntity(i, j, k)).tryConnection();
@@ -90,7 +90,7 @@ public class BlockMarker extends BlockContainer {
 		Utils.preDestroyBlock(world, x, y, z);
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
-	
+
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
 		return null;
@@ -165,8 +165,8 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public void updateBlockMetadata(World world, int x, int y, int z, int par5, float par6, float par7, float par8) {
-		super.updateBlockMetadata(world, x, y, z, par5, par6, par7, par8);
+	public void func_85105_g(World world, int x, int y, int z, int par5) {
+		super.func_85105_g(world, x, y, z, par5);
 		int i1 = world.getBlockMetadata(x, y, z);
 		if (par5 == 1 && BuildersProxy.canPlaceTorch(world, x, y - 1, z)) {
 			i1 = 5;
@@ -188,7 +188,7 @@ public class BlockMarker extends BlockContainer {
 		}
 		world.setBlockMetadataWithNotify(x, y, z, i1);
 	}
-	
+
 	@Override
 	public void onBlockAdded(World world, int i, int j, int k) {
 		super.onBlockAdded(world, i, j, k);

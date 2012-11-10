@@ -11,7 +11,7 @@ package buildcraft.core;
 
 import java.util.TreeMap;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPassiveItemContribution;
@@ -293,7 +293,7 @@ public class EntityPassiveItem implements IPipedItem {
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#toEntityItem(net.minecraft.src.buildcraft.api.Orientations)
 	 */
 	@Override
-	public EntityItem toEntityItem(Orientations dir) {
+	public EntityItem toEntityItem(ForgeDirection dir) {
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			if (getItemStack().stackSize <= 0) {
 				return null;

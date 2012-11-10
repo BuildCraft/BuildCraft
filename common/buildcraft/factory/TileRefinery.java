@@ -10,7 +10,7 @@
 package buildcraft.factory;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.liquids.ILiquidTank;
 import buildcraft.api.liquids.ITankContainer;
@@ -44,7 +44,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		@TileNetworkData
 		public int quantity = 0;
 
-		public int fill(Orientations from, int amount, int id, boolean doFill) {
+		public int fill(ForgeDirection from, int amount, int id, boolean doFill) {
 			if (quantity != 0 && liquidId != id) {
 				return 0;
 			} else if (quantity + amount <= LIQUID_PER_SLOT) {
@@ -387,7 +387,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(Orientations from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		int used = 0;
 
 		if (filters[0] != 0 || filters[1] != 0) {
@@ -418,7 +418,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public LiquidStack drain(Orientations from, int maxEmpty, boolean doDrain) {
+	public LiquidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
 		return drain(2, maxEmpty, doDrain);
 	}
 

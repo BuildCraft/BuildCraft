@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -88,7 +88,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		}
 
 		@Override
-		public ChunkCoordinates func_82114_b() {
+		public ChunkCoordinates getPlayerCoordinates() {
 			return null;
 		}
 	}
@@ -312,7 +312,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 					return;
 				}
 			}
-			craftSlot.func_82870_a(internalPlayer, craftResult.getStackInSlot(0));
+			craftSlot.onPickupFromSlot(internalPlayer, craftResult.getStackInSlot(0));
 			for (int i=0; i<tempStorage.length; i++) {
 				if (tempStorage[i]!=null && tempStorage[i].stackSize<=0) tempStorage[i]=null;
 			}
@@ -327,7 +327,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 			}
 			for (ItemStack output : outputs) {
 				System.out.printf("Output stack is %s\n",output);
-				boolean putToPipe = Utils.addToRandomPipeEntry(this, Orientations.YPos, output);
+				boolean putToPipe = Utils.addToRandomPipeEntry(this, ForgeDirection.UP, output);
 				if (!putToPipe)
 				{
 					System.out.println(output);
@@ -354,7 +354,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 						}
 					}
 					if (output.stackSize > 0) {
-						output = Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord, Orientations.Unknown);
+						output = Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
 					}
 					if (output.stackSize > 0) {
 						Utils.dropItems(worldObj, output, xCoord, yCoord, zCoord);
@@ -373,7 +373,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	}
 
 	private void updateCraftingResults() {
-		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().func_82787_a(internalInventoryCrafting, worldObj));
+		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(internalInventoryCrafting, worldObj));
 		onInventoryChanged();
 	}
 

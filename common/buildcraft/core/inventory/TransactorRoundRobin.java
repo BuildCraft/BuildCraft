@@ -2,7 +2,7 @@ package buildcraft.core.inventory;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 
 public class TransactorRoundRobin extends TransactorSimple {
 
@@ -11,7 +11,7 @@ public class TransactorRoundRobin extends TransactorSimple {
 	}
 	
 	@Override
-	public int inject(ItemStack stack, Orientations orientation, boolean doAdd) {
+	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
 		
 		int oneLessThanStackSize = stack.stackSize - 1;
 		int added = 0;

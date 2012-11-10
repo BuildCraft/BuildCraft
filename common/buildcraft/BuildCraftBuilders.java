@@ -154,7 +154,8 @@ public class BuildCraftBuilders {
 		new BptBlockRotateMeta(Block.vine.blockID, new int[] { 1, 4, 8, 2 }, false);
 		new BptBlockRotateMeta(Block.trapdoor.blockID, new int[] { 0, 1, 2, 3 }, false);
 
-		new BptBlockLever(Block.button.blockID);
+		new BptBlockLever(Block.woodenButton.blockID);
+		new BptBlockLever(Block.stoneButton.blockID);
 		new BptBlockLever(Block.lever.blockID);
 
 		new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));

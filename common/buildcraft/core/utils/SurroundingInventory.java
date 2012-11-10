@@ -11,7 +11,7 @@ package buildcraft.core.utils;
 
 import java.util.LinkedList;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.core.IBuilderInventory;
 
@@ -52,7 +52,7 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 
 		Position pos = new Position(x, y, z);
 
-		for (Orientations o : Orientations.dirs()) {
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			tile = Utils.getTile(world, pos, o);
 
 			if (tile instanceof IInventory) {

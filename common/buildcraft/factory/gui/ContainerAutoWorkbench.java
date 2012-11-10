@@ -46,7 +46,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 		}
 
 		@Override
-		public void func_82870_a(EntityPlayer pl, ItemStack itemstack) {
+		public void onPickupFromSlot(EntityPlayer pl, ItemStack itemstack) {
 			CoreProxy.proxy.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
 			if (itemstack.itemID == Block.workbench.blockID) {
 				thePlayer.addStat(AchievementList.buildWorkBench, 1);
@@ -128,7 +128,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	}
 
 	@Override
-	public ItemStack func_82846_b(EntityPlayer pl, int i) {
+	public ItemStack transferStackInSlot(EntityPlayer pl, int i) {
 		ItemStack itemstack = null;
 		Slot slot = (Slot) inventorySlots.get(i);
 		if (slot != null && slot.getHasStack()) {
@@ -155,7 +155,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 				slot.onSlotChanged();
 			}
 			if (itemstack1.stackSize != itemstack.stackSize) {
-				slot.func_82870_a(pl, itemstack1);
+				slot.onPickupFromSlot(pl, itemstack1);
 			} else {
 				return null;
 			}

@@ -9,7 +9,7 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.api.core.Orientations;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeEntry;
@@ -45,7 +45,7 @@ public class PipeLogicIron extends PipeLogic {
 			if (nextMetadata > 5)
 				nextMetadata = 0;
 
-			TileEntity tile = container.getTile(Orientations.values()[nextMetadata]);
+			TileEntity tile = container.getTile(ForgeDirection.values()[nextMetadata]);
 
 			if (tile instanceof TileGenericPipe) {
 				Pipe pipe = ((TileGenericPipe) tile).pipe;
@@ -103,7 +103,7 @@ public class PipeLogicIron extends PipeLogic {
 	}
 
 	@Override
-	public boolean outputOpen(Orientations to) {
+	public boolean outputOpen(ForgeDirection to) {
 		return to.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 	}
 
