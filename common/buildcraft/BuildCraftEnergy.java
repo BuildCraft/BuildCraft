@@ -8,6 +8,7 @@
 
 package buildcraft;
 
+import java.util.LinkedList;
 import java.util.TreeMap;
 
 import cpw.mods.fml.common.Mod;
@@ -38,6 +39,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BlockOilFlowing;
 import buildcraft.energy.BlockOilStill;
+import buildcraft.energy.BlockPollution;
 import buildcraft.energy.BptBlockEngine;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
@@ -45,6 +47,7 @@ import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
 import buildcraft.energy.OilPopulate;
+import buildcraft.energy.TilePollution;
 import buildcraft.energy.TriggerEngineHeat;
 import buildcraft.energy.Engine.EnergyStage;
 
@@ -53,6 +56,8 @@ import net.minecraft.src.CreativeTabs;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
@@ -84,6 +89,7 @@ public class BuildCraftEnergy {
 
 	@Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
+	private static BlockPollution pollution;
 
 	@Init
 	public static void load(FMLInitializationEvent evt) {
@@ -157,6 +163,9 @@ public class BuildCraftEnergy {
 
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(oilStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(oilMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
 		LiquidManager.liquids.add(new LiquidData(new LiquidStack(fuel, LiquidManager.BUCKET_VOLUME), new LiquidStack(fuel, LiquidManager.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
+		pollution=new BlockPollution(DefaultProps.POLLUTION_ID);
+		CoreProxy.proxy.addName(pollution.setBlockName("pollution"), "Pollution");		
+		CoreProxy.proxy.registerBlock(pollution);
 	}
 
 	public static void loadRecipes() {
@@ -171,104 +180,101 @@ public class BuildCraftEnergy {
 				Character.valueOf('p'), Block.pistonBase });
 	}
 
-	// public static int createPollution (World world, int i, int j, int k, int
-	// saturation) {
-	// int remainingSaturation = saturation;
-	//
-	// if (world.rand.nextFloat() > 0.7) {
-	// // Try to place an item on the sides
-	//
-	// LinkedList<BlockIndex> orientations = new LinkedList<BlockIndex>();
-	//
-	// for (int id = -1; id <= 1; id += 2) {
-	// for (int kd = -1; kd <= 1; kd += 2) {
-	// if (canPollute(world, i + id, j, k + kd)) {
-	// orientations.add(new BlockIndex(i + id, j, k + kd));
-	// }
-	// }
-	// }
-	//
-	// if (orientations.size() > 0) {
-	// BlockIndex toPollute =
-	// orientations.get(world.rand.nextInt(orientations.size()));
-	//
-	// int x = toPollute.i;
-	// int y = toPollute.j;
-	// int z = toPollute.k;
-	//
-	// if (world.getBlockId(x, y, z) == 0) {
-	// world.setBlockAndMetadataWithNotify(x, y, z,
-	// BuildCraftEnergy.pollution.blockID,
-	// saturation * 16 / 100);
-	//
-	// saturationStored.put(new BlockIndex(x, y, z), new Integer(
-	// saturation));
-	// remainingSaturation = 0;
-	// } else if (world.getBlockTileEntity(z, y, z) instanceof TilePollution) {
-	// remainingSaturation = updateExitingPollution(world, x, y, z, saturation);
-	// }
-	// }
-	// }
-	//
-	// if (remainingSaturation > 0) {
-	// if (world.getBlockId(i, j + 1, k) == 0) {
-	// if (j + 1 < 128) {
-	// world.setBlockAndMetadataWithNotify(i, j + 1, k,
-	// BuildCraftEnergy.pollution.blockID,
-	// saturation * 16 / 100);
-	// saturationStored.put(new BlockIndex(i, j + 1, k),
-	// new Integer(remainingSaturation));
-	// }
-	//
-	// remainingSaturation = 0;
-	// } else if (world.getBlockTileEntity(i, j + 1, k) instanceof
-	// TilePollution) {
-	// remainingSaturation = updateExitingPollution(world, i, j + 1,
-	// k, remainingSaturation);
-	// }
-	// }
-	//
-	// if (remainingSaturation == 0) {
-	// System.out.println ("EXIT 1");
-	// return 0;
-	// } else if (remainingSaturation == saturation) {
-	// System.out.println ("EXIT 2");
-	// return saturation;
-	// } else {
-	// System.out.println ("EXIT 3");
-	// return createPollution (world, i, j, k, remainingSaturation);
-	// }
-	// }
-	//
-	// private static int updateExitingPollution (World world, int i, int j, int
-	// k, int saturation) {
-	// int remainingSaturation = saturation;
-	//
-	// TilePollution tile = (TilePollution) world.getBlockTileEntity(
-	// i, j, k);
-	//
-	// if (tile.saturation + saturation <= 100) {
-	// remainingSaturation = 0;
-	// tile.saturation += saturation;
-	// } else {
-	// remainingSaturation = (tile.saturation + saturation) - 100;
-	// tile.saturation += saturation - remainingSaturation;
-	// }
-	//
-	// world.setBlockMetadata(i, j, k, saturation * 16 / 100);
-	// world.markBlockNeedsUpdate(i, j, k);
-	//
-	// return remainingSaturation;
-	// }
-	//
-	// private static boolean canPollute (World world, int i, int j, int k) {
-	// if (world.getBlockId(i, j, k) == 0) {
-	// return true;
-	// } else {
-	// TileEntity tile = world.getBlockTileEntity(i, j, k);
-	//
-	// return (tile instanceof TilePollution && ((TilePollution)
-	// tile).saturation < 100);
-	// }
-	// }
+	 public static int createPollution (World world, int i, int j, int k, int
+	 saturation) {
+	 int remainingSaturation = saturation;
+	
+	 if (world.rand.nextFloat() > 0.7) {
+	 // Try to place an item on the sides
+	
+	 LinkedList<BlockIndex> orientations = new LinkedList<BlockIndex>();
+	
+	 for (int id = -1; id <= 1; id += 2) {
+	 for (int kd = -1; kd <= 1; kd += 2) {
+	 if (canPollute(world, i + id, j, k + kd)) {
+	 orientations.add(new BlockIndex(i + id, j, k + kd));
+	 }
+	 }
+	 }
+	
+	 if (orientations.size() > 0) {
+	 BlockIndex toPollute =
+	 orientations.get(world.rand.nextInt(orientations.size()));
+	
+	 int x = toPollute.i;
+	 int y = toPollute.j;
+	 int z = toPollute.k;
+	
+	 if (world.getBlockId(x, y, z) == 0) {
+	 world.setBlockAndMetadataWithNotify(x, y, z,
+	 BuildCraftEnergy.pollution.blockID,
+	 saturation * 16 / 100);
+	
+	 saturationStored.put(new BlockIndex(x, y, z), new Integer(
+	 saturation));
+	 remainingSaturation = 0;
+	 } else if (world.getBlockTileEntity(z, y, z) instanceof TilePollution) {
+	 remainingSaturation = updateExitingPollution(world, x, y, z, saturation);
+	 }
+	 }
+	 }
+	
+	 if (remainingSaturation > 0 && j+1 < 128) {
+	 if (world.getBlockId(i, j + 1, k) == 0) {
+	 world.setBlockAndMetadataWithNotify(i, j + 1, k,
+	 BuildCraftEnergy.pollution.blockID,
+	 saturation * 16 / 100);
+	 saturationStored.put(new BlockIndex(i, j + 1, k),
+	 new Integer(remainingSaturation));
+	 remainingSaturation = 0;
+	 } else if (world.getBlockTileEntity(i, j + 1, k) instanceof
+	 TilePollution) {
+	 remainingSaturation = updateExitingPollution(world, i, j + 1,
+	 k, remainingSaturation);
+	 }
+	 }
+	
+	 if (remainingSaturation == 0) {
+	 System.out.println ("EXIT 1");
+	 return 0;
+	 } else if (remainingSaturation == saturation) {
+	 System.out.println ("EXIT 2");
+	 return saturation;
+	 } else {
+	 System.out.println ("EXIT 3");
+	 return createPollution (world, i, j, k, remainingSaturation);
+	 }
+	 }
+	
+	 private static int updateExitingPollution (World world, int i, int j, int
+	 k, int saturation) {
+	 int remainingSaturation = saturation;
+	
+	 TilePollution tile = (TilePollution) world.getBlockTileEntity(
+	 i, j, k);
+	
+	 if (tile.saturation + saturation <= 100) {
+	 remainingSaturation = 0;
+	 tile.saturation += saturation;
+	 } else {
+	 remainingSaturation = (tile.saturation + saturation) - 100;
+	 tile.saturation += saturation - remainingSaturation;
+	 }
+	
+	 world.setBlockMetadata(i, j, k, tile.saturation * 16 / 100);
+	 world.markBlockNeedsUpdate(i, j, k);
+	
+	 return remainingSaturation;
+	 }
+	
+	 private static boolean canPollute (World world, int i, int j, int k) {
+	 if (world.getBlockId(i, j, k) == 0) {
+	 return true;
+	 } else {
+	 TileEntity tile = world.getBlockTileEntity(i, j, k);
+	
+	 return (tile instanceof TilePollution && ((TilePollution)
+	 tile).saturation < 100);
+	 }
+	 }
 }
