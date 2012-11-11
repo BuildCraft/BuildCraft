@@ -14,8 +14,6 @@ public class TransportProxyClient extends TransportProxy {
 	public final static PipeWorldRenderer pipeWorldRenderer = new PipeWorldRenderer();
 	public final static FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
 
-	public static int pipeModel;
-
 	@Override
 	public void registerTileEntities() {
 		super.registerTileEntities();
@@ -53,7 +51,7 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsSandstone.shiftedIndex, pipeItemRenderer);
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem.shiftedIndex, facadeItemRenderer);
-		pipeModel = RenderingRegistry.getNextAvailableRenderId();
+		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
 	}

@@ -21,12 +21,11 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.utils.Utils;
-import buildcraft.silicon.SiliconProxyClient;
 
 public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 	@Override
 	public int getRenderId() {
-		return SiliconProxyClient.laserBlockModel;
+		return SiliconProxy.laserBlockModel;
 	}
 	@Override
 	public boolean shouldRender3DInInventory() {

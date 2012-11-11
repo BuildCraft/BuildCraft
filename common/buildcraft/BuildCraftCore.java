@@ -73,7 +73,7 @@ import net.minecraftforge.liquids.LiquidData;
 import net.minecraftforge.liquids.LiquidManager;
 import net.minecraftforge.liquids.LiquidStack;
 
-@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[6.3.0.364,)")
+@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[6.3.0.0,)")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {

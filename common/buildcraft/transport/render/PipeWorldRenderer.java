@@ -10,7 +10,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeRenderState;
-import buildcraft.transport.TransportProxyClient;
+import buildcraft.transport.TransportProxy;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
@@ -539,6 +539,6 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public int getRenderId() {
-		return TransportProxyClient.pipeModel;
+		return TransportProxy.pipeModel;
 	}
 }

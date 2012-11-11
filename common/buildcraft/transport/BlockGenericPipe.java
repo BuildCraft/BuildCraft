@@ -51,7 +51,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public int getRenderType() {
-		return TransportProxyClient.pipeModel;
+		return TransportProxy.pipeModel;
 	}
 
 	@Override
