@@ -98,7 +98,7 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 	// Compares to only the types of source materials.
 	// We consider non-null < null in order that one-ingredient recipe is checked after
 	// the failure of matching two-ingredient recipes which include that liquid.
-	
+	@Override
 	public int compareTo(RefineryRecipe other) {
 		
 		if(other == null) {
@@ -134,7 +134,7 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 	
 	
 	// equals() should be consistent with compareTo().
-	
+	@Override
 	public boolean equals(Object obj) {
 		if(obj != null && obj instanceof RefineryRecipe) {
 			return this.compareTo((RefineryRecipe)obj) == 0;
@@ -143,7 +143,7 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 	}
 	
 	// hashCode() should be overridden because equals() was overridden.
-	
+	@Override
 	public int hashCode() {
 		if(ingredient1 == null) {
 			return 0;
