@@ -59,7 +59,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	private class CoreState implements IClientState {
 
 		public int pipeId = -1;
-		public int gateKind = -1;
+		public int gateKind = 0;
 
 		@Override
 		public void writeData(DataOutputStream data) throws IOException {
