@@ -6,13 +6,13 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
-import buildcraft.api.liquids.ITankContainer;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IMachine;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.liquids.ITankContainer;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 

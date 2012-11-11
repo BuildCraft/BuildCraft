@@ -19,10 +19,10 @@ import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
 
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.liquids.LiquidStack;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.factory.TileTank;

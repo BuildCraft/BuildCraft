@@ -10,7 +10,7 @@
 package buildcraft.transport.pipes;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.IPipeTransportLiquidsHook;
 import buildcraft.transport.Pipe;

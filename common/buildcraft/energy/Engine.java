@@ -10,7 +10,7 @@
 package buildcraft.energy;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.LiquidTank;
+import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;

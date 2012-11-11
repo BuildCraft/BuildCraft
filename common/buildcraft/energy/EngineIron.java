@@ -10,11 +10,11 @@
 package buildcraft.energy;
 
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.api.liquids.LiquidManager;
-import buildcraft.api.liquids.LiquidStack;
-import buildcraft.api.liquids.LiquidTank;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;

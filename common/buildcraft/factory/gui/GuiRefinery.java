@@ -11,11 +11,11 @@ package buildcraft.factory.gui;
 
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
+import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.liquids.LiquidManager;
-import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;

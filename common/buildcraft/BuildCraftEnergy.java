@@ -25,9 +25,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.gates.Trigger;
-import buildcraft.api.liquids.LiquidData;
-import buildcraft.api.liquids.LiquidManager;
-import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.DefaultProps;
@@ -56,6 +53,9 @@ import net.minecraft.src.Material;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.liquids.LiquidData;
+import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidStack;
 
 @Mod(name="BuildCraft Energy", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)

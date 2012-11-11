@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -13,13 +13,13 @@ import java.util.Random;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.liquids.ILiquid;
 import buildcraft.core.DefaultProps;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockFluid;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
+import net.minecraftforge.liquids.ILiquid;
 
 
 public class BlockOilFlowing extends BlockFluid implements ILiquid {
@@ -30,7 +30,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);
-		
+
 		setHardness(100F);
 		setLightOpacity(3);
 	}
@@ -45,7 +45,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
-	private void func_30003_j(World world, int i, int j, int k) {
+	private void updateFlow(World world, int i, int j, int k) {
 		int l = world.getBlockMetadata(i, j, k);
 		world.setBlockAndMetadata(i, j, k, blockID + 1, l);
 		world.markBlocksDirty(i, j, k, i, j, k);
@@ -86,10 +86,10 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 					world.notifyBlocksOfNeighborChange(i, j, k, blockID);
 				}
 			} else if (flag) {
-				func_30003_j(world, i, j, k);
+				updateFlow(world, i, j, k);
 			}
 		} else {
-			func_30003_j(world, i, j, k);
+			updateFlow(world, i, j, k);
 		}
 		if (liquidCanDisplaceBlock(world, i, j - 1, k)) {
 			if (l >= 8) {

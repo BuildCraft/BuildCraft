@@ -11,11 +11,11 @@ package buildcraft.core.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
-import buildcraft.api.liquids.ILiquidTank;
-import buildcraft.api.liquids.ITankContainer;
-import buildcraft.api.liquids.LiquidManager;
 import buildcraft.core.DefaultProps;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.ITankContainer;
+import net.minecraftforge.liquids.LiquidManager;
 
 public class TriggerLiquidContainer extends Trigger {
 

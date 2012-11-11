@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 

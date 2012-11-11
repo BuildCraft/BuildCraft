@@ -9,11 +9,11 @@
 
 package buildcraft.transport.triggers;
 
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
-import buildcraft.api.liquids.ILiquidTank;
-import buildcraft.api.liquids.LiquidManager;
-import buildcraft.api.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.ITriggerPipe;

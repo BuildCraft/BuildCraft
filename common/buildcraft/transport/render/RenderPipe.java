@@ -34,7 +34,7 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderEntityBlock;

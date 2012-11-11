@@ -11,7 +11,8 @@ package buildcraft.api.recipes;
 
 import java.util.LinkedList;
 
-import buildcraft.api.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidStack;
+
 
 
 public class RefineryRecipe {

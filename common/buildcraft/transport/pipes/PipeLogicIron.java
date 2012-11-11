@@ -10,7 +10,7 @@
 package buildcraft.transport.pipes;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.ITankContainer;
+import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.transport.Pipe;

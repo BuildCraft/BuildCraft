@@ -31,9 +31,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.Trigger;
-import buildcraft.api.liquids.LiquidData;
-import buildcraft.api.liquids.LiquidManager;
-import buildcraft.api.liquids.LiquidStack;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BuildCraftConfiguration;
@@ -72,8 +69,11 @@ import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.liquids.LiquidData;
+import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidStack;
 
-@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[5.0,)")
+@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[6.3.0.364,)")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {

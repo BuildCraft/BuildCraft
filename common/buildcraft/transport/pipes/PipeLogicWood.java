@@ -11,7 +11,7 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.ITankContainer;
+import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;

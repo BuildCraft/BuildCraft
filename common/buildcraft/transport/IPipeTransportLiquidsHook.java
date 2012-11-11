@@ -10,7 +10,7 @@
 package buildcraft.transport;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidStack;
 
 public interface IPipeTransportLiquidsHook {
 

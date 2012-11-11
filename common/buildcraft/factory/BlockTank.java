@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.liquids.LiquidManager;
-import buildcraft.api.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 
