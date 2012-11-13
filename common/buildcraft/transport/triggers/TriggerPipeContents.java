@@ -9,6 +9,7 @@
 
 package buildcraft.transport.triggers;
 
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidManager;
 import net.minecraftforge.liquids.LiquidStack;
@@ -102,13 +103,13 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 				searchedLiquid = LiquidManager.getLiquidForFilledItem(parameter.getItem());
 
 			if (kind == Kind.Empty) {
-				for (ILiquidTank b : transportLiquids.getTanks())
+				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))
 					if (b.getLiquid() != null && b.getLiquid().amount != 0)
 						return false;
 
 				return true;
 			} else {
-				for (ILiquidTank b : transportLiquids.getTanks())
+				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))
 					if (b.getLiquid() != null && b.getLiquid().amount != 0)
 						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(b.getLiquid()))
 							return true;

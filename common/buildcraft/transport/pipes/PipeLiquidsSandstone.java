@@ -41,6 +41,6 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe)) 
 			return 0;
 		
-		return ((PipeTransportLiquids)this.transport).getTanks()[from.ordinal()].fill(resource, doFill);
+		return ((PipeTransportLiquids)this.transport).getTanks(ForgeDirection.UNKNOWN)[from.ordinal()].fill(resource, doFill);
 	}
 }

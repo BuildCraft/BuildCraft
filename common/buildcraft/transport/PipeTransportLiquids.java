@@ -406,7 +406,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		if (tile instanceof ITankContainer) {
 			ITankContainer liq = (ITankContainer) tile;
 
-			if (liq.getTanks() != null && liq.getTanks().length > 0)
+			if (liq.getTanks(ForgeDirection.UNKNOWN) != null && liq.getTanks(ForgeDirection.UNKNOWN).length > 0)
 				return true;
 		}
 
@@ -460,7 +460,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	}
 
 	@Override
-	public ILiquidTank[] getTanks() {
+	public ILiquidTank[] getTanks(ForgeDirection direction) {
 		return internalTanks;
 	}
 

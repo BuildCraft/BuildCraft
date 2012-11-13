@@ -468,7 +468,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	@Override
-	public LiquidTank[] getTanks() {
+	public LiquidTank[] getTanks(ForgeDirection direction) {
 		if (engine == null) {
 			return new LiquidTank[0];
 		} else {

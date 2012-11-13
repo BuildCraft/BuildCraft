@@ -12,6 +12,7 @@ import buildcraft.core.IMachine;
 import net.minecraft.src.Block;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
@@ -30,7 +31,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerFullInventory);
 		}
 
-		if (tile instanceof ITankContainer && ((ITankContainer) tile).getTanks().length > 0) {
+		if (tile instanceof ITankContainer && ((ITankContainer) tile).getTanks(ForgeDirection.UNKNOWN).length > 0) {
 			res.add(BuildCraftCore.triggerEmptyLiquid);
 			res.add(BuildCraftCore.triggerContainsLiquid);
 			res.add(BuildCraftCore.triggerSpaceLiquid);

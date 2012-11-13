@@ -13,6 +13,7 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidManager;
@@ -76,7 +77,7 @@ public class TriggerLiquidContainer extends Trigger {
 			if (parameter != null && parameter.getItem() != null)
 				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
 
-			ILiquidTank[] liquids = container.getTanks();
+			ILiquidTank[] liquids = container.getTanks(ForgeDirection.UNKNOWN);
 
 			if (liquids == null || liquids.length == 0)
 				return false;

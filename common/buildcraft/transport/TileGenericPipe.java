@@ -546,9 +546,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public ILiquidTank[] getTanks() {
+	public ILiquidTank[] getTanks(ForgeDirection direction) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
-			return ((ITankContainer) pipe.transport).getTanks();
+			return ((ITankContainer) pipe.transport).getTanks(ForgeDirection.UNKNOWN);
 		else
 			return null;
 	}

@@ -223,7 +223,7 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     }
 
     @Override
-    public ILiquidTank[] getTanks()
+    public ILiquidTank[] getTanks(ForgeDirection direction)
     {
         ILiquidTank compositeTank = new LiquidTank(tank.getCapacity());
 

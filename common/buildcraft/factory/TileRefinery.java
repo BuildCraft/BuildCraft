@@ -449,7 +449,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public ILiquidTank[] getTanks() {
+	public ILiquidTank[] getTanks(ForgeDirection direction) {
 		return new ILiquidTank[] {
 				new LiquidTank(slot1.liquidId, slot1.quantity, LIQUID_PER_SLOT),
 				new LiquidTank(slot2.liquidId, slot2.quantity, LIQUID_PER_SLOT),

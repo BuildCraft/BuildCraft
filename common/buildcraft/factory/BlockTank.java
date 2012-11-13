@@ -111,7 +111,7 @@ public class BlockTank extends BlockContainer {
 			// Handle empty containers
 			} else {
 
-				LiquidStack available = tank.getTanks()[0].getLiquid();
+				LiquidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getLiquid();
                 if(available != null){
                     ItemStack filled = LiquidManager.fillLiquidContainer(available, current);
 
