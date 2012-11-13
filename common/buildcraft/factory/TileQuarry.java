@@ -107,7 +107,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 				isDigging = true;
 				if (box != null && (( headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax)))
 				{
-					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
+					setHead(box.xMin + 1, yCoord + 1, box.zMin + 1);
 				}
 			}
 
