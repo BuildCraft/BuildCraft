@@ -26,7 +26,6 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
-import buildcraft.energy.TileEngine;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 
@@ -188,8 +187,6 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 			message.itemID = slot.recipe.output.itemID;
 			message.itemDmg = slot.recipe.output.getItemDamage();
-
-			ContainerAssemblyTable container = (ContainerAssemblyTable) inventorySlots;
 
 			if (CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj)) {
 				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(assemblyTable.xCoord, assemblyTable.yCoord,

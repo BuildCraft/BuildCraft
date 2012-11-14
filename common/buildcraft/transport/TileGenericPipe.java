@@ -548,7 +548,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public ILiquidTank[] getTanks(ForgeDirection direction) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
-			return ((ITankContainer) pipe.transport).getTanks(ForgeDirection.UNKNOWN);
+			return ((ITankContainer) pipe.transport).getTanks(direction);
 		else
 			return null;
 	}
@@ -628,5 +628,13 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@SideOnly(Side.CLIENT)
 	public double func_82115_m() {
 		return 24 * 24;
+	}
+
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
+			return ((ITankContainer) pipe.transport).getTank(direction, type);
+		else
+			return null;
 	}
 }

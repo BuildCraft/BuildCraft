@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import buildcraft.BuildCraftCore;
 
 import buildcraft.BuildCraftEnergy;
-import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
 import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;

@@ -25,7 +25,6 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.SlotCrafting;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInventory, ILaserTarget, IMachine {
 	private final class InternalInventoryCraftingContainer extends Container {

@@ -1,32 +1,15 @@
 package buildcraft.silicon.gui;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.IInventory;
 import net.minecraft.src.IRecipe;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
-import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.gui.GuiAdvancedInterface.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface.IInventorySlot;
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketSlotChange;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
-import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
-import buildcraft.silicon.gui.GuiAssemblyTable.AssemblyLedger;
-import buildcraft.silicon.gui.GuiAssemblyTable.RecipeSlot;
 
 public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 	class AssemblyWorkbenchLedger extends Ledger

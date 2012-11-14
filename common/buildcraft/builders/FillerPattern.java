@@ -10,7 +10,6 @@
 package buildcraft.builders;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.proxy.CoreProxy;

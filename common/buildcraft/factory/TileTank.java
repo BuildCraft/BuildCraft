@@ -82,14 +82,14 @@ public class TileTank extends TileBuildCraft implements ITankContainer
     public void readFromNBT(NBTTagCompound data)
     {
         super.readFromNBT(data);
-        
+
         if(data.hasKey("stored") && data.hasKey("liquidId"))
         {
 	        LiquidStack liquid = new LiquidStack(data.getInteger("liquidId"), data.getInteger("stored"), 0);
 	        tank.setLiquid(liquid);
         }
         else
-        {        
+        {
 	        LiquidStack liquid = new LiquidStack(0, 0, 0);
 	        liquid.readFromNBT(data.getCompoundTag("tank"));
 	        tank.setLiquid(liquid);
@@ -252,5 +252,11 @@ public class TileTank extends TileBuildCraft implements ITankContainer
 
         compositeTank.setCapacity(capacity);
         return new ILiquidTank[]{compositeTank};
+    }
+
+    @Override
+    public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+    	// TODO Auto-generated method stub
+    	return null;
     }
 }

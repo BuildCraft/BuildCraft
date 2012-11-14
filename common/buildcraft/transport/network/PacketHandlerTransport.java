@@ -12,7 +12,6 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.transport.PipeTransportItems;

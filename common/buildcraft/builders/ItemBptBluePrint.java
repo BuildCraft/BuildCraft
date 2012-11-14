@@ -9,9 +9,6 @@
 
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.core.blueprints.BptBase;
-
 public class ItemBptBluePrint extends ItemBptBase {
 
 	public ItemBptBluePrint(int i) {

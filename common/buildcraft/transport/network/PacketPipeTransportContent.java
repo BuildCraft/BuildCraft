@@ -1,15 +1,12 @@
 package buildcraft.transport.network;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.transport.IPipedItem;
 
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 
 import buildcraft.transport.EntityData;
-
-import java.util.EnumSet;
 
 public class PacketPipeTransportContent extends PacketUpdate {
 

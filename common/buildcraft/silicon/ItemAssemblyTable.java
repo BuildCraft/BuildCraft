@@ -1,6 +1,5 @@
 package buildcraft.silicon;
 
-import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 

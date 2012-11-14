@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -225,14 +225,14 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	private boolean containsInput(LiquidStack liquid) {
 		if(liquid == null)
 			return true;
-		
+
 		return new LiquidStack(slot1.liquidId, slot1.quantity, 0).containsLiquid(liquid) || new LiquidStack(slot2.liquidId, slot2.quantity, 0).containsLiquid(liquid);
 	}
 
 	private boolean consumeInput(LiquidStack liquid) {
 		if(liquid == null)
 			return true;
-		
+
 		if(new LiquidStack(slot1.liquidId, slot1.quantity, 0).containsLiquid(liquid)) {
 			slot1.quantity -= liquid.amount;
 			return true;
@@ -240,7 +240,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 			slot2.quantity -= liquid.amount;
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -455,6 +455,12 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 				new LiquidTank(slot2.liquidId, slot2.quantity, LIQUID_PER_SLOT),
 				new LiquidTank(result.liquidId, result.quantity, LIQUID_PER_SLOT),
 		};
+	}
+
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+    	// TODO Auto-generated method stub
+		return null;
 	}
 
 }
