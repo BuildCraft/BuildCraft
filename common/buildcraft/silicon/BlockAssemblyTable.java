@@ -1,8 +1,6 @@
 package buildcraft.silicon;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -16,7 +14,6 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 

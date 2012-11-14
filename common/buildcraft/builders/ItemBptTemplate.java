@@ -1,8 +1,5 @@
 package buildcraft.builders;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.core.blueprints.BptBase;
-
 public class ItemBptTemplate extends ItemBptBase {
 
 	public ItemBptTemplate(int i) {

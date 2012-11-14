@@ -11,8 +11,6 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import com.google.common.math.IntMath;
-
 import buildcraft.BuildCraftFactory;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;

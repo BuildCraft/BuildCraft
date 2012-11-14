@@ -1,7 +1,6 @@
 package buildcraft.silicon;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import buildcraft.core.GuiIds;
 import buildcraft.silicon.gui.ContainerAssemblyAdvancedWorkbench;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 import buildcraft.silicon.gui.GuiAssemblyAdvancedWorkbench;

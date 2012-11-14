@@ -15,11 +15,11 @@
       
     <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
           
-	<property name="mc.version"			value="1.3.2"/>
-    <property name="mcp.version"         value="72"/>
-    <property name="forge.version"       value="4.1.4.287"/>
+	<property name="mc.version"			value="1.4.1"/>
+    <property name="mcp.version"         value="718_pre1"/>
+    <property name="forge.version"       value="6.0.0.329"/>
     <property name="bc.version"          value="3.2.0"/>
-    <property name="bc.version.full"     value="${bc.version}pre7"/>
+    <property name="bc.version.full"     value="${bc.version}"/>
     
     <echo message="Starting build for ${bc.version.full}"/>
 	

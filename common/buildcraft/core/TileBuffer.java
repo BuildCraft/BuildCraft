@@ -11,7 +11,6 @@ package buildcraft.core;
 
 import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.src.Block;
-import net.minecraft.src.BlockContainer;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 

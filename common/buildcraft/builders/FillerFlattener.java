@@ -9,7 +9,6 @@
 
 package buildcraft.builders;
 
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;

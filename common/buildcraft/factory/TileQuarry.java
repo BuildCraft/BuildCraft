@@ -15,12 +15,10 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import net.minecraftforge.common.ForgeDirection;
@@ -43,10 +41,8 @@ import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Block;
 import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;

@@ -22,7 +22,6 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BptSlotInfo;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.Position;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptContext;
