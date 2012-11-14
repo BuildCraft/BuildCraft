@@ -21,7 +21,7 @@ public class BptBlockRefinery extends BptBlock {
 
 	@Override
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		slot.meta = ForgeDirection.values()[slot.meta].getLeftRotation().ordinal();
+		slot.meta = ForgeDirection.values()[slot.meta].getRotation(ForgeDirection.DOWN).ordinal();
 	}
 
 	@Override

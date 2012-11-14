@@ -39,7 +39,7 @@ public class BptItemPipeDiamond extends BptItem {
 				newInv[dir * 9 + s] = inv[dir * 9 + s];
 
 		for (int dir = 2; dir <= 5; ++dir) {
-			ForgeDirection r = ForgeDirection.values()[dir].getLeftRotation();
+			ForgeDirection r = ForgeDirection.values()[dir].getRotation(ForgeDirection.DOWN);
 
 			for (int s = 0; s < 9; ++s)
 				newInv[r.ordinal() * 9 + s] = inv[dir * 9 + s];

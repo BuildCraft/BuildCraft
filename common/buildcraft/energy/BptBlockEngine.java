@@ -27,7 +27,7 @@ public class BptBlockEngine extends BptBlock {
 	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
 		int o = slot.cpt.getInteger("orientation");
 
-		o = ForgeDirection.values()[o].getLeftRotation().ordinal();
+		o = ForgeDirection.values()[o].getRotation(ForgeDirection.DOWN).ordinal();
 
 		slot.cpt.setInteger("orientation", o);
 	}

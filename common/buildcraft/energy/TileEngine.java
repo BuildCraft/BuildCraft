@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
@@ -476,4 +477,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 		}
 	}
 
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
