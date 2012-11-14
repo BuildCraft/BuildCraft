@@ -478,9 +478,4 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 	@Override public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) { return null; }
 
-	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
