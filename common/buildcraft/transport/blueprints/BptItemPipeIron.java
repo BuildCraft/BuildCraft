@@ -39,7 +39,7 @@ public class BptItemPipeIron extends BptItem {
 		int orientation = slot.meta & 7;
 		int others = slot.meta - orientation;
 
-		slot.meta = ForgeDirection.values()[orientation].getLeftRotation().ordinal() + others;
+		slot.meta = ForgeDirection.values()[orientation].getRotation(ForgeDirection.DOWN).ordinal() + others;
 	}
 
 }

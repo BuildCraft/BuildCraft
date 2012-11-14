@@ -464,4 +464,9 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		return internalTanks;
 	}
 
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
