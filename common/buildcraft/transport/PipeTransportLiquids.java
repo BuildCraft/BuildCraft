@@ -13,7 +13,7 @@ import buildcraft.BuildCraftCore;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidItemRegistry;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.core.SafeTimeTracker;
@@ -126,7 +126,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	 * The amount of liquid contained by a pipe section. For simplicity, all
 	 * pipe sections are assumed to be of the same volume.
 	 */
-	public static int LIQUID_IN_PIPE = LiquidItemRegistry.BUCKET_VOLUME / 4;
+	public static int LIQUID_IN_PIPE = LiquidContainerRegistry.BUCKET_VOLUME / 4;
 	public static short INPUT_TTL = 60;	//100
 	public static short OUTPUT_TTL = 80;	//80
 	public static short OUTPUT_COOLDOWN = 30;	//30

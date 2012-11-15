@@ -10,7 +10,7 @@
 package buildcraft.energy;
 
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidItemRegistry;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.fuels.IronEngineCoolant;
@@ -26,7 +26,7 @@ import net.minecraft.src.NBTTagCompound;
 
 public class EngineIron extends Engine {
 
-	public static int MAX_LIQUID = LiquidItemRegistry.BUCKET_VOLUME * 10;
+	public static int MAX_LIQUID = LiquidContainerRegistry.BUCKET_VOLUME * 10;
 	public static int MAX_HEAT = 100000;
 	public static int COOLANT_THRESHOLD = 49000;
 
@@ -106,7 +106,7 @@ public class EngineIron extends Engine {
 					burnTime--;
 				} else {
 					liquidQty--;
-					burnTime = currentFuel.totalBurningTime / LiquidItemRegistry.BUCKET_VOLUME;
+					burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
 				}
 
 				currentOutput = currentFuel.powerPerCycle;
@@ -130,11 +130,11 @@ public class EngineIron extends Engine {
 			LiquidStack liquid = null;
 			if (Block.ice.blockID == itemInInventory.itemID && heat > COOLANT_THRESHOLD)
 			{
-				liquid = LiquidItemRegistry.getLiquidForFilledItem(new ItemStack(Item.bucketWater));
+				liquid = LiquidContainerRegistry.getLiquidForFilledItem(new ItemStack(Item.bucketWater));
 			}
 			else
 			{
-				liquid = LiquidItemRegistry.getLiquidForFilledItem(itemInInventory);
+				liquid = LiquidContainerRegistry.getLiquidForFilledItem(itemInInventory);
 			}
 
 			if (liquid != null) {

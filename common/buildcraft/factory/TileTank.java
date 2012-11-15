@@ -12,7 +12,7 @@ import buildcraft.BuildCraftCore;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidItemRegistry;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.core.SafeTimeTracker;
@@ -26,7 +26,7 @@ import net.minecraft.src.TileEntity;
 public class TileTank extends TileBuildCraft implements ITankContainer
 {
 
-    public final LiquidTank tank = new LiquidTank(LiquidItemRegistry.BUCKET_VOLUME * 16);
+    public final LiquidTank tank = new LiquidTank(LiquidContainerRegistry.BUCKET_VOLUME * 16);
     public boolean hasUpdate = false;
     public SafeTimeTracker tracker = new SafeTimeTracker();
 

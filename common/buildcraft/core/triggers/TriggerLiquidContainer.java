@@ -16,7 +16,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidItemRegistry;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 
 public class TriggerLiquidContainer extends Trigger {
@@ -76,7 +76,7 @@ public class TriggerLiquidContainer extends Trigger {
 			LiquidStack searchedLiquid = null;
 
 			if (parameter != null && parameter.getItem() != null)
-				searchedLiquid = LiquidItemRegistry.getLiquidForFilledItem(parameter.getItem());
+				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
 
 			ILiquidTank[] liquids = container.getTanks(ForgeDirection.UNKNOWN);
 

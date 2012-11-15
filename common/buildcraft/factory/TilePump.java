@@ -16,7 +16,7 @@ import java.util.TreeSet;
 import buildcraft.BuildCraftCore;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidItemRegistry;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
@@ -95,7 +95,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
 							}
 
-							internalLiquid = internalLiquid += LiquidItemRegistry.BUCKET_VOLUME;
+							internalLiquid = internalLiquid += LiquidContainerRegistry.BUCKET_VOLUME;
 
 							if (CoreProxy.proxy.isSimulating(worldObj)) {
 								sendNetworkUpdate();

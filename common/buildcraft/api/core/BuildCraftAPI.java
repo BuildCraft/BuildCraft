@@ -15,7 +15,7 @@ import net.minecraft.src.World;
 public class BuildCraftAPI {
 
 	@Deprecated
-	// To be removed, see LiquidItemRegistry
+	// To be removed, see LiquidContainerRegistry
 	public static final int BUCKET_VOLUME = 1000;
 	public static final int LAST_ORIGINAL_BLOCK = 122;
 	public static final int LAST_ORIGINAL_ITEM = 126;

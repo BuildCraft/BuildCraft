@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import buildcraft.BuildCraftCore;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidItemRegistry;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
@@ -93,7 +93,7 @@ public class BlockTank extends BlockContainer {
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
 
-			LiquidStack liquid = LiquidItemRegistry.getLiquidForFilledItem(current);
+			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
@@ -113,9 +113,9 @@ public class BlockTank extends BlockContainer {
 
 				LiquidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getLiquid();
                 if(available != null){
-                    ItemStack filled = LiquidItemRegistry.fillLiquidContainer(available, current);
+                    ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
 
-                    liquid = LiquidItemRegistry.getLiquidForFilledItem(filled);
+                    liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
 
                     if(liquid != null) {
 			if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode){
