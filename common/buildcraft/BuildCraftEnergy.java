@@ -145,7 +145,7 @@ public class BuildCraftEnergy {
 		bucketFuel.setIconIndex(0 * 16 + 3).setMaxStackSize(1).setCreativeTab(CreativeTabs.tabMisc);
 		LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 
-		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(new LiquidStack(oilStill.blockID, 1, 0), null, new LiquidStack(fuel.shiftedIndex, 1, 0), 10, 1));
+		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(new LiquidStack(oilStill.blockID, 1, 0), null, new LiquidStack(fuel.shiftedIndex, 1, 0), 12, 1));
 
 		// Iron Engine Fuels
 		IronEngineFuel.fuels.add(new IronEngineFuel(Block.lavaStill.blockID, 1, 20000));

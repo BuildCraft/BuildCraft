@@ -183,6 +183,11 @@ public class PipeTransportPower extends PipeTransport {
 			double[] next = Arrays.copyOf(internalPower, 6);
 			internalPower = internalNextPower;
 			internalNextPower = next;
+			for (int i = 0; i < nextPowerQuery.length; i++) {
+				if (powerQuery[i] == 0.0d) {
+					internalNextPower[i]-=1;
+				}
+			}
 		}
 	}
 

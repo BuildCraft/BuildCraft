@@ -167,7 +167,10 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	public void updateEntity() {
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			simpleAnimationIterate();
+			return;
+
 		} else if (CoreProxy.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+			System.out.printf("Server Anim state: %d %f\n", animationStage, animationSpeed);
 			sendNetworkUpdate();
 		}
 
@@ -192,30 +195,27 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 			return;
 		}
 
+		if (!containsInput(currentRecipe.ingredient1) || !containsInput(currentRecipe.ingredient2)) {
+			decreaseAnimation();
+			return;
+		}
+
 		isActive = true;
 
 		if (powerProvider.getEnergyStored() >= currentRecipe.energy) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
-			return;
 		}
 
 		if (!time.markTimeIfDelay(worldObj, currentRecipe.delay)) {
 			return;
 		}
 
-		if (!containsInput(currentRecipe.ingredient1)
-				|| !containsInput(currentRecipe.ingredient2)) {
-			decreaseAnimation();
-			return;
-		}
-
 		float energyUsed = powerProvider.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
 
 		if (energyUsed != 0) {
-			if (consumeInput(currentRecipe.ingredient1)
-					&& consumeInput(currentRecipe.ingredient2)) {
+			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {
 				result.liquidId = currentRecipe.result.itemID;
 				result.quantity += currentRecipe.result.amount;
 			}

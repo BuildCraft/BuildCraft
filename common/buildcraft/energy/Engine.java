@@ -67,8 +67,10 @@ public abstract class Engine {
 
 	public void update() {
 		if (!tile.isRedstonePowered) {
-			if (energy > 1) {
+			if (energy >= 1) {
 				energy -= 1;
+			} else if (energy < 1) {
+				energy = 0;
 			}
 		}
 	}
