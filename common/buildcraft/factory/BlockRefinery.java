@@ -23,7 +23,7 @@ import net.minecraft.src.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidItemRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
@@ -105,7 +105,7 @@ public class BlockRefinery extends BlockContainer {
 			return true;
 		} else {
 
-			LiquidStack liquid = LiquidManager.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
+			LiquidStack liquid = LiquidItemRegistry.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
 
 			if (liquid != null) {
 				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(ForgeDirection.UNKNOWN, liquid, true);

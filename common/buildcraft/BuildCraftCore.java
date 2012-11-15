@@ -69,8 +69,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Property;
-import net.minecraftforge.liquids.LiquidData;
-import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidContainerData;
+import net.minecraftforge.liquids.LiquidItemRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 
 @Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[6.3.0.0,)")
@@ -232,10 +232,6 @@ public class BuildCraftCore {
 	@Init
 	public void initialize(FMLInitializationEvent evt) {
 		//MinecraftForge.registerConnectionHandler(new ConnectionHandler());
-		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
-		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
-		LiquidManager.liquids.add(new LiquidData(new LiquidStack(Block.lavaStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
-
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 

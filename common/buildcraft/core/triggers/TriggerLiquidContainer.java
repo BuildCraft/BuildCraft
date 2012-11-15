@@ -16,7 +16,8 @@ import net.minecraft.src.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidItemRegistry;
+import net.minecraftforge.liquids.LiquidStack;
 
 public class TriggerLiquidContainer extends Trigger {
 
@@ -72,10 +73,10 @@ public class TriggerLiquidContainer extends Trigger {
 		if (tile instanceof ITankContainer) {
 			ITankContainer container = (ITankContainer) tile;
 
-			int seachedLiquidId = 0;
+			LiquidStack searchedLiquid = null;
 
 			if (parameter != null && parameter.getItem() != null)
-				seachedLiquidId = LiquidManager.getLiquidIDForFilledItem(parameter.getItem());
+				searchedLiquid = LiquidItemRegistry.getLiquidForFilledItem(parameter.getItem());
 
 			ILiquidTank[] liquids = container.getTanks(ForgeDirection.UNKNOWN);
 
@@ -96,7 +97,7 @@ public class TriggerLiquidContainer extends Trigger {
 			case Contains:
 				for (ILiquidTank c : liquids)
 					if (c.getLiquid() != null && c.getLiquid().amount != 0)
-						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquid().itemID)
+						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(c.getLiquid()))
 							return true;
 
 				return false;
@@ -106,7 +107,7 @@ public class TriggerLiquidContainer extends Trigger {
 					if (c.getLiquid() == null || c.getLiquid().amount == 0)
 						return true;
 					else if (c.getLiquid().amount < c.getCapacity())
-						if (seachedLiquidId == 0 || seachedLiquidId == c.getLiquid().itemID)
+						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(c.getLiquid()))
 							return true;
 
 				return false;

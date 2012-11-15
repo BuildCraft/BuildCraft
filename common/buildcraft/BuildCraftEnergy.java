@@ -53,8 +53,8 @@ import net.minecraft.src.Material;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
-import net.minecraftforge.liquids.LiquidData;
-import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidContainerData;
+import net.minecraftforge.liquids.LiquidItemRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 
 @Mod(name="BuildCraft Energy", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -153,10 +153,10 @@ public class BuildCraftEnergy {
 		IronEngineFuel.fuels.add(new IronEngineFuel(fuel.shiftedIndex, 6, 100000));
 
 		// Iron Engine Coolants
-		IronEngineCoolant.coolants.add(new IronEngineCoolant(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), 1.0f));
+		IronEngineCoolant.coolants.add(new IronEngineCoolant(new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME), 1.0f));
 
-		LiquidManager.liquids.add(new LiquidData(new LiquidStack(oilStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(oilMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
-		LiquidManager.liquids.add(new LiquidData(new LiquidStack(fuel, LiquidManager.BUCKET_VOLUME), new LiquidStack(fuel, LiquidManager.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
+		LiquidItemRegistry.registerLiquid(new LiquidContainerData(new LiquidStack(oilStill, LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
+		LiquidItemRegistry.registerLiquid(new LiquidContainerData(new LiquidStack(fuel, LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
 	}
 
 	public static void loadRecipes() {

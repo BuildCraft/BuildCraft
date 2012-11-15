@@ -13,7 +13,7 @@ import buildcraft.BuildCraftCore;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidItemRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.core.SafeTimeTracker;
@@ -35,7 +35,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	private int[] filters = new int[2];
 
-	public static int LIQUID_PER_SLOT = LiquidManager.BUCKET_VOLUME * 4;
+	public static int LIQUID_PER_SLOT = LiquidItemRegistry.BUCKET_VOLUME * 4;
 
 	public static class Slot {
 

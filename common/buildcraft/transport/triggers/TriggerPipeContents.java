@@ -11,7 +11,7 @@ package buildcraft.transport.triggers;
 
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidItemRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
@@ -100,7 +100,7 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 			LiquidStack searchedLiquid = null;
 
 			if (parameter != null && parameter.getItem() != null)
-				searchedLiquid = LiquidManager.getLiquidForFilledItem(parameter.getItem());
+				searchedLiquid = LiquidItemRegistry.getLiquidForFilledItem(parameter.getItem());
 
 			if (kind == Kind.Empty) {
 				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))

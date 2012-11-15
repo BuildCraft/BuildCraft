@@ -11,7 +11,7 @@ package buildcraft.factory.gui;
 
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
-import net.minecraftforge.liquids.LiquidManager;
+import net.minecraftforge.liquids.LiquidItemRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
@@ -80,9 +80,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			slot = slots[position];
 
 		if (slot != null) {
-			int liquidId = LiquidManager.getLiquidIDForFilledItem(mc.thePlayer.inventory.getItemStack());
+			LiquidStack liquid = LiquidItemRegistry.getLiquidForFilledItem(mc.thePlayer.inventory.getItemStack());
 
-			container.setFilter(position, liquidId, 0);
+			container.setFilter(position, liquid.itemID, liquid.itemMeta);
 		}
 	}
 
@@ -102,8 +102,8 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		if (filter1 != null)
 			liquid1Id = filter1.itemID;
 
-		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(new LiquidStack(liquid0Id, LiquidManager.BUCKET_VOLUME, 0),
-				new LiquidStack(liquid1Id, LiquidManager.BUCKET_VOLUME, 0));
+		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(new LiquidStack(liquid0Id, LiquidItemRegistry.BUCKET_VOLUME, 0),
+				new LiquidStack(liquid1Id, LiquidItemRegistry.BUCKET_VOLUME, 0));
 
 		if (recipe != null)
 			((ItemSlot) slots[2]).stack = recipe.result.asItemStack();
