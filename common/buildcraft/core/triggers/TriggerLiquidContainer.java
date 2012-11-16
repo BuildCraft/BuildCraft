@@ -77,6 +77,9 @@ public class TriggerLiquidContainer extends Trigger {
 
 			if (parameter != null && parameter.getItem() != null)
 				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
+				
+			if(searchedLiquid != null)
+				searchedLiquid.amount = 1;
 
 			ILiquidTank[] liquids = container.getTanks(ForgeDirection.UNKNOWN);
 
@@ -85,36 +88,47 @@ public class TriggerLiquidContainer extends Trigger {
 
 			switch (state) {
 			case Empty:
-
-				if (liquids != null && liquids.length > 0) {
-					for (ILiquidTank c : liquids)
-						if (c.getLiquid() != null && c.getLiquid().amount != 0)
+				for (ILiquidTank c : liquids) {
+					if (searchedLiquid != null) {
+						LiquidStack drained = c.drain(1, false);
+						if (drained != null && searchedLiquid.isLiquidEqual(drained))
 							return false;
+					} else if (c.getLiquid() != null && c.getLiquid().amount > 0) {
+						return false;
+					}
+				}
 
-					return true;
-				} else
-					return false;
+				return true;
 			case Contains:
-				for (ILiquidTank c : liquids)
-					if (c.getLiquid() != null && c.getLiquid().amount != 0)
+				for (ILiquidTank c : liquids) {
+					if (c.getLiquid() != null && c.getLiquid().amount != 0) {
 						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(c.getLiquid()))
 							return true;
+					}
+				}
 
 				return false;
 
 			case Space:
-				for (ILiquidTank c : liquids)
-					if (c.getLiquid() == null || c.getLiquid().amount == 0)
-						return true;
-					else if (c.getLiquid().amount < c.getCapacity())
-						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(c.getLiquid()))
+				for (ILiquidTank c : liquids) {
+					if (searchedLiquid != null) {
+						if (c.fill(searchedLiquid, false) > 0)
 							return true;
+					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity()) {
+						return true;
+					}
+				}
 
 				return false;
 			case Full:
-				for (ILiquidTank c : liquids)
-					if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
+				for (ILiquidTank c : liquids) {
+					if (searchedLiquid != null) {
+						if(c.fill(searchedLiquid, false) > 0)
+							return false;
+					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity()) {
 						return false;
+					}
+				}
 
 				return true;
 			}
