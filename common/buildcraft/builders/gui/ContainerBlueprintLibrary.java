@@ -52,9 +52,9 @@ public class ContainerBlueprintLibrary extends BuildCraftContainer {
 		for (int i = 0; i < crafters.size(); i++) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
 			if (progressIn != library.progressIn)
-				icrafting.updateCraftingInventoryInfo(this, 0, library.progressIn);
+				icrafting.sendProgressBarUpdate(this, 0, library.progressIn);
 			if (progressOut != library.progressOut)
-				icrafting.updateCraftingInventoryInfo(this, 1, library.progressOut);
+				icrafting.sendProgressBarUpdate(this, 1, library.progressOut);
 		}
 
 		progressIn = library.progressIn;

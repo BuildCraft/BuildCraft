@@ -62,7 +62,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	private void onSelectionUpdate(EntityPlayer player, PacketUpdate packet) {
 
-		Container container = player.craftingInventory;
+		Container container = player.inventoryContainer;
 
 		if (container instanceof ContainerAssemblyTable) {
 			SelectionMessage message = new SelectionMessage();

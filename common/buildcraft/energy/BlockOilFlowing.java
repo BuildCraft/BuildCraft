@@ -48,8 +48,8 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	private void updateFlow(World world, int i, int j, int k) {
 		int l = world.getBlockMetadata(i, j, k);
 		world.setBlockAndMetadata(i, j, k, blockID + 1, l);
-		world.markBlocksDirty(i, j, k, i, j, k);
-		world.markBlockNeedsUpdate(i, j, k);
+		world.markBlockRangeForRenderUpdate(i, j, k, i, j, k);
+		world.markBlockForUpdate(i, j, k);
 	}
 
 	@Override

@@ -381,8 +381,8 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(container, 0, filters[0]);
-		iCrafting.updateCraftingInventoryInfo(container, 1, filters[1]);
+		iCrafting.sendProgressBarUpdate(container, 0, filters[0]);
+		iCrafting.sendProgressBarUpdate(container, 1, filters[1]);
 	}
 
 	/* ITANKCONTAINER */

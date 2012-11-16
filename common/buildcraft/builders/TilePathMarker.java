@@ -270,7 +270,7 @@ public class TilePathMarker extends TileMarker {
 		super.handleUpdatePacket(packet);
 
 		if (previousState != tryingToConnect) {
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 }

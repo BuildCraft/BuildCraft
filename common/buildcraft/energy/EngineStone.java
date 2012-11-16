@@ -151,10 +151,10 @@ public class EngineStone extends Engine {
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, Math.round(energy));
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, Math.round(currentOutput));
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, burnTime);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, totalBurnTime);
+		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy));
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, Math.round(currentOutput));
+		iCrafting.sendProgressBarUpdate(containerEngine, 2, burnTime);
+		iCrafting.sendProgressBarUpdate(containerEngine, 3, totalBurnTime);
 	}
 
 	@Override

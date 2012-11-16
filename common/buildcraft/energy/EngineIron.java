@@ -276,15 +276,15 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 0, Math.round(energy * 10) & 0xff);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 1, (Math.round(energy * 10) & 0xff00) >> 8 );
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 2, Math.round(currentOutput * 10));
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 3, heat & 0xff);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 4, (heat & 0xff00) >> 8);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 5, liquidQty);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 6, liquidId);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 7, coolantQty);
-		iCrafting.updateCraftingInventoryInfo(containerEngine, 8, coolantId);
+		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy * 10) & 0xff);
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, (Math.round(energy * 10) & 0xff00) >> 8 );
+		iCrafting.sendProgressBarUpdate(containerEngine, 2, Math.round(currentOutput * 10));
+		iCrafting.sendProgressBarUpdate(containerEngine, 3, heat & 0xff);
+		iCrafting.sendProgressBarUpdate(containerEngine, 4, (heat & 0xff00) >> 8);
+		iCrafting.sendProgressBarUpdate(containerEngine, 5, liquidQty);
+		iCrafting.sendProgressBarUpdate(containerEngine, 6, liquidId);
+		iCrafting.sendProgressBarUpdate(containerEngine, 7, coolantQty);
+		iCrafting.sendProgressBarUpdate(containerEngine, 8, coolantId);
 	}
 
 	@Override

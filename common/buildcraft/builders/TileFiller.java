@@ -134,7 +134,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 			}
 
 			if (done) {
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				sendNetworkUpdate();
 			}
 		}
@@ -175,7 +175,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 		}
 
 		if (worldObj != null) {
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 
 		if (currentPattern == null) {
@@ -307,7 +307,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 		super.handleDescriptionPacket(packet);
 
 		currentPattern = FillerManager.registry.getPattern(currentPatternId);
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);
@@ -321,7 +321,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 		super.handleUpdatePacket(packet);
 
 		currentPattern = FillerManager.registry.getPattern(currentPatternId);
-		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 
 		if (!initialized && box.isInitialized()) {
 			box.createLasers(worldObj, LaserKind.Stripes);

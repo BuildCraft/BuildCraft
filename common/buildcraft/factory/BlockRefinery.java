@@ -101,7 +101,7 @@ public class BlockRefinery extends BlockContainer {
 				break;
 			}
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
-			world.markBlockNeedsUpdate(i, j, k);
+			world.markBlockForUpdate(i, j, k);
 			return true;
 		} else {
 

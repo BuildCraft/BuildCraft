@@ -88,7 +88,7 @@ public class BlockArchitect extends BlockContainer {
 				break;
 			}
 
-			world.markBlockNeedsUpdate(i, j, k);
+			world.markBlockForUpdate(i, j, k);
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
 			return true;
 		} else {

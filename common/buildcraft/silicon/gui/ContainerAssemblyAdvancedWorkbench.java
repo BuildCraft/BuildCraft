@@ -56,7 +56,7 @@ public class ContainerAssemblyAdvancedWorkbench extends BuildCraftContainer {
 	        while (var4.hasNext())
 	        {
 	            ICrafting var5 = (ICrafting)var4.next();
-	            var5.updateCraftingInventorySlot(this, -i-1, workbench.getCraftingSlots().getStackInSlot(i));
+	            var5.sendSlotContents(this, -i-1, workbench.getCraftingSlots().getStackInSlot(i));
 	        }
 		}
         Iterator var4 = this.crafters.iterator();
@@ -64,7 +64,7 @@ public class ContainerAssemblyAdvancedWorkbench extends BuildCraftContainer {
         while (var4.hasNext())
         {
             ICrafting var5 = (ICrafting)var4.next();
-            var5.updateCraftingInventorySlot(this, -10, workbench.getOutputSlot());
+            var5.sendSlotContents(this, -10, workbench.getOutputSlot());
         }
 		for (int i = 0; i < crafters.size(); i++)
 			workbench.sendGUINetworkData(this, (ICrafting) crafters.get(i));

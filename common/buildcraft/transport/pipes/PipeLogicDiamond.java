@@ -88,7 +88,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 		ItemStack stack = filters.decrStackSize(i, j);
 
 		if (CoreProxy.proxy.isSimulating(worldObj))
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 
 		return stack;
 	}
@@ -98,7 +98,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 
 		filters.setInventorySlotContents(i, itemstack);
 		if (CoreProxy.proxy.isSimulating(worldObj))
-			worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 
 	}
 

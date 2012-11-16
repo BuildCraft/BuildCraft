@@ -190,7 +190,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 					engine.orientation = o;
 				}
 				orientation = o.ordinal();
-				worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlockId(xCoord, yCoord, zCoord));
 				break;
 			}

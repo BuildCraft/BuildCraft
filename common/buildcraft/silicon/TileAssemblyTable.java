@@ -432,12 +432,12 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		{
 			lRecentEnergy += (int)(recentEnergy[i] * 100.0 / (float)(recentEnergy.length - 1));
 		}
-		iCrafting.updateCraftingInventoryInfo(container, 0, requiredEnergy & 0xFFFF);
-		iCrafting.updateCraftingInventoryInfo(container, 1, currentStored & 0xFFFF);
-		iCrafting.updateCraftingInventoryInfo(container, 2, (requiredEnergy >>> 16) & 0xFFFF);
-		iCrafting.updateCraftingInventoryInfo(container, 3, (currentStored >>> 16) & 0xFFFF);
-		iCrafting.updateCraftingInventoryInfo(container, 4, lRecentEnergy & 0xFFFF);
-		iCrafting.updateCraftingInventoryInfo(container, 5, (lRecentEnergy >>> 16) & 0xFFFF);
+		iCrafting.sendProgressBarUpdate(container, 0, requiredEnergy & 0xFFFF);
+		iCrafting.sendProgressBarUpdate(container, 1, currentStored & 0xFFFF);
+		iCrafting.sendProgressBarUpdate(container, 2, (requiredEnergy >>> 16) & 0xFFFF);
+		iCrafting.sendProgressBarUpdate(container, 3, (currentStored >>> 16) & 0xFFFF);
+		iCrafting.sendProgressBarUpdate(container, 4, lRecentEnergy & 0xFFFF);
+		iCrafting.sendProgressBarUpdate(container, 5, (lRecentEnergy >>> 16) & 0xFFFF);
 	}
 
 	@Override

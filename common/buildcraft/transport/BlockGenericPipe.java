@@ -520,7 +520,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean isPoweringTo(IBlockAccess iblockaccess, int x, int y, int z, int l) {
+	public boolean isProvidingStrongPower(IBlockAccess iblockaccess, int x, int y, int z, int l) {
 		Pipe pipe = getPipe(iblockaccess, x, y, z);
 
 		if (isValid(pipe))
@@ -535,7 +535,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean isIndirectlyPoweringTo(IBlockAccess world, int i, int j, int k, int l) {
+	public boolean isProvidingWeakPower(IBlockAccess world, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(world, i, j, k);
 
 		if (isValid(pipe))
