@@ -252,7 +252,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 
 		if (renderState.isDirty()){
-			worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+			worldObj.markBlockForRenderUpdate(this.xCoord, this.yCoord, this.zCoord);
 			renderState.clean();
 		}
 
@@ -374,7 +374,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				initialize(BlockGenericPipe.createPipe(packet.getPipeId()));
 			}
 			renderState = packet.getRenderState();
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 		}
 		return;
 	}
