@@ -16,6 +16,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPassiveItemContribution;
 import buildcraft.api.transport.IPipedItem;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
 
 import net.minecraft.src.EntityItem;

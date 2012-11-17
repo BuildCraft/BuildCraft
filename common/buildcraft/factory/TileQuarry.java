@@ -9,7 +9,6 @@
 
 package buildcraft.factory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +17,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -374,7 +374,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 			// Share this with mining well!
 
-			ArrayList<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, i, j, k);
+			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, i, j, k);
 
 			if (stacks != null) {
 				for (ItemStack s : stacks) {

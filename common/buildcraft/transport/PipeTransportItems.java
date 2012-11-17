@@ -359,7 +359,7 @@ public class PipeTransportItems extends PipeTransport {
 
 				entity.setContainer(container);
 
-				EntityData data = new EntityData(entity, ForgeDirection.values()[dataTag.getInteger("input")]);
+				EntityData data = new EntityData(entity, ForgeDirection.getOrientation(dataTag.getInteger("input")));
 				data.output = ForgeDirection.getOrientation(dataTag.getInteger("output"));
 				data.toCenter = dataTag.getBoolean("toCenter");
 

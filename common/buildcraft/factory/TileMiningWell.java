@@ -9,8 +9,9 @@
 
 package buildcraft.factory;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
@@ -61,7 +62,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		int blockId = world.getBlockId(xCoord, depth, zCoord);
 
-		ArrayList<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
+		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
 		world.setBlockWithNotify(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 

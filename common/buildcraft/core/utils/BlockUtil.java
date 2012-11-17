@@ -8,19 +8,20 @@
 
 package buildcraft.core.utils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import buildcraft.BuildCraftCore;
-
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.BuildCraftAPI;
+
 import net.minecraft.src.Block;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
 public class BlockUtil {
 
-	public static ArrayList<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
+	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
 		if (block == null)
@@ -36,14 +37,14 @@ public class BlockUtil {
 
 		if (blockId != 0 && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
 			List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-			
+
 			for (ItemStack item : items) {
 				float var = 0.7F;
 				double dx = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
 				double dy = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
 				double dz = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
 				EntityItem entityitem = new EntityItem(world, x + dx, y + dy, z + dz, item);
-				
+
 				entityitem.lifespan = BuildCraftCore.itemLifespan;
 				entityitem.delayBeforeCanPickup = 10;
 
