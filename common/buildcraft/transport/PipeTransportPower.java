@@ -184,7 +184,7 @@ public class PipeTransportPower extends PipeTransport {
 			internalPower = internalNextPower;
 			internalNextPower = next;
 			for (int i = 0; i < nextPowerQuery.length; i++) {
-				if (powerQuery[i] == 0.0d) {
+				if (powerQuery[i] == 0.0d && internalNextPower[i] > 0) {
 					internalNextPower[i]-=1;
 				}
 			}
