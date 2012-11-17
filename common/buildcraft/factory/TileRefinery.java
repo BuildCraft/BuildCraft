@@ -170,7 +170,6 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 			return;
 
 		} else if (CoreProxy.proxy.isSimulating(worldObj) && updateNetworkTime.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-			System.out.printf("Server Anim state: %d %f\n", animationStage, animationSpeed);
 			sendNetworkUpdate();
 		}
 

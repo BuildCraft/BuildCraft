@@ -325,14 +325,11 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 				}
 			}
 			for (ItemStack output : outputs) {
-				System.out.printf("Output stack is %s\n",output);
 				boolean putToPipe = Utils.addToRandomPipeEntry(this, ForgeDirection.UP, output);
 				if (!putToPipe)
 				{
-					System.out.println(output);
 					for (int i = 0; i < storageSlots.length; i++)
 					{
-						System.out.printf("%d: %s %s\n", i,output, storageSlots[i]);
 						if (output.stackSize <= 0) {
 							break;
 						}
@@ -345,11 +342,8 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 								output.stackSize = 0;
 							}
 						} else if (storageSlots[i] == null) {
-							System.out.println(output);
 							storageSlots[i] = output.copy();
-							System.out.println(storageSlots[i]+":"+output);
 							output.stackSize = 0;
-							System.out.println(storageSlots[i]+":"+output);
 						}
 					}
 					if (output.stackSize > 0) {
