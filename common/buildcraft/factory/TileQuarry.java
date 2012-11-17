@@ -390,7 +390,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 		// Collect any lost items laying around
 		double[] head = getHead();
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 1.5, head[1], head[2] - 1.5,	head[0] + 2.5, head[1] + 2.5, head[2] + 2.5);
+		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
 		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
 		for (int ii = 0; ii < result.size(); ii++) {
 			if (result.get(ii) instanceof EntityItem) {
@@ -421,6 +421,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 
 			EntityItem entityitem = new EntityItem(worldObj, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
+
+			entityitem.lifespan = BuildCraftCore.itemLifespan;
+			entityitem.delayBeforeCanPickup = 10;
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3;

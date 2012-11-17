@@ -88,6 +88,8 @@ public class BuildCraftCore {
 
 	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.
 
+	public static int itemLifespan = 1200;
+
 	public static int updateFactor = 10;
 
 	public static BuildCraftConfiguration mainConfiguration;
@@ -164,16 +166,22 @@ public class BuildCraftCore {
 			stripesLaserTexture = 0 * 16 + 3;
 			transparentTexture = 0 * 16 + 0;
 
-			Property continuousCurrent = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"current.continuous", DefaultProps.CURRENT_CONTINUOUS);
+			Property continuousCurrent = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL, "current.continuous", DefaultProps.CURRENT_CONTINUOUS);
 			continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 			continuousCurrentModel = continuousCurrent.getBoolean(DefaultProps.CURRENT_CONTINUOUS);
 
-			Property trackNetwork = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"trackNetworkUsage", false);
+			Property trackNetwork = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL, "trackNetworkUsage", false);
 			trackNetworkUsage = trackNetwork.getBoolean(false);
 
 			Property dropBlock = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"dropBrokenBlocks", true);
 			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
 			dropBrokenBlocks = dropBlock.getBoolean(true);
+
+			Property lifespan = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL, "itemLifespan", itemLifespan);
+			lifespan.comment = "the lifespan in ticks of items dropped on the ground by pipes and machines, vanilla = 6000, default = 1200";
+			itemLifespan = lifespan.getInt(itemLifespan);
+			if(itemLifespan < 100)
+				itemLifespan = 100;
 
 			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"power.framework", "buildcraft.energy.PneumaticPowerFramework");
 

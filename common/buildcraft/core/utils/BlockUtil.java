@@ -34,8 +34,22 @@ public class BlockUtil {
 	public static void breakBlock(World world, int x, int y, int z) {
 		int blockId = world.getBlockId(x, y, z);
 
-		if (blockId != 0 && BuildCraftCore.dropBrokenBlocks)
-			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+		if (blockId != 0 && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+			List<ItemStack> items = getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+			
+			for (ItemStack item : items) {
+				float var = 0.7F;
+				double dx = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+				double dy = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+				double dz = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+				EntityItem entityitem = new EntityItem(world, x + dx, y + dy, z + dz, item);
+				
+				entityitem.lifespan = BuildCraftCore.itemLifespan;
+				entityitem.delayBeforeCanPickup = 10;
+
+				world.spawnEntityInWorld(entityitem);
+			}
+		}
 
 		world.setBlockWithNotify(x, y, z, 0);
 	}

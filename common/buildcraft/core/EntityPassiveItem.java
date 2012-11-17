@@ -304,6 +304,9 @@ public class EntityPassiveItem implements IPipedItem {
 
 			EntityItem entityitem = new EntityItem(worldObj, position.x, position.y, position.z, getItemStack());
 
+			entityitem.lifespan = BuildCraftCore.itemLifespan;
+			entityitem.delayBeforeCanPickup = 10;
+
 			float f3 = 0.00F + worldObj.rand.nextFloat() * 0.04F - 0.02F;
 			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3 + motion.x;
 			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3 + motion.y;
@@ -311,7 +314,6 @@ public class EntityPassiveItem implements IPipedItem {
 			worldObj.spawnEntityInWorld(entityitem);
 			remove();
 
-			entityitem.delayBeforeCanPickup = 20;
 			return entityitem;
 		} else {
 			return null;

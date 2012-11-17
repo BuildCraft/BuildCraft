@@ -93,6 +93,9 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
 
+			entityitem.lifespan = BuildCraftCore.itemLifespan;
+			entityitem.delayBeforeCanPickup = 10;
+
 			float f3 = 0.05F;
 			entityitem.motionX = (float) world.rand.nextGaussian() * f3;
 			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
