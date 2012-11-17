@@ -35,7 +35,7 @@ public class BlockUtil {
 		int blockId = world.getBlockId(x, y, z);
 
 		if (blockId != 0 && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
-			List<ItemStack> items = getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+			List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 			
 			for (ItemStack item : items) {
 				float var = 0.7F;
