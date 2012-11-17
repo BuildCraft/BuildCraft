@@ -296,7 +296,6 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	@Override
 	protected void mouseClicked(int i, int j, int k) {
-		System.out.printf("Mouse click %d %d %d\n", i,j,k);
 		super.mouseClicked(i, j, k);
 
 		int cornerX = (width - xSize) / 2;

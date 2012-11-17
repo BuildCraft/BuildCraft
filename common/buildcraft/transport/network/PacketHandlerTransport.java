@@ -274,7 +274,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param packet
 	 */
 	private void onGateInitRequest(EntityPlayer playerEntity, PacketCoordinates packet) {
-		System.out.printf("gate init %s\n",playerEntity.openContainer);
 		if (!(playerEntity.openContainer instanceof ContainerGateInterface))
 			return;
 

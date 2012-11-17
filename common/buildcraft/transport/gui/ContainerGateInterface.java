@@ -61,8 +61,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		System.out.printf("Gate gui %s\n", this);
-
 		if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
@@ -90,7 +88,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 					if (!_potentialActions.contains(a))
 						_potentialActions.add(a);
 			}
-			System.out.printf("Action list %s %s\n", _potentialActions, _potentialTriggers);
 		}
 	}
 
@@ -278,7 +275,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
-		System.out.printf("Packet to player %s\n", packet);
 		// Send to player
 		CoreProxy.proxy.sendToPlayer(player, packet);
 	}

@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.tools.IToolWrench;
@@ -581,7 +582,7 @@ public class BlockGenericPipe extends BlockContainer {
 			if (pipe != null) {
 				return pipe.getConstructor(int.class).newInstance(key);
 			} else {
-				System.err.printf("[BuildCraft] Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?\n");
+				BuildCraftCore.bcLog.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}
 
 		} catch (Throwable t) {
