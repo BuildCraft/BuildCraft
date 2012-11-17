@@ -61,6 +61,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
+		System.out.printf("Gate gui %s\n", this);
+
 		if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
@@ -88,6 +90,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 					if (!_potentialActions.contains(a))
 						_potentialActions.add(a);
 			}
+			System.out.printf("Action list %s %s\n", _potentialActions, _potentialTriggers);
 		}
 	}
 
@@ -108,7 +111,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Clears list of potential actions and refills it according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void updateActions(PacketUpdate packet) {
@@ -123,7 +126,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Clears list of potential triggers and refills it according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void updateTriggers(PacketUpdate packet) {
@@ -136,7 +139,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sets the currently selected actions and triggers according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void setSelection(PacketUpdate packet) {
@@ -260,7 +263,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the list of potential actions to the client
-	 * 
+	 *
 	 * @param player
 	 */
 	private void sendActions(EntityPlayer player) {
@@ -275,13 +278,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
+		System.out.printf("Packet to player %s\n", packet);
 		// Send to player
 		CoreProxy.proxy.sendToPlayer(player, packet);
 	}
 
 	/**
 	 * Sends the list of potential triggers to the client
-	 * 
+	 *
 	 * @param player
 	 */
 	private void sendTriggers(EntityPlayer player) {
@@ -302,7 +306,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the current selection on the gate to the client.
-	 * 
+	 *
 	 * @param player
 	 */
 	public void sendSelection(EntityPlayer player) {
