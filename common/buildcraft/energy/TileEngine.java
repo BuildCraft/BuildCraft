@@ -476,6 +476,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			return engine.getLiquidSlots();
 		}
 	}
-	@Override public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) { return null; }
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		return engine != null ? engine.getTank(direction, type) : null;
+	}
 
 }

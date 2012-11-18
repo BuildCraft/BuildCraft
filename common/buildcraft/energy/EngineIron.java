@@ -10,6 +10,7 @@
 package buildcraft.energy;
 
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
@@ -389,6 +390,19 @@ public class EngineIron extends Engine {
 		ItemStack toReturn = itemInInventory;
 		itemInInventory = null;
 		return toReturn;
+	}
+
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		switch (direction)
+		{
+		case UP:
+			return new LiquidTank(liquidId, liquidQty, MAX_LIQUID);
+		case DOWN:
+			return new LiquidTank(coolantId, coolantQty, MAX_LIQUID);
+		default:
+			return null;
+		}
 	}
 
 }

@@ -9,6 +9,9 @@
 
 package buildcraft.energy;
 
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 
 public class EngineWood extends Engine {
@@ -84,5 +87,10 @@ public class EngineWood extends Engine {
 	@Override
 	public void burn() {
 
+	}
+
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		return null;
 	}
 }

@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -16,6 +16,9 @@ import net.minecraft.src.ICrafting;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntityFurnace;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.LiquidStack;
 
 public class EngineStone extends Engine {
 
@@ -94,7 +97,7 @@ public class EngineStone extends Engine {
 	private int getItemBurnTime(ItemStack itemstack) {
 		if (itemstack == null)
 			return 0;
-		
+
 		return TileEntityFurnace.getItemBurnTime(itemstack);
 	}
 
@@ -103,7 +106,7 @@ public class EngineStone extends Engine {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		burnTime = nbttagcompound.getInteger("burnTime");
 		totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
-		
+
 		if (nbttagcompound.hasKey("itemInInventory")) {
 			NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
 			itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
@@ -115,7 +118,7 @@ public class EngineStone extends Engine {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("burnTime", burnTime);
 		nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
-		
+
 		if (itemInInventory != null) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			itemInInventory.writeToNBT(cpt);
@@ -161,7 +164,7 @@ public class EngineStone extends Engine {
 	public int getHeat() {
 		return Math.round(energy);
 	}
-	
+
 	/* IINVENTORY */
 	@Override public int getSizeInventory() { return 1; }
 	@Override public ItemStack getStackInSlot(int i) { return itemInInventory; }
@@ -191,4 +194,8 @@ public class EngineStone extends Engine {
 		return toReturn;
 	}
 
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		return null;
+	}
 }

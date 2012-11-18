@@ -10,6 +10,8 @@
 package buildcraft.energy;
 
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
@@ -183,5 +185,7 @@ public abstract class Engine {
 	public ItemStack decrStackSize(int i, int j) { return null; }
 	public ItemStack getStackInSlotOnClosing(int i) { return getStackInSlot(i); }
 	public void setInventorySlotContents(int i, ItemStack itemstack) {}
+
+	public abstract ILiquidTank getTank(ForgeDirection direction, LiquidStack type);
 
 }
