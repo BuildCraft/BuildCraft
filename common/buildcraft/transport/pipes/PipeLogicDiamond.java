@@ -9,15 +9,10 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketNBT;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.transport.BlockGenericPipe;

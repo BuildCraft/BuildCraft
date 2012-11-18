@@ -15,7 +15,6 @@ import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import net.minecraftforge.common.ForgeDirection;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
