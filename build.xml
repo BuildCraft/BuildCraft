@@ -26,7 +26,7 @@
 	<condition property="should-download-ant-contrib">
 		<or>
 			<available file="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
-			<available file="${download.dir}/minecraftforge-src-1.4.5-${forge.version}.zip"/>
+			<available file="${download.dir}/minecraftforge-src-${mc.version}-${forge.version}.zip"/>
 		</or>
 	</condition>
 
