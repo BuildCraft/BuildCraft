@@ -17,15 +17,15 @@
 
 	<property name="mcpsrc.dir"          value="${mcp.dir}/src/minecraft"/>
 
-	<property name="mcp.version"         value="722"/>
-	<property name="forge.version"       value="6.4.0.381"/>
+	<property name="mcp.version"         value="723"/>
+	<property name="forge.version"       value="6.4.0.394"/>
 	<property name="bc.version"          value="3.1.8"/>
 
-	<available property="forge-exists" file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
+	<available property="forge-exists" file="${download.dir}/minecraftforge-src-1.4.5-${forge.version}.zip"/>
 	<condition property="should-download-ant-contrib">
 		<or>
 			<available file="${download.dir}/ant-contrib/ant-contrib-1.0b3.jar"/>
-			<available file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
+			<available file="${download.dir}/minecraftforge-src-1.4.5-${forge.version}.zip"/>
 		</or>
 	</condition>
 
@@ -97,8 +97,8 @@
 			</classpath>
 		</taskdef>
 
-		<getMethod url="http://files.minecraftforge.net/minecraftforge-src-${forge.version}.zip"
-				   responseDataFile="${download.dir}/minecraftforge-src-${forge.version}.zip">
+		<getMethod url="http://files.minecraftforge.net/minecraftforge-src-1.4.5-${forge.version}.zip"
+				   responseDataFile="${download.dir}/minecraftforge-src-1.4.5-${forge.version}.zip">
 			<header name="User-Agent" value="Ant-${ant.version}/${ant.java.version}"/>
 		</getMethod>
 
@@ -116,7 +116,7 @@
 
 		<unzip dest="${mcp.dir}">
 			<fileset dir="${download.dir}">
-				<include name="minecraftforge-src-${forge.version}.zip"/>
+				<include name="minecraftforge-src-1.4.5-${forge.version}.zip"/>
 			</fileset>
 		</unzip>
 
