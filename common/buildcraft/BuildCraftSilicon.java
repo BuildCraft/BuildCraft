@@ -68,11 +68,11 @@ public class BuildCraftSilicon {
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		Property laserId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"laser.id", DefaultProps.LASER_ID);
+		Property laserId = BuildCraftCore.mainConfiguration.getBlock("laser.id", DefaultProps.LASER_ID);
 
-		Property assemblyTableId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"assemblyTable.id", DefaultProps.ASSEMBLY_TABLE_ID);
+		Property assemblyTableId = BuildCraftCore.mainConfiguration.getBlock("assemblyTable.id", DefaultProps.ASSEMBLY_TABLE_ID);
 
-		Property redstoneChipsetId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"redstoneChipset.id", DefaultProps.REDSTONE_CHIPSET);
+		Property redstoneChipsetId = BuildCraftCore.mainConfiguration.getItem("redstoneChipset.id", DefaultProps.REDSTONE_CHIPSET);
 
 		BuildCraftCore.mainConfiguration.save();
 

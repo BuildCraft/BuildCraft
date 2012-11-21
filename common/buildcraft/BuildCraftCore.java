@@ -201,16 +201,16 @@ public class BuildCraftCore {
 				PowerFramework.currentFramework = new RedstonePowerFramework();
 			}
 
-			Property wrenchId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"wrench.id", DefaultProps.WRENCH_ID);
+			Property wrenchId = BuildCraftCore.mainConfiguration.getItem("wrench.id", DefaultProps.WRENCH_ID);
 
 			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setIconIndex(0 * 16 + 2).setItemName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
 
-			Property woodenGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
-			Property stoneGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
-			Property ironGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"ironGearItem.id", DefaultProps.IRON_GEAR_ID);
-			Property goldenGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
-			Property diamondGearId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
+			Property woodenGearId = BuildCraftCore.mainConfiguration.getItem("woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
+			Property stoneGearId = BuildCraftCore.mainConfiguration.getItem("stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
+			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
+			Property goldenGearId = BuildCraftCore.mainConfiguration.getItem("goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
+			Property diamondGearId = BuildCraftCore.mainConfiguration.getItem("diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
 			Property modifyWorld = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"modifyWorld", true);
 			modifyWorld.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 

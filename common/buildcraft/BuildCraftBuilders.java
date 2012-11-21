@@ -220,8 +220,8 @@ public class BuildCraftBuilders {
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		Property templateItemId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
-		Property blueprintItemId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
+		Property templateItemId = BuildCraftCore.mainConfiguration.getItem("templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
+		Property blueprintItemId = BuildCraftCore.mainConfiguration.getItem("blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
 		Property markerId = BuildCraftCore.mainConfiguration.getBlock("marker.id", DefaultProps.MARKER_ID);
 		Property pathMarkerId = BuildCraftCore.mainConfiguration.getBlock("pathMarker.id", DefaultProps.PATH_MARKER_ID);
 		Property fillerId = BuildCraftCore.mainConfiguration.getBlock("filler.id", DefaultProps.FILLER_ID);

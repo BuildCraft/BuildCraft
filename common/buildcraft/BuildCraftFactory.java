@@ -153,15 +153,15 @@ public class BuildCraftFactory {
 	public void initialize(FMLPreInitializationEvent evt) {
 		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"mining.enabled", true).value);
 
-		Property minigWellId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"miningWell.id", DefaultProps.MINING_WELL_ID);
-		Property plainPipeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"drill.id", DefaultProps.DRILL_ID);
-		Property autoWorkbenchId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"autoWorkbench.id", DefaultProps.AUTO_WORKBENCH_ID);
-		Property frameId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"frame.id", DefaultProps.FRAME_ID);
-		Property quarryId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"quarry.id", DefaultProps.QUARRY_ID);
-		Property pumpId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"pump.id", DefaultProps.PUMP_ID);
-		Property tankId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"tank.id", DefaultProps.TANK_ID);
-		Property refineryId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"refinery.id", DefaultProps.REFINERY_ID);
-		Property hopperId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"hopper.id", DefaultProps.HOPPER_ID);
+		Property minigWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
+		Property plainPipeId = BuildCraftCore.mainConfiguration.getBlock("drill.id", DefaultProps.DRILL_ID);
+		Property autoWorkbenchId = BuildCraftCore.mainConfiguration.getBlock("autoWorkbench.id", DefaultProps.AUTO_WORKBENCH_ID);
+		Property frameId = BuildCraftCore.mainConfiguration.getBlock("frame.id", DefaultProps.FRAME_ID);
+		Property quarryId = BuildCraftCore.mainConfiguration.getBlock("quarry.id", DefaultProps.QUARRY_ID);
+		Property pumpId = BuildCraftCore.mainConfiguration.getBlock("pump.id", DefaultProps.PUMP_ID);
+		Property tankId = BuildCraftCore.mainConfiguration.getBlock("tank.id", DefaultProps.TANK_ID);
+		Property refineryId = BuildCraftCore.mainConfiguration.getBlock("refinery.id", DefaultProps.REFINERY_ID);
+		Property hopperId = BuildCraftCore.mainConfiguration.getBlock("hopper.id", DefaultProps.HOPPER_ID);
 		Property hopperDisable = BuildCraftCore.mainConfiguration.get( "Block Savers","hopper.disabled", false);
 
 		BuildCraftCore.mainConfiguration.save();
