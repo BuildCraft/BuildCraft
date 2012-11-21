@@ -246,9 +246,9 @@ public class BuildCraftTransport {
 
 			groupItemsTrigger = Integer.parseInt(groupItemsTriggerProp.value);
 
-			Property genericPipeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK,"pipe.id", DefaultProps.GENERIC_PIPE_ID);
+			Property genericPipeId = BuildCraftCore.mainConfiguration.getBlock("pipe.id", DefaultProps.GENERIC_PIPE_ID);
 
-			Property pipeWaterproofId = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_ITEM,"pipeWaterproof.id", DefaultProps.PIPE_WATERPROOF_ID);
+			Property pipeWaterproofId = BuildCraftCore.mainConfiguration.getItem("pipeWaterproof.id", DefaultProps.PIPE_WATERPROOF_ID);
 
 			pipeWaterproof = new ItemBuildCraft(Integer.parseInt(pipeWaterproofId.value)).setIconIndex(2 * 16 + 1);
 			pipeWaterproof.setItemName("pipeWaterproof");
