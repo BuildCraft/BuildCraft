@@ -1,9 +1,5 @@
 ## Welcome to Buildcraft on GitHub
 
-### Official Builds
-An official jenkins build server can be found [here](http://jenkins.mc-epoch.com:8080/). Jenkins will generate a new 
-build every time a change is pushed to github.
-
 ### Contributing
 If you wish to submit a pull request to fix bugs or broken behaivor feel free to do so. If you would like to add 
 features or change existing behaivour or balance, please discuss it with Sengir or Krapht before submiting the pull request.
