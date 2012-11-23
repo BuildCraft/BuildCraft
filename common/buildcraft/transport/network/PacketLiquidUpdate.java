@@ -1,13 +1,14 @@
 package buildcraft.transport.network;
 
+import buildcraft.core.network.PacketCoordinates;
+import buildcraft.core.network.PacketIds;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
 
 
 public class PacketLiquidUpdate extends PacketCoordinates{
@@ -17,10 +18,8 @@ public class PacketLiquidUpdate extends PacketCoordinates{
 	public PacketLiquidUpdate(int xCoord, int yCoord, int zCoord) {
 		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
 	}
-	
-	public PacketLiquidUpdate() {
 
-	}
+	public PacketLiquidUpdate() {}
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
@@ -31,7 +30,6 @@ public class PacketLiquidUpdate extends PacketCoordinates{
 			int liquidMeta = data.readInt();
 			displayLiquid[direction.ordinal()] = new LiquidStack(liquidId, liquidQuantity, liquidMeta);
 		}
-		
 	}
 	
 	@Override
@@ -47,8 +45,11 @@ public class PacketLiquidUpdate extends PacketCoordinates{
 				data.writeInt(0);
 				data.writeInt(0);
 			}
-			
 		}
 	}
 
+	@Override
+	public int getID() {
+		return PacketIds.PIPE_LIQUID;
+	}
 }
