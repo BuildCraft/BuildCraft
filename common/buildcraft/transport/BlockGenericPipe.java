@@ -20,6 +20,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
@@ -71,12 +72,12 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 	
 	@Override
-	public float getBlockHardness(World par1World, int par2, int par3, int par4) {
+	public float getBlockHardness(World world, int x, int y, int z) {
 		// Use parent material to define typical hardness
-		float baseHardness = super.getBlockHardness(par1World, par2, par3, par4);
+		float baseHardness = super.getBlockHardness(world, x, y, z);
 		float increasedHardness = baseHardness + 0.25f;
 		// Change hardness based on the contents of the pipe
-		TileGenericPipe pipe = (TileGenericPipe)par1World.getBlockTileEntity(par2, par3, par4);
+		TileGenericPipe pipe = (TileGenericPipe)world.getBlockTileEntity(x, y, z);
 		if(pipe == null) return baseHardness;
 		// Is there no method to check if a generic pipe contains something?  isEmpty()  ?
 		try{
@@ -84,13 +85,23 @@ public class BlockGenericPipe extends BlockContainer {
 				return ((PipeTransportItems)pipe.pipe.transport).travelingEntities.size() == 0 ? baseHardness :increasedHardness; 
 			}else if(pipe.pipe.transport instanceof PipeTransportLiquids){
 				PipeTransportLiquids liquidPipeTransport = (PipeTransportLiquids)pipe.pipe.transport;
-				for(ILiquidTank section : liquidPipeTransport.getTanks(ForgeDirection.UNKNOWN)){
-					if(section.getLiquid() != null && section.getLiquid().amount > 0) return increasedHardness;
+				// Client doesn't know about the core details, so we need to use it's render information
+				// So people think it's working correctly due to visual state.
+				if(world.isRemote){
+					if(liquidPipeTransport.renderCache == null) return baseHardness;
+					for(LiquidStack stack : liquidPipeTransport.renderCache){
+						if(stack != null && stack.amount > 0) return increasedHardness;
+					}
+				}else{
+					for(ILiquidTank section : liquidPipeTransport.getTanks(ForgeDirection.UNKNOWN)){
+						if(section.getLiquid() != null && section.getLiquid().amount > 0) return increasedHardness;
+					}
 				}
 				return baseHardness;
 			}else if(pipe.pipe.transport instanceof PipeTransportPower){
 				PipeTransportPower powerPipeTransport = (PipeTransportPower)pipe.pipe.transport;
-				for(double powerLevel : powerPipeTransport.internalPower){
+				// Display power is for the most part, synchronized. Best variable to use
+				for(short powerLevel : powerPipeTransport.displayPower){
 					if(powerLevel > 0) return increasedHardness;
 				}
 				return baseHardness;
