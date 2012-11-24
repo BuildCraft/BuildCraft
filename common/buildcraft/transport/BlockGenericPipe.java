@@ -28,6 +28,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
 
 import net.minecraft.src.AxisAlignedBB;
+import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
@@ -57,6 +58,11 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public boolean isOpaqueCube() {
+		return false;
+	}
+
+	@Override
+	public boolean canBeReplacedByLeaves(World world, int x, int y, int z) {
 		return false;
 	}
 
