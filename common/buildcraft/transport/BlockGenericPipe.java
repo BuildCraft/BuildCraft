@@ -28,7 +28,6 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
 
 import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
