@@ -82,6 +82,10 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		if (slot != null) {
 			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(mc.thePlayer.inventory.getItemStack());
 
+			if(liquid == null) {
+				return;
+			}
+
 			container.setFilter(position, liquid.itemID, liquid.itemMeta);
 		}
 	}
