@@ -611,7 +611,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				if (pipe == null && coreState.pipeId != 0){
 					initialize(BlockGenericPipe.createPipe(coreState.pipeId));
 				}
-				if (pipe != null) {
+				if (pipe != null && coreState.gateKind != GateKind.None.ordinal()) {
 					if (pipe.gate == null) {
 						pipe.gate = new GateVanilla(pipe);
 					}
