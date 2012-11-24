@@ -168,7 +168,7 @@ public class PipeTransportPower extends PipeTransport {
 				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 				packet.displayPower = displayPower;
 				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE);
+						DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
 
 	}

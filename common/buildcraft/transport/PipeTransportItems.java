@@ -440,7 +440,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void sendItemPacket(EntityData data) {
 		int dimension = worldObj.provider.dimensionId;
-		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE, dimension, createItemPacket(data));
+		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, createItemPacket(data));
 	}
 
 	public int getNumberOfItems() {
@@ -479,7 +479,7 @@ public class PipeTransportItems extends PipeTransport {
 	public void groupEntities() {
 		EntityData[] entities = travelingEntities.values().toArray(new EntityData[travelingEntities.size()]);
 
-		TreeSet<Integer> toRemove = new TreeSet<Integer>();
+		TreeSet<Integer> remove = new TreeSet<Integer>();
 
 		for (int i = 0; i < entities.length; ++i) {
 			EntityData data1 = entities[i];
@@ -489,17 +489,17 @@ public class PipeTransportItems extends PipeTransport {
 
 				if (data1.item.getItemStack().itemID == data2.item.getItemStack().itemID
 						&& data1.item.getItemStack().getItemDamage() == data2.item.getItemStack().getItemDamage()
-						&& !toRemove.contains(data1.item.getEntityId()) && !toRemove.contains(data2.item.getEntityId())
+						&& !remove.contains(data1.item.getEntityId()) && !remove.contains(data2.item.getEntityId())
 						&& !data1.item.hasContributions() && !data2.item.hasContributions()
 						&& data1.item.getItemStack().stackSize + data2.item.getItemStack().stackSize < data1.item.getItemStack().getMaxStackSize()) {
 
 					data1.item.getItemStack().stackSize += data2.item.getItemStack().stackSize;
-					toRemove.add(data2.item.getEntityId());
+					remove.add(data2.item.getEntityId());
 				}
 			}
 		}
 
-		for (Integer i : toRemove) {
+		for (Integer i : remove) {
 			travelingEntities.get(i).item.remove();
 			travelingEntities.remove(i);
 		}
@@ -509,8 +509,9 @@ public class PipeTransportItems extends PipeTransport {
 	public void dropContents() {
 		groupEntities();
 
-		for (EntityData data : travelingEntities.values())
+		for (EntityData data : travelingEntities.values()) {
 			Utils.dropItems(worldObj, data.item.getItemStack(), xCoord, yCoord, zCoord);
+		}
 
 		travelingEntities.clear();
 	}
