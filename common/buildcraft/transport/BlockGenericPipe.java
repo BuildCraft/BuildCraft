@@ -61,6 +61,11 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
+	public boolean canBeReplacedByLeaves(World world, int x, int y, int z) {
+		return false;
+	}
+
+	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
