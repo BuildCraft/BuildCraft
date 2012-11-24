@@ -48,6 +48,8 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	int aimY = 0;
 	public @TileNetworkData
 	int liquidId = 0;
+	public @TileNetworkData
+	int liquidMeta = 0;
 
 	private IPowerProvider powerProvider;
 
@@ -83,10 +85,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 				BlockIndex index = getNextIndexToPump(false);
 
 				if (isPumpableLiquid(index)) {
-					int liquidToPump = Utils.liquidId(worldObj.getBlockId(index.i, index.j, index.k));
+					LiquidStack liquidToPump = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
 
-					if (internalLiquid == 0 || liquidId == liquidToPump) {
-						liquidId = liquidToPump;
+					if (internalLiquid == 0 || (liquidId == liquidToPump.itemID && liquidMeta == liquidToPump.itemMeta)) {
+						liquidId = liquidToPump.itemID;
+						liquidMeta = liquidToPump.itemMeta;
 
 						if (powerProvider.useEnergy(10, 10, true) == 10) {
 							index = getNextIndexToPump(true);
@@ -95,7 +98,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
 							}
 
-							internalLiquid = internalLiquid += LiquidContainerRegistry.BUCKET_VOLUME;
+							internalLiquid = internalLiquid += liquidToPump.amount;
 
 							if (CoreProxy.proxy.isSimulating(worldObj)) {
 								sendNetworkUpdate();
@@ -264,7 +267,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	}
 
 	private boolean isLiquid(BlockIndex index) {
-		return index != null && (Utils.liquidId(worldObj.getBlockId(index.i, index.j, index.k)) != 0);
+		return index != null && (Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k)) != null);
 	}
 
 	@Override

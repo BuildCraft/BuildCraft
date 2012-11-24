@@ -49,13 +49,13 @@ public class GuiCombustionEngine extends GuiEngine {
 		EngineIron engineIron = ((EngineIron) engine.engine);
 
 		if (engine.getScaledBurnTime(58) > 0)
-			displayGauge(j, k, 19, 104, engine.getScaledBurnTime(58), engineIron.liquidId);
+			displayGauge(j, k, 19, 104, engine.getScaledBurnTime(58), engineIron.liquidId, engineIron.liquidMeta);
 
 		if (engineIron.getScaledCoolant(58) > 0)
-			displayGauge(j, k, 19, 122, engineIron.getScaledCoolant(58), engineIron.coolantId);
+			displayGauge(j, k, 19, 122, engineIron.getScaledCoolant(58), engineIron.coolantId, engineIron.coolantMeta);
 	}
 
-	private void displayGauge(int j, int k, int line, int col, int squaled, int liquidId) {
+	private void displayGauge(int j, int k, int line, int col, int squaled, int liquidId, int liquidMeta) {
 		int liquidImgIndex = 0;
 
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
@@ -63,7 +63,7 @@ public class GuiCombustionEngine extends GuiEngine {
 			liquidImgIndex = Block.blocksList[liquidId].blockIndexInTexture;
 		} else if (Item.itemsList[liquidId] != null) {
 			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-			liquidImgIndex = Item.itemsList[liquidId].getIconFromDamage(0);
+			liquidImgIndex = Item.itemsList[liquidId].getIconFromDamage(liquidMeta);
 		} else {
 			return;
 		}

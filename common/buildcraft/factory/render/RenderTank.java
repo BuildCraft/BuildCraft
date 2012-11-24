@@ -31,15 +31,21 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	final static private int displayStages = 100;
 
-	private HashMap<Integer, int[]> stage = new HashMap<Integer, int[]>();
+	private HashMap<Integer, HashMap<Integer, int[]>> stage = new HashMap<Integer, HashMap<Integer, int[]>>();
 
 	private int[] getDisplayLists(int liquidId, int damage, World world) {
 
-		if (stage.containsKey(liquidId))
-			return stage.get(liquidId);
+		if (stage.containsKey(liquidId)){
+			HashMap<Integer, int[]> x = stage.get(liquidId);
+			if (x.containsKey(damage)){
+				return x.get(damage);
+			}
+		} else {
+			stage.put(liquidId, new HashMap<Integer, int[]>());
+		}
 
 		int[] d = new int[displayStages];
-		stage.put(liquidId, d);
+		stage.get(liquidId).put(damage, d);
 
 		BlockInterface block = new BlockInterface();
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)

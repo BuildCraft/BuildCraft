@@ -36,9 +36,11 @@ public class EngineIron extends Engine {
 	int burnTime = 0;
 	int liquidQty = 0;
 	public int liquidId = 0;
+	public int liquidMeta = 0;
 
 	int coolantQty = 0;
 	public int coolantId = 0;
+	public int coolantMeta = 0;
 
 	int heat = 0;
 
@@ -92,7 +94,7 @@ public class EngineIron extends Engine {
 	@Override
 	public void burn() {
 		currentOutput = 0;
-		IronEngineFuel currentFuel = IronEngineFuel.getFuelForLiquid(new LiquidStack(liquidId, liquidQty, 0));
+		IronEngineFuel currentFuel = IronEngineFuel.getFuelForLiquid(new LiquidStack(liquidId, liquidQty, liquidMeta));
 
 		if (currentFuel == null) {
 			return;
@@ -149,7 +151,7 @@ public class EngineIron extends Engine {
 		if (heat > COOLANT_THRESHOLD) {
 			int extraHeat = heat - COOLANT_THRESHOLD;
 
-			IronEngineCoolant currentCoolant = IronEngineCoolant.getCoolantForLiquid(new LiquidStack(coolantId, coolantQty, 0));
+			IronEngineCoolant currentCoolant = IronEngineCoolant.getCoolantForLiquid(new LiquidStack(coolantId, coolantQty, coolantMeta));
 			if (currentCoolant != null)
 			{
 				if(coolantQty * currentCoolant.coolingPerUnit > extraHeat) {
@@ -198,9 +200,11 @@ public class EngineIron extends Engine {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		liquidId = nbttagcompound.getInteger("liquidId");
 		liquidQty = nbttagcompound.getInteger("liquidQty");
+		liquidMeta = nbttagcompound.getInteger("liquidMeta");
 		burnTime = nbttagcompound.getInteger("burnTime");
 		coolantId = nbttagcompound.getInteger("coolantId");
 		coolantQty = nbttagcompound.getInteger("coolantQty");
+		coolantMeta = nbttagcompound.getInteger("coolantMeta");
 		heat = nbttagcompound.getInteger("heat");
 		penaltyCooling = nbttagcompound.getInteger("penaltyCooling");
 
@@ -215,9 +219,11 @@ public class EngineIron extends Engine {
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("liquidId", liquidId);
 		nbttagcompound.setInteger("liquidQty", liquidQty);
+		nbttagcompound.setInteger("liquidMeta", liquidMeta);
 		nbttagcompound.setInteger("burnTime", burnTime);
 		nbttagcompound.setInteger("coolantId", coolantId);
 		nbttagcompound.setInteger("coolantQty", coolantQty);
+		nbttagcompound.setInteger("coolantMeta", coolantMeta);
 		nbttagcompound.setInteger("heat", heat);
 		nbttagcompound.setInteger("penaltyCooling", penaltyCooling);
 
@@ -272,6 +278,11 @@ public class EngineIron extends Engine {
 		case 8:
 			coolantId = j;
 			break;
+		case 9:
+			liquidMeta = j;
+			break;
+		case 10:
+			coolantMeta = j;
 		}
 	}
 
@@ -286,6 +297,8 @@ public class EngineIron extends Engine {
 		iCrafting.sendProgressBarUpdate(containerEngine, 6, liquidId);
 		iCrafting.sendProgressBarUpdate(containerEngine, 7, coolantQty);
 		iCrafting.sendProgressBarUpdate(containerEngine, 8, coolantId);
+		iCrafting.sendProgressBarUpdate(containerEngine, 9, liquidMeta);
+		iCrafting.sendProgressBarUpdate(containerEngine, 10, coolantMeta);
 	}
 
 	@Override
@@ -307,7 +320,7 @@ public class EngineIron extends Engine {
 
 		int res = 0;
 
-		if (liquidQty > 0 && liquidId != resource.itemID) {
+		if (liquidQty > 0 && (liquidId != resource.itemID || liquidMeta != resource.itemMeta)) {
 			return 0;
 		}
 
@@ -329,6 +342,7 @@ public class EngineIron extends Engine {
 		}
 
 		liquidId = resource.itemID;
+		liquidMeta = resource.itemMeta;
 
 		return res;
 	}
@@ -336,7 +350,7 @@ public class EngineIron extends Engine {
 	private int fillCoolant(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		int res = 0;
 
-		if (coolantQty > 0 && coolantId != resource.itemID)
+		if (coolantQty > 0 && (coolantId != resource.itemID || coolantMeta != resource.itemMeta))
 			return 0;
 
 		if (coolantQty + resource.amount <= MAX_LIQUID) {
@@ -352,14 +366,15 @@ public class EngineIron extends Engine {
 		}
 
 		coolantId = resource.itemID;
+		coolantMeta = resource.itemMeta;
 
 		return res;
 	}
 
 	@Override
 	public LiquidTank[] getLiquidSlots() {
-		return new LiquidTank[] { new LiquidTank(liquidId, liquidQty, MAX_LIQUID),
-				new LiquidTank(coolantId, coolantQty, MAX_LIQUID) };
+		return new LiquidTank[] { new LiquidTank(new LiquidStack(liquidId, liquidQty, liquidMeta), MAX_LIQUID),
+				new LiquidTank(new LiquidStack(coolantId, coolantQty, coolantMeta),  MAX_LIQUID) };
 	}
 
 
@@ -397,9 +412,9 @@ public class EngineIron extends Engine {
 		switch (direction)
 		{
 		case UP:
-			return new LiquidTank(liquidId, liquidQty, MAX_LIQUID);
+			return new LiquidTank(new LiquidStack(liquidId, liquidQty, liquidMeta), MAX_LIQUID);
 		case DOWN:
-			return new LiquidTank(coolantId, coolantQty, MAX_LIQUID);
+			return new LiquidTank(new LiquidStack(coolantId, coolantQty, coolantMeta), MAX_LIQUID);
 		default:
 			return null;
 		}
