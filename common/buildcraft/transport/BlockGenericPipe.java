@@ -19,6 +19,7 @@ import cpw.mods.fml.common.asm.SideOnly;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
@@ -67,6 +68,37 @@ public class BlockGenericPipe extends BlockContainer {
 
 	public boolean isACube() {
 		return false;
+	}
+	
+	@Override
+	public float getBlockHardness(World par1World, int par2, int par3, int par4) {
+		// Use parent material to define typical hardness
+		float baseHardness = super.getBlockHardness(par1World, par2, par3, par4);
+		float increasedHardness = baseHardness + 0.25f;
+		// Change hardness based on the contents of the pipe
+		TileGenericPipe pipe = (TileGenericPipe)par1World.getBlockTileEntity(par2, par3, par4);
+		if(pipe == null) return baseHardness;
+		// Is there no method to check if a generic pipe contains something?  isEmpty()  ?
+		try{
+			if(pipe.pipe.transport instanceof PipeTransportItems){
+				return ((PipeTransportItems)pipe.pipe.transport).travelingEntities.size() == 0 ? baseHardness :increasedHardness; 
+			}else if(pipe.pipe.transport instanceof PipeTransportLiquids){
+				PipeTransportLiquids liquidPipeTransport = (PipeTransportLiquids)pipe.pipe.transport;
+				for(ILiquidTank section : liquidPipeTransport.getTanks(ForgeDirection.UNKNOWN)){
+					if(section.getLiquid() != null && section.getLiquid().amount > 0) return increasedHardness;
+				}
+				return baseHardness;
+			}else if(pipe.pipe.transport instanceof PipeTransportPower){
+				PipeTransportPower powerPipeTransport = (PipeTransportPower)pipe.pipe.transport;
+				for(double powerLevel : powerPipeTransport.internalPower){
+					if(powerLevel > 0) return increasedHardness;
+				}
+				return baseHardness;
+			}
+		}catch(Exception e){
+			/* An exception likely means something is not initialized yet, so carry on per-usual */
+		}
+		return baseHardness;
 	}
 
 	@SuppressWarnings("rawtypes")
