@@ -35,6 +35,7 @@ public class BlockEngine extends BlockContainer {
 
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabs.tabRedstone);
+		setBlockName("engineBlock");
 	}
 
 	@Override
