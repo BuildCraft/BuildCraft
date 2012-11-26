@@ -165,28 +165,29 @@ public class BlockMarker extends BlockContainer {
 	}
 
 	@Override
-	public void func_85105_g(World world, int x, int y, int z, int par5) {
-		super.func_85105_g(world, x, y, z, par5);
-		int i1 = world.getBlockMetadata(x, y, z);
-		if (par5 == 1 && BuildersProxy.canPlaceTorch(world, x, y - 1, z)) {
-			i1 = 5;
+	public int func_85104_a(World world, int x, int y, int z, int side,  float par6, float par7, float par8, int meta) {
+		super.func_85104_a(world, x, y, z, side, par6, par7, par8, meta);
+
+		if (side == 1 && BuildersProxy.canPlaceTorch(world, x, y - 1, z)) {
+			meta = 5;
 		}
-		if (par5 == 2 && BuildersProxy.canPlaceTorch(world, x, y, z + 1)) {
-			i1 = 4;
+		if (side == 2 && BuildersProxy.canPlaceTorch(world, x, y, z + 1)) {
+			meta = 4;
 		}
-		if (par5 == 3 && BuildersProxy.canPlaceTorch(world, x, y, z - 1)) {
-			i1 = 3;
+		if (side == 3 && BuildersProxy.canPlaceTorch(world, x, y, z - 1)) {
+			meta = 3;
 		}
-		if (par5 == 4 && BuildersProxy.canPlaceTorch(world, x + 1, y, z)) {
-			i1 = 2;
+		if (side == 4 && BuildersProxy.canPlaceTorch(world, x + 1, y, z)) {
+			meta = 2;
 		}
-		if (par5 == 5 && BuildersProxy.canPlaceTorch(world, x - 1, y, z)) {
-			i1 = 1;
+		if (side == 5 && BuildersProxy.canPlaceTorch(world, x - 1, y, z)) {
+			meta = 1;
 		}
-		if (par5 == 0 && BuildersProxy.canPlaceTorch(world, x, y + 1, z)) {
-			i1 = 0;
+		if (side == 0 && BuildersProxy.canPlaceTorch(world, x, y + 1, z)) {
+			meta = 0;
 		}
-		world.setBlockMetadataWithNotify(x, y, z, i1);
+
+		return meta;
 	}
 
 	@Override
