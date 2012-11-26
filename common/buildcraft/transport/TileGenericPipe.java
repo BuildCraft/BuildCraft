@@ -387,6 +387,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		} else {
 			coreState.gateKind = 0;
 		}
+		
+		if(pipe != null && pipe.transport != null){
+			pipe.transport.sendDescriptionPacket();
+		}
+		
 		packet.addStateForSerialization((byte) 0, coreState);
 		packet.addStateForSerialization((byte) 1, renderState);
 		if (pipe instanceof IClientState) {

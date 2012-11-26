@@ -43,7 +43,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 			case PacketIds.PIPE_LIQUID:
 				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
 				packetLiquid.readData(data);
-				onPacketLiquid((EntityPlayer)player, packetLiquid);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
@@ -218,25 +217,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 
 
-	}
-
-	private void onPacketLiquid(EntityPlayer player, PacketLiquidUpdate packetLiquid) {
-		World world = player.worldObj;
-		if (!world.blockExists(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ))
-			return;
-
-		TileEntity entity = world.getBlockTileEntity(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ);
-		if (!(entity instanceof TileGenericPipe))
-			return;
-
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
-			return;
-
-		if (!(pipe.pipe.transport instanceof PipeTransportLiquids))
-			return;
-
-		((PipeTransportLiquids) pipe.pipe.transport).handleLiquidPacket(packetLiquid);
 	}
 
 	/********************       SERVER         ******************** **/
