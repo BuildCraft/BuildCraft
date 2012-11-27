@@ -64,13 +64,13 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 			}
 
 			if (delta.get(dir.ordinal() * 3 + 0)) {
-				renderCache[dir.ordinal()].itemID = data.readInt();
+				renderCache[dir.ordinal()].itemID = data.readShort();
 			}
 			if (delta.get(dir.ordinal() * 3 + 1)) {
-				renderCache[dir.ordinal()].itemMeta = data.readInt();
+				renderCache[dir.ordinal()].itemMeta = data.readShort();
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
-				renderCache[dir.ordinal()].amount = data.readInt();
+				renderCache[dir.ordinal()].amount = data.readShort();
 			}
 		}
 	}
@@ -88,23 +88,23 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 
 			if (delta.get(dir.ordinal() * 3 + 0)) {
 				if (liquid != null) {
-					data.writeInt(liquid.itemID);
+					data.writeShort(liquid.itemID);
 				} else {
-					data.writeInt(0);
+					data.writeShort(0);
 				}
 			}
 			if (delta.get(dir.ordinal() * 3 + 1)) {
 				if (liquid != null) {
-					data.writeInt(liquid.itemMeta);
+					data.writeShort(liquid.itemMeta);
 				} else {
-					data.writeInt(0);
+					data.writeShort(0);
 				}
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
 				if (liquid != null) {
-					data.writeInt(liquid.amount);
+					data.writeShort(liquid.amount);
 				} else {
-					data.writeInt(0);
+					data.writeShort(0);
 				}
 			}
 		}
