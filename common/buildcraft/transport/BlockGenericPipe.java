@@ -73,43 +73,7 @@ public class BlockGenericPipe extends BlockContainer {
 	
 	@Override
 	public float getBlockHardness(World world, int x, int y, int z) {
-		// Use parent material to define typical hardness
-		float baseHardness = super.getBlockHardness(world, x, y, z);
-		float increasedHardness = baseHardness + 0.25f;
-		// Change hardness based on the contents of the pipe
-		TileGenericPipe pipe = (TileGenericPipe)world.getBlockTileEntity(x, y, z);
-		if(pipe == null) return baseHardness;
-		// Is there no method to check if a generic pipe contains something?  isEmpty()  ?
-		try{
-			if(pipe.pipe.transport instanceof PipeTransportItems){
-				return ((PipeTransportItems)pipe.pipe.transport).travelingEntities.size() == 0 ? baseHardness :increasedHardness; 
-			}else if(pipe.pipe.transport instanceof PipeTransportLiquids){
-				PipeTransportLiquids liquidPipeTransport = (PipeTransportLiquids)pipe.pipe.transport;
-				// Client doesn't know about the core details, so we need to use it's render information
-				// So people think it's working correctly due to visual state.
-				if(world.isRemote){
-					if(liquidPipeTransport.renderCache == null) return baseHardness;
-					for(LiquidStack stack : liquidPipeTransport.renderCache){
-						if(stack != null && stack.amount > 0) return increasedHardness;
-					}
-				}else{
-					for(ILiquidTank section : liquidPipeTransport.getTanks(ForgeDirection.UNKNOWN)){
-						if(section.getLiquid() != null && section.getLiquid().amount > 0) return increasedHardness;
-					}
-				}
-				return baseHardness;
-			}else if(pipe.pipe.transport instanceof PipeTransportPower){
-				PipeTransportPower powerPipeTransport = (PipeTransportPower)pipe.pipe.transport;
-				// Display power is for the most part, synchronized. Best variable to use
-				for(short powerLevel : powerPipeTransport.displayPower){
-					if(powerLevel > 0) return increasedHardness;
-				}
-				return baseHardness;
-			}
-		}catch(Exception e){
-			/* An exception likely means something is not initialized yet, so carry on per-usual */
-		}
-		return baseHardness;
+		return 0.25f;
 	}
 
 	@SuppressWarnings("rawtypes")
