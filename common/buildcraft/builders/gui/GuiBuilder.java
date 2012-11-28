@@ -52,7 +52,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		if (builder.isBuildingBlueprint())
 			fontRenderer.drawString(StringUtil.localize("gui.needed"), 185, 7, 0x404040);
 
-		drawForegroundSelection();
+		drawForegroundSelection(par1, par2);
 	}
 
 	@Override

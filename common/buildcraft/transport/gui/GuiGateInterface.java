@@ -243,7 +243,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		fontRenderer.drawString(name, getCenteredOffset(name), 15, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
-		drawForegroundSelection();
+		drawForegroundSelection(par1, par2);
 	}
 
 	@Override

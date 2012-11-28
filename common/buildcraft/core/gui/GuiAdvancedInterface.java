@@ -147,13 +147,13 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		GL11.glPopMatrix();
 	}
 
-	protected void drawForegroundSelection() {
+	protected void drawForegroundSelection(int mouseX, int mouseY) {
 		String s = "";
 
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 
-		int position = getSlotAtLocation(lastX - cornerX, lastY - cornerY);
+		int position = getSlotAtLocation(mouseX - cornerX, mouseY - cornerY);
 
 		if (position != -1) {
 			AdvancedSlot slot = slots[position];
@@ -163,20 +163,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 
 		if (s.length() > 0) {
-			int i2 = (lastX - cornerX);
-			int k2 = lastY - cornerY;
+			int i2 = (mouseX - cornerX);
+			int k2 = mouseY - cornerY;
 			drawCreativeTabHoveringText(s, i2, k2);
 		}
-	}
-
-	private int lastX = 0;
-	private int lastY = 0;
-
-	@Override
-	protected void mouseMovedOrUp(int i, int j, int k) {
-		super.mouseMovedOrUp(i, j, k);
-
-		lastX = i;
-		lastY = j;
 	}
 }

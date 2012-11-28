@@ -92,7 +92,7 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 		String title = StringUtil.localize("tile.assemblyWorkbenchBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
-		drawForegroundSelection();
+		drawForegroundSelection(par1, par2);
 	}
 
 	@Override

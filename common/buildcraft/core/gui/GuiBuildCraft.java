@@ -238,7 +238,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		ledgerManager.drawLedgers(mouseX, mouseY);
+		ledgerManager.drawLedgers(par1, par2);
 	}
 
 	protected int getCenteredOffset(String string) {
@@ -256,18 +256,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		// / Handle ledger clicks
 		ledgerManager.handleMouseClicked(par1, par2, mouseButton);
-	}
-
-	// / MOUSE MOVEMENT
-	private int mouseX = 0;
-	private int mouseY = 0;
-
-	@Override
-	protected void mouseMovedOrUp(int i, int j, int k) {
-		super.mouseMovedOrUp(i, j, k);
-
-		mouseX = i;
-		mouseY = j;
 	}
 
 }

@@ -49,7 +49,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		fontRenderer.drawString("<-", 106, 59, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
-		drawForegroundSelection();
+		drawForegroundSelection(par1, par2);
 	}
 
 	@Override
