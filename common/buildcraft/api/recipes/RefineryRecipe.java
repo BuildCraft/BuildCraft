@@ -33,53 +33,6 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 		
 		return null;
 	}
-	
-	/**
-	 * Utility method which compares to only the types of source materials.
-	 * We consider non-null < null in order that one-ingredient recipe is checked after
-	 * the failure of matching two-ingredient recipes which include that liquid.
-	 */
-	private static int compareLiquids(LiquidStack liquid1, LiquidStack liquid2) {
-		if (liquid1 == null) {
-			if(liquid2 == null) {
-				return 0;
-			} else {
-				return 1;
-			}
-		} else if(liquid2 == null) {
-			return -1;
-		} else if(liquid1.itemID != liquid2.itemID) {
-			return liquid1.itemID - liquid2.itemID;
-		} else if(liquid1.itemMeta == -1) {
-			// liquid which meta is -1 has lower priority.
-			if(liquid2.itemMeta == -1){
-				return 0;
-			}else{
-				return 1;
-			}
-		} else {
-			if(liquid2.itemMeta == -1) {
-				return -1;
-			} else {
-				return liquid1.itemMeta - liquid2.itemMeta;
-			}
-		}
-	}
-	
-	private static boolean isLiquidEqual(LiquidStack ingredient, LiquidStack liquid) {
-		if(ingredient == null)
-			return liquid == null;
-		
-		if(liquid == null)
-			return false;
-		
-		// ignores meta matching if itemMeta == -1, as the same mannar as the vanilla recipes.
-		if(ingredient.itemMeta == -1)
-			return ingredient.itemID == liquid.itemID;
-		
-		return ingredient.isLiquidEqual(liquid);
-	}
-	
 
 	public final LiquidStack ingredient1;
 	public final LiquidStack ingredient2;
@@ -95,7 +48,15 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 	public RefineryRecipe(LiquidStack ingredient1, LiquidStack ingredient2, LiquidStack result, int energy, int delay) {
 		
 		// Sort starting materials.
-		if(compareLiquids(ingredient1, ingredient2) > 0) {
+		if(ingredient1 != null && ingredient2 != null) {
+			if( (ingredient1.itemID > ingredient2.itemID) || (ingredient1.itemID == ingredient2.itemID && ingredient1.itemMeta > ingredient2.itemMeta) ) {
+				this.ingredient1 = ingredient2;
+				this.ingredient2 = ingredient1;
+			} else {
+				this.ingredient1 = ingredient1;
+				this.ingredient2 = ingredient2;
+			}
+		} else if(ingredient2 != null) {
 			this.ingredient1 = ingredient2;
 			this.ingredient2 = ingredient1;
 		} else {
@@ -122,32 +83,53 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 		if(ingredient1 != null) {
 			
 			if(ingredient2 == null)
-				return isLiquidEqual(ingredient1, liquid1) || isLiquidEqual(ingredient1, liquid2);
+				return ingredient1.isLiquidEqual(liquid1) || ingredient1.isLiquidEqual(liquid2);
 			else
-				return (isLiquidEqual(ingredient1, liquid1) && isLiquidEqual(ingredient2, liquid2))
-						|| (isLiquidEqual(ingredient2, liquid1) && isLiquidEqual(ingredient1, liquid2));
+				return (ingredient1.isLiquidEqual(liquid1) && ingredient2.isLiquidEqual(liquid2))
+						|| (ingredient2.isLiquidEqual(liquid1) && ingredient1.isLiquidEqual(liquid2));
 			
 		} else if(ingredient2 != null)
-			return isLiquidEqual(ingredient2, liquid1) || isLiquidEqual(ingredient2, liquid2);
+			return ingredient2.isLiquidEqual(liquid1) || ingredient2.isLiquidEqual(liquid2);
 		else
 			return false;
 
 	}
 	
-	// Make instance of this class sortable.
+	// Compares to only the types of source materials.
+	// We consider non-null < null in order that one-ingredient recipe is checked after
+	// the failure of matching two-ingredient recipes which include that liquid.
 	@Override
 	public int compareTo(RefineryRecipe other) {
 		
-		int result;
-		
 		if(other == null) {
 			return -1;
+		} else if (ingredient1 == null) {
+			if(other.ingredient1 == null) {
+				return 0;
+			} else {
+				return 1;
+			}
+		} else if(other.ingredient1 == null) {
+			return -1;
+		} else if(ingredient1.itemID != other.ingredient1.itemID) {
+			return ingredient1.itemID - other.ingredient1.itemID;
+		} else if(ingredient1.itemMeta != other.ingredient1.itemMeta) {
+			return ingredient1.itemMeta - other.ingredient1.itemMeta;
+		} else if(ingredient2 == null) {
+			if(other.ingredient2 == null) {
+				return 0;
+			} else {
+				return 1;
+			}
+		} else if(other.ingredient2 == null) {
+			return -1;
+		} else if(ingredient2.itemID != other.ingredient2.itemID) {
+			return ingredient2.itemID - other.ingredient2.itemID;
+		} else if(ingredient2.itemMeta != other.ingredient2.itemMeta) {
+			return ingredient2.itemMeta - other.ingredient2.itemMeta;
 		}
 		
-		result = compareLiquids(ingredient1, other.ingredient1);
-		if(result == 0) return compareLiquids(ingredient2, other.ingredient2);
-		
-		return result;
+		return 0;
 	}
 	
 	

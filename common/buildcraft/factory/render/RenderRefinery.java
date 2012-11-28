@@ -136,17 +136,23 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		ModelRenderer theMagnet = magnet[0];
 
 		if (tile != null) {
-			liquid1 = tile.slot1.liquidId;
-			liquidMeta1 = tile.slot1.liquidMeta;
-			qty1 = tile.slot1.quantity;
+			if(tile.ingredient1.getLiquid() != null) {
+				liquid1 = tile.ingredient1.getLiquid().itemID;
+				liquidMeta1 = tile.ingredient1.getLiquid().itemMeta;
+				qty1 = tile.ingredient1.getLiquid().amount;
+			}
 
-			liquid2 = tile.slot2.liquidId;
-			liquidMeta2 = tile.slot2.liquidMeta;
-			qty2 = tile.slot2.quantity;
+			if(tile.ingredient2.getLiquid() != null) {
+				liquid2 = tile.ingredient2.getLiquid().itemID;
+				liquidMeta2 = tile.ingredient2.getLiquid().itemMeta;
+				qty2 = tile.ingredient2.getLiquid().amount;
+			}
 
-			liquid3 = tile.result.liquidId;
-			liquidMeta3 = tile.result.liquidMeta;
-			qty3 = tile.result.quantity;
+			if(tile.result.getLiquid() != null) {
+				liquid3 = tile.result.getLiquid().itemID;
+				liquidMeta3 = tile.result.getLiquid().itemMeta;
+				qty3 = tile.result.getLiquid().amount;
+			}
 
 			anim = tile.getAnimationStage();
 

@@ -15,9 +15,11 @@ import java.util.TreeSet;
 
 import buildcraft.BuildCraftCore;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -25,6 +27,7 @@ import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
+import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
@@ -34,28 +37,24 @@ import net.minecraft.src.Block;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
-public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
+public class TilePump extends TileMachine implements IMachine, IPowerReceptor, ITankContainer {
+
+	public static int MAX_LIQUID = LiquidContainerRegistry.BUCKET_VOLUME;
 
 	EntityBlock tube;
 
 	private TreeMap<Integer, LinkedList<BlockIndex>> blocksToPump = new TreeMap<Integer, LinkedList<BlockIndex>>();
 
-	public @TileNetworkData
-	int internalLiquid;
-	public @TileNetworkData
+	LiquidTank tank;
 	double tubeY = Double.NaN;
-	public @TileNetworkData
 	int aimY = 0;
-	public @TileNetworkData
-	int liquidId = 0;
-	public @TileNetworkData
-	int liquidMeta = 0;
 
 	private IPowerProvider powerProvider;
 
 	public TilePump() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(20, 1, 10, 10, 100);
+		tank = new LiquidTank(MAX_LIQUID);
 	}
 
 	// TODO, manage this by different levels (pump what's above first...)
@@ -81,24 +80,22 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 				return;
 			}
 
-			if (internalLiquid <= 0) {
+			if (tank.getLiquid() == null || tank.getLiquid().amount <= 0) {
 				BlockIndex index = getNextIndexToPump(false);
 
 				if (isPumpableLiquid(index)) {
 					LiquidStack liquidToPump = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
 
-					if (internalLiquid == 0 || (liquidId == liquidToPump.itemID && liquidMeta == liquidToPump.itemMeta)) {
-						liquidId = liquidToPump.itemID;
-						liquidMeta = liquidToPump.itemMeta;
+					if (tank.fill(liquidToPump, false) == liquidToPump.amount) {
 
 						if (powerProvider.useEnergy(10, 10, true) == 10) {
 							index = getNextIndexToPump(true);
 
-							if (liquidId != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
+							if (liquidToPump.itemID != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
 								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
 							}
 
-							internalLiquid = internalLiquid += liquidToPump.amount;
+							tank.fill(liquidToPump, true);
 
 							if (CoreProxy.proxy.isSimulating(worldObj)) {
 								sendNetworkUpdate();
@@ -126,7 +123,8 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 			}
 		}
 
-		if (internalLiquid >= 0) {
+		LiquidStack liquid = tank.getLiquid();
+		if (liquid != null && liquid.amount >= 0) {
 			for (int i = 0; i < 6; ++i) {
 				Position p = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[i]);
 				p.moveForwards(1);
@@ -134,9 +132,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 				TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
 
 				if(tile instanceof ITankContainer) {
-					internalLiquid -= ((ITankContainer)tile).fill(p.orientation.getOpposite(), new LiquidStack(liquidId, internalLiquid), true);
-					if(internalLiquid <= 0)
+					int moved = ((ITankContainer)tile).fill(p.orientation.getOpposite(), liquid, true);
+					tank.drain(moved, true);
+					if(liquid.amount <= 0) {
 						break;
+					}
 				}
 			}
 		}
@@ -274,11 +274,19 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		internalLiquid = nbttagcompound.getInteger("internalLiquid");
+		if(nbttagcompound.hasKey("internalLiquid")) {
+			tank.setLiquid(
+				new LiquidStack(
+					nbttagcompound.getInteger("liquidId"),
+					nbttagcompound.getInteger("internalLiquid")));
+		} else if(nbttagcompound.hasKey("tank")) {
+			tank.setLiquid(
+				LiquidStack.loadLiquidStackFromNBT(
+					nbttagcompound.getCompoundTag("tank")));
+		}
 		aimY = nbttagcompound.getInteger("aimY");
 
 		tubeY = nbttagcompound.getFloat("tubeY");
-		liquidId = nbttagcompound.getInteger("liquidId");
 
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
 		powerProvider.configure(20, 1, 10, 10, 100);
@@ -290,8 +298,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		super.writeToNBT(nbttagcompound);
 
 		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		
+		if(tank.getLiquid() != null) {
+			nbttagcompound.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
+		}
 
-		nbttagcompound.setInteger("internalLiquid", internalLiquid);
 		nbttagcompound.setInteger("aimY", aimY);
 
 		if (tube != null) {
@@ -299,8 +310,6 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 		} else {
 			nbttagcompound.setFloat("tubeY", yCoord);
 		}
-
-		nbttagcompound.setInteger("liquidId", liquidId);
 	}
 
 	@Override
@@ -322,15 +331,43 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	public void doWork() {}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
-		super.handleDescriptionPacket(packet);
+	public PacketPayload getPacketPayload()
+	{
+		PacketPayload payload = new PacketPayload(4, 1, 0);
+		if(tank.getLiquid() != null) {
+			payload.intPayload[0] = tank.getLiquid().itemID;
+			payload.intPayload[1] = tank.getLiquid().itemMeta;
+			payload.intPayload[2] = tank.getLiquid().amount;
+		} else {
+			payload.intPayload[0] = 0;
+			payload.intPayload[1] = 0;
+			payload.intPayload[2] = 0;
+		}
+		payload.intPayload[3] = aimY;
+		payload.floatPayload[0] = (float) tubeY;
+		
+		return payload;
+	}
 
-		setTubePosition();
+	@Override
+	public void handleDescriptionPacket(PacketUpdate packet) {
+		handleUpdatePacket(packet);
 	}
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) {
-		super.handleDescriptionPacket(packet);
+		if(packet.payload.intPayload[0] > 0) {
+			tank.setLiquid(
+				new LiquidStack(
+					packet.payload.intPayload[0],
+					packet.payload.intPayload[2],
+					packet.payload.intPayload[1]));
+		} else {
+			tank.setLiquid(null);
+		}
+		
+		aimY = packet.payload.intPayload[3];
+		tubeY = packet.payload.floatPayload[0];
 
 		setTubePosition();
 	}
@@ -375,5 +412,48 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor {
 	@Override
 	public boolean allowActions() {
 		return false;
+	}
+	
+	// ITankContainer implementation.
+	
+	@Override
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill)
+	{
+		// not acceptable
+		return 0;
+	}
+	
+	@Override
+	public int fill(int tankIndex, LiquidStack resource, boolean doFill)
+	{
+		// not acceptable
+		return 0;
+	}
+	
+	@Override
+	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
+	{
+		return drain(0, maxDrain, doDrain);
+	}
+	
+	@Override
+	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain)
+	{
+		if(tankIndex == 0)
+			return tank.drain(maxDrain, doDrain);
+		
+		return null;
+	}
+	
+	@Override
+	public ILiquidTank[] getTanks(ForgeDirection direction)
+	{
+		return new ILiquidTank[]{ tank };
+	}
+	
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type)
+	{
+		return null;
 	}
 }

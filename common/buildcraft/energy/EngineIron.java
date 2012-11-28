@@ -34,15 +34,9 @@ public class EngineIron extends Engine {
 	private ItemStack itemInInventory;
 
 	int burnTime = 0;
-	int liquidQty = 0;
-	public int liquidId = 0;
-	public int liquidMeta = 0;
-
-	int coolantQty = 0;
-	public int coolantId = 0;
-	public int coolantMeta = 0;
-
 	int heat = 0;
+	private LiquidTank fuelTank;
+	private LiquidTank coolantTank;
 
 	public int penaltyCooling = 0;
 
@@ -53,6 +47,8 @@ public class EngineIron extends Engine {
 
 		maxEnergy = 100000;
 		maxEnergyExtracted = 500;
+		fuelTank = new LiquidTank(MAX_LIQUID);
+		coolantTank = new LiquidTank(MAX_LIQUID);
 	}
 
 	@Override
@@ -88,13 +84,15 @@ public class EngineIron extends Engine {
 
 	@Override
 	public boolean isBurning() {
-		return liquidQty > 0 && penaltyCooling == 0 && tile.isRedstonePowered;
+		LiquidStack fuel = fuelTank.getLiquid();
+		return fuel != null && fuel.amount > 0 && penaltyCooling == 0 && tile.isRedstonePowered;
 	}
 
 	@Override
 	public void burn() {
 		currentOutput = 0;
-		IronEngineFuel currentFuel = IronEngineFuel.getFuelForLiquid(new LiquidStack(liquidId, liquidQty, liquidMeta));
+		LiquidStack fuel = this.fuelTank.getLiquid();
+		IronEngineFuel currentFuel = IronEngineFuel.getFuelForLiquid(fuel);
 
 		if (currentFuel == null) {
 			return;
@@ -104,11 +102,11 @@ public class EngineIron extends Engine {
 
 			lastPowered = true;
 
-			if (burnTime > 0 || liquidQty > 0) {
+			if (burnTime > 0 || fuel.amount > 0) {
 				if (burnTime > 0) {
 					burnTime--;
 				} else {
-					liquidQty--;
+					fuel.amount--;
 					burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
 				}
 
@@ -151,15 +149,16 @@ public class EngineIron extends Engine {
 		if (heat > COOLANT_THRESHOLD) {
 			int extraHeat = heat - COOLANT_THRESHOLD;
 
-			IronEngineCoolant currentCoolant = IronEngineCoolant.getCoolantForLiquid(new LiquidStack(coolantId, coolantQty, coolantMeta));
+			LiquidStack coolant = this.coolantTank.getLiquid();
+			IronEngineCoolant currentCoolant = IronEngineCoolant.getCoolantForLiquid(coolant);
 			if (currentCoolant != null)
 			{
-				if(coolantQty * currentCoolant.coolingPerUnit > extraHeat) {
-					coolantQty -= Math.round(extraHeat / currentCoolant.coolingPerUnit);
+				if(coolant.amount * currentCoolant.coolingPerUnit > extraHeat) {
+					coolant.amount -= Math.round(extraHeat / currentCoolant.coolingPerUnit);
 					heat = COOLANT_THRESHOLD;
 				} else {
-					heat -= coolantQty * currentCoolant.coolingPerUnit;
-					coolantQty = 0;
+					heat -= coolant.amount * currentCoolant.coolingPerUnit;
+					coolant.amount = 0;
 				}
 			}
 		}
@@ -193,18 +192,37 @@ public class EngineIron extends Engine {
 
 	@Override
 	public int getScaledBurnTime(int i) {
-		return (int) (((float) liquidQty / (float) (MAX_LIQUID)) * i);
+		return this.fuelTank.getLiquid() != null ? (int) (((float) this.fuelTank.getLiquid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		liquidId = nbttagcompound.getInteger("liquidId");
-		liquidQty = nbttagcompound.getInteger("liquidQty");
-		liquidMeta = nbttagcompound.getInteger("liquidMeta");
+		if(nbttagcompound.hasKey("liquidId")) {
+			fuelTank.setLiquid(
+				new LiquidStack(
+					nbttagcompound.getInteger("liquidId"),
+					nbttagcompound.getInteger("liquidQty"),
+					nbttagcompound.getInteger("liquidMeta")));
+		} else if(nbttagcompound.hasKey("fuelTank")) {
+			fuelTank.setLiquid(
+				LiquidStack.loadLiquidStackFromNBT(
+					nbttagcompound.getCompoundTag("fuelTank")));
+		}
+		
 		burnTime = nbttagcompound.getInteger("burnTime");
-		coolantId = nbttagcompound.getInteger("coolantId");
-		coolantQty = nbttagcompound.getInteger("coolantQty");
-		coolantMeta = nbttagcompound.getInteger("coolantMeta");
+		
+		if(nbttagcompound.hasKey("coolantId")) {
+			coolantTank.setLiquid(
+				new LiquidStack(
+					nbttagcompound.getInteger("coolantId"),
+					nbttagcompound.getInteger("coolantQty"),
+					nbttagcompound.getInteger("coolantMeta")));
+		} else if(nbttagcompound.hasKey("coolantTank")) {
+			coolantTank.setLiquid(
+				LiquidStack.loadLiquidStackFromNBT(
+					nbttagcompound.getCompoundTag("coolantTank")));
+		}
+		
 		heat = nbttagcompound.getInteger("heat");
 		penaltyCooling = nbttagcompound.getInteger("penaltyCooling");
 
@@ -217,13 +235,15 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setInteger("liquidId", liquidId);
-		nbttagcompound.setInteger("liquidQty", liquidQty);
-		nbttagcompound.setInteger("liquidMeta", liquidMeta);
+		if(fuelTank.getLiquid() != null) {
+			nbttagcompound.setTag("fuelTank", fuelTank.getLiquid().writeToNBT(new NBTTagCompound()));
+		}
+
+		if(coolantTank.getLiquid() != null) {
+			nbttagcompound.setTag("coolantTank", coolantTank.getLiquid().writeToNBT(new NBTTagCompound()));
+		}
+
 		nbttagcompound.setInteger("burnTime", burnTime);
-		nbttagcompound.setInteger("coolantId", coolantId);
-		nbttagcompound.setInteger("coolantQty", coolantQty);
-		nbttagcompound.setInteger("coolantMeta", coolantMeta);
 		nbttagcompound.setInteger("heat", heat);
 		nbttagcompound.setInteger("penaltyCooling", penaltyCooling);
 
@@ -236,7 +256,7 @@ public class EngineIron extends Engine {
 	}
 
 	public int getScaledCoolant(int i) {
-		return (int) (((float) coolantQty / (float) (MAX_LIQUID)) * i);
+		return coolantTank.getLiquid() != null ? (int) (((float) coolantTank.getLiquid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 
 	@Override
@@ -267,22 +287,28 @@ public class EngineIron extends Engine {
 			heat = (heat & 0xff) | ((j & 0xff) << 8 );
 			break;
 		case 5:
-			liquidQty = j;
+			if(fuelTank.getLiquid() == null) fuelTank.setLiquid(new LiquidStack(0, j));
+			else fuelTank.getLiquid().amount = j;
 			break;
 		case 6:
-			liquidId = j;
+			if(fuelTank.getLiquid() == null) fuelTank.setLiquid(new LiquidStack(j, 0));
+			else fuelTank.getLiquid().itemID = j;
 			break;
 		case 7:
-			coolantQty = j;
+			if(coolantTank.getLiquid() == null) coolantTank.setLiquid(new LiquidStack(0, j));
+			else coolantTank.getLiquid().amount = j;
 			break;
 		case 8:
-			coolantId = j;
+			if(coolantTank.getLiquid() == null) coolantTank.setLiquid(new LiquidStack(j, 0));
+			else coolantTank.getLiquid().itemID = j;
 			break;
 		case 9:
-			liquidMeta = j;
+			if(fuelTank.getLiquid() == null) fuelTank.setLiquid(new LiquidStack(0, 0, j));
+			else fuelTank.getLiquid().itemMeta = j;
 			break;
 		case 10:
-			coolantMeta = j;
+			if(coolantTank.getLiquid() == null) coolantTank.setLiquid(new LiquidStack(0, 0, j));
+			else coolantTank.getLiquid().itemMeta = j;
 		}
 	}
 
@@ -293,12 +319,12 @@ public class EngineIron extends Engine {
 		iCrafting.sendProgressBarUpdate(containerEngine, 2, Math.round(currentOutput * 10));
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, heat & 0xff);
 		iCrafting.sendProgressBarUpdate(containerEngine, 4, (heat & 0xff00) >> 8);
-		iCrafting.sendProgressBarUpdate(containerEngine, 5, liquidQty);
-		iCrafting.sendProgressBarUpdate(containerEngine, 6, liquidId);
-		iCrafting.sendProgressBarUpdate(containerEngine, 7, coolantQty);
-		iCrafting.sendProgressBarUpdate(containerEngine, 8, coolantId);
-		iCrafting.sendProgressBarUpdate(containerEngine, 9, liquidMeta);
-		iCrafting.sendProgressBarUpdate(containerEngine, 10, coolantMeta);
+		iCrafting.sendProgressBarUpdate(containerEngine, 5, fuelTank.getLiquid() != null ? fuelTank.getLiquid().amount : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 6, fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemID : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 7, coolantTank.getLiquid() != null ? coolantTank.getLiquid().amount : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 8, coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemID : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 9, fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemMeta : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 10, coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemMeta : 0);
 	}
 
 	@Override
@@ -318,63 +344,19 @@ public class EngineIron extends Engine {
 		if (IronEngineCoolant.getCoolantForLiquid(resource) != null)
 			return fillCoolant(from, resource, doFill);
 
-		int res = 0;
+		if (IronEngineFuel.getFuelForLiquid(resource) != null)
+			return fuelTank.fill(resource, doFill);
 
-		if (liquidQty > 0 && (liquidId != resource.itemID || liquidMeta != resource.itemMeta)) {
-			return 0;
-		}
-
-		if (IronEngineFuel.getFuelForLiquid(resource) == null)
-			return 0;
-
-		if (liquidQty + resource.amount <= MAX_LIQUID) {
-			if (doFill) {
-				liquidQty += resource.amount;
-			}
-
-			res = resource.amount;
-		} else {
-			res = MAX_LIQUID - liquidQty;
-
-			if (doFill) {
-				liquidQty = MAX_LIQUID;
-			}
-		}
-
-		liquidId = resource.itemID;
-		liquidMeta = resource.itemMeta;
-
-		return res;
+		return 0;
 	}
 
 	private int fillCoolant(ForgeDirection from, LiquidStack resource, boolean doFill) {
-		int res = 0;
-
-		if (coolantQty > 0 && (coolantId != resource.itemID || coolantMeta != resource.itemMeta))
-			return 0;
-
-		if (coolantQty + resource.amount <= MAX_LIQUID) {
-			if (doFill)
-				coolantQty += resource.amount;
-
-			res = resource.amount;
-		} else {
-			res = MAX_LIQUID - coolantQty;
-
-			if (doFill)
-				coolantQty = MAX_LIQUID;
-		}
-
-		coolantId = resource.itemID;
-		coolantMeta = resource.itemMeta;
-
-		return res;
+		return coolantTank.fill(resource, doFill);
 	}
 
 	@Override
 	public LiquidTank[] getLiquidSlots() {
-		return new LiquidTank[] { new LiquidTank(new LiquidStack(liquidId, liquidQty, liquidMeta), MAX_LIQUID),
-				new LiquidTank(new LiquidStack(coolantId, coolantQty, coolantMeta),  MAX_LIQUID) };
+		return new LiquidTank[] { fuelTank, coolantTank };
 	}
 
 
@@ -412,12 +394,27 @@ public class EngineIron extends Engine {
 		switch (direction)
 		{
 		case UP:
-			return new LiquidTank(new LiquidStack(liquidId, liquidQty, liquidMeta), MAX_LIQUID);
+			return fuelTank;
 		case DOWN:
-			return new LiquidTank(new LiquidStack(coolantId, coolantQty, coolantMeta), MAX_LIQUID);
+			return coolantTank;
 		default:
 			return null;
 		}
 	}
 
+	public int getFuelId() {
+		return fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemID : 0;
+	}
+
+	public int getFuelMeta() {
+		return fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemMeta : 0;
+	}
+
+	public int getCoolantId() {
+		return coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemID : 0;
+	}
+
+	public int getCoolantMeta() {
+		return coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemMeta : 0;
+	}
 }
