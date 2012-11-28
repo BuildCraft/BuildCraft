@@ -636,7 +636,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
-		provider = powerProvider;
+		powerProvider = provider;
 
 	}
 

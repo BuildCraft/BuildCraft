@@ -10,12 +10,6 @@
 package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
-import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.transport.IPipeEntry;
@@ -24,8 +18,15 @@ import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketLiquidUpdate;
+import java.util.BitSet;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.ITankContainer;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidTank;
 
 public class PipeTransportLiquids extends PipeTransport implements ITankContainer {
 
@@ -134,7 +135,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
 
-
+	public byte initClient = 0;
 	public short travelDelay = 12;
 	public short flowRate = 20;
 	public LiquidStack[] renderCache = new LiquidStack[orientations.length];
@@ -185,49 +186,89 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			return;
 
 		moveLiquids();
-		for (ForgeDirection direction : orientations) {
-			LiquidStack liquid = internalTanks[direction.ordinal()].getLiquid();
 
-			if (liquid != null){
-				if (renderCache[direction.ordinal()] == null){
-					renderCache[direction.ordinal()] = liquid.copy();
-				} else {
-					renderCache[direction.ordinal()].itemID = liquid.itemID;
-					renderCache[direction.ordinal()].itemMeta = liquid.itemMeta;
+		if (tracker.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor)) {
+
+			boolean changed = false;
+			BitSet delta = new BitSet(21);
+
+			if (initClient > 0) {
+				changed = true;
+				initClient--;
+				delta.set(0, 21);
+			}
+
+			for (ForgeDirection dir : orientations) {
+				LiquidStack current = internalTanks[dir.ordinal()].getLiquid();
+				LiquidStack prev = renderCache[dir.ordinal()];
+
+				if (prev == null && current == null) {
+					continue;
+				}
+
+				if (prev == null && current != null) {
+					changed = true;
+					renderCache[dir.ordinal()] = current.copy();
+					delta.set(dir.ordinal() * 3 + 0);
+					delta.set(dir.ordinal() * 3 + 1);
+					delta.set(dir.ordinal() * 3 + 2);
+					continue;
+				}
+
+				if (prev != null && current == null) {
+					changed = true;
+					renderCache[dir.ordinal()] = null;
+					delta.set(dir.ordinal() * 3 + 0);
+					delta.set(dir.ordinal() * 3 + 1);
+					delta.set(dir.ordinal() * 3 + 2);
+					continue;
+				}
+
+				if (prev.itemID != current.itemID) {
+					changed = true;
+					renderCache[dir.ordinal()].itemID = current.itemID;
+					delta.set(dir.ordinal() * 3 + 0);
+				}
+
+				if (prev.itemMeta != current.itemMeta) {
+					changed = true;
+					renderCache[dir.ordinal()].itemMeta = current.itemMeta;
+					delta.set(dir.ordinal() * 3 + 1);
+				}
+
+				int displayQty = (renderCache[dir.ordinal()].amount * 4 + current.amount) / 5;
+				if (displayQty == 0 && current.amount > 0) {
+					displayQty = current.amount;
+				}
+				displayQty = Math.min(PipeTransportLiquids.LIQUID_IN_PIPE, displayQty);
+
+				if (prev.amount != displayQty) {
+					changed = true;
+					renderCache[dir.ordinal()].amount = displayQty;
+					delta.set(dir.ordinal() * 3 + 2);
 				}
 			}
 
-			if (renderCache[direction.ordinal()] != null){
-				int currentLiquid = liquid != null ? liquid.amount : 0;
-				renderCache[direction.ordinal()].amount = (short) Math.min(LIQUID_IN_PIPE, ((renderCache[direction.ordinal()].amount * 9 + currentLiquid) / 10));
-				if (renderCache[direction.ordinal()].amount == 0 && currentLiquid > 0){
-					renderCache[direction.ordinal()].amount = currentLiquid;
-				}
-
-				//Uncomment to disable the avaraging
-				//renderCache[direction.ordinal()].amount = (liquid != null ? liquid.amount : 0);
-			}
-
-			//Uncomment to disable the renderstate and show actual values
-//			renderCache[direction.ordinal()] = internalTanks[direction.ordinal()].getLiquid();
-//			if (renderCache[direction.ordinal()] != null){
-//				renderCache[direction.ordinal()] = renderCache[direction.ordinal()].copy();
-//			}
-		}
-
-
-		if (CoreProxy.proxy.isSimulating(worldObj))
-			if (tracker.markTimeIfDelay(worldObj, 1 * BuildCraftCore.updateFactor)){
-
+			if (changed) {
 				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);
-				packet.displayLiquid = this.renderCache;
+				packet.renderCache = this.renderCache;
+				packet.delta = delta;
 				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.NETWORK_UPDATE_RANGE);
+						DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
-
-		//this.container.synchronizeIfDelay(1 * BuildCraftCore.updateFactor);
+		}
 	}
 
+	/**
+	 * Initializes client
+	 */
+	@Override
+	public void sendDescriptionPacket() {
+		super.sendDescriptionPacket();
+
+		initClient = 2;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
@@ -421,11 +462,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public boolean allowsConnect(PipeTransport with) {
 		return with instanceof PipeTransportLiquids;
 	}
-
-	public void handleLiquidPacket(PacketLiquidUpdate packetLiquid) {
-		this.renderCache = packetLiquid.displayLiquid;
-	}
-
+	
 	/** ITankContainer implementation **/
 
 	@Override

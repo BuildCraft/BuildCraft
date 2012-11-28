@@ -19,6 +19,7 @@ public class DefaultProps {
 	public static int WORLD_HEIGHT = 256;
 	public static final String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 128;
+	public static int PIPE_CONTENTS_RENDER_DIST = 24;
 
 	public static String TEXTURE_PATH_GUI = "/gfx/buildcraft/gui";
 	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";

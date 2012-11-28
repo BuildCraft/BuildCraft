@@ -88,4 +88,8 @@ public abstract class PipeTransport {
 	public boolean allowsConnect(PipeTransport with) {
 		return false;
 	}
+	
+	public void sendDescriptionPacket() {
+		
+	}
 }

@@ -61,6 +61,11 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
+	public boolean canBeReplacedByLeaves(World world, int x, int y, int z) {
+		return false;
+	}
+
+	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
@@ -331,13 +336,14 @@ public class BlockGenericPipe extends BlockContainer {
 
 
 	@Override
-	public void func_85105_g(World world, int x, int y, int z, int par5) {
-		super.func_85105_g(world, x, y, z, par5);
+	public int func_85104_a(World world, int x, int y, int z, int side,  float par6, float par7, float par8, int meta) {
+		super.func_85104_a(world, x, y, z, side, par6, par7, par8, meta);
 		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
 			pipe.onBlockPlaced();
 
+		return meta;
 	}
 
 	@Override

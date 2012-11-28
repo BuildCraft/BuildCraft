@@ -1,8 +1,18 @@
 package buildcraft.transport.network;
 
+import buildcraft.core.network.PacketCoordinates;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketSlotChange;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.gui.ContainerGateInterface;
+import buildcraft.transport.pipes.PipeLogicDiamond;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
@@ -10,18 +20,6 @@ import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketSlotChange;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.PipeTransportLiquids;
-import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.pipes.PipeLogicDiamond;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
 
 public class PacketHandlerTransport implements IPacketHandler {
 
@@ -43,7 +41,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 			case PacketIds.PIPE_LIQUID:
 				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
 				packetLiquid.readData(data);
-				onPacketLiquid((EntityPlayer)player, packetLiquid);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
@@ -218,25 +215,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 
 
-	}
-
-	private void onPacketLiquid(EntityPlayer player, PacketLiquidUpdate packetLiquid) {
-		World world = player.worldObj;
-		if (!world.blockExists(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ))
-			return;
-
-		TileEntity entity = world.getBlockTileEntity(packetLiquid.posX, packetLiquid.posY, packetLiquid.posZ);
-		if (!(entity instanceof TileGenericPipe))
-			return;
-
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
-			return;
-
-		if (!(pipe.pipe.transport instanceof PipeTransportLiquids))
-			return;
-
-		((PipeTransportLiquids) pipe.pipe.transport).handleLiquidPacket(packetLiquid);
 	}
 
 	/********************       SERVER         ******************** **/
