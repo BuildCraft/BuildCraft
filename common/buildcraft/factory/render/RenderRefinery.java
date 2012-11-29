@@ -63,15 +63,21 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 	final static private int displayStages = 100;
 
-	private HashMap<Integer, int[]> stage = new HashMap<Integer, int[]>();
+	private HashMap<Integer, HashMap<Integer, int[]>> stage = new HashMap<Integer, HashMap<Integer, int[]>>();
 
-	private int[] getDisplayLists(int liquidId, World world) {
+	private int[] getDisplayLists(int liquidId, int damage, World world) {
 
-		if (stage.containsKey(liquidId))
-			return stage.get(liquidId);
+		if (stage.containsKey(liquidId)){
+			HashMap<Integer, int[]> x = stage.get(liquidId);
+			if (x.containsKey(damage)){
+				return x.get(damage);
+			}
+		} else {
+			stage.put(liquidId, new HashMap<Integer, int[]>());
+		}
 
 		int[] d = new int[displayStages];
-		stage.put(liquidId, d);
+		stage.get(liquidId).put(damage, d);
 
 		BlockInterface block = new BlockInterface();
 
@@ -80,7 +86,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 
 		else if (Item.itemsList[liquidId] != null)
-			block.texture = Item.itemsList[liquidId].getIconFromDamage(0);
+			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
 
 		else
 			return null;
@@ -123,20 +129,30 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	private void render(TileRefinery tile, double x, double y, double z) {
 
 		int liquid1 = 0, liquid2 = 0, liquid3 = 0;
+		int liquidMeta1 = 0, liquidMeta2 = 0, liquidMeta3 = 0;
 		int qty1 = 0, qty2 = 0, qty3 = 0;
 		float anim = 0;
 		int angle = 0;
 		ModelRenderer theMagnet = magnet[0];
 
 		if (tile != null) {
-			liquid1 = tile.slot1.liquidId;
-			qty1 = tile.slot1.quantity;
+			if(tile.ingredient1.getLiquid() != null) {
+				liquid1 = tile.ingredient1.getLiquid().itemID;
+				liquidMeta1 = tile.ingredient1.getLiquid().itemMeta;
+				qty1 = tile.ingredient1.getLiquid().amount;
+			}
 
-			liquid2 = tile.slot2.liquidId;
-			qty2 = tile.slot2.quantity;
+			if(tile.ingredient2.getLiquid() != null) {
+				liquid2 = tile.ingredient2.getLiquid().itemID;
+				liquidMeta2 = tile.ingredient2.getLiquid().itemMeta;
+				qty2 = tile.ingredient2.getLiquid().amount;
+			}
 
-			liquid3 = tile.result.liquidId;
-			qty3 = tile.result.quantity;
+			if(tile.result.getLiquid() != null) {
+				liquid3 = tile.result.getLiquid().itemID;
+				liquidMeta3 = tile.result.getLiquid().itemMeta;
+				qty3 = tile.result.getLiquid().amount;
+			}
 
 			anim = tile.getAnimationStage();
 
@@ -213,7 +229,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		if (qty1 > 0) {
-			int[] list1 = getDisplayLists(liquid1, tile.worldObj);
+			int[] list1 = getDisplayLists(liquid1, liquidMeta1, tile.worldObj);
 
 			if (list1 != null) {
 				setTextureFor(liquid1);
@@ -224,7 +240,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		GL11.glTranslatef(-4F * factor, 0, 4F * factor);
 		if (qty2 > 0) {
-			int[] list2 = getDisplayLists(liquid2, tile.worldObj);
+			int[] list2 = getDisplayLists(liquid2, liquidMeta2, tile.worldObj);
 
 			if (list2 != null) {
 				setTextureFor(liquid2);
@@ -235,12 +251,11 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		GL11.glTranslatef(4F * factor, 0, 0);
 		if (qty3 > 0) {
-			int[] list3 = getDisplayLists(liquid3, tile.worldObj);
+			int[] list3 = getDisplayLists(liquid3, liquidMeta3, tile.worldObj);
 
 			if (list3 != null) {
 				setTextureFor(liquid3);
-				GL11.glCallList(getDisplayLists(liquid3, tile.worldObj)[(int) ((float) qty3
-						/ (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
+				GL11.glCallList(list3[(int) ((float) qty3 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
 			}
 		}
 		GL11.glTranslatef(-4F * factor, 0, 0);
