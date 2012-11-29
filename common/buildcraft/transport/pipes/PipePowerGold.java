@@ -18,7 +18,7 @@ public class PipePowerGold extends Pipe {
 	public PipePowerGold(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicGold(), itemID);
 
-		((PipeTransportPower) transport).powerResistance = 0.005;
+		((PipeTransportPower) transport).powerResistance = 0.001;
 	}
 
 	@Override

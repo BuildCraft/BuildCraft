@@ -28,9 +28,9 @@ import buildcraft.transport.network.PacketPowerUpdate;
 
 public class PipeTransportPower extends PipeTransport {
 
-	private static final int MAX_POWER_INTERNAL = 10000;
-
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
+	
+	public static final int MAX_POWER_INTERNAL = 1000;
 
 	public int[] powerQuery = new int[6];
 	public int[] nextPowerQuery = new int[6];
@@ -39,7 +39,7 @@ public class PipeTransportPower extends PipeTransport {
 	public double[] internalPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 	public double[] internalNextPower = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
-	public double powerResistance = 0.05;
+	public double powerResistance = 0.01;
 
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
@@ -180,14 +180,8 @@ public class PipeTransportPower extends PipeTransport {
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[] { 0, 0, 0, 0, 0, 0 };
 
-			double[] next = Arrays.copyOf(internalPower, 6);
 			internalPower = internalNextPower;
-			internalNextPower = next;
-			for (int i = 0; i < nextPowerQuery.length; i++) {
-				if (powerQuery[i] == 0.0d && internalNextPower[i] > 0) {
-					internalNextPower[i]-=1;
-				}
-			}
+			internalNextPower = new double[] {0, 0, 0, 0, 0, 0};
 		}
 	}
 

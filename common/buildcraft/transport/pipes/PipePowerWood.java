@@ -21,14 +21,10 @@ import net.minecraft.src.TileEntity;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
-	private static final int MAX_OVERHEAT_TICKS = 100;
-
 	private IPowerProvider powerProvider;
 
 	private int baseTexture = 7 * 16 + 6;
 	private int plainTexture = 1 * 16 + 15;
-
-	private int overheatTicks;
 
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
@@ -64,9 +60,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public IPowerProvider getPowerProvider() {
-		if (overheatTicks > 0) {
-			return null;
-		}
 		return powerProvider;
 	}
 
@@ -79,11 +72,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (powerProvider.getEnergyStored() == powerProvider.getMaxEnergyStored()) {
-			overheatTicks+=overheatTicks<MAX_OVERHEAT_TICKS ? 1 : 0;
-		} else {
-			overheatTicks-=overheatTicks>0 ? 1 : 0;
-		}
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
 			if (Utils.checkPipesConnections(container, container.getTile(o))) {
