@@ -465,8 +465,10 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 				TileEntity tile = container.getTile(o);
 
 				if (tile != null && !(tile instanceof TileGenericPipe)) {
-					if (trigger instanceof ITriggerDirectional && ((ITriggerDirectional) trigger).isTriggerActive(o.getOpposite(), tile, parameter)) {
-						return true;
+					if (trigger instanceof ITriggerDirectional) {
+						if (((ITriggerDirectional) trigger).isTriggerActive(o.getOpposite(), tile, parameter)) {
+							return true;
+						}
 					} else if (trigger.isTriggerActive(tile, parameter)) {
 						return true;
 					}
