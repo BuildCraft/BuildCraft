@@ -9,15 +9,20 @@
 
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 
-public class TriggerInventory extends Trigger {
+public class TriggerInventory extends Trigger implements ITriggerDirectional {
+
 
 	public enum State {
 		Empty, Contains, Space, Full
@@ -67,50 +72,68 @@ public class TriggerInventory extends Trigger {
 		}
 	}
 
+	
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		ItemStack searchedStack = null;
 
-		if (parameter != null)
+		if (parameter != null) {
 			searchedStack = parameter.getItem();
+		}
 
-		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
-			IInventory inv = Utils.getInventory(((IInventory) tile));
+		if (tile instanceof IInventory ) {
+			IInventory inv = Utils.getInventory(((IInventory) tile));			
+			if(side != ForgeDirection.UNKNOWN && inv instanceof ISidedInventory){
+				inv = new SidedInventoryAdapter((ISidedInventory)inv, side);
+			}
+			
+			int invSize = inv.getSizeInventory();
+		
+			if(invSize <= 0){
+				return false;
+			}			
 
 			boolean foundItems = false;
 			boolean foundSpace = false;
 
-			for (int i = 0; i < inv.getSizeInventory(); ++i) {
+			for (int i = 0; i < invSize; ++i) {
 				ItemStack stack = inv.getStackInSlot(i);
 
-				if (parameter == null || parameter.getItemStack() == null)
-					foundItems = foundItems || stack != null && stack.stackSize > 0;
-				else if (stack != null && stack.stackSize > 0)
-					foundItems = foundItems
-							|| (stack.itemID == parameter.getItemStack().itemID && stack.getItemDamage() == parameter.getItemStack()
-									.getItemDamage());
+				boolean slotEmpty = stack == null || stack.stackSize == 0;
 
-				if (stack == null || stack.stackSize == 0)
+				if (searchedStack == null) {
+					foundItems |= !slotEmpty;
+				} else if (!slotEmpty) {
+					foundItems |= stack.isItemEqual(searchedStack);
+				}
+
+				if (slotEmpty) {
 					foundSpace = true;
-				else if (searchedStack != null)
-					if (stack.stackSize < stack.getMaxStackSize() && stack.itemID == searchedStack.itemID
-							&& stack.getItemDamage() == searchedStack.getItemDamage())
+				} else if (searchedStack != null) {
+					if (stack.stackSize < stack.getMaxStackSize() && stack.isItemEqual(searchedStack)) {
 						foundSpace = true;
+					}
+				}
 			}
 
 			switch (state) {
-			case Empty:
-				return !foundItems;
-			case Contains:
-				return foundItems;
-			case Space:
-				return foundSpace;
-			default:
-				return !foundSpace;
+				case Empty:
+					return !foundItems;
+				case Contains:
+					return foundItems;
+				case Space:
+					return foundSpace;
+				default:
+					return !foundSpace;
 			}
 		}
 
 		return false;
+	}
+	
+	@Override
+	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+		return isTriggerActive(ForgeDirection.UNKNOWN, tile, parameter);
 	}
 
 	@Override

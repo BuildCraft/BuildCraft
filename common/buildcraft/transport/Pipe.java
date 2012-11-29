@@ -22,6 +22,7 @@ import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
@@ -457,15 +458,21 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		if (trigger instanceof ITriggerPipe)
+		if (trigger instanceof ITriggerPipe) {
 			return ((ITriggerPipe) trigger).isTriggerActive(this, parameter);
-		else if (trigger != null)
+		} else if (trigger != null) {
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = container.getTile(o);
 
-				if (tile != null && !(tile instanceof TileGenericPipe) && trigger.isTriggerActive(tile, parameter))
-					return true;
+				if (tile != null && !(tile instanceof TileGenericPipe)) {
+					if (trigger instanceof ITriggerDirectional && ((ITriggerDirectional) trigger).isTriggerActive(o.getOpposite(), tile, parameter)) {
+						return true;
+					} else if (trigger.isTriggerActive(tile, parameter)) {
+						return true;
+					}
+				}
 			}
+		}
 
 		return false;
 	}
