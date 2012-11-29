@@ -52,7 +52,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 	 */
 	public void setFilter(int slot, int liquidId, int liquidMeta) {
 
-		refinery.setFilter(slot, liquidId);
+		refinery.setFilter(slot, liquidId, liquidMeta);
 
 		if (CoreProxy.proxy.isRenderWorld(refinery.worldObj)) {
 			PacketPayload payload = new PacketPayload(3, 0, 0);
@@ -66,8 +66,9 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 	public ItemStack getFilter(int slot) {
 		int liquidId = refinery.getFilter(slot);
+		int liquidMeta = refinery.getFilterMeta(slot);
 		if (liquidId > 0)
-			return new ItemStack(liquidId, 0, 0);
+			return new ItemStack(liquidId, 0, liquidMeta);
 		else
 			return null;
 	}

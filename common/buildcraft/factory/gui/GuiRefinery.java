@@ -98,16 +98,15 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		((ItemSlot) slots[0]).stack = filter0;
 		((ItemSlot) slots[1]).stack = filter1;
 
-		int liquid0Id = 0;
-		int liquid1Id = 0;
+		LiquidStack liquid0 = null;
+		LiquidStack liquid1 = null;
 
 		if (filter0 != null)
-			liquid0Id = filter0.itemID;
+			liquid0 = new LiquidStack(filter0.itemID, LiquidContainerRegistry.BUCKET_VOLUME, filter0.getItemDamage());
 		if (filter1 != null)
-			liquid1Id = filter1.itemID;
+			liquid1 = new LiquidStack(filter1.itemID, LiquidContainerRegistry.BUCKET_VOLUME, filter1.getItemDamage());
 
-		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(new LiquidStack(liquid0Id, LiquidContainerRegistry.BUCKET_VOLUME, 0),
-				new LiquidStack(liquid1Id, LiquidContainerRegistry.BUCKET_VOLUME, 0));
+		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(liquid0, liquid1);
 
 		if (recipe != null)
 			((ItemSlot) slots[2]).stack = recipe.result.asItemStack();

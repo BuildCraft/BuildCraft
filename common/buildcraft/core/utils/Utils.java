@@ -17,6 +17,8 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquid;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
@@ -383,6 +385,23 @@ public class Utils {
 			return ((ILiquid) Block.blocksList[blockId]).stillLiquidId();
 		else
 			return 0;
+	}
+	
+	public static LiquidStack liquidFromBlockId(int blockId) {
+		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID){
+			return new LiquidStack(Block.waterStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
+		}else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID){
+			return new LiquidStack(Block.lavaStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
+		}else if (Block.blocksList[blockId] instanceof ILiquid){
+			ILiquid liquid = (ILiquid) Block.blocksList[blockId];
+			if(liquid.isMetaSensitive()){
+				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, liquid.stillLiquidMeta());
+			}else{
+				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, 0);
+			}
+		}else{
+			return null;
+		}
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {

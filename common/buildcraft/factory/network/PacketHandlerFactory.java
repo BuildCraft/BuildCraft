@@ -56,7 +56,7 @@ public class PacketHandlerFactory implements IPacketHandler {
 		if (tile == null)
 			return;
 
-		tile.setFilter(packet.payload.intPayload[0], packet.payload.intPayload[1]);
+		tile.setFilter(packet.payload.intPayload[0], packet.payload.intPayload[1], packet.payload.intPayload[2]);
 
 	}
 
