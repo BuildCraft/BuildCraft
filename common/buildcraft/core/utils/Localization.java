@@ -83,6 +83,21 @@ public class Localization {
 				modMappings.clear();
 				modMappings.load(langStream);
 			}
+
+			//If the selected language inherits mappings from another language
+			//we use those first and then we overwrite the common ones with
+			//those in the selected language
+			if (modMappings.containsKey("language.parent")) {
+				langStream = Localization.class.getResourceAsStream(path + modMappings.get("language.parent") + ".properties");
+
+				if (langStream != null) {
+					Properties parentModMappings = new Properties();
+
+					parentModMappings.load(langStream);
+					mappings.putAll(parentModMappings);
+				}
+			}
+
 			mappings.putAll(modMappings);
 
 		} catch (Exception e) {
