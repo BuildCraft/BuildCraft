@@ -166,6 +166,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			int i2 = (mouseX - cornerX);
 			int k2 = mouseY - cornerY;
 			drawCreativeTabHoveringText(s, i2, k2);
+			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
 }
