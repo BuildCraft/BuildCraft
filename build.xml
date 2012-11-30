@@ -18,7 +18,7 @@
 	<property name="mcpsrc.dir"          value="${mcp.dir}/src/minecraft"/>
 
 	<property name="mcp.version"         value="723"/>
-	<property name="forge.version"       value="1.4.5-6.4.0.396"/>
+	<property name="forge.version"       value="1.4.5-6.4.1.408"/>
 	<property name="bc.version"          value="3.1.8"/>
 
 	<available property="forge-exists" file="${download.dir}/minecraftforge-src-${forge.version}.zip"/>
