@@ -19,6 +19,8 @@ import cpw.mods.fml.common.asm.SideOnly;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
@@ -72,6 +74,11 @@ public class BlockGenericPipe extends BlockContainer {
 
 	public boolean isACube() {
 		return false;
+	}
+	
+	@Override
+	public float getBlockHardness(World world, int x, int y, int z) {
+		return 0.25f;
 	}
 
 	@SuppressWarnings("rawtypes")
