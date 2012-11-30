@@ -51,6 +51,11 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
+	public float getBlockHardness(World par1World, int par2, int par3, int par4) {
+		return BuildCraftTransport.pipeDuribility;
+	}
+	
+	@Override
 	public int getRenderType() {
 		return TransportProxy.pipeModel;
 	}

@@ -99,6 +99,7 @@ public class BuildCraftTransport {
 	public static boolean alwaysConnectPipes;
 	public static boolean usePipeLoss;
 	public static int maxItemsInPipes;
+	public static float pipeDuribility;
 
 	public static Item pipeWaterproof;
 	public static Item pipeGate;
@@ -218,6 +219,10 @@ public class BuildCraftTransport {
 			pipeLoss.comment = "Set to false to turn off energy loss over distance on all power pipes";
 			usePipeLoss = pipeLoss.getBoolean(DefaultProps.USE_PIPELOSS);
 
+			Property duribility = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.duribility", DefaultProps.PIPES_DURIBILITY);
+			duribility.comment = "How long a pipe will take to break";
+			pipeDuribility = (float)duribility.getDouble(DefaultProps.PIPES_DURIBILITY);
+			
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_BLOCK,"woodenPipe.item.exclusion", "");
 
 			String[] excludedItemBlocks = exclusionItemList.value.split(",");
