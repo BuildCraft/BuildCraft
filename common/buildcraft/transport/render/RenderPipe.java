@@ -368,7 +368,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	public DisplayLiquidList getListFromBuffer(LiquidStack stack, World world) {
+	private DisplayLiquidList getListFromBuffer(LiquidStack stack, World world) {
 
 		int liquidId = stack.itemID;
 
@@ -377,9 +377,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
 			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
-		} else {
+		} else if(Item.itemsList[liquidId] != null) {
 			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-		}
+		} else {
+			return null;
+		}		
 		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}
 
