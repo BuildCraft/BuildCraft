@@ -46,9 +46,9 @@ public class PacketPipeTransportContent extends PacketCoordinates {
 		data.writeByte((byte)entityData.input.ordinal());
 		data.writeByte((byte)entityData.output.ordinal());
 
-		data.writeInt(entityData.item.getItemStack().itemID);
+		data.writeShort(entityData.item.getItemStack().itemID);
 		data.writeByte((byte)entityData.item.getItemStack().stackSize);
-		data.writeInt(entityData.item.getItemStack().getItemDamage());
+		data.writeShort(entityData.item.getItemStack().getItemDamage());
 
 		data.writeFloat((float) entityData.item.getPosition().x);
 		data.writeFloat((float) entityData.item.getPosition().y);
@@ -66,9 +66,9 @@ public class PacketPipeTransportContent extends PacketCoordinates {
 		this.input = ForgeDirection.getOrientation(data.readByte());
 		this.output = ForgeDirection.getOrientation(data.readByte());
 
-		this.itemId = data.readInt();
+		this.itemId = data.readShort();
 		this.stackSize = data.readByte();
-		this.itemDamage = data.readInt();
+		this.itemDamage = data.readShort();
 
 		this.itemX = data.readFloat();
 		this.itemY = data.readFloat();
