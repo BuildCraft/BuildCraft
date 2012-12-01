@@ -311,15 +311,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 				if (d == null)
 					continue;
-
-				/* Shouldn't happen, but if it did, it would cause an AIOOB */
-				if(liquid.amount > PipeTransportLiquids.LIQUID_IN_PIPE){
-					liquid.amount = PipeTransportLiquids.LIQUID_IN_PIPE;
-				}
 				
 				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 				
-				/* To prevent OOB errors, which have been reported to happen btw */
 				if(stage > displayLiquidStages -1){
 					stage = displayLiquidStages -1;
 				}else if(stage < 0){
@@ -365,9 +359,15 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			//DisplayLiquidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getLiquid(), pipe.worldObj);
 			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
-			if (d != null) {
+			if (d != null) {				
 				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
-
+				
+				if(stage > displayLiquidStages -1){
+					stage = displayLiquidStages -1;
+				}else if(stage < 0){
+					stage = 0;
+				}
+				
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
 
