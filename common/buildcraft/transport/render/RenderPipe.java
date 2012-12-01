@@ -37,6 +37,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
@@ -311,8 +312,20 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				if (d == null)
 					continue;
 
+				/* Shouldn't happen, but if it did, it would cause an AIOOB */
+				if(liquid.amount > PipeTransportLiquids.LIQUID_IN_PIPE){
+					liquid.amount = PipeTransportLiquids.LIQUID_IN_PIPE;
+				}
+				
 				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
-
+				
+				/* To prevent OOB errors, which have been reported to happen btw */
+				if(stage > displayLiquidStages -1){
+					stage = displayLiquidStages -1;
+				}else if(stage < 0){
+					stage = 0;
+				}
+				
 				GL11.glPushMatrix();
 				int list = 0;
 
