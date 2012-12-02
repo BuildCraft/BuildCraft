@@ -260,6 +260,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
 
+		int triggerTracker = 0;
 		for (int s = 0; s < slots.length; ++s) {
 			AdvancedSlot slot = slots[s];
 
@@ -267,12 +268,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				ITrigger trigger = ((TriggerSlot) slot).getTrigger();
 
 				if (_container.getGateOrdinal() >= GateKind.AND_3.ordinal()) {
-					ITriggerParameter parameter = null;
-
-					if (slots[s + nbEntries * 2] != null && slots[s + nbEntries * 2].isDefined())
-						parameter = ((TriggerParameterSlot) slots[s + nbEntries * 2]).getTriggerParameter();
-
-					if (_container.isNearbyTriggerActive(trigger, parameter)) {
+					
+					if (_container.triggerState[triggerTracker++]) {
 						mc.renderEngine.bindTexture(texture);
 
 						drawTexturedModalRect(cornerX + slot.x + 35, cornerY + slot.y + 6, 176, 18, 18, 4);
@@ -283,7 +280,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 						drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y - 1, 176, 0, 18, 18);
 					}
-				} else if (_container.isNearbyTriggerActive(trigger, null)) {
+				} else if (_container.triggerState[triggerTracker++]) {
 					mc.renderEngine.bindTexture(texture);
 
 					drawTexturedModalRect(cornerX + slot.x + 17, cornerY + slot.y + 6, 176, 18, 18, 4);

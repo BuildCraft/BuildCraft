@@ -12,6 +12,13 @@ package buildcraft.transport.gui;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import net.minecraft.src.Block;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ICrafting;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.Slot;
+import net.minecraft.src.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ActionManager;
@@ -28,13 +35,6 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Slot;
-import net.minecraft.src.TileEntity;
-
 public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
@@ -45,6 +45,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	private boolean isSynchronized = false;
 	private boolean isNetInitialized = false;
+	public boolean[] triggerState = new boolean[8];
+	private int lastTriggerState = 0;
 
 	public ContainerGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(0);
@@ -214,10 +216,43 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord)
 					.getPacket());
 		}
-
+	}
+	
+	@Override
+	public void updateProgressBar(int id, int state) {
+		if(id == 0 /* Trigger state update */){
+			for(int i = 0; i < 8; i++){
+				/* Bit mask of triggers */
+				triggerState[i] = ((state >> i) & 0x01) == 0x01;
+			}
+		}
 	}
 
 	/** SERVER SIDE **/
+	private int calculateTriggerState(){
+		int state = 0;
+		for(int i = 0; i < triggerState.length; i++){
+			if(pipe.activatedTriggers[i] != null){
+				triggerState[i] = isNearbyTriggerActive(pipe.activatedTriggers[i], pipe.getTriggerParameter(i));
+			}
+			state |= triggerState[i] ? 0x01 << i : 0x0;
+		}
+		return state;
+	}
+	
+	@Override
+	public void updateCraftingResults() {
+		super.updateCraftingResults();
+		int state = calculateTriggerState();
+		if(state != lastTriggerState){
+			for(int i = 0; i < this.crafters.size(); i++){
+				ICrafting viewingPlayer = (ICrafting)this.crafters.get(i);
+				
+				viewingPlayer.sendProgressBarUpdate(this, 0 /* State update */, state);
+			}
+			lastTriggerState = state;
+		}
+	}
 
 	public void handleInitRequest(EntityPlayer player) {
 		sendActions(player);
