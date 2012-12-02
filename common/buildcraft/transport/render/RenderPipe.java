@@ -37,6 +37,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
@@ -310,9 +311,15 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 				if (d == null)
 					continue;
-
+				
 				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
-
+				
+				if(stage > displayLiquidStages -1){
+					stage = displayLiquidStages -1;
+				}else if(stage < 0){
+					stage = 0;
+				}
+				
 				GL11.glPushMatrix();
 				int list = 0;
 
@@ -352,9 +359,15 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			//DisplayLiquidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getLiquid(), pipe.worldObj);
 			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
-			if (d != null) {
+			if (d != null) {				
 				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
-
+				
+				if(stage > displayLiquidStages -1){
+					stage = displayLiquidStages -1;
+				}else if(stage < 0){
+					stage = 0;
+				}
+				
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
 
