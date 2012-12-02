@@ -243,7 +243,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	@Override
 	public void updateCraftingResults() {
 		super.updateCraftingResults();
-		if(CoreProxy.proxy.isRenderWorld(pipe.worldObj)) return; /* Server only from this point */
 		int state = calculateTriggerState();
 		if(state != lastTriggerState){
 			for(int i = 0; i < this.crafters.size(); i++){
