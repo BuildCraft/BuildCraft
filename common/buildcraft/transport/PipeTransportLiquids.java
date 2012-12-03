@@ -40,8 +40,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 		//Tracks how much is currently available (has spent it's inbound delaytime)
 
-		public PipeSection() {
-			super(null, PipeTransportLiquids.LIQUID_IN_PIPE);
+		public PipeSection(int capacity) {
+			super(null, capacity);
 		}
 
 		@Override
@@ -153,11 +153,15 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	public PipeTransportLiquids() {
 		for (ForgeDirection direction : orientations) {
-			internalTanks[direction.ordinal()] = new PipeSection();
+			internalTanks[direction.ordinal()] = new PipeSection(getCapacity());
 			if (direction != ForgeDirection.UNKNOWN){
 				transferState[direction.ordinal()] = TransferState.None;
 			}
 		}
+	}
+
+	public int getCapacity() {
+		return LIQUID_IN_PIPE;
 	}
 
 	public boolean canReceiveLiquid(ForgeDirection o) {
@@ -193,9 +197,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			BitSet delta = new BitSet(21);
 
 			if (initClient > 0) {
-				changed = true;
 				initClient--;
-				delta.set(0, 21);
+				if (initClient == 1) {
+					changed = true;
+					delta.set(0, 21);
+				}
 			}
 
 			for (ForgeDirection dir : orientations) {
@@ -236,11 +242,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 					delta.set(dir.ordinal() * 3 + 1);
 				}
 
-				int displayQty = (renderCache[dir.ordinal()].amount * 4 + current.amount) / 5;
+				int displayQty = (prev.amount * 4 + current.amount) / 5;
 				if (displayQty == 0 && current.amount > 0) {
 					displayQty = current.amount;
 				}
-				displayQty = Math.min(PipeTransportLiquids.LIQUID_IN_PIPE, displayQty);
+				displayQty = Math.min(getCapacity(), displayQty);
 
 				if (prev.amount != displayQty) {
 					changed = true;
@@ -253,8 +259,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);
 				packet.renderCache = this.renderCache;
 				packet.delta = delta;
-				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
 		}
 	}
@@ -266,7 +271,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void sendDescriptionPacket() {
 		super.sendDescriptionPacket();
 
-		initClient = 2;
+		initClient = 6;
 	}
 	
 	@Override

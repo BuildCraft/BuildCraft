@@ -49,8 +49,10 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 		if (!(pipe.pipe.transport instanceof PipeTransportLiquids)) {
 			return;
 		}
+		
+		PipeTransportLiquids transLiq = ((PipeTransportLiquids) pipe.pipe.transport);
 
-		renderCache = ((PipeTransportLiquids) pipe.pipe.transport).renderCache;
+		renderCache = transLiq.renderCache;
 
 		byte[] dBytes = new byte[3];
 		data.read(dBytes);
@@ -70,7 +72,7 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 				renderCache[dir.ordinal()].itemMeta = data.readShort();
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
-				renderCache[dir.ordinal()].amount = data.readShort();
+				renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readShort());
 			}
 		}
 	}
