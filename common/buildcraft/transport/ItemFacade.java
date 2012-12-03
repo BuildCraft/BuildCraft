@@ -130,14 +130,14 @@ public class ItemFacade extends ItemBuildCraft {
 		return ((encoded & 0xFFF0) >>> 4);
 	}
 
-        public static void addFacade(ItemStack itemStack) {
-            allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage())));
+	public static void addFacade(ItemStack itemStack) {
+		allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage())));
 
-            //3 Structurepipes + this block makes 6 facades
-            AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(
-                                            new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack},
-                                            8000,
-                                            new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID,  itemStack.getItemDamage()))));
-        }
+		//3 Structurepipes + this block makes 6 facades
+		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(
+				new ItemStack[]{new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack},
+				8000,
+				new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()))));
+	}
 }
 

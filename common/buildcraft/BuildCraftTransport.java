@@ -417,28 +417,24 @@ public class BuildCraftTransport {
 	}
 
 	@IMCCallback
-	public void processIMCRequests(FMLInterModComms.IMCEvent event)	{
-	    Splitter splitter = Splitter.on("@").trimResults();
-	    for (IMCMessage m : event.getMessages())
-	    {
-	        if ("add-facade".equals(m.key))
-	        {
-	            String[] array = Iterables.toArray(splitter.split(m.value), String.class);
-	            if (array.length!=2)
-	            {
-	                Logger.getLogger("Buildcraft").log(Level.INFO,String.format("Received an invalid add-facade request %s from mod %s",m.value,m.sender));
-	                continue;
-	            }
-                    Integer blId = Ints.tryParse(array[0]);
-                    Integer metaId = Ints.tryParse(array[1]);
-	            if (blId == null || metaId == null)
-	            {
-                        Logger.getLogger("Buildcraft").log(Level.INFO,String.format("Received an invalid add-facade request %s from mod %s",m.value,m.sender));
-                        continue;
-	            }
-	            ItemFacade.addFacade(new ItemStack(blId, 0, metaId));
-	        }
-	    }
+	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		Splitter splitter = Splitter.on("@").trimResults();
+		for (IMCMessage m : event.getMessages()) {
+			if ("add-facade".equals(m.key)) {
+				String[] array = Iterables.toArray(splitter.split(m.value), String.class);
+				if (array.length != 2) {
+					Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.value, m.sender));
+					continue;
+				}
+				Integer blId = Ints.tryParse(array[0]);
+				Integer metaId = Ints.tryParse(array[1]);
+				if (blId == null || metaId == null) {
+					Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.value, m.sender));
+					continue;
+				}
+				ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
+			}
+		}
 	}
 
 	private static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3) {
