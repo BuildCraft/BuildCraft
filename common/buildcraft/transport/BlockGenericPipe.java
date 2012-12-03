@@ -386,9 +386,8 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
+					pipe.signalStrength[IPipe.WireColor.Red.ordinal()] = 0;
+					pipe.container.scheduleNeighborChange();
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
@@ -396,9 +395,8 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.container.scheduleRenderUpdate();
-					//world.markBlockNeedsUpdate(i, j, k);
-
+					pipe.signalStrength[IPipe.WireColor.Blue.ordinal()] = 0;
+					pipe.container.scheduleNeighborChange();
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
@@ -406,7 +404,8 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.container.scheduleRenderUpdate();
+					pipe.signalStrength[IPipe.WireColor.Green.ordinal()] = 0;
+					pipe.container.scheduleNeighborChange();
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
@@ -414,7 +413,8 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.container.scheduleRenderUpdate();
+					pipe.signalStrength[IPipe.WireColor.Yellow.ordinal()] = 0;
+					pipe.container.scheduleNeighborChange();
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.shiftedIndex
