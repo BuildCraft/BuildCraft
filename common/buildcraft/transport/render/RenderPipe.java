@@ -58,7 +58,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
 	private class DisplayLiquidList {
-
+            
 		public int[] sideHorizontal = new int[displayLiquidStages];
 		public int[] sideVertical = new int[displayLiquidStages];
 		public int[] centerHorizontal = new int[displayLiquidStages];
@@ -311,7 +311,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				if (d == null)
 					continue;
 
-				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liquid.amount / (float) (liq.getTanks(ForgeDirection.UNKNOWN)[0].getCapacity()) * (displayLiquidStages - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
@@ -353,7 +353,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liquid.amount / (float) (liq.getTanks(ForgeDirection.UNKNOWN)[0].getCapacity()) * (displayLiquidStages - 1));
 
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
