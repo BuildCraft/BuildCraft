@@ -98,7 +98,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		BlockInterface block = new BlockInterface();
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
+			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, meta);
 		else
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
 
