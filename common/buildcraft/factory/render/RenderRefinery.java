@@ -83,7 +83,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		// Retrieve the texture depending on type of item.
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
+			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
 
 		else if (Item.itemsList[liquidId] != null)
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
