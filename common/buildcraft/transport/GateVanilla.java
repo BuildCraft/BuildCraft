@@ -1,7 +1,5 @@
 package buildcraft.transport;
 
-import java.util.LinkedList;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -10,10 +8,11 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.ActionEnergyPulser;
-
+import java.util.LinkedList;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -119,7 +118,7 @@ public class GateVanilla extends Gate {
 	 * @return
 	 */
 	private boolean addEnergyPulser(Pipe pipe) {
-		if (!(pipe instanceof IPowerReceptor)){
+		if (!(pipe instanceof IPowerReceptor) || pipe instanceof PipePowerWood){
 			pulser = new EnergyPulser(null);
 			return false;
 		}
