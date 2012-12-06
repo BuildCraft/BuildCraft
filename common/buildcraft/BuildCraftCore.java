@@ -144,8 +144,7 @@ public class BuildCraftCore {
 	public static BuildCraftCore instance;
 
 	@PreInit
-	public void loadConfiguration(FMLPreInitializationEvent evt) {
-
+	public void preInit(FMLPreInitializationEvent evt) {
 		Version.versionCheck();
 
 		bcLog.setParent(FMLLog.getLogger());
@@ -154,6 +153,9 @@ public class BuildCraftCore {
 		bcLog.info("http://www.mod-buildcraft.com");
 
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
+	}
+
+	public void loadConfiguration() {
 		try
 		{
 			mainConfiguration.load();
@@ -236,6 +238,8 @@ public class BuildCraftCore {
 
 	@Init
 	public void initialize(FMLInitializationEvent evt) {
+		loadConfiguration();
+
 		//MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());

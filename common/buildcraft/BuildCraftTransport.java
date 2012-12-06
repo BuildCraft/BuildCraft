@@ -206,9 +206,8 @@ public class BuildCraftTransport {
 
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
-	@PreInit
-	public void preInitialize(FMLPreInitializationEvent evt)
-	{
+	@Init
+	public void load(FMLInitializationEvent evt) {
 		try
 		{
 			Property alwaysConnect = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"pipes.alwaysConnect", DefaultProps.PIPES_ALWAYS_CONNECT);
@@ -222,7 +221,7 @@ public class BuildCraftTransport {
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
 			pipeDurability = (float)durability.getDouble(DefaultProps.PIPES_DURABILITY);
-			
+
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_BLOCK,"woodenPipe.item.exclusion", "");
 
 			String[] excludedItemBlocks = exclusionItemList.value.split(",");
@@ -305,10 +304,7 @@ public class BuildCraftTransport {
 		{
 			BuildCraftCore.mainConfiguration.save();
 		}
-	}
 
-	@Init
-	public void load(FMLInitializationEvent evt) {
 		// Register connection handler
 		//MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 
