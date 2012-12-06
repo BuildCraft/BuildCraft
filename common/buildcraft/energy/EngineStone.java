@@ -171,18 +171,22 @@ public class EngineStone extends Engine {
 	@Override public void setInventorySlotContents(int i, ItemStack itemstack) { itemInInventory = itemstack; }
 
 	@Override
-	public ItemStack decrStackSize(int i, int j) {
+	public ItemStack decrStackSize(int slot, int amount) {
 		if (itemInInventory != null) {
-			ItemStack newStack = itemInInventory.splitStack(j);
-
-			if (itemInInventory.stackSize == 0) {
+			if (itemInInventory.stackSize <= 0) {
 				itemInInventory = null;
+				return null;
+			}
+			ItemStack newStack = itemInInventory;
+			if (amount >= newStack.stackSize) {
+				itemInInventory = null;
+			} else {
+				newStack = itemInInventory.splitStack(amount);
 			}
 
 			return newStack;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override
