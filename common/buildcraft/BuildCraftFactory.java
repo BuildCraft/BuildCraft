@@ -121,36 +121,6 @@ public class BuildCraftFactory {
 	}
 	@Init
 	public void load(FMLInitializationEvent evt) {
-		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
-
-//		EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
-
-		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
-		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
-		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
-		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
-		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
-		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
-
-		if (!hopperDisabled) {
-			CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
-		}
-
-		FactoryProxy.proxy.initializeTileEntities();
-		FactoryProxy.proxy.initializeEntityRenders();
-		drillTexture = 2 * 16 + 1;
-
-		new BptBlockAutoWorkbench(autoWorkbenchBlock.blockID);
-		new BptBlockFrame(frameBlock.blockID);
-		new BptBlockRefinery(refineryBlock.blockID);
-		new BptBlockTank(tankBlock.blockID);
-
-		if (BuildCraftCore.loadDefaultRecipes)
-			loadRecipes();
-	}
-
-	@PreInit
-	public void initialize(FMLPreInitializationEvent evt) {
 		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"mining.enabled", true).value);
 
 		Property minigWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
@@ -206,6 +176,33 @@ public class BuildCraftFactory {
 		}
 
 		BuildCraftCore.mainConfiguration.save();
+
+		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+
+//		EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
+
+		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
+		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
+		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
+		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
+		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
+		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
+
+		if (!hopperDisabled) {
+			CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+		}
+
+		FactoryProxy.proxy.initializeTileEntities();
+		FactoryProxy.proxy.initializeEntityRenders();
+		drillTexture = 2 * 16 + 1;
+
+		new BptBlockAutoWorkbench(autoWorkbenchBlock.blockID);
+		new BptBlockFrame(frameBlock.blockID);
+		new BptBlockRefinery(refineryBlock.blockID);
+		new BptBlockTank(tankBlock.blockID);
+
+		if (BuildCraftCore.loadDefaultRecipes)
+			loadRecipes();
 	}
 
 	public static void loadRecipes() {

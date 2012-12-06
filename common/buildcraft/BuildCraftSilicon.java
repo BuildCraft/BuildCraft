@@ -52,22 +52,6 @@ public class BuildCraftSilicon {
 
 	@Init
 	public void load(FMLInitializationEvent evt) {
-		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
-		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
-		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
-		CoreProxy.proxy.registerTileEntity(TileAssemblyAdvancedWorkbench.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
-
-		new BptBlockRotateMeta(laserBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
-		new BptBlockInventory(assemblyTableBlock.blockID);
-
-		if (BuildCraftCore.loadDefaultRecipes)
-			loadRecipes();
-
-		SiliconProxy.proxy.registerRenderers();
-	}
-
-	@PreInit
-	public void initialize(FMLPreInitializationEvent evt) {
 		Property laserId = BuildCraftCore.mainConfiguration.getBlock("laser.id", DefaultProps.LASER_ID);
 
 		Property assemblyTableId = BuildCraftCore.mainConfiguration.getBlock("assemblyTable.id", DefaultProps.ASSEMBLY_TABLE_ID);
@@ -89,6 +73,18 @@ public class BuildCraftSilicon {
 		redstoneChipset = new ItemRedstoneChipset(Integer.parseInt(redstoneChipsetId.value));
 		redstoneChipset.setItemName("redstoneChipset");
 
+		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
+		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
+		CoreProxy.proxy.registerTileEntity(TileAssemblyAdvancedWorkbench.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
+
+		new BptBlockRotateMeta(laserBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
+		new BptBlockInventory(assemblyTableBlock.blockID);
+
+		if (BuildCraftCore.loadDefaultRecipes)
+			loadRecipes();
+
+		SiliconProxy.proxy.registerRenderers();
 	}
 
 	public static void loadRecipes() {

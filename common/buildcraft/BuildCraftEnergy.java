@@ -87,22 +87,6 @@ public class BuildCraftEnergy {
 
 	@Init
 	public static void load(FMLInitializationEvent evt) {
-		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
-		GameRegistry.registerWorldGenerator(new OilPopulate());
-
-		new BptBlockEngine(engineBlock.blockID);
-
-		if (BuildCraftCore.loadDefaultRecipes)
-		{
-			loadRecipes();
-		}
-		EnergyProxy.proxy.registerBlockRenderers();
-		EnergyProxy.proxy.registerTileEntities();
-		EnergyProxy.proxy.registerTextureFX();
-	}
-
-	@PreInit
-	public void initialize(FMLPreInitializationEvent evt) {
 		Property engineId = BuildCraftCore.mainConfiguration.getBlock("engine.id", DefaultProps.ENGINE_ID);
 		Property oilStillId = BuildCraftCore.mainConfiguration.getBlock("oilStill.id", DefaultProps.OIL_STILL_ID);
 		Property oilMovingId = BuildCraftCore.mainConfiguration.getBlock("oilMoving.id", DefaultProps.OIL_MOVING_ID);
@@ -157,6 +141,19 @@ public class BuildCraftEnergy {
 
 		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(new LiquidStack(oilStill, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
 		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(new LiquidStack(fuel, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
+
+		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+		GameRegistry.registerWorldGenerator(new OilPopulate());
+
+		new BptBlockEngine(engineBlock.blockID);
+
+		if (BuildCraftCore.loadDefaultRecipes)
+		{
+			loadRecipes();
+		}
+		EnergyProxy.proxy.registerBlockRenderers();
+		EnergyProxy.proxy.registerTileEntities();
+		EnergyProxy.proxy.registerTextureFX();
 	}
 
 	public static void loadRecipes() {
