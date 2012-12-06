@@ -53,19 +53,14 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
-		World w = worldObj;
-
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		if (meta > 5)
+		ForgeDirection direction = ((PipeLogicWood) logic).direction;
+		if (direction == ForgeDirection.UNKNOWN)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
-		pos.moveForwards(1);
-		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		TileEntity tile = container.getTile(direction);
 
 		if (tile instanceof ITankContainer) {
-         if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+         if (!PipeManager.canExtractLiquids(this, worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
             return;
 
          if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME)
@@ -87,26 +82,20 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public void updateEntity() {
 		super.updateEntity();
 
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		if (liquidToExtract > 0 && meta < 6) {
-			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
-			pos.moveForwards(1);
-
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		ForgeDirection direction = ((PipeLogicWood) logic).direction;
+		if (liquidToExtract > 0 && direction != ForgeDirection.UNKNOWN) {
+			TileEntity tile = container.getTile(direction);
 
 			if (tile instanceof ITankContainer) {
 				ITankContainer container = (ITankContainer) tile;
-
 				int flowRate = ((PipeTransportLiquids) transport).flowRate;
-
-				LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
-
+				LiquidStack extracted = container.drain(direction.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
                 int inserted = 0;
-                if(extracted != null) {
-                    inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
 
-                    container.drain(pos.orientation.getOpposite(), inserted, true);
+                if(extracted != null) {
+                    inserted = ((PipeTransportLiquids) transport).fill(direction, extracted, true);
+
+                    container.drain(direction.getOpposite(), inserted, true);
                 }
 
 				liquidToExtract -= inserted;
@@ -124,13 +113,12 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == direction.ordinal())
+			if (((PipeLogicWood) logic).direction == direction)
 				return plainTexture;
 			else
 				return baseTexture;
-		}	}
+		}
+	}
 
 
 	@Override

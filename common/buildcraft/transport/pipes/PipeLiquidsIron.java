@@ -32,9 +32,7 @@ public class PipeLiquidsIron extends Pipe {
 		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == direction.ordinal())
+			if (((PipeLogicIron) logic).direction == direction)
 				return baseTexture;
 			else
 				return plainTexture;
