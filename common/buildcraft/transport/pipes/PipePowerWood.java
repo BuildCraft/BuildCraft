@@ -48,9 +48,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == direction.ordinal())
+			if (((PipeLogicWood) logic).direction == direction)
 				return plainTexture;
 			else
 				return baseTexture;
@@ -59,7 +57,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public void setPowerProvider(IPowerProvider provider) {
-		provider = powerProvider;
+		powerProvider = provider;
 	}
 
 	@Override

@@ -57,9 +57,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (direction == ForgeDirection.UNKNOWN)
 			return baseTexture;
 		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == direction.ordinal())
+			if (((PipeLogicWood) logic).direction == direction)
 				return plainTexture;
 			else
 				return baseTexture;
@@ -81,24 +79,19 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
-		World w = worldObj;
-
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		if (meta > 5)
+		ForgeDirection direction = ((PipeLogicWood) logic).direction;
+		if (direction == ForgeDirection.UNKNOWN)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
-		pos.moveForwards(1);
-		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		TileEntity tile = container.getTile(direction);
 
 		if (tile instanceof IInventory) {
-         if (!PipeManager.canExtractItems(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+         if (!PipeManager.canExtractItems(this, worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
             return;
 
          IInventory inventory = (IInventory) tile;
 
-         ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.getOpposite());
+         ItemStack[] extracted = checkExtract(inventory, true, direction.getOpposite());
          if (extracted == null)
             return;
 
@@ -108,13 +101,10 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
                   continue;
             }
 
-            Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
-                  pos.orientation.getOpposite());
-
+            Position entityPos = new Position(tile.xCoord + 0.5, tile.yCoord + Utils.getPipeFloorOf(stack), tile.zCoord + 0.5,
+                  direction.getOpposite());
             entityPos.moveForwards(0.5);
-
-            IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
-
+            IPipedItem entity = new EntityPassiveItem(worldObj, entityPos.x, entityPos.y, entityPos.z, stack);
             ((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
          }
       }
@@ -126,10 +116,9 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	 * on the position of the pipe.
 	 */
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
-
 		/// ISPECIALINVENTORY
 		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int)powerProvider.getEnergyStored());
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerProvider.getEnergyStored());
 			if (stacks != null && doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
@@ -154,7 +143,6 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 				return new ItemStack[] { result };
 		} else if (inventory.getSizeInventory() == 2) {
 			// This is an input-output inventory
-
 			int slotIndex = 0;
 
 			if (from == ForgeDirection.DOWN || from == ForgeDirection.UP)
@@ -171,7 +159,6 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 					return new ItemStack[] { slot };
 		} else if (inventory.getSizeInventory() == 3) {
 			// This is a furnace-like inventory
-
 			int slotIndex = 0;
 
 			if (from == ForgeDirection.UP)
@@ -204,7 +191,6 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
 		for (int k = start; k <= stop; ++k)
 			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
-
 				ItemStack slot = inventory.getStackInSlot(k);
 
 				if (slot != null && slot.stackSize > 0)

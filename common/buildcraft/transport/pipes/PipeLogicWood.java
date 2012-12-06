@@ -21,30 +21,31 @@ import buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
 public class PipeLogicWood extends PipeLogic {
 
-	public void switchSource() {
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-		int newMeta = 6;
+	public ForgeDirection direction = ForgeDirection.DOWN;
 
-		for (int i = meta + 1; i <= meta + 6; ++i) {
+	public void switchSource() {
+		ForgeDirection newDir = ForgeDirection.UNKNOWN;
+
+		for (int i = direction.ordinal() + 1; i <= direction.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.values()[i % 6];
 
 			TileEntity tile = container.getTile(o);
 
 			if (isInput(tile))
 				if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) || PipeManager.canExtractLiquids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) ) {
-					newMeta = o.ordinal();
+					newDir = o;
 					break;
 				}
 		}
 
-		if (newMeta != meta) {
-			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
+		if (newDir != direction) {
+			direction = newDir;
 			container.scheduleRenderUpdate();
-			//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -88,12 +89,10 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	private void switchSourceIfNeeded() {
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		if (meta > 5)
+		if (direction == ForgeDirection.UNKNOWN)
 			switchSource();
 		else {
-			TileEntity tile = container.getTile(ForgeDirection.values()[meta]);
+			TileEntity tile = container.getTile(direction);
 
 			if (!isInput(tile))
 				switchSource();
@@ -107,13 +106,27 @@ public class PipeLogicWood extends PipeLogic {
 		if (!CoreProxy.proxy.isRenderWorld(worldObj))
 			switchSourceIfNeeded();
 	}
-	
+
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		if (this.container.pipe instanceof PipeLiquidsWood){
-			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-			return meta != to.ordinal();
-		}
+		if (container.pipe instanceof PipeLiquidsWood)
+			return direction != to;
 		return super.outputOpen(to);
 	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+		if (nbttagcompound.hasKey("direction"))
+			direction = ForgeDirection.values()[nbttagcompound.getInteger("direction")];
+		else
+			direction = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)];
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+		nbttagcompound.setInteger("direction", direction.ordinal());
+	}
+
 }

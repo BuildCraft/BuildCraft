@@ -18,11 +18,13 @@ import buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 
 public class PipeLogicIron extends PipeLogic {
 
-	boolean lastPower = false;
+	private boolean lastPower = false;
+	public ForgeDirection direction = ForgeDirection.DOWN;
 
 	public void switchPower() {
 		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
@@ -35,17 +37,15 @@ public class PipeLogicIron extends PipeLogic {
 	}
 
 	public void switchPosition() {
-		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-		int nextMetadata = metadata;
+		int nextDirection = direction.ordinal();
 
 		for (int l = 0; l < 6; ++l) {
-			nextMetadata++;
+			nextDirection++;
 
-			if (nextMetadata > 5)
-				nextMetadata = 0;
+			if (nextDirection > 5)
+				nextDirection = 0;
 
-			TileEntity tile = container.getTile(ForgeDirection.values()[nextMetadata]);
+			TileEntity tile = container.getTile(ForgeDirection.values()[nextDirection]);
 
 			if (tile instanceof TileGenericPipe) {
 				Pipe pipe = ((TileGenericPipe) tile).pipe;
@@ -56,7 +56,7 @@ public class PipeLogicIron extends PipeLogic {
 			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer
 					|| tile instanceof TileGenericPipe) {
 
-				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
+				direction = ForgeDirection.values()[nextDirection];
 				container.scheduleRenderUpdate();
 				return;
 			}
@@ -74,7 +74,6 @@ public class PipeLogicIron extends PipeLogic {
 	public void onBlockPlaced() {
 		super.onBlockPlaced();
 
-		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 1);
 		switchPosition();
 	}
 
@@ -86,9 +85,7 @@ public class PipeLogicIron extends PipeLogic {
 		if (equipped instanceof IToolWrench
 				&& ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
 			switchPosition();
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
-
 			return true;
 		}
 
@@ -104,7 +101,22 @@ public class PipeLogicIron extends PipeLogic {
 
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		return to.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		return to == direction;
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+		if (nbttagcompound.hasKey("direction"))
+			direction = ForgeDirection.values()[nbttagcompound.getInteger("direction")];
+		else
+			direction = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)];
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+		nbttagcompound.setInteger("direction", direction.ordinal());
 	}
 
 }
