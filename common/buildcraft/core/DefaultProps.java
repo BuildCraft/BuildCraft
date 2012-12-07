@@ -104,8 +104,8 @@ public class DefaultProps {
 	public static int ASSEMBLY_TABLE_ID = 1517;
 	public static int PATH_MARKER_ID = 1518;
 	public static int HOPPER_ID = 1519;
-	public static int OIL_MOVING_ID = 150;
-	public static int OIL_STILL_ID = 151;
+	public static int OIL_MOVING_ID = 1520;
+	public static int OIL_STILL_ID = 1521;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;
