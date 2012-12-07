@@ -63,18 +63,14 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	}
 
 	@Override
-	public ItemStack decrStackSize(int i, int j) {
-
-		ItemStack newStack = stackList[i].copy();
-		newStack.stackSize = j;
-
-		stackList[i].stackSize -= j;
-
-		if (stackList[i].stackSize == 0) {
-			stackList[i] = null;
-		}
-
-		return newStack;
+	public ItemStack decrStackSize(int slotId, int count) {
+		if (stackList[slotId] == null)
+			return null;
+		if (stackList[slotId].stackSize > count)
+			return stackList[slotId].splitStack(count);
+		ItemStack stack = stackList[slotId];
+		stackList[slotId] = null;
+		return stack;
 	}
 
 	@Override
