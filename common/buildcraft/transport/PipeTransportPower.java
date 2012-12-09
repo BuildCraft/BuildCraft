@@ -69,8 +69,8 @@ public class PipeTransportPower extends PipeTransport {
 		// Extract the nearby connected tiles
 
 		for (int i = 0; i < 6; ++i) {
-			if (Utils.checkPipesConnections(container.getTile(ForgeDirection.values()[i]), container))
-				tiles[i] = container.getTile(ForgeDirection.values()[i]);
+			if (Utils.checkPipesConnections(container.getTile(ForgeDirection.VALID_DIRECTIONS[i]), container))
+				tiles[i] = container.getTile(ForgeDirection.VALID_DIRECTIONS[i]);
         }
 
 		// Send the power to nearby pipes who requested it
@@ -140,7 +140,7 @@ public class PipeTransportPower extends PipeTransport {
 				int request = receptor.powerRequest();
 
 				if (request > 0)
-					requestEnergy(ForgeDirection.values()[i], request);
+					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
 			}
 		}
 
@@ -171,7 +171,7 @@ public class PipeTransportPower extends PipeTransport {
 							continue;
 
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
-						nearbyTransport.requestEnergy(ForgeDirection.values()[i].getOpposite(), transferQuery[i]);
+						nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 					}
 				}
 		}
