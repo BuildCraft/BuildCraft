@@ -31,6 +31,10 @@ public class PipeTransportPower extends PipeTransport {
 	private static final int OVERLOAD_LIMIT = 7500;
 	private static final short MAX_DISPLAY = 100;
 	private static final float DISPLAY_POWER_FACTOR = 0.1f;
+	
+	private boolean needsInit = true;
+	
+	private TileEntity[] tiles = new TileEntity[6];
 
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 	public boolean overload;
@@ -56,6 +60,30 @@ public class PipeTransportPower extends PipeTransport {
 	public boolean isPipeConnected(TileEntity tile) {
 		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
 	}
+	
+	@Override
+	public void onNeighborBlockChange(int blockId) {
+		super.onNeighborBlockChange(blockId);
+		updateTiles();
+	}
+	
+	private void updateTiles() {
+		for (int i = 0; i < 6; ++i) {
+			TileEntity tile = container.getTile(ForgeDirection.VALID_DIRECTIONS[i]);
+			if (Utils.checkPipesConnections(tile, container)) {
+				tiles[i] = tile;
+			} else {
+				tiles[i] = null;
+			}
+		}
+	}
+	
+	private void init() {
+		if (needsInit) {
+			needsInit = false;
+			updateTiles();
+		}
+	}
 
 	@Override
 	public void updateEntity() {
@@ -63,15 +91,8 @@ public class PipeTransportPower extends PipeTransport {
 			return;
 
 		step();
-
-		TileEntity tiles[] = new TileEntity[6];
-
-		// Extract the nearby connected tiles
-
-		for (int i = 0; i < 6; ++i) {
-			if (Utils.checkPipesConnections(container.getTile(ForgeDirection.VALID_DIRECTIONS[i]), container))
-				tiles[i] = container.getTile(ForgeDirection.VALID_DIRECTIONS[i]);
-        }
+		
+		init();
 
 		// Send the power to nearby pipes who requested it
 
@@ -160,29 +181,31 @@ public class PipeTransportPower extends PipeTransport {
 		// Transfer the requested energy to nearby pipes
 
 		for (int i = 0; i < 6; ++i) {
-			if (transferQuery[i] != 0)
+			if (transferQuery[i] != 0) {
 				if (tiles[i] != null) {
 					TileEntity entity = tiles[i];
 
 					if (entity instanceof TileGenericPipe) {
 						TileGenericPipe nearbyTile = (TileGenericPipe) entity;
 
-						if (nearbyTile.pipe == null)
+						if (nearbyTile.pipe == null) {
 							continue;
+						}
 
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 						nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 					}
 				}
+			}
 		}
 
 		if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
-				packet.displayPower = displayPower;
-				packet.overload = overload;
-				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-						DefaultProps.PIPE_CONTENTS_RENDER_DIST);
-			}
+			PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
+			packet.displayPower = displayPower;
+			packet.overload = overload;
+			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
+					DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+		}
 
 	}
 
