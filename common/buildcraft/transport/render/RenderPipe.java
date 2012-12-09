@@ -49,20 +49,20 @@ import buildcraft.transport.TileGenericPipe;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
 	
-	final static private int maxPower = 1000;
+	final static private int MAX_POWER = 1000;
 
-	final static private int displayLiquidStages = 40;
+	final static private int LIQUID_STAGES = 40;
 
-	final static private int numItemsToRender = 10;
+	final static private int MAX_ITEMS_TO_RENDER = 10;
 
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
 	private class DisplayLiquidList {
             
-		public int[] sideHorizontal = new int[displayLiquidStages];
-		public int[] sideVertical = new int[displayLiquidStages];
-		public int[] centerHorizontal = new int[displayLiquidStages];
-		public int[] centerVertical = new int[displayLiquidStages];
+		public int[] sideHorizontal = new int[LIQUID_STAGES];
+		public int[] sideVertical = new int[LIQUID_STAGES];
+		public int[] centerHorizontal = new int[LIQUID_STAGES];
+		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
 
 	private HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
@@ -71,10 +71,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
 
-	final static private int displayPowerStages = 80;
+	final static private int POWER_STAGES = 100;
 
-	public int[] displayPowerList = new int[displayPowerStages];
-	public double[] displayPowerLimits = new double[displayPowerStages];
+	public int[] displayPowerList = new int[POWER_STAGES];
+	public int[] displayPowerListOverload = new int[POWER_STAGES];
 
 	private RenderBlocks renderBlocks;
 
@@ -106,8 +106,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		// render size
 
-		for (int s = 0; s < displayLiquidStages; ++s) {
-			float ratio = (float) s / (float) displayLiquidStages;
+		for (int s = 0; s < LIQUID_STAGES; ++s) {
+			float ratio = (float) s / (float) LIQUID_STAGES;
 
 			// SIDE HORIZONTAL
 
@@ -195,17 +195,17 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = 0 * 16 + 4;
+		block.texture = 4;
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
-		for (int s = 0; s < displayPowerStages; ++s) {
+		for (int s = 0; s < POWER_STAGES; ++s) {
 			displayPowerList[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(displayPowerList[s], 4864 /* GL_COMPILE */);
 
 			float minSize = 0.005F;
 
-			float unit = (size - minSize) / 2F / displayPowerStages;
+			float unit = (size - minSize) / 2F / POWER_STAGES;
 
 			block.minY = 0.5 - (minSize / 2F) - unit * s;
 			block.maxY = 0.5 + (minSize / 2F) + unit * s;
@@ -220,10 +220,32 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			GL11.glEndList();
 		}
+		
+		block.texture = 6;
 
-		for (int i = 0; i < displayPowerStages; ++i)
-			displayPowerLimits[displayPowerStages - i - 1] = maxPower
-					- Math.sqrt(maxPower * maxPower / (displayPowerStages - 1) * i);
+		size = Utils.pipeMaxPos - Utils.pipeMinPos;
+
+		for (int s = 0; s < POWER_STAGES; ++s) {
+			displayPowerListOverload[s] = GLAllocation.generateDisplayLists(1);
+			GL11.glNewList(displayPowerListOverload[s], 4864 /* GL_COMPILE */);
+
+			float minSize = 0.005F;
+
+			float unit = (size - minSize) / 2F / POWER_STAGES;
+
+			block.minY = 0.5 - (minSize / 2F) - unit * s;
+			block.maxY = 0.5 + (minSize / 2F) + unit * s;
+
+			block.minZ = 0.5 - (minSize / 2F) - unit * s;
+			block.maxZ = 0.5 + (minSize / 2F) + unit * s;
+
+			block.minX = 0;
+			block.maxX = 0.5 + (minSize / 2F) + unit * s;
+
+			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
+
+			GL11.glEndList();
+		}
 	}
 
 	@Override
@@ -259,6 +281,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+		
+		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
@@ -267,17 +291,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glRotatef(angleZ[i], 0, 0, 1);
 
 			if (pow.displayPower[i] >= 1.0) {
-				int stage = 0;
+				short stage = pow.displayPower[i];
 
-				for (; stage < displayPowerStages; ++stage) {
-					if (displayPowerLimits[stage] > pow.displayPower[i])
-						break;
-				}
-
-				if (stage < displayPowerList.length)
-					GL11.glCallList(displayPowerList[stage]);
+				if (stage < displayList.length)
+					GL11.glCallList(displayList[stage]);
 				else
-					GL11.glCallList(displayPowerList[displayPowerList.length - 1]);
+					GL11.glCallList(displayList[displayList.length - 1]);
 			}
 
 			GL11.glPopMatrix();
@@ -312,7 +331,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				if (d == null)
 					continue;
 
-				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
@@ -354,7 +373,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (displayLiquidStages - 1));
+				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
 
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
@@ -394,7 +413,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		int count = 0;
 		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
-			if(count >= numItemsToRender)
+			if(count >= MAX_ITEMS_TO_RENDER)
 				break;
 
 			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z

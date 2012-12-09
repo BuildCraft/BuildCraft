@@ -9,13 +9,8 @@
 
 package buildcraft.transport;
 
-import java.util.Arrays;
-
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerProvider;
@@ -25,12 +20,20 @@ import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
+import java.util.Arrays;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportPower extends PipeTransport {
 
 	private static final int MAX_POWER_INTERNAL = 10000;
+	private static final int OVERLOAD_LIMIT = 7500;
+	private static final short MAX_DISPLAY = 100;
+	private static final float DISPLAY_POWER_FACTOR = 0.1f;
 
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
+	public boolean overload;
 
 	public int[] powerQuery = new int[6];
 	public int[] nextPowerQuery = new int[6];
@@ -72,7 +75,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		// Send the power to nearby pipes who requested it
 
-		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
+		Arrays.fill(displayPower, (short)0);
 
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
@@ -95,10 +98,10 @@ public class PipeTransportPower extends PipeTransport {
 
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
-							nearbyTransport.receiveEnergy(ForgeDirection.values()[j].getOpposite(), watts);
+							nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 
-							displayPower[j] += watts / 2F;
-							displayPower[i] += watts / 2F;
+							displayPower[j] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
+							displayPower[i] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
 
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof IPowerReceptor) {
@@ -107,10 +110,10 @@ public class PipeTransportPower extends PipeTransport {
 							IPowerProvider prov = pow.getPowerProvider();
 
 							if(prov != null) {
-								prov.receiveEnergy((float) watts, ForgeDirection.values()[j].getOpposite());
+								prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 
-							    displayPower[j] += watts / 2F;
-							    displayPower[i] += watts / 2F;
+							    displayPower[j] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
+							    displayPower[i] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
 
 								internalPower[i] -= watts;
 							}
@@ -119,6 +122,15 @@ public class PipeTransportPower extends PipeTransport {
 				}
 			}
 		}
+		
+		double highestPower = 0;
+		for(int i = 0; i < 6; i++){
+			if(internalPower[i] > highestPower){
+				highestPower = internalPower[i];
+			}
+			displayPower[i] = (short)Math.min(displayPower[i], MAX_DISPLAY);
+		}
+		overload = highestPower > OVERLOAD_LIMIT;
 
 		// Compute the tiles requesting energy that are not pipes
 
@@ -164,9 +176,10 @@ public class PipeTransportPower extends PipeTransport {
 				}
 		}
 
-		if (!worldObj.isRemote && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+		if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 				PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 				packet.displayPower = displayPower;
+				packet.overload = overload;
 				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
 						DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
@@ -263,6 +276,7 @@ public class PipeTransportPower extends PipeTransport {
 	 */
 	public void handlePowerPacket(PacketPowerUpdate packetPower) {
 		displayPower = packetPower.displayPower;
+		overload = packetPower.overload;
 	}
 
 }

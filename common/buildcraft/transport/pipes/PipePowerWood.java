@@ -8,7 +8,6 @@
 
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -18,6 +17,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
@@ -79,13 +79,15 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
+		if (worldObj.isRemote) return;
+		
 		if (powerProvider.getEnergyStored() == powerProvider.getMaxEnergyStored()) {
 			overheatTicks+=overheatTicks<MAX_OVERHEAT_TICKS ? 1 : 0;
 		} else {
 			overheatTicks-=overheatTicks>0 ? 1 : 0;
 		}
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			if (Utils.checkPipesConnections(container, container.getTile(o))) {
 				TileEntity tile = container.getTile(o);
 
@@ -94,9 +96,9 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 						continue; // Null pointer protection
 					}
 
-					PipeTransportPower pow = (PipeTransportPower) ((TileGenericPipe) tile).pipe.transport;
+					PipeTransportPower trans = (PipeTransportPower) ((TileGenericPipe) tile).pipe.transport;
 
-					float energyToRemove = 0;
+					float energyToRemove;
 
 					if (powerProvider.getEnergyStored() > 40)
 						energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
@@ -107,13 +109,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 					float energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
 
-					pow.receiveEnergy(o.getOpposite(), energyUsed);
-
-					if (worldObj.isRemote) return;
-					((PipeTransportPower) transport).displayPower[o.ordinal()] += energyUsed;
+					trans.receiveEnergy(o.getOpposite(), energyUsed);
 				}
-
 			}
+		}
 	}
 
 	@Override
