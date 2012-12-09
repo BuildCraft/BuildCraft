@@ -8,7 +8,6 @@ import buildcraft.transport.TileGenericPipe;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.BitSet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;

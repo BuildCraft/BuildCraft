@@ -29,7 +29,6 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 

@@ -24,7 +24,6 @@ import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
