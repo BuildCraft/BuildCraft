@@ -49,8 +49,6 @@ import buildcraft.transport.TileGenericPipe;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
 	
-	final static private int MAX_POWER = 1000;
-
 	final static private int LIQUID_STAGES = 40;
 
 	final static private int MAX_ITEMS_TO_RENDER = 10;
@@ -473,7 +471,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
 				&& Block.blocksList[itemstack.itemID].blockID != 0) {
-				//&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
+
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
 
 			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
@@ -499,6 +497,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 
 		} else {
+			
 			GL11.glTranslatef(0, 0.10F, 0); // BC SPECIFIC
 
 			if (itemstack.getItem().requiresMultipleRenderPasses()) {
@@ -506,19 +505,20 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
 
 				for (int i = 0; i <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++i) {
-					int iconIndex = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), i);
+					int iconIndex = itemstack.getItem().getIconFromItemStackForMultiplePasses(itemstack, i);
 					float scale = 1.0F;
 
-					if (true) {
-						int itemColour = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, i);
-						float var18 = (itemColour >> 16 & 255) / 255.0F;
-						float var19 = (itemColour >> 8 & 255) / 255.0F;
-						float var20 = (itemColour & 255) / 255.0F;
-						GL11.glColor4f(var18 * scale, var19 * scale, var20 * scale, 1.0F);
-					}
+					int itemColour = Item.itemsList[itemstack.itemID]
+							.getColorFromItemStack(itemstack, i);
+					float rgbR = (itemColour >> 16 & 255) / 255.0F;
+					float rgbG = (itemColour >> 8 & 255) / 255.0F;
+					float rgbB = (itemColour & 255) / 255.0F;
+					GL11.glColor4f(rgbR * scale, rgbG * scale, rgbB * scale,
+							1.0F);
 
 					this.drawItem(iconIndex, quantity);
 				}
+				
 			} else {
 
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
