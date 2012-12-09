@@ -137,12 +137,14 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	public byte initClient = 0;
 	public short travelDelay = 12;
-	public short flowRate = 20;
+	public short flowRate = 10;
 	public LiquidStack[] renderCache = new LiquidStack[orientations.length];
 
 	private final PipeSection[] internalTanks = new PipeSection[orientations.length];
 
 	private final TransferState[] transferState = new TransferState[directions.length];
+	
+	private final int[] inputPerTick = new int[directions.length];
 
 	private final short[] inputTTL = new short[] { 0, 0, 0, 0, 0, 0 };
 	private final short[] outputTTL = new short[] { OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL };
@@ -358,7 +360,6 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	}
 
 	private void moveToCenter() {
-		int [] maxInput = new int[] {0,0,0,0,0,0};
 		int transferInCount = 0;
 		LiquidStack stackInCenter = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(flowRate, false);
 		int spaceAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getCapacity();
@@ -367,27 +368,35 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		}
 
 
-		for (ForgeDirection direction : directions){
-			LiquidStack testStack = internalTanks[direction.ordinal()].drain(flowRate, false);
-			if (testStack == null) continue;
-			if (stackInCenter != null && !stackInCenter.isLiquidEqual(testStack)) continue;
-			maxInput[direction.ordinal()] = testStack.amount;
+		for (ForgeDirection dir : directions) {
+			inputPerTick[dir.ordinal()] = 0;
+			if (transferState[dir.ordinal()] == TransferState.Output) {
+				continue;
+			}
+			LiquidStack testStack = internalTanks[dir.ordinal()].drain(flowRate, false);
+			if (testStack == null) {
+				continue;
+			}
+			if (stackInCenter != null && !stackInCenter.isLiquidEqual(testStack)) {
+				continue;
+			}
+			inputPerTick[dir.ordinal()] = testStack.amount;
 			transferInCount++;
 		}
 
-		for (ForgeDirection direction : directions){
+		for (ForgeDirection dir : directions) {
 			//Move liquid from input sides to the center
-			if (transferState[direction.ordinal()] != TransferState.Output && maxInput[direction.ordinal()] > 0){
+			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
 
-				int ammountToDrain = (int) ((double) maxInput[direction.ordinal()] / (double) flowRate / (double) transferInCount * (double) Math.min(flowRate, spaceAvailable));
-				if (ammountToDrain < 1){
+				int ammountToDrain = (int) ((double) inputPerTick[dir.ordinal()] / (double) flowRate / (double) transferInCount * (double) Math.min(flowRate, spaceAvailable));
+				if (ammountToDrain < 1) {
 					ammountToDrain++;
 				}
 
-				LiquidStack liquidToPush = internalTanks[direction.ordinal()].drain(ammountToDrain, false);
+				LiquidStack liquidToPush = internalTanks[dir.ordinal()].drain(ammountToDrain, false);
 				if (liquidToPush != null) {
 					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
-					internalTanks[direction.ordinal()].drain(filled, true);
+					internalTanks[dir.ordinal()].drain(filled, true);
 				}
 			}
 		}

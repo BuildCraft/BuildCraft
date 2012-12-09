@@ -9,18 +9,7 @@
 
 package buildcraft.transport;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import cpw.mods.fml.common.network.PacketDispatcher;
-
 import buildcraft.BuildCraftTransport;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.inventory.ISpecialInventory;
@@ -34,7 +23,14 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportContent;
-
+import cpw.mods.fml.common.network.PacketDispatcher;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -42,6 +38,7 @@ import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
 
@@ -165,10 +162,11 @@ public class PipeTransportItems extends PipeTransport {
 
 		data.blacklist.add(data.input.getOpposite());
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			if (!data.blacklist.contains(o) && container.pipe.outputOpen(o))
 				if (canReceivePipeObjects(o, data.item))
 					result.add(o);
+		}
 
 		if (result.size() == 0 && allowBouncing) {
 			if (canReceivePipeObjects(data.input.getOpposite(), data.item))
@@ -345,7 +343,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		NBTTagList nbttaglist = nbt.getTagList("travelingEntities");
 
-		for (int j = 0; j < nbttaglist.tagCount(); ++j)
+		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
 			try {
 				NBTTagCompound dataTag = (NBTTagCompound) nbttaglist.tagAt(j);
 
@@ -369,6 +367,7 @@ public class PipeTransportItems extends PipeTransport {
 				// It may be the case that entities cannot be reloaded between
 				// two versions - ignore these errors.
 			}
+		}
 	}
 
 	@Override
@@ -403,7 +402,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		EntityData data = travelingEntities.remove(packet.getEntityId());
 
-		IPipedItem item = null;
+		IPipedItem item;
 		if(data == null) {
 			item = EntityPassiveItem.getOrCreate(worldObj, packet.getEntityId());
 		} else {
