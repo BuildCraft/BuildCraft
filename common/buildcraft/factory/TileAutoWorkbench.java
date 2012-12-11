@@ -152,7 +152,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 			if (stack != null) {
 				if (stack.stackSize <= itemsToLeave) {
-					StackPointer pointer = getNearbyItem(stack.itemID, stack.getItemDamage());
+				    StackPointer pointer = getNearbyItem(stack);
 
 					if (pointer == null) {
 						resetPointers(pointerList);
@@ -184,7 +184,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 				// replace with the container where appropriate
 
 				if (p.item.getItem().getContainerItem() != null) {
-					ItemStack newStack = new ItemStack(p.item.getItem().getContainerItem(), 1);
+				    ItemStack newStack = p.item.getItem().getContainerItemStack(p.item);
 
 					p.inventory.setInventorySlotContents(p.index, newStack);
 				}
@@ -205,6 +205,89 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			}
 		}
 	}
+	
+	public StackPointer getNearbyItem(ItemStack stack) {
+	    StackPointer pointer = null;
+        
+        if (pointer == null) {
+            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.WEST);
+        }
+
+        if (pointer == null) {
+            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.EAST);
+        }
+
+        if (pointer == null) {
+            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.DOWN);
+        }
+
+        if (pointer == null) {
+            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.UP);
+        }
+
+        if (pointer == null) {
+            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.NORTH);
+        }
+
+        if (pointer == null) {
+            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.SOUTH);
+        }
+        
+        if (pointer == null) {
+            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.UNKNOWN);
+        }
+        
+        return pointer;
+	}
+	
+	public StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction) {
+	    TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+
+        if (tile instanceof ISpecialInventory) {
+            // Don't get stuff out of ISpecialInventory for now / we wouldn't
+            // know how to put it back... And it's not clear if we want to
+            // have workbenches automatically getting things from one another.
+        } else if (tile instanceof IInventory) {
+            IInventory inventory = Utils.getInventory((IInventory) tile);
+
+            for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+                ItemStack stack = inventory.getStackInSlot(j);
+
+                if (stack != null) {
+                    if (stack.stackSize > 0) {
+                        if (stack.itemID == itemStack.itemID) {
+                            if (!stack.isItemStackDamageable()) {
+                                if (stack.itemID == itemStack.itemID && stack.getItemDamage() == itemStack.getItemDamage()) {
+                                    inventory.decrStackSize(j, 1);
+                
+                                    StackPointer result = new StackPointer();
+                                    result.inventory = inventory;
+                                    result.index = j;
+                                    result.item = stack;
+                
+                                    return result;
+                                }
+                            }
+                            else {
+                                if (stack.itemID == itemStack.itemID) {
+                                    inventory.decrStackSize(j, 1);
+                
+                                    StackPointer result = new StackPointer();
+                                    result.inventory = inventory;
+                                    result.index = j;
+                                    result.item = stack;
+                
+                                    return result;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 
 	public StackPointer getNearbyItem(int itemId, int damage) {
 		StackPointer pointer = null;
