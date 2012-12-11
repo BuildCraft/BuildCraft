@@ -54,6 +54,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 import net.minecraftforge.liquids.LiquidContainerData;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidDictionary;
 import net.minecraftforge.liquids.LiquidStack;
 
 @Mod(name="BuildCraft Energy", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -71,6 +72,9 @@ public class BuildCraftEnergy {
 	public static Item bucketFuel;
 
 	public static Item fuel;
+	
+	public static LiquidStack oilLiquid;
+	public static LiquidStack fuelLiquid;
 
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 
@@ -143,19 +147,22 @@ public class BuildCraftEnergy {
 		bucketFuel = new ItemBuildCraft(Integer.parseInt(bucketFuelId.value)).setItemName("bucketFuel").setContainerItem(Item.bucketEmpty);
 		bucketFuel.setIconIndex(0 * 16 + 3).setMaxStackSize(1).setCreativeTab(CreativeTabs.tabMisc);
 		LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
+		
+		oilLiquid = LiquidDictionary.getOrCreateLiquid("Oil", new LiquidStack(oilStill, 1));
+		fuelLiquid = LiquidDictionary.getOrCreateLiquid("Fuel", new LiquidStack(fuel, 1));
 
-		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(new LiquidStack(oilStill.blockID, 1, 0), null, new LiquidStack(fuel.shiftedIndex, 1, 0), 12, 1));
+		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(LiquidDictionary.getLiquid("Oil", 1), null, LiquidDictionary.getLiquid("Fuel", 1), 12, 1));
 
 		// Iron Engine Fuels
 		IronEngineFuel.fuels.add(new IronEngineFuel(Block.lavaStill.blockID, 1, 20000));
-		IronEngineFuel.fuels.add(new IronEngineFuel(oilStill.blockID, 3, 20000));
-		IronEngineFuel.fuels.add(new IronEngineFuel(fuel.shiftedIndex, 6, 100000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(LiquidDictionary.getLiquid("Oil", LiquidContainerRegistry.BUCKET_VOLUME), 3, 20000));
+		IronEngineFuel.fuels.add(new IronEngineFuel(LiquidDictionary.getLiquid("Fuel", LiquidContainerRegistry.BUCKET_VOLUME), 6, 100000));
 
 		// Iron Engine Coolants
 		IronEngineCoolant.coolants.add(new IronEngineCoolant(new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME), 1.0f));
 
-		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(new LiquidStack(oilStill, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
-		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(new LiquidStack(fuel, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
+		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(LiquidDictionary.getLiquid("Oil", LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
+		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(LiquidDictionary.getLiquid("Fuel", LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
 	}
 
 	public static void loadRecipes() {
