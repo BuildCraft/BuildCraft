@@ -192,6 +192,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 				    if (p.item.isItemStackDamageable()) {
 				        if (newStack.getItemDamage() >= p.item.getMaxDamage()) {
 				            MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(CoreProxy.proxy.getBuildCraftPlayer(worldObj, xCoord, yCoord, zCoord), newStack));
+				            this.worldObj.playSoundAtEntity(CoreProxy.proxy.getBuildCraftPlayer(worldObj, xCoord, yCoord, zCoord), "random.break", 0.8F, 0.8F + this.worldObj.rand.nextFloat() * 0.4F);
 				            newStack = null;
 				        }
 				    }
