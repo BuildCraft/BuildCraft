@@ -159,13 +159,55 @@ public class CoreProxy {
 		player.username = "[BuildCraft]";
 		return player;
 	}
+	
+	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
+        EntityPlayer player = new EntityPlayer(world) {
+
+            @Override
+            public void sendChatToPlayer(String var1) {
+            }
+
+            @Override
+            public boolean canCommandSenderUseCommand(int var1, String var2) {
+                return false;
+            }
+
+            @Override
+            public ChunkCoordinates getPlayerCoordinates() {
+                return null;
+            }
+
+        };
+        player.username = "[BuildCraft]";
+        player.posX = (int) x;
+        player.posY = (int) y;
+        player.posZ = (int) z;
+        return player;
+    }
 
 	public EntityPlayer getBuildCraftPlayer(World world) {
 		if (CoreProxy.buildCraftPlayer == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);
 		}
+		else {
+		    CoreProxy.buildCraftPlayer.worldObj = world;
+		}
 
 		return CoreProxy.buildCraftPlayer;
 	}
+	
+	public EntityPlayer getBuildCraftPlayer(World world, int x, int y, int z) {
+        if (CoreProxy.buildCraftPlayer == null) {
+            CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
+        }
+        else {
+            CoreProxy.buildCraftPlayer.worldObj = world;
+            CoreProxy.buildCraftPlayer.posX = (int) x;
+            CoreProxy.buildCraftPlayer.posY = (int) y;
+            CoreProxy.buildCraftPlayer.posZ = (int) z;
+        }
+
+        return CoreProxy.buildCraftPlayer;
+    }
 
 }

@@ -12,9 +12,12 @@ package buildcraft.factory;
 import java.util.LinkedList;
 
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.TransactorRoundRobin;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
 import net.minecraft.src.Container;
@@ -185,8 +188,15 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 				if (p.item.getItem().getContainerItem() != null) {
 				    ItemStack newStack = p.item.getItem().getContainerItemStack(p.item);
-
-					p.inventory.setInventorySlotContents(p.index, newStack);
+				    
+				    if (p.item.isItemStackDamageable()) {
+				        if (newStack.getItemDamage() >= p.item.getMaxDamage()) {
+				            MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(CoreProxy.proxy.getBuildCraftPlayer(worldObj, xCoord, yCoord, zCoord), newStack));
+				            newStack = null;
+				        }
+				    }
+				    
+    				p.inventory.setInventorySlotContents(p.index, newStack);
 				}
 			}
 		}
