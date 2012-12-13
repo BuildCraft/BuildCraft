@@ -88,7 +88,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
@@ -150,69 +150,80 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			ItemStack result = checkExtractGeneric(inv, doRemove, from, first, last);
 
-			if (result != null)
-				return new ItemStack[] { result };
+			if (result != null) {
+				return new ItemStack[]{result};
+			}
 		} else if (inventory.getSizeInventory() == 2) {
 			// This is an input-output inventory
 
 			int slotIndex = 0;
 
-			if (from == ForgeDirection.DOWN || from == ForgeDirection.UP)
+			if (from == ForgeDirection.DOWN || from == ForgeDirection.UP) {
 				slotIndex = 0;
-			else
+			} else {
 				slotIndex = 1;
+			}
 
 			ItemStack slot = inventory.getStackInSlot(slotIndex);
 
-			if (slot != null && slot.stackSize > 0)
-				if (doRemove)
-					return new ItemStack[] { inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true)) };
-				else
-					return new ItemStack[] { slot };
+			if (slot != null && slot.stackSize > 0) {
+				if (doRemove) {
+					return new ItemStack[]{inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true))};
+				} else {
+					return new ItemStack[]{slot};
+				}
+			}
 		} else if (inventory.getSizeInventory() == 3) {
 			// This is a furnace-like inventory
 
 			int slotIndex = 0;
 
-			if (from == ForgeDirection.UP)
+			if (from == ForgeDirection.UP) {
 				slotIndex = 0;
-			else if (from == ForgeDirection.DOWN)
+			} else if (from == ForgeDirection.DOWN) {
 				slotIndex = 1;
-			else
+			} else {
 				slotIndex = 2;
+			}
 
 			ItemStack slot = inventory.getStackInSlot(slotIndex);
 
-			if (slot != null && slot.stackSize > 0)
-				if (doRemove)
-					return new ItemStack[] { inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true)) };
-				else
-					return new ItemStack[] { slot };
+			if (slot != null && slot.stackSize > 0) {
+				if (doRemove) {
+					return new ItemStack[]{inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true))};
+				} else {
+					return new ItemStack[]{slot};
+				}
+			}
 		} else {
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
 
 			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
 
-			if (result != null)
-				return new ItemStack[] { result };
+			if (result != null) {
+				return new ItemStack[]{result};
+			}
 		}
 
 		return null;
 	}
 
 	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
-		for (int k = start; k <= stop; ++k)
+		for (int k = start; k <= stop; ++k) {
 			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
 
 				ItemStack slot = inventory.getStackInSlot(k);
 
-				if (slot != null && slot.stackSize > 0)
-					if (doRemove)
+				if (slot != null && slot.stackSize > 0) {
+					if (doRemove) {
 						return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
-					else
+					} else {
 						return slot;
+					}
+				}
 			}
+		}
 
 		return null;
 	}

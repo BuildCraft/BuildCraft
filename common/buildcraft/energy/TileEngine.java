@@ -119,13 +119,12 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 				if (isPoweredTile(tile)) {
-					IPowerReceptor receptor = (IPowerReceptor) tile;
+					IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
 
-					float extracted = engine.extractEnergy(receptor.getPowerProvider().getMinEnergyReceived(),
-							receptor.getPowerProvider().getMaxEnergyReceived(), true);
+					float extracted = engine.extractEnergy(receptor.getMinEnergyReceived(), receptor.getMaxEnergyReceived(), true);
 
 					if (extracted > 0) {
-						receptor.getPowerProvider().receiveEnergy(extracted, engine.orientation.getOpposite());
+						receptor.receiveEnergy(extracted, engine.orientation.getOpposite());
 					}
 				}
 			} else if (engine.progress >= 1) {
@@ -139,14 +138,14 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (isPoweredTile(tile)) {
-				IPowerReceptor receptor = (IPowerReceptor) tile;
+				IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
 
-				if (engine.extractEnergy(receptor.getPowerProvider().getMinEnergyReceived(),
-						receptor.getPowerProvider().getMaxEnergyReceived(), false) > 0) {
+				if (engine.extractEnergy(receptor.getMinEnergyReceived(), receptor.getMaxEnergyReceived(), false) > 0) {
 					progressPart = 1;
 					setActive(true);
-				} else
+				} else {
 					setActive(false);
+				}
 			} else
 				setActive(false);
 
@@ -372,10 +371,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	public boolean isPoweredTile(TileEntity tile) {
 		if (tile instanceof IPowerReceptor) {
-			IPowerReceptor receptor = (IPowerReceptor) tile;
-			IPowerProvider provider = receptor.getPowerProvider();
+			IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
 
-			return provider != null && provider.getClass().getSuperclass().equals(PowerProvider.class);
+			return receptor != null && receptor.getClass().getSuperclass().equals(PowerProvider.class);
 		}
 
 		return false;

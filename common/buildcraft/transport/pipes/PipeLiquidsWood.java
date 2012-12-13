@@ -60,7 +60,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
@@ -90,7 +90,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		if (liquidToExtract > 0 && meta < 6) {
-			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
+			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
 			pos.moveForwards(1);
 
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
