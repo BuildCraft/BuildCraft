@@ -50,7 +50,7 @@ public class EntityPassiveItem implements IPipedItem {
 
 	/* CONSTRUCTORS */
 	public EntityPassiveItem(World world) {
-		this(world, maxId != Integer.MAX_VALUE ? ++maxId : (maxId = 0));
+		this(world, maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
 	}
 
 	public EntityPassiveItem(World world, int id) {

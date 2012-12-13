@@ -1,5 +1,6 @@
 package buildcraft.transport.network;
 
+import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.EntityData;
@@ -7,61 +8,63 @@ import buildcraft.transport.EntityData;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import net.minecraft.src.MathHelper;
 
 import net.minecraftforge.common.ForgeDirection;
 
-public class PacketPipeTransportContent extends PacketCoordinates {
+public class PacketPipeTransportContent extends BuildCraftPacket {
 
 	private EntityData entityData;
-
 	private int entityId;
-
 	private ForgeDirection input;
 	private ForgeDirection output;
-
 	private int itemId;
 	private byte stackSize;
 	private int itemDamage;
-
 	private float itemX;
 	private float itemY;
 	private float itemZ;
-
 	private float speed;
+	public int posX;
+	public int posY;
+	public int posZ;
 
-	public PacketPipeTransportContent() {}
+	public PacketPipeTransportContent() {
+	}
 
-	public PacketPipeTransportContent(int x, int y, int z, EntityData data) {
-		super(PacketIds.PIPE_CONTENTS, x, y, z);
-		
+	public PacketPipeTransportContent(EntityData data) {
 		this.entityData = data;
 	}
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		super.writeData(data);
-
-		data.writeInt(entityData.item.getEntityId());
-
-		data.writeByte((byte)entityData.input.ordinal());
-		data.writeByte((byte)entityData.output.ordinal());
-
-		data.writeShort(entityData.item.getItemStack().itemID);
-		data.writeByte((byte)entityData.item.getItemStack().stackSize);
-		data.writeShort(entityData.item.getItemStack().getItemDamage());
-
 		data.writeFloat((float) entityData.item.getPosition().x);
 		data.writeFloat((float) entityData.item.getPosition().y);
 		data.writeFloat((float) entityData.item.getPosition().z);
+
+		data.writeShort(entityData.item.getEntityId());
+
+		data.writeByte((byte) entityData.input.ordinal());
+		data.writeByte((byte) entityData.output.ordinal());
+
+		data.writeShort(entityData.item.getItemStack().itemID);
+		data.writeByte((byte) entityData.item.getItemStack().stackSize);
+		data.writeShort(entityData.item.getItemStack().getItemDamage());
 
 		data.writeFloat(entityData.item.getSpeed());
 	}
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
-		super.readData(data);
+		this.itemX = data.readFloat();
+		this.itemY = data.readFloat();
+		this.itemZ = data.readFloat();
+		
+		posX = MathHelper.floor_float(itemX);
+		posY = MathHelper.floor_float(itemY);
+		posZ = MathHelper.floor_float(itemZ);
 
-		this.entityId = data.readInt();
+		this.entityId = data.readShort();
 
 		this.input = ForgeDirection.getOrientation(data.readByte());
 		this.output = ForgeDirection.getOrientation(data.readByte());
@@ -69,10 +72,6 @@ public class PacketPipeTransportContent extends PacketCoordinates {
 		this.itemId = data.readShort();
 		this.stackSize = data.readByte();
 		this.itemDamage = data.readShort();
-
-		this.itemX = data.readFloat();
-		this.itemY = data.readFloat();
-		this.itemZ = data.readFloat();
 
 		this.speed = data.readFloat();
 	}
