@@ -128,9 +128,14 @@
     <target name="package" depends="compile">
         
         <jar destfile="${jar.dir}/buildcraft-A-${bc.version.full}.jar" basedir="${classes.dir}/client"/>
-        
+		<copy todir="${jar.dir}/changelog">
+			<fileset dir="${src.dir}/buildcraft_resources/changelog">
+				<include name="*" />
+			</fileset>
+		</copy>
+
     </target>
     
-    <target name="main" depends="clean,package"/>
+    <target name="main" depends="clean,package" />
 
 </project>
