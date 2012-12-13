@@ -92,6 +92,10 @@ public abstract class Engine {
 	public abstract boolean isBurning();
 
 	public abstract void delete();
+	
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+		return 0;
+	}
 
 	public void addEnergy(float addition) {
 		energy += addition;
