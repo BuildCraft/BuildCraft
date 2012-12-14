@@ -149,6 +149,7 @@ public class PipeTransportPower extends PipeTransport {
 			if(internalPower[i] > highestPower){
 				highestPower = internalPower[i];
 			}
+			displayPower[i] = (short)Math.max(displayPower[i], Math.ceil(internalPower[i] * DISPLAY_POWER_FACTOR));
 			displayPower[i] = (short)Math.min(displayPower[i], MAX_DISPLAY);
 		}
 		overload = highestPower > OVERLOAD_LIMIT;
