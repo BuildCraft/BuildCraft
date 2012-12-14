@@ -106,7 +106,7 @@ public class EngineIron extends Engine {
 				if (burnTime > 0) {
 					burnTime--;
 				} else {
-					fuel.amount--;
+					if(--fuel.amount <= 0) fuelTank.setLiquid(null);
 					burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
 				}
 
@@ -154,7 +154,7 @@ public class EngineIron extends Engine {
 					heat = COOLANT_THRESHOLD;
 				} else {
 					heat -= coolant.amount * currentCoolant.coolingPerUnit;
-					coolant.amount = 0;
+					coolantTank.setLiquid(null);
 				}
 			}
 		}
