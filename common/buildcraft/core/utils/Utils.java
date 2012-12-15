@@ -12,13 +12,24 @@ package buildcraft.core.utils;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.LaserKind;
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquid;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
@@ -35,18 +46,6 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.InventoryLargeChest;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityChest;
-import net.minecraft.src.World;
 
 public class Utils {
 

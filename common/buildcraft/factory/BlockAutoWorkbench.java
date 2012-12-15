@@ -11,12 +11,12 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;

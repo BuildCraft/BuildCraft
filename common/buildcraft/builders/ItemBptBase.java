@@ -11,16 +11,15 @@ package buildcraft.builders;
 
 import java.util.List;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
 
 public abstract class ItemBptBase extends ItemBuildCraft {
 

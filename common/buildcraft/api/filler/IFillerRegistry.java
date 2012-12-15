@@ -1,6 +1,6 @@
 package buildcraft.api.filler;
 
-import net.minecraft.src.IInventory;
+import net.minecraft.inventory.IInventory;
 
 public interface IFillerRegistry {
 

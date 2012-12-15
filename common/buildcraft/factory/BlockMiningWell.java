@@ -9,19 +9,18 @@
 
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
 import java.util.ArrayList;
 
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 
 public class BlockMiningWell extends BlockMachineRoot {

@@ -9,10 +9,10 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.TileEntity;
 
 public class PipeLogicCobblestone extends PipeLogic {
 

@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 
 public class PacketSlotChange extends PacketCoordinates {
 

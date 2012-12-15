@@ -3,8 +3,19 @@ package buildcraft.silicon;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketIds;
@@ -12,19 +23,8 @@ import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.core.utils.Utils;
-import net.minecraft.src.ChunkCoordinates;
-import net.minecraft.src.Container;
-import net.minecraft.src.CraftingManager;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.InventoryCraftResult;
-import net.minecraft.src.InventoryCrafting;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.SlotCrafting;
-import net.minecraft.src.TileEntity;
+
+import com.google.common.collect.Lists;
 
 public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInventory, ILaserTarget, IMachine {
 	private final class InternalInventoryCraftingContainer extends Container {

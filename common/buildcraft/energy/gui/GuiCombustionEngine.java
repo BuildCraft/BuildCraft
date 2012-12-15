@@ -9,10 +9,9 @@
 
 package buildcraft.energy.gui;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.Item;
-
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;

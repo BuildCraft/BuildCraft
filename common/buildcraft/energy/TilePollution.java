@@ -9,10 +9,10 @@
 
 package buildcraft.energy;
 
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.BlockIndex;
-import net.minecraft.src.TileEntity;
 
 public class TilePollution extends TileEntity {
 

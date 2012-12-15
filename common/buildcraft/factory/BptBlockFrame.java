@@ -11,11 +11,10 @@ package buildcraft.factory;
 
 import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-
-import net.minecraft.src.ItemStack;
 
 public class BptBlockFrame extends BptBlock {
 

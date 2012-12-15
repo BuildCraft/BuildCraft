@@ -9,6 +9,9 @@
 
 package buildcraft.energy;
 
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidStack;
@@ -16,9 +19,6 @@ import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
 
 public abstract class Engine {
 
@@ -92,10 +92,6 @@ public abstract class Engine {
 	public abstract boolean isBurning();
 
 	public abstract void delete();
-	
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
-		return 0;
-	}
 
 	public void addEnergy(float addition) {
 		energy += addition;

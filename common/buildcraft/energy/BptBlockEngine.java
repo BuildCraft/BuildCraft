@@ -9,13 +9,13 @@
 
 package buildcraft.energy;
 
+import net.minecraft.block.Block;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.Version;
-import net.minecraft.src.Block;
 
 public class BptBlockEngine extends BptBlock {
 

@@ -12,23 +12,15 @@ import java.io.File;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.ServerStarting;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.command.CommandHandler;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Property;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
@@ -44,7 +36,6 @@ import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
-import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.EntityIds;
@@ -52,26 +43,30 @@ import buildcraft.core.network.PacketHandler;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerLiquidContainer;
 import buildcraft.core.triggers.TriggerMachine;
-import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
-
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.ServerStarting;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockFluid;
-import net.minecraft.src.CommandHandler;
-import net.minecraft.src.EntityList;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.Property;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[6.3.0.0,)")
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -91,8 +86,6 @@ public class BuildCraftCore {
 	public static int itemLifespan = 1200;
 
 	public static int updateFactor = 10;
-	
-	public static long longUpdateFactor = 40;
 
 	public static BuildCraftConfiguration mainConfiguration;
 
@@ -190,10 +183,6 @@ public class BuildCraftCore {
 			Property factor = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
 			updateFactor = factor.getInt(10);
-			
-			Property longFactor = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"network.stateRefreshPeriod", 40);
-			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
-			longUpdateFactor = longFactor.getInt(40);
 
 			String powerFrameworkClassName = "buildcraft.energy.PneumaticPowerFramework";
 			if (!forcePneumaticPower)
@@ -279,8 +268,6 @@ public class BuildCraftCore {
 		}
 
 		BuildCraftAPI.softBlocks[Block.snow.blockID] = true;
-		TickRegistry.registerTickHandler(new TickHandlerCoreClient(), Side.CLIENT);
-
     }
 
 	@ServerStarting

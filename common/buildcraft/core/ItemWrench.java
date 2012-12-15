@@ -1,8 +1,8 @@
 package buildcraft.core;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import buildcraft.api.tools.IToolWrench;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.EntityPlayer;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 

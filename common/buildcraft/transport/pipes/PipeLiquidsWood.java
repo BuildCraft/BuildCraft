@@ -8,6 +8,8 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
@@ -18,12 +20,10 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.RedstonePowerFramework;
+import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
@@ -60,7 +60,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
@@ -90,7 +90,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		if (liquidToExtract > 0 && meta < 6) {
-			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
+			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.values()[meta]);
 			pos.moveForwards(1);
 
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);

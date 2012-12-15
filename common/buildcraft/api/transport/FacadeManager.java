@@ -1,7 +1,8 @@
 package buildcraft.api.transport;
 
 import java.lang.reflect.Method;
-import net.minecraft.src.ItemStack;
+
+import net.minecraft.item.ItemStack;
 
 public class FacadeManager
 {

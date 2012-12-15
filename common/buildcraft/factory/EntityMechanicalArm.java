@@ -9,12 +9,12 @@
 
 package buildcraft.factory;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.EntityBlock;
-import net.minecraft.src.Entity;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class EntityMechanicalArm extends Entity {
 	EntityBlock xArm, yArm, zArm, head;

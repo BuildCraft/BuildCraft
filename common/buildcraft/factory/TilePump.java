@@ -13,13 +13,16 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import buildcraft.BuildCraftCore;
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -31,10 +34,6 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
 
 public class TilePump extends TileMachine implements IMachine, IPowerReceptor, ITankContainer {
 

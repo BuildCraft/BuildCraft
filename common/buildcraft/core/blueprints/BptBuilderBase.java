@@ -9,11 +9,11 @@
 
 package buildcraft.core.blueprints;
 
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.IBuilderInventory;
-import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.World;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 

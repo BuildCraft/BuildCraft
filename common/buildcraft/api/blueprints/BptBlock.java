@@ -12,13 +12,12 @@ package buildcraft.api.blueprints;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.BuildCraftAPI;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
 
 /**
  * This class allow to specify specific behavior for blocks stored in

@@ -1,6 +1,8 @@
 package buildcraft.builders;
 
-import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.builders.gui.ContainerBlueprintLibrary;
 import buildcraft.builders.gui.ContainerBuilder;
 import buildcraft.builders.gui.ContainerFiller;
@@ -10,9 +12,7 @@ import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiFiller;
 import buildcraft.builders.gui.GuiTemplate;
 import buildcraft.core.GuiIds;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 

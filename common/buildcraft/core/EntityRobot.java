@@ -15,11 +15,9 @@ import java.util.List;
 
 import javax.management.RuntimeErrorException;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.Position;
@@ -30,9 +28,10 @@ import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 

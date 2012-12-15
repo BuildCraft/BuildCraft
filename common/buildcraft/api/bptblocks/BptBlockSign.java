@@ -11,14 +11,13 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BlockSignature;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
 
 public class BptBlockSign extends BptBlock {
 

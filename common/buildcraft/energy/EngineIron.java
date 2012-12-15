@@ -9,21 +9,21 @@
 
 package buildcraft.energy;
 
-import buildcraft.api.fuels.IronEngineCoolant;
-import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.Utils;
-import buildcraft.energy.gui.ContainerEngine;
-import net.minecraft.src.Block;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.block.Block;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
+import buildcraft.api.fuels.IronEngineCoolant;
+import buildcraft.api.fuels.IronEngineFuel;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.Utils;
+import buildcraft.energy.gui.ContainerEngine;
 
 public class EngineIron extends Engine {
 
@@ -106,7 +106,7 @@ public class EngineIron extends Engine {
 				if (burnTime > 0) {
 					burnTime--;
 				} else {
-					if(--fuel.amount <= 0) fuelTank.setLiquid(null);
+					fuel.amount--;
 					burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
 				}
 
@@ -128,10 +128,13 @@ public class EngineIron extends Engine {
 		super.update();
 
 		if (itemInInventory != null) {
-			LiquidStack liquid;
-			if (Block.ice.blockID == itemInInventory.itemID && heat > COOLANT_THRESHOLD) {
+			LiquidStack liquid = null;
+			if (Block.ice.blockID == itemInInventory.itemID && heat > COOLANT_THRESHOLD)
+			{
 				liquid = LiquidContainerRegistry.getLiquidForFilledItem(new ItemStack(Item.bucketWater));
-			} else {
+			}
+			else
+			{
 				liquid = LiquidContainerRegistry.getLiquidForFilledItem(itemInInventory);
 			}
 
@@ -148,13 +151,14 @@ public class EngineIron extends Engine {
 
 			LiquidStack coolant = this.coolantTank.getLiquid();
 			IronEngineCoolant currentCoolant = IronEngineCoolant.getCoolantForLiquid(coolant);
-			if (currentCoolant != null) {
-				if (coolant.amount * currentCoolant.coolingPerUnit > extraHeat) {
+			if (currentCoolant != null)
+			{
+				if(coolant.amount * currentCoolant.coolingPerUnit > extraHeat) {
 					coolant.amount -= Math.round(extraHeat / currentCoolant.coolingPerUnit);
 					heat = COOLANT_THRESHOLD;
 				} else {
 					heat -= coolant.amount * currentCoolant.coolingPerUnit;
-					coolantTank.setLiquid(null);
+					coolant.amount = 0;
 				}
 			}
 		}
@@ -164,9 +168,7 @@ public class EngineIron extends Engine {
 
 		}
 
-		if (heat <= 0) {
-			heat = 0;
-		}
+		if (heat <= 0) heat = 0;
 
 		if (heat == 0 && penaltyCooling > 0) {
 			penaltyCooling--;
@@ -336,7 +338,6 @@ public class EngineIron extends Engine {
 	}
 
 	/* ITANKCONTAINER */
-	@Override
 	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 
 		// Handle coolant
@@ -365,22 +366,18 @@ public class EngineIron extends Engine {
 	@Override public void setInventorySlotContents(int i, ItemStack itemstack) { itemInInventory = itemstack; }
 
 	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
+	public ItemStack decrStackSize(int i, int j) {
 		if (itemInInventory != null) {
-			if (itemInInventory.stackSize <= 0) {
+			ItemStack newStack = itemInInventory.splitStack(j);
+
+			if (itemInInventory.stackSize == 0) {
 				itemInInventory = null;
-				return null;
-			}
-			ItemStack newStack = itemInInventory;
-			if (amount >= newStack.stackSize) {
-				itemInInventory = null;
-			} else {
-				newStack = itemInInventory.splitStack(amount);
 			}
 
 			return newStack;
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	@Override

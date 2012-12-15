@@ -9,16 +9,16 @@
 
 package buildcraft.energy;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.Utils;
-import buildcraft.energy.gui.ContainerEngine;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntityFurnace;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.Utils;
+import buildcraft.energy.gui.ContainerEngine;
 
 public class EngineStone extends Engine {
 
@@ -171,22 +171,18 @@ public class EngineStone extends Engine {
 	@Override public void setInventorySlotContents(int i, ItemStack itemstack) { itemInInventory = itemstack; }
 
 	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
+	public ItemStack decrStackSize(int i, int j) {
 		if (itemInInventory != null) {
-			if (itemInInventory.stackSize <= 0) {
+			ItemStack newStack = itemInInventory.splitStack(j);
+
+			if (itemInInventory.stackSize == 0) {
 				itemInInventory = null;
-				return null;
-			}
-			ItemStack newStack = itemInInventory;
-			if (amount >= newStack.stackSize) {
-				itemInInventory = null;
-			} else {
-				newStack = itemInInventory.splitStack(amount);
 			}
 
 			return newStack;
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	@Override

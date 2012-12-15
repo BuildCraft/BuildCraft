@@ -12,32 +12,19 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.IMCCallback;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IExtractionHandler;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
@@ -78,16 +65,28 @@ import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.TriggerPipeContents;
-import buildcraft.transport.triggers.TriggerPipeSignal;
 import buildcraft.transport.triggers.TriggerPipeContents.Kind;
+import buildcraft.transport.triggers.TriggerPipeSignal;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.primitives.Ints;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.IMCCallback;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(version = Version.VERSION, modid="BuildCraft|Transport", name = "Buildcraft Transport", dependencies=DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels={DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerTransport.class)
@@ -99,7 +98,7 @@ public class BuildCraftTransport {
 	public static boolean alwaysConnectPipes;
 	public static boolean usePipeLoss;
 	public static int maxItemsInPipes;
-	public static float pipeDurability;
+	public static float pipeDuribility;
 
 	public static Item pipeWaterproof;
 	public static Item pipeGate;
@@ -219,9 +218,9 @@ public class BuildCraftTransport {
 			pipeLoss.comment = "Set to false to turn off energy loss over distance on all power pipes";
 			usePipeLoss = pipeLoss.getBoolean(DefaultProps.USE_PIPELOSS);
 
-			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
-			durability.comment = "How long a pipe will take to break";
-			pipeDurability = (float)durability.getDouble(DefaultProps.PIPES_DURABILITY);
+			Property duribility = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.duribility", DefaultProps.PIPES_DURIBILITY);
+			duribility.comment = "How long a pipe will take to break";
+			pipeDuribility = (float)duribility.getDouble(DefaultProps.PIPES_DURIBILITY);
 			
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_BLOCK,"woodenPipe.item.exclusion", "");
 
@@ -417,24 +416,28 @@ public class BuildCraftTransport {
 	}
 
 	@IMCCallback
-	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-		Splitter splitter = Splitter.on("@").trimResults();
-		for (IMCMessage m : event.getMessages()) {
-			if ("add-facade".equals(m.key)) {
-				String[] array = Iterables.toArray(splitter.split(m.value), String.class);
-				if (array.length != 2) {
-					Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.value, m.sender));
-					continue;
-				}
-				Integer blId = Ints.tryParse(array[0]);
-				Integer metaId = Ints.tryParse(array[1]);
-				if (blId == null || metaId == null) {
-					Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.value, m.sender));
-					continue;
-				}
-				ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
-			}
-		}
+	public void processIMCRequests(FMLInterModComms.IMCEvent event)	{
+	    Splitter splitter = Splitter.on("@").trimResults();
+	    for (IMCMessage m : event.getMessages())
+	    {
+	        if ("add-facade".equals(m.key))
+	        {
+	            String[] array = Iterables.toArray(splitter.split(m.value), String.class);
+	            if (array.length!=2)
+	            {
+	                Logger.getLogger("Buildcraft").log(Level.INFO,String.format("Received an invalid add-facade request %s from mod %s",m.value,m.sender));
+	                continue;
+	            }
+                    Integer blId = Ints.tryParse(array[0]);
+                    Integer metaId = Ints.tryParse(array[1]);
+	            if (blId == null || metaId == null)
+	            {
+                        Logger.getLogger("Buildcraft").log(Level.INFO,String.format("Received an invalid add-facade request %s from mod %s",m.value,m.sender));
+                        continue;
+	            }
+	            ItemFacade.addFacade(new ItemStack(blId, 0, metaId));
+	        }
+	    }
 	}
 
 	private static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3) {

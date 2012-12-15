@@ -9,12 +9,12 @@
 
 package buildcraft.core.render;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Render;
-import net.minecraft.src.Tessellator;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.entity.Entity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;

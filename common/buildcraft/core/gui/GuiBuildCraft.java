@@ -2,9 +2,9 @@ package buildcraft.core.gui;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.GuiContainer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.TileEntity;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 

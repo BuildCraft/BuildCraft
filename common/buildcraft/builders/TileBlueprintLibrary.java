@@ -3,19 +3,17 @@ package buildcraft.builders;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.builders.BuildersProxy;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
 
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public static final int COMMAND_NEXT = 1,

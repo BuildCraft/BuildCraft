@@ -9,10 +9,10 @@
 
 package buildcraft.energy;
 
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
-import net.minecraft.src.TileEntity;
 
 public class TriggerEngineHeat extends Trigger {
 

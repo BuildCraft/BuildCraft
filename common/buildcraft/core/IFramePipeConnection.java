@@ -9,7 +9,7 @@
 
 package buildcraft.core;
 
-import net.minecraft.src.IBlockAccess;
+import net.minecraft.world.IBlockAccess;
 
 public interface IFramePipeConnection {
 

@@ -2,11 +2,10 @@ package buildcraft.core;
 
 import java.util.List;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.ItemStack;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 

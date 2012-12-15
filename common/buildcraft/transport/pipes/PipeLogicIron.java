@@ -9,16 +9,16 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
-import net.minecraft.src.TileEntity;
 
 public class PipeLogicIron extends PipeLogic {
 

@@ -14,8 +14,15 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
-import buildcraft.BuildCraftTransport;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
@@ -34,14 +41,6 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
 import buildcraft.transport.pipes.PipeLogic;
 import buildcraft.transport.triggers.ActionSignalOutput;
-
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public abstract class Pipe implements IPipe, IDropControlInventory {
 
