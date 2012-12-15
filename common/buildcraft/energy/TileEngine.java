@@ -425,7 +425,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public boolean isPipeConnected(ForgeDirection with) {
-		if (engine != null && engine instanceof EngineWood) {
+		if (engine instanceof EngineWood) {
 			return false;
 		}
 
