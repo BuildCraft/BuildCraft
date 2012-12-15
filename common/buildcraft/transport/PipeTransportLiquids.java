@@ -20,6 +20,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketLiquidUpdate;
 import java.util.BitSet;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
@@ -151,6 +152,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private final short[] outputCooldown = new short[] {0, 0, 0, 0, 0, 0 };
 
 	private final SafeTimeTracker tracker = new SafeTimeTracker();
+	private int clientSyncCounter = 0;
 
 
 	public PipeTransportLiquids() {
@@ -195,75 +197,103 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 		if (tracker.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor)) {
 
-			boolean changed = false;
-			BitSet delta = new BitSet(21);
-
-			if (initClient > 0) {
-				initClient--;
-				if (initClient == 1) {
-					changed = true;
-					delta.set(0, 21);
-				}
+			boolean init = false;
+			if(++clientSyncCounter > BuildCraftCore.longUpdateFactor){
+				clientSyncCounter = 0;
+				init = true;
 			}
-
-			for (ForgeDirection dir : orientations) {
-				LiquidStack current = internalTanks[dir.ordinal()].getLiquid();
-				LiquidStack prev = renderCache[dir.ordinal()];
-
-				if (prev == null && current == null) {
-					continue;
-				}
-
-				if (prev == null && current != null) {
-					changed = true;
-					renderCache[dir.ordinal()] = current.copy();
-					delta.set(dir.ordinal() * 3 + 0);
-					delta.set(dir.ordinal() * 3 + 1);
-					delta.set(dir.ordinal() * 3 + 2);
-					continue;
-				}
-
-				if (prev != null && current == null) {
-					changed = true;
-					renderCache[dir.ordinal()] = null;
-					delta.set(dir.ordinal() * 3 + 0);
-					delta.set(dir.ordinal() * 3 + 1);
-					delta.set(dir.ordinal() * 3 + 2);
-					continue;
-				}
-
-				if (prev.itemID != current.itemID) {
-					changed = true;
-					renderCache[dir.ordinal()].itemID = current.itemID;
-					delta.set(dir.ordinal() * 3 + 0);
-				}
-
-				if (prev.itemMeta != current.itemMeta) {
-					changed = true;
-					renderCache[dir.ordinal()].itemMeta = current.itemMeta;
-					delta.set(dir.ordinal() * 3 + 1);
-				}
-
-				int displayQty = (prev.amount * 4 + current.amount) / 5;
-				if (displayQty == 0 && current.amount > 0) {
-					displayQty = current.amount;
-				}
-				displayQty = Math.min(getCapacity(), displayQty);
-
-				if (prev.amount != displayQty) {
-					changed = true;
-					renderCache[dir.ordinal()].amount = displayQty;
-					delta.set(dir.ordinal() * 3 + 2);
-				}
-			}
-
-			if (changed) {
-				PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord);
-				packet.renderCache = this.renderCache;
-				packet.delta = delta;
+			PacketLiquidUpdate packet = computeLiquidUpdate(init, true);
+			if(packet != null){
 				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
 		}
+	}
+	
+	/**
+	 * Computes the PacketLiquidUpdate packet for transmission to a client
+	 * @param initPacket everything is sent, no delta stuff ( first packet )
+	 * @param persistChange The render cache change is persisted
+	 * @return PacketLiquidUpdate liquid update packet
+	 */
+	private PacketLiquidUpdate computeLiquidUpdate(boolean initPacket, boolean persistChange){
+		
+		boolean changed = false;
+		BitSet delta = new BitSet(21);
+
+		if (initClient > 0) {
+			initClient--;
+			if (initClient == 1) {
+				changed = true;
+				delta.set(0, 21);
+			}
+		}
+
+		LiquidStack[] renderCache = this.renderCache.clone();
+		
+		for (ForgeDirection dir : orientations) {
+			LiquidStack current = internalTanks[dir.ordinal()].getLiquid();
+			LiquidStack prev = renderCache[dir.ordinal()];
+
+			if (prev == null && current == null) {
+				continue;
+			}
+
+			if (prev == null && current != null) {
+				changed = true;
+				renderCache[dir.ordinal()] = current.copy();
+				delta.set(dir.ordinal() * 3 + 0);
+				delta.set(dir.ordinal() * 3 + 1);
+				delta.set(dir.ordinal() * 3 + 2);
+				continue;
+			}
+
+			if (prev != null && current == null) {
+				changed = true;
+				renderCache[dir.ordinal()] = null;
+				delta.set(dir.ordinal() * 3 + 0);
+				delta.set(dir.ordinal() * 3 + 1);
+				delta.set(dir.ordinal() * 3 + 2);
+				continue;
+			}
+
+			if (prev.itemID != current.itemID || initPacket) {
+				changed = true;
+				renderCache[dir.ordinal()].itemID = current.itemID;
+				delta.set(dir.ordinal() * 3 + 0);
+			}
+
+			if (prev.itemMeta != current.itemMeta || initPacket) {
+				changed = true;
+				renderCache[dir.ordinal()].itemMeta = current.itemMeta;
+				delta.set(dir.ordinal() * 3 + 1);
+			}
+
+			int displayQty = (prev.amount * 4 + current.amount) / 5;
+			if (displayQty == 0 && current.amount > 0 || initPacket) {
+				displayQty = current.amount;
+			}
+			displayQty = Math.min(getCapacity(), displayQty);
+
+			if (prev.amount != displayQty || initPacket) {
+				changed = true;
+				renderCache[dir.ordinal()].amount = displayQty;
+				delta.set(dir.ordinal() * 3 + 2);
+			}
+		}		
+
+		if(persistChange){
+			this.renderCache = renderCache;
+		}
+
+		if (changed || initPacket) {
+			PacketLiquidUpdate packet = new PacketLiquidUpdate(xCoord, yCoord, zCoord, initPacket);
+			packet.renderCache = renderCache;
+			packet.delta = delta;
+			return packet;
+		}
+		
+		return null;
+		
 	}
 
 	/**
@@ -272,9 +302,10 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	@Override
 	public void sendDescriptionPacket() {
 		super.sendDescriptionPacket();
-
+		
 		initClient = 6;
 	}
+	
 	
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

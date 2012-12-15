@@ -91,6 +91,8 @@ public class BuildCraftCore {
 	public static int itemLifespan = 1200;
 
 	public static int updateFactor = 10;
+	
+	public static long longUpdateFactor = 40;
 
 	public static BuildCraftConfiguration mainConfiguration;
 
@@ -188,6 +190,10 @@ public class BuildCraftCore {
 			Property factor = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
 			updateFactor = factor.getInt(10);
+			
+			Property longFactor = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"network.stateRefreshPeriod", 40);
+			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
+			longUpdateFactor = longFactor.getInt(40);
 
 			String powerFrameworkClassName = "buildcraft.energy.PneumaticPowerFramework";
 			if (!forcePneumaticPower)
