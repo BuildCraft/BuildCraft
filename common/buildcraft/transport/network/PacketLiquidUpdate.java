@@ -22,6 +22,11 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 	public PacketLiquidUpdate(int xCoord, int yCoord, int zCoord) {
 		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
 	}
+	
+	public PacketLiquidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket) {
+		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
+		this.isChunkDataPacket = chunkPacket;
+	}
 
 	public PacketLiquidUpdate() {
 	}
