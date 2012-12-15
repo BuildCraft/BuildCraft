@@ -425,7 +425,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	@Override
 	public boolean isPipeConnected(ForgeDirection with) {
-		if (engine instanceof EngineWood) {
+		if (engine != null && engine instanceof EngineWood) {
 			return false;
 		}
 
@@ -444,6 +444,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	/* ILIQUIDCONTAINER */
 	@Override
 	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+		if(engine == null) {
+			return 0;
+		}
 		return engine.fill(from, resource, doFill);
 	}
 
