@@ -444,6 +444,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	/* ILIQUIDCONTAINER */
 	@Override
 	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+		if(engine == null) {
+			return 0;
+		}
 		return engine.fill(from, resource, doFill);
 	}
 
