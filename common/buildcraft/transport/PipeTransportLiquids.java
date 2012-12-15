@@ -152,6 +152,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	private final short[] outputCooldown = new short[] {0, 0, 0, 0, 0, 0 };
 
 	private final SafeTimeTracker tracker = new SafeTimeTracker();
+	private int clientSyncCounter = 0;
 
 
 	public PipeTransportLiquids() {
@@ -196,7 +197,12 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 		if (tracker.markTimeIfDelay(worldObj, BuildCraftCore.updateFactor)) {
 
-			PacketLiquidUpdate packet = computeLiquidUpdate(false, true);
+			boolean init = false;
+			if(++clientSyncCounter > BuildCraftCore.longUpdateFactor){
+				clientSyncCounter = 0;
+				init = true;
+			}
+			PacketLiquidUpdate packet = computeLiquidUpdate(init, true);
 			if(packet != null){
 				CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
@@ -297,10 +303,6 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public void sendDescriptionPacket() {
 		super.sendDescriptionPacket();
 		
-		PacketLiquidUpdate packet = computeLiquidUpdate(true, false);
-		if(packet != null){
-			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
-		}
 		initClient = 6;
 	}
 	
