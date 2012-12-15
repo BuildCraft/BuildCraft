@@ -9,7 +9,7 @@
 
 package buildcraft.builders.gui;
 
-import net.minecraft.src.IInventory;
+import net.minecraft.inventory.IInventory;
 
 import org.lwjgl.opengl.GL11;
 

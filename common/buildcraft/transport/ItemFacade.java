@@ -6,25 +6,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-
-import buildcraft.BuildCraftTransport;
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class ItemFacade extends ItemBuildCraft {
 
@@ -130,14 +129,14 @@ public class ItemFacade extends ItemBuildCraft {
 		return ((encoded & 0xFFF0) >>> 4);
 	}
 
-	public static void addFacade(ItemStack itemStack) {
-		allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage())));
+        public static void addFacade(ItemStack itemStack) {
+            allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage())));
 
-		//3 Structurepipes + this block makes 6 facades
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(
-				new ItemStack[]{new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack},
-				8000,
-				new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()))));
-	}
+            //3 Structurepipes + this block makes 6 facades
+            AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(
+                                            new ItemStack[] {new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack},
+                                            8000,
+                                            new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID,  itemStack.getItemDamage()))));
+        }
 }
 

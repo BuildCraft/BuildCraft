@@ -20,7 +20,7 @@ public class EnergyProxyClient extends EnergyProxy {
 
 	@Override
 	public void registerTextureFX() {
-		net.minecraft.src.RenderEngine renderEngine = FMLClientHandler.instance().getClient().renderEngine;
+		net.minecraft.client.renderer.RenderEngine renderEngine = FMLClientHandler.instance().getClient().renderEngine;
 
 		renderEngine.registerTextureFX(new TextureOilFX());
 		renderEngine.registerTextureFX(new TextureFuelFX());

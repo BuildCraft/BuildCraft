@@ -1,9 +1,9 @@
 package buildcraft.core.gui;
 
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.OpenGlHelper;
-import net.minecraft.src.RenderHelper;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 

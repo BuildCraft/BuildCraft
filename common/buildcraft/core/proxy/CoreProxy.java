@@ -13,26 +13,24 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
+import buildcraft.core.ItemBlockBuildCraft;
+import buildcraft.core.network.BuildCraftPacket;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
-
-import buildcraft.core.ItemBlockBuildCraft;
-import buildcraft.core.network.BuildCraftPacket;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.ChunkCoordinates;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Packet;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class CoreProxy {
 
@@ -159,55 +157,13 @@ public class CoreProxy {
 		player.username = "[BuildCraft]";
 		return player;
 	}
-	
-	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
-        EntityPlayer player = new EntityPlayer(world) {
-
-            @Override
-            public void sendChatToPlayer(String var1) {
-            }
-
-            @Override
-            public boolean canCommandSenderUseCommand(int var1, String var2) {
-                return false;
-            }
-
-            @Override
-            public ChunkCoordinates getPlayerCoordinates() {
-                return null;
-            }
-
-        };
-        player.username = "[BuildCraft]";
-        player.posX = (int) x;
-        player.posY = (int) y;
-        player.posZ = (int) z;
-        return player;
-    }
 
 	public EntityPlayer getBuildCraftPlayer(World world) {
 		if (CoreProxy.buildCraftPlayer == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);
 		}
-		else {
-		    CoreProxy.buildCraftPlayer.worldObj = world;
-		}
 
 		return CoreProxy.buildCraftPlayer;
 	}
-	
-	public EntityPlayer getBuildCraftPlayer(World world, int x, int y, int z) {
-        if (CoreProxy.buildCraftPlayer == null) {
-            CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
-        }
-        else {
-            CoreProxy.buildCraftPlayer.worldObj = world;
-            CoreProxy.buildCraftPlayer.posX = (int) x;
-            CoreProxy.buildCraftPlayer.posY = (int) y;
-            CoreProxy.buildCraftPlayer.posZ = (int) z;
-        }
-
-        return CoreProxy.buildCraftPlayer;
-    }
 
 }

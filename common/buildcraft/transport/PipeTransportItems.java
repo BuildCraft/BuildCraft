@@ -9,6 +9,22 @@
 
 package buildcraft.transport;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
@@ -24,27 +40,12 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportContent;
 import cpw.mods.fml.common.network.PacketDispatcher;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.Packet;
-import net.minecraft.src.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
 
 	public boolean allowBouncing = false;
-	public Map<Integer, EntityData> travelingEntities = new HashMap<Integer, EntityData>();
-	private final List<EntityData> entitiesToLoad = new LinkedList<EntityData>();
+	public Map<Integer, EntityData> travelingEntities = new TreeMap<Integer, EntityData>();
+	private final List<EntityData> entitiesToLoad = new ArrayList<EntityData>();
 
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
@@ -57,20 +58,17 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	public void defaultReajustSpeed(IPipedItem item) {
-		float speed = item.getSpeed();
-		
-		if (speed > Utils.pipeNormalSpeed)
-			speed -= Utils.pipeNormalSpeed;
 
-		if (speed < Utils.pipeNormalSpeed)
-			speed = Utils.pipeNormalSpeed;
-		
-		item.setSpeed(speed);
+		if (item.getSpeed() > Utils.pipeNormalSpeed)
+			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed);
+
+		if (item.getSpeed() < Utils.pipeNormalSpeed)
+			item.setSpeed(Utils.pipeNormalSpeed);
 	}
 
 	@Override
 	public void entityEntering(IPipedItem item, ForgeDirection orientation) {
-		if (item.isCorrupted()) 
+		if (item.isCorrupted())
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
@@ -83,26 +81,22 @@ public class PipeTransportItems extends PipeTransport {
 			data = new EntityData(item, orientation);
 			travelingEntities.put(item.getEntityId(), data);
 
-			if (item.getContainer() != null && item.getContainer() != this.container) {
+			if (item.getContainer() != null && item.getContainer() != this.container)
 				((PipeTransportItems) ((TileGenericPipe) item.getContainer()).pipe.transport).scheduleRemoval(item);
-			}
 
 			item.setContainer(container);
 		}
 
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
-		if (orientation != ForgeDirection.UP && orientation != ForgeDirection.DOWN) {
+		if (orientation != ForgeDirection.UP && orientation != ForgeDirection.DOWN)
 			item.setPosition(item.getPosition().x, yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
-		}
 
-		if (!worldObj.isRemote) {
-			data.output = resolveDestination(data);
-		}
+		  if (!worldObj.isRemote)
+				data.output = resolveDestination(data);
 
-		if (container.pipe instanceof IPipeTransportItemsHook) {
+		if (container.pipe instanceof IPipeTransportItemsHook)
 			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
-		}
 
 		if (!worldObj.isRemote) {
 			sendItemPacket(data);
@@ -111,9 +105,8 @@ public class PipeTransportItems extends PipeTransport {
 		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
 			groupEntities();
 
-			if (travelingEntities.size() > BuildCraftTransport.maxItemsInPipes) {
+			if (travelingEntities.size() > BuildCraftTransport.maxItemsInPipes)
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 1, false);
-			}
 		}
 	}
 
@@ -170,11 +163,10 @@ public class PipeTransportItems extends PipeTransport {
 
 		data.blacklist.add(data.input.getOpposite());
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
 			if (!data.blacklist.contains(o) && container.pipe.outputOpen(o))
 				if (canReceivePipeObjects(o, data.item))
 					result.add(o);
-		}
 
 		if (result.size() == 0 && allowBouncing) {
 			if (canReceivePipeObjects(data.input.getOpposite(), data.item))
@@ -213,7 +205,7 @@ public class PipeTransportItems extends PipeTransport {
 		moveSolids();
 	}
 
-	Set<Integer> toRemove = new HashSet<Integer>();
+	HashSet<Integer> toRemove = new HashSet<Integer>();
 
 	public void scheduleRemoval(IPipedItem item) {
 		toRemove.add(item.getEntityId());
@@ -229,13 +221,12 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void moveSolids() {
-		if(!entitiesToLoad.isEmpty()){
-			for (EntityData data : entitiesToLoad) {
-				data.item.setWorld(worldObj);
-				travelingEntities.put(data.item.getEntityId(), data);
-			}
-			entitiesToLoad.clear();
+		for (EntityData data : entitiesToLoad) {
+			data.item.setWorld(worldObj);
+			travelingEntities.put(data.item.getEntityId(), data);
 		}
+
+		entitiesToLoad.clear();
 		performRemoval();
 
 		for (EntityData data : travelingEntities.values()) {
@@ -248,12 +239,9 @@ public class PipeTransportItems extends PipeTransport {
 			Position motion = new Position(0, 0, 0, data.toCenter ? data.input : data.output);
 			motion.moveForwards(data.item.getSpeed());
 
-			
-			Position pos = data.item.getPosition();
-			data.item.setPosition(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
-			pos = data.item.getPosition();
+			data.item.setPosition(data.item.getPosition().x + motion.x, data.item.getPosition().y + motion.y, data.item.getPosition().z + motion.z);
 
-			if ((data.toCenter && middleReached(data, pos)) || outOfBounds(pos)) {
+			if ((data.toCenter && middleReached(data)) || outOfBounds(data)) {
 				data.toCenter = false;
 
 				// Reajusting to the middle
@@ -277,7 +265,7 @@ public class PipeTransportItems extends PipeTransport {
 						travelHook.centerReached(this, data);
 				}
 
-			} else if (!data.toCenter && endReached(pos)) {
+			} else if (!data.toCenter && endReached(data)) {
 				Position destPos = new Position(xCoord, yCoord, zCoord, data.output);
 
 				destPos.moveForwards(1.0);
@@ -328,21 +316,21 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 
-	protected boolean middleReached(EntityData entity, Position pos) {
+	public boolean middleReached(EntityData entity) {
 		float middleLimit = entity.item.getSpeed() * 1.01F;
-		return (Math.abs(xCoord + 0.5 - pos.x) < middleLimit
-				&& Math.abs(yCoord + Utils.getPipeFloorOf(entity.item.getItemStack()) - pos.y) < middleLimit
-				&& Math.abs(zCoord + 0.5 - pos.z) < middleLimit);
+		return (Math.abs(xCoord + 0.5 - entity.item.getPosition().x) < middleLimit
+				&& Math.abs(yCoord + Utils.getPipeFloorOf(entity.item.getItemStack()) - entity.item.getPosition().y) < middleLimit && Math.abs(zCoord
+				+ 0.5 - entity.item.getPosition().z) < middleLimit);
 	}
 
-	protected boolean endReached(Position pos) {
-		return pos.x > xCoord + 1 ||pos.x < xCoord || pos.y > yCoord + 1
-				|| pos.y < yCoord || pos.z > zCoord + 1 || pos.z < zCoord;
+	public boolean endReached(EntityData entity) {
+		return entity.item.getPosition().x > xCoord + 1.0 || entity.item.getPosition().x < xCoord || entity.item.getPosition().y > yCoord + 1.0
+				|| entity.item.getPosition().y < yCoord || entity.item.getPosition().z > zCoord + 1.0 || entity.item.getPosition().z < zCoord;
 	}
 
-	protected boolean outOfBounds(Position pos) {
-		return pos.x > xCoord + 2 || pos.x < xCoord - 1 || pos.y > yCoord + 2
-				|| pos.y < yCoord - 1 || pos.z > zCoord + 2 || pos.z < zCoord - 1;
+	public boolean outOfBounds(EntityData entity) {
+		return entity.item.getPosition().x > xCoord + 2.0 || entity.item.getPosition().x < xCoord - 1.0 || entity.item.getPosition().y > yCoord + 2.0
+				|| entity.item.getPosition().y < yCoord - 1.0 || entity.item.getPosition().z > zCoord + 2.0 || entity.item.getPosition().z < zCoord - 1.0;
 	}
 
 	public Position getPosition() {
@@ -355,7 +343,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		NBTTagList nbttaglist = nbt.getTagList("travelingEntities");
 
-		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
+		for (int j = 0; j < nbttaglist.tagCount(); ++j)
 			try {
 				NBTTagCompound dataTag = (NBTTagCompound) nbttaglist.tagAt(j);
 
@@ -379,7 +367,6 @@ public class PipeTransportItems extends PipeTransport {
 				// It may be the case that entities cannot be reloaded between
 				// two versions - ignore these errors.
 			}
-		}
 	}
 
 	@Override
@@ -414,7 +401,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		EntityData data = travelingEntities.remove(packet.getEntityId());
 
-		IPipedItem item;
+		IPipedItem item = null;
 		if(data == null) {
 			item = EntityPassiveItem.getOrCreate(worldObj, packet.getEntityId());
 		} else {
@@ -445,7 +432,7 @@ public class PipeTransportItems extends PipeTransport {
 	 * @return
 	 */
 	public Packet createItemPacket(EntityData data) {
-		PacketPipeTransportContent packet = new PacketPipeTransportContent(data);
+		PacketPipeTransportContent packet = new PacketPipeTransportContent(container.xCoord, container.yCoord, container.zCoord, data);
 		return packet.getPacket();
 	}
 

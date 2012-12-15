@@ -9,21 +9,24 @@
 
 package buildcraft.factory;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
-
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet3Chat;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -42,16 +45,10 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.ChunkCoordIntPair;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet3Chat;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.ForgeChunkManager.Type;
+import com.google.common.collect.Sets;
+
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 	public @TileNetworkData
@@ -243,99 +240,64 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 
-	private LinkedList<int[]> visitList = Lists.newLinkedList();
-
 	public boolean findTarget(boolean doSet) {
 
 		if (worldObj.isRemote)
 			return false;
 
-		if (visitList.isEmpty())
-		{
-		    createColumnVisitList();
+		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
+
+//		for (int searchX = 0; searchX < bluePrintBuilder.bluePrint.sizeX - 2; ++searchX) {
+//			for (int searchZ = 0; searchZ < bluePrintBuilder.bluePrint.sizeZ - 2; ++searchZ) {
+//				blockedColumns[searchX][searchZ] = false;
+//			}
+//		}
+//
+		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
+			int startX, endX, incX;
+
+			if (searchY % 2 == 0) {
+				startX = 0;
+				endX = bluePrintBuilder.bluePrint.sizeX - 2;
+				incX = 1;
+			} else {
+				startX = bluePrintBuilder.bluePrint.sizeX - 3;
+				endX = -1;
+				incX = -1;
+			}
+
+			for (int searchX = startX; searchX != endX; searchX += incX) {
+				int startZ, endZ, incZ;
+
+				if (searchX % 2 == searchY % 2) {
+					startZ = 0;
+					endZ = bluePrintBuilder.bluePrint.sizeZ - 2;
+					incZ = 1;
+				} else {
+					startZ = bluePrintBuilder.bluePrint.sizeZ - 3;
+					endZ = -1;
+					incZ = -1;
+				}
+
+				for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
+					if (!blockedColumns[searchX][searchZ]) {
+						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
+
+						if (!BlockUtil.canChangeBlock(worldObj, bx, by, bz)) {
+							blockedColumns[searchX][searchZ] = true;
+						} else if (!BlockUtil.isSoftBlock(worldObj, bx, by, bz)) {
+							if (doSet) {
+								setTarget(bx, by + 1, bz);
+							}
+
+							return true;
+						}
+					}
+				}
+			}
 		}
 
-		if (!doSet)
-		{
-		    return !visitList.isEmpty();
-		}
-
-		if (visitList.isEmpty()) {
-		    return false;
-		}
-
-	    boolean foundTarget = false;
-	    int[] target;
-	    do {
-	        if (visitList.isEmpty()) {
-	            createColumnVisitList();
-	        }
-		    target = visitList.removeFirst();
-		    boolean alternativeTarget = false;
-		    for (int y = target[1]+1; y < yCoord+3; y++) {
-                if (BlockUtil.canChangeBlock(worldObj, target[0], y, target[2]) && !BlockUtil.isSoftBlock(worldObj, target[0], y, target[2])) {
-                    createColumnVisitList();
-                    alternativeTarget = true;
-                    break;
-                }
-		    }
-		    foundTarget = !alternativeTarget;
-        }
-	    while (!foundTarget);
-
-	    setTarget(target[0],target[1] + 1,target[2]);
-	    return true;
-	}
-
-	/**
-	 * Make the column visit list: called once per layer
-	 */
-	private void createColumnVisitList()	{
-	    visitList.clear();
-        boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
-        for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
-            int startX, endX, incX;
-
-            if (searchY % 2 == 0) {
-                startX = 0;
-                endX = bluePrintBuilder.bluePrint.sizeX - 2;
-                incX = 1;
-            } else {
-                startX = bluePrintBuilder.bluePrint.sizeX - 3;
-                endX = -1;
-                incX = -1;
-            }
-
-            for (int searchX = startX; searchX != endX; searchX += incX) {
-                int startZ, endZ, incZ;
-
-                if (searchX % 2 == searchY % 2) {
-                    startZ = 0;
-                    endZ = bluePrintBuilder.bluePrint.sizeZ - 2;
-                    incZ = 1;
-                } else {
-                    startZ = bluePrintBuilder.bluePrint.sizeZ - 3;
-                    endZ = -1;
-                    incZ = -1;
-                }
-
-                for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
-                    if (!blockedColumns[searchX][searchZ]) {
-                        int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
-
-                        if (!BlockUtil.canChangeBlock(worldObj, bx, by, bz)) {
-                            blockedColumns[searchX][searchZ] = true;
-                        } else if (!BlockUtil.isSoftBlock(worldObj, bx, by, bz)) {
-                            visitList.add(new int[] { bx, by, bz });
-                        }
-                        // Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
-                        if (visitList.size() > bluePrintBuilder.bluePrint.sizeZ * bluePrintBuilder.bluePrint.sizeX * 2)
-                            return;
-                    }
-                }
-            }
-        }
-
+		return false;
 	}
 
 	@Override

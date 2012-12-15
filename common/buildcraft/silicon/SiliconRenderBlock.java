@@ -9,18 +9,16 @@
 
 package buildcraft.silicon;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.Tessellator;
-
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 	@Override

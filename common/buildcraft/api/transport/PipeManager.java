@@ -1,13 +1,12 @@
 package buildcraft.api.transport;
 
-import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
+import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
-
-import net.minecraft.src.World;
 
 public abstract class PipeManager {
 

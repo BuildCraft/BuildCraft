@@ -1,7 +1,7 @@
 package buildcraft.factory.gui;
 
-import net.minecraft.src.GuiContainer;
-import net.minecraft.src.InventoryPlayer;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
 

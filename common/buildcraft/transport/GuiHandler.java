@@ -1,16 +1,15 @@
 package buildcraft.transport;
 
-import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.core.GuiIds;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerDiamondPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiGateInterface;
 import buildcraft.transport.pipes.PipeLogicDiamond;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 

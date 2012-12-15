@@ -1,13 +1,13 @@
 package buildcraft.silicon;
 
-import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.silicon.gui.ContainerAssemblyAdvancedWorkbench;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 import buildcraft.silicon.gui.GuiAssemblyAdvancedWorkbench;
 import buildcraft.silicon.gui.GuiAssemblyTable;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 

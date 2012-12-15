@@ -9,11 +9,11 @@
 
 package buildcraft.core.triggers;
 
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import net.minecraft.src.TileEntity;
 
 public class TriggerMachine extends Trigger {
 

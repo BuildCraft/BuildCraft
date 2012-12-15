@@ -11,8 +11,8 @@ package buildcraft.transport.gui;
 
 import java.util.Iterator;
 
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
@@ -21,8 +21,8 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.Gate.GateKind;
+import buildcraft.transport.Pipe;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 

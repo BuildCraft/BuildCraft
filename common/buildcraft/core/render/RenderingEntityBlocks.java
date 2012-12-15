@@ -2,15 +2,16 @@ package buildcraft.core.render;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.IBlockAccess;
+
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.utils.Utils;
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.Tessellator;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {

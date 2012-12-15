@@ -2,12 +2,11 @@ package buildcraft.core;
 
 import java.util.List;
 
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.src.CommandBase;
-import net.minecraft.src.ICommand;
-import net.minecraft.src.ICommandSender;
-import net.minecraft.src.WrongUsageException;
 
 public class CommandBuildCraft extends CommandBase {
 
@@ -48,12 +47,7 @@ public class CommandBuildCraft extends CommandBase {
 	}
 
 	private void commandVersion(ICommandSender sender, String[] arguments) {
-		String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
-		
-    	sender.sendChatToPlayer(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(), CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion()));
-    	if(Version.isOutdated())
-    		for(String updateLine : Version.getChangelog())
-    			sender.sendChatToPlayer("\u00A79" + updateLine);
+    	sender.sendChatToPlayer(String.format("BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(), CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion()));
 	}
 	
 

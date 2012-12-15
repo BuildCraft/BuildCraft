@@ -11,9 +11,12 @@ package buildcraft.factory;
 
 import java.util.List;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -21,10 +24,6 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
 
 public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
 

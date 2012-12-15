@@ -11,15 +11,14 @@ package buildcraft.factory.render;
 
 import java.util.HashMap;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.GLAllocation;
-import net.minecraft.src.Item;
-import net.minecraft.src.ModelBase;
-import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntitySpecialRenderer;
-import net.minecraft.src.World;
-
+import net.minecraft.block.Block;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
@@ -83,7 +82,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		// Retrieve the texture depending on type of item.
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
+			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 
 		else if (Item.itemsList[liquidId] != null)
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);

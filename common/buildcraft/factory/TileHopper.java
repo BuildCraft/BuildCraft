@@ -1,18 +1,18 @@
 package buildcraft.factory;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.InventoryUtil;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.SimpleInventory;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
-import net.minecraftforge.common.ISidedInventory;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
 

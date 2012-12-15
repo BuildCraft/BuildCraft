@@ -12,13 +12,12 @@ package buildcraft.builders;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IFillerRegistry;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
 
 public class FillerRegistry implements IFillerRegistry {
 

@@ -11,7 +11,7 @@ package buildcraft.builders.gui;
 
 import java.util.Date;
 
-import net.minecraft.src.IInventory;
+import net.minecraft.inventory.IInventory;
 
 import org.lwjgl.opengl.GL11;
 

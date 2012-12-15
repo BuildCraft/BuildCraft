@@ -1,12 +1,12 @@
 package buildcraft.energy.gui;
 
+import net.minecraft.inventory.IInventory;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.energy.Engine;
 import buildcraft.energy.TileEngine;
-import net.minecraft.src.IInventory;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 

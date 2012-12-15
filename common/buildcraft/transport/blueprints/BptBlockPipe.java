@@ -11,6 +11,9 @@ package buildcraft.transport.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blueprints.BlockSignature;
@@ -23,10 +26,6 @@ import buildcraft.core.Version;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GateVanilla;
 import buildcraft.transport.Pipe;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
 
 public class BptBlockPipe extends BptBlock {
 

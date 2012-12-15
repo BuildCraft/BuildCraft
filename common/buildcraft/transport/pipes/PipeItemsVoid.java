@@ -9,13 +9,13 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
-import net.minecraft.src.TileEntity;
 
 public class PipeItemsVoid extends Pipe implements IItemTravelingHook{
 

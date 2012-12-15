@@ -11,15 +11,14 @@ package buildcraft.energy;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.block.material.Material;
+import net.minecraft.world.World;
+import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockFluid;
-import net.minecraft.src.Material;
-import net.minecraft.src.World;
-import net.minecraftforge.liquids.ILiquid;
 
 
 public class BlockOilFlowing extends BlockFluid implements ILiquid {

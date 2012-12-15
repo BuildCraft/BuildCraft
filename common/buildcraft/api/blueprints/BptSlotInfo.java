@@ -11,8 +11,8 @@ package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * This class records a slot, either from a blueprint or from a block placed in

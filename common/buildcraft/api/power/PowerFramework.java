@@ -9,7 +9,7 @@
 
 package buildcraft.api.power;
 
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class PowerFramework {
 

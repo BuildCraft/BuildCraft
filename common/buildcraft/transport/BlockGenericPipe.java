@@ -13,12 +13,21 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
@@ -26,19 +35,8 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
-
-import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
-import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.Vec3;
-import net.minecraft.src.World;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 
 public class BlockGenericPipe extends BlockContainer {
@@ -52,7 +50,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public float getBlockHardness(World par1World, int par2, int par3, int par4) {
-		return BuildCraftTransport.pipeDurability;
+		return BuildCraftTransport.pipeDuribility;
 	}
 	
 	@Override
@@ -386,8 +384,9 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.signalStrength[IPipe.WireColor.Red.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+					pipe.container.scheduleRenderUpdate();
+					//world.markBlockNeedsUpdate(i, j, k);
+
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
@@ -395,8 +394,9 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.signalStrength[IPipe.WireColor.Blue.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+					pipe.container.scheduleRenderUpdate();
+					//world.markBlockNeedsUpdate(i, j, k);
+
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
@@ -404,8 +404,7 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.signalStrength[IPipe.WireColor.Green.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
@@ -413,8 +412,7 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
 					if (!entityplayer.capabilities.isCreativeMode)
 						entityplayer.getCurrentEquippedItem().splitStack(1);
-					pipe.signalStrength[IPipe.WireColor.Yellow.ordinal()] = 0;
-					pipe.container.scheduleNeighborChange();
+					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
 			} else if (entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.shiftedIndex

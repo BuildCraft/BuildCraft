@@ -2,11 +2,10 @@ package buildcraft.core;
 
 import java.util.Random;
 
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.world.World;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.Material;
-import net.minecraft.src.World;
 
 
 public abstract class BlockBuildCraft extends BlockContainer {

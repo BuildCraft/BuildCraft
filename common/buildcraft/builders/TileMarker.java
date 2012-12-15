@@ -9,6 +9,8 @@
 
 package buildcraft.builders;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -19,8 +21,6 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
 

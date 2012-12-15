@@ -9,9 +9,9 @@
 
 package buildcraft.core.render;
 
+import net.minecraft.client.model.ModelRenderer;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
-import net.minecraft.src.ModelRenderer;
 
 public class RenderEnergyLaser extends RenderLaser {
 

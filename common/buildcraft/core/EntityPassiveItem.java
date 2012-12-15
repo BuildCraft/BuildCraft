@@ -11,22 +11,21 @@ package buildcraft.core;
 
 import java.util.TreeMap;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPassiveItemContribution;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class EntityPassiveItem implements IPipedItem {
 
@@ -50,7 +49,7 @@ public class EntityPassiveItem implements IPipedItem {
 
 	/* CONSTRUCTORS */
 	public EntityPassiveItem(World world) {
-		this(world, maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
+		this(world, maxId != Integer.MAX_VALUE ? ++maxId : (maxId = 0));
 	}
 
 	public EntityPassiveItem(World world, int id) {

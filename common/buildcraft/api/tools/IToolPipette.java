@@ -1,6 +1,6 @@
 package buildcraft.api.tools;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.liquids.LiquidStack;
 
 public interface IToolPipette {

@@ -12,29 +12,28 @@ package buildcraft.transport.render;
 import java.util.HashMap;
 import java.util.Random;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.GLAllocation;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.RenderManager;
-import net.minecraft.src.Tessellator;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntitySpecialRenderer;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderEntityBlock;
@@ -48,19 +47,21 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
-	
-	final static private int LIQUID_STAGES = 40;
 
-	final static private int MAX_ITEMS_TO_RENDER = 10;
+	final static private int maxPower = 1000;
+
+	final static private int displayLiquidStages = 40;
+
+	final static private int numItemsToRender = 10;
 
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
 	private class DisplayLiquidList {
-            
-		public int[] sideHorizontal = new int[LIQUID_STAGES];
-		public int[] sideVertical = new int[LIQUID_STAGES];
-		public int[] centerHorizontal = new int[LIQUID_STAGES];
-		public int[] centerVertical = new int[LIQUID_STAGES];
+
+		public int[] sideHorizontal = new int[displayLiquidStages];
+		public int[] sideVertical = new int[displayLiquidStages];
+		public int[] centerHorizontal = new int[displayLiquidStages];
+		public int[] centerVertical = new int[displayLiquidStages];
 	}
 
 	private HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
@@ -69,10 +70,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
 
-	final static private int POWER_STAGES = 100;
+	final static private int displayPowerStages = 80;
 
-	public int[] displayPowerList = new int[POWER_STAGES];
-	public int[] displayPowerListOverload = new int[POWER_STAGES];
+	public int[] displayPowerList = new int[displayPowerStages];
+	public double[] displayPowerLimits = new double[displayPowerStages];
 
 	private RenderBlocks renderBlocks;
 
@@ -96,7 +97,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		BlockInterface block = new BlockInterface();
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, meta);
+			block.texture = Block.blocksList[liquidId].blockIndexInTexture;
 		else
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
 
@@ -104,8 +105,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		// render size
 
-		for (int s = 0; s < LIQUID_STAGES; ++s) {
-			float ratio = (float) s / (float) LIQUID_STAGES;
+		for (int s = 0; s < displayLiquidStages; ++s) {
+			float ratio = (float) s / (float) displayLiquidStages;
 
 			// SIDE HORIZONTAL
 
@@ -193,17 +194,17 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = 4;
+		block.texture = 0 * 16 + 4;
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
-		for (int s = 0; s < POWER_STAGES; ++s) {
+		for (int s = 0; s < displayPowerStages; ++s) {
 			displayPowerList[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(displayPowerList[s], 4864 /* GL_COMPILE */);
 
 			float minSize = 0.005F;
 
-			float unit = (size - minSize) / 2F / POWER_STAGES;
+			float unit = (size - minSize) / 2F / displayPowerStages;
 
 			block.minY = 0.5 - (minSize / 2F) - unit * s;
 			block.maxY = 0.5 + (minSize / 2F) + unit * s;
@@ -218,32 +219,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			GL11.glEndList();
 		}
-		
-		block.texture = 6;
 
-		size = Utils.pipeMaxPos - Utils.pipeMinPos;
-
-		for (int s = 0; s < POWER_STAGES; ++s) {
-			displayPowerListOverload[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(displayPowerListOverload[s], 4864 /* GL_COMPILE */);
-
-			float minSize = 0.005F;
-
-			float unit = (size - minSize) / 2F / POWER_STAGES;
-
-			block.minY = 0.5 - (minSize / 2F) - unit * s;
-			block.maxY = 0.5 + (minSize / 2F) + unit * s;
-
-			block.minZ = 0.5 - (minSize / 2F) - unit * s;
-			block.maxZ = 0.5 + (minSize / 2F) + unit * s;
-
-			block.minX = 0;
-			block.maxX = 0.5 + (minSize / 2F) + unit * s;
-
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
-
-			GL11.glEndList();
-		}
+		for (int i = 0; i < displayPowerStages; ++i)
+			displayPowerLimits[displayPowerStages - i - 1] = maxPower
+					- Math.sqrt(maxPower * maxPower / (displayPowerStages - 1) * i);
 	}
 
 	@Override
@@ -279,8 +258,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
-		
-		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
@@ -289,12 +266,16 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glRotatef(angleZ[i], 0, 0, 1);
 
 			if (pow.displayPower[i] >= 1.0) {
-				short stage = pow.displayPower[i];
+				int stage = 0;
 
-				if (stage < displayList.length)
-					GL11.glCallList(displayList[stage]);
+				for (; stage < displayPowerStages; ++stage)
+					if (displayPowerLimits[stage] > pow.displayPower[i])
+						break;
+
+				if (stage < displayPowerList.length)
+					GL11.glCallList(displayPowerList[stage]);
 				else
-					GL11.glCallList(displayList[displayList.length - 1]);
+					GL11.glCallList(displayPowerList[displayPowerList.length - 1]);
 			}
 
 			GL11.glPopMatrix();
@@ -329,30 +310,30 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				if (d == null)
 					continue;
 
-				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
 
-				switch (ForgeDirection.VALID_DIRECTIONS[i]) {
-					case UP:
-						above = true;
-						list = d.sideVertical[stage];
-						break;
-					case DOWN:
-						GL11.glTranslatef(0, -0.75F, 0);
-						list = d.sideVertical[stage];
-						break;
-					case EAST:
-					case WEST:
-					case SOUTH:
-					case NORTH:
-						sides = true;
-						GL11.glRotatef(angleY[i], 0, 1, 0);
-						GL11.glRotatef(angleZ[i], 0, 0, 1);
-						list = d.sideHorizontal[stage];
-						break;
-					default:
+				switch (ForgeDirection.values()[i]) {
+				case UP:
+					above = true;
+					list = d.sideVertical[stage];
+					break;
+				case DOWN:
+					GL11.glTranslatef(0, -0.75F, 0);
+					list = d.sideVertical[stage];
+					break;
+				case EAST:
+				case WEST:
+				case SOUTH:
+				case NORTH:
+					sides = true;
+					GL11.glRotatef(angleY[i], 0, 1, 0);
+					GL11.glRotatef(angleZ[i], 0, 0, 1);
+					list = d.sideHorizontal[stage];
+					break;
+				default:
 				}
 
 				GL11.glCallList(list);
@@ -371,7 +352,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) liquid.amount / (float) (PipeTransportLiquids.LIQUID_IN_PIPE) * (displayLiquidStages - 1));
 
 				if (above)
 					GL11.glCallList(d.centerVertical[stage]);
@@ -411,7 +392,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		int count = 0;
 		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
-			if(count >= MAX_ITEMS_TO_RENDER)
+			if(count >= numItemsToRender)
 				break;
 
 			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z
@@ -471,7 +452,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
 				&& Block.blocksList[itemstack.itemID].blockID != 0) {
-
+				//&& RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())) {
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
 
 			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
@@ -497,7 +478,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 
 		} else {
-			
 			GL11.glTranslatef(0, 0.10F, 0); // BC SPECIFIC
 
 			if (itemstack.getItem().requiresMultipleRenderPasses()) {
@@ -505,20 +485,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
 
 				for (int i = 0; i <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++i) {
-					int iconIndex = itemstack.getItem().getIconFromItemStackForMultiplePasses(itemstack, i);
+					int iconIndex = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), i);
 					float scale = 1.0F;
 
-					int itemColour = Item.itemsList[itemstack.itemID]
-							.getColorFromItemStack(itemstack, i);
-					float rgbR = (itemColour >> 16 & 255) / 255.0F;
-					float rgbG = (itemColour >> 8 & 255) / 255.0F;
-					float rgbB = (itemColour & 255) / 255.0F;
-					GL11.glColor4f(rgbR * scale, rgbG * scale, rgbB * scale,
-							1.0F);
+					if (true) {
+						int itemColour = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, i);
+						float var18 = (itemColour >> 16 & 255) / 255.0F;
+						float var19 = (itemColour >> 8 & 255) / 255.0F;
+						float var20 = (itemColour & 255) / 255.0F;
+						GL11.glColor4f(var18 * scale, var19 * scale, var20 * scale, 1.0F);
+					}
 
 					this.drawItem(iconIndex, quantity);
 				}
-				
 			} else {
 
 				GL11.glScalef(0.5F, 0.5F, 0.5F);

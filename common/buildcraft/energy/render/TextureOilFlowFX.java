@@ -9,13 +9,10 @@
 
 package buildcraft.energy.render;
 
-import net.minecraft.src.RenderEngine;
-
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
-
 import cpw.mods.fml.client.FMLTextureFX;
 
 public class TextureOilFlowFX extends FMLTextureFX {
@@ -38,7 +35,7 @@ public class TextureOilFlowFX extends FMLTextureFX {
 	}
 
 	@Override
-	public void bindImage(RenderEngine renderengine) {
+	public void bindImage(net.minecraft.client.renderer.RenderEngine renderengine) {
 		GL11.glBindTexture(3553, renderengine.getTexture(DefaultProps.TEXTURE_BLOCKS));
 	}
 

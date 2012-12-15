@@ -9,7 +9,7 @@
 
 package buildcraft.core.render;
 
-import net.minecraft.src.RenderEngine;
+import net.minecraft.client.renderer.RenderEngine;
 import net.minecraftforge.client.ForgeHooksClient;
 import cpw.mods.fml.client.FMLTextureFX;
 

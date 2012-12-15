@@ -9,7 +9,7 @@
 
 package buildcraft.api.transport;
 
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 public interface IPipe {
 

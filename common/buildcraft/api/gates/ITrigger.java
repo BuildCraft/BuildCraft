@@ -1,6 +1,6 @@
 package buildcraft.api.gates;
 
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 public interface ITrigger {
 

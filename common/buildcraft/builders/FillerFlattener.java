@@ -9,12 +9,12 @@
 
 package buildcraft.builders;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
 
 public class FillerFlattener extends FillerPattern {
 

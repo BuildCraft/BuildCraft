@@ -1,10 +1,10 @@
 package buildcraft.core.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.IBlockAccess;
 import buildcraft.BuildCraftCore;
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.Tessellator;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RenderingMarkers implements ISimpleBlockRenderingHandler {
