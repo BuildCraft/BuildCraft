@@ -26,7 +26,7 @@
   "mcversion": "",
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
-  "authors": [ "SpaceToad, "BuildCraft Team" ],
+  "authors": [ "SpaceToad", "BuildCraft Team" ],
   "parent": "BuildCraft|Core",
   "screenshots": [],
   "dependencies": [
