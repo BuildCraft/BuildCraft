@@ -2,15 +2,14 @@ package buildcraft.transport;
 
 import java.util.LinkedList;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.core.network.PacketPayload;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.core.network.PacketPayload;
 
 public abstract class Gate {
 
@@ -102,8 +101,7 @@ public abstract class Gate {
 	public abstract String getGuiFile();
 
 	public static boolean isGateItem(ItemStack stack) {
-		return stack.itemID == BuildCraftTransport.pipeGate.shiftedIndex
-				|| stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex;
+		return stack.itemID == BuildCraftTransport.pipeGate.shiftedIndex || stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex;
 	}
 
 }

@@ -9,33 +9,33 @@
 
 package buildcraft.energy;
 
-import buildcraft.BuildCraftEnergy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import buildcraft.BuildCraftEnergy;
 
 public class OilBucketHandler {
 
-    @ForgeSubscribe
-    public void onBucketFill(FillBucketEvent event){
+	@ForgeSubscribe
+	public void onBucketFill(FillBucketEvent event) {
 
-    	ItemStack result = fillCustomBucket(event.world,event.target);
+		ItemStack result = fillCustomBucket(event.world, event.target);
 
-    	if(result == null)
-    		return;
+		if (result == null)
+			return;
 
-    	event.result=result;
-    	event.setResult(Result.ALLOW);
-    }
+		event.result = result;
+		event.setResult(Result.ALLOW);
+	}
 
 	public ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
 
-		int blockID = world.getBlockId(pos.blockX,pos.blockY,pos.blockZ);
+		int blockID = world.getBlockId(pos.blockX, pos.blockY, pos.blockZ);
 
-		if((blockID == BuildCraftEnergy.oilStill.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
+		if ((blockID == BuildCraftEnergy.oilStill.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
 				&& world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
 
 			world.setBlockWithNotify(pos.blockX, pos.blockY, pos.blockZ, 0);

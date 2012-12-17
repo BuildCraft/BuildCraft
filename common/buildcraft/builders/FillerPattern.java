@@ -9,23 +9,22 @@
 
 package buildcraft.builders;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public abstract class FillerPattern implements IFillerPattern {
 
 	protected int id;
 
 	/**
-	 * stackToPlace contains the next item that can be place in the world. Null
-	 * if there is none. IteratePattern is responsible to decrementing the stack
-	 * size if needed. Return true when the iteration process is finished.
+	 * stackToPlace contains the next item that can be place in the world. Null if there is none. IteratePattern is responsible to decrementing the stack size
+	 * if needed. Return true when the iteration process is finished.
 	 */
 	@Override
 	public abstract boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace);
@@ -48,9 +47,9 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	/**
 	 * Attempt to fill blocks in the area.
-	 *
+	 * 
 	 * Return false if the process failed.
-	 *
+	 * 
 	 */
 	public boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, ItemStack stackToPlace, World world) {
 		boolean found = false;
@@ -59,9 +58,8 @@ public abstract class FillerPattern implements IFillerPattern {
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {
-					if(!BlockUtil.canChangeBlock(world, x, y, z)){
+					if (!BlockUtil.canChangeBlock(world, x, y, z))
 						return false;
-					}
 					if (BlockUtil.isSoftBlock(world, x, y, z)) {
 						xSlot = x;
 						ySlot = y;
@@ -74,8 +72,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
-			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1,
-					zSlot, 1, 0.0f, 0.0f, 0.0f);
+			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1, zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
 		return found;
@@ -83,9 +80,9 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	/**
 	 * Attempt to remove the blocks in the area.
-	 *
+	 * 
 	 * Return false if is the process failed.
-	 *
+	 * 
 	 */
 	public boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world) {
 		boolean found = false;
@@ -95,9 +92,8 @@ public abstract class FillerPattern implements IFillerPattern {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if(!BlockUtil.canChangeBlock(world, x, y, z)){
+					if (!BlockUtil.canChangeBlock(world, x, y, z))
 						return false;
-					}
 					if (!BlockUtil.isSoftBlock(world, x, y, z)) {
 						found = true;
 						lastX = x;

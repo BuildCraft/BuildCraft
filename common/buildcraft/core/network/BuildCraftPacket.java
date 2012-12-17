@@ -5,17 +5,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import buildcraft.core.DefaultProps;
-
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
-
+import buildcraft.core.DefaultProps;
 
 public abstract class BuildCraftPacket {
 
 	protected boolean isChunkDataPacket = false;
 	protected String channel = DefaultProps.NET_CHANNEL_NAME;
-	
+
 	public abstract int getID();
 
 	public Packet getPacket() {

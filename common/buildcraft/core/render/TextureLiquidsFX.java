@@ -18,8 +18,7 @@ public class TextureLiquidsFX extends FMLTextureFX {
 	private final int redMin, redMax, greenMin, greenMax, blueMin, blueMax;
 	private final String texture;
 
-	public TextureLiquidsFX(int redMin, int redMax, int greenMin, int greenMax, int blueMin, int blueMax, int spriteIndex,
-			String texture) {
+	public TextureLiquidsFX(int redMin, int redMax, int greenMin, int greenMax, int blueMin, int blueMax, int spriteIndex, String texture) {
 		super(spriteIndex);
 
 		this.redMin = redMin;
@@ -68,13 +67,15 @@ public class TextureLiquidsFX extends FMLTextureFX {
 			for (int j = 0; j < tileSizeBase; ++j) {
 				this.blue[i + j * tileSizeBase] += this.alpha[i + j * tileSizeBase] * 0.05F;
 
-				if (this.blue[i + j * tileSizeBase] < 0.0F)
+				if (this.blue[i + j * tileSizeBase] < 0.0F) {
 					this.blue[i + j * tileSizeBase] = 0.0F;
+				}
 
 				this.alpha[i + j * tileSizeBase] -= 0.1F;
 
-				if (Math.random() < 0.05D)
+				if (Math.random() < 0.05D) {
 					this.alpha[i + j * tileSizeBase] = 0.5F;
+				}
 			}
 		}
 
@@ -83,10 +84,12 @@ public class TextureLiquidsFX extends FMLTextureFX {
 		red = af;
 		for (int i1 = 0; i1 < tileSizeSquare; i1++) {
 			float f1 = red[i1];
-			if (f1 > 1.0F)
+			if (f1 > 1.0F) {
 				f1 = 1.0F;
-			if (f1 < 0.0F)
+			}
+			if (f1 < 0.0F) {
 				f1 = 0.0F;
+			}
 			float f2 = f1 * f1;
 			int r = (int) (redMin + f2 * (redMax - redMin));
 			int g = (int) (greenMin + f2 * (greenMax - greenMin));

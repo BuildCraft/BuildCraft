@@ -79,10 +79,12 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public void openChest() {}
+	public void openChest() {
+	}
 
 	@Override
-	public void closeChest() {}
+	public void closeChest() {
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {

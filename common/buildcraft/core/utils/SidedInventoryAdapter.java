@@ -1,17 +1,16 @@
 package buildcraft.core.utils;
 
-import net.minecraftforge.common.ForgeDirection;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 
 /**
- * This class is responsible for abstracting an ISidedInventory as a normal
- * IInventory
- *
+ * This class is responsible for abstracting an ISidedInventory as a normal IInventory
+ * 
  * @author Krapht
- *
+ * 
  */
 public class SidedInventoryAdapter implements IInventory {
 

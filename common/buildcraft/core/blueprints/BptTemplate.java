@@ -15,7 +15,8 @@ import java.io.IOException;
 
 public class BptTemplate extends BptBase {
 
-	public BptTemplate() {}
+	public BptTemplate() {
+	}
 
 	public BptTemplate(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
@@ -27,16 +28,19 @@ public class BptTemplate extends BptBase {
 
 		boolean first = true;
 
-		for (int x = 0; x < sizeX; ++x)
-			for (int y = 0; y < sizeY; ++y)
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					if (first)
+					if (first) {
 						first = false;
-					else
+					} else {
 						writer.write(",");
+					}
 
 					writer.write(contents[x][y][z].blockId + "");
 				}
+			}
+		}
 	}
 
 	@Override
@@ -47,8 +51,8 @@ public class BptTemplate extends BptBase {
 			String[] mask = val.split(",");
 			int maskIndex = 0;
 
-			for (int x = 0; x < sizeX; ++x)
-				for (int y = 0; y < sizeY; ++y)
+			for (int x = 0; x < sizeX; ++x) {
+				for (int y = 0; y < sizeY; ++y) {
 					for (int z = 0; z < sizeZ; ++z) {
 						contents[x][y][z] = new BptSlot();
 						contents[x][y][z].x = x;
@@ -58,6 +62,8 @@ public class BptTemplate extends BptBase {
 
 						maskIndex++;
 					}
+				}
+			}
 		}
 
 	}

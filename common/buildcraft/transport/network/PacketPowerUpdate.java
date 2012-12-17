@@ -1,10 +1,11 @@
 package buildcraft.transport.network;
 
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import buildcraft.core.network.PacketCoordinates;
+import buildcraft.core.network.PacketIds;
 
 public class PacketPowerUpdate extends PacketCoordinates {
 
@@ -20,7 +21,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
-		displayPower = new short[]{0, 0, 0, 0, 0, 0};
+		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 		super.readData(data);
 		overload = data.readBoolean();
 		for (int i = 0; i < displayPower.length; i++) {

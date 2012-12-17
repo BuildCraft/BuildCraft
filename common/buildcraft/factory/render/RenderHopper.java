@@ -3,8 +3,8 @@ package buildcraft.factory.render;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
@@ -16,7 +16,8 @@ import buildcraft.core.IInventoryRenderer;
 
 public class RenderHopper extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private ModelBase model = new ModelBase() {};
+	private ModelBase model = new ModelBase() {
+	};
 
 	private final ModelRenderer top;
 	private final ModelFrustum middle;

@@ -39,15 +39,17 @@ public class BptBlueprint extends BptBase {
 	TreeSet<Integer> idsToMap = new TreeSet<Integer>();
 
 	public BptBlueprint() {
-		for (int i = 0; i < idMapping.length; ++i)
+		for (int i = 0; i < idMapping.length; ++i) {
 			idMapping[i] = i;
+		}
 	}
 
 	public BptBlueprint(int sizeX, int sizeY, int sizeZ) {
 		super(sizeX, sizeY, sizeZ);
 
-		for (int i = 0; i < idMapping.length; ++i)
+		for (int i = 0; i < idMapping.length; ++i) {
 			idMapping[i] = i;
+		}
 	}
 
 	public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z) {
@@ -97,28 +99,33 @@ public class BptBlueprint extends BptBase {
 
 		boolean[] idsUsed = new boolean[Item.itemsList.length];
 
-		for (int i = 1; i < idsUsed.length; ++i)
+		for (int i = 1; i < idsUsed.length; ++i) {
 			idsUsed[i] = false;
+		}
 
-		for (int x = 0; x < sizeX; ++x)
-			for (int y = 0; y < sizeY; ++y)
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					BptSlotInfo slot = contents[x][y][z];
 
 					storeId(slot.blockId);
 
-					for (ItemStack stack : slot.storedRequirements)
+					for (ItemStack stack : slot.storedRequirements) {
 						storeId(stack.itemID);
+					}
 				}
+			}
+		}
 
 		writer.write("idMap:");
 		writer.newLine();
 
 		for (Integer id : idsToMap) {
-			if (id < Block.blocksList.length && Block.blocksList[id] != null)
+			if (id < Block.blocksList.length && Block.blocksList[id] != null) {
 				writer.write(BlueprintManager.getBlockSignature(Block.blocksList[id]) + "=" + id);
-			else
+			} else {
 				writer.write(BlueprintManager.getItemSignature(Item.itemsList[id]) + "=" + id);
+			}
 
 			writer.newLine();
 		}
@@ -129,23 +136,27 @@ public class BptBlueprint extends BptBase {
 		writer.write("contents:");
 		writer.newLine();
 
-		for (int x = 0; x < sizeX; ++x)
-			for (int y = 0; y < sizeY; ++y)
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					BptSlotInfo slot = contents[x][y][z];
 
 					if (slot != null && slot.blockId != 0) {
 						slot.cpt.setInteger("bId", slot.blockId);
 
-						if (slot.meta != 0)
+						if (slot.meta != 0) {
 							slot.cpt.setInteger("meta", slot.meta);
+						}
 
 						NBTBase.writeNamedTag(slot.cpt, new BptDataStream(writer));
 
 						writer.newLine();
-					} else
+					} else {
 						writer.newLine();
+					}
 				}
+			}
+		}
 
 		writer.write(":contents");
 		writer.newLine();
@@ -153,8 +164,8 @@ public class BptBlueprint extends BptBase {
 		writer.write("requirements:");
 		writer.newLine();
 
-		for (int x = 0; x < sizeX; ++x)
-			for (int y = 0; y < sizeY; ++y)
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					BptSlotInfo slot = contents[x][y][z];
 
@@ -170,9 +181,12 @@ public class BptBlueprint extends BptBase {
 						NBTBase.writeNamedTag(list, new BptDataStream(writer));
 
 						writer.newLine();
-					} else
+					} else {
 						writer.newLine();
+					}
 				}
+			}
+		}
 
 		writer.write(":requirements");
 		writer.newLine();
@@ -184,12 +198,13 @@ public class BptBlueprint extends BptBase {
 			throw new BptError("Blueprint format 3.1.0 is not supported anymore, can't load " + file);
 
 		// blockMap is still tested for being able to load pre 3.1.2 bpts
-		if (attr.equals("blockMap") || attr.equals("idMap"))
+		if (attr.equals("blockMap") || attr.equals("idMap")) {
 			while (true) {
 				String mapStr = reader.readLine();
 
-				if (mapStr == null)
+				if (mapStr == null) {
 					break;
+				}
 
 				mapStr = mapStr.replaceAll("\n", "");
 
@@ -209,8 +224,9 @@ public class BptBlueprint extends BptBase {
 
 							// Items between 256 and Block.blocksList.length may
 							// be item or block
-							if (i < Block.blocksList.length && Block.blocksList[i] != null)
+							if (i < Block.blocksList.length && Block.blocksList[i] != null) {
 								continue;
+							}
 
 							if (itemMatch(sig, Item.itemsList[i])) {
 								found = true;
@@ -229,8 +245,9 @@ public class BptBlueprint extends BptBase {
 
 					BptBlock handlingBlock = BlueprintManager.blockBptProps[blockId];
 
-					if (handlingBlock == null)
+					if (handlingBlock == null) {
 						handlingBlock = defaultBlock;
+					}
 
 					if (!handlingBlock.match(Block.blocksList[blockId], bptSignature)) {
 						boolean found = false;
@@ -239,8 +256,9 @@ public class BptBlueprint extends BptBase {
 							if (Block.blocksList[i] != null) {
 								handlingBlock = BlueprintManager.blockBptProps[i];
 
-								if (handlingBlock == null)
+								if (handlingBlock == null) {
 									handlingBlock = defaultBlock;
+								}
 
 								if (handlingBlock.match(Block.blocksList[i], bptSignature)) {
 									idMapping[blockId] = i;
@@ -253,11 +271,11 @@ public class BptBlueprint extends BptBase {
 					}
 				}
 			}
-		else if (attr.equals("contents")) {
+		} else if (attr.equals("contents")) {
 			contents = new BptSlot[sizeX][sizeY][sizeZ];
 
-			for (int x = 0; x < sizeX; ++x)
-				for (int y = 0; y < sizeY; ++y)
+			for (int x = 0; x < sizeX; ++x) {
+				for (int y = 0; y < sizeY; ++y) {
 					for (int z = 0; z < sizeZ; ++z) {
 						String slotStr = reader.readLine().replaceAll("\n", "");
 
@@ -274,15 +292,18 @@ public class BptBlueprint extends BptBase {
 
 							slot.blockId = mapWorldId(slot.cpt.getInteger("bId"));
 
-							if (slot.cpt.hasKey("meta"))
+							if (slot.cpt.hasKey("meta")) {
 								slot.meta = slot.cpt.getInteger("meta");
+							}
 
 							contents[x][y][z] = slot;
 						}
 					}
-		} else if (attr.equals("requirements"))
-			for (int x = 0; x < sizeX; ++x)
-				for (int y = 0; y < sizeY; ++y)
+				}
+			}
+		} else if (attr.equals("requirements")) {
+			for (int x = 0; x < sizeX; ++x) {
+				for (int y = 0; y < sizeY; ++y) {
 					for (int z = 0; z < sizeZ; ++z) {
 						String reqStr = reader.readLine().replaceAll("\n", "");
 
@@ -299,6 +320,9 @@ public class BptBlueprint extends BptBase {
 							}
 						}
 					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -322,8 +346,9 @@ public class BptBlueprint extends BptBase {
 	}
 
 	public void storeId(int worldId) {
-		if (worldId != 0)
+		if (worldId != 0) {
 			idsToMap.add(worldId);
+		}
 	}
 
 	private boolean itemMatch(ItemSignature sig, Item item) {

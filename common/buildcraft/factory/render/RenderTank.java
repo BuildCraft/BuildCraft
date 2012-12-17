@@ -13,11 +13,10 @@ import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.world.World;
-
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.liquids.LiquidStack;
 
@@ -35,11 +34,10 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	private int[] getDisplayLists(int liquidId, int damage, World world) {
 
-		if (stage.containsKey(liquidId)){
+		if (stage.containsKey(liquidId)) {
 			HashMap<Integer, int[]> x = stage.get(liquidId);
-			if (x.containsKey(damage)){
+			if (x.containsKey(damage))
 				return x.get(damage);
-			}
 		} else {
 			stage.put(liquidId, new HashMap<Integer, int[]>());
 		}
@@ -48,11 +46,11 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		stage.get(liquidId).put(damage, d);
 
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
 			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
-		else if(Item.itemsList[liquidId] != null)
+		} else if (Item.itemsList[liquidId] != null) {
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
-		else
+		} else
 			return null;
 
 		for (int s = 0; s < displayStages; ++s) {
@@ -82,12 +80,11 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		LiquidStack liquid = tank.tank.getLiquid();
 
-		if (liquid == null || liquid.amount <= 0
-				|| liquid.itemID <= 0)
+		if (liquid == null || liquid.amount <= 0 || liquid.itemID <= 0)
 			return;
 
 		int[] displayList = getDisplayLists(liquid.itemID, liquid.itemMeta, tileentity.worldObj);
-		if(displayList == null)
+		if (displayList == null)
 			return;
 
 		GL11.glPushMatrix();

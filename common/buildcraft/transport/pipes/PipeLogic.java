@@ -9,13 +9,13 @@
 
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.core.IDropControlInventory;
-import buildcraft.transport.TileGenericPipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.core.IDropControlInventory;
+import buildcraft.transport.TileGenericPipe;
 
 public class PipeLogic implements IDropControlInventory {
 
@@ -30,26 +30,54 @@ public class PipeLogic implements IDropControlInventory {
 		this.yCoord = yCoord;
 		this.zCoord = zCoord;
 	}
-	public void setWorld(World worldObj) { this.worldObj = worldObj; }
-	public void setTile(TileGenericPipe tile) { this.container = tile; }
+
+	public void setWorld(World worldObj) {
+		this.worldObj = worldObj;
+	}
+
+	public void setTile(TileGenericPipe tile) {
+		this.container = tile;
+	}
 
 	/* SAVING & LOADING */
-	public void writeToNBT(NBTTagCompound nbttagcompound) {}
-	public void readFromNBT(NBTTagCompound nbttagcompound) {}
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+	}
+
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+	}
 
 	/* PIPE LOGIC */
-	public void initialize() {}
-	public void updateEntity() {}
-	
-	public boolean blockActivated(EntityPlayer entityplayer) { return false; }
-	
-	public boolean isPipeConnected(TileEntity tile) { return true; }
-	public void onNeighborBlockChange(int blockId) {}
-	public void onBlockPlaced() {}
-	
-	public boolean inputOpen(ForgeDirection from) { return true; }
-	public boolean outputOpen(ForgeDirection to) { return true; }
-	
+	public void initialize() {
+	}
+
+	public void updateEntity() {
+	}
+
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		return false;
+	}
+
+	public boolean isPipeConnected(TileEntity tile) {
+		return true;
+	}
+
+	public void onNeighborBlockChange(int blockId) {
+	}
+
+	public void onBlockPlaced() {
+	}
+
+	public boolean inputOpen(ForgeDirection from) {
+		return true;
+	}
+
+	public boolean outputOpen(ForgeDirection to) {
+		return true;
+	}
+
 	/* IDROPCONTROLINVENTORY */
-	@Override public boolean doDrop() { return true; }
+	@Override
+	public boolean doDrop() {
+		return true;
+	}
 }

@@ -8,10 +8,9 @@ public class ItemBptTemplate extends ItemBptBase {
 
 	@Override
 	public int getIconFromDamage(int i) {
-		if (i == 0) {
+		if (i == 0)
 			return 5 * 16 + 0;
-		} else {
+		else
 			return 5 * 16 + 1;
-		}
 	}
 }

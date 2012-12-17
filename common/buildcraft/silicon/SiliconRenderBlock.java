@@ -10,27 +10,27 @@
 package buildcraft.silicon;
 
 import net.minecraft.block.Block;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 	@Override
 	public int getRenderId() {
 		return SiliconProxy.laserBlockModel;
 	}
+
 	@Override
 	public boolean shouldRender3DInInventory() {
 		return true;
 	}
+
 	@Override
 	public boolean renderWorldBlock(IBlockAccess iblockaccess, int x, int y, int z, Block block, int l, RenderBlocks renderblocks) {
 
@@ -43,11 +43,11 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateBottom = 2;
 
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 4F / 16F, 1, 1);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F, 11F / 16F, 11F / 16F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == ForgeDirection.WEST.ordinal()) {
 			renderblocks.uvRotateEast = 1;
@@ -56,22 +56,22 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateBottom = 1;
 
 			block.setBlockBounds(1F - 4F / 16F, 0.0F, 0.0F, 1, 1, 1);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F, 1F - 4F / 16F, 11F / 16F, 11F / 16F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == ForgeDirection.NORTH.ordinal()) {
 			renderblocks.uvRotateSouth = 1;
 			renderblocks.uvRotateNorth = 2;
 
 			block.setBlockBounds(0.0F, 0.0F, 1F - 4F / 16F, 1, 1, 1);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F, 11F / 16F, 1F - 4F / 16F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == ForgeDirection.SOUTH.ordinal()) {
 			renderblocks.uvRotateSouth = 2;
@@ -80,11 +80,11 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateBottom = 3;
 
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 1, 4F / 16F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F, 11F / 16F, 13F / 16F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == ForgeDirection.DOWN.ordinal()) {
 			renderblocks.uvRotateEast = 3;
@@ -93,19 +93,19 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 			renderblocks.uvRotateNorth = 3;
 
 			block.setBlockBounds(0.0F, 1.0F - 4F / 16F, 0.0F, 1.0F, 1.0F, 1.0F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F, 1F - 4F / 16F, 11F / 16F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		} else if (meta == ForgeDirection.UP.ordinal()) {
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 
 			block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
@@ -127,11 +127,11 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
-        renderblocks.func_83018_a(block);
+		renderblocks.func_83018_a(block);
 		renderBlockInInv(renderblocks, block, 0);
 
 		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
-        renderblocks.func_83018_a(block);
+		renderblocks.func_83018_a(block);
 		renderBlockInInv(renderblocks, block, 1);
 
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
@@ -172,26 +172,20 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 	}
 
 	/*
-	 * @Override public GuiScreen handleGUI(int i) { switch
-	 * (Utils.intToPacketId(i)) { case AssemblyTableGUI: return new
-	 * GuiAssemblyTable( ModLoader.getMinecraftInstance().thePlayer.inventory,
-	 * new TileAssemblyTable()); default: return null; } }
+	 * @Override public GuiScreen handleGUI(int i) { switch (Utils.intToPacketId(i)) { case AssemblyTableGUI: return new GuiAssemblyTable(
+	 * ModLoader.getMinecraftInstance().thePlayer.inventory, new TileAssemblyTable()); default: return null; } }
 	 */
 
 	/*
-	 * @Override public void handlePacket(Packet230ModLoader packet) { switch
-	 * (PacketIds.values()[packet.packetType]) { case AssemblyTableSelect:
-	 * GuiScreen screen = ModLoader.getMinecraftInstance().currentScreen;
-	 *
-	 * if (screen instanceof GuiAssemblyTable) { GuiAssemblyTable gui =
-	 * (GuiAssemblyTable) screen; SelectionMessage message = new
-	 * SelectionMessage();
-	 *
-	 * TileAssemblyTable.selectionMessageWrapper.updateFromPacket(message,
-	 * packet);
-	 *
+	 * @Override public void handlePacket(Packet230ModLoader packet) { switch (PacketIds.values()[packet.packetType]) { case AssemblyTableSelect: GuiScreen
+	 * screen = ModLoader.getMinecraftInstance().currentScreen;
+	 * 
+	 * if (screen instanceof GuiAssemblyTable) { GuiAssemblyTable gui = (GuiAssemblyTable) screen; SelectionMessage message = new SelectionMessage();
+	 * 
+	 * TileAssemblyTable.selectionMessageWrapper.updateFromPacket(message, packet);
+	 * 
 	 * gui.handleSelectionMessage (message); }
-	 *
+	 * 
 	 * break; } }
 	 */
 

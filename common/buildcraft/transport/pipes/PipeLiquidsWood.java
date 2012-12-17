@@ -8,6 +8,8 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
@@ -18,12 +20,10 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.RedstonePowerFramework;
+import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
@@ -65,12 +65,13 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 		if (tile instanceof ITankContainer) {
-         if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
-            return;
+			if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+				return;
 
-         if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME)
-            liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
-      }
+			if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME) {
+				liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
+			}
+		}
 	}
 
 	@Override
@@ -102,12 +103,12 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 				LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
-                int inserted = 0;
-                if(extracted != null) {
-                    inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
+				int inserted = 0;
+				if (extracted != null) {
+					inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
 
-                    container.drain(pos.orientation.getOpposite(), inserted, true);
-                }
+					container.drain(pos.orientation.getOpposite(), inserted, true);
+				}
 
 				liquidToExtract -= inserted;
 			}
@@ -130,8 +131,8 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 				return plainTexture;
 			else
 				return baseTexture;
-		}	}
-
+		}
+	}
 
 	@Override
 	public int powerRequest() {
@@ -140,7 +141,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public boolean canConnectRedstone() {
-		if(PowerFramework.currentFramework instanceof RedstonePowerFramework)
+		if (PowerFramework.currentFramework instanceof RedstonePowerFramework)
 			return true;
 		return super.canConnectRedstone();
 	}

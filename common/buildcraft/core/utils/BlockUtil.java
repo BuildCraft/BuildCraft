@@ -10,14 +10,13 @@ package buildcraft.core.utils;
 
 import java.util.List;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.api.core.BuildCraftAPI;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.BuildCraftAPI;
 
 public class BlockUtil {
 
@@ -56,35 +55,29 @@ public class BlockUtil {
 	}
 
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
-		if(world.isAirBlock(x, y, z)) {
+		if (world.isAirBlock(x, y, z))
 			return true;
-		}
 
 		int blockID = world.getBlockId(x, y, z);
-		if(Block.blocksList[blockID] == null) {
+		if (Block.blocksList[blockID] == null)
 			return true;
-		}
 		Block block = Block.blocksList[blockID];
 
-		if(block.getBlockHardness(world, x, y, z) < 0) {
+		if (block.getBlockHardness(world, x, y, z) < 0)
 			return false;
-		}
 
-		if(blockID == BuildCraftEnergy.oilMoving.blockID || blockID == BuildCraftEnergy.oilStill.blockID) {
+		if (blockID == BuildCraftEnergy.oilMoving.blockID || blockID == BuildCraftEnergy.oilStill.blockID)
 			return false;
-		}
 
-		if(blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID) {
+		if (blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID)
 			return false;
-		}
 
 		return true;
 	}
-        
-	public static boolean isSoftBlock(World world, int x, int y, int z){
-		if(world.isAirBlock(x, y, z)) {
+
+	public static boolean isSoftBlock(World world, int x, int y, int z) {
+		if (world.isAirBlock(x, y, z))
 			return true;
-		}
 
 		int blockId = world.getBlockId(x, y, z);
 

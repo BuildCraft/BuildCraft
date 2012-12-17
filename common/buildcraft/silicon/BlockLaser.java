@@ -11,16 +11,14 @@ package buildcraft.silicon;
 
 import java.util.ArrayList;
 
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.core.DefaultProps;
-
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.core.DefaultProps;
 
 public class BlockLaser extends BlockContainer {
 
@@ -61,19 +59,17 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		if (i == ForgeDirection.values()[j].getOpposite().ordinal()) {
+		if (i == ForgeDirection.values()[j].getOpposite().ordinal())
 			return 16 * 2 + 15;
-		} else if (i == j) {
+		else if (i == j)
 			return 16 * 2 + 14;
-		} else {
+		else
 			return 16 * 2 + 13;
-		}
 
 	}
 
-
 	@Override
-	public int func_85104_a(World world, int x, int y, int z, int side,  float par6, float par7, float par8, int meta) {
+	public int func_85104_a(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.func_85104_a(world, x, y, z, side, par6, par7, par8, meta);
 
 		if (side <= 6) {

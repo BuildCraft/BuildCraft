@@ -12,19 +12,19 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.GuiIds;
@@ -68,8 +68,7 @@ public class BlockRefinery extends BlockContainer {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
-				new Position(i, j, k));
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
 	}
@@ -119,8 +118,9 @@ public class BlockRefinery extends BlockContainer {
 			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world))
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
+		}
 
 		return true;
 	}

@@ -1,12 +1,11 @@
 package buildcraft.core.gui;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
-
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
@@ -46,9 +45,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			if (!isDefined())
 				return;
 
-			if (getItemStack() != null)
+			if (getItemStack() != null) {
 				drawStack(getItemStack());
-			else if (getTexture() != null && !getTexture().equals("")) {
+			} else if (getTexture() != null && !getTexture().equals("")) {
 				int texture = mc.renderEngine.getTexture(getTexture());
 				mc.renderEngine.bindTexture(texture);
 
@@ -88,8 +87,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	/**
-	 * More dynamic slot displaying an inventory stack at specified position in
-	 * the passed IInventory
+	 * More dynamic slot displaying an inventory stack at specified position in the passed IInventory
 	 */
 	public class IInventorySlot extends AdvancedSlot {
 
@@ -140,8 +138,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		for (int s = 0; s < slots.length; ++s) {
 			AdvancedSlot slot = slots[s];
 
-			if (slot != null)
+			if (slot != null) {
 				slot.drawSprite(cornerX, cornerY);
+			}
 		}
 
 		GL11.glPopMatrix();
@@ -158,8 +157,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		if (position != -1) {
 			AdvancedSlot slot = slots[position];
 
-			if (slot != null)
+			if (slot != null) {
 				s = slot.getDescription();
+			}
 		}
 
 		if (s.length() > 0) {

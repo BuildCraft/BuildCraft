@@ -9,16 +9,16 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 
 public class PipeLogicIron extends PipeLogic {
 
@@ -42,19 +42,20 @@ public class PipeLogicIron extends PipeLogic {
 		for (int l = 0; l < 6; ++l) {
 			nextMetadata++;
 
-			if (nextMetadata > 5)
+			if (nextMetadata > 5) {
 				nextMetadata = 0;
+			}
 
 			TileEntity tile = container.getTile(ForgeDirection.values()[nextMetadata]);
 
 			if (tile instanceof TileGenericPipe) {
 				Pipe pipe = ((TileGenericPipe) tile).pipe;
-				if (pipe.logic instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone)
+				if (pipe.logic instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone) {
 					continue;
+				}
 			}
 
-			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer
-					|| tile instanceof TileGenericPipe) {
+			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer || tile instanceof TileGenericPipe) {
 
 				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
 				container.scheduleRenderUpdate();
@@ -83,8 +84,7 @@ public class PipeLogicIron extends PipeLogic {
 		super.blockActivated(entityplayer);
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench
-				&& ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
 			switchPosition();
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);

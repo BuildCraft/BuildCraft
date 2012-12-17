@@ -11,10 +11,10 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
@@ -38,11 +38,10 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 
 	@Override
 	public int getBlockTextureFromSide(int i) {
-		if (i == 1 || i == 0) {
+		if (i == 1 || i == 0)
 			return topTexture;
-		} else {
+		else
 			return sideTexture;
-		}
 	}
 
 	@Override
@@ -54,13 +53,13 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 			return false;
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
 				return false;
-			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world))
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
+		}
 
 		return true;
 	}

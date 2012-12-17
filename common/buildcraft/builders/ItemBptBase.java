@@ -11,16 +11,15 @@ package buildcraft.builders;
 
 import java.util.List;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.blueprints.BptBase;
-import buildcraft.core.proxy.CoreProxy;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.blueprints.BptBase;
+import buildcraft.core.proxy.CoreProxy;
 
 public abstract class ItemBptBase extends ItemBuildCraft {
 
@@ -44,19 +43,18 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 		}
 	}
 
-    @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
-		if(CoreProxy.proxy.isSimulating(world)) {
+	@Override
+	public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
+		if (CoreProxy.proxy.isSimulating(world)) {
 			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(itemStack.getItemDamage());
-			if(bpt != null) {
-				return BuildCraftBuilders
-					.getBptItemStack(itemStack.itemID, itemStack.getItemDamage(), bpt.getName());
-			}
+			if (bpt != null)
+				return BuildCraftBuilders.getBptItemStack(itemStack.itemID, itemStack.getItemDamage(), bpt.getName());
 		}
 		return itemStack;
-    }
+	}
 
 	@Override
-	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {}
+	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
+	}
 
 }

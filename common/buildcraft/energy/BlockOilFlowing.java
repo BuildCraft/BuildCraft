@@ -11,16 +11,14 @@ package buildcraft.energy;
 
 import java.util.Random;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.core.DefaultProps;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import net.minecraftforge.liquids.ILiquid;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.core.DefaultProps;
 
 public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
@@ -103,9 +101,8 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 			if (l >= 8) {
 				k1 = 1;
 			}
-			if (k1 >= 8) {
+			if (k1 >= 8)
 				return;
-			}
 			if (aflag[0]) {
 				flowIntoBlock(world, i - 1, j, k, k1);
 			}
@@ -152,13 +149,11 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 			if (k1 == 3) {
 				j2++;
 			}
-			if (blockBlocksFlow(world, l1, i2, j2) || world.getBlockMaterial(l1, i2, j2) == blockMaterial
-					&& world.getBlockMetadata(l1, i2, j2) == 0) {
+			if (blockBlocksFlow(world, l1, i2, j2) || world.getBlockMaterial(l1, i2, j2) == blockMaterial && world.getBlockMetadata(l1, i2, j2) == 0) {
 				continue;
 			}
-			if (!blockBlocksFlow(world, l1, i2 - 1, j2)) {
+			if (!blockBlocksFlow(world, l1, i2 - 1, j2))
 				return l;
-			}
 			if (l >= 4) {
 				continue;
 			}
@@ -189,8 +184,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 			if (l == 3) {
 				j2++;
 			}
-			if (blockBlocksFlow(world, j1, i2, j2) || world.getBlockMaterial(j1, i2, j2) == blockMaterial
-					&& world.getBlockMetadata(j1, i2, j2) == 0) {
+			if (blockBlocksFlow(world, j1, i2, j2) || world.getBlockMaterial(j1, i2, j2) == blockMaterial && world.getBlockMetadata(j1, i2, j2) == 0) {
 				continue;
 			}
 			if (!blockBlocksFlow(world, j1, i2 - 1, j2)) {
@@ -216,22 +210,18 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	private boolean blockBlocksFlow(World world, int i, int j, int k) {
 		int l = world.getBlockId(i, j, k);
-		if (l == Block.doorWood.blockID || l == Block.doorSteel.blockID || l == Block.signPost.blockID
-				|| l == Block.ladder.blockID || l == Block.reed.blockID) {
+		if (l == Block.doorWood.blockID || l == Block.doorSteel.blockID || l == Block.signPost.blockID || l == Block.ladder.blockID || l == Block.reed.blockID)
 			return true;
-		}
-		if (l == 0) {
+		if (l == 0)
 			return false;
-		}
 		Material material = Block.blocksList[l].blockMaterial;
 		return material.isSolid();
 	}
 
 	protected int getSmallestFlowDecay(World world, int i, int j, int k, int l) {
 		int i1 = getFlowDecay(world, i, j, k);
-		if (i1 < 0) {
+		if (i1 < 0)
 			return l;
-		}
 		if (i1 >= 8) {
 			i1 = 0;
 		}
@@ -240,11 +230,10 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	private boolean liquidCanDisplaceBlock(World world, int i, int j, int k) {
 		Material material = world.getBlockMaterial(i, j, k);
-		if (material == blockMaterial) {
+		if (material == blockMaterial)
 			return false;
-		} else {
+		else
 			return !blockBlocksFlow(world, i, j, k);
-		}
 	}
 
 	@Override

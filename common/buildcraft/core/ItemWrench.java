@@ -1,8 +1,8 @@
 package buildcraft.core;
 
-import buildcraft.api.tools.IToolWrench;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import buildcraft.api.tools.IToolWrench;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
@@ -17,5 +17,6 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	}
 
 	@Override
-	public void wrenchUsed(EntityPlayer player, int x, int y, int z) {}
+	public void wrenchUsed(EntityPlayer player, int x, int y, int z) {
+	}
 }

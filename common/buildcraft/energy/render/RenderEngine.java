@@ -11,24 +11,25 @@ package buildcraft.energy.render;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.energy.Engine;
-import buildcraft.energy.IEngineProvider;
 import buildcraft.energy.Engine.EnergyStage;
+import buildcraft.energy.IEngineProvider;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private ModelBase model = new ModelBase() {};
+	private ModelBase model = new ModelBase() {
+	};
 
 	private ModelRenderer box;
 	private ModelRenderer trunk;
@@ -79,12 +80,12 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		Engine engine = ((IEngineProvider) tileentity).getEngine();
 
-		if (engine != null)
+		if (engine != null) {
 			render(engine.getEnergyStage(), engine.progress, engine.orientation, engine.getTextureFile(), x, y, z);
+		}
 	}
 
-	private void render(EnergyStage energy, float progress, ForgeDirection orientation, String baseTexture, double x, double y,
-			double z) {
+	private void render(EnergyStage energy, float progress, ForgeDirection orientation, String baseTexture, double x, double y, double z) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
 			return;
@@ -96,10 +97,11 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float step;
 
-		if (progress > 0.5)
+		if (progress > 0.5) {
 			step = 7.99F - (progress - 0.5F) * 2F * 7.99F;
-		else
+		} else {
 			step = progress * 2F * 7.99F;
+		}
 
 		float[] angle = { 0, 0, 0 };
 		float[] translate = { 0, 0, 0 };
@@ -167,8 +169,9 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf, translate[2] * chamberf);
 		}
 
-		for (int i = 0; i <= step + 2; i += 2)
+		for (int i = 0; i <= step + 2; i += 2) {
 			GL11.glTranslatef(-translate[0] * chamberf, -translate[1] * chamberf, -translate[2] * chamberf);
+		}
 
 		String texture = "";
 

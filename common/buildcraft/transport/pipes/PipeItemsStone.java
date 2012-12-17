@@ -19,7 +19,6 @@ import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-
 public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 
 	public PipeItemsStone(int itemID) {
@@ -31,7 +30,7 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(ForgeDirection direction) {
 		return 1 * 16 + 13;
@@ -39,16 +38,17 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public void readjustSpeed(IPipedItem item) {
-		if (item.getSpeed() > Utils.pipeNormalSpeed)
+		if (item.getSpeed() > Utils.pipeNormalSpeed) {
 			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 2.0F);
+		}
 
-		if (item.getSpeed() < Utils.pipeNormalSpeed)
+		if (item.getSpeed() < Utils.pipeNormalSpeed) {
 			item.setSpeed(Utils.pipeNormalSpeed);
+		}
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
-			IPipedItem item) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
 		return possibleOrientations;
 	}
 

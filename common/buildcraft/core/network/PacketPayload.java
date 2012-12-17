@@ -8,7 +8,8 @@ public class PacketPayload {
 	public float[] floatPayload = new float[0];
 	public String[] stringPayload = new String[0];
 
-	public PacketPayload() {}
+	public PacketPayload() {
+	}
 
 	public PacketPayload(int intSize, int floatSize, int stringSize) {
 		intPayload = new int[intSize];
@@ -20,12 +21,15 @@ public class PacketPayload {
 		if (other == null)
 			return;
 
-		if (other.intPayload.length > 0)
+		if (other.intPayload.length > 0) {
 			this.intPayload = Utils.concat(this.intPayload, other.intPayload);
-		if (other.floatPayload.length > 0)
+		}
+		if (other.floatPayload.length > 0) {
 			this.floatPayload = Utils.concat(this.floatPayload, other.floatPayload);
-		if (other.stringPayload.length > 0)
+		}
+		if (other.stringPayload.length > 0) {
 			this.stringPayload = Utils.concat(this.stringPayload, other.stringPayload);
+		}
 
 	}
 
@@ -37,14 +41,17 @@ public class PacketPayload {
 	}
 
 	public void splitTail(IndexInPayload index) {
-		PacketPayload payload = new PacketPayload(intPayload.length - index.intIndex, floatPayload.length - index.floatIndex,
-				stringPayload.length - index.stringIndex);
+		PacketPayload payload = new PacketPayload(intPayload.length - index.intIndex, floatPayload.length - index.floatIndex, stringPayload.length
+				- index.stringIndex);
 
-		if (intPayload.length > 0)
+		if (intPayload.length > 0) {
 			System.arraycopy(intPayload, index.intIndex, payload.intPayload, 0, payload.intPayload.length);
-		if (floatPayload.length > 0)
+		}
+		if (floatPayload.length > 0) {
 			System.arraycopy(floatPayload, index.floatIndex, payload.floatPayload, 0, payload.floatPayload.length);
-		if (stringPayload.length > 0)
+		}
+		if (stringPayload.length > 0) {
 			System.arraycopy(stringPayload, index.stringIndex, payload.stringPayload, 0, payload.stringPayload.length);
+		}
 	}
 }

@@ -3,8 +3,11 @@ package buildcraft.builders;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.builders.BuildersProxy;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptPlayerIndex;
@@ -12,16 +15,8 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
-	public static final int COMMAND_NEXT = 1,
-			COMMAND_PREV = 2,
-			COMMAND_LOCK_UPDATE = 3,
-			COMMAND_DELETE = 4;
+	public static final int COMMAND_NEXT = 1, COMMAND_PREV = 2, COMMAND_LOCK_UPDATE = 3, COMMAND_DELETE = 4;
 
 	public ItemStack[] stack = new ItemStack[4];
 
@@ -32,13 +27,16 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	private ArrayList<BptBase> currentPage;
 
-	public @TileNetworkData(staticSize=BuildCraftBuilders.LIBRARY_PAGE_SIZE) String[] currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
-	public @TileNetworkData int selected = -1;
+	public @TileNetworkData(staticSize = BuildCraftBuilders.LIBRARY_PAGE_SIZE)
+	String[] currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
+	public @TileNetworkData
+	int selected = -1;
 
-	public @TileNetworkData boolean locked = false;
-	
-	public TileBlueprintLibrary(){
-		for(int i = 0; i < currentNames.length; i++){
+	public @TileNetworkData
+	boolean locked = false;
+
+	public TileBlueprintLibrary() {
+		for (int i = 0; i < currentNames.length; i++) {
 			currentNames[i] = "";
 		}
 	}
@@ -46,7 +44,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	@Override
 	public void initialize() {
 		super.initialize();
-		if(CoreProxy.proxy.isSimulating(worldObj)){
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
 			setCurrentPage(getNextPage(null));
 		}
 	}
@@ -98,28 +96,28 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 		return result;
 	}
-	
-	public void updateCurrentNames(){
+
+	public void updateCurrentNames() {
 		currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
-		for(int i = 0; i < currentPage.size(); i++){
+		for (int i = 0; i < currentPage.size(); i++) {
 			currentNames[i] = currentPage.get(i).getName();
 		}
-		for(int i = currentPage.size(); i < currentNames.length; i++){
+		for (int i = currentPage.size(); i < currentNames.length; i++) {
 			currentNames[i] = "";
 		}
 		sendNetworkUpdate();
 	}
-	
-	public ArrayList<BptBase> getCurrentPage(){
+
+	public ArrayList<BptBase> getCurrentPage() {
 		return currentPage;
 	}
-	
-	public void setCurrentPage(ArrayList<BptBase> newPage){
+
+	public void setCurrentPage(ArrayList<BptBase> newPage) {
 		currentPage = newPage;
 		selected = -1;
 		updateCurrentNames();
 	}
-	
+
 	public void setCurrentPage(boolean nextPage) {
 		int index = 0;
 		if (nextPage) {
@@ -131,8 +129,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			setCurrentPage(getNextPage(null));
 		}
 	}
-		
-	public void deleteSelectedBpt(){
+
+	public void deleteSelectedBpt() {
 		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 		if (selected > -1 && selected < currentPage.size()) {
 			index.deleteBluePrint(currentPage.get(selected).file.getName());
@@ -178,9 +176,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		if (stack[i] == null) {
+		if (stack[i] == null)
 			return null;
-		}
 
 		ItemStack res = stack[i].splitStack(j);
 
@@ -237,16 +234,19 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void openChest() {}
+	public void openChest() {
+	}
 
 	@Override
-	public void closeChest() {}
+	public void closeChest() {
+	}
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if(CoreProxy.proxy.isRenderWorld(worldObj)) return;
-		
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
+
 		if (progressIn > 0 && progressIn < 100) {
 			progressIn++;
 		}
@@ -276,8 +276,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		if (progressOut == 100 && stack[3] == null) {
 			if (selected > -1 && selected < currentPage.size()) {
 				BptBase bpt = currentPage.get(selected);
-				setInventorySlotContents(3,
-						BuildCraftBuilders.getBptItemStack(stack[2].itemID, bpt.position, bpt.getName()));
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, bpt.position, bpt.getName()));
 			} else {
 				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, 0, null));
 			}

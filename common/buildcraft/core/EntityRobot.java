@@ -15,11 +15,9 @@ import java.util.List;
 
 import javax.management.RuntimeErrorException;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.core.Position;
@@ -30,9 +28,10 @@ import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
@@ -92,8 +91,9 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	@Override
 	public void writeSpawnData(ByteArrayDataOutput data) {
 
-		if(box == null)
+		if (box == null) {
 			box = new Box();
+		}
 
 		data.writeInt(box.xMin);
 		data.writeInt(box.yMin);
@@ -118,13 +118,16 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	@Override
-	protected void entityInit() {}
+	protected void entityInit() {
+	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
+	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
+	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
+	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
+	}
 
 	@Override
 	public void onUpdate() {
@@ -210,16 +213,17 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 						if (target.mode == Mode.ClearIfInvalid) {
 
-							if (!target.isValid(a.context))
+							if (!target.isValid(a.context)) {
 								worldObj.setBlockAndMetadataWithNotify(target.x, target.y, target.z, 0, 0);
+							}
 
 						} else if (target.stackToUse != null) {
 
 							worldObj.setBlockWithNotify(target.x, target.y, target.z, 0);
 							throw new RuntimeErrorException(null, "NOT IMPLEMENTED");
-//							target.stackToUse.getItem().onItemUse(target.stackToUse,
-//									CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
-//									target.z, 1);
+							// target.stackToUse.getItem().onItemUse(target.stackToUse,
+							// CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
+							// target.z, 1);
 						} else {
 
 							try {
@@ -245,15 +249,16 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	public void updateWait() {
 
 		if (targets.size() > 0)
-			if (wait == 0)
+			if (wait == 0) {
 				wait = MAX_TARGETS - targets.size() + 2;
-			else
+			} else {
 				wait--;
+			}
 	}
 
 	private void updateLaser() {
 
-		if(laser == null)
+		if (laser == null)
 			return;
 
 		if (targets.size() > 0) {
@@ -266,8 +271,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 				laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
 				laser.show();
 			}
-		}
-		else {
+		} else {
 			laser.hide();
 		}
 
@@ -303,8 +307,9 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	@Override
 	public void setDead() {
 
-		if (laser != null)
+		if (laser != null) {
 			laser.setDead();
+		}
 
 		super.setDead();
 	}

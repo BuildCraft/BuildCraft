@@ -11,12 +11,11 @@ package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
@@ -26,8 +25,8 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j)
-			for (int i = 0; i < bluePrint.sizeX; ++i)
+		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
+			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
 					int xCoord = i + x - bluePrint.anchorX;
 					int yCoord = j + y - bluePrint.anchorY;
@@ -48,9 +47,11 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						clearList.add(slot);
 					}
 				}
+			}
+		}
 
-		for (int j = 0; j < bluePrint.sizeY; ++j)
-			for (int i = 0; i < bluePrint.sizeX; ++i)
+		for (int j = 0; j < bluePrint.sizeY; ++j) {
+			for (int i = 0; i < bluePrint.sizeX; ++i) {
 				for (int k = 0; k < bluePrint.sizeZ; ++k) {
 					int xCoord = i + x - bluePrint.anchorX;
 					int yCoord = j + y - bluePrint.anchorY;
@@ -58,9 +59,9 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					BptSlot slot = bluePrint.contents[i][j][k];
 
-					if (slot != null)
+					if (slot != null) {
 						slot = slot.clone();
-					else {
+					} else {
 						slot = new BptSlot();
 						slot.meta = 0;
 						slot.blockId = 0;
@@ -72,16 +73,20 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					slot.mode = Mode.Build;
 
-					if (slot.blockId != 0)
+					if (slot.blockId != 0) {
 						buildList.add(slot);
+					}
 				}
+			}
+		}
 	}
 
 	private void checkDone() {
-		if (clearList.size() == 0 && buildList.size() == 0)
+		if (clearList.size() == 0 && buildList.size() == 0) {
 			done = true;
-		else
+		} else {
 			done = false;
+		}
 	}
 
 	@Override
@@ -110,6 +115,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 		return null;
 	}
+
 	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list) {
 		BptSlot result = null;
 
@@ -117,17 +123,18 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			BptSlot slot = list.getFirst();
 
 			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
-			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z)))
+			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z))) {
 				list.removeFirst();
-			else if (slot.mode == Mode.ClearIfInvalid) {
+			} else if (slot.mode == Mode.ClearIfInvalid) {
 				result = slot;
 				list.removeFirst();
 				break;
 			} else {
 				int size = inv.getSizeInventory();
 				for (int i = 0; i < size; ++i) {
-					if (!inv.isBuildingMaterial(i))
+					if (!inv.isBuildingMaterial(i)) {
 						continue;
+					}
 
 					ItemStack stack = inv.decrStackSize(i, 1);
 

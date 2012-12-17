@@ -42,7 +42,8 @@ public abstract class BptBase {
 
 	protected String version = "";
 
-	public BptBase() {}
+	public BptBase() {
+	}
 
 	public BptBase(int sizeX, int sizeY, int sizeZ) {
 		contents = new BptSlot[sizeX][sizeY][sizeZ];
@@ -70,12 +71,12 @@ public abstract class BptBase {
 	public void rotateLeft(BptContext context) {
 		BptSlot newContents[][][] = new BptSlot[sizeZ][sizeY][sizeX];
 
-		for (int x = 0; x < sizeZ; ++x)
-			for (int y = 0; y < sizeY; ++y)
+		for (int x = 0; x < sizeZ; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeX; ++z) {
 					newContents[x][y][z] = contents[z][y][(sizeZ - 1) - x];
 
-					if (newContents[x][y][z] != null)
+					if (newContents[x][y][z] != null) {
 						try {
 							newContents[x][y][z].rotateLeft(context);
 						} catch (Throwable t) {
@@ -83,7 +84,10 @@ public abstract class BptBase {
 							t.printStackTrace();
 							BuildCraftCore.bcLog.throwing("BptBase", "rotateLeft", t);
 						}
+					}
 				}
+			}
+		}
 
 		int newAnchorX, newAnchorY, newAnchorZ;
 
@@ -109,8 +113,9 @@ public abstract class BptBase {
 
 			baseDir.mkdir();
 
-			if (!file.exists())
+			if (!file.exists()) {
 				file.createNewFile();
+			}
 
 			FileOutputStream output = new FileOutputStream(file);
 
@@ -119,10 +124,11 @@ public abstract class BptBase {
 			writer.write("version:" + Version.VERSION);
 			writer.newLine();
 
-			if (this instanceof BptTemplate)
+			if (this instanceof BptTemplate) {
 				writer.write("kind:template");
-			else
+			} else {
 				writer.write("kind:blueprint");
+			}
 			writer.newLine();
 
 			writer.write("sizeX:" + sizeX);
@@ -170,12 +176,11 @@ public abstract class BptBase {
 
 		BptBase bpt = (BptBase) o;
 
-		if (sizeX != bpt.sizeX || sizeY != bpt.sizeY || sizeZ != bpt.sizeZ || anchorX != bpt.anchorX || anchorY != bpt.anchorY
-				|| anchorZ != bpt.anchorZ)
+		if (sizeX != bpt.sizeX || sizeY != bpt.sizeY || sizeZ != bpt.sizeZ || anchorX != bpt.anchorX || anchorY != bpt.anchorY || anchorZ != bpt.anchorZ)
 			return false;
 
-		for (int x = 0; x < contents.length; ++x)
-			for (int y = 0; y < contents[0].length; ++y)
+		for (int x = 0; x < contents.length; ++x) {
+			for (int y = 0; y < contents[0].length; ++y) {
 				for (int z = 0; z < contents[0][0].length; ++z) {
 					if (contents[x][y][z] != null && bpt.contents[x][y][z] == null)
 						return false;
@@ -183,12 +188,15 @@ public abstract class BptBase {
 					if (contents[x][y][z] == null && bpt.contents[x][y][z] != null)
 						return false;
 
-					if (contents[x][y][z] == null && bpt.contents[x][y][z] == null)
+					if (contents[x][y][z] == null && bpt.contents[x][y][z] == null) {
 						continue;
+					}
 
 					if (contents[x][y][z].blockId != bpt.contents[x][y][z].blockId)
 						return false;
 				}
+			}
+		}
 
 		return true;
 	}
@@ -206,47 +214,51 @@ public abstract class BptBase {
 			while (true) {
 				String line = reader.readLine();
 
-				if (line == null)
+				if (line == null) {
 					break;
+				}
 
 				String[] cpts = line.split(":");
 				String attr = cpts[0];
 
 				if (attr.equals("kind")) {
-					if (cpts[1].equals("template"))
+					if (cpts[1].equals("template")) {
 						result = new BptTemplate();
-					else if (cpts[1].equals("blueprint"))
+					} else if (cpts[1].equals("blueprint")) {
 						result = new BptBlueprint();
+					}
 
 					result.position = position;
 					result.version = version;
 					result.file = file;
-				} else if (attr.equals("sizeX"))
+				} else if (attr.equals("sizeX")) {
 					result.sizeX = Integer.parseInt(cpts[1]);
-				else if (attr.equals("sizeY"))
+				} else if (attr.equals("sizeY")) {
 					result.sizeY = Integer.parseInt(cpts[1]);
-				else if (attr.equals("sizeZ"))
+				} else if (attr.equals("sizeZ")) {
 					result.sizeZ = Integer.parseInt(cpts[1]);
-				else if (attr.equals("anchorX"))
+				} else if (attr.equals("anchorX")) {
 					result.anchorX = Integer.parseInt(cpts[1]);
-				else if (attr.equals("anchorY"))
+				} else if (attr.equals("anchorY")) {
 					result.anchorY = Integer.parseInt(cpts[1]);
-				else if (attr.equals("anchorZ"))
+				} else if (attr.equals("anchorZ")) {
 					result.anchorZ = Integer.parseInt(cpts[1]);
-				else if (attr.equals("name"))
+				} else if (attr.equals("name")) {
 					result.name = cpts[1];
-				else if (attr.equals("version")) {
-					if (result != null)
+				} else if (attr.equals("version")) {
+					if (result != null) {
 						result.version = version;
-					else
+					} else {
 						version = cpts[1];
-				} else if (attr.equals("author"))
+					}
+				} else if (attr.equals("author")) {
 					result.author = cpts[1];
-				else if (result != null)
-					if (cpts.length >= 2)
+				} else if (result != null)
+					if (cpts.length >= 2) {
 						result.loadAttribute(reader, attr, cpts[1]);
-					else
+					} else {
 						result.loadAttribute(reader, attr, "");
+					}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -297,11 +309,14 @@ public abstract class BptBase {
 
 		res.contents = new BptSlot[sizeX][sizeY][sizeZ];
 
-		for (int x = 0; x < sizeX; ++x)
-			for (int y = 0; y < sizeY; ++y)
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z)
-					if (contents[x][y][z] != null)
+					if (contents[x][y][z] != null) {
 						res.contents[x][y][z] = contents[x][y][z].clone();
+					}
+			}
+		}
 
 		copyTo(res);
 

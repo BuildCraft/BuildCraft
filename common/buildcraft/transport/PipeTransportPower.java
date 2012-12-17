@@ -9,6 +9,11 @@
 
 package buildcraft.transport;
 
+import java.util.Arrays;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -20,10 +25,6 @@ import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
-import java.util.Arrays;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportPower extends PipeTransport {
 
@@ -31,9 +32,9 @@ public class PipeTransportPower extends PipeTransport {
 	private static final int OVERLOAD_LIMIT = 7500;
 	private static final short MAX_DISPLAY = 100;
 	private static final float DISPLAY_POWER_FACTOR = 0.1f;
-	
+
 	private boolean needsInit = true;
-	
+
 	private TileEntity[] tiles = new TileEntity[6];
 
 	public short[] displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
@@ -60,13 +61,13 @@ public class PipeTransportPower extends PipeTransport {
 	public boolean isPipeConnected(TileEntity tile) {
 		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
 	}
-	
+
 	@Override
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 		updateTiles();
 	}
-	
+
 	private void updateTiles() {
 		for (int i = 0; i < 6; ++i) {
 			TileEntity tile = container.getTile(ForgeDirection.VALID_DIRECTIONS[i]);
@@ -77,7 +78,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 	}
-	
+
 	private void init() {
 		if (needsInit) {
 			needsInit = false;
@@ -91,12 +92,12 @@ public class PipeTransportPower extends PipeTransport {
 			return;
 
 		step();
-		
+
 		init();
 
 		// Send the power to nearby pipes who requested it
 
-		Arrays.fill(displayPower, (short)0);
+		Arrays.fill(displayPower, (short) 0);
 
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
@@ -104,8 +105,9 @@ public class PipeTransportPower extends PipeTransport {
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0)
-						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IPowerReceptor)
+						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IPowerReceptor) {
 							div += powerQuery[j];
+						}
 				}
 
 				double totalWatt = internalPower[i];
@@ -121,8 +123,8 @@ public class PipeTransportPower extends PipeTransport {
 
 							nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 
-							displayPower[j] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
-							displayPower[i] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
+							displayPower[j] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
+							displayPower[i] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
 
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof IPowerReceptor) {
@@ -130,11 +132,11 @@ public class PipeTransportPower extends PipeTransport {
 
 							IPowerProvider prov = pow.getPowerProvider();
 
-							if(prov != null) {
+							if (prov != null) {
 								prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 
-							    displayPower[j] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
-							    displayPower[i] += (short)Math.ceil(watts * DISPLAY_POWER_FACTOR);
+								displayPower[j] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
+								displayPower[i] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
 
 								internalPower[i] -= watts;
 							}
@@ -143,14 +145,14 @@ public class PipeTransportPower extends PipeTransport {
 				}
 			}
 		}
-		
+
 		double highestPower = 0;
-		for(int i = 0; i < 6; i++){
-			if(internalPower[i] > highestPower){
+		for (int i = 0; i < 6; i++) {
+			if (internalPower[i] > highestPower) {
 				highestPower = internalPower[i];
 			}
-			displayPower[i] = (short)Math.max(displayPower[i], Math.ceil(internalPower[i] * DISPLAY_POWER_FACTOR));
-			displayPower[i] = (short)Math.min(displayPower[i], MAX_DISPLAY);
+			displayPower[i] = (short) Math.max(displayPower[i], Math.ceil(internalPower[i] * DISPLAY_POWER_FACTOR));
+			displayPower[i] = (short) Math.min(displayPower[i], MAX_DISPLAY);
 		}
 		overload = highestPower > OVERLOAD_LIMIT;
 
@@ -161,8 +163,9 @@ public class PipeTransportPower extends PipeTransport {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
 				int request = receptor.powerRequest();
 
-				if (request > 0)
+				if (request > 0) {
 					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
+				}
 			}
 		}
 
@@ -174,8 +177,9 @@ public class PipeTransportPower extends PipeTransport {
 			transferQuery[i] = 0;
 
 			for (int j = 0; j < 6; ++j) {
-				if (j != i)
+				if (j != i) {
 					transferQuery[i] += powerQuery[j];
+				}
 			}
 		}
 
@@ -204,8 +208,7 @@ public class PipeTransportPower extends PipeTransport {
 			PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 			packet.displayPower = displayPower;
 			packet.overload = overload;
-			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord,
-					DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
 
 	}
@@ -222,7 +225,7 @@ public class PipeTransportPower extends PipeTransport {
 			internalNextPower = next;
 			for (int i = 0; i < nextPowerQuery.length; i++) {
 				if (powerQuery[i] == 0.0d && internalNextPower[i] > 0) {
-					internalNextPower[i]-=1;
+					internalNextPower[i] -= 1;
 				}
 			}
 		}
@@ -230,13 +233,14 @@ public class PipeTransportPower extends PipeTransport {
 
 	public void receiveEnergy(ForgeDirection from, double val) {
 		step();
-		if (this.container.pipe instanceof IPipeTransportPowerHook)
+		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
-		else {
-			if (BuildCraftTransport.usePipeLoss)
+		} else {
+			if (BuildCraftTransport.usePipeLoss) {
 				internalNextPower[from.ordinal()] += val * (1 - powerResistance);
-			else
+			} else {
 				internalNextPower[from.ordinal()] += val;
+			}
 
 			if (internalNextPower[from.ordinal()] >= MAX_POWER_INTERNAL) {
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, false);
@@ -247,9 +251,9 @@ public class PipeTransportPower extends PipeTransport {
 
 	public void requestEnergy(ForgeDirection from, int i) {
 		step();
-		if (this.container.pipe instanceof IPipeTransportPowerHook)
+		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, i);
-		else {
+		} else {
 			step();
 			nextPowerQuery[from.ordinal()] += i;
 		}
@@ -296,6 +300,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	/**
 	 * Client-side handler for receiving power updates from the server;
+	 * 
 	 * @param packetPower
 	 */
 	public void handlePowerPacket(PacketPowerUpdate packetPower) {

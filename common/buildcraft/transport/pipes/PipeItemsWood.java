@@ -8,7 +8,12 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.power.IPowerProvider;
@@ -22,11 +27,6 @@ import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ISidedInventory;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
@@ -93,43 +93,41 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 		if (tile instanceof IInventory) {
-         if (!PipeManager.canExtractItems(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
-            return;
+			if (!PipeManager.canExtractItems(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+				return;
 
-         IInventory inventory = (IInventory) tile;
+			IInventory inventory = (IInventory) tile;
 
-         ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.getOpposite());
-         if (extracted == null)
-            return;
+			ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.getOpposite());
+			if (extracted == null)
+				return;
 
-         for(ItemStack stack : extracted) {
-            if (stack == null || stack.stackSize == 0) {
-               powerProvider.useEnergy(1, 1, false);
-                  continue;
-            }
+			for (ItemStack stack : extracted) {
+				if (stack == null || stack.stackSize == 0) {
+					powerProvider.useEnergy(1, 1, false);
+					continue;
+				}
 
-            Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5,
-                  pos.orientation.getOpposite());
+				Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5, pos.orientation.getOpposite());
 
-            entityPos.moveForwards(0.5);
+				entityPos.moveForwards(0.5);
 
-            IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
+				IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
 
-            ((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
-         }
-      }
+				((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
+			}
+		}
 	}
 
 	/**
-	 * Return the itemstack that can be if something can be extracted from this
-	 * inventory, null if none. On certain cases, the extractable slot depends
-	 * on the position of the pipe.
+	 * Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain cases, the extractable slot depends on the
+	 * position of the pipe.
 	 */
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
-		/// ISPECIALINVENTORY
+		// / ISPECIALINVENTORY
 		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int)powerProvider.getEnergyStored());
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerProvider.getEnergyStored());
 			if (stacks != null && doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
@@ -150,9 +148,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			ItemStack result = checkExtractGeneric(inv, doRemove, from, first, last);
 
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
+			if (result != null)
+				return new ItemStack[] { result };
 		} else if (inventory.getSizeInventory() == 2) {
 			// This is an input-output inventory
 
@@ -167,11 +164,10 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			ItemStack slot = inventory.getStackInSlot(slotIndex);
 
 			if (slot != null && slot.stackSize > 0) {
-				if (doRemove) {
-					return new ItemStack[]{inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true))};
-				} else {
-					return new ItemStack[]{slot};
-				}
+				if (doRemove)
+					return new ItemStack[] { inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true)) };
+				else
+					return new ItemStack[] { slot };
 			}
 		} else if (inventory.getSizeInventory() == 3) {
 			// This is a furnace-like inventory
@@ -189,11 +185,10 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			ItemStack slot = inventory.getStackInSlot(slotIndex);
 
 			if (slot != null && slot.stackSize > 0) {
-				if (doRemove) {
-					return new ItemStack[]{inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true))};
-				} else {
-					return new ItemStack[]{slot};
-				}
+				if (doRemove)
+					return new ItemStack[] { inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true)) };
+				else
+					return new ItemStack[] { slot };
 			}
 		} else {
 			// This is a generic inventory
@@ -201,9 +196,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
 
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
+			if (result != null)
+				return new ItemStack[] { result };
 		}
 
 		return null;
@@ -216,11 +210,10 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 				ItemStack slot = inventory.getStackInSlot(k);
 
 				if (slot != null && slot.stackSize > 0) {
-					if (doRemove) {
+					if (doRemove)
 						return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
-					} else {
+					else
 						return slot;
-					}
 				}
 			}
 		}
@@ -235,7 +228,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public boolean canConnectRedstone() {
-		if(PowerFramework.currentFramework instanceof RedstonePowerFramework)
+		if (PowerFramework.currentFramework instanceof RedstonePowerFramework)
 			return true;
 		return super.canConnectRedstone();
 	}

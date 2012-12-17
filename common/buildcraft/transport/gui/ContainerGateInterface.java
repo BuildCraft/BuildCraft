@@ -16,8 +16,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
@@ -52,12 +52,15 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		super(0);
 		this.playerIInventory = playerInventory;
 
-		for (int l = 0; l < 3; l++)
-			for (int k1 = 0; k1 < 9; k1++)
+		for (int l = 0; l < 3; l++) {
+			for (int k1 = 0; k1 < 9; k1++) {
 				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+			}
+		}
 
-		for (int i1 = 0; i1 < 9; i1++)
+		for (int i1 = 0; i1 < 9; i1++) {
 			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
+		}
 
 		this.pipe = pipe;
 
@@ -68,8 +71,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
 
 			TileEntity ptile = pipe.worldObj.getBlockTileEntity(pipe.xCoord, pipe.yCoord, pipe.zCoord);
-			if (ptile instanceof IOverrideDefaultTriggers)
-				_potentialTriggers.addAll( ((IOverrideDefaultTriggers)ptile).getTriggers());
+			if (ptile instanceof IOverrideDefaultTriggers) {
+				_potentialTriggers.addAll(((IOverrideDefaultTriggers) ptile).getTriggers());
+			}
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				Position pos = new Position(pipe.xCoord, pipe.yCoord, pipe.zCoord, o);
@@ -81,14 +85,16 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				LinkedList<ITrigger> nearbyTriggers = ActionManager.getNeighborTriggers(block, tile);
 
 				for (ITrigger t : nearbyTriggers)
-					if (!_potentialTriggers.contains(t))
+					if (!_potentialTriggers.contains(t)) {
 						_potentialTriggers.add(t);
+					}
 
 				LinkedList<IAction> nearbyActions = ActionManager.getNeighborActions(block, tile);
 
 				for (IAction a : nearbyActions)
-					if (!_potentialActions.contains(a))
+					if (!_potentialActions.contains(a)) {
 						_potentialActions.add(a);
+					}
 			}
 		}
 	}
@@ -101,8 +107,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	/** CLIENT SIDE **/
 
 	/**
-	 * Marks client side gate container as needing to be synchronized with the
-	 * server.
+	 * Marks client side gate container as needing to be synchronized with the server.
 	 */
 	public void markDirty() {
 		isSynchronized = false;
@@ -110,7 +115,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Clears list of potential actions and refills it according to packet.
-	 *
+	 * 
 	 * @param packet
 	 */
 	public void updateActions(PacketUpdate packet) {
@@ -118,27 +123,29 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		_potentialActions.clear();
 		int length = packet.payload.intPayload[0];
 
-		for (int i = 0; i < length; i++)
+		for (int i = 0; i < length; i++) {
 			_potentialActions.add(ActionManager.actions[packet.payload.intPayload[i + 1]]);
+		}
 
 	}
 
 	/**
 	 * Clears list of potential triggers and refills it according to packet.
-	 *
+	 * 
 	 * @param packet
 	 */
 	public void updateTriggers(PacketUpdate packet) {
 		_potentialTriggers.clear();
 		int length = packet.payload.intPayload[0];
 
-		for (int i = 0; i < length; i++)
+		for (int i = 0; i < length; i++) {
 			_potentialTriggers.add(ActionManager.triggers[packet.payload.intPayload[i + 1]]);
+		}
 	}
 
 	/**
 	 * Sets the currently selected actions and triggers according to packet.
-	 *
+	 * 
 	 * @param packet
 	 */
 	public void setSelection(PacketUpdate packet) {
@@ -179,15 +186,17 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		payload.intPayload[0] = position;
 
-		if (pipe.activatedTriggers[position] != null)
+		if (pipe.activatedTriggers[position] != null) {
 			payload.intPayload[1] = pipe.activatedTriggers[position].getId();
-		else
+		} else {
 			payload.intPayload[1] = -1;
+		}
 
-		if (pipe.activatedActions[position] != null)
+		if (pipe.activatedActions[position] != null) {
 			payload.intPayload[2] = pipe.activatedActions[position].getId();
-		else
+		} else {
 			payload.intPayload[2] = -1;
+		}
 
 		if (pipe.triggerParameters[position] != null && pipe.triggerParameters[position].getItemStack() != null) {
 			payload.intPayload[3] = pipe.triggerParameters[position].getItemStack().itemID;
@@ -195,33 +204,29 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
 		}
 
-		CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload)
-				.getPacket());
+		CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload).getPacket());
 	}
 
 	/**
-	 * Initializes the list of triggers and actions on the gate and
-	 * (re-)requests the current selection on the gate if needed.
+	 * Initializes the list of triggers and actions on the gate and (re-)requests the current selection on the gate if needed.
 	 */
 	public void synchronize() {
 
 		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			isNetInitialized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord)
-					.getPacket());
+			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord).getPacket());
 		}
 
 		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 			isSynchronized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord)
-					.getPacket());
+			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord).getPacket());
 		}
 	}
-	
+
 	@Override
 	public void updateProgressBar(int id, int state) {
-		if(id == 0 /* Trigger state update */){
-			for(int i = 0; i < 8; i++){
+		if (id == 0 /* Trigger state update */) {
+			for (int i = 0; i < 8; i++) {
 				/* Bit mask of triggers */
 				triggerState[i] = ((state >> i) & 0x01) == 0x01;
 			}
@@ -229,25 +234,25 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	/** SERVER SIDE **/
-	private int calculateTriggerState(){
+	private int calculateTriggerState() {
 		int state = 0;
-		for(int i = 0; i < triggerState.length; i++){
-			if(pipe.activatedTriggers[i] != null){
+		for (int i = 0; i < triggerState.length; i++) {
+			if (pipe.activatedTriggers[i] != null) {
 				triggerState[i] = isNearbyTriggerActive(pipe.activatedTriggers[i], pipe.getTriggerParameter(i));
 			}
 			state |= triggerState[i] ? 0x01 << i : 0x0;
 		}
 		return state;
 	}
-	
+
 	@Override
 	public void updateCraftingResults() {
 		super.updateCraftingResults();
 		int state = calculateTriggerState();
-		if(state != lastTriggerState){
-			for(int i = 0; i < this.crafters.size(); i++){
-				ICrafting viewingPlayer = (ICrafting)this.crafters.get(i);
-				
+		if (state != lastTriggerState) {
+			for (int i = 0; i < this.crafters.size(); i++) {
+				ICrafting viewingPlayer = (ICrafting) this.crafters.get(i);
+
 				viewingPlayer.sendProgressBarUpdate(this, 0 /* State update */, state);
 			}
 			lastTriggerState = state;
@@ -295,7 +300,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the list of potential actions to the client
-	 *
+	 * 
 	 * @param player
 	 */
 	private void sendActions(EntityPlayer player) {
@@ -305,8 +310,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketPayload payload = new PacketPayload(length + 1, 0, 0);
 
 		payload.intPayload[0] = length;
-		for (int i = 0; i < length; i++)
+		for (int i = 0; i < length; i++) {
 			payload.intPayload[i + 1] = _potentialActions.get(i).getId();
+		}
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
@@ -316,7 +322,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the list of potential triggers to the client
-	 *
+	 * 
 	 * @param player
 	 */
 	private void sendTriggers(EntityPlayer player) {
@@ -326,8 +332,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		PacketPayload payload = new PacketPayload(length + 1, 0, 0);
 
 		payload.intPayload[0] = length;
-		for (int i = 0; i < length; i++)
+		for (int i = 0; i < length; i++) {
 			payload.intPayload[i + 1] = _potentialTriggers.get(i).getId();
+		}
 
 		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
 
@@ -337,7 +344,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the current selection on the gate to the client.
-	 *
+	 * 
 	 * @param player
 	 */
 	public void sendSelection(EntityPlayer player) {
@@ -368,15 +375,17 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 			payload.intPayload[0] = position;
 
-			if (pipe.activatedTriggers[position] != null)
+			if (pipe.activatedTriggers[position] != null) {
 				payload.intPayload[1] = pipe.activatedTriggers[position].getId();
-			else
+			} else {
 				payload.intPayload[1] = -1;
+			}
 
-			if (pipe.activatedActions[position] != null)
+			if (pipe.activatedActions[position] != null) {
 				payload.intPayload[2] = pipe.activatedActions[position].getId();
-			else
+			} else {
 				payload.intPayload[2] = -1;
+			}
 
 			if (pipe.triggerParameters[position] != null && pipe.triggerParameters[position].getItemStack() != null) {
 				payload.intPayload[3] = pipe.triggerParameters[position].getItemStack().itemID;
@@ -384,8 +393,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
 			}
 
-			CoreProxy.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord,
-					payload));
+			CoreProxy.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload));
 		}
 
 		// System.out.println("Sending current selection to player");
@@ -414,14 +422,16 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
 		pipe.setTrigger(position, trigger);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify)
+		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
 			sendSelectionChange(position);
+		}
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
 		pipe.setTriggerParameter(position, parameter);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify)
+		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
 			sendSelectionChange(position);
+		}
 	}
 
 	/** ACTIONS **/
@@ -443,8 +453,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.setAction(position, action);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify)
+		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
 			sendSelectionChange(position);
+		}
 	}
 
 	/** GATE INFORMATION **/

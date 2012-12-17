@@ -22,7 +22,7 @@ public class FactoryProxyClient extends FactoryProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
 		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.refineryBlock, 0), new RenderRefinery());
 
-		if(!BuildCraftFactory.hopperDisabled) {
+		if (!BuildCraftFactory.hopperDisabled) {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileHopper.class, new RenderHopper());
 			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 		}
@@ -33,7 +33,7 @@ public class FactoryProxyClient extends FactoryProxy {
 	public void initializeEntityRenders() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
 	}
-	
+
 	@Override
 	public void initializeNEIIntegration() {
 		try {

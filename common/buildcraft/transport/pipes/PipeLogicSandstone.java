@@ -9,13 +9,12 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.pipes.PipeLogic;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.transport.TileGenericPipe;
 
-public class PipeLogicSandstone extends PipeLogic{
+public class PipeLogicSandstone extends PipeLogic {
 	@Override
 	public boolean isPipeConnected(TileEntity tile) {
-		 return (tile instanceof TileGenericPipe);
+		return (tile instanceof TileGenericPipe);
 	}
 }

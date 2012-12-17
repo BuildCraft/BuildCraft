@@ -11,18 +11,18 @@ package buildcraft.transport.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.blueprints.BptItem;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 
 public class BptItemPipeDiamond extends BptItem {
 
-	public BptItemPipeDiamond() {}
+	public BptItemPipeDiamond() {
+	}
 
 	@Override
 	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
@@ -34,15 +34,18 @@ public class BptItemPipeDiamond extends BptItem {
 		ItemStack inv[] = BptBlockUtils.getItemStacks(slot, context);
 		ItemStack newInv[] = new ItemStack[54];
 
-		for (int dir = 0; dir <= 1; ++dir)
-			for (int s = 0; s < 9; ++s)
+		for (int dir = 0; dir <= 1; ++dir) {
+			for (int s = 0; s < 9; ++s) {
 				newInv[dir * 9 + s] = inv[dir * 9 + s];
+			}
+		}
 
 		for (int dir = 2; dir <= 5; ++dir) {
 			ForgeDirection r = ForgeDirection.values()[dir].getRotation(ForgeDirection.DOWN);
 
-			for (int s = 0; s < 9; ++s)
+			for (int s = 0; s < 9; ++s) {
 				newInv[r.ordinal() * 9 + s] = inv[dir * 9 + s];
+			}
 		}
 
 		BptBlockUtils.setItemStacks(slot, context, newInv);

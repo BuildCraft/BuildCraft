@@ -9,11 +9,6 @@
 
 package buildcraft.energy;
 
-import buildcraft.api.fuels.IronEngineCoolant;
-import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.Utils;
-import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.Item;
@@ -24,6 +19,11 @@ import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
+import buildcraft.api.fuels.IronEngineCoolant;
+import buildcraft.api.fuels.IronEngineFuel;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.Utils;
+import buildcraft.energy.gui.ContainerEngine;
 
 public class EngineIron extends Engine {
 
@@ -94,9 +94,8 @@ public class EngineIron extends Engine {
 		LiquidStack fuel = this.fuelTank.getLiquid();
 		IronEngineFuel currentFuel = IronEngineFuel.getFuelForLiquid(fuel);
 
-		if (currentFuel == null) {
+		if (currentFuel == null)
 			return;
-		}
 
 		if (penaltyCooling <= 0 && tile.isRedstonePowered) {
 
@@ -106,7 +105,9 @@ public class EngineIron extends Engine {
 				if (burnTime > 0) {
 					burnTime--;
 				} else {
-					if(--fuel.amount <= 0) fuelTank.setLiquid(null);
+					if (--fuel.amount <= 0) {
+						fuelTank.setLiquid(null);
+					}
 					burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
 				}
 
@@ -195,32 +196,22 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		if(nbttagcompound.hasKey("liquidId")) {
-			fuelTank.setLiquid(
-				new LiquidStack(
-					nbttagcompound.getInteger("liquidId"),
-					nbttagcompound.getInteger("liquidQty"),
-					nbttagcompound.getInteger("liquidMeta")));
-		} else if(nbttagcompound.hasKey("fuelTank")) {
-			fuelTank.setLiquid(
-				LiquidStack.loadLiquidStackFromNBT(
-					nbttagcompound.getCompoundTag("fuelTank")));
+		if (nbttagcompound.hasKey("liquidId")) {
+			fuelTank.setLiquid(new LiquidStack(nbttagcompound.getInteger("liquidId"), nbttagcompound.getInteger("liquidQty"), nbttagcompound
+					.getInteger("liquidMeta")));
+		} else if (nbttagcompound.hasKey("fuelTank")) {
+			fuelTank.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("fuelTank")));
 		}
-		
+
 		burnTime = nbttagcompound.getInteger("burnTime");
-		
-		if(nbttagcompound.hasKey("coolantId")) {
-			coolantTank.setLiquid(
-				new LiquidStack(
-					nbttagcompound.getInteger("coolantId"),
-					nbttagcompound.getInteger("coolantQty"),
-					nbttagcompound.getInteger("coolantMeta")));
-		} else if(nbttagcompound.hasKey("coolantTank")) {
-			coolantTank.setLiquid(
-				LiquidStack.loadLiquidStackFromNBT(
-					nbttagcompound.getCompoundTag("coolantTank")));
+
+		if (nbttagcompound.hasKey("coolantId")) {
+			coolantTank.setLiquid(new LiquidStack(nbttagcompound.getInteger("coolantId"), nbttagcompound.getInteger("coolantQty"), nbttagcompound
+					.getInteger("coolantMeta")));
+		} else if (nbttagcompound.hasKey("coolantTank")) {
+			coolantTank.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("coolantTank")));
 		}
-		
+
 		heat = nbttagcompound.getInteger("heat");
 		penaltyCooling = nbttagcompound.getInteger("penaltyCooling");
 
@@ -233,11 +224,11 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		if(fuelTank.getLiquid() != null) {
+		if (fuelTank.getLiquid() != null) {
 			nbttagcompound.setTag("fuelTank", fuelTank.getLiquid().writeToNBT(new NBTTagCompound()));
 		}
 
-		if(coolantTank.getLiquid() != null) {
+		if (coolantTank.getLiquid() != null) {
 			nbttagcompound.setTag("coolantTank", coolantTank.getLiquid().writeToNBT(new NBTTagCompound()));
 		}
 
@@ -282,38 +273,56 @@ public class EngineIron extends Engine {
 			heat = (heat & 0xff00) | (j & 0xff);
 			break;
 		case 4:
-			heat = (heat & 0xff) | ((j & 0xff) << 8 );
+			heat = (heat & 0xff) | ((j & 0xff) << 8);
 			break;
 		case 5:
-			if(fuelTank.getLiquid() == null) fuelTank.setLiquid(new LiquidStack(0, j));
-			else fuelTank.getLiquid().amount = j;
+			if (fuelTank.getLiquid() == null) {
+				fuelTank.setLiquid(new LiquidStack(0, j));
+			} else {
+				fuelTank.getLiquid().amount = j;
+			}
 			break;
 		case 6:
-			if(fuelTank.getLiquid() == null) fuelTank.setLiquid(new LiquidStack(j, 0));
-			else fuelTank.getLiquid().itemID = j;
+			if (fuelTank.getLiquid() == null) {
+				fuelTank.setLiquid(new LiquidStack(j, 0));
+			} else {
+				fuelTank.getLiquid().itemID = j;
+			}
 			break;
 		case 7:
-			if(coolantTank.getLiquid() == null) coolantTank.setLiquid(new LiquidStack(0, j));
-			else coolantTank.getLiquid().amount = j;
+			if (coolantTank.getLiquid() == null) {
+				coolantTank.setLiquid(new LiquidStack(0, j));
+			} else {
+				coolantTank.getLiquid().amount = j;
+			}
 			break;
 		case 8:
-			if(coolantTank.getLiquid() == null) coolantTank.setLiquid(new LiquidStack(j, 0));
-			else coolantTank.getLiquid().itemID = j;
+			if (coolantTank.getLiquid() == null) {
+				coolantTank.setLiquid(new LiquidStack(j, 0));
+			} else {
+				coolantTank.getLiquid().itemID = j;
+			}
 			break;
 		case 9:
-			if(fuelTank.getLiquid() == null) fuelTank.setLiquid(new LiquidStack(0, 0, j));
-			else fuelTank.getLiquid().itemMeta = j;
+			if (fuelTank.getLiquid() == null) {
+				fuelTank.setLiquid(new LiquidStack(0, 0, j));
+			} else {
+				fuelTank.getLiquid().itemMeta = j;
+			}
 			break;
 		case 10:
-			if(coolantTank.getLiquid() == null) coolantTank.setLiquid(new LiquidStack(0, 0, j));
-			else coolantTank.getLiquid().itemMeta = j;
+			if (coolantTank.getLiquid() == null) {
+				coolantTank.setLiquid(new LiquidStack(0, 0, j));
+			} else {
+				coolantTank.getLiquid().itemMeta = j;
+			}
 		}
 	}
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy * 10) & 0xff);
-		iCrafting.sendProgressBarUpdate(containerEngine, 1, (Math.round(energy * 10) & 0xff00) >> 8 );
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, (Math.round(energy * 10) & 0xff00) >> 8);
 		iCrafting.sendProgressBarUpdate(containerEngine, 2, Math.round(currentOutput * 10));
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, heat & 0xff);
 		iCrafting.sendProgressBarUpdate(containerEngine, 4, (heat & 0xff00) >> 8);
@@ -358,11 +367,21 @@ public class EngineIron extends Engine {
 		return new LiquidTank[] { fuelTank, coolantTank };
 	}
 
-
 	/* IINVENTORY */
-	@Override public int getSizeInventory() { return 1; }
-	@Override public ItemStack getStackInSlot(int i) { return itemInInventory; }
-	@Override public void setInventorySlotContents(int i, ItemStack itemstack) { itemInInventory = itemstack; }
+	@Override
+	public int getSizeInventory() {
+		return 1;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return itemInInventory;
+	}
+
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		itemInInventory = itemstack;
+	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
@@ -394,8 +413,7 @@ public class EngineIron extends Engine {
 
 	@Override
 	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		switch (direction)
-		{
+		switch (direction) {
 		case UP:
 			return fuelTank;
 		case DOWN:

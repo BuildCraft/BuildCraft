@@ -1,17 +1,17 @@
 package buildcraft.transport.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.IItemRenderer;
+
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemPipe;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraftforge.client.IItemRenderer;
 
 public class PipeItemRenderer implements IItemRenderer {
 
@@ -22,12 +22,13 @@ public class PipeItemRenderer implements IItemRenderer {
 
 		Block block = BuildCraftTransport.genericPipeBlock;
 		int textureID = ((ItemPipe) Item.itemsList[item.itemID]).getTextureIndex();
-		if (textureID > 255)
+		if (textureID > 255) {
 			textureID -= 256;
+		}
 
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();
-        render.func_83018_a(block);
+		render.func_83018_a(block);
 
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
@@ -57,7 +58,6 @@ public class PipeItemRenderer implements IItemRenderer {
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
-
 
 	/** IItemRenderer implementation **/
 

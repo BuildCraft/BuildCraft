@@ -9,15 +9,15 @@
 
 package buildcraft.core;
 
-import buildcraft.api.core.Position;
 import net.minecraft.world.World;
+import buildcraft.api.core.Position;
 
 public class EntityEnergyLaser extends EntityLaser {
 
 	public static final short POWER_AVERAGING = 100;
 	public int displayStage = 0;
 
-	private final float power [] = new float [POWER_AVERAGING];
+	private final float power[] = new float[POWER_AVERAGING];
 	private int powerIndex = 0;
 	private float powerAverage = 0;
 
@@ -29,15 +29,16 @@ public class EntityEnergyLaser extends EntityLaser {
 		super(world, head, tail);
 	}
 
-	public void pushPower (float received) {
+	public void pushPower(float received) {
 
-		powerAverage -= power [powerIndex];
+		powerAverage -= power[powerIndex];
 		powerAverage += received;
 		power[powerIndex] = received;
 		powerIndex++;
 
-		if (powerIndex == power.length)
+		if (powerIndex == power.length) {
 			powerIndex = 0;
+		}
 	}
 
 	public float getPowerAverage() {
@@ -45,9 +46,9 @@ public class EntityEnergyLaser extends EntityLaser {
 	}
 
 	@Override
-	public String getTexture () {
+	public String getTexture() {
 
-		if (getPowerAverage () <= 1.0)
+		if (getPowerAverage() <= 1.0)
 			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png";
 		else if (getPowerAverage() <= 2.0)
 			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png";
@@ -56,19 +57,19 @@ public class EntityEnergyLaser extends EntityLaser {
 		else
 			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png";
 	}
-	
+
 	@Override
 	protected void updateDataClient() {
 		super.updateDataClient();
-		powerAverage = (float)decodeDouble(dataWatcher.getWatchableObjectInt(15));
+		powerAverage = (float) decodeDouble(dataWatcher.getWatchableObjectInt(15));
 	}
 
 	@Override
 	protected void updateDataServer() {
 		super.updateDataServer();
-		dataWatcher.updateObject(15, Integer.valueOf(encodeDouble((double)powerAverage)));
+		dataWatcher.updateObject(15, Integer.valueOf(encodeDouble(powerAverage)));
 	}
-	
+
 	@Override
 	protected void entityInit() {
 		super.entityInit();

@@ -9,7 +9,6 @@
 
 package buildcraft.builders;
 
-import buildcraft.builders.TileBlueprintLibrary;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 

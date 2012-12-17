@@ -12,9 +12,8 @@ package buildcraft.api.gates;
 import net.minecraft.tileentity.TileEntity;
 
 /**
- * This class has to be implemented to create new triggers kinds to BuildCraft
- * gates. There is an instance per kind, which will get called wherever the
- * trigger can be active.
+ * This class has to be implemented to create new triggers kinds to BuildCraft gates. There is an instance per kind, which will get called wherever the trigger
+ * can be active.
  */
 public abstract class Trigger implements ITrigger {
 
@@ -28,21 +27,27 @@ public abstract class Trigger implements ITrigger {
 		ActionManager.triggers[id] = this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#getId()
 	 */
 	@Override
 	public int getId() {
 		return this.id;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#getTextureFile()
 	 */
 	@Override
 	public abstract String getTextureFile();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#getIndexInTexture()
 	 */
 	@Override
@@ -50,7 +55,9 @@ public abstract class Trigger implements ITrigger {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#hasParameter()
 	 */
 	@Override
@@ -58,7 +65,9 @@ public abstract class Trigger implements ITrigger {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#getDescription()
 	 */
 	@Override
@@ -66,15 +75,20 @@ public abstract class Trigger implements ITrigger {
 		return "";
 	}
 
-	/* (non-Javadoc)
-	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#isTriggerActive(net.minecraft.src.TileEntity, net.minecraft.src.buildcraft.api.gates.TriggerParameter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#isTriggerActive(net.minecraft.src.TileEntity,
+	 * net.minecraft.src.buildcraft.api.gates.TriggerParameter)
 	 */
 	@Override
 	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITrigger#createParameter()
 	 */
 	@Override

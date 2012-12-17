@@ -1,23 +1,24 @@
 package buildcraft.core.render;
 
-import buildcraft.api.core.Position;
-import net.minecraft.entity.Entity;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
 
 public class RenderLaser extends Render {
 
-	protected ModelBase model = new ModelBase() {};
+	protected ModelBase model = new ModelBase() {
+	};
 	private ModelRenderer box;
 
 	public RenderLaser() {
-		
+
 		box = new ModelRenderer(model, 0, 0);
 		box.addBox(0, -0.5F, -0.5F, 16, 1, 1);
 		box.rotationPointX = 0;
@@ -27,13 +28,13 @@ public class RenderLaser extends Render {
 
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
-		
+
 		doRender((EntityLaser) entity, x, y, z, f, f1);
 		entity.setAngles(45, 180);
 	}
 
 	private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1) {
-		
+
 		if (!laser.isVisible() || laser.getTexture() == null)
 			return;
 

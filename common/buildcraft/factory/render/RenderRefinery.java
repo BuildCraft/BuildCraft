@@ -12,14 +12,13 @@ package buildcraft.factory.render;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.item.Item;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
@@ -37,7 +36,8 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	private ModelRenderer tank;
 	private ModelRenderer magnet[] = new ModelRenderer[4];
 
-	private ModelBase model = new ModelBase() {};
+	private ModelBase model = new ModelBase() {
+	};
 
 	public RenderRefinery() {
 
@@ -67,11 +67,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 	private int[] getDisplayLists(int liquidId, int damage, World world) {
 
-		if (stage.containsKey(liquidId)){
+		if (stage.containsKey(liquidId)) {
 			HashMap<Integer, int[]> x = stage.get(liquidId);
-			if (x.containsKey(damage)){
+			if (x.containsKey(damage))
 				return x.get(damage);
-			}
 		} else {
 			stage.put(liquidId, new HashMap<Integer, int[]>());
 		}
@@ -82,13 +81,11 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		BlockInterface block = new BlockInterface();
 
 		// Retrieve the texture depending on type of item.
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
 			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
-
-		else if (Item.itemsList[liquidId] != null)
+		} else if (Item.itemsList[liquidId] != null) {
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
-
-		else
+		} else
 			return null;
 
 		for (int s = 0; s < displayStages; ++s) {
@@ -136,19 +133,19 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		ModelRenderer theMagnet = magnet[0];
 
 		if (tile != null) {
-			if(tile.ingredient1.getLiquid() != null) {
+			if (tile.ingredient1.getLiquid() != null) {
 				liquid1 = tile.ingredient1.getLiquid().itemID;
 				liquidMeta1 = tile.ingredient1.getLiquid().itemMeta;
 				qty1 = tile.ingredient1.getLiquid().amount;
 			}
 
-			if(tile.ingredient2.getLiquid() != null) {
+			if (tile.ingredient2.getLiquid() != null) {
 				liquid2 = tile.ingredient2.getLiquid().itemID;
 				liquidMeta2 = tile.ingredient2.getLiquid().itemMeta;
 				qty2 = tile.ingredient2.getLiquid().amount;
 			}
 
-			if(tile.result.getLiquid() != null) {
+			if (tile.result.getLiquid() != null) {
 				liquid3 = tile.result.getLiquid().itemID;
 				liquidMeta3 = tile.result.getLiquid().itemMeta;
 				qty3 = tile.result.getLiquid().amount;
@@ -171,14 +168,15 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				break;
 			}
 
-			if (tile.animationSpeed <= 1)
+			if (tile.animationSpeed <= 1) {
 				theMagnet = magnet[0];
-			else if (tile.animationSpeed <= 2.5)
+			} else if (tile.animationSpeed <= 2.5) {
 				theMagnet = magnet[1];
-			else if (tile.animationSpeed <= 4.5)
+			} else if (tile.animationSpeed <= 4.5) {
 				theMagnet = magnet[2];
-			else
+			} else {
 				theMagnet = magnet[3];
+			}
 
 		}
 
@@ -270,6 +268,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		} else {
 			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
 		}
-		
+
 	}
 }

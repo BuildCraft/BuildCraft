@@ -9,10 +9,15 @@
 
 package buildcraft.builders;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.Box;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
@@ -23,11 +28,6 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 public class TileArchitect extends TileBuildCraft implements IInventory {
 
@@ -39,7 +39,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	private boolean isComputing = false;
 	public int computingTime = 0;
 
-	public @TileNetworkData String name = "";
+	public @TileNetworkData
+	String name = "";
 
 	// Use that field to avoid creating several times the same template if
 	// they're the same!
@@ -80,9 +81,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	public void createBpt() {
-		if (!box.isInitialized() || items[1] != null) {
+		if (!box.isInitialized() || items[1] != null)
 			return;
-		}
 
 		BptBase result;
 		BptContext context = null;
@@ -173,14 +173,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 		return result;
 	}
-		
-	public void handleClientInput(char c){
+
+	public void handleClientInput(char c) {
 		if (c == 8) {
-			if (name.length() > 0)
+			if (name.length() > 0) {
 				name = name.substring(0, name.length() - 1);
+			}
 		} else if (Character.isLetterOrDigit(c) || c == ' ') {
-			if (name.length() < BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE)
+			if (name.length() < BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
 				name += c;
+			}
 		}
 		sendNetworkUpdate();
 	}
@@ -312,9 +314,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	private void initializeComputing() {
-		if (!box.isInitialized()) {
+		if (!box.isInitialized())
 			return;
-		} else if (!isComputing) {
+		else if (!isComputing) {
 			if (items[0] != null && items[0].getItem() instanceof ItemBptBase && items[1] == null) {
 				isComputing = true;
 				computingTime = 0;

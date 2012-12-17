@@ -9,14 +9,14 @@
 
 package buildcraft.transport;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.IItemPipe;
-import buildcraft.core.ItemBuildCraft;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftTransport;
+import buildcraft.core.IItemPipe;
+import buildcraft.core.ItemBuildCraft;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -33,27 +33,32 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
 
-		if (world.getBlockId(i, j, k) == Block.snow.blockID)
+		if (world.getBlockId(i, j, k) == Block.snow.blockID) {
 			side = 0;
-		else {
-			if (side == 0)
+		} else {
+			if (side == 0) {
 				j--;
-			if (side == 1)
+			}
+			if (side == 1) {
 				j++;
-			if (side == 2)
+			}
+			if (side == 2) {
 				k--;
-			if (side == 3)
+			}
+			if (side == 3) {
 				k++;
-			if (side == 4)
+			}
+			if (side == 4) {
 				i--;
-			if (side == 5)
+			}
+			if (side == 5) {
 				i++;
+			}
 		}
 
 		if (itemstack.stackSize == 0)
 			return false;
-		if (entityplayer.canCurrentToolHarvestBlock(i, j, k)
-				&& world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
+		if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
 
 			Pipe pipe = BlockGenericPipe.createPipe(shiftedIndex);
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
@@ -71,7 +76,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			return false;
 	}
 
-	public ItemPipe setTextureIndex(int textureIndex){
+	public ItemPipe setTextureIndex(int textureIndex) {
 		this.textureIndex = textureIndex;
 		return this;
 	}

@@ -13,16 +13,16 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
@@ -93,13 +93,15 @@ public class BlockEngine extends BlockContainer {
 					return false;
 
 			if (tile.engine instanceof EngineStone) {
-				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj))
+				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj)) {
 					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
+				}
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
-				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj))
+				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj)) {
 					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
+				}
 				return true;
 			}
 
@@ -125,9 +127,8 @@ public class BlockEngine extends BlockContainer {
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 
-		if (!tile.isBurning()) {
+		if (!tile.isBurning())
 			return;
-		}
 
 		float f = (float) i + 0.5F;
 		float f1 = (float) j + 0.0F + (random.nextFloat() * 6F) / 16F;

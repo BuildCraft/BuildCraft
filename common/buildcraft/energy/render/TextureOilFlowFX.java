@@ -15,7 +15,6 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
-
 import cpw.mods.fml.client.FMLTextureFX;
 
 public class TextureOilFlowFX extends FMLTextureFX {
@@ -45,7 +44,7 @@ public class TextureOilFlowFX extends FMLTextureFX {
 	@Override
 	public void onTick() {
 		field_1134_k++;
-		for (int i = 0; i < tileSizeBase; i++)
+		for (int i = 0; i < tileSizeBase; i++) {
 			for (int k = 0; k < tileSizeBase; k++) {
 				float f = 0.0F;
 				for (int j1 = k - 2; j1 <= k; j1++) {
@@ -56,26 +55,32 @@ public class TextureOilFlowFX extends FMLTextureFX {
 
 				field_1137_h[i + k * tileSizeBase] = f / 3.2F + field_1136_i[i + k * tileSizeBase] * 0.8F;
 			}
+		}
 
-		for (int j = 0; j < tileSizeBase; j++)
+		for (int j = 0; j < tileSizeBase; j++) {
 			for (int l = 0; l < tileSizeBase; l++) {
 				field_1136_i[j + l * tileSizeBase] += field_1135_j[j + l * tileSizeBase] * 0.05F;
-				if (field_1136_i[j + l * tileSizeBase] < 0.0F)
+				if (field_1136_i[j + l * tileSizeBase] < 0.0F) {
 					field_1136_i[j + l * tileSizeBase] = 0.0F;
+				}
 				field_1135_j[j + l * tileSizeBase] -= 0.3F;
-				if (Math.random() < 0.20000000000000001D)
+				if (Math.random() < 0.20000000000000001D) {
 					field_1135_j[j + l * tileSizeBase] = 0.5F;
+				}
 			}
+		}
 
 		float af[] = field_1137_h;
 		field_1137_h = field_1138_g;
 		field_1138_g = af;
 		for (int i1 = 0; i1 < tileSizeSquare; i1++) {
 			float f1 = field_1138_g[i1 - field_1134_k * tileSizeBase & tileSizeSquareMask];
-			if (f1 > 1.0F)
+			if (f1 > 1.0F) {
 				f1 = 1.0F;
-			if (f1 < 0.0F)
+			}
+			if (f1 < 0.0F) {
 				f1 = 0.0F;
+			}
 			float f2 = f1 * f1;
 			int l1 = (int) (10F + f2 * 22F);
 			int j2 = (int) (50F + f2 * 64F);

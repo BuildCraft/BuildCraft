@@ -1,18 +1,18 @@
 package buildcraft.transport.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IItemRenderer;
+
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.IItemRenderer;
 
 public class FacadeItemRenderer implements IItemRenderer {
 
@@ -24,15 +24,14 @@ public class FacadeItemRenderer implements IItemRenderer {
 		Tessellator tessellator = Tessellator.instance;
 
 		Block block = Block.blocksList[decodedBlockId];
-		if (block == null){
+		if (block == null)
 			return;
-		}
 
-		//Render Facade
+		// Render Facade
 		GL11.glPushMatrix();
 		ForgeHooksClient.bindTexture(block.getTextureFile(), 0);
-		block.setBlockBounds(0F, 0F, 1F - 1F/16F, 1F, 1F, 1F);
-        render.func_83018_a(block);
+		block.setBlockBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
+		render.func_83018_a(block);
 		GL11.glTranslatef(translateX, translateY, translateZ);
 
 		tessellator.startDrawingQuads();
@@ -62,14 +61,13 @@ public class FacadeItemRenderer implements IItemRenderer {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPopMatrix();
 
-
-		//Render StructurePipe
+		// Render StructurePipe
 		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 		block = BuildCraftTransport.genericPipeBlock;
-		int textureID = 7 * 16 + 13; //Structure pipe
-		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F/16F);
+		int textureID = 7 * 16 + 13; // Structure pipe
+		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F / 16F);
 		block.setBlockBoundsForItemRender();
-        render.func_83018_a(block);
+		render.func_83018_a(block);
 		GL11.glTranslatef(translateX, translateY, translateZ + 0.25F);
 
 		tessellator.startDrawingQuads();
@@ -100,15 +98,17 @@ public class FacadeItemRenderer implements IItemRenderer {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-		switch (type){
-			case ENTITY: return true;
-			case EQUIPPED: return true;
-			case INVENTORY: return true;
-			default:
-				return false;
+		switch (type) {
+		case ENTITY:
+			return true;
+		case EQUIPPED:
+			return true;
+		case INVENTORY:
+			return true;
+		default:
+			return false;
 		}
 	}
 

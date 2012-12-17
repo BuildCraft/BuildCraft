@@ -17,10 +17,9 @@ public class ItemBptBluePrint extends ItemBptBase {
 
 	@Override
 	public int getIconFromDamage(int i) {
-		if (i == 0) {
+		if (i == 0)
 			return 5 * 16 + 2;
-		} else {
+		else
 			return 5 * 16 + 3;
-		}
 	}
 }

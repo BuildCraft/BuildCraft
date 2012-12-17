@@ -11,9 +11,12 @@ package buildcraft.factory;
 
 import java.util.List;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -21,10 +24,6 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
 
@@ -38,14 +37,12 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	/**
-	 * Dig the next available piece of land if not done. As soon as it reaches
-	 * bedrock, lava or goes below 0, it's considered done.
+	 * Dig the next available piece of land if not done. As soon as it reaches bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
 	public void doWork() {
-		if (powerProvider.useEnergy(25, 25, true) < 25) {
+		if (powerProvider.useEnergy(25, 25, true) < 25)
 			return;
-		}
 
 		World world = worldObj;
 
@@ -66,24 +63,22 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		world.setBlockWithNotify(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
-		if (blockId == 0) {
+		if (blockId == 0)
 			return;
-		}
 
-		if (stacks == null || stacks.isEmpty()) {
+		if (stacks == null || stacks.isEmpty())
 			return;
-		}
 
 		for (ItemStack stack : stacks) {
 
 			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
 			stack.stackSize -= added.stackSize;
-			if (stack.stackSize <= 0)
+			if (stack.stackSize <= 0) {
 				continue;
-
-			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0) {
-				return;
 			}
+
+			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0)
+				return;
 
 			// Throw the object away.
 			// TODO: factorize that code

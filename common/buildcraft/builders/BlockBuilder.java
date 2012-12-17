@@ -12,23 +12,22 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftBuilders;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
 
 public class BlockBuilder extends BlockContainer {
 
@@ -57,13 +56,11 @@ public class BlockBuilder extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		if (j == 0 && i == 3) {
+		if (j == 0 && i == 3)
 			return blockTextureFront;
-		}
 
-		if (i == j) {
+		if (i == j)
 			return blockTextureFront;
-		}
 
 		switch (i) {
 		case 1:
@@ -106,8 +103,9 @@ public class BlockBuilder extends BlockContainer {
 			return true;
 		} else {
 
-			if (!CoreProxy.proxy.isRenderWorld(world))
+			if (!CoreProxy.proxy.isRenderWorld(world)) {
 				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, i, j, k);
+			}
 			return true;
 
 		}
@@ -116,8 +114,7 @@ public class BlockBuilder extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
-				new Position(i, j, k));
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
 	}

@@ -3,9 +3,12 @@ package buildcraft.silicon.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
-
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -14,13 +17,8 @@ import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
-
-import net.minecraft.inventory.Container;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 
 public class PacketHandlerSilicon implements IPacketHandler {
 
@@ -34,18 +32,18 @@ public class PacketHandlerSilicon implements IPacketHandler {
 			case PacketIds.SELECTION_ASSEMBLY_SEND:
 				PacketUpdate packetT = new PacketUpdate();
 				packetT.readData(data);
-				onSelectionUpdate((EntityPlayer)player, packetT);
+				onSelectionUpdate((EntityPlayer) player, packetT);
 				break;
 
 			case PacketIds.SELECTION_ASSEMBLY:
 				PacketUpdate packetA = new PacketUpdate();
 				packetA.readData(data);
-				onAssemblySelect((EntityPlayer)player, packetA);
+				onAssemblySelect((EntityPlayer) player, packetA);
 				break;
 			case PacketIds.SELECTION_ASSEMBLY_GET:
 				PacketCoordinates packetC = new PacketCoordinates();
 				packetC.readData(data);
-				onAssemblyGetSelection((EntityPlayer)player, packetC);
+				onAssemblyGetSelection((EntityPlayer) player, packetC);
 				break;
 			case PacketIds.ADVANCED_WORKBENCH_SETSLOT:
 				PacketSlotChange packet1 = new PacketSlotChange();
@@ -67,10 +65,9 @@ public class PacketHandlerSilicon implements IPacketHandler {
 		if (container instanceof ContainerAssemblyTable) {
 			SelectionMessage message = new SelectionMessage();
 			TileAssemblyTable.selectionMessageWrapper.fromPayload(message, packet.payload);
-			((ContainerAssemblyTable)container).handleSelectionMessage(message);
+			((ContainerAssemblyTable) container).handleSelectionMessage(message);
 		}
 	}
-
 
 	private TileAssemblyTable getAssemblyTable(World world, int x, int y, int z) {
 
@@ -95,9 +92,10 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 		return (TileAssemblyAdvancedWorkbench) tile;
 	}
+
 	/**
 	 * Sends the current selection on the assembly table to a player.
-	 *
+	 * 
 	 * @param player
 	 * @param packet
 	 */
@@ -112,7 +110,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	/**
 	 * Sets the selection on an assembly table according to player request.
-	 *
+	 * 
 	 * @param player
 	 * @param packet
 	 */
@@ -129,7 +127,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	/**
 	 * Sets the packet into the advanced workbench
-	 *
+	 * 
 	 * @param player
 	 * @param packet1
 	 */

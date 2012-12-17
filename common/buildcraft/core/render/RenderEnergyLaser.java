@@ -9,9 +9,9 @@
 
 package buildcraft.core.render;
 
+import net.minecraft.client.model.ModelRenderer;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
-import net.minecraft.client.model.ModelRenderer;
 
 public class RenderEnergyLaser extends RenderLaser {
 
@@ -39,7 +39,8 @@ public class RenderEnergyLaser extends RenderLaser {
 		EntityEnergyLaser eLaser = (EntityEnergyLaser) laser;
 
 		eLaser.displayStage = eLaser.displayStage + 1;
-		if (eLaser.displayStage >= box.length * 10)
+		if (eLaser.displayStage >= box.length * 10) {
 			eLaser.displayStage = 0;
+		}
 	}
 }

@@ -16,13 +16,11 @@ public class SafeTimeTracker {
 	private long lastMark = 0;
 
 	/**
-	 * Return true if a given delay has passed since last time marked was called
-	 * successfully.
+	 * Return true if a given delay has passed since last time marked was called successfully.
 	 */
 	public boolean markTimeIfDelay(World world, long delay) {
-		if (world == null) {
+		if (world == null)
 			return false;
-		}
 
 		long currentTime = world.getWorldTime();
 
@@ -32,9 +30,8 @@ public class SafeTimeTracker {
 		} else if (lastMark + delay <= currentTime) {
 			lastMark = world.getWorldTime();
 			return true;
-		} else {
+		} else
 			return false;
-		}
 
 	}
 

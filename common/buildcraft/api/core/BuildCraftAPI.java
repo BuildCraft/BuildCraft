@@ -21,7 +21,7 @@ public class BuildCraftAPI {
 	public static final int LAST_ORIGINAL_ITEM = 126;
 
 	public static final boolean[] softBlocks = new boolean[Block.blocksList.length];
-        
+
 	@Deprecated
 	// To be removed
 	public static boolean softBlock(int blockId) {

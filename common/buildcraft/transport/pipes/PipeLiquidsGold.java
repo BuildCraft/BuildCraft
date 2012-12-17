@@ -8,10 +8,10 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
-import net.minecraftforge.common.ForgeDirection;
 
 public class PipeLiquidsGold extends Pipe {
 
@@ -26,7 +26,7 @@ public class PipeLiquidsGold extends Pipe {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(ForgeDirection direction) {
 		return 7 * 16 + 4;

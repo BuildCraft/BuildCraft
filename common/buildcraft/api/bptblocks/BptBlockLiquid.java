@@ -11,11 +11,10 @@ package buildcraft.api.bptblocks;
 
 import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-
-import net.minecraft.item.ItemStack;
 
 public class BptBlockLiquid extends BptBlock {
 
@@ -36,12 +35,10 @@ public class BptBlockLiquid extends BptBlock {
 
 	@Override
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
-		if (slot.meta == 0) {
-			return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z)
-					&& context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
-		} else {
+		if (slot.meta == 0)
+			return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z) && context.world().getBlockMetadata(slot.x, slot.y, slot.z) == 0;
+		else
 			return true;
-		}
 	}
 
 	@Override

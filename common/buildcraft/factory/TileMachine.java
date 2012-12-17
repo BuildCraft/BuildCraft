@@ -17,11 +17,11 @@ public abstract class TileMachine extends TileBuildCraft implements IMachine, IP
 
 	@Override
 	public int powerRequest() {
-		if (isActive()) {
-			return (int) Math.ceil(Math.min(getPowerProvider().getMaxEnergyReceived(), getPowerProvider().getMaxEnergyStored() - getPowerProvider().getEnergyStored()));
-		} else {
+		if (isActive())
+			return (int) Math.ceil(Math.min(getPowerProvider().getMaxEnergyReceived(), getPowerProvider().getMaxEnergyStored()
+					- getPowerProvider().getEnergyStored()));
+		else
 			return 0;
-		}
 	}
 
 }

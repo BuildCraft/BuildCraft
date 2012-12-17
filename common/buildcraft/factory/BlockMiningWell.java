@@ -9,20 +9,18 @@
 
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
 import java.util.ArrayList;
 
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
 
 public class BlockMiningWell extends BlockMachineRoot {
 
@@ -44,27 +42,24 @@ public class BlockMiningWell extends BlockMachineRoot {
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		if (j == 0 && i == 3) {
+		if (j == 0 && i == 3)
 			return textureFront;
-		}
 
-		if (i == 1) {
+		if (i == 1)
 			return textureTop;
-		} else if (i == 0) {
+		else if (i == 0)
 			return textureBack;
-		} else if (i == j) {
+		else if (i == j)
 			return textureFront;
-		} else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i) {
+		else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i)
 			return textureBack;
-		} else {
+		else
 			return textureSides;
-		}
 	}
 
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
-				new Position(i, j, k));
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
 	}
@@ -73,9 +68,9 @@ public class BlockMiningWell extends BlockMachineRoot {
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
 		super.breakBlock(world, x, y, z, id, meta);
 
-		for(int depth = y - 1; depth > 0; depth--){
+		for (int depth = y - 1; depth > 0; depth--) {
 			int pipeID = world.getBlockId(x, depth, z);
-			if(pipeID != BuildCraftFactory.plainPipeBlock.blockID){
+			if (pipeID != BuildCraftFactory.plainPipeBlock.blockID) {
 				break;
 			}
 			world.setBlockWithNotify(x, depth, z, 0);

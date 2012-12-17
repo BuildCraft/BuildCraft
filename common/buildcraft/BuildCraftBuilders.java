@@ -13,18 +13,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.bptblocks.BptBlockBed;
 import buildcraft.api.bptblocks.BptBlockCustomStack;
@@ -76,17 +71,20 @@ import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.blueprints.BptRootIndex;
 import buildcraft.core.proxy.CoreProxy;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-
-@Mod(name="BuildCraft Builders", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
+@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
+@NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftBuilders {
 
 	public static final int LIBRARY_PAGE_SIZE = 12;
@@ -161,7 +159,7 @@ public class BuildCraftBuilders {
 		new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));
 		new BptBlockCustomStack(Block.redstoneWire.blockID, new ItemStack(Item.redstone));
 		// FIXME: Not sure what this has become
-		//new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
+		// new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
 		new BptBlockCustomStack(Block.cake.blockID, new ItemStack(Item.cake));
 		new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
 		new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));
@@ -211,8 +209,7 @@ public class BuildCraftBuilders {
 		new BptBlockWallSide(pathMarkerBlock.blockID);
 		new BptBlockFiller(fillerBlock.blockID);
 
-		if (BuildCraftCore.loadDefaultRecipes)
-		{
+		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
 
@@ -229,7 +226,7 @@ public class BuildCraftBuilders {
 		Property architectId = BuildCraftCore.mainConfiguration.getBlock("architect.id", DefaultProps.ARCHITECT_ID);
 		Property libraryId = BuildCraftCore.mainConfiguration.getBlock("blueprintLibrary.id", DefaultProps.BLUEPRINT_LIBRARY_ID);
 
-		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"filler.destroy", DefaultProps.FILLER_DESTROY);
+		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
 
@@ -298,69 +295,65 @@ public class BuildCraftBuilders {
 				new ItemStack(Item.dyePowder, 1, 2), Character.valueOf('r'), Block.torchRedstoneActive });
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[] { "btb", "ycy", "gCg", Character.valueOf('b'),
-				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'),
-				new ItemStack(Item.dyePowder, 1, 11), Character.valueOf('c'), Block.workbench, Character.valueOf('g'),
-				BuildCraftCore.goldGearItem, Character.valueOf('C'), Block.chest });
+				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+				Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('C'), Block.chest });
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[] { "btb", "ycy", "gCg", Character.valueOf('b'),
-				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'),
-				new ItemStack(Item.dyePowder, 1, 11), Character.valueOf('c'), Block.workbench, Character.valueOf('g'),
-				BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest });
+				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+				Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest });
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[] { "btb", "ycy", "gCg", Character.valueOf('b'),
-				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'),
-				new ItemStack(Item.dyePowder, 1, 11), Character.valueOf('c'), Block.workbench, Character.valueOf('g'),
-				BuildCraftCore.diamondGearItem, Character.valueOf('C'), new ItemStack(templateItem, 1) });
+				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+				Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'),
+				new ItemStack(templateItem, 1) });
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[] { "bbb", "bBb", "bbb", Character.valueOf('b'),
 				new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf });
 		// / INIT FILLER PATTERNS
-		FillerManager.registry.addRecipe(new FillerFillAll(), new Object[] { "bbb", "bbb", "bbb", Character.valueOf('b'),
-				new ItemStack(Block.brick, 1) });
+		FillerManager.registry.addRecipe(new FillerFillAll(), new Object[] { "bbb", "bbb", "bbb", Character.valueOf('b'), new ItemStack(Block.brick, 1) });
 
-		FillerManager.registry.addRecipe(new FillerFlattener(), new Object[] { "   ", "ggg", "bbb", Character.valueOf('g'),
-				Block.glass, Character.valueOf('b'), Block.brick });
+		FillerManager.registry.addRecipe(new FillerFlattener(), new Object[] { "   ", "ggg", "bbb", Character.valueOf('g'), Block.glass,
+				Character.valueOf('b'), Block.brick });
 
-		FillerManager.registry.addRecipe(new FillerRemover(), new Object[] { "ggg", "ggg", "ggg", Character.valueOf('g'),
-				Block.glass });
+		FillerManager.registry.addRecipe(new FillerRemover(), new Object[] { "ggg", "ggg", "ggg", Character.valueOf('g'), Block.glass });
 
-		FillerManager.registry.addRecipe(new FillerFillWalls(), new Object[] { "bbb", "b b", "bbb", Character.valueOf('b'),
-				Block.brick });
+		FillerManager.registry.addRecipe(new FillerFillWalls(), new Object[] { "bbb", "b b", "bbb", Character.valueOf('b'), Block.brick });
 
-		FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[] { "   ", " b ", "bbb", Character.valueOf('b'),
-				Block.brick });
+		FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[] { "   ", " b ", "bbb", Character.valueOf('b'), Block.brick });
 
-		FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[] { "  b", " bb", "bbb", Character.valueOf('b'),
-				Block.brick });
+		FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[] { "  b", " bb", "bbb", Character.valueOf('b'), Block.brick });
 	}
 
 	public static BptPlayerIndex getPlayerIndex(String name) {
 		BptRootIndex rootIndex = getBptRootIndex();
 
-		if (!playerLibrary.containsKey(name))
+		if (!playerLibrary.containsKey(name)) {
 			try {
 				playerLibrary.put(name, new BptPlayerIndex(name + ".list", rootIndex));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
 
 		return playerLibrary.get(name);
 	}
 
 	public static BptRootIndex getBptRootIndex() {
-		if (rootBptIndex == null)
+		if (rootBptIndex == null) {
 			try {
 				rootBptIndex = new BptRootIndex("index.txt");
 				rootBptIndex.loadIndex();
 
-				for (IBuilderHook hook : hooks)
+				for (IBuilderHook hook : hooks) {
 					hook.rootIndexInitialized(rootBptIndex);
+				}
 
 				rootBptIndex.importNewFiles();
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
 
 		return rootBptIndex;
 	}
@@ -368,7 +361,7 @@ public class BuildCraftBuilders {
 	public static ItemStack getBptItemStack(int id, int damage, String name) {
 		ItemStack stack = new ItemStack(id, 1, damage);
 		NBTTagCompound nbt = new NBTTagCompound();
-		if(name != null && !"".equals(name)) {
+		if (name != null && !"".equals(name)) {
 			nbt.setString("BptName", name);
 			stack.setTagCompound(nbt);
 		}
@@ -376,8 +369,9 @@ public class BuildCraftBuilders {
 	}
 
 	public static void addHook(IBuilderHook hook) {
-		if (!hooks.contains(hook))
+		if (!hooks.contains(hook)) {
 			hooks.add(hook);
+		}
 	}
 
 	@Mod.ServerStopping

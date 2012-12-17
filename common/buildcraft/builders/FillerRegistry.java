@@ -12,13 +12,12 @@ package buildcraft.builders;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.filler.IFillerRegistry;
-
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.filler.IFillerRegistry;
 
 public class FillerRegistry implements IFillerRegistry {
 
@@ -39,12 +38,10 @@ public class FillerRegistry implements IFillerRegistry {
 		public boolean matches(IInventory inventorycrafting) {
 			for (int i = 0; i <= 3 - recipeWidth; i++) {
 				for (int j = 0; j <= 3 - recipeHeight; j++) {
-					if (func_21137_a(inventorycrafting, i, j, true)) {
+					if (func_21137_a(inventorycrafting, i, j, true))
 						return true;
-					}
-					if (func_21137_a(inventorycrafting, i, j, false)) {
+					if (func_21137_a(inventorycrafting, i, j, false))
 						return true;
-					}
 				}
 
 			}
@@ -69,15 +66,12 @@ public class FillerRegistry implements IFillerRegistry {
 					if (itemstack1 == null && itemstack == null) {
 						continue;
 					}
-					if (itemstack1 == null && itemstack != null || itemstack1 != null && itemstack == null) {
+					if (itemstack1 == null && itemstack != null || itemstack1 != null && itemstack == null)
 						return false;
-					}
-					if (itemstack.itemID != itemstack1.itemID) {
+					if (itemstack.itemID != itemstack1.itemID)
 						return false;
-					}
-					if (itemstack.getItemDamage() != -1 && itemstack.getItemDamage() != itemstack1.getItemDamage()) {
+					if (itemstack.getItemDamage() != -1 && itemstack.getItemDamage() != itemstack1.getItemDamage())
 						return false;
-					}
 				}
 
 			}
@@ -144,9 +138,8 @@ public class FillerRegistry implements IFillerRegistry {
 	public IFillerPattern findMatchingRecipe(IInventory inventorycrafting) {
 		for (int i = 0; i < recipes.size(); i++) {
 			ShapedPatternRecipe irecipe = recipes.get(i);
-			if (irecipe.matches(inventorycrafting)) {
+			if (irecipe.matches(inventorycrafting))
 				return irecipe.recipeOutput;
-			}
 		}
 
 		return null;
@@ -157,10 +150,8 @@ public class FillerRegistry implements IFillerRegistry {
 		int i = 0;
 
 		for (ShapedPatternRecipe recipe : recipes) {
-			if (recipe.recipeOutput == pattern) {
-
+			if (recipe.recipeOutput == pattern)
 				return i;
-			}
 
 			i++;
 		}
@@ -170,9 +161,8 @@ public class FillerRegistry implements IFillerRegistry {
 
 	@Override
 	public IFillerPattern getPattern(int n) {
-		if (n <= 0) {
+		if (n <= 0)
 			return null;
-		}
 
 		return recipes.get(n - 1).recipeOutput;
 	}

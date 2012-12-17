@@ -11,22 +11,21 @@ package buildcraft.core;
 
 import java.util.TreeMap;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPassiveItemContribution;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class EntityPassiveItem implements IPipedItem {
 
@@ -55,7 +54,7 @@ public class EntityPassiveItem implements IPipedItem {
 
 	public EntityPassiveItem(World world, int id) {
 		setEntityId(id);
-//		PipeManager.getAllEntities().put(getEntityId(), this);
+		// PipeManager.getAllEntities().put(getEntityId(), this);
 		worldObj = world;
 	}
 
@@ -72,25 +71,29 @@ public class EntityPassiveItem implements IPipedItem {
 
 	/* CREATING & CACHING */
 	public static IPipedItem getOrCreate(World world, int id) {
-//		if (PipeManager.getAllEntities().containsKey(id)) {
-//			return PipeManager.getAllEntities().get(id);
-//		} else {
-			return new EntityPassiveItem(world, id);
-//		}
+		// if (PipeManager.getAllEntities().containsKey(id)) {
+		// return PipeManager.getAllEntities().get(id);
+		// } else {
+		return new EntityPassiveItem(world, id);
+		// }
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#remove()
 	 */
 	@Override
 	public void remove() {
-//		if (PipeManager.getAllEntities().containsKey(getEntityId())) {
-//			PipeManager.getAllEntities().remove(getEntityId());
-//		}
+		// if (PipeManager.getAllEntities().containsKey(getEntityId())) {
+		// PipeManager.getAllEntities().remove(getEntityId());
+		// }
 	}
 
 	/* GETTING & SETTING */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setWorld(net.minecraft.src.World)
 	 */
 	@Override
@@ -98,7 +101,9 @@ public class EntityPassiveItem implements IPipedItem {
 		worldObj = world;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getPosition()
 	 */
 	@Override
@@ -106,7 +111,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return position;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setPosition(double, double, double)
 	 */
 	@Override
@@ -114,7 +121,9 @@ public class EntityPassiveItem implements IPipedItem {
 		position = new Position(x, y, z);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getSpeed()
 	 */
 	@Override
@@ -122,7 +131,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return speed;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setSpeed(float)
 	 */
 	@Override
@@ -130,7 +141,9 @@ public class EntityPassiveItem implements IPipedItem {
 		this.speed = speed;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getItemStack()
 	 */
 	@Override
@@ -138,7 +151,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return item;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setItemStack(net.minecraft.src.ItemStack)
 	 */
 	@Override
@@ -146,7 +161,9 @@ public class EntityPassiveItem implements IPipedItem {
 		this.item = item;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getContainer()
 	 */
 	@Override
@@ -154,7 +171,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return container;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setContainer(net.minecraft.src.TileEntity)
 	 */
 	@Override
@@ -162,7 +181,9 @@ public class EntityPassiveItem implements IPipedItem {
 		this.container = container;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getSynchroTracker()
 	 */
 	@Override
@@ -171,7 +192,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return synchroTracker;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setSynchroTracker(net.minecraft.src.buildcraft.api.SafeTimeTracker)
 	 */
 	@Override
@@ -180,7 +203,9 @@ public class EntityPassiveItem implements IPipedItem {
 		this.synchroTracker = synchroTracker;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getDeterministicRandomization()
 	 */
 	@Override
@@ -189,7 +214,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return deterministicRandomization;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setDeterministicRandomization(int)
 	 */
 	@Override
@@ -198,7 +225,9 @@ public class EntityPassiveItem implements IPipedItem {
 		this.deterministicRandomization = deterministicRandomization;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getEntityId()
 	 */
 	@Override
@@ -206,7 +235,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return entityId;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setEntityId(int)
 	 */
 	@Override
@@ -215,14 +246,14 @@ public class EntityPassiveItem implements IPipedItem {
 	}
 
 	/* SAVING & LOADING */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#readFromNBT(net.minecraft.src.NBTTagCompound)
 	 */
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		setPosition(nbttagcompound.getDouble("x"),
-					nbttagcompound.getDouble("y"),
-					nbttagcompound.getDouble("z"));
+		setPosition(nbttagcompound.getDouble("x"), nbttagcompound.getDouble("y"), nbttagcompound.getDouble("z"));
 
 		setSpeed(nbttagcompound.getFloat("speed"));
 		setItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound.getCompoundTag("Item")));
@@ -255,7 +286,9 @@ public class EntityPassiveItem implements IPipedItem {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#writeToNBT(net.minecraft.src.NBTTagCompound)
 	 */
 	@Override
@@ -290,15 +323,16 @@ public class EntityPassiveItem implements IPipedItem {
 		nbttagcompound.setTag("contribList", contribList);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#toEntityItem(net.minecraft.src.buildcraft.api.Orientations)
 	 */
 	@Override
 	public EntityItem toEntityItem(ForgeDirection dir) {
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-			if (getItemStack().stackSize <= 0) {
+			if (getItemStack().stackSize <= 0)
 				return null;
-			}
 
 			Position motion = new Position(0, 0, 0, dir);
 			motion.moveForwards(0.1 + getSpeed() * 2F);
@@ -316,12 +350,13 @@ public class EntityPassiveItem implements IPipedItem {
 			remove();
 
 			return entityitem;
-		} else {
+		} else
 			return null;
-		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getEntityBrightness(float)
 	 */
 	@Override
@@ -333,12 +368,13 @@ public class EntityPassiveItem implements IPipedItem {
 			double d = 0.66000000000000003D;
 			int k = MathHelper.floor_double(position.y + d);
 			return worldObj.getLightBrightness(i, k, j);
-		} else {
+		} else
 			return 0.0F;
-		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#isCorrupted()
 	 */
 	@Override
@@ -346,7 +382,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return getItemStack() == null || getItemStack().stackSize <= 0 || Item.itemsList[getItemStack().itemID] == null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#addContribution(java.lang.String, net.minecraft.src.buildcraft.api.IPassiveItemContribution)
 	 */
 	@Override
@@ -354,7 +392,9 @@ public class EntityPassiveItem implements IPipedItem {
 		contributions.put(key, contribution);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getContribution(java.lang.String)
 	 */
 	@Override
@@ -362,7 +402,9 @@ public class EntityPassiveItem implements IPipedItem {
 		return contributions.get(key);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.IPipedItem#hasContributions()
 	 */
 	@Override

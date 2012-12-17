@@ -9,10 +9,10 @@
 
 package buildcraft.api.power;
 
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.core.SafeTimeTracker;
 
 public abstract class PowerProvider implements IPowerProvider {
 
@@ -31,16 +31,42 @@ public abstract class PowerProvider implements IPowerProvider {
 
 	public int[] powerSources = { 0, 0, 0, 0, 0, 0 };
 
-	@Override public SafeTimeTracker getTimeTracker() { return this.timeTracker; }
-	
-	@Override public int getLatency() { return this.latency; }
-	@Override public int getMinEnergyReceived() { return this.minEnergyReceived; }
-	@Override public int getMaxEnergyReceived() { return this.maxEnergyReceived; }
-	@Override public int getMaxEnergyStored() { return this.maxEnergyStored; }
-	@Override public int getActivationEnergy() { return this.minActivationEnergy; }
-	@Override public float getEnergyStored() { return this.energyStored; }
-	
-	@Override 
+	@Override
+	public SafeTimeTracker getTimeTracker() {
+		return this.timeTracker;
+	}
+
+	@Override
+	public int getLatency() {
+		return this.latency;
+	}
+
+	@Override
+	public int getMinEnergyReceived() {
+		return this.minEnergyReceived;
+	}
+
+	@Override
+	public int getMaxEnergyReceived() {
+		return this.maxEnergyReceived;
+	}
+
+	@Override
+	public int getMaxEnergyStored() {
+		return this.maxEnergyStored;
+	}
+
+	@Override
+	public int getActivationEnergy() {
+		return this.minActivationEnergy;
+	}
+
+	@Override
+	public float getEnergyStored() {
+		return this.energyStored;
+	}
+
+	@Override
 	public void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
 		this.latency = latency;
 		this.minEnergyReceived = minEnergyReceived;
@@ -49,7 +75,7 @@ public abstract class PowerProvider implements IPowerProvider {
 		this.minActivationEnergy = minActivationEnergy;
 	}
 
-	@Override 
+	@Override
 	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
 		this.powerLoss = powerLoss;
 		this.powerLossRegularity = powerLossRegularity;
@@ -57,9 +83,8 @@ public abstract class PowerProvider implements IPowerProvider {
 
 	@Override
 	public boolean update(IPowerReceptor receptor) {
-		if (!preConditions(receptor)) {
+		if (!preConditions(receptor))
 			return false;
-		}
 
 		TileEntity tile = (TileEntity) receptor;
 		boolean result = false;
@@ -119,7 +144,7 @@ public abstract class PowerProvider implements IPowerProvider {
 		return result;
 	}
 
-	@Override 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		latency = nbttagcompound.getInteger("latency");
 		minEnergyReceived = nbttagcompound.getInteger("minEnergyReceived");
@@ -134,7 +159,7 @@ public abstract class PowerProvider implements IPowerProvider {
 		}
 	}
 
-	@Override 
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setInteger("latency", latency);
 		nbttagcompound.setInteger("minEnergyReceived", minEnergyReceived);

@@ -2,6 +2,15 @@ package buildcraft.silicon;
 
 import java.util.LinkedList;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipeConnection;
@@ -13,16 +22,6 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.inventory.Container;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 
 public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection, ILaserTarget {
 
@@ -102,26 +101,30 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			if (currentRecipe.canBeDone(items)) {
 
 				for (ItemStack in : currentRecipe.input) {
-					if (in == null)
+					if (in == null) {
 						continue; // Optimisation, reduces calculation for a null ingredient
+					}
 
 					int found = 0; // Amount of ingredient found in inventory
 
 					for (int i = 0; i < items.length; ++i) {
-						if (items[i] == null)
+						if (items[i] == null) {
 							continue; // Broken out of large if statement, increases clarity
+						}
 
 						if (items[i].isItemEqual(in)) {
 
 							int supply = items[i].stackSize;
 							int toBeFound = in.stackSize - found;
 
-							if (supply >= toBeFound)
+							if (supply >= toBeFound) {
 								found += decrStackSize(i, toBeFound).stackSize; // Adds the amount of ingredient taken (in this case the total still needed)
-							else
+							} else {
 								found += decrStackSize(i, supply).stackSize; // Adds the amount of ingredient taken (in this case the total in that slot)
-							if (found >= in.stackSize)
+							}
+							if (found >= in.stackSize) {
 								break; // Breaks out of the for loop when the required amount of ingredient has been taken
+							}
 						}
 					}
 				}
@@ -130,8 +133,9 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
 				remaining.stackSize -= added.stackSize;
 
-				if (remaining.stackSize > 0)
+				if (remaining.stackSize > 0) {
 					Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, remaining);
+				}
 
 				if (remaining.stackSize > 0) {
 					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5, currentRecipe.output.copy());
@@ -145,13 +149,12 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	public float getCompletionRatio(float ratio) {
-		if (currentRecipe == null) {
+		if (currentRecipe == null)
 			return 0;
-		} else if (energyStored >= currentRecipe.energy) {
+		else if (energyStored >= currentRecipe.energy)
 			return ratio;
-		} else {
+		else
 			return energyStored / currentRecipe.energy * ratio;
-		}
 	}
 
 	@Override
@@ -283,14 +286,12 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	public boolean isPlanned(AssemblyRecipe recipe) {
-		if (recipe == null) {
+		if (recipe == null)
 			return false;
-		}
 
 		for (AssemblyRecipe r : plannedOutput) {
-			if (r == recipe) {
+			if (r == recipe)
 				return true;
-			}
 		}
 
 		return false;
@@ -302,10 +303,11 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	private void setCurrentRecipe(AssemblyRecipe recipe) {
 		this.currentRecipe = recipe;
-		if (recipe != null)
+		if (recipe != null) {
 			this.currentRequiredEnergy = recipe.energy;
-		else
+		} else {
 			this.currentRequiredEnergy = 0;
+		}
 	}
 
 	public void planOutput(AssemblyRecipe recipe) {
@@ -396,8 +398,8 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	/* SMP GUI */
 	public void getGUINetworkData(int i, int j) {
-		int currentStored = (int)(energyStored * 100.0);
-		int requiredEnergy = (int)(currentRequiredEnergy * 100.0);
+		int currentStored = (int) (energyStored * 100.0);
+		int requiredEnergy = (int) (currentRequiredEnergy * 100.0);
 		switch (i) {
 		case 0:
 			requiredEnergy = (requiredEnergy & 0xFFFF0000) | (j & 0xFFFF);
@@ -408,29 +410,28 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			energyStored = (currentStored / 100.0f);
 			break;
 		case 2:
-			requiredEnergy = (requiredEnergy & 0xFFFF) | ( (j & 0xFFFF) << 16);
+			requiredEnergy = (requiredEnergy & 0xFFFF) | ((j & 0xFFFF) << 16);
 			currentRequiredEnergy = (requiredEnergy / 100.0f);
 			break;
 		case 3:
-			currentStored = (currentStored & 0xFFFF) | ( (j & 0xFFFF) << 16);
+			currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
 			energyStored = (currentStored / 100.0f);
 			break;
 		case 4:
-			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | ( j & 0xFFFF);
+			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
 			break;
 		case 5:
-			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ( (j & 0xFFFF) << 16);
+			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
 			break;
 		}
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		int requiredEnergy = (int)(currentRequiredEnergy * 100.0);
-		int currentStored = (int)(energyStored * 100.0);
+		int requiredEnergy = (int) (currentRequiredEnergy * 100.0);
+		int currentStored = (int) (energyStored * 100.0);
 		int lRecentEnergy = 0;
-		for (int i = 0; i < recentEnergy.length; i++)
-		{
-			lRecentEnergy += (int)(recentEnergy[i] * 100.0 / (float)(recentEnergy.length - 1));
+		for (int i = 0; i < recentEnergy.length; i++) {
+			lRecentEnergy += (int) (recentEnergy[i] * 100.0 / (recentEnergy.length - 1));
 		}
 		iCrafting.sendProgressBarUpdate(container, 0, requiredEnergy & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 1, currentStored & 0xFFFF);

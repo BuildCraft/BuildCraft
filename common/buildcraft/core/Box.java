@@ -12,6 +12,8 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.LaserKind;
@@ -19,9 +21,6 @@ import buildcraft.api.core.Position;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 public class Box implements IBox {
 
@@ -74,8 +73,8 @@ public class Box implements IBox {
 
 	public void initialize(NBTTagCompound nbttagcompound) {
 
-		initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"),
-				nbttagcompound.getInteger("xMax"), nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
+		initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"), nbttagcompound.getInteger("xMax"),
+				nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
 	}
 
 	public void initialize(int centerX, int centerY, int centerZ, int size) {
@@ -119,10 +118,8 @@ public class Box implements IBox {
 	@Override
 	public boolean contains(int x, int y, int z) {
 
-		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax) {
-
+		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax)
 			return true;
-		}
 
 		return false;
 	}
@@ -211,16 +208,18 @@ public class Box implements IBox {
 	@Override
 	public void createLasers(World world, LaserKind kind) {
 
-		if (lasers == null)
+		if (lasers == null) {
 			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax, zMax, kind);
+		}
 	}
 
 	@Override
 	public void deleteLasers() {
 
 		if (lasers != null) {
-			for (EntityBlock b : lasers)
+			for (EntityBlock b : lasers) {
 				CoreProxy.proxy.removeEntity(b);
+			}
 
 			lasers = null;
 		}

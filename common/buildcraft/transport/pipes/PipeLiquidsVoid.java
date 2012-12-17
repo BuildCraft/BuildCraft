@@ -16,22 +16,21 @@ import buildcraft.transport.IPipeTransportLiquidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 
-public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook{
+public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook {
 
 	public PipeLiquidsVoid(int itemID) {
 		super(new PipeTransportLiquids(), new PipeLogicVoid(), itemID);
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(ForgeDirection direction) {
 		return 9 * 16 + 14;
 	}
-
 
 	@Override
 	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {

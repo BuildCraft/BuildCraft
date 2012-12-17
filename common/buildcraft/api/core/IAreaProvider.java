@@ -10,8 +10,7 @@
 package buildcraft.api.core;
 
 /**
- * To be implemented by TileEntities able to provide a square area on the world,
- * typically BuildCraft markers.
+ * To be implemented by TileEntities able to provide a square area on the world, typically BuildCraft markers.
  */
 public interface IAreaProvider {
 

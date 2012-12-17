@@ -9,11 +9,11 @@
 
 package buildcraft.builders.gui;
 
-import buildcraft.core.gui.BuildCraftContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import buildcraft.core.gui.BuildCraftContainer;
 
 public class ContainerFiller extends BuildCraftContainer {
 
@@ -66,10 +66,11 @@ public class ContainerFiller extends BuildCraftContainer {
 					return null;
 			} else if (!mergeItemStack(itemstack1, 9, getInventorySize(), false))
 				return null;
-			if (itemstack1.stackSize == 0)
+			if (itemstack1.stackSize == 0) {
 				slot.putStack(null);
-			else
+			} else {
 				slot.onSlotChanged();
+			}
 		}
 		return itemstack;
 	}

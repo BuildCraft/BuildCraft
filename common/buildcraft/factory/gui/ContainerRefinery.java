@@ -8,17 +8,17 @@
  */
 package buildcraft.factory.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 public class ContainerRefinery extends BuildCraftContainer {
 
@@ -59,8 +59,8 @@ public class ContainerRefinery extends BuildCraftContainer {
 			payload.intPayload[0] = slot;
 			payload.intPayload[1] = liquidId;
 			payload.intPayload[2] = liquidMeta;
-			CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord,
-					refinery.zCoord, payload).getPacket());
+			CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload)
+					.getPacket());
 		}
 	}
 

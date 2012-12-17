@@ -1,8 +1,8 @@
 package buildcraft.transport;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerReceptor;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class EnergyPulser {
 
@@ -20,7 +20,8 @@ public class EnergyPulser {
 	}
 
 	public void update() {
-		if (powerReceptor == null) return;
+		if (powerReceptor == null)
+			return;
 
 		// Set current pulse speed
 		pulseSpeed = getPulseSpeed();
@@ -36,18 +37,20 @@ public class EnergyPulser {
 				powerReceptor.getPowerProvider().receiveEnergy(1, ForgeDirection.WEST);
 
 				// Heat up
-				if (heat < maxHeat)
+				if (heat < maxHeat) {
 					heat++;
+				}
 
 			} else if (progress >= 1) {
 				progress = 0;
 				progressPart = 0;
 			}
-		} else if (isActive)
+		} else if (isActive) {
 			progressPart = 1;
-		else
+		} else {
 			// Cool down when deactivated
 			heat--;
+		}
 
 	}
 

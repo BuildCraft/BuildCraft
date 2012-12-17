@@ -17,30 +17,29 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.TileGenericPipe;
 
-public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsHook{
-	 public PipeLiquidsSandstone(int itemID) {
-			super(new PipeTransportLiquids(), new PipeLogicSandstone(), itemID);
+public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsHook {
+	public PipeLiquidsSandstone(int itemID) {
+		super(new PipeTransportLiquids(), new PipeLogicSandstone(), itemID);
 	}
-	 
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(ForgeDirection direction) {
-		 return 9 * 16 + 15;
+		return 9 * 16 + 15;
 	}
-
 
 	@Override
 	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		if (container.tileBuffer == null || container.tileBuffer[from.ordinal()] == null)
 			return 0;
-		
-		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe)) 
+
+		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe))
 			return 0;
-		
-		return ((PipeTransportLiquids)this.transport).getTanks(ForgeDirection.UNKNOWN)[from.ordinal()].fill(resource, doFill);
+
+		return ((PipeTransportLiquids) this.transport).getTanks(ForgeDirection.UNKNOWN)[from.ordinal()].fill(resource, doFill);
 	}
 }

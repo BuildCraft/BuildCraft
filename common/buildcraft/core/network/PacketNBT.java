@@ -21,9 +21,9 @@ public class PacketNBT extends PacketCoordinates {
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		
+
 		super.writeData(data);
-		
+
 		byte[] compressed = CompressedStreamTools.compress(nbttagcompound);
 		data.writeShort(compressed.length);
 		data.write(compressed);
@@ -31,9 +31,9 @@ public class PacketNBT extends PacketCoordinates {
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
-		
+
 		super.readData(data);
-		
+
 		short length = data.readShort();
 		byte[] compressed = new byte[length];
 		data.readFully(compressed);

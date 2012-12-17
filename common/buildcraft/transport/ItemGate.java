@@ -2,13 +2,11 @@ package buildcraft.transport;
 
 import java.util.List;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-
-import buildcraft.core.ItemBuildCraft;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.ItemBuildCraft;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 public class ItemGate extends ItemBuildCraft {
 
@@ -28,10 +26,11 @@ public class ItemGate extends ItemBuildCraft {
 	@Override
 	public int getIconFromDamage(int i) {
 		int n = 0;
-		if (series > 0)
+		if (series > 0) {
 			n = 3;
-		else
+		} else {
 			n = 2;
+		}
 
 		switch (i) {
 		case 0:

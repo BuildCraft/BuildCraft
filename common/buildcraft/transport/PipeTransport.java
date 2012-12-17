@@ -9,11 +9,11 @@
 
 package buildcraft.transport;
 
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.transport.IPipedItem;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.transport.IPipedItem;
 
 public abstract class PipeTransport {
 
@@ -88,8 +88,8 @@ public abstract class PipeTransport {
 	public boolean allowsConnect(PipeTransport with) {
 		return false;
 	}
-	
+
 	public void sendDescriptionPacket() {
-		
+
 	}
 }

@@ -9,15 +9,15 @@
 
 package buildcraft.core.triggers;
 
-import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
-import buildcraft.core.DefaultProps;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.Trigger;
+import buildcraft.core.DefaultProps;
 
 public class TriggerLiquidContainer extends Trigger {
 
@@ -75,11 +75,13 @@ public class TriggerLiquidContainer extends Trigger {
 
 			LiquidStack searchedLiquid = null;
 
-			if (parameter != null && parameter.getItem() != null)
+			if (parameter != null && parameter.getItem() != null) {
 				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
-				
-			if(searchedLiquid != null)
+			}
+
+			if (searchedLiquid != null) {
 				searchedLiquid.amount = 1;
+			}
 
 			ILiquidTank[] liquids = container.getTanks(ForgeDirection.UNKNOWN);
 
@@ -93,9 +95,8 @@ public class TriggerLiquidContainer extends Trigger {
 						LiquidStack drained = c.drain(1, false);
 						if (drained != null && searchedLiquid.isLiquidEqual(drained))
 							return false;
-					} else if (c.getLiquid() != null && c.getLiquid().amount > 0) {
+					} else if (c.getLiquid() != null && c.getLiquid().amount > 0)
 						return false;
-					}
 				}
 
 				return true;
@@ -114,20 +115,18 @@ public class TriggerLiquidContainer extends Trigger {
 					if (searchedLiquid != null) {
 						if (c.fill(searchedLiquid, false) > 0)
 							return true;
-					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity()) {
+					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
 						return true;
-					}
 				}
 
 				return false;
 			case Full:
 				for (ILiquidTank c : liquids) {
 					if (searchedLiquid != null) {
-						if(c.fill(searchedLiquid, false) > 0)
+						if (c.fill(searchedLiquid, false) > 0)
 							return false;
-					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity()) {
+					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
 						return false;
-					}
 				}
 
 				return true;

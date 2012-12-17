@@ -88,8 +88,9 @@ public class ByteBuffer {
 	public int[] readIntArray() {
 		LinkedList<Integer> ints = new LinkedList<Integer>();
 
-		while (bytes.size() > 0)
+		while (bytes.size() > 0) {
 			ints.add(readInt());
+		}
 
 		int[] res = new int[ints.size()];
 
@@ -104,7 +105,8 @@ public class ByteBuffer {
 	}
 
 	public void writeIntArray(int[] arr) {
-		for (int i : arr)
+		for (int i : arr) {
 			writeInt(i);
+		}
 	}
 }

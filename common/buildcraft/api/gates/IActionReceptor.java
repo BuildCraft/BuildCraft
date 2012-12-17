@@ -9,7 +9,6 @@
 
 package buildcraft.api.gates;
 
-
 public interface IActionReceptor {
 
 	public void actionActivated(IAction action);

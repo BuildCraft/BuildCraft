@@ -13,9 +13,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.LaserKind;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -40,13 +46,6 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SurroundingInventory;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 
@@ -124,9 +123,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 				bpt = instanciateBluePrint(newX, newY, newZ, o);
 
-				if (bpt == null) {
+				if (bpt == null)
 					return null;
-				}
 
 				AxisAlignedBB boundingBox = bpt.getBoundingBox();
 
@@ -134,9 +132,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 					oldBoundingBox = boundingBox;
 
-					if (bpt != null) {
+					if (bpt != null)
 						return bpt;
-					}
 				}
 
 				ix += cx;
@@ -145,9 +142,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 				double distance = (ix - to.i) * (ix - to.i) + (iy - to.j) * (iy - to.j) + (iz - to.k) * (iz - to.k);
 
-				if (distance > lastDistance) {
+				if (distance > lastDistance)
 					return null;
-				} else {
+				else {
 					lastDistance = distance;
 				}
 			}
@@ -159,21 +156,17 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				next.oldBoundingBox = oldBoundingBox;
 
 				return next;
-			} else {
+			} else
 				return null;
-			}
 		}
 
 		public boolean collision(AxisAlignedBB left, AxisAlignedBB right) {
-			if (left.maxX < right.minX || left.minX > right.maxX) {
+			if (left.maxX < right.minX || left.minX > right.maxX)
 				return false;
-			}
-			if (left.maxY < right.minY || left.minY > right.maxY) {
+			if (left.maxY < right.minY || left.minY > right.maxY)
 				return false;
-			}
-			if (left.maxZ < right.minZ || left.minZ > right.maxZ) {
+			if (left.maxZ < right.minZ || left.minZ > right.maxZ)
 				return false;
-			}
 			return true;
 		}
 	}
@@ -195,7 +188,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
-		
+
 		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
 			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
 				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
@@ -207,8 +200,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 						for (BlockIndex b : path) {
 							worldObj.setBlockWithNotify(b.i, b.j, b.k, 0);
 
-							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.i, b.j, b.k,
-									BuildCraftBuilders.pathMarkerBlock.blockID, 0);
+							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.i, b.j, b.k, BuildCraftBuilders.pathMarkerBlock.blockID, 0);
 						}
 
 						break;
@@ -234,11 +226,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 		for (BlockIndex b : path) {
 			if (previous != null) {
-				
-				EntityPowerLaser laser = new EntityPowerLaser(worldObj,
-						new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5),
-						new Position(b.i + 0.5, b.j + 0.5, b.k + 0.5));
-				
+
+				EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5), new Position(
+						b.i + 0.5, b.j + 0.5, b.k + 0.5));
+
 				laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
 				laser.show();
 				worldObj.spawnEntityInWorld(laser);
@@ -252,9 +243,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public BptBuilderBase instanciateBluePrint(int x, int y, int z, ForgeDirection o) {
 		BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(items[0].getItemDamage());
 
-		if (bpt == null) {
+		if (bpt == null)
 			return null;
-		}
 
 		bpt = bpt.clone();
 
@@ -273,32 +263,27 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			bpt.rotateLeft(context);
 		}
 
-		if (items[0].getItem() instanceof ItemBptTemplate) {
+		if (items[0].getItem() instanceof ItemBptTemplate)
 			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
-		} else if (items[0].getItem() instanceof ItemBptBluePrint) {
+		else if (items[0].getItem() instanceof ItemBptBluePrint)
 			return new BptBuilderBlueprint((BptBlueprint) bpt, worldObj, x, y, z);
-		} else {
+		else
 			return null;
-		}
 	}
 
 	@Override
 	public void doWork() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
-		}
 
-		if (done) {
+		if (done)
 			return;
-		}
 
-		if (builderRobot != null && !builderRobot.readyToBuild()) {
+		if (builderRobot != null && !builderRobot.readyToBuild())
 			return;
-		}
 
-		if (powerProvider.useEnergy(25, 25, true) < 25) {
+		if (powerProvider.useEnergy(25, 25, true) < 25)
 			return;
-		}
 
 		iterateBpt();
 
@@ -314,8 +299,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 			box.createLasers(worldObj, LaserKind.Stripes);
 
-			builderRobot.scheduleContruction(
-					bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
+			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
 					bluePrintBuilder.getContext());
 		}
 	}
@@ -575,11 +559,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public int powerRequest() {
-		if ((bluePrintBuilder != null || currentPathIterator != null) && !done) {
+		if ((bluePrintBuilder != null || currentPathIterator != null) && !done)
 			return powerProvider.getMaxEnergyReceived();
-		} else {
+		else
 			return 0;
-		}
 	}
 
 	@Override
@@ -587,8 +570,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 		super.updateEntity();
 
-		if ((bluePrintBuilder == null || bluePrintBuilder.done) && box.isInitialized()
-				&& (builderRobot == null || builderRobot.done())) {
+		if ((bluePrintBuilder == null || bluePrintBuilder.done) && box.isInitialized() && (builderRobot == null || builderRobot.done())) {
 
 			box.deleteLasers();
 			box.reset();
@@ -636,11 +618,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	public Collection<ItemStack> getNeededItems() {
-		if (bluePrintBuilder instanceof BptBuilderBlueprint) {
+		if (bluePrintBuilder instanceof BptBuilderBlueprint)
 			return ((BptBuilderBlueprint) bluePrintBuilder).neededItems;
-		} else {
+		else
 			return null;
-		}
 	}
 
 	@Override

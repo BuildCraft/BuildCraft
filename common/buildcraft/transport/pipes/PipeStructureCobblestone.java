@@ -16,11 +16,10 @@ public class PipeStructureCobblestone extends Pipe {
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(ForgeDirection direction) {
 		return 7 * 16 + 13;
 	}
-
 
 }

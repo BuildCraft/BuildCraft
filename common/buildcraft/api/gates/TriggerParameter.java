@@ -16,15 +16,19 @@ public class TriggerParameter implements ITriggerParameter {
 
 	protected ItemStack stack;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#getItemStack()
 	 */
 	@Override
 	public ItemStack getItemStack() {
 		return stack;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#set(net.minecraft.src.ItemStack)
 	 */
 	@Override
@@ -35,7 +39,9 @@ public class TriggerParameter implements ITriggerParameter {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#writeToNBT(net.minecraft.src.NBTTagCompound)
 	 */
 	@Override
@@ -46,7 +52,9 @@ public class TriggerParameter implements ITriggerParameter {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#readFromNBT(net.minecraft.src.NBTTagCompound)
 	 */
 	@Override
@@ -58,7 +66,9 @@ public class TriggerParameter implements ITriggerParameter {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.minecraft.src.buildcraft.api.gates.ITriggerParameter#getItem()
 	 */
 	@Override

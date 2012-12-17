@@ -8,17 +8,15 @@ import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.PipeRenderState;
 
-
 public class PipeRenderStatePacket extends PacketCoordinates {
-	
+
 	private PipeRenderState renderState;
 	public int pipeId;
-	
-	
-	public PipeRenderStatePacket(){
-		
+
+	public PipeRenderStatePacket() {
+
 	}
-	
+
 	public PipeRenderStatePacket(PipeRenderState renderState, int pipeId, int x, int y, int z) {
 		super(PacketIds.PIPE_DESCRIPTION, x, y, z);
 		this.pipeId = pipeId;
@@ -26,10 +24,10 @@ public class PipeRenderStatePacket extends PacketCoordinates {
 		this.renderState = renderState;
 	}
 
-	public PipeRenderState getRenderState(){
+	public PipeRenderState getRenderState() {
 		return this.renderState;
 	}
-	
+
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
@@ -50,10 +48,10 @@ public class PipeRenderStatePacket extends PacketCoordinates {
 		return PacketIds.PIPE_DESCRIPTION;
 	}
 
-	public void setPipeId(int pipeId){
-		this.pipeId = pipeId; 
+	public void setPipeId(int pipeId) {
+		this.pipeId = pipeId;
 	}
-	
+
 	public int getPipeId() {
 		return pipeId;
 	}

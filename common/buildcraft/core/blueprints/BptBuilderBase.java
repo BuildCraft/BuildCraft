@@ -9,11 +9,11 @@
 
 package buildcraft.core.blueprints;
 
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.IBuilderInventory;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
@@ -32,10 +32,11 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		Box box = new Box();
 		box.initialize(this);
 
-		if (bluePrint instanceof BptBlueprint)
+		if (bluePrint instanceof BptBlueprint) {
 			context = new BptContext(world, (BptBlueprint) bluePrint, box);
-		else
+		} else {
 			context = new BptContext(world, null, box);
+		}
 	}
 
 	public abstract BptSlot getNextBlock(World world, IBuilderInventory inv);

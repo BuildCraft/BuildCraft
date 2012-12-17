@@ -11,24 +11,21 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import buildcraft.BuildCraftFactory;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import buildcraft.factory.BlockMachineRoot;
-
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
 
 public class BlockQuarry extends BlockMachineRoot {
 
@@ -53,13 +50,11 @@ public class BlockQuarry extends BlockMachineRoot {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ),
-				new Position(i, j, k));
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
-		if (entityliving instanceof EntityPlayer)
-		{
-			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i,j,k);
+		if (entityliving instanceof EntityPlayer) {
+			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i, j, k);
 			tq.placedBy = (EntityPlayer) entityliving;
 		}
 	}
@@ -67,13 +62,11 @@ public class BlockQuarry extends BlockMachineRoot {
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
 		// If no metadata is set, then this is an icon.
-		if (j == 0 && i == 3) {
+		if (j == 0 && i == 3)
 			return textureFront;
-		}
 
-		if (i == j) {
+		if (i == j)
 			return textureFront;
-		}
 
 		switch (i) {
 		case 1:
@@ -125,8 +118,8 @@ public class BlockQuarry extends BlockMachineRoot {
 		}
 	}
 
-	private void markFrameForDecay(World world, int x, int y, int z){
-		if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID){
+	private void markFrameForDecay(World world, int x, int y, int z) {
+		if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID) {
 			world.setBlockMetadata(x, y, z, 1);
 		}
 	}
@@ -134,17 +127,15 @@ public class BlockQuarry extends BlockMachineRoot {
 	@Override
 	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
 
-		if (!CoreProxy.proxy.isSimulating(world)){
+		if (!CoreProxy.proxy.isSimulating(world))
 			return;
-		}
 
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
-		if (tile instanceof TileQuarry){
-			TileQuarry quarry = (TileQuarry)tile;
+		if (tile instanceof TileQuarry) {
+			TileQuarry quarry = (TileQuarry) tile;
 			Box box = quarry.box;
-			if (box.isInitialized() && Integer.MAX_VALUE != box.xMax)
-			{
-				//X - Axis
+			if (box.isInitialized() && Integer.MAX_VALUE != box.xMax) {
+				// X - Axis
 				for (int x = box.xMin; x <= box.xMax; x++) {
 					markFrameForDecay(world, x, box.yMin, box.zMin);
 					markFrameForDecay(world, x, box.yMax, box.zMin);
@@ -152,7 +143,7 @@ public class BlockQuarry extends BlockMachineRoot {
 					markFrameForDecay(world, x, box.yMax, box.zMax);
 				}
 
-				//Z - Axis
+				// Z - Axis
 				for (int z = box.zMin + 1; z <= box.zMax - 1; z++) {
 					markFrameForDecay(world, box.xMin, box.yMin, z);
 					markFrameForDecay(world, box.xMax, box.yMin, z);
@@ -160,8 +151,8 @@ public class BlockQuarry extends BlockMachineRoot {
 					markFrameForDecay(world, box.xMax, box.yMax, z);
 				}
 
-				//Y - Axis
-				for (int y = box.yMin + 1; y <= box.yMax -1; y++) {
+				// Y - Axis
+				for (int y = box.yMin + 1; y <= box.yMax - 1; y++) {
 
 					markFrameForDecay(world, box.xMin, y, box.zMin);
 					markFrameForDecay(world, box.xMax, y, box.zMin);
@@ -174,33 +165,33 @@ public class BlockQuarry extends BlockMachineRoot {
 
 		Utils.preDestroyBlock(world, i, j, k);
 
-//		byte width = 1;
-//		int width2 = width + 1;
-//
-//		if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
-//
-//			boolean frameFound = false;
-//			for (int z = -width; z <= width; ++z) {
-//
-//				for (int y = -width; y <= width; ++y) {
-//
-//					for (int x = -width; x <= width; ++x) {
-//
-//						int blockID = world.getBlockId(i + z, j + y, k + x);
-//
-//						if (blockID == BuildCraftFactory.frameBlock.blockID) {
-//							searchFrames(world, i + z, j + y, k + x);
-//							frameFound = true;
-//							break;
-//						}
-//					}
-//					if (frameFound)
-//						break;
-//				}
-//				if (frameFound)
-//					break;
-//			}
-//		}
+		// byte width = 1;
+		// int width2 = width + 1;
+		//
+		// if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
+		//
+		// boolean frameFound = false;
+		// for (int z = -width; z <= width; ++z) {
+		//
+		// for (int y = -width; y <= width; ++y) {
+		//
+		// for (int x = -width; x <= width; ++x) {
+		//
+		// int blockID = world.getBlockId(i + z, j + y, k + x);
+		//
+		// if (blockID == BuildCraftFactory.frameBlock.blockID) {
+		// searchFrames(world, i + z, j + y, k + x);
+		// frameFound = true;
+		// break;
+		// }
+		// }
+		// if (frameFound)
+		// break;
+		// }
+		// if (frameFound)
+		// break;
+		// }
+		// }
 
 		super.breakBlock(world, i, j, k, par5, par6);
 	}

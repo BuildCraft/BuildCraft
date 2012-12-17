@@ -9,8 +9,8 @@
 
 package buildcraft.builders.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
 
 import org.lwjgl.opengl.GL11;
 
@@ -90,8 +90,10 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		String[] currentNames = library.currentNames;
 		for (int i = 0; i < currentNames.length; i++) {
 			String name = currentNames[i];
-			if(name == null) break;
-			if(name.length() > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE){
+			if (name == null) {
+				break;
+			}
+			if (name.length() > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
 				name = name.substring(0, BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 			}
 
@@ -130,7 +132,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	}
 
 	@Override
-	public void updateScreen(){
+	public void updateScreen() {
 		if (library.locked) {
 			lockButton.displayString = StringUtil.localize("gui.unlock");
 		} else {
@@ -140,8 +142,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION,
-				library.xCoord, library.yCoord, library.zCoord);
+		PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_ACTION, library.xCoord, library.yCoord, library.zCoord);
 		if (button == nextPageButton) {
 			packet.actionId = TileBlueprintLibrary.COMMAND_NEXT;
 		} else if (button == prevPageButton) {
@@ -167,12 +168,11 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		if (x >= 8 && x <= 88) {
 			int ySlot = (y - 24) / 9;
 
-			if (ySlot >= 0 && ySlot <= 11){
-				if (ySlot < library.currentNames.length){
+			if (ySlot >= 0 && ySlot <= 11) {
+				if (ySlot < library.currentNames.length) {
 					PacketPayload payload = new PacketPayload();
-					payload.intPayload = new int[]{ySlot};
-					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT,
-							library.xCoord, library.yCoord, library.zCoord);
+					payload.intPayload = new int[] { ySlot };
+					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, library.xCoord, library.yCoord, library.zCoord);
 					packet.actionId = ySlot;
 					CoreProxy.proxy.sendToServer(packet.getPacket());
 				}

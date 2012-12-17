@@ -29,19 +29,20 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 	PipeLogicDiamond filterInventory;
 
 	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe tile) {
-		super(new ContainerDiamondPipe(playerInventory, (IInventory)tile.pipe.logic), (IInventory)tile.pipe.logic);
+		super(new ContainerDiamondPipe(playerInventory, (IInventory) tile.pipe.logic), (IInventory) tile.pipe.logic);
 		this.playerInventory = playerInventory;
-		this.filterInventory = (PipeLogicDiamond)tile.pipe.logic;
+		this.filterInventory = (PipeLogicDiamond) tile.pipe.logic;
 		xSize = 175;
 		ySize = 225;
 
 		slots = new AdvancedSlot[54];
 
-		for (int k = 0; k < 6; k++)
+		for (int k = 0; k < 6; k++) {
 			for (int j1 = 0; j1 < 9; j1++) {
 				int id = k * 9 + j1;
 				slots[id] = new IInventorySlot(8 + j1 * 18, 18 + k * 18, filterInventory, j1 + k * 9);
 			}
+		}
 	}
 
 	@Override
@@ -77,23 +78,25 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 		IInventorySlot slot = null;
 
-		if (position != -1)
+		if (position != -1) {
 			slot = (IInventorySlot) slots[position];
+		}
 
 		if (slot != null) {
 			ItemStack playerStack = mc.thePlayer.inventory.getItemStack();
 
 			ItemStack newStack;
-			if (playerStack != null)
+			if (playerStack != null) {
 				newStack = new ItemStack(playerStack.itemID, 1, playerStack.getItemDamage());
-			else
+			} else {
 				newStack = null;
+			}
 
 			filterInventory.setInventorySlotContents(position, newStack);
 
 			if (CoreProxy.proxy.isRenderWorld(filterInventory.worldObj)) {
-				PacketSlotChange packet = new PacketSlotChange(PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord,
-						filterInventory.yCoord, filterInventory.zCoord, position, newStack);
+				PacketSlotChange packet = new PacketSlotChange(PacketIds.DIAMOND_PIPE_SELECT, filterInventory.xCoord, filterInventory.yCoord,
+						filterInventory.zCoord, position, newStack);
 				CoreProxy.proxy.sendToServer(packet.getPacket());
 			}
 		}

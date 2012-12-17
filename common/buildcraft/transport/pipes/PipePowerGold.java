@@ -31,5 +31,4 @@ public class PipePowerGold extends Pipe {
 		return 7 * 16 + 10;
 	}
 
-
 }

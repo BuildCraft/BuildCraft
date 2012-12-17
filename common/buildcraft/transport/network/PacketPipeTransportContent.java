@@ -1,16 +1,14 @@
 package buildcraft.transport.network;
 
-import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
-import buildcraft.transport.EntityData;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import net.minecraft.util.MathHelper;
 
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.PacketIds;
+import buildcraft.transport.EntityData;
 
 public class PacketPipeTransportContent extends BuildCraftPacket {
 
@@ -59,7 +57,7 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		this.itemX = data.readFloat();
 		this.itemY = data.readFloat();
 		this.itemZ = data.readFloat();
-		
+
 		posX = MathHelper.floor_float(itemX);
 		posY = MathHelper.floor_float(itemY);
 		posZ = MathHelper.floor_float(itemZ);

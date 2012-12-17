@@ -1,19 +1,19 @@
 package buildcraft.silicon.gui;
 
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
 
 public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
-	class AssemblyWorkbenchLedger extends Ledger
-	{
+	class AssemblyWorkbenchLedger extends Ledger {
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
 		int textColour = 0x000000;
@@ -22,6 +22,7 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 			maxHeight = 94;
 			overlayColor = 0xd46c1f;
 		}
+
 		@Override
 		public void draw(int x, int y) {
 
@@ -40,13 +41,13 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
 			fontRenderer.drawString(String.format("%2.1f MJ", workbench.getStoredEnergy()), x + 22, y + 56, textColour);
 			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(String.format("%3.2f MJ/t",workbench.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
+			fontRenderer.drawString(String.format("%3.2f MJ/t", workbench.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
 
 		@Override
 		public String getTooltip() {
-			return String.format("%3.2f MJ/t",workbench.getRecentEnergyAverage() / 100.0f);
+			return String.format("%3.2f MJ/t", workbench.getRecentEnergyAverage() / 100.0f);
 		}
 
 	}
@@ -73,18 +74,17 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 		xSize = 175;
 		ySize = 240;
 
-
 		slots = new AdvancedSlot[10];
 
 		int id = 0;
-		for (int k = 0; k < 3; k++)
+		for (int k = 0; k < 3; k++) {
 			for (int j1 = 0; j1 < 3; j1++) {
 				slots[id++] = new IInventorySlot(31 + j1 * 18, 16 + k * 18, workbench.getCraftingSlots(), j1 + k * 3);
 			}
+		}
 
 		slots[id] = new OutputSlot(124, 35);
 	}
-
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
@@ -117,22 +117,25 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 
 		IInventorySlot slot = null;
 
-		if (position >= 0 && position < 9)
+		if (position >= 0 && position < 9) {
 			slot = (IInventorySlot) slots[position];
+		}
 
 		if (slot != null) {
 			ItemStack playerStack = mc.thePlayer.inventory.getItemStack();
 
 			ItemStack newStack;
-			if (playerStack != null)
+			if (playerStack != null) {
 				newStack = new ItemStack(playerStack.itemID, 1, playerStack.getItemDamage());
-			else
+			} else {
 				newStack = null;
+			}
 
 			workbench.updateCraftingMatrix(position, newStack);
 		}
 
 	}
+
 	@Override
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);

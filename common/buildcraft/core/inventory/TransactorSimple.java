@@ -18,14 +18,14 @@ public class TransactorSimple extends Transactor {
 		int injected = 0;
 
 		int slot = 0;
-		while((slot = getPartialSlot(stack, orientation, slot)) >= 0
-				&& injected < stack.stackSize)
+		while ((slot = getPartialSlot(stack, orientation, slot)) >= 0 && injected < stack.stackSize) {
 			injected += addToSlot(slot, stack, injected, doAdd);
+		}
 
 		slot = 0;
-		while((slot = getEmptySlot(orientation)) >= 0
-				&& injected < stack.stackSize)
+		while ((slot = getEmptySlot(orientation)) >= 0 && injected < stack.stackSize) {
 			injected += addToSlot(slot, stack, injected, doAdd);
+		}
 
 		return injected;
 	}
@@ -36,15 +36,18 @@ public class TransactorSimple extends Transactor {
 
 	protected int getPartialSlot(ItemStack stack, int startSlot, int endSlot) {
 
-		for(int i = startSlot; i < endSlot; i++) {
-			if(inventory.getStackInSlot(i) == null)
+		for (int i = startSlot; i < endSlot; i++) {
+			if (inventory.getStackInSlot(i) == null) {
 				continue;
+			}
 
-			if(!inventory.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(inventory.getStackInSlot(i), stack))
+			if (!inventory.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(inventory.getStackInSlot(i), stack)) {
 				continue;
+			}
 
-			if(inventory.getStackInSlot(i).stackSize >= inventory.getStackInSlot(i).getMaxStackSize())
+			if (inventory.getStackInSlot(i).stackSize >= inventory.getStackInSlot(i).getMaxStackSize()) {
 				continue;
+			}
 
 			return i;
 		}
@@ -57,8 +60,8 @@ public class TransactorSimple extends Transactor {
 	}
 
 	protected int getEmptySlot(int startSlot, int endSlot) {
-		for(int i = startSlot; i < endSlot; i++)
-			if(inventory.getStackInSlot(i) == null)
+		for (int i = startSlot; i < endSlot; i++)
+			if (inventory.getStackInSlot(i) == null)
 				return i;
 
 		return -1;
@@ -68,8 +71,8 @@ public class TransactorSimple extends Transactor {
 		int remaining = stack.stackSize - injected;
 
 		ItemStack stackInSlot = inventory.getStackInSlot(slot);
-		if(stackInSlot == null) {
-			if(doAdd) {
+		if (stackInSlot == null) {
+			if (doAdd) {
 				stackInSlot = stack.copy();
 				stackInSlot.stackSize = remaining;
 				inventory.setInventorySlotContents(slot, stackInSlot);
@@ -77,20 +80,22 @@ public class TransactorSimple extends Transactor {
 			return remaining;
 		}
 
-		if(!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack))
+		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack))
 			return 0;
 
 		int space = stackInSlot.getMaxStackSize() - stackInSlot.stackSize;
-		if(space <= 0)
+		if (space <= 0)
 			return 0;
 
-		if(space >= remaining) {
-			if(doAdd)
+		if (space >= remaining) {
+			if (doAdd) {
 				stackInSlot.stackSize += remaining;
+			}
 			return remaining;
 		} else {
-			if(doAdd)
+			if (doAdd) {
 				stackInSlot.stackSize = stackInSlot.getMaxStackSize();
+			}
 			return space;
 		}
 	}

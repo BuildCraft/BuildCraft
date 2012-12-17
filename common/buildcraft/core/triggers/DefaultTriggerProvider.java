@@ -2,18 +2,17 @@ package buildcraft.core.triggers;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IMachine;
-
-import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ITankContainer;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 
@@ -44,8 +43,8 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 		}
 
 		if (block != null && block.canProvidePower()) {
-//			res.add(BuildCraftCore.triggerRedstoneActive);
-//			res.add(BuildCraftCore.triggerRedstoneInactive);
+			// res.add(BuildCraftCore.triggerRedstoneActive);
+			// res.add(BuildCraftCore.triggerRedstoneInactive);
 		}
 
 		return res;

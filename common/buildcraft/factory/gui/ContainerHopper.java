@@ -1,11 +1,11 @@
 package buildcraft.factory.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.factory.TileHopper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
 
 public class ContainerHopper extends BuildCraftContainer {
 
@@ -24,14 +24,16 @@ public class ContainerHopper extends BuildCraftContainer {
 		addSlotToContainer(new Slot(tile, 3, 80, 36));
 
 		// Player inventory
-		for (int i1 = 0; i1 < 3; i1++)
+		for (int i1 = 0; i1 < 3; i1++) {
 			for (int l1 = 0; l1 < 9; l1++) {
 				addSlotToContainer(new Slot(inventory, l1 + i1 * 9 + 9, 8 + l1 * 18, 71 + i1 * 18));
 			}
+		}
 
 		// Player hotbar
-		for (int j1 = 0; j1 < 9; j1++)
+		for (int j1 = 0; j1 < 9; j1++) {
 			addSlotToContainer(new Slot(inventory, j1, 8 + j1 * 18, 129));
+		}
 
 	}
 

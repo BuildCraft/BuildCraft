@@ -36,8 +36,9 @@ public class BptDataStream implements DataInput, DataOutput {
 
 		reader.read(c);
 
-		for (int i = 0; i < b.length; ++i)
+		for (int i = 0; i < b.length; ++i) {
 			b[i] = (byte) c[i];
+		}
 	}
 
 	@Override
@@ -96,8 +97,9 @@ public class BptDataStream implements DataInput, DataOutput {
 
 		while (!exit) {
 			int i = reader.read();
-			if (i < 0)
+			if (i < 0) {
 				break;
+			}
 
 			char c = (char) i;
 
@@ -126,8 +128,9 @@ public class BptDataStream implements DataInput, DataOutput {
 
 		while (!exit) {
 			int i = reader.read();
-			if (i < 0)
+			if (i < 0) {
 				break;
+			}
 
 			char c = (char) i;
 
@@ -214,10 +217,11 @@ public class BptDataStream implements DataInput, DataOutput {
 
 	@Override
 	public void writeBoolean(boolean v) throws IOException {
-		if (v)
+		if (v) {
 			writeUTF("T");
-		else
+		} else {
 			writeUTF("F");
+		}
 	}
 
 	@Override
@@ -276,7 +280,7 @@ public class BptDataStream implements DataInput, DataOutput {
 
 		writer.write("\"");
 
-		for (char c : s.toCharArray())
+		for (char c : s.toCharArray()) {
 			switch (c) {
 			case '\n':
 				writer.write("\\n");
@@ -289,13 +293,15 @@ public class BptDataStream implements DataInput, DataOutput {
 			default:
 				writer.write(c);
 			}
+		}
 
 		writer.write("\"");
 	}
 
 	private void handleWriteComma() throws IOException {
-		if (!isFirst)
+		if (!isFirst) {
 			writer.append(",");
+		}
 
 		isFirst = false;
 	}

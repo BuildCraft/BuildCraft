@@ -2,10 +2,10 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
@@ -57,13 +57,13 @@ public class BlockHopper extends BlockBuildCraft {
 			return false;
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
 				return false;
-			}
 		}
 
-		if (!CoreProxy.proxy.isRenderWorld(world))
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
 			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
+		}
 
 		return true;
 	}

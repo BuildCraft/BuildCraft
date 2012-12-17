@@ -1,8 +1,8 @@
 package buildcraft.core;
 
-import buildcraft.core.utils.StringUtil;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.utils.StringUtil;
 
 public class ItemBlockBuildCraft extends ItemBlock {
 

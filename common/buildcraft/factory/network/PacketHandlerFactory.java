@@ -3,16 +3,16 @@ package buildcraft.factory.network;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.factory.TileRefinery;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketUpdate;
+import buildcraft.factory.TileRefinery;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.Player;
 
 public class PacketHandlerFactory implements IPacketHandler {
 
@@ -28,7 +28,7 @@ public class PacketHandlerFactory implements IPacketHandler {
 
 			case PacketIds.REFINERY_FILTER_SET:
 				packetU.readData(data);
-				onRefinerySelect((EntityPlayer)player, packetU);
+				onRefinerySelect((EntityPlayer) player, packetU);
 				break;
 
 			}

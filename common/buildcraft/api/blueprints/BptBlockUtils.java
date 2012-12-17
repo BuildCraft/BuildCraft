@@ -11,7 +11,6 @@ package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,9 +49,8 @@ public class BptBlockUtils {
 	public static ItemStack[] getItemStacks(BptSlotInfo slot, IBptContext context) {
 		NBTTagList list = (NBTTagList) slot.cpt.getTag("inv");
 
-		if (list == null) {
+		if (list == null)
 			return new ItemStack[0];
-		}
 
 		ItemStack stacks[] = new ItemStack[list.tagCount()];
 

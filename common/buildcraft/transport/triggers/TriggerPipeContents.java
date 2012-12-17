@@ -99,8 +99,9 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 
 			LiquidStack searchedLiquid = null;
 
-			if (parameter != null && parameter.getItem() != null)
+			if (parameter != null && parameter.getItem() != null) {
 				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
+			}
 
 			if (kind == Kind.Empty) {
 				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))

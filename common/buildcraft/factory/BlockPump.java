@@ -11,16 +11,14 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.Utils;
-
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.Utils;
 
 public class BlockPump extends BlockContainer {
 
@@ -34,7 +32,7 @@ public class BlockPump extends BlockContainer {
 	public TileEntity createNewTileEntity(World var1) {
 		return new TilePump();
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
@@ -57,7 +55,7 @@ public class BlockPump extends BlockContainer {
 		Utils.preDestroyBlock(world, x, y, z);
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

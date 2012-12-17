@@ -9,10 +9,10 @@
 
 package buildcraft.core;
 
-import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.api.core.SafeTimeTracker;
 
 public class TileBuffer {
 
@@ -36,9 +36,9 @@ public class TileBuffer {
 		blockID = world.getBlockId(this.x, this.y, this.z);
 
 		Block block = Block.blocksList[blockID];
-		if (block != null
-				&& block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z)))
+		if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z))) {
 			tile = world.getBlockTileEntity(this.x, this.y, this.z);
+		}
 	}
 
 	public void set(int blockID, TileEntity tile) {

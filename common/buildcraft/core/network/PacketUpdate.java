@@ -14,7 +14,8 @@ public class PacketUpdate extends BuildCraftPacket {
 
 	public PacketPayload payload;
 
-	public PacketUpdate() {}
+	public PacketUpdate() {
+	}
 
 	public PacketUpdate(int packetId, PacketPayload payload) {
 		this(packetId, 0, 0, 0, payload);
@@ -55,12 +56,15 @@ public class PacketUpdate extends BuildCraftPacket {
 		data.writeInt(payload.floatPayload.length);
 		data.writeInt(payload.stringPayload.length);
 
-		for (int intData : payload.intPayload)
+		for (int intData : payload.intPayload) {
 			data.writeInt(intData);
-		for (float floatData : payload.floatPayload)
+		}
+		for (float floatData : payload.floatPayload) {
 			data.writeFloat(floatData);
-		for (String stringData : payload.stringPayload)
+		}
+		for (String stringData : payload.stringPayload) {
 			data.writeUTF(stringData);
+		}
 
 	}
 
@@ -77,12 +81,15 @@ public class PacketUpdate extends BuildCraftPacket {
 		payload.floatPayload = new float[data.readInt()];
 		payload.stringPayload = new String[data.readInt()];
 
-		for (int i = 0; i < payload.intPayload.length; i++)
+		for (int i = 0; i < payload.intPayload.length; i++) {
 			payload.intPayload[i] = data.readInt();
-		for (int i = 0; i < payload.floatPayload.length; i++)
+		}
+		for (int i = 0; i < payload.floatPayload.length; i++) {
 			payload.floatPayload[i] = data.readFloat();
-		for (int i = 0; i < payload.stringPayload.length; i++)
+		}
+		for (int i = 0; i < payload.stringPayload.length; i++) {
 			payload.stringPayload[i] = data.readUTF();
+		}
 
 	}
 

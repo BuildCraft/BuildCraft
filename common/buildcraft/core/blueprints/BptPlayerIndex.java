@@ -12,7 +12,6 @@ import java.util.TreeMap;
 
 import buildcraft.core.proxy.CoreProxy;
 
-
 public class BptPlayerIndex {
 
 	private TreeMap<String, File> bluePrintsFile = new TreeMap<String, File>();
@@ -28,12 +27,14 @@ public class BptPlayerIndex {
 		if (!file.exists()) {
 			file.createNewFile();
 
-			for (String file : rootIndex.filesSet.keySet())
+			for (String file : rootIndex.filesSet.keySet()) {
 				bluePrintsFile.put(file, new File(baseDir, file));
+			}
 
 			saveIndex();
-		} else
+		} else {
 			loadIndex();
+		}
 	}
 
 	public void loadIndex() throws IOException {
@@ -44,8 +45,9 @@ public class BptPlayerIndex {
 		while (true) {
 			String line = reader.readLine();
 
-			if (line == null)
+			if (line == null) {
 				break;
+			}
 
 			line = line.replaceAll("\\n", "");
 

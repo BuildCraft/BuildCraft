@@ -9,6 +9,9 @@
 
 package buildcraft.energy;
 
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidStack;
@@ -16,9 +19,6 @@ import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class Engine {
 
@@ -92,7 +92,7 @@ public abstract class Engine {
 	public abstract boolean isBurning();
 
 	public abstract void delete();
-	
+
 	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
 		return 0;
 	}
@@ -110,9 +110,8 @@ public abstract class Engine {
 	}
 
 	public float extractEnergy(int min, int max, boolean doExtract) {
-		if (energy < min) {
+		if (energy < min)
 			return 0;
-		}
 
 		int actualMax;
 
@@ -122,7 +121,7 @@ public abstract class Engine {
 			actualMax = max;
 		}
 
-		if(actualMax < min)
+		if (actualMax < min)
 			return 0;
 
 		float extracted;
@@ -184,11 +183,24 @@ public abstract class Engine {
 	}
 
 	/* IINVENTORY */
-	public int getSizeInventory() { return 0; }
-	public ItemStack getStackInSlot(int i) { return null; }
-	public ItemStack decrStackSize(int i, int j) { return null; }
-	public ItemStack getStackInSlotOnClosing(int i) { return getStackInSlot(i); }
-	public void setInventorySlotContents(int i, ItemStack itemstack) {}
+	public int getSizeInventory() {
+		return 0;
+	}
+
+	public ItemStack getStackInSlot(int i) {
+		return null;
+	}
+
+	public ItemStack decrStackSize(int i, int j) {
+		return null;
+	}
+
+	public ItemStack getStackInSlotOnClosing(int i) {
+		return getStackInSlot(i);
+	}
+
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+	}
 
 	public abstract ILiquidTank getTank(ForgeDirection direction, LiquidStack type);
 

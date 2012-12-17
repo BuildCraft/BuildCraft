@@ -1,9 +1,9 @@
 package buildcraft.core.render;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
@@ -13,7 +13,8 @@ import buildcraft.core.EntityRobot;
 
 public class RenderRobot extends Render {
 
-	protected ModelBase model = new ModelBase() {};
+	protected ModelBase model = new ModelBase() {
+	};
 	private ModelRenderer box;
 
 	public RenderRobot() {

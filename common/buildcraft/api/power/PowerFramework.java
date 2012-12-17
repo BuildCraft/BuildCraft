@@ -37,9 +37,8 @@ public abstract class PowerFramework {
 
 		IPowerProvider provider = receptor.getPowerProvider();
 
-		if (provider == null) {
+		if (provider == null)
 			return;
-		}
 
 		NBTTagCompound cpt = new NBTTagCompound();
 

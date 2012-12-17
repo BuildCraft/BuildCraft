@@ -11,22 +11,20 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import buildcraft.BuildCraftCore;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.block.BlockContainer;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
 
 public class BlockTank extends BlockContainer {
 
@@ -79,11 +77,10 @@ public class BlockTank extends BlockContainer {
 		case 1:
 			return 6 * 16 + 2;
 		default:
-			if (iblockaccess.getBlockId(i, j - 1, k) == blockID) {
+			if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
 				return 6 * 16 + 1;
-			} else {
+			else
 				return 6 * 16 + 0;
-			}
 		}
 	}
 
@@ -102,39 +99,37 @@ public class BlockTank extends BlockContainer {
 				int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
 				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
-					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-							Utils.consumeItem(current));
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
 				}
 
 				return true;
 
-			// Handle empty containers
+				// Handle empty containers
 			} else {
 
 				LiquidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getLiquid();
-                if(available != null){
-                    ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
+				if (available != null) {
+					ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
 
-                    liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
+					liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
 
-                    if(liquid != null) {
-			if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode){
-                        if(current.stackSize > 1) {
-                            if(!entityplayer.inventory.addItemStackToInventory(filled))
-                                return false;
-                            else
-                                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-                                        Utils.consumeItem(current));
-                        } else {
-                            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-                                    Utils.consumeItem(current));
-                            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
-                        }
-			}
-                        tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
-                        return true;
-                    }
-                }
+					if (liquid != null) {
+						if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+							if (current.stackSize > 1) {
+								if (!entityplayer.inventory.addItemStackToInventory(filled))
+									return false;
+								else {
+									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+								}
+							} else {
+								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
+							}
+						}
+						tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
+						return true;
+					}
+				}
 			}
 		}
 

@@ -10,6 +10,4 @@ public class SiliconProxy {
 	public void registerRenderers() {
 	}
 
-
-
 }

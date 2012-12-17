@@ -2,21 +2,19 @@ package buildcraft.silicon;
 
 import java.util.List;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 public class BlockAssemblyTable extends BlockContainer {
 
@@ -65,19 +63,19 @@ public class BlockAssemblyTable extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		if (i == 1) {
+		if (i == 1)
 			return 16 * 6 + 12;
-		} else if (i == 0) {
+		else if (i == 0)
 			return 16 * 2 + 15;
-		} else {
+		else
 			return j == 0 ? 16 * 6 + 11 : 2 * 16 + 12;
-		}
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return metadata == 0 ? new TileAssemblyTable() : new TileAssemblyAdvancedWorkbench();
 	}
+
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return null;
@@ -96,7 +94,7 @@ public class BlockAssemblyTable extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {
-		par3List.add(new ItemStack(this,1,0));
-		par3List.add(new ItemStack(this,1,1));
+		par3List.add(new ItemStack(this, 1, 0));
+		par3List.add(new ItemStack(this, 1, 1));
 	}
 }

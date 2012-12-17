@@ -21,7 +21,6 @@ import java.util.TreeMap;
 
 import buildcraft.core.proxy.CoreProxy;
 
-
 public class BptRootIndex {
 
 	private TreeMap<Integer, File> bluePrintsFile = new TreeMap<Integer, File>();
@@ -39,8 +38,9 @@ public class BptRootIndex {
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
 
-		if (!file.exists())
+		if (!file.exists()) {
 			file.createNewFile();
+		}
 	}
 
 	public void loadIndex() throws IOException {
@@ -51,8 +51,9 @@ public class BptRootIndex {
 		while (true) {
 			String line = reader.readLine();
 
-			if (line == null)
+			if (line == null) {
 				break;
+			}
 
 			line = line.replaceAll("\\n", "");
 
@@ -62,8 +63,9 @@ public class BptRootIndex {
 
 			filesSet.put(line, maxBpt);
 
-			if (bptFile.exists())
+			if (bptFile.exists()) {
 				bluePrintsFile.put(maxBpt, bptFile);
+			}
 
 		}
 
@@ -78,8 +80,9 @@ public class BptRootIndex {
 		for (String foundFile : files) {
 			String[] parts = foundFile.split("[.]");
 
-			if (parts.length < 2 || !parts[1].equals("bpt"))
+			if (parts.length < 2 || !parts[1].equals("bpt")) {
 				continue;
+			}
 
 			if (!filesSet.containsKey(foundFile)) {
 				maxBpt++;
@@ -89,8 +92,8 @@ public class BptRootIndex {
 
 				bluePrintsFile.put(maxBpt, newFile);
 
-//				for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary.values())
-//					playerIndex.addBlueprint(newFile);
+				// for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary.values())
+				// playerIndex.addBlueprint(newFile);
 			}
 		}
 
@@ -104,8 +107,9 @@ public class BptRootIndex {
 		for (int i = 1; i <= maxBpt; ++i) {
 			File f = bluePrintsFile.get(i);
 
-			if (f != null)
+			if (f != null) {
 				writer.write(f.getName());
+			}
 
 			writer.newLine();
 		}
@@ -138,14 +142,16 @@ public class BptRootIndex {
 	public int storeBluePrint(BptBase bluePrint) {
 		String name = bluePrint.name;
 
-		if (name == null || name.equals(""))
+		if (name == null || name.equals("")) {
 			name = "unnamed";
+		}
 
 		if (filesSet.containsKey(name + ".bpt")) {
 			int n = 0;
 
-			while (filesSet.containsKey(name + "_" + n + ".bpt"))
+			while (filesSet.containsKey(name + "_" + n + ".bpt")) {
 				n++;
+			}
 
 			name = name + "_" + n;
 		}

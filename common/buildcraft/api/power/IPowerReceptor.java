@@ -9,7 +9,6 @@
 
 package buildcraft.api.power;
 
-
 public interface IPowerReceptor {
 
 	public void setPowerProvider(IPowerProvider provider);

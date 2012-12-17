@@ -35,25 +35,24 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 		return 1 * 16 + 14;
 	}
 
-//	@Override
-//	public boolean isPipeConnected(TileEntity tile) {
-//		if (!super.isPipeConnected(tile))
-//			return false;
-//
-//		Pipe pipe2 = null;
-//
-//		if (tile instanceof TileGenericPipe)
-//			pipe2 = ((TileGenericPipe) tile).pipe;
-//
-//		if (BuildCraftTransport.alwaysConnectPipes)
-//			return super.isPipeConnected(tile);
-//		else
-//			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
-//	}
+	// @Override
+	// public boolean isPipeConnected(TileEntity tile) {
+	// if (!super.isPipeConnected(tile))
+	// return false;
+	//
+	// Pipe pipe2 = null;
+	//
+	// if (tile instanceof TileGenericPipe)
+	// pipe2 = ((TileGenericPipe) tile).pipe;
+	//
+	// if (BuildCraftTransport.alwaysConnectPipes)
+	// return super.isPipeConnected(tile);
+	// else
+	// return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
+	// }
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos,
-			IPipedItem item) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
 		return possibleOrientations;
 	}
 

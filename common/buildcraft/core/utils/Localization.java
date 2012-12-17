@@ -1,4 +1,3 @@
-
 package buildcraft.core.utils;
 
 import java.io.IOException;
@@ -8,10 +7,9 @@ import java.util.Properties;
 
 import buildcraft.core.proxy.CoreProxy;
 
-
 /**
  * Simple mod localization class.
- *
+ * 
  * @author Jimeo Wan
  * @license Public domain
  */
@@ -26,20 +24,20 @@ public class Localization {
 			this.defaultLanguage = defaultLanguage;
 		}
 	}
+
 	private static String loadedLanguage = getCurrentLanguage();
 	private static Properties defaultMappings = new Properties();
 	private static Properties mappings = new Properties();
 	private static LinkedList<modInfo> mods = new LinkedList<modInfo>();
 
 	/**
-	 * Adds localization from a given directory. The files must have the same
-	 * name as the corresponding language file in minecraft and a ".properties"
-	 * file extention e.g "en_US.properties"
-	 *
-	 * @param path The path to the localization files
-	 * @param defaultLanguage The default localization to be used when there is
-	 * no localization for the selected language or if a string is missing (e.g.
-	 * "en_US")
+	 * Adds localization from a given directory. The files must have the same name as the corresponding language file in minecraft and a ".properties" file
+	 * extention e.g "en_US.properties"
+	 * 
+	 * @param path
+	 *            The path to the localization files
+	 * @param defaultLanguage
+	 *            The default localization to be used when there is no localization for the selected language or if a string is missing (e.g. "en_US")
 	 */
 	public static void addLocalization(String path, String defaultLanguage) {
 		mods.add(new modInfo(path, defaultLanguage));
@@ -48,7 +46,7 @@ public class Localization {
 
 	/**
 	 * Get a string for the given key, in the currently active translation.
-	 *
+	 * 
 	 * @param key
 	 * @return
 	 */
@@ -70,23 +68,23 @@ public class Localization {
 		Properties modMappings = new Properties();
 
 		try {
-			//Load the default language mappings
+			// Load the default language mappings
 			langStream = Localization.class.getResourceAsStream(path + default_language + ".properties");
 			modMappings.load(langStream);
 			defaultMappings.putAll(modMappings);
 			langStream.close();
 
-			//Try to load the current language mappings. 
-			//If the file doesn't exist use the default mappings.
+			// Try to load the current language mappings.
+			// If the file doesn't exist use the default mappings.
 			langStream = Localization.class.getResourceAsStream(path + getCurrentLanguage() + ".properties");
 			if (langStream != null) {
 				modMappings.clear();
 				modMappings.load(langStream);
 			}
 
-			//If the selected language inherits mappings from another language
-			//we use those first and then we overwrite the common ones with
-			//those in the selected language
+			// If the selected language inherits mappings from another language
+			// we use those first and then we overwrite the common ones with
+			// those in the selected language
 			if (modMappings.containsKey("language.parent")) {
 				langStream = Localization.class.getResourceAsStream(path + modMappings.get("language.parent") + ".properties");
 
@@ -104,8 +102,9 @@ public class Localization {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (langStream != null)
+				if (langStream != null) {
 					langStream.close();
+				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

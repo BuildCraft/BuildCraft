@@ -13,8 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 /**
- * This class is a comparable container for block positions. TODO: should this
- * be merged with position?
+ * This class is a comparable container for block positions. TODO: should this be merged with position?
  */
 public class BlockIndex implements Comparable<BlockIndex> {
 

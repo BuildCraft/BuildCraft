@@ -9,10 +9,10 @@
 
 package buildcraft.core.gui;
 
-import net.minecraft.inventory.Container;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 public abstract class BuildCraftContainer extends Container {
 
@@ -34,15 +34,16 @@ public abstract class BuildCraftContainer extends Container {
 					return null;
 			} else if (!mergeItemStack(itemstack1, 0, inventorySize, false))
 				return null;
-			if (itemstack1.stackSize == 0)
+			if (itemstack1.stackSize == 0) {
 				slot.putStack(null);
-			else
+			} else {
 				slot.onSlotChanged();
+			}
 		}
 		return itemstack;
 	}
 
-	public int getInventorySize(){
+	public int getInventorySize() {
 		return inventorySize;
 	}
 }

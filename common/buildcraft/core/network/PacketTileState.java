@@ -6,10 +6,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class PacketTileState extends PacketCoordinates {
 
-	private class StateWithId{
+	private class StateWithId {
 		public byte stateId;
 		public IClientState state;
 
@@ -21,15 +20,17 @@ public class PacketTileState extends PacketCoordinates {
 
 	private List<StateWithId> stateList = new LinkedList<StateWithId>();
 
-
 	/**
 	 * Default constructor for incomming packets
 	 */
-	public PacketTileState(){}
+	public PacketTileState() {
+	}
 
 	/**
 	 * Constructor for outgoing packets
-	 * @param x, y, z - the coordinates the tile to sync
+	 * 
+	 * @param x
+	 *            , y, z - the coordinates the tile to sync
 	 */
 	public PacketTileState(int x, int y, int z) {
 		super(PacketIds.STATE_UPDATE, x, y, z);
@@ -55,7 +56,7 @@ public class PacketTileState extends PacketCoordinates {
 		}
 	}
 
-	public void addStateForSerialization(byte stateId, IClientState state){
+	public void addStateForSerialization(byte stateId, IClientState state) {
 		stateList.add(new StateWithId(stateId, state));
 	}
 
@@ -63,7 +64,7 @@ public class PacketTileState extends PacketCoordinates {
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		data.writeByte(stateList.size());
-		for (StateWithId stateWithId : stateList){
+		for (StateWithId stateWithId : stateList) {
 			data.writeByte(stateWithId.stateId);
 			stateWithId.state.writeData(data);
 		}

@@ -9,6 +9,11 @@
 
 package buildcraft.builders;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -28,11 +33,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 
 public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
 
@@ -89,9 +89,8 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 		if (done) {
 			if (lastMode == Mode.Loop) {
 				done = false;
-			} else {
+			} else
 				return;
-			}
 		}
 
 		if (powerProvider.getEnergyStored() >= 25) {
@@ -101,17 +100,14 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	@Override
 	public void doWork() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
-		}
 
-		if (lastMode == Mode.Off) {
+		if (lastMode == Mode.Off)
 			return;
-		}
 
-		if (powerProvider.useEnergy(25, 25, true) < 25) {
+		if (powerProvider.useEnergy(25, 25, true) < 25)
 			return;
-		}
 
 		if (box.isInitialized() && currentPattern != null && !done) {
 			ItemStack stack = null;
@@ -155,15 +151,13 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	public void computeRecipe() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
-		}
 
 		IFillerPattern newPattern = FillerManager.registry.findMatchingRecipe(this);
 
-		if (newPattern == currentPattern) {
+		if (newPattern == currentPattern)
 			return;
-		}
 
 		currentPattern = newPattern;
 
@@ -212,9 +206,8 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 			computeRecipe();
 
 			return itemstack1;
-		} else {
+		} else
 			return null;
-		}
 	}
 
 	@Override
@@ -281,9 +274,8 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this) {
+		if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
 			return false;
-		}
 		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
 	}
 
@@ -365,11 +357,10 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	@Override
 	public int powerRequest() {
-		if (isActive()) {
+		if (isActive())
 			return powerProvider.getMaxEnergyReceived();
-		} else {
+		else
 			return 0;
-		}
 	}
 
 	@Override
@@ -390,22 +381,26 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	/**
 	 * Get the start of the side inventory.
-	 * @param side The global side to get the start of range.
+	 * 
+	 * @param side
+	 *            The global side to get the start of range.
 	 */
 	public int getStartInventorySide(ForgeDirection side) {
-		if(side == ForgeDirection.UP)
+		if (side == ForgeDirection.UP)
 			return 0;
 		return 9;
 	}
 
 	/**
 	 * Get the size of the side inventory.
-	 * @param side The global side.
+	 * 
+	 * @param side
+	 *            The global side.
 	 */
 	public int getSizeInventorySide(ForgeDirection side) {
-		if(side == ForgeDirection.UP)
+		if (side == ForgeDirection.UP)
 			return 9;
-		return getSizeInventory()-9;
+		return getSizeInventory() - 9;
 
 	}
 }

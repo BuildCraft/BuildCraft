@@ -1,13 +1,13 @@
 package buildcraft.transport;
 
 import net.minecraftforge.client.MinecraftForgeClient;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
 import buildcraft.transport.render.PipeItemRenderer;
 import buildcraft.transport.render.PipeWorldRenderer;
 import buildcraft.transport.render.RenderPipe;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class TransportProxyClient extends TransportProxy {
 	public final static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
@@ -44,7 +44,7 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerStone.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerGold.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeStructureCobblestone.shiftedIndex, pipeItemRenderer);
-		//MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStipes.shiftedIndex, pipeItemRenderer);
+		// MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStipes.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsVoid.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsVoid.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsSandstone.shiftedIndex, pipeItemRenderer);

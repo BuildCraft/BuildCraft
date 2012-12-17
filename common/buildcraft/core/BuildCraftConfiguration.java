@@ -28,8 +28,9 @@ public class BuildCraftConfiguration extends Configuration {
 			versionProp = new Property();
 			versionProp.setName("version");
 			categories.get(CATEGORY_GENERAL).put("version", versionProp);
-		} else
+		} else {
 			versionProp = categories.get(CATEGORY_GENERAL).get("version");
+		}
 
 		versionProp.value = Version.VERSION;
 

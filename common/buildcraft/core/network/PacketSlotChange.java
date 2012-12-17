@@ -11,7 +11,8 @@ public class PacketSlotChange extends PacketCoordinates {
 	public int slot;
 	public ItemStack stack;
 
-	public PacketSlotChange() {}
+	public PacketSlotChange() {
+	}
 
 	public PacketSlotChange(int id, int x, int y, int z, int slot, ItemStack stack) {
 		super(id, x, y, z);
@@ -29,8 +30,9 @@ public class PacketSlotChange extends PacketCoordinates {
 			data.writeInt(stack.itemID);
 			data.writeInt(stack.stackSize);
 			data.writeInt(stack.getItemDamage());
-		} else
+		} else {
 			data.writeInt(0);
+		}
 	}
 
 	@Override
@@ -43,8 +45,9 @@ public class PacketSlotChange extends PacketCoordinates {
 
 		if (id != 0) {
 			stack = new ItemStack(id, data.readInt(), data.readInt());
-		} else
+		} else {
 			stack = null;
+		}
 	}
 
 }

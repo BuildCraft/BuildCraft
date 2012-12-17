@@ -1,5 +1,12 @@
 package buildcraft.transport;
 
+import java.util.LinkedList;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -12,12 +19,6 @@ import buildcraft.core.utils.StringUtil;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.ActionEnergyPulser;
-import java.util.LinkedList;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 public class GateVanilla extends Gate {
 
@@ -30,8 +31,9 @@ public class GateVanilla extends Gate {
 	public GateVanilla(Pipe pipe, ItemStack stack) {
 		super(pipe, stack);
 
-		if (stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex)
+		if (stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex) {
 			addEnergyPulser(pipe);
+		}
 	}
 
 	// / SAVING & LOADING
@@ -62,15 +64,17 @@ public class GateVanilla extends Gate {
 	// GUI
 	@Override
 	public void openGui(EntityPlayer player) {
-		if (!CoreProxy.proxy.isRenderWorld(player.worldObj))
+		if (!CoreProxy.proxy.isRenderWorld(player.worldObj)) {
 			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+		}
 	}
 
 	// / UPDATING
 	@Override
 	public void update() {
-		if (hasPulser())
+		if (hasPulser()) {
 			pulser.update();
+		}
 	}
 
 	// / INFORMATION
@@ -113,12 +117,12 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Tries to add an energy pulser to gates that accept energy.
-	 *
+	 * 
 	 * @param pipe
 	 * @return
 	 */
 	private boolean addEnergyPulser(Pipe pipe) {
-		if (!(pipe instanceof IPowerReceptor) || pipe instanceof PipePowerWood){
+		if (!(pipe instanceof IPowerReceptor) || pipe instanceof PipePowerWood) {
 			pulser = new EnergyPulser(null);
 			return false;
 		}
@@ -129,7 +133,7 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Drops a gate item of the specified kind.
-	 *
+	 * 
 	 * @param kind
 	 * @param world
 	 * @param i
@@ -166,10 +170,11 @@ public class GateVanilla extends Gate {
 		}
 
 		Item gateItem;
-		if (hasPulser())
+		if (hasPulser()) {
 			gateItem = BuildCraftTransport.pipeGateAutarchic;
-		else
+		} else {
 			gateItem = BuildCraftTransport.pipeGate;
+		}
 
 		Utils.dropItems(world, new ItemStack(gateItem, 1, gateDamage), i, j, k);
 
@@ -179,27 +184,33 @@ public class GateVanilla extends Gate {
 	@Override
 	public void addActions(LinkedList<IAction> list) {
 
-		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_2.ordinal()) {
 			list.add(BuildCraftTransport.actionRedSignal);
+		}
 
-		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_3.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_3.ordinal()) {
 			list.add(BuildCraftTransport.actionBlueSignal);
+		}
 
-		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
 			list.add(BuildCraftTransport.actionGreenSignal);
+		}
 
-		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal())
+		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] && kind.ordinal() >= Gate.GateKind.AND_4.ordinal()) {
 			list.add(BuildCraftTransport.actionYellowSignal);
+		}
 
-		if (hasPulser())
+		if (hasPulser()) {
 			list.add(BuildCraftTransport.actionEnergyPulser);
+		}
 
 	}
 
 	@Override
 	public void startResolution() {
-		if (hasPulser())
+		if (hasPulser()) {
 			pulser.disablePulse();
+		}
 	}
 
 	@Override
@@ -244,8 +255,9 @@ public class GateVanilla extends Gate {
 	public final int getTexture(boolean isSignalActive) {
 
 		boolean isGateActive = isSignalActive;
-		if (hasPulser() && pulser.isActive())
+		if (hasPulser() && pulser.isActive()) {
 			isGateActive = true;
+		}
 
 		int n = getTextureRow();
 		switch (kind) {

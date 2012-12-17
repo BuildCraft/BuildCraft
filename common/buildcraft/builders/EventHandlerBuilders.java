@@ -8,17 +8,17 @@
 
 package buildcraft.builders;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Side;
 
 public class EventHandlerBuilders {
 
 	@ForgeSubscribe
 	public void handleWorldLoad(WorldEvent.Load event) {
-		//Temporary solution
-		//Please remove the world Load event when world Unload event gets implimented
+		// Temporary solution
+		// Please remove the world Load event when world Unload event gets implimented
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
 			TilePathMarker.clearAvailableMarkersList(event.world);
 		}
@@ -32,5 +32,5 @@ public class EventHandlerBuilders {
 			TilePathMarker.clearAvailableMarkersList(event.world);
 		}
 	}
-	
+
 }

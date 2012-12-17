@@ -11,15 +11,14 @@ package buildcraft.core.utils;
 
 import java.util.LinkedList;
 
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.core.Position;
-import buildcraft.core.IBuilderInventory;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.core.Position;
+import buildcraft.core.IBuilderInventory;
 
 public class SurroundingInventory implements IInventory, IBuilderInventory {
 
@@ -142,7 +141,8 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 	}
 
 	@Override
-	public void onInventoryChanged() {}
+	public void onInventoryChanged() {
+	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
@@ -150,10 +150,12 @@ public class SurroundingInventory implements IInventory, IBuilderInventory {
 	}
 
 	@Override
-	public void openChest() {}
+	public void openChest() {
+	}
 
 	@Override
-	public void closeChest() {}
+	public void closeChest() {
+	}
 
 	@Override
 	public boolean isBuildingMaterial(int i) {

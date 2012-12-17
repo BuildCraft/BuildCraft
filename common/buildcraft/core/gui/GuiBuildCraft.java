@@ -27,13 +27,14 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		public void add(Ledger ledger) {
 			this.ledgers.add(ledger);
-			if (SessionVars.getOpenedLedger() != null && ledger.getClass().equals(SessionVars.getOpenedLedger()))
+			if (SessionVars.getOpenedLedger() != null && ledger.getClass().equals(SessionVars.getOpenedLedger())) {
 				ledger.setFullyOpen();
+			}
 		}
 
 		/**
 		 * Inserts a ledger into the next-to-last position.
-		 *
+		 * 
 		 * @param ledger
 		 */
 		public void insert(Ledger ledger) {
@@ -47,8 +48,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 			for (int i = 0; i < ledgers.size(); i++) {
 				Ledger ledger = ledgers.get(i);
-				if (!ledger.isVisible())
+				if (!ledger.isVisible()) {
 					continue;
+				}
 
 				ledger.currentShiftX = xShift;
 				ledger.currentShiftY = yShift;
@@ -67,8 +69,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			for (Ledger ledger : ledgers) {
 
 				ledger.update();
-				if (!ledger.isVisible())
+				if (!ledger.isVisible()) {
 					continue;
+				}
 
 				ledger.draw(xSize, xPos);
 				xPos += ledger.getHeight();
@@ -97,8 +100,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				if (ledger != null && !ledger.handleMouseClicked(x, y, mouseButton)) {
 
 					for (Ledger other : ledgers)
-						if (other != ledger && other.isOpen())
+						if (other != ledger && other.isOpen()) {
 							other.toggleOpen();
+						}
 					ledger.toggleOpen();
 				}
 			}
@@ -130,16 +134,18 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		public void update() {
 			// Width
-			if (open && currentWidth < maxWidth)
+			if (open && currentWidth < maxWidth) {
 				currentWidth += 4;
-			else if (!open && currentWidth > minWidth)
+			} else if (!open && currentWidth > minWidth) {
 				currentWidth -= 4;
+			}
 
 			// Height
-			if (open && currentHeight < maxHeight)
+			if (open && currentHeight < maxHeight) {
 				currentHeight += 4;
-			else if (!open && currentHeight > minHeight)
+			} else if (!open && currentHeight > minHeight) {
 				currentHeight -= 4;
+			}
 		}
 
 		public int getHeight() {
@@ -205,8 +211,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			// Add in top left corner again
 			drawTexturedModalRect(x, y, 0, 0, 4, 4);
 
-			drawTexturedModalRect(x + 4, y + 4, 256 - currentWidth + 4, 256 - currentHeight + 4, currentWidth - 4,
-					currentHeight - 4);
+			drawTexturedModalRect(x + 4, y + 4, 256 - currentWidth + 4, 256 - currentHeight + 4, currentWidth - 4, currentHeight - 4);
 
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
 		}
@@ -228,13 +233,15 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	public GuiBuildCraft(BuildCraftContainer container, IInventory inventory) {
 		super(container);
 
-		if (inventory instanceof TileEntity)
+		if (inventory instanceof TileEntity) {
 			tile = (TileEntity) inventory;
+		}
 
 		initLedgers(inventory);
 	}
 
-	protected void initLedgers(IInventory inventory) {}
+	protected void initLedgers(IInventory inventory) {
+	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {

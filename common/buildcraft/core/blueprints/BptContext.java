@@ -9,12 +9,12 @@
 
 package buildcraft.core.blueprints;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class BptContext implements IBptContext {
 
@@ -46,8 +46,9 @@ public class BptContext implements IBptContext {
 
 	@Override
 	public void storeId(int worldId) {
-		if (bpt != null)
+		if (bpt != null) {
 			bpt.storeId(worldId);
+		}
 	}
 
 	@Override

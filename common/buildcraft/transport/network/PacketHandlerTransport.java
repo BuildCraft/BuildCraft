@@ -1,5 +1,15 @@
 package buildcraft.transport.network;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -11,15 +21,6 @@ import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import net.minecraft.inventory.Container;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class PacketHandlerTransport implements IPacketHandler {
 
@@ -27,16 +28,16 @@ public class PacketHandlerTransport implements IPacketHandler {
 	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet2, Player player) {
 		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet2.data));
 		try {
-			//NetClientHandler net = (NetClientHandler) network.getNetHandler();
+			// NetClientHandler net = (NetClientHandler) network.getNetHandler();
 
 			int packetID = data.read();
 
 			PacketUpdate packet = new PacketUpdate();
 			switch (packetID) {
 			case PacketIds.PIPE_POWER:
-				PacketPowerUpdate packetPower= new PacketPowerUpdate();
+				PacketPowerUpdate packetPower = new PacketPowerUpdate();
 				packetPower.readData(data);
-				onPacketPower((EntityPlayer)player, packetPower);
+				onPacketPower((EntityPlayer) player, packetPower);
 				break;
 			case PacketIds.PIPE_LIQUID:
 				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
@@ -45,24 +46,24 @@ public class PacketHandlerTransport implements IPacketHandler {
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();
 				descPacket.readData(data);
-				onPipeDescription((EntityPlayer)player, descPacket);
+				onPipeDescription((EntityPlayer) player, descPacket);
 				break;
 			case PacketIds.PIPE_CONTENTS:
 				PacketPipeTransportContent packetC = new PacketPipeTransportContent();
 				packetC.readData(data);
-				onPipeContentUpdate((EntityPlayer)player, packetC);
+				onPipeContentUpdate((EntityPlayer) player, packetC);
 				break;
 			case PacketIds.GATE_ACTIONS:
 				packet.readData(data);
-				onGateActions((EntityPlayer)player, packet);
+				onGateActions((EntityPlayer) player, packet);
 				break;
 			case PacketIds.GATE_TRIGGERS:
 				packet.readData(data);
-				onGateTriggers((EntityPlayer)player, packet);
+				onGateTriggers((EntityPlayer) player, packet);
 				break;
 			case PacketIds.GATE_SELECTION:
 				packet.readData(data);
-				onGateSelection((EntityPlayer)player, packet);
+				onGateSelection((EntityPlayer) player, packet);
 				break;
 
 			/** SERVER SIDE **/
@@ -91,8 +92,6 @@ public class PacketHandlerTransport implements IPacketHandler {
 				break;
 			}
 
-
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -100,7 +99,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received list of potential actions on a gate
-	 *
+	 * 
 	 * @param packet
 	 */
 	private void onGateActions(EntityPlayer player, PacketUpdate packet) {
@@ -114,7 +113,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received list of potential triggers on a gate.
-	 *
+	 * 
 	 * @param packet
 	 */
 	private void onGateTriggers(EntityPlayer player, PacketUpdate packet) {
@@ -128,7 +127,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received current gate selection on a gate
-	 *
+	 * 
 	 * @param packet
 	 */
 	private void onGateSelection(EntityPlayer player, PacketUpdate packet) {
@@ -141,9 +140,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 	}
 
 	/**
-	 * Handles a pipe description packet. (Creates the pipe object client side
-	 * if needed.)
-	 *
+	 * Handles a pipe description packet. (Creates the pipe object client side if needed.)
+	 * 
 	 * @param descPacket
 	 */
 	private void onPipeDescription(EntityPlayer player, PipeRenderStatePacket descPacket) {
@@ -153,11 +151,10 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		TileEntity entity = world.getBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ);
-		if (entity == null){
+		if (entity == null)
 			return;
-//			entity = new TileGenericPipeProxy();
-//			world.setBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ, entity);
-		}
+		// entity = new TileGenericPipeProxy();
+		// world.setBlockTileEntity(descPacket.posX, descPacket.posY, descPacket.posZ, entity);
 
 		if (!(entity instanceof TileGenericPipe))
 			return;
@@ -168,7 +165,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Updates items in a pipe.
-	 *
+	 * 
 	 * @param packet
 	 */
 	private void onPipeContentUpdate(EntityPlayer player, PacketPipeTransportContent packet) {
@@ -193,6 +190,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Updates the display power on a power pipe
+	 * 
 	 * @param packetPower
 	 */
 	private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
@@ -213,15 +211,13 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
 
-
-
 	}
 
-	/********************       SERVER         ******************** **/
+	/******************** SERVER ******************** **/
 
 	/**
 	 * Handles selection changes on a gate.
-	 *
+	 * 
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -234,7 +230,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles gate gui (current) selection requests.
-	 *
+	 * 
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -247,7 +243,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles received gate gui initialization requests.
-	 *
+	 * 
 	 * @param playerEntity
 	 * @param packet
 	 */
@@ -260,7 +256,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Retrieves pipe at specified coordinates if any.
-	 *
+	 * 
 	 * @param world
 	 * @param x
 	 * @param y
@@ -280,7 +276,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 
 	/**
 	 * Handles selection changes on diamond pipe guis.
-	 *
+	 * 
 	 * @param player
 	 * @param packet
 	 */
@@ -292,8 +288,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (!(pipe.pipe.logic instanceof PipeLogicDiamond))
 			return;
 
-		((PipeLogicDiamond)pipe.pipe.logic).setInventorySlotContents(packet.slot, packet.stack);
+		((PipeLogicDiamond) pipe.pipe.logic).setInventorySlotContents(packet.slot, packet.stack);
 	}
-
 
 }

@@ -12,12 +12,12 @@ package buildcraft.builders;
 import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.filler.IFillerPattern;
@@ -25,7 +25,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-
 
 public class BlockFiller extends BlockContainer {
 
@@ -52,8 +51,9 @@ public class BlockFiller extends BlockContainer {
 		if (entityplayer.isSneaking())
 			return false;
 
-		if (!CoreProxy.proxy.isRenderWorld(world))
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
+		}
 		return true;
 
 	}
@@ -62,25 +62,22 @@ public class BlockFiller extends BlockContainer {
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 
-		if (iblockaccess == null) {
+		if (iblockaccess == null)
 			return getBlockTextureFromSideAndMetadata(i, m);
-		}
 
 		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
 
 		if (tile != null && tile instanceof TileFiller) {
 			TileFiller filler = (TileFiller) tile;
 			if (l == 1 || l == 0) {
-				if (!filler.isActive()) {
+				if (!filler.isActive())
 					return textureTopOff;
-				} else {
+				else
 					return textureTopOn;
-				}
-			} else if (filler.currentPattern != null) {
+			} else if (filler.currentPattern != null)
 				return filler.currentPattern.getTextureIndex();
-			} else {
+			else
 				return textureSides;
-			}
 		}
 
 		return getBlockTextureFromSideAndMetadata(l, m);
@@ -88,11 +85,10 @@ public class BlockFiller extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSide(int i) {
-		if (i == 0 || i == 1) {
+		if (i == 0 || i == 1)
 			return textureTopOn;
-		} else {
+		else
 			return textureSides;
-		}
 	}
 
 	@Override

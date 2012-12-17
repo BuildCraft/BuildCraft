@@ -1,13 +1,13 @@
 package buildcraft.api.transport;
 
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.core.Position;
-import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.core.Position;
+import buildcraft.api.core.SafeTimeTracker;
 
 public interface IPipedItem {
 
@@ -26,7 +26,8 @@ public interface IPipedItem {
 	public abstract float getSpeed();
 
 	/**
-	 * @param speed the speed to set
+	 * @param speed
+	 *            the speed to set
 	 */
 	public abstract void setSpeed(float speed);
 
@@ -36,7 +37,8 @@ public interface IPipedItem {
 	public abstract ItemStack getItemStack();
 
 	/**
-	 * @param item the item to set
+	 * @param item
+	 *            the item to set
 	 */
 	public abstract void setItemStack(ItemStack item);
 
@@ -46,7 +48,8 @@ public interface IPipedItem {
 	public abstract TileEntity getContainer();
 
 	/**
-	 * @param container the container to set
+	 * @param container
+	 *            the container to set
 	 */
 	public abstract void setContainer(TileEntity container);
 
@@ -57,7 +60,8 @@ public interface IPipedItem {
 	public abstract SafeTimeTracker getSynchroTracker();
 
 	/**
-	 * @param synchroTracker the synchroTracker to set
+	 * @param synchroTracker
+	 *            the synchroTracker to set
 	 */
 	@Deprecated
 	public abstract void setSynchroTracker(SafeTimeTracker synchroTracker);
@@ -69,7 +73,8 @@ public interface IPipedItem {
 	public abstract int getDeterministicRandomization();
 
 	/**
-	 * @param deterministicRandomization the deterministicRandomization to set
+	 * @param deterministicRandomization
+	 *            the deterministicRandomization to set
 	 */
 	@Deprecated
 	public abstract void setDeterministicRandomization(int deterministicRandomization);
@@ -80,7 +85,8 @@ public interface IPipedItem {
 	public abstract int getEntityId();
 
 	/**
-	 * @param entityId the entityId to set
+	 * @param entityId
+	 *            the entityId to set
 	 */
 	public abstract void setEntityId(int entityId);
 

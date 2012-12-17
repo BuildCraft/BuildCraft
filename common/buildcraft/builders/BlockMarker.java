@@ -11,24 +11,21 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
-import buildcraft.BuildCraftBuilders;
-import buildcraft.BuildCraftCore;
-import buildcraft.builders.BuildersProxy;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.Utils;
-
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
+import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.Utils;
 
 public class BlockMarker extends BlockContainer {
 
@@ -145,27 +142,22 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	public boolean canPlaceBlockAt(World world, int i, int j, int k) {
-		if (BuildersProxy.canPlaceTorch(world, i - 1, j, k)) {
+		if (BuildersProxy.canPlaceTorch(world, i - 1, j, k))
 			return true;
-		}
-		if (BuildersProxy.canPlaceTorch(world, i + 1, j, k)) {
+		if (BuildersProxy.canPlaceTorch(world, i + 1, j, k))
 			return true;
-		}
-		if (BuildersProxy.canPlaceTorch(world, i, j, k - 1)) {
+		if (BuildersProxy.canPlaceTorch(world, i, j, k - 1))
 			return true;
-		}
-		if (BuildersProxy.canPlaceTorch(world, i, j, k + 1)) {
+		if (BuildersProxy.canPlaceTorch(world, i, j, k + 1))
 			return true;
-		}
-		if (BuildersProxy.canPlaceTorch(world, i, j - 1, k)) {
+		if (BuildersProxy.canPlaceTorch(world, i, j - 1, k))
 			return true;
-		}
 
 		return BuildersProxy.canPlaceTorch(world, i, j + 1, k);
 	}
 
 	@Override
-	public int func_85104_a(World world, int x, int y, int z, int side,  float par6, float par7, float par8, int meta) {
+	public int func_85104_a(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.func_85104_a(world, x, y, z, side, par6, par7, par8, meta);
 
 		if (side == 1 && BuildersProxy.canPlaceTorch(world, x, y - 1, z)) {
@@ -216,9 +208,8 @@ public class BlockMarker extends BlockContainer {
 			dropBlockAsItem(world, i, j, k, BuildCraftBuilders.markerBlock.blockID, 0);
 			world.setBlockWithNotify(i, j, k, 0);
 			return false;
-		} else {
+		} else
 			return true;
-		}
 	}
 
 	@Override

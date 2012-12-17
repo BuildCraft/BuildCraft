@@ -1,10 +1,10 @@
 package buildcraft.core.render;
 
-import buildcraft.BuildCraftCore;
 import net.minecraft.block.Block;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.IBlockAccess;
+import buildcraft.BuildCraftCore;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RenderingMarkers implements ISimpleBlockRenderingHandler {
@@ -14,25 +14,32 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public void renderInventoryBlock(Block block, int metadata, int modelID,
-			RenderBlocks renderer) {}
+	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
+	}
 
 	@Override
-	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
-			Block block, int modelId, RenderBlocks renderer) {
+	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 
 		Tessellator tessellator = Tessellator.instance;
 		float f = block.getBlockBrightness(world, x, y, z);
-		if (Block.lightValue[block.blockID] > 0)
+		if (Block.lightValue[block.blockID] > 0) {
 			f = 1.0F;
+		}
 		tessellator.setColorOpaque_F(f, f, f);
 		renderMarkerWithMeta(world, block, x, y, z, world.getBlockMetadata(x, y, z));
 
 		return true;
 	}
 
-	@Override public boolean shouldRender3DInInventory() { return false; }
-	@Override public int getRenderId() { return BuildCraftCore.markerModel; }
+	@Override
+	public boolean shouldRender3DInInventory() {
+		return false;
+	}
+
+	@Override
+	public int getRenderId() {
+		return BuildCraftCore.markerModel;
+	}
 
 	/* PATH MARKER RENDERING */
 	public static double frontX[][][] = new double[6][3][4];
@@ -42,9 +49,11 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	public static double[][] safeClone(double[][] d) {
 		double ret[][] = new double[d.length][d[0].length];
 
-		for (int i = 0; i < d.length; ++i)
-			for (int j = 0; j < d[0].length; ++j)
+		for (int i = 0; i < d.length; ++i) {
+			for (int j = 0; j < d[0].length; ++j) {
 				ret[i][j] = d[i][j];
+			}
+		}
 
 		return ret;
 	}
@@ -218,6 +227,5 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			face[j][3] = tmp;
 		}
 	}
-
 
 }

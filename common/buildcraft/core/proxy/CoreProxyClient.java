@@ -12,10 +12,21 @@ package buildcraft.core.proxy;
 import java.io.File;
 import java.util.List;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.StringTranslate;
+import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
@@ -30,22 +41,9 @@ import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.render.RenderingOil;
 import buildcraft.transport.render.TileEntityPickupFX;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.block.Block;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.util.StringTranslate;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraftforge.client.MinecraftForgeClient;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -63,13 +61,14 @@ public class CoreProxyClient extends CoreProxy {
 	public void removeEntity(Entity entity) {
 		super.removeEntity(entity);
 
-		if (isRenderWorld(entity.worldObj))
+		if (isRenderWorld(entity.worldObj)) {
 			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
+		}
 	}
 
 	/* WRAPPER */
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
-		if(Block.blocksList[id] == null)
+		if (Block.blocksList[id] == null)
 			return;
 
 		Block.blocksList[id].getSubBlocks(id, tab, itemList);
@@ -80,17 +79,21 @@ public class CoreProxyClient extends CoreProxy {
 	public String getCurrentLanguage() {
 		return StringTranslate.getInstance().getCurrentLanguage();
 	}
+
 	@Override
 	public void addName(Object obj, String s) {
 		LanguageRegistry.addName(obj, s);
 	}
+
 	@Override
 	public void addLocalization(String s1, String string) {
 		LanguageRegistry.instance().addStringLocalization(s1, string);
 	}
+
 	@Override
-	public String getItemDisplayName(ItemStack stack){
-		if (Item.itemsList[stack.itemID] == null) return "";
+	public String getItemDisplayName(ItemStack stack) {
+		if (Item.itemsList[stack.itemID] == null)
+			return "";
 
 		return Item.itemsList[stack.itemID].getItemDisplayName(stack);
 	}
@@ -125,7 +128,6 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 	}
 
-
 	/* NETWORKING */
 	@Override
 	public void sendToServer(Packet packet) {
@@ -145,11 +147,15 @@ public class CoreProxyClient extends CoreProxy {
 
 	private EntityPlayer createNewPlayer(World world) {
 		EntityPlayer player = new EntityPlayer(world) {
-			@Override public void sendChatToPlayer(String var1) {}
+			@Override
+			public void sendChatToPlayer(String var1) {
+			}
+
 			@Override
 			public boolean canCommandSenderUseCommand(int var1, String var2) {
 				return false;
 			}
+
 			@Override
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;

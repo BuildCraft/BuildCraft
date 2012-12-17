@@ -13,21 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
-
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-
 
 public class BlockFrame extends Block implements IFramePipeConnection {
 
@@ -43,9 +41,9 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	public void updateTick(World world, int i, int j, int k, Random random) {
 		if (world.isRemote)
 			return;
-		
+
 		int meta = world.getBlockMetadata(i, j, k);
-		if (meta == 1 && random.nextInt(10) > 5){
+		if (meta == 1 && random.nextInt(10) > 5) {
 			world.setBlockWithNotify(i, j, k, 0);
 		}
 	}
@@ -98,8 +96,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 			zMax = 1.0F;
 		}
 
-		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
-				(double) j + yMax, (double) k + zMax);
+		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
 	}
 
 	@SuppressWarnings({ "all" })

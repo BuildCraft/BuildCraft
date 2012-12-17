@@ -9,10 +9,10 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
-import net.minecraft.tileentity.TileEntity;
 
 public class PipeLogicCobblestone extends PipeLogic {
 
@@ -20,8 +20,9 @@ public class PipeLogicCobblestone extends PipeLogic {
 	public boolean isPipeConnected(TileEntity tile) {
 		Pipe pipe2 = null;
 
-		if (tile instanceof TileGenericPipe)
+		if (tile instanceof TileGenericPipe) {
 			pipe2 = ((TileGenericPipe) tile).pipe;
+		}
 
 		if (BuildCraftTransport.alwaysConnectPipes)
 			return super.isPipeConnected(tile);

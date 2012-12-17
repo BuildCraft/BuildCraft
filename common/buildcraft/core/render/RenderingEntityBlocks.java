@@ -2,15 +2,16 @@ package buildcraft.core.render;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.IBlockAccess;
+
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.utils.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
@@ -43,20 +44,20 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 
 	@Override
-	public void renderInventoryBlock(Block block, int metadata, int modelID,
-			RenderBlocks renderer) {
+	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 
 			EntityRenderIndex index = new EntityRenderIndex(block, metadata);
-			if (blockByEntityRenders.containsKey(index))
+			if (blockByEntityRenders.containsKey(index)) {
 				blockByEntityRenders.get(index).inventoryRender(-0.5, -0.5, -0.5, 0, 0);
+			}
 
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
 			Tessellator tessellator = Tessellator.instance;
 
 			block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-	        renderer.func_83018_a(block);
+			renderer.func_83018_a(block);
 			block.setBlockBoundsForItemRender();
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 			tessellator.startDrawingQuads();
@@ -89,15 +90,14 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
-			Block block, int modelId, RenderBlocks renderer) {
+	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 			// renderblocks.renderStandardBlock(block, i, j, k);
 
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
 
-				legacyPipeRender(renderer, world, x, y, z, block, modelId);
+			legacyPipeRender(renderer, world, x, y, z, block, modelId);
 
 		}
 
@@ -120,42 +120,42 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		float maxSize = Utils.pipeMaxPos;
 
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
-        renderblocks.func_83018_a(block);
+		renderblocks.func_83018_a(block);
 		renderblocks.renderStandardBlock(block, i, j, k);
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i - 1, j, k)) {
 			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i + 1, j, k)) {
 			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j - 1, k)) {
 			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j + 1, k)) {
 			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k - 1)) {
 			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 
 		if (Utils.checkLegacyPipesConnections(iblockaccess, i, j, k, i, j, k + 1)) {
 			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
-	        renderblocks.func_83018_a(block);
+			renderblocks.func_83018_a(block);
 			renderblocks.renderStandardBlock(block, i, j, k);
 		}
 

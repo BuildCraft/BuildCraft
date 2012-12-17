@@ -9,9 +9,9 @@
 
 package buildcraft.core.network;
 
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.core.ByteBuffer;
 import buildcraft.core.network.ClassMapping.Indexes;
-import net.minecraft.tileentity.TileEntity;
 
 public class TilePacketWrapper {
 
@@ -26,8 +26,9 @@ public class TilePacketWrapper {
 	public TilePacketWrapper(Class c[]) {
 		rootMappings = new ClassMapping[c.length];
 
-		for (int i = 0; i < c.length; ++i)
+		for (int i = 0; i < c.length; ++i) {
 			rootMappings[i] = new ClassMapping(c[i]);
+		}
 	}
 
 	public PacketPayload toPayload(TileEntity tile) {
@@ -92,8 +93,9 @@ public class TilePacketWrapper {
 		try {
 			Indexes ind = new Indexes(0, 0);
 
-			for (int i = 0; i < rootMappings.length; ++i)
+			for (int i = 0; i < rootMappings.length; ++i) {
 				rootMappings[i].setData(obj[i], buf, payload.floatPayload, payload.stringPayload, ind);
+			}
 
 			payload.intPayload = buf.readIntArray();
 
@@ -136,8 +138,9 @@ public class TilePacketWrapper {
 
 			Indexes ind = new Indexes(0, 0);
 
-			for (int i = 0; i < rootMappings.length; ++i)
+			for (int i = 0; i < rootMappings.length; ++i) {
 				rootMappings[i].updateFromData(obj[i], buf, packet.floatPayload, packet.stringPayload, ind);
+			}
 
 			packet.intPayload = buf.readIntArray();
 		} catch (Exception e) {

@@ -12,23 +12,15 @@ import java.io.File;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.ServerStarting;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.command.CommandHandler;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Property;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
@@ -52,29 +44,35 @@ import buildcraft.core.network.PacketHandler;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerLiquidContainer;
 import buildcraft.core.triggers.TriggerMachine;
-import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
-
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.ServerStarting;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.command.CommandHandler;
-import net.minecraft.entity.EntityList;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.Property;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
 
-@Mod(name="BuildCraft", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies="required-after:Forge@[6.3.0.0,)")
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[6.3.0.0,)")
+@NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {
 		Full, NoDynamic
@@ -91,7 +89,7 @@ public class BuildCraftCore {
 	public static int itemLifespan = 1200;
 
 	public static int updateFactor = 10;
-	
+
 	public static long longUpdateFactor = 40;
 
 	public static BuildCraftConfiguration mainConfiguration;
@@ -159,8 +157,7 @@ public class BuildCraftCore {
 		bcLog.info("http://www.mod-buildcraft.com");
 
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
-		try
-		{
+		try {
 			mainConfiguration.load();
 
 			redLaserTexture = 0 * 16 + 2;
@@ -168,36 +165,38 @@ public class BuildCraftCore {
 			stripesLaserTexture = 0 * 16 + 3;
 			transparentTexture = 0 * 16 + 0;
 
-			Property continuousCurrent = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL, "current.continuous", DefaultProps.CURRENT_CONTINUOUS);
+			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
+					DefaultProps.CURRENT_CONTINUOUS);
 			continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
 			continuousCurrentModel = continuousCurrent.getBoolean(DefaultProps.CURRENT_CONTINUOUS);
 
-			Property trackNetwork = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL, "trackNetworkUsage", false);
+			Property trackNetwork = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "trackNetworkUsage", false);
 			trackNetworkUsage = trackNetwork.getBoolean(false);
 
-			Property dropBlock = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"dropBrokenBlocks", true);
+			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
 			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
 			dropBrokenBlocks = dropBlock.getBoolean(true);
 
-			Property lifespan = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL, "itemLifespan", itemLifespan);
+			Property lifespan = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "itemLifespan", itemLifespan);
 			lifespan.comment = "the lifespan in ticks of items dropped on the ground by pipes and machines, vanilla = 6000, default = 1200";
 			itemLifespan = lifespan.getInt(itemLifespan);
-			if(itemLifespan < 100)
+			if (itemLifespan < 100) {
 				itemLifespan = 100;
+			}
 
-			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"power.framework", "buildcraft.energy.PneumaticPowerFramework");
+			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "power.framework",
+					"buildcraft.energy.PneumaticPowerFramework");
 
-			Property factor = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"network.updateFactor", 10);
+			Property factor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
 			updateFactor = factor.getInt(10);
-			
-			Property longFactor = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"network.stateRefreshPeriod", 40);
+
+			Property longFactor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.stateRefreshPeriod", 40);
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
 
 			String powerFrameworkClassName = "buildcraft.energy.PneumaticPowerFramework";
-			if (!forcePneumaticPower)
-			{
+			if (!forcePneumaticPower) {
 				powerFrameworkClassName = powerFrameworkClass.value;
 			}
 			try {
@@ -217,7 +216,7 @@ public class BuildCraftCore {
 			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
 			Property goldenGearId = BuildCraftCore.mainConfiguration.getItem("goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
 			Property diamondGearId = BuildCraftCore.mainConfiguration.getItem("diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
-			Property modifyWorld = BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"modifyWorld", true);
+			Property modifyWorld = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
 			modifyWorld.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 
 			BuildCraftCore.modifyWorld = modifyWorld.getBoolean(true);
@@ -236,21 +235,18 @@ public class BuildCraftCore {
 
 			diamondGearItem = (new ItemBuildCraft(Integer.parseInt(diamondGearId.value))).setIconIndex(1 * 16 + 4).setItemName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
-		}
-		finally
-		{
+		} finally {
 			mainConfiguration.save();
 		}
 	}
 
 	@Init
 	public void initialize(FMLInitializationEvent evt) {
-		//MinecraftForge.registerConnectionHandler(new ConnectionHandler());
+		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
-		if (BuildCraftCore.loadDefaultRecipes)
-		{
+		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
@@ -271,9 +267,9 @@ public class BuildCraftCore {
 	}
 
 	@PostInit
-	public void postInit(FMLPostInitializationEvent event){
-		for(Block block : Block.blocksList) {
-			if(block instanceof BlockFluid || block instanceof IPlantable){
+	public void postInit(FMLPostInitializationEvent event) {
+		for (Block block : Block.blocksList) {
+			if (block instanceof BlockFluid || block instanceof IPlantable) {
 				BuildCraftAPI.softBlocks[block.blockID] = true;
 			}
 		}
@@ -281,20 +277,21 @@ public class BuildCraftCore {
 		BuildCraftAPI.softBlocks[Block.snow.blockID] = true;
 		TickRegistry.registerTickHandler(new TickHandlerCoreClient(), Side.CLIENT);
 
-    }
+	}
 
 	@ServerStarting
 	public void serverStarting(FMLServerStartingEvent event) {
-		CommandHandler commandManager = (CommandHandler)event.getServer().getCommandManager();
+		CommandHandler commandManager = (CommandHandler) event.getServer().getCommandManager();
 		commandManager.registerCommand(new CommandBuildCraft());
 	}
 
 	public void loadRecipes() {
 		GameRegistry.addRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('G'), stoneGearItem);
 		GameRegistry.addRecipe(new ItemStack(woodenGearItem), " S ", "S S", " S ", Character.valueOf('S'), Item.stick);
-		GameRegistry.addRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone, Character.valueOf('G'), woodenGearItem);
+		GameRegistry.addRecipe(new ItemStack(stoneGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Block.cobblestone, Character.valueOf('G'),
+				woodenGearItem);
 		GameRegistry.addRecipe(new ItemStack(ironGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('G'), stoneGearItem);
 		GameRegistry.addRecipe(new ItemStack(goldGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.ingotGold, Character.valueOf('G'), ironGearItem);
-		GameRegistry.addRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", Character.valueOf('I'),Item.diamond, Character.valueOf('G'), goldGearItem);
+		GameRegistry.addRecipe(new ItemStack(diamondGearItem), " I ", "IGI", " I ", Character.valueOf('I'), Item.diamond, Character.valueOf('G'), goldGearItem);
 	}
 }

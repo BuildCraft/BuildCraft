@@ -9,18 +9,18 @@
 
 package buildcraft.factory.gui;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.stats.AchievementList;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileAutoWorkbench;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 
 public class ContainerAutoWorkbench extends BuildCraftContainer {
 
@@ -71,7 +71,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			}
 			CoreProxy.proxy.TakenFromCrafting(thePlayer, itemstack, craftMatrix);
 			// FIXME: Autocrafting table should post a forge event.
-			//ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
+			// ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
 
 			tile.extractItem(true, true);
 		}
@@ -135,20 +135,16 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 			if (i == 0) {
-				if (!mergeItemStack(itemstack1, 10, 46, true)) {
+				if (!mergeItemStack(itemstack1, 10, 46, true))
 					return null;
-				}
 			} else if (i >= 10 && i < 37) {
-				if (!mergeItemStack(itemstack1, 37, 46, false)) {
+				if (!mergeItemStack(itemstack1, 37, 46, false))
 					return null;
-				}
 			} else if (i >= 37 && i < 46) {
-				if (!mergeItemStack(itemstack1, 10, 37, false)) {
+				if (!mergeItemStack(itemstack1, 10, 37, false))
 					return null;
-				}
-			} else if (!mergeItemStack(itemstack1, 10, 46, false)) {
+			} else if (!mergeItemStack(itemstack1, 10, 46, false))
 				return null;
-			}
 			if (itemstack1.stackSize == 0) {
 				slot.putStack(null);
 			} else {
@@ -156,9 +152,8 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			}
 			if (itemstack1.stackSize != itemstack.stackSize) {
 				slot.onPickupFromSlot(pl, itemstack1);
-			} else {
+			} else
 				return null;
-			}
 		}
 		return itemstack;
 	}

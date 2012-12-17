@@ -9,10 +9,10 @@
 
 package buildcraft.builders;
 
-import buildcraft.api.core.IBox;
-import buildcraft.core.DefaultProps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.api.core.IBox;
+import buildcraft.core.DefaultProps;
 
 public class FillerFillAll extends FillerPattern {
 

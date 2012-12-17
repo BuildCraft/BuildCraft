@@ -12,7 +12,6 @@ package buildcraft.energy.render;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.render.TextureLiquidsFX;
 
-
 public class TextureOilFX extends TextureLiquidsFX {
 
 	public TextureOilFX() {

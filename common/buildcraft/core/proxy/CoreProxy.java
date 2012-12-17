@@ -13,15 +13,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
-
-import buildcraft.core.ItemBlockBuildCraft;
-import buildcraft.core.network.BuildCraftPacket;
-
 import net.minecraft.block.Block;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -32,18 +24,31 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import buildcraft.core.ItemBlockBuildCraft;
+import buildcraft.core.network.BuildCraftPacket;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class CoreProxy {
 
-	@SidedProxy(clientSide="buildcraft.core.proxy.CoreProxyClient", serverSide="buildcraft.core.proxy.CoreProxy")
+	@SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
 	public static CoreProxy proxy;
 
-	public String getMinecraftVersion() { return Loader.instance().getMinecraftModContainer().getVersion(); }
+	public String getMinecraftVersion() {
+		return Loader.instance().getMinecraftModContainer().getVersion();
+	}
 
 	/* INSTANCES */
-	public Object getClient() { return null; }
-	public World getClientWorld() { return null; }
+	public Object getClient() {
+		return null;
+	}
+
+	public World getClientWorld() {
+		return null;
+	}
 
 	/* SIMULATION */
 	public boolean isSimulating(World world) {
@@ -64,17 +69,29 @@ public class CoreProxy {
 	}
 
 	/* WRAPPER */
-	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {}
+	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
+	}
 
 	/* LOCALIZATION */
-	public void addName(Object obj, String s) {}
-	public void addLocalization(String s1, String string) {}
-	public String getItemDisplayName(ItemStack newStack) { return ""; }
+	public void addName(Object obj, String s) {
+	}
+
+	public void addLocalization(String s1, String string) {
+	}
+
+	public String getItemDisplayName(ItemStack newStack) {
+		return "";
+	}
 
 	/* GFX */
-	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {}
-	public void initializeRendering() {}
-	public void initializeEntityRendering() {}
+	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
+	}
+
+	public void initializeRendering() {
+	}
+
+	public void initializeEntityRendering() {
+	}
 
 	/* REGISTRATION */
 	public void registerBlock(Block block) {
@@ -103,9 +120,9 @@ public class CoreProxy {
 			for (int j = 0; j < world.playerEntities.size(); j++) {
 				EntityPlayerMP player = (EntityPlayerMP) world.playerEntities.get(j);
 
-				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance
-						&& Math.abs(player.posZ - z) <= maxDistance)
+				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance && Math.abs(player.posZ - z) <= maxDistance) {
 					player.playerNetServerHandler.sendPacketToPlayer(packet);
+				}
 			}
 		}
 	}
@@ -115,7 +132,8 @@ public class CoreProxy {
 		player.playerNetServerHandler.sendPacketToPlayer(packet.getPacket());
 	}
 
-	public void sendToServer(Packet packet) {}
+	public void sendToServer(Packet packet) {
+	}
 
 	/* FILE SYSTEM */
 	public File getBuildCraftBase() {
@@ -137,7 +155,10 @@ public class CoreProxy {
 	/* BUILDCRAFT PLAYER */
 	protected static EntityPlayer buildCraftPlayer;
 
-	public String playerName() { return ""; }
+	public String playerName() {
+		return "";
+	}
+
 	private EntityPlayer createNewPlayer(World world) {
 		EntityPlayer player = new EntityPlayer(world) {
 
@@ -159,55 +180,53 @@ public class CoreProxy {
 		player.username = "[BuildCraft]";
 		return player;
 	}
-	
+
 	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
-        EntityPlayer player = new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world) {
 
-            @Override
-            public void sendChatToPlayer(String var1) {
-            }
+			@Override
+			public void sendChatToPlayer(String var1) {
+			}
 
-            @Override
-            public boolean canCommandSenderUseCommand(int var1, String var2) {
-                return false;
-            }
+			@Override
+			public boolean canCommandSenderUseCommand(int var1, String var2) {
+				return false;
+			}
 
-            @Override
-            public ChunkCoordinates getPlayerCoordinates() {
-                return null;
-            }
+			@Override
+			public ChunkCoordinates getPlayerCoordinates() {
+				return null;
+			}
 
-        };
-        player.username = "[BuildCraft]";
-        player.posX = (int) x;
-        player.posY = (int) y;
-        player.posZ = (int) z;
-        return player;
-    }
+		};
+		player.username = "[BuildCraft]";
+		player.posX = x;
+		player.posY = y;
+		player.posZ = z;
+		return player;
+	}
 
 	public EntityPlayer getBuildCraftPlayer(World world) {
 		if (CoreProxy.buildCraftPlayer == null) {
 			CoreProxy.buildCraftPlayer = createNewPlayer(world);
-		}
-		else {
-		    CoreProxy.buildCraftPlayer.worldObj = world;
+		} else {
+			CoreProxy.buildCraftPlayer.worldObj = world;
 		}
 
 		return CoreProxy.buildCraftPlayer;
 	}
-	
-	public EntityPlayer getBuildCraftPlayer(World world, int x, int y, int z) {
-        if (CoreProxy.buildCraftPlayer == null) {
-            CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
-        }
-        else {
-            CoreProxy.buildCraftPlayer.worldObj = world;
-            CoreProxy.buildCraftPlayer.posX = (int) x;
-            CoreProxy.buildCraftPlayer.posY = (int) y;
-            CoreProxy.buildCraftPlayer.posZ = (int) z;
-        }
 
-        return CoreProxy.buildCraftPlayer;
-    }
+	public EntityPlayer getBuildCraftPlayer(World world, int x, int y, int z) {
+		if (CoreProxy.buildCraftPlayer == null) {
+			CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
+		} else {
+			CoreProxy.buildCraftPlayer.worldObj = world;
+			CoreProxy.buildCraftPlayer.posX = x;
+			CoreProxy.buildCraftPlayer.posY = y;
+			CoreProxy.buildCraftPlayer.posZ = z;
+		}
+
+		return CoreProxy.buildCraftPlayer;
+	}
 
 }

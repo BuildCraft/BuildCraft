@@ -12,13 +12,24 @@ package buildcraft.core.utils;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.LaserKind;
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquid;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
@@ -36,18 +47,6 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryLargeChest;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.world.World;
-
 public class Utils {
 
 	public static final float pipeMinPos = 0.25F;
@@ -56,6 +55,7 @@ public class Utils {
 
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given coordinates.
+	 * 
 	 * @param stack
 	 * @param world
 	 * @param x
@@ -68,18 +68,19 @@ public class Utils {
 		LinkedList<ITransactor> possibleInventories = new LinkedList<ITransactor>();
 
 		// Determine inventories which can accept (at least part of) this stack.
-		for(ForgeDirection orientation : ForgeDirection.values()) {
-			if(from.getOpposite() == orientation)
+		for (ForgeDirection orientation : ForgeDirection.values()) {
+			if (from.getOpposite() == orientation) {
 				continue;
+			}
 
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
 			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
-			if(transactor != null && !(tileInventory instanceof TileEngine)
-					&& transactor.add(stack, from, false).stackSize > 0)
+			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, from, false).stackSize > 0) {
 				possibleInventories.add(transactor);
+			}
 		}
 
 		if (possibleInventories.size() > 0) {
@@ -94,8 +95,7 @@ public class Utils {
 	}
 
 	/**
-	 * Depending on the kind of item in the pipe, set the floor at a different
-	 * level to optimize graphical aspect.
+	 * Depending on the kind of item in the pipe, set the floor at a different level to optimize graphical aspect.
 	 */
 	public static float getPipeFloorOf(ItemStack item) {
 		return pipeMinPos;
@@ -130,11 +130,9 @@ public class Utils {
 	}
 
 	/**
-	 * Look around the tile given in parameter in all 6 position, tries to add
-	 * the items to a random pipe entry around. Will make sure that the location
-	 * from which the items are coming from (identified by the from parameter)
-	 * isn't used again so that entities doesn't go backwards. Returns true if
-	 * successful, false otherwise.
+	 * Look around the tile given in parameter in all 6 position, tries to add the items to a random pipe entry around. Will make sure that the location from
+	 * which the items are coming from (identified by the from parameter) isn't used again so that entities doesn't go backwards. Returns true if successful,
+	 * false otherwise.
 	 */
 	public static boolean addToRandomPipeEntry(TileEntity tile, ForgeDirection from, ItemStack items) {
 		World w = tile.worldObj;
@@ -142,8 +140,9 @@ public class Utils {
 		LinkedList<ForgeDirection> possiblePipes = new LinkedList<ForgeDirection>();
 
 		for (int j = 0; j < 6; ++j) {
-			if (from.getOpposite().ordinal() == j)
+			if (from.getOpposite().ordinal() == j) {
 				continue;
+			}
 
 			ForgeDirection o = ForgeDirection.values()[j];
 			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, o);
@@ -153,9 +152,10 @@ public class Utils {
 			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems()) {
-				if( pipeEntry instanceof IPipeConnection )
-					if( !((IPipeConnection) pipeEntry).isPipeConnected(o.getOpposite()) )
+				if (pipeEntry instanceof IPipeConnection)
+					if (!((IPipeConnection) pipeEntry).isPipeConnected(o.getOpposite())) {
 						continue;
+					}
 				possiblePipes.add(o);
 			}
 		}
@@ -186,7 +186,7 @@ public class Utils {
 	}
 
 	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
-		if(stack.stackSize <= 0)
+		if (stack.stackSize <= 0)
 			return;
 
 		float f1 = 0.7F;
@@ -203,8 +203,9 @@ public class Utils {
 		for (int l = 0; l < inventory.getSizeInventory(); ++l) {
 			ItemStack items = inventory.getStackInSlot(l);
 
-			if (items != null && items.stackSize > 0)
+			if (items != null && items.stackSize > 0) {
 				dropItems(world, inventory.getStackInSlot(l).copy(), i, j, k);
+			}
 		}
 	}
 
@@ -218,6 +219,7 @@ public class Utils {
 
 	/**
 	 * Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
+	 * 
 	 * @param inv
 	 * @return Modified inventory if double chest, unmodified otherwise.
 	 */
@@ -228,17 +230,21 @@ public class Utils {
 			TileEntity tile;
 			IInventory chest2 = null;
 			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.WEST);
-			if (tile instanceof TileEntityChest)
+			if (tile instanceof TileEntityChest) {
 				chest2 = (IInventory) tile;
+			}
 			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.EAST);
-			if (tile instanceof TileEntityChest)
+			if (tile instanceof TileEntityChest) {
 				chest2 = (IInventory) tile;
+			}
 			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.NORTH);
-			if (tile instanceof TileEntityChest)
+			if (tile instanceof TileEntityChest) {
 				chest2 = (IInventory) tile;
+			}
 			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.SOUTH);
-			if (tile instanceof TileEntityChest)
+			if (tile instanceof TileEntityChest) {
 				chest2 = (IInventory) tile;
+			}
 			if (chest2 != null)
 				return new InventoryLargeChest("", inv, chest2);
 		}
@@ -332,8 +338,7 @@ public class Utils {
 		return block;
 	}
 
-	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax,
-			double zMax, LaserKind kind) {
+	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
 		EntityBlock lasers[] = new EntityBlock[12];
 		Position[] p = new Position[8];
 
@@ -386,33 +391,33 @@ public class Utils {
 		else
 			return 0;
 	}
-	
+
 	public static LiquidStack liquidFromBlockId(int blockId) {
-		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID){
+		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID)
 			return new LiquidStack(Block.waterStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		}else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID){
+		else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID)
 			return new LiquidStack(Block.lavaStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		}else if (Block.blocksList[blockId] instanceof ILiquid){
+		else if (Block.blocksList[blockId] instanceof ILiquid) {
 			ILiquid liquid = (ILiquid) Block.blocksList[blockId];
-			if(liquid.isMetaSensitive()){
+			if (liquid.isMetaSensitive())
 				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, liquid.stillLiquidMeta());
-			}else{
+			else
 				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, 0);
-			}
-		}else{
+		} else
 			return null;
-		}
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 
 		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world))
-			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop())
+			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
 				dropItems(world, (IInventory) tile, i, j, k);
+			}
 
-		if (tile instanceof TileBuildCraft)
+		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
+		}
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
@@ -424,18 +429,19 @@ public class Utils {
 
 		ForgeDirection o = ForgeDirection.UNKNOWN;
 
-		if (tile1.xCoord - 1 == tile2.xCoord)
+		if (tile1.xCoord - 1 == tile2.xCoord) {
 			o = ForgeDirection.WEST;
-		else if (tile1.xCoord + 1 == tile2.xCoord)
+		} else if (tile1.xCoord + 1 == tile2.xCoord) {
 			o = ForgeDirection.EAST;
-		else if (tile1.yCoord - 1 == tile2.yCoord)
+		} else if (tile1.yCoord - 1 == tile2.yCoord) {
 			o = ForgeDirection.DOWN;
-		else if (tile1.yCoord + 1 == tile2.yCoord)
+		} else if (tile1.yCoord + 1 == tile2.yCoord) {
 			o = ForgeDirection.UP;
-		else if (tile1.zCoord - 1 == tile2.zCoord)
+		} else if (tile1.zCoord - 1 == tile2.zCoord) {
 			o = ForgeDirection.NORTH;
-		else if (tile1.zCoord + 1 == tile2.zCoord)
+		} else if (tile1.zCoord + 1 == tile2.zCoord) {
 			o = ForgeDirection.SOUTH;
+		}
 
 		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o))
 			return false;
@@ -460,12 +466,10 @@ public class Utils {
 		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection))
 			return false;
 
-		if (b1 instanceof IFramePipeConnection
-				&& !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2))
+		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2))
 			return false;
 
-		if (b2 instanceof IFramePipeConnection
-				&& !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1))
+		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1))
 			return false;
 
 		return true;
@@ -480,8 +484,9 @@ public class Utils {
 				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(i);
 
 				stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
-			} else
+			} else {
 				stacks[i] = null;
+			}
 	}
 
 	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
@@ -490,8 +495,9 @@ public class Utils {
 		for (int i = 0; i < stacks.length; ++i) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			nbttaglist.appendTag(cpt);
-			if (stacks[i] != null)
+			if (stacks[i] != null) {
 				stacks[i].writeToNBT(cpt);
+			}
 
 		}
 

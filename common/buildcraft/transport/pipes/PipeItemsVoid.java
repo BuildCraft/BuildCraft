@@ -9,45 +9,45 @@
 
 package buildcraft.transport.pipes;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
-import net.minecraft.tileentity.TileEntity;
 
-public class PipeItemsVoid extends Pipe implements IItemTravelingHook{
+public class PipeItemsVoid extends Pipe implements IItemTravelingHook {
 
 	public PipeItemsVoid(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicVoid(), itemID);
 		((PipeTransportItems) transport).travelHook = this;
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return DefaultProps.TEXTURE_BLOCKS;
 	}
-	
+
 	@Override
 	public int getTextureIndex(ForgeDirection direction) {
 		return 8 * 16 + 14;
 	}
 
-
-	//This is called if the void pipe is only connected to one pipe
+	// This is called if the void pipe is only connected to one pipe
 	@Override
 	public void drop(PipeTransportItems pipe, EntityData data) {
 		data.item.getItemStack().stackSize = 0;
 	}
 
-	//This is called when the void pipe is connected to multiple pipes
+	// This is called when the void pipe is connected to multiple pipes
 	@Override
 	public void centerReached(PipeTransportItems pipe, EntityData data) {
 		((PipeTransportItems) transport).scheduleRemoval(data.item);
 	}
 
 	@Override
-	public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile) {}
+	public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile) {
+	}
 
 }

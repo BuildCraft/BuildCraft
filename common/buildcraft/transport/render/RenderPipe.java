@@ -13,28 +13,27 @@ import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderEntityBlock;
@@ -48,7 +47,7 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
-	
+
 	final static private int LIQUID_STAGES = 40;
 
 	final static private int MAX_ITEMS_TO_RENDER = 10;
@@ -56,7 +55,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	private final static EntityItem dummyEntityItem = new EntityItem(null);
 
 	private class DisplayLiquidList {
-            
+
 		public int[] sideHorizontal = new int[LIQUID_STAGES];
 		public int[] sideVertical = new int[LIQUID_STAGES];
 		public int[] centerHorizontal = new int[LIQUID_STAGES];
@@ -64,7 +63,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	}
 
 	private HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
-
 
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
@@ -81,24 +79,23 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	}
 
 	private DisplayLiquidList getDisplayLiquidLists(int liquidId, int meta, World world) {
-		if (displayLiquidLists.containsKey(liquidId)){
+		if (displayLiquidLists.containsKey(liquidId)) {
 			HashMap<Integer, DisplayLiquidList> x = displayLiquidLists.get(liquidId);
-			if (x.containsKey(meta)){
+			if (x.containsKey(meta))
 				return x.get(meta);
-			}
 		} else {
 			displayLiquidLists.put(liquidId, new HashMap<Integer, DisplayLiquidList>());
 		}
-
 
 		DisplayLiquidList d = new DisplayLiquidList();
 		displayLiquidLists.get(liquidId).put(meta, d);
 
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
 			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, meta);
-		else
+		} else {
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
+		}
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -218,7 +215,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			GL11.glEndList();
 		}
-		
+
 		block.texture = 6;
 
 		size = Utils.pipeMaxPos - Utils.pipeMinPos;
@@ -259,14 +256,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (pipe.pipe == null)
 			return;
 
-		if (pipe.pipe.transport instanceof PipeTransportItems)
+		if (pipe.pipe.transport instanceof PipeTransportItems) {
 			renderSolids(pipe.pipe, x, y, z);
-
-		else if (pipe.pipe.transport instanceof PipeTransportLiquids)
+		} else if (pipe.pipe.transport instanceof PipeTransportLiquids) {
 			renderLiquids(pipe.pipe, x, y, z);
-
-		else if (pipe.pipe.transport instanceof PipeTransportPower)
+		} else if (pipe.pipe.transport instanceof PipeTransportPower) {
 			renderPower(pipe.pipe, x, y, z);
+		}
 
 	}
 
@@ -279,7 +275,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
-		
+
 		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
 
 		for (int i = 0; i < 6; ++i) {
@@ -291,10 +287,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			if (pow.displayPower[i] >= 1.0) {
 				short stage = pow.displayPower[i];
 
-				if (stage < displayList.length)
+				if (stage < displayList.length) {
 					GL11.glCallList(displayList[stage]);
-				else
+				} else {
 					GL11.glCallList(displayList[displayList.length - 1]);
+				}
 			}
 
 			GL11.glPopMatrix();
@@ -317,17 +314,18 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		boolean sides = false, above = false;
 
 		for (int i = 0; i < 6; ++i) {
-			//ILiquidTank tank = liq.getTanks()[i];
-			//LiquidStack liquid = tank.getLiquid();
+			// ILiquidTank tank = liq.getTanks()[i];
+			// LiquidStack liquid = tank.getLiquid();
 			LiquidStack liquid = liq.renderCache[i];
-			//int amount = liquid != null ? liquid.amount : 0;
-			//int amount = liquid != null ? liq.renderAmmount[i] : 0;
+			// int amount = liquid != null ? liquid.amount : 0;
+			// int amount = liquid != null ? liq.renderAmmount[i] : 0;
 
-			if ( liquid != null && liquid.amount > 0) {
+			if (liquid != null && liquid.amount > 0) {
 				DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
-				if (d == null)
+				if (d == null) {
 					continue;
+				}
 
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
 
@@ -335,24 +333,24 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				int list = 0;
 
 				switch (ForgeDirection.VALID_DIRECTIONS[i]) {
-					case UP:
-						above = true;
-						list = d.sideVertical[stage];
-						break;
-					case DOWN:
-						GL11.glTranslatef(0, -0.75F, 0);
-						list = d.sideVertical[stage];
-						break;
-					case EAST:
-					case WEST:
-					case SOUTH:
-					case NORTH:
-						sides = true;
-						GL11.glRotatef(angleY[i], 0, 1, 0);
-						GL11.glRotatef(angleZ[i], 0, 0, 1);
-						list = d.sideHorizontal[stage];
-						break;
-					default:
+				case UP:
+					above = true;
+					list = d.sideVertical[stage];
+					break;
+				case DOWN:
+					GL11.glTranslatef(0, -0.75F, 0);
+					list = d.sideVertical[stage];
+					break;
+				case EAST:
+				case WEST:
+				case SOUTH:
+				case NORTH:
+					sides = true;
+					GL11.glRotatef(angleY[i], 0, 1, 0);
+					GL11.glRotatef(angleZ[i], 0, 0, 1);
+					list = d.sideHorizontal[stage];
+					break;
+				default:
 				}
 
 				GL11.glCallList(list);
@@ -360,24 +358,26 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 		}
 		// CENTER
-//		ILiquidTank tank = liq.getTanks()[ForgeDirection.Unknown.ordinal()];
-//		LiquidStack liquid = tank.getLiquid();
+		// ILiquidTank tank = liq.getTanks()[ForgeDirection.Unknown.ordinal()];
+		// LiquidStack liquid = tank.getLiquid();
 		LiquidStack liquid = liq.renderCache[ForgeDirection.UNKNOWN.ordinal()];
 
-		//int amount = liquid != null ? liquid.amount : 0;
-		//int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
+		// int amount = liquid != null ? liquid.amount : 0;
+		// int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
-			//DisplayLiquidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getLiquid(), pipe.worldObj);
+			// DisplayLiquidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getLiquid(), pipe.worldObj);
 			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 			if (d != null) {
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
 
-				if (above)
+				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
+				}
 
-				if (!above || sides)
+				if (!above || sides) {
 					GL11.glCallList(d.centerHorizontal[stage]);
+				}
 			}
 
 		}
@@ -395,11 +395,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
 			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
-		} else if(Item.itemsList[liquidId] != null) {
+		} else if (Item.itemsList[liquidId] != null) {
 			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-		} else {
+		} else
 			return null;
-		}		
 		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}
 
@@ -411,8 +410,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		int count = 0;
 		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
-			if(count >= MAX_ITEMS_TO_RENDER)
+			if (count >= MAX_ITEMS_TO_RENDER) {
 				break;
+			}
 
 			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z
 					- pipe.zCoord, light);
@@ -436,8 +436,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 
 		byte quantity = 1;
-		if (entityitem.getItemStack().stackSize > 1)
+		if (entityitem.getItemStack().stackSize > 1) {
 			quantity = 2;
+		}
 
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
 		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
@@ -469,16 +470,16 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				GL11.glPopMatrix();
 			}
 
-		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
-				&& Block.blocksList[itemstack.itemID].blockID != 0) {
+		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null && Block.blocksList[itemstack.itemID].blockID != 0) {
 
 			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
 
 			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
 			float f4 = 0.25F;
 			int j = Block.blocksList[itemstack.itemID].getRenderType();
-			if (j == 1 || j == 19 || j == 12 || j == 2)
+			if (j == 1 || j == 19 || j == 12 || j == 2) {
 				f4 = 0.5F;
+			}
 
 			GL11.glScalef(f4, f4, f4);
 			for (int k = 0; k < quantity; k++) {
@@ -497,7 +498,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 
 		} else {
-			
+
 			GL11.glTranslatef(0, 0.10F, 0); // BC SPECIFIC
 
 			if (itemstack.getItem().requiresMultipleRenderPasses()) {
@@ -508,26 +509,24 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					int iconIndex = itemstack.getItem().getIconFromItemStackForMultiplePasses(itemstack, i);
 					float scale = 1.0F;
 
-					int itemColour = Item.itemsList[itemstack.itemID]
-							.getColorFromItemStack(itemstack, i);
+					int itemColour = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, i);
 					float rgbR = (itemColour >> 16 & 255) / 255.0F;
 					float rgbG = (itemColour >> 8 & 255) / 255.0F;
 					float rgbB = (itemColour & 255) / 255.0F;
-					GL11.glColor4f(rgbR * scale, rgbG * scale, rgbB * scale,
-							1.0F);
+					GL11.glColor4f(rgbR * scale, rgbG * scale, rgbB * scale, 1.0F);
 
 					this.drawItem(iconIndex, quantity);
 				}
-				
+
 			} else {
 
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 				int i = itemstack.getIconIndex();
-				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null
-						&& Block.blocksList[itemstack.itemID].blockID != 0)
+				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null && Block.blocksList[itemstack.itemID].blockID != 0) {
 					ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
-				else
+				} else {
 					ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
+				}
 
 				drawItem(i, quantity);
 			}

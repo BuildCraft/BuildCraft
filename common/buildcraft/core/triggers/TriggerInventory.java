@@ -9,20 +9,19 @@
 
 package buildcraft.core.triggers;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 
 public class TriggerInventory extends Trigger implements ITriggerDirectional {
-
 
 	public enum State {
 		Empty, Contains, Space, Full
@@ -72,7 +71,6 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 		}
 	}
 
-	
 	@Override
 	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		ItemStack searchedStack = null;
@@ -81,17 +79,16 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 			searchedStack = parameter.getItem();
 		}
 
-		if (tile instanceof IInventory ) {
-			IInventory inv = Utils.getInventory(((IInventory) tile));			
-			if(side != ForgeDirection.UNKNOWN && inv instanceof ISidedInventory){
-				inv = new SidedInventoryAdapter((ISidedInventory)inv, side);
+		if (tile instanceof IInventory) {
+			IInventory inv = Utils.getInventory(((IInventory) tile));
+			if (side != ForgeDirection.UNKNOWN && inv instanceof ISidedInventory) {
+				inv = new SidedInventoryAdapter((ISidedInventory) inv, side);
 			}
-			
+
 			int invSize = inv.getSizeInventory();
-		
-			if(invSize <= 0){
+
+			if (invSize <= 0)
 				return false;
-			}			
 
 			boolean foundItems = false;
 			boolean foundSpace = false;
@@ -117,20 +114,20 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 			}
 
 			switch (state) {
-				case Empty:
-					return !foundItems;
-				case Contains:
-					return foundItems;
-				case Space:
-					return foundSpace;
-				default:
-					return !foundSpace;
+			case Empty:
+				return !foundItems;
+			case Contains:
+				return foundItems;
+			case Space:
+				return foundSpace;
+			default:
+				return !foundSpace;
 			}
 		}
 
 		return false;
 	}
-	
+
 	@Override
 	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
 		return isTriggerActive(ForgeDirection.UNKNOWN, tile, parameter);

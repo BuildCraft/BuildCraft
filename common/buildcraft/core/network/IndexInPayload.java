@@ -1,8 +1,7 @@
 package buildcraft.core.network;
 
 /**
- * Keeps track of the indices to use when writing data to payload arrays.
- * Internal use only.
+ * Keeps track of the indices to use when writing data to payload arrays. Internal use only.
  */
 public class IndexInPayload {
 

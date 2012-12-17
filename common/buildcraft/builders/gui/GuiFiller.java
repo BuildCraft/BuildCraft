@@ -38,8 +38,9 @@ public class GuiFiller extends GuiBuildCraft {
 		fontRenderer.drawString(StringUtil.localize("gui.filling.resources"), 8, 74, 0x404040);
 		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, 142, 0x404040);
 
-		if (filler.currentPattern != null)
+		if (filler.currentPattern != null) {
 			drawForegroundSelection(filler.currentPattern.getName());
+		}
 	}
 
 	@Override

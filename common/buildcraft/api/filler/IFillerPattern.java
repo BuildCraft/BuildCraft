@@ -1,8 +1,8 @@
 package buildcraft.api.filler;
 
-import buildcraft.api.core.IBox;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.api.core.IBox;
 
 public interface IFillerPattern {
 

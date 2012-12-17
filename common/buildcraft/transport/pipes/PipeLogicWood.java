@@ -9,19 +9,19 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 
 public class PipeLogicWood extends PipeLogic {
 
@@ -35,7 +35,8 @@ public class PipeLogicWood extends PipeLogic {
 			TileEntity tile = container.getTile(o);
 
 			if (isInput(tile))
-				if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) || PipeManager.canExtractLiquids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord) ) {
+				if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)
+						|| PipeManager.canExtractLiquids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)) {
 					newMeta = o.ordinal();
 					break;
 				}
@@ -44,7 +45,7 @@ public class PipeLogicWood extends PipeLogic {
 		if (newMeta != meta) {
 			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
 			container.scheduleRenderUpdate();
-			//worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+			// worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -56,8 +57,7 @@ public class PipeLogicWood extends PipeLogic {
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench
-				&& ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
 			switchSource();
 			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
 			return true;
@@ -70,8 +70,9 @@ public class PipeLogicWood extends PipeLogic {
 	public boolean isPipeConnected(TileEntity tile) {
 		Pipe pipe2 = null;
 
-		if (tile instanceof TileGenericPipe)
+		if (tile instanceof TileGenericPipe) {
 			pipe2 = ((TileGenericPipe) tile).pipe;
+		}
 
 		if (BuildCraftTransport.alwaysConnectPipes)
 			return super.isPipeConnected(tile);
@@ -83,20 +84,22 @@ public class PipeLogicWood extends PipeLogic {
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj))
+		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			switchSourceIfNeeded();
+		}
 	}
 
 	private void switchSourceIfNeeded() {
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-		if (meta > 5)
+		if (meta > 5) {
 			switchSource();
-		else {
+		} else {
 			TileEntity tile = container.getTile(ForgeDirection.values()[meta]);
 
-			if (!isInput(tile))
+			if (!isInput(tile)) {
 				switchSource();
+			}
 		}
 	}
 
@@ -104,13 +107,14 @@ public class PipeLogicWood extends PipeLogic {
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj))
+		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			switchSourceIfNeeded();
+		}
 	}
-	
+
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		if (this.container.pipe instanceof PipeLiquidsWood){
+		if (this.container.pipe instanceof PipeLiquidsWood) {
 			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			return meta != to.ordinal();
 		}

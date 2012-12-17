@@ -9,12 +9,11 @@
 
 package buildcraft.core;
 
-import buildcraft.api.core.Position;
-import buildcraft.core.proxy.CoreProxy;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import buildcraft.api.core.Position;
+import buildcraft.core.proxy.CoreProxy;
 
 public abstract class EntityLaser extends Entity {
 
@@ -72,8 +71,9 @@ public abstract class EntityLaser extends Entity {
 			needsUpdate = false;
 		}
 
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			updateDataClient();
+		}
 
 		boundingBox.minX = Math.min(head.x, tail.x);
 		boundingBox.minY = Math.min(head.y, tail.y);
@@ -156,7 +156,7 @@ public abstract class EntityLaser extends Entity {
 		return (i / 8192D);
 	}
 
-	//The read/write to nbt seem to be useless
+	// The read/write to nbt seem to be useless
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbt) {
 
@@ -183,7 +183,7 @@ public abstract class EntityLaser extends Entity {
 		nbt.setDouble("tailZ", tail.z);
 	}
 
-	//Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
+	// Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
 	public Position renderOffset() {
 		return new Position(head.x - posX, head.y - posY, head.z - posZ);
 	}

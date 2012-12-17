@@ -9,7 +9,6 @@
 
 package buildcraft.api.gates;
 
-
 public abstract class Action implements IAction {
 
 	protected int id;
@@ -23,7 +22,7 @@ public abstract class Action implements IAction {
 	public int getId() {
 		return this.id;
 	}
-	
+
 	@Override
 	public abstract String getTexture();
 

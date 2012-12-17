@@ -26,17 +26,17 @@ public class PacketHandlerBuilders implements IPacketHandler {
 			case PacketIds.ARCHITECT_NAME:
 				PacketUpdate packetA = new PacketUpdate();
 				packetA.readData(data);
-				onArchitectName((EntityPlayer)player, packetA);
+				onArchitectName((EntityPlayer) player, packetA);
 				break;
 			case PacketIds.LIBRARY_ACTION:
 				PacketLibraryAction packetB = new PacketLibraryAction();
 				packetB.readData(data);
-				onLibraryAction((EntityPlayer)player, packetB);
+				onLibraryAction((EntityPlayer) player, packetB);
 				break;
 			case PacketIds.LIBRARY_SELECT:
 				PacketLibraryAction packetC = new PacketLibraryAction();
 				packetC.readData(data);
-				onLibrarySelect((EntityPlayer)player, packetC);
+				onLibrarySelect((EntityPlayer) player, packetC);
 				break;
 			}
 		} catch (Exception ex) {
@@ -46,19 +46,17 @@ public class PacketHandlerBuilders implements IPacketHandler {
 	}
 
 	private void onArchitectName(EntityPlayer player, PacketUpdate packet) {
-		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX,
-				packet.posY, packet.posZ);
-		if(te instanceof TileArchitect){
+		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
+		if (te instanceof TileArchitect) {
 			((TileArchitect) te).handleClientInput((char) packet.payload.intPayload[0]);
 		}
 	}
 
 	private void onLibraryAction(EntityPlayer player, PacketLibraryAction packet) {
-		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX,
-				packet.posY, packet.posZ);
-		if(te instanceof TileBlueprintLibrary) {
+		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
+		if (te instanceof TileBlueprintLibrary) {
 			TileBlueprintLibrary tbl = (TileBlueprintLibrary) te;
-			switch(packet.actionId){
+			switch (packet.actionId) {
 			case TileBlueprintLibrary.COMMAND_DELETE:
 				tbl.deleteSelectedBpt();
 				break;
@@ -77,12 +75,11 @@ public class PacketHandlerBuilders implements IPacketHandler {
 	}
 
 	private void onLibrarySelect(EntityPlayer player, PacketLibraryAction packet) {
-		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX,
-				packet.posY, packet.posZ);
-		if(te instanceof TileBlueprintLibrary){
+		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
+		if (te instanceof TileBlueprintLibrary) {
 			TileBlueprintLibrary tbl = (TileBlueprintLibrary) te;
 			int ySlot = packet.actionId;
-			if (ySlot < tbl.getCurrentPage().size()){
+			if (ySlot < tbl.getCurrentPage().size()) {
 				tbl.selected = ySlot;
 			}
 			tbl.sendNetworkUpdate();

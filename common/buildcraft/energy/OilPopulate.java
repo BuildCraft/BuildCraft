@@ -11,25 +11,22 @@ package buildcraft.energy;
 
 import java.util.Random;
 
-import cpw.mods.fml.common.IWorldGenerator;
-
+import net.minecraft.block.Block;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.IChunkProvider;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.block.Block;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.World;
+import cpw.mods.fml.common.IWorldGenerator;
 
 public class OilPopulate implements IWorldGenerator {
 
 	public static Random rand = null;
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+
 		// shift to world coordinates
 		chunkX = chunkX << 4;
 		chunkZ = chunkZ << 4;
@@ -38,9 +35,8 @@ public class OilPopulate implements IWorldGenerator {
 	}
 
 	public static void doPopulate(World world, int x, int z) {
-		if (!BuildCraftCore.modifyWorld) {
+		if (!BuildCraftCore.modifyWorld)
 			return;
-		}
 
 		if (rand == null) {
 			rand = CoreProxy.proxy.createNewRandom(world);
@@ -110,8 +106,7 @@ public class OilPopulate implements IWorldGenerator {
 
 			for (int y = 128; y >= cy; --y) {
 				if (!started && world.getBlockId(cx, y, cz) != 0 && world.getBlockId(cx, y, cz) != Block.leaves.blockID
-						&& world.getBlockId(cx, y, cz) != Block.wood.blockID
-						&& world.getBlockId(cx, y, cz) != Block.grass.blockID) {
+						&& world.getBlockId(cx, y, cz) != Block.wood.blockID && world.getBlockId(cx, y, cz) != Block.grass.blockID) {
 
 					started = true;
 
@@ -177,15 +172,13 @@ public class OilPopulate implements IWorldGenerator {
 			boolean adjacentOil = false;
 
 			for (int d = -1; d <= 1; ++d) {
-				if (isOil(world, x + d, y - 1, z) || isOil(world, x - d, y - 1, z) || isOil(world, x, y - 1, z + d)
-						|| isOil(world, x, y - 1, z - d)) {
+				if (isOil(world, x + d, y - 1, z) || isOil(world, x - d, y - 1, z) || isOil(world, x, y - 1, z + d) || isOil(world, x, y - 1, z - d)) {
 					adjacentOil = true;
 				}
 			}
 
 			if (adjacentOil || force) {
-				if (world.getBlockId(x, y, z) == Block.waterMoving.blockID
-						|| world.getBlockId(x, y, z) == Block.waterStill.blockID || isOil(world, x, y, z)) {
+				if (world.getBlockId(x, y, z) == Block.waterMoving.blockID || world.getBlockId(x, y, z) == Block.waterStill.blockID || isOil(world, x, y, z)) {
 
 					world.setBlockWithNotify(x, y, z, BuildCraftEnergy.oilStill.blockID);
 				} else {

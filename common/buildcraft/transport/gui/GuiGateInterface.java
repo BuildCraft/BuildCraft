@@ -21,8 +21,8 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.Gate.GateKind;
+import buildcraft.transport.Pipe;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 
@@ -268,7 +268,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				ITrigger trigger = ((TriggerSlot) slot).getTrigger();
 
 				if (_container.getGateOrdinal() >= GateKind.AND_3.ordinal()) {
-					
+
 					if (_container.triggerState[triggerTracker++]) {
 						mc.renderEngine.bindTexture(texture);
 
@@ -313,10 +313,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			ITrigger changed = null;
 			if (triggerSlot.getTrigger() == null) {
 
-				if (k == 0)
+				if (k == 0) {
 					changed = _container.getFirstTrigger();
-				else
+				} else {
 					changed = _container.getLastTrigger();
+				}
 
 			} else {
 				Iterator<ITrigger> it = _container.getTriggerIterator(k != 0);
@@ -347,10 +348,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			IAction changed = null;
 			if (actionSlot.getAction() == null) {
 
-				if (k == 0)
+				if (k == 0) {
 					changed = _container.getFirstAction();
-				else
+				} else {
 					changed = _container.getLastAction();
+				}
 
 			} else {
 				Iterator<IAction> it = _container.getActionIterator(k != 0);

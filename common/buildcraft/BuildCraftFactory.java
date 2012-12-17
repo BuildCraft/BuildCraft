@@ -10,18 +10,14 @@ package buildcraft;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.Property;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
@@ -48,17 +44,22 @@ import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.Property;
 
-@Mod(name="BuildCraft Factory", version=Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
+import com.google.common.collect.Lists;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
+
+@Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
+@NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftFactory {
 
 	public static BlockQuarry quarryBlock;
@@ -82,15 +83,13 @@ public class BuildCraftFactory {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
-		ForgeChunkManager.setForcedChunkLoadingCallback(instance,new QuarryChunkloadCallback());
+		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
 	}
 
-	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback
-	{
+	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback {
 		@Override
 		public void ticketsLoaded(List<Ticket> tickets, World world) {
-			for (Ticket ticket : tickets)
-			{
+			for (Ticket ticket : tickets) {
 				int quarryX = ticket.getModData().getInteger("quarryX");
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
@@ -103,15 +102,13 @@ public class BuildCraftFactory {
 		@Override
 		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount) {
 			List<Ticket> validTickets = Lists.newArrayList();
-			for (Ticket ticket : tickets)
-			{
+			for (Ticket ticket : tickets) {
 				int quarryX = ticket.getModData().getInteger("quarryX");
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
 
 				int blId = world.getBlockId(quarryX, quarryY, quarryZ);
-				if (blId == quarryBlock.blockID)
-				{
+				if (blId == quarryBlock.blockID) {
 					validTickets.add(ticket);
 				}
 			}
@@ -119,11 +116,12 @@ public class BuildCraftFactory {
 		}
 
 	}
+
 	@Init
 	public void load(FMLInitializationEvent evt) {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
-//		EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
+		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 
 		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
 		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
@@ -145,13 +143,14 @@ public class BuildCraftFactory {
 		new BptBlockRefinery(refineryBlock.blockID);
 		new BptBlockTank(tankBlock.blockID);
 
-		if (BuildCraftCore.loadDefaultRecipes)
+		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
+		}
 	}
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get( Configuration.CATEGORY_GENERAL,"mining.enabled", true).value);
+		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "mining.enabled", true).value);
 
 		Property minigWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
 		Property plainPipeId = BuildCraftCore.mainConfiguration.getBlock("drill.id", DefaultProps.DRILL_ID);
@@ -162,7 +161,7 @@ public class BuildCraftFactory {
 		Property tankId = BuildCraftCore.mainConfiguration.getBlock("tank.id", DefaultProps.TANK_ID);
 		Property refineryId = BuildCraftCore.mainConfiguration.getBlock("refinery.id", DefaultProps.REFINERY_ID);
 		Property hopperId = BuildCraftCore.mainConfiguration.getBlock("hopper.id", DefaultProps.HOPPER_ID);
-		Property hopperDisable = BuildCraftCore.mainConfiguration.get( "Block Savers","hopper.disabled", false);
+		Property hopperDisable = BuildCraftCore.mainConfiguration.get("Block Savers", "hopper.disabled", false);
 
 		BuildCraftCore.mainConfiguration.save();
 
@@ -211,32 +210,32 @@ public class BuildCraftFactory {
 	public static void loadRecipes() {
 
 		if (allowMining) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
-					new Object[] { "ipi", "igi", "iPi", Character.valueOf('p'), Item.redstone, Character.valueOf('i'),
-							Item.ingotIron, Character.valueOf('g'), BuildCraftCore.ironGearItem, Character.valueOf('P'),
-							Item.pickaxeSteel });
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1), new Object[] { "ipi", "igi", "iPi", Character.valueOf('p'), Item.redstone,
+					Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'), BuildCraftCore.ironGearItem, Character.valueOf('P'), Item.pickaxeSteel });
 
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(quarryBlock), new Object[] { "ipi", "gig", "dDd", Character.valueOf('i'),
-					BuildCraftCore.ironGearItem, Character.valueOf('p'), Item.redstone, Character.valueOf('g'),
-					BuildCraftCore.goldGearItem, Character.valueOf('d'), BuildCraftCore.diamondGearItem, Character.valueOf('D'),
-					Item.pickaxeDiamond, });
+			CoreProxy.proxy.addCraftingRecipe(
+					new ItemStack(quarryBlock),
+					new Object[] { "ipi", "gig", "dDd", Character.valueOf('i'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Item.redstone,
+							Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('d'), BuildCraftCore.diamondGearItem,
+							Character.valueOf('D'), Item.pickaxeDiamond, });
 		}
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), new Object[] { " g ", "gwg", " g ", Character.valueOf('w'),
-				Block.workbench, Character.valueOf('g'), BuildCraftCore.woodenGearItem });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), new Object[] { " g ", "gwg", " g ", Character.valueOf('w'), Block.workbench,
+				Character.valueOf('g'), BuildCraftCore.woodenGearItem });
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock,
-				Character.valueOf('W'), miningWellBlock, });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock, Character.valueOf('W'),
+				miningWellBlock, });
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(tankBlock), new Object[] { "ggg", "g g", "ggg", Character.valueOf('g'),
-				Block.glass, });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(tankBlock), new Object[] { "ggg", "g g", "ggg", Character.valueOf('g'), Block.glass, });
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(refineryBlock), new Object[] { "   ", "RTR", "TGT", Character.valueOf('T'),
-				tankBlock, Character.valueOf('G'), BuildCraftCore.diamondGearItem, Character.valueOf('R'),
-				Block.torchRedstoneActive, });
+		CoreProxy.proxy.addCraftingRecipe(
+				new ItemStack(refineryBlock),
+				new Object[] { "   ", "RTR", "TGT", Character.valueOf('T'), tankBlock, Character.valueOf('G'), BuildCraftCore.diamondGearItem,
+						Character.valueOf('R'), Block.torchRedstoneActive, });
 		if (!hopperDisabled) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock), new Object[] { "ICI", "IGI", " I ", Character.valueOf('I'),
-					Item.ingotIron, Character.valueOf('C'), Block.chest, Character.valueOf('G'), BuildCraftCore.stoneGearItem });
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock),
+					new Object[] { "ICI", "IGI", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('C'), Block.chest, Character.valueOf('G'),
+							BuildCraftCore.stoneGearItem });
 		}
 
 	}

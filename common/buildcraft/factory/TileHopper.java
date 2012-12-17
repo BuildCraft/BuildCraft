@@ -1,18 +1,18 @@
 package buildcraft.factory;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.InventoryUtil;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.SimpleInventory;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ISidedInventory;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
 
@@ -111,8 +111,10 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void openChest() {}
+	public void openChest() {
+	}
 
 	@Override
-	public void closeChest() {}
+	public void closeChest() {
+	}
 }

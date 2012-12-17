@@ -9,8 +9,8 @@
 
 package buildcraft.core.render;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.entity.Entity;
 
 public class RenderVoid extends Render {
 

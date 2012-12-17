@@ -13,8 +13,8 @@ public class DefaultProps {
 
 	public static final String MOD = "BuildCraft";
 
-	public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@"+Version.VERSION;
-	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@"+Version.VERSION;
+	public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@" + Version.VERSION;
+	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@" + Version.VERSION;
 
 	public static int WORLD_HEIGHT = 256;
 	public static final String NET_CHANNEL_NAME = "BC";
@@ -109,7 +109,7 @@ public class DefaultProps {
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;
-	public static double  PIPES_DURABILITY = 0.25D;
+	public static double PIPES_DURABILITY = 0.25D;
 	public static boolean FILLER_DESTROY = false;
 	public static boolean USE_PIPELOSS = true;
 

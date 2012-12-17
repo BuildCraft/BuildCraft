@@ -9,12 +9,12 @@
 
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.core.EntityBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
 	EntityBlock xArm, yArm, zArm, head;
@@ -56,15 +56,13 @@ public class EntityMechanicalArm extends Entity {
 		updatePosition();
 	}
 
-	void setHead(double x, double y, double z)
-	{
+	void setHead(double x, double y, double z) {
 		this.headX = (int) (x * 32D);
 		this.headY = (int) (y * 32D);
 		this.headZ = (int) (z * 32D);
 	}
 
-	private void setArmSize(double x, double z)
-	{
+	private void setArmSize(double x, double z) {
 		armSizeX = x;
 		xArm.iSize = x;
 		armSizeZ = z;
@@ -93,7 +91,8 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	@Override
-	protected void entityInit() {}
+	protected void entityInit() {
+	}
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
@@ -107,14 +106,11 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	private void findAndJoinQuarry() {
-		TileEntity te = worldObj.getBlockTileEntity((int)posX, (int)posY, (int)posZ);
-		if (te != null && te instanceof TileQuarry)
-		{
+		TileEntity te = worldObj.getBlockTileEntity((int) posX, (int) posY, (int) posZ);
+		if (te != null && te instanceof TileQuarry) {
 			parent = (TileQuarry) te;
 			parent.setArm(this);
-		}
-		else
-		{
+		} else {
 			setDead();
 		}
 	}
@@ -132,13 +128,11 @@ public class EntityMechanicalArm extends Entity {
 	public void onUpdate() {
 		super.onUpdate();
 		updatePosition();
-		if (parent == null)
-		{
+		if (parent == null) {
 			findAndJoinQuarry();
 		}
 
-		if (parent == null)
-		{
+		if (parent == null) {
 			setDead();
 			return;
 		}
@@ -147,17 +141,15 @@ public class EntityMechanicalArm extends Entity {
 	public void updatePosition() {
 		double[] head = getHead();
 		this.xArm.setPosition(xRoot, yRoot, head[2] + 0.25);
-		this.yArm.jSize = yRoot - head[1]- 1;
+		this.yArm.jSize = yRoot - head[1] - 1;
 		this.yArm.setPosition(head[0] + 0.25, head[1] + 1, head[2] + 0.25);
 		this.zArm.setPosition(head[0] + 0.25, yRoot, zRoot);
 		this.head.setPosition(head[0] + 0.4, head[1], head[2] + 0.4);
 	}
 
-
 	@Override
 	public void setDead() {
-		if (worldObj!=null && worldObj.isRemote)
-		{
+		if (worldObj != null && worldObj.isRemote) {
 			xArm.setDead();
 			yArm.setDead();
 			zArm.setDead();
@@ -166,8 +158,7 @@ public class EntityMechanicalArm extends Entity {
 		super.setDead();
 	}
 
-	private double[] getHead()
-	{
+	private double[] getHead() {
 		return new double[] { this.headX / 32D, this.headY / 32D, this.headZ / 32D };
 	}
 }

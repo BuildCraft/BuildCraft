@@ -11,6 +11,8 @@ package buildcraft.silicon;
 
 import java.util.LinkedList;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
@@ -21,9 +23,6 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 
 public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
@@ -49,7 +48,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 
-		if(!CoreProxy.proxy.isSimulating(worldObj))
+		if (!CoreProxy.proxy.isSimulating(worldObj))
 			return;
 
 		// Disable the laser and do nothing if no energy is available.
@@ -60,8 +59,9 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 		// Check for available tables if none is linked to this laser.
 		if (!isValidTable())
-			if (canFindTable())
+			if (canFindTable()) {
 				findTable();
+			}
 
 		// If we still don't have a valid table or the existing has
 		// become invalid, we disable the laser and do nothing.
@@ -72,19 +72,22 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 		// We have a table and can work, so we create a laser if
 		// necessary.
-		if (laser == null)
+		if (laser == null) {
 			createLaser();
+		}
 
 		// We have a laser and may update it
-		if (laser != null && canUpdateLaser())
+		if (laser != null && canUpdateLaser()) {
 			updateLaser();
+		}
 
 		// Consume power and transfer it to the table.
 		float power = powerProvider.useEnergy(0, 4, true);
 		laserTarget.receiveLaserEnergy(power);
 
-		if (laser != null)
+		if (laser != null) {
 			laser.pushPower(power);
+		}
 
 		sendNetworkUpdate();
 	}
@@ -157,9 +160,8 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 			}
 		}
 
-		if (targets.size() == 0) {
+		if (targets.size() == 0)
 			return;
-		}
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
 		laserTarget = (ILaserTarget) worldObj.getBlockTileEntity(b.i, b.j, b.k);
@@ -178,37 +180,36 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 		switch (ForgeDirection.values()[meta]) {
 
-			case WEST:
-				px = -0.3;
-				break;
-			case EAST:
-				px = 0.3;
-				break;
-			case DOWN:
-				py = -0.3;
-				break;
-			case UP:
-				py = 0.3;
-				break;
-			case NORTH:
-				pz = -0.3;
-				break;
-			case SOUTH:
-			default:
-				pz = 0.3;
-				break;
+		case WEST:
+			px = -0.3;
+			break;
+		case EAST:
+			px = 0.3;
+			break;
+		case DOWN:
+			py = -0.3;
+			break;
+		case UP:
+			py = 0.3;
+			break;
+		case NORTH:
+			pz = -0.3;
+			break;
+		case SOUTH:
+		default:
+			pz = 0.3;
+			break;
 		}
 
 		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
-		Position tail = new Position(
-				laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F,
-				laserTarget.getYCoord() + 9F / 16F,
+		Position tail = new Position(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F,
 				laserTarget.getZCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 
 		laser.setPositions(head, tail);
 
-		if(!laser.isVisible())
+		if (!laser.isVisible()) {
 			laser.show();
+		}
 	}
 
 	protected void removeLaser() {
@@ -230,21 +231,22 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	}
 
 	@Override
-	public void doWork() {}
+	public void doWork() {
+	}
 
 	@Override
 	public int powerRequest() {
-		if (powerProvider.getEnergyStored() < 200 || laser != null) {
+		if (powerProvider.getEnergyStored() < 200 || laser != null)
 			return 25;
-		} else {
+		else
 			return 0;
-		}
 	}
 
 	@Override
 	public void sendNetworkUpdate() {
-		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate))
+		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate)) {
 			super.sendNetworkUpdate();
+		}
 	};
 
 	@Override

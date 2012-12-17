@@ -2,12 +2,11 @@ package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class BptSlot extends BptSlotInfo {
 
@@ -68,8 +67,9 @@ public class BptSlot extends BptSlotInfo {
 		obj.cpt = (NBTTagCompound) cpt.copy();
 		obj.storedRequirements = (LinkedList<ItemStack>) storedRequirements.clone();
 
-		if (stackToUse != null)
+		if (stackToUse != null) {
 			obj.stackToUse = stackToUse.copy();
+		}
 
 		obj.mode = mode;
 

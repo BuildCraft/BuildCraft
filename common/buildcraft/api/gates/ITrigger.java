@@ -27,14 +27,12 @@ public interface ITrigger {
 	public abstract String getDescription();
 
 	/**
-	 * Return true if the tile given in parameter activates the trigger, given
-	 * the parameters.
+	 * Return true if the tile given in parameter activates the trigger, given the parameters.
 	 */
 	public abstract boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter);
 
 	/**
-	 * Create parameters for the trigger. As for now, there is only one kind of
-	 * trigger parameter available so this subprogram is final.
+	 * Create parameters for the trigger. As for now, there is only one kind of trigger parameter available so this subprogram is final.
 	 */
 	public abstract ITriggerParameter createParameter();
 

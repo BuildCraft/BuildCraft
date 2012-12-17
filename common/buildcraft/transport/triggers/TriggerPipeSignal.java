@@ -30,7 +30,7 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 
 	@Override
 	public int getIndexInTexture() {
-		if (active)
+		if (active) {
 			switch (color) {
 			case Red:
 				return 0 * 16 + 3;
@@ -41,7 +41,7 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 			case Yellow:
 				return 0 * 16 + 9;
 			}
-		else
+		} else {
 			switch (color) {
 			case Red:
 				return 0 * 16 + 2;
@@ -52,6 +52,7 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 			case Yellow:
 				return 0 * 16 + 8;
 			}
+		}
 
 		return 0;
 	}
@@ -63,7 +64,7 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 
 	@Override
 	public String getDescription() {
-		if (active)
+		if (active) {
 			switch (color) {
 			case Red:
 				return "Red Pipe Signal On";
@@ -74,7 +75,7 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 			case Yellow:
 				return "Yellow Pipe Signal On";
 			}
-		else
+		} else {
 			switch (color) {
 			case Red:
 				return "Red Pipe Signal Off";
@@ -85,6 +86,7 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 			case Yellow:
 				return "Yellow Pipe Signal Off";
 			}
+		}
 
 		return "";
 	}

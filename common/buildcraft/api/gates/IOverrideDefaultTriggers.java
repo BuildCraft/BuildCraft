@@ -11,11 +11,8 @@ package buildcraft.api.gates;
 
 import java.util.LinkedList;
 
-
 /**
- * This interface has to be implemented by a TileEntity or a Pipe that wants to
- * provide triggers different from the ones installed by default with
- * BuildCraft.
+ * This interface has to be implemented by a TileEntity or a Pipe that wants to provide triggers different from the ones installed by default with BuildCraft.
  */
 public interface IOverrideDefaultTriggers {
 

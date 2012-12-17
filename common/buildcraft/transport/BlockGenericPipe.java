@@ -13,12 +13,21 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
@@ -26,24 +35,12 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
-
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.block.material.Material;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 
 public class BlockGenericPipe extends BlockContainer {
 
-	/* Defined subprograms **************************************************/
+	/* Defined subprograms ************************************************* */
 
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
@@ -54,7 +51,7 @@ public class BlockGenericPipe extends BlockContainer {
 	public float getBlockHardness(World par1World, int par2, int par3, int par4) {
 		return BuildCraftTransport.pipeDurability;
 	}
-	
+
 	@Override
 	public int getRenderType() {
 		return TransportProxy.pipeModel;
@@ -132,7 +129,7 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 
 			if (tileG.hasFacade(ForgeDirection.UP)) {
-				setBlockBounds(0.0F, 1 - facadeThickness, 0.0F,  1.0F, 1.0F, 1.0F);
+				setBlockBounds(0.0F, 1 - facadeThickness, 0.0F, 1.0F, 1.0F, 1.0F);
 				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
@@ -142,12 +139,12 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 
 			if (tileG.hasFacade(ForgeDirection.SOUTH)) {
-				setBlockBounds(0.0F, 0.0F, 1 - facadeThickness,  1.0F, 1.0F, 1.0F);
+				setBlockBounds(0.0F, 0.0F, 1 - facadeThickness, 1.0F, 1.0F, 1.0F);
 				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.NORTH)) {
-				setBlockBounds(0.0F, 0.0F, 0.0F,  1.0F, 1.0F, facadeThickness);
+				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, facadeThickness);
 				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 		}
@@ -162,23 +159,29 @@ public class BlockGenericPipe extends BlockContainer {
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
 		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
-		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.WEST)))
+		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.WEST))) {
 			xMin = 0.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.EAST)))
+		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.EAST))) {
 			xMax = 1.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.DOWN)))
+		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.DOWN))) {
 			yMin = 0.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.UP)))
+		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.UP))) {
 			yMax = 1.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1) || (tileG != null && tileG.hasFacade(ForgeDirection.NORTH)))
+		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1) || (tileG != null && tileG.hasFacade(ForgeDirection.NORTH))) {
 			zMin = 0.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1) || (tileG != null && tileG.hasFacade(ForgeDirection.SOUTH)))
+		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1) || (tileG != null && tileG.hasFacade(ForgeDirection.SOUTH))) {
 			zMax = 1.0F;
+		}
 
 		if (tileG != null) {
 			if (tileG.hasFacade(ForgeDirection.EAST) || tileG.hasFacade(ForgeDirection.WEST)) {
@@ -203,8 +206,7 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 		}
 
-		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax,
-				(double) j + yMax, (double) k + zMax);
+		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
 	}
 
 	@Override
@@ -213,23 +215,29 @@ public class BlockGenericPipe extends BlockContainer {
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
 
-		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k))
+		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k)) {
 			xMin = 0.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k))
+		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k)) {
 			xMax = 1.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k))
+		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k)) {
 			yMin = 0.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k))
+		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k)) {
 			yMax = 1.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1))
+		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1)) {
 			zMin = 0.0F;
+		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1))
+		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1)) {
 			zMax = 1.0F;
+		}
 
 		setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
@@ -244,8 +252,9 @@ public class BlockGenericPipe extends BlockContainer {
 		if (pipe == null)
 			return;
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			pipe.onBlockRemoval();
+		}
 
 		World world = pipe.worldObj;
 
@@ -290,13 +299,15 @@ public class BlockGenericPipe extends BlockContainer {
 
 		int i1 = quantityDropped(world.rand);
 		for (int j1 = 0; j1 < i1; j1++) {
-			if (world.rand.nextFloat() > f)
+			if (world.rand.nextFloat() > f) {
 				continue;
+			}
 
 			Pipe pipe = getPipe(world, i, j, k);
 
-			if (pipe == null)
+			if (pipe == null) {
 				pipe = pipeRemoved.get(new BlockIndex(i, j, k));
+			}
 
 			if (pipe != null) {
 				int k1 = pipe.itemID;
@@ -317,8 +328,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public int idPicked(World world, int i, int j, int k)
-	{
+	public int idPicked(World world, int i, int j, int k) {
 		Pipe pipe = getPipe(world, i, j, k);
 
 		if (pipe == null)
@@ -327,7 +337,7 @@ public class BlockGenericPipe extends BlockContainer {
 			return pipe.itemID;
 	}
 
-	/* Wrappers *************************************************************/
+	/* Wrappers ************************************************************ */
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int l) {
@@ -335,18 +345,19 @@ public class BlockGenericPipe extends BlockContainer {
 
 		Pipe pipe = getPipe(world, x, y, z);
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
+		}
 	}
 
-
 	@Override
-	public int func_85104_a(World world, int x, int y, int z, int side,  float par6, float par7, float par8, int meta) {
+	public int func_85104_a(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.func_85104_a(world, x, y, z, side, par6, par7, par8, meta);
 		Pipe pipe = getPipe(world, x, y, z);
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			pipe.onBlockPlaced();
+		}
 
 		return meta;
 	}
@@ -372,20 +383,21 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem() == null) {
 
 				// Fall through the end of the test
-			} else if (entityplayer.getCurrentEquippedItem().itemID == Item.sign.shiftedIndex){
+			} else if (entityplayer.getCurrentEquippedItem().itemID == Item.sign.shiftedIndex)
 				// Sign will be placed anyway, so lets show the sign gui
 				return false;
-			} else if (entityplayer.getCurrentEquippedItem().getItem() instanceof ItemPipe)
+			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof ItemPipe)
 				return false;
-			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
+			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench)
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(world, i, j, k, entityplayer);
-			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
+			else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode)
+					if (!entityplayer.capabilities.isCreativeMode) {
 						entityplayer.getCurrentEquippedItem().splitStack(1);
+					}
 					pipe.signalStrength[IPipe.WireColor.Red.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
@@ -393,8 +405,9 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Blue.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode)
+					if (!entityplayer.capabilities.isCreativeMode) {
 						entityplayer.getCurrentEquippedItem().splitStack(1);
+					}
 					pipe.signalStrength[IPipe.WireColor.Blue.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
@@ -402,8 +415,9 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Green.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode)
+					if (!entityplayer.capabilities.isCreativeMode) {
 						entityplayer.getCurrentEquippedItem().splitStack(1);
+					}
 					pipe.signalStrength[IPipe.WireColor.Green.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
@@ -411,8 +425,9 @@ public class BlockGenericPipe extends BlockContainer {
 			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode)
+					if (!entityplayer.capabilities.isCreativeMode) {
 						entityplayer.getCurrentEquippedItem().splitStack(1);
+					}
 					pipe.signalStrength[IPipe.WireColor.Yellow.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
@@ -422,8 +437,9 @@ public class BlockGenericPipe extends BlockContainer {
 				if (!pipe.hasInterface()) {
 
 					pipe.gate = new GateVanilla(pipe, entityplayer.getCurrentEquippedItem());
-					if (!entityplayer.capabilities.isCreativeMode)
+					if (!entityplayer.capabilities.isCreativeMode) {
 						entityplayer.getCurrentEquippedItem().splitStack(1);
+					}
 					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
@@ -444,18 +460,20 @@ public class BlockGenericPipe extends BlockContainer {
 		// Try to strip wires first, starting with yellow.
 		for (IPipe.WireColor color : IPipe.WireColor.values())
 			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj))
+				if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+				}
 				pipe.wireSet[color.reverse().ordinal()] = false;
-				//pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+				// pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 				pipe.container.scheduleRenderUpdate();
 				return true;
 			}
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
-			if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj))
+			if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 				pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			}
 			pipe.resetGate();
 			return true;
 		}
@@ -465,7 +483,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	/**
 	 * Drops a pipe wire item of the passed color.
-	 *
+	 * 
 	 * @param color
 	 */
 	private void dropWire(IPipe.WireColor color, World world, int i, int j, int k) {
@@ -492,22 +510,22 @@ public class BlockGenericPipe extends BlockContainer {
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 
 		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
-		if (!(tile instanceof IPipeRenderState)) return 0;
-		return ((IPipeRenderState)tile).getRenderState().currentTextureIndex;
+		if (!(tile instanceof IPipeRenderState))
+			return 0;
+		return ((IPipeRenderState) tile).getRenderState().currentTextureIndex;
 
-
-//		Pipe pipe = getPipe(iblockaccess, i, j, k);
-//		if (!isValid(pipe)) {
-//			CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-//			return 0;
-//		}
-//		int pipeTexture = pipe.getPipeTexture();
-//		if (pipeTexture > 255) {
-//			CoreProxy.BindTexture(DefaultProps.TEXTURE_EXTERNAL);
-//			return pipeTexture - 256;
-//		}
-//		CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
-//		return pipeTexture;
+		// Pipe pipe = getPipe(iblockaccess, i, j, k);
+		// if (!isValid(pipe)) {
+		// CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
+		// return 0;
+		// }
+		// int pipeTexture = pipe.getPipeTexture();
+		// if (pipeTexture > 255) {
+		// CoreProxy.BindTexture(DefaultProps.TEXTURE_EXTERNAL);
+		// return pipeTexture - 256;
+		// }
+		// CoreProxy.BindTexture(DefaultProps.TEXTURE_BLOCKS);
+		// return pipeTexture;
 	}
 
 	@Override
@@ -516,13 +534,13 @@ public class BlockGenericPipe extends BlockContainer {
 
 		Pipe pipe = getPipe(world, i, j, k);
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			pipe.onEntityCollidedWithBlock(entity);
+		}
 	}
 
 	@Override
-	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
-	{
+	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
 		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
@@ -561,11 +579,12 @@ public class BlockGenericPipe extends BlockContainer {
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		Pipe pipe = getPipe(world, i, j, k);
 
-		if (isValid(pipe))
+		if (isValid(pipe)) {
 			pipe.randomDisplayTick(random);
+		}
 	}
 
-	/* Registration *********************************************************/
+	/* Registration ******************************************************** */
 
 	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
 
@@ -578,7 +597,7 @@ public class BlockGenericPipe extends BlockContainer {
 		pipes.put(item.shiftedIndex, clas);
 
 		Pipe dummyPipe = createPipe(item.shiftedIndex);
-		if (dummyPipe != null){
+		if (dummyPipe != null) {
 			item.setTextureFile(dummyPipe.getTextureFile());
 			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
 		}
@@ -590,9 +609,9 @@ public class BlockGenericPipe extends BlockContainer {
 
 		try {
 			Class<? extends Pipe> pipe = pipes.get(key);
-			if (pipe != null) {
+			if (pipe != null)
 				return pipe.getConstructor(int.class).newInstance(key);
-			} else {
+			else {
 				BuildCraftCore.bcLog.warning("Detected pipe with unknown key (" + key + "). Did you remove a buildcraft addon?");
 			}
 
@@ -604,7 +623,8 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	public static boolean placePipe(Pipe pipe, World world, int i, int j, int k, int blockId, int meta) {
-		if (world.isRemote) return true;
+		if (world.isRemote)
+			return true;
 
 		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta);
 
@@ -621,10 +641,10 @@ public class BlockGenericPipe extends BlockContainer {
 
 		TileEntity tile = blockAccess.getBlockTileEntity(i, j, k);
 
-		if(!(tile instanceof TileGenericPipe) || tile.isInvalid())
+		if (!(tile instanceof TileGenericPipe) || tile.isInvalid())
 			return null;
 
-		return ((TileGenericPipe)tile).pipe;
+		return ((TileGenericPipe) tile).pipe;
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {

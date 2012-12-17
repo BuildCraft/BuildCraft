@@ -17,7 +17,6 @@ import java.util.TreeMap;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ByteBuffer;
 
-
 public class ClassMapping {
 
 	public static class Reporter {
@@ -31,8 +30,7 @@ public class ClassMapping {
 
 		@Override
 		public String toString() {
-			String res = clas + ": " + occurences + " times (" + dataInt + ", " + dataFloat + ", " + dataString + " = " + bytes
-					+ ")";
+			String res = clas + ": " + occurences + " times (" + dataInt + ", " + dataFloat + ", " + dataString + " = " + bytes + ")";
 
 			return res;
 		}
@@ -96,8 +94,9 @@ public class ClassMapping {
 
 		try {
 			for (Field f : fields) {
-				if (!isSynchronizedField(f))
+				if (!isSynchronizedField(f)) {
 					continue;
+				}
 
 				Type t = f.getGenericType();
 
@@ -210,19 +209,21 @@ public class ClassMapping {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void setData(Object obj, ByteBuffer byteBuffer, float[] floatValues, String[] stringValues, Indexes index)
-			throws IllegalArgumentException, IllegalAccessException {
+	public void setData(Object obj, ByteBuffer byteBuffer, float[] floatValues, String[] stringValues, Indexes index) throws IllegalArgumentException,
+			IllegalAccessException {
 
 		Reporter r = null;
 
 		if (BuildCraftCore.trackNetworkUsage) {
-			if (!report.containsKey(clas.getName()))
+			if (!report.containsKey(clas.getName())) {
 				report.put(clas.getName(), new Reporter());
+			}
 
 			r = report.get(clas.getName());
 			r.clas = clas;
-		} else
+		} else {
 			r = new Reporter();
+		}
 
 		r.occurences++;
 
@@ -350,7 +351,7 @@ public class ClassMapping {
 				r.dataInt += 1;
 			}
 		}
-		
+
 		for (Field f : stringArrayFields) {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
@@ -390,19 +391,21 @@ public class ClassMapping {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void updateFromData(Object obj, ByteBuffer byteBuffer, float[] floatValues, String[] stringValues, Indexes index)
-			throws IllegalArgumentException, IllegalAccessException {
+	public void updateFromData(Object obj, ByteBuffer byteBuffer, float[] floatValues, String[] stringValues, Indexes index) throws IllegalArgumentException,
+			IllegalAccessException {
 
 		Reporter r = null;
 
 		if (BuildCraftCore.trackNetworkUsage) {
-			if (!report.containsKey(clas.getName()))
+			if (!report.containsKey(clas.getName())) {
 				report.put(clas.getName(), new Reporter());
+			}
 
 			r = report.get(clas.getName());
 			r.clas = clas;
-		} else
+		} else {
 			r = new Reporter();
+		}
 
 		r.occurences++;
 
@@ -463,13 +466,15 @@ public class ClassMapping {
 			r.dataInt += 1;
 
 			if (isNull) {
-				for (int i = 0; i < c.sizeBytes; ++i)
+				for (int i = 0; i < c.sizeBytes; ++i) {
 					byteBuffer.readUnsignedByte();
+				}
 
 				index.floatIndex += c.sizeFloat;
 				index.stringIndex += c.sizeString;
-			} else
+			} else {
 				c.updateFromData(c.field.get(obj), byteBuffer, floatValues, stringValues, index);
+			}
 		}
 
 		for (Field f : doubleArrayFields) {
@@ -524,7 +529,7 @@ public class ClassMapping {
 				r.dataInt += 1;
 			}
 		}
-		
+
 		for (Field f : stringArrayFields) {
 			TileNetworkData updateAnnotation = f.getAnnotation(TileNetworkData.class);
 
@@ -549,13 +554,15 @@ public class ClassMapping {
 				r.dataInt += 1;
 
 				if (isNull) {
-					for (int j = 0; j < c.sizeBytes; ++j)
+					for (int j = 0; j < c.sizeBytes; ++j) {
 						byteBuffer.readUnsignedByte();
+					}
 
 					index.floatIndex += c.sizeFloat;
 					index.stringIndex += c.sizeString;
-				} else
+				} else {
 					c.updateFromData(cpts[i], byteBuffer, floatValues, stringValues, index);
+				}
 			}
 		}
 	}

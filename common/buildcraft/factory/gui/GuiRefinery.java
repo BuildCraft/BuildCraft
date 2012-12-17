@@ -76,15 +76,15 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 		AdvancedSlot slot = null;
 
-		if (position != -1 && position != 2)
+		if (position != -1 && position != 2) {
 			slot = slots[position];
+		}
 
 		if (slot != null) {
 			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(mc.thePlayer.inventory.getItemStack());
 
-			if(liquid == null) {
+			if (liquid == null)
 				return;
-			}
 
 			container.setFilter(position, liquid.itemID, liquid.itemMeta);
 		}
@@ -101,17 +101,20 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		LiquidStack liquid0 = null;
 		LiquidStack liquid1 = null;
 
-		if (filter0 != null)
+		if (filter0 != null) {
 			liquid0 = new LiquidStack(filter0.itemID, LiquidContainerRegistry.BUCKET_VOLUME, filter0.getItemDamage());
-		if (filter1 != null)
+		}
+		if (filter1 != null) {
 			liquid1 = new LiquidStack(filter1.itemID, LiquidContainerRegistry.BUCKET_VOLUME, filter1.getItemDamage());
+		}
 
 		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(liquid0, liquid1);
 
-		if (recipe != null)
+		if (recipe != null) {
 			((ItemSlot) slots[2]).stack = recipe.result.asItemStack();
-		else
+		} else {
 			((ItemSlot) slots[2]).stack = null;
+		}
 	}
 
 }

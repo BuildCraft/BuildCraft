@@ -9,13 +9,12 @@
 
 package buildcraft.energy;
 
-import buildcraft.core.DefaultProps;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
+import buildcraft.core.DefaultProps;
 
 public class BlockPollution extends BlockContainer {
 
@@ -43,7 +42,7 @@ public class BlockPollution extends BlockContainer {
 	public TileEntity createNewTileEntity(World var1) {
 		return new TilePollution();
 	}
-	
+
 	@SuppressWarnings({ "all" })
 	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		return 5 * 16 + iblockaccess.getBlockMetadata(i, j, k);

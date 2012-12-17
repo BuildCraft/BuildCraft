@@ -9,12 +9,12 @@
 
 package buildcraft.builders.gui;
 
-import buildcraft.builders.TileArchitect;
-import buildcraft.core.gui.BuildCraftContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import buildcraft.builders.TileArchitect;
+import buildcraft.core.gui.BuildCraftContainer;
 
 public class ContainerTemplate extends BuildCraftContainer {
 
@@ -44,20 +44,18 @@ public class ContainerTemplate extends BuildCraftContainer {
 
 	// FIXME: This is not called anymore
 	/*
-	@Override
-	public void onCraftGuiOpened(ICrafting icrafting) {
-		super.onCraftGuiOpened(icrafting);
-		icrafting.updateCraftingInventoryInfo(this, 0, template.computingTime);
-	}
-	*/
+	 * @Override public void onCraftGuiOpened(ICrafting icrafting) { super.onCraftGuiOpened(icrafting); icrafting.updateCraftingInventoryInfo(this, 0,
+	 * template.computingTime); }
+	 */
 
 	@Override
 	public void updateCraftingResults() {
 		super.updateCraftingResults();
 		for (int i = 0; i < crafters.size(); i++) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
-			if (computingTime != template.computingTime)
+			if (computingTime != template.computingTime) {
 				icrafting.sendProgressBarUpdate(this, 0, template.computingTime);
+			}
 		}
 
 		computingTime = template.computingTime;
@@ -65,8 +63,9 @@ public class ContainerTemplate extends BuildCraftContainer {
 
 	@Override
 	public void updateProgressBar(int i, int j) {
-		if (i == 0)
+		if (i == 0) {
 			template.computingTime = j;
+		}
 	}
 
 	@Override
