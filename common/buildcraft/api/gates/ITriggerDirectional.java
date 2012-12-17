@@ -1,6 +1,6 @@
 package buildcraft.api.gates;
 
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
 // TODO: Merge with ITrigger

@@ -13,11 +13,11 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 import java.util.LinkedList;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class GateVanilla extends Gate {
 

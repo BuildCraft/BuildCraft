@@ -6,8 +6,8 @@ import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class BptSlot extends BptSlotInfo {
 

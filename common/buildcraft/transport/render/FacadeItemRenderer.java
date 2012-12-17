@@ -7,10 +7,10 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.Tessellator;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 

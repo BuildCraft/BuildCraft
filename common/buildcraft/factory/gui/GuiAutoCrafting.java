@@ -9,8 +9,8 @@
 
 package buildcraft.factory.gui;
 
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 

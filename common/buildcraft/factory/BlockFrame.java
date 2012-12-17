@@ -18,15 +18,15 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
-import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.Vec3;
-import net.minecraft.src.World;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.item.ItemStack;
+import net.minecraft.block.material.Material;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 
 public class BlockFrame extends Block implements IFramePipeConnection {

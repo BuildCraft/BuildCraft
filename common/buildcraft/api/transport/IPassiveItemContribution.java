@@ -9,7 +9,7 @@
 
 package buildcraft.api.transport;
 
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.nbt.NBTTagCompound;
 
 public interface IPassiveItemContribution {
 

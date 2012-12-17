@@ -10,7 +10,7 @@
 package buildcraft.core;
 
 import buildcraft.api.core.Position;
-import net.minecraft.src.World;
+import net.minecraft.world.World;
 
 public class EntityEnergyLaser extends EntityLaser {
 

@@ -4,10 +4,10 @@ import java.util.List;
 
 import buildcraft.core.proxy.CoreProxy;
 
-import net.minecraft.src.CommandBase;
-import net.minecraft.src.ICommand;
-import net.minecraft.src.ICommandSender;
-import net.minecraft.src.WrongUsageException;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 
 public class CommandBuildCraft extends CommandBase {
 

@@ -9,10 +9,10 @@
 
 package buildcraft.core.gui;
 
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Slot;
+import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.inventory.Slot;
 
 public abstract class BuildCraftContainer extends Container {
 

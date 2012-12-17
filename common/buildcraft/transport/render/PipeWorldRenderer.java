@@ -12,10 +12,10 @@ import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TransportProxy;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.TileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
 
 public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {

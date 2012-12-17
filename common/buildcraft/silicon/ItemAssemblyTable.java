@@ -1,7 +1,7 @@
 package buildcraft.silicon;
 
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 
 public class ItemAssemblyTable extends ItemBlock {
 	public ItemAssemblyTable(int par1) {

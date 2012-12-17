@@ -10,9 +10,9 @@
 package buildcraft.energy;
 
 import buildcraft.BuildCraftEnergy;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.World;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;

@@ -11,8 +11,8 @@ package buildcraft.api.blueprints;
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.Position;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 /**
  * This interface provide contextual information when building or initializing

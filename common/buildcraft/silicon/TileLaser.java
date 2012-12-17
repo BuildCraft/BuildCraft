@@ -22,8 +22,8 @@ import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 

@@ -8,7 +8,7 @@ import buildcraft.transport.EntityData;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import net.minecraft.src.MathHelper;
+import net.minecraft.util.MathHelper;
 
 import net.minecraftforge.common.ForgeDirection;
 

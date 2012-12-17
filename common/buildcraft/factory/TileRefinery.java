@@ -25,12 +25,12 @@ import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class TileRefinery extends TileMachine implements ITankContainer, IPowerReceptor, IInventory, IMachine {
 

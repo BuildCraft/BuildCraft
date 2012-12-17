@@ -13,10 +13,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftTransport;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;

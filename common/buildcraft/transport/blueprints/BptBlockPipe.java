@@ -24,9 +24,9 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GateVanilla;
 import buildcraft.transport.Pipe;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class BptBlockPipe extends BptBlock {
 

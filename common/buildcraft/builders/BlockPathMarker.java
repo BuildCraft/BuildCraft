@@ -13,10 +13,10 @@ import java.util.ArrayList;
 
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class BlockPathMarker extends BlockMarker {
 

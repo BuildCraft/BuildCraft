@@ -11,9 +11,9 @@ import buildcraft.factory.gui.ContainerRefinery;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.gui.GuiHopper;
 import buildcraft.factory.gui.GuiRefinery;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler {
 

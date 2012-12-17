@@ -20,19 +20,19 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.network.BuildCraftPacket;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.ChunkCoordinates;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Packet;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class CoreProxy {
 

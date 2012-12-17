@@ -11,7 +11,7 @@ package buildcraft.core.network;
 
 import buildcraft.core.ByteBuffer;
 import buildcraft.core.network.ClassMapping.Indexes;
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 public class TilePacketWrapper {
 

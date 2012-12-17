@@ -13,7 +13,7 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 public class TriggerMachine extends Trigger {
 

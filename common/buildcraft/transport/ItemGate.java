@@ -7,8 +7,8 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 import buildcraft.core.ItemBuildCraft;
 
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.ItemStack;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
 
 public class ItemGate extends ItemBuildCraft {
 

@@ -1,6 +1,6 @@
 package buildcraft.core.inventory;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.inventory.ISpecialInventory;
 

@@ -15,10 +15,10 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockFluid;
-import net.minecraft.src.Material;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.block.material.Material;
+import net.minecraft.world.World;
 import net.minecraftforge.liquids.ILiquid;
 
 

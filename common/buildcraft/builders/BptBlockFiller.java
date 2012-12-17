@@ -20,8 +20,8 @@ import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class BptBlockFiller extends BptBlock {
 

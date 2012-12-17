@@ -16,10 +16,10 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Material;
+import net.minecraft.block.Block;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.item.ItemStack;
+import net.minecraft.block.material.Material;
 
 
 public class BlockPlainPipe extends Block implements IFramePipeConnection {

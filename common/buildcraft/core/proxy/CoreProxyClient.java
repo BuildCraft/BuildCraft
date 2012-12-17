@@ -32,19 +32,19 @@ import buildcraft.core.render.RenderingOil;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Block;
-import net.minecraft.src.ChunkCoordinates;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Packet;
-import net.minecraft.src.StringTranslate;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
+import net.minecraft.block.Block;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.util.StringTranslate;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 public class CoreProxyClient extends CoreProxy {

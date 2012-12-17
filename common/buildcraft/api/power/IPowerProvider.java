@@ -2,7 +2,7 @@ package buildcraft.api.power;
 
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.nbt.NBTTagCompound;
 
 public interface IPowerProvider {
 

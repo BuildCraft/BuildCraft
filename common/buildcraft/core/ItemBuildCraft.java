@@ -10,8 +10,8 @@
 package buildcraft.core;
 
 import buildcraft.core.utils.StringUtil;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 
 public class ItemBuildCraft extends Item {

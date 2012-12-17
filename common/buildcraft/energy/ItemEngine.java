@@ -10,7 +10,7 @@
 package buildcraft.energy;
 
 import buildcraft.core.ItemBlockBuildCraft;
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 
 public class ItemEngine extends ItemBlockBuildCraft {
 

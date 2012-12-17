@@ -20,8 +20,8 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class Box implements IBox {
 

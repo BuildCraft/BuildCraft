@@ -15,7 +15,7 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 
 public class BptBlockFrame extends BptBlock {
 

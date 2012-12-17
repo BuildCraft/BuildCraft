@@ -15,10 +15,10 @@ import java.util.LinkedList;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.filler.IFillerRegistry;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
+import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class FillerRegistry implements IFillerRegistry {
 

@@ -22,8 +22,8 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 

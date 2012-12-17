@@ -2,7 +2,7 @@ package buildcraft.transport;
 
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerReceptor;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class EnergyPulser {
 

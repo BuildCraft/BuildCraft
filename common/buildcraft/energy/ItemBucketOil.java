@@ -12,8 +12,8 @@ package buildcraft.energy;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtil;
-import net.minecraft.src.ItemBucket;
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
 
 
 public class ItemBucketOil extends ItemBucket {

@@ -30,9 +30,9 @@ import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 

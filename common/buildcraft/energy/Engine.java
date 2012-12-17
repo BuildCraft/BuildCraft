@@ -16,9 +16,9 @@ import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.gui.ContainerEngine;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class Engine {
 

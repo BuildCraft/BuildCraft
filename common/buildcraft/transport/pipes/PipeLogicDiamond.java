@@ -16,10 +16,10 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.transport.BlockGenericPipe;
-import net.minecraft.src.Block;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 

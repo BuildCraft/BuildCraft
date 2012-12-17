@@ -13,8 +13,8 @@ import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class BptContext implements IBptContext {
 

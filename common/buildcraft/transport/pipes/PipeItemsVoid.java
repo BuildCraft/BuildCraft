@@ -15,7 +15,7 @@ import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 public class PipeItemsVoid extends Pipe implements IItemTravelingHook{
 

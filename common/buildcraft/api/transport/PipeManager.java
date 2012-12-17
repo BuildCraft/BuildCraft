@@ -7,7 +7,7 @@ import java.util.List;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Side;
 
-import net.minecraft.src.World;
+import net.minecraft.world.World;
 
 public abstract class PipeManager {
 

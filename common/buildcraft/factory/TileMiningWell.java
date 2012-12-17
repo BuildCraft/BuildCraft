@@ -22,9 +22,9 @@ import buildcraft.core.IMachine;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
 

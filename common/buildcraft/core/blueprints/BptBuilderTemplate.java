@@ -15,8 +15,8 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 

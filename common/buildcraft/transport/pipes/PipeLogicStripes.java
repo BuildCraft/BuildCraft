@@ -12,7 +12,7 @@ package buildcraft.transport.pipes;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 public class PipeLogicStripes extends PipeLogic {
 

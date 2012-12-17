@@ -16,7 +16,7 @@ import buildcraft.api.blueprints.IBptContext;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.blueprints.BptItem;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 
 public class BptItemPipeWooden extends BptItem {
 

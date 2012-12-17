@@ -1,7 +1,7 @@
 package buildcraft.core.inventory;
 
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ISidedInventory;
 
 /**

@@ -12,10 +12,10 @@ package buildcraft.energy.gui;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.energy.EngineStone;
 import buildcraft.energy.TileEngine;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ICrafting;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.Slot;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
 
 public class ContainerEngine extends BuildCraftContainer {
 

@@ -7,8 +7,8 @@ import java.io.IOException;
 
 import buildcraft.core.DefaultProps;
 
-import net.minecraft.src.Packet;
-import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet250CustomPayload;
 
 
 public abstract class BuildCraftPacket {

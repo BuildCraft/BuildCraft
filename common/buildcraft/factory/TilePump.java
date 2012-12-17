@@ -32,9 +32,9 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 public class TilePump extends TileMachine implements IMachine, IPowerReceptor, ITankContainer {
 

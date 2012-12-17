@@ -12,11 +12,11 @@ package buildcraft.transport;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
-import net.minecraft.src.Block;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 

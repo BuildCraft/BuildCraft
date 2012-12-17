@@ -32,8 +32,8 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeLogicStripes;
 import buildcraft.transport.PipeTransportItems;
 
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPowerReceptor {
 

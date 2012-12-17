@@ -9,10 +9,10 @@
 
 package buildcraft.energy.render;
 
-import net.minecraft.src.ModelBase;
-import net.minecraft.src.ModelRenderer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntitySpecialRenderer;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;

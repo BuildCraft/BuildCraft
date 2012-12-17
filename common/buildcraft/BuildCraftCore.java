@@ -63,12 +63,12 @@ import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
 
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import net.minecraft.src.Block;
-import net.minecraft.src.BlockFluid;
-import net.minecraft.src.CommandHandler;
-import net.minecraft.src.EntityList;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.command.CommandHandler;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Property;

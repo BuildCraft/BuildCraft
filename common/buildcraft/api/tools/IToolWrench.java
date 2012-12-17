@@ -1,6 +1,6 @@
 package buildcraft.api.tools;
 
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 
 /***
  * Implement this interface on subclasses of Item to have that item work as a

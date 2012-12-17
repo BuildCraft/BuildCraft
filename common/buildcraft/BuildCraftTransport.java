@@ -81,11 +81,11 @@ import buildcraft.transport.triggers.TriggerPipeContents;
 import buildcraft.transport.triggers.TriggerPipeSignal;
 import buildcraft.transport.triggers.TriggerPipeContents.Kind;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 

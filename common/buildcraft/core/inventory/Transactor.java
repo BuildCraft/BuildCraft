@@ -3,9 +3,9 @@ package buildcraft.core.inventory;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.utils.Utils;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntityFurnace;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.ISidedInventory;
 
 public abstract class Transactor implements ITransactor {

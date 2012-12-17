@@ -11,8 +11,8 @@ package buildcraft.builders;
 
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class FillerFillPyramid extends FillerPattern {
 

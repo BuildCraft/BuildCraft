@@ -20,14 +20,14 @@ import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.Container;
-import net.minecraft.src.CraftingManager;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.InventoryCrafting;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
+import net.minecraft.inventory.Container;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 

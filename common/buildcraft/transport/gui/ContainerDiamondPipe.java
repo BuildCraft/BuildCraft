@@ -10,9 +10,9 @@
 package buildcraft.transport.gui;
 
 import buildcraft.core.gui.BuildCraftContainer;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.Slot;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 
 public class ContainerDiamondPipe extends BuildCraftContainer {
 

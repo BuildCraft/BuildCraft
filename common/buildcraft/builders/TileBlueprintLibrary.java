@@ -12,10 +12,10 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public static final int COMMAND_NEXT = 1,

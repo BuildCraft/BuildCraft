@@ -12,8 +12,8 @@ package buildcraft.core;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerProvider;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 public class RedstonePowerProvider extends PowerProvider {
 

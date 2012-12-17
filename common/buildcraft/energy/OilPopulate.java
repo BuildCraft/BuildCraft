@@ -17,10 +17,10 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.proxy.CoreProxy;
 
-import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.Block;
-import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.World;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.block.Block;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.World;
 
 public class OilPopulate implements IWorldGenerator {
 

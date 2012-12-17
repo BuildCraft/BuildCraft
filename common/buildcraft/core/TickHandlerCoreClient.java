@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import buildcraft.core.proxy.CoreProxy;
 
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;

@@ -9,8 +9,8 @@
 
 package buildcraft.factory.gui;
 
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.ItemStack;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 

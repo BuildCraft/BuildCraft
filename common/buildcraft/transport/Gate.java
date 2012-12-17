@@ -7,10 +7,10 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.network.PacketPayload;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public abstract class Gate {
 

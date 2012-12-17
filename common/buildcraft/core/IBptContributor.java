@@ -2,7 +2,7 @@ package buildcraft.core;
 
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.core.blueprints.BptBase;
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 public interface IBptContributor {
 

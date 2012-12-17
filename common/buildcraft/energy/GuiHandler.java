@@ -6,9 +6,9 @@ import buildcraft.energy.TileEngine;
 import buildcraft.energy.gui.ContainerEngine;
 import buildcraft.energy.gui.GuiCombustionEngine;
 import buildcraft.energy.gui.GuiSteamEngine;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler {
 

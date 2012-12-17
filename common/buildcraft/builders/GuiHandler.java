@@ -10,9 +10,9 @@ import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiFiller;
 import buildcraft.builders.gui.GuiTemplate;
 import buildcraft.core.GuiIds;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler {
 

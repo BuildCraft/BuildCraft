@@ -10,11 +10,11 @@
 package buildcraft.factory;
 
 import buildcraft.core.IMachine;
-import net.minecraft.src.BlockContainer;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Material;
-import net.minecraft.src.TileEntity;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntity;
 
 public abstract class BlockMachineRoot extends BlockContainer {
 

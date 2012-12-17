@@ -9,7 +9,7 @@
 
 package buildcraft.energy.gui;
 
-import net.minecraft.src.InventoryPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
 

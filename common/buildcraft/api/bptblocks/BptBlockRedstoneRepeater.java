@@ -15,8 +15,8 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class BptBlockRedstoneRepeater extends BptBlock {
 

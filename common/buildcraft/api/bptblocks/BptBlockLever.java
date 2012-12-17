@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 
 public class BptBlockLever extends BptBlockWallSide {
 

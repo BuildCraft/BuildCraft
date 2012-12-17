@@ -14,10 +14,10 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.BuildCraftAPI;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class BlockUtil {
 

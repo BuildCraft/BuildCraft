@@ -11,9 +11,9 @@ package buildcraft.transport;
 
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.transport.IPipedItem;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public abstract class PipeTransport {
 

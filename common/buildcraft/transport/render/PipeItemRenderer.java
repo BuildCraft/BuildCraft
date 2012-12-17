@@ -6,11 +6,11 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemPipe;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.Tessellator;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.client.IItemRenderer;
 
 public class PipeItemRenderer implements IItemRenderer {

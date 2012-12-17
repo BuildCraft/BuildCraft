@@ -7,8 +7,8 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.core.IMachine;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.TileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 
 public class DefaultActionProvider implements IActionProvider {
 

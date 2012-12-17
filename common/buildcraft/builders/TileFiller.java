@@ -28,9 +28,9 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 

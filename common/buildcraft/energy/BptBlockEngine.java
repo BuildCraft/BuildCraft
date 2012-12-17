@@ -15,7 +15,7 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.Version;
-import net.minecraft.src.Block;
+import net.minecraft.block.Block;
 
 public class BptBlockEngine extends BptBlock {
 

@@ -8,8 +8,8 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipe;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.TileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 
 public class PipeTriggerProvider implements ITriggerProvider {
 

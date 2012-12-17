@@ -16,7 +16,7 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {

@@ -9,7 +9,7 @@
 
 package buildcraft.energy.render;
 
-import net.minecraft.src.RenderEngine;
+import net.minecraft.client.renderer.RenderEngine;
 
 import org.lwjgl.opengl.GL11;
 

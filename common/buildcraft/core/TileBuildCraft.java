@@ -21,8 +21,8 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-import net.minecraft.src.Packet;
-import net.minecraft.src.TileEntity;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 

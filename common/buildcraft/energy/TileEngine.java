@@ -32,12 +32,12 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet;
-import net.minecraft.src.TileEntity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
 
 //TODO: All Engines need to take func_48081_b into account
 

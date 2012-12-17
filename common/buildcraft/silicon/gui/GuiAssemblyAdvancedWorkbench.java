@@ -2,10 +2,10 @@ package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.IInventory;
-import net.minecraft.src.IRecipe;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.ItemStack;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;

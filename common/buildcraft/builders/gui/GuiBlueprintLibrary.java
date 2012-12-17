@@ -9,8 +9,8 @@
 
 package buildcraft.builders.gui;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.gui.GuiButton;
 
 import org.lwjgl.opengl.GL11;
 
