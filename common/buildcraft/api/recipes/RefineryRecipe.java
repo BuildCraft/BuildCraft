@@ -12,6 +12,8 @@ package buildcraft.api.recipes;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.google.common.collect.ImmutableSortedSet;
+
 import net.minecraftforge.liquids.LiquidStack;
 
 public class RefineryRecipe implements Comparable<RefineryRecipe> {
@@ -22,6 +24,10 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 		if (!recipes.contains(recipe)) {
 			recipes.add(recipe);
 		}
+	}
+
+	public static SortedSet<RefineryRecipe> getRecipes() {
+		return ImmutableSortedSet.copyof(recipes);
 	}
 
 	public static RefineryRecipe findRefineryRecipe(LiquidStack liquid1, LiquidStack liquid2) {
