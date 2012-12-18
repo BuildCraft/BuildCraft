@@ -34,7 +34,7 @@ public class TileEntityPickupFX extends EntityFX {
 		field_679_o = entity1;
 		field_677_q = 3;
 
-		yDestination = Utils.getPipeFloorOf(entity.item);
+		yDestination = Utils.getPipeFloorOf(entity.func_92014_d());
 	}
 
 	@Override

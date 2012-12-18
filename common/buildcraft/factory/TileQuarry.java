@@ -420,11 +420,13 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 				if (entity.isDead) {
 					continue;
 				}
-				if (entity.item.stackSize <= 0) {
+
+				ItemStack mineable = entity.func_92014_d();
+				if (mineable.stackSize <= 0) {
 					continue;
 				}
 				CoreProxy.proxy.removeEntity(entity);
-				mineStack(entity.item);
+				mineStack(mineable);
 			}
 		}
 	}

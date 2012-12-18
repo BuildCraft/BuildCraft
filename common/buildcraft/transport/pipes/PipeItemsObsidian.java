@@ -215,15 +215,17 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 			if (entity instanceof EntityItem) {
 				EntityItem item = (EntityItem) entity;
+				ItemStack contained = item.func_92014_d();
+				
 				CoreProxy.proxy.obsidianPipePickup(worldObj, item, this.container);
 
-				float energyUsed = powerProvider.useEnergy(distance, item.item.stackSize * distance, true);
+				float energyUsed = powerProvider.useEnergy(distance, contained.stackSize * distance, true);
 
-				if (distance == 0 || energyUsed / distance == item.item.stackSize) {
-					stack = item.item;
+				if (distance == 0 || energyUsed / distance == contained.stackSize) {
+					stack = contained;
 					CoreProxy.proxy.removeEntity(entity);
 				} else {
-					stack = item.item.splitStack((int) (energyUsed / distance));
+					stack = contained.splitStack((int) (energyUsed / distance));
 				}
 
 				speed = Math.sqrt(item.motionX * item.motionX + item.motionY * item.motionY + item.motionZ * item.motionZ);
@@ -263,7 +265,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		if (entity instanceof EntityItem) {
 			EntityItem item = (EntityItem) entity;
 
-			if (item.item.stackSize <= 0)
+			if (item.func_92014_d().stackSize <= 0)
 				return false;
 
 			for (int i = 0; i < entitiesDropped.length; ++i)

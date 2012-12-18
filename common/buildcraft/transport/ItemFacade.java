@@ -22,8 +22,8 @@ import buildcraft.core.proxy.CoreProxy;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemFacade extends ItemBuildCraft {
 

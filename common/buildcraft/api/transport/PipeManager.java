@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Side;
+import cpw.mods.fml.relauncher.Side;
 
 public abstract class PipeManager {
 

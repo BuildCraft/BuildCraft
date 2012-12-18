@@ -464,7 +464,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					GL11.glTranslatef(f5, f7, f9);
 				}
 
-				RenderPipe.dummyEntityItem.item = itemstack;
+				RenderPipe.dummyEntityItem.func_92013_a(itemstack);
 
 				customRenderer.renderItem(ItemRenderType.ENTITY, itemstack, renderBlocks, RenderPipe.dummyEntityItem);
 				GL11.glPopMatrix();
@@ -506,7 +506,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
 
 				for (int i = 0; i <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++i) {
-					int iconIndex = itemstack.getItem().getIconFromItemStackForMultiplePasses(itemstack, i);
+					int iconIndex = itemstack.getItem().getIconIndex(itemstack, i);
 					float scale = 1.0F;
 
 					int itemColour = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, i);
