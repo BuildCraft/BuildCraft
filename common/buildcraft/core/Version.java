@@ -47,7 +47,7 @@ public class Version {
 		property.comment = "indicates the last version the user has been informed about and will suppress further notices on it.";
 		String seenVersion = property.value;
 
-		if (recommendedVersion.equals(seenVersion))
+		if (recommendedVersion == null || recommendedVersion.equals(seenVersion))
 			return false;
 
 		property.value = recommendedVersion;
