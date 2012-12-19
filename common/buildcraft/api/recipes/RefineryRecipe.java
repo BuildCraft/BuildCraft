@@ -9,6 +9,7 @@
 
 package buildcraft.api.recipes;
 
+import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -22,6 +23,10 @@ public class RefineryRecipe implements Comparable<RefineryRecipe> {
 		if (!recipes.contains(recipe)) {
 			recipes.add(recipe);
 		}
+	}
+
+	public static SortedSet<RefineryRecipe> getRecipes() {
+		return Collections.unmodifiableSortedSet(recipes);
 	}
 
 	public static RefineryRecipe findRefineryRecipe(LiquidStack liquid1, LiquidStack liquid2) {
