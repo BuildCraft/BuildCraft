@@ -8,6 +8,9 @@
 package buildcraft.factory;
 
 import static net.minecraftforge.common.ForgeDirection.DOWN;
+
+import java.util.ArrayList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -26,7 +29,20 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class TileTank extends TileBuildCraft implements ITankContainer {
 
-	public final LiquidTank tank = new LiquidTank(LiquidContainerRegistry.BUCKET_VOLUME * 16);
+	public final LiquidTank tank = new LiquidTank(LiquidContainerRegistry.BUCKET_VOLUME * 16)
+	{
+		@Override
+		public int fill(LiquidStack resource, boolean doFill) {
+			if(doFill) hasUpdate = true;
+			return super.fill(resource, doFill);
+		}
+		
+		@Override
+		public LiquidStack drain(int maxDrain, boolean doDrain) {
+			if(doDrain) hasUpdate = true;
+			return super.drain(maxDrain, doDrain);
+		}
+	};
 	public boolean hasUpdate = false;
 	public SafeTimeTracker tracker = new SafeTimeTracker();
 
@@ -206,36 +222,18 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 
 	@Override
 	public ILiquidTank[] getTanks(ForgeDirection direction) {
-		LiquidTank compositeTank = new LiquidTank(tank.getCapacity());
-
-		TileTank tile = getBottomTank();
-
-		int capacity = tank.getCapacity();
-
-		if (tile != null && tile.tank.getLiquid() != null) {
-			compositeTank.setLiquid(tile.tank.getLiquid().copy());
-		} else
-			return new ILiquidTank[] { compositeTank };
-
-		tile = getTankAbove(tile);
-
-		while (tile != null) {
-
-			LiquidStack liquid = tile.tank.getLiquid();
-			if (liquid == null || liquid.amount == 0) {
-				// NOOP
-			} else if (!compositeTank.getLiquid().isLiquidEqual(liquid)) {
-				break;
-			} else {
-				compositeTank.getLiquid().amount += liquid.amount;
+		ArrayList<ILiquidTank> result = new ArrayList<ILiquidTank>();
+		result.add(tank);
+		
+		TileTank tankAbove = getTankAbove(this);
+		
+		if(tankAbove != null) {
+			for(ILiquidTank tankToAdd : tankAbove.getTanks(direction)) {
+				result.add(tankToAdd);
 			}
-
-			capacity += tile.tank.getCapacity();
-			tile = getTankAbove(tile);
 		}
-
-		compositeTank.setCapacity(capacity);
-		return new ILiquidTank[] { compositeTank };
+		
+		return result.toArray(new ILiquidTank[1]);
 	}
 
 	@Override
