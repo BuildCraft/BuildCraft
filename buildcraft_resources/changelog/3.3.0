@@ -1,0 +1,17 @@
+
+#3.3.0
+
+- Updated: Minecraft 1.4.6.
+- Added: Oil and fuel to liquid dictionary. (CovertJaguar)
+- Added: Update version check. (SirSengir)
+- Changed: Improved performance of conductive pipes. (CovertJaguar)
+- Changed: Moved default block ids for oil to 1520 and 1521. (narc0tiq)
+- Changed: ACT now plays item breaking sound when a tool breaks. (pahimar)
+- Changed: Improved performance of all pipes in cpu and network bandwith usage. (CovertJaguar)
+- Bugfix: Updated ACT to correctly handle container items. (pahimar)
+- Bugfix: Partially fixed incorrect bee rendering in pipes. (SirSengir)
+- Bugfix: Fixed decrStackSize bug on the ACT. (CovertJaguar)
+- Bugfix: Fixed an issue that caused some combustion engines to refuse new fuel. (gishicrafter)
+- Bugfix: Fixed potential NPEs on engine. (Nevercast)
+- Bugfix: Fixed liquid pipes getting stuck client side. (Nevercast)
+- API: Refinery recipe list can now be queried. (narc0tiq)

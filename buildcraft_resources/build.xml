@@ -10,15 +10,14 @@
     <property name="classes.dir"         value="${build.dir}/classes"/>
     <property name="jar.dir"             value="${build.dir}/dist"/>
           
-    <property name="mcp.dir"             value="${build.dir}/mcp"/>
-    <property name="forge.dir"           value="${mcp.dir}/forge"/>
-      
+	<property name="forge.dir"			value="${build.dir}/forge" />
+	<property name="mcp.dir"			value="${forge.dir}/mcp" />
+
     <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
           
-	<property name="mc.version"			value="1.4.5"/>
-    <property name="mcp.version"         value="723"/>
-    <property name="forge.version"       value="6.4.1.408"/>
-    <property name="bc.version"          value="3.2.2"/>
+	<property name="mc.version"			 value="1.4.6"/>
+    <property name="forge.version"		 value="6.5.0.457"/>
+    <property name="bc.version"          value="3.3.0"/>
     <property name="bc.version.full"     value="${bc.version}"/>
     
     <echo message="Starting build for ${bc.version.full}"/>
@@ -31,36 +30,17 @@
     
     <target name="setup">
         
-		<!-- Setup MCP -->
-		<unzip dest="${mcp.dir}">
-			<fileset dir="${resource.dir}">
-				<include name="mcp${mcp.version}.zip" />
-			</fileset>
-		</unzip>
-		
-        <unzip dest="${mcp.dir}">
+		<echo message="Unpacking Forge..." />
+        <unzip dest="${build.dir}">
             <fileset dir="${resource.dir}">
                 <include name="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
             </fileset>
         </unzip>
-
-		<unzip dest="${mcp.dir}/jars">
-			<fileset dir="${resource.dir}">
-				<include name="mc-jars-${mc.version}.zip"/>
-			</fileset>
-		</unzip>	
-
-        <chmod file="${mcp.dir}/updatemd5.sh" perm="+x"/>
-        <chmod file="${mcp.dir}/decompile.sh" perm="+x"/>
-        <chmod file="${mcp.dir}/recompile.sh" perm="+x"/>
-        <chmod file="${mcp.dir}/reobfuscate.sh" perm="+x"/>
+        
         <chmod file="${forge.dir}/install.sh" perm="+x"/>
-    	
-        <!-- if your building on OSX these 2 should be executable -->
-        <chmod file="${mcp.dir}/runtime/bin/astyle-osx" perm="+x" />
-        <chmod file="${mcp.dir}/runtime/bin/jad-osx" perm="+x" />
-                
+		
         <!-- Install forge -->
+		<echo message="Installing Forge..." />
         <exec dir="${forge.dir}" executable="cmd" osfamily="windows">
             <arg line="/c install.cmd"/>
         </exec>
