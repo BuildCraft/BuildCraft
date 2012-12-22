@@ -32,29 +32,35 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	@Override
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
+		Block block = BuildCraftTransport.genericPipeBlock;
 
-		if (world.getBlockId(i, j, k) == Block.snow.blockID) {
-			side = 0;
-		} else {
-			if (side == 0) {
-				j--;
-			}
-			if (side == 1) {
-				j++;
-			}
-			if (side == 2) {
-				k--;
-			}
-			if (side == 3) {
-				k++;
-			}
-			if (side == 4) {
-				i--;
-			}
-			if (side == 5) {
-				i++;
-			}
-		}
+        int id = world.getBlockId(i, j, k);
+
+        if (id == Block.snow.blockID) {
+            side = 1;
+        }
+        else if (id != Block.vine.blockID && id != Block.tallGrass.blockID && id != Block.deadBush.blockID
+                && (Block.blocksList[id] == null || !Block.blocksList[id].isBlockReplaceable(world, i, j, k)))
+        {
+            if (side == 0) {
+                j--;
+            }
+            if (side == 1) {
+                j++;
+            }
+            if (side == 2) {
+                k--;
+            }
+            if (side == 3) {
+                k++;
+            }
+            if (side == 4) {
+                i--;
+            }
+            if (side == 5) {
+                i++;
+            }
+        }
 
 		if (itemstack.stackSize == 0)
 			return false;
@@ -64,11 +70,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
 
 				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
-				// To move to a proxt
-				// world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F,
-				// (float)k + 0.5F, block.stepSound.func_1145_d(),
-				// (block.stepSound.getVolume() + 1.0F) / 2.0F,
-				// block.stepSound.getPitch() * 0.8F);
+				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
+						block.stepSound.getPlaceSound(),
+						(block.stepSound.getVolume() + 1.0F) / 2.0F,
+						block.stepSound.getPitch() * 0.8F);
 				itemstack.stackSize--;
 			}
 			return true;
