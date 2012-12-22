@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
@@ -661,5 +662,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return ((ITankContainer) pipe.transport).getTank(direction, type);
 		else
 			return null;
+	}
+
+	@Override
+	public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z) {
+		return oldID != newID;
 	}
 }
