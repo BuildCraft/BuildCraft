@@ -47,8 +47,8 @@ public class ContainerAssemblyAdvancedWorkbench extends BuildCraftContainer {
 	}
 
 	@Override
-	public void updateCraftingResults() {
-		super.updateCraftingResults();
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
 		for (int i = 0; i < workbench.getCraftingSlots().getSizeInventory(); i++) {
 			Iterator var4 = this.crafters.iterator();
 

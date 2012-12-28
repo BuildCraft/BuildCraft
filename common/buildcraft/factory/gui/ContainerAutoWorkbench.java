@@ -50,19 +50,19 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			CoreProxy.proxy.onCraftingPickup(thePlayer.worldObj, thePlayer, itemstack);
 			if (itemstack.itemID == Block.workbench.blockID) {
 				thePlayer.addStat(AchievementList.buildWorkBench, 1);
-			} else if (itemstack.itemID == Item.pickaxeWood.shiftedIndex) {
+			} else if (itemstack.itemID == Item.pickaxeWood.itemID) {
 				thePlayer.addStat(AchievementList.buildPickaxe, 1);
 			} else if (itemstack.itemID == Block.stoneOvenIdle.blockID) {
 				thePlayer.addStat(AchievementList.buildFurnace, 1);
-			} else if (itemstack.itemID == Item.hoeWood.shiftedIndex) {
+			} else if (itemstack.itemID == Item.hoeWood.itemID) {
 				thePlayer.addStat(AchievementList.buildHoe, 1);
-			} else if (itemstack.itemID == Item.bread.shiftedIndex) {
+			} else if (itemstack.itemID == Item.bread.itemID) {
 				thePlayer.addStat(AchievementList.makeBread, 1);
-			} else if (itemstack.itemID == Item.cake.shiftedIndex) {
+			} else if (itemstack.itemID == Item.cake.itemID) {
 				thePlayer.addStat(AchievementList.bakeCake, 1);
-			} else if (itemstack.itemID == Item.pickaxeStone.shiftedIndex) {
+			} else if (itemstack.itemID == Item.pickaxeStone.itemID) {
 				thePlayer.addStat(AchievementList.buildBetterPickaxe, 1);
-			} else if (itemstack.itemID == Item.swordWood.shiftedIndex) {
+			} else if (itemstack.itemID == Item.swordWood.itemID) {
 				thePlayer.addStat(AchievementList.buildSword, 1);
 			} else if (itemstack.itemID == Block.enchantmentTable.blockID) {
 				thePlayer.addStat(AchievementList.enchantments, 1);
@@ -106,8 +106,8 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	}
 
 	@Override
-	public void updateCraftingResults() {
-		super.updateCraftingResults();
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
 		craftResult.setInventorySlotContents(0, tile.findRecipe());
 	}
 

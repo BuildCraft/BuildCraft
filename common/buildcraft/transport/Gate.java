@@ -101,7 +101,7 @@ public abstract class Gate {
 	public abstract String getGuiFile();
 
 	public static boolean isGateItem(ItemStack stack) {
-		return stack.itemID == BuildCraftTransport.pipeGate.shiftedIndex || stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex;
+		return stack.itemID == BuildCraftTransport.pipeGate.itemID || stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID;
 	}
 
 }

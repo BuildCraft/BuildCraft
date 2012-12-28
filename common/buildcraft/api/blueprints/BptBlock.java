@@ -102,7 +102,7 @@ public class BptBlock {
 		if (stack.stackSize == 0 && stack.getItem().getContainerItem() != null) {
 			Item container = stack.getItem().getContainerItem();
 
-			stack.itemID = container.shiftedIndex;
+			stack.itemID = container.itemID;
 			stack.stackSize = 1;
 			stack.setItemDamage(0);
 		}

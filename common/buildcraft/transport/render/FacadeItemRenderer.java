@@ -31,7 +31,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		GL11.glPushMatrix();
 		ForgeHooksClient.bindTexture(block.getTextureFile(), 0);
 		block.setBlockBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
-		render.updateCustomBlockBounds(block);
+		render.setRenderBoundsFromBlock(block);
 		GL11.glTranslatef(translateX, translateY, translateZ);
 
 		tessellator.startDrawingQuads();
@@ -67,7 +67,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		int textureID = 7 * 16 + 13; // Structure pipe
 		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F / 16F);
 		block.setBlockBoundsForItemRender();
-		render.updateCustomBlockBounds(block);
+		render.setRenderBoundsFromBlock(block);
 		GL11.glTranslatef(translateX, translateY, translateZ + 0.25F);
 
 		tessellator.startDrawingQuads();

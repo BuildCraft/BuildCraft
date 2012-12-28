@@ -12,7 +12,7 @@ public class BlueprintManager {
 	public static ItemSignature getItemSignature(Item item) {
 		ItemSignature sig = new ItemSignature();
 
-		if (item.shiftedIndex >= Block.blocksList.length + BuildCraftAPI.LAST_ORIGINAL_ITEM) {
+		if (item.itemID >= Block.blocksList.length + BuildCraftAPI.LAST_ORIGINAL_ITEM) {
 			sig.itemClassName = item.getClass().getSimpleName();
 		}
 

@@ -66,7 +66,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			return false;
 		if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
 
-			Pipe pipe = BlockGenericPipe.createPipe(shiftedIndex);
+			Pipe pipe = BlockGenericPipe.createPipe(itemID);
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
 
 				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);

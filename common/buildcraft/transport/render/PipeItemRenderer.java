@@ -28,7 +28,7 @@ public class PipeItemRenderer implements IItemRenderer {
 
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();
-		render.updateCustomBlockBounds(block);
+		render.setRenderBoundsFromBlock(block);
 
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();

@@ -85,48 +85,48 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		state.currentTextureIndex = state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN);
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
-		renderblocks.updateCustomBlockBounds(block);
+		renderblocks.setRenderBoundsFromBlock(block);
 		renderblocks.renderStandardBlock(block, x, y, z);
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.WEST)) {
 			state.currentTextureIndex = state.textureMatrix.getTextureIndex(ForgeDirection.WEST);
 			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.EAST)) {
 			state.currentTextureIndex = state.textureMatrix.getTextureIndex(ForgeDirection.EAST);
 			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.DOWN)) {
 			state.currentTextureIndex = state.textureMatrix.getTextureIndex(ForgeDirection.DOWN);
 			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.UP)) {
 			state.currentTextureIndex = state.textureMatrix.getTextureIndex(ForgeDirection.UP);
 			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.NORTH)) {
 			state.currentTextureIndex = state.textureMatrix.getTextureIndex(ForgeDirection.NORTH);
 			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.SOUTH)) {
 			state.currentTextureIndex = state.textureMatrix.getTextureIndex(ForgeDirection.SOUTH);
 			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
@@ -190,7 +190,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 					rotated[1][0] -= zFightOffset / 2;
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-					renderblocks.updateCustomBlockBounds(block);
+					renderblocks.setRenderBoundsFromBlock(block);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
 					rotated = deepClone(zeroState);
@@ -198,7 +198,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 					rotated[1][0] -= zFightOffset / 2;
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-					renderblocks.updateCustomBlockBounds(block);
+					renderblocks.setRenderBoundsFromBlock(block);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
 					rotated = deepClone(zeroState);
@@ -207,7 +207,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 					rotated[1][1] -= zFightOffset;
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-					renderblocks.updateCustomBlockBounds(block);
+					renderblocks.setRenderBoundsFromBlock(block);
 					renderblocks.renderStandardBlock(block, x, y, z);
 
 					rotated = deepClone(zeroState);
@@ -216,13 +216,13 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 					rotated[1][1] -= zFightOffset;
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-					renderblocks.updateCustomBlockBounds(block);
+					renderblocks.setRenderBoundsFromBlock(block);
 					renderblocks.renderStandardBlock(block, x, y, z);
 				} else { // Solid facade
 					float[][] rotated = deepClone(zeroState);
 					transform(rotated, direction);
 					block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-					renderblocks.updateCustomBlockBounds(block);
+					renderblocks.setRenderBoundsFromBlock(block);
 					renderblocks.renderStandardBlock(block, x, y, z);
 				}
 			}
@@ -247,7 +247,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 				transform(rotated, direction);
 
 				block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-				renderblocks.updateCustomBlockBounds(block);
+				renderblocks.setRenderBoundsFromBlock(block);
 				renderblocks.renderStandardBlock(block, x, y, z);
 			}
 		}
@@ -441,7 +441,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		if (minZ != Utils.pipeMinPos || maxZ != Utils.pipeMaxPos || !found) {
 			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, cy == Utils.pipeMinPos ? cy - 0.05F : cy, minZ, cx == Utils.pipeMinPos ? cx
 					: cx + 0.05F, cy == Utils.pipeMinPos ? cy : cy + 0.05F, maxZ);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
@@ -450,7 +450,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		if (minX != Utils.pipeMinPos || maxX != Utils.pipeMaxPos || !found) {
 			block.setBlockBounds(minX, cy == Utils.pipeMinPos ? cy - 0.05F : cy, cz == Utils.pipeMinPos ? cz - 0.05F : cz, maxX, cy == Utils.pipeMinPos ? cy
 					: cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
@@ -459,14 +459,14 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		if (minY != Utils.pipeMinPos || maxY != Utils.pipeMaxPos || !found) {
 			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, minY, cz == Utils.pipeMinPos ? cz - 0.05F : cz, cx == Utils.pipeMinPos ? cx
 					: cx + 0.05F, maxY, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (center || !found) {
 			block.setBlockBounds(cx == Utils.pipeMinPos ? cx - 0.05F : cx, cy == Utils.pipeMinPos ? cy - 0.05F : cy, cz == Utils.pipeMinPos ? cz - 0.05F : cz,
 					cx == Utils.pipeMinPos ? cx : cx + 0.05F, cy == Utils.pipeMinPos ? cy : cy + 0.05F, cz == Utils.pipeMinPos ? cz : cz + 0.05F);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
@@ -481,37 +481,37 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.WEST) && !state.facadeMatrix.isConnected(ForgeDirection.WEST)) {
 			block.setBlockBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos, max, max);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.EAST) && !state.facadeMatrix.isConnected(ForgeDirection.EAST)) {
 			block.setBlockBounds(Utils.pipeMaxPos, min, min, Utils.pipeMaxPos + 0.10F, max, max);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.DOWN) && !state.facadeMatrix.isConnected(ForgeDirection.DOWN)) {
 			block.setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.UP) && !state.facadeMatrix.isConnected(ForgeDirection.UP)) {
 			block.setBlockBounds(min, Utils.pipeMaxPos, min, max, Utils.pipeMaxPos + 0.10F, max);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.NORTH) && !state.facadeMatrix.isConnected(ForgeDirection.NORTH)) {
 			block.setBlockBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
 		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.SOUTH) && !state.facadeMatrix.isConnected(ForgeDirection.SOUTH)) {
 			block.setBlockBounds(min, min, Utils.pipeMaxPos, max, max, Utils.pipeMaxPos + 0.10F);
-			renderblocks.updateCustomBlockBounds(block);
+			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 	}

@@ -382,11 +382,11 @@ public class BuildCraftTransport {
 
 		new BptBlockPipe(genericPipeBlock.blockID);
 
-		BuildCraftCore.itemBptProps[pipeItemsWood.shiftedIndex] = new BptItemPipeWooden();
-		BuildCraftCore.itemBptProps[pipeLiquidsWood.shiftedIndex] = new BptItemPipeWooden();
-		BuildCraftCore.itemBptProps[pipeItemsIron.shiftedIndex] = new BptItemPipeIron();
-		BuildCraftCore.itemBptProps[pipeLiquidsIron.shiftedIndex] = new BptItemPipeIron();
-		BuildCraftCore.itemBptProps[pipeItemsDiamond.shiftedIndex] = new BptItemPipeDiamond();
+		BuildCraftCore.itemBptProps[pipeItemsWood.itemID] = new BptItemPipeWooden();
+		BuildCraftCore.itemBptProps[pipeLiquidsWood.itemID] = new BptItemPipeWooden();
+		BuildCraftCore.itemBptProps[pipeItemsIron.itemID] = new BptItemPipeIron();
+		BuildCraftCore.itemBptProps[pipeLiquidsIron.itemID] = new BptItemPipeIron();
+		BuildCraftCore.itemBptProps[pipeItemsDiamond.itemID] = new BptItemPipeDiamond();
 
 		ActionManager.registerTriggerProvider(new PipeTriggerProvider());
 

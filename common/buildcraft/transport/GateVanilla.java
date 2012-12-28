@@ -31,7 +31,7 @@ public class GateVanilla extends Gate {
 	public GateVanilla(Pipe pipe, ItemStack stack) {
 		super(pipe, stack);
 
-		if (stack.itemID == BuildCraftTransport.pipeGateAutarchic.shiftedIndex) {
+		if (stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID) {
 			addEnergyPulser(pipe);
 		}
 	}

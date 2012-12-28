@@ -111,7 +111,7 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@Override
-	public void func_85105_g(World world, int x, int y, int z, int par5) {
+	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(x, y, z);
 		tile.orientation = ForgeDirection.UP.ordinal();
 		tile.switchOrientation();
