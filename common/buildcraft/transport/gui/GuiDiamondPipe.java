@@ -87,7 +87,8 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 
 			ItemStack newStack;
 			if (playerStack != null) {
-				newStack = new ItemStack(playerStack.itemID, 1, playerStack.getItemDamage());
+				newStack = playerStack.copy();
+				newStack.stackSize = 1;
 			} else {
 				newStack = null;
 			}
