@@ -541,7 +541,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean canMakeRedstoneConnectionOnSide(IBlockAccess world, int x, int y, int z, int side) {
+	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
 		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe))
