@@ -176,6 +176,11 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 		resource = resource.copy();
 		int totalUsed = 0;
 		TileTank tankToFill = getBottomTank();
+        LiquidStack liquid = tankToFill.tank.getLiquid();
+
+        if (liquid != null && !liquid.isLiquidEqual(resource))
+            return 0;
+
 		while (tankToFill != null && resource.amount > 0) {
 			int used = tankToFill.tank.fill(resource, doFill);
 			resource.amount -= used;
