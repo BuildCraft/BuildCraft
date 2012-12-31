@@ -26,7 +26,7 @@ public class TransactorSimple extends Transactor {
 		while ((slot = getEmptySlot(orientation)) >= 0 && injected < stack.stackSize) {
 			injected += addToSlot(slot, stack, injected, doAdd);
 		}
-
+		inventory.onInventoryChanged();
 		return injected;
 	}
 
