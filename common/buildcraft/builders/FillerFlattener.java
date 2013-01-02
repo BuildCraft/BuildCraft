@@ -73,7 +73,7 @@ public class FillerFlattener extends FillerPattern {
 		if (lastX != Integer.MAX_VALUE)
 			return false;
 
-		return !empty(xMin, yMin, zMin, xMax, 64 * 2, zMax, tile.worldObj);
+		return !empty(xMin, yMin, zMin, xMax, 64 * 4, zMax, tile.worldObj);
 	}
 
 	@Override
