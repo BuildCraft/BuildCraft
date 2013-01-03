@@ -55,7 +55,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	public TileRefinery() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(20, 25, 25, 25, 1000);
+		powerProvider.configure(20, 25, 100, 25, 1000);
 
 		filters[0] = 0;
 		filters[1] = 0;
@@ -255,7 +255,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		animationSpeed = nbttagcompound.getFloat("animationSpeed");
 
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
-		powerProvider.configure(20, 25, 25, 25, 1000);
+		powerProvider.configure(20, 25, 100, 25, 1000);
 
 		filters[0] = nbttagcompound.getInteger("filters_0");
 		filters[1] = nbttagcompound.getInteger("filters_1");
