@@ -309,6 +309,48 @@ public class BuildCraftTransport {
 
 			pipeLiquidsSandstone = createPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeLiquidsSandstone.class, "Sandstone Waterproof Pipe", pipeWaterproof,
 					pipeItemsSandstone, null);
+
+			Property redPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "redPipeWire.id", DefaultProps.RED_PIPE_WIRE);
+			redPipeWire = new ItemBuildCraft(Integer.parseInt(redPipeWireId.value)).setIconIndex(4 * 16 + 0).setCreativeTab(CreativeTabs.tabRedstone);
+			redPipeWire.setItemName("redPipeWire");
+			LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 1), new ItemStack(Item.redstone, 1),
+					new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(redPipeWire, 8)));
+
+			Property bluePipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bluePipeWire.id", DefaultProps.BLUE_PIPE_WIRE);
+			bluePipeWire = new ItemBuildCraft(Integer.parseInt(bluePipeWireId.value)).setIconIndex(4 * 16 + 1).setCreativeTab(CreativeTabs.tabRedstone);
+			bluePipeWire.setItemName("bluePipeWire");
+			LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 4), new ItemStack(Item.redstone, 1),
+					new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(bluePipeWire, 8)));
+
+			Property greenPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "greenPipeWire.id", DefaultProps.GREEN_PIPE_WIRE);
+			greenPipeWire = new ItemBuildCraft(Integer.parseInt(greenPipeWireId.value)).setIconIndex(4 * 16 + 2).setCreativeTab(CreativeTabs.tabRedstone);
+			greenPipeWire.setItemName("greenPipeWire");
+			LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 2), new ItemStack(Item.redstone, 1),
+					new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(greenPipeWire, 8)));
+
+			Property yellowPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "yellowPipeWire.id", DefaultProps.YELLOW_PIPE_WIRE);
+			yellowPipeWire = new ItemBuildCraft(Integer.parseInt(yellowPipeWireId.value)).setIconIndex(4 * 16 + 3).setCreativeTab(CreativeTabs.tabRedstone);
+			yellowPipeWire.setItemName("yellowPipeWire");
+			LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 11), new ItemStack(Item.redstone, 1),
+					new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(yellowPipeWire, 8)));
+
+			Property pipeGateId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGate.id", DefaultProps.GATE_ID);
+			pipeGate = new ItemGate(Integer.parseInt(pipeGateId.value), 0).setIconIndex(2 * 16 + 3);
+			pipeGate.setItemName("pipeGate");
+
+			Property pipeGateAutarchicId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGateAutarchic.id",
+					DefaultProps.GATE_AUTARCHIC_ID);
+			pipeGateAutarchic = new ItemGate(Integer.parseInt(pipeGateAutarchicId.value), 1).setIconIndex(2 * 16 + 3);
+			pipeGateAutarchic.setItemName("pipeGateAutarchic");
+
+			Property pipeFacadeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeFacade.id", DefaultProps.PIPE_FACADE_ID);
+			facadeItem = new ItemFacade(Integer.parseInt(pipeFacadeId.value));
+			facadeItem.setItemName("pipeFacade");
+
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
 		}
@@ -336,49 +378,6 @@ public class BuildCraftTransport {
 		for (int j = 0; j < 6; ++j) {
 			diamondTextures[j] = 1 * 16 + 6 + j;
 		}
-
-		Property redPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "redPipeWire.id", DefaultProps.RED_PIPE_WIRE);
-		redPipeWire = new ItemBuildCraft(Integer.parseInt(redPipeWireId.value)).setIconIndex(4 * 16 + 0).setCreativeTab(CreativeTabs.tabRedstone);
-		redPipeWire.setItemName("redPipeWire");
-		LanguageRegistry.addName(redPipeWire, "Red Pipe Wire");
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 1), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(redPipeWire, 8)));
-
-		Property bluePipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bluePipeWire.id", DefaultProps.BLUE_PIPE_WIRE);
-		bluePipeWire = new ItemBuildCraft(Integer.parseInt(bluePipeWireId.value)).setIconIndex(4 * 16 + 1).setCreativeTab(CreativeTabs.tabRedstone);
-		bluePipeWire.setItemName("bluePipeWire");
-		LanguageRegistry.addName(bluePipeWire, "Blue Pipe Wire");
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 4), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(bluePipeWire, 8)));
-
-		Property greenPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "greenPipeWire.id", DefaultProps.GREEN_PIPE_WIRE);
-		greenPipeWire = new ItemBuildCraft(Integer.parseInt(greenPipeWireId.value)).setIconIndex(4 * 16 + 2).setCreativeTab(CreativeTabs.tabRedstone);
-		greenPipeWire.setItemName("greenPipeWire");
-		LanguageRegistry.addName(greenPipeWire, "Green Pipe Wire");
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 2), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(greenPipeWire, 8)));
-
-		Property yellowPipeWireId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "yellowPipeWire.id", DefaultProps.YELLOW_PIPE_WIRE);
-		yellowPipeWire = new ItemBuildCraft(Integer.parseInt(yellowPipeWireId.value)).setIconIndex(4 * 16 + 3).setCreativeTab(CreativeTabs.tabRedstone);
-		yellowPipeWire.setItemName("yellowPipeWire");
-		LanguageRegistry.addName(yellowPipeWire, "Yellow Pipe Wire");
-		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(Item.dyePowder, 1, 11), new ItemStack(Item.redstone, 1),
-				new ItemStack(Item.ingotIron, 1) }, 500, new ItemStack(yellowPipeWire, 8)));
-
-		Property pipeGateId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeGate.id", DefaultProps.GATE_ID);
-		pipeGate = new ItemGate(Integer.parseInt(pipeGateId.value), 0).setIconIndex(2 * 16 + 3);
-		pipeGate.setItemName("pipeGate");
-
-		Property pipeGateAutarchicId = BuildCraftCore.mainConfiguration
-				.get(Configuration.CATEGORY_ITEM, "pipeGateAutarchic.id", DefaultProps.GATE_AUTARCHIC_ID);
-		pipeGateAutarchic = new ItemGate(Integer.parseInt(pipeGateAutarchicId.value), 1).setIconIndex(2 * 16 + 3);
-		pipeGateAutarchic.setItemName("pipeGateAutarchic");
-
-		Property pipeFacadeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeFacade.id", DefaultProps.PIPE_FACADE_ID);
-		facadeItem = new ItemFacade(Integer.parseInt(pipeFacadeId.value));
-		facadeItem.setItemName("pipeFacade");
-
-		BuildCraftCore.mainConfiguration.save();
 
 		new BptBlockPipe(genericPipeBlock.blockID);
 
@@ -425,13 +424,15 @@ public class BuildCraftTransport {
 			if ("add-facade".equals(m.key)) {
 				String[] array = Iterables.toArray(splitter.split(m.getStringValue()), String.class);
 				if (array.length != 2) {
-					Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
+					Logger.getLogger("Buildcraft").log(Level.INFO,
+							String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
 					continue;
 				}
 				Integer blId = Ints.tryParse(array[0]);
 				Integer metaId = Ints.tryParse(array[1]);
 				if (blId == null || metaId == null) {
-					Logger.getLogger("Buildcraft").log(Level.INFO, String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
+					Logger.getLogger("Buildcraft").log(Level.INFO,
+							String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
 					continue;
 				}
 				ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
