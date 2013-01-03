@@ -120,11 +120,6 @@
 			</fileset>
 		</unzip>
 
-		<!-- Copy the necessary jars -->
-		<copy todir="${mcp.dir}/jars">
-			<fileset dir="${files.minecraft.dir}"/>
-		</copy>
-
 		<!-- Change executables' permitions -->
 		<chmod file="${mcp.dir}/updatemd5.sh" perm="+x"/>
 		<chmod file="${mcp.dir}/recompile.sh" perm="+x"/>
