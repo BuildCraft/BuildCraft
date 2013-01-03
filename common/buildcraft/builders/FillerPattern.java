@@ -47,9 +47,9 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	/**
 	 * Attempt to fill blocks in the area.
-	 * 
+	 *
 	 * Return false if the process failed.
-	 * 
+	 *
 	 */
 	public boolean fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, ItemStack stackToPlace, World world) {
 		boolean found = false;
@@ -80,15 +80,15 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	/**
 	 * Attempt to remove the blocks in the area.
-	 * 
+	 *
 	 * Return false if is the process failed.
-	 * 
+	 *
 	 */
 	public boolean empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, World world) {
 		boolean found = false;
 		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
-		for (int y = yMin; y <= yMax; ++y) {
+		for (int y = yMax; y >= yMin; y--) {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
@@ -112,7 +112,7 @@ public abstract class FillerPattern implements IFillerPattern {
 			if (BuildCraftBuilders.fillerDestroy) {
 				world.setBlockWithNotify(lastX, lastY, lastZ, 0);
 			} else {
-				BlockUtil.breakBlock(world, lastX, lastY, lastZ);
+				BlockUtil.breakBlock(world, lastX, lastY, lastZ, 20);
 			}
 			return true;
 		}

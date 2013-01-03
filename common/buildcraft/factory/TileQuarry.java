@@ -152,7 +152,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
 
 			if (energy > 0) {
-				moveHead(0.05 + energy / 200F);
+				moveHead(0.1 + energy / 200F);
 			}
 		}
 
