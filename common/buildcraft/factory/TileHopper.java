@@ -17,7 +17,6 @@ import buildcraft.core.utils.SimpleInventory;
 public class TileHopper extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory _inventory = new SimpleInventory(4, "Hopper", 64);
-	private final InventoryUtil _internalInventory = new InventoryUtil(_inventory);
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
@@ -39,32 +38,39 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		super.updateEntity();
 		if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getWorldTime() % 5 != 0)
 			return;
-		int internalSlot = _internalInventory.getIdForFirstSlot();
-		if (internalSlot < 0)
-			return;
 
 		TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
 
+		if (tile == null) return;
+
+		ISpecialInventory special = null;
+		InventoryUtil externalInventory = null;
 		if (tile instanceof ISpecialInventory) {
-			ISpecialInventory special = (ISpecialInventory) tile;
-			ItemStack clonedStack = _inventory.getStackInSlot(internalSlot).copy().splitStack(1);
-			if (special.addItem(clonedStack, true, ForgeDirection.UP) > 0) {
-				_inventory.decrStackSize(internalSlot, 1);
+			special = (ISpecialInventory) tile;
+		} else if (tile instanceof ISidedInventory) {
+			externalInventory = new InventoryUtil(new SidedInventoryAdapter((ISidedInventory) tile, ForgeDirection.UP));
+		} else if (tile instanceof IInventory) {
+			externalInventory = new InventoryUtil((IInventory) tile);
+		}
+
+		for(int internalSlot = 0; internalSlot < _inventory.getSizeInventory(); internalSlot++) {
+			ItemStack stackInSlot = _inventory.getStackInSlot(internalSlot);
+			if(stackInSlot == null) continue;
+
+			if (special != null) {
+				ItemStack clonedStack = stackInSlot.copy().splitStack(1);
+				if (special.addItem(clonedStack, true, ForgeDirection.UP) > 0) {
+					_inventory.decrStackSize(internalSlot, 1);
+					return;
+				}
+				continue;
 			}
-			return;
-		}
 
-		if (!(tile instanceof IInventory))
-			return;
-		IInventory inventory = (IInventory) tile;
-		if (tile instanceof ISidedInventory) {
-			inventory = new SidedInventoryAdapter((ISidedInventory) tile, ForgeDirection.UP);
-		}
-
-		InventoryUtil externalInventory = new InventoryUtil(inventory);
-		if (externalInventory.hasRoomForItem(_inventory.getStackInSlot(internalSlot))) {
-			ItemStack stackToMove = _inventory.decrStackSize(internalSlot, 1);
-			externalInventory.addToInventory(stackToMove);
+			if (externalInventory != null && externalInventory.hasRoomForItem(stackInSlot)) {
+				ItemStack stackToMove = _inventory.decrStackSize(internalSlot, 1);
+				externalInventory.addToInventory(stackToMove);
+				return;
+			}
 		}
 	}
 
