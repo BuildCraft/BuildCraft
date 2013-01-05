@@ -54,7 +54,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	public TileFiller() {
 		contents = new ItemStack[getSizeInventory()];
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(20, 25, 50, 25, 100);
+		powerProvider.configure(10, 25, 100, 25, 100);
 		powerProvider.configurePowerPerdition(25, 40);
 	}
 
@@ -106,7 +106,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 		if (lastMode == Mode.Off)
 			return;
 
-		if (powerProvider.useEnergy(25, 25, true) < 25)
+		if (powerProvider.useEnergy(currentPattern.expectedPowerUse(), currentPattern.expectedPowerUse(), false) < currentPattern.expectedPowerUse())
 			return;
 
 		if (box.isInitialized() && currentPattern != null && !done) {
@@ -123,7 +123,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 				}
 			}
 
-			done = currentPattern.iteratePattern(this, box, stack);
+			done = currentPattern.iteratePattern(this, box, stack, powerProvider)<0;
 
 			if (stack != null && stack.stackSize == 0) {
 				contents[stackId] = null;
@@ -381,7 +381,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	/**
 	 * Get the start of the side inventory.
-	 *
+	 * 
 	 * @param side
 	 *            The global side to get the start of range.
 	 */
@@ -393,7 +393,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	/**
 	 * Get the size of the side inventory.
-	 *
+	 * 
 	 * @param side
 	 *            The global side.
 	 */

@@ -12,12 +12,13 @@ package buildcraft.builders;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
+import buildcraft.api.power.IPowerProvider;
 import buildcraft.core.DefaultProps;
 
 public class FillerFillPyramid extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public float iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace, IPowerProvider power) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -33,6 +34,8 @@ public class FillerFillPyramid extends FillerPattern {
 		int height;
 
 		int stepY;
+		
+		float powerUsed = -1;
 
 		if (tile.yCoord <= yMin) {
 			stepY = 1;
@@ -47,14 +50,15 @@ public class FillerFillPyramid extends FillerPattern {
 		}
 
 		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
-			if (fill(xMin + step, height, zMin + step, xMax - step, height, zMax - step, stackToPlace, tile.worldObj))
-				return false;
+			powerUsed = fill(xMin + step, height, zMin + step, xMax - step, height, zMax - step, stackToPlace, tile.worldObj, power);
+			if (powerUsed>=0)
+				return powerUsed;
 
 			step++;
 			height += stepY;
 		}
 
-		return true;
+		return powerUsed;
 	}
 
 	@Override

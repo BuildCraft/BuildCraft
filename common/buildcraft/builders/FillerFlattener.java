@@ -12,6 +12,7 @@ package buildcraft.builders;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
+import buildcraft.api.power.IPowerProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
@@ -19,7 +20,7 @@ import buildcraft.core.utils.BlockUtil;
 public class FillerFlattener extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public float iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace, IPowerProvider power) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -46,7 +47,7 @@ public class FillerFlattener extends FillerPattern {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (!BlockUtil.canChangeBlock(tile.worldObj, x, y, z))
-						return true;
+						return -1;
 					if (!blockedColumns[x - xMin][z - zMin]) {
 						if (!BlockUtil.isSoftBlock(tile.worldObj, x, y, z)) {
 							blockedColumns[x - xMin][z - zMin] = true;
@@ -71,9 +72,9 @@ public class FillerFlattener extends FillerPattern {
 		}
 
 		if (lastX != Integer.MAX_VALUE)
-			return false;
+			return -1;
 
-		return !empty(xMin, yMin, zMin, xMax, 64 * 4, zMax, tile.worldObj);
+		return empty(xMin, yMin, zMin, xMax, 64 * 2, zMax, tile.worldObj, power);
 	}
 
 	@Override
