@@ -218,13 +218,22 @@ public class BuildCraftFactory {
 					new Object[] { "ipi", "gig", "dDd", Character.valueOf('i'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Item.redstone,
 							Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('d'), BuildCraftCore.diamondGearItem,
 							Character.valueOf('D'), Item.pickaxeDiamond, });
+							
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock, Character.valueOf('W'),
+					miningWellBlock, });							
+		}
+		else {
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "iri", "iTi", "gpg", 
+					Character.valueOf('r'), Item.redstone,
+					Character.valueOf('i'), Item.ingotIron, 
+					Character.valueOf('T'), tankBlock, 
+					Character.valueOf('g'), BuildCraftCore.ironGearItem, 
+					Character.valueOf('p'), BuildCraftTransport.pipeLiquidsGold });
 		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), new Object[] { " g ", "gwg", " g ", Character.valueOf('w'), Block.workbench,
 				Character.valueOf('g'), BuildCraftCore.woodenGearItem });
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock, Character.valueOf('W'),
-				miningWellBlock, });
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(tankBlock), new Object[] { "ggg", "g g", "ggg", Character.valueOf('g'), Block.glass, });
 
