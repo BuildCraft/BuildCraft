@@ -95,6 +95,10 @@
 		<!-- Copy sources -->
 		<copy todir="${mcpsrc.dir}/minecraft">
 			<fileset dir="${src.dir}/common"/>
+			<filterset>
+				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
 		</copy>
 
 		<!-- Recompile -->
@@ -118,10 +122,6 @@
 		<!-- Copy classes -->
 		<copy todir="${classes.dir}">
 			<fileset dir="${mcp.dir}/reobf/minecraft"/>
-			<filterset>
-                <filter token="VERSION" value="${project.version.full}" />
-           		<filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
 		</copy>
 
 		<!-- Copy resources -->
@@ -129,12 +129,6 @@
 			<fileset dir="${resources.dir}">
 				<exclude name="build.xml"/>
 			</fileset>
-			<filterset>
-				<filter token="MC_VERSION" value="${mc.version}"/>
-				<filter token="MOD_VERSION" value="${project.version.full}"/>
-				<filter token="MOD_ID" value="${ant.project.name}"/>
-				<filter token="MOD_NAME" value="${ant.project.name}"/>
-			</filterset>
 		</copy>
 
 		<!-- Copy localizations -->
