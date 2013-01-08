@@ -6,12 +6,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
-import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.Transactor;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.InventoryUtil;
-import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.SimpleInventory;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
@@ -43,32 +41,17 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 		if (tile == null) return;
 
-		ISpecialInventory special = null;
-		InventoryUtil externalInventory = null;
-		if (tile instanceof ISpecialInventory) {
-			special = (ISpecialInventory) tile;
-		} else if (tile instanceof ISidedInventory) {
-			externalInventory = new InventoryUtil(new SidedInventoryAdapter((ISidedInventory) tile, ForgeDirection.UP));
-		} else if (tile instanceof IInventory) {
-			externalInventory = new InventoryUtil((IInventory) tile);
-		}
+		ITransactor transactor = Transactor.getTransactorFor(tile);
+
+		if (transactor == null) return;
 
 		for(int internalSlot = 0; internalSlot < _inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = _inventory.getStackInSlot(internalSlot);
 			if(stackInSlot == null) continue;
 
-			if (special != null) {
-				ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-				if (special.addItem(clonedStack, true, ForgeDirection.UP) > 0) {
-					_inventory.decrStackSize(internalSlot, 1);
-					return;
-				}
-				continue;
-			}
-
-			if (externalInventory != null && externalInventory.hasRoomForItem(stackInSlot)) {
-				ItemStack stackToMove = _inventory.decrStackSize(internalSlot, 1);
-				externalInventory.addToInventory(stackToMove);
+			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
+			if (transactor.addItem(clonedStack, ForgeDirection.UP, true).stackSize <= 0) {
+				_inventory.decrStackSize(internalSlot, 1);
 				return;
 			}
 		}
