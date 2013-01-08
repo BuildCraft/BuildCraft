@@ -50,7 +50,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			if(stackInSlot == null) continue;
 
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-			if (transactor.addItem(clonedStack, ForgeDirection.UP, true).stackSize <= 0) {
+			if (transactor.addItem(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
 				_inventory.decrStackSize(internalSlot, 1);
 				return;
 			}
