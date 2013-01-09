@@ -59,6 +59,15 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@Override
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof TileEngine) {
+			return ForgeDirection.getOrientation(((TileEngine) tile).orientation).getOpposite() == side;
+		}
+		return false;
+	}
+
+	@Override
 	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
 		TileEngine engine = ((TileEngine) world.getBlockTileEntity(x, y, z));
 

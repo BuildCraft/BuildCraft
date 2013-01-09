@@ -71,7 +71,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				createEngineIfNeeded();
 			}
 
-			engine.orientation = ForgeDirection.values()[orientation];
+			engine.orientation = ForgeDirection.VALID_DIRECTIONS[orientation];
 			provider.configure(0, engine.minEnergyReceived(), engine.maxEnergyReceived(), 1, engine.maxEnergy);
 			checkRedstonePower();
 		}
@@ -170,7 +170,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 			engine = newEngine(kind);
 
-			engine.orientation = ForgeDirection.values()[orientation];
+			engine.orientation = ForgeDirection.VALID_DIRECTIONS[orientation];
 			worldObj.notifyBlockChange(xCoord, yCoord, zCoord, BuildCraftEnergy.engineBlock.blockID);
 		}
 	}
