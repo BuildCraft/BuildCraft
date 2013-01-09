@@ -68,35 +68,34 @@ public class TransactorSimple extends Transactor {
 	}
 
 	protected int addToSlot(int slot, ItemStack stack, int injected, boolean doAdd) {
-		int remaining = stack.stackSize - injected;
+		int available = stack.stackSize - injected;
+		int max = Math.min(stack.getMaxStackSize(), inventory.getInventoryStackLimit());
 
 		ItemStack stackInSlot = inventory.getStackInSlot(slot);
 		if (stackInSlot == null) {
+			int wanted = Math.min(available, max);
 			if (doAdd) {
 				stackInSlot = stack.copy();
-				stackInSlot.stackSize = remaining;
+				stackInSlot.stackSize = wanted;
 				inventory.setInventorySlotContents(slot, stackInSlot);
 			}
-			return remaining;
+			return wanted;
 		}
 
 		if (!stackInSlot.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(stackInSlot, stack))
 			return 0;
 
-		int space = stackInSlot.getMaxStackSize() - stackInSlot.stackSize;
-		if (space <= 0)
+		int wanted = max - stackInSlot.stackSize;
+		if (wanted <= 0)
 			return 0;
 
-		if (space >= remaining) {
-			if (doAdd) {
-				stackInSlot.stackSize += remaining;
-			}
-			return remaining;
-		} else {
-			if (doAdd) {
-				stackInSlot.stackSize = stackInSlot.getMaxStackSize();
-			}
-			return space;
+		if (wanted > available)
+			wanted = available;
+
+		if (doAdd) {
+			stackInSlot.stackSize += wanted;
+			inventory.setInventorySlotContents(slot, stackInSlot);
 		}
+		return wanted;
 	}
 }
