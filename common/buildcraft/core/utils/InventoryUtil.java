@@ -62,6 +62,7 @@ public class InventoryUtil {
 				int itemsToMove = stack.getMaxStackSize() - stack.stackSize;
 				stack.stackSize += itemsToMove;
 				stackToMove.stackSize -= itemsToMove;
+				_inventory.setInventorySlotContents(i, stackToMove);
 			}
 		}
 		return stackToMove;

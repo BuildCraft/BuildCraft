@@ -90,11 +90,13 @@ public class TransactorSimple extends Transactor {
 		if (space >= remaining) {
 			if (doAdd) {
 				stackInSlot.stackSize += remaining;
+				inventory.setInventorySlotContents(slot, stackInSlot);
 			}
 			return remaining;
 		} else {
 			if (doAdd) {
 				stackInSlot.stackSize = stackInSlot.getMaxStackSize();
+				inventory.setInventorySlotContents(slot, stackInSlot);
 			}
 			return space;
 		}
