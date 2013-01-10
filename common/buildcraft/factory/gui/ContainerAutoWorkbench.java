@@ -22,6 +22,8 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileAutoWorkbench;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+
 public class ContainerAutoWorkbench extends BuildCraftContainer {
 
 	TileAutoWorkbench tile;
@@ -69,7 +71,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			} else if (itemstack.itemID == Block.bookShelf.blockID) {
 				thePlayer.addStat(AchievementList.bookcase, 1);
 			}
-			CoreProxy.proxy.TakenFromCrafting(thePlayer, itemstack, craftMatrix);
+			GameRegistry.onItemCrafted(thePlayer, itemstack, craftMatrix);
 			// FIXME: Autocrafting table should post a forge event.
 			// ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
 
