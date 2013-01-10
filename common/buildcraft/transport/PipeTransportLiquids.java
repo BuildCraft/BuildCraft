@@ -491,11 +491,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	}
 
 	@Override
-	public boolean isPipeConnected(TileEntity tile) {
+	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof ITankContainer) {
 			ITankContainer liq = (ITankContainer) tile;
 
-			if (liq.getTanks(ForgeDirection.UNKNOWN) != null && liq.getTanks(ForgeDirection.UNKNOWN).length > 0)
+			if (liq.getTanks(side) != null && liq.getTanks(side).length > 0)
 				return true;
 		}
 

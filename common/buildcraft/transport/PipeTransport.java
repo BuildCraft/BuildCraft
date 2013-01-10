@@ -49,7 +49,7 @@ public abstract class PipeTransport {
 		this.container = tile;
 	}
 
-	public boolean isPipeConnected(TileEntity tile) {
+	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
 		return true;
 	}
 
