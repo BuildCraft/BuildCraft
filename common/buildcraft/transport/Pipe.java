@@ -130,8 +130,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		updateSignalState();
 	}
 
-	public boolean isPipeConnected(TileEntity tile) {
-		return logic.isPipeConnected(tile) && transport.isPipeConnected(tile);
+	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
+		return logic.isPipeConnected(tile) && transport.isPipeConnected(tile, side);
 	}
 
 	/**
