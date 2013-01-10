@@ -19,6 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.Trigger;
@@ -259,7 +261,7 @@ public class BuildCraftTransport {
 			GameRegistry.registerBlock(genericPipeBlock);
 
 			// Fixing retro-compatiblity
-			pipeItemsWood = createPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
+			pipeItemsWood = createPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
 			pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe",
 					Block.cobblestone, Block.glass, Block.cobblestone);
 			pipeItemsStone = createPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
@@ -410,9 +412,9 @@ public class BuildCraftTransport {
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
 			if (pipe.isShapeless) {
-				GameRegistry.addShapelessRecipe(pipe.result, pipe.input);
+				GameRegistry.addRecipe(new ShapelessOreRecipe(pipe.result, pipe.input));
 			} else {
-				GameRegistry.addRecipe(pipe.result, pipe.input);
+				GameRegistry.addRecipe(new ShapedOreRecipe(pipe.result, pipe.input));
 			}
 		}
 	}
