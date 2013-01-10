@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.BuildCraftCore;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -67,6 +68,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
 
 			Pipe pipe = BlockGenericPipe.createPipe(itemID);
+			if (pipe == null) {
+				BuildCraftCore.bcLog.warning("Pipe failed to create during placement at "+i+","+j+","+k);
+				return true;
+			}
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
 
 				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
