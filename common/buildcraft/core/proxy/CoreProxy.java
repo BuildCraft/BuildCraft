@@ -99,20 +99,8 @@ public class CoreProxy {
 		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getBlockName());
 	}
 
-	public void registerTileEntity(Class clas, String ident) {
-		GameRegistry.registerTileEntity(clas, ident);
-	}
-
 	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
 		stack.onCrafting(world, player, stack.stackSize);
-	}
-
-	public void addCraftingRecipe(ItemStack result, Object[] recipe) {
-		GameRegistry.addRecipe(result, recipe);
-	}
-
-	public void addShapelessRecipe(ItemStack result, Object[] recipe) {
-		GameRegistry.addShapelessRecipe(result, recipe);
 	}
 
 	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
@@ -142,10 +130,6 @@ public class CoreProxy {
 
 	public int addCustomTexture(String pathToTexture) {
 		return 0;
-	}
-
-	public void TakenFromCrafting(EntityPlayer thePlayer, ItemStack itemstack, IInventory craftMatrix) {
-		GameRegistry.onItemCrafted(thePlayer, itemstack, craftMatrix);
 	}
 
 	public Random createNewRandom(World world) {

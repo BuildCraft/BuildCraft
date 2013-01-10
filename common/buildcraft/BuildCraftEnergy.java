@@ -22,6 +22,7 @@ import net.minecraftforge.liquids.LiquidContainerData;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidDictionary;
 import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.gates.Trigger;
@@ -161,12 +162,12 @@ public class BuildCraftEnergy {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
-				new Object[] { "www", " g ", "GpG", Character.valueOf('w'), Block.planks, Character.valueOf('g'), Block.glass, Character.valueOf('G'),
-						BuildCraftCore.woodenGearItem, Character.valueOf('p'), Block.pistonBase });
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[] { "www", " g ", "GpG", Character.valueOf('w'), Block.cobblestone,
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(engineBlock, 1, 0),
+				new Object[] { "www", " g ", "GpG", Character.valueOf('w'), "plankWood", Character.valueOf('g'), Block.glass, Character.valueOf('G'),
+						BuildCraftCore.woodenGearItem, Character.valueOf('p'), Block.pistonBase }));
+		GameRegistry.addRecipe(new ItemStack(engineBlock, 1, 1), new Object[] { "www", " g ", "GpG", Character.valueOf('w'), Block.cobblestone,
 				Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem, Character.valueOf('p'), Block.pistonBase });
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'), Item.ingotIron,
+		GameRegistry.addRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'), Item.ingotIron,
 				Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Block.pistonBase });
 	}
 
