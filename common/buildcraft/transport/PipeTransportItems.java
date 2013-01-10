@@ -47,6 +47,9 @@ public class PipeTransportItems extends PipeTransport {
 	public Map<Integer, EntityData> travelingEntities = new HashMap<Integer, EntityData>();
 	private final List<EntityData> entitiesToLoad = new LinkedList<EntityData>();
 
+	private final List<EntityData> delayedEntitiesToLoad = new LinkedList<EntityData>();
+	private int delay = -1;
+
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
 
@@ -238,6 +241,14 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void moveSolids() {
+		if(delay > 0) {
+			delay--;
+			if(delay == 0) {
+				entitiesToLoad.addAll(delayedEntitiesToLoad);
+				delayedEntitiesToLoad.clear();
+				delay = -1;
+			}
+		}
 		if (!entitiesToLoad.isEmpty()) {
 			for (EntityData data : entitiesToLoad) {
 				data.item.setWorld(worldObj);
@@ -385,7 +396,7 @@ public class PipeTransportItems extends PipeTransport {
 				data.output = ForgeDirection.getOrientation(dataTag.getInteger("output"));
 				data.toCenter = dataTag.getBoolean("toCenter");
 
-				entitiesToLoad.add(data);
+				delayedEntitiesToLoad.add(data);
 			} catch (Throwable t) {
 				t.printStackTrace();
 				// It may be the case that entities cannot be reloaded between
