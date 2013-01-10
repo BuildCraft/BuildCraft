@@ -51,6 +51,9 @@ public class Localization {
 	 * @return
 	 */
 	public static synchronized String get(String key) {
+        if (getCurrentLanguage() == null) {
+            return key;
+        }
 		if (!getCurrentLanguage().equals(loadedLanguage)) {
 			defaultMappings.clear();
 			mappings.clear();
