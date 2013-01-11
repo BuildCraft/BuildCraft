@@ -29,7 +29,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class EntityPassiveItem implements IPipedItem {
 
-	private static TreeMap<String, IPassiveItemContribution> contributions = new TreeMap<String, IPassiveItemContribution>();
+	private TreeMap<String, IPassiveItemContribution> contributions = new TreeMap<String, IPassiveItemContribution>();
 	protected static int maxId = 0;
 	protected World worldObj;
 
