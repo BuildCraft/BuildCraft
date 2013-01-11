@@ -493,7 +493,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				t.refresh();
 
 				if (t.getTile() != null) {
-					pipeConnectionsBuffer[i] = isPipeConnected(t.getTile(), ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
+					pipeConnectionsBuffer[i] = isPipeConnected(t.getTile(), ForgeDirection.VALID_DIRECTIONS[i]);
 
 					if (t.getTile() instanceof TileGenericPipe) {
 						TileGenericPipe pipe = (TileGenericPipe) t.getTile();
