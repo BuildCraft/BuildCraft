@@ -403,6 +403,7 @@ public class PipeTransportItems extends PipeTransport {
 				// two versions - ignore these errors.
 			}
 		}
+		delay = 2;
 	}
 
 	@Override
