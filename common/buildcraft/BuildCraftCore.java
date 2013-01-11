@@ -245,6 +245,12 @@ public class BuildCraftCore {
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
+		
+		OreDictionary.registerOre("gearWooden", woodenGearItem);
+		OreDictionary.registerOre("gearStone", stoneGearItem);
+		OreDictionary.registerOre("gearIron", ironGearItem);
+		OreDictionary.registerOre("gearGold", goldGearItem);
+		OreDictionary.registerOre("gearDiamond", diamondGearItem);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
