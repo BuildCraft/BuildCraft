@@ -30,7 +30,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		// Render Facade
 		GL11.glPushMatrix();
 		ForgeHooksClient.bindTexture(block.getTextureFile(), 0);
-		block.setBlockBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
+		block.setBlockBounds(1F / 16F, 1F / 16F, 1F - 1F / 16F, 1F - 1F / 16F, 1F - 1F / 16F, 1F - 1F / 16F);
 		render.setRenderBoundsFromBlock(block);
 		GL11.glTranslatef(translateX, translateY, translateZ);
 
