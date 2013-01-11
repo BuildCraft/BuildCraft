@@ -131,6 +131,7 @@ public class BptBlock {
 	 */
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
+		if (context.world().getBlockId(slot.x, slot.y, slot.z)==7) return;
 		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
 		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
 
