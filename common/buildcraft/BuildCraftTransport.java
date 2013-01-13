@@ -29,6 +29,7 @@ import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
@@ -259,7 +260,7 @@ public class BuildCraftTransport {
 			GameRegistry.registerBlock(genericPipeBlock);
 
 			// Fixing retro-compatiblity
-			pipeItemsWood = createPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", Block.planks, Block.glass, Block.planks);
+			pipeItemsWood = createPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
 			pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe",
 					Block.cobblestone, Block.glass, Block.cobblestone);
 			pipeItemsStone = createPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
@@ -412,7 +413,7 @@ public class BuildCraftTransport {
 			if (pipe.isShapeless) {
 				GameRegistry.addShapelessRecipe(pipe.result, pipe.input);
 			} else {
-				GameRegistry.addRecipe(pipe.result, pipe.input);
+				CoreProxy.proxy.addCraftingRecipe(pipe.result, pipe.input);
 			}
 		}
 	}

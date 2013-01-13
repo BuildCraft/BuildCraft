@@ -22,10 +22,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.network.BuildCraftPacket;
 import cpw.mods.fml.common.Loader;
@@ -108,7 +110,8 @@ public class CoreProxy {
 	}
 
 	public void addCraftingRecipe(ItemStack result, Object[] recipe) {
-		GameRegistry.addRecipe(result, recipe);
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
+		//GameRegistry.addRecipe(result, recipe);
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object[] recipe) {

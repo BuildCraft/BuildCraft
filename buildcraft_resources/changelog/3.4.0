@@ -1,0 +1,13 @@
+
+#3.4.0
+
+- Upgraded: MC 1.4.7
+- Changed: Filler function to stop its use asa mining tool. Empties from the top down, items dropped from it only last a second. (cpw)
+- Changed: Gates and pipe wires now available earlier for other mods. (Flow86)
+- Changed: Pipes now replace grass, vines, etc. when placed. (tcooc)
+- Changed: onInventoryChanged() now called when adding to an IInventory. (MrTJP)
+- Bugfix: Fixed issues with the hopper and NBT data. (CovertJaguar)
+- Bugfix: Fixed NBT data not synching in diamond pipe gui.
+- Bugfix: Pipe items should now display smoother. (aznhe21)
+- Bugfix: Filler flatten now works above 128 height. (DeliciousJaffa)
+- Bugfix: Stacked tanks will not store different liquids anymore. (kemurphy)
