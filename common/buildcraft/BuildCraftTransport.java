@@ -441,7 +441,7 @@ public class BuildCraftTransport {
 		}
 	}
 
-	private static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3) {
+	public static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
 
 		Property prop = BuildCraftCore.mainConfiguration.getItem(name + ".id", defaultID);
