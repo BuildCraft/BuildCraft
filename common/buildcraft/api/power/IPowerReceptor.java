@@ -17,6 +17,4 @@ public interface IPowerReceptor {
 
 	public void doWork();
 
-	public int powerRequest();
-
 }
