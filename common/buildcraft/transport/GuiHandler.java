@@ -5,11 +5,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.gui.ContainerDiamondPipe;
+import buildcraft.transport.gui.ContainerEmeraldPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.gui.GuiDiamondPipe;
+import buildcraft.transport.gui.GuiEmeraldPipe;
 import buildcraft.transport.gui.GuiGateInterface;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraft.inventory.IInventory;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -30,6 +33,9 @@ public class GuiHandler implements IGuiHandler {
 		switch (ID) {
 		case GuiIds.PIPE_DIAMOND:
 			return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond) pipe.pipe.logic);
+			
+		case GuiIds.PIPE_EMERALD_ITEM:
+			return new ContainerEmeraldPipe(player.inventory, (IInventory) pipe.pipe);
 
 		case GuiIds.GATES:
 			return new ContainerGateInterface(player.inventory, pipe.pipe);
@@ -56,6 +62,9 @@ public class GuiHandler implements IGuiHandler {
 		switch (ID) {
 		case GuiIds.PIPE_DIAMOND:
 			return new GuiDiamondPipe(player.inventory, pipe);
+			
+		case GuiIds.PIPE_EMERALD_ITEM:
+			return new GuiEmeraldPipe(player.inventory, pipe);
 
 		case GuiIds.GATES:
 			return new GuiGateInterface(player.inventory, pipe.pipe);

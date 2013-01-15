@@ -18,6 +18,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
+import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
@@ -67,11 +68,19 @@ public class PacketHandlerTransport implements IPacketHandler {
 				break;
 
 			/** SERVER SIDE **/
-			case PacketIds.DIAMOND_PIPE_SELECT:
+			case PacketIds.DIAMOND_PIPE_SELECT: {
 				PacketSlotChange packet1 = new PacketSlotChange();
 				packet1.readData(data);
 				onDiamondPipeSelect((EntityPlayer) player, packet1);
 				break;
+			}
+
+			case PacketIds.EMERALD_PIPE_SELECT: {
+				PacketSlotChange packet1 = new PacketSlotChange();
+				packet1.readData(data);
+				onEmeraldPipeSelect((EntityPlayer) player, packet1);
+				break;
+			}
 
 			case PacketIds.GATE_REQUEST_INIT:
 				PacketCoordinates packetU = new PacketCoordinates();
@@ -289,6 +298,23 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		((PipeLogicDiamond) pipe.pipe.logic).setInventorySlotContents(packet.slot, packet.stack);
+	}
+	
+	/**
+	 * Handles selection changes on emerald pipe guis.
+	 * 
+	 * @param player
+	 * @param packet
+	 */
+	private void onEmeraldPipeSelect(EntityPlayer player, PacketSlotChange packet) {
+		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		if (pipe == null)
+			return;
+
+		if (!(pipe.pipe instanceof PipeItemsEmerald))
+			return;
+
+		((PipeItemsEmerald) pipe.pipe).setInventorySlotContents(packet.slot, packet.stack);
 	}
 
 }

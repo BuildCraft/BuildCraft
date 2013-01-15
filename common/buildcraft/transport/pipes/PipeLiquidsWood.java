@@ -31,17 +31,21 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	int liquidToExtract;
 
 	private IPowerProvider powerProvider;
-	private int baseTexture = 7 * 16 + 0;
-	private int plainTexture = 1 * 16 + 15;
+	protected int baseTexture = 7 * 16 + 0;
+	protected int plainTexture = 1 * 16 + 15;
 
 	long lastMining = 0;
 	boolean lastPower = false;
 
 	public PipeLiquidsWood(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicWood(), itemID);
+		this(new PipeLogicWood(), itemID);
+	}
+	
+	protected PipeLiquidsWood(PipeLogic logic, int itemID) {
+		super(new PipeTransportLiquids(), logic, itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 1, 1, 1);
+		powerProvider.configure(50, 1, 100, 1, 250);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 

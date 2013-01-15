@@ -32,15 +32,19 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
 
-	private int baseTexture = 1 * 16 + 0;
-	private int plainTexture = 1 * 16 + 15;
+	protected int baseTexture = 1 * 16 + 0;
+	protected int plainTexture = 1 * 16 + 15;
 
-	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
-		super(transport, new PipeLogicWood(), itemID);
+	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
+		super(transport, logic, itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 1, 64, 1, 64);
 		powerProvider.configurePowerPerdition(64, 1);
+	}
+	
+	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
+		this(transport, new PipeLogicWood(), itemID);
 	}
 
 	public PipeItemsWood(int itemID) {
@@ -108,9 +112,9 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 					continue;
 				}
 
-				Position entityPos = new Position(pos.x + 0.5, pos.y + Utils.getPipeFloorOf(stack), pos.z + 0.5, pos.orientation.getOpposite());
+				Position entityPos = new Position(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, pos.orientation.getOpposite());
 
-				entityPos.moveForwards(0.5);
+				entityPos.moveForwards(0.6);
 
 				IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
 
@@ -205,15 +209,13 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
 		for (int k = start; k <= stop; ++k) {
-			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
+			ItemStack slot = inventory.getStackInSlot(k);
 
-				ItemStack slot = inventory.getStackInSlot(k);
-
-				if (slot != null && slot.stackSize > 0) {
-					if (doRemove)
-						return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
-					else
-						return slot;
+			if (slot != null && slot.stackSize > 0) {
+				if (doRemove) {
+					return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
+				} else {
+					return slot;
 				}
 			}
 		}

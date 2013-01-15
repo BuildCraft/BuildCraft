@@ -40,11 +40,13 @@ import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.blueprints.BptBlockPipe;
 import buildcraft.transport.blueprints.BptItemPipeDiamond;
+import buildcraft.transport.blueprints.BptItemPipeEmerald;
 import buildcraft.transport.blueprints.BptItemPipeIron;
 import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeItemsCobblestone;
 import buildcraft.transport.pipes.PipeItemsDiamond;
+import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsGold;
 import buildcraft.transport.pipes.PipeItemsIron;
 import buildcraft.transport.pipes.PipeItemsObsidian;
@@ -53,6 +55,7 @@ import buildcraft.transport.pipes.PipeItemsStone;
 import buildcraft.transport.pipes.PipeItemsVoid;
 import buildcraft.transport.pipes.PipeItemsWood;
 import buildcraft.transport.pipes.PipeLiquidsCobblestone;
+import buildcraft.transport.pipes.PipeLiquidsEmerald;
 import buildcraft.transport.pipes.PipeLiquidsGold;
 import buildcraft.transport.pipes.PipeLiquidsIron;
 import buildcraft.transport.pipes.PipeLiquidsSandstone;
@@ -110,6 +113,7 @@ public class BuildCraftTransport {
 	public static Item yellowPipeWire;
 
 	public static Item pipeItemsWood;
+	public static Item pipeItemsEmerald;
 	public static Item pipeItemsStone;
 	public static Item pipeItemsCobblestone;
 	public static Item pipeItemsIron;
@@ -126,6 +130,7 @@ public class BuildCraftTransport {
 	public static Item pipeLiquidsGold;
 	public static Item pipeLiquidsVoid;
 	public static Item pipeLiquidsSandstone;
+	public static Item pipeLiquidsEmerald;
 
 	public static Item pipePowerWood;
 	public static Item pipePowerStone;
@@ -261,40 +266,26 @@ public class BuildCraftTransport {
 
 			// Fixing retro-compatiblity
 			pipeItemsWood = createPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
-			pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe",
-					Block.cobblestone, Block.glass, Block.cobblestone);
+			pipeItemsEmerald = createPipe(DefaultProps.PIPE_ITEMS_EMERALD_ID, PipeItemsEmerald.class, "Emerald Transport Pipe", Item.emerald, Block.glass, Item.emerald);
+			pipeItemsCobblestone = createPipe(DefaultProps.PIPE_ITEMS_COBBLESTONE_ID, PipeItemsCobblestone.class, "Cobblestone Transport Pipe", Block.cobblestone, Block.glass, Block.cobblestone);
 			pipeItemsStone = createPipe(DefaultProps.PIPE_ITEMS_STONE_ID, PipeItemsStone.class, "Stone Transport Pipe", Block.stone, Block.glass, Block.stone);
 			pipeItemsIron = createPipe(DefaultProps.PIPE_ITEMS_IRON_ID, PipeItemsIron.class, "Iron Transport Pipe", Item.ingotIron, Block.glass, Item.ingotIron);
-			pipeItemsGold = createPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass,
-					Item.ingotGold);
-			pipeItemsDiamond = createPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass,
-					Item.diamond);
-			pipeItemsObsidian = createPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian,
-					Block.glass, Block.obsidian);
+			pipeItemsGold = createPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
+			pipeItemsDiamond = createPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
+			pipeItemsObsidian = createPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 
-			pipeLiquidsWood = createPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood,
-					null);
-			pipeLiquidsCobblestone = createPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe",
-					pipeWaterproof, pipeItemsCobblestone, null);
-			pipeLiquidsStone = createPipe(DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone,
-					null);
+			pipeLiquidsWood = createPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
+			pipeLiquidsCobblestone = createPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);
+			pipeLiquidsStone = createPipe(DefaultProps.PIPE_LIQUIDS_STONE_ID, PipeLiquidsStone.class, "Stone Waterproof Pipe", pipeWaterproof, pipeItemsStone, null);
 			pipeLiquidsIron = createPipe(DefaultProps.PIPE_LIQUIDS_IRON_ID, PipeLiquidsIron.class, "Iron Waterproof Pipe", pipeWaterproof, pipeItemsIron, null);
-			pipeLiquidsGold = createPipe(DefaultProps.PIPE_LIQUIDS_GOLD_ID, PipeLiquidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold,
-					null);
-			// diamond
-			// obsidian
+			pipeLiquidsGold = createPipe(DefaultProps.PIPE_LIQUIDS_GOLD_ID, PipeLiquidsGold.class, "Golden Waterproof Pipe", pipeWaterproof, pipeItemsGold, null);
+			pipeLiquidsEmerald = createPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeLiquidsEmerald.class, "Emerald Waterproof Pipe", pipeWaterproof, pipeItemsEmerald, null);
 
 			pipePowerWood = createPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone, pipeItemsWood, null);
-			// cobblestone
 			pipePowerStone = createPipe(DefaultProps.PIPE_POWER_STONE_ID, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone, null);
-			// iron
 			pipePowerGold = createPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Conductive Pipe", Item.redstone, pipeItemsGold, null);
-			// diamond
-			// obsidian
 
-			// Fix name and recipe (Structure pipe insteand of Signal?)
-			pipeStructureCobblestone = createPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe",
-					Block.gravel, pipeItemsCobblestone, null);
+			pipeStructureCobblestone = createPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone, null);
 
 			// Fix the recipe
 			// pipeItemsStipes = createPipe(DefaultProps.PIPE_ITEMS_STRIPES_ID, PipeItemsStripes.class, "Stripes Transport Pipe", new ItemStack(Item.dyePowder,
@@ -387,6 +378,7 @@ public class BuildCraftTransport {
 		BuildCraftCore.itemBptProps[pipeItemsIron.itemID] = new BptItemPipeIron();
 		BuildCraftCore.itemBptProps[pipeLiquidsIron.itemID] = new BptItemPipeIron();
 		BuildCraftCore.itemBptProps[pipeItemsDiamond.itemID] = new BptItemPipeDiamond();
+		BuildCraftCore.itemBptProps[pipeItemsEmerald.itemID] = new BptItemPipeEmerald();
 
 		ActionManager.registerTriggerProvider(new PipeTriggerProvider());
 
