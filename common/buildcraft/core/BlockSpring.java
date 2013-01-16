@@ -34,10 +34,6 @@ public class BlockSpring extends Block {
 		if(!world.isAirBlock(x, y + 1, z))
 			return;
 		
-		int above = world.getBlockId(x, y + 1, z);
-		if(above == Block.waterStill.blockID)
-			return;
-		
 		world.setBlockWithNotify(x, y + 1, z, Block.waterStill.blockID);
 	}
 }
