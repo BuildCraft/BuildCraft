@@ -31,7 +31,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class PipeItemsEmerald extends PipeItemsWood implements IInventory, ISpecialInventory, IClientState {
+public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory, IClientState {
 
 	private SimpleInventory filters = new SimpleInventory(9, "items", 1);
 	private int currentFilter = 0;
@@ -259,7 +259,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IInventory, ISpec
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer var1) {
-		return true;
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
 	}
 
 	@Override
