@@ -108,6 +108,7 @@ public class DefaultProps {
 	public static int HOPPER_ID = 1519;
 	public static int OIL_MOVING_ID = 1520;
 	public static int OIL_STILL_ID = 1521;
+	public static int SPRING_ID = 1522;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static boolean PIPES_ALWAYS_CONNECT = false;

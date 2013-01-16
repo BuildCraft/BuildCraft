@@ -27,6 +27,7 @@ import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.Trigger;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.DefaultProps;
@@ -36,6 +37,7 @@ import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
+import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
@@ -100,6 +102,8 @@ public class BuildCraftCore {
 
 	public static boolean continuousCurrentModel;
 
+	public static Block springBlock;
+	
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -211,6 +215,8 @@ public class BuildCraftCore {
 			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setIconIndex(0 * 16 + 2).setItemName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
 
+			Property springId = BuildCraftCore.mainConfiguration.getBlock("springBlock.id", DefaultProps.SPRING_ID);
+			
 			Property woodenGearId = BuildCraftCore.mainConfiguration.getItem("woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
 			Property stoneGearId = BuildCraftCore.mainConfiguration.getItem("stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
 			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
@@ -221,6 +227,11 @@ public class BuildCraftCore {
 
 			BuildCraftCore.modifyWorld = modifyWorld.getBoolean(true);
 
+			if(BuildCraftCore.modifyWorld) {
+				springBlock = new BlockSpring(Integer.parseInt(springId.value)).setBlockName("eternalSpring");
+				GameRegistry.registerBlock(springBlock, "eternalSpring");
+			}
+			
 			woodenGearItem = (new ItemBuildCraft(Integer.parseInt(woodenGearId.value))).setIconIndex(1 * 16 + 0).setItemName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
 
@@ -246,6 +257,8 @@ public class BuildCraftCore {
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
+		GameRegistry.registerWorldGenerator(new SpringPopulate());
+				
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
