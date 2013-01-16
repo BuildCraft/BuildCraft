@@ -258,22 +258,22 @@ public class EngineIron extends Engine {
 		switch (i) {
 		case 0:
 			int iEnergy = Math.round(energy * 10);
-			iEnergy = (iEnergy & 0xff00) | (j & 0xff);
+			iEnergy = (iEnergy & 0xffff0000) | (j & 0xffff);
 			energy = iEnergy / 10;
 			break;
 		case 1:
 			iEnergy = Math.round(energy * 10);
-			iEnergy = (iEnergy & 0xff) | ((j & 0xff) << 8);
+			iEnergy = (iEnergy & 0xffff) | ((j & 0xffff) << 16);
 			energy = iEnergy / 10;
 			break;
 		case 2:
 			currentOutput = j / 10;
 			break;
 		case 3:
-			heat = (heat & 0xff00) | (j & 0xff);
+			heat = (heat & 0xffff0000) | (j & 0xffff);
 			break;
 		case 4:
-			heat = (heat & 0xff) | ((j & 0xff) << 8);
+			heat = (heat & 0xffff) | ((j & 0xffff) << 16);
 			break;
 		case 5:
 			if (fuelTank.getLiquid() == null) {
@@ -321,11 +321,11 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy * 10) & 0xff);
-		iCrafting.sendProgressBarUpdate(containerEngine, 1, (Math.round(energy * 10) & 0xff00) >> 8);
+		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy * 10) & 0xffff);
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, (Math.round(energy * 10) & 0xffff0000) >> 16);
 		iCrafting.sendProgressBarUpdate(containerEngine, 2, Math.round(currentOutput * 10));
-		iCrafting.sendProgressBarUpdate(containerEngine, 3, heat & 0xff);
-		iCrafting.sendProgressBarUpdate(containerEngine, 4, (heat & 0xff00) >> 8);
+		iCrafting.sendProgressBarUpdate(containerEngine, 3, heat & 0xffff);
+		iCrafting.sendProgressBarUpdate(containerEngine, 4, (heat & 0xffff0000) >> 16);
 		iCrafting.sendProgressBarUpdate(containerEngine, 5, fuelTank.getLiquid() != null ? fuelTank.getLiquid().amount : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 6, fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemID : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 7, coolantTank.getLiquid() != null ? coolantTank.getLiquid().amount : 0);
