@@ -65,7 +65,50 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 		return true;
 	}
+	
+	@Override
+	public void doWork() {
+		if (powerProvider.getEnergyStored() <= 0)
+			return;
 
+		World w = worldObj;
+
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+		if (meta > 5)
+			return;
+
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
+		pos.moveForwards(1);
+		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+
+		if (tile instanceof IInventory) {
+			if (!PipeManager.canExtractItems(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+				return;
+
+			IInventory inventory = (IInventory) tile;
+
+			ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.getOpposite());
+			if (extracted == null)
+				return;
+
+			for (ItemStack stack : extracted) {
+				if (stack == null || stack.stackSize == 0) {
+					powerProvider.useEnergy(0.5f, 0.5f, false);
+					continue;
+				}
+
+				Position entityPos = new Position(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, pos.orientation.getOpposite());
+
+				entityPos.moveForwards(0.6);
+
+				IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
+
+				((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
+			}
+		}
+	}
+	
 	/**
 	 * Return the itemstack that can be if something can be extracted from this
 	 * inventory, null if none. On certain cases, the extractable slot depends
@@ -76,11 +119,13 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 		// ISELECTIVEINVENTORY
 		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored());
+			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored()*2);
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
-						getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+						getPowerProvider().useEnergy(((float) stack.stackSize)/2.0f,
+										((float) stack.stackSize)/2.0f,
+										true);
 					}
 				}
 				incrementFilter();
@@ -91,7 +136,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 		// ISPECIALINVENTORY
 		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored()*2);
 			if (stacks != null) {
 				for (ItemStack stack : stacks) {
 					boolean matches = false;
@@ -107,10 +152,12 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 					}
 				}
 				if (doRemove) {
-					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
+					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored()*2);
 					for (ItemStack stack : stacks) {
 						if (stack != null) {
-							getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+							getPowerProvider().useEnergy(((float) stack.stackSize)/2.0f,
+											((float) stack.stackSize)/2.0f,
+											true);
 						}
 					}
 				}
@@ -176,7 +223,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				}
 				if (doRemove) {
 					incrementFilter();
-					return inventory.decrStackSize(i, (int) getPowerProvider().useEnergy(1, stack.stackSize, true));
+					return inventory.decrStackSize(i, (int) getPowerProvider().useEnergy(0.5f,
+										((float) stack.stackSize)/2.0f,
+										true));
 				} else {
 					return stack;
 				}

@@ -25,4 +25,33 @@ public class PipeLiquidsEmerald extends PipeLiquidsWood {
 		((PipeTransportLiquids) transport).flowRate = 40;
 		((PipeTransportLiquids) transport).travelDelay = 4;
 	}
+	
+	/**
+	 * Extracts a random piece of item outside of a nearby chest.
+	 */
+	@Override
+	public void doWork() {
+		if (powerProvider.getEnergyStored() <= 0)
+			return;
+
+		World w = worldObj;
+
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+		if (meta > 5)
+			return;
+
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
+		pos.moveForwards(1);
+		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+
+		if (tile instanceof ITankContainer) {
+			if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+				return;
+
+			if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME) {
+				liquidToExtract += powerProvider.useEnergy(0.5f, 0.5f, true) * 4 * LiquidContainerRegistry.BUCKET_VOLUME;
+			}
+		}
+	}
 }
