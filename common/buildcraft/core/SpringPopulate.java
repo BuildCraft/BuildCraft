@@ -23,7 +23,7 @@ public class SpringPopulate implements IWorldGenerator {
 		if(random.nextFloat() > 0.025f)
 			return;
 		
-		// Do not generate oil in the End
+		// Do not generate water in the End or the Nether
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);
 		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID)
 			return;
