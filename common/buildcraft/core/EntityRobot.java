@@ -207,7 +207,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 			if (a.slot != null) {
 
 				BptSlot target = a.slot;
-				if (wait <= 0) {
+				if (wait <= 0 && BlockUtil.canChangeBlock(worldObj, target.x, target.y, target.z)) {
 
 					if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 
