@@ -164,7 +164,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
 
-			if (BlockUtil.isSoftBlock(worldObj, blockIndex.i, blockIndex.j, blockIndex.k) && movementBoundary.contains(blockIndex)) {
+			if (BlockUtil.isSoftBlock(worldObj, blockIndex.i, blockIndex.j, blockIndex.k) && movementBoundary.contains(blockIndex) && BlockUtil.canChamgeBlock(worldObj, blockIndex.i, blockIndex.j, blockIndex.k)) {
 				potentialDestinations.add(blockIndex);
 			}
 		}
