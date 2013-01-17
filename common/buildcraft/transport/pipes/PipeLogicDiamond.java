@@ -101,7 +101,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer var1) {
-		return true;
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
 	}
 
 	@Override
