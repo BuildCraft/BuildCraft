@@ -119,20 +119,27 @@ public class BptRootIndex {
 	}
 
 	public BptBase getBluePrint(int number) {
-		if (!bluePrints.containsKey(number))
-			if (bluePrintsFile.containsKey(number)) {
-				BptBase bpt = BptBase.loadBluePrint(bluePrintsFile.get(number), number);
-
-				if (bpt != null) {
-					bluePrints.put(number, bpt);
-					bpt.file = bluePrintsFile.get(number);
-				} else {
-					bluePrintsFile.remove(number);
-					return null;
+		// This is a dirty, dirty hack and doesn't really solve the problem
+		// However, for the time being it should fix any problems
+		// TODO find out the actual problem
+		try {
+			if (!bluePrints.containsKey(number))
+				if (bluePrintsFile.containsKey(number)) {
+					BptBase bpt = BptBase.loadBluePrint(bluePrintsFile.get(number), number);
+	
+					if (bpt != null) {
+						bluePrints.put(number, bpt);
+						bpt.file = bluePrintsFile.get(number);
+					} else {
+						bluePrintsFile.remove(number);
+						return null;
+					}
 				}
-			}
 
-		return bluePrints.get(number);
+			return bluePrints.get(number);
+		} catch(NullPointerException npe) {
+			return null
+		}
 	}
 
 	public BptBase getBluePrint(String filename) {
