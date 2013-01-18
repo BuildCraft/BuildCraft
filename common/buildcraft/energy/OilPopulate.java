@@ -1,12 +1,10 @@
-/** 
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
- * License 1.0, or MMPL. Please check the contents of the license located in
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.energy;
 
 import java.util.Random;
@@ -14,39 +12,41 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.IChunkProvider;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.IWorldGenerator;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.event.terraingen.TerrainGen;
 
-public class OilPopulate implements IWorldGenerator {
+public class OilPopulate {
 
-	public static Random rand = null;
+	@ForgeSubscribe
+	public void populate(PopulateChunkEvent.Post event) {
 
-	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkX, event.hasVillageGenerated, PopulateChunkEvent.Populate.EventType.CUSTOM);
 
-		// shift to world coordinates
-		chunkX = chunkX << 4;
-		chunkZ = chunkZ << 4;
-
-		doPopulate(world, chunkX, chunkZ);
-	}
-
-	public static void doPopulate(World world, int x, int z) {
-		if (!BuildCraftCore.modifyWorld)
+		if (!doGen) {
 			return;
-
-		if (rand == null) {
-			rand = CoreProxy.proxy.createNewRandom(world);
 		}
 
-		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);
+		// shift to world coordinates
+		int worldX = event.chunkX << 4;
+		int worldZ = event.chunkZ << 4;
+
+		doPopulate(event.world, event.rand, worldX, worldZ);
+	}
+
+	public static void doPopulate(World world, Random rand, int x, int z) {
+		if (!BuildCraftCore.modifyWorld) {
+			return;
+		}
+
+		BiomeGenBase biomegenbase = world.getBiomeGenForCoords(x + 16, z + 16);
 
 		// Do not generate oil in the End
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID)
+		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID) {
 			return;
+		}
 
 		if (biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
@@ -60,7 +60,7 @@ public class OilPopulate implements IWorldGenerator {
 
 				if (world.getBlockId(i, j, k) != 0) {
 					if (world.getBlockId(i, j, k) == Block.sand.blockID) {
-						generateSurfaceDeposit(world, i, j, k, 3);
+						generateSurfaceDeposit(world, rand, i, j, k, 3);
 					}
 
 					break;
@@ -111,9 +111,9 @@ public class OilPopulate implements IWorldGenerator {
 					started = true;
 
 					if (largeDeposit) {
-						generateSurfaceDeposit(world, cx, y, cz, 20 + rand.nextInt(20));
+						generateSurfaceDeposit(world, rand, cx, y, cz, 20 + rand.nextInt(20));
 					} else if (mediumDeposit) {
-						generateSurfaceDeposit(world, cx, y, cz, 5 + rand.nextInt(5));
+						generateSurfaceDeposit(world, rand, cx, y, cz, 5 + rand.nextInt(5));
 					}
 
 					int ymax = 0;
@@ -136,17 +136,17 @@ public class OilPopulate implements IWorldGenerator {
 		}
 	}
 
-	public static void generateSurfaceDeposit(World world, int x, int y, int z, int radius) {
-		setOilWithProba(world, 1, x, y, z, true);
+	public static void generateSurfaceDeposit(World world, Random rand, int x, int y, int z, int radius) {
+		setOilWithProba(world, rand, 1, x, y, z, true);
 
 		for (int w = 1; w <= radius; ++w) {
 			float proba = (float) (radius - w + 4) / (float) (radius + 4);
 
 			for (int d = -w; d <= w; ++d) {
-				setOilWithProba(world, proba, x + d, y, z + w, false);
-				setOilWithProba(world, proba, x + d, y, z - w, false);
-				setOilWithProba(world, proba, x + w, y, z + d, false);
-				setOilWithProba(world, proba, x - w, y, z + d, false);
+				setOilWithProba(world, rand, proba, x + d, y, z + w, false);
+				setOilWithProba(world, rand, proba, x + d, y, z - w, false);
+				setOilWithProba(world, rand, proba, x + w, y, z + d, false);
+				setOilWithProba(world, rand, proba, x - w, y, z + d, false);
 			}
 		}
 
@@ -156,7 +156,7 @@ public class OilPopulate implements IWorldGenerator {
 				if (world.getBlockId(dx, y - 1, dz) != BuildCraftEnergy.oilStill.blockID) {
 					if (isOil(world, dx + 1, y - 1, dz) && isOil(world, dx - 1, y - 1, dz) && isOil(world, dx, y - 1, dz + 1)
 							&& isOil(world, dx, y - 1, dz - 1)) {
-						setOilWithProba(world, 1.0F, dx, y, dz, true);
+						setOilWithProba(world, rand, 1.0F, dx, y, dz, true);
 					}
 				}
 			}
@@ -167,7 +167,7 @@ public class OilPopulate implements IWorldGenerator {
 		return (world.getBlockId(x, y, z) == BuildCraftEnergy.oilStill.blockID || world.getBlockId(x, y, z) == BuildCraftEnergy.oilMoving.blockID);
 	}
 
-	public static void setOilWithProba(World world, float proba, int x, int y, int z, boolean force) {
+	public static void setOilWithProba(World world, Random rand, float proba, int x, int y, int z, boolean force) {
 		if ((rand.nextFloat() <= proba && world.getBlockId(x, y - 2, z) != 0) || force) {
 			boolean adjacentOil = false;
 
@@ -189,5 +189,4 @@ public class OilPopulate implements IWorldGenerator {
 			}
 		}
 	}
-
 }

@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core;
 
 import java.util.Random;
@@ -7,17 +14,29 @@ import buildcraft.BuildCraftCore;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.IChunkProvider;
-import cpw.mods.fml.common.IWorldGenerator;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.event.terraingen.TerrainGen;
 
-public class SpringPopulate implements IWorldGenerator {
+public class SpringPopulate {
 
-	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		
+	@ForgeSubscribe
+	public void populate(PopulateChunkEvent.Post event) {
+
+		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkX, event.hasVillageGenerated, PopulateChunkEvent.Populate.EventType.CUSTOM);
+
+		if (!doGen) {
+			return;
+		}
+
 		// shift to world coordinates
-		int x = chunkX << 4;
-		int z = chunkZ << 4;
+		int worldX = event.chunkX << 4;
+		int worldZ = event.chunkZ << 4;
+
+		doPopulate(event.world, event.rand, worldX, worldZ);
+	}
+	
+	private void doPopulate(World world, Random random, int x, int z) {
 
 		// A spring will be generated every 40th chunk.
 		if(random.nextFloat() > 0.025f)
