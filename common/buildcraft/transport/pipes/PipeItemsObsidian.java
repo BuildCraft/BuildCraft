@@ -215,7 +215,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 			if (entity instanceof EntityItem) {
 				EntityItem item = (EntityItem) entity;
-				ItemStack contained = item.func_92014_d();
+				ItemStack contained = item.getEntityItem();
 				
 				CoreProxy.proxy.obsidianPipePickup(worldObj, item, this.container);
 
@@ -265,7 +265,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		if (entity instanceof EntityItem) {
 			EntityItem item = (EntityItem) entity;
 
-			if (item.func_92014_d().stackSize <= 0)
+			if (item.getEntityItem().stackSize <= 0)
 				return false;
 
 			for (int i = 0; i < entitiesDropped.length; ++i)

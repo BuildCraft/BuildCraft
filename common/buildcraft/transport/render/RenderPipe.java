@@ -9,6 +9,8 @@
 
 package buildcraft.transport.render;
 
+import static org.lwjgl.opengl.GL11.glScalef;
+
 import java.util.HashMap;
 import java.util.Random;
 
@@ -16,6 +18,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
@@ -52,7 +55,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	final static private int MAX_ITEMS_TO_RENDER = 10;
 
-	private final static EntityItem dummyEntityItem = new EntityItem(null);
+	private final EntityItem dummyEntityItem = new EntityItem(null);
+
+	private final RenderItem customRenderItem;
 
 	private class DisplayLiquidList {
 
@@ -72,10 +77,16 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	public int[] displayPowerList = new int[POWER_STAGES];
 	public int[] displayPowerListOverload = new int[POWER_STAGES];
 
-	private RenderBlocks renderBlocks;
-
 	public RenderPipe() {
-		renderBlocks = new RenderBlocks();
+	    customRenderItem = new RenderItem() {
+	        public boolean shouldBob() {
+	            return false;
+	        };
+	        public boolean shouldSpreadItems() {
+	            return false;
+	        };
+	    };
+	    customRenderItem.setRenderManager(RenderManager.instance);
 	}
 
 	private DisplayLiquidList getDisplayLiquidLists(int liquidId, int meta, World world) {
@@ -430,141 +441,14 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (entityitem == null || entityitem.getItemStack() == null)
 			return;
 
+		float renderScale = 0.7f;
 		ItemStack itemstack = entityitem.getItemStack();
-		random.setSeed(187L);
-
 		GL11.glPushMatrix();
-
-		byte quantity = 1;
-		if (entityitem.getItemStack().stackSize > 1) {
-			quantity = 2;
-		}
-
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
-		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
-
-		IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, ItemRenderType.ENTITY);
-
-		if (customRenderer != null) {
-
-			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
-			ForgeHooksClient.bindTexture(itemstack.getItem().getTextureFile(), 0);
-			float f4 = 0.25F;
-			f4 = 0.5F;
-			GL11.glScalef(f4, f4, f4);
-
-			for (int j = 0; j < quantity; j++) {
-
-				GL11.glPushMatrix();
-
-				if (j > 0) {
-					float f5 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
-					float f7 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
-					float f9 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
-					GL11.glTranslatef(f5, f7, f9);
-				}
-
-				RenderPipe.dummyEntityItem.func_92013_a(itemstack);
-
-				customRenderer.renderItem(ItemRenderType.ENTITY, itemstack, renderBlocks, RenderPipe.dummyEntityItem);
-				GL11.glPopMatrix();
-			}
-
-		} else if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null && Block.blocksList[itemstack.itemID].blockID != 0) {
-
-			GL11.glTranslatef(0, 0.25F, 0); // BC SPECIFIC
-
-			ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
-			float f4 = 0.25F;
-			int j = Block.blocksList[itemstack.itemID].getRenderType();
-			if (j == 1 || j == 19 || j == 12 || j == 2) {
-				f4 = 0.5F;
-			}
-
-			GL11.glScalef(f4, f4, f4);
-			for (int k = 0; k < quantity; k++) {
-				GL11.glPushMatrix();
-
-				if (k > 0) {
-					float f6 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
-					float f9 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
-					float f11 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
-					GL11.glTranslatef(f6, f9, f11);
-				}
-
-				float f7 = 1.0F;
-				renderBlocks.renderBlockAsItem(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), f7);
-				GL11.glPopMatrix();
-			}
-
-		} else {
-
-			GL11.glTranslatef(0, 0.10F, 0); // BC SPECIFIC
-
-			if (itemstack.getItem().requiresMultipleRenderPasses()) {
-				GL11.glScalef(0.5F, 0.5F, 0.5F);
-				ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
-
-				for (int i = 0; i <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++i) {
-					int iconIndex = itemstack.getItem().getIconIndex(itemstack, i);
-					float scale = 1.0F;
-
-					int itemColour = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, i);
-					float rgbR = (itemColour >> 16 & 255) / 255.0F;
-					float rgbG = (itemColour >> 8 & 255) / 255.0F;
-					float rgbB = (itemColour & 255) / 255.0F;
-					GL11.glColor4f(rgbR * scale, rgbG * scale, rgbB * scale, 1.0F);
-
-					this.drawItem(iconIndex, quantity);
-				}
-
-			} else {
-
-				GL11.glScalef(0.5F, 0.5F, 0.5F);
-				int i = itemstack.getIconIndex();
-				if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null && Block.blocksList[itemstack.itemID].blockID != 0) {
-					ForgeHooksClient.bindTexture(Block.blocksList[itemstack.itemID].getTextureFile(), 0);
-				} else {
-					ForgeHooksClient.bindTexture(Item.itemsList[itemstack.itemID].getTextureFile(), 0);
-				}
-
-				drawItem(i, quantity);
-			}
-
-		}
-		GL11.glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
+        GL11.glTranslatef(0, 0.25F, 0);
+        GL11.glScalef(renderScale, renderScale, renderScale);
+        dummyEntityItem.func_92058_a(itemstack);
+        customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
 		GL11.glPopMatrix();
-	}
-
-	private void drawItem(int iconIndex, int quantity) {
-		Tessellator tesselator = Tessellator.instance;
-		float var4 = (iconIndex % 16 * 16 + 0) / 256.0F;
-		float var5 = (iconIndex % 16 * 16 + 16) / 256.0F;
-		float var6 = (iconIndex / 16 * 16 + 0) / 256.0F;
-		float var7 = (iconIndex / 16 * 16 + 16) / 256.0F;
-		float var8 = 1.0F;
-		float var9 = 0.5F;
-		float var10 = 0.25F;
-
-		for (int var11 = 0; var11 < quantity; ++var11) {
-			GL11.glPushMatrix();
-
-			if (var11 > 0) {
-				float var12 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.3F;
-				float var13 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.3F;
-				float var14 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.3F;
-				GL11.glTranslatef(var12, var13, var14);
-			}
-
-			GL11.glRotatef(180.0F - RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
-			tesselator.startDrawingQuads();
-			tesselator.setNormal(0.0F, 1.0F, 0.0F);
-			tesselator.addVertexWithUV((0.0F - var9), (0.0F - var10), 0.0D, var4, var7);
-			tesselator.addVertexWithUV((var8 - var9), (0.0F - var10), 0.0D, var5, var7);
-			tesselator.addVertexWithUV((var8 - var9), (1.0F - var10), 0.0D, var5, var6);
-			tesselator.addVertexWithUV((0.0F - var9), (1.0F - var10), 0.0D, var4, var6);
-			tesselator.draw();
-			GL11.glPopMatrix();
-		}
 	}
 }

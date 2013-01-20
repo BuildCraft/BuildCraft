@@ -67,7 +67,7 @@ public class CoreProxy {
 
 	/* ENTITY HANDLING */
 	public void removeEntity(Entity entity) {
-		entity.setDead();
+		entity.worldObj.removeEntity(entity);
 	}
 
 	/* WRAPPER */

@@ -6,79 +6,94 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
+/**
+ * Based on {@link EntityPickupFX}
+ */
 package buildcraft.transport.render;
 
-import net.minecraft.client.particle.EntityFX;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.particle.EntityPickupFX;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.tileentity.TileEntity;
 import buildcraft.core.utils.Utils;
 
-public class TileEntityPickupFX extends EntityFX {
+@SideOnly(Side.CLIENT)
+public class TileEntityPickupFX extends EntityFX
+{
+    private Entity entityToPickUp;
+    private TileEntity entityPickingUp;
+    private int age = 0;
+    private int maxAge = 0;
 
-	private double yDestination;
+    /** renamed from yOffset to fix shadowing Entity.yOffset */
+    private double yOffs;
 
-	public TileEntityPickupFX(World world, EntityItem entity, TileEntity entity1) {
-		super(world, entity.posX, entity.posY, entity.posZ, entity.motionX, entity.motionY, entity.motionZ);
-		field_678_p = 0;
-		field_677_q = 0;
-		field_675_a = entity;
-		field_679_o = entity1;
-		field_677_q = 3;
+    public TileEntityPickupFX(World par1World, EntityItem par2Entity, TileEntity par3Entity)
+    {
+        super(par1World, par2Entity.posX, par2Entity.posY, par2Entity.posZ, par2Entity.motionX, par2Entity.motionY, par2Entity.motionZ);
+        this.entityToPickUp = par2Entity;
+        this.entityPickingUp = par3Entity;
+        this.maxAge = 3;
+        this.yOffs = Utils.getPipeFloorOf(par2Entity.getEntityItem());
+    }
 
-		yDestination = Utils.getPipeFloorOf(entity.func_92014_d());
-	}
+    @Override
+    public void renderParticle(Tessellator par1Tessellator, float par2, float par3, float par4, float par5, float par6, float par7)
+    {
+        float var8 = ((float)this.age + par2) / (float)this.maxAge;
+        var8 *= var8;
+        double var9 = this.entityToPickUp.posX;
+        double var11 = this.entityToPickUp.posY;
+        double var13 = this.entityToPickUp.posZ;
+        double var15 = this.entityPickingUp.xCoord + 0.5;
+        double var17 = this.entityPickingUp.yCoord + yOffs;
+        double var19 = this.entityPickingUp.zCoord + 0.5;
+        double var21 = var9 + (var15 - var9) * (double)var8;
+        double var23 = var11 + (var17 - var11) * (double)var8;
+        double var25 = var13 + (var19 - var13) * (double)var8;
+        int var27 = MathHelper.floor_double(var21);
+        int var28 = MathHelper.floor_double(var23 + (double)(this.yOffset / 2.0F));
+        int var29 = MathHelper.floor_double(var25);
+        int var30 = this.getBrightnessForRender(par2);
+        int var31 = var30 % 65536;
+        int var32 = var30 / 65536;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)var31 / 1.0F, (float)var32 / 1.0F);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        var21 -= interpPosX;
+        var23 -= interpPosY;
+        var25 -= interpPosZ;
+        if (RenderManager.instance.renderEngine != null) {
+            RenderManager.instance.renderEntityWithPosYaw(this.entityToPickUp, (double)((float)var21), (double)((float)var23), (double)((float)var25), this.entityToPickUp.rotationYaw, par2);
+        }
+    }
 
-	@Override
-	public void renderParticle(Tessellator tessellator, float f, float f1, float f2, float f3, float f4, float f5) {
-		float f6 = (field_678_p + f) / field_677_q;
-		f6 *= f6;
-		double d = field_675_a.posX;
-		double d1 = field_675_a.posY;
-		double d2 = field_675_a.posZ;
-		double d3 = field_679_o.xCoord + 0.5;
-		double d4 = field_679_o.yCoord + yDestination;
-		double d5 = field_679_o.zCoord + 0.5;
-		double d6 = d + (d3 - d) * f6;
-		double d7 = d1 + (d4 - d1) * f6;
-		double d8 = d2 + (d5 - d2) * f6;
-		int i = MathHelper.floor_double(d6);
-		int j = MathHelper.floor_double(d7 + (yOffset / 2.0F));
-		int k = MathHelper.floor_double(d8);
-		float f7 = worldObj.getLightBrightness(i, j, k);
-		d6 -= interpPosX;
-		d7 -= interpPosY;
-		d8 -= interpPosZ;
-		GL11.glColor4f(f7, f7, f7, 1.0F);
+    /**
+     * Called to update the entity's position/logic.
+     */
+    @Override
+    public void onUpdate()
+    {
+        ++this.age;
 
-		if (RenderManager.instance.renderEngine != null) {
-			RenderManager.instance.renderEntityWithPosYaw(field_675_a, (float) d6, (float) d7, (float) d8, field_675_a.rotationYaw, f);
-		}
-	}
+        if (this.age == this.maxAge)
+        {
+            this.setDead();
+        }
+    }
 
-	@Override
-	public void onUpdate() {
-		field_678_p++;
-		if (field_678_p == field_677_q) {
-			setDead();
-		}
-	}
-
-	@Override
-	public int getFXLayer() {
-		return 3;
-	}
-
-	private Entity field_675_a;
-	private TileEntity field_679_o;
-	private int field_678_p;
-	private int field_677_q;
+    @Override
+    public int getFXLayer()
+    {
+        return 3;
+    }
 }

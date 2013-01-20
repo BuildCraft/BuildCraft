@@ -421,7 +421,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 					continue;
 				}
 
-				ItemStack mineable = entity.func_92014_d();
+				ItemStack mineable = entity.getEntityItem();
 				if (mineable.stackSize <= 0) {
 					continue;
 				}
