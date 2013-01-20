@@ -10,7 +10,7 @@
 package buildcraft.energy.render;
 
 import buildcraft.BuildCraftEnergy;
-import buildcraft.core.render.TextureLiquidsFX;
+import net.minecraftforge.liquids.TextureLiquidsFX;
 
 public class TextureFuelFX extends TextureLiquidsFX {
 
