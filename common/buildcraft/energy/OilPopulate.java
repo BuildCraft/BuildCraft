@@ -12,6 +12,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.*;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -48,7 +49,8 @@ public class OilPopulate {
 			return;
 		}
 
-		if (biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97) {
+		if ((biomegenbase == BiomeGenBase.desert || world.getChunkProvider() instanceof ChunkProviderFlat) &&
+			rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
 
 			int startX = rand.nextInt(10) + 2;
@@ -59,7 +61,9 @@ public class OilPopulate {
 				int k = startZ + z;
 
 				if (world.getBlockId(i, j, k) != 0) {
-					if (world.getBlockId(i, j, k) == Block.sand.blockID) {
+					if (world.getBlockId(i, j, k) == Block.sand.blockID ||
+						(world.getChunkProvider() instanceof ChunkProviderFlat &&
+							world.getBlockMaterial(i, j, k).isOpaque())) {
 						generateSurfaceDeposit(world, rand, i, j, k, 3);
 					}
 
@@ -67,7 +71,9 @@ public class OilPopulate {
 				}
 			}
 		}
-
+		
+		if (world.getChunkProvider() instanceof ChunkProviderFlat) return;
+		
 		boolean mediumDeposit = rand.nextDouble() <= (0.15 / 100.0);
 		boolean largeDeposit = rand.nextDouble() <= (0.005 / 100.0);
 
