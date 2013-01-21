@@ -49,8 +49,8 @@ public class OilPopulate {
 			return;
 		}
 
-		if ((biomegenbase == BiomeGenBase.desert || world.getChunkProvider() instanceof ChunkProviderFlat) &&
-			rand.nextFloat() > 0.97) {
+		if ((biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97)  ||
+			(world.getChunkProvider() instanceof ChunkProviderFlat && rand.nextFloat() > 0.85)) {
 			// Generate a small desert deposit
 
 			int startX = rand.nextInt(10) + 2;
