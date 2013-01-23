@@ -39,7 +39,6 @@ import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
-import buildcraft.core.Version;
 import buildcraft.core.blueprints.BptItem;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
@@ -153,8 +152,6 @@ public class BuildCraftCore {
 
 	@PreInit
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-
-		Version.versionCheck();
 
 		bcLog.setParent(FMLLog.getLogger());
 		bcLog.info("Starting BuildCraft " + Version.getVersion());
