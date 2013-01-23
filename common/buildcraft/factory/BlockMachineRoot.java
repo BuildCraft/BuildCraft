@@ -11,16 +11,16 @@ package buildcraft.factory;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IMachine;
 
 public abstract class BlockMachineRoot extends BlockContainer {
 
 	protected BlockMachineRoot(int i, Material material) {
 		super(i, material);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

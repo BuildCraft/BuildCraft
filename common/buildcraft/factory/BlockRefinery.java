@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -27,6 +26,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -37,7 +37,7 @@ public class BlockRefinery extends BlockContainer {
 		super(i, Material.iron);
 
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

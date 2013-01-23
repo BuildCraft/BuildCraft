@@ -3,7 +3,6 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -20,7 +19,6 @@ public class BlockHopper extends BlockBuildCraft {
 	public BlockHopper(int blockId) {
 		super(blockId, Material.iron);
 		setHardness(5F);
-		setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override

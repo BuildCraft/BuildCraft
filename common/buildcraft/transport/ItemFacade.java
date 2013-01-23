@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -34,7 +35,7 @@ public class ItemFacade extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

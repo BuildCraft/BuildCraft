@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -25,6 +24,7 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
@@ -41,7 +41,7 @@ public class BlockArchitect extends BlockContainer {
 	public BlockArchitect(int i) {
 		super(i, Material.iron);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 		blockTextureSides = 3 * 16 + 0;
 		blockTextureTopNeg = 3 * 16 + 1;
 		blockTextureTopPos = 3 * 16 + 2;

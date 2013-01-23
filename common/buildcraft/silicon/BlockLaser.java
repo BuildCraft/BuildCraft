@@ -13,11 +13,11 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 
 public class BlockLaser extends BlockContainer {
@@ -25,7 +25,7 @@ public class BlockLaser extends BlockContainer {
 	public BlockLaser(int i) {
 		super(i, Material.iron);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

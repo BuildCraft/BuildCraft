@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
@@ -28,7 +28,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 	public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 		setHardness(0.7F);
 	}
 

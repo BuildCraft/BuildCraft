@@ -11,12 +11,12 @@ package buildcraft.builders;
 
 import java.util.List;
 
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.proxy.CoreProxy;
@@ -28,7 +28,7 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 
 		maxStackSize = 1;
 		iconIndex = 5 * 16 + 0;
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@SuppressWarnings({ "all" })

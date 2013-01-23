@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -24,7 +25,7 @@ public class BlockAssemblyTable extends BlockContainer {
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 
 	}
 

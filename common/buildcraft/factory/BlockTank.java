@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +22,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftCore;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 
@@ -32,7 +32,7 @@ public class BlockTank extends BlockContainer {
 		super(i, Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

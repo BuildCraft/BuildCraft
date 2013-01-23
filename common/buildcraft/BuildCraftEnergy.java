@@ -138,7 +138,7 @@ public class BuildCraftEnergy {
 		LanguageRegistry.addName(bucketOil, "Oil Bucket");
 
 		bucketFuel = new ItemBuildCraft(Integer.parseInt(bucketFuelId.value)).setItemName("bucketFuel").setContainerItem(Item.bucketEmpty);
-		bucketFuel.setIconIndex(0 * 16 + 3).setMaxStackSize(1).setCreativeTab(CreativeTabs.tabMisc);
+		bucketFuel.setIconIndex(0 * 16 + 3).setMaxStackSize(1);
 		LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 
 		oilLiquid = LiquidDictionary.getOrCreateLiquid("Oil", new LiquidStack(oilStill, 1));

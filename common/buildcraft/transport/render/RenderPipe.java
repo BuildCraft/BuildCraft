@@ -9,15 +9,10 @@
 
 package buildcraft.transport.render;
 
-import static org.lwjgl.opengl.GL11.glScalef;
-
 import java.util.HashMap;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -27,9 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 
@@ -433,8 +425,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
 	}
-
-	private Random random = new Random();
 
 	public void doRenderItem(IPipedItem entityitem, double d, double d1, double d2, float f1) {
 

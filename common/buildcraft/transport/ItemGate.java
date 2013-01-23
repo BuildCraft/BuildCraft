@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 
 public class ItemGate extends ItemBuildCraft {
@@ -20,7 +21,7 @@ public class ItemGate extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@SuppressWarnings({ "all" })

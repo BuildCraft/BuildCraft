@@ -4,7 +4,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.World;
 
 public class BlockSpring extends Block {
@@ -15,8 +14,8 @@ public class BlockSpring extends Block {
 		setResistance(6000000.0F);
 		setStepSound(soundStoneFootstep);
 		disableStats();
-		setCreativeTab(CreativeTabs.tabBlock);
 		setTickRandomly(true);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

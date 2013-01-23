@@ -44,7 +44,6 @@ import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.SurroundingInventory;
 import buildcraft.core.utils.Utils;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {

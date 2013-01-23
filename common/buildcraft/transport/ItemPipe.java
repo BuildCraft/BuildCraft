@@ -10,11 +10,11 @@
 package buildcraft.transport;
 
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.BuildCraftCore;
@@ -27,7 +27,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	protected ItemPipe(int i) {
 		super(i);
-		this.setCreativeTab(CreativeTabs.tabTransport);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

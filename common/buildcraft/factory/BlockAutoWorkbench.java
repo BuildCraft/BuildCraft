@@ -12,7 +12,6 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -33,7 +32,6 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		topTexture = 2 * 16 + 11;
 		sideTexture = 2 * 16 + 12;
 		setHardness(1.0F);
-		setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override

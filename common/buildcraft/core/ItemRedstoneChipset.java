@@ -15,7 +15,6 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
-		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	@SuppressWarnings({ "all" })

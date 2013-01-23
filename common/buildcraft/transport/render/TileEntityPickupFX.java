@@ -17,12 +17,10 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.particle.EntityPickupFX;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.core.utils.Utils;
@@ -61,9 +59,6 @@ public class TileEntityPickupFX extends EntityFX
         double var21 = var9 + (var15 - var9) * (double)var8;
         double var23 = var11 + (var17 - var11) * (double)var8;
         double var25 = var13 + (var19 - var13) * (double)var8;
-        int var27 = MathHelper.floor_double(var21);
-        int var28 = MathHelper.floor_double(var23 + (double)(this.yOffset / 2.0F));
-        int var29 = MathHelper.floor_double(var25);
         int var30 = this.getBrightnessForRender(par2);
         int var31 = var30 % 65536;
         int var32 = var30 / 65536;

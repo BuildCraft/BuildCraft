@@ -37,7 +37,6 @@ public class BlockMiningWell extends BlockMachineRoot {
 		textureSides = 16 * 2 + 5;
 		textureBack = 16 * 2 + 6;
 		textureTop = 16 * 2 + 4;
-
 	}
 
 	@Override
