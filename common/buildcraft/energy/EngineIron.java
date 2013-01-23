@@ -37,6 +37,7 @@ public class EngineIron extends Engine {
 	int heat = 0;
 	private LiquidTank fuelTank;
 	private LiquidTank coolantTank;
+	private IronEngineFuel currentFuel = null;
 
 	public int penaltyCooling = 0;
 
@@ -92,7 +93,9 @@ public class EngineIron extends Engine {
 	public void burn() {
 		currentOutput = 0;
 		LiquidStack fuel = this.fuelTank.getLiquid();
-		IronEngineFuel currentFuel = IronEngineFuel.getFuelForLiquid(fuel);
+		if(currentFuel == null) {
+			currentFuel = IronEngineFuel.getFuelForLiquid(fuel);
+		}
 
 		if (currentFuel == null)
 			return;
@@ -104,20 +107,25 @@ public class EngineIron extends Engine {
 			if (burnTime > 0 || fuel.amount > 0) {
 				if (burnTime > 0) {
 					burnTime--;
-				} else {
-					if (--fuel.amount <= 0) {
-						fuelTank.setLiquid(null);
+				} 
+				if (burnTime <= 0) {
+					if(fuel != null) {
+						if (--fuel.amount <= 0) {
+							fuelTank.setLiquid(null);
+						}
+						burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
+					} else {
+						currentFuel = null;
+						return;
 					}
-					burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
 				}
-
 				currentOutput = currentFuel.powerPerCycle;
 				addEnergy(currentFuel.powerPerCycle);
 				heat += currentFuel.powerPerCycle;
 			}
 		} else if (penaltyCooling <= 0) {
 			if (lastPowered) {
-				lastPowered = false;
+				lastPowered = false; 
 				penaltyCooling = 30 * 20;
 				// 30 sec of penalty on top of the cooling
 			}
