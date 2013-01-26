@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -122,6 +123,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		logic.onBlockPlaced();
 		transport.onBlockPlaced();
 	}
+	
+	public void onBlockPlacedBy(EntityLiving placer) {}
 
 	public void onNeighborBlockChange(int blockId) {
 		logic.onNeighborBlockChange(blockId);
