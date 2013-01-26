@@ -16,7 +16,7 @@
     <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
           
 	<property name="mc.version"			 value="1.4.7"/>
-    <property name="forge.version"		 value="6.6.0.491"/>
+    <property name="forge.version"		 value="6.6.0.509"/>
     <property name="bc.version"          value="3.4.1"/>
     <property name="bc.version.full"     value="${bc.version}"/>
     
