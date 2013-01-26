@@ -94,6 +94,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
 			if (stacks != null) {
 				for (ItemStack stack : stacks) {
+					if(stack == null)
+						continue;
+					
 					boolean matches = false;
 					for (int i = 0; i < filters.getSizeInventory(); i++) {
 						ItemStack filter = filters.getStackInSlot(i);
