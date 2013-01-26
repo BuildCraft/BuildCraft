@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import net.minecraftforge.common.Property;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
-import cpw.mods.fml.common.FMLLog;
 
-public class Version {
+public class Version implements Runnable {
+    
+    private static Version instance = new Version();
 
 	public enum EnumUpdateState {
 		CURRENT, OUTDATED, CONNECTION_ERROR
@@ -85,7 +86,7 @@ public class Version {
 						recommendedVersion = tokens[2];
 
 						if (line.endsWith(VERSION)) {
-							FMLLog.finer(DefaultProps.MOD + ": Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
+						    BuildCraftCore.bcLog.finer("Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
 							currentVersion = EnumUpdateState.CURRENT;
 							return;
 						}
@@ -93,13 +94,13 @@ public class Version {
 				}
 			}
 
-			FMLLog.warning(DefaultProps.MOD + ": Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
+			BuildCraftCore.bcLog.warning("Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
 					+ ". Consider updating.");
 			currentVersion = EnumUpdateState.OUTDATED;
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			FMLLog.warning(DefaultProps.MOD + ": Unable to read from remote version authority.");
+			BuildCraftCore.bcLog.warning("Unable to read from remote version authority.");
+			BuildCraftCore.bcLog.warning(e.toString());
 			currentVersion = EnumUpdateState.CONNECTION_ERROR;
 		}
 	}
@@ -146,10 +147,44 @@ public class Version {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			FMLLog.warning(DefaultProps.MOD + ": Unable to read changelog from remote site.");
+			BuildCraftCore.bcLog.warning("Unable to read changelog from remote site.");
 		}
 
 		return new String[] { String.format("Unable to retrieve changelog for %s %s", DefaultProps.MOD, version) };
 	}
+
+    @Override
+    public void run() {
+
+        int count = 0;
+        currentVersion = null;
+        
+        BuildCraftCore.bcLog.info("Beginning version check");
+        
+        try {
+            while ((count < 3) && ((currentVersion == null) || (currentVersion == EnumUpdateState.CONNECTION_ERROR))) {
+                versionCheck();
+                count++;
+                
+                if (currentVersion == EnumUpdateState.CONNECTION_ERROR) {
+                    BuildCraftCore.bcLog.info("Version check attempt " + count + " failed, trying again in 10 seconds");
+                    Thread.sleep(10000);
+                }
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        if (currentVersion == EnumUpdateState.CONNECTION_ERROR) {
+            BuildCraftCore.bcLog.info("Version check failed");
+        }
+        
+    }
+    
+    public static void check() {
+        
+        new Thread(instance).start();
+    }
 
 }

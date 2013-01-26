@@ -154,7 +154,7 @@ public class BuildCraftCore {
 	@PreInit
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
-		Version.versionCheck();
+		Version.check();
 
 		bcLog.setParent(FMLLog.getLogger());
 		bcLog.info("Starting BuildCraft " + Version.getVersion());
