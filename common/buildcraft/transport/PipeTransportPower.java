@@ -237,15 +237,13 @@ public class PipeTransportPower extends PipeTransport {
 			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
 		} else {
 			if (BuildCraftTransport.usePipeLoss) {
-				internalNextPower[from.ordinal()] += val * (1 - powerResistance);
-			} else {
-				internalNextPower[from.ordinal()] += val;
+				val = val * (1 - powerResistance);
+			}
+			if (internalNextPower[from.ordinal()] + val >= MAX_POWER_INTERNAL) {
+				return;
 			}
 
-			if (internalNextPower[from.ordinal()] >= MAX_POWER_INTERNAL) {
-				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, false);
-				worldObj.setBlockWithNotify(xCoord, yCoord, zCoord, 0);
-			}
+			internalNextPower[from.ordinal()] += val;
 		}
 	}
 
