@@ -449,51 +449,51 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-	 ForgeDirection dir = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)];
+		ForgeDirection dir = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
 
-       switch (direction) {
-       case NORTH:
-           switch (dir) {
-           case WEST:
-               return ingredient2;
-           case EAST:
-               return ingredient1;
-           default:
-               return null;
-           }
-       case SOUTH:
-           switch (dir) {
-           case WEST:
-               return ingredient1;
-           case EAST:
-               return ingredient2;
-           default:
-               return null;
-           }
-       case EAST:
-           switch (dir) {
-           case NORTH:
-               return ingredient2;
-           case SOUTH:
-               return ingredient1;
-           default:
-               return null;
-           }
-       case WEST:
-           switch (dir) {
-           case NORTH:
-               return ingredient1;
-           case SOUTH:
-               return ingredient2;
-           default:
-               return null;
-           }
-       case DOWN:
-           return result;
-       default:
-           return null;
-     }
-}
+		switch (direction) {
+			case NORTH:
+				switch (dir) {
+					case WEST:
+						return ingredient2;
+					case EAST:
+						return ingredient1;
+					default:
+						return null;
+				}
+			case SOUTH:
+				switch (dir) {
+					case WEST:
+						return ingredient1;
+					case EAST:
+						return ingredient2;
+					default:
+						return null;
+				}
+			case EAST:
+				switch (dir) {
+					case NORTH:
+						return ingredient2;
+					case SOUTH:
+						return ingredient1;
+					default:
+						return null;
+				}
+			case WEST:
+				switch (dir) {
+					case NORTH:
+						return ingredient1;
+					case SOUTH:
+						return ingredient2;
+					default:
+						return null;
+				}
+			case DOWN:
+				return result;
+			default:
+				return null;
+		}
+	}
 
 	// Network
 
