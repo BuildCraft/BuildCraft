@@ -430,6 +430,6 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 
 	@Override
 	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		return null;
+		return tank;
 	}
 }
