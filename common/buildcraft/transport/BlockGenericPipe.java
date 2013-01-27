@@ -39,6 +39,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockGenericPipe extends BlockContainer {
 
@@ -605,6 +606,8 @@ public class BlockGenericPipe extends BlockContainer {
 
 	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
 		ItemPipe item = new ItemPipe(key);
+		item.setItemName("buildcraftPipe." + clas.getSimpleName().toLowerCase());
+		GameRegistry.registerItem(item, item.getItemName());
 
 		pipes.put(item.itemID, clas);
 
