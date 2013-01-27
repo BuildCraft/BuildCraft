@@ -109,7 +109,14 @@
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
 			<arg value="recompile.sh"/>
 		</exec>
-
+		
+		<!-- Check for failure -->
+		<fail message="MCP failed to build">
+			<condition>
+				<resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
+			</condition>
+		</fail>
+		
 		<!-- Reobfuscate -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate.bat"/>
