@@ -295,8 +295,7 @@ public class BuildCraftCore {
 
 	@ServerStarting
 	public void serverStarting(FMLServerStartingEvent event) {
-		CommandHandler commandManager = (CommandHandler) event.getServer().getCommandManager();
-		commandManager.registerCommand(new CommandBuildCraft());
+		event.registerServerCommand(new CommandBuildCraft());
 	}
 
 	public void loadRecipes() {
