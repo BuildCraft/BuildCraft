@@ -502,12 +502,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				}
 			}
 
-			for (int i = 0; i < tileBuffer.length; ++i)
+			for (int i = 0; i < tileBuffer.length; ++i) {
 				if (oldConnections[i] != pipeConnectionsBuffer[i]) {
-					Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.VALID_DIRECTIONS[i]);
-					pos.moveForwards(1.0);
-					scheduleRenderUpdate();
+					TileBuffer t = tileBuffer[i];
+					if (t.getTile() != null && t.getTile() instanceof TileGenericPipe) {
+						((TileGenericPipe) t.getTile()).scheduleRenderUpdate();
+					}
 				}
+			}
 		}
 	}
 
