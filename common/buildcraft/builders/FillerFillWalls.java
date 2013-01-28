@@ -12,12 +12,13 @@ package buildcraft.builders;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
+import buildcraft.api.power.IPowerProvider;
 import buildcraft.core.DefaultProps;
 
 public class FillerFillWalls extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public float iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace, IPowerProvider power) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -26,25 +27,23 @@ public class FillerFillWalls extends FillerPattern {
 		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
-		if (fill(xMin, yMin, zMin, xMax, yMin, zMax, stackToPlace, tile.worldObj))
-			return false;
+		float powerUsed = fill(xMin, yMin, zMin, xMax, yMin, zMax, stackToPlace, tile.worldObj, power);
+		if (powerUsed>=0)
+			return powerUsed;
 
-		if (fill(xMin, yMin, zMin, xMin, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
-
-		if (fill(xMin, yMin, zMin, xMax, yMax, zMin, stackToPlace, tile.worldObj))
-			return false;
-
-		if (fill(xMax, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
-
-		if (fill(xMin, yMin, zMax, xMax, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
-
-		if (fill(xMin, yMax, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
-
-		return true;
+		powerUsed = fill(xMin, yMin, zMin, xMin, yMax, zMax, stackToPlace, tile.worldObj, power);
+		if (powerUsed>=0)
+			return powerUsed;
+		powerUsed = fill(xMin, yMin, zMin, xMax, yMax, zMin, stackToPlace, tile.worldObj, power);
+		if (powerUsed>=0)
+			return powerUsed;
+		powerUsed = fill(xMax, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj, power);
+		if (powerUsed>=0)
+			return powerUsed;
+		powerUsed = fill(xMin, yMin, zMax, xMax, yMax, zMax, stackToPlace, tile.worldObj, power);
+		if (powerUsed>=0)
+			return powerUsed;
+		return fill(xMin, yMax, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj, power);
 	}
 
 	@Override

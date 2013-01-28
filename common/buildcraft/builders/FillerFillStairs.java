@@ -12,12 +12,13 @@ package buildcraft.builders;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
+import buildcraft.api.power.IPowerProvider;
 import buildcraft.core.DefaultProps;
 
 public class FillerFillStairs extends FillerPattern {
 
 	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+	public float iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace, IPowerProvider power) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -33,6 +34,8 @@ public class FillerFillStairs extends FillerPattern {
 		int heightStep;
 		int dimX = 0;
 		int dimZ = 0;
+
+		float powerUsed = -1;
 
 		if (tile.yCoord <= yMin) {
 			height = yMin;
@@ -120,8 +123,9 @@ public class FillerFillStairs extends FillerPattern {
 		if (kind == 0) {
 			while (x2 - x1 + 1 > 0 && z2 - z1 + 1 > 0 && x2 - x1 < sizeX && z2 - z1 < sizeZ && height >= yMin && height <= yMax) {
 
-				if (fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj))
-					return false;
+				powerUsed = fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj, power);
+				if(powerUsed>=0)
+					return powerUsed;
 
 				if (heightStep == 1) {
 					x1 += steps[0];
@@ -175,8 +179,9 @@ public class FillerFillStairs extends FillerPattern {
 
 				}
 
-				if (fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj))
-					return false;
+				powerUsed = fill(x1, height, z1, x2, height, z2, stackToPlace, tile.worldObj, power);
+				if (powerUsed >=0)
+					return powerUsed;
 
 				dimX += stepDiagX;
 				dimZ += stepDiagZ;
@@ -185,7 +190,7 @@ public class FillerFillStairs extends FillerPattern {
 			}
 		}
 
-		return true;
+		return powerUsed;
 	}
 
 	@Override
