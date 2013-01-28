@@ -102,11 +102,14 @@ public class ItemFacade extends ItemBuildCraft {
 				} catch (Exception e) {
 					continue;
 				}
-				if (b.blockID == 7 || b.blockID == 18 || b.blockID == 19 || b.blockID == 95) {
-					continue;
-				}
-				if (!b.isOpaqueCube() || b.hasTileEntity(0) || !b.renderAsNormalBlock()) {
-					continue;
+				
+				if (!(b.blockID == 20)){
+					if (b.blockID == 7 || b.blockID == 18 || b.blockID == 19 || b.blockID == 95) {
+						continue;
+					}
+					if (!b.isOpaqueCube() || b.hasTileEntity(0) || !b.renderAsNormalBlock()) {
+						continue;
+					}
 				}
 				ItemStack base = new ItemStack(b, 1);
 				if (base.getHasSubtypes()) {
