@@ -259,7 +259,7 @@ public class BuildCraftCore {
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
 		if (BuildCraftCore.modifyWorld) {
-			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
+			MinecraftForge.TERRAIN_GEN_BUS.register(new SpringPopulate());
 		}
 
 		if (BuildCraftCore.loadDefaultRecipes) {
