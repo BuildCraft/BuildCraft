@@ -89,7 +89,7 @@ public class BuildCraftEnergy {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
 		if (BuildCraftCore.modifyWorld) {
-			MinecraftForge.EVENT_BUS.register(new OilPopulate());
+			MinecraftForge.TERRAIN_GEN_BUS.register(new OilPopulate());
 		}
 
 		new BptBlockEngine(engineBlock.blockID);
