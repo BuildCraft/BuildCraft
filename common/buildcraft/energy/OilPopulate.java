@@ -37,10 +37,6 @@ public class OilPopulate {
 	}
 
 	public static void doPopulate(World world, Random rand, int x, int z) {
-		if (!BuildCraftCore.modifyWorld) {
-			return;
-		}
-
 		BiomeGenBase biomegenbase = world.getBiomeGenForCoords(x + 16, z + 16);
 
 		// Do not generate oil in the End

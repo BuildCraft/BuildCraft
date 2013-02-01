@@ -258,8 +258,10 @@ public class BuildCraftCore {
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
-		MinecraftForge.EVENT_BUS.register(new SpringPopulate());
-				
+		if (BuildCraftCore.modifyWorld) {
+			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
+		}
+
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
