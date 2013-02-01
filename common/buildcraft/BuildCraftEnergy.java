@@ -87,7 +87,10 @@ public class BuildCraftEnergy {
 	@Init
 	public static void load(FMLInitializationEvent evt) {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
-		MinecraftForge.EVENT_BUS.register(new OilPopulate());
+
+		if (BuildCraftCore.modifyWorld) {
+			MinecraftForge.EVENT_BUS.register(new OilPopulate());
+		}
 
 		new BptBlockEngine(engineBlock.blockID);
 

@@ -22,9 +22,6 @@ public class SpringPopulate {
 
 	@ForgeSubscribe
 	public void populate(PopulateChunkEvent.Post event) {
-		if (!BuildCraftCore.modifyWorld) {
-			return;
-		}
 		
 		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkX, event.hasVillageGenerated, PopulateChunkEvent.Populate.EventType.CUSTOM);
 
