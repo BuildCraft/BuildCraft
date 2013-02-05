@@ -17,8 +17,8 @@ public class TransactorSimple extends Transactor {
 
 		int injected = 0;
 
-		int slot = 0;
-		while ((slot = getPartialSlot(stack, orientation, slot)) >= 0 && injected < stack.stackSize) {
+		int slot = -1;
+		while ((slot = getPartialSlot(stack, orientation, slot + 1)) >= 0 && injected < stack.stackSize) {
 			injected += addToSlot(slot, stack, injected, doAdd);
 		}
 
