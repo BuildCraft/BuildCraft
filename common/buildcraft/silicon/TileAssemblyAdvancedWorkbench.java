@@ -47,14 +47,20 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 
 		@Override
 		public ItemStack getStackInSlot(int par1) {
-			if (tempStacks != null) {
-				if (par1 >= 0 && par1 < 9) {
-					if (bindings[par1] >= 0)
+			if (par1 >= 0 && par1 < 9) {
+				if (tempStacks != null) {
+					if (bindings[par1] >= 0) {
 						return tempStacks[bindings[par1]];
+					}
+					
+					// unbound returns null
+				} else {
+					return craftingSlots.getStackInSlot(par1);
 				}
-				return null;
 			}
-			return craftingSlots.getStackInSlot(par1);
+			
+			// vanilla returns null for out of bound stacks in InventoryCrafting as well
+			return null;
 		}
 
 		@Override
