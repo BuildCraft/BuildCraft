@@ -1,8 +1,8 @@
 ## Welcome to Buildcraft on GitHub
 
 ### Contributing
-If you wish to submit a pull request to fix bugs or broken behaivor feel free to do so. If you would like to add 
-features or change existing behaivour or balance, please discuss it with Sengir or Krapht before submiting the pull request.
+If you wish to submit a pull request to fix bugs or broken behaviour feel free to do so. If you would like to add 
+features or change existing behaviour or balance, please discuss it with Sengir or Krapht before submiting the pull request.
 
 ### Compiling and packaging Buildcraft
 1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) is installed correctly on your system.
