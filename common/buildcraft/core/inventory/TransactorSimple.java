@@ -45,7 +45,7 @@ public class TransactorSimple extends Transactor {
 				continue;
 			}
 
-			if (inventory.getStackInSlot(i).stackSize >= inventory.getStackInSlot(i).getMaxStackSize()) {
+			if (inventory.getStackInSlot(i).stackSize >= inventory.getStackInSlot(i).getMaxStackSize() || inventory.getStackInSlot(i).stackSize >= inventory.getInventoryStackLimit()) {
 				continue;
 			}
 
