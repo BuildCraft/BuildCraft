@@ -24,6 +24,11 @@ public class CommandBuildCraft extends CommandBase {
 	public String getCommandUsage(ICommandSender sender) {
 		return "/" + this.getCommandName() + " help";
 	}
+	
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender) {
+		return true;
+	}
 
 	@Override
 	public List getCommandAliases() {
