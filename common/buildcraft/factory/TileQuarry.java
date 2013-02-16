@@ -75,7 +75,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	boolean isDigging = false;
 
-	public static int MAX_ENERGY = 15000;
+	public static final int MAX_ENERGY = 15000;
 
 	public TileQuarry() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
@@ -234,7 +234,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
 	}
 
-	private LinkedList<int[]> visitList = Lists.newLinkedList();
+	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
 	public boolean findTarget(boolean doSet) {
 
@@ -251,7 +251,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		if (visitList.isEmpty())
 			return false;
 
-		boolean foundTarget = false;
+		boolean foundTarget;
 		int[] target;
 		do {
 			if (visitList.isEmpty()) {
@@ -260,7 +260,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			target = visitList.removeFirst();
 			boolean alternativeTarget = false;
 			for (int y = target[1] + 1; y < yCoord + 3; y++) {
-				if (BlockUtil.canChangeBlock(worldObj, target[0], y, target[2]) && !BlockUtil.isSoftBlock(worldObj, target[0], y, target[2])) {
+				int blockID = worldObj.getBlockId(target[0], y, target[2]);
+				if (BlockUtil.canChangeBlock(blockID, worldObj, target[0], y, target[2]) && !BlockUtil.isSoftBlock(blockID, worldObj, target[0], y, target[2])) {
 					createColumnVisitList();
 					alternativeTarget = true;
 					break;
@@ -278,6 +279,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	 */
 	private void createColumnVisitList() {
 		visitList.clear();
+
+		Integer[][] columnHeights = new Integer[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
 		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
 		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
 			int startX, endX, incX;
@@ -307,11 +310,20 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 				for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
 					if (!blockedColumns[searchX][searchZ]) {
+						Integer height = columnHeights[searchX][searchZ];
 						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
 
-						if (!BlockUtil.canChangeBlock(worldObj, bx, by, bz)) {
+						if (height == null)
+							columnHeights[searchX][searchZ] = height = worldObj.getHeightValue(bx, bz);
+
+						if (height < by)
+							continue;
+
+						int blockID = worldObj.getBlockId(bx, by, bz);
+
+						if (!BlockUtil.canChangeBlock(blockID, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BlockUtil.isSoftBlock(worldObj, bx, by, bz)) {
+						} else if (!BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz)) {
 							visitList.add(new int[] { bx, by, bz });
 						}
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
@@ -321,7 +333,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -461,7 +472,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
-		return BlockUtil.canChangeBlock(worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(worldObj, bx, by, bz);
+		int blockID = worldObj.getBlockId(bx, by, bz);
+		return BlockUtil.canChangeBlock(blockID, worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz);
 	}
 
 	@Override
@@ -529,7 +541,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		int xSize = a.xMax() - a.xMin() + 1;
-		int ySize = a.yMax() - a.yMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
@@ -544,7 +555,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		xSize = a.xMax() - a.xMin() + 1;
-		ySize = a.yMax() - a.yMin() + 1;
+		int ySize = a.yMax() - a.yMin() + 1;
 		zSize = a.zMax() - a.zMin() + 1;
 
 		box.initialize(a);
@@ -555,7 +566,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		if (useDefault) {
-			int xMin = 0, zMin = 0;
+			int xMin, zMin;
 
 			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 

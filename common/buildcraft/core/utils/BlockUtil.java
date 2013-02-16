@@ -58,13 +58,14 @@ public class BlockUtil {
 	}
 
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
-		if (world.isAirBlock(x, y, z))
-			return true;
+		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
+	}
 
-		int blockID = world.getBlockId(x, y, z);
-		if (Block.blocksList[blockID] == null)
-			return true;
+	public static boolean canChangeBlock(int blockID, World world, int x, int y, int z) {
 		Block block = Block.blocksList[blockID];
+
+		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
+			return true;
 
 		if (block.getBlockHardness(world, x, y, z) < 0)
 			return false;
@@ -79,11 +80,12 @@ public class BlockUtil {
 	}
 
 	public static boolean isSoftBlock(World world, int x, int y, int z) {
-		if (world.isAirBlock(x, y, z))
-			return true;
+		return isSoftBlock(world.getBlockId(x, y, z), world, x, y, z);
+	}
 
-		int blockId = world.getBlockId(x, y, z);
+	public static boolean isSoftBlock(int blockID, World world, int x, int y, int z) {
+		Block block = Block.blocksList[blockID];
 
-		return BuildCraftAPI.softBlocks[blockId] || Block.blocksList[blockId] == null;
+		return blockID == 0 || block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
 	}
 }
