@@ -56,6 +56,11 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	}
 
+	public IRecipe getCurrentRecipe() {
+
+		return currentRecipe ;
+	}
+
 	@Override
 	public int getSizeInventory() {
 
