@@ -12,6 +12,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +24,7 @@ import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.utils.CraftingHelper;
 
 import com.google.common.collect.Lists;
 
@@ -111,6 +113,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	private int tick;
 	private int recentEnergyAverage;
 	private InternalPlayer internalPlayer;
+	private IRecipe currentRecipe;
 
 	@Override
 	public int getSizeInventory() {
@@ -348,7 +351,11 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	}
 
 	private void updateCraftingResults() {
-		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(internalInventoryCrafting, worldObj));
+		if(this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj))
+			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
+
+		ItemStack resultStack = currentRecipe.getCraftingResult(internalInventoryCrafting);
+		craftResult.setInventorySlotContents(0, resultStack);
 		onInventoryChanged();
 	}
 
