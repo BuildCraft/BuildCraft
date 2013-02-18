@@ -123,8 +123,8 @@ public class PipeTransportPower extends PipeTransport {
 
 							nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 
-							displayPower[j] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
-							displayPower[i] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
+							displayPower[j] += (short) (watts * DISPLAY_POWER_FACTOR + .9999);
+							displayPower[i] += (short) (watts * DISPLAY_POWER_FACTOR + .9999);
 
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof IPowerReceptor) {
@@ -135,8 +135,8 @@ public class PipeTransportPower extends PipeTransport {
 							if (prov != null) {
 								prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 
-								displayPower[j] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
-								displayPower[i] += (short) Math.ceil(watts * DISPLAY_POWER_FACTOR);
+								displayPower[j] += (short) (watts * DISPLAY_POWER_FACTOR + .9999);
+								displayPower[i] += (short) (watts * DISPLAY_POWER_FACTOR + .9999);
 
 								internalPower[i] -= watts;
 							}
