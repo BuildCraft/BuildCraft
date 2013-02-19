@@ -28,7 +28,7 @@ import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.utils.CraftingHelper;
+import buildcraft.core.utils.CraftingHelper;
 
 public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
