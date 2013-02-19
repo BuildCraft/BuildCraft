@@ -34,6 +34,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
+import buildcraft.core.EventHandlerCore;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
@@ -261,6 +262,8 @@ public class BuildCraftCore {
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
 		}
+		
+		MinecraftForge.EVENT_BUS.register(new EventHandlerCore());
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

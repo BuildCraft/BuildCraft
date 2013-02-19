@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.Property;
 import buildcraft.core.DefaultProps;
@@ -34,6 +35,7 @@ import buildcraft.factory.BptBlockAutoWorkbench;
 import buildcraft.factory.BptBlockFrame;
 import buildcraft.factory.BptBlockRefinery;
 import buildcraft.factory.BptBlockTank;
+import buildcraft.factory.EventHandlerFactory;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.GuiHandler;
 import buildcraft.factory.TileAutoWorkbench;
@@ -76,6 +78,8 @@ public class BuildCraftFactory {
 	public static int drillTexture;
 
 	public static boolean allowMining = true;
+	
+	public static boolean quarriesLoadChunks = false;
 
 	@Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
@@ -101,6 +105,11 @@ public class BuildCraftFactory {
 
 		@Override
 		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount) {
+			if (!BuildCraftFactory.quarriesLoadChunks) {
+				tickets.clear();
+				return tickets;
+			}
+			
 			List<Ticket> validTickets = Lists.newArrayList();
 			for (Ticket ticket : tickets) {
 				int quarryX = ticket.getModData().getInteger("quarryX");
@@ -133,6 +142,8 @@ public class BuildCraftFactory {
 		if (!hopperDisabled) {
 			CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
 		}
+		
+		MinecraftForge.EVENT_BUS.register(new EventHandlerFactory());
 
 		FactoryProxy.proxy.initializeTileEntities();
 		FactoryProxy.proxy.initializeEntityRenders();
@@ -151,6 +162,8 @@ public class BuildCraftFactory {
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
 		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "mining.enabled", true).value);
+		
+		quarriesLoadChunks = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "quarry.loadChunks", false).value);
 
 		Property minigWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
 		Property plainPipeId = BuildCraftCore.mainConfiguration.getBlock("drill.id", DefaultProps.DRILL_ID);

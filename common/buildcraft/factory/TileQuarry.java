@@ -137,15 +137,42 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void updateEntity() {
+		
+		super.updateEntity();
+		
+		if (!BuildCraftFactory.quarriesLoadChunks) {
+			// If the quarry isn't loading chunks themselves, then it will only run if it's fully loaded.
+			isAlive = true;
+			
+			for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4 && isAlive; chunkX++) {
+				for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ++) {
+					if (!worldObj.blockExists(chunkX << 4, 64, chunkZ << 4)) {
+						isAlive = false;
+						break;
+					} else System.out.println("chunk exists at "+(chunkX<<4)+","+(chunkZ<<4));
+				}
+			}
+			
+			if (!isAlive) {
+				if (arm != null) {
+					arm.setDead();
+					arm = null;
+				}
+				if (builder != null) {
+					builder.setDead();
+					builder = null;
+				}
+				box.deleteLasers();
+			}
+		}
+		
 		if (!isAlive && CoreProxy.proxy.isSimulating(worldObj)) {
-			super.updateEntity();
 			return;
 		}
 		if (!CoreProxy.proxy.isSimulating(worldObj) && isAlive) {
-			super.updateEntity();
 			return;
 		}
-		super.updateEntity();
+		
 		if (inProcess) {
 			float energyToUse = 2 + powerProvider.getEnergyStored() / 500;
 
@@ -203,6 +230,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 		if (builder == null) {
 			builder = new EntityRobot(worldObj, box);
+			builder.alwaysUpdate = true;
 			worldObj.spawnEntityInWorld(builder);
 		}
 
@@ -510,23 +538,25 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void setBoundaries(boolean useDefault) {
-		if (chunkTicket == null) {
-			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
-		}
-		if (chunkTicket == null) {
-			isAlive = false;
-			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
-				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-								xCoord, yCoord, zCoord)), (Player) placedBy);
+		if (BuildCraftFactory.quarriesLoadChunks) {
+			if (chunkTicket == null) {
+				chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
 			}
-			sendNetworkUpdate();
-			return;
+			if (chunkTicket == null) {
+				isAlive = false;
+				if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
+					PacketDispatcher.sendPacketToPlayer(
+							new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
+									xCoord, yCoord, zCoord)), (Player) placedBy);
+				}
+				sendNetworkUpdate();
+				return;
+			}
+			chunkTicket.getModData().setInteger("quarryX", xCoord);
+			chunkTicket.getModData().setInteger("quarryY", yCoord);
+			chunkTicket.getModData().setInteger("quarryZ", zCoord);
+			ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 		}
-		chunkTicket.getModData().setInteger("quarryX", xCoord);
-		chunkTicket.getModData().setInteger("quarryY", yCoord);
-		chunkTicket.getModData().setInteger("quarryZ", zCoord);
-		ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 
 		IAreaProvider a = null;
 
@@ -543,15 +573,17 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int xSize = a.xMax() - a.xMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
-		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
-			if (placedBy != null) {
-				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
-								chunkTicket.getMaxChunkListDepth())), (Player) placedBy);
+		if (BuildCraftFactory.quarriesLoadChunks) {
+			if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
+				if (placedBy != null) {
+					PacketDispatcher.sendPacketToPlayer(
+							new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
+									chunkTicket.getMaxChunkListDepth())), (Player) placedBy);
+				}
+				a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
+	
+				useDefault = true;
 			}
-			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
-
-			useDefault = true;
 		}
 
 		xSize = a.xMax() - a.xMin() + 1;
@@ -594,7 +626,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 
 		a.removeFromWorld();
-		forceChunkLoading(chunkTicket);
+		
+		if (BuildCraftFactory.quarriesLoadChunks)
+			forceChunkLoading(chunkTicket);
 	}
 
 	private void initializeBluePrintBuilder() {
