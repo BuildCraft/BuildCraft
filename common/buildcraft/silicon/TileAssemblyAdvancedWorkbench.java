@@ -24,7 +24,7 @@ import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.utils.CraftingHelper;
+import buildcraft.core.utils.CraftingHelper;
 
 import com.google.common.collect.Lists;
 
