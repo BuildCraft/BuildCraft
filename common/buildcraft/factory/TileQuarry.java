@@ -149,7 +149,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 					if (!worldObj.blockExists(chunkX << 4, 64, chunkZ << 4)) {
 						isAlive = false;
 						break;
-					} else System.out.println("chunk exists at "+(chunkX<<4)+","+(chunkZ<<4));
+					}
 				}
 			}
 			
