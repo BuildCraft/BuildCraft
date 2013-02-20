@@ -17,6 +17,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -27,11 +28,13 @@ import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.CraftingHelper;
 
 public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	private ItemStack stackList[] = new ItemStack[9];
-
+	private IRecipe currentRecipe = null;
+	
 	class LocalInventoryCrafting extends InventoryCrafting {
 
 		public LocalInventoryCrafting() {
@@ -51,6 +54,11 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			// TODO Auto-generated constructor stub
 		}
 
+	}
+
+	public IRecipe getCurrentRecipe() {
+
+		return currentRecipe ;
 	}
 
 	@Override
@@ -137,9 +145,10 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
+		if(this.currentRecipe == null || !this.currentRecipe.matches(craftMatrix, worldObj))
+			currentRecipe = CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
 
-		return recipe;
+		return currentRecipe.getCraftingResult(craftMatrix);
 	}
 
 	public ItemStack extractItem(boolean doRemove, boolean removeRecipe) {
@@ -177,7 +186,14 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
+		if(this.currentRecipe == null || !this.currentRecipe.matches(craftMatrix, worldObj))
+			currentRecipe = buildcraft.core.utils.CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
+
+		
+		ItemStack resultStack = null;
+		if(currentRecipe != null) {
+			resultStack = currentRecipe.getCraftingResult(craftMatrix);
+		}
 
 		if (resultStack == null || !doRemove) {
 			resetPointers(pointerList);
