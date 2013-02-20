@@ -37,6 +37,7 @@ import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportContent;
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -115,18 +116,19 @@ public class PipeTransportItems extends PipeTransport {
 			sendItemPacket(data);
 		}
 
-		if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
+		if (!worldObj.isRemote && travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
 			groupEntities();
 
 			if (travelingEntities.size() > BuildCraftTransport.maxItemsInPipes) {
-				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 1, false);
+				BlockUtil.explodeBlock(worldObj, xCoord, yCoord, zCoord);
+				return;
 			}
 		}
 	}
 
 	/**
 	 * Bounces the item back into the pipe without changing the travelingEntities map.
-	 * 
+	 *
 	 * @param data
 	 */
 	private void reverseItem(EntityData data) {
@@ -429,7 +431,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	/**
 	 * Handles a packet describing a stack of items inside a pipe.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void handleItemPacket(PacketPipeTransportContent packet) {
@@ -466,7 +468,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	/**
 	 * Creates a packet describing a stack of items inside a pipe.
-	 * 
+	 *
 	 * @param data
 	 * @return
 	 */

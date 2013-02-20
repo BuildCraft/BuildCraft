@@ -10,9 +10,16 @@ package buildcraft.core.utils;
 
 import java.util.List;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet60Explosion;
+import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
@@ -32,9 +39,9 @@ public class BlockUtil {
 	}
 
 	public static void breakBlock(World world, int x, int y, int z) {
-	    breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
+		breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
 	}
-    public static void breakBlock(World world, int x, int y, int z, int forcedLifespan) {
+	public static void breakBlock(World world, int x, int y, int z, int forcedLifespan) {
 		int blockId = world.getBlockId(x, y, z);
 
 		if (blockId != 0 && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
@@ -85,5 +92,24 @@ public class BlockUtil {
 		int blockId = world.getBlockId(x, y, z);
 
 		return BuildCraftAPI.softBlocks[blockId] || Block.blocksList[blockId] == null;
+	}
+
+	/**
+	 * Create an explosion which only affects a single block.
+	 */
+	public static void explodeBlock(World world, int x, int y, int z) {
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) return;
+
+		Explosion explosion = new Explosion(world, null, x + .5, y + .5, z + .5, 3f);
+		explosion.affectedBlockPositions.add(new ChunkPosition(x, y, z));
+		explosion.doExplosionB(true);
+
+		for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities) {
+			if (!(player instanceof EntityPlayerMP)) continue;
+
+			if (player.getDistanceSq(x, y, z) < 4096) {
+				((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(x + .5, y + .5, z + .5, 3f, explosion.affectedBlockPositions, null));
+			}
+		}
 	}
 }
