@@ -354,7 +354,10 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		if(this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj))
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
 
-		ItemStack resultStack = currentRecipe.getCraftingResult(internalInventoryCrafting);
+		ItemStack resultStack = null;
+		if(currentRecipe != null) {
+			resultStack = currentRecipe.getCraftingResult(internalInventoryCrafting);
+		}
 		craftResult.setInventorySlotContents(0, resultStack);
 		onInventoryChanged();
 	}
