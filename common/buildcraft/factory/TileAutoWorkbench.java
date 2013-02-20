@@ -187,12 +187,12 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		}
 
 		if(this.currentRecipe == null || !this.currentRecipe.matches(craftMatrix, worldObj))
-			currentRecipe = CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
+			currentRecipe = buildcraft.core.utils.CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
 
 		
 		ItemStack resultStack = null;
 		if(currentRecipe != null) {
-			resultStack = currentRecipe.getCraftingResult(internalInventoryCrafting);
+			resultStack = currentRecipe.getCraftingResult(craftMatrix);
 		}
 
 		if (resultStack == null || !doRemove) {
