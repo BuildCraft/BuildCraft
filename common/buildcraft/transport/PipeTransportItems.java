@@ -589,6 +589,8 @@ public class PipeTransportItems extends PipeTransport {
 						entities.set(k, null);
 					} else {
 						target.item.getItemStack().stackSize += space;
+
+						source.item.getItemStack().stackSize -= space;
 					}
 
 					if (amount >= space) {
