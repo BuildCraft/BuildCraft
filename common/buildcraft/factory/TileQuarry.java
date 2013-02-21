@@ -237,12 +237,14 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
 	public boolean findTarget(boolean doSet) {
-
 		if (worldObj.isRemote)
 			return false;
 
+		boolean columnVisitListIsUpdated = false;
+
 		if (visitList.isEmpty()) {
 			createColumnVisitList();
+			columnVisitListIsUpdated = true;
 		}
 
 		if (!doSet)
@@ -251,26 +253,23 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		if (visitList.isEmpty())
 			return false;
 
-		boolean foundTarget;
-		int[] target;
-		do {
-			if (visitList.isEmpty()) {
-				createColumnVisitList();
-			}
-			target = visitList.removeFirst();
-			boolean alternativeTarget = false;
-			for (int y = target[1] + 1; y < yCoord + 3; y++) {
-				int blockID = worldObj.getBlockId(target[0], y, target[2]);
-				if (BlockUtil.canChangeBlock(blockID, worldObj, target[0], y, target[2]) && !BlockUtil.isSoftBlock(blockID, worldObj, target[0], y, target[2])) {
+		int[] nextTarget = visitList.removeFirst();
+
+		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
+			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
+				int blockID = worldObj.getBlockId(nextTarget[0], y, nextTarget[2]);
+
+				if (BlockUtil.canChangeBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2]) && !BlockUtil.isSoftBlock(blockID, worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
-					alternativeTarget = true;
+					nextTarget = visitList.removeFirst();
+
 					break;
 				}
 			}
-			foundTarget = !alternativeTarget;
-		} while (!foundTarget);
+		}
 
-		setTarget(target[0], target[1] + 1, target[2]);
+		setTarget(nextTarget[0], nextTarget[1] + 1, nextTarget[2]);
+
 		return true;
 	}
 
