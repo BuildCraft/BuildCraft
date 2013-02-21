@@ -36,3 +36,7 @@ Your directory structure should look like this:
 
 Localizations can be submitted [here](https://github.com/BuildCraft/BuildCraft-Localization). Localization PRs against
 this repository will have to be rejected.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/BuildCraft/BuildCraft/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
