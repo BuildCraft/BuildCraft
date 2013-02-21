@@ -132,7 +132,7 @@ public class PipeTransportItems extends PipeTransport {
 	 *
 	 * @param data
 	 */
-	private void reverseItem(EntityData data) {
+	protected void reverseItem(EntityData data) {
 		if (data.item.isCorrupted())
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
