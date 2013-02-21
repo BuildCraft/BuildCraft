@@ -18,8 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -517,52 +515,52 @@ public class PipeTransportItems extends PipeTransport {
 	public void groupEntities() {
 		// determine groupable entities
 		List<EntityData> entities = new ArrayList<EntityData>();
-		
+
 		for (EntityData entityData : travelingEntities.values()) {
 			if (!entityData.item.hasContributions() &&
 				entityData.item.getItemStack().stackSize < entityData.item.getItemStack().getMaxStackSize()) {
 				entities.add(entityData);
 			}
 		}
-		
+
 		if (entities.isEmpty()) return; // nothing groupable
-		
+
 		// sort the groupable entities to have all entities with the same id:dmg next to each other (contiguous range)
 		Collections.sort(entities, new Comparator<EntityData>() {
 			@Override
 			public int compare(EntityData a, EntityData b) {
 				// the item id is always less than 2^15 so the int won't overflow
-				int itemA = ((int) a.item.getItemStack().itemID << 16) | a.item.getItemStack().getItemDamage();
-				int itemB = ((int) b.item.getItemStack().itemID << 16) | b.item.getItemStack().getItemDamage();
-				
+				int itemA = (a.item.getItemStack().itemID << 16) | a.item.getItemStack().getItemDamage();
+				int itemB = (b.item.getItemStack().itemID << 16) | b.item.getItemStack().getItemDamage();
+
 				return itemA - itemB;
 			}
 		});
-		
+
 		// group the entities
 		int matchStart = 0;
-		int lastId = ((int) entities.get(0).item.getItemStack().itemID << 16) | entities.get(0).item.getItemStack().getItemDamage();
-		
+		int lastId = (entities.get(0).item.getItemStack().itemID << 16) | entities.get(0).item.getItemStack().getItemDamage();
+
 		for (int i = 1; i < entities.size(); i++) {
-			int id = ((int) entities.get(i).item.getItemStack().itemID << 16) | entities.get(i).item.getItemStack().getItemDamage();
-			
+			int id = (entities.get(i).item.getItemStack().itemID << 16) | entities.get(i).item.getItemStack().getItemDamage();
+
 			if (id != lastId) {
 				// merge within the last matching ID range
 				groupEntityRange(entities, matchStart, i);
-				
+
 				// start of the next matching ID range
 				matchStart = i;
 				lastId = id;
 			}
 		}
-		
+
 		// merge last matching ID range
 		groupEntityRange(entities, matchStart, entities.size());
 	}
-	
+
 	/**
 	 * Group a range of items with matching IDs (item id + meta/dmg)
-	 * 
+	 *
 	 * @param entities entity list to group
 	 * @param start start index (inclusive)
 	 * @param end end index (exclusive)
@@ -570,25 +568,29 @@ public class PipeTransportItems extends PipeTransport {
 	private void groupEntityRange(List<EntityData> entities, int start, int end) {
 		for (int j = start; j < end; j++) {
 			EntityData target = entities.get(j);
-			
+			if (target == null) continue;
+
 			for (int k = j + 1; k < end; k++) {
 				EntityData source = entities.get(k);
-				
+				if (source == null) continue;
+
 				// only merge if the ItemStack tags match
 				if (ItemStack.areItemStackTagsEqual(source.item.getItemStack(), target.item.getItemStack())) {
 					// merge source to target
 					int amount = source.item.getItemStack().stackSize;
 					int space = target.item.getItemStack().getMaxStackSize() - target.item.getItemStack().stackSize;
-					
+
 					if (amount <= space) {
 						// source fits completely into target
 						target.item.getItemStack().stackSize += amount;
+
 						source.item.remove();
 						travelingEntities.remove(source.item.getEntityId());
+						entities.set(k, null);
 					} else {
 						target.item.getItemStack().stackSize += space;
 					}
-					
+
 					if (amount >= space) {
 						// target not usable for further additions, no need to check more sources
 						break;
