@@ -152,8 +152,33 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			return currentRecipe.getCraftingResult(craftMatrix);
 		return null;
 	}
+	
+	public ItemStack getResult() {
+		InventoryCrafting craftMatrix = new LocalInventoryCrafting();
+		
+		for(int i = 0; i < getSizeInventory(); ++i) {
+			ItemStack stack = getStackInSlot(i);
+			craftMatrix.setInventorySlotContents(i, stack);
+		}
+		
+		IRecipe resultRecipe = currentRecipe;
+		if(resultRecipe == null || !resultRecipe.matches(craftMatrix, worldObj)) {
+			resultRecipe = buildcraft.core.utils.CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
+		}
+		
+		ItemStack resultStack = null;
+		if(resultRecipe != null) {
+			resultStack = resultRecipe.getCraftingResult(craftMatrix);
+		}
+		
+		return resultStack;
+	}
 
 	public ItemStack extractItem(boolean doRemove, boolean removeRecipe) {
+		return extractItemRecursive(doRemove, removeRecipe, null);
+	}
+	
+	public ItemStack extractItemRecursive(boolean doRemove, boolean removeRecipe, LinkedList<TileAutoWorkbench> prevCrafters) {
 		InventoryCrafting craftMatrix = new LocalInventoryCrafting();
 
 		LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
@@ -168,9 +193,25 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 					StackPointer pointer = getNearbyItem(stack);
 
 					if (pointer == null) {
-						resetPointers(pointerList);
-
-						return null;
+						if(stack.getItem().getContainerItem() == null && !stack.isItemStackDamageable()) {
+							if(!craftNearbyItem(stack, doRemove, prevCrafters)) {
+								resetPointers(pointerList);
+								return null;
+							}
+							else {
+								StackPointer localPointer = new StackPointer();
+								localPointer.inventory = this;
+								localPointer.item = this.decrStackSize(i, 1); /* decrement here, not in craftNearbyItem */
+								localPointer.index = i;
+								stack = localPointer.item;
+								
+								pointerList.add(localPointer);
+							}
+						}
+						else {
+							resetPointers(pointerList);
+							return null;
+						}
 					} else {
 						pointerList.add(pointer);
 					}
@@ -269,7 +310,83 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 		return pointer;
 	}
+	
+	public boolean craftNearbyItem(ItemStack stack, boolean doRemove, LinkedList<TileAutoWorkbench> prevCrafters) {
+		boolean crafted = false;
 
+		if (crafted == false) {
+			crafted = craftNearbyItemFromOrientation(stack, ForgeDirection.WEST, doRemove, prevCrafters);
+		}
+
+		if (crafted == false) {
+			crafted = craftNearbyItemFromOrientation(stack, ForgeDirection.EAST, doRemove, prevCrafters);
+		}
+
+		if (crafted == false) {
+			crafted = craftNearbyItemFromOrientation(stack, ForgeDirection.DOWN, doRemove, prevCrafters);
+		}
+
+		if (crafted == false) {
+			crafted = craftNearbyItemFromOrientation(stack, ForgeDirection.UP, doRemove, prevCrafters);
+		}
+
+		if (crafted == false) {
+			crafted = craftNearbyItemFromOrientation(stack, ForgeDirection.NORTH, doRemove, prevCrafters);
+		}
+
+		if (crafted == false) {
+			crafted = craftNearbyItemFromOrientation(stack, ForgeDirection.SOUTH, doRemove, prevCrafters);
+		}
+
+		if (crafted == false) {
+			crafted = craftNearbyItemFromOrientation(stack, ForgeDirection.UNKNOWN, doRemove, prevCrafters);
+		}
+
+		return crafted;
+	}
+	
+	public boolean craftNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction, boolean doRemove, LinkedList<TileAutoWorkbench> prevCrafters) {
+		TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+		
+		if(tile instanceof TileAutoWorkbench) {
+			TileAutoWorkbench autocraft = (TileAutoWorkbench) tile;
+			
+			ItemStack craftedStack = autocraft.getResult();
+			
+			if(craftedStack != null) {
+				if(craftedStack.itemID == itemStack.itemID) {
+					LinkedList<TileAutoWorkbench> crafters = prevCrafters;
+					if(prevCrafters == null) {
+						crafters = new LinkedList<TileAutoWorkbench>();
+					}
+				
+					for(TileAutoWorkbench crafter : crafters) {
+						if(crafter.xCoord == autocraft.xCoord && crafter.yCoord == autocraft.yCoord && crafter.zCoord == autocraft.zCoord) {
+							return false;
+						}
+					}
+					
+					crafters.add(this);
+				
+					ItemStack stack = autocraft.extractItemRecursive(doRemove, false, crafters);
+					
+					if(stack == null) {
+						return false;
+					}
+					
+					if(doRemove) {
+						/* itemStack.stackSize += stack.stackSize; */
+						new TransactorRoundRobin(this).add(stack, direction, true);
+					}
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	public StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction) {
 		TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
 
