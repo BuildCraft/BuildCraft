@@ -36,16 +36,22 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	private boolean init = false;
 
 	public TileBuildCraft() {
-		if (!updateWrappers.containsKey(this.getClass())) {
-			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
+		TilePacketWrapper localDescription = descriptionWrappers.get(this.getClass());
+
+		if (localDescription == null) {
+			localDescription = new TilePacketWrapper(this.getClass());
+			descriptionWrappers.put(this.getClass(), localDescription);
+		}
+		
+		TilePacketWrapper localUpdate = updateWrappers.get(this.getClass());
+		
+		if (localUpdate == null) {
+			localUpdate = new TilePacketWrapper(this.getClass());
+			updateWrappers.put(this.getClass(), localUpdate);
 		}
 
-		if (!descriptionWrappers.containsKey(this.getClass())) {
-			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-		}
-
-		updatePacket = updateWrappers.get(this.getClass());
-		descriptionPacket = descriptionWrappers.get(this.getClass());
+		updatePacket = localUpdate;
+		descriptionPacket = localDescription;
 
 	}
 
