@@ -48,9 +48,9 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 
-			EntityRenderIndex index = new EntityRenderIndex(block, metadata);
-			if (blockByEntityRenders.containsKey(index)) {
-				blockByEntityRenders.get(index).inventoryRender(-0.5, -0.5, -0.5, 0, 0);
+			IInventoryRenderer index = blockByEntityRenders.get(new EntityRenderIndex(block, metadata));
+			if (index != null) {
+				index.inventoryRender(-0.5, -0.5, -0.5, 0, 0);
 			}
 
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {

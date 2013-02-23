@@ -34,16 +34,18 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	private int[] getDisplayLists(int liquidId, int damage, World world) {
 
-		if (stage.containsKey(liquidId)) {
-			HashMap<Integer, int[]> x = stage.get(liquidId);
-			if (x.containsKey(damage))
-				return x.get(damage);
+		HashMap<Integer, int[]> x = stage.get(liquidId);
+		if (x != null) {
+			int[] y= x.get(damage);
+			if (y != null)
+				return y;
 		} else {
-			stage.put(liquidId, new HashMap<Integer, int[]>());
+			x =  new HashMap<Integer, int[]>();
+			stage.put(liquidId,x);
 		}
 
 		int[] d = new int[displayStages];
-		stage.get(liquidId).put(damage, d);
+		x.put(damage, d);
 
 		BlockInterface block = new BlockInterface();
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
