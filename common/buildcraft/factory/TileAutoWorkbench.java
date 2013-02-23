@@ -193,7 +193,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 					StackPointer pointer = getNearbyItem(stack);
 
 					if (pointer == null) {
-						if(stack.getItem().getContainerItem() == null && !stack.isItemStackDamageable()) {
+						if(stack.getItem().getContainerItem() == null) { /* can craft damageable items, but don't know where to put containers for containeritems */
 							if(!craftNearbyItem(stack, doRemove, prevCrafters)) {
 								resetPointers(pointerList);
 								return null;
