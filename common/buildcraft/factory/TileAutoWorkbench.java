@@ -375,8 +375,8 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 					}
 					
 					if(doRemove) {
-						/* itemStack.stackSize += stack.stackSize; */
-						new TransactorRoundRobin(this).add(stack, direction, true);
+						itemStack.stackSize += 1;
+						new TransactorRoundRobin(this).add(new ItemStack(stack.getItem(), stack.stackSize - 1), direction, true);
 					}
 					
 					return true;
