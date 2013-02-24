@@ -19,7 +19,7 @@
 
 	<property name="mc.version" value="1.4.7"/>
 	<property name="forge.version" value="6.6.0.515"/>
-	<property name="project.version" value="3.4.2"/>
+	<property name="project.version" value="3.4.3"/>
 
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
 
