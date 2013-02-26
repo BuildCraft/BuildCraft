@@ -40,6 +40,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		int[] bindings = new int[9];
 		ItemStack[] tempStacks;
 		public int[] hitCount;
+        private boolean useRecipeStack;
 
 		private InternalInventoryCrafting() {
 			super(new InternalInventoryCraftingContainer(), 3, 3);
@@ -48,17 +49,16 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		@Override
 		public ItemStack getStackInSlot(int par1) {
 			if (par1 >= 0 && par1 < 9) {
-				if (tempStacks != null) {
+				if (useRecipeStack  || tempStacks == null) {
+                    return craftingSlots.getStackInSlot(par1);
+				} else {
+
 					if (bindings[par1] >= 0) {
 						return tempStacks[bindings[par1]];
 					}
-					
-					// unbound returns null
-				} else {
-					return craftingSlots.getStackInSlot(par1);
 				}
 			}
-			
+
 			// vanilla returns null for out of bound stacks in InventoryCrafting as well
 			return null;
 		}
@@ -77,6 +77,11 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 			else
 				return null;
 		}
+
+        public void recipeUpdate(boolean flag)
+        {
+            useRecipeStack = flag;
+        }
 	}
 
 	private final class InternalPlayer extends EntityPlayer {
@@ -271,6 +276,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		}
 		if (!CoreProxy.proxy.isSimulating(worldObj))
 			return;
+		updateCraftingResults();
 		tick++;
 		tick = tick % recentEnergy.length;
 		recentEnergy[tick] = 0.0f;
@@ -279,10 +285,10 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 			internalInventoryCrafting.tempStacks = tempStorage;
 			internalInventoryCrafting.hitCount = new int[27];
 			for (int j = 0; j < craftingSlots.getSizeInventory(); j++) {
-				if (craftingSlots.getStackInSlot(j) == null) {
-					internalInventoryCrafting.bindings[j] = -1;
-					continue;
-				}
+                if (craftingSlots.getStackInSlot(j) == null) {
+                    internalInventoryCrafting.bindings[j] = -1;
+                    continue;
+                }
 				boolean matchedStorage = false;
 				for (int i = 0; i < tempStorage.length; i++) {
 					if (tempStorage[i] != null && craftingSlots.getStackInSlot(j).isItemEqual(tempStorage[i])
@@ -357,6 +363,11 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	}
 
 	private void updateCraftingResults() {
+	    if (internalInventoryCrafting == null)
+	    {
+	        return;
+	    }
+        internalInventoryCrafting.recipeUpdate(true);
 		if(this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj))
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
 
@@ -365,6 +376,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 			resultStack = currentRecipe.getCraftingResult(internalInventoryCrafting);
 		}
 		craftResult.setInventorySlotContents(0, resultStack);
+        internalInventoryCrafting.recipeUpdate(false);
 		onInventoryChanged();
 	}
 
