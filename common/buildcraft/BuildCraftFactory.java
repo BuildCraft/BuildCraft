@@ -8,6 +8,7 @@
 
 package buildcraft;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -106,8 +107,7 @@ public class BuildCraftFactory {
 		@Override
 		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount) {
 			if (!BuildCraftFactory.quarriesLoadChunks) {
-				tickets.clear();
-				return tickets;
+				return Collections.emptyList();
 			}
 			
 			List<Ticket> validTickets = Lists.newArrayList();
