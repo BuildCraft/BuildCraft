@@ -21,12 +21,14 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.CraftingHelper;
 
@@ -272,42 +274,50 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	public StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction) {
 		TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
-
+		
 		if (tile instanceof ISpecialInventory) {
 			// Don't get stuff out of ISpecialInventory for now / we wouldn't
 			// know how to put it back... And it's not clear if we want to
 			// have workbenches automatically getting things from one another.
+			return null;
+		}
+		
+		IInventory inventory = null;
+		if (tile instanceof ISidedInventory){
+			inventory = new SidedInventoryAdapter((ISidedInventory) tile, direction.getOpposite());
 		} else if (tile instanceof IInventory) {
-			IInventory inventory = Utils.getInventory((IInventory) tile);
+			inventory = Utils.getInventory((IInventory) tile);
+		}
+		
+		if (inventory == null) return null; 
 
-			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-				ItemStack stack = inventory.getStackInSlot(j);
+		for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+			ItemStack stack = inventory.getStackInSlot(j);
 
-				if (stack != null) {
-					if (stack.stackSize > 0) {
-						if (stack.itemID == itemStack.itemID) {
-							if (!stack.isItemStackDamageable()) {
-								if (stack.itemID == itemStack.itemID && stack.getItemDamage() == itemStack.getItemDamage()) {
-									inventory.decrStackSize(j, 1);
+			if (stack != null) {
+				if (stack.stackSize > 0) {
+					if (stack.itemID == itemStack.itemID) {
+						if (!stack.isItemStackDamageable()) {
+							if (stack.itemID == itemStack.itemID && stack.getItemDamage() == itemStack.getItemDamage()) {
+								inventory.decrStackSize(j, 1);
 
-									StackPointer result = new StackPointer();
-									result.inventory = inventory;
-									result.index = j;
-									result.item = stack;
+								StackPointer result = new StackPointer();
+								result.inventory = inventory;
+								result.index = j;
+								result.item = stack;
 
-									return result;
-								}
-							} else {
-								if (stack.itemID == itemStack.itemID) {
-									inventory.decrStackSize(j, 1);
+								return result;
+							}
+						} else {
+							if (stack.itemID == itemStack.itemID) {
+								inventory.decrStackSize(j, 1);
 
-									StackPointer result = new StackPointer();
-									result.inventory = inventory;
-									result.index = j;
-									result.item = stack;
+								StackPointer result = new StackPointer();
+								result.inventory = inventory;
+								result.index = j;
+								result.item = stack;
 
-									return result;
-								}
+								return result;
 							}
 						}
 					}
