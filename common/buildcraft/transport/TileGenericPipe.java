@@ -418,7 +418,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	@Override
 	public int powerRequest() {
-		return getPowerProvider().getMaxEnergyReceived();
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
+			return ((IPowerReceptor) pipe).powerRequest();
+		return 0;
 	}
 
 	@Override
