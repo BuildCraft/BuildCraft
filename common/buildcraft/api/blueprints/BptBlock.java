@@ -206,7 +206,7 @@ public class BptBlock {
 			}
 		}
 
-		sig.blockName = block.getBlockName();
+		sig.blockName = block.getUnlocalizedName();
 		sig.replaceNullWithStar();
 
 		return sig;

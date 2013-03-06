@@ -74,7 +74,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			}
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
 
-				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
+				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
 				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
 						block.stepSound.getPlaceSound(),
 						(block.stepSound.getVolume() + 1.0F) / 2.0F,

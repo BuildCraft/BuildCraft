@@ -53,7 +53,7 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	@Override
-	public String getItemNameIS(ItemStack itemstack) {
+	public String getUnlocalizedName(ItemStack itemstack) {
 		return "item.Facade";
 	}
 
@@ -102,7 +102,7 @@ public class ItemFacade extends ItemBuildCraft {
 				} catch (Exception e) {
 					continue;
 				}
-				
+
 				if (!(b.blockID == 20)){
 					if (b.blockID == 7 || b.blockID == 18 || b.blockID == 19 || b.blockID == 95) {
 						continue;

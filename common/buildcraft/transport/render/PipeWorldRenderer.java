@@ -180,7 +180,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.facadeMatrix.isConnected(direction)) {
 				ForgeHooksClient.bindTexture(state.facadeMatrix.getTextureFile(direction), 0);
-				state.currentTextureIndex = state.facadeMatrix.getTextureIndex(direction);
+				state.currentTextureIndex = state.facadeMatrix.getTextureIcon(direction);
 
 				// Hollow facade
 				if (state.pipeConnectionMatrix.isConnected(direction)) {

@@ -72,7 +72,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
 		if (CoreProxy.proxy.isSimulating(world) && entityliving instanceof EntityPlayer) {
 			TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
 			tile.owner = ((EntityPlayer) entityliving).username;

@@ -80,7 +80,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 					world.setBlockWithNotify(i, j, k, 0);
 				} else {
 					world.setBlockMetadataWithNotify(i, j, k, l);
-					world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
+					world.scheduleBlockUpdate(i, j, k, blockID, tickRate(world));
 					world.notifyBlocksOfNeighborChange(i, j, k, blockID);
 				}
 			} else if (flag) {
@@ -240,7 +240,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	public void onBlockAdded(World world, int i, int j, int k) {
 		super.onBlockAdded(world, i, j, k);
 		if (world.getBlockId(i, j, k) == blockID) {
-			world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
+			world.scheduleBlockUpdate(i, j, k, blockID, tickRate(world));
 		}
 	}
 

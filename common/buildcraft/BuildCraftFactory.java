@@ -166,41 +166,41 @@ public class BuildCraftFactory {
 		BuildCraftCore.mainConfiguration.save();
 
 		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
-		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
+		CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
 		CoreProxy.proxy.addName(miningWellBlock, "Mining Well");
 
 		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(plainPipeId.value));
-		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+		CoreProxy.proxy.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"));
 		CoreProxy.proxy.addName(plainPipeBlock, "Mining Pipe");
 
 		autoWorkbenchBlock = new BlockAutoWorkbench(Integer.parseInt(autoWorkbenchId.value));
-		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"));
 		CoreProxy.proxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
 
 		frameBlock = new BlockFrame(Integer.parseInt(frameId.value));
-		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
+		CoreProxy.proxy.registerBlock(frameBlock.setUnlocalizedName("frameBlock"));
 		CoreProxy.proxy.addName(frameBlock, "Frame");
 
 		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
-		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+		CoreProxy.proxy.registerBlock(quarryBlock.setUnlocalizedName("machineBlock"));
 		CoreProxy.proxy.addName(quarryBlock, "Quarry");
 
 		tankBlock = new BlockTank(Integer.parseInt(tankId.value));
-		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+		CoreProxy.proxy.registerBlock(tankBlock.setUnlocalizedName("tankBlock"));
 		CoreProxy.proxy.addName(tankBlock, "Tank");
 
 		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
-		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+		CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
 		CoreProxy.proxy.addName(pumpBlock, "Pump");
 
 		refineryBlock = new BlockRefinery(Integer.parseInt(refineryId.value));
-		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+		CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
 		CoreProxy.proxy.addName(refineryBlock, "Refinery");
 
 		hopperDisabled = Boolean.parseBoolean(hopperDisable.value);
 		if (!hopperDisabled) {
 			hopperBlock = new BlockHopper(Integer.parseInt(hopperId.value));
-			CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+			CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
 			CoreProxy.proxy.addName(hopperBlock, "Hopper");
 		}
 

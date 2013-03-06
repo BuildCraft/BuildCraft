@@ -120,27 +120,27 @@ public class BuildCraftEnergy {
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 1), "Steam Engine");
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 2), "Combustion Engine");
 
-		oilStill = (new BlockOilStill(oilStillId.getInt(DefaultProps.OIL_STILL_ID), Material.water)).setBlockName("oil");
-		CoreProxy.proxy.addName(oilStill.setBlockName("oilStill"), "Oil");
+		oilStill = (new BlockOilStill(oilStillId.getInt(DefaultProps.OIL_STILL_ID), Material.water)).setUnlocalizedName("oil");
+		CoreProxy.proxy.addName(oilStill.setUnlocalizedName("oilStill"), "Oil");
 		CoreProxy.proxy.registerBlock(oilStill);
 
-		oilMoving = (new BlockOilFlowing(oilMovingId.getInt(DefaultProps.OIL_MOVING_ID), Material.water)).setBlockName("oil");
-		CoreProxy.proxy.addName(oilMoving.setBlockName("oilMoving"), "Oil");
+		oilMoving = (new BlockOilFlowing(oilMovingId.getInt(DefaultProps.OIL_MOVING_ID), Material.water)).setUnlocalizedName("oil");
+		CoreProxy.proxy.addName(oilMoving.setUnlocalizedName("oilMoving"), "Oil");
 		CoreProxy.proxy.registerBlock(oilMoving);
 
 		// Oil and fuel
 		if (oilMoving.blockID + 1 != oilStill.blockID)
 			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
 
-		fuel = new ItemBuildCraft(itemFuelId.getInt(DefaultProps.FUEL_ID)).setItemName("fuel");
+		fuel = new ItemBuildCraft(itemFuelId.getInt(DefaultProps.FUEL_ID)).setUnlocalizedName("fuel");
 		LanguageRegistry.addName(fuel, "Fuel");
 
 		MinecraftForge.EVENT_BUS.register(new OilBucketHandler());
 
-		bucketOil = (new ItemBucketOil(bucketOilId.getInt(DefaultProps.BUCKET_OIL_ID))).setItemName("bucketOil").setContainerItem(Item.bucketEmpty);
+		bucketOil = (new ItemBucketOil(bucketOilId.getInt(DefaultProps.BUCKET_OIL_ID))).setUnlocalizedName("bucketOil").setContainerItem(Item.bucketEmpty);
 		LanguageRegistry.addName(bucketOil, "Oil Bucket");
 
-		bucketFuel = new ItemBuildCraft(Integer.parseInt(bucketFuelId.value)).setItemName("bucketFuel").setContainerItem(Item.bucketEmpty);
+		bucketFuel = new ItemBuildCraft(Integer.parseInt(bucketFuelId.value)).setUnlocalizedName("bucketFuel").setContainerItem(Item.bucketEmpty);
 		bucketFuel.setIconIndex(0 * 16 + 3).setMaxStackSize(1);
 		LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 

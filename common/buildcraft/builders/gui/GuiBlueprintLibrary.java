@@ -110,16 +110,9 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = 0;
-		// if (library.owner.equals(player.username)) {
-		i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
-		// } else {
-		// i = mc.renderEngine
-		// .getTexture("/net/minecraft/src/buildcraft/builders/gui/library_r.png");
-		// }
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
 
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

@@ -231,35 +231,35 @@ public class BuildCraftBuilders {
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
 
 		templateItem = new ItemBptTemplate(Integer.parseInt(templateItemId.value));
-		templateItem.setItemName("templateItem");
+		templateItem.setUnlocalizedName("templateItem");
 		LanguageRegistry.addName(templateItem, "Template");
 
 		blueprintItem = new ItemBptBluePrint(Integer.parseInt(blueprintItemId.value));
-		blueprintItem.setItemName("blueprintItem");
+		blueprintItem.setUnlocalizedName("blueprintItem");
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
 
 		markerBlock = new BlockMarker(Integer.parseInt(markerId.value));
-		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
+		CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
 		CoreProxy.proxy.addName(markerBlock, "Land Mark");
 
 		pathMarkerBlock = new BlockPathMarker(Integer.parseInt(pathMarkerId.value));
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
+		CoreProxy.proxy.registerBlock(pathMarkerBlock.setUnlocalizedName("pathMarkerBlock"));
 		CoreProxy.proxy.addName(pathMarkerBlock, "Path Mark");
 
 		fillerBlock = new BlockFiller(Integer.parseInt(fillerId.value));
-		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
+		CoreProxy.proxy.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"));
 		CoreProxy.proxy.addName(fillerBlock, "Filler");
 
 		builderBlock = new BlockBuilder(Integer.parseInt(builderId.value));
-		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
+		CoreProxy.proxy.registerBlock(builderBlock.setUnlocalizedName("builderBlock"));
 		CoreProxy.proxy.addName(builderBlock, "Builder");
 
 		architectBlock = new BlockArchitect(Integer.parseInt(architectId.value));
-		CoreProxy.proxy.registerBlock(architectBlock.setBlockName("architectBlock"));
+		CoreProxy.proxy.registerBlock(architectBlock.setUnlocalizedName("architectBlock"));
 		CoreProxy.proxy.addName(architectBlock, "Architect Table");
 
 		libraryBlock = new BlockBlueprintLibrary(Integer.parseInt(libraryId.value));
-		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
+		CoreProxy.proxy.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"));
 		CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
 
 		GameRegistry.registerTileEntity(TileMarker.class, "Marker");

@@ -252,9 +252,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			renderState.facadeMatrix.setConnected(direction, blockId != 0 && Block.blocksList[blockId] != null);
 			if (Block.blocksList[blockId] != null) {
 				Block block = Block.blocksList[blockId];
-				renderState.facadeMatrix.setTextureFile(direction, block.getTextureFile());
-				renderState.facadeMatrix.setTextureIndex(direction,
-						block.getBlockTextureFromSideAndMetadata(direction.ordinal(), this.facadeMeta[direction.ordinal()]));
+
+				// TODO
 			}
 		}
 

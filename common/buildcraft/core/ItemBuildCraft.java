@@ -17,12 +17,11 @@ public class ItemBuildCraft extends Item {
 
 	public ItemBuildCraft(int i) {
 		super(i);
-		setTextureFile(DefaultProps.TEXTURE_ITEMS);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
-		return StringUtil.localize(getItemNameIS(itemstack));
+		return StringUtil.localize(getUnlocalizedName(itemstack));
 	}
 }

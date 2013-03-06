@@ -36,7 +36,7 @@ public class BlockEngine extends BlockContainer {
 
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-		setBlockName("engineBlock");
+		setUnlocalizedName("engineBlock");
 	}
 
 	@Override

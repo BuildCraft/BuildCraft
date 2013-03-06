@@ -47,13 +47,13 @@ public class BlockGenericPipe extends BlockContainer {
 		Pipe,
 		Gate
 	}
-	
+
 	static class RaytraceResult {
 		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition) {
 			this.hitPart = hitPart;
 			this.movingObjectPosition = movingObjectPosition;
 		}
-		
+
 		public Part hitPart;
 		public MovingObjectPosition movingObjectPosition;
 	}
@@ -230,14 +230,14 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		RaytraceResult raytraceResult = doRayTrace(world, x, y, z, origin, direction);
-		
+
 		if (raytraceResult == null) {
 			return null;
 		} else {
 			return raytraceResult.movingObjectPosition;
 		}
 	}
-	
+
 	public RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer entityPlayer) {
 		double pitch = Math.toRadians(entityPlayer.rotationPitch);
 		double yaw = Math.toRadians(entityPlayer.rotationYaw);
@@ -245,39 +245,39 @@ public class BlockGenericPipe extends BlockContainer {
         double dirX = -Math.sin(yaw) * Math.cos(pitch);
         double dirY = -Math.sin(pitch);
         double dirZ = Math.cos(yaw) * Math.cos(pitch);
-        
+
         double reachDistance = 5;
-        
+
         if (entityPlayer instanceof EntityPlayerMP) {
         	reachDistance = ((EntityPlayerMP) entityPlayer).theItemInWorldManager.getBlockReachDistance();
         }
-        
-		Vec3 origin = Vec3.vec3dPool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
+
+		Vec3 origin = Vec3.fakePool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
 		Vec3 direction = origin.addVector(dirX * reachDistance, dirY * reachDistance, dirZ * reachDistance);
-		
+
 		return doRayTrace(world, x, y, z, origin, direction);
 	}
-	
+
 	public RaytraceResult doRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity pipeTileEntity = world.getBlockTileEntity(x, y, z);
 		Pipe pipe = getPipe(world, x, y, z);
-		
+
 		if (pipeTileEntity == null || !isValid(pipe)) {
 			return null;
 		}
-		
+
 		/**
-		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades] 
+		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades]
 		 */
 		MovingObjectPosition[] hits = new MovingObjectPosition[] { null, null, null, null, null, null, null, null, null };
-		
+
 		boolean needAxisCheck = false;
 		boolean needCenterCheck = true;
-		
+
 		// check along the x axis
-		
+
 		if (Utils.checkPipesConnections(world, pipeTileEntity, x - 1, y, z)) {
 			xMin = 0.0F;
 			needAxisCheck = true;
@@ -287,7 +287,7 @@ public class BlockGenericPipe extends BlockContainer {
 			xMax = 1.0F;
 			needAxisCheck = true;
 		}
-		
+
 		if (needAxisCheck) {
 			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
@@ -297,7 +297,7 @@ public class BlockGenericPipe extends BlockContainer {
 			needAxisCheck = false;
 			needCenterCheck = false; // center already checked through this axis
 		}
-		
+
 		// check along the y axis
 
 		if (Utils.checkPipesConnections(world, pipeTileEntity, x, y - 1, z)) {
@@ -309,7 +309,7 @@ public class BlockGenericPipe extends BlockContainer {
 			yMax = 1.0F;
 			needAxisCheck = true;
 		}
-		
+
 		if (needAxisCheck) {
 			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
@@ -319,7 +319,7 @@ public class BlockGenericPipe extends BlockContainer {
 			needAxisCheck = false;
 			needCenterCheck = false; // center already checked through this axis
 		}
-		
+
 		// check along the z axis
 
 		if (Utils.checkPipesConnections(world, pipeTileEntity, x, y, z - 1)) {
@@ -331,7 +331,7 @@ public class BlockGenericPipe extends BlockContainer {
 			zMax = 1.0F;
 			needAxisCheck = true;
 		}
-		
+
 		if (needAxisCheck) {
 			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
@@ -341,7 +341,7 @@ public class BlockGenericPipe extends BlockContainer {
 			needAxisCheck = false;
 			needCenterCheck = false; // center already checked through this axis
 		}
-		
+
 		// check center (only if no axis were checked/the pipe has no connections)
 
 		if (needCenterCheck) {
@@ -349,59 +349,59 @@ public class BlockGenericPipe extends BlockContainer {
 
 			hits[0] = super.collisionRayTrace(world, x, y, z, origin, direction);
 		}
-		
+
 		// gates
-		
+
 		if (pipe.hasGate()) {
 			for (int side = 0; side < 6; side++) {
 				setBlockBoundsToGate(ForgeDirection.VALID_DIRECTIONS[side]);
-				
+
 				hits[3 + side] = super.collisionRayTrace(world, x, y, z, origin, direction);
 			}
 		}
-		
+
 		// TODO: check wires, facades
 
 		// get closest hit
-		
+
 		double minLengthSquared = Double.POSITIVE_INFINITY;
 		int minIndex = -1;
-		
+
 		for (int i = 0; i < hits.length; i++) {
 			MovingObjectPosition hit = hits[i];
 			if (hit == null) continue;
-			
+
 			double lengthSquared = hit.hitVec.squareDistanceTo(origin);
-			
+
 			if (lengthSquared < minLengthSquared) {
 				minLengthSquared = lengthSquared;
 				minIndex = i;
 			}
 		}
-		
+
 		// reset bounds
-		
+
 		setBlockBounds(0, 0, 0, 1, 1, 1);
-		
+
 		if (minIndex == -1) {
 			return null;
 		} else {
 			Part hitPart;
-			
+
 			if (minIndex < 3) {
 				hitPart = Part.Pipe;
 			} else {
 				hitPart = Part.Gate;
 			}
-			
+
 			return new RaytraceResult(hitPart, hits[minIndex]);
 		}
 	}
-	
+
 	private void setBlockBoundsToGate(ForgeDirection dir) {
 		float min = Utils.pipeMinPos + 0.05F;
 		float max = Utils.pipeMaxPos - 0.05F;
-		
+
 		switch (dir) {
 		case DOWN:
 			setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
@@ -537,17 +537,17 @@ public class BlockGenericPipe extends BlockContainer {
 
 		return meta;
 	}
-	
+
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving placer) {
-		super.onBlockPlacedBy(world, x, y, z, placer);
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving placer, ItemStack stack) {
+		super.onBlockPlacedBy(world, x, y, z, placer, stack);
 		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe)) {
 			pipe.onBlockPlacedBy(placer);
 		}
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float xOffset, float yOffset, float zOffset) {
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, xOffset, yOffset, zOffset);
@@ -629,17 +629,17 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
-			
+
 			boolean openGateGui = false;
 
 			if (pipe.hasGate()) {
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, entityplayer);
-				
+
 				if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
 					openGateGui = true;
 				}
 			}
-			
+
 			if (openGateGui) {
 				pipe.gate.openGui(entityplayer);
 
@@ -679,7 +679,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	/**
 	 * Drops a pipe wire item of the passed color.
-	 * 
+	 *
 	 * @param color
 	 */
 	private void dropWire(IPipe.WireColor color, World world, int i, int j, int k) {
@@ -789,14 +789,13 @@ public class BlockGenericPipe extends BlockContainer {
 
 	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
 		ItemPipe item = new ItemPipe(key);
-		item.setItemName("buildcraftPipe." + clas.getSimpleName().toLowerCase());
-		GameRegistry.registerItem(item, item.getItemName());
+		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase());
+		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
 		pipes.put(item.itemID, clas);
 
 		Pipe dummyPipe = createPipe(item.itemID);
 		if (dummyPipe != null) {
-			item.setTextureFile(dummyPipe.getTextureFile());
 			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
 		}
 
