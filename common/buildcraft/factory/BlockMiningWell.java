@@ -60,7 +60,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 			if (pipeID != BuildCraftFactory.plainPipeBlock.blockID) {
 				break;
 			}
-			world.setBlockWithNotify(x, depth, z, 0);
+			world.func_94575_c(x, depth, z, 0);
 		}
 	}
 

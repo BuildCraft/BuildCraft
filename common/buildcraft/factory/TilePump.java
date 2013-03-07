@@ -23,6 +23,7 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -89,7 +90,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 							index = getNextIndexToPump(true);
 
 							if (liquidToPump.itemID != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
-								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+								worldObj.func_94575_c(index.i, index.j, index.k, 0);
 							}
 
 							tank.fill(liquidToPump, true);
@@ -140,8 +141,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 
 	@Override
 	public void initialize() {
-		tube = new EntityBlock(worldObj);
-		tube.texture = 6 * 16 + 6;
+	    tube = FactoryProxy.proxy.newPumpTube(worldObj);
 
 		if (!Double.isNaN(tubeY)) {
 			tube.posY = tubeY;

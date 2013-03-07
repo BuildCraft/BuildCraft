@@ -189,7 +189,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		GL11.glRotatef(angle, 0, 1, 0);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png", 0);
+		tileEntityRenderer.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		tank.render(factor);
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);
@@ -263,11 +263,5 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	}
 
 	public void setTextureFor(int liquidId) {
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
-		} else {
-			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-		}
-
 	}
 }

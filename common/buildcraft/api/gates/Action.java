@@ -1,13 +1,17 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
 package buildcraft.api.gates;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.Icon;
 
 public abstract class Action implements IAction {
 
@@ -24,12 +28,8 @@ public abstract class Action implements IAction {
 	}
 
 	@Override
-	public abstract String getTexture();
-
-	@Override
-	public int getIndexInTexture() {
-		return 0;
-	}
+	@SideOnly(Side.CLIENT)
+	public abstract Icon getTexture();
 
 	@Override
 	public boolean hasParameter() {

@@ -134,7 +134,7 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 	}
 
 	@Override
-	public String getTextureFile() {
+	public String getTexture() {
 		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

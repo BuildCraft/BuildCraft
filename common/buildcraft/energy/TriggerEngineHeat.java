@@ -64,7 +64,7 @@ public class TriggerEngineHeat extends Trigger {
 	}
 
 	@Override
-	public String getTextureFile() {
+	public String getTexture() {
 		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

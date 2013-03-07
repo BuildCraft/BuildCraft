@@ -1,6 +1,9 @@
 package buildcraft.api.gates;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 
 public interface ITrigger {
 
@@ -9,12 +12,8 @@ public interface ITrigger {
 	/**
 	 * Return the texture file for this trigger icon
 	 */
-	public abstract String getTextureFile();
-
-	/**
-	 * Return the icon id in the texture file
-	 */
-	public abstract int getIndexInTexture();
+    @SideOnly(Side.CLIENT)
+	public abstract Icon getTexture();
 
 	/**
 	 * Return true if this trigger can accept parameters

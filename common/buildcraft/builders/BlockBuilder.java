@@ -84,17 +84,17 @@ public class BlockBuilder extends BlockContainer {
 
 			switch (ForgeDirection.values()[meta]) {
 			case WEST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(),0);
 				break;
 			case EAST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(),0);
 				break;
 			case NORTH:
-				world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(),0);
 				break;
 			case SOUTH:
 			default:
-				world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(),0);
 				break;
 			}
 
@@ -116,7 +116,7 @@ public class BlockBuilder extends BlockContainer {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Property;
@@ -72,6 +73,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.MinecraftForge;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[6.5.0.0,)")
@@ -104,7 +106,7 @@ public class BuildCraftCore {
 	public static boolean continuousCurrentModel;
 
 	public static Block springBlock;
-	
+
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -112,10 +114,14 @@ public class BuildCraftCore {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 
-	public static int redLaserTexture;
-	public static int blueLaserTexture;
-	public static int stripesLaserTexture;
-	public static int transparentTexture;
+	@SideOnly(Side.CLIENT)
+	public static Icon redLaserTexture;
+    @SideOnly(Side.CLIENT)
+	public static Icon blueLaserTexture;
+    @SideOnly(Side.CLIENT)
+	public static Icon stripesLaserTexture;
+    @SideOnly(Side.CLIENT)
+	public static Icon transparentTexture;
 
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
@@ -165,11 +171,6 @@ public class BuildCraftCore {
 		try {
 			mainConfiguration.load();
 
-			redLaserTexture = 0 * 16 + 2;
-			blueLaserTexture = 0 * 16 + 1;
-			stripesLaserTexture = 0 * 16 + 3;
-			transparentTexture = 0 * 16 + 0;
-
 			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
 					DefaultProps.CURRENT_CONTINUOUS);
 			continuousCurrent.comment = "set to true for allowing machines to be driven by continuous current";
@@ -202,7 +203,7 @@ public class BuildCraftCore {
 
 			String powerFrameworkClassName = "buildcraft.energy.PneumaticPowerFramework";
 			if (!forcePneumaticPower) {
-				powerFrameworkClassName = powerFrameworkClass.value;
+				powerFrameworkClassName = powerFrameworkClass.getString();
 			}
 			try {
 				PowerFramework.currentFramework = (PowerFramework) Class.forName(powerFrameworkClassName).getConstructor().newInstance();
@@ -213,11 +214,11 @@ public class BuildCraftCore {
 
 			Property wrenchId = BuildCraftCore.mainConfiguration.getItem("wrench.id", DefaultProps.WRENCH_ID);
 
-			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setIconIndex(0 * 16 + 2).setUnlocalizedName("wrenchItem");
+			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setUnlocalizedName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
 
 			Property springId = BuildCraftCore.mainConfiguration.getBlock("springBlock.id", DefaultProps.SPRING_ID);
-			
+
 			Property woodenGearId = BuildCraftCore.mainConfiguration.getItem("woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
 			Property stoneGearId = BuildCraftCore.mainConfiguration.getItem("stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
 			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
@@ -229,23 +230,23 @@ public class BuildCraftCore {
 			BuildCraftCore.modifyWorld = modifyWorld.getBoolean(true);
 
 			if(BuildCraftCore.modifyWorld) {
-				springBlock = new BlockSpring(Integer.parseInt(springId.value)).setUnlocalizedName("eternalSpring");
+				springBlock = new BlockSpring(springId.getInt()).setUnlocalizedName("eternalSpring");
 				GameRegistry.registerBlock(springBlock, "eternalSpring");
 			}
-			
-			woodenGearItem = (new ItemBuildCraft(Integer.parseInt(woodenGearId.value))).setIconIndex(1 * 16 + 0).setUnlocalizedName("woodenGearItem");
+
+			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
 
-			stoneGearItem = (new ItemBuildCraft(Integer.parseInt(stoneGearId.value))).setIconIndex(1 * 16 + 1).setUnlocalizedName("stoneGearItem");
+			stoneGearItem = (new ItemBuildCraft(stoneGearId.getInt())).setUnlocalizedName("stoneGearItem");
 			LanguageRegistry.addName(stoneGearItem, "Stone Gear");
 
-			ironGearItem = (new ItemBuildCraft(Integer.parseInt(ironGearId.value))).setIconIndex(1 * 16 + 2).setUnlocalizedName("ironGearItem");
+			ironGearItem = (new ItemBuildCraft(ironGearId.getInt())).setUnlocalizedName("ironGearItem");
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
 
-			goldGearItem = (new ItemBuildCraft(Integer.parseInt(goldenGearId.value))).setIconIndex(1 * 16 + 3).setUnlocalizedName("goldGearItem");
+			goldGearItem = (new ItemBuildCraft(goldenGearId.getInt())).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
 
-			diamondGearItem = (new ItemBuildCraft(Integer.parseInt(diamondGearId.value))).setIconIndex(1 * 16 + 4).setUnlocalizedName("diamondGearItem");
+			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 		} finally {
 			mainConfiguration.save();

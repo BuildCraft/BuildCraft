@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -63,7 +64,7 @@ public class BlockAssemblyTable extends BlockContainer {
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (i == 1) {
 			return j == 0 ? 16 * 6 + 12 : 16 * 3 + 15;
 		} else if (i == 0) {
@@ -74,7 +75,7 @@ public class BlockAssemblyTable extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
+	public TileEntity createTileEntity(World world, int metadata) {
 		return metadata == 0 ? new TileAssemblyTable() : new TileAssemblyAdvancedWorkbench();
 	}
 

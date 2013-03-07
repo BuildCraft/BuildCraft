@@ -137,7 +137,7 @@ public class TriggerLiquidContainer extends Trigger {
 	}
 
 	@Override
-	public String getTextureFile() {
+	public String getTexture() {
 		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }

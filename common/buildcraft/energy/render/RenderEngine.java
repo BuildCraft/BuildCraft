@@ -152,7 +152,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float factor = (float) (1.0 / 16.0);
 
-		ForgeHooksClient.bindTexture(baseTexture, 0);
+		tileEntityRenderer.renderEngine.func_98187_b(baseTexture);
 
 		box.render(factor);
 
@@ -160,7 +160,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png", 0);
+		tileEntityRenderer.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
 
 		float chamberf = 2F / 16F;
 
@@ -190,7 +190,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			break;
 		}
 
-		ForgeHooksClient.bindTexture(texture, 0);
+		tileEntityRenderer.renderEngine.func_98187_b(texture);
 
 		trunk.render(factor);
 

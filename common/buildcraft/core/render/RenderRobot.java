@@ -36,7 +36,7 @@ public class RenderRobot extends Render {
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 		GL11.glTranslated(x, y, z);
 
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/robot.png", 0);
+		renderManager.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_ENTITIES + "/robot.png");
 
 		float factor = (float) (1.0 / 16.0);
 

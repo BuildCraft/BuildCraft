@@ -96,7 +96,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				for (ItemStack stack : stacks) {
 					if(stack == null)
 						continue;
-					
+
 					boolean matches = false;
 					for (int i = 0; i < filters.getSizeInventory(); i++) {
 						ItemStack filter = filters.getStackInSlot(i);
@@ -293,4 +293,18 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 		}
 
 	}
+
+    @Override
+    public boolean func_94042_c()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean func_94041_b(int i, ItemStack itemstack)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

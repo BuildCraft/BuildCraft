@@ -86,20 +86,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		int[] displayList = getDisplayLists(liquid.itemID, liquid.itemMeta, tileentity.worldObj);
 		if (displayList == null)
 			return;
-		
-		String textureFile;
-		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
-			textureFile = Block.blocksList[liquid.itemID].getTextureFile();
-		} else if (Item.itemsList[liquid.itemID] != null){
-			textureFile = Item.itemsList[liquid.itemID].getTextureFile();
-		} else {
-			return;
-		}
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
-		
-		ForgeHooksClient.bindTexture(textureFile, 0);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 

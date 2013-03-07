@@ -123,7 +123,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		logic.onBlockPlaced();
 		transport.onBlockPlaced();
 	}
-	
+
 	public void onBlockPlacedBy(EntityLiving placer) {}
 
 	public void onNeighborBlockChange(int blockId) {
@@ -144,7 +144,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	/**
 	 * Should return the textureindex in the file specified by getTextureFile()
-	 * 
+	 *
 	 * @param direction
 	 *            The orientation for the texture that is requested. Unknown for the center pipe center
 	 * @return the index in the texture sheet
@@ -154,7 +154,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	/**
 	 * Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default implementation might not work if your
 	 * getTextureIndex(Orienations.Unknown) has logic
-	 * 
+	 *
 	 * @return
 	 */
 	public int getTextureIndexForItem() {
@@ -374,20 +374,20 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return false;
 	}
 
-	public boolean isPoweringTo(int l) {
+	public int isPoweringTo(int l) {
 		if (!broadcastRedstone)
-			return false;
+			return 0;
 
 		ForgeDirection o = ForgeDirection.values()[l].getOpposite();
 		TileEntity tile = container.getTile(o);
 
 		if (tile instanceof TileGenericPipe && Utils.checkPipesConnections(this.container, tile))
-			return false;
+			return 0;
 
-		return true;
+		return 15;
 	}
 
-	public boolean isIndirectlyPoweringTo(int l) {
+	public int isIndirectlyPoweringTo(int l) {
 		return isPoweringTo(l);
 	}
 

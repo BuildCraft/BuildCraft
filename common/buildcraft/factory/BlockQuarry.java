@@ -52,7 +52,7 @@ public class BlockQuarry extends BlockMachineRoot {
 
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 		if (entityliving instanceof EntityPlayer) {
 			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i, j, k);
 			tq.placedBy = (EntityPlayer) entityliving;
@@ -94,7 +94,7 @@ public class BlockQuarry extends BlockMachineRoot {
 		int meta = world.getBlockMetadata(i, j, k);
 
 		if ((meta & 8) == 0) {
-			world.setBlockMetadata(i, j, k, meta | 8);
+			world.setBlockMetadataWithNotify(i, j, k, meta | 8,0);
 
 			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
 
@@ -120,7 +120,7 @@ public class BlockQuarry extends BlockMachineRoot {
 
 	private void markFrameForDecay(World world, int x, int y, int z) {
 		if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID) {
-			world.setBlockMetadata(x, y, z, 1);
+			world.setBlockMetadataWithNotify(x, y, z, 1,0);
 		}
 	}
 

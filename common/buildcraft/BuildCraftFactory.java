@@ -13,6 +13,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -72,8 +73,6 @@ public class BuildCraftFactory {
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
 	public static boolean hopperDisabled;
-
-	public static int drillTexture;
 
 	public static boolean allowMining = true;
 
@@ -135,8 +134,6 @@ public class BuildCraftFactory {
 		}
 
 		FactoryProxy.proxy.initializeTileEntities();
-		FactoryProxy.proxy.initializeEntityRenders();
-		drillTexture = 2 * 16 + 1;
 
 		new BptBlockAutoWorkbench(autoWorkbenchBlock.blockID);
 		new BptBlockFrame(frameBlock.blockID);
@@ -150,9 +147,9 @@ public class BuildCraftFactory {
 
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
-		allowMining = Boolean.parseBoolean(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "mining.enabled", true).value);
+		allowMining = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "mining.enabled", true).getBoolean(true);
 
-		Property minigWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
+		Property miningWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
 		Property plainPipeId = BuildCraftCore.mainConfiguration.getBlock("drill.id", DefaultProps.DRILL_ID);
 		Property autoWorkbenchId = BuildCraftCore.mainConfiguration.getBlock("autoWorkbench.id", DefaultProps.AUTO_WORKBENCH_ID);
 		Property frameId = BuildCraftCore.mainConfiguration.getBlock("frame.id", DefaultProps.FRAME_ID);
@@ -163,48 +160,55 @@ public class BuildCraftFactory {
 		Property hopperId = BuildCraftCore.mainConfiguration.getBlock("hopper.id", DefaultProps.HOPPER_ID);
 		Property hopperDisable = BuildCraftCore.mainConfiguration.get("Block Savers", "hopper.disabled", false);
 
-		BuildCraftCore.mainConfiguration.save();
+		if (BuildCraftCore.mainConfiguration.hasChanged())
+		{
+		    BuildCraftCore.mainConfiguration.save();
+		}
 
-		miningWellBlock = new BlockMiningWell(Integer.parseInt(minigWellId.value));
+		miningWellBlock = new BlockMiningWell(miningWellId.getInt());
 		CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
 		CoreProxy.proxy.addName(miningWellBlock, "Mining Well");
 
-		plainPipeBlock = new BlockPlainPipe(Integer.parseInt(plainPipeId.value));
+		plainPipeBlock = new BlockPlainPipe(plainPipeId.getInt());
 		CoreProxy.proxy.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"));
 		CoreProxy.proxy.addName(plainPipeBlock, "Mining Pipe");
 
-		autoWorkbenchBlock = new BlockAutoWorkbench(Integer.parseInt(autoWorkbenchId.value));
+		autoWorkbenchBlock = new BlockAutoWorkbench(autoWorkbenchId.getInt());
 		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"));
 		CoreProxy.proxy.addName(autoWorkbenchBlock, "Automatic Crafting Table");
 
-		frameBlock = new BlockFrame(Integer.parseInt(frameId.value));
+		frameBlock = new BlockFrame(frameId.getInt());
 		CoreProxy.proxy.registerBlock(frameBlock.setUnlocalizedName("frameBlock"));
 		CoreProxy.proxy.addName(frameBlock, "Frame");
 
-		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
+		quarryBlock = new BlockQuarry(quarryId.getInt());
 		CoreProxy.proxy.registerBlock(quarryBlock.setUnlocalizedName("machineBlock"));
 		CoreProxy.proxy.addName(quarryBlock, "Quarry");
 
-		tankBlock = new BlockTank(Integer.parseInt(tankId.value));
+		tankBlock = new BlockTank(tankId.getInt());
 		CoreProxy.proxy.registerBlock(tankBlock.setUnlocalizedName("tankBlock"));
 		CoreProxy.proxy.addName(tankBlock, "Tank");
 
-		pumpBlock = new BlockPump(Integer.parseInt(pumpId.value));
+		pumpBlock = new BlockPump(pumpId.getInt());
 		CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
 		CoreProxy.proxy.addName(pumpBlock, "Pump");
 
-		refineryBlock = new BlockRefinery(Integer.parseInt(refineryId.value));
+		refineryBlock = new BlockRefinery(refineryId.getInt());
 		CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
 		CoreProxy.proxy.addName(refineryBlock, "Refinery");
 
-		hopperDisabled = Boolean.parseBoolean(hopperDisable.value);
+		hopperDisabled = hopperDisable.getBoolean(false);
 		if (!hopperDisabled) {
-			hopperBlock = new BlockHopper(Integer.parseInt(hopperId.value));
+			hopperBlock = new BlockHopper(hopperId.getInt());
 			CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
 			CoreProxy.proxy.addName(hopperBlock, "Hopper");
 		}
 
-		BuildCraftCore.mainConfiguration.save();
+		FactoryProxy.proxy.initializeEntityRenders();
+		if (BuildCraftCore.mainConfiguration.hasChanged())
+		{
+		    BuildCraftCore.mainConfiguration.save();
+		}
 	}
 
 	public static void loadRecipes() {
@@ -218,16 +222,16 @@ public class BuildCraftFactory {
 					new Object[] { "ipi", "gig", "dDd", Character.valueOf('i'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Item.redstone,
 							Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('d'), BuildCraftCore.diamondGearItem,
 							Character.valueOf('D'), Item.pickaxeDiamond, });
-							
+
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock, Character.valueOf('W'),
-					miningWellBlock, });							
+					miningWellBlock, });
 		}
 		else {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "iri", "iTi", "gpg", 
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "iri", "iTi", "gpg",
 					Character.valueOf('r'), Item.redstone,
-					Character.valueOf('i'), Item.ingotIron, 
-					Character.valueOf('T'), tankBlock, 
-					Character.valueOf('g'), BuildCraftCore.ironGearItem, 
+					Character.valueOf('i'), Item.ingotIron,
+					Character.valueOf('T'), tankBlock,
+					Character.valueOf('g'), BuildCraftCore.ironGearItem,
 					Character.valueOf('p'), BuildCraftTransport.pipeLiquidsGold });
 		}
 

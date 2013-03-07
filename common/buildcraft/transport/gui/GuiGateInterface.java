@@ -13,8 +13,12 @@ import java.util.Iterator;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -53,22 +57,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				return "";
 		}
 
+        @SideOnly(Side.CLIENT)
 		@Override
-		public String getTexture() {
+		public Icon getTexture() {
 			ITrigger trigger = pipe.getTrigger(slot);
 			if (trigger != null)
-				return trigger.getTextureFile();
+				return trigger.getTexture();
 			else
-				return "";
-		}
-
-		@Override
-		public int getTextureIndex() {
-			ITrigger trigger = pipe.getTrigger(slot);
-			if (trigger != null)
-				return trigger.getIndexInTexture();
-			else
-				return 0;
+				return null;
 		}
 
 		@Override
@@ -102,22 +98,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				return "";
 		}
 
+		@SideOnly(Side.CLIENT)
 		@Override
-		public String getTexture() {
+		public Icon getTexture() {
 			IAction action = pipe.getAction(slot);
 			if (action != null)
 				return action.getTexture();
 			else
-				return "";
-		}
-
-		@Override
-		public int getTextureIndex() {
-			IAction action = pipe.getAction(slot);
-			if (action != null)
-				return action.getIndexInTexture();
-			else
-				return 0;
+				return null;
 		}
 
 		@Override
@@ -250,12 +238,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
 		_container.synchronize();
-		int texture = 0;
 
-		texture = mc.renderEngine.getTexture(_container.getGateGuiFile());
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.func_98187_b(_container.getGateGuiFile());
 
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(texture);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

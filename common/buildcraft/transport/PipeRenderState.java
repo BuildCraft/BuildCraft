@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.util.Icon;
+
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
@@ -28,7 +30,7 @@ public class PipeRenderState implements IClientState {
 	/*
 	 * This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will then return the the WorldRenderer
 	 */
-	public int currentTextureIndex;
+	public Icon currentTexture;
 
 	public PipeRenderState() {
 		// for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){

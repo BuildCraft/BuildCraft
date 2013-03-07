@@ -43,6 +43,6 @@ public class BuildCraftAPI {
 			Block.blocksList[blockId].dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 		}
 
-		world.setBlockWithNotify(x, y, z, 0);
+		world.func_94575_c(x, y, z, 0);
 	}
 }

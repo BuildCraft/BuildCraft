@@ -55,10 +55,10 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		GL11.glDisable(GL11.GL_LIGHTING);
 
 		GL11.glTranslated(x, y, z);
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png", 0);
+		tileEntityRenderer.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png");
 		top.render((float) (1.0 / 16.0));
 		bottom.render((float) (1.0 / 16.0));
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png", 0);
+		tileEntityRenderer.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png");
 		middle.render(Tessellator.instance, 1F / 16F);
 
 		GL11.glEnable(GL11.GL_LIGHTING);

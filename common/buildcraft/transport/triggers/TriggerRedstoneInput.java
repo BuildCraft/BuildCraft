@@ -50,7 +50,7 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public String getTextureFile() {
+	public String getTexture() {
 		return DefaultProps.TEXTURE_TRIGGERS;
 	}
 }
