@@ -101,7 +101,10 @@ public class BuildCraftTransport {
 	public static BlockGenericPipe genericPipeBlock;
 
 	@SideOnly(Side.CLIENT)
-	public Icon[] icons;
+	public Icon[] terrainIcons;
+
+	@SideOnly(Side.CLIENT)
+	public Icon[] itemIcons;
 	
 	public static boolean alwaysConnectPipes;
 	public static boolean usePipeLoss;
@@ -361,7 +364,8 @@ public class BuildCraftTransport {
 		// MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 
 		TransportProxy.proxy.registerTileEntities();
-		TransportProxy.proxy.loadIcons(this);
+		TransportProxy.proxy.loadTerrainIcons(this);
+		TransportProxy.proxy.loadItemIcons(this);
 
 		// dockingStationBlock = new
 		// BlockDockingStation(Integer.parseInt(dockingStationId.value));
