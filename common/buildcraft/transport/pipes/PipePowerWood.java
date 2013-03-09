@@ -19,7 +19,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
@@ -30,8 +30,8 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
 	
-	protected int standardIconIndex = IconConstants.PipePowerWood_Standard;
-	protected int solidIconIndex = IconConstants.PipeAllWood_Solid;
+	protected int standardIconIndex = IconTerrainConstants.PipePowerWood_Standard;
+	protected int solidIconIndex = IconTerrainConstants.PipeAllWood_Solid;
 
 
 	private int overheatTicks;
@@ -47,7 +47,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override

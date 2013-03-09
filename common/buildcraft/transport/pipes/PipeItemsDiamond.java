@@ -28,7 +28,7 @@ import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.IPipeTransportItemsHook;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
@@ -41,19 +41,19 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
 		switch(direction){
-			case UNKNOWN: return IconConstants.PipeItemsDiamond_Center;
-			case DOWN: return IconConstants.PipeItemsDiamond_Down;
-			case UP: return IconConstants.PipeItemsDiamond_Up;
-			case NORTH: return IconConstants.PipeItemsDiamond_North;
-			case SOUTH: return IconConstants.PipeItemsDiamond_South;
-			case WEST: return IconConstants.PipeItemsDiamond_West;
-			case EAST: return IconConstants.PipeItemsDiamond_East;
+			case UNKNOWN: return IconTerrainConstants.PipeItemsDiamond_Center;
+			case DOWN: return IconTerrainConstants.PipeItemsDiamond_Down;
+			case UP: return IconTerrainConstants.PipeItemsDiamond_Up;
+			case NORTH: return IconTerrainConstants.PipeItemsDiamond_North;
+			case SOUTH: return IconTerrainConstants.PipeItemsDiamond_South;
+			case WEST: return IconTerrainConstants.PipeItemsDiamond_West;
+			case EAST: return IconTerrainConstants.PipeItemsDiamond_East;
 			default: throw new IllegalArgumentException("direction out of bounds");
 		}
 	}

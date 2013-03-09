@@ -16,7 +16,7 @@ import buildcraft.transport.utils.WireMatrix;
 public class PipeRenderState implements IClientState {
 
 	private boolean hasGate = false;
-	private int gateTextureIndex = 0;
+	private int gateIconIndex = 0;
 
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
@@ -42,15 +42,15 @@ public class PipeRenderState implements IClientState {
 		return hasGate;
 	}
 
-	public void setGateTexture(int value) {
-		if (gateTextureIndex != value) {
-			gateTextureIndex = value;
+	public void setGateIconIndex(int value) {
+		if (gateIconIndex != value) {
+			gateIconIndex = value;
 			dirty = true;
 		}
 	}
 
-	public int getGateTextureIndex() {
-		return gateTextureIndex;
+	public int getGateIconIndex() {
+		return gateIconIndex;
 	}
 
 	public void clean() {
@@ -68,7 +68,7 @@ public class PipeRenderState implements IClientState {
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
 		data.writeBoolean(hasGate);
-		data.writeInt(gateTextureIndex);
+		data.writeInt(gateIconIndex);
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
@@ -78,7 +78,7 @@ public class PipeRenderState implements IClientState {
 	@Override
 	public void readData(DataInputStream data) throws IOException {
 		hasGate = data.readBoolean();
-		gateTextureIndex = data.readInt();
+		gateIconIndex = data.readInt();
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);

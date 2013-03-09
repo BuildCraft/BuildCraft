@@ -14,7 +14,7 @@ import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 
@@ -30,12 +30,12 @@ public class PipeLiquidsGold extends Pipe {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return IconConstants.PipeLiquidsGold;
+		return IconTerrainConstants.PipeLiquidsGold;
 	}
 
 }

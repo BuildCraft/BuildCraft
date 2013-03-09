@@ -1,6 +1,6 @@
 package buildcraft.transport;
 
-public class IconConstants {
+public class IconTerrainConstants {
 	
 	public static final int PipeStructureCobblestone 		=  0;
 	public static final int PipeItemsCobbleStone 			=  1;
@@ -44,7 +44,39 @@ public class IconConstants {
 	public static final int Texture_Yellow_Lit				= 38;
 	public static final int Texture_Cyan 					= 39;
 	
-	public static final int MAX 							= 40;
+	public static final int Gate_Dark 						= 40;
+	public static final int Gate_Lit 						= 41;
+	public static final int Gate_Iron_And_Dark 				= 42;
+	public static final int Gate_Iron_And_Lit 				= 43;
+	public static final int Gate_Iron_Or_Dark 				= 43;
+	public static final int Gate_Iron_Or_Lit 				= 44;
+	public static final int Gate_Gold_And_Dark 				= 45;
+	public static final int Gate_Gold_And_Lit 				= 46;
+	public static final int Gate_Gold_Or_Dark 				= 47;
+	public static final int Gate_Gold_Or_Lit 				= 48;
+	public static final int Gate_Diamond_And_Dark 			= 49;
+	public static final int Gate_Diamond_And_Lit 			= 50;
+	public static final int Gate_Diamond_Or_Dark 			= 51;
+	public static final int Gate_Diamond_Or_Lit 			= 52;	
+	
+	public static final int Gate_Autarchic_Dark 			= 53;
+	public static final int Gate_Autarchic_Lit 				= 54;
+	public static final int Gate_Autarchic_Iron_And_Dark 	= 55;
+	public static final int Gate_Autarchic_Iron_And_Lit 	= 56;
+	public static final int Gate_Autarchic_Iron_Or_Dark 	= 57;
+	public static final int Gate_Autarchic_Iron_Or_Lit 		= 58;
+	public static final int Gate_Autarchic_Gold_And_Dark 	= 59;
+	public static final int Gate_Autarchic_Gold_And_Lit 	= 60;
+	public static final int Gate_Autarchic_Gold_Or_Dark 	= 61;
+	public static final int Gate_Autarchic_Gold_Or_Lit 		= 62;
+	public static final int Gate_Autarchic_Diamond_And_Dark = 63;
+	public static final int Gate_Autarchic_Diamond_And_Lit 	= 64;
+	public static final int Gate_Autarchic_Diamond_Or_Dark 	= 65;
+	public static final int Gate_Autarchic_Diamond_Or_Lit 	= 66;	
+	
+	public static final int MAX 							= 67;
+	
+	
 
 
 }

@@ -12,7 +12,7 @@ import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeRenderState;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
@@ -139,22 +139,22 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		if (state.wireMatrix.hasWire(WireColor.Red)) {
-			state.currentTexture = BuildCraftTransport.instance.icons[state.wireMatrix.isWireLit(WireColor.Red)?IconConstants.Texture_Red_Lit:IconConstants.Texture_Red_Dark];
+			state.currentTexture = BuildCraftTransport.instance.terrainIcons[state.wireMatrix.isWireLit(WireColor.Red)?IconTerrainConstants.Texture_Red_Lit:IconTerrainConstants.Texture_Red_Dark];
 			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, IPipe.WireColor.Red, x, y, z);
 		}
 
 		if (state.wireMatrix.hasWire(WireColor.Blue)) {
-			state.currentTexture = BuildCraftTransport.instance.icons[state.wireMatrix.isWireLit(WireColor.Blue)?IconConstants.Texture_Blue_Lit:IconConstants.Texture_Blue_Dark];
+			state.currentTexture = BuildCraftTransport.instance.terrainIcons[state.wireMatrix.isWireLit(WireColor.Blue)?IconTerrainConstants.Texture_Blue_Lit:IconTerrainConstants.Texture_Blue_Dark];
 			pipeWireRender(renderblocks, block, state, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos, IPipe.WireColor.Blue, x, y, z);
 		}
 
 		if (state.wireMatrix.hasWire(WireColor.Green)) {
-			state.currentTexture = BuildCraftTransport.instance.icons[state.wireMatrix.isWireLit(WireColor.Green)?IconConstants.Texture_Green_Lit:IconConstants.Texture_Green_Dark];
+			state.currentTexture = BuildCraftTransport.instance.terrainIcons[state.wireMatrix.isWireLit(WireColor.Green)?IconTerrainConstants.Texture_Green_Lit:IconTerrainConstants.Texture_Green_Dark];
 			pipeWireRender(renderblocks, block, state, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMinPos, IPipe.WireColor.Green, x, y, z);
 		}
 
 		if (state.wireMatrix.hasWire(WireColor.Yellow)) {
-			state.currentTexture = BuildCraftTransport.instance.icons[state.wireMatrix.isWireLit(WireColor.Yellow)?IconConstants.Texture_Yellow_Lit:IconConstants.Texture_Yellow_Dark];
+			state.currentTexture = BuildCraftTransport.instance.terrainIcons[state.wireMatrix.isWireLit(WireColor.Yellow)?IconTerrainConstants.Texture_Yellow_Lit:IconTerrainConstants.Texture_Yellow_Dark];
 			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, IPipe.WireColor.Yellow, x, y, z);
 		}
 
@@ -241,7 +241,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = Utils.pipeMinPos;
 		zeroState[2][1] = Utils.pipeMaxPos;
 
-		state.currentTexture = BuildCraftTransport.instance.icons[IconConstants.PipeStructureCobblestone]; // Structure Pipe
+		state.currentTexture = BuildCraftTransport.instance.terrainIcons[IconTerrainConstants.PipeStructureCobblestone]; // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.facadeMatrix.isConnected(direction) && !state.pipeConnectionMatrix.isConnected(direction)) {
@@ -476,7 +476,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 	private void pipeGateRender(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
 
-		state.currentTexture = state.getGateTextureIndex();
+		state.currentTexture = BuildCraftTransport.instance.itemIcons[state.getGateIconIndex()];
 
 		float min = Utils.pipeMinPos + 0.05F;
 		float max = Utils.pipeMaxPos - 0.05F;

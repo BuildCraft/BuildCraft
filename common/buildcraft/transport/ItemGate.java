@@ -7,6 +7,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 
@@ -26,30 +28,51 @@ public class ItemGate extends ItemBuildCraft {
 
 	@SuppressWarnings({ "all" })
 	@Override
-	public int getIconFromDamage(int i) {
+	@SideOnly(Side.CLIENT)
+	public Icon getIconFromDamage(int i) {
 		int n = 0;
 		if (series > 0) {
 			n = 3;
 		} else {
 			n = 2;
 		}
-
-		switch (i) {
-		case 0:
-			return n * 16 + 6;
-		case 1:
-			return n * 16 + 7;
-		case 2:
-			return n * 16 + 8;
-		case 3:
-			return n * 16 + 9;
-		case 4:
-			return n * 16 + 10;
-		case 5:
-			return n * 16 + 11;
-		default:
-			return n * 16 + 12;
+		
+		if (series == 0){	//Normal Gates
+			switch (i) {
+			case 0:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate];
+			case 1:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Iron_And];
+			case 2:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Iron_Or];
+			case 3:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Gold_And];
+			case 4:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Gold_Or];
+			case 5:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Diamond_And];
+			default:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Diamond_Or];
+			}
+		} else if (series == 1){
+			switch (i) {
+			case 0:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate];
+			case 1:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Iron_And];
+			case 2:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Iron_Or];
+			case 3:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Gold_And];
+			case 4:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Gold_Or];
+			case 5:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Diamond_And];
+			default:
+				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Diamond_Or];
+			}
 		}
+		return null;
 	}
 
 	@Override

@@ -36,7 +36,7 @@ import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
@@ -195,7 +195,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = BuildCraftTransport.instance.icons[IconConstants.Texture_Cyan];
+		block.texture = BuildCraftTransport.instance.terrainIcons[IconTerrainConstants.Texture_Cyan];
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -221,7 +221,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = BuildCraftTransport.instance.icons[IconConstants.Texture_Red_Dark];
+		block.texture = BuildCraftTransport.instance.terrainIcons[IconTerrainConstants.Texture_Red_Dark];
 
 		size = Utils.pipeMaxPos - Utils.pipeMinPos;
 

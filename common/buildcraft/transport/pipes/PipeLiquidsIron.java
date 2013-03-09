@@ -14,14 +14,14 @@ import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 
 public class PipeLiquidsIron extends Pipe {
 	
-	protected int standardIconIndex = IconConstants.PipeLiquidsIron_Standard;
-	protected int solidIconIndex = IconConstants.PipeAllIron_Solid;
+	protected int standardIconIndex = IconTerrainConstants.PipeLiquidsIron_Standard;
+	protected int solidIconIndex = IconTerrainConstants.PipeAllIron_Solid;
 
 
 	public PipeLiquidsIron(int itemID) {
@@ -31,7 +31,7 @@ public class PipeLiquidsIron extends Pipe {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override

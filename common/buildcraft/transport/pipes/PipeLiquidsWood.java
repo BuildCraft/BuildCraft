@@ -26,7 +26,7 @@ import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.network.TileNetworkData;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 
@@ -37,8 +37,8 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
 
-	protected int standardIconIndex = IconConstants.PipeLiquidsWood_Standard;
-	protected int solidIconIndex = IconConstants.PipeAllWood_Solid;
+	protected int standardIconIndex = IconTerrainConstants.PipeLiquidsWood_Standard;
+	protected int solidIconIndex = IconTerrainConstants.PipeAllWood_Solid;
 
 	long lastMining = 0;
 	boolean lastPower = false;
@@ -128,7 +128,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override

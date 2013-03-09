@@ -250,74 +250,40 @@ public class GateVanilla extends Gate {
 
 	}
 
-	// / TEXTURES
+	// / ICONS
 	@Override
-	public final int getTexture(boolean isSignalActive) {
+	public final int getTextureIconIndex(boolean isSignalActive) {
 
 		boolean isGateActive = isSignalActive;
 		if (hasPulser() && pulser.isActive()) {
 			isGateActive = true;
 		}
-
-		int n = getTextureRow();
-		switch (kind) {
-		case None:
-			break;
-		case Single:
-			if (!isGateActive)
-				return n * 16 + 12;
-			else
-				return n * 16 + 13;
-		case AND_2:
-			if (!isGateActive) {
-				if (hasPulser())
-					return 9 * 16 + 0;
-				else
-					return 6 * 16 + 7;
-			} else if (hasPulser())
-				return 9 * 16 + 1;
-			else
-				return 6 * 16 + 8;
-		case OR_2:
-			if (!isGateActive) {
-				if (hasPulser())
-					return 9 * 16 + 2;
-				else
-					return 6 * 16 + 9;
-			} else if (hasPulser())
-				return 9 * 16 + 3;
-			else
-				return 6 * 16 + 10;
-		case AND_3:
-			if (!isGateActive)
-				return n * 16 + 4;
-			else
-				return n * 16 + 5;
-		case OR_3:
-			if (!isGateActive)
-				return n * 16 + 6;
-			else
-				return n * 16 + 7;
-		case AND_4:
-			if (!isGateActive)
-				return n * 16 + 8;
-			else
-				return n * 16 + 9;
-		case OR_4:
-			if (!isGateActive)
-				return n * 16 + 10;
-			else
-				return n * 16 + 11;
+	
+		if (!hasPulser()){
+			switch (kind){
+				case None: return 0;
+				case Single: return isGateActive ? IconTerrainConstants.Gate_Dark : IconTerrainConstants.Gate_Lit;
+				case AND_2: return isGateActive ? IconTerrainConstants.Gate_Iron_And_Dark : IconTerrainConstants.Gate_Iron_And_Lit;
+				case OR_2: return isGateActive ? IconTerrainConstants.Gate_Iron_Or_Dark : IconTerrainConstants.Gate_Iron_Or_Lit;
+				case AND_3: return isGateActive ? IconTerrainConstants.Gate_Gold_And_Dark : IconTerrainConstants.Gate_Gold_And_Lit;
+				case OR_3: return isGateActive ? IconTerrainConstants.Gate_Gold_Or_Dark : IconTerrainConstants.Gate_Gold_Or_Lit;
+				case AND_4: return isGateActive ? IconTerrainConstants.Gate_Diamond_And_Dark : IconTerrainConstants.Gate_Diamond_And_Lit;
+				case OR_4: return isGateActive ? IconTerrainConstants.Gate_Diamond_Or_Dark : IconTerrainConstants.Gate_Diamond_Or_Lit;
+			}
+		} else {
+			switch (kind){
+				case None: return 0; 
+				case Single: return isGateActive ? IconTerrainConstants.Gate_Autarchic_Dark : IconTerrainConstants.Gate_Autarchic_Lit;
+				case AND_2: return isGateActive ? IconTerrainConstants.Gate_Autarchic_Iron_And_Dark : IconTerrainConstants.Gate_Autarchic_Iron_And_Lit;
+				case OR_2: return isGateActive ? IconTerrainConstants.Gate_Autarchic_Iron_Or_Dark : IconTerrainConstants.Gate_Autarchic_Iron_Or_Lit;
+				case AND_3: return isGateActive ? IconTerrainConstants.Gate_Autarchic_Gold_And_Dark : IconTerrainConstants.Gate_Autarchic_Gold_And_Lit;
+				case OR_3: return isGateActive ? IconTerrainConstants.Gate_Autarchic_Gold_Or_Dark : IconTerrainConstants.Gate_Autarchic_Gold_Or_Lit;
+				case AND_4: return isGateActive ? IconTerrainConstants.Gate_Autarchic_Diamond_And_Dark : IconTerrainConstants.Gate_Autarchic_Diamond_And_Lit;
+				case OR_4: return isGateActive ? IconTerrainConstants.Gate_Autarchic_Diamond_Or_Dark : IconTerrainConstants.Gate_Autarchic_Diamond_Or_Lit;
+			}
 		}
 
 		return 0;
-	}
-
-	private int getTextureRow() {
-		if (hasPulser())
-			return 9;
-		else
-			return 8;
 	}
 
 	@Override

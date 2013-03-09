@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 
@@ -65,7 +65,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		// Render StructurePipe
 		block = BuildCraftTransport.genericPipeBlock;
-		Icon textureID = BuildCraftTransport.instance.icons[IconConstants.PipeStructureCobblestone]; // Structure pipe
+		Icon textureID = BuildCraftTransport.instance.terrainIcons[IconTerrainConstants.PipeStructureCobblestone]; // Structure pipe
 		
 		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F / 16F);
 		block.setBlockBoundsForItemRender();

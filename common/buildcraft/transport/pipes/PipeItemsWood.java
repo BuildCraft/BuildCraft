@@ -29,7 +29,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
@@ -37,8 +37,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
 	
-	protected int standardIconIndex = IconConstants.PipeItemsWood_Standard;
-	protected int solidIconIndex = IconConstants.PipeAllWood_Solid;
+	protected int standardIconIndex = IconTerrainConstants.PipeItemsWood_Standard;
+	protected int solidIconIndex = IconTerrainConstants.PipeAllWood_Solid;
 
 	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
 		super(transport, logic, itemID);
@@ -59,7 +59,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override

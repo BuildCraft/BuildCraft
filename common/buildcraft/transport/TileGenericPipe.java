@@ -219,7 +219,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 		// Gate Textures
 		renderState.setHasGate(pipe.hasGate());
-		renderState.setGateTexture(!pipe.hasGate() ? 0 : pipe.gate.getTexture(pipe.isGateActive()));
+		renderState.setGateIconIndex(!pipe.hasGate() ? 0 : pipe.gate.getTextureIconIndex(pipe.isGateActive()));
 
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {

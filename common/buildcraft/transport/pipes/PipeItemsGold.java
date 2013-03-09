@@ -21,7 +21,7 @@ import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeTransportItemsHook;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
@@ -34,12 +34,12 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return IconConstants.PipeItemsGold;
+		return IconTerrainConstants.PipeItemsGold;
 	}
 
 	@Override

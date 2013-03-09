@@ -18,7 +18,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
-import buildcraft.transport.IconConstants;
+import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
@@ -32,12 +32,12 @@ public class PipeItemsVoid extends Pipe implements IItemTravelingHook {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.icons;
+		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return IconConstants.PipeItemsVoid;
+		return IconTerrainConstants.PipeItemsVoid;
 	}
 
 	// This is called if the void pipe is only connected to one pipe
