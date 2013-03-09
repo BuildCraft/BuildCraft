@@ -9,17 +9,22 @@
 
 package buildcraft.core.triggers;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.IconItemConstants;
 
 public class TriggerInventory extends Trigger implements ITriggerDirectional {
 
@@ -33,20 +38,6 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 		super(id);
 
 		this.state = state;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (state) {
-		case Empty:
-			return 2 * 16 + 4;
-		case Contains:
-			return 2 * 16 + 5;
-		case Space:
-			return 2 * 16 + 6;
-		default:
-			return 2 * 16 + 7;
-		}
 	}
 
 	@Override
@@ -134,7 +125,17 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 	}
 
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTextureIcon() {
+		switch (state) {
+		case Empty:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Empty];
+		case Contains:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Contains];
+		case Space:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Space];
+		default:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Full];
+		}
 	}
 }

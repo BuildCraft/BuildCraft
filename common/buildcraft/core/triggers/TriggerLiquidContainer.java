@@ -9,15 +9,20 @@
 
 package buildcraft.core.triggers;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
+import buildcraft.transport.IconItemConstants;
 
 public class TriggerLiquidContainer extends Trigger {
 
@@ -30,20 +35,6 @@ public class TriggerLiquidContainer extends Trigger {
 	public TriggerLiquidContainer(int id, State state) {
 		super(id);
 		this.state = state;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (state) {
-		case Empty:
-			return 2 * 16 + 0;
-		case Contains:
-			return 2 * 16 + 1;
-		case Space:
-			return 2 * 16 + 2;
-		default:
-			return 2 * 16 + 3;
-		}
 	}
 
 	@Override
@@ -137,7 +128,17 @@ public class TriggerLiquidContainer extends Trigger {
 	}
 
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTextureIcon() {
+		switch (state) {
+		case Empty:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Empty];
+		case Contains:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Contains];
+		case Space:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Space];
+		default:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Full];
+		}
 	}
 }

@@ -62,7 +62,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		public Icon getTexture() {
 			ITrigger trigger = pipe.getTrigger(slot);
 			if (trigger != null)
-				return trigger.getTexture();
+				return trigger.getTextureIcon();
 			else
 				return null;
 		}

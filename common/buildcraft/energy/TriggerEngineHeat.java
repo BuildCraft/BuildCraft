@@ -9,10 +9,15 @@
 
 package buildcraft.energy;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
+import buildcraft.transport.IconItemConstants;
 
 public class TriggerEngineHeat extends Trigger {
 
@@ -22,20 +27,6 @@ public class TriggerEngineHeat extends Trigger {
 		super(id);
 
 		this.stage = stage;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (stage) {
-		case Blue:
-			return 1 * 16 + 0;
-		case Green:
-			return 1 * 16 + 1;
-		case Yellow:
-			return 1 * 16 + 2;
-		default:
-			return 1 * 16 + 3;
-		}
 	}
 
 	@Override
@@ -64,7 +55,17 @@ public class TriggerEngineHeat extends Trigger {
 	}
 
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTextureIcon() {
+		switch (stage) {
+		case Blue:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Blue];
+		case Green:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Green];
+		case Yellow:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Yellow];
+		default:
+			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Red];
+		}
 	}
 }

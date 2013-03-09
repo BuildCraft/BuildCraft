@@ -1,7 +1,12 @@
 package buildcraft.transport.triggers;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.Icon;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.Action;
 import buildcraft.core.DefaultProps;
+import buildcraft.transport.IconItemConstants;
 
 public class ActionEnergyPulser extends Action {
 
@@ -10,13 +15,9 @@ public class ActionEnergyPulser extends Action {
 	}
 
 	@Override
-	public int getIndexInTexture() {
-		return 4 * 16 + 0;
-	}
-
-	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTexture() {
+		return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Machine_Active];
 	}
 
 	@Override

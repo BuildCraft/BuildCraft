@@ -13,7 +13,7 @@ public interface ITrigger {
 	 * Return the texture file for this trigger icon
 	 */
     @SideOnly(Side.CLIENT)
-	public abstract Icon getTexture();
+	public abstract Icon getTextureIcon();
 
 	/**
 	 * Return true if this trigger can accept parameters

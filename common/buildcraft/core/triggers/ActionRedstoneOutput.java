@@ -9,8 +9,13 @@
 
 package buildcraft.core.triggers;
 
+import net.minecraft.util.Icon;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.Action;
 import buildcraft.core.DefaultProps;
+import buildcraft.transport.IconItemConstants;
 
 public class ActionRedstoneOutput extends Action {
 
@@ -19,17 +24,13 @@ public class ActionRedstoneOutput extends Action {
 	}
 
 	@Override
-	public int getIndexInTexture() {
-		return 0 * 16 + 0;
-	}
-
-	@Override
 	public String getDescription() {
 		return "Redstone Signal";
 	}
 
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTexture() {
+		return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_RedstoneInput_Active];
 	}
 }

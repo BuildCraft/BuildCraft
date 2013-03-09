@@ -47,7 +47,7 @@ public abstract class Trigger implements ITrigger {
 	 */
     @SideOnly(Side.CLIENT)
 	@Override
-	public abstract Icon getTexture();
+	public abstract Icon getTextureIcon();
 
 	/*
 	 * (non-Javadoc)
