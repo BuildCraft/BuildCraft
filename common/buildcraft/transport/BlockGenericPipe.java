@@ -97,41 +97,41 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void getCollisionBoxes(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
+	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
 		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-		super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
 		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
 		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (tileG != null) {
@@ -139,32 +139,32 @@ public class BlockGenericPipe extends BlockContainer {
 
 			if (tileG.hasFacade(ForgeDirection.EAST)) {
 				setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-				super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.WEST)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, facadeThickness, 1.0F, 1.0F);
-				super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.UP)) {
 				setBlockBounds(0.0F, 1 - facadeThickness, 0.0F, 1.0F, 1.0F, 1.0F);
-				super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.DOWN)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, facadeThickness, 1.0F);
-				super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.SOUTH)) {
 				setBlockBounds(0.0F, 0.0F, 1 - facadeThickness, 1.0F, 1.0F, 1.0F);
-				super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.NORTH)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, facadeThickness);
-				super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 		}
 
