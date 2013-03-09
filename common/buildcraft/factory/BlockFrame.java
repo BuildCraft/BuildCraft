@@ -106,41 +106,41 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
 		return getCollisionBoundingBoxFromPool(world, i, j, k);
 	}
-
+		
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void getCollisionBoxes(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
+	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
 		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-		super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
-			super.getCollisionBoxes(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
