@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 
@@ -12,7 +13,9 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.IconConstants;
 import buildcraft.transport.ItemFacade;
+import buildcraft.transport.pipes.PipeStructureCobblestone;
 
 public class FacadeItemRenderer implements IItemRenderer {
 
@@ -62,7 +65,8 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		// Render StructurePipe
 		block = BuildCraftTransport.genericPipeBlock;
-		int textureID = 7 * 16 + 13; // Structure pipe
+		Icon textureID = BuildCraftTransport.instance.icons[IconConstants.PipeStructureCobblestone]; // Structure pipe
+		
 		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F / 16F);
 		block.setBlockBoundsForItemRender();
 		render.setRenderBoundsFromBlock(block);

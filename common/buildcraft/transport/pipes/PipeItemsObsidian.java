@@ -10,6 +10,9 @@ package buildcraft.transport.pipes;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
@@ -19,7 +22,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -29,6 +34,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.IconConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
@@ -54,13 +60,14 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public Icon[] getTextureIcons() {
+		return BuildCraftTransport.instance.icons;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 1 * 16 + 12;
+	public int getIconIndex(ForgeDirection direction) {
+		return IconConstants.PipeItemsObsidian;
 	}
 
 	@Override

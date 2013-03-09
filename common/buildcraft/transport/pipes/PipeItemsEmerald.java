@@ -22,6 +22,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.IconConstants;
 import buildcraft.transport.PipeTransportItems;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -39,8 +40,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
 		super(transport, new PipeLogicEmerald(), itemID);
 
-		baseTexture = 6 * 16 + 13;
-		plainTexture = baseTexture + 1;
+		standardIconIndex = IconConstants.PipeItemsEmerald_Standard;
+		solidIconIndex = IconConstants.PipeAllEmerald_Solid;
 	}
 
 	public PipeItemsEmerald(int itemID) {

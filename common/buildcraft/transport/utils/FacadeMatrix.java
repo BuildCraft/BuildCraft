@@ -8,23 +8,28 @@ import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 
 public class FacadeMatrix extends ConnectionMatrix {
-	private Icon[] _textureIcons = new Icon[ForgeDirection.VALID_DIRECTIONS.length];
+	private final int[] _blockIds = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private final int[] _blockMetas = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
 	private boolean dirty = false;
 
 	public FacadeMatrix() {
 	}
 
-
-	public Icon getTextureIcon(ForgeDirection direction) {
-		return _textureIcons[direction.ordinal()];
-	}
-
-	public void setTextureIcon(ForgeDirection direction, Icon value) {
-		if (_textureIcons[direction.ordinal()] != value) {
-			_textureIcons[direction.ordinal()] = value;
+	public void setFacade(ForgeDirection direction, int blockId, int blockMeta){
+		if (_blockIds[direction.ordinal()] != blockId || _blockMetas[direction.ordinal()] != blockMeta){
+			_blockIds[direction.ordinal()] = blockId;
+			_blockMetas[direction.ordinal()] = blockMeta;
 			dirty = true;
 		}
+	}
+	
+	public int getFacadeBlockId(ForgeDirection direction){
+		return _blockIds[direction.ordinal()];
+	}
+	
+	public int getFacadeMetaId(ForgeDirection direction){
+		return _blockMetas[direction.ordinal()];
 	}
 
 	@Override
@@ -42,7 +47,8 @@ public class FacadeMatrix extends ConnectionMatrix {
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			_textureIcons[i] = data.readInt();
+			_blockIds[i] = data.readInt();
+			_blockMetas[i] = data.readInt();
 		}
 	}
 
@@ -50,8 +56,8 @@ public class FacadeMatrix extends ConnectionMatrix {
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			data.writeUTF(_textureFiles[i]);
-			data.writeInt(_textureIcons[i]);
+			data.writeInt(_blockIds[i]);
+			data.writeInt(_blockMetas[i]);
 		}
 	}
 }

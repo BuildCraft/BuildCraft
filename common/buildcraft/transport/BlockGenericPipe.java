@@ -797,7 +797,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 		Pipe dummyPipe = createPipe(item.itemID);
 		if (dummyPipe != null) {
-			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
+			item.setPipeIcon(dummyPipe.getTextureIcons()[dummyPipe.getIconIndexForItem()]);
 		}
 
 		return item;

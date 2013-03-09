@@ -9,9 +9,12 @@
 
 package buildcraft.transport;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -20,10 +23,6 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.BuildCraftCore;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
-
-	Pipe dummyPipe;
-
-	private int textureIndex = 0;
 
 	protected ItemPipe(int i) {
 		super(i);
@@ -85,13 +84,14 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		} else
 			return false;
 	}
-
-	public ItemPipe setTextureIndex(int textureIndex) {
-		this.textureIndex = textureIndex;
-		return this;
+	
+	@SideOnly(Side.CLIENT)
+	public Icon getPipeIcon(){
+		return iconIndex;
 	}
-
-	public int getTextureIndex() {
-		return textureIndex;
+	
+	@SideOnly(Side.CLIENT)
+	public void setPipeIcon(Icon icon){
+		this.iconIndex = icon;
 	}
 }

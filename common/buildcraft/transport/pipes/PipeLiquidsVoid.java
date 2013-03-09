@@ -9,10 +9,15 @@
 
 package buildcraft.transport.pipes;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.IPipeTransportLiquidsHook;
+import buildcraft.transport.IconConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 
@@ -23,13 +28,14 @@ public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public Icon[] getTextureIcons() {
+		return BuildCraftTransport.instance.icons;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 9 * 16 + 14;
+	public int getIconIndex(ForgeDirection direction) {
+		return IconConstants.PipeLiquidsVoid;
 	}
 
 	@Override

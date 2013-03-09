@@ -28,6 +28,7 @@ import net.minecraftforge.liquids.LiquidStack;
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftTransport;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
@@ -35,6 +36,7 @@ import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
+import buildcraft.transport.IconConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
@@ -193,7 +195,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = 4;
+		block.texture = BuildCraftTransport.instance.icons[IconConstants.Texture_Cyan];
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -219,7 +221,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = 6;
+		block.texture = BuildCraftTransport.instance.icons[IconConstants.Texture_Red_Dark];
 
 		size = Utils.pipeMaxPos - Utils.pipeMinPos;
 

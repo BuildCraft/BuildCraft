@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
@@ -203,9 +204,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		}
 
 		// Pipe Textures
-		renderState.setTextureFile(pipe.getTextureFile());
 		for (ForgeDirection o : ForgeDirection.values()) {
-			renderState.textureMatrix.setTextureIndex(o, pipe.getTextureIndex(o));
+			renderState.textureMatrix.setIconIndex(o, pipe.getIconIndex(o));
 		}
 
 		// WireState
@@ -214,32 +214,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color));
 			}
-		}
-
-		// Wire Textures
-
-		if (pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
-			renderState.wireMatrix.setTextureIndex(WireColor.Red, pipe.signalStrength[IPipe.WireColor.Red.ordinal()] > 0 ? 6 : 5);
-		} else {
-			renderState.wireMatrix.setTextureIndex(WireColor.Red, 0);
-		}
-
-		if (pipe.wireSet[IPipe.WireColor.Blue.ordinal()]) {
-			renderState.wireMatrix.setTextureIndex(WireColor.Blue, pipe.signalStrength[IPipe.WireColor.Blue.ordinal()] > 0 ? 8 : 7);
-		} else {
-			renderState.wireMatrix.setTextureIndex(WireColor.Blue, 0);
-		}
-
-		if (pipe.wireSet[IPipe.WireColor.Green.ordinal()]) {
-			renderState.wireMatrix.setTextureIndex(WireColor.Green, pipe.signalStrength[IPipe.WireColor.Green.ordinal()] > 0 ? 10 : 9);
-		} else {
-			renderState.wireMatrix.setTextureIndex(WireColor.Green, 0);
-		}
-
-		if (pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]) {
-			renderState.wireMatrix.setTextureIndex(WireColor.Yellow, pipe.signalStrength[IPipe.WireColor.Yellow.ordinal()] > 0 ? 12 : 11);
-		} else {
-			renderState.wireMatrix.setTextureIndex(WireColor.Yellow, 0);
+			renderState.wireMatrix.setWireLit(color, pipe.signalStrength[color.ordinal()] > 0);
 		}
 
 		// Gate Textures
@@ -251,9 +226,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			int blockId = this.facadeBlocks[direction.ordinal()];
 			renderState.facadeMatrix.setConnected(direction, blockId != 0 && Block.blocksList[blockId] != null);
 			if (Block.blocksList[blockId] != null) {
-				Block block = Block.blocksList[blockId];
-
-				// TODO
+				renderState.facadeMatrix.setFacade(direction, blockId, this.facadeMeta[direction.ordinal()]);
 			}
 		}
 
@@ -610,6 +583,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public PipeRenderState getRenderState() {
 		return renderState;
+	}
+	
+	@Override
+	public Icon[] getPipeIcons() {
+		if (pipe == null) return null;
+		return pipe.getTextureIcons();
 	}
 
 	@Override

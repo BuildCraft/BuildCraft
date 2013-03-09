@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
@@ -91,14 +92,17 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerTransport.class)
 public class BuildCraftTransport {
 	public static BlockGenericPipe genericPipeBlock;
 
-	public static int[] diamondTextures = new int[6];
-
+	@SideOnly(Side.CLIENT)
+	public Icon[] icons;
+	
 	public static boolean alwaysConnectPipes;
 	public static boolean usePipeLoss;
 	public static int maxItemsInPipes;
@@ -357,6 +361,7 @@ public class BuildCraftTransport {
 		// MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 
 		TransportProxy.proxy.registerTileEntities();
+		TransportProxy.proxy.loadIcons(this);
 
 		// dockingStationBlock = new
 		// BlockDockingStation(Integer.parseInt(dockingStationId.value));
@@ -366,10 +371,6 @@ public class BuildCraftTransport {
 
 		// ModLoader.RegisterTileEntity(TileDockingStation.class,
 		// "net.minecraft.src.buildcraft.TileDockingStation");
-
-		for (int j = 0; j < 6; ++j) {
-			diamondTextures[j] = 1 * 16 + 6 + j;
-		}
 
 		new BptBlockPipe(genericPipeBlock.blockID);
 

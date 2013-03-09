@@ -15,7 +15,6 @@ import buildcraft.transport.utils.WireMatrix;
 
 public class PipeRenderState implements IClientState {
 
-	private String textureFile = DefaultProps.TEXTURE_BLOCKS;
 	private boolean hasGate = false;
 	private int gateTextureIndex = 0;
 
@@ -31,25 +30,6 @@ public class PipeRenderState implements IClientState {
 	 * This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will then return the the WorldRenderer
 	 */
 	public Icon currentTexture;
-
-	public PipeRenderState() {
-		// for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
-		// facadeMatrix.setConnected(direction, true);
-		// facadeMatrix.setTextureFile(direction, "/terrain.png");
-		// facadeMatrix.setTextureIndex(direction, direction.ordinal());
-		// }
-	}
-
-	public void setTextureFile(String textureFile) {
-		if (this.textureFile != textureFile) {
-			this.textureFile = textureFile;
-			this.dirty = true;
-		}
-	}
-
-	public String getTextureFile() {
-		return this.textureFile;
-	}
 
 	public void setHasGate(boolean value) {
 		if (hasGate != value) {
@@ -87,7 +67,6 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		data.writeUTF(textureFile);
 		data.writeBoolean(hasGate);
 		data.writeInt(gateTextureIndex);
 		pipeConnectionMatrix.writeData(data);
@@ -98,7 +77,6 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
-		textureFile = data.readUTF();
 		hasGate = data.readBoolean();
 		gateTextureIndex = data.readInt();
 		pipeConnectionMatrix.readData(data);
@@ -106,5 +84,4 @@ public class PipeRenderState implements IClientState {
 		wireMatrix.readData(data);
 		facadeMatrix.readData(data);
 	}
-
 }

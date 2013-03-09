@@ -14,6 +14,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
@@ -21,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
@@ -138,28 +142,32 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	/**
-	 * Should return the texture file that is used to render this pipe
-	 */
-	public abstract String getTextureFile();
-
-	/**
-	 * Should return the textureindex in the file specified by getTextureFile()
-	 *
-	 * @param direction
-	 *            The orientation for the texture that is requested. Unknown for the center pipe center
-	 * @return the index in the texture sheet
-	 */
-	public abstract int getTextureIndex(ForgeDirection direction);
-
-	/**
 	 * Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default implementation might not work if your
 	 * getTextureIndex(Orienations.Unknown) has logic
 	 *
 	 * @return
 	 */
-	public int getTextureIndexForItem() {
-		return getTextureIndex(ForgeDirection.UNKNOWN);
+	public int getIconIndexForItem() {
+		return getIconIndex(ForgeDirection.UNKNOWN);
 	}
+	
+	
+	/**
+	 * Should return an array of icons that is registered with this pipe. Do not return/modify the buildcraft one!
+	 * @return An array of icons
+	 */
+	@SideOnly(Side.CLIENT)
+	public abstract Icon[] getTextureIcons();
+	
+	/**
+	 * Should return the index in the array returned by GetTextureIcons() for a specified direction
+	 * @param direction - The direction for which the indexed should be rendered. Unknown for pipe center
+	 * 		
+	 * @return An index valid in the array returned by getTextureIcons() 
+	 */
+	public abstract int getIconIndex(ForgeDirection direction);
+	
+	
 
 	public void updateEntity() {
 

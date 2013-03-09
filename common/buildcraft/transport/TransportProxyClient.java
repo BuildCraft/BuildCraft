@@ -1,5 +1,8 @@
 package buildcraft.transport;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.Icon;
 import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
@@ -56,5 +59,63 @@ public class TransportProxyClient extends TransportProxy {
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
+	}
+	
+	@Override
+	public void loadIcons(BuildCraftTransport instance) {
+		instance.icons = new Icon[IconConstants.MAX];
+		TextureMap terrainTextures = Minecraft.getMinecraft().renderEngine.field_94154_l;
+		instance.icons[IconConstants.PipeStructureCobblestone] = terrainTextures.func_94245_a("buildcraft:pipeStructureCobblestone");
+		
+		instance.icons[IconConstants.PipeItemsCobbleStone] = terrainTextures.func_94245_a("buildcraft:pipeItemsCobblestone");
+		
+		instance.icons[IconConstants.PipeItemsDiamond_Center] = terrainTextures.func_94245_a("buildcraft:pipeItemsDiamond_center");
+		instance.icons[IconConstants.PipeItemsDiamond_Down] = terrainTextures.func_94245_a("buildcraft:pipeItemsDiamond_down");
+		instance.icons[IconConstants.PipeItemsDiamond_Up] = terrainTextures.func_94245_a("buildcraft:pipeItemsDiamond_up");
+		instance.icons[IconConstants.PipeItemsDiamond_North] = terrainTextures.func_94245_a("buildcraft:pipeItemsDiamond_north");
+		instance.icons[IconConstants.PipeItemsDiamond_South] = terrainTextures.func_94245_a("buildcraft:pipeItemsDiamond_south");
+		instance.icons[IconConstants.PipeItemsDiamond_West] = terrainTextures.func_94245_a("buildcraft:pipeItemsDiamond_west");
+		instance.icons[IconConstants.PipeItemsDiamond_East] = terrainTextures.func_94245_a("buildcraft:pipeItemsDiamond_east");
+		
+		instance.icons[IconConstants.PipeItemsWood_Standard] = terrainTextures.func_94245_a("buildcraft:pipeItemsWood_standard");
+		instance.icons[IconConstants.PipeAllWood_Solid] = terrainTextures.func_94245_a("buildcraft:pipeAllWood_solid");
+		
+		instance.icons[IconConstants.PipeItemsEmerald_Standard] = terrainTextures.func_94245_a("buildcraft:pipeItemsEmerald_standard");
+		instance.icons[IconConstants.PipeAllEmerald_Solid] = terrainTextures.func_94245_a("buildcraft:pipeAllEmerald_solid");
+		
+		instance.icons[IconConstants.PipeItemsGold] = terrainTextures.func_94245_a("buildcraft:pipeItemsGold");
+		
+		instance.icons[IconConstants.PipeItemsIron_Standard] = terrainTextures.func_94245_a("buildcraft:pipeItemsIron_standard");
+		instance.icons[IconConstants.PipeAllIron_Solid] = terrainTextures.func_94245_a("buildcraft:pipeAllIron_solid");
+		
+		instance.icons[IconConstants.PipeItemsObsidian] = terrainTextures.func_94245_a("buildcraft:pipeItemsObsidian");
+		instance.icons[IconConstants.PipeItemsSandstone] = terrainTextures.func_94245_a("buildcraft:pipeItemsSandstone");
+		instance.icons[IconConstants.PipeItemsStone] = terrainTextures.func_94245_a("buildcraft:pipeItemsStone");
+		instance.icons[IconConstants.PipeItemsVoid] = terrainTextures.func_94245_a("buildcraft:pipeItemsVoid");
+		
+		instance.icons[IconConstants.PipeLiquidsCobblestone] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsCobblestone");
+		instance.icons[IconConstants.PipeLiquidsWood_Standard] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsWood_standard");
+		instance.icons[IconConstants.PipeLiquidsEmerald_Standard] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsEmerald_standard");
+		instance.icons[IconConstants.PipeLiquidsGold] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsGold");
+		instance.icons[IconConstants.PipeLiquidsIron_Standard] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsIron_standard");
+		instance.icons[IconConstants.PipeLiquidsSandstone] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsSandstone");
+		instance.icons[IconConstants.PipeLiquidsStone] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsStone");
+		instance.icons[IconConstants.PipeLiquidsVoid] = terrainTextures.func_94245_a("buildcraft:pipeLiquidsVoid");
+		
+		instance.icons[IconConstants.PipePowerGold] = terrainTextures.func_94245_a("buildcraft:pipePowerGold");
+		instance.icons[IconConstants.PipePowerStone] = terrainTextures.func_94245_a("buildcraft:pipePowerStone");
+		instance.icons[IconConstants.PipePowerWood_Standard] = terrainTextures.func_94245_a("buildcraft:pipePowerWood_standard");
+		
+		instance.icons[IconConstants.Texture_Red_Dark] = terrainTextures.func_94245_a("buildcraft:texture_red_dark");
+		instance.icons[IconConstants.Texture_Red_Lit] = terrainTextures.func_94245_a("buildcraft:texture_red_lit");
+		instance.icons[IconConstants.Texture_Blue_Dark] = terrainTextures.func_94245_a("buildcraft:texture_blue_dark");
+		instance.icons[IconConstants.Texture_Blue_Lit] = terrainTextures.func_94245_a("buildcraft:texture_blue_lit");
+		instance.icons[IconConstants.Texture_Green_Dark] = terrainTextures.func_94245_a("buildcraft:texture_green_dark");
+		instance.icons[IconConstants.Texture_Green_Lit] = terrainTextures.func_94245_a("buildcraft:texture_green_lit");
+		instance.icons[IconConstants.Texture_Yellow_Dark] = terrainTextures.func_94245_a("buildcraft:texture_yellow_dark");
+		instance.icons[IconConstants.Texture_Yellow_Lit] = terrainTextures.func_94245_a("buildcraft:texture_yellow_lit");
+		instance.icons[IconConstants.Texture_Cyan] = terrainTextures.func_94245_a("buildcraft:texture_cyan");
+		
+		
 	}
 }
