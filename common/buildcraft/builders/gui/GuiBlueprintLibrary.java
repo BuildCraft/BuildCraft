@@ -63,15 +63,15 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		prevPageButton = new GuiButton(0, j + 100, k + 23, 20, 20, "<");
 		nextPageButton = new GuiButton(1, j + 122, k + 23, 20, 20, ">");
 
-		controlList.add(prevPageButton);
-		controlList.add(nextPageButton);
+		buttonList.add(prevPageButton);
+		buttonList.add(nextPageButton);
 
 		// if (library.owner.equals(player.username)) {
 		deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtil.localize("gui.del"));
-		controlList.add(deleteButton);
+		buttonList.add(deleteButton);
 
 		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
-		controlList.add(lockButton);
+		buttonList.add(lockButton);
 		if (library.locked) {
 			lockButton.displayString = StringUtil.localize("gui.unlock");
 		} else {
