@@ -160,6 +160,16 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 		LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
 
+		if(this.currentRecipe == null || !this.currentRecipe.matches(craftMatrix, worldObj))
+			currentRecipe = buildcraft.core.utils.CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
+
+		// don't bother finding ingredients if there is no recipe.
+		if(this.currentRecipe == null)
+			return null;
+		ItemStack resultStack = currentRecipe.getCraftingResult(craftMatrix);
+		if(resultStack == null)
+			return null;
+
 		int itemsToLeave = (removeRecipe ? 0 : 1);
 
 		for (int i = 0; i < getSizeInventory(); ++i) {
@@ -190,16 +200,8 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
 
-		if(this.currentRecipe == null || !this.currentRecipe.matches(craftMatrix, worldObj))
-			currentRecipe = buildcraft.core.utils.CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
 
-		
-		ItemStack resultStack = null;
-		if(currentRecipe != null) {
-			resultStack = currentRecipe.getCraftingResult(craftMatrix);
-		}
-
-		if (resultStack == null || !doRemove) {
+		if (!doRemove) {
 			resetPointers(pointerList);
 		} else {
 			for (StackPointer p : pointerList) {
