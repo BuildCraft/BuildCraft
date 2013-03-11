@@ -136,6 +136,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		IInventory inventory;
 		int index;
 		ItemStack item;
+		public int requestedSize;
 	}
 
 	public ItemStack findRecipe() {
@@ -160,51 +161,59 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 		LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
 
+
+		LinkedList<ItemStack> externalIngredients = new LinkedList<ItemStack>();
+		LinkedList<StackPointer> allIngredients = new LinkedList<StackPointer>();
 		int itemsToLeave = (removeRecipe ? 0 : 1);
 
 		for (int i = 0; i < getSizeInventory(); ++i) {
 			ItemStack stack = getStackInSlot(i);
 
 			if (stack != null) {
-				if (stack.stackSize <= itemsToLeave) {
-					StackPointer pointer = getNearbyItem(stack);
-
-					if (pointer == null) {
-						resetPointers(pointerList);
-
-						return null;
-					} else {
-						pointerList.add(pointer);
+				if (stack.stackSize <= itemsToLeave) {// assert, stackSize not 0.;
+					boolean newItem=true;
+					// accumulate ingredient to external list, so that there is only 1 request for each item type.
+					for(ItemStack item:externalIngredients) {
+						if(item.isItemEqual(stack)){
+							item.stackSize ++;
+							newItem = false;							
+						}
 					}
+					if(newItem)
+						externalIngredients.add(stack.copy());
 				} else {
 					StackPointer pointer = new StackPointer();
 					pointer.inventory = this;
-					pointer.item = this.decrStackSize(i, 1);
 					pointer.index = i;
-					stack = pointer.item;
-
+					pointer.requestedSize = 1;
 					pointerList.add(pointer);
 				}
 			}
 
 			craftMatrix.setInventorySlotContents(i, stack);
 		}
-
 		if(this.currentRecipe == null || !this.currentRecipe.matches(craftMatrix, worldObj))
 			currentRecipe = buildcraft.core.utils.CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
 
-		
-		ItemStack resultStack = null;
-		if(currentRecipe != null) {
-			resultStack = currentRecipe.getCraftingResult(craftMatrix);
+		// don't bother finding ingredients if there is no recipe.
+		if(this.currentRecipe == null)
+			return null;
+		ItemStack resultStack = currentRecipe.getCraftingResult(craftMatrix);
+		if(resultStack == null)
+			return null;
+
+		for(ItemStack stack:externalIngredients) {
+			StackPointer pointer = getNearbyItem(stack);
+			if (pointer == null)
+				return null;
+			pointerList.add(pointer);			
 		}
 
-		if (resultStack == null || !doRemove) {
-			resetPointers(pointerList);
-		} else {
+
+		if (doRemove) {
 			for (StackPointer p : pointerList) {
 				// replace with the container where appropriate
-
+				p.item = p.inventory.decrStackSize(p.index, p.requestedSize);
 				if (p.item.getItem().getContainerItem() != null) {
 					ItemStack newStack = p.item.getItem().getContainerItemStack(p.item);
 
@@ -226,19 +235,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		return resultStack;
 	}
 
-	public void resetPointers(LinkedList<StackPointer> pointers) {
-		for (StackPointer p : pointers) {
-			ItemStack item = p.inventory.getStackInSlot(p.index);
-
-			if (item == null) {
-				p.inventory.setInventorySlotContents(p.index, p.item);
-			} else {
-				p.inventory.getStackInSlot(p.index).stackSize++;
-			}
-		}
-	}
-
-	public StackPointer getNearbyItem(ItemStack stack) {
+	private StackPointer getNearbyItem(ItemStack stack) {
 		StackPointer pointer = null;
 
 		if (pointer == null) {
@@ -272,7 +269,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		return pointer;
 	}
 
-	public StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction) {
+	private StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction) {
 		TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
 		
 		if (tile instanceof ISpecialInventory) {
@@ -299,88 +296,28 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 					if (stack.itemID == itemStack.itemID) {
 						if (!stack.isItemStackDamageable()) {
 							if (stack.itemID == itemStack.itemID && stack.getItemDamage() == itemStack.getItemDamage()) {
-								inventory.decrStackSize(j, 1);
 
 								StackPointer result = new StackPointer();
 								result.inventory = inventory;
 								result.index = j;
 								result.item = stack;
+								result.requestedSize = itemStack.stackSize;
 
 								return result;
 							}
 						} else {
 							if (stack.itemID == itemStack.itemID) {
-								inventory.decrStackSize(j, 1);
 
 								StackPointer result = new StackPointer();
 								result.inventory = inventory;
 								result.index = j;
 								result.item = stack;
+								result.requestedSize = itemStack.stackSize;
 
 								return result;
 							}
 						}
 					}
-				}
-			}
-		}
-
-		return null;
-	}
-
-	public StackPointer getNearbyItem(int itemId, int damage) {
-		StackPointer pointer = null;
-
-		pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.WEST);
-
-		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.EAST);
-		}
-
-		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.DOWN);
-		}
-
-		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.UP);
-		}
-
-		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.NORTH);
-		}
-
-		if (pointer == null) {
-			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.SOUTH);
-		}
-
-		return pointer;
-	}
-
-	public StackPointer getNearbyItemFromOrientation(int itemId, int damage, ForgeDirection orientation) {
-		Position p = new Position(xCoord, yCoord, zCoord, orientation);
-		p.moveForwards(1.0);
-
-		TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
-
-		if (tile instanceof ISpecialInventory) {
-			// Don't get stuff out of ISpecialInventory for now / we wouldn't
-			// know how to put it back... And it's not clear if we want to
-			// have workbenches automatically getting things from one another.
-		} else if (tile instanceof IInventory) {
-			IInventory inventory = Utils.getInventory((IInventory) tile);
-
-			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-				ItemStack stack = inventory.getStackInSlot(j);
-
-				if (stack != null && stack.stackSize > 0 && stack.itemID == itemId && stack.getItemDamage() == damage) {
-					inventory.decrStackSize(j, 1);
-
-					StackPointer result = new StackPointer();
-					result.inventory = inventory;
-					result.index = j;
-					result.item = stack;
-
-					return result;
 				}
 			}
 		}
