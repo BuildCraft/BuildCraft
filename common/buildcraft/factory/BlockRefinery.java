@@ -11,8 +11,12 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -131,4 +135,10 @@ public class BlockRefinery extends BlockContainer {
 		itemList.add(new ItemStack(this));
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    // NOOP
+	}
 }

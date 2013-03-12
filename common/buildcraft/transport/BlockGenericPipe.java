@@ -18,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,6 +42,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockGenericPipe extends BlockContainer {
@@ -796,9 +798,12 @@ public class BlockGenericPipe extends BlockContainer {
 		pipes.put(item.itemID, clas);
 
 		Pipe dummyPipe = createPipe(item.itemID);
-		if (dummyPipe != null) {
+		if (dummyPipe != null && dummyPipe.getTextureIcons() != null) {
 			item.setPipeIcon(dummyPipe.getTextureIcons()[dummyPipe.getIconIndexForItem()]);
+		} else if (dummyPipe != null) {
+		    BuildCraftCore.bcLog.info("The pipe "+ dummyPipe + " is not returning icons");
 		}
+
 
 		return item;
 	}
@@ -851,5 +856,12 @@ public class BlockGenericPipe extends BlockContainer {
 
 	public static boolean isValid(Pipe pipe) {
 		return isFullyDefined(pipe);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    // NOOP we do this elsewhere
 	}
 }

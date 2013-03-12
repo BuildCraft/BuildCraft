@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -59,6 +60,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		}
 
+		setTileEntityRenderer(TileEntityRenderer.instance);
 	}
 
 	final static private int displayStages = 100;
@@ -189,7 +191,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		GL11.glRotatef(angle, 0, 1, 0);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		tileEntityRenderer.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
+		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		tank.render(factor);
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);

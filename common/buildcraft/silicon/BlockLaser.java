@@ -11,16 +11,24 @@ package buildcraft.silicon;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 
 public class BlockLaser extends BlockContainer {
+
+    @SideOnly(Side.CLIENT)
+    private Icon textureTop, textureBottom, textureSide;
 
 	public BlockLaser(int i) {
 		super(i, Material.iron);
@@ -58,13 +66,13 @@ public class BlockLaser extends BlockContainer {
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (i == ForgeDirection.values()[j].getOpposite().ordinal())
-			return 16 * 2 + 15;
+			return textureBottom;
 		else if (i == j)
-			return 16 * 2 + 14;
+			return textureTop;
 		else
-			return 16 * 2 + 13;
+			return textureSide;
 
 	}
 
@@ -83,5 +91,14 @@ public class BlockLaser extends BlockContainer {
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    textureTop = par1IconRegister.func_94245_a("buildcraft:laser_top");
+        textureBottom = par1IconRegister.func_94245_a("buildcraft:laser_bottom");
+        textureSide = par1IconRegister.func_94245_a("buildcraft:laser_side");
 	}
 }

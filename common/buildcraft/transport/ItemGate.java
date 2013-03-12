@@ -5,6 +5,7 @@ import java.util.List;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -36,7 +37,7 @@ public class ItemGate extends ItemBuildCraft {
 		} else {
 			n = 2;
 		}
-		
+
 		if (series == 0){	//Normal Gates
 			switch (i) {
 			case 0:
@@ -91,5 +92,12 @@ public class ItemGate extends ItemBuildCraft {
 		itemList.add(new ItemStack(this, 1, 4));
 		itemList.add(new ItemStack(this, 1, 5));
 		itemList.add(new ItemStack(this, 1, 6));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94581_a(IconRegister par1IconRegister)
+	{
+	    // NOOP
 	}
 }

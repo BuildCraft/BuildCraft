@@ -105,7 +105,7 @@ public class BuildCraftTransport {
 
 	@SideOnly(Side.CLIENT)
 	public Icon[] itemIcons;
-	
+
 	public static boolean alwaysConnectPipes;
 	public static boolean usePipeLoss;
 	public static int maxItemsInPipes;
@@ -260,6 +260,9 @@ public class BuildCraftTransport {
 
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
+	        TransportProxy.proxy.loadTerrainIcons(this);
+	        TransportProxy.proxy.loadItemIcons(this);
+
 			Property genericPipeId = BuildCraftCore.mainConfiguration.getBlock("pipe.id", DefaultProps.GENERIC_PIPE_ID);
 
 			Property pipeWaterproofId = BuildCraftCore.mainConfiguration.getItem("pipeWaterproof.id", DefaultProps.PIPE_WATERPROOF_ID);
@@ -364,8 +367,6 @@ public class BuildCraftTransport {
 		// MinecraftForge.setGuiHandler(mod_BuildCraftTransport.instance, new GuiHandler());
 
 		TransportProxy.proxy.registerTileEntities();
-		TransportProxy.proxy.loadTerrainIcons(this);
-		TransportProxy.proxy.loadItemIcons(this);
 
 		// dockingStationBlock = new
 		// BlockDockingStation(Integer.parseInt(dockingStationId.value));

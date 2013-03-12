@@ -12,6 +12,7 @@ package buildcraft.transport;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -84,14 +85,21 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		} else
 			return false;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public Icon getPipeIcon(){
 		return iconIndex;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public void setPipeIcon(Icon icon){
 		this.iconIndex = icon;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94581_a(IconRegister par1IconRegister)
+	{
+	    // NOOP
 	}
 }

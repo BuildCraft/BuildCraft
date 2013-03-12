@@ -9,6 +9,9 @@
 
 package buildcraft.energy;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftEnergy;
@@ -20,7 +23,6 @@ public class ItemBucketOil extends ItemBucket {
 
 	public ItemBucketOil(int i) {
 		super(i, BuildCraftEnergy.oilMoving.blockID);
-		iconIndex = 0 * 16 + 1;
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
@@ -29,4 +31,10 @@ public class ItemBucketOil extends ItemBucket {
 		return StringUtil.localize(getUnlocalizedName(itemstack));
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94581_a(IconRegister par1IconRegister)
+	{
+	    par1IconRegister.func_94245_a("buildcraft:oil_bucket");
+	}
 }

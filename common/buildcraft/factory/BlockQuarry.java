@@ -11,12 +11,17 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftFactory;
@@ -29,9 +34,9 @@ import buildcraft.core.utils.Utils;
 
 public class BlockQuarry extends BlockMachineRoot {
 
-	int textureTop;
-	int textureFront;
-	int textureSide;
+	Icon textureTop;
+	Icon textureFront;
+	Icon textureSide;
 
 	public BlockQuarry(int i) {
 		super(i, Material.iron);
@@ -39,11 +44,6 @@ public class BlockQuarry extends BlockMachineRoot {
 		setHardness(1.5F);
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
-
-		textureSide = 2 * 16 + 9;
-		textureFront = 2 * 16 + 7;
-		textureTop = 2 * 16 + 8;
-
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		// If no metadata is set, then this is an icon.
 		if (j == 0 && i == 3)
 			return textureFront;
@@ -226,5 +226,14 @@ public class BlockQuarry extends BlockMachineRoot {
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    textureSide = par1IconRegister.func_94245_a("buildcraft:quarry_side");
+        textureTop = par1IconRegister.func_94245_a("buildcraft:quarry_top");
+        textureFront = par1IconRegister.func_94245_a("buildcraft:quarry_front");
 	}
 }

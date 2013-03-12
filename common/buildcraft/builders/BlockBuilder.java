@@ -11,13 +11,18 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
@@ -31,15 +36,12 @@ import buildcraft.core.utils.Utils;
 
 public class BlockBuilder extends BlockContainer {
 
-	int blockTextureTop;
-	int blockTextureSide;
-	int blockTextureFront;
+	Icon blockTextureTop;
+	Icon blockTextureSide;
+	Icon blockTextureFront;
 
 	public BlockBuilder(int i) {
 		super(i, Material.iron);
-		blockTextureSide = 3 * 16 + 5;
-		blockTextureTop = 3 * 16 + 6;
-		blockTextureFront = 3 * 16 + 7;
 		setHardness(0.7F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
@@ -55,7 +57,7 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (j == 0 && i == 3)
 			return blockTextureFront;
 
@@ -131,4 +133,12 @@ public class BlockBuilder extends BlockContainer {
 		itemList.add(new ItemStack(this));
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    blockTextureTop = par1IconRegister.func_94245_a("buildcraft:builder_top");
+	    blockTextureSide = par1IconRegister.func_94245_a("buildcraft:builder_side");
+	    blockTextureFront = par1IconRegister.func_94245_a("buildcraft:builder_front");
+	}
 }

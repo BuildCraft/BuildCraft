@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -145,5 +146,12 @@ public class ItemFacade extends ItemBuildCraft {
 		// 3 Structurepipes + this block makes 6 facades
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack },
 				8000, new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()))));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94581_a(IconRegister par1IconRegister)
+	{
+	    // NOOP
 	}
 }

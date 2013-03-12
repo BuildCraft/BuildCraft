@@ -11,12 +11,17 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -26,7 +31,10 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class BlockBlueprintLibrary extends BlockContainer {
 
-	public BlockBlueprintLibrary(int i) {
+	private Icon textureTop;
+    private Icon textureSide;
+
+    public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 		setHardness(0.7F);
@@ -61,13 +69,13 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	}
 
 	@Override
-	public int getBlockTextureFromSide(int i) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		switch (i) {
 		case 0:
 		case 1:
-			return 3 * 16 + 5;
+			return textureTop;
 		default:
-			return 3 * 16 + 8;
+			return textureSide;
 		}
 	}
 
@@ -83,5 +91,13 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    textureTop = par1IconRegister.func_94245_a("buildcraft:library_topbottom");
+        textureSide = par1IconRegister.func_94245_a("buildcraft:library_side");
 	}
 }
