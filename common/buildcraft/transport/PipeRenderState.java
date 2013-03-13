@@ -24,7 +24,7 @@ public class PipeRenderState implements IClientState {
 
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 
-	private boolean dirty = false;
+	private boolean dirty = true;
 
 	/*
 	 * This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will then return the the WorldRenderer

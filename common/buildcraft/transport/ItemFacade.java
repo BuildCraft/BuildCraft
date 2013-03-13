@@ -154,4 +154,11 @@ public class ItemFacade extends ItemBuildCraft {
 	{
 	    // NOOP
 	}
+	
+	@Override
+    @SideOnly(Side.CLIENT)
+    public int func_94901_k()
+    {
+        return 0;
+    }
 }
