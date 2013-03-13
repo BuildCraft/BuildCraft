@@ -90,6 +90,15 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
+	@Override
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof TileGenericPipe) {
+			return ((TileGenericPipe)tile).hasFacade(side);
+		}
+		return false;
+	}
+
 	public boolean isACube() {
 		return false;
 	}
