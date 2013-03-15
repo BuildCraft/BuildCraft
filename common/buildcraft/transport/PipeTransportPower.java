@@ -239,11 +239,13 @@ public class PipeTransportPower extends PipeTransport {
 			if (BuildCraftTransport.usePipeLoss) {
 				val = val * (1 - powerResistance);
 			}
-			if (internalNextPower[from.ordinal()] + val >= MAX_POWER_INTERNAL) {
+            double newPower = internalNextPower[from.ordinal()] + val;
+			if (newPower + val >= MAX_POWER_INTERNAL) {
+                internalNextPower[from.ordinal()] = newPower - 1;
 				return;
 			}
 
-			internalNextPower[from.ordinal()] += val;
+			internalNextPower[from.ordinal()] = newPower;
 		}
 	}
 
