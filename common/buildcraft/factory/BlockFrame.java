@@ -188,11 +188,6 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 		return blockAccess.getBlockId(x2, y2, z2) == blockID;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

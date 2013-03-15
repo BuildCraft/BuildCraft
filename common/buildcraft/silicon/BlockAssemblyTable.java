@@ -83,11 +83,6 @@ public class BlockAssemblyTable extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public int damageDropped(int par1) {
 		return par1;
 	}

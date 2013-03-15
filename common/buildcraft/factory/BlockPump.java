@@ -43,11 +43,6 @@ public class BlockPump extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		switch (i) {
 		case 0:

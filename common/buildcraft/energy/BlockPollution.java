@@ -27,11 +27,6 @@ public class BlockPollution extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
 	}

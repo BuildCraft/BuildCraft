@@ -62,11 +62,6 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 		return false;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	public float getHeightInPipe() {
 		return 0.5F;
 	}

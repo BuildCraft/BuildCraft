@@ -38,11 +38,6 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return BuildCraftCore.oilModel;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	private void updateFlow(World world, int i, int j, int k) {
 		int l = world.getBlockMetadata(i, j, k);
 		world.setBlockAndMetadataWithNotify(i, j, k, blockID + 1, l, 1);

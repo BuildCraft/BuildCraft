@@ -461,11 +461,6 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}

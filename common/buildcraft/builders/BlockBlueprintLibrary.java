@@ -41,11 +41,6 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 

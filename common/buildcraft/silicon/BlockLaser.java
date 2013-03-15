@@ -61,11 +61,6 @@ public class BlockLaser extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (i == ForgeDirection.values()[j].getOpposite().ordinal())
 			return textureBottom;

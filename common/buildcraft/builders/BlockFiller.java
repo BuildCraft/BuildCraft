@@ -103,11 +103,6 @@ public class BlockFiller extends BlockContainer {
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {

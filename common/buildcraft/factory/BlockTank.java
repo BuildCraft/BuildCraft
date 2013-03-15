@@ -63,11 +63,6 @@ public class BlockTank extends BlockContainer {
 		return new TileTank();
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	@SuppressWarnings({ "all" })
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {

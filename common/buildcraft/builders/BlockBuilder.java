@@ -52,11 +52,6 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (j == 0 && i == 3)
 			return blockTextureFront;

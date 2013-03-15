@@ -81,11 +81,6 @@ public class BlockMiningWell extends BlockMachineRoot {
 		return new TileMiningWell();
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
