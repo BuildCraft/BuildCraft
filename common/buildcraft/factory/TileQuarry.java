@@ -431,7 +431,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 	}
 
-	private void mineStack(ItemStack stack) {
+	protected void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
 		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
 		stack.stackSize -= added.stackSize;
@@ -460,7 +460,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 	}
 
-	private boolean isQuarriableBlock(int bx, int by, int bz) {
+	protected boolean isQuarriableBlock(int bx, int by, int bz) {
 		return BlockUtil.canChangeBlock(worldObj, bx, by, bz) && !BlockUtil.isSoftBlock(worldObj, bx, by, bz);
 	}
 
@@ -798,7 +798,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		this.headPosZ = z;
 	}
 
-	private double[] getHead() {
+	protected double[] getHead() {
 		return new double[] { headPosX, headPosY, headPosZ };
 	}
 

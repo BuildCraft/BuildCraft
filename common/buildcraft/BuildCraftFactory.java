@@ -10,6 +10,7 @@ package buildcraft;
 
 import java.util.List;
 
+import buildcraft.factory.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,28 +22,6 @@ import net.minecraftforge.common.Property;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.factory.BlockAutoWorkbench;
-import buildcraft.factory.BlockFrame;
-import buildcraft.factory.BlockHopper;
-import buildcraft.factory.BlockMiningWell;
-import buildcraft.factory.BlockPlainPipe;
-import buildcraft.factory.BlockPump;
-import buildcraft.factory.BlockQuarry;
-import buildcraft.factory.BlockRefinery;
-import buildcraft.factory.BlockTank;
-import buildcraft.factory.BptBlockAutoWorkbench;
-import buildcraft.factory.BptBlockFrame;
-import buildcraft.factory.BptBlockRefinery;
-import buildcraft.factory.BptBlockTank;
-import buildcraft.factory.FactoryProxy;
-import buildcraft.factory.GuiHandler;
-import buildcraft.factory.TileAutoWorkbench;
-import buildcraft.factory.TileHopper;
-import buildcraft.factory.TileMiningWell;
-import buildcraft.factory.TilePump;
-import buildcraft.factory.TileQuarry;
-import buildcraft.factory.TileRefinery;
-import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
 
 import com.google.common.collect.Lists;
@@ -62,7 +41,8 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftFactory {
 
-	public static BlockQuarry quarryBlock;
+	public static BlockAdvancedQuarry quarryAdvBlock;
+    public static BlockQuarry quarryBlock;
 	public static BlockMiningWell miningWellBlock;
 	public static BlockAutoWorkbench autoWorkbenchBlock;
 	public static BlockFrame frameBlock;
@@ -111,6 +91,9 @@ public class BuildCraftFactory {
 				if (blId == quarryBlock.blockID) {
 					validTickets.add(ticket);
 				}
+                else if(blId == quarryAdvBlock.blockID) {
+                    validTickets.add(ticket);
+                }
 			}
 			return validTickets;
 		}
@@ -124,6 +107,7 @@ public class BuildCraftFactory {
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 
 		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
+        CoreProxy.proxy.registerTileEntity(TileAdvancedQuarry.class, "MachineAdv");
 		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
 		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
@@ -157,6 +141,7 @@ public class BuildCraftFactory {
 		Property autoWorkbenchId = BuildCraftCore.mainConfiguration.getBlock("autoWorkbench.id", DefaultProps.AUTO_WORKBENCH_ID);
 		Property frameId = BuildCraftCore.mainConfiguration.getBlock("frame.id", DefaultProps.FRAME_ID);
 		Property quarryId = BuildCraftCore.mainConfiguration.getBlock("quarry.id", DefaultProps.QUARRY_ID);
+        Property quarryAdvId = BuildCraftCore.mainConfiguration.getBlock("quarryAdv.id", DefaultProps.QUARRY_ADV_ID);
 		Property pumpId = BuildCraftCore.mainConfiguration.getBlock("pump.id", DefaultProps.PUMP_ID);
 		Property tankId = BuildCraftCore.mainConfiguration.getBlock("tank.id", DefaultProps.TANK_ID);
 		Property refineryId = BuildCraftCore.mainConfiguration.getBlock("refinery.id", DefaultProps.REFINERY_ID);
@@ -184,6 +169,10 @@ public class BuildCraftFactory {
 		quarryBlock = new BlockQuarry(Integer.parseInt(quarryId.value));
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
 		CoreProxy.proxy.addName(quarryBlock, "Quarry");
+
+        quarryAdvBlock = new BlockAdvancedQuarry(Integer.parseInt(quarryAdvId.value));
+        CoreProxy.proxy.registerBlock(quarryAdvBlock.setBlockName("machineAdvBlock"));
+        CoreProxy.proxy.addName(quarryAdvBlock, "Advanced Quarry");
 
 		tankBlock = new BlockTank(Integer.parseInt(tankId.value));
 		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
@@ -218,6 +207,12 @@ public class BuildCraftFactory {
 					new Object[] { "ipi", "gig", "dDd", Character.valueOf('i'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Item.redstone,
 							Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('d'), BuildCraftCore.diamondGearItem,
 							Character.valueOf('D'), Item.pickaxeDiamond, });
+
+            CoreProxy.proxy.addCraftingRecipe(
+                    new ItemStack(quarryAdvBlock),
+                    new Object[] { "gGg", "bQb", "rDr", Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('G'), Item.pickaxeGold,
+                            Character.valueOf('b'), Item.expBottle, Character.valueOf('Q'), BuildCraftFactory.quarryBlock,
+                            Character.valueOf('r'), Item.redstone, Character.valueOf('D'), BuildCraftCore.diamondGearItem });
 							
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), new Object[] { "T ", "W ", Character.valueOf('T'), tankBlock, Character.valueOf('W'),
 					miningWellBlock, });							

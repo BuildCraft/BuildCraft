@@ -91,6 +91,7 @@ public class DefaultProps {
 	public static int DRILL_ID = 1501;
 	public static int AUTO_WORKBENCH_ID = 1502;
 	public static int QUARRY_ID = 1503;
+    public static int QUARRY_ADV_ID = 1523;
 	public static int MARKER_ID = 1504;
 	public static int FILLER_ID = 1505;
 	public static int BUILDER_ID = 1507;
