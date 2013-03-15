@@ -8,21 +8,20 @@
 
 package buildcraft.transport.pipes;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.IIconProvider;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
@@ -30,8 +29,8 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
 	
-	protected int standardIconIndex = IconTerrainConstants.PipePowerWood_Standard;
-	protected int solidIconIndex = IconTerrainConstants.PipeAllWood_Solid;
+	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
+	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
 
 
 	private int overheatTicks;
@@ -46,8 +45,8 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.terrainIcons;
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override

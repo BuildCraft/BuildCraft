@@ -8,15 +8,14 @@
 
 package buildcraft.transport.pipes;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconTerrainConstants;
+import buildcraft.core.IIconProvider;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportLiquids;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeLiquidsCobblestone extends Pipe {
 
@@ -26,12 +25,12 @@ public class PipeLiquidsCobblestone extends Pipe {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.terrainIcons;
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return IconTerrainConstants.PipeLiquidsCobblestone;
+		return PipeIconProvider.PipeLiquidsCobblestone;
 	}
 }

@@ -8,10 +8,7 @@
 
 package buildcraft.transport.pipes;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
@@ -23,12 +20,14 @@ import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.IIconProvider;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.network.TileNetworkData;
-import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportLiquids;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
@@ -37,8 +36,8 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
 
-	protected int standardIconIndex = IconTerrainConstants.PipeLiquidsWood_Standard;
-	protected int solidIconIndex = IconTerrainConstants.PipeAllWood_Solid;
+	protected int standardIconIndex = PipeIconProvider.PipeLiquidsWood_Standard;
+	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
 
 	long lastMining = 0;
 	boolean lastPower = false;
@@ -127,8 +126,8 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.terrainIcons;
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override

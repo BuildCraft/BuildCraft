@@ -40,6 +40,7 @@ import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IDropControlInventory;
+import buildcraft.core.IIconProvider;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.utils.Utils;
@@ -143,7 +144,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	/**
 	 * Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default implementation might not work if your
-	 * getTextureIndex(Orienations.Unknown) has logic
+	 * getTextureIndex(Orienations.Unknown) has logic. Then override this
 	 *
 	 * @return
 	 */
@@ -151,13 +152,12 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return getIconIndex(ForgeDirection.UNKNOWN);
 	}
 	
-	
 	/**
-	 * Should return an array of icons that is registered with this pipe. Do not return/modify the buildcraft one!
+	 * Should return the IIconProvider that provides icons for this pipe
 	 * @return An array of icons
 	 */
 	@SideOnly(Side.CLIENT)
-	public abstract Icon[] getTextureIcons();
+	public abstract IIconProvider getIconProvider();
 	
 	/**
 	 * Should return the index in the array returned by GetTextureIcons() for a specified direction

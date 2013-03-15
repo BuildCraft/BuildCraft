@@ -701,6 +701,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
+	@SideOnly(Side.CLIENT)
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 
 		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
@@ -793,13 +794,10 @@ public class BlockGenericPipe extends BlockContainer {
 		pipes.put(item.itemID, clas);
 
 		Pipe dummyPipe = createPipe(item.itemID);
-		if (dummyPipe != null && dummyPipe.getTextureIcons() != null) {
-			item.setPipeIcon(dummyPipe.getTextureIcons()[dummyPipe.getIconIndexForItem()]);
-		} else if (dummyPipe != null) {
-		    BuildCraftCore.bcLog.info("The pipe "+ dummyPipe + " is not returning icons");
+		if (dummyPipe != null) {
+			item.setPipeIconIndex(dummyPipe.getIconIndexForItem());
+			TransportProxy.proxy.setIconProviderFromPipe(item, dummyPipe);
 		}
-
-
 		return item;
 	}
 
@@ -855,8 +853,15 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void func_94332_a(IconRegister iconRegister)
 	{
-	    // NOOP we do this elsewhere
+		BuildCraftTransport.instance.gateIconProvider.RegisterIcons(iconRegister);
+		BuildCraftTransport.instance.wireIconProvider.RegisterIcons(iconRegister);
+		for (int i : pipes.keySet()){
+			Pipe dummyPipe = createPipe(i);
+			if (dummyPipe != null){
+				dummyPipe.getIconProvider().RegisterIcons(iconRegister);
+			}
+		}
 	}
 }

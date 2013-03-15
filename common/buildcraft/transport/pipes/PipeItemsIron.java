@@ -8,31 +8,24 @@
 
 package buildcraft.transport.pipes;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconTerrainConstants;
+import buildcraft.core.IIconProvider;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsIron extends Pipe {
 
-	private int standardIconIndex = IconTerrainConstants.PipeItemsIron_Standard;
-	private int solidIconIndex = IconTerrainConstants.PipeAllIron_Solid;
+	private int standardIconIndex = PipeIconProvider.PipeItemsIron_Standard;
+	private int solidIconIndex = PipeIconProvider.PipeAllIron_Solid;
 
 	public PipeItemsIron(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicIron(), itemID);
 
 		((PipeTransportItems) transport).allowBouncing = true;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.terrainIcons;
 	}
 
 	@Override
@@ -47,6 +40,12 @@ public class PipeItemsIron extends Pipe {
 			else
 				return standardIconIndex;
 		}
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override

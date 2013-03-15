@@ -21,23 +21,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftTransport;
 import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
-import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
@@ -195,7 +193,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = BuildCraftTransport.instance.terrainIcons[IconTerrainConstants.Texture_Cyan];
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Normal);
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -221,7 +219,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = BuildCraftTransport.instance.terrainIcons[IconTerrainConstants.Texture_Red_Dark];
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Overload);
 
 		size = Utils.pipeMaxPos - Utils.pipeMinPos;
 

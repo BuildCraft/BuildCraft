@@ -28,17 +28,21 @@ import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.IIconProvider;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.GateIconProvider;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGate;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TransportProxy;
+import buildcraft.transport.WireIconProvider;
 import buildcraft.transport.blueprints.BptBlockPipe;
 import buildcraft.transport.blueprints.BptItemPipeDiamond;
 import buildcraft.transport.blueprints.BptItemPipeEmerald;
@@ -99,12 +103,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerTransport.class)
 public class BuildCraftTransport {
 	public static BlockGenericPipe genericPipeBlock;
-
-	@SideOnly(Side.CLIENT)
-	public Icon[] terrainIcons;
-
-	@SideOnly(Side.CLIENT)
-	public Icon[] itemIcons;
 
 	public static boolean alwaysConnectPipes;
 	public static boolean usePipeLoss;
@@ -170,6 +168,10 @@ public class BuildCraftTransport {
 
 	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
+	
+	public IIconProvider pipeIconProvider = new PipeIconProvider();
+	public IIconProvider gateIconProvider = new GateIconProvider();
+	public IIconProvider wireIconProvider = new WireIconProvider();
 
 	private static class PipeRecipe {
 		boolean isShapeless = false; // pipe recipes come shaped and unshaped.
@@ -260,8 +262,6 @@ public class BuildCraftTransport {
 
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
-	        TransportProxy.proxy.loadTerrainIcons(this);
-	        TransportProxy.proxy.loadItemIcons(this);
 
 			Property genericPipeId = BuildCraftCore.mainConfiguration.getBlock("pipe.id", DefaultProps.GENERIC_PIPE_ID);
 

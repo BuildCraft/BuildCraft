@@ -8,20 +8,19 @@
 
 package buildcraft.transport.pipes;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconTerrainConstants;
+import buildcraft.core.IIconProvider;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportLiquids;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeLiquidsIron extends Pipe {
 	
-	protected int standardIconIndex = IconTerrainConstants.PipeLiquidsIron_Standard;
-	protected int solidIconIndex = IconTerrainConstants.PipeAllIron_Solid;
+	protected int standardIconIndex = PipeIconProvider.PipeLiquidsIron_Standard;
+	protected int solidIconIndex = PipeIconProvider.PipeAllIron_Solid;
 
 
 	public PipeLiquidsIron(int itemID) {
@@ -30,8 +29,8 @@ public class PipeLiquidsIron extends Pipe {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.terrainIcons;
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override

@@ -19,11 +19,17 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.IIconProvider;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.BuildCraftCore;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
+
+	@SideOnly(Side.CLIENT)
+	private IIconProvider iconProvider;
+	
+	private int pipeIconIndex;
 
 	protected ItemPipe(int i) {
 		super(i);
@@ -85,21 +91,32 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		} else
 			return false;
 	}
-
+	
 	@SideOnly(Side.CLIENT)
-	public Icon getPipeIcon(){
-		return iconIndex;
+	public void setPipesIcons(IIconProvider iconProvider){
+		this.iconProvider = iconProvider;
 	}
-
+	
+	public void setPipeIconIndex(int index){
+		this.pipeIconIndex = index;
+	}
+	
+	@Override
 	@SideOnly(Side.CLIENT)
-	public void setPipeIcon(Icon icon){
-		this.iconIndex = icon;
+	public Icon getIconFromDamage(int par1) {
+		return iconProvider.getIcon(pipeIconIndex);
 	}
-
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void func_94581_a(IconRegister par1IconRegister)
 	{
 	    // NOOP
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int func_94901_k() {
+		return 0;
 	}
 }

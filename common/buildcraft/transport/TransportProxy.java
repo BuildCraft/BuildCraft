@@ -18,10 +18,11 @@ public class TransportProxy {
 	public void registerRenderers() {
 	}
 
-	public void loadTerrainIcons(BuildCraftTransport instance) {
+	public void initIconProviders(BuildCraftTransport instance){
+		
 	}
-	
-	public void loadItemIcons(BuildCraftTransport instance){
+
+	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
 		
 	}
 

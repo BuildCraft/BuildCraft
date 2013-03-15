@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.util.Icon;
 
 import buildcraft.core.DefaultProps;
@@ -29,6 +32,7 @@ public class PipeRenderState implements IClientState {
 	/*
 	 * This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will then return the the WorldRenderer
 	 */
+	@SideOnly(Side.CLIENT)
 	public Icon currentTexture;
 
 	public void setHasGate(boolean value) {

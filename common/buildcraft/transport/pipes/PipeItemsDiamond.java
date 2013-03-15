@@ -13,24 +13,22 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.IIconProvider;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.IPipeTransportItemsHook;
-import buildcraft.transport.IconTerrainConstants;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, IClientState {
 
@@ -40,20 +38,20 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon[] getTextureIcons() {
-		return BuildCraftTransport.instance.terrainIcons;
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
 		switch(direction){
-			case UNKNOWN: return IconTerrainConstants.PipeItemsDiamond_Center;
-			case DOWN: return IconTerrainConstants.PipeItemsDiamond_Down;
-			case UP: return IconTerrainConstants.PipeItemsDiamond_Up;
-			case NORTH: return IconTerrainConstants.PipeItemsDiamond_North;
-			case SOUTH: return IconTerrainConstants.PipeItemsDiamond_South;
-			case WEST: return IconTerrainConstants.PipeItemsDiamond_West;
-			case EAST: return IconTerrainConstants.PipeItemsDiamond_East;
+			case UNKNOWN: return PipeIconProvider.PipeItemsDiamond_Center;
+			case DOWN: return PipeIconProvider.PipeItemsDiamond_Down;
+			case UP: return PipeIconProvider.PipeItemsDiamond_Up;
+			case NORTH: return PipeIconProvider.PipeItemsDiamond_North;
+			case SOUTH: return PipeIconProvider.PipeItemsDiamond_South;
+			case WEST: return PipeIconProvider.PipeItemsDiamond_West;
+			case EAST: return PipeIconProvider.PipeItemsDiamond_East;
 			default: throw new IllegalArgumentException("direction out of bounds");
 		}
 	}

@@ -15,8 +15,29 @@ import buildcraft.core.ItemBuildCraft;
 
 public class ItemGate extends ItemBuildCraft {
 
+	public static final int Gate								=  0;
+	public static final int Gate_Iron_And						=  1;
+	public static final int Gate_Iron_Or						=  2;
+	public static final int Gate_Gold_And						=  3;
+	public static final int Gate_Gold_Or						=  4;
+	public static final int Gate_Diamond_And					=  5;
+	public static final int Gate_Diamond_Or						=  6;
+	
+	public static final int Autarchic_Gate						=  7;
+	public static final int Autarchic_Gate_Iron_And				=  8;
+	public static final int Autarchic_Gate_Iron_Or				=  9;
+	public static final int Autarchic_Gate_Gold_And				= 10;
+	public static final int Autarchic_Gate_Gold_Or				= 11;
+	public static final int Autarchic_Gate_Diamond_And			= 12;
+	public static final int Autarchic_Gate_Diamond_Or			= 13;
+	
+	public static final int MAX									= 14;
+		
 	private int series;
 
+	@SideOnly(Side.CLIENT)
+	private Icon[] icons;
+	
 	public ItemGate(int i, int series) {
 		super(i);
 
@@ -41,36 +62,36 @@ public class ItemGate extends ItemBuildCraft {
 		if (series == 0){	//Normal Gates
 			switch (i) {
 			case 0:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate];
+				return icons[ItemGate.Gate];
 			case 1:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Iron_And];
+				return icons[ItemGate.Gate_Iron_And];
 			case 2:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Iron_Or];
+				return icons[ItemGate.Gate_Iron_Or];
 			case 3:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Gold_And];
+				return icons[ItemGate.Gate_Gold_And];
 			case 4:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Gold_Or];
+				return icons[ItemGate.Gate_Gold_Or];
 			case 5:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Diamond_And];
+				return icons[ItemGate.Gate_Diamond_And];
 			default:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Gate_Diamond_Or];
+				return icons[ItemGate.Gate_Diamond_Or];
 			}
 		} else if (series == 1){
 			switch (i) {
 			case 0:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate];
+				return icons[ItemGate.Autarchic_Gate];
 			case 1:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Iron_And];
+				return icons[ItemGate.Autarchic_Gate_Iron_And];
 			case 2:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Iron_Or];
+				return icons[ItemGate.Autarchic_Gate_Iron_Or];
 			case 3:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Gold_And];
+				return icons[ItemGate.Autarchic_Gate_Gold_And];
 			case 4:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Gold_Or];
+				return icons[ItemGate.Autarchic_Gate_Gold_Or];
 			case 5:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Diamond_And];
+				return icons[ItemGate.Autarchic_Gate_Diamond_And];
 			default:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Autarchic_Gate_Diamond_Or];
+				return icons[ItemGate.Autarchic_Gate_Diamond_Or];
 			}
 		}
 		return null;
@@ -96,8 +117,25 @@ public class ItemGate extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
+	public void func_94581_a(IconRegister iconRegister)
 	{
-	    // NOOP
+		icons = new Icon[ItemGate.MAX];
+		icons[ItemGate.Gate] = iconRegister.func_94245_a("buildcraft:gate");
+		icons[ItemGate.Gate_Iron_And] = iconRegister.func_94245_a("buildcraft:gate_iron_and");
+		icons[ItemGate.Gate_Iron_Or] = iconRegister.func_94245_a("buildcraft:gate_iron_or");
+		icons[ItemGate.Gate_Gold_And] = iconRegister.func_94245_a("buildcraft:gate_gold_and");
+		icons[ItemGate.Gate_Gold_Or] = iconRegister.func_94245_a("buildcraft:gate_gold_or");
+		icons[ItemGate.Gate_Diamond_And] = iconRegister.func_94245_a("buildcraft:gate_diamond_and");
+		icons[ItemGate.Gate_Diamond_Or] = iconRegister.func_94245_a("buildcraft:gate_diamond_or");
+		
+		icons[ItemGate.Autarchic_Gate] = iconRegister.func_94245_a("buildcraft:autarchic_gate");
+		icons[ItemGate.Autarchic_Gate_Iron_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_iron_and");
+		icons[ItemGate.Autarchic_Gate_Iron_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_iron_or");
+		icons[ItemGate.Autarchic_Gate_Gold_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_gold_and");
+		icons[ItemGate.Autarchic_Gate_Gold_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_gold_or");
+		icons[ItemGate.Autarchic_Gate_Diamond_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_diamond_and");
+		icons[ItemGate.Autarchic_Gate_Diamond_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_diamond_or");
+
+		
 	}
 }
