@@ -14,14 +14,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.Icon;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
-import buildcraft.transport.IconItemConstants;
 import buildcraft.transport.Pipe;
 
-public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
+public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 
 	boolean active;
 	IPipe.WireColor color;
@@ -81,24 +81,24 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 		if (active) {
 			switch (color) {
 			case Red:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Red_Active];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active);
 			case Blue:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Blue_Active];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active);
 			case Green:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Green_Active];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active);
 			case Yellow:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Yellow_Active];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active);
 			}
 		} else {
 			switch (color) {
 			case Red:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Red_Inactive];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive);
 			case Blue:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Blue_Inactive];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Inactive);
 			case Green:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Green_Inactive];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Inactive);
 			case Yellow:
-				return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Yellow_Inactive];
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive);
 			}
 		}
 

@@ -13,11 +13,9 @@ import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.Action;
 import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconItemConstants;
 
-public class ActionRedstoneOutput extends Action {
+public class ActionRedstoneOutput extends BCAction {
 
 	public ActionRedstoneOutput(int id) {
 		super(id);
@@ -31,6 +29,6 @@ public class ActionRedstoneOutput extends Action {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getTexture() {
-		return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_RedstoneInput_Active];
+		return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_RedstoneInput_Active);
 	}
 }

@@ -14,13 +14,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
-import buildcraft.transport.IconItemConstants;
 import buildcraft.transport.Pipe;
 
-public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
+public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 
 	boolean active;
 
@@ -50,8 +50,8 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 	@SideOnly(Side.CLIENT)
 	public Icon getTextureIcon() {
 		if (active)
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_RedstoneInput_Active];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_RedstoneInput_Active);
 		else
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_RedstoneInput_Inactive];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive);
 	}
 }

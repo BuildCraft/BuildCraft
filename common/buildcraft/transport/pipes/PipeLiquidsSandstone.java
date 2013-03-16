@@ -12,7 +12,7 @@ package buildcraft.transport.pipes;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.IIconProvider;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.IPipeTransportLiquidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;

@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.core.IIconProvider;
+import buildcraft.api.core.IIconProvider;
 
 public class WireIconProvider implements IIconProvider {
 	
@@ -34,6 +34,8 @@ public class WireIconProvider implements IIconProvider {
 	@SideOnly(Side.CLIENT)
 	public void RegisterIcons(IconRegister iconRegister) {
 		if (registered) return;
+		registered = true;
+		
 		icons = new Icon[MAX];
 
 		icons[WireIconProvider.Texture_Red_Dark] = iconRegister.func_94245_a("buildcraft:texture_red_dark");

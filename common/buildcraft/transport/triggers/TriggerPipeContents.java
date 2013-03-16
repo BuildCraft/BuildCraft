@@ -18,17 +18,17 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.ITriggerPipe;
-import buildcraft.transport.IconItemConstants;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 
-public class TriggerPipeContents extends Trigger implements ITriggerPipe {
+public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 	public enum Kind {
 		Empty, ContainsItems, ContainsLiquids, ContainsEnergy
@@ -133,13 +133,13 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 	public Icon getTextureIcon() {
 		switch (kind) {
 		case Empty:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeContents_Empty];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_Empty);
 		case ContainsItems:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeContents_ContainsItems];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems);
 		case ContainsLiquids:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeContents_ContainsLiquid];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid);
 		case ContainsEnergy:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeContents_ContainsEnergy];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy);
 		}
 		return null;
 	}

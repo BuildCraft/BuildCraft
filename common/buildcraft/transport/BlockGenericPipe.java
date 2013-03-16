@@ -35,6 +35,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
@@ -60,6 +63,8 @@ public class BlockGenericPipe extends BlockContainer {
 		public Part hitPart;
 		public MovingObjectPosition movingObjectPosition;
 	}
+
+	private boolean skippedFirstIconRegister;
 
 	/* Defined subprograms ************************************************* */
 
@@ -855,6 +860,10 @@ public class BlockGenericPipe extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void func_94332_a(IconRegister iconRegister)
 	{
+		if (!skippedFirstIconRegister){
+			skippedFirstIconRegister = true;
+			return;
+		}
 		BuildCraftTransport.instance.gateIconProvider.RegisterIcons(iconRegister);
 		BuildCraftTransport.instance.wireIconProvider.RegisterIcons(iconRegister);
 		for (int i : pipes.keySet()){

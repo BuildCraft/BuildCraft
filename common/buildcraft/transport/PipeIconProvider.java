@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.core.IIconProvider;
+import buildcraft.api.core.IIconProvider;
 
 public class PipeIconProvider implements IIconProvider {
 	
@@ -60,6 +60,7 @@ public class PipeIconProvider implements IIconProvider {
 	@SideOnly(Side.CLIENT)
 	public void RegisterIcons(IconRegister iconRegister) {
 		if (registered) return;
+		registered = true;
 		
 		_icons = new Icon[PipeIconProvider.MAX];
 		

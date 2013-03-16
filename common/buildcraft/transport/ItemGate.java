@@ -10,6 +10,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 
@@ -52,13 +55,6 @@ public class ItemGate extends ItemBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIconFromDamage(int i) {
-		int n = 0;
-		if (series > 0) {
-			n = 3;
-		} else {
-			n = 2;
-		}
-
 		if (series == 0){	//Normal Gates
 			switch (i) {
 			case 0:
@@ -119,6 +115,17 @@ public class ItemGate extends ItemBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public void func_94581_a(IconRegister iconRegister)
 	{
+		
+		for (IAction action : ActionManager.actions){
+			if (action == null) continue;
+			action.getIconProvider().RegisterIcons(iconRegister);
+		}
+		
+		for (ITrigger trigger : ActionManager.triggers){
+			if (trigger == null) continue;
+			trigger.getIconProvider().RegisterIcons(iconRegister);
+		}
+		
 		icons = new Icon[ItemGate.MAX];
 		icons[ItemGate.Gate] = iconRegister.func_94245_a("buildcraft:gate");
 		icons[ItemGate.Gate_Iron_And] = iconRegister.func_94245_a("buildcraft:gate_iron_and");

@@ -15,11 +15,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconItemConstants;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
 
-public class TriggerEngineHeat extends Trigger {
+public class TriggerEngineHeat extends BCTrigger {
 
 	public Engine.EnergyStage stage;
 
@@ -59,13 +59,13 @@ public class TriggerEngineHeat extends Trigger {
 	public Icon getTextureIcon() {
 		switch (stage) {
 		case Blue:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Blue];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Blue);
 		case Green:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Green];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Green);
 		case Yellow:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Yellow];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Yellow);
 		default:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_EngineHeat_Red];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Red);
 		}
 	}
 }
