@@ -33,8 +33,8 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			drawBackground(x, y);
 
 			// Draw icon
-			//drawIcon(DefaultProps.TEXTURE_ICONS, 0, x + 3, y + 4);
-			drawIcon(BuildCraftTransport.instance.wireIconProvider.getIcon(0), x + 3, y + 4);
+			drawIcon(DefaultProps.TEXTURE_ICONS, 0, x + 3, y + 4);
+			//drawIcon(BuildCraftTransport.instance.wireIconProvider.getIcon(0), x + 3, y + 4);
 
 			if (!isFullyOpened())
 				return;
