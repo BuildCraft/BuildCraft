@@ -253,7 +253,9 @@ public class BuildCraftCore {
 			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 		} finally {
-			mainConfiguration.save();
+			if (mainConfiguration.hasChanged()) {
+				mainConfiguration.save();
+			}
 		}
 	}
 
