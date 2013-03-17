@@ -248,7 +248,9 @@ public class BuildCraftCore {
 			diamondGearItem = (new ItemBuildCraft(Integer.parseInt(diamondGearId.value))).setIconIndex(1 * 16 + 4).setItemName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 		} finally {
-			mainConfiguration.save();
+			if (mainConfiguration.hasChanged()) {
+				mainConfiguration.save();
+			}
 		}
 	}
 
