@@ -14,7 +14,8 @@ before_script:
   - mv .project BuildCraft/
   - mv README.md BuildCraft/
   - mv build.xml BuildCraft/
-  - mkdir jars && mkdir jars/bin
+  - mkdir jars
+  - mkdir jars/bin
   - cd jars
   - wget http://assets.minecraft.net/1_4_7/minecraft_server.jar
   - cd bin
@@ -23,4 +24,3 @@ before_script:
   - cd ..
   - cd BuildCraft
 script: ant
-after_script: ls && cd .. && ls
