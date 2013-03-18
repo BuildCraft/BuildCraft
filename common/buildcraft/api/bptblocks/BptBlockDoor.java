@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -61,11 +61,11 @@ public class BptBlockDoor extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.blockId, slot.meta + 8);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
+		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.blockId, slot.meta + 8,1);
 
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.meta + 8);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y + 1, slot.z, slot.meta + 8,1);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta,1);
 
 	}
 }

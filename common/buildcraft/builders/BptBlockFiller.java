@@ -69,7 +69,7 @@ public class BptBlockFiller extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockWithNotify(slot.x, slot.y, slot.z, slot.blockId);
+		context.world().func_94575_c(slot.x, slot.y, slot.z, slot.blockId);
 
 		TileFiller filler = (TileFiller) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
 

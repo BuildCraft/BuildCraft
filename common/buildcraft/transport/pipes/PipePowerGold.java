@@ -9,9 +9,13 @@
 package buildcraft.transport.pipes;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.core.DefaultProps;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipePowerGold extends Pipe {
 
@@ -22,13 +26,14 @@ public class PipePowerGold extends Pipe {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 7 * 16 + 10;
+	public int getIconIndex(ForgeDirection direction) {
+		return PipeIconProvider.PipePowerGold;
 	}
 
 }

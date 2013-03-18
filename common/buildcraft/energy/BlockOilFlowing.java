@@ -38,14 +38,9 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return BuildCraftCore.oilModel;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	private void updateFlow(World world, int i, int j, int k) {
 		int l = world.getBlockMetadata(i, j, k);
-		world.setBlockAndMetadata(i, j, k, blockID + 1, l);
+		world.setBlockAndMetadataWithNotify(i, j, k, blockID + 1, l, 1);
 		world.markBlockRangeForRenderUpdate(i, j, k, i, j, k);
 		world.markBlockForUpdate(i, j, k);
 	}
@@ -77,10 +72,10 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 			if (j1 != l) {
 				l = j1;
 				if (l < 0) {
-					world.setBlockWithNotify(i, j, k, 0);
+					world.func_94575_c(i, j, k, 0);
 				} else {
-					world.setBlockMetadataWithNotify(i, j, k, l);
-					world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
+					world.setBlockMetadataWithNotify(i, j, k, l,1);
+					world.scheduleBlockUpdate(i, j, k, blockID, tickRate(world));
 					world.notifyBlocksOfNeighborChange(i, j, k, blockID);
 				}
 			} else if (flag) {
@@ -91,9 +86,9 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		}
 		if (liquidCanDisplaceBlock(world, i, j - 1, k)) {
 			if (l >= 8) {
-				world.setBlockAndMetadataWithNotify(i, j - 1, k, blockID, l);
+				world.setBlockAndMetadataWithNotify(i, j - 1, k, blockID, l,1);
 			} else {
-				world.setBlockAndMetadataWithNotify(i, j - 1, k, blockID, l + 8);
+				world.setBlockAndMetadataWithNotify(i, j - 1, k, blockID, l + 8,1);
 			}
 		} else if (l >= 0 && (l == 0 || blockBlocksFlow(world, i, j - 1, k))) {
 			boolean aflag[] = getOptimalFlowDirections(world, i, j, k);
@@ -124,7 +119,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 			if (i1 > 0) {
 				Block.blocksList[i1].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
 			}
-			world.setBlockAndMetadataWithNotify(i, j, k, blockID, l);
+			world.setBlockAndMetadataWithNotify(i, j, k, blockID, l,1);
 		}
 	}
 
@@ -240,7 +235,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	public void onBlockAdded(World world, int i, int j, int k) {
 		super.onBlockAdded(world, i, j, k);
 		if (world.getBlockId(i, j, k) == blockID) {
-			world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
+			world.scheduleBlockUpdate(i, j, k, blockID, tickRate(world));
 		}
 	}
 

@@ -8,9 +8,9 @@ import net.minecraftforge.common.ISidedInventory;
 
 /**
  * This class is responsible for abstracting an ISidedInventory as a normal IInventory
- * 
+ *
  * @author Krapht
- * 
+ *
  */
 public class SidedInventoryAdapter implements IInventory {
 
@@ -78,4 +78,18 @@ public class SidedInventoryAdapter implements IInventory {
 	public ItemStack getStackInSlotOnClosing(int slot) {
 		return _sidedInventory.getStackInSlotOnClosing(slot + _slotOffset);
 	}
+
+    @Override
+    public boolean func_94042_c()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean func_94041_b(int i, ItemStack itemstack)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

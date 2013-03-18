@@ -9,14 +9,19 @@
 
 package buildcraft.transport.triggers;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.Icon;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
 
-public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
+public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 
 	boolean active;
 	IPipe.WireColor color;
@@ -26,35 +31,6 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 
 		this.active = active;
 		this.color = color;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		if (active) {
-			switch (color) {
-			case Red:
-				return 0 * 16 + 3;
-			case Blue:
-				return 0 * 16 + 5;
-			case Green:
-				return 0 * 16 + 7;
-			case Yellow:
-				return 0 * 16 + 9;
-			}
-		} else {
-			switch (color) {
-			case Red:
-				return 0 * 16 + 2;
-			case Blue:
-				return 0 * 16 + 4;
-			case Green:
-				return 0 * 16 + 6;
-			case Yellow:
-				return 0 * 16 + 8;
-			}
-		}
-
-		return 0;
 	}
 
 	@Override
@@ -100,7 +76,32 @@ public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTextureIcon() {
+		if (active) {
+			switch (color) {
+			case Red:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active);
+			case Blue:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active);
+			case Green:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active);
+			case Yellow:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active);
+			}
+		} else {
+			switch (color) {
+			case Red:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive);
+			case Blue:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Inactive);
+			case Green:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Inactive);
+			case Yellow:
+				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive);
+			}
+		}
+
+		return null;
 	}
 }

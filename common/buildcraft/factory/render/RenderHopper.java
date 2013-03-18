@@ -3,6 +3,7 @@ package buildcraft.factory.render;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -35,6 +36,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		bottom.rotationPointX = 8F;
 		bottom.rotationPointY = 8F;
 		bottom.rotationPointZ = 8F;
+		setTileEntityRenderer(TileEntityRenderer.instance);
 	}
 
 	@Override
@@ -55,10 +57,10 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		GL11.glDisable(GL11.GL_LIGHTING);
 
 		GL11.glTranslated(x, y, z);
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png", 0);
+		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png");
 		top.render((float) (1.0 / 16.0));
 		bottom.render((float) (1.0 / 16.0));
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png", 0);
+		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png");
 		middle.render(Tessellator.instance, 1F / 16F);
 
 		GL11.glEnable(GL11.GL_LIGHTING);

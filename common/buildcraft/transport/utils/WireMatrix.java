@@ -11,7 +11,8 @@ public class WireMatrix {
 
 	private final boolean[] _hasWire = new boolean[IPipe.WireColor.values().length];
 	private final ConnectionMatrix _wires[] = new ConnectionMatrix[IPipe.WireColor.values().length];
-	private int _wireTextureIndex[] = new int[IPipe.WireColor.values().length];
+	private final int[] _wireIconIndex = new int[IPipe.WireColor.values().length]; 
+	
 	private boolean dirty = false;
 
 	public WireMatrix() {
@@ -38,14 +39,14 @@ public class WireMatrix {
 	public void setWireConnected(IPipe.WireColor color, ForgeDirection direction, boolean value) {
 		_wires[color.ordinal()].setConnected(direction, value);
 	}
-
-	public int getTextureIndex(IPipe.WireColor color) {
-		return _wireTextureIndex[color.ordinal()];
+	
+	public int getWireIconIndex(IPipe.WireColor color){
+		return _wireIconIndex[color.ordinal()];
 	}
-
-	public void setTextureIndex(IPipe.WireColor color, int value) {
-		if (_wireTextureIndex[color.ordinal()] != value) {
-			_wireTextureIndex[color.ordinal()] = value;
+	
+	public void setWireIndex(IPipe.WireColor color, int value){
+		if (_wireIconIndex[color.ordinal()] != value){
+			_wireIconIndex[color.ordinal()] = value;
 			dirty = true;
 		}
 	}
@@ -72,7 +73,7 @@ public class WireMatrix {
 		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
 			data.writeBoolean(_hasWire[i]);
 			_wires[i].writeData(data);
-			data.writeInt(_wireTextureIndex[i]);
+			data.writeInt(_wireIconIndex[i]);
 		}
 	}
 
@@ -80,7 +81,7 @@ public class WireMatrix {
 		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
 			_hasWire[i] = data.readBoolean();
 			_wires[i].readData(data);
-			_wireTextureIndex[i] = data.readInt();
+			_wireIconIndex[i] = data.readInt();
 		}
 	}
 }

@@ -1,22 +1,23 @@
 package buildcraft.transport.triggers;
 
-import buildcraft.api.gates.Action;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.Icon;
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCAction;
 
-public class ActionEnergyPulser extends Action {
+public class ActionEnergyPulser extends BCAction {
 
 	public ActionEnergyPulser(int id) {
 		super(id);
 	}
 
 	@Override
-	public int getIndexInTexture() {
-		return 4 * 16 + 0;
-	}
-
-	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTexture() {
+		return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Machine_Active);
 	}
 
 	@Override

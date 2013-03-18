@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
@@ -21,10 +22,7 @@ public class PipeItemRenderer implements IItemRenderer {
 		Tessellator tessellator = Tessellator.instance;
 
 		Block block = BuildCraftTransport.genericPipeBlock;
-		int textureID = ((ItemPipe) Item.itemsList[item.itemID]).getTextureIndex();
-		if (textureID > 255) {
-			textureID -= 256;
-		}
+		Icon icon = ((ItemPipe) Item.itemsList[item.itemID]).getIconFromDamage(0);
 
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();
@@ -33,27 +31,27 @@ public class PipeItemRenderer implements IItemRenderer {
 		GL11.glTranslatef(translateX, translateY, translateZ);
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
-		render.renderBottomFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderBottomFace(block, 0.0D, 0.0D, 0.0D, icon);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		render.renderTopFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderTopFace(block, 0.0D, 0.0D, 0.0D, icon);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, -1F);
-		render.renderEastFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderEastFace(block, 0.0D, 0.0D, 0.0D, icon);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		render.renderWestFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderWestFace(block, 0.0D, 0.0D, 0.0D, icon);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		render.renderNorthFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderNorthFace(block, 0.0D, 0.0D, 0.0D, icon);
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		render.renderSouthFace(block, 0.0D, 0.0D, 0.0D, textureID);
+		render.renderSouthFace(block, 0.0D, 0.0D, 0.0D, icon);
 		tessellator.draw();
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);

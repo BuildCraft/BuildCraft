@@ -107,7 +107,7 @@ public class EngineIron extends Engine {
 			if (burnTime > 0 || fuel.amount > 0) {
 				if (burnTime > 0) {
 					burnTime--;
-				} 
+				}
 				if (burnTime <= 0) {
 					if(fuel != null) {
 						if (--fuel.amount <= 0) {
@@ -125,7 +125,7 @@ public class EngineIron extends Engine {
 			}
 		} else if (penaltyCooling <= 0) {
 			if (lastPowered) {
-				lastPowered = false; 
+				lastPowered = false;
 				penaltyCooling = 30 * 20;
 				// 30 sec of penalty on top of the cooling
 			}
@@ -431,19 +431,11 @@ public class EngineIron extends Engine {
 		}
 	}
 
-	public int getFuelId() {
-		return fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemID : 0;
+	public LiquidStack getFuel() {
+		return fuelTank.getLiquid();
 	}
 
-	public int getFuelMeta() {
-		return fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemMeta : 0;
-	}
-
-	public int getCoolantId() {
-		return coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemID : 0;
-	}
-
-	public int getCoolantMeta() {
-		return coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemMeta : 0;
+	public LiquidStack getCoolant() {
+		return coolantTank.getLiquid();
 	}
 }
