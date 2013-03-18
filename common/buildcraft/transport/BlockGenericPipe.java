@@ -9,6 +9,7 @@
 
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -466,6 +467,30 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
+	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
+
+		if (CoreProxy.proxy.isRenderWorld(world))
+			return null;
+
+		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
+
+		int count = quantityDropped(metadata, fortune, world.rand);
+		for (int i = 0; i < count; i++) {
+			Pipe pipe = getPipe(world, x, y, z);
+
+			if (pipe == null) {
+				pipe = pipeRemoved.get(new BlockIndex(x, y, z));
+			}
+
+			if (pipe != null) {
+				if (pipe.itemID > 0) {
+					pipe.dropContents();
+					list.add(new ItemStack(pipe.itemID, 1, damageDropped(metadata)));
+				}
+			}
+		}
+		return list;
+	}
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}
