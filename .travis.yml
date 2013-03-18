@@ -3,6 +3,8 @@ jdk:
   - oraclejdk7
   - openjdk7
   - openjdk6
-before_script: mkdir jars && mkdir jars/bin && cd jars && wget http://assets.minecraft.net/1_4_7/minecraft_server.jar && cd bin && wget http://assets.minecraft.net/1_4_7/minecraft.jar && cd .. && cd ..
+before_script: mkdir BuildCraft
+before_script: mv buildcraft_resources BuildCraft/ && mv common BuildCraft/ && mv .classpath BuildCraft/ && mv .gitattributes BuildCraft/ && mv .gitignore BuildCraft/ && mv .project BuildCraft/ && mv README.md BuildCraft/ && mv build.xml BuildCraft/
+before_script: mkdir jars && mkdir jars/bin && cd jars && wget http://assets.minecraft.net/1_4_7/minecraft_server.jar && cd bin && wget http://assets.minecraft.net/1_4_7/minecraft.jar && cd .. && cd .. && cd BuildCraft
 script: ant
 after_script: ls
