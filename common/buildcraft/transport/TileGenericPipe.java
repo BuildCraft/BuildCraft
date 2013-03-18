@@ -568,11 +568,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return false;
 
 		if (hasFacade(direction)) {
-			dropFacade(direction);
+			Utils.dropItems(
+				worldObj,
+				new ItemStack(BuildCraftTransport.facadeItem, 1,
+						ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
 		}
 
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
+        worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
 		scheduleRenderUpdate();
 		return true;
 	}
@@ -594,6 +598,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 						ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
+        worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
 		scheduleRenderUpdate();
 	}
 
