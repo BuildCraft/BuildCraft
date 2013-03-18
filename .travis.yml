@@ -22,5 +22,6 @@ before_script:
   - wget http://assets.minecraft.net/1_4_7/minecraft.jar
   - cd ..
   - cd ..
+  - git clone https://github.com/BuildCraft/BuildCraft-Localization.git
   - cd BuildCraft
 script: ant
