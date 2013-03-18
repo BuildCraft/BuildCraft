@@ -5,3 +5,4 @@ jdk:
   - openjdk6
 before_script: mkdir jars && mkdir jars/bin && cd jars && wget http://assets.minecraft.net/1_4_7/minecraft_server.jar && cd bin && wget http://assets.minecraft.net/1_4_7/minecraft.jar && cd .. && cd ..
 script: ant
+after_script: ls
