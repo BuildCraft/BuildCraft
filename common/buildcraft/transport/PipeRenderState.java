@@ -4,6 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraft.util.Icon;
+
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
@@ -13,9 +18,8 @@ import buildcraft.transport.utils.WireMatrix;
 
 public class PipeRenderState implements IClientState {
 
-	private String textureFile = DefaultProps.TEXTURE_BLOCKS;
 	private boolean hasGate = false;
-	private int gateTextureIndex = 0;
+	private int gateIconIndex = 0;
 
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
@@ -23,31 +27,13 @@ public class PipeRenderState implements IClientState {
 
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 
-	private boolean dirty = false;
+	private boolean dirty = true;
 
 	/*
 	 * This is a placeholder for the pipe renderer to set to a value that the BlockGenericPipe->TileGenericPipe will then return the the WorldRenderer
 	 */
-	public int currentTextureIndex;
-
-	public PipeRenderState() {
-		// for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
-		// facadeMatrix.setConnected(direction, true);
-		// facadeMatrix.setTextureFile(direction, "/terrain.png");
-		// facadeMatrix.setTextureIndex(direction, direction.ordinal());
-		// }
-	}
-
-	public void setTextureFile(String textureFile) {
-		if (this.textureFile != textureFile) {
-			this.textureFile = textureFile;
-			this.dirty = true;
-		}
-	}
-
-	public String getTextureFile() {
-		return this.textureFile;
-	}
+	@SideOnly(Side.CLIENT)
+	public Icon currentTexture;
 
 	public void setHasGate(boolean value) {
 		if (hasGate != value) {
@@ -60,15 +46,15 @@ public class PipeRenderState implements IClientState {
 		return hasGate;
 	}
 
-	public void setGateTexture(int value) {
-		if (gateTextureIndex != value) {
-			gateTextureIndex = value;
+	public void setGateIconIndex(int value) {
+		if (gateIconIndex != value) {
+			gateIconIndex = value;
 			dirty = true;
 		}
 	}
 
-	public int getGateTextureIndex() {
-		return gateTextureIndex;
+	public int getGateIconIndex() {
+		return gateIconIndex;
 	}
 
 	public void clean() {
@@ -85,9 +71,8 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		data.writeUTF(textureFile);
 		data.writeBoolean(hasGate);
-		data.writeInt(gateTextureIndex);
+		data.writeInt(gateIconIndex);
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
@@ -96,13 +81,11 @@ public class PipeRenderState implements IClientState {
 
 	@Override
 	public void readData(DataInputStream data) throws IOException {
-		textureFile = data.readUTF();
 		hasGate = data.readBoolean();
-		gateTextureIndex = data.readInt();
+		gateIconIndex = data.readInt();
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);
 		facadeMatrix.readData(data);
 	}
-
 }

@@ -11,13 +11,17 @@ package buildcraft.transport.pipes;
 import java.util.LinkedList;
 
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 
@@ -26,30 +30,15 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 1 * 16 + 14;
+	public int getIconIndex(ForgeDirection direction) {
+		return PipeIconProvider.PipeItemsGold;
 	}
-
-	// @Override
-	// public boolean isPipeConnected(TileEntity tile) {
-	// if (!super.isPipeConnected(tile))
-	// return false;
-	//
-	// Pipe pipe2 = null;
-	//
-	// if (tile instanceof TileGenericPipe)
-	// pipe2 = ((TileGenericPipe) tile).pipe;
-	//
-	// if (BuildCraftTransport.alwaysConnectPipes)
-	// return super.isPipeConnected(tile);
-	// else
-	// return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
-	// }
 
 	@Override
 	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {

@@ -47,7 +47,7 @@ public class RenderLaser extends Render {
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
-		ForgeHooksClient.bindTexture(laser.getTexture(), 0);
+		renderManager.renderEngine.func_98187_b(laser.getTexture());
 
 		float factor = (float) (1.0 / 16.0);
 

@@ -7,10 +7,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -20,13 +22,15 @@ import buildcraft.core.utils.Utils;
 
 public class BlockAssemblyTable extends BlockContainer {
 
+    @SideOnly(Side.CLIENT)
+    private Icon[][] icons;
+
 	public BlockAssemblyTable(int i) {
 		super(i, Material.iron);
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-
 	}
 
 	@Override
@@ -63,29 +67,19 @@ public class BlockAssemblyTable extends BlockContainer {
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		if (i == 1) {
-			return j == 0 ? 16 * 6 + 12 : 16 * 3 + 15;
-		} else if (i == 0) {
-			return 16 * 2 + 15;
-		} else {
-			return j == 0 ? 16 * 6 + 11 : 16 * 3 + 14;
-		}
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
+	    int s = i > 1 ? 2 : i;
+	    return icons[j][s];
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
+	public TileEntity createTileEntity(World world, int metadata) {
 		return metadata == 0 ? new TileAssemblyTable() : new TileAssemblyAdvancedWorkbench();
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return null;
-	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@Override
@@ -98,5 +92,20 @@ public class BlockAssemblyTable extends BlockContainer {
 	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {
 		par3List.add(new ItemStack(this, 1, 0));
 		par3List.add(new ItemStack(this, 1, 1));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    icons = new Icon[2][];
+	    icons[0] = new Icon[3];
+	    icons[1] = new Icon[3];
+        icons[0][0] = par1IconRegister.func_94245_a("buildcraft:assemblytable_bottom");
+        icons[1][0] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_bottom");
+	    icons[0][1] = par1IconRegister.func_94245_a("buildcraft:assemblytable_top");
+        icons[1][1] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_top");
+        icons[0][2] = par1IconRegister.func_94245_a("buildcraft:assemblytable_side");
+        icons[1][2] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_side");
 	}
 }

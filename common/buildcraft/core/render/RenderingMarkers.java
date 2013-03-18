@@ -3,6 +3,7 @@ package buildcraft.core.render;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import buildcraft.BuildCraftCore;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -116,11 +117,11 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		int yCoord = (int) y;
 		int zCoord = (int) z;
 
-		int i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
+		Icon i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
 
 		int m = meta;
-		int j = (i & 0xf) << 4;
-		int k = i & 0xf0;
+		int j = i.func_94211_a();
+		int k = i.func_94216_b();
 		float f = j / 256F;
 		float f1 = (j + 15.99F) / 256F;
 		float f2 = k / 256F;
@@ -170,8 +171,8 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 		i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 0);
 
-		j = (i & 0xf) << 4;
-		k = i & 0xf0;
+		j = i.func_94211_a();
+		k = i.func_94216_b();
 		f = j / 256F;
 		f1 = (j + 15.99F) / 256F;
 		f2 = k / 256F;

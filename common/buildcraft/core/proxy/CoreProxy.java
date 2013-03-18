@@ -98,7 +98,7 @@ public class CoreProxy {
 	/* REGISTRATION */
 	public void registerBlock(Block block) {
 		Item.itemsList[block.blockID] = null;
-		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getBlockName());
+		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getUnlocalizedName());
 	}
 
 	public void registerTileEntity(Class clas, String ident) {

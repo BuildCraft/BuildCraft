@@ -11,11 +11,16 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
@@ -28,9 +33,9 @@ import buildcraft.core.utils.Utils;
 
 public class BlockFiller extends BlockContainer {
 
-	int textureSides;
-	int textureTopOn;
-	int textureTopOff;
+	Icon textureSides;
+	Icon textureTopOn;
+	Icon textureTopOff;
 	public IFillerPattern currentPattern;
 
 	public BlockFiller(int i) {
@@ -38,10 +43,6 @@ public class BlockFiller extends BlockContainer {
 
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-
-		textureSides = 4 * 16 + 2;
-		textureTopOn = 4 * 16 + 0;
-		textureTopOff = 4 * 16 + 1;
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class BlockFiller extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 
 		if (iblockaccess == null)
@@ -75,7 +76,7 @@ public class BlockFiller extends BlockContainer {
 				else
 					return textureTopOn;
 			} else if (filler.currentPattern != null)
-				return filler.currentPattern.getTextureIndex();
+				return filler.currentPattern.getTexture();
 			else
 				return textureSides;
 		}
@@ -84,7 +85,7 @@ public class BlockFiller extends BlockContainer {
 	}
 
 	@Override
-	public int getBlockTextureFromSide(int i) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (i == 0 || i == 1)
 			return textureTopOn;
 		else
@@ -102,14 +103,18 @@ public class BlockFiller extends BlockContainer {
 		super.breakBlock(world, x, y, z, par5, par6);
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    textureTopOn = par1IconRegister.func_94245_a("buildcraft:blockFillerTopOn");
+        textureTopOff = par1IconRegister.func_94245_a("buildcraft:blockFillerTopOff");
+        textureSides = par1IconRegister.func_94245_a("buildcraft:blockFillerSides");
 	}
 }

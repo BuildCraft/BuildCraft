@@ -15,6 +15,8 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -116,8 +118,11 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
+        TextureMap blockTextureMap = Minecraft.getMinecraft().renderEngine.field_94154_l;
+        BuildCraftCore.redLaserTexture = blockTextureMap.func_94245_a("buildcraft:blockRedLaser");
+        BuildCraftCore.blueLaserTexture = blockTextureMap.func_94245_a("buildcraft:blockBlueLaser");
+        BuildCraftCore.stripesLaserTexture = blockTextureMap.func_94245_a("buildcraft:blockStripesLaser");
+        BuildCraftCore.transparentTexture = blockTextureMap.func_94245_a("buildcraft:blockTransparentLaser");
 	}
 
 	@Override
@@ -131,7 +136,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* NETWORKING */
 	@Override
 	public void sendToServer(Packet packet) {
-		FMLClientHandler.instance().getClient().getSendQueue().addToSendQueue(packet);
+		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
 	}
 
 	/* FILE SYSTEM */

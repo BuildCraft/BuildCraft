@@ -20,7 +20,7 @@ public class ItemBlockBuildCraft extends ItemBlock {
 
 	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
-		return StringUtil.localize(getItemNameIS(itemstack));
+		return StringUtil.localize(getUnlocalizedName(itemstack));
 	}
 
 }

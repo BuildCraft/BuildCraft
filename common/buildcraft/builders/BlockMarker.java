@@ -11,9 +11,13 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -31,8 +35,6 @@ public class BlockMarker extends BlockContainer {
 
 	public BlockMarker(int i) {
 		super(i, Material.circuits);
-
-		blockIndexInTexture = 3 * 16 + 9;
 
 		setLightValue(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
@@ -130,7 +132,7 @@ public class BlockMarker extends BlockContainer {
 			}
 			if (flag) {
 				dropBlockAsItem(world, i, j, k, BuildCraftBuilders.markerBlock.blockID, 0);
-				world.setBlockWithNotify(i, j, k, 0);
+				world.func_94575_c(i, j, k, 0);
 			}
 		}
 	}
@@ -187,17 +189,17 @@ public class BlockMarker extends BlockContainer {
 		super.onBlockAdded(world, i, j, k);
 
 		if (BuildersProxy.canPlaceTorch(world, i - 1, j, k)) {
-			world.setBlockMetadataWithNotify(i, j, k, 1);
+			world.setBlockMetadataWithNotify(i, j, k, 1,1);
 		} else if (BuildersProxy.canPlaceTorch(world, i + 1, j, k)) {
-			world.setBlockMetadataWithNotify(i, j, k, 2);
+			world.setBlockMetadataWithNotify(i, j, k, 2,1);
 		} else if (BuildersProxy.canPlaceTorch(world, i, j, k - 1)) {
-			world.setBlockMetadataWithNotify(i, j, k, 3);
+			world.setBlockMetadataWithNotify(i, j, k, 3,1);
 		} else if (BuildersProxy.canPlaceTorch(world, i, j, k + 1)) {
-			world.setBlockMetadataWithNotify(i, j, k, 4);
+			world.setBlockMetadataWithNotify(i, j, k, 4,1);
 		} else if (BuildersProxy.canPlaceTorch(world, i, j - 1, k)) {
-			world.setBlockMetadataWithNotify(i, j, k, 5);
+			world.setBlockMetadataWithNotify(i, j, k, 5,1);
 		} else if (BuildersProxy.canPlaceTorch(world, i, j + 1, k)) {
-			world.setBlockMetadataWithNotify(i, j, k, 0);
+			world.setBlockMetadataWithNotify(i, j, k, 0,1);
 		}
 
 		dropTorchIfCantStay(world, i, j, k);
@@ -206,20 +208,22 @@ public class BlockMarker extends BlockContainer {
 	private boolean dropTorchIfCantStay(World world, int i, int j, int k) {
 		if (!canPlaceBlockAt(world, i, j, k)) {
 			dropBlockAsItem(world, i, j, k, BuildCraftBuilders.markerBlock.blockID, 0);
-			world.setBlockWithNotify(i, j, k, 0);
+			world.func_94575_c(i, j, k, 0);
 			return false;
 		} else
 			return true;
-	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    par1IconRegister.func_94245_a("buildcraft:blockMarker");
 	}
 }

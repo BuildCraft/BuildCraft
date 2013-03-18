@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -55,7 +56,7 @@ public class Utils {
 
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given coordinates.
-	 * 
+	 *
 	 * @param stack
 	 * @param world
 	 * @param x
@@ -219,7 +220,7 @@ public class Utils {
 
 	/**
 	 * Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
-	 * 
+	 *
 	 * @param inv
 	 * @return Modified inventory if double chest, unmodified otherwise.
 	 */
@@ -315,7 +316,7 @@ public class Utils {
 			jSize = 0.10;
 		}
 
-		int texture = BuildCraftCore.redLaserTexture;
+		Icon texture = BuildCraftCore.redLaserTexture;
 
 		switch (kind) {
 		case Blue:

@@ -1,5 +1,8 @@
 package buildcraft.transport;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.Icon;
 import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
@@ -56,5 +59,10 @@ public class TransportProxyClient extends TransportProxy {
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
+	}
+	
+	@Override
+	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
+		item.setPipesIcons(dummyPipe.getIconProvider());
 	}
 }

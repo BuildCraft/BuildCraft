@@ -32,11 +32,6 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
 	public int stillLiquidId() {
 		return BuildCraftEnergy.oilStill.blockID;
 	}

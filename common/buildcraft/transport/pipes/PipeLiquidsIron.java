@@ -9,35 +9,41 @@
 package buildcraft.transport.pipes;
 
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.core.DefaultProps;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportLiquids;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeLiquidsIron extends Pipe {
+	
+	protected int standardIconIndex = PipeIconProvider.PipeLiquidsIron_Standard;
+	protected int solidIconIndex = PipeIconProvider.PipeAllIron_Solid;
 
-	private int baseTexture = 7 * 16 + 3;
-	private int plainTexture = 1 * 16 + 3;
 
 	public PipeLiquidsIron(int itemID) {
 		super(new PipeTransportLiquids(), new PipeLogicIron(), itemID);
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
+	public int getIconIndex(ForgeDirection direction) {
 		if (direction == ForgeDirection.UNKNOWN)
-			return baseTexture;
+			return standardIconIndex;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 			if (metadata == direction.ordinal())
-				return baseTexture;
+				return solidIconIndex;
 			else
-				return plainTexture;
+				return standardIconIndex;
 		}
 	}
 

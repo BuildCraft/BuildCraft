@@ -9,8 +9,11 @@
 
 package buildcraft.builders;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
 
@@ -189,13 +192,9 @@ public class FillerFillStairs extends FillerPattern {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getTextureIndex() {
-		return 4 * 16 + 8;
+    @SideOnly(Side.CLIENT)
+	public Icon getTexture() {
+		return BuilderProxyClient.fillerStairsTexture;
 	}
 
 	@Override

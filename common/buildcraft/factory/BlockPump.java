@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -11,10 +11,15 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
@@ -22,7 +27,11 @@ import buildcraft.core.utils.Utils;
 
 public class BlockPump extends BlockContainer {
 
-	public BlockPump(int i) {
+	private Icon textureTop;
+    private Icon textureBottom;
+    private Icon textureSide;
+
+    public BlockPump(int i) {
 		super(i, Material.iron);
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
@@ -34,19 +43,14 @@ public class BlockPump extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getBlockTextureFromSide(int i) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		switch (i) {
 		case 0:
-			return 6 * 16 + 4;
+			return textureTop;
 		case 1:
-			return 6 * 16 + 5;
+			return textureBottom;
 		default:
-			return 6 * 16 + 3;
+			return textureSide;
 		}
 	}
 
@@ -60,5 +64,14 @@ public class BlockPump extends BlockContainer {
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+	    textureTop = par1IconRegister.func_94245_a("buildcraft:pump_top");
+	    textureBottom = par1IconRegister.func_94245_a("buildcraft:pump_bottom");
+	    textureSide = par1IconRegister.func_94245_a("buildcraft:pump_side");
 	}
 }
