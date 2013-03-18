@@ -4,7 +4,7 @@ jdk:
   - openjdk7
   - openjdk6
 before_script:
-  - apt-get install astyle
+  - sudo apt-get install astyle
   - mkdir BuildCraft
   - mv buildcraft_resources BuildCraft/
   - mv common BuildCraft/
