@@ -11,7 +11,7 @@ public class ItemAssemblyTable extends ItemBlock {
 	}
 
 	@Override
-	public String getItemNameIS(ItemStack par1ItemStack) {
+	public String getUnlocalizedName(ItemStack par1ItemStack) {
 		return par1ItemStack.getItemDamage() == 0 ? "block.assemblyTableBlock" : "block.assemblyWorkbenchBlock";
 	}
 

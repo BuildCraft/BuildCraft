@@ -46,21 +46,13 @@ public class GuiFiller extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
-		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
+	    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+	    mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
 
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		if (filler.currentPattern != null) {
-			i = mc.renderEngine.getTexture(filler.currentPattern.getTextureFile());
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			mc.renderEngine.bindTexture(i);
-
-			int textureI = filler.currentPattern.getTextureIndex() >> 4;
-			int textureJ = filler.currentPattern.getTextureIndex() - textureI * 16;
-
-			drawTexturedModalRect(guiLeft + patternSymbolX, guiTop + patternSymbolY, 16 * textureJ, 16 * textureI, 16, 16);
+			func_94065_a(guiLeft + patternSymbolX, guiTop + patternSymbolY, filler.currentPattern.getTexture(), 16, 16);
 		}
 
 	}

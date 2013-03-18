@@ -8,13 +8,21 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.inventory.ISelectiveInventory;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.inventory.ISelectiveInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.network.IClientState;
@@ -22,14 +30,8 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory, IClientState {
 
@@ -39,8 +41,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
 		super(transport, new PipeLogicEmerald(), itemID);
 
-		baseTexture = 6 * 16 + 13;
-		plainTexture = baseTexture + 1;
+		standardIconIndex = PipeIconProvider.PipeItemsEmerald_Standard;
+		solidIconIndex = PipeIconProvider.PipeAllEmerald_Solid;
 	}
 
 	public PipeItemsEmerald(int itemID) {
@@ -96,7 +98,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				for (ItemStack stack : stacks) {
 					if(stack == null)
 						continue;
-					
+
 					boolean matches = false;
 					for (int i = 0; i < filters.getSizeInventory(); i++) {
 						ItemStack filter = filters.getStackInSlot(i);
@@ -293,4 +295,18 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 		}
 
 	}
+
+    @Override
+    public boolean func_94042_c()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean func_94041_b(int i, ItemStack itemstack)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

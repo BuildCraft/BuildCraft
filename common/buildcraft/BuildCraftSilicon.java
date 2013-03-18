@@ -76,18 +76,18 @@ public class BuildCraftSilicon {
 
 		BuildCraftCore.mainConfiguration.save();
 
-		laserBlock = new BlockLaser(Integer.parseInt(laserId.value));
-		CoreProxy.proxy.addName(laserBlock.setBlockName("laserBlock"), "Laser");
+		laserBlock = new BlockLaser(laserId.getInt());
+		CoreProxy.proxy.addName(laserBlock.setUnlocalizedName("laserBlock"), "Laser");
 		CoreProxy.proxy.registerBlock(laserBlock);
 
-		assemblyTableBlock = new BlockAssemblyTable(Integer.parseInt(assemblyTableId.value));
+		assemblyTableBlock = new BlockAssemblyTable(assemblyTableId.getInt());
 		GameRegistry.registerBlock(assemblyTableBlock, ItemAssemblyTable.class);
 
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 0), "Assembly Table");
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 1), "Advanced Crafting Table");
 
-		redstoneChipset = new ItemRedstoneChipset(Integer.parseInt(redstoneChipsetId.value));
-		redstoneChipset.setItemName("redstoneChipset");
+		redstoneChipset = new ItemRedstoneChipset(redstoneChipsetId.getInt());
+		redstoneChipset.setUnlocalizedName("redstoneChipset");
 
 	}
 

@@ -9,13 +9,16 @@
 
 package buildcraft.core.triggers;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 
-public class TriggerMachine extends Trigger {
+public class TriggerMachine extends BCTrigger {
 
 	boolean active;
 
@@ -23,14 +26,6 @@ public class TriggerMachine extends Trigger {
 		super(id);
 
 		this.active = active;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		if (active)
-			return 4 * 16 + 0;
-		else
-			return 4 * 16 + 1;
 	}
 
 	@Override
@@ -56,7 +51,11 @@ public class TriggerMachine extends Trigger {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTextureIcon() {
+		if (active)
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Machine_Active);
+		else
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Machine_Inactive);
 	}
 }
