@@ -20,13 +20,11 @@ import net.minecraftforge.common.ISidedInventory;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.IconItemConstants;
 
-public class TriggerInventory extends Trigger implements ITriggerDirectional {
+public class TriggerInventory extends BCTrigger implements ITriggerDirectional {
 
 	public enum State {
 		Empty, Contains, Space, Full
@@ -129,13 +127,13 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 	public Icon getTextureIcon() {
 		switch (state) {
 		case Empty:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Empty];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Empty);
 		case Contains:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Contains];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Contains);
 		case Space:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Space];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Space);
 		default:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Inventory_Full];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Full);
 		}
 	}
 }

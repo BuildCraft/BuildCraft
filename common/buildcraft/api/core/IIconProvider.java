@@ -1,4 +1,4 @@
-package buildcraft.core;
+package buildcraft.api.core;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;

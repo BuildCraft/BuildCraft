@@ -28,21 +28,21 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.Action;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IDropControlInventory;
-import buildcraft.core.IIconProvider;
 import buildcraft.core.network.TilePacketWrapper;
+import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
 import buildcraft.transport.pipes.PipeLogic;
@@ -71,9 +71,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 
-	public ITrigger[] activatedTriggers = new Trigger[8];
+	public ITrigger[] activatedTriggers = new BCTrigger[8];
 	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
-	public IAction[] activatedActions = new Action[8];
+	public IAction[] activatedActions = new BCAction[8];
 
 	public boolean broadcastSignal[] = new boolean[] { false, false, false, false };
 	public boolean broadcastRedstone = false;
@@ -529,9 +529,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	public void resetGate() {
 		gate = null;
-		activatedTriggers = new Trigger[activatedTriggers.length];
+		activatedTriggers = new BCTrigger[activatedTriggers.length];
 		triggerParameters = new ITriggerParameter[triggerParameters.length];
-		activatedActions = new Action[activatedActions.length];
+		activatedActions = new BCAction[activatedActions.length];
 		broadcastSignal = new boolean[] { false, false, false, false };
 		if (broadcastRedstone) {
 			updateNeighbors(true);

@@ -13,12 +13,12 @@ import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.Action;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconItemConstants;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCAction;
 
-public class ActionSignalOutput extends Action {
+public class ActionSignalOutput extends BCAction {
 
 	public IPipe.WireColor color;
 
@@ -49,13 +49,13 @@ public class ActionSignalOutput extends Action {
 	public Icon getTexture() {
 		switch (color) {
 		case Red:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Red_Active];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active);
 		case Blue:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Blue_Active];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active);
 		case Green:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Green_Active];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active);
 		case Yellow:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_PipeSignal_Yellow_Active];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active);
 		}
 
 		return null;

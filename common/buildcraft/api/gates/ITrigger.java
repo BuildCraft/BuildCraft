@@ -1,5 +1,6 @@
 package buildcraft.api.gates;
 
+import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
@@ -13,26 +14,29 @@ public interface ITrigger {
 	 * Return the texture file for this trigger icon
 	 */
     @SideOnly(Side.CLIENT)
-	public abstract Icon getTextureIcon();
+	public Icon getTextureIcon();
+    
+    @SideOnly(Side.CLIENT)
+    public IIconProvider getIconProvider();
 
 	/**
 	 * Return true if this trigger can accept parameters
 	 */
-	public abstract boolean hasParameter();
+	public boolean hasParameter();
 
 	/**
 	 * Return the trigger description in the UI
 	 */
-	public abstract String getDescription();
+	public String getDescription();
 
 	/**
 	 * Return true if the tile given in parameter activates the trigger, given the parameters.
 	 */
-	public abstract boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter);
+	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter);
 
 	/**
 	 * Create parameters for the trigger. As for now, there is only one kind of trigger parameter available so this subprogram is final.
 	 */
-	public abstract ITriggerParameter createParameter();
+	public ITriggerParameter createParameter();
 
 }

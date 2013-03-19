@@ -23,9 +23,8 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Property;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.gates.Action;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
@@ -48,9 +47,12 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerLiquidContainer;
 import buildcraft.core.triggers.TriggerMachine;
@@ -128,23 +130,23 @@ public class BuildCraftCore {
 	public static int markerModel;
 	public static int oilModel;
 
-	public static Trigger triggerMachineActive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_ACTIVE, true);
-	public static Trigger triggerMachineInactive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_INACTIVE, false);
-	public static Trigger triggerEmptyInventory = new TriggerInventory(DefaultProps.TRIGGER_EMPTY_INVENTORY, TriggerInventory.State.Empty);
-	public static Trigger triggerContainsInventory = new TriggerInventory(DefaultProps.TRIGGER_CONTAINS_INVENTORY, TriggerInventory.State.Contains);
-	public static Trigger triggerSpaceInventory = new TriggerInventory(DefaultProps.TRIGGER_SPACE_INVENTORY, TriggerInventory.State.Space);
-	public static Trigger triggerFullInventory = new TriggerInventory(DefaultProps.TRIGGER_FULL_INVENTORY, TriggerInventory.State.Full);
-	public static Trigger triggerEmptyLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_EMPTY_LIQUID, TriggerLiquidContainer.State.Empty);
-	public static Trigger triggerContainsLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_CONTAINS_LIQUID, TriggerLiquidContainer.State.Contains);
-	public static Trigger triggerSpaceLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_SPACE_LIQUID, TriggerLiquidContainer.State.Space);
-	public static Trigger triggerFullLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerLiquidContainer.State.Full);
-	public static Trigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
-	public static Trigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
+	public static BCTrigger triggerMachineActive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_ACTIVE, true);
+	public static BCTrigger triggerMachineInactive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_INACTIVE, false);
+	public static BCTrigger triggerEmptyInventory = new TriggerInventory(DefaultProps.TRIGGER_EMPTY_INVENTORY, TriggerInventory.State.Empty);
+	public static BCTrigger triggerContainsInventory = new TriggerInventory(DefaultProps.TRIGGER_CONTAINS_INVENTORY, TriggerInventory.State.Contains);
+	public static BCTrigger triggerSpaceInventory = new TriggerInventory(DefaultProps.TRIGGER_SPACE_INVENTORY, TriggerInventory.State.Space);
+	public static BCTrigger triggerFullInventory = new TriggerInventory(DefaultProps.TRIGGER_FULL_INVENTORY, TriggerInventory.State.Full);
+	public static BCTrigger triggerEmptyLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_EMPTY_LIQUID, TriggerLiquidContainer.State.Empty);
+	public static BCTrigger triggerContainsLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_CONTAINS_LIQUID, TriggerLiquidContainer.State.Contains);
+	public static BCTrigger triggerSpaceLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_SPACE_LIQUID, TriggerLiquidContainer.State.Space);
+	public static BCTrigger triggerFullLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerLiquidContainer.State.Full);
+	public static BCTrigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
+	public static BCTrigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
 
-	public static Action actionRedstone = new ActionRedstoneOutput(DefaultProps.ACTION_REDSTONE);
-	public static Action actionOn = new ActionMachineControl(DefaultProps.ACTION_ON, Mode.On);
-	public static Action actionOff = new ActionMachineControl(DefaultProps.ACTION_OFF, Mode.Off);
-	public static Action actionLoop = new ActionMachineControl(DefaultProps.ACTION_LOOP, Mode.Loop);
+	public static BCAction actionRedstone = new ActionRedstoneOutput(DefaultProps.ACTION_REDSTONE);
+	public static BCAction actionOn = new ActionMachineControl(DefaultProps.ACTION_ON, Mode.On);
+	public static BCAction actionOff = new ActionMachineControl(DefaultProps.ACTION_OFF, Mode.Off);
+	public static BCAction actionLoop = new ActionMachineControl(DefaultProps.ACTION_LOOP, Mode.Loop);
 
 	public static boolean loadDefaultRecipes = true;
 	public static boolean forcePneumaticPower = true;
@@ -153,6 +155,8 @@ public class BuildCraftCore {
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
 	public static Logger bcLog = Logger.getLogger("Buildcraft");
+	
+	public IIconProvider actionTriggerIconProvider = new ActionTriggerIconProvider();
 
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
@@ -249,7 +253,9 @@ public class BuildCraftCore {
 			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
 		} finally {
-			mainConfiguration.save();
+			if (mainConfiguration.hasChanged()) {
+				mainConfiguration.save();
+			}
 		}
 	}
 

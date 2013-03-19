@@ -9,6 +9,7 @@
 
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -35,6 +36,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.ITrigger;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
@@ -60,6 +64,8 @@ public class BlockGenericPipe extends BlockContainer {
 		public Part hitPart;
 		public MovingObjectPosition movingObjectPosition;
 	}
+
+	private boolean skippedFirstIconRegister;
 
 	/* Defined subprograms ************************************************* */
 
@@ -461,6 +467,30 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
+	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
+
+		if (CoreProxy.proxy.isRenderWorld(world))
+			return null;
+
+		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
+
+		int count = quantityDropped(metadata, fortune, world.rand);
+		for (int i = 0; i < count; i++) {
+			Pipe pipe = getPipe(world, x, y, z);
+
+			if (pipe == null) {
+				pipe = pipeRemoved.get(new BlockIndex(x, y, z));
+			}
+
+			if (pipe != null) {
+				if (pipe.itemID > 0) {
+					pipe.dropContents();
+					list.add(new ItemStack(pipe.itemID, 1, damageDropped(metadata)));
+				}
+			}
+		}
+		return list;
+	}
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}
@@ -855,6 +885,10 @@ public class BlockGenericPipe extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void func_94332_a(IconRegister iconRegister)
 	{
+		if (!skippedFirstIconRegister){
+			skippedFirstIconRegister = true;
+			return;
+		}
 		BuildCraftTransport.instance.gateIconProvider.RegisterIcons(iconRegister);
 		BuildCraftTransport.instance.wireIconProvider.RegisterIcons(iconRegister);
 		for (int i : pipes.keySet()){

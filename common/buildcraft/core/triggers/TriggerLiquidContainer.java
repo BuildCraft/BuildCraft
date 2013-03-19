@@ -20,11 +20,9 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconItemConstants;
 
-public class TriggerLiquidContainer extends Trigger {
+public class TriggerLiquidContainer extends BCTrigger {
 
 	public enum State {
 		Empty, Contains, Space, Full
@@ -132,13 +130,13 @@ public class TriggerLiquidContainer extends Trigger {
 	public Icon getTextureIcon() {
 		switch (state) {
 		case Empty:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Empty];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Empty);
 		case Contains:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Contains];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Contains);
 		case Space:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Space];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Space);
 		default:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_LiquidContainer_Full];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Full);
 		}
 	}
 }

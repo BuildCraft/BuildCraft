@@ -12,7 +12,7 @@ package buildcraft.transport.pipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.IIconProvider;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;

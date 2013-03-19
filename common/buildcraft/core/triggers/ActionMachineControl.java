@@ -4,11 +4,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.Icon;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.Action;
 import buildcraft.core.DefaultProps;
-import buildcraft.transport.IconItemConstants;
 
-public class ActionMachineControl extends Action {
+public class ActionMachineControl extends BCAction {
 
 	public enum Mode {
 		Unknown, On, Off, Loop
@@ -41,11 +39,11 @@ public class ActionMachineControl extends Action {
 	public Icon getTexture() {
 		switch (mode) {
 		case On:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Action_MachineControl_On];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Action_MachineControl_On);
 		case Off:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Action_MachineControl_Off];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Action_MachineControl_Off);
 		case Loop:
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Action_MachineControl_Loop];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Action_MachineControl_Loop);
 		default:
 			return null;
 		}

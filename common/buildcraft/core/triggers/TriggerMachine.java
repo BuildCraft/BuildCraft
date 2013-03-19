@@ -15,12 +15,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
-import buildcraft.transport.IconItemConstants;
 
-public class TriggerMachine extends Trigger {
+public class TriggerMachine extends BCTrigger {
 
 	boolean active;
 
@@ -56,8 +54,8 @@ public class TriggerMachine extends Trigger {
 	@SideOnly(Side.CLIENT)
 	public Icon getTextureIcon() {
 		if (active)
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Machine_Active];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Machine_Active);
 		else
-			return BuildCraftTransport.instance.itemIcons[IconItemConstants.Trigger_Machine_Inactive];
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Machine_Inactive);
 	}
 }

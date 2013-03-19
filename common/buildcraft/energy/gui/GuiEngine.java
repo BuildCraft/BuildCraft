@@ -1,6 +1,9 @@
 package buildcraft.energy.gui;
 
+import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
@@ -31,6 +34,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 			// Draw icon
 			drawIcon(DefaultProps.TEXTURE_ICONS, 0, x + 3, y + 4);
+			//drawIcon(BuildCraftTransport.instance.wireIconProvider.getIcon(0), x + 3, y + 4);
 
 			if (!isFullyOpened())
 				return;

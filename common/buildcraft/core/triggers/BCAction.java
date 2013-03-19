@@ -7,17 +7,21 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package buildcraft.api.gates;
+package buildcraft.core.triggers;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.gates.ActionManager;
+import buildcraft.api.gates.IAction;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.Icon;
 
-public abstract class Action implements IAction {
+public abstract class BCAction implements IAction {
 
 	protected int id;
 
-	public Action(int id) {
+	public BCAction(int id) {
 		this.id = id;
 		ActionManager.actions[id] = this;
 	}
@@ -40,4 +44,12 @@ public abstract class Action implements IAction {
 	public String getDescription() {
 		return "";
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftCore.instance.actionTriggerIconProvider;
+	}
+	
+	
 }
