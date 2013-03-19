@@ -18,7 +18,6 @@ before_script:
   - mkdir jars/bin
   - cd jars
   - wget http://assets.minecraft.net/1_4_7/minecraft_server.jar
-  - ls
   - cd bin
   - wget http://assets.minecraft.net/1_4_7/minecraft.jar
   - cd ..
