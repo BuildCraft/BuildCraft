@@ -19,6 +19,6 @@ public interface IIconProvider {
 	 * @param iconRegister
 	 */
 	@SideOnly(Side.CLIENT)
-	public void RegisterIcons(IconRegister iconRegister);
+	public void registerIcons(IconRegister iconRegister);
 
 }

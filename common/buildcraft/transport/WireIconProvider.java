@@ -32,7 +32,7 @@ public class WireIconProvider implements IIconProvider {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void RegisterIcons(IconRegister iconRegister) {
+	public void registerIcons(IconRegister iconRegister) {
 		if (registered) return;
 		registered = true;
 		
