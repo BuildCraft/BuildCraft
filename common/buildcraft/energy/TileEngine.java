@@ -121,7 +121,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 					IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
 
 					float extracted = engine.extractEnergy(receptor.getMinEnergyReceived(),
-							receptor.getMaxEnergyReceived() - Math.round(receptor.getEnergyStored()), true);
+							Math.min(receptor.getMaxEnergyReceived(), receptor.getMaxEnergyStored() - Math.round(receptor.getEnergyStored())), true);
 
 					if (extracted > 0) {
 						receptor.receiveEnergy(extracted, engine.orientation.getOpposite());
