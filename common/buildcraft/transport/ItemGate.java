@@ -118,12 +118,12 @@ public class ItemGate extends ItemBuildCraft {
 		
 		for (IAction action : ActionManager.actions){
 			if (action == null) continue;
-			action.getIconProvider().RegisterIcons(iconRegister);
+			action.getIconProvider().registerIcons(iconRegister);
 		}
 		
 		for (ITrigger trigger : ActionManager.triggers){
 			if (trigger == null) continue;
-			trigger.getIconProvider().RegisterIcons(iconRegister);
+			trigger.getIconProvider().registerIcons(iconRegister);
 		}
 		
 		icons = new Icon[ItemGate.MAX];

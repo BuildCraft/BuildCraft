@@ -889,12 +889,12 @@ public class BlockGenericPipe extends BlockContainer {
 			skippedFirstIconRegister = true;
 			return;
 		}
-		BuildCraftTransport.instance.gateIconProvider.RegisterIcons(iconRegister);
-		BuildCraftTransport.instance.wireIconProvider.RegisterIcons(iconRegister);
+		BuildCraftTransport.instance.gateIconProvider.registerIcons(iconRegister);
+		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
 		for (int i : pipes.keySet()){
 			Pipe dummyPipe = createPipe(i);
 			if (dummyPipe != null){
-				dummyPipe.getIconProvider().RegisterIcons(iconRegister);
+				dummyPipe.getIconProvider().registerIcons(iconRegister);
 			}
 		}
 	}

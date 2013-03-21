@@ -19,6 +19,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.Property;
@@ -34,6 +35,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
+import buildcraft.core.CoreIconProvider;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
@@ -77,6 +79,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[6.5.0.0,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -124,6 +127,9 @@ public class BuildCraftCore {
 	public static Icon stripesLaserTexture;
     @SideOnly(Side.CLIENT)
 	public static Icon transparentTexture;
+    
+    @SideOnly(Side.CLIENT)
+    public static IIconProvider iconProvider;
 
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
@@ -252,6 +258,9 @@ public class BuildCraftCore {
 
 			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
+			
+			MinecraftForge.EVENT_BUS.register(this);
+
 		} finally {
 			if (mainConfiguration.hasChanged()) {
 				mainConfiguration.save();
@@ -306,6 +315,15 @@ public class BuildCraftCore {
 	@ServerStarting
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandBuildCraft());
+	}
+	
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Pre event){
+		if ("items".equals(event.map.field_94253_b)){
+			iconProvider = new CoreIconProvider();
+			iconProvider.registerIcons(event.map);
+		}
 	}
 
 	public void loadRecipes() {

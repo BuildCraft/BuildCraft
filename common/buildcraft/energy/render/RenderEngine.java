@@ -192,7 +192,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			break;
 		}
 
-		tileEntityRenderer.renderEngine.func_98187_b(texture);
+		bindTextureByName(texture);
 
 		trunk.render(factor);
 

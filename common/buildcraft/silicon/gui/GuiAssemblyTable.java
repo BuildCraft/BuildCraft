@@ -12,13 +12,16 @@ package buildcraft.silicon.gui;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.CoreIconProvider;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -50,7 +53,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-			drawIcon(DefaultProps.TEXTURE_ICONS, 0, x + 3, y + 4);
+			Minecraft.getMinecraft().renderEngine.func_98187_b("/gui/items.png");
+			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
 				return;
