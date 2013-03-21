@@ -29,7 +29,7 @@ public class Box implements IBox {
 	public @TileNetworkData
 	boolean initialized;
 
-	private EntityBlock lasers[];
+	private EntityBlockImmobile lasers[];
 
 	public Box() {
 		reset();
