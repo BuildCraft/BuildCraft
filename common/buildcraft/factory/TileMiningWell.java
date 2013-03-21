@@ -78,7 +78,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			}
 
 			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0)
-				return;
+				continue;
 
 			// Throw the object away.
 			// TODO: factorize that code
