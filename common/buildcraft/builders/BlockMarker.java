@@ -222,8 +222,7 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
-	{
-	    par1IconRegister.func_94245_a("buildcraft:blockMarker");
+	public void func_94332_a(IconRegister par1IconRegister) {
+		field_94336_cN = par1IconRegister.func_94245_a("buildcraft:blockMarker");
 	}
 }
