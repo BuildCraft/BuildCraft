@@ -96,7 +96,7 @@ public abstract class Gate {
 	public abstract void addTrigger(LinkedList<ITrigger> list);
 
 	// / TEXTURES
-	public abstract int getTexture(boolean isSignalActive);
+	public abstract int getTextureIconIndex(boolean isSignalActive);
 
 	public abstract String getGuiFile();
 

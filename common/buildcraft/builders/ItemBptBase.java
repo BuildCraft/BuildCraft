@@ -11,9 +11,14 @@ package buildcraft.builders;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -27,13 +32,12 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 		super(i);
 
 		maxStackSize = 1;
-		iconIndex = 5 * 16 + 0;
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public abstract int getIconFromDamage(int i);
+	public abstract Icon getIconFromDamage(int i);
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
@@ -57,4 +61,10 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94581_a(IconRegister par1IconRegister)
+	{
+	    par1IconRegister.func_94245_a("buildcraft:template_clean");
+	}
 }

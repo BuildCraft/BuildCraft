@@ -11,7 +11,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
 
 public class Version implements Runnable {
-    
+
     private static Version instance = new Version();
 
 	public enum EnumUpdateState {
@@ -46,12 +46,12 @@ public class Version implements Runnable {
 
 		Property property = BuildCraftCore.mainConfiguration.get("vars", "version.seen", VERSION);
 		property.comment = "indicates the last version the user has been informed about and will suppress further notices on it.";
-		String seenVersion = property.value;
+		String seenVersion = property.getString();
 
 		if (recommendedVersion == null || recommendedVersion.equals(seenVersion))
 			return false;
 
-		property.value = recommendedVersion;
+		property.set(recommendedVersion);
 		BuildCraftCore.mainConfiguration.save();
 		return true;
 	}
@@ -158,14 +158,14 @@ public class Version implements Runnable {
 
         int count = 0;
         currentVersion = null;
-        
+
         BuildCraftCore.bcLog.info("Beginning version check");
-        
+
         try {
             while ((count < 3) && ((currentVersion == null) || (currentVersion == EnumUpdateState.CONNECTION_ERROR))) {
                 versionCheck();
                 count++;
-                
+
                 if (currentVersion == EnumUpdateState.CONNECTION_ERROR) {
                     BuildCraftCore.bcLog.info("Version check attempt " + count + " failed, trying again in 10 seconds");
                     Thread.sleep(10000);
@@ -175,15 +175,15 @@ public class Version implements Runnable {
         catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
+
         if (currentVersion == EnumUpdateState.CONNECTION_ERROR) {
             BuildCraftCore.bcLog.info("Version check failed");
         }
-        
+
     }
-    
+
     public static void check() {
-        
+
         new Thread(instance).start();
     }
 

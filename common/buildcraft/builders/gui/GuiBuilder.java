@@ -60,21 +60,18 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = 0;
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		int realXSize = 0;
 
 		if (builder.isBuildingBlueprint()) {
-			i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");
+			mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");
 			realXSize = 256;
 		} else {
-			i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/builder.png");
+			mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/builder.png");
 			realXSize = 176;
 		}
-
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
 
 		drawTexturedModalRect(j, k, 0, 0, realXSize, ySize);
 

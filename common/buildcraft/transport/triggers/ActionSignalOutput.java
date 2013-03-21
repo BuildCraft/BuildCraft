@@ -9,11 +9,16 @@
 
 package buildcraft.transport.triggers;
 
-import buildcraft.api.gates.Action;
+import net.minecraft.util.Icon;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCAction;
 
-public class ActionSignalOutput extends Action {
+public class ActionSignalOutput extends BCAction {
 
 	public IPipe.WireColor color;
 
@@ -21,22 +26,6 @@ public class ActionSignalOutput extends Action {
 		super(id);
 
 		this.color = color;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (color) {
-		case Red:
-			return 0 * 16 + 3;
-		case Blue:
-			return 0 * 16 + 5;
-		case Green:
-			return 0 * 16 + 7;
-		case Yellow:
-			return 0 * 16 + 9;
-		}
-
-		return 0;
 	}
 
 	@Override
@@ -56,7 +45,19 @@ public class ActionSignalOutput extends Action {
 	}
 
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTexture() {
+		switch (color) {
+		case Red:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active);
+		case Blue:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active);
+		case Green:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active);
+		case Yellow:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active);
+		}
+
+		return null;
 	}
 }

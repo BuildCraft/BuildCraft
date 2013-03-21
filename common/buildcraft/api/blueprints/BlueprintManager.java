@@ -16,7 +16,7 @@ public class BlueprintManager {
 			sig.itemClassName = item.getClass().getSimpleName();
 		}
 
-		sig.itemName = item.getItemNameIS(new ItemStack(item));
+		sig.itemName = item.getUnlocalizedName(new ItemStack(item));
 
 		return sig;
 	}

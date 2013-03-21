@@ -2,10 +2,15 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
@@ -42,11 +47,6 @@ public class BlockHopper extends BlockBuildCraft {
 	}
 
 	@Override
-	public int getBlockTextureFromSide(int par1) {
-		return 1;
-	}
-
-	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
 
@@ -70,6 +70,13 @@ public class BlockHopper extends BlockBuildCraft {
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IconRegister par1IconRegister)
+	{
+//	    field_94336_cN = par1IconRegister.func_94245_a("buildcraft:hopper");
 	}
 
 }

@@ -21,7 +21,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 
@@ -29,13 +28,14 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
@@ -193,7 +193,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = 4;
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Normal);
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -219,7 +219,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = 6;
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Overload);
 
 		size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -274,8 +274,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
-
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
 
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 
@@ -396,12 +394,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (liquidId == 0)
 			return null;
 
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
-		} else if (Item.itemsList[liquidId] != null) {
-			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-		} else
-			return null;
 		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}
 
@@ -437,7 +429,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
         GL11.glTranslatef(0, 0.25F, 0);
         GL11.glScalef(renderScale, renderScale, renderScale);
-        dummyEntityItem.func_92058_a(itemstack);
+        dummyEntityItem.setEntityItemStack(itemstack);
         customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
 		GL11.glPopMatrix();
 	}

@@ -5,11 +5,13 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.transport.IPipe;
+import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCTrigger;
 
 public class ActionManager {
 
-	public static Trigger[] triggers = new Trigger[1024];
-	public static Action[] actions = new Action[1024];
+	public static ITrigger[] triggers = new ITrigger[1024];
+	public static IAction[] actions = new IAction[1024];
 
 	private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
 	private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();

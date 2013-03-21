@@ -92,7 +92,7 @@ public class OilPopulate {
 						int d2 = bx * bx + by * by + bz * bz;
 
 						if (d2 <= r2) {
-							world.setBlockWithNotify(bx + cx, by + cy, bz + cz, BuildCraftEnergy.oilStill.blockID);
+							world.func_94575_c(bx + cx, by + cy, bz + cz, BuildCraftEnergy.oilStill.blockID);
 						}
 					}
 				}
@@ -121,11 +121,11 @@ public class OilPopulate {
 					}
 
 					for (int h = y + 1; h <= ymax; ++h) {
-						world.setBlockWithNotify(cx, h, cz, BuildCraftEnergy.oilStill.blockID);
+						world.func_94575_c(cx, h, cz, BuildCraftEnergy.oilStill.blockID);
 					}
 
 				} else if (started) {
-					world.setBlockWithNotify(cx, y, cz, BuildCraftEnergy.oilStill.blockID);
+					world.func_94575_c(cx, y, cz, BuildCraftEnergy.oilStill.blockID);
 				}
 			}
 
@@ -176,12 +176,12 @@ public class OilPopulate {
 			if (adjacentOil || force) {
 				if (world.getBlockId(x, y, z) == Block.waterMoving.blockID || world.getBlockId(x, y, z) == Block.waterStill.blockID || isOil(world, x, y, z)) {
 
-					world.setBlockWithNotify(x, y, z, BuildCraftEnergy.oilStill.blockID);
+					world.func_94575_c(x, y, z, BuildCraftEnergy.oilStill.blockID);
 				} else {
-					world.setBlockWithNotify(x, y, z, 0);
+					world.func_94575_c(x, y, z, 0);
 				}
 
-				world.setBlockWithNotify(x, y - 1, z, BuildCraftEnergy.oilStill.blockID);
+				world.func_94575_c(x, y - 1, z, BuildCraftEnergy.oilStill.blockID);
 			}
 		}
 	}

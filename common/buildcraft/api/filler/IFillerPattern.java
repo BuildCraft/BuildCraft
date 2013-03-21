@@ -1,7 +1,10 @@
 package buildcraft.api.filler;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import buildcraft.api.core.IBox;
 
 public interface IFillerPattern {
@@ -12,9 +15,8 @@ public interface IFillerPattern {
 
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace);
 
-	public String getTextureFile();
-
-	public int getTextureIndex();
+	@SideOnly(Side.CLIENT)
+	public Icon getTexture();
 
 	public String getName();
 

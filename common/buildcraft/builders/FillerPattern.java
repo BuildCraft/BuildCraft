@@ -9,8 +9,11 @@
 
 package buildcraft.builders;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IBox;
@@ -29,11 +32,9 @@ public abstract class FillerPattern implements IFillerPattern {
 	@Override
 	public abstract boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace);
 
+	@SideOnly(Side.CLIENT)
 	@Override
-	public abstract String getTextureFile();
-
-	@Override
-	public abstract int getTextureIndex();
+	public abstract Icon getTexture();
 
 	@Override
 	public void setId(int id) {
@@ -110,7 +111,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 		if (lastX != Integer.MAX_VALUE) {
 			if (BuildCraftBuilders.fillerDestroy) {
-				world.setBlockWithNotify(lastX, lastY, lastZ, 0);
+				world.func_94575_c(lastX, lastY, lastZ, 0);
 			} else {
 				BlockUtil.breakBlock(world, lastX, lastY, lastZ, 20);
 			}

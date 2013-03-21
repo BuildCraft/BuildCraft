@@ -11,6 +11,7 @@ package buildcraft.energy.render;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -68,6 +69,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	public RenderEngine(String baseTexture) {
 		this();
 		this.baseTexture = baseTexture;
+		setTileEntityRenderer(TileEntityRenderer.instance);
 	}
 
 	@Override
@@ -152,7 +154,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float factor = (float) (1.0 / 16.0);
 
-		ForgeHooksClient.bindTexture(baseTexture, 0);
+		bindTextureByName(baseTexture);
 
 		box.render(factor);
 
@@ -160,7 +162,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png", 0);
+		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
 
 		float chamberf = 2F / 16F;
 
@@ -190,7 +192,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			break;
 		}
 
-		ForgeHooksClient.bindTexture(texture, 0);
+		bindTextureByName(texture);
 
 		trunk.render(factor);
 

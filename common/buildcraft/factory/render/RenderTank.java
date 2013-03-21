@@ -9,18 +9,25 @@
 
 package buildcraft.factory.render;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.liquids.LiquidDictionary;
 import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.base.Joiner;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Primitives;
 
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
@@ -30,28 +37,20 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	final static private int displayStages = 100;
 
-	private HashMap<Integer, HashMap<Integer, int[]>> stage = new HashMap<Integer, HashMap<Integer, int[]>>();
+	private HashMap<LiquidStack, int[]> stage = new HashMap<LiquidStack, int[]>();
 
-	private int[] getDisplayLists(int liquidId, int damage, World world) {
+	private int[] getDisplayLists(LiquidStack liquid, World world) {
 
-		if (stage.containsKey(liquidId)) {
-			HashMap<Integer, int[]> x = stage.get(liquidId);
-			if (x.containsKey(damage))
-				return x.get(damage);
-		} else {
-			stage.put(liquidId, new HashMap<Integer, int[]>());
+		if (stage.containsKey(liquid)) {
+		    return stage.get(liquid);
 		}
 
 		int[] d = new int[displayStages];
-		stage.get(liquidId).put(damage, d);
+		stage.put(liquid, d);
 
 		BlockInterface block = new BlockInterface();
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
-		} else if (Item.itemsList[liquidId] != null) {
-			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
-		} else
-			return null;
+		block.texture = liquid.getRenderingIcon();
+        Minecraft.getMinecraft().renderEngine.func_98187_b("/terrain.png");
 
 		for (int s = 0; s < displayStages; ++s) {
 			d[s] = GLAllocation.generateDisplayLists(1);
@@ -78,30 +77,21 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		TileTank tank = ((TileTank) tileentity);
 
+		String liquidName = tank.tank.getLiquidName();
 		LiquidStack liquid = tank.tank.getLiquid();
+        LiquidStack refLiquid = LiquidDictionary.getCanonicalLiquid(liquidName);
 
-		if (liquid == null || liquid.amount <= 0 || liquid.itemID <= 0)
+		if (refLiquid == null || liquid.amount <= 0)
 			return;
 
-		int[] displayList = getDisplayLists(liquid.itemID, liquid.itemMeta, tileentity.worldObj);
+		int[] displayList = getDisplayLists(refLiquid, tileentity.worldObj);
 		if (displayList == null)
 			return;
-		
-		String textureFile;
-		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
-			textureFile = Block.blocksList[liquid.itemID].getTextureFile();
-		} else if (Item.itemsList[liquid.itemID] != null){
-			textureFile = Item.itemsList[liquid.itemID].getTextureFile();
-		} else {
-			return;
-		}
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
-		
-		ForgeHooksClient.bindTexture(textureFile, 0);
 
-		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (displayStages - 1))]);
 
