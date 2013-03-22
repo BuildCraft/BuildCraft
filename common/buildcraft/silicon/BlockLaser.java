@@ -90,10 +90,10 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureTop = par1IconRegister.func_94245_a("buildcraft:laser_top");
-        textureBottom = par1IconRegister.func_94245_a("buildcraft:laser_bottom");
-        textureSide = par1IconRegister.func_94245_a("buildcraft:laser_side");
+	    textureTop = par1IconRegister.registerIcons("buildcraft:laser_top");
+        textureBottom = par1IconRegister.registerIcons("buildcraft:laser_bottom");
+        textureSide = par1IconRegister.registerIcons("buildcraft:laser_side");
 	}
 }

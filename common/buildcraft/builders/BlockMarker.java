@@ -132,7 +132,7 @@ public class BlockMarker extends BlockContainer {
 			}
 			if (flag) {
 				dropBlockAsItem(world, i, j, k, BuildCraftBuilders.markerBlock.blockID, 0);
-				world.func_94575_c(i, j, k, 0);
+				world.setBlock(i, j, k, 0);
 			}
 		}
 	}
@@ -208,7 +208,7 @@ public class BlockMarker extends BlockContainer {
 	private boolean dropTorchIfCantStay(World world, int i, int j, int k) {
 		if (!canPlaceBlockAt(world, i, j, k)) {
 			dropBlockAsItem(world, i, j, k, BuildCraftBuilders.markerBlock.blockID, 0);
-			world.func_94575_c(i, j, k, 0);
+			world.setBlock(i, j, k, 0);
 			return false;
 		} else
 			return true;
@@ -222,8 +222,8 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.func_94245_a("buildcraft:blockMarker");
+	    par1IconRegister.registerIcons("buildcraft:blockMarker");
 	}
 }

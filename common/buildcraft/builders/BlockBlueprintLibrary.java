@@ -90,9 +90,9 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureTop = par1IconRegister.func_94245_a("buildcraft:library_topbottom");
-        textureSide = par1IconRegister.func_94245_a("buildcraft:library_side");
+	    textureTop = par1IconRegister.registerIcons("buildcraft:library_topbottom");
+        textureSide = par1IconRegister.registerIcons("buildcraft:library_side");
 	}
 }

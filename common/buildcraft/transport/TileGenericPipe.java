@@ -647,7 +647,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public double func_82115_m() {
+	public double getMaxRenderDistanceSquared() {
 		return DefaultProps.PIPE_CONTENTS_RENDER_DIST * DefaultProps.PIPE_CONTENTS_RENDER_DIST;
 	}
 

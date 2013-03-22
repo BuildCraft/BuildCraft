@@ -53,7 +53,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.func_98187_b("/gui/items.png");
+			Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
@@ -144,7 +144,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

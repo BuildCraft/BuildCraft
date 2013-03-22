@@ -46,7 +46,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 		int meta = world.getBlockMetadata(i, j, k);
 		if (meta == 1 && random.nextInt(10) > 5) {
-			world.func_94575_c(i, j, k, 0);
+			world.setBlock(i, j, k, 0);
 		}
 	}
 
@@ -196,8 +196,8 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.func_94245_a("buildcraft:blockFrame");
+	    par1IconRegister.registerIcons("buildcraft:blockFrame");
 	}
 }

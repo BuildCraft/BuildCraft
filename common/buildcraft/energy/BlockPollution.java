@@ -43,8 +43,8 @@ public class BlockPollution extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.func_94245_a("buildcraft:blockPollution");
+	    par1IconRegister.registerIcons("buildcraft:blockPollution");
 	}
 }

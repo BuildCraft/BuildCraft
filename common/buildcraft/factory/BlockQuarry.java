@@ -225,10 +225,10 @@ public class BlockQuarry extends BlockMachineRoot {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureSide = par1IconRegister.func_94245_a("buildcraft:quarry_side");
-        textureTop = par1IconRegister.func_94245_a("buildcraft:quarry_top");
-        textureFront = par1IconRegister.func_94245_a("buildcraft:quarry_front");
+	    textureSide = par1IconRegister.registerIcons("buildcraft:quarry_side");
+        textureTop = par1IconRegister.registerIcons("buildcraft:quarry_top");
+        textureFront = par1IconRegister.registerIcons("buildcraft:quarry_front");
 	}
 }

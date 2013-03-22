@@ -39,7 +39,7 @@ public class GuiCombustionEngine extends GuiEngine {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
@@ -74,7 +74,7 @@ public class GuiCombustionEngine extends GuiEngine {
 				squaled = 0;
 			}
 
-			func_94065_a(j + col, k + line + 58 - x - start, liquid.getRenderingIcon(), 16, 16 - (16 - x));
+			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquid.getRenderingIcon(), 16, 16 - (16 - x));
 			start = start + 16;
 
 			if (x == 0 || squaled == 0) {
@@ -82,7 +82,7 @@ public class GuiCombustionEngine extends GuiEngine {
 			}
 		}
 
-		mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);
 	}
 }

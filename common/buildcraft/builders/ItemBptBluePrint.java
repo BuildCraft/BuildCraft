@@ -33,9 +33,9 @@ public class ItemBptBluePrint extends ItemBptBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
+	public void updateIcons(IconRegister par1IconRegister)
 	{
-	    cleanBlueprint = par1IconRegister.func_94245_a("buildcraft:blueprint_clean");
-	    usedBlueprint = par1IconRegister.func_94245_a("buildcraft:blueprint_used");
+	    cleanBlueprint = par1IconRegister.registerIcons("buildcraft:blueprint_clean");
+	    usedBlueprint = par1IconRegister.registerIcons("buildcraft:blueprint_used");
 	}
 }

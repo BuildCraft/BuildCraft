@@ -61,7 +61,7 @@ public class BlockUtil {
 			}
 		}
 
-		world.func_94575_c(x, y, z, 0);
+		world.setBlock(x, y, z, 0);
 	}
 
 	public static boolean canChangeBlock(World world, int x, int y, int z) {

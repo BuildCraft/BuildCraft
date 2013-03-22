@@ -320,10 +320,11 @@ public class BuildCraftCore {
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event){
-		if ("items".equals(event.map.field_94253_b)){
+		//if ("items".equals(event.map.field_94253_b)){
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
-		}
+		//}
+		//TODO: this needs un-privating in TextureMap
 	}
 
 	public void loadRecipes() {

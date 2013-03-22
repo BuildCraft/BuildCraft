@@ -45,7 +45,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			if (getItemStack() != null) {
 				drawStack(getItemStack());
 			} else if (getTexture() != null) {
-				func_94065_a(cornerX + x, cornerY + y, getTexture(), 16, 16);
+				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getTexture(), 16, 16);
 			}
 
 		}

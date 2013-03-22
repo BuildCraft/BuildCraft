@@ -63,8 +63,8 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
+	public void updateIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.func_94245_a("buildcraft:template_clean");
+	    par1IconRegister.registerIcons("buildcraft:template_clean");
 	}
 }

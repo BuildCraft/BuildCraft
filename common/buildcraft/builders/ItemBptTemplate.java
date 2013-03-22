@@ -21,9 +21,9 @@ public class ItemBptTemplate extends ItemBptBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
+	public void updateIcons(IconRegister par1IconRegister)
 	{
-	    super.func_94581_a(par1IconRegister);
-	    par1IconRegister.func_94245_a("buildcraft:template_used");
+	    super.updateIcons(par1IconRegister);
+	    par1IconRegister.registerIcons("buildcraft:template_used");
 	}
 }

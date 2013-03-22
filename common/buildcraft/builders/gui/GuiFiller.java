@@ -47,12 +47,12 @@ public class GuiFiller extends GuiBuildCraft {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
 	    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-	    mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
+	    mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
 
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		if (filler.currentPattern != null) {
-			func_94065_a(guiLeft + patternSymbolX, guiTop + patternSymbolY, filler.currentPattern.getTexture(), 16, 16);
+			drawTexturedModelRectFromIcon(guiLeft + patternSymbolX, guiTop + patternSymbolY, filler.currentPattern.getTexture(), 16, 16);
 		}
 
 	}

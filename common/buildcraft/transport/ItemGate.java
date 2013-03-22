@@ -113,7 +113,7 @@ public class ItemGate extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister iconRegister)
+	public void updateIcons(IconRegister iconRegister)
 	{
 		
 		for (IAction action : ActionManager.actions){
@@ -127,21 +127,21 @@ public class ItemGate extends ItemBuildCraft {
 		}
 		
 		icons = new Icon[ItemGate.MAX];
-		icons[ItemGate.Gate] = iconRegister.func_94245_a("buildcraft:gate");
-		icons[ItemGate.Gate_Iron_And] = iconRegister.func_94245_a("buildcraft:gate_iron_and");
-		icons[ItemGate.Gate_Iron_Or] = iconRegister.func_94245_a("buildcraft:gate_iron_or");
-		icons[ItemGate.Gate_Gold_And] = iconRegister.func_94245_a("buildcraft:gate_gold_and");
-		icons[ItemGate.Gate_Gold_Or] = iconRegister.func_94245_a("buildcraft:gate_gold_or");
-		icons[ItemGate.Gate_Diamond_And] = iconRegister.func_94245_a("buildcraft:gate_diamond_and");
-		icons[ItemGate.Gate_Diamond_Or] = iconRegister.func_94245_a("buildcraft:gate_diamond_or");
+		icons[ItemGate.Gate] = iconRegister.registerIcons("buildcraft:gate");
+		icons[ItemGate.Gate_Iron_And] = iconRegister.registerIcons("buildcraft:gate_iron_and");
+		icons[ItemGate.Gate_Iron_Or] = iconRegister.registerIcons("buildcraft:gate_iron_or");
+		icons[ItemGate.Gate_Gold_And] = iconRegister.registerIcons("buildcraft:gate_gold_and");
+		icons[ItemGate.Gate_Gold_Or] = iconRegister.registerIcons("buildcraft:gate_gold_or");
+		icons[ItemGate.Gate_Diamond_And] = iconRegister.registerIcons("buildcraft:gate_diamond_and");
+		icons[ItemGate.Gate_Diamond_Or] = iconRegister.registerIcons("buildcraft:gate_diamond_or");
 		
-		icons[ItemGate.Autarchic_Gate] = iconRegister.func_94245_a("buildcraft:autarchic_gate");
-		icons[ItemGate.Autarchic_Gate_Iron_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_iron_and");
-		icons[ItemGate.Autarchic_Gate_Iron_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_iron_or");
-		icons[ItemGate.Autarchic_Gate_Gold_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_gold_and");
-		icons[ItemGate.Autarchic_Gate_Gold_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_gold_or");
-		icons[ItemGate.Autarchic_Gate_Diamond_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_diamond_and");
-		icons[ItemGate.Autarchic_Gate_Diamond_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_diamond_or");
+		icons[ItemGate.Autarchic_Gate] = iconRegister.registerIcons("buildcraft:autarchic_gate");
+		icons[ItemGate.Autarchic_Gate_Iron_And] = iconRegister.registerIcons("buildcraft:autarchic_gate_iron_and");
+		icons[ItemGate.Autarchic_Gate_Iron_Or] = iconRegister.registerIcons("buildcraft:autarchic_gate_iron_or");
+		icons[ItemGate.Autarchic_Gate_Gold_And] = iconRegister.registerIcons("buildcraft:autarchic_gate_gold_and");
+		icons[ItemGate.Autarchic_Gate_Gold_Or] = iconRegister.registerIcons("buildcraft:autarchic_gate_gold_or");
+		icons[ItemGate.Autarchic_Gate_Diamond_And] = iconRegister.registerIcons("buildcraft:autarchic_gate_diamond_and");
+		icons[ItemGate.Autarchic_Gate_Diamond_Or] = iconRegister.registerIcons("buildcraft:autarchic_gate_diamond_or");
 
 		
 	}

@@ -238,9 +238,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
 		_container.synchronize();
-
+		
+		String texture = _container.getGateGuiFile();
+		
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_98187_b(_container.getGateGuiFile());
+		mc.renderEngine.bindTexture(texture);
 
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;

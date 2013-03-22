@@ -33,8 +33,8 @@ public class ItemBucketOil extends ItemBucket {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
+	public void updateIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.func_94245_a("buildcraft:oil_bucket");
+	    par1IconRegister.registerIcons("buildcraft:oil_bucket");
 	}
 }
