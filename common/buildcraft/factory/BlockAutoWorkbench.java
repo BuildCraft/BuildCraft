@@ -79,7 +79,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    topTexture = par1IconRegister.registerIcons("buildcraft:autoWorkbench_top");
-	    sideTexture = par1IconRegister.registerIcons("buildcraft:autoWorkbench_side");
+	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
+	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");
 	}
 }

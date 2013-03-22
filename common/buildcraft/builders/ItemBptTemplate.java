@@ -24,6 +24,6 @@ public class ItemBptTemplate extends ItemBptBase {
 	public void updateIcons(IconRegister par1IconRegister)
 	{
 	    super.updateIcons(par1IconRegister);
-	    par1IconRegister.registerIcons("buildcraft:template_used");
+	    par1IconRegister.registerIcon("buildcraft:template_used");
 	}
 }

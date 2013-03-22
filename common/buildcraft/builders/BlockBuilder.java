@@ -132,8 +132,8 @@ public class BlockBuilder extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    blockTextureTop = par1IconRegister.registerIcons("buildcraft:builder_top");
-	    blockTextureSide = par1IconRegister.registerIcons("buildcraft:builder_side");
-	    blockTextureFront = par1IconRegister.registerIcons("buildcraft:builder_front");
+	    blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
+	    blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
+	    blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
 	}
 }

@@ -49,7 +49,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	    icons = new Icon[chipsetNames.length];
 	    int i = 0;
 	    for (String csName : chipsetNames) {
-	        icons[i++] = par1IconRegister.registerIcons("buildcraft:"+csName+"_chipset");
+	        icons[i++] = par1IconRegister.registerIcon("buildcraft:"+csName+"_chipset");
 	    }
 	}
 }

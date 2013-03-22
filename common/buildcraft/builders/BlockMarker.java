@@ -224,6 +224,6 @@ public class BlockMarker extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.registerIcons("buildcraft:blockMarker");
+	    par1IconRegister.registerIcon("buildcraft:blockMarker");
 	}
 }

@@ -45,6 +45,6 @@ public class BlockPollution extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.registerIcons("buildcraft:blockPollution");
+	    par1IconRegister.registerIcon("buildcraft:blockPollution");
 	}
 }

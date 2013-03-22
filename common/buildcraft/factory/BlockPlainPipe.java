@@ -77,6 +77,6 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.registerIcons("buildcraft:blockPlainPipe");
+	    par1IconRegister.registerIcon("buildcraft:blockPlainPipe");
 	}
 }

@@ -145,10 +145,10 @@ public class BlockArchitect extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    blockTextureSides = par1IconRegister.registerIcons("buildcraft:architect_sides");
-        blockTextureTopNeg = par1IconRegister.registerIcons("buildcraft:architect_top_neg");
-        blockTextureTopPos = par1IconRegister.registerIcons("buildcraft:architect_top_pos");
-        blockTextureTopArchitect = par1IconRegister.registerIcons("buildcraft:architect_top");
-        blockTextureFront = par1IconRegister.registerIcons("buildcraft:architect_front");
+	    blockTextureSides = par1IconRegister.registerIcon("buildcraft:architect_sides");
+        blockTextureTopNeg = par1IconRegister.registerIcon("buildcraft:architect_top_neg");
+        blockTextureTopPos = par1IconRegister.registerIcon("buildcraft:architect_top_pos");
+        blockTextureTopArchitect = par1IconRegister.registerIcon("buildcraft:architect_top");
+        blockTextureFront = par1IconRegister.registerIcon("buildcraft:architect_front");
 	}
 }

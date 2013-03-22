@@ -91,9 +91,9 @@ public class BlockMiningWell extends BlockMachineRoot {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureFront = par1IconRegister.registerIcons("buildcraft:miningwell_front");
-        textureSides = par1IconRegister.registerIcons("buildcraft:miningwell_side");
-        textureBack = par1IconRegister.registerIcons("buildcraft:miningwell_back");
-        textureTop = par1IconRegister.registerIcons("buildcraft:miningwell_top");
+	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
+        textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
+        textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
+        textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
 	}
 }

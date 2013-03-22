@@ -62,7 +62,7 @@ public class BlockPathMarker extends BlockMarker {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    blockIcon = par1IconRegister.registerIcons("buildcraft:blockPathMarker");
-	    activeMarker = par1IconRegister.registerIcons("buildcraft:blockPathMarkerActive");
+	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockPathMarker");
+	    activeMarker = par1IconRegister.registerIcon("buildcraft:blockPathMarkerActive");
 	}
 }

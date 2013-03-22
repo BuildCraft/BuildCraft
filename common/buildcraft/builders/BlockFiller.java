@@ -113,8 +113,8 @@ public class BlockFiller extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureTopOn = par1IconRegister.registerIcons("buildcraft:blockFillerTopOn");
-        textureTopOff = par1IconRegister.registerIcons("buildcraft:blockFillerTopOff");
-        textureSides = par1IconRegister.registerIcons("buildcraft:blockFillerSides");
+	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
+        textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
+        textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
 	}
 }

@@ -44,6 +44,6 @@ public class BlockSpring extends Block {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    blockIcon = par1IconRegister.registerIcons("water");
+	    blockIcon = par1IconRegister.registerIcon("water");
 	}
 }

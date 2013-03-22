@@ -70,8 +70,8 @@ public class BlockPump extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureTop = par1IconRegister.registerIcons("buildcraft:pump_top");
-	    textureBottom = par1IconRegister.registerIcons("buildcraft:pump_bottom");
-	    textureSide = par1IconRegister.registerIcons("buildcraft:pump_side");
+	    textureTop = par1IconRegister.registerIcon("buildcraft:pump_top");
+	    textureBottom = par1IconRegister.registerIcon("buildcraft:pump_bottom");
+	    textureSide = par1IconRegister.registerIcon("buildcraft:pump_side");
 	}
 }

@@ -198,6 +198,6 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.registerIcons("buildcraft:blockFrame");
+	    par1IconRegister.registerIcon("buildcraft:blockFrame");
 	}
 }

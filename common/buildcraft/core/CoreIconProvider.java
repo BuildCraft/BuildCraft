@@ -25,7 +25,7 @@ public class CoreIconProvider implements IIconProvider {
 	public void registerIcons(IconRegister iconRegister) {
 		_icons = new Icon[MAX];
 		
-		_icons[ENERGY] = iconRegister.registerIcons("buildcraft:icons/energy");
+		_icons[ENERGY] = iconRegister.registerIcon("buildcraft:icons/energy");
 		
 	}
 

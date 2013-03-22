@@ -39,6 +39,6 @@ public class ItemBuildCraft extends Item {
     @SideOnly(Side.CLIENT)
     public void updateIcons(IconRegister par1IconRegister)
     {
-        this.iconIndex = par1IconRegister.registerIcons("buildcraft:" + iconName);
+        this.iconIndex = par1IconRegister.registerIcon("buildcraft:" + iconName);
     }
 }
