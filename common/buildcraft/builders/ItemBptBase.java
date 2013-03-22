@@ -60,11 +60,4 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 	@Override
 	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
 	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void updateIcons(IconRegister par1IconRegister)
-	{
-	    par1IconRegister.registerIcon("buildcraft:template_clean");
-	}
 }

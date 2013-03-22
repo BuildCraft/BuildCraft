@@ -63,6 +63,18 @@ public class BlockTank extends BlockContainer {
 		return new TileTank();
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+		switch(par1){
+		case 0:
+		case 1:
+			return textureTop;
+		default:
+			return textureBottomSide;
+		}
+	}
+	
 	@SuppressWarnings({ "all" })
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {

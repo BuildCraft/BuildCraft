@@ -26,6 +26,7 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
@@ -269,7 +270,7 @@ public class BuildCraftTransport {
 
 			pipeWaterproof = new ItemBuildCraft(pipeWaterproofId.getInt());
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
-			pipeWaterproof.setCreativeTab(CreativeTabs.tabMaterials);
+			pipeWaterproof.setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Waterproof");
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
 			GameRegistry.registerBlock(genericPipeBlock);

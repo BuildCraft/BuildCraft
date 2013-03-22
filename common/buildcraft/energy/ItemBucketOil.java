@@ -35,6 +35,6 @@ public class ItemBucketOil extends ItemBucket {
 	@SideOnly(Side.CLIENT)
 	public void updateIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.registerIcon("buildcraft:oil_bucket");
+		this.iconIndex = par1IconRegister.registerIcon("buildcraft:oil_bucket");
 	}
 }

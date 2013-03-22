@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemBptTemplate extends ItemBptBase {
-    private Icon usedTemplate;
+	private Icon usedTemplate;
 	public ItemBptTemplate(int i) {
 		super(i);
 	}
@@ -23,7 +23,7 @@ public class ItemBptTemplate extends ItemBptBase {
 	@SideOnly(Side.CLIENT)
 	public void updateIcons(IconRegister par1IconRegister)
 	{
-	    super.updateIcons(par1IconRegister);
-	    par1IconRegister.registerIcon("buildcraft:template_used");
+		iconIndex = par1IconRegister.registerIcon("buildcraft:template_clean");
+		usedTemplate = par1IconRegister.registerIcon("buildcraft:template_used");
 	}
 }
