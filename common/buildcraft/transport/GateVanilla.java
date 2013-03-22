@@ -262,24 +262,24 @@ public class GateVanilla extends Gate {
 		if (!hasPulser()){
 			switch (kind){
 				case None: return 0;
-				case Single: return isGateActive ? GateIconProvider.Gate_Dark : GateIconProvider.Gate_Lit;
-				case AND_2: return isGateActive ? GateIconProvider.Gate_Iron_And_Dark : GateIconProvider.Gate_Iron_And_Lit;
-				case OR_2: return isGateActive ? GateIconProvider.Gate_Iron_Or_Dark : GateIconProvider.Gate_Iron_Or_Lit;
-				case AND_3: return isGateActive ? GateIconProvider.Gate_Gold_And_Dark : GateIconProvider.Gate_Gold_And_Lit;
-				case OR_3: return isGateActive ? GateIconProvider.Gate_Gold_Or_Dark : GateIconProvider.Gate_Gold_Or_Lit;
-				case AND_4: return isGateActive ? GateIconProvider.Gate_Diamond_And_Dark : GateIconProvider.Gate_Diamond_And_Lit;
-				case OR_4: return isGateActive ? GateIconProvider.Gate_Diamond_Or_Dark : GateIconProvider.Gate_Diamond_Or_Lit;
+				case Single: return isGateActive ? GateIconProvider.Gate_Lit : GateIconProvider.Gate_Dark;
+				case AND_2: return isGateActive ? GateIconProvider.Gate_Iron_And_Lit : GateIconProvider.Gate_Iron_And_Dark;
+				case OR_2: return isGateActive ? GateIconProvider.Gate_Iron_Or_Lit : GateIconProvider.Gate_Iron_Or_Dark;
+				case AND_3: return isGateActive ? GateIconProvider.Gate_Gold_And_Lit : GateIconProvider.Gate_Gold_And_Dark;
+				case OR_3: return isGateActive ? GateIconProvider.Gate_Gold_Or_Lit : GateIconProvider.Gate_Gold_Or_Dark;
+				case AND_4: return isGateActive ? GateIconProvider.Gate_Diamond_And_Lit : GateIconProvider.Gate_Diamond_And_Dark;
+				case OR_4: return isGateActive ? GateIconProvider.Gate_Diamond_Or_Lit : GateIconProvider.Gate_Diamond_Or_Dark;
 			}
 		} else {
 			switch (kind){
 				case None: return 0; 
-				case Single: return isGateActive ? GateIconProvider.Gate_Autarchic_Dark : GateIconProvider.Gate_Autarchic_Lit;
-				case AND_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_And_Dark : GateIconProvider.Gate_Autarchic_Iron_And_Lit;
-				case OR_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_Or_Dark : GateIconProvider.Gate_Autarchic_Iron_Or_Lit;
-				case AND_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_And_Dark : GateIconProvider.Gate_Autarchic_Gold_And_Lit;
-				case OR_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_Or_Dark : GateIconProvider.Gate_Autarchic_Gold_Or_Lit;
-				case AND_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_And_Dark : GateIconProvider.Gate_Autarchic_Diamond_And_Lit;
-				case OR_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_Or_Dark : GateIconProvider.Gate_Autarchic_Diamond_Or_Lit;
+				case Single: return isGateActive ? GateIconProvider.Gate_Autarchic_Lit : GateIconProvider.Gate_Autarchic_Dark;
+				case AND_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_And_Lit : GateIconProvider.Gate_Autarchic_Iron_And_Dark;
+				case OR_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_Or_Lit : GateIconProvider.Gate_Autarchic_Iron_Or_Dark;
+				case AND_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_And_Lit : GateIconProvider.Gate_Autarchic_Gold_And_Dark;
+				case OR_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_Or_Lit : GateIconProvider.Gate_Autarchic_Gold_Or_Dark;
+				case AND_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_And_Lit : GateIconProvider.Gate_Autarchic_Diamond_And_Dark;
+				case OR_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_Or_Lit : GateIconProvider.Gate_Autarchic_Diamond_Or_Dark;
 			}
 		}
 
