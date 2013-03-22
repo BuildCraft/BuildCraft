@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
@@ -320,11 +321,11 @@ public class BuildCraftCore {
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event){
-		//if ("items".equals(event.map.field_94253_b)){
+		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
+		//if (event.map.textureType == 1) { 'TODO Replace above
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
-		//}
-		//TODO: this needs un-privating in TextureMap
+		}
 	}
 
 	public void loadRecipes() {
