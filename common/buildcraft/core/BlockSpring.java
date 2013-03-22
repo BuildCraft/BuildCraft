@@ -37,13 +37,13 @@ public class BlockSpring extends Block {
 		if(!world.isAirBlock(x, y + 1, z))
 			return;
 
-		world.func_94575_c(x, y + 1, z, Block.waterStill.blockID);
+		world.setBlock(x, y + 1, z, Block.waterStill.blockID);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    field_94336_cN = par1IconRegister.func_94245_a("water");
+	    blockIcon = par1IconRegister.registerIcons("water");
 	}
 }

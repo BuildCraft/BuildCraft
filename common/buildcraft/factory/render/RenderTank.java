@@ -50,7 +50,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		BlockInterface block = new BlockInterface();
 		block.texture = liquid.getRenderingIcon();
-        Minecraft.getMinecraft().renderEngine.func_98187_b("/terrain.png");
+        Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
 
 		for (int s = 0; s < displayStages; ++s) {
 			d[s] = GLAllocation.generateDisplayLists(1);

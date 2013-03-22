@@ -61,7 +61,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
-		world.func_94575_c(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
+		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
 		if (blockId == 0)
 			return;

@@ -74,9 +74,9 @@ public class BlockHopper extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-//	    field_94336_cN = par1IconRegister.func_94245_a("buildcraft:hopper");
+//	    field_94336_cN = par1IconRegister.registerIcons("buildcraft:hopper");
 	}
 
 }

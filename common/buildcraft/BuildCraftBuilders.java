@@ -184,11 +184,11 @@ public class BuildCraftBuilders {
 
 		new BptBlockPumpkin(Block.pumpkinLantern.blockID);
 
-		new BptBlockStairs(Block.stairCompactCobblestone.blockID);
-		new BptBlockStairs(Block.stairCompactPlanks.blockID);
+		new BptBlockStairs(Block.stairsCobblestone.blockID);
+		new BptBlockStairs(Block.stairsWoodOak.blockID);
 		new BptBlockStairs(Block.stairsNetherBrick.blockID);
 		new BptBlockStairs(Block.stairsBrick.blockID);
-		new BptBlockStairs(Block.stairsStoneBrickSmooth.blockID);
+		new BptBlockStairs(Block.stairsStoneBrick.blockID);
 
 		new BptBlockDoor(Block.doorWood.blockID, new ItemStack(Item.doorWood));
 		new BptBlockDoor(Block.doorSteel.blockID, new ItemStack(Item.doorSteel));

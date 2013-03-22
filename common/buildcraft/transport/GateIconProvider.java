@@ -58,35 +58,35 @@ public class GateIconProvider implements IIconProvider {
 		registered = true;
 		
 		icons = new Icon[MAX];
-		icons[GateIconProvider.Gate_Dark] = iconRegister.func_94245_a("buildcraft:gate_dark");
-		icons[GateIconProvider.Gate_Lit] = iconRegister.func_94245_a("buildcraft:gate_lit");
-		icons[GateIconProvider.Gate_Iron_And_Dark] = iconRegister.func_94245_a("buildcraft:gate_iron_and_dark");
-		icons[GateIconProvider.Gate_Iron_And_Lit] = iconRegister.func_94245_a("buildcraft:gate_iron_and_lit");
-		icons[GateIconProvider.Gate_Iron_Or_Dark] = iconRegister.func_94245_a("buildcraft:gate_iron_or_dark");
-		icons[GateIconProvider.Gate_Iron_Or_Lit] = iconRegister.func_94245_a("buildcraft:gate_iron_or_lit");
-		icons[GateIconProvider.Gate_Gold_And_Dark] = iconRegister.func_94245_a("buildcraft:gate_gold_and_dark");
-		icons[GateIconProvider.Gate_Gold_And_Lit] = iconRegister.func_94245_a("buildcraft:gate_gold_and_lit");
-		icons[GateIconProvider.Gate_Gold_Or_Dark] = iconRegister.func_94245_a("buildcraft:gate_gold_or_dark");
-		icons[GateIconProvider.Gate_Gold_Or_Lit] = iconRegister.func_94245_a("buildcraft:gate_gold_or_lit");
-		icons[GateIconProvider.Gate_Diamond_And_Dark] = iconRegister.func_94245_a("buildcraft:gate_diamond_and_dark");
-		icons[GateIconProvider.Gate_Diamond_And_Lit] = iconRegister.func_94245_a("buildcraft:gate_diamond_and_lit");
-		icons[GateIconProvider.Gate_Diamond_Or_Dark] = iconRegister.func_94245_a("buildcraft:gate_diamond_or_dark");
-		icons[GateIconProvider.Gate_Diamond_Or_Lit] = iconRegister.func_94245_a("buildcraft:gate_diamond_or_lit");
+		icons[GateIconProvider.Gate_Dark] = iconRegister.registerIcons("buildcraft:gate_dark");
+		icons[GateIconProvider.Gate_Lit] = iconRegister.registerIcons("buildcraft:gate_lit");
+		icons[GateIconProvider.Gate_Iron_And_Dark] = iconRegister.registerIcons("buildcraft:gate_iron_and_dark");
+		icons[GateIconProvider.Gate_Iron_And_Lit] = iconRegister.registerIcons("buildcraft:gate_iron_and_lit");
+		icons[GateIconProvider.Gate_Iron_Or_Dark] = iconRegister.registerIcons("buildcraft:gate_iron_or_dark");
+		icons[GateIconProvider.Gate_Iron_Or_Lit] = iconRegister.registerIcons("buildcraft:gate_iron_or_lit");
+		icons[GateIconProvider.Gate_Gold_And_Dark] = iconRegister.registerIcons("buildcraft:gate_gold_and_dark");
+		icons[GateIconProvider.Gate_Gold_And_Lit] = iconRegister.registerIcons("buildcraft:gate_gold_and_lit");
+		icons[GateIconProvider.Gate_Gold_Or_Dark] = iconRegister.registerIcons("buildcraft:gate_gold_or_dark");
+		icons[GateIconProvider.Gate_Gold_Or_Lit] = iconRegister.registerIcons("buildcraft:gate_gold_or_lit");
+		icons[GateIconProvider.Gate_Diamond_And_Dark] = iconRegister.registerIcons("buildcraft:gate_diamond_and_dark");
+		icons[GateIconProvider.Gate_Diamond_And_Lit] = iconRegister.registerIcons("buildcraft:gate_diamond_and_lit");
+		icons[GateIconProvider.Gate_Diamond_Or_Dark] = iconRegister.registerIcons("buildcraft:gate_diamond_or_dark");
+		icons[GateIconProvider.Gate_Diamond_Or_Lit] = iconRegister.registerIcons("buildcraft:gate_diamond_or_lit");
 		
-		icons[GateIconProvider.Gate_Autarchic_Dark] = iconRegister.func_94245_a("buildcraft:gate_autarchic_dark");
-		icons[GateIconProvider.Gate_Autarchic_Lit] = iconRegister.func_94245_a("buildcraft:gate_autarchic_lit");
-		icons[GateIconProvider.Gate_Autarchic_Iron_And_Dark] = iconRegister.func_94245_a("buildcraft:gate_autarchic_iron_and_dark");
-		icons[GateIconProvider.Gate_Autarchic_Iron_And_Lit] = iconRegister.func_94245_a("buildcraft:gate_autarchic_iron_and_lit");
-		icons[GateIconProvider.Gate_Autarchic_Iron_Or_Dark] = iconRegister.func_94245_a("buildcraft:gate_autarchic_iron_or_dark");
-		icons[GateIconProvider.Gate_Autarchic_Iron_Or_Lit] = iconRegister.func_94245_a("buildcraft:gate_autarchic_iron_or_lit");
-		icons[GateIconProvider.Gate_Autarchic_Gold_And_Dark] = iconRegister.func_94245_a("buildcraft:gate_autarchic_gold_and_dark");
-		icons[GateIconProvider.Gate_Autarchic_Gold_And_Lit] = iconRegister.func_94245_a("buildcraft:gate_autarchic_gold_and_lit");
-		icons[GateIconProvider.Gate_Autarchic_Gold_Or_Dark] = iconRegister.func_94245_a("buildcraft:gate_autarchic_gold_or_dark");
-		icons[GateIconProvider.Gate_Autarchic_Gold_Or_Lit] = iconRegister.func_94245_a("buildcraft:gate_autarchic_gold_or_lit");
-		icons[GateIconProvider.Gate_Autarchic_Diamond_And_Dark] = iconRegister.func_94245_a("buildcraft:gate_autarchic_diamond_and_dark");
-		icons[GateIconProvider.Gate_Autarchic_Diamond_And_Lit] = iconRegister.func_94245_a("buildcraft:gate_autarchic_diamond_and_lit");
-		icons[GateIconProvider.Gate_Autarchic_Diamond_Or_Dark] = iconRegister.func_94245_a("buildcraft:gate_autarchic_diamond_or_dark");
-		icons[GateIconProvider.Gate_Autarchic_Diamond_Or_Lit] = iconRegister.func_94245_a("buildcraft:gate_autarchic_diamond_or_lit");	
+		icons[GateIconProvider.Gate_Autarchic_Dark] = iconRegister.registerIcons("buildcraft:gate_autarchic_dark");
+		icons[GateIconProvider.Gate_Autarchic_Lit] = iconRegister.registerIcons("buildcraft:gate_autarchic_lit");
+		icons[GateIconProvider.Gate_Autarchic_Iron_And_Dark] = iconRegister.registerIcons("buildcraft:gate_autarchic_iron_and_dark");
+		icons[GateIconProvider.Gate_Autarchic_Iron_And_Lit] = iconRegister.registerIcons("buildcraft:gate_autarchic_iron_and_lit");
+		icons[GateIconProvider.Gate_Autarchic_Iron_Or_Dark] = iconRegister.registerIcons("buildcraft:gate_autarchic_iron_or_dark");
+		icons[GateIconProvider.Gate_Autarchic_Iron_Or_Lit] = iconRegister.registerIcons("buildcraft:gate_autarchic_iron_or_lit");
+		icons[GateIconProvider.Gate_Autarchic_Gold_And_Dark] = iconRegister.registerIcons("buildcraft:gate_autarchic_gold_and_dark");
+		icons[GateIconProvider.Gate_Autarchic_Gold_And_Lit] = iconRegister.registerIcons("buildcraft:gate_autarchic_gold_and_lit");
+		icons[GateIconProvider.Gate_Autarchic_Gold_Or_Dark] = iconRegister.registerIcons("buildcraft:gate_autarchic_gold_or_dark");
+		icons[GateIconProvider.Gate_Autarchic_Gold_Or_Lit] = iconRegister.registerIcons("buildcraft:gate_autarchic_gold_or_lit");
+		icons[GateIconProvider.Gate_Autarchic_Diamond_And_Dark] = iconRegister.registerIcons("buildcraft:gate_autarchic_diamond_and_dark");
+		icons[GateIconProvider.Gate_Autarchic_Diamond_And_Lit] = iconRegister.registerIcons("buildcraft:gate_autarchic_diamond_and_lit");
+		icons[GateIconProvider.Gate_Autarchic_Diamond_Or_Dark] = iconRegister.registerIcons("buildcraft:gate_autarchic_diamond_or_dark");
+		icons[GateIconProvider.Gate_Autarchic_Diamond_Or_Lit] = iconRegister.registerIcons("buildcraft:gate_autarchic_diamond_or_lit");	
 	}
 
 }

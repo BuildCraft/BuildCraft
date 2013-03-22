@@ -852,7 +852,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (world.isRemote)
 			return true;
 
-		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta,1);
+		boolean placed = world.setBlock(i, j, k, blockId, meta, 1);
 
 		if (placed) {
 
@@ -883,7 +883,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister iconRegister)
+	public void registerIcons(IconRegister iconRegister)
 	{
 		if (!skippedFirstIconRegister){
 			skippedFirstIconRegister = true;

@@ -111,10 +111,10 @@ public class BlockFiller extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureTopOn = par1IconRegister.func_94245_a("buildcraft:blockFillerTopOn");
-        textureTopOff = par1IconRegister.func_94245_a("buildcraft:blockFillerTopOff");
-        textureSides = par1IconRegister.func_94245_a("buildcraft:blockFillerSides");
+	    textureTopOn = par1IconRegister.registerIcons("buildcraft:blockFillerTopOn");
+        textureTopOff = par1IconRegister.registerIcons("buildcraft:blockFillerTopOff");
+        textureSides = par1IconRegister.registerIcons("buildcraft:blockFillerSides");
 	}
 }

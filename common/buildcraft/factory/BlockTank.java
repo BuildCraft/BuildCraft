@@ -137,11 +137,11 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureStackedSide = par1IconRegister.func_94245_a("buildcraft:tank_stacked_side");
-        textureBottomSide = par1IconRegister.func_94245_a("buildcraft:tank_bottom_side");
-        textureTop = par1IconRegister.func_94245_a("buildcraft:tank_top");
+	    textureStackedSide = par1IconRegister.registerIcons("buildcraft:tank_stacked_side");
+        textureBottomSide = par1IconRegister.registerIcons("buildcraft:tank_bottom_side");
+        textureTop = par1IconRegister.registerIcons("buildcraft:tank_top");
 	}
 
 }

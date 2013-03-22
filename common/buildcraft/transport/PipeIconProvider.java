@@ -64,49 +64,49 @@ public class PipeIconProvider implements IIconProvider {
 		
 		_icons = new Icon[PipeIconProvider.MAX];
 		
-		_icons[PipeIconProvider.PipeStructureCobblestone] = iconRegister.func_94245_a("buildcraft:pipeStructureCobblestone");
+		_icons[PipeIconProvider.PipeStructureCobblestone] = iconRegister.registerIcons("buildcraft:pipeStructureCobblestone");
 		
-		_icons[PipeIconProvider.PipeItemsCobbleStone] = iconRegister.func_94245_a("buildcraft:pipeItemsCobblestone");
+		_icons[PipeIconProvider.PipeItemsCobbleStone] = iconRegister.registerIcons("buildcraft:pipeItemsCobblestone");
 		
-		_icons[PipeIconProvider.PipeItemsDiamond_Center] = iconRegister.func_94245_a("buildcraft:pipeItemsDiamond_center");
-		_icons[PipeIconProvider.PipeItemsDiamond_Down] = iconRegister.func_94245_a("buildcraft:pipeItemsDiamond_down");
-		_icons[PipeIconProvider.PipeItemsDiamond_Up] = iconRegister.func_94245_a("buildcraft:pipeItemsDiamond_up");
-		_icons[PipeIconProvider.PipeItemsDiamond_North] = iconRegister.func_94245_a("buildcraft:pipeItemsDiamond_north");
-		_icons[PipeIconProvider.PipeItemsDiamond_South] = iconRegister.func_94245_a("buildcraft:pipeItemsDiamond_south");
-		_icons[PipeIconProvider.PipeItemsDiamond_West] = iconRegister.func_94245_a("buildcraft:pipeItemsDiamond_west");
-		_icons[PipeIconProvider.PipeItemsDiamond_East] = iconRegister.func_94245_a("buildcraft:pipeItemsDiamond_east");
+		_icons[PipeIconProvider.PipeItemsDiamond_Center] = iconRegister.registerIcons("buildcraft:pipeItemsDiamond_center");
+		_icons[PipeIconProvider.PipeItemsDiamond_Down] = iconRegister.registerIcons("buildcraft:pipeItemsDiamond_down");
+		_icons[PipeIconProvider.PipeItemsDiamond_Up] = iconRegister.registerIcons("buildcraft:pipeItemsDiamond_up");
+		_icons[PipeIconProvider.PipeItemsDiamond_North] = iconRegister.registerIcons("buildcraft:pipeItemsDiamond_north");
+		_icons[PipeIconProvider.PipeItemsDiamond_South] = iconRegister.registerIcons("buildcraft:pipeItemsDiamond_south");
+		_icons[PipeIconProvider.PipeItemsDiamond_West] = iconRegister.registerIcons("buildcraft:pipeItemsDiamond_west");
+		_icons[PipeIconProvider.PipeItemsDiamond_East] = iconRegister.registerIcons("buildcraft:pipeItemsDiamond_east");
 		
-		_icons[PipeIconProvider.PipeItemsWood_Standard] = iconRegister.func_94245_a("buildcraft:pipeItemsWood_standard");
-		_icons[PipeIconProvider.PipeAllWood_Solid] = iconRegister.func_94245_a("buildcraft:pipeAllWood_solid");
+		_icons[PipeIconProvider.PipeItemsWood_Standard] = iconRegister.registerIcons("buildcraft:pipeItemsWood_standard");
+		_icons[PipeIconProvider.PipeAllWood_Solid] = iconRegister.registerIcons("buildcraft:pipeAllWood_solid");
 		
-		_icons[PipeIconProvider.PipeItemsEmerald_Standard] = iconRegister.func_94245_a("buildcraft:pipeItemsEmerald_standard");
-		_icons[PipeIconProvider.PipeAllEmerald_Solid] = iconRegister.func_94245_a("buildcraft:pipeAllEmerald_solid");
+		_icons[PipeIconProvider.PipeItemsEmerald_Standard] = iconRegister.registerIcons("buildcraft:pipeItemsEmerald_standard");
+		_icons[PipeIconProvider.PipeAllEmerald_Solid] = iconRegister.registerIcons("buildcraft:pipeAllEmerald_solid");
 		
-		_icons[PipeIconProvider.PipeItemsGold] = iconRegister.func_94245_a("buildcraft:pipeItemsGold");
+		_icons[PipeIconProvider.PipeItemsGold] = iconRegister.registerIcons("buildcraft:pipeItemsGold");
 		
-		_icons[PipeIconProvider.PipeItemsIron_Standard] = iconRegister.func_94245_a("buildcraft:pipeItemsIron_standard");
-		_icons[PipeIconProvider.PipeAllIron_Solid] = iconRegister.func_94245_a("buildcraft:pipeAllIron_solid");
+		_icons[PipeIconProvider.PipeItemsIron_Standard] = iconRegister.registerIcons("buildcraft:pipeItemsIron_standard");
+		_icons[PipeIconProvider.PipeAllIron_Solid] = iconRegister.registerIcons("buildcraft:pipeAllIron_solid");
 		
-		_icons[PipeIconProvider.PipeItemsObsidian] = iconRegister.func_94245_a("buildcraft:pipeItemsObsidian");
-		_icons[PipeIconProvider.PipeItemsSandstone] = iconRegister.func_94245_a("buildcraft:pipeItemsSandstone");
-		_icons[PipeIconProvider.PipeItemsStone] = iconRegister.func_94245_a("buildcraft:pipeItemsStone");
-		_icons[PipeIconProvider.PipeItemsVoid] = iconRegister.func_94245_a("buildcraft:pipeItemsVoid");
+		_icons[PipeIconProvider.PipeItemsObsidian] = iconRegister.registerIcons("buildcraft:pipeItemsObsidian");
+		_icons[PipeIconProvider.PipeItemsSandstone] = iconRegister.registerIcons("buildcraft:pipeItemsSandstone");
+		_icons[PipeIconProvider.PipeItemsStone] = iconRegister.registerIcons("buildcraft:pipeItemsStone");
+		_icons[PipeIconProvider.PipeItemsVoid] = iconRegister.registerIcons("buildcraft:pipeItemsVoid");
 		
-		_icons[PipeIconProvider.PipeLiquidsCobblestone] = iconRegister.func_94245_a("buildcraft:pipeLiquidsCobblestone");
-		_icons[PipeIconProvider.PipeLiquidsWood_Standard] = iconRegister.func_94245_a("buildcraft:pipeLiquidsWood_standard");
-		_icons[PipeIconProvider.PipeLiquidsEmerald_Standard] = iconRegister.func_94245_a("buildcraft:pipeLiquidsEmerald_standard");
-		_icons[PipeIconProvider.PipeLiquidsGold] = iconRegister.func_94245_a("buildcraft:pipeLiquidsGold");
-		_icons[PipeIconProvider.PipeLiquidsIron_Standard] = iconRegister.func_94245_a("buildcraft:pipeLiquidsIron_standard");
-		_icons[PipeIconProvider.PipeLiquidsSandstone] = iconRegister.func_94245_a("buildcraft:pipeLiquidsSandstone");
-		_icons[PipeIconProvider.PipeLiquidsStone] = iconRegister.func_94245_a("buildcraft:pipeLiquidsStone");
-		_icons[PipeIconProvider.PipeLiquidsVoid] = iconRegister.func_94245_a("buildcraft:pipeLiquidsVoid");
+		_icons[PipeIconProvider.PipeLiquidsCobblestone] = iconRegister.registerIcons("buildcraft:pipeLiquidsCobblestone");
+		_icons[PipeIconProvider.PipeLiquidsWood_Standard] = iconRegister.registerIcons("buildcraft:pipeLiquidsWood_standard");
+		_icons[PipeIconProvider.PipeLiquidsEmerald_Standard] = iconRegister.registerIcons("buildcraft:pipeLiquidsEmerald_standard");
+		_icons[PipeIconProvider.PipeLiquidsGold] = iconRegister.registerIcons("buildcraft:pipeLiquidsGold");
+		_icons[PipeIconProvider.PipeLiquidsIron_Standard] = iconRegister.registerIcons("buildcraft:pipeLiquidsIron_standard");
+		_icons[PipeIconProvider.PipeLiquidsSandstone] = iconRegister.registerIcons("buildcraft:pipeLiquidsSandstone");
+		_icons[PipeIconProvider.PipeLiquidsStone] = iconRegister.registerIcons("buildcraft:pipeLiquidsStone");
+		_icons[PipeIconProvider.PipeLiquidsVoid] = iconRegister.registerIcons("buildcraft:pipeLiquidsVoid");
 		
-		_icons[PipeIconProvider.PipePowerGold] = iconRegister.func_94245_a("buildcraft:pipePowerGold");
-		_icons[PipeIconProvider.PipePowerStone] = iconRegister.func_94245_a("buildcraft:pipePowerStone");
-		_icons[PipeIconProvider.PipePowerWood_Standard] = iconRegister.func_94245_a("buildcraft:pipePowerWood_standard");
+		_icons[PipeIconProvider.PipePowerGold] = iconRegister.registerIcons("buildcraft:pipePowerGold");
+		_icons[PipeIconProvider.PipePowerStone] = iconRegister.registerIcons("buildcraft:pipePowerStone");
+		_icons[PipeIconProvider.PipePowerWood_Standard] = iconRegister.registerIcons("buildcraft:pipePowerWood_standard");
 		
-		_icons[PipeIconProvider.Power_Normal] = iconRegister.func_94245_a("buildcraft:texture_cyan");
-		_icons[PipeIconProvider.Power_Overload] = iconRegister.func_94245_a("buildcraft:texture_red_dark");
+		_icons[PipeIconProvider.Power_Normal] = iconRegister.registerIcons("buildcraft:texture_cyan");
+		_icons[PipeIconProvider.Power_Overload] = iconRegister.registerIcons("buildcraft:texture_red_dark");
 	}
 
 }

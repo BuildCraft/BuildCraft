@@ -96,16 +96,16 @@ public class BlockAssemblyTable extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
 	    icons = new Icon[2][];
 	    icons[0] = new Icon[3];
 	    icons[1] = new Icon[3];
-        icons[0][0] = par1IconRegister.func_94245_a("buildcraft:assemblytable_bottom");
-        icons[1][0] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_bottom");
-	    icons[0][1] = par1IconRegister.func_94245_a("buildcraft:assemblytable_top");
-        icons[1][1] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_top");
-        icons[0][2] = par1IconRegister.func_94245_a("buildcraft:assemblytable_side");
-        icons[1][2] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_side");
+        icons[0][0] = par1IconRegister.registerIcons("buildcraft:assemblytable_bottom");
+        icons[1][0] = par1IconRegister.registerIcons("buildcraft:advworkbenchtable_bottom");
+	    icons[0][1] = par1IconRegister.registerIcons("buildcraft:assemblytable_top");
+        icons[1][1] = par1IconRegister.registerIcons("buildcraft:advworkbenchtable_top");
+        icons[0][2] = par1IconRegister.registerIcons("buildcraft:assemblytable_side");
+        icons[1][2] = par1IconRegister.registerIcons("buildcraft:advworkbenchtable_side");
 	}
 }

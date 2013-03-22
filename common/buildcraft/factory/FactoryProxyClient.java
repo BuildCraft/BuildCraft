@@ -42,10 +42,10 @@ public class FactoryProxyClient extends FactoryProxy {
 	@Override
 	public void initializeEntityRenders() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
-		TextureMap terrainTextures = Minecraft.getMinecraft().renderEngine.field_94154_l;
-		pumpTexture = terrainTextures.func_94245_a("buildcraft:blockPumpTubeTexture");
-		drillTexture = terrainTextures.func_94245_a("buildcraft:blockDrillTexture");
-        drillHeadTexture = terrainTextures.func_94245_a("buildcraft:blockDrillHeadTexture");
+		TextureMap terrainTextures = Minecraft.getMinecraft().renderEngine.textureMapItems;
+		pumpTexture = terrainTextures.registerIcons("buildcraft:blockPumpTubeTexture");
+		drillTexture = terrainTextures.registerIcons("buildcraft:blockDrillTexture");
+        drillHeadTexture = terrainTextures.registerIcons("buildcraft:blockDrillHeadTexture");
 	}
 
 	@Override

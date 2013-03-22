@@ -120,8 +120,8 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		Icon i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
 
 		int m = meta;
-		int j = i.func_94211_a();
-		int k = i.func_94216_b();
+		int j = i.getOriginX();
+		int k = i.getOriginY();
 		float f = j / 256F;
 		float f1 = (j + 15.99F) / 256F;
 		float f2 = k / 256F;
@@ -171,8 +171,8 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 		i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 0);
 
-		j = i.func_94211_a();
-		k = i.func_94216_b();
+		j = i.getOriginX();
+		k = i.getOriginY();
 		f = j / 256F;
 		f1 = (j + 15.99F) / 256F;
 		f2 = k / 256F;

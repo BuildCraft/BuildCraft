@@ -55,7 +55,7 @@ public class GuiTemplate extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
