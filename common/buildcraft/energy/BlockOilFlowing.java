@@ -267,8 +267,8 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	
 	@Override
     	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister iconRegister){
-		this.field_94425_a = new Icon[] {iconRegister.func_94245_a("buildcraft:oil"), iconRegister.func_94245_a("buildcraft:oil_flow")};
+	public void registerIcons(IconRegister iconRegister){
+		this.field_94425_a = new Icon[] {iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
 	}
 	
 	@Override
