@@ -73,6 +73,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
+			BlockUtil.breakBlock(world,  xSlot, ySlot, zSlot);
 			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1, zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
