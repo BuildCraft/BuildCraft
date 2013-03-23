@@ -68,7 +68,7 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, Pipe pipe, ITriggerParameter parameter) {
+	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
 		if (pipe.transport instanceof PipeTransportItems) {
 			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
 

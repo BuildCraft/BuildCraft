@@ -5,6 +5,7 @@ import net.minecraft.util.Icon;
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
 public interface ITrigger {
 

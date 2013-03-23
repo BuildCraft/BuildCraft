@@ -15,6 +15,7 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
 public class TriggerMachine extends BCTrigger {
 

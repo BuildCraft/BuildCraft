@@ -16,6 +16,7 @@ import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
 public class TriggerEngineHeat extends BCTrigger {
 
@@ -42,7 +43,7 @@ public class TriggerEngineHeat extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof TileEngine) {
 			Engine engine = ((TileEngine) tile).engine;
 

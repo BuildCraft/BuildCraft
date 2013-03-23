@@ -37,7 +37,7 @@ public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, Pipe pipe, ITriggerParameter parameter) {
+	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
 		if (active)
 			return pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 		else
