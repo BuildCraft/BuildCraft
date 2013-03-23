@@ -1,6 +1,9 @@
 package buildcraft.transport;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerReceptor;
 
@@ -9,10 +12,7 @@ public class EnergyPulser {
 	private IPowerReceptor powerReceptor;
 
 	private boolean isActive = false;
-	private float progress = 0;
-	private int progressPart = 0;
-	private float pulseSpeed = 0;
-	private int maxHeat = 1000;
+	private int progress = 0;
 
 	public EnergyPulser(IPowerReceptor receptor) {
 		powerReceptor = receptor;
@@ -22,24 +22,14 @@ public class EnergyPulser {
 		if (powerReceptor == null)
 			return;
 
-		// Check if we are already running
-		if (progressPart != 0) {
+		if (isActive) {
+			progress = (progress + 1) % 10;
 
-			progress += getPulseSpeed();
-
-			if (progress > 0.5 && progressPart == 1) {
-				progressPart = 2;
-				// Give off energy pulse!
+			if (progress == 5)
 				powerReceptor.getPowerProvider().receiveEnergy(1, ForgeDirection.WEST);
-
-			} else if (progress >= 1) {
-				progress = 0;
-				progressPart = 0;
-			}
-		} else if (isActive) {
-			progressPart = 1;
+		} else {
+			progress = 0;
 		}
-
 	}
 
 	public void enablePulse() {
@@ -54,19 +44,21 @@ public class EnergyPulser {
 		return isActive;
 	}
 
-	private float getPulseSpeed() {
-		return 0.1F;
-	}
-
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setBoolean("IsActive", isActive);
-		nbttagcompound.setShort("ProgressPart", (short) progressPart);
-		nbttagcompound.setFloat("Progress", progress);
+		nbttagcompound.setInteger("Progress", progress);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		isActive = nbttagcompound.getBoolean("IsActive");
-		progressPart = nbttagcompound.getShort("ProgressPart");
-		progress = nbttagcompound.getFloat("Progress");
+
+		NBTBase tag = nbttagcompound.getTag("Progress");
+
+		if (tag instanceof NBTTagInt) {
+			progress = ((NBTTagInt) tag).data;
+		} else if (tag instanceof NBTTagFloat) {
+			// progress was a float in 3.4.3 and below
+			progress = ((int) ((NBTTagFloat) tag).data) % 10;
+		}
 	}
 }
