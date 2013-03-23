@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -36,18 +33,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {

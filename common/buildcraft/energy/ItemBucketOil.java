@@ -9,15 +9,14 @@
 
 package buildcraft.energy;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtil;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemBucketOil extends ItemBucket {
 

@@ -20,8 +20,8 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.CoreIconProvider;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;

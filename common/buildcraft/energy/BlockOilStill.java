@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.core.DefaultProps;
 
 public class BlockOilStill extends BlockStationary implements ILiquid {
 

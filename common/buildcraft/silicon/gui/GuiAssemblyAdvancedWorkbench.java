@@ -9,8 +9,8 @@ import net.minecraft.item.crafting.IRecipe;
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.CoreIconProvider;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.silicon.TileAssemblyAdvancedWorkbench;

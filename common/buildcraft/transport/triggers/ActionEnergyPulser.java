@@ -1,12 +1,10 @@
 package buildcraft.transport.triggers;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.Icon;
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCAction;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ActionEnergyPulser extends BCAction {
 

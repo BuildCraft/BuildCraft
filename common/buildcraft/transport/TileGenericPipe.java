@@ -14,15 +14,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
@@ -38,7 +34,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipeTile;
@@ -54,6 +49,8 @@ import buildcraft.core.network.PacketTileState;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile {

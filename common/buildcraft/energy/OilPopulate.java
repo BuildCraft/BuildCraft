@@ -12,11 +12,11 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 
 public class OilPopulate {
 

@@ -17,9 +17,6 @@ import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -27,6 +24,8 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 

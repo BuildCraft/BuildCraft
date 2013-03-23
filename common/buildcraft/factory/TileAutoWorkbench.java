@@ -16,7 +16,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,9 +27,9 @@ import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
-import buildcraft.core.utils.CraftingHelper;
 
 public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 

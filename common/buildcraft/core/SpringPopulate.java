@@ -9,14 +9,13 @@ package buildcraft.core;
 
 import java.util.Random;
 
-import buildcraft.BuildCraftCore;
-
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import buildcraft.BuildCraftCore;
 
 public class SpringPopulate {
 

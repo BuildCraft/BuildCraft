@@ -12,8 +12,6 @@ package buildcraft.core.triggers;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.DefaultProps;
 
 public class ActionRedstoneOutput extends BCAction {
 

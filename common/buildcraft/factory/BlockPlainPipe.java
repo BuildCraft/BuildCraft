@@ -12,17 +12,15 @@ package buildcraft.factory;
 import java.util.ArrayList;
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockPlainPipe extends Block implements IFramePipeConnection {
 

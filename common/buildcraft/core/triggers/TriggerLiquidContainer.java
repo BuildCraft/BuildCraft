@@ -9,8 +9,6 @@
 
 package buildcraft.core.triggers;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
@@ -18,9 +16,9 @@ import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.DefaultProps;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerLiquidContainer extends BCTrigger {
 
