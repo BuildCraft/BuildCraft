@@ -63,6 +63,8 @@ public class Version implements Runnable {
 	public static void versionCheck() {
 		try {
 
+			if ("0.0.0".equals(VERSION)) return;
+			
 			String location = REMOTE_VERSION_FILE;
 			HttpURLConnection conn = null;
 			while (location != null && !location.isEmpty()) {
