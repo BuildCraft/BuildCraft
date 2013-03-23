@@ -32,7 +32,7 @@ public interface ITrigger {
 	/**
 	 * Return true if the tile given in parameter activates the trigger, given the parameters.
 	 */
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter);
+	public abstract boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter);
 
 	/**
 	 * Create parameters for the trigger. As for now, there is only one kind of trigger parameter available so this subprogram is final.

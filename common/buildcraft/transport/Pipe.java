@@ -30,7 +30,6 @@ import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
@@ -491,10 +490,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 				TileEntity tile = container.getTile(o);
 
 				if (tile != null && !(tile instanceof TileGenericPipe)) {
-					if (trigger instanceof ITriggerDirectional) {
-						if (((ITriggerDirectional) trigger).isTriggerActive(o.getOpposite(), tile, parameter))
-							return true;
-					} else if (trigger.isTriggerActive(tile, parameter))
+					if (trigger.isTriggerActive(o.getOpposite(), tile, parameter))
 						return true;
 				}
 			}
