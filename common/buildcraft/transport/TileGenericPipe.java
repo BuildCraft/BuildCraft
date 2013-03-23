@@ -566,10 +566,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return false;
 
 		if (hasFacade(direction)) {
-			Utils.dropItems(
-				worldObj,
-				new ItemStack(BuildCraftTransport.facadeItem, 1,
-						ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+			dropFacadeItem(direction);
 		}
 
 		this.facadeBlocks[direction.ordinal()] = blockid;
@@ -584,16 +581,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return renderState.facadeMatrix.isConnected(direction);
 		return (this.facadeBlocks[direction.ordinal()] != 0);
 	}
+	
+	private void dropFacadeItem(ForgeDirection direction){
+		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1,	ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+	}
 
 	public void dropFacade(ForgeDirection direction) {
 		if (this.worldObj.isRemote)
 			return;
 		if (!hasFacade(direction))
 			return;
-		Utils.dropItems(
-				worldObj,
-				new ItemStack(BuildCraftTransport.facadeItem, 1,
-						ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+		dropFacadeItem(direction);
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
