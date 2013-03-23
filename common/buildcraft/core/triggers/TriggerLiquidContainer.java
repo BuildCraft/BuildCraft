@@ -56,7 +56,7 @@ public class TriggerLiquidContainer extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof ITankContainer) {
 			ITankContainer container = (ITankContainer) tile;
 
