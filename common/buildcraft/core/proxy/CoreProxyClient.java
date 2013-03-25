@@ -15,7 +15,6 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -28,9 +27,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
@@ -118,11 +115,11 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 
-        TextureMap blockTextureMap = Minecraft.getMinecraft().renderEngine.field_94154_l;
-        BuildCraftCore.redLaserTexture = blockTextureMap.func_94245_a("buildcraft:blockRedLaser");
-        BuildCraftCore.blueLaserTexture = blockTextureMap.func_94245_a("buildcraft:blockBlueLaser");
-        BuildCraftCore.stripesLaserTexture = blockTextureMap.func_94245_a("buildcraft:blockStripesLaser");
-        BuildCraftCore.transparentTexture = blockTextureMap.func_94245_a("buildcraft:blockTransparentLaser");
+        TextureMap blockTextureMap = Minecraft.getMinecraft().renderEngine.textureMapItems;
+        BuildCraftCore.redLaserTexture = blockTextureMap.registerIcon("buildcraft:blockRedLaser");
+        BuildCraftCore.blueLaserTexture = blockTextureMap.registerIcon("buildcraft:blockBlueLaser");
+        BuildCraftCore.stripesLaserTexture = blockTextureMap.registerIcon("buildcraft:blockStripesLaser");
+        BuildCraftCore.transparentTexture = blockTextureMap.registerIcon("buildcraft:blockTransparentLaser");
 	}
 
 	@Override

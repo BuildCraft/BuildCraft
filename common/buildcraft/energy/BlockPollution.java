@@ -9,16 +9,13 @@
 
 package buildcraft.energy;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import buildcraft.core.DefaultProps;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockPollution extends BlockContainer {
 
@@ -43,8 +40,8 @@ public class BlockPollution extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.func_94245_a("buildcraft:blockPollution");
+	    par1IconRegister.registerIcon("buildcraft:blockPollution");
 	}
 }

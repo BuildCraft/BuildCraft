@@ -11,10 +11,6 @@ package buildcraft.builders;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -59,12 +55,5 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 
 	@Override
 	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
-	{
-	    par1IconRegister.func_94245_a("buildcraft:template_clean");
 	}
 }

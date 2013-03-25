@@ -10,13 +10,11 @@
 package buildcraft.transport.triggers;
 
 import net.minecraft.util.Icon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipe;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCAction;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ActionSignalOutput extends BCAction {
 

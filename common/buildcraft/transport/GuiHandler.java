@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.core.GuiIds;
@@ -12,7 +13,6 @@ import buildcraft.transport.gui.GuiEmeraldPipe;
 import buildcraft.transport.gui.GuiGateInterface;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IGuiHandler;
-import net.minecraft.inventory.IInventory;
 
 public class GuiHandler implements IGuiHandler {
 

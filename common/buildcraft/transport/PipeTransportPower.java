@@ -244,7 +244,7 @@ public class PipeTransportPower extends PipeTransport {
 
 			if (internalNextPower[from.ordinal()] >= MAX_POWER_INTERNAL) {
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, false);
-				worldObj.func_94575_c(xCoord, yCoord, zCoord, 0);
+				worldObj.setBlock(xCoord, yCoord, zCoord, 0);
 			}
 		}
 	}

@@ -205,7 +205,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
 
-            mc.renderEngine.func_98187_b(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
+            mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
 			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
 			// Add in top left corner again
@@ -219,7 +219,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		protected void drawIcon(Icon icon, int x, int y) {
 
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
-			func_94065_a(x, y, icon, 16, 16);
+			drawTexturedModelRectFromIcon(x, y, icon, 16, 16);
 		}
 	}
 

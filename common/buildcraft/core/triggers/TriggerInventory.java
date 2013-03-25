@@ -9,22 +9,19 @@
 
 package buildcraft.core.triggers;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class TriggerInventory extends BCTrigger implements ITriggerDirectional {
+public class TriggerInventory extends BCTrigger {
 
 	public enum State {
 		Empty, Contains, Space, Full
@@ -115,11 +112,6 @@ public class TriggerInventory extends BCTrigger implements ITriggerDirectional {
 		}
 
 		return false;
-	}
-
-	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
-		return isTriggerActive(ForgeDirection.UNKNOWN, tile, parameter);
 	}
 
 	@Override

@@ -14,15 +14,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
@@ -38,11 +34,11 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipedItem;
+import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IDropControlInventory;
@@ -54,9 +50,11 @@ import buildcraft.core.network.PacketTileState;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile {
+		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
 
 	private class CoreState implements IClientState {
 
@@ -568,11 +566,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return false;
 
 		if (hasFacade(direction)) {
-			dropFacade(direction);
+			dropFacadeItem(direction);
 		}
 
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
 		scheduleRenderUpdate();
 		return true;
 	}
@@ -582,18 +581,20 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return renderState.facadeMatrix.isConnected(direction);
 		return (this.facadeBlocks[direction.ordinal()] != 0);
 	}
+	
+	private void dropFacadeItem(ForgeDirection direction){
+		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1,	ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+	}
 
 	public void dropFacade(ForgeDirection direction) {
 		if (this.worldObj.isRemote)
 			return;
 		if (!hasFacade(direction))
 			return;
-		Utils.dropItems(
-				worldObj,
-				new ItemStack(BuildCraftTransport.facadeItem, 1,
-						ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+		dropFacadeItem(direction);
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
 		scheduleRenderUpdate();
 	}
 
@@ -647,7 +648,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public double func_82115_m() {
+	public double getMaxRenderDistanceSquared() {
 		return DefaultProps.PIPE_CONTENTS_RENDER_DIST * DefaultProps.PIPE_CONTENTS_RENDER_DIST;
 	}
 
@@ -662,5 +663,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@Override
 	public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z) {
 		return oldID != newID;
+	}
+
+	@Override
+	public boolean isSolidOnSide(ForgeDirection side) {
+		if (hasFacade(side))
+			return true;
+
+		if (BlockGenericPipe.isValid(pipe) && pipe instanceof ISolidSideTile) {
+			if (((ISolidSideTile) pipe).isSolidOnSide(side))
+				return true;
+		}
+		return false;
 	}
 }

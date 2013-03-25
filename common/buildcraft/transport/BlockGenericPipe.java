@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -36,18 +33,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {
@@ -96,6 +91,15 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof ISolidSideTile) {
+			return ((ISolidSideTile) tile).isSolidOnSide(side);
+		}
 		return false;
 	}
 
@@ -852,7 +856,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (world.isRemote)
 			return true;
 
-		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta,1);
+		boolean placed = world.setBlock(i, j, k, blockId, meta, 1);
 
 		if (placed) {
 
@@ -883,7 +887,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister iconRegister)
+	public void registerIcons(IconRegister iconRegister)
 	{
 		if (!skippedFirstIconRegister){
 			skippedFirstIconRegister = true;

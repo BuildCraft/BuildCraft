@@ -12,7 +12,6 @@ import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
@@ -199,7 +198,7 @@ public class BuildCraftEnergy {
 	// int z = toPollute.k;
 	//
 	// if (world.getBlockId(x, y, z) == 0) {
-	// world.setBlockAndMetadataWithNotify(x, y, z,
+	// world.setBlock(x, y, z,
 	// BuildCraftEnergy.pollution.blockID,
 	// saturation * 16 / 100);
 	//
@@ -215,7 +214,7 @@ public class BuildCraftEnergy {
 	// if (remainingSaturation > 0) {
 	// if (world.getBlockId(i, j + 1, k) == 0) {
 	// if (j + 1 < 128) {
-	// world.setBlockAndMetadataWithNotify(i, j + 1, k,
+	// world.setBlock(i, j + 1, k,
 	// BuildCraftEnergy.pollution.blockID,
 	// saturation * 16 / 100);
 	// saturationStored.put(new BlockIndex(i, j + 1, k),

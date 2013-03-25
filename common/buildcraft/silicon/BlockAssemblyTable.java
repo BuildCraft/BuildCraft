@@ -2,9 +2,6 @@ package buildcraft.silicon;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -16,9 +13,10 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAssemblyTable extends BlockContainer {
 
@@ -96,16 +94,16 @@ public class BlockAssemblyTable extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
 	    icons = new Icon[2][];
 	    icons[0] = new Icon[3];
 	    icons[1] = new Icon[3];
-        icons[0][0] = par1IconRegister.func_94245_a("buildcraft:assemblytable_bottom");
-        icons[1][0] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_bottom");
-	    icons[0][1] = par1IconRegister.func_94245_a("buildcraft:assemblytable_top");
-        icons[1][1] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_top");
-        icons[0][2] = par1IconRegister.func_94245_a("buildcraft:assemblytable_side");
-        icons[1][2] = par1IconRegister.func_94245_a("buildcraft:advworkbenchtable_side");
+        icons[0][0] = par1IconRegister.registerIcon("buildcraft:assemblytable_bottom");
+        icons[1][0] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_bottom");
+	    icons[0][1] = par1IconRegister.registerIcon("buildcraft:assemblytable_top");
+        icons[1][1] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_top");
+        icons[0][2] = par1IconRegister.registerIcon("buildcraft:assemblytable_side");
+        icons[1][2] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_side");
 	}
 }

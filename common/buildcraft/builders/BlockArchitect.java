@@ -11,9 +11,6 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -30,10 +27,11 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockArchitect extends BlockContainer {
 
@@ -143,12 +141,12 @@ public class BlockArchitect extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    blockTextureSides = par1IconRegister.func_94245_a("buildcraft:architect_sides");
-        blockTextureTopNeg = par1IconRegister.func_94245_a("buildcraft:architect_top_neg");
-        blockTextureTopPos = par1IconRegister.func_94245_a("buildcraft:architect_top_pos");
-        blockTextureTopArchitect = par1IconRegister.func_94245_a("buildcraft:architect_top");
-        blockTextureFront = par1IconRegister.func_94245_a("buildcraft:architect_front");
+	    blockTextureSides = par1IconRegister.registerIcon("buildcraft:architect_sides");
+        blockTextureTopNeg = par1IconRegister.registerIcon("buildcraft:architect_top_neg");
+        blockTextureTopPos = par1IconRegister.registerIcon("buildcraft:architect_top_pos");
+        blockTextureTopArchitect = par1IconRegister.registerIcon("buildcraft:architect_top");
+        blockTextureFront = par1IconRegister.registerIcon("buildcraft:architect_front");
 	}
 }

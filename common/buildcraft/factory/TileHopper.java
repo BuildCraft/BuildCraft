@@ -6,9 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 

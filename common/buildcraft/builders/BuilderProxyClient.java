@@ -15,13 +15,13 @@ public class BuilderProxyClient extends BuilderProxy {
 
 
 	public void initializeTextures() {
-	    TextureMap terrainMap = Minecraft.getMinecraft().renderEngine.field_94154_l;
-	    fillerFillAllTexture = terrainMap.func_94245_a("buildcraft:fillerPatterns/fillAll");
-	    fillerClearTexture = terrainMap.func_94245_a("buildcraft:fillerPatterns/clear");
-	    fillerWallsTexture = terrainMap.func_94245_a("buildcraft:fillerPatterns/walls");
-	    fillerStairsTexture = terrainMap.func_94245_a("buildcraft:fillerPatterns/stairs");
-	    fillerFlattenTexture = terrainMap.func_94245_a("buildcraft:fillerPatterns/flatten");
-	    fillerPyramidTexture = terrainMap.func_94245_a("buildcraft:fillerPatterns/pyramid");
+	    TextureMap terrainMap = Minecraft.getMinecraft().renderEngine.textureMapItems;
+	    fillerFillAllTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/fillAll");
+	    fillerClearTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/clear");
+	    fillerWallsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/walls");
+	    fillerStairsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/stairs");
+	    fillerFlattenTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/flatten");
+	    fillerPyramidTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/pyramid");
 	}
     @Override
 	public void registerClientHook() {

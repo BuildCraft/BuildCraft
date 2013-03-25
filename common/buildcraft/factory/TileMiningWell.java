@@ -61,7 +61,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
-		world.func_94575_c(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
+		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
 		if (blockId == 0)
 			return;
@@ -78,7 +78,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			}
 
 			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0)
-				return;
+				continue;
 
 			// Throw the object away.
 			// TODO: factorize that code

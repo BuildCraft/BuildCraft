@@ -9,14 +9,13 @@ package buildcraft.core;
 
 import java.util.Random;
 
-import buildcraft.BuildCraftCore;
-
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import buildcraft.BuildCraftCore;
 
 public class SpringPopulate {
 
@@ -55,11 +54,11 @@ public class SpringPopulate {
 			if(candidate != Block.bedrock.blockID)
 				continue;
 
-			world.func_94575_c(posX, i + 1, posZ, BuildCraftCore.springBlock.blockID);
+			world.setBlock(posX, i + 1, posZ, BuildCraftCore.springBlock.blockID);
 			for(int j = i + 2; j < world.getActualHeight() - 10; j++) {
 				if(!boreToSurface(world, posX, j, posZ)) {
 					if(world.isAirBlock(posX, j, posZ))
-						world.func_94575_c(posX, j, posZ, Block.waterStill.blockID);
+						world.setBlock(posX, j, posZ, Block.waterStill.blockID);
 					break;
 				}
 			}
@@ -78,7 +77,7 @@ public class SpringPopulate {
 				&& existing != Block.grass.blockID)
 			return false;
 
-		world.func_94575_c(x, y, z, Block.waterStill.blockID);
+		world.setBlock(x, y, z, Block.waterStill.blockID);
 		return true;
 	}
 }

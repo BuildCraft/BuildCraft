@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -27,9 +24,10 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockFrame extends Block implements IFramePipeConnection {
 
@@ -46,7 +44,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 		int meta = world.getBlockMetadata(i, j, k);
 		if (meta == 1 && random.nextInt(10) > 5) {
-			world.func_94575_c(i, j, k, 0);
+			world.setBlock(i, j, k, 0);
 		}
 	}
 
@@ -196,8 +194,8 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.func_94245_a("buildcraft:blockFrame");
+	    par1IconRegister.registerIcon("buildcraft:blockFrame");
 	}
 }

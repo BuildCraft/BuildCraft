@@ -2,9 +2,9 @@ package buildcraft.core.triggers;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
+import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.api.core.IIconProvider;
 
 public class ActionTriggerIconProvider implements IIconProvider {
 	
@@ -62,38 +62,38 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		registered = true;
 		icons = new Icon[MAX];
 		
-		icons[ActionTriggerIconProvider.Action_MachineControl_On] = iconRegister.func_94245_a("buildcraft:triggers/action_machinecontrol_on");
-		icons[ActionTriggerIconProvider.Action_MachineControl_Off] = iconRegister.func_94245_a("buildcraft:triggers/action_machinecontrol_off");
-		icons[ActionTriggerIconProvider.Action_MachineControl_Loop] = iconRegister.func_94245_a("buildcraft:triggers/action_machinecontrol_loop");
+		icons[ActionTriggerIconProvider.Action_MachineControl_On] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_on");
+		icons[ActionTriggerIconProvider.Action_MachineControl_Off] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_off");
+		icons[ActionTriggerIconProvider.Action_MachineControl_Loop] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_loop");
 		
-		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Blue] = iconRegister.func_94245_a("buildcraft:triggers/trigger_engineheat_blue");
-		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Green] = iconRegister.func_94245_a("buildcraft:triggers/trigger_engineheat_green");
-		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Yellow] = iconRegister.func_94245_a("buildcraft:triggers/trigger_engineheat_yellow");
-		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Red] = iconRegister.func_94245_a("buildcraft:triggers/trigger_engineheat_red");
-		icons[ActionTriggerIconProvider.Trigger_Inventory_Empty] = iconRegister.func_94245_a("buildcraft:triggers/trigger_inventory_empty");
-		icons[ActionTriggerIconProvider.Trigger_Inventory_Contains] = iconRegister.func_94245_a("buildcraft:triggers/trigger_inventory_contains");
-		icons[ActionTriggerIconProvider.Trigger_Inventory_Space] = iconRegister.func_94245_a("buildcraft:triggers/trigger_inventory_space");
-		icons[ActionTriggerIconProvider.Trigger_Inventory_Full] = iconRegister.func_94245_a("buildcraft:triggers/trigger_inventory_full");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Empty] = iconRegister.func_94245_a("buildcraft:triggers/trigger_liquidcontainer_empty");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Contains] = iconRegister.func_94245_a("buildcraft:triggers/trigger_liquidcontainer_contains");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Space] = iconRegister.func_94245_a("buildcraft:triggers/trigger_liquidcontainer_space");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Full] = iconRegister.func_94245_a("buildcraft:triggers/trigger_liquidcontainer_full");
-		icons[ActionTriggerIconProvider.Trigger_Machine_Active] = iconRegister.func_94245_a("buildcraft:triggers/trigger_machine_active");
-		icons[ActionTriggerIconProvider.Trigger_Machine_Inactive] = iconRegister.func_94245_a("buildcraft:triggers/trigger_machine_inactive");
-		icons[ActionTriggerIconProvider.Trigger_PipeContents_Empty] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipecontents_empty");
-		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipecontents_containsitems");
-		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipecontents_containsliquid");
-		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipecontents_containsenergy");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_red_active");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_red_inactive");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_blue_active");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Inactive] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_blue_inactive");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_green_active");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Green_Inactive] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_green_inactive");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_yellow_active");
-		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive] = iconRegister.func_94245_a("buildcraft:triggers/trigger_pipesignal_yellow_inactive");
-		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Active] = iconRegister.func_94245_a("buildcraft:triggers/trigger_redstoneinput_active");
-		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive] = iconRegister.func_94245_a("buildcraft:triggers/trigger_redstoneinput_inactive");
+		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Blue] = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_blue");
+		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Green] = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_green");
+		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Yellow] = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_yellow");
+		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Red] = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_red");
+		icons[ActionTriggerIconProvider.Trigger_Inventory_Empty] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_empty");
+		icons[ActionTriggerIconProvider.Trigger_Inventory_Contains] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_contains");
+		icons[ActionTriggerIconProvider.Trigger_Inventory_Space] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_space");
+		icons[ActionTriggerIconProvider.Trigger_Inventory_Full] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_full");
+		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Empty] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_empty");
+		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Contains] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_contains");
+		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Space] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_space");
+		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Full] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_full");
+		icons[ActionTriggerIconProvider.Trigger_Machine_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_active");
+		icons[ActionTriggerIconProvider.Trigger_Machine_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_inactive");
+		icons[ActionTriggerIconProvider.Trigger_PipeContents_Empty] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_empty");
+		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsitems");
+		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsliquid");
+		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsenergy");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_active");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_inactive");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_active");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_inactive");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_active");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Green_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_inactive");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_active");
+		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_inactive");
+		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_active");
+		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_inactive");
 		
 	}
 

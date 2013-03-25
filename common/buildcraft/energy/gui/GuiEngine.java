@@ -32,7 +32,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.func_98187_b("/gui/items.png");
+			Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())

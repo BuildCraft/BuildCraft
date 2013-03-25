@@ -2,13 +2,12 @@ package buildcraft.core;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 
@@ -44,12 +43,12 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	private static String[] chipsetNames = { "redstone_red", "redstone_iron", "redstone_gold", "redstone_diamond", "redstone_pulsating" };
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
+	public void updateIcons(IconRegister par1IconRegister)
 	{
 	    icons = new Icon[chipsetNames.length];
 	    int i = 0;
 	    for (String csName : chipsetNames) {
-	        icons[i++] = par1IconRegister.func_94245_a("buildcraft:"+csName+"_chipset");
+	        icons[i++] = par1IconRegister.registerIcon("buildcraft:"+csName+"_chipset");
 	    }
 	}
 }

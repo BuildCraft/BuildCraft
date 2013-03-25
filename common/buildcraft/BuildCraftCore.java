@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
-import net.minecraft.command.CommandHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,9 @@ import net.minecraft.util.Icon;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -31,11 +33,11 @@ import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
+import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
-import buildcraft.core.CoreIconProvider;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
@@ -49,12 +51,12 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
+import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCAction;
-import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
-import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.TriggerInventory;
 import buildcraft.core.triggers.TriggerLiquidContainer;
 import buildcraft.core.triggers.TriggerMachine;
@@ -78,8 +80,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[6.5.0.0,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -320,7 +320,8 @@ public class BuildCraftCore {
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event){
-		if ("items".equals(event.map.field_94253_b)){
+		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
+		//if (event.map.textureType == 1) { 'TODO Replace above
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
 		}

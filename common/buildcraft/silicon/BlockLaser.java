@@ -11,9 +11,6 @@ package buildcraft.silicon;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -23,7 +20,8 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockLaser extends BlockContainer {
 
@@ -90,10 +88,10 @@ public class BlockLaser extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureTop = par1IconRegister.func_94245_a("buildcraft:laser_top");
-        textureBottom = par1IconRegister.func_94245_a("buildcraft:laser_bottom");
-        textureSide = par1IconRegister.func_94245_a("buildcraft:laser_side");
+	    textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
+        textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
+        textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");
 	}
 }

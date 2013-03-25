@@ -4,17 +4,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.util.Icon;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeRenderState implements IClientState {
 

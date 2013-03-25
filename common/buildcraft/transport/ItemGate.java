@@ -2,19 +2,17 @@ package buildcraft.transport;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemGate extends ItemBuildCraft {
 
@@ -113,7 +111,7 @@ public class ItemGate extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister iconRegister)
+	public void updateIcons(IconRegister iconRegister)
 	{
 		
 		for (IAction action : ActionManager.actions){
@@ -127,21 +125,21 @@ public class ItemGate extends ItemBuildCraft {
 		}
 		
 		icons = new Icon[ItemGate.MAX];
-		icons[ItemGate.Gate] = iconRegister.func_94245_a("buildcraft:gate");
-		icons[ItemGate.Gate_Iron_And] = iconRegister.func_94245_a("buildcraft:gate_iron_and");
-		icons[ItemGate.Gate_Iron_Or] = iconRegister.func_94245_a("buildcraft:gate_iron_or");
-		icons[ItemGate.Gate_Gold_And] = iconRegister.func_94245_a("buildcraft:gate_gold_and");
-		icons[ItemGate.Gate_Gold_Or] = iconRegister.func_94245_a("buildcraft:gate_gold_or");
-		icons[ItemGate.Gate_Diamond_And] = iconRegister.func_94245_a("buildcraft:gate_diamond_and");
-		icons[ItemGate.Gate_Diamond_Or] = iconRegister.func_94245_a("buildcraft:gate_diamond_or");
+		icons[ItemGate.Gate] = iconRegister.registerIcon("buildcraft:gate");
+		icons[ItemGate.Gate_Iron_And] = iconRegister.registerIcon("buildcraft:gate_iron_and");
+		icons[ItemGate.Gate_Iron_Or] = iconRegister.registerIcon("buildcraft:gate_iron_or");
+		icons[ItemGate.Gate_Gold_And] = iconRegister.registerIcon("buildcraft:gate_gold_and");
+		icons[ItemGate.Gate_Gold_Or] = iconRegister.registerIcon("buildcraft:gate_gold_or");
+		icons[ItemGate.Gate_Diamond_And] = iconRegister.registerIcon("buildcraft:gate_diamond_and");
+		icons[ItemGate.Gate_Diamond_Or] = iconRegister.registerIcon("buildcraft:gate_diamond_or");
 		
-		icons[ItemGate.Autarchic_Gate] = iconRegister.func_94245_a("buildcraft:autarchic_gate");
-		icons[ItemGate.Autarchic_Gate_Iron_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_iron_and");
-		icons[ItemGate.Autarchic_Gate_Iron_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_iron_or");
-		icons[ItemGate.Autarchic_Gate_Gold_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_gold_and");
-		icons[ItemGate.Autarchic_Gate_Gold_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_gold_or");
-		icons[ItemGate.Autarchic_Gate_Diamond_And] = iconRegister.func_94245_a("buildcraft:autarchic_gate_diamond_and");
-		icons[ItemGate.Autarchic_Gate_Diamond_Or] = iconRegister.func_94245_a("buildcraft:autarchic_gate_diamond_or");
+		icons[ItemGate.Autarchic_Gate] = iconRegister.registerIcon("buildcraft:autarchic_gate");
+		icons[ItemGate.Autarchic_Gate_Iron_And] = iconRegister.registerIcon("buildcraft:autarchic_gate_iron_and");
+		icons[ItemGate.Autarchic_Gate_Iron_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_iron_or");
+		icons[ItemGate.Autarchic_Gate_Gold_And] = iconRegister.registerIcon("buildcraft:autarchic_gate_gold_and");
+		icons[ItemGate.Autarchic_Gate_Gold_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_gold_or");
+		icons[ItemGate.Autarchic_Gate_Diamond_And] = iconRegister.registerIcon("buildcraft:autarchic_gate_diamond_and");
+		icons[ItemGate.Autarchic_Gate_Diamond_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_diamond_or");
 
 		
 	}

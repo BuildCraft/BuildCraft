@@ -11,9 +11,6 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -28,8 +25,9 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockTank extends BlockContainer {
 
@@ -63,6 +61,18 @@ public class BlockTank extends BlockContainer {
 		return new TileTank();
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+		switch(par1){
+		case 0:
+		case 1:
+			return textureTop;
+		default:
+			return textureBottomSide;
+		}
+	}
+	
 	@SuppressWarnings({ "all" })
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
@@ -137,11 +147,11 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureStackedSide = par1IconRegister.func_94245_a("buildcraft:tank_stacked_side");
-        textureBottomSide = par1IconRegister.func_94245_a("buildcraft:tank_bottom_side");
-        textureTop = par1IconRegister.func_94245_a("buildcraft:tank_top");
+	    textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
+        textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
+        textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
 	}
 
 }

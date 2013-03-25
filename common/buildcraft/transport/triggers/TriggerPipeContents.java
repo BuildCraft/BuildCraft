@@ -9,16 +9,12 @@
 
 package buildcraft.transport.triggers;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.EntityData;
@@ -27,6 +23,8 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 

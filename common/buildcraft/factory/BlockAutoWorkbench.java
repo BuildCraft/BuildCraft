@@ -11,9 +11,6 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +23,8 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
@@ -77,9 +76,9 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    topTexture = par1IconRegister.func_94245_a("buildcraft:autoWorkbench_top");
-	    sideTexture = par1IconRegister.func_94245_a("buildcraft:autoWorkbench_side");
+	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
+	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");
 	}
 }

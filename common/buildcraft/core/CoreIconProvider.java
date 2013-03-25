@@ -2,9 +2,9 @@ package buildcraft.core;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
+import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.api.core.IIconProvider;
 
 public class CoreIconProvider implements IIconProvider {
 
@@ -25,7 +25,7 @@ public class CoreIconProvider implements IIconProvider {
 	public void registerIcons(IconRegister iconRegister) {
 		_icons = new Icon[MAX];
 		
-		_icons[ENERGY] = iconRegister.func_94245_a("buildcraft:icons/energy");
+		_icons[ENERGY] = iconRegister.registerIcon("buildcraft:icons/energy");
 		
 	}
 

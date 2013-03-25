@@ -54,7 +54,7 @@ public class BptBlockLiquid extends BptBlock {
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		if (slot.meta == 0) {
-			context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, 0,1);
+			context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, 0,1);
 		}
 	}
 

@@ -17,9 +17,6 @@ import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
@@ -27,6 +24,8 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 
@@ -238,9 +237,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
 		_container.synchronize();
-
+		
+		String texture = _container.getGateGuiFile();
+		
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_98187_b(_container.getGateGuiFile());
+		mc.renderEngine.bindTexture(texture);
 
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;

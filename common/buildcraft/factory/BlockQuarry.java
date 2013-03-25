@@ -11,9 +11,6 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
@@ -28,9 +25,10 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockQuarry extends BlockMachineRoot {
 
@@ -225,10 +223,10 @@ public class BlockQuarry extends BlockMachineRoot {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureSide = par1IconRegister.func_94245_a("buildcraft:quarry_side");
-        textureTop = par1IconRegister.func_94245_a("buildcraft:quarry_top");
-        textureFront = par1IconRegister.func_94245_a("buildcraft:quarry_front");
+	    textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
+        textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
+        textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
 	}
 }

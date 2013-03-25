@@ -9,20 +9,20 @@
 
 package buildcraft.transport;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.BuildCraftCore;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -109,14 +109,14 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister)
+	public void updateIcons(IconRegister par1IconRegister)
 	{
 	    // NOOP
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int func_94901_k() {
+	public int getSpriteNumber() {
 		return 0;
 	}
 }

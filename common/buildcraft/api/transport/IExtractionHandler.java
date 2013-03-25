@@ -9,11 +9,13 @@ public interface IExtractionHandler {
 
 	/**
 	 * Can this pipe extract items from the block located at these coordinates?
+	 * param extractor can be null
 	 */
-	boolean canExtractItems(IPipe pipe, World world, int i, int j, int k);
+	boolean canExtractItems(Object extractor, World world, int i, int j, int k);
 
 	/**
 	 * Can this pipe extract liquids from the block located at these coordinates?
+	 * param extractor can be null
 	 */
-	boolean canExtractLiquids(IPipe pipe, World world, int i, int j, int k);
+	boolean canExtractLiquids(Object extractor, World world, int i, int j, int k);
 }

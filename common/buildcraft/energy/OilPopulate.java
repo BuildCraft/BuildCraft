@@ -12,11 +12,11 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 
 public class OilPopulate {
 
@@ -92,7 +92,7 @@ public class OilPopulate {
 						int d2 = bx * bx + by * by + bz * bz;
 
 						if (d2 <= r2) {
-							world.func_94575_c(bx + cx, by + cy, bz + cz, BuildCraftEnergy.oilStill.blockID);
+							world.setBlock(bx + cx, by + cy, bz + cz, BuildCraftEnergy.oilStill.blockID);
 						}
 					}
 				}
@@ -121,11 +121,11 @@ public class OilPopulate {
 					}
 
 					for (int h = y + 1; h <= ymax; ++h) {
-						world.func_94575_c(cx, h, cz, BuildCraftEnergy.oilStill.blockID);
+						world.setBlock(cx, h, cz, BuildCraftEnergy.oilStill.blockID);
 					}
 
 				} else if (started) {
-					world.func_94575_c(cx, y, cz, BuildCraftEnergy.oilStill.blockID);
+					world.setBlock(cx, y, cz, BuildCraftEnergy.oilStill.blockID);
 				}
 			}
 
@@ -176,12 +176,12 @@ public class OilPopulate {
 			if (adjacentOil || force) {
 				if (world.getBlockId(x, y, z) == Block.waterMoving.blockID || world.getBlockId(x, y, z) == Block.waterStill.blockID || isOil(world, x, y, z)) {
 
-					world.func_94575_c(x, y, z, BuildCraftEnergy.oilStill.blockID);
+					world.setBlock(x, y, z, BuildCraftEnergy.oilStill.blockID);
 				} else {
-					world.func_94575_c(x, y, z, 0);
+					world.setBlock(x, y, z, 0);
 				}
 
-				world.func_94575_c(x, y - 1, z, BuildCraftEnergy.oilStill.blockID);
+				world.setBlock(x, y - 1, z, BuildCraftEnergy.oilStill.blockID);
 			}
 		}
 	}

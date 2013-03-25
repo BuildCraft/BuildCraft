@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.transport.IPipe;
-import buildcraft.core.triggers.BCAction;
-import buildcraft.core.triggers.BCTrigger;
 
 public class ActionManager {
 

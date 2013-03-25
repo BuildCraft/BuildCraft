@@ -9,8 +9,6 @@
 
 package buildcraft.builders;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
@@ -20,6 +18,8 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class FillerPattern implements IFillerPattern {
 
@@ -73,6 +73,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
+			BlockUtil.breakBlock(world,  xSlot, ySlot, zSlot);
 			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1, zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
@@ -111,7 +112,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 		if (lastX != Integer.MAX_VALUE) {
 			if (BuildCraftBuilders.fillerDestroy) {
-				world.func_94575_c(lastX, lastY, lastZ, 0);
+				world.setBlock(lastX, lastY, lastZ, 0);
 			} else {
 				BlockUtil.breakBlock(world, lastX, lastY, lastZ, 20);
 			}

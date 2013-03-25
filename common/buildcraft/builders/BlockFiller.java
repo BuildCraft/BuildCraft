@@ -11,9 +11,6 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -26,10 +23,11 @@ import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockFiller extends BlockContainer {
 
@@ -111,10 +109,10 @@ public class BlockFiller extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    textureTopOn = par1IconRegister.func_94245_a("buildcraft:blockFillerTopOn");
-        textureTopOff = par1IconRegister.func_94245_a("buildcraft:blockFillerTopOff");
-        textureSides = par1IconRegister.func_94245_a("buildcraft:blockFillerSides");
+	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
+        textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
+        textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
 	}
 }

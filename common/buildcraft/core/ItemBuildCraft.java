@@ -9,12 +9,12 @@
 
 package buildcraft.core;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import buildcraft.core.utils.StringUtil;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemBuildCraft extends Item {
 
@@ -37,8 +37,8 @@ public class ItemBuildCraft extends Item {
 	
 	@Override
     @SideOnly(Side.CLIENT)
-    public void func_94581_a(IconRegister par1IconRegister)
+    public void updateIcons(IconRegister par1IconRegister)
     {
-        this.iconIndex = par1IconRegister.func_94245_a("buildcraft:" + iconName);
+        this.iconIndex = par1IconRegister.registerIcon("buildcraft:" + iconName);
     }
 }

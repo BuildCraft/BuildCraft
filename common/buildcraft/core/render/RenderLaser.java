@@ -4,7 +4,6 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
 
@@ -47,7 +46,7 @@ public class RenderLaser extends Render {
 		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
 		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
 
-		renderManager.renderEngine.func_98187_b(laser.getTexture());
+		renderManager.renderEngine.bindTexture(laser.getTexture());
 
 		float factor = (float) (1.0 / 16.0);
 

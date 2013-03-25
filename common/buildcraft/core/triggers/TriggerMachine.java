@@ -9,14 +9,13 @@
 
 package buildcraft.core.triggers;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
 public class TriggerMachine extends BCTrigger {
 
@@ -37,7 +36,7 @@ public class TriggerMachine extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof IMachine) {
 			IMachine machine = (IMachine) tile;
 

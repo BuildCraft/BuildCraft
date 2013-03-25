@@ -13,10 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
@@ -26,6 +24,7 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
@@ -96,8 +95,6 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerTransport.class)
@@ -189,12 +186,12 @@ public class BuildCraftTransport {
 		}
 
 		@Override
-		public boolean canExtractItems(IPipe pipe, World world, int i, int j, int k) {
+		public boolean canExtractItems(Object extractor, World world, int i, int j, int k) {
 			return testStrings(items, world, i, j, k);
 		}
 
 		@Override
-		public boolean canExtractLiquids(IPipe pipe, World world, int i, int j, int k) {
+		public boolean canExtractLiquids(Object extractor, World world, int i, int j, int k) {
 			return testStrings(liquids, world, i, j, k);
 		}
 
@@ -269,7 +266,7 @@ public class BuildCraftTransport {
 
 			pipeWaterproof = new ItemBuildCraft(pipeWaterproofId.getInt());
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
-			pipeWaterproof.setCreativeTab(CreativeTabs.tabMaterials);
+			pipeWaterproof.setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Waterproof");
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
 			GameRegistry.registerBlock(genericPipeBlock);

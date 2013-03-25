@@ -9,13 +9,13 @@
 
 package buildcraft.core.triggers;
 
+import net.minecraft.util.Icon;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.util.Icon;
 
 public abstract class BCAction implements IAction {
 
