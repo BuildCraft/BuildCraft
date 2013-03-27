@@ -19,6 +19,8 @@ import buildcraft.core.DefaultProps;
 
 public class BlockOilStill extends BlockStationary implements ILiquid {
 
+	private Icon[] field_94425_a;
+
 	public BlockOilStill(int i, Material material) {
 		super(i, material);
 
