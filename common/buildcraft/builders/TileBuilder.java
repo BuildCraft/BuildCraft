@@ -561,7 +561,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		if ((bluePrintBuilder != null || currentPathIterator != null) && !done)
 			return powerProvider.getMaxEnergyReceived();
 		else

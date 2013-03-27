@@ -235,7 +235,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		if (powerProvider.getEnergyStored() < 200 || laser != null)
 			return 25;
 		else

@@ -389,7 +389,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		return 0;
 	}
 
