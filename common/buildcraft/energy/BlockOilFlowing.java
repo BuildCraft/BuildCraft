@@ -30,6 +30,8 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	int numAdjacentSources = 0;
 	boolean isOptimalFlowDirection[] = new boolean[4];
 	int flowCost[] = new int[4];
+	
+	@SideOnly(Side.CLIENT)
 	private Icon[] field_94425_a;
 
 	public BlockOilFlowing(int i, Material material) {
