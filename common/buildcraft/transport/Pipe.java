@@ -36,8 +36,6 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.triggers.ActionRedstoneOutput;
-import buildcraft.core.triggers.BCAction;
-import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
 import buildcraft.transport.pipes.PipeLogic;
@@ -68,9 +66,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 
-	public ITrigger[] activatedTriggers = new BCTrigger[8];
+	public ITrigger[] activatedTriggers = new ITrigger[8];
 	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
-	public IAction[] activatedActions = new BCAction[8];
+	public IAction[] activatedActions = new IAction[8];
 
 	public boolean broadcastSignal[] = new boolean[] { false, false, false, false };
 	public boolean broadcastRedstone = false;
@@ -523,9 +521,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	public void resetGate() {
 		gate = null;
-		activatedTriggers = new BCTrigger[activatedTriggers.length];
+		activatedTriggers = new ITrigger[activatedTriggers.length];
 		triggerParameters = new ITriggerParameter[triggerParameters.length];
-		activatedActions = new BCAction[activatedActions.length];
+		activatedActions = new IAction[activatedActions.length];
 		broadcastSignal = new boolean[] { false, false, false, false };
 		if (broadcastRedstone) {
 			updateNeighbors(true);
