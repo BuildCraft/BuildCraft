@@ -5,6 +5,7 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
+@Deprecated
 public class BptBlockInventory extends BptBlock {
 
 	public BptBlockInventory(int blockId) {

@@ -12,6 +12,7 @@ package buildcraft.api.bptblocks;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
+@Deprecated
 public class BptBlockPiston extends BptBlockRotateMeta {
 
 	public BptBlockPiston(int blockId) {

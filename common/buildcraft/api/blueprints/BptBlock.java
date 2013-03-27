@@ -41,6 +41,8 @@ import buildcraft.api.core.BuildCraftAPI;
  * search through the block list, and upon matching signature, it will translate all blocks ids of the blueprint to the installation ones. If no such block id
  * is found, BuildCraft will assume that the block is not installed and will not load the blueprint.
  */
+
+@Deprecated
 public class BptBlock {
 
 	public final int blockId;

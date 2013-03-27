@@ -17,6 +17,7 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.Version;
 
+@Deprecated
 public class BptBlockEngine extends BptBlock {
 
 	public BptBlockEngine(int blockId) {

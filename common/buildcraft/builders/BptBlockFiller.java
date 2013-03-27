@@ -22,6 +22,7 @@ import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 
+@Deprecated
 public class BptBlockFiller extends BptBlock {
 
 	public BptBlockFiller(int blockId) {
