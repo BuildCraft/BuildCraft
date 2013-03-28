@@ -11,10 +11,12 @@ package buildcraft.builders;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import buildcraft.api.core.IBox;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class FillerFlattener extends FillerPattern {
 
@@ -76,14 +78,10 @@ public class FillerFlattener extends FillerPattern {
 		return !empty(xMin, yMin, zMin, xMax, 64 * 4, zMax, tile.worldObj);
 	}
 
+    @SideOnly(Side.CLIENT)
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getTextureIndex() {
-		return 4 * 16 + 5;
+	public Icon getTexture() {
+		return BuilderProxyClient.fillerFlattenTexture;
 	}
 
 	@Override

@@ -9,18 +9,14 @@
 
 package buildcraft.core.triggers;
 
-import buildcraft.api.gates.Action;
-import buildcraft.core.DefaultProps;
+import net.minecraft.util.Icon;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class ActionRedstoneOutput extends Action {
+public class ActionRedstoneOutput extends BCAction {
 
 	public ActionRedstoneOutput(int id) {
 		super(id);
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		return 0 * 16 + 0;
 	}
 
 	@Override
@@ -29,7 +25,8 @@ public class ActionRedstoneOutput extends Action {
 	}
 
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTexture() {
+		return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_RedstoneInput_Active);
 	}
 }

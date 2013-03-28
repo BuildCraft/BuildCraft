@@ -57,4 +57,9 @@ public class TransportProxyClient extends TransportProxy {
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
 	}
+	
+	@Override
+	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
+		item.setPipesIcons(dummyPipe.getIconProvider());
+	}
 }

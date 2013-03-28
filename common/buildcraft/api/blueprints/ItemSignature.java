@@ -9,6 +9,7 @@
 
 package buildcraft.api.blueprints;
 
+@Deprecated
 public class ItemSignature {
 
 	public String itemClassName;

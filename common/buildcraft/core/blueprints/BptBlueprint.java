@@ -358,7 +358,7 @@ public class BptBlueprint extends BptBase {
 		if (!"*".equals(sig.itemClassName) && !item.getClass().getSimpleName().equals(sig.itemClassName))
 			return false;
 
-		if (!"*".equals(sig.itemName) && !item.getItemNameIS(new ItemStack(item)).equals(sig.itemName))
+		if (!"*".equals(sig.itemName) && !item.getUnlocalizedName(new ItemStack(item)).equals(sig.itemName))
 			return false;
 
 		return true;

@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.core.BuildCraftAPI;
 
+@Deprecated
 public class BlueprintManager {
 
 	public static BptBlock[] blockBptProps = new BptBlock[Block.blocksList.length];
@@ -16,7 +17,7 @@ public class BlueprintManager {
 			sig.itemClassName = item.getClass().getSimpleName();
 		}
 
-		sig.itemName = item.getItemNameIS(new ItemStack(item));
+		sig.itemName = item.getUnlocalizedName(new ItemStack(item));
 
 		return sig;
 	}

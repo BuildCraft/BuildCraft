@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -21,26 +21,28 @@ import buildcraft.api.core.BuildCraftAPI;
 
 /**
  * This class allow to specify specific behavior for blocks stored in blueprints:
- * 
+ *
  * - what items needs to be used to create that block - how the block has to be built on the world - how to rotate the block - what extra data to store / load
  * in the blueprint
- * 
+ *
  * Default implementations of this can be seen in the package buildcraft.api.bptblocks. The class BptBlockUtils provide some additional utilities.
- * 
+ *
  * Blueprints perform "id translation" in case the block ids between a blueprint and the world installation are different. In order to translate block ids,
  * blocks needs to be uniquely identified. By default, this identification is done by:
- * 
+ *
  * - the block simple class name - the tile simple class name (if any) - the block name
- * 
+ *
  * In certain circumstances, the above is not enough (e.g. if several blocks share the same class and the same name, with no tile). In this case, additional
  * data may be provided by children of this class:
- * 
+ *
  * - mod name - custom signature
- * 
+ *
  * At blueprint load time, BuildCraft will check that each block id of the blueprint corresponds to the block id in the installation. If not, it will perform a
  * search through the block list, and upon matching signature, it will translate all blocks ids of the blueprint to the installation ones. If no such block id
  * is found, BuildCraft will assume that the block is not installed and will not load the blueprint.
  */
+
+@Deprecated
 public class BptBlock {
 
 	public final int blockId;
@@ -69,11 +71,11 @@ public class BptBlock {
 	 * This is called each time an item matches a reqquirement, that is: (req id == stack id) for damageable items (req id == stack id && req dmg == stack dmg)
 	 * for other items by default, it will increase damage of damageable items by the amount of damage of the requirement, and remove the intended amount of non
 	 * damageable item.
-	 * 
+	 *
 	 * Client may override this behavior for default items. Note that this subprogram may be called twice with the same parameters, once with a copy of
 	 * requirements and stack to check if the entire requirements can be fullfilled, and once with the real inventory. Implementer is responsible for updating
 	 * req (with the remaining requirements if any) and stack (after usage)
-	 * 
+	 *
 	 * returns: what was used (similer to req, but created from stack, so that any NBT based differences are drawn from the correct source)
 	 */
 	public ItemStack useItem(BptSlotInfo slot, IBptContext context, ItemStack req, ItemStack stack) {
@@ -112,7 +114,7 @@ public class BptBlock {
 	/**
 	 * Return true if the block on the world correspond to the block stored in the blueprint at the location given by the slot. By default, this subprogram is
 	 * permissive and doesn't take into account metadata.
-	 * 
+	 *
 	 * Added metadata sensitivity //Krapht
 	 */
 	public boolean isValid(BptSlotInfo slot, IBptContext context) {
@@ -131,8 +133,8 @@ public class BptBlock {
 	 */
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
 		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
-		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta,1);
 
 		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
 			TileEntity tile = context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
@@ -157,7 +159,7 @@ public class BptBlock {
 	/**
 	 * Initializes a slot from the blueprint according to an objet placed on {x, y, z} on the world. This typically means adding entries in slot.cpt. Note that
 	 * "id" and "meta" will be set automatically, corresponding to the block id and meta.
-	 * 
+	 *
 	 * By default, if the block is a BlockContainer, tile information will be to save / load the block.
 	 */
 	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
@@ -206,7 +208,7 @@ public class BptBlock {
 			}
 		}
 
-		sig.blockName = block.getBlockName();
+		sig.blockName = block.getUnlocalizedName();
 		sig.replaceNullWithStar();
 
 		return sig;

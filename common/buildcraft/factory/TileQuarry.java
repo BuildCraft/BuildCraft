@@ -417,7 +417,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			}
 
 			worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
-			worldObj.setBlockWithNotify(i, j, k, 0);
+			worldObj.setBlock(i, j, k, 0);
 		}
 
 		// Collect any lost items laying around

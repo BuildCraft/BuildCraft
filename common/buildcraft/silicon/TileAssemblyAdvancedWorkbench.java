@@ -11,7 +11,6 @@ import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,9 +21,9 @@ import buildcraft.core.IMachine;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.core.utils.Utils;
-import buildcraft.core.utils.CraftingHelper;
 
 import com.google.common.collect.Lists;
 
@@ -464,6 +463,18 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		iCrafting.sendProgressBarUpdate(container, 3, (currentStored >>> 16) & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 4, lRecentEnergy & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 5, (lRecentEnergy >>> 16) & 0xFFFF);
+	}
+
+	@Override
+	public boolean isInvNameLocalized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

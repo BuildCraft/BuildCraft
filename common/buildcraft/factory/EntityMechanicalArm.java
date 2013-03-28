@@ -13,7 +13,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftFactory;
 import buildcraft.core.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
@@ -71,17 +70,11 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	private void makeParts(World world) {
-		xArm = new EntityBlock(world, 0, 0, 0, 1, 0.5, 0.5);
-		xArm.texture = BuildCraftFactory.drillTexture;
+		xArm = FactoryProxy.proxy.newDrill(world, 0, 0, 0, 1, 0.5, 0.5);
+		yArm = FactoryProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 1, 0.5);
+		zArm = FactoryProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 0.5, 1);
 
-		yArm = new EntityBlock(world, 0, 0, 0, 0.5, 1, 0.5);
-		yArm.texture = BuildCraftFactory.drillTexture;
-
-		zArm = new EntityBlock(world, 0, 0, 0, 0.5, 0.5, 1);
-		zArm.texture = BuildCraftFactory.drillTexture;
-
-		head = new EntityBlock(world, 0, 0, 0, 0.2, 1, 0.2);
-		head.texture = 2 * 16 + 10;
+		head = FactoryProxy.proxy.newDrillHead(world, 0, 0, 0, 0.2, 1, 0.2);
 		head.shadowSize = 1.0F;
 
 		world.spawnEntityInWorld(xArm);

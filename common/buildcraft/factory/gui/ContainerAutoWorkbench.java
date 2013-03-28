@@ -52,7 +52,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 				thePlayer.addStat(AchievementList.buildWorkBench, 1);
 			} else if (itemstack.itemID == Item.pickaxeWood.itemID) {
 				thePlayer.addStat(AchievementList.buildPickaxe, 1);
-			} else if (itemstack.itemID == Block.stoneOvenIdle.blockID) {
+			} else if (itemstack.itemID == Block.furnaceIdle.blockID) {
 				thePlayer.addStat(AchievementList.buildFurnace, 1);
 			} else if (itemstack.itemID == Item.hoeWood.itemID) {
 				thePlayer.addStat(AchievementList.buildHoe, 1);

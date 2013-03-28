@@ -16,6 +16,7 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
+@Deprecated
 public class BptBlockIgnore extends BptBlock {
 
 	public BptBlockIgnore(int blockId) {

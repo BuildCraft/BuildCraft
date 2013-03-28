@@ -8,6 +8,7 @@
 package buildcraft.factory;
 
 import static net.minecraftforge.common.ForgeDirection.DOWN;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -23,7 +24,6 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import net.minecraft.item.Item;
 
 public class TileTank extends TileBuildCraft implements ITankContainer {
 

@@ -133,7 +133,7 @@ public class BuildCraftBuilders {
 		new BptBlockDirt(Block.tilledField.blockID);
 
 		new BptBlockDelegate(Block.torchRedstoneIdle.blockID, Block.torchRedstoneActive.blockID);
-		new BptBlockDelegate(Block.stoneOvenActive.blockID, Block.stoneOvenIdle.blockID);
+		new BptBlockDelegate(Block.furnaceBurning.blockID, Block.furnaceIdle.blockID);
 		new BptBlockDelegate(Block.pistonMoving.blockID, Block.pistonBase.blockID);
 
 		new BptBlockWallSide(Block.torchWood.blockID);
@@ -142,7 +142,7 @@ public class BuildCraftBuilders {
 		new BptBlockRotateMeta(Block.ladder.blockID, new int[] { 2, 5, 3, 4 }, true);
 		new BptBlockRotateMeta(Block.fenceGate.blockID, new int[] { 0, 1, 2, 3 }, true);
 
-		new BptBlockRotateInventory(Block.stoneOvenIdle.blockID, new int[] { 2, 5, 3, 4 }, true);
+		new BptBlockRotateInventory(Block.furnaceIdle.blockID, new int[] { 2, 5, 3, 4 }, true);
 		new BptBlockRotateInventory(Block.chest.blockID, new int[] { 2, 5, 3, 4 }, true);
 		new BptBlockRotateInventory(Block.lockedChest.blockID, new int[] { 2, 5, 3, 4 }, true);
 		new BptBlockRotateInventory(Block.dispenser.blockID, new int[] { 2, 5, 3, 4 }, true);
@@ -184,11 +184,11 @@ public class BuildCraftBuilders {
 
 		new BptBlockPumpkin(Block.pumpkinLantern.blockID);
 
-		new BptBlockStairs(Block.stairCompactCobblestone.blockID);
-		new BptBlockStairs(Block.stairCompactPlanks.blockID);
+		new BptBlockStairs(Block.stairsCobblestone.blockID);
+		new BptBlockStairs(Block.stairsWoodOak.blockID);
 		new BptBlockStairs(Block.stairsNetherBrick.blockID);
 		new BptBlockStairs(Block.stairsBrick.blockID);
-		new BptBlockStairs(Block.stairsStoneBrickSmooth.blockID);
+		new BptBlockStairs(Block.stairsStoneBrick.blockID);
 
 		new BptBlockDoor(Block.doorWood.blockID, new ItemStack(Item.doorWood));
 		new BptBlockDoor(Block.doorSteel.blockID, new ItemStack(Item.doorSteel));
@@ -230,36 +230,36 @@ public class BuildCraftBuilders {
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
 
-		templateItem = new ItemBptTemplate(Integer.parseInt(templateItemId.value));
-		templateItem.setItemName("templateItem");
+		templateItem = new ItemBptTemplate(templateItemId.getInt());
+		templateItem.setUnlocalizedName("templateItem");
 		LanguageRegistry.addName(templateItem, "Template");
 
-		blueprintItem = new ItemBptBluePrint(Integer.parseInt(blueprintItemId.value));
-		blueprintItem.setItemName("blueprintItem");
+		blueprintItem = new ItemBptBluePrint(blueprintItemId.getInt());
+		blueprintItem.setUnlocalizedName("blueprintItem");
 		LanguageRegistry.addName(blueprintItem, "Blueprint");
 
-		markerBlock = new BlockMarker(Integer.parseInt(markerId.value));
-		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
+		markerBlock = new BlockMarker(markerId.getInt());
+		CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
 		CoreProxy.proxy.addName(markerBlock, "Land Mark");
 
-		pathMarkerBlock = new BlockPathMarker(Integer.parseInt(pathMarkerId.value));
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
+		pathMarkerBlock = new BlockPathMarker(pathMarkerId.getInt());
+		CoreProxy.proxy.registerBlock(pathMarkerBlock.setUnlocalizedName("pathMarkerBlock"));
 		CoreProxy.proxy.addName(pathMarkerBlock, "Path Mark");
 
-		fillerBlock = new BlockFiller(Integer.parseInt(fillerId.value));
-		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
+		fillerBlock = new BlockFiller(fillerId.getInt());
+		CoreProxy.proxy.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"));
 		CoreProxy.proxy.addName(fillerBlock, "Filler");
 
-		builderBlock = new BlockBuilder(Integer.parseInt(builderId.value));
-		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
+		builderBlock = new BlockBuilder(builderId.getInt());
+		CoreProxy.proxy.registerBlock(builderBlock.setUnlocalizedName("builderBlock"));
 		CoreProxy.proxy.addName(builderBlock, "Builder");
 
-		architectBlock = new BlockArchitect(Integer.parseInt(architectId.value));
-		CoreProxy.proxy.registerBlock(architectBlock.setBlockName("architectBlock"));
+		architectBlock = new BlockArchitect(architectId.getInt());
+		CoreProxy.proxy.registerBlock(architectBlock.setUnlocalizedName("architectBlock"));
 		CoreProxy.proxy.addName(architectBlock, "Architect Table");
 
-		libraryBlock = new BlockBlueprintLibrary(Integer.parseInt(libraryId.value));
-		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
+		libraryBlock = new BlockBlueprintLibrary(libraryId.getInt());
+		CoreProxy.proxy.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"));
 		CoreProxy.proxy.addName(libraryBlock, "Blueprint Library");
 
 		GameRegistry.registerTileEntity(TileMarker.class, "Marker");
@@ -269,7 +269,10 @@ public class BuildCraftBuilders {
 		GameRegistry.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
 		GameRegistry.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
 
-		BuildCraftCore.mainConfiguration.save();
+		if (BuildCraftCore.mainConfiguration.hasChanged())
+		{
+		    BuildCraftCore.mainConfiguration.save();
+		}
 
 		// public static final Block music;
 		// public static final Block cloth;

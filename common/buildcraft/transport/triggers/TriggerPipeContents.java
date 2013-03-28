@@ -9,21 +9,24 @@
 
 package buildcraft.transport.triggers;
 
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class TriggerPipeContents extends Trigger implements ITriggerPipe {
+public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 	public enum Kind {
 		Empty, ContainsItems, ContainsLiquids, ContainsEnergy
@@ -34,21 +37,6 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 	public TriggerPipeContents(int id, Kind kind) {
 		super(id);
 		this.kind = kind;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (kind) {
-		case Empty:
-			return 3 * 16 + 0;
-		case ContainsItems:
-			return 3 * 16 + 1;
-		case ContainsLiquids:
-			return 3 * 16 + 2;
-		case ContainsEnergy:
-			return 3 * 16 + 3;
-		}
-		return 3 * 16 + 0;
 	}
 
 	@Override
@@ -139,8 +127,18 @@ public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTextureIcon() {
+		switch (kind) {
+		case Empty:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_Empty);
+		case ContainsItems:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems);
+		case ContainsLiquids:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid);
+		case ContainsEnergy:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy);
+		}
+		return null;
 	}
-
 }

@@ -13,9 +13,11 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -23,12 +25,17 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockTank extends BlockContainer {
 
-	public BlockTank(int i) {
+	private Icon textureStackedSide;
+    private Icon textureBottomSide;
+    private Icon textureTop;
+
+    public BlockTank(int i) {
 		super(i, Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
@@ -55,32 +62,28 @@ public class BlockTank extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getBlockTextureFromSide(int i) {
-		switch (i) {
+	@SideOnly(Side.CLIENT)
+	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+		switch(par1){
 		case 0:
 		case 1:
-			return 6 * 16 + 2;
+			return textureTop;
 		default:
-			return 6 * 16 + 0;
+			return textureBottomSide;
 		}
 	}
-
+	
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
 		case 0:
 		case 1:
-			return 6 * 16 + 2;
+			return textureTop;
 		default:
 			if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
-				return 6 * 16 + 1;
+				return textureStackedSide;
 			else
-				return 6 * 16 + 0;
+				return textureBottomSide;
 		}
 	}
 
@@ -140,6 +143,15 @@ public class BlockTank extends BlockContainer {
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
+        textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
+        textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
 	}
 
 }

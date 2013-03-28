@@ -13,6 +13,7 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
+@Deprecated
 public class BptBlockRefinery extends BptBlock {
 
 	public BptBlockRefinery(int blockId) {

@@ -8,17 +8,17 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TextureMatrix {
 
-	private final int[] _textureIndexes = new int[ForgeDirection.values().length];
+	private final int[] _iconIndexes = new int[ForgeDirection.values().length];
 
 	private boolean dirty = false;
 
 	public int getTextureIndex(ForgeDirection direction) {
-		return _textureIndexes[direction.ordinal()];
+		return _iconIndexes[direction.ordinal()];
 	}
 
-	public void setTextureIndex(ForgeDirection direction, int value) {
-		if (_textureIndexes[direction.ordinal()] != value) {
-			_textureIndexes[direction.ordinal()] = value;
+	public void setIconIndex(ForgeDirection direction, int value) {
+		if (_iconIndexes[direction.ordinal()] != value) {
+			_iconIndexes[direction.ordinal()] = value;
 			dirty = true;
 		}
 	}
@@ -33,13 +33,13 @@ public class TextureMatrix {
 
 	public void writeData(DataOutputStream data) throws IOException {
 		for (int i = 0; i < ForgeDirection.values().length; i++) {
-			data.writeInt(_textureIndexes[i]);
+			data.writeInt(_iconIndexes[i]);
 		}
 	}
 
 	public void readData(DataInputStream data) throws IOException {
 		for (int i = 0; i < ForgeDirection.values().length; i++) {
-			_textureIndexes[i] = data.readInt();
+			_iconIndexes[i] = data.readInt();
 		}
 	}
 }

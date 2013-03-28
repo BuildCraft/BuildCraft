@@ -14,6 +14,7 @@ import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -28,6 +29,8 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockEngine extends BlockContainer {
 
@@ -36,7 +39,7 @@ public class BlockEngine extends BlockContainer {
 
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-		setBlockName("engineBlock");
+		setUnlocalizedName("engineBlock");
 	}
 
 	@Override
@@ -47,6 +50,13 @@ public class BlockEngine extends BlockContainer {
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    // NOOP
 	}
 
 	@Override

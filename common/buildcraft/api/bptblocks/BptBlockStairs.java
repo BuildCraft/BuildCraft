@@ -16,6 +16,7 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
+@Deprecated
 public class BptBlockStairs extends BptBlock {
 
 	public BptBlockStairs(int blockId) {

@@ -1,8 +1,8 @@
 package buildcraft.core;
 
-import buildcraft.BuildCraftCore;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import buildcraft.BuildCraftCore;
 
 public class CreativeTabBuildCraft extends CreativeTabs {
 

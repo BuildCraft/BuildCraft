@@ -1,5 +1,6 @@
 package buildcraft.transport;
 
+import buildcraft.BuildCraftTransport;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -15,6 +16,14 @@ public class TransportProxy {
 	}
 
 	public void registerRenderers() {
+	}
+
+	public void initIconProviders(BuildCraftTransport instance){
+		
+	}
+
+	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
+		
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -53,7 +54,7 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	@Override
-	public String getItemNameIS(ItemStack itemstack) {
+	public String getUnlocalizedName(ItemStack itemstack) {
 		return "item.Facade";
 	}
 
@@ -102,7 +103,7 @@ public class ItemFacade extends ItemBuildCraft {
 				} catch (Exception e) {
 					continue;
 				}
-				
+
 				if (!(b.blockID == 20)){
 					if (b.blockID == 7 || b.blockID == 18 || b.blockID == 19 || b.blockID == 95) {
 						continue;
@@ -146,4 +147,18 @@ public class ItemFacade extends ItemBuildCraft {
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack },
 				8000, new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()))));
 	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void updateIcons(IconRegister par1IconRegister)
+	{
+	    // NOOP
+	}
+	
+	@Override
+    @SideOnly(Side.CLIENT)
+    public int getSpriteNumber()
+    {
+        return 0;
+    }
 }

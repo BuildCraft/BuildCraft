@@ -15,6 +15,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -26,9 +27,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
@@ -116,8 +115,11 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
+        TextureMap blockTextureMap = Minecraft.getMinecraft().renderEngine.textureMapItems;
+        BuildCraftCore.redLaserTexture = blockTextureMap.registerIcon("buildcraft:blockRedLaser");
+        BuildCraftCore.blueLaserTexture = blockTextureMap.registerIcon("buildcraft:blockBlueLaser");
+        BuildCraftCore.stripesLaserTexture = blockTextureMap.registerIcon("buildcraft:blockStripesLaser");
+        BuildCraftCore.transparentTexture = blockTextureMap.registerIcon("buildcraft:blockTransparentLaser");
 	}
 
 	@Override
@@ -131,7 +133,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* NETWORKING */
 	@Override
 	public void sendToServer(Packet packet) {
-		FMLClientHandler.instance().getClient().getSendQueue().addToSendQueue(packet);
+		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
 	}
 
 	/* FILE SYSTEM */
