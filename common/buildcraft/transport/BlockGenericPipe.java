@@ -932,10 +932,13 @@ public class BlockGenericPipe extends BlockContainer {
         int x = target.blockX;
         int y = target.blockY;
         int z = target.blockZ;
+        
+        Pipe pipe = getPipe(worldObj, x, y, z);
+    	if (pipe == null) return false;
+    	
+    	Icon icon = BuildCraftTransport.instance.pipeIconProvider.getIcon(pipe.getIconIndexForItem());
 
         int sideHit = target.sideHit;
-
-        int meta = worldObj.getBlockMetadata(x, y, z);
 
         Block block = BuildCraftTransport.genericPipeBlock;
         float b = 0.1F;
@@ -968,7 +971,7 @@ public class BlockGenericPipe extends BlockContainer {
         }
 
         EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine);
-		fx.func_94052_a(Minecraft.getMinecraft().renderEngine, getBlockTexture(worldObj, x, y, z, 0));
+		fx.func_94052_a(Minecraft.getMinecraft().renderEngine, icon);
         effectRenderer.addEffect(fx.func_70596_a(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
         return true;
     }
