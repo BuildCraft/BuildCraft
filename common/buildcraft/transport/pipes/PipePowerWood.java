@@ -114,9 +114,14 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 						energyToRemove = 1;
 					}
 
-					float energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
+					float energyUsable = powerProvider.useEnergy(1, energyToRemove, false);
 
-					trans.receiveEnergy(o.getOpposite(), energyUsed);
+					float energySend = Math.min(energyUsable, ((PipeTransportPower)transport).powerQuery[o.ordinal()]);
+					if(energySend > 0)
+					{
+						trans.receiveEnergy(o.getOpposite(), energySend);
+						powerProvider.useEnergy(1, energySend, true);
+					}
 				}
 			}
 		}
