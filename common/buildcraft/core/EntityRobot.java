@@ -214,7 +214,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 						if (target.mode == Mode.ClearIfInvalid) {
 
 							if (!target.isValid(a.context)) {
-								worldObj.setBlock(target.x, target.y, target.z, 0, 0,1);
+								worldObj.setBlock(target.x, target.y, target.z, 0, 0,3);
 							}
 
 						} else if (target.stackToUse != null) {

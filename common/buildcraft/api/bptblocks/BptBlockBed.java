@@ -57,7 +57,7 @@ public class BptBlockBed extends BptBlock {
 		if ((slot.meta & 8) != 0)
 			return;
 
-		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,3);
 
 		int x2 = slot.x;
 		int z2 = slot.z;
@@ -77,7 +77,7 @@ public class BptBlockBed extends BptBlock {
 			break;
 		}
 
-		context.world().setBlock(x2, slot.y, z2, slot.blockId, slot.meta + 8,1);
+		context.world().setBlock(x2, slot.y, z2, slot.blockId, slot.meta + 8,3);
 	}
 
 	@Override
