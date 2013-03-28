@@ -157,4 +157,6 @@ public class DefaultProps {
 	public static int ACTION_OFF = 7;
 	public static int ACTION_LOOP = 8;
 	public static int ACTION_ENERGY_PULSER = 9;
+	public static int ACTION_SINGLE_ENERGY_PULSE = 10;
+
 }

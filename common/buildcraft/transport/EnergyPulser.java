@@ -8,12 +8,11 @@ public class EnergyPulser {
 
 	private IPowerReceptor powerReceptor;
 
-	private boolean isActive = false;
-	private float progress = 0;
-	private int progressPart = 0;
-	private float pulseSpeed = 0;
-	private int maxHeat = 1000;
-
+	private boolean isActive;
+	private boolean singlePulse;
+	private boolean hasPulsed;
+	private int pulseCount;
+	private int tick;
 	public EnergyPulser(IPowerReceptor receptor) {
 		powerReceptor = receptor;
 	}
@@ -22,32 +21,39 @@ public class EnergyPulser {
 		if (powerReceptor == null)
 			return;
 
-		// Check if we are already running
-		if (progressPart != 0) {
-
-			progress += getPulseSpeed();
-
-			if (progress > 0.5 && progressPart == 1) {
-				progressPart = 2;
-				// Give off energy pulse!
-				powerReceptor.getPowerProvider().receiveEnergy(1, ForgeDirection.WEST);
-
-			} else if (progress >= 1) {
-				progress = 0;
-				progressPart = 0;
+		if (isActive)
+		{
+			tick++;
+			if (!singlePulse || !hasPulsed) {
+				if (tick % 10 == 0 || !hasPulsed)
+				{
+					powerReceptor.getPowerProvider().receiveEnergy(Math.max(1 << (pulseCount-1),64), ForgeDirection.WEST);
+					if (singlePulse) {
+						hasPulsed = true;
+					}
+				}
 			}
-		} else if (isActive) {
-			progressPart = 1;
 		}
-
 	}
 
-	public void enablePulse() {
+	public void enableSinglePulse(int count)	{
+		singlePulse = true;
 		isActive = true;
+		pulseCount = count;
+	}
+
+	public void enablePulse(int count) {
+		isActive = true;
+		singlePulse = false;
+		pulseCount = count;
 	}
 
 	public void disablePulse() {
+		if (!isActive) {
+			hasPulsed = false;
+		}
 		isActive = false;
+		pulseCount = 0;
 	}
 
 	public boolean isActive() {
@@ -59,14 +65,12 @@ public class EnergyPulser {
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		nbttagcompound.setBoolean("SinglePulse", singlePulse);
 		nbttagcompound.setBoolean("IsActive", isActive);
-		nbttagcompound.setShort("ProgressPart", (short) progressPart);
-		nbttagcompound.setFloat("Progress", progress);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		isActive = nbttagcompound.getBoolean("IsActive");
-		progressPart = nbttagcompound.getShort("ProgressPart");
-		progress = nbttagcompound.getFloat("Progress");
+		singlePulse = nbttagcompound.getBoolean("SinglePulse");
 	}
 }
