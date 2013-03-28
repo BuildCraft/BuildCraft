@@ -18,6 +18,9 @@ import buildcraft.BuildCraftEnergy;
 
 public class BlockOilStill extends BlockStationary implements ILiquid {
 
+	@SideOnly(Side.CLIENT)
+	private Icon[] field_94425_a;
+
 	public BlockOilStill(int i, Material material) {
 		super(i, material);
 
@@ -48,6 +51,18 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	@Override
 	public boolean isBlockReplaceable(World world, int i, int j, int k) {
 		return true;
+	}
+	
+	@Override
+    	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister){
+		this.field_94425_a = new Icon[] {iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+		return par1 != 0 && par1 != 1 ? this.field_94425_a[1] : this.field_94425_a[0];
 	}
 
 }
