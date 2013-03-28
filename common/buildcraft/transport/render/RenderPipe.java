@@ -214,6 +214,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			displayPowerList[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(displayPowerList[s], 4864 /* GL_COMPILE */);
 
+			Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
+
 			float minSize = 0.005F;
 
 			float unit = (size - minSize) / 2F / POWER_STAGES;
@@ -288,15 +290,17 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
 
+			GL11.glTranslatef(0.5F, 0.0F, 0.5F);
 			GL11.glRotatef(angleY[i], 0, 1, 0);
 			GL11.glRotatef(angleZ[i], 0, 0, 1);
+			GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
 
 			if (pow.displayPower[i] >= 1.0) {
 				short stage = pow.displayPower[i];
