@@ -90,7 +90,7 @@ public abstract class Gate {
 
 	public abstract void startResolution();
 
-	public abstract boolean resolveAction(IAction action);
+	public abstract boolean resolveAction(IAction action, int count);
 
 	// / TRIGGERS
 	public abstract void addTrigger(LinkedList<ITrigger> list);
