@@ -27,7 +27,7 @@ public class EnergyPulser {
 			if (!singlePulse || !hasPulsed) {
 				if (tick % 10 == 0 || !hasPulsed)
 				{
-					powerReceptor.getPowerProvider().receiveEnergy(Math.max(1 << (pulseCount-1),64), ForgeDirection.WEST);
+					powerReceptor.getPowerProvider().receiveEnergy(Math.min(1 << (pulseCount-1),64), ForgeDirection.WEST);
 					if (singlePulse) {
 						hasPulsed = true;
 					}
