@@ -25,7 +25,7 @@ public class PipeIconProvider implements IIconProvider {
 	public static final int PipeItemsIron_Standard 			= 14;
 	public static final int PipeAllIron_Solid 				= 15;
 	public static final int PipeItemsObsidian 				= 16;
-	public static final int PipeItemsSandstone 				= 17;	
+	public static final int PipeItemsSandstone 				= 17;
 	public static final int PipeItemsStone 					= 18;
 	public static final int PipeItemsVoid 					= 19;
 	public static final int PipeLiquidsCobblestone 			= 20;
@@ -43,8 +43,10 @@ public class PipeIconProvider implements IIconProvider {
 	public static final int Power_Normal		 			= 31;
 	public static final int Power_Overload		 			= 32;
 	
-	public static final int MAX								= 33;
+	public static final int Stripes 						= 33;
 	
+	public static final int MAX								= 34;
+		
 	private boolean registered = false;
 	
 	@SideOnly(Side.CLIENT)
@@ -107,6 +109,7 @@ public class PipeIconProvider implements IIconProvider {
 		
 		_icons[PipeIconProvider.Power_Normal] = iconRegister.registerIcon("buildcraft:texture_cyan");
 		_icons[PipeIconProvider.Power_Overload] = iconRegister.registerIcon("buildcraft:texture_red_dark");
+		_icons[PipeIconProvider.Stripes] = iconRegister.registerIcon("buildcraft:pipeStripes");
 	}
 
 }
