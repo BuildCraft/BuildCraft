@@ -23,7 +23,6 @@ public class EnergyPulser {
 
 		if (!singlePulse || !hasPulsed)
 		{
-			System.out.printf("Pulsing%d\n",Math.min(1 << (pulseCount-1),64));
 			powerReceptor.getPowerProvider().receiveEnergy(Math.min(1 << (pulseCount-1),64), ForgeDirection.WEST);
 			hasPulsed = true;
 		}
