@@ -11,6 +11,7 @@ package buildcraft.factory.render;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -29,24 +30,33 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	final static private int displayStages = 100;
 
-	private HashMap<LiquidStack, int[]> stage = new HashMap<LiquidStack, int[]>();
+	private final HashMap<LiquidStack, int[]> stage = new HashMap<LiquidStack, int[]>();
 
 	private int[] getDisplayLists(LiquidStack liquid, World world) {
 
 		if (stage.containsKey(liquid)) {
-		    return stage.get(liquid);
+			return stage.get(liquid);
 		}
 
 		int[] d = new int[displayStages];
 		stage.put(liquid, d);
 
 		BlockInterface block = new BlockInterface();
+		block.baseBlock = Block.waterStill;
 		block.texture = liquid.getRenderingIcon();
-        Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
+
+		String spriteSet = "/gui/items.png";
+
+		if (liquid.itemID < Block.blocksList.length) {
+			spriteSet = "/terrain.png";
+			block.baseBlock = Block.blocksList[liquid.itemID];
+		}
 
 		for (int s = 0; s < displayStages; ++s) {
 			d[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d[s], 4864 /* GL_COMPILE */);
+
+			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
 
 			block.minX = 0.125 + 0.01;
 			block.minY = 0;
@@ -71,7 +81,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		String liquidName = tank.tank.getLiquidName();
 		LiquidStack liquid = tank.tank.getLiquid();
-        LiquidStack refLiquid = LiquidDictionary.getCanonicalLiquid(liquidName);
+		LiquidStack refLiquid = LiquidDictionary.getCanonicalLiquid(liquidName);
 
 		if (refLiquid == null || liquid.amount <= 0)
 			return;
