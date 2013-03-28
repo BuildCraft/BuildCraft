@@ -43,6 +43,10 @@ import buildcraft.transport.render.PipeWorldRenderer;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityDiggingFX;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {
@@ -59,6 +63,8 @@ public class BlockGenericPipe extends BlockContainer {
 		public Part hitPart;
 		public MovingObjectPosition movingObjectPosition;
 	}
+	
+	private static Random rand = new Random();
 
 	private boolean skippedFirstIconRegister;
 
@@ -908,4 +914,96 @@ public class BlockGenericPipe extends BlockContainer {
 	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
 		return BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Stripes);
 	}
+	
+	/**
+     * Spawn a digging particle effect in the world, this is a wrapper around
+     * EffectRenderer.addBlockHitEffects to allow the block more control over
+     * the particles. Useful when you have entirely different texture sheets for
+     * different sides/locations in the world.
+     *
+     * @param world The current world
+     * @param target The target the player is looking at {x/y/z/side/sub}
+     * @param effectRenderer A reference to the current effect renderer.
+     * @return True to prevent vanilla digging particles form spawning.
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
+        int x = target.blockX;
+        int y = target.blockY;
+        int z = target.blockZ;
+
+        int sideHit = target.sideHit;
+
+        int meta = worldObj.getBlockMetadata(x, y, z);
+
+        Block block = BuildCraftTransport.genericPipeBlock;
+        float b = 0.1F;
+        double px = x + rand.nextDouble() * (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (b * 2.0F)) + b + block.getBlockBoundsMinX();
+        double py = y + rand.nextDouble() * (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (b * 2.0F)) + b + block.getBlockBoundsMinY();
+        double pz = z + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block.getBlockBoundsMinZ();
+
+        if (sideHit == 0) {
+            py = (double) y + block.getBlockBoundsMinY() - (double) b;
+        }
+
+        if (sideHit == 1) {
+            py = (double) y + block.getBlockBoundsMaxY() + (double) b;
+        }
+
+        if (sideHit == 2) {
+            pz = (double) z + block.getBlockBoundsMinZ() - (double) b;
+        }
+
+        if (sideHit == 3) {
+            pz = (double) z + block.getBlockBoundsMaxZ() + (double) b;
+        }
+
+        if (sideHit == 4) {
+            px = (double) x + block.getBlockBoundsMinX() - (double) b;
+        }
+
+        if (sideHit == 5) {
+            px = (double) x + block.getBlockBoundsMaxX() + (double) b;
+        }
+
+        EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine);
+		fx.func_94052_a(Minecraft.getMinecraft().renderEngine, getBlockTexture(worldObj, x, y, z, 0));
+        effectRenderer.addEffect(fx.func_70596_a(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+        return true;
+    }
+
+    /**
+     * Spawn particles for when the block is destroyed. Due to the nature of how
+     * this is invoked, the x/y/z locations are not always guaranteed to host
+     * your block. So be sure to do proper sanity checks before assuming that
+     * the location is this block.
+     *
+     * @param world The current world
+     * @param x X position to spawn the particle
+     * @param y Y position to spawn the particle
+     * @param z Z position to spawn the particle
+     * @param meta The metadata for the block before it was destroyed.
+     * @param effectRenderer A reference to the current effect renderer.
+     * @return True to prevent vanilla break particles from spawning.
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+        byte its = 4;
+        for (int i = 0; i < its; ++i) {
+            for (int j = 0; j < its; ++j) {
+                for (int k = 0; k < its; ++k) {
+                    double px = x + (i + 0.5D) / (double) its;
+                    double py = y + (j + 0.5D) / (double) its;
+                    double pz = z + (k + 0.5D) / (double) its;
+                    int random = rand.nextInt(6);
+                    EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta, Minecraft.getMinecraft().renderEngine);
+					fx.func_94052_a(Minecraft.getMinecraft().renderEngine, getBlockTexture(worldObj, x, y, z, 0));
+                    effectRenderer.addEffect(fx.func_70596_a(x, y, z));
+                }
+            }
+        }
+        return true;
+    }
 }
