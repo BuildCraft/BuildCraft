@@ -11,15 +11,19 @@ package buildcraft.energy;
 
 import net.minecraft.block.BlockStationary;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockOilStill extends BlockStationary implements ILiquid {
 
 	@SideOnly(Side.CLIENT)
-	private Icon[] field_94425_a;
+	private Icon[] theIcon;
 
 	public BlockOilStill(int i, Material material) {
 		super(i, material);
@@ -52,17 +56,17 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	public boolean isBlockReplaceable(World world, int i, int j, int k) {
 		return true;
 	}
-	
+
 	@Override
-    	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister){
-		this.field_94425_a = new Icon[] {iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister) {
+		this.theIcon = new Icon[] { iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow") };
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
-		return par1 != 0 && par1 != 1 ? this.field_94425_a[1] : this.field_94425_a[0];
+		return par1 != 0 && par1 != 1 ? this.theIcon[1] : this.theIcon[0];
 	}
 
 }

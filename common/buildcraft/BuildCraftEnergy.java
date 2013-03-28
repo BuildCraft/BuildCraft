@@ -12,11 +12,14 @@ import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.liquids.LiquidContainerData;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidDictionary;
@@ -53,6 +56,8 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -160,6 +165,18 @@ public class BuildCraftEnergy {
 				bucketOil), new ItemStack(Item.bucketEmpty)));
 		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(LiquidDictionary.getLiquid("Fuel", LiquidContainerRegistry.BUCKET_VOLUME),
 				new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
+
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Post event) {
+		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
+			LiquidDictionary.getCanonicalLiquid("Fuel").setRenderingIcon(fuel.getIconFromDamage(0));
+		} else {
+			LiquidDictionary.getCanonicalLiquid("Oil").setRenderingIcon(oilStill.getBlockTextureFromSide(1));
+		}
 	}
 
 	public static void loadRecipes() {
