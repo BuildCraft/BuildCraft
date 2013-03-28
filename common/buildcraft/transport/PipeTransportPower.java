@@ -161,7 +161,7 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
-				int request = receptor.powerRequest();
+				int request = receptor.powerRequest(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
 
 				if (request > 0) {
 					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);

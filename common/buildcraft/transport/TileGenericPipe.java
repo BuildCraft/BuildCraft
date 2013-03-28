@@ -406,7 +406,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
 			return ((IPowerReceptor) pipe).powerRequest();
 		return 0;

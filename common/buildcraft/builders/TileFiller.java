@@ -356,7 +356,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		if (isActive())
 			return powerProvider.getMaxEnergyReceived();
 		else

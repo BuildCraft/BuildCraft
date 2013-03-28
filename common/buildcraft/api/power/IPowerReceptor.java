@@ -9,6 +9,8 @@
 
 package buildcraft.api.power;
 
+import net.minecraftforge.common.ForgeDirection;
+
 public interface IPowerReceptor {
 
 	public void setPowerProvider(IPowerProvider provider);
@@ -17,6 +19,6 @@ public interface IPowerReceptor {
 
 	public void doWork();
 
-	public int powerRequest();
+	public int powerRequest(ForgeDirection from);
 
 }
