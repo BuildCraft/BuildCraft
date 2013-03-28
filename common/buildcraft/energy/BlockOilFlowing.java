@@ -11,9 +11,14 @@ package buildcraft.energy;
 
 import java.util.Random;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
@@ -24,6 +29,9 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	int numAdjacentSources = 0;
 	boolean isOptimalFlowDirection[] = new boolean[4];
 	int flowCost[] = new int[4];
+	
+	@SideOnly(Side.CLIENT)
+	private Icon[] field_94425_a;
 
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);
@@ -256,6 +264,18 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	@Override
 	public boolean isBlockReplaceable(World world, int i, int j, int k) {
 		return true;
+	}
+	
+	@Override
+    	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister){
+		this.field_94425_a = new Icon[] {iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+		return par1 != 0 && par1 != 1 ? this.field_94425_a[1] : this.field_94425_a[0];
 	}
 
 }
