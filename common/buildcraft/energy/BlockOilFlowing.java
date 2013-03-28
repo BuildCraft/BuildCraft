@@ -30,9 +30,6 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	boolean isOptimalFlowDirection[] = new boolean[4];
 	int flowCost[] = new int[4];
 	
-	@SideOnly(Side.CLIENT)
-	private Icon[] field_94425_a;
-
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);
 
@@ -269,13 +266,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	@Override
     	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister){
-		this.field_94425_a = new Icon[] {iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
+		this.theIcon = new Icon[] {iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
 	}
 	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
-		return par1 != 0 && par1 != 1 ? this.field_94425_a[1] : this.field_94425_a[0];
-	}
-
 }
