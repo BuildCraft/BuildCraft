@@ -19,6 +19,6 @@ public interface IPowerReceptor {
 
 	public void doWork();
 
-	public int powerRequest(ForgeDirection validDirections);
+	public int powerRequest(ForgeDirection from);
 
 }
