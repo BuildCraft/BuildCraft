@@ -12,6 +12,7 @@ package buildcraft.transport.render;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -59,7 +60,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
 
-	private HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
+	private final HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
 
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
@@ -94,9 +95,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		displayLiquidLists.get(liquidId).put(meta, d);
 
 		BlockInterface block = new BlockInterface();
+		String spriteSet = "/gui/items.png";
+
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, meta);
+			block.baseBlock = Block.blocksList[liquidId];
+			spriteSet = "/terrain.png";
 		} else {
+			block.baseBlock = Block.waterStill;
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
 		}
 
@@ -111,6 +116,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			d.sideHorizontal[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.sideHorizontal[s], 4864 /* GL_COMPILE */);
+
+			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
 
 			block.minX = 0.0F;
 			block.minZ = Utils.pipeMinPos + 0.01F;
@@ -130,6 +137,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.sideVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.sideVertical[s], 4864 /* GL_COMPILE */);
 
+			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
+
 			block.minY = Utils.pipeMaxPos - 0.01;
 			block.maxY = 1;
 
@@ -148,6 +157,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.centerHorizontal[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerHorizontal[s], 4864 /* GL_COMPILE */);
 
+			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
+
 			block.minX = Utils.pipeMinPos + 0.01;
 			block.minZ = Utils.pipeMinPos + 0.01;
 
@@ -165,6 +176,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			d.centerVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerVertical[s], 4864 /* GL_COMPILE */);
+
+			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
 
 			block.minY = Utils.pipeMinPos + 0.01;
 			block.maxY = Utils.pipeMaxPos - 0.01;
@@ -308,7 +321,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		// sides
 
@@ -347,8 +360,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				case SOUTH:
 				case NORTH:
 					sides = true;
+					// Yes, this is kind of ugly, but was easier than transform the coordinates above.
+					GL11.glTranslatef(0.5F, 0.0F, 0.5F);
 					GL11.glRotatef(angleY[i], 0, 1, 0);
 					GL11.glRotatef(angleZ[i], 0, 0, 1);
+					GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
 					list = d.sideHorizontal[stage];
 					break;
 				default:
