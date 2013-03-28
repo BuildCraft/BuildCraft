@@ -14,8 +14,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityDiggingFX;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -43,10 +47,6 @@ import buildcraft.transport.render.PipeWorldRenderer;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EffectRenderer;
-import net.minecraft.client.particle.EntityDiggingFX;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {
@@ -990,6 +990,11 @@ public class BlockGenericPipe extends BlockContainer {
     @SideOnly(Side.CLIENT)
     @Override
     public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+    	Pipe pipe = getPipe(worldObj, x, y, z);
+    	if (pipe == null) return false;
+    	
+    	Icon icon = BuildCraftTransport.instance.pipeIconProvider.getIcon(pipe.getIconIndexForItem());
+    	
         byte its = 4;
         for (int i = 0; i < its; ++i) {
             for (int j = 0; j < its; ++j) {
@@ -999,7 +1004,7 @@ public class BlockGenericPipe extends BlockContainer {
                     double pz = z + (k + 0.5D) / (double) its;
                     int random = rand.nextInt(6);
                     EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta, Minecraft.getMinecraft().renderEngine);
-					fx.func_94052_a(Minecraft.getMinecraft().renderEngine, getBlockTexture(worldObj, x, y, z, 0));
+					fx.func_94052_a(Minecraft.getMinecraft().renderEngine, icon);
                     effectRenderer.addEffect(fx.func_70596_a(x, y, z));
                 }
             }
