@@ -19,6 +19,7 @@ import buildcraft.core.utils.StringUtil;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 
 public class GateVanilla extends Gate {
 
@@ -117,7 +118,7 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Tries to add an energy pulser to gates that accept energy.
-	 * 
+	 *
 	 * @param pipe
 	 * @return
 	 */
@@ -133,7 +134,7 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Drops a gate item of the specified kind.
-	 * 
+	 *
 	 * @param kind
 	 * @param world
 	 * @param i
@@ -202,6 +203,7 @@ public class GateVanilla extends Gate {
 
 		if (hasPulser()) {
 			list.add(BuildCraftTransport.actionEnergyPulser);
+			list.add(BuildCraftTransport.actionSingleEnergyPulse);
 		}
 
 	}
@@ -214,13 +216,15 @@ public class GateVanilla extends Gate {
 	}
 
 	@Override
-	public boolean resolveAction(IAction action) {
+	public boolean resolveAction(IAction action, int count) {
 
 		if (action instanceof ActionEnergyPulser) {
-			pulser.enablePulse();
+			pulser.enablePulse(count);
+			return true;
+		} else if (action instanceof ActionSingleEnergyPulse) {
+			pulser.enableSinglePulse(count);
 			return true;
 		}
-
 		return false;
 	}
 

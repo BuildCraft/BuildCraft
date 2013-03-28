@@ -14,6 +14,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
@@ -123,7 +126,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		logic.onBlockPlaced();
 		transport.onBlockPlaced();
 	}
-	
+
 	public void onBlockPlacedBy(EntityLiving placer) {}
 
 	public void onNeighborBlockChange(int blockId) {
@@ -144,7 +147,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	/**
 	 * Should return the textureindex in the file specified by getTextureFile()
-	 * 
+	 *
 	 * @param direction
 	 *            The orientation for the texture that is requested. Unknown for the center pipe center
 	 * @return the index in the texture sheet
@@ -154,7 +157,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	/**
 	 * Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default implementation might not work if your
 	 * getTextureIndex(Orienations.Unknown) has logic
-	 * 
+	 *
 	 * @return
 	 */
 	public int getTextureIndexForItem() {
@@ -547,6 +550,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		gate.startResolution();
 
 		HashMap<Integer, Boolean> actions = new HashMap<Integer, Boolean>();
+		Multiset<Integer> actionCount = HashMultiset.create();
 
 		// Computes the actions depending on the triggers
 		for (int it = 0; it < 8; ++it) {
@@ -554,14 +558,17 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			IAction action = activatedActions[it];
 			ITriggerParameter parameter = triggerParameters[it];
 
-			if (trigger != null && action != null)
+			if (trigger != null && action != null) {
+				actionCount.add(action.getId());
 				if (!actions.containsKey(action.getId())) {
 					actions.put(action.getId(), isNearbyTriggerActive(trigger, parameter));
 				} else if (gate.getConditional() == GateConditional.AND) {
 					actions.put(action.getId(), actions.get(action.getId()) && isNearbyTriggerActive(trigger, parameter));
+
 				} else {
 					actions.put(action.getId(), actions.get(action.getId()) || isNearbyTriggerActive(trigger, parameter));
 				}
+			}
 		}
 
 		// Activate the actions
@@ -569,7 +576,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			if (actions.get(i)) {
 
 				// Custom gate actions take precedence over defaults.
-				if (gate.resolveAction(ActionManager.actions[i])) {
+				if (gate.resolveAction(ActionManager.actions[i], actionCount.count(i))) {
 					continue;
 				}
 
