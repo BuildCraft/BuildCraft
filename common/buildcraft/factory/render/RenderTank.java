@@ -47,7 +47,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		String spriteSet = "/gui/items.png";
 
-		if (liquid.itemID < Block.blocksList.length) {
+		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
 			spriteSet = "/terrain.png";
 			block.baseBlock = Block.blocksList[liquid.itemID];
 		}
