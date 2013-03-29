@@ -75,8 +75,21 @@ public class EngineStone extends Engine {
 		currentOutput = 0;
 		if (burnTime > 0) {
 			burnTime--;
-			currentOutput = 1;
-			addEnergy(1);
+
+			switch (getEnergyStage()) {
+			default:
+			case Blue:
+			case Green:
+				currentOutput = 1; // 100%
+				break;
+			case Yellow:
+				currentOutput = 0.66f; // 66%
+				break;
+			case Red:
+				currentOutput = 0.33f; // 33%
+				break;
+			}
+			addEnergy(currentOutput);
 		}
 
 		if (burnTime == 0 && tile.isRedstonePowered) {
@@ -142,7 +155,7 @@ public class EngineStone extends Engine {
 			energy = j;
 			break;
 		case 1:
-			currentOutput = j;
+			currentOutput = j / 10.0f;
 			break;
 		case 2:
 			burnTime = j;
@@ -156,7 +169,7 @@ public class EngineStone extends Engine {
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy));
-		iCrafting.sendProgressBarUpdate(containerEngine, 1, Math.round(currentOutput));
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, Math.round(currentOutput * 10.0f));
 		iCrafting.sendProgressBarUpdate(containerEngine, 2, burnTime);
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, totalBurnTime);
 	}
