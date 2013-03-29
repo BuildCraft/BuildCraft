@@ -70,7 +70,10 @@ public class GuiCombustionEngine extends GuiEngine {
 				x = squaled;
 				squaled = 0;
 			}
-
+			liquid.setRenderingIcon(liquid.asItemStack().getIconIndex());
+			if(liquid.asItemStack().getItem() instanceof ItemBlock) Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
+				else Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
+						
 			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquid.getRenderingIcon(), 16, 16 - (16 - x));
 			start = start + 16;
 
