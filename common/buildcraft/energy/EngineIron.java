@@ -207,8 +207,8 @@ public class EngineIron extends Engine {
 		if (nbttagcompound.hasKey("liquidId")) {
 			fuelTank.setLiquid(new LiquidStack(nbttagcompound.getInteger("liquidId"), nbttagcompound.getInteger("liquidQty"), nbttagcompound
 					.getInteger("liquidMeta")));
-		} else if (nbttagcompound.hasKey("fuelTank")) {
-			fuelTank.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("fuelTank")));
+		} else {
+			fuelTank.readFromNBT(nbttagcompound.getCompoundTag("fuelTank"));
 		}
 
 		burnTime = nbttagcompound.getInteger("burnTime");
@@ -216,8 +216,8 @@ public class EngineIron extends Engine {
 		if (nbttagcompound.hasKey("coolantId")) {
 			coolantTank.setLiquid(new LiquidStack(nbttagcompound.getInteger("coolantId"), nbttagcompound.getInteger("coolantQty"), nbttagcompound
 					.getInteger("coolantMeta")));
-		} else if (nbttagcompound.hasKey("coolantTank")) {
-			coolantTank.setLiquid(LiquidStack.loadLiquidStackFromNBT(nbttagcompound.getCompoundTag("coolantTank")));
+		} else {
+			coolantTank.readFromNBT(nbttagcompound.getCompoundTag("coolantTank"));
 		}
 
 		heat = nbttagcompound.getInteger("heat");
@@ -232,13 +232,8 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		if (fuelTank.getLiquid() != null) {
-			nbttagcompound.setTag("fuelTank", fuelTank.getLiquid().writeToNBT(new NBTTagCompound()));
-		}
-
-		if (coolantTank.getLiquid() != null) {
-			nbttagcompound.setTag("coolantTank", coolantTank.getLiquid().writeToNBT(new NBTTagCompound()));
-		}
+		nbttagcompound.setTag("fuelTank", fuelTank.writeToNBT(new NBTTagCompound()));
+		nbttagcompound.setTag("coolantTank", coolantTank.writeToNBT(new NBTTagCompound()));
 
 		nbttagcompound.setInteger("burnTime", burnTime);
 		nbttagcompound.setInteger("heat", heat);
