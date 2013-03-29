@@ -45,10 +45,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		block.baseBlock = Block.waterStill;
 		block.texture = liquid.getRenderingIcon();
 
-		String spriteSet = "/gui/items.png";
+		String spriteSet = liquid.getTextureSheet();
 
 		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
-			spriteSet = "/terrain.png";
 			block.baseBlock = Block.blocksList[liquid.itemID];
 		}
 
@@ -79,9 +78,11 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		TileTank tank = ((TileTank) tileentity);
 
-		String liquidName = tank.tank.getLiquidName();
 		LiquidStack liquid = tank.tank.getLiquid();
-		LiquidStack refLiquid = LiquidDictionary.getCanonicalLiquid(liquidName);
+		if (liquid == null)
+		    return;
+
+		LiquidStack refLiquid = liquid.canonical();
 
 		if (refLiquid == null || liquid.amount <= 0)
 			return;

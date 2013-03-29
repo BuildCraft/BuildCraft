@@ -294,7 +294,7 @@ public class EngineIron extends Engine {
 			if (fuelTank.getLiquid() == null) {
 				fuelTank.setLiquid(new LiquidStack(j, 0));
 			} else {
-				fuelTank.getLiquid().itemID = j;
+				fuelTank.setLiquid(new LiquidStack(j,fuelTank.getLiquid().amount,fuelTank.getLiquid().itemMeta));
 			}
 			break;
 		case 7:
@@ -308,21 +308,21 @@ public class EngineIron extends Engine {
 			if (coolantTank.getLiquid() == null) {
 				coolantTank.setLiquid(new LiquidStack(j, 0));
 			} else {
-				coolantTank.getLiquid().itemID = j;
+                coolantTank.setLiquid(new LiquidStack(j,coolantTank.getLiquid().amount,coolantTank.getLiquid().itemMeta));
 			}
 			break;
 		case 9:
 			if (fuelTank.getLiquid() == null) {
 				fuelTank.setLiquid(new LiquidStack(0, 0, j));
 			} else {
-				fuelTank.getLiquid().itemMeta = j;
+                fuelTank.setLiquid(new LiquidStack(fuelTank.getLiquid().itemID,fuelTank.getLiquid().amount,j));
 			}
 			break;
 		case 10:
 			if (coolantTank.getLiquid() == null) {
 				coolantTank.setLiquid(new LiquidStack(0, 0, j));
 			} else {
-				coolantTank.getLiquid().itemMeta = j;
+                coolantTank.setLiquid(new LiquidStack(coolantTank.getLiquid().itemID,coolantTank.getLiquid().amount,j));
 			}
 		}
 	}

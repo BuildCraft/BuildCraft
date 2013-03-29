@@ -15,6 +15,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidDictionary;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
@@ -84,9 +85,8 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 			LiquidStack liquid = new LiquidStack(data.getInteger("liquidId"), data.getInteger("stored"), 0);
 			tank.setLiquid(liquid);
 		} else {
-			LiquidStack liquid = new LiquidStack(0, 0, 0);
-			liquid.readFromNBT(data.getCompoundTag("tank"));
-			if (Item.itemsList[liquid.itemID] != null && liquid.amount > 0) {
+			LiquidStack liquid = LiquidStack.loadLiquidStackFromNBT(data.getCompoundTag("tank"));
+			if (liquid != null) {
 				tank.setLiquid(liquid);
 			}
 		}
@@ -95,7 +95,7 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		if (tank.getLiquid() != null) {
+		if (tank.containsValidLiquid()) {
 			data.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
 		}
 	}
@@ -184,7 +184,7 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 		resource = resource.copy();
 		int totalUsed = 0;
 		TileTank tankToFill = getBottomTank();
-		
+
 		LiquidStack liquid = tankToFill.tank.getLiquid();
 		if (liquid != null && liquid.amount > 0 && !liquid.isLiquidEqual(resource)) {
 			return 0;
