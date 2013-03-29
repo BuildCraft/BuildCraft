@@ -173,9 +173,9 @@ public class BuildCraftEnergy {
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
 		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
-			LiquidDictionary.getCanonicalLiquid("Fuel").setRenderingIcon(fuel.getIconFromDamage(0));
+			LiquidDictionary.getCanonicalLiquid("Fuel").setRenderingIcon(fuel.getIconFromDamage(0)).setTextureSheet("/gui/items.png");
 		} else {
-			LiquidDictionary.getCanonicalLiquid("Oil").setRenderingIcon(oilStill.getBlockTextureFromSide(1));
+			LiquidDictionary.getCanonicalLiquid("Oil").setRenderingIcon(oilStill.getBlockTextureFromSide(1)).setTextureSheet("/terrain.png");
 		}
 	}
 

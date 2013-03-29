@@ -71,7 +71,8 @@ public class GuiCombustionEngine extends GuiEngine {
 				squaled = 0;
 			}
 
-			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquid.getRenderingIcon(), 16, 16 - (16 - x));
+			mc.renderEngine.bindTexture(liquid.canonical().getTextureSheet());
+			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquid.canonical().getRenderingIcon(), 16, 16 - (16 - x));
 			start = start + 16;
 
 			if (x == 0 || squaled == 0) {
