@@ -43,6 +43,9 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	public LinkedList<Action> targets = new LinkedList<Action>();
 	public static int MAX_TARGETS = 20;
 	public int wait = 0;
+	
+	// If true, the entity will tick even if chunks near it aren't loaded.
+	public boolean alwaysUpdate;
 
 	private class Action {
 
