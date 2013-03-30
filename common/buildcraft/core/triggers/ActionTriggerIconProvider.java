@@ -7,11 +7,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ActionTriggerIconProvider implements IIconProvider {
-	
+
 	public static final int Action_MachineControl_On 			=  0;
 	public static final int Action_MachineControl_Off 			=  1;
 	public static final int Action_MachineControl_Loop 			=  2;
-	
+
 	public static final int Trigger_EngineHeat_Blue 			=  3;
 	public static final int Trigger_EngineHeat_Green 			=  4;
 	public static final int Trigger_EngineHeat_Yellow 			=  5;
@@ -43,12 +43,12 @@ public class ActionTriggerIconProvider implements IIconProvider {
 
 	public static final int MAX 								= 31;
 
-	
+
 	@SideOnly(Side.CLIENT)
 	private Icon[] icons;
-	
+
 	private boolean registered = false;
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int iconIndex) {
@@ -58,14 +58,12 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		if (registered) return;
-		registered = true;
 		icons = new Icon[MAX];
-		
+
 		icons[ActionTriggerIconProvider.Action_MachineControl_On] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_on");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Off] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_off");
 		icons[ActionTriggerIconProvider.Action_MachineControl_Loop] = iconRegister.registerIcon("buildcraft:triggers/action_machinecontrol_loop");
-		
+
 		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Blue] = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_blue");
 		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Green] = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_green");
 		icons[ActionTriggerIconProvider.Trigger_EngineHeat_Yellow] = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_yellow");
@@ -94,7 +92,6 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_inactive");
 		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_active");
 		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_inactive");
-		
 	}
 
 }
