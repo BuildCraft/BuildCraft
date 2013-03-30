@@ -36,7 +36,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		private short currentTime = 0;
 
 		// Tracks how much of the liquid is inbound in timeslots
-		private short[] incomming = new short[travelDelay];
+		private int[] incomming = new int[travelDelay];
 
 		// Tracks how much is currently available (has spent it's inbound delaytime)
 
@@ -88,36 +88,36 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 		public void reset() {
 			this.setLiquid(null);
-			incomming = new short[travelDelay];
+			incomming = new int[travelDelay];
 		}
 
 		public int getAvailable() {
 			int all = this.getLiquid() != null ? this.getLiquid().amount : 0;
-			for (short slot : incomming) {
+			for (int slot : incomming) {
 				all -= slot;
 			}
 			return all;
 		}
 
-		public void readFromNBT(NBTTagCompound compoundTag) {
+		public LiquidTank readFromNBT(NBTTagCompound compoundTag) {
+		    super.readFromNBT(compoundTag);
 			this.setCapacity(compoundTag.getInteger("capacity"));
 
 			for (int i = 0; i < travelDelay; ++i) {
 				incomming[i] = compoundTag.getShort("in[" + i + "]");
 			}
-			setLiquid(LiquidStack.loadLiquidStackFromNBT(compoundTag));
+			return this;
 		}
 
-		public void writeToNBT(NBTTagCompound subTag) {
+		public NBTTagCompound writeToNBT(NBTTagCompound subTag) {
 			subTag.setInteger("capacity", this.getCapacity());
 
 			for (int i = 0; i < travelDelay; ++i) {
 				incomming[i] = subTag.getShort("in[" + i + "]");
 			}
 
-			if (this.getLiquid() != null) {
-				this.getLiquid().writeToNBT(subTag);
-			}
+			super.writeToNBT(subTag);
+			return subTag;
 		}
 	}
 
@@ -138,7 +138,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	public byte initClient = 0;
 	public short travelDelay = 12;
-	public short flowRate = 10;
+	public int flowRate = 10;
 	public LiquidStack[] renderCache = new LiquidStack[orientations.length];
 
 	private final PipeSection[] internalTanks = new PipeSection[orientations.length];
@@ -549,5 +549,9 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void forceSize(ForgeDirection dir, int maxCapacity) {
+	    internalTanks[dir.ordinal()].setCapacity(maxCapacity);
 	}
 }

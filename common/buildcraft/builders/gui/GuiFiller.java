@@ -52,6 +52,7 @@ public class GuiFiller extends GuiBuildCraft {
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		if (filler.currentPattern != null) {
+		    mc.renderEngine.bindTexture("/terrain.png");
 			drawTexturedModelRectFromIcon(guiLeft + patternSymbolX, guiTop + patternSymbolY, filler.currentPattern.getTexture(), 16, 16);
 		}
 

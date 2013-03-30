@@ -14,12 +14,17 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.bptblocks.BptBlockBed;
 import buildcraft.api.bptblocks.BptBlockCustomStack;
@@ -47,6 +52,7 @@ import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BptBlockFiller;
+import buildcraft.builders.BuilderProxyClient;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.FillerFillAll;
 import buildcraft.builders.FillerFillPyramid;
@@ -82,6 +88,8 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
@@ -274,6 +282,8 @@ public class BuildCraftBuilders {
 		    BuildCraftCore.mainConfiguration.save();
 		}
 
+		MinecraftForge.EVENT_BUS.register(this);
+
 		// public static final Block music;
 		// public static final Block cloth;
 		// public static final Block tilledField;
@@ -381,5 +391,21 @@ public class BuildCraftBuilders {
 	public void ServerStop(FMLServerStoppingEvent event) {
 		TilePathMarker.clearAvailableMarkersList();
 	}
+
+
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void loadTextures(TextureStitchEvent.Pre evt) {
+	    if (evt.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+	        TextureMap terrainMap = evt.map;
+	        BuilderProxyClient.fillerFillAllTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/fillAll");
+	        BuilderProxyClient.fillerClearTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/clear");
+	        BuilderProxyClient.fillerWallsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/walls");
+	        BuilderProxyClient.fillerStairsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/stairs");
+	        BuilderProxyClient.fillerFlattenTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/flatten");
+	        BuilderProxyClient.fillerPyramidTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/pyramid");
+	    }
+	}
+
 
 }

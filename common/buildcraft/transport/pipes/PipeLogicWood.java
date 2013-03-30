@@ -43,7 +43,7 @@ public class PipeLogicWood extends PipeLogic {
 		}
 
 		if (newMeta != meta) {
-			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMeta,0);
+			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMeta,3);
 			container.scheduleRenderUpdate();
 			// worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}

@@ -45,13 +45,15 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public PipeLiquidsWood(int itemID) {
 		this(new PipeLogicWood(), itemID);
 	}
-	
+
 	protected PipeLiquidsWood(PipeLogic logic, int itemID) {
 		super(new PipeTransportLiquids(), logic, itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 100, 1, 250);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerProvider.configure(50, 1, 64, 1, 250);
+		powerProvider.configurePowerPerdition(64, 1);
+		((PipeTransportLiquids) transport).flowRate = 1000;
+		((PipeTransportLiquids) transport).travelDelay = 2;
 	}
 
 	/**
@@ -59,7 +61,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	 */
 	@Override
 	public void doWork() {
-		if (powerProvider.getEnergyStored() <= 0)
+		if (powerProvider.getEnergyStored() <= 0 || liquidToExtract > LiquidContainerRegistry.BUCKET_VOLUME * 4.0f)
 			return;
 
 		World w = worldObj;
@@ -77,9 +79,10 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 			if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
 				return;
 
-			if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME) {
-				liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
-			}
+		    double p = powerProvider.useEnergy(1, 64, true);
+		    double d = ( Math.log(p)/Math.log(2) + 1 ) * LiquidContainerRegistry.BUCKET_VOLUME / 7.0f;
+            System.out.printf("Extracting %f %f %f\n",p,d,( Math.log(p)/Math.log(2) + 1 ));
+			liquidToExtract = (int)Math.floor(d);
 		}
 	}
 
@@ -108,15 +111,15 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 			if (tile instanceof ITankContainer) {
 				ITankContainer container = (ITankContainer) tile;
 
-				int flowRate = ((PipeTransportLiquids) transport).flowRate;
-
-				LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
+				LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract, false);
 
 				int inserted = 0;
 				if (extracted != null) {
+	                System.out.printf("Can extract %d of %d\n", extracted.amount, extracted.itemID);
 					inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
 
 					container.drain(pos.orientation.getOpposite(), inserted, true);
+                    System.out.printf("Did extract %d of %d\n", inserted, extracted.itemID);
 				}
 
 				liquidToExtract -= inserted;
