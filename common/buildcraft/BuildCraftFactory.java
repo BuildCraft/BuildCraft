@@ -11,13 +11,18 @@ package buildcraft;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
@@ -35,6 +40,7 @@ import buildcraft.factory.BptBlockFrame;
 import buildcraft.factory.BptBlockRefinery;
 import buildcraft.factory.BptBlockTank;
 import buildcraft.factory.FactoryProxy;
+import buildcraft.factory.FactoryProxyClient;
 import buildcraft.factory.GuiHandler;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileHopper;
@@ -57,6 +63,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerFactory.class, clientSideRequired = true, serverSideRequired = true)
@@ -208,6 +216,8 @@ public class BuildCraftFactory {
 		{
 		    BuildCraftCore.mainConfiguration.save();
 		}
+
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public static void loadRecipes() {
@@ -250,5 +260,17 @@ public class BuildCraftFactory {
 							BuildCraftCore.stoneGearItem });
 		}
 
+	}
+
+
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void loadTextures(TextureStitchEvent.Pre evt) {
+	    if (evt.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+	        TextureMap terrainTextures = evt.map;
+	        FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraft:pump_tube");
+	        FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");
+	        FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
+	    }
 	}
 }

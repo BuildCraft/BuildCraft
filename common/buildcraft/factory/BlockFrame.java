@@ -104,7 +104,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
 		return getCollisionBoundingBoxFromPool(world, i, j, k);
 	}
-		
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
@@ -196,6 +196,6 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    par1IconRegister.registerIcon("buildcraft:blockFrame");
+	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockFrame");
 	}
 }

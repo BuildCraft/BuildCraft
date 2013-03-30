@@ -20,9 +20,9 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class FactoryProxyClient extends FactoryProxy {
-	private Icon pumpTexture;
-    private Icon drillTexture;
-    private Icon drillHeadTexture;
+	public static Icon pumpTexture;
+    public static Icon drillTexture;
+    public static Icon drillHeadTexture;
 
     @Override
 	public void initializeTileEntities() {
@@ -41,10 +41,6 @@ public class FactoryProxyClient extends FactoryProxy {
 	@Override
 	public void initializeEntityRenders() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
-		TextureMap terrainTextures = Minecraft.getMinecraft().renderEngine.textureMapItems;
-		pumpTexture = terrainTextures.registerIcon("buildcraft:blockPumpTubeTexture");
-		drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");
-        drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
 	}
 
 	@Override

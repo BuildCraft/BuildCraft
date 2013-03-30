@@ -44,9 +44,9 @@ public class BlockPump extends BlockContainer {
 	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		switch (i) {
 		case 0:
-			return textureTop;
-		case 1:
 			return textureBottom;
+		case 1:
+			return textureTop;
 		default:
 			return textureSide;
 		}
