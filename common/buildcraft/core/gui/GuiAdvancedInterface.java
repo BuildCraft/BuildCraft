@@ -46,7 +46,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				drawStack(getItemStack());
 			} else if (getTexture() != null) {
 			    mc.renderEngine.bindTexture("/gui/items.png");
-			    System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getTexture().getIconName(), getTexture().getOriginX(),getTexture().getOriginY(),cornerX + x, cornerY + y);
+			    //System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getTexture().getIconName(), getTexture().getOriginX(),getTexture().getOriginY(),cornerX + x, cornerY + y);
 				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getTexture(), 16, 16);
 			}
 

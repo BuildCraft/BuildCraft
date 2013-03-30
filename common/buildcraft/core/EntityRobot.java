@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -207,7 +205,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 			if (a.slot != null) {
 
 				BptSlot target = a.slot;
-				System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
+				//System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
 				if (wait <= 0 && BlockUtil.canChangeBlock(worldObj, target.x, target.y, target.z)) {
 
 					if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
