@@ -18,12 +18,13 @@
 	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
 
 	<property name="mc.version" value="1.5.1"/>
-	<property name="forge.version" value="7.7.1.616"/>
-	<property name="project.version" value="0.0.0"/>
+	<property name="forge.version" value="7.7.1.622"/>
+<!--	<property name="project.version" value="0.0.0"/>-->
 
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
 
 	<available property="forge-exists" file="${download.dir}/${forge.name}"/>
+	<available file=".git" type="dir" property="git.present"/>
 
 	<condition property="out-of-date">
 		<not>
@@ -44,7 +45,7 @@
 	</target>
 
 	<!-- Set full version -->
-	<target name="initialize-version" depends="version-provided,version-not-provided">
+	<target name="initialize-version" depends="version-provided,version-not-provided,git.revision">
 		<property name="project.version.full" value="${project.version}.${build.number}"/>
 	</target>
 
@@ -57,6 +58,21 @@
 	<target name="version-provided" if="env.BUILD_NUMBER">
 		<property name="build.number" value="${env.BUILD_NUMBER}"/>
 	</target>
+	
+	<target name="git.revision" if="git.present">
+		<exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+			<arg value="describe"/>
+			<arg value="--tags"/>
+			<arg value="--always"/>
+			<arg value="HEAD"/>
+		</exec>
+		<condition property="project.version" value="${git.revision}" else="0.0.0">
+			<and>
+				<isset property="git.revision"/>
+				<length string="${git.revision}" trim="yes" length="0" when="greater"/>
+			</and>
+		</condition>
+	</target>	
 
 	<!-- Download necessary files -->
 	<target name="download-files" depends="download-forge"/>
