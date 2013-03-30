@@ -114,12 +114,6 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
-
-        TextureMap blockTextureMap = Minecraft.getMinecraft().renderEngine.textureMapItems;
-        BuildCraftCore.redLaserTexture = blockTextureMap.registerIcon("buildcraft:blockRedLaser");
-        BuildCraftCore.blueLaserTexture = blockTextureMap.registerIcon("buildcraft:blockBlueLaser");
-        BuildCraftCore.stripesLaserTexture = blockTextureMap.registerIcon("buildcraft:blockStripesLaser");
-        BuildCraftCore.transparentTexture = blockTextureMap.registerIcon("buildcraft:blockTransparentLaser");
 	}
 
 	@Override

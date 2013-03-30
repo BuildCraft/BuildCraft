@@ -68,6 +68,7 @@ public class RenderEntityBlock extends Render {
 		World world = entity.worldObj;
 		BlockInterface util = new BlockInterface();
 		util.texture = entity.texture;
+		loadTexture("/terrain.png");
 
 		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
 			for (int jBase = 0; jBase < entity.jSize; ++jBase) {
@@ -86,7 +87,7 @@ public class RenderEntityBlock extends Render {
 					util.maxZ = (remainZ > 1.0 ? 1.0 : remainZ);
 
 					GL11.glPushMatrix();
-					GL11.glTranslatef((float) i + 0.5F, (float) j + 0.5F, (float) k + 0.5F);
+					GL11.glTranslatef((float) i, (float) j, (float) k);
 					GL11.glRotatef(entity.rotationX, 1, 0, 0);
 					GL11.glRotatef(entity.rotationY, 0, 1, 0);
 					GL11.glRotatef(entity.rotationZ, 0, 0, 1);

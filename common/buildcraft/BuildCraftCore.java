@@ -324,7 +324,13 @@ public class BuildCraftCore {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
 			actionTriggerIconProvider.registerIcons(event.map);
+		} else if (event.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+	        BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
+	        BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
+	        BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");
+	        BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraft:blockTransparentLaser");
 		}
+
 	}
 
 	public void loadRecipes() {
