@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class PowerFramework {
 
-	static private String baseNBTName = "net.minecraft.src.buildcarft.Power";
+	static private String baseNBTName = "net.minecraft.src.buildcraft.Power";
 
 	public static PowerFramework currentFramework;
 
