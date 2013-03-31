@@ -936,7 +936,7 @@ public class BlockGenericPipe extends BlockContainer {
         Pipe pipe = getPipe(worldObj, x, y, z);
     	if (pipe == null) return false;
     	
-    	Icon icon = BuildCraftTransport.instance.pipeIconProvider.getIcon(pipe.getIconIndexForItem());
+    	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
         int sideHit = target.sideHit;
 
@@ -996,7 +996,7 @@ public class BlockGenericPipe extends BlockContainer {
     	Pipe pipe = getPipe(worldObj, x, y, z);
     	if (pipe == null) return false;
     	
-    	Icon icon = BuildCraftTransport.instance.pipeIconProvider.getIcon(pipe.getIconIndexForItem());
+    	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
     	
         byte its = 4;
         for (int i = 0; i < its; ++i) {
