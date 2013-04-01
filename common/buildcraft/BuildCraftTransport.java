@@ -238,15 +238,19 @@ public class BuildCraftTransport {
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK, "woodenPipe.item.exclusion", new String[0]);
 
 			String[] excludedItemBlocks = exclusionItemList.getStringList();
-			for (int j = 0; j < excludedItemBlocks.length; ++j) {
-				excludedItemBlocks[j] = excludedItemBlocks[j].trim();
+			if(excludedItemBlocks != null) {
+				for (int j = 0; j < excludedItemBlocks.length; ++j) {
+					excludedItemBlocks[j] = excludedItemBlocks[j].trim();
+				}
 			}
 
 			Property exclusionLiquidList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK, "woodenPipe.liquid.exclusion", new String[0]);
 
 			String[] excludedLiquidBlocks = exclusionLiquidList.getStringList();
-			for (int j = 0; j < excludedLiquidBlocks.length; ++j) {
-				excludedLiquidBlocks[j] = excludedLiquidBlocks[j].trim();
+			if(excludedLiquidBlocks != null) {
+				for (int j = 0; j < excludedLiquidBlocks.length; ++j) {
+					excludedLiquidBlocks[j] = excludedLiquidBlocks[j].trim();
+				}
 			}
 
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedLiquidBlocks));
