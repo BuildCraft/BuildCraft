@@ -103,7 +103,6 @@ public class BuildCraftEnergy {
 		}
 		EnergyProxy.proxy.registerBlockRenderers();
 		EnergyProxy.proxy.registerTileEntities();
-		EnergyProxy.proxy.registerTextureFX();
 	}
 
 	@PreInit

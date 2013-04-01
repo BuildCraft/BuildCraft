@@ -10,7 +10,6 @@
 package buildcraft.api.core;
 
 import net.minecraft.block.Block;
-import net.minecraft.world.World;
 
 public class BuildCraftAPI {
 

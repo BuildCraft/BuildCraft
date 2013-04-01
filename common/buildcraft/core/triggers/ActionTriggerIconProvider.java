@@ -47,8 +47,6 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	@SideOnly(Side.CLIENT)
 	private Icon[] icons;
 
-	private boolean registered = false;
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int iconIndex) {

@@ -71,6 +71,7 @@ public class CoreProxy {
 	}
 
 	/* WRAPPER */
+	@SuppressWarnings("rawtypes")
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
 	}
 
@@ -101,6 +102,7 @@ public class CoreProxy {
 		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getUnlocalizedName());
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void registerTileEntity(Class clas, String ident) {
 		GameRegistry.registerTileEntity(clas, ident);
 	}
@@ -109,6 +111,7 @@ public class CoreProxy {
 		stack.onCrafting(world, player, stack.stackSize);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addCraftingRecipe(ItemStack result, Object[] recipe) {
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
 		//GameRegistry.addRecipe(result, recipe);

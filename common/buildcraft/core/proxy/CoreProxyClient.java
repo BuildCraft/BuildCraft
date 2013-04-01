@@ -15,7 +15,6 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -66,6 +65,7 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	/* WRAPPER */
+	@SuppressWarnings("rawtypes")
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
 		if (Block.blocksList[id] == null)
 			return;

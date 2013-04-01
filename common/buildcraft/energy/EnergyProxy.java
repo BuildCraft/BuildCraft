@@ -11,9 +11,6 @@ public class EnergyProxy {
 		GameRegistry.registerTileEntity(TileEngine.class, "net.minecraft.src.buildcraft.energy.Engine");
 	}
 
-	public void registerTextureFX() {
-	}
-
 	public void registerBlockRenderers() {
 	}
 }

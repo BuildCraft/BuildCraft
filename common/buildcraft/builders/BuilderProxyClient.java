@@ -1,7 +1,5 @@
 package buildcraft.builders;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.Icon;
 import buildcraft.BuildCraftBuilders;
 

@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+//import net.minecraft.client.particle.EntityPickupFX; 
 
 @SideOnly(Side.CLIENT)
 public class TileEntityPickupFX extends EntityFX

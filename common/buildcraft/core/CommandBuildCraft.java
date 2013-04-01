@@ -30,6 +30,7 @@ public class CommandBuildCraft extends CommandBase {
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List getCommandAliases() {
 		return null;

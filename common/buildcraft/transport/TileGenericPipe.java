@@ -476,7 +476,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	private void computeConnections() {
 		if (tileBuffer != null) {
-			boolean[] oldConnections = pipeConnectionsBuffer;
 			pipeConnectionsBuffer = new boolean[6];
 
 			for (int i = 0; i < tileBuffer.length; ++i) {

@@ -2,8 +2,6 @@ package buildcraft.factory;
 
 import java.lang.reflect.Method;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;

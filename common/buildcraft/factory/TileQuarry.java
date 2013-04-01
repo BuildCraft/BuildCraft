@@ -389,6 +389,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		nbttagcompound.setTag("box", boxTag);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void positionReached() {
 		inProcess = false;
 

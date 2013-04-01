@@ -85,6 +85,7 @@ public class BlockAssemblyTable extends BlockContainer {
 		return par1;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {

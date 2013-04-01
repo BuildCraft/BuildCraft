@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 public class FacadeManager {
 	private static Method addFacade;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void addFacade(ItemStack is) {
 		try {
 			if (addFacade == null) {

@@ -58,6 +58,7 @@ public class ItemFacade extends ItemBuildCraft {
 		return "item.Facade";
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
@@ -93,7 +94,6 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static void initialize() {
 		for (Field f : Block.class.getDeclaredFields()) {
 			if (Modifier.isStatic(f.getModifiers()) && Block.class.isAssignableFrom(f.getType())) {

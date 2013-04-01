@@ -5,7 +5,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.energy.render.RenderEngine;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 
 public class EnergyProxyClient extends EnergyProxy {
@@ -13,11 +12,6 @@ public class EnergyProxyClient extends EnergyProxy {
 	public void registerTileEntities() {
 		super.registerTileEntities();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngine.class, new RenderEngine());
-	}
-
-	@Override
-	public void registerTextureFX() {
-		net.minecraft.client.renderer.RenderEngine renderEngine = FMLClientHandler.instance().getClient().renderEngine;
 	}
 
 	@Override

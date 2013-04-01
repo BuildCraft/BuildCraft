@@ -98,6 +98,7 @@ public class BlockUtil {
 	/**
 	 * Create an explosion which only affects a single block.
 	 */
+	@SuppressWarnings("unchecked")
 	public static void explodeBlock(World world, int x, int y, int z) {
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) return;
 
