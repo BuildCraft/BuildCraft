@@ -103,11 +103,7 @@
 
 	</target>
 
-	<target name="compile" depends="initialize-version,setup">
-
-		<delete dir="${classes.dir}"/>
-		<mkdir dir="${classes.dir}"/>
-
+	<target name="copy-src">
 		<!-- Copy sources -->
 		<copy todir="${mcpsrc.dir}/minecraft">
 			<fileset dir="${src.dir}/common"/>
@@ -116,6 +112,12 @@
 				<filter token="BUILD_NUMBER" value="${build.number}" />
 			</filterset>
 		</copy>
+	</target>
+
+	<target name="compile" depends="initialize-version,setup,copy-src">
+
+		<delete dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}"/>
 
 		<!-- Recompile -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
