@@ -21,9 +21,16 @@ import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 
 public class EngineStone extends Engine {
+	final float maxProduction = 1f;
+	final float minProduction = maxProduction / 3;
+	final float target = 0.375f;
+	final float kp = 1f;
+	final float ki = 0.05f;
+	final float eLimit = (maxProduction - minProduction) / ki;
 
 	int burnTime = 0;
 	int totalBurnTime = 0;
+	float esum = 0;
 
 	private ItemStack itemInInventory;
 
@@ -75,8 +82,13 @@ public class EngineStone extends Engine {
 		currentOutput = 0;
 		if (burnTime > 0) {
 			burnTime--;
-			currentOutput = 1;
-			addEnergy(1);
+
+			float e = target * maxEnergy - energy;
+
+			esum = Math.min(Math.max(esum + e, -eLimit), eLimit);
+			currentOutput = Math.min(Math.max(e * kp + esum * ki, minProduction), maxProduction);
+
+			addEnergy(currentOutput);
 		}
 
 		if (burnTime == 0 && tile.isRedstonePowered) {
@@ -142,7 +154,7 @@ public class EngineStone extends Engine {
 			energy = j;
 			break;
 		case 1:
-			currentOutput = j;
+			currentOutput = j / 100f;
 			break;
 		case 2:
 			burnTime = j;
@@ -156,7 +168,7 @@ public class EngineStone extends Engine {
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy));
-		iCrafting.sendProgressBarUpdate(containerEngine, 1, Math.round(currentOutput));
+		iCrafting.sendProgressBarUpdate(containerEngine, 1, Math.round(currentOutput * 100f));
 		iCrafting.sendProgressBarUpdate(containerEngine, 2, burnTime);
 		iCrafting.sendProgressBarUpdate(containerEngine, 3, totalBurnTime);
 	}
