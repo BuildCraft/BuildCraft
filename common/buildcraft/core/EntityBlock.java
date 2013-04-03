@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class EntityBlock extends Entity {
 
 	@SideOnly(Side.CLIENT)
-	public Icon texture = null;
+	public Icon texture;
 	public float shadowSize = 0;
 
 	public float rotationX = 0;
@@ -49,11 +49,6 @@ public class EntityBlock extends Entity {
 		this.motionX = 0.0;
 		this.motionY = 0.0;
 		this.motionZ = 0.0;
-	}
-
-	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, Icon texture) {
-		this(world, i, j, k, iSize, jSize, kSize);
-		this.texture = texture;
 	}
 
 	@Override

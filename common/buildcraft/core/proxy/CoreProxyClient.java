@@ -27,6 +27,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
@@ -169,5 +170,23 @@ public class CoreProxyClient extends CoreProxy {
 
 		return CoreProxy.buildCraftPlayer;
 	}
+	
+	@Override
+	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
+		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
+		switch (laserKind) {
+		case Blue:
+			eb.texture = BuildCraftCore.blueLaserTexture;
+			break;
 
+		case Red:
+			eb.texture = BuildCraftCore.redLaserTexture;
+			break;
+
+		case Stripes:
+			eb.texture = BuildCraftCore.stripesLaserTexture;
+			break;
+		}
+		return eb;
+	}
 }

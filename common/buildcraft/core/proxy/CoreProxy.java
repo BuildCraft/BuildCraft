@@ -28,6 +28,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import buildcraft.api.core.LaserKind;
+import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.network.BuildCraftPacket;
 import cpw.mods.fml.common.Loader;
@@ -234,5 +236,8 @@ public class CoreProxy {
 
 		return CoreProxy.buildCraftPlayer;
 	}
-
+	
+	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
+		return new EntityBlock(world, i, j, k, iSize, jSize, kSize);
+	}
 }

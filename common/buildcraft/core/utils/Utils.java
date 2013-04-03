@@ -21,7 +21,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -316,23 +315,7 @@ public class Utils {
 			jSize = 0.10;
 		}
 
-		Icon texture = BuildCraftCore.redLaserTexture;
-
-		switch (kind) {
-		case Blue:
-			texture = BuildCraftCore.blueLaserTexture;
-			break;
-
-		case Red:
-			texture = BuildCraftCore.redLaserTexture;
-			break;
-
-		case Stripes:
-			texture = BuildCraftCore.stripesLaserTexture;
-			break;
-		}
-
-		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize, kSize, texture);
+		EntityBlock block = CoreProxy.proxy.newEntityBlock(world, i, j, k, iSize, jSize, kSize, kind);
 
 		world.spawnEntityInWorld(block);
 
