@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -116,12 +117,16 @@ public class ItemGate extends ItemBuildCraft {
 		
 		for (IAction action : ActionManager.actions){
 			if (action == null) continue;
-			action.getIconProvider().registerIcons(iconRegister);
+			IIconProvider ip = action.getIconProvider();
+			if (ip == null) throw new RuntimeException("Action " + action.getClass().toString() + " does not return a IIconProvider. This is not a buildcraft bug");
+			ip.registerIcons(iconRegister);
 		}
 		
 		for (ITrigger trigger : ActionManager.triggers){
 			if (trigger == null) continue;
-			trigger.getIconProvider().registerIcons(iconRegister);
+			IIconProvider ip = trigger.getIconProvider();
+			if (ip == null) throw new RuntimeException("Trigger " + trigger.getClass().toString() + " does not return a IIconProvider. This is not a buildcraft bug");
+			ip.registerIcons(iconRegister);
 		}
 		
 		icons = new Icon[ItemGate.MAX];
