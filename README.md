@@ -17,22 +17,32 @@ less time coding and more time doing stuff that makes them less grumpy.
 1. Create a base directory for the build
 1. Clone the Buildcraft repository into `basedir/BuildCraft/`
  * Optional: Copy BuildCraft localization repository into `basedir/BuildCraft-Localization`
-1. Copy the minecraft bin dir and minecraft_server.jar into `basedir/jars/`
 1. Navigate to basedir/Buildcraft in a shell and run `ant` (this will take 2-5 minutes)
-1. The compiled and obfuscated jar will be in basedir/build/dist
+1. The compiled and obfuscated jar will be in basedir/bin
 
-Your directory structure should look like this:
+Your directory structure should look like this before running ant:
 ***
 
     basedir
-    \- jars
-     |- minecraft_server.jar
-     \- bin
-      |- minecraft.jar
-      |- ...
     \- BuildCraft
      |- buildcraft_resources
      |- common
+     |- ...
+    \- BuildCraft-Localization
+     |- lang
+
+***
+
+And like this after running ant:
+***
+
+    basedir
+    \- BuildCraft
+     |- bin
+     |- build
+     |- buildcraft_resources
+     |- common
+     |- download
      |- ...
     \- BuildCraft-Localization
      |- lang
