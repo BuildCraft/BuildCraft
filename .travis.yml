@@ -1,0 +1,27 @@
+language: java
+jdk:
+  - oraclejdk7
+  - openjdk7
+  - openjdk6
+before_script:
+  - sudo apt-get install astyle
+  - mkdir BuildCraft
+  - mv buildcraft_resources BuildCraft/
+  - mv common BuildCraft/
+  - mv .classpath BuildCraft/
+  - mv .gitattributes BuildCraft/
+  - mv .gitignore BuildCraft/
+  - mv .project BuildCraft/
+  - mv README.md BuildCraft/
+  - mv build.xml BuildCraft/
+  - mkdir jars
+  - mkdir jars/bin
+  - cd jars
+  - wget http://assets.minecraft.net/1_4_7/minecraft_server.jar
+  - cd bin
+  - wget http://assets.minecraft.net/1_4_7/minecraft.jar
+  - cd ..
+  - cd ..
+  - git clone https://github.com/BuildCraft/BuildCraft-Localization.git
+  - cd BuildCraft
+script: ant
