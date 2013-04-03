@@ -13,33 +13,33 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBuilder extends BlockContainer {
 
-	int blockTextureTop;
-	int blockTextureSide;
-	int blockTextureFront;
+	Icon blockTextureTop;
+	Icon blockTextureSide;
+	Icon blockTextureFront;
 
 	public BlockBuilder(int i) {
 		super(i, Material.iron);
-		blockTextureSide = 3 * 16 + 5;
-		blockTextureTop = 3 * 16 + 6;
-		blockTextureFront = 3 * 16 + 7;
 		setHardness(0.7F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
@@ -50,12 +50,7 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		if (j == 0 && i == 3)
 			return blockTextureFront;
 
@@ -84,17 +79,17 @@ public class BlockBuilder extends BlockContainer {
 
 			switch (ForgeDirection.values()[meta]) {
 			case WEST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(),0);
 				break;
 			case EAST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(),0);
 				break;
 			case NORTH:
-				world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(),0);
 				break;
 			case SOUTH:
 			default:
-				world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(),0);
 				break;
 			}
 
@@ -112,11 +107,11 @@ public class BlockBuilder extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving);
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 
 	@Override
@@ -131,4 +126,12 @@ public class BlockBuilder extends BlockContainer {
 		itemList.add(new ItemStack(this));
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
+	    blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
+	    blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
+	}
 }

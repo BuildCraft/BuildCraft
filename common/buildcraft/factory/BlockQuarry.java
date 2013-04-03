@@ -12,26 +12,29 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.Box;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockQuarry extends BlockMachineRoot {
 
-	int textureTop;
-	int textureFront;
-	int textureSide;
+	Icon textureTop;
+	Icon textureFront;
+	Icon textureSide;
 
 	public BlockQuarry(int i) {
 		super(i, Material.iron);
@@ -39,20 +42,15 @@ public class BlockQuarry extends BlockMachineRoot {
 		setHardness(1.5F);
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
-
-		textureSide = 2 * 16 + 9;
-		textureFront = 2 * 16 + 7;
-		textureTop = 2 * 16 + 8;
-
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving);
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 		if (entityliving instanceof EntityPlayer) {
 			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i, j, k);
 			tq.placedBy = (EntityPlayer) entityliving;
@@ -60,7 +58,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
 		// If no metadata is set, then this is an icon.
 		if (j == 0 && i == 3)
 			return textureFront;
@@ -94,7 +92,7 @@ public class BlockQuarry extends BlockMachineRoot {
 		int meta = world.getBlockMetadata(i, j, k);
 
 		if ((meta & 8) == 0) {
-			world.setBlockMetadata(i, j, k, meta | 8);
+			world.setBlockMetadataWithNotify(i, j, k, meta | 8,0);
 
 			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
 
@@ -120,7 +118,7 @@ public class BlockQuarry extends BlockMachineRoot {
 
 	private void markFrameForDecay(World world, int x, int y, int z) {
 		if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID) {
-			world.setBlockMetadata(x, y, z, 1);
+			world.setBlockMetadataWithNotify(x, y, z, 1,0);
 		}
 	}
 
@@ -217,14 +215,18 @@ public class BlockQuarry extends BlockMachineRoot {
 		return false;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
+        textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
+        textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
 	}
 }

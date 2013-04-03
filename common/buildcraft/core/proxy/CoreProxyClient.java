@@ -26,9 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
@@ -67,6 +65,7 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	/* WRAPPER */
+	@SuppressWarnings("rawtypes")
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
 		if (Block.blocksList[id] == null)
 			return;
@@ -115,9 +114,6 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
-
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
 	}
 
 	@Override
@@ -131,7 +127,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* NETWORKING */
 	@Override
 	public void sendToServer(Packet packet) {
-		FMLClientHandler.instance().getClient().getSendQueue().addToSendQueue(packet);
+		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
 	}
 
 	/* FILE SYSTEM */

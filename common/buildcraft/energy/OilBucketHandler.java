@@ -38,7 +38,7 @@ public class OilBucketHandler {
 		if ((blockID == BuildCraftEnergy.oilStill.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
 				&& world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
 
-			world.setBlockWithNotify(pos.blockX, pos.blockY, pos.blockZ, 0);
+			world.setBlock(pos.blockX, pos.blockY, pos.blockZ, 0);
 
 			return new ItemStack(BuildCraftEnergy.bucketOil);
 		} else

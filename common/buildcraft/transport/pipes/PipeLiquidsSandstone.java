@@ -11,11 +11,15 @@ package buildcraft.transport.pipes;
 
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
-import buildcraft.core.DefaultProps;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.IPipeTransportLiquidsHook;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.TileGenericPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsHook {
 	public PipeLiquidsSandstone(int itemID) {
@@ -23,13 +27,14 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 9 * 16 + 15;
+	public int getIconIndex(ForgeDirection direction) {
+		return PipeIconProvider.PipeLiquidsSandstone;
 	}
 
 	@Override

@@ -17,13 +17,14 @@
 
 	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
 
-	<property name="mc.version" value="1.4.7"/>
-	<property name="forge.version" value="6.6.0.515"/>
-	<property name="project.version" value="3.4.2"/>
+	<property name="mc.version" value="1.5.1"/>
+	<property name="forge.version" value="7.7.1.624"/>
+<!--	<property name="project.version" value="0.0.0"/>-->
 
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
 
 	<available property="forge-exists" file="${download.dir}/${forge.name}"/>
+	<available file=".git" type="dir" property="git.present"/>
 
 	<condition property="out-of-date">
 		<not>
@@ -44,7 +45,7 @@
 	</target>
 
 	<!-- Set full version -->
-	<target name="initialize-version" depends="version-provided,version-not-provided">
+	<target name="initialize-version" depends="version-provided,version-not-provided,git.revision">
 		<property name="project.version.full" value="${project.version}.${build.number}"/>
 	</target>
 
@@ -57,6 +58,21 @@
 	<target name="version-provided" if="env.BUILD_NUMBER">
 		<property name="build.number" value="${env.BUILD_NUMBER}"/>
 	</target>
+	
+	<target name="git.revision" if="git.present">
+		<exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+			<arg value="describe"/>
+			<arg value="--tags"/>
+			<arg value="--always"/>
+			<arg value="HEAD"/>
+		</exec>
+		<condition property="project.version" value="${git.revision}" else="0.0.0">
+			<and>
+				<isset property="git.revision"/>
+				<length string="${git.revision}" trim="yes" length="0" when="greater"/>
+			</and>
+		</condition>
+	</target>	
 
 	<!-- Download necessary files -->
 	<target name="download-files" depends="download-forge"/>
@@ -87,11 +103,7 @@
 
 	</target>
 
-	<target name="compile" depends="initialize-version,setup">
-
-		<delete dir="${classes.dir}"/>
-		<mkdir dir="${classes.dir}"/>
-
+	<target name="copy-src">
 		<!-- Copy sources -->
 		<copy todir="${mcpsrc.dir}/minecraft">
 			<fileset dir="${src.dir}/common"/>
@@ -100,6 +112,12 @@
 				<filter token="BUILD_NUMBER" value="${build.number}" />
 			</filterset>
 		</copy>
+	</target>
+
+	<target name="compile" depends="initialize-version,setup,copy-src">
+
+		<delete dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}"/>
 
 		<!-- Recompile -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">

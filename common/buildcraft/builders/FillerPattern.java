@@ -11,12 +11,15 @@ package buildcraft.builders;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class FillerPattern implements IFillerPattern {
 
@@ -29,11 +32,9 @@ public abstract class FillerPattern implements IFillerPattern {
 	@Override
 	public abstract boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace);
 
+	@SideOnly(Side.CLIENT)
 	@Override
-	public abstract String getTextureFile();
-
-	@Override
-	public abstract int getTextureIndex();
+	public abstract Icon getTexture();
 
 	@Override
 	public void setId(int id) {
@@ -72,6 +73,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
+			BlockUtil.breakBlock(world,  xSlot, ySlot, zSlot);
 			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1, zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
@@ -110,7 +112,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 		if (lastX != Integer.MAX_VALUE) {
 			if (BuildCraftBuilders.fillerDestroy) {
-				world.setBlockWithNotify(lastX, lastY, lastZ, 0);
+				world.setBlock(lastX, lastY, lastZ, 0);
 			} else {
 				BlockUtil.breakBlock(world, lastX, lastY, lastZ, 20);
 			}

@@ -1,5 +1,6 @@
 package buildcraft.silicon.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -7,6 +8,8 @@ import net.minecraft.item.crafting.IRecipe;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtil;
@@ -30,7 +33,8 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-			drawIcon(DefaultProps.TEXTURE_ICONS, 0, x + 3, y + 4);
+			Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
+			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
 				return;
@@ -97,9 +101,8 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

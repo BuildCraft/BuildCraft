@@ -11,8 +11,10 @@ package buildcraft.builders;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import buildcraft.api.core.IBox;
-import buildcraft.core.DefaultProps;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class FillerFillPyramid extends FillerPattern {
 
@@ -58,13 +60,9 @@ public class FillerFillPyramid extends FillerPattern {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getTextureIndex() {
-		return 4 * 16 + 7;
+    @SideOnly(Side.CLIENT)
+	public Icon getTexture() {
+		return BuilderProxyClient.fillerPyramidTexture;
 	}
 
 	@Override

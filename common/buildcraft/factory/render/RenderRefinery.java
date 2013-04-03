@@ -12,14 +12,15 @@ package buildcraft.factory.render;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
 
@@ -33,10 +34,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 	static final float factor = (float) (1.0 / 16.0);
 
-	private ModelRenderer tank;
-	private ModelRenderer magnet[] = new ModelRenderer[4];
+	private final ModelRenderer tank;
+	private final ModelRenderer magnet[] = new ModelRenderer[4];
 
-	private ModelBase model = new ModelBase() {
+	private final ModelBase model = new ModelBase() {
 	};
 
 	public RenderRefinery() {
@@ -59,11 +60,12 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		}
 
+		setTileEntityRenderer(TileEntityRenderer.instance);
 	}
 
 	final static private int displayStages = 100;
 
-	private HashMap<Integer, HashMap<Integer, int[]>> stage = new HashMap<Integer, HashMap<Integer, int[]>>();
+	private final HashMap<Integer, HashMap<Integer, int[]>> stage = new HashMap<Integer, HashMap<Integer, int[]>>();
 
 	private int[] getDisplayLists(int liquidId, int damage, World world) {
 
@@ -80,10 +82,14 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		BlockInterface block = new BlockInterface();
 
+		String spriteSet = "/gui/items.png";
+
 		// Retrieve the texture depending on type of item.
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
+			block.baseBlock = Block.blocksList[liquidId];
+			spriteSet = "/terrain.png";
 		} else if (Item.itemsList[liquidId] != null) {
+			block.baseBlock = Block.waterStill;
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
 		} else
 			return null;
@@ -91,6 +97,8 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		for (int s = 0; s < displayStages; ++s) {
 			d[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d[s], 4864 /* GL_COMPILE */);
+
+			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
 
 			block.minX = 0.5 - 4F * factor + 0.01;
 			block.minY = 0;
@@ -189,7 +197,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		GL11.glRotatef(angle, 0, 1, 0);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png", 0);
+		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		tank.render(factor);
 		GL11.glTranslatef(4F * factor, 0, 4F * factor);
@@ -223,14 +231,11 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		theMagnet.render(factor);
 		GL11.glTranslatef(0, -trans2, -12F * factor);
 
-		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-
 		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
 		if (qty1 > 0) {
 			int[] list1 = getDisplayLists(liquid1, liquidMeta1, tile.worldObj);
 
 			if (list1 != null) {
-				setTextureFor(liquid1);
 				GL11.glCallList(list1[(int) ((float) qty1 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
 			}
 		}
@@ -241,7 +246,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			int[] list2 = getDisplayLists(liquid2, liquidMeta2, tile.worldObj);
 
 			if (list2 != null) {
-				setTextureFor(liquid2);
 				GL11.glCallList(list2[(int) ((float) qty2 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
 			}
 		}
@@ -252,7 +256,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			int[] list3 = getDisplayLists(liquid3, liquidMeta3, tile.worldObj);
 
 			if (list3 != null) {
-				setTextureFor(liquid3);
 				GL11.glCallList(list3[(int) ((float) qty3 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
 			}
 		}
@@ -260,14 +263,5 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		GL11.glEnable(2896 /* GL_LIGHTING */);
 		GL11.glPopMatrix();
-	}
-
-	public void setTextureFor(int liquidId) {
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
-		} else {
-			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-		}
-
 	}
 }

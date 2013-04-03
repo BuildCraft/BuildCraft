@@ -10,11 +10,15 @@
 package buildcraft.energy;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
-public class TriggerEngineHeat extends Trigger {
+public class TriggerEngineHeat extends BCTrigger {
 
 	public Engine.EnergyStage stage;
 
@@ -22,20 +26,6 @@ public class TriggerEngineHeat extends Trigger {
 		super(id);
 
 		this.stage = stage;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (stage) {
-		case Blue:
-			return 1 * 16 + 0;
-		case Green:
-			return 1 * 16 + 1;
-		case Yellow:
-			return 1 * 16 + 2;
-		default:
-			return 1 * 16 + 3;
-		}
 	}
 
 	@Override
@@ -53,7 +43,7 @@ public class TriggerEngineHeat extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof TileEngine) {
 			Engine engine = ((TileEngine) tile).engine;
 
@@ -64,7 +54,17 @@ public class TriggerEngineHeat extends Trigger {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	@SideOnly(Side.CLIENT)
+	public Icon getTextureIcon() {
+		switch (stage) {
+		case Blue:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Blue);
+		case Green:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Green);
+		case Yellow:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Yellow);
+		default:
+			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Red);
+		}
 	}
 }

@@ -7,37 +7,28 @@ import java.io.IOException;
 import net.minecraftforge.common.ForgeDirection;
 
 public class FacadeMatrix extends ConnectionMatrix {
-	private String[] _textureFiles = new String[ForgeDirection.VALID_DIRECTIONS.length];
-	private int[] _textureIndex = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private final int[] _blockIds = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private final int[] _blockMetas = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
 	private boolean dirty = false;
 
 	public FacadeMatrix() {
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			_textureFiles[direction.ordinal()] = "";
-		}
 	}
 
-	public String getTextureFile(ForgeDirection direction) {
-		return _textureFiles[direction.ordinal()];
-	}
-
-	public void setTextureFile(ForgeDirection direction, String filePath) {
-		if (!_textureFiles[direction.ordinal()].equals(filePath)) {
-			_textureFiles[direction.ordinal()] = filePath;
+	public void setFacade(ForgeDirection direction, int blockId, int blockMeta){
+		if (_blockIds[direction.ordinal()] != blockId || _blockMetas[direction.ordinal()] != blockMeta){
+			_blockIds[direction.ordinal()] = blockId;
+			_blockMetas[direction.ordinal()] = blockMeta;
 			dirty = true;
 		}
 	}
-
-	public int getTextureIndex(ForgeDirection direction) {
-		return _textureIndex[direction.ordinal()];
+	
+	public int getFacadeBlockId(ForgeDirection direction){
+		return _blockIds[direction.ordinal()];
 	}
-
-	public void setTextureIndex(ForgeDirection direction, int value) {
-		if (_textureIndex[direction.ordinal()] != value) {
-			_textureIndex[direction.ordinal()] = value;
-			dirty = true;
-		}
+	
+	public int getFacadeMetaId(ForgeDirection direction){
+		return _blockMetas[direction.ordinal()];
 	}
 
 	@Override
@@ -55,8 +46,8 @@ public class FacadeMatrix extends ConnectionMatrix {
 	public void readData(DataInputStream data) throws IOException {
 		super.readData(data);
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			_textureFiles[i] = data.readUTF();
-			_textureIndex[i] = data.readInt();
+			_blockIds[i] = data.readInt();
+			_blockMetas[i] = data.readInt();
 		}
 	}
 
@@ -64,8 +55,8 @@ public class FacadeMatrix extends ConnectionMatrix {
 	public void writeData(DataOutputStream data) throws IOException {
 		super.writeData(data);
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			data.writeUTF(_textureFiles[i]);
-			data.writeInt(_textureIndex[i]);
+			data.writeInt(_blockIds[i]);
+			data.writeInt(_blockMetas[i]);
 		}
 	}
 }

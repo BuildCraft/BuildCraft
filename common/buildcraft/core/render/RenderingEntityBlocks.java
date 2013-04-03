@@ -3,6 +3,7 @@ package buildcraft.core.render;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
@@ -96,7 +97,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 			// renderblocks.renderStandardBlock(block, i, j, k);
 
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
-
+		    Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
 			legacyPipeRender(renderer, world, x, y, z, block, modelId);
 
 		}
@@ -114,7 +115,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		return BuildCraftCore.blockByEntityModel;
 	}
 
-	/* LEGACY PIPE RENDERING */
+	/* LEGACY PIPE RENDERING and quarry frames! */
 	private void legacyPipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;

@@ -10,23 +10,28 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	private static final int MAX_OVERHEAT_TICKS = 100;
 
 	private IPowerProvider powerProvider;
+	
+	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
+	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
 
-	private int baseTexture = 7 * 16 + 6;
-	private int plainTexture = 1 * 16 + 15;
 
 	private int overheatTicks;
 
@@ -39,21 +44,22 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
+	public int getIconIndex(ForgeDirection direction) {
 		if (direction == ForgeDirection.UNKNOWN)
-			return baseTexture;
+			return standardIconIndex;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 			if (metadata == direction.ordinal())
-				return plainTexture;
+				return solidIconIndex;
 			else
-				return baseTexture;
+				return standardIconIndex;
 		}
 	}
 
@@ -122,7 +128,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		return getPowerProvider().getMaxEnergyReceived();
 	}
 

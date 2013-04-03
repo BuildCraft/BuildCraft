@@ -99,16 +99,17 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			return all;
 		}
 
-		public void readFromNBT(NBTTagCompound compoundTag) {
+		public LiquidTank readFromNBT(NBTTagCompound compoundTag) {
 			this.setCapacity(compoundTag.getInteger("capacity"));
 
 			for (int i = 0; i < travelDelay; ++i) {
 				incomming[i] = compoundTag.getShort("in[" + i + "]");
 			}
 			setLiquid(LiquidStack.loadLiquidStackFromNBT(compoundTag));
+			return this;
 		}
 
-		public void writeToNBT(NBTTagCompound subTag) {
+		public NBTTagCompound writeToNBT(NBTTagCompound subTag) {
 			subTag.setInteger("capacity", this.getCapacity());
 
 			for (int i = 0; i < travelDelay; ++i) {
@@ -118,6 +119,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			if (this.getLiquid() != null) {
 				this.getLiquid().writeToNBT(subTag);
 			}
+			return subTag;
 		}
 	}
 
@@ -209,7 +211,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	/**
 	 * Computes the PacketLiquidUpdate packet for transmission to a client
-	 * 
+	 *
 	 * @param initPacket
 	 *            everything is sent, no delta stuff ( first packet )
 	 * @param persistChange
@@ -257,16 +259,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 				continue;
 			}
 
-			if (prev.itemID != current.itemID || initPacket) {
+			if (!prev.equals(current) || initPacket) {
 				changed = true;
-				renderCache[dir.ordinal()].itemID = current.itemID;
+				renderCache[dir.ordinal()] = current;
 				delta.set(dir.ordinal() * 3 + 0);
-			}
-
-			if (prev.itemMeta != current.itemMeta || initPacket) {
-				changed = true;
-				renderCache[dir.ordinal()].itemMeta = current.itemMeta;
-				delta.set(dir.ordinal() * 3 + 1);
+                delta.set(dir.ordinal() * 3 + 1);
 			}
 
 			int displayQty = (prev.amount * 4 + current.amount) / 5;

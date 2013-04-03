@@ -492,4 +492,18 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	public int getZCoord() {
 		return zCoord;
 	}
+
+    @Override
+    public boolean isInvNameLocalized()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isStackValidForSlot(int i, ItemStack itemstack)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
