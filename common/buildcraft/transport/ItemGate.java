@@ -118,14 +118,14 @@ public class ItemGate extends ItemBuildCraft {
 		for (IAction action : ActionManager.actions){
 			if (action == null) continue;
 			IIconProvider ip = action.getIconProvider();
-			if (ip == null) throw new RuntimeException("Action " + action.getClass().toString() + " does not return a IIconProvider. This is not a buildcraft bug");
+			if (ip == null) throw new RuntimeException("Action " + action.getClass().toString() + " does not return an IIconProvider. This is not a buildcraft bug!");
 			ip.registerIcons(iconRegister);
 		}
 		
 		for (ITrigger trigger : ActionManager.triggers){
 			if (trigger == null) continue;
 			IIconProvider ip = trigger.getIconProvider();
-			if (ip == null) throw new RuntimeException("Trigger " + trigger.getClass().toString() + " does not return a IIconProvider. This is not a buildcraft bug");
+			if (ip == null) throw new RuntimeException("Trigger " + trigger.getClass().toString() + " does not return an IIconProvider. This is not a buildcraft bug!");
 			ip.registerIcons(iconRegister);
 		}
 		
