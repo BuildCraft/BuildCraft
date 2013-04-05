@@ -296,11 +296,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
-
-			GL11.glTranslatef(0.5F, 0.0F, 0.5F);
+			
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 			GL11.glRotatef(angleY[i], 0, 1, 0);
 			GL11.glRotatef(angleZ[i], 0, 0, 1);
-			GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
+			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
 			if (pow.displayPower[i] >= 1.0) {
 				short stage = pow.displayPower[i];
