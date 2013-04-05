@@ -24,7 +24,7 @@
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
 
 	<available property="forge-exists" file="${download.dir}/${forge.name}"/>
-	<available file=".git" type="dir" property="git.present"/>
+	<available file="${src.dir}/.git" type="dir" property="git.present"/>
 
 	<condition property="out-of-date">
 		<not>
@@ -60,7 +60,7 @@
 	</target>
 	
 	<target name="git.revision" if="git.present">
-		<exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+		<exec executable="git" dir="${src.dir}" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
 			<arg value="describe"/>
 			<arg value="--tags"/>
 			<arg value="--always"/>
