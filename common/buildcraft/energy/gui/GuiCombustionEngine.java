@@ -54,15 +54,17 @@ public class GuiCombustionEngine extends GuiEngine {
 	}
 
 	private void displayGauge(int j, int k, int line, int col, int squaled, LiquidStack liquid) {
-	    if (liquid == null)
-	    {
-	        return;
-	    }
+		if (liquid == null)
+		{
+			return;
+		}
 		int start = 0;
-
+	
+		mc.renderEngine.bindTexture(liquid.canonical().getTextureSheet());
+		
 		while (true) {
 			int x = 0;
-
+	
 			if (squaled > 16) {
 				x = 16;
 				squaled -= 16;
@@ -70,16 +72,15 @@ public class GuiCombustionEngine extends GuiEngine {
 				x = squaled;
 				squaled = 0;
 			}
-
-			mc.renderEngine.bindTexture(liquid.canonical().getTextureSheet());
+	
 			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquid.canonical().getRenderingIcon(), 16, 16 - (16 - x));
 			start = start + 16;
-
+	
 			if (x == 0 || squaled == 0) {
 				break;
 			}
 		}
-
+	
 		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);
 	}
