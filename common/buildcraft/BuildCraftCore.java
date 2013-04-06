@@ -101,6 +101,8 @@ public class BuildCraftCore {
 	public static int updateFactor = 10;
 
 	public static long longUpdateFactor = 40;
+	
+	public static String facadeIdList;
 
 	public static BuildCraftConfiguration mainConfiguration;
 
@@ -199,7 +201,11 @@ public class BuildCraftCore {
 			if (itemLifespan < 100) {
 				itemLifespan = 100;
 			}
-
+			
+			Property facadeIds = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facadeBlockIds", "");
+			facadeIds.comment = "a comma delimited list of additional block IDs to add as facades, subtypes will be added automatically";
+			facadeIdList = facadeIds.getString();
+			
 			Property powerFrameworkClass = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "power.framework",
 					"buildcraft.energy.PneumaticPowerFramework");
 
