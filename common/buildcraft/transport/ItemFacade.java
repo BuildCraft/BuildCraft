@@ -2,6 +2,7 @@ package buildcraft.transport;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -95,6 +97,8 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static void initialize() {
+	    Set<Integer> facadeBlockIds = Sets.newHashSet();
+	    
 		for (Field f : Block.class.getDeclaredFields()) {
 			if (Modifier.isStatic(f.getModifiers()) && Block.class.isAssignableFrom(f.getType())) {
 				Block b;
@@ -112,19 +116,31 @@ public class ItemFacade extends ItemBuildCraft {
 						continue;
 					}
 				}
-				ItemStack base = new ItemStack(b, 1);
-				if (base.getHasSubtypes()) {
-					Set<String> names = Sets.newHashSet();
-					for (int meta = 0; meta < 15; meta++) {
-						ItemStack is = new ItemStack(b, 1, meta);
-						if (!Strings.isNullOrEmpty(is.getItemName()) && names.add(is.getItemName())) {
-							ItemFacade.addFacade(is);
-						}
-					}
-				} else {
-					ItemFacade.addFacade(base);
-				}
+				facadeBlockIds.add(b.blockID);
 			}
+		}
+
+		for (String id : BuildCraftCore.facadeIdList.trim().split("\\s*,\\s*")) {
+		    try {
+		        facadeBlockIds.add(Integer.parseInt(id));
+		    } catch (Exception e) {
+		        continue;
+		    }
+		}
+		
+		for (int blockId : facadeBlockIds) {
+		    ItemStack base = new ItemStack(blockId, 1, -1);
+	        if (base.getHasSubtypes()) {
+	            Set<String> names = Sets.newHashSet();
+	            for (int meta = 0; meta < 15; meta++) {
+	                ItemStack is = new ItemStack(blockId, 1, meta);
+	                if (!Strings.isNullOrEmpty(is.getItemName()) && names.add(is.getItemName())) {
+	                    ItemFacade.addFacade(is);
+	                }
+	            }
+	        } else {
+	            ItemFacade.addFacade(base);
+	        }
 		}
 	}
 
