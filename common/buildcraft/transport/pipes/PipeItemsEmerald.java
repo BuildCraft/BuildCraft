@@ -193,15 +193,17 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 	/* SAVING & LOADING */
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
-		filters.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		filters.readFromNBT(nbt);
+		currentFilter = nbt.getInteger("currentFilter");
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
-		filters.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		filters.writeToNBT(nbt);
+		nbt.setInteger("currentFilter", currentFilter);
 	}
 
 	// ICLIENTSTATE
