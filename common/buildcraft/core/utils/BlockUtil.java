@@ -32,7 +32,7 @@ public class BlockUtil {
 		if (block == null)
 			return null;
 
-		if (block.isAirBlock(world, i, j, k)
+		if (block.isAirBlock(world, i, j, k))
 			return null;
 
 		int meta = world.getBlockMetadata(i, j, k);
