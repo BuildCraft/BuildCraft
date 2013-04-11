@@ -32,6 +32,9 @@ public class BlockUtil {
 		if (block == null)
 			return null;
 
+		if (block.isAirBlock(world, i, j, k))
+			return null;
+
 		int meta = world.getBlockMetadata(i, j, k);
 
 		return block.getBlockDropped(world, i, j, k, meta, 0);
