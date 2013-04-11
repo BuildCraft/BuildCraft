@@ -7,7 +7,7 @@ import net.minecraftforge.common.ISidedInventory;
 /**
  * Will respect ISidedInventory implementation but only accept input from above or below.
  */
-public class TransactorFurnace extends TransactorSided {
+public class TransactorFurnace extends TransactorForgeSided {
 
 	public TransactorFurnace(ISidedInventory inventory) {
 		super(inventory);

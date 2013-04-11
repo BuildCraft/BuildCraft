@@ -92,6 +92,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
+        Minecraft.getMinecraft().renderEngine.bindTexture(refLiquid.getTextureSheet());
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 

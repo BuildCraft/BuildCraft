@@ -7,11 +7,11 @@ import net.minecraftforge.common.ISidedInventory;
 /**
  * Manages input on ISidedInventory
  */
-public class TransactorSided extends TransactorSimple {
+public class TransactorForgeSided extends TransactorSimple {
 
 	ISidedInventory sided;
 
-	public TransactorSided(ISidedInventory inventory) {
+	public TransactorForgeSided(ISidedInventory inventory) {
 		super(inventory);
 		this.sided = inventory;
 	}
@@ -31,7 +31,7 @@ public class TransactorSided extends TransactorSimple {
 	}
 
 	@Override
-	protected int getEmptySlot(ForgeDirection orientation) {
+	protected int getEmptySlot(ItemStack stack, ForgeDirection orientation, int slotIndex) {
 		return getEmptySlot(sided.getStartInventorySide(orientation), sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
 	}
 

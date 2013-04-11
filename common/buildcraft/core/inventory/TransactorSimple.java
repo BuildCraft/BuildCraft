@@ -17,13 +17,14 @@ public class TransactorSimple extends Transactor {
 
 		int injected = 0;
 
-		int slot = -1;
-		while ((slot = getPartialSlot(stack, orientation, slot + 1)) >= 0 && injected < stack.stackSize) {
+		int slotIndex = 0;
+		int slot = 0;
+		while ((slot = getPartialSlot(stack, orientation, slotIndex++)) >= 0 && injected < stack.stackSize) {
 			injected += addToSlot(slot, stack, injected, doAdd);
 		}
 
-		slot = 0;
-		while ((slot = getEmptySlot(orientation)) >= 0 && injected < stack.stackSize) {
+		slotIndex = 0;
+		while ((slot = getEmptySlot(stack, orientation, slotIndex++)) >= 0 && injected < stack.stackSize) {
 			injected += addToSlot(slot, stack, injected, doAdd);
 		}
 		inventory.onInventoryChanged();
@@ -55,7 +56,7 @@ public class TransactorSimple extends Transactor {
 		return -1;
 	}
 
-	protected int getEmptySlot(ForgeDirection orientation) {
+	protected int getEmptySlot(ItemStack stack, ForgeDirection orientation, int slotIndex) {
 		return getEmptySlot(0, inventory.getSizeInventory());
 	}
 
