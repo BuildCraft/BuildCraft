@@ -38,7 +38,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getIcon(int i, int j) {
 		if (j == 0 && i == 3)
 			return textureFront;
 

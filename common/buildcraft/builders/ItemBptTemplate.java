@@ -14,16 +14,16 @@ public class ItemBptTemplate extends ItemBptBase {
 	@Override
 	public Icon getIconFromDamage(int i) {
 		if (i == 0)
-			return iconIndex;
+			return itemIcon;
 		else
 			return usedTemplate;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateIcons(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
-		iconIndex = par1IconRegister.registerIcon("buildcraft:template_clean");
+		itemIcon = par1IconRegister.registerIcon("buildcraft:template_clean");
 		usedTemplate = par1IconRegister.registerIcon("buildcraft:template_used");
 	}
 }

@@ -62,7 +62,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getIcon(int i, int j) {
 		switch (i) {
 		case 0:
 		case 1:

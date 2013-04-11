@@ -116,11 +116,11 @@ public class BlockArchitect extends BlockContainer {
 		if (l == 1)
 			return blockTextureTopArchitect;
 
-		return getBlockTextureFromSideAndMetadata(l, m);
+		return getIcon(l, m);
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getIcon(int i, int j) {
 		if (j == 0 && i == 3)
 			return blockTextureFront;
 

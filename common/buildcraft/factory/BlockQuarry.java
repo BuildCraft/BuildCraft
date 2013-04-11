@@ -58,7 +58,7 @@ public class BlockQuarry extends BlockMachineRoot {
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getIcon(int i, int j) {
 		// If no metadata is set, then this is an icon.
 		if (j == 0 && i == 3)
 			return textureFront;

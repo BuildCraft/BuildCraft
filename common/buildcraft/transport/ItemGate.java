@@ -24,7 +24,7 @@ public class ItemGate extends ItemBuildCraft {
 	public static final int Gate_Gold_Or						=  4;
 	public static final int Gate_Diamond_And					=  5;
 	public static final int Gate_Diamond_Or						=  6;
-	
+
 	public static final int Autarchic_Gate						=  7;
 	public static final int Autarchic_Gate_Iron_And				=  8;
 	public static final int Autarchic_Gate_Iron_Or				=  9;
@@ -32,14 +32,14 @@ public class ItemGate extends ItemBuildCraft {
 	public static final int Autarchic_Gate_Gold_Or				= 11;
 	public static final int Autarchic_Gate_Diamond_And			= 12;
 	public static final int Autarchic_Gate_Diamond_Or			= 13;
-	
+
 	public static final int MAX									= 14;
-		
+
 	private int series;
 
 	@SideOnly(Side.CLIENT)
 	private Icon[] icons;
-	
+
 	public ItemGate(int i, int series) {
 		super(i);
 
@@ -112,23 +112,23 @@ public class ItemGate extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateIcons(IconRegister iconRegister)
+	public void registerIcons(IconRegister iconRegister)
 	{
-		
+
 		for (IAction action : ActionManager.actions){
 			if (action == null) continue;
 			IIconProvider ip = action.getIconProvider();
 			if (ip == null) throw new RuntimeException("Action " + action.getClass().toString() + " does not return an IIconProvider. This is not a buildcraft bug!");
 			ip.registerIcons(iconRegister);
 		}
-		
+
 		for (ITrigger trigger : ActionManager.triggers){
 			if (trigger == null) continue;
 			IIconProvider ip = trigger.getIconProvider();
 			if (ip == null) throw new RuntimeException("Trigger " + trigger.getClass().toString() + " does not return an IIconProvider. This is not a buildcraft bug!");
 			ip.registerIcons(iconRegister);
 		}
-		
+
 		icons = new Icon[ItemGate.MAX];
 		icons[ItemGate.Gate] = iconRegister.registerIcon("buildcraft:gate");
 		icons[ItemGate.Gate_Iron_And] = iconRegister.registerIcon("buildcraft:gate_iron_and");
@@ -137,7 +137,7 @@ public class ItemGate extends ItemBuildCraft {
 		icons[ItemGate.Gate_Gold_Or] = iconRegister.registerIcon("buildcraft:gate_gold_or");
 		icons[ItemGate.Gate_Diamond_And] = iconRegister.registerIcon("buildcraft:gate_diamond_and");
 		icons[ItemGate.Gate_Diamond_Or] = iconRegister.registerIcon("buildcraft:gate_diamond_or");
-		
+
 		icons[ItemGate.Autarchic_Gate] = iconRegister.registerIcon("buildcraft:autarchic_gate");
 		icons[ItemGate.Autarchic_Gate_Iron_And] = iconRegister.registerIcon("buildcraft:autarchic_gate_iron_and");
 		icons[ItemGate.Autarchic_Gate_Iron_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_iron_or");
@@ -146,6 +146,6 @@ public class ItemGate extends ItemBuildCraft {
 		icons[ItemGate.Autarchic_Gate_Diamond_And] = iconRegister.registerIcon("buildcraft:autarchic_gate_diamond_and");
 		icons[ItemGate.Autarchic_Gate_Diamond_Or] = iconRegister.registerIcon("buildcraft:autarchic_gate_diamond_or");
 
-		
+
 	}
 }

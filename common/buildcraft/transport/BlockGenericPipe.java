@@ -63,7 +63,7 @@ public class BlockGenericPipe extends BlockContainer {
 		public Part hitPart;
 		public MovingObjectPosition movingObjectPosition;
 	}
-	
+
 	private static Random rand = new Random();
 
 	private boolean skippedFirstIconRegister;
@@ -908,13 +908,13 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 		}
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+	public Icon getIcon(int par1, int par2) {
 		return BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Stripes);
 	}
-	
+
 	/**
      * Spawn a digging particle effect in the world, this is a wrapper around
      * EffectRenderer.addBlockHitEffects to allow the block more control over
@@ -932,10 +932,10 @@ public class BlockGenericPipe extends BlockContainer {
         int x = target.blockX;
         int y = target.blockY;
         int z = target.blockZ;
-        
+
         Pipe pipe = getPipe(worldObj, x, y, z);
     	if (pipe == null) return false;
-    	
+
     	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
         int sideHit = target.sideHit;
@@ -971,7 +971,7 @@ public class BlockGenericPipe extends BlockContainer {
         }
 
         EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine);
-		fx.func_94052_a(Minecraft.getMinecraft().renderEngine, icon);
+		fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
         effectRenderer.addEffect(fx.func_70596_a(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
         return true;
     }
@@ -995,9 +995,9 @@ public class BlockGenericPipe extends BlockContainer {
     public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
     	Pipe pipe = getPipe(worldObj, x, y, z);
     	if (pipe == null) return false;
-    	
+
     	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
-    	
+
         byte its = 4;
         for (int i = 0; i < its; ++i) {
             for (int j = 0; j < its; ++j) {
@@ -1007,7 +1007,7 @@ public class BlockGenericPipe extends BlockContainer {
                     double pz = z + (k + 0.5D) / (double) its;
                     int random = rand.nextInt(6);
                     EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta, Minecraft.getMinecraft().renderEngine);
-					fx.func_94052_a(Minecraft.getMinecraft().renderEngine, icon);
+					fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
                     effectRenderer.addEffect(fx.func_70596_a(x, y, z));
                 }
             }

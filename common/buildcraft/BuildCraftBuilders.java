@@ -198,7 +198,7 @@ public class BuildCraftBuilders {
 		new BptBlockStairs(Block.stairsStoneBrick.blockID);
 
 		new BptBlockDoor(Block.doorWood.blockID, new ItemStack(Item.doorWood));
-		new BptBlockDoor(Block.doorSteel.blockID, new ItemStack(Item.doorSteel));
+		new BptBlockDoor(Block.doorIron.blockID, new ItemStack(Item.doorIron));
 
 		new BptBlockBed(Block.bed.blockID);
 

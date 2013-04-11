@@ -29,7 +29,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	int numAdjacentSources = 0;
 	boolean isOptimalFlowDirection[] = new boolean[4];
 	int flowCost[] = new int[4];
-	
+
 	public BlockOilFlowing(int i, Material material) {
 		super(i, material);
 
@@ -209,7 +209,7 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	private boolean blockBlocksFlow(World world, int i, int j, int k) {
 		int l = world.getBlockId(i, j, k);
-		if (l == Block.doorWood.blockID || l == Block.doorSteel.blockID || l == Block.signPost.blockID || l == Block.ladder.blockID || l == Block.reed.blockID)
+		if (l == Block.doorWood.blockID || l == Block.doorIron.blockID || l == Block.signPost.blockID || l == Block.ladder.blockID || l == Block.reed.blockID)
 			return true;
 		if (l == 0)
 			return false;
@@ -262,11 +262,11 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 	public boolean isBlockReplaceable(World world, int i, int j, int k) {
 		return true;
 	}
-	
+
 	@Override
     	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister){
 		this.theIcon = new Icon[] {iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
 	}
-	
+
 }

@@ -28,7 +28,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	@SideOnly(Side.CLIENT)
 	private IIconProvider iconProvider;
-	
+
 	private int pipeIconIndex;
 
 	protected ItemPipe(int i) {
@@ -91,29 +91,29 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		} else
 			return false;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public void setPipesIcons(IIconProvider iconProvider){
 		this.iconProvider = iconProvider;
 	}
-	
+
 	public void setPipeIconIndex(int index){
 		this.pipeIconIndex = index;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIconFromDamage(int par1) {
 		return iconProvider.getIcon(pipeIconIndex);
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateIcons(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
 	    // NOOP
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {

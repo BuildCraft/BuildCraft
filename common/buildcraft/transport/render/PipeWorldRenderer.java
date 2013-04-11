@@ -81,11 +81,11 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;
-		
+
 		PipeRenderState state = renderState.getRenderState();
 		IIconProvider icons = renderState.getPipeIcons();
 		if (icons == null) return;
-		
+
 
 		state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
@@ -138,7 +138,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		if (state.wireMatrix.hasWire(WireColor.Red)) {
 			state.currentTexture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(WireColor.Red));
-			
+
 			pipeWireRender(renderblocks, block, state, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, IPipe.WireColor.Red, x, y, z);
 		}
 
@@ -182,7 +182,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.facadeMatrix.isConnected(direction)) {
-				state.currentTexture = Block.blocksList[state.facadeMatrix.getFacadeBlockId(direction)].getBlockTextureFromSideAndMetadata(direction.ordinal(), state.facadeMatrix.getFacadeMetaId(direction));
+				state.currentTexture = Block.blocksList[state.facadeMatrix.getFacadeBlockId(direction)].getIcon(direction.ordinal(), state.facadeMatrix.getFacadeMetaId(direction));
 
 				// Hollow facade
 				if (state.pipeConnectionMatrix.isConnected(direction)) {

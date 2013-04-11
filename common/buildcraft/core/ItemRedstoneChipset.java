@@ -44,7 +44,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	private static String[] chipsetNames = { "redstone_red", "redstone_iron", "redstone_gold", "redstone_diamond", "redstone_pulsating" };
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateIcons(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
 	    icons = new Icon[chipsetNames.length];
 	    int i = 0;

@@ -35,27 +35,27 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
-		render.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, decodedMeta));
+		render.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getIcon(0, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		render.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, decodedMeta));
+		render.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getIcon(1, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, -1F);
-		render.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, decodedMeta));
+		render.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getIcon(2, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		render.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, decodedMeta));
+		render.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getIcon(3, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		render.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, decodedMeta));
+		render.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getIcon(4, decodedMeta));
 		tessellator.draw();
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		render.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, decodedMeta));
+		render.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, decodedMeta));
 		tessellator.draw();
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPopMatrix();
@@ -63,7 +63,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		// Render StructurePipe
 		block = BuildCraftTransport.genericPipeBlock;
 		Icon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.PipeStructureCobblestone); // Structure pipe
-		
+
 		block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos - 1F / 16F);
 		block.setBlockBoundsForItemRender();
 		render.setRenderBoundsFromBlock(block);

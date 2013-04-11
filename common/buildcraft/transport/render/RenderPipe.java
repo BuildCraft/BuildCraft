@@ -296,7 +296,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
-			
+
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 			GL11.glRotatef(angleY[i], 0, 1, 0);
 			GL11.glRotatef(angleZ[i], 0, 0, 1);
@@ -373,7 +373,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					break;
 				default:
 				}
-
+	            Minecraft.getMinecraft().renderEngine.bindTexture(liquid.canonical().getTextureSheet());
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}

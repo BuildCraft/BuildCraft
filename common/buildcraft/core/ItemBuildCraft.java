@@ -28,17 +28,17 @@ public class ItemBuildCraft extends Item {
 	public String getItemDisplayName(ItemStack itemstack) {
 		return StringUtil.localize(getUnlocalizedName(itemstack));
 	}
-	
+
 	@Override
 	public Item setUnlocalizedName(String par1Str) {
 		iconName = par1Str;
 		return super.setUnlocalizedName(par1Str);
 	}
-	
+
 	@Override
     @SideOnly(Side.CLIENT)
-    public void updateIcons(IconRegister par1IconRegister)
+    public void registerIcons(IconRegister par1IconRegister)
     {
-        this.iconIndex = par1IconRegister.registerIcon("buildcraft:" + iconName);
+        this.itemIcon = par1IconRegister.registerIcon("buildcraft:" + iconName);
     }
 }

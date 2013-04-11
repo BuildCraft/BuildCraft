@@ -65,7 +65,7 @@ public class BlockAssemblyTable extends BlockContainer {
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getIcon(int i, int j) {
 	    int s = i > 1 ? 2 : i;
 	    return icons[j][s];
 	}

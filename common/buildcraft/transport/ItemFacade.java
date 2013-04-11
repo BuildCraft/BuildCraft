@@ -150,11 +150,11 @@ public class ItemFacade extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateIcons(IconRegister par1IconRegister)
+	public void registerIcons(IconRegister par1IconRegister)
 	{
 	    // NOOP
 	}
-	
+
 	@Override
     @SideOnly(Side.CLIENT)
     public int getSpriteNumber()

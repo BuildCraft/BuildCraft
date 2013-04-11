@@ -224,7 +224,7 @@ public class BuildCraftFactory {
 
 		if (allowMining) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1), new Object[] { "ipi", "igi", "iPi", Character.valueOf('p'), Item.redstone,
-					Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'), BuildCraftCore.ironGearItem, Character.valueOf('P'), Item.pickaxeSteel });
+					Character.valueOf('i'), Item.ingotIron, Character.valueOf('g'), BuildCraftCore.ironGearItem, Character.valueOf('P'), Item.pickaxeIron });
 
 			CoreProxy.proxy.addCraftingRecipe(
 					new ItemStack(quarryBlock),

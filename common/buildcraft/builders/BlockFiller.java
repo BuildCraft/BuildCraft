@@ -62,7 +62,7 @@ public class BlockFiller extends BlockContainer {
 		int m = iblockaccess.getBlockMetadata(i, j, k);
 
 		if (iblockaccess == null)
-			return getBlockTextureFromSideAndMetadata(i, m);
+			return getIcon(i, m);
 
 		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
 
@@ -79,11 +79,11 @@ public class BlockFiller extends BlockContainer {
 				return textureSides;
 		}
 
-		return getBlockTextureFromSideAndMetadata(l, m);
+		return getIcon(l, m);
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getIcon(int i, int j) {
 		if (i == 0 || i == 1)
 			return textureTopOn;
 		else

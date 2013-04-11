@@ -63,7 +63,7 @@ public class BlockTank extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2) {
+	public Icon getIcon(int par1, int par2) {
 		switch(par1){
 		case 0:
 		case 1:
@@ -72,7 +72,7 @@ public class BlockTank extends BlockContainer {
 			return textureBottomSide;
 		}
 	}
-	
+
 	@SuppressWarnings({ "all" })
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		switch (l) {
