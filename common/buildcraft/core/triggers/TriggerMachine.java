@@ -10,12 +10,9 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.ForgeDirection;
 
 public class TriggerMachine extends BCTrigger {
 
@@ -50,11 +47,10 @@ public class TriggerMachine extends BCTrigger {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTextureIcon() {
+	public int getIconIndex() {
 		if (active)
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Machine_Active);
+			return ActionTriggerIconProvider.Trigger_Machine_Active;
 		else
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Machine_Inactive);
+			return ActionTriggerIconProvider.Trigger_Machine_Inactive;
 	}
-}
+}	

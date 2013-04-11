@@ -9,9 +9,6 @@
 
 package buildcraft.core.triggers;
 
-import net.minecraft.util.Icon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ActionRedstoneOutput extends BCAction {
 
@@ -25,8 +22,7 @@ public class ActionRedstoneOutput extends BCAction {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTexture() {
-		return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_RedstoneInput_Active);
+	public int getIconIndex() {
+		return ActionTriggerIconProvider.Trigger_RedstoneInput_Active;
 	}
 }

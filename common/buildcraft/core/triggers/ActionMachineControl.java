@@ -1,8 +1,5 @@
 package buildcraft.core.triggers;
 
-import net.minecraft.util.Icon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ActionMachineControl extends BCAction {
 
@@ -31,20 +28,17 @@ public class ActionMachineControl extends BCAction {
 			return "";
 		}
 	}
-
+	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTexture() {
+	public int getIconIndex() {
 		switch (mode) {
 		case On:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Action_MachineControl_On);
+			return ActionTriggerIconProvider.Action_MachineControl_On;
 		case Off:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Action_MachineControl_Off);
+			return ActionTriggerIconProvider.Action_MachineControl_Off;
 		case Loop:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Action_MachineControl_Loop);
 		default:
-			return null;
-		}
+			return ActionTriggerIconProvider.Action_MachineControl_Loop;
+		}		
 	}
-
 }

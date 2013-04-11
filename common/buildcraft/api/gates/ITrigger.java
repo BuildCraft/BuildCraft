@@ -1,21 +1,16 @@
 package buildcraft.api.gates;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.ForgeDirection;
 
 public interface ITrigger {
 
 	public abstract int getId();
 
-	/**
-	 * Return the texture file for this trigger icon
-	 */
-    @SideOnly(Side.CLIENT)
-	public Icon getTextureIcon();
+	public int getIconIndex();
     
     @SideOnly(Side.CLIENT)
     public IIconProvider getIconProvider();

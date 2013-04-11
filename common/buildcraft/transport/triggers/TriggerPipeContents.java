@@ -9,7 +9,6 @@
 
 package buildcraft.transport.triggers;
 
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
@@ -23,8 +22,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
@@ -127,18 +124,18 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTextureIcon() {
+	public int getIconIndex() {
 		switch (kind) {
-		case Empty:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_Empty);
-		case ContainsItems:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems);
-		case ContainsLiquids:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid);
-		case ContainsEnergy:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy);
+			case Empty:
+				return ActionTriggerIconProvider.Trigger_PipeContents_Empty;
+			case ContainsItems:
+				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems;
+			case ContainsLiquids:
+				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid;
+			case ContainsEnergy:
+			default:
+				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy;
+			
 		}
-		return null;
 	}
 }

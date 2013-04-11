@@ -12,14 +12,11 @@ package buildcraft.core.triggers;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerInventory extends BCTrigger {
 
@@ -115,17 +112,16 @@ public class TriggerInventory extends BCTrigger {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTextureIcon() {
+	public int getIconIndex() {
 		switch (state) {
 		case Empty:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Empty);
+			return ActionTriggerIconProvider.Trigger_Inventory_Empty;
 		case Contains:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Contains);
+			return ActionTriggerIconProvider.Trigger_Inventory_Contains;
 		case Space:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Space);
+			return ActionTriggerIconProvider.Trigger_Inventory_Space;
 		default:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_Inventory_Full);
+			return ActionTriggerIconProvider.Trigger_Inventory_Full;
 		}
 	}
 }

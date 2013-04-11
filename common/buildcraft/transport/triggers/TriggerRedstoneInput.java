@@ -9,14 +9,11 @@
 
 package buildcraft.transport.triggers;
 
-import net.minecraft.util.Icon;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 
@@ -43,13 +40,12 @@ public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 		else
 			return !pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
-
+	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTextureIcon() {
+	public int getIconIndex() {
 		if (active)
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_RedstoneInput_Active);
+			return ActionTriggerIconProvider.Trigger_RedstoneInput_Active;
 		else
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive);
+			return ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive;
 	}
 }

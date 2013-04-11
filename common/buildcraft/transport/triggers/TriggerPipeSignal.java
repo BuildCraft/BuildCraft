@@ -9,15 +9,12 @@
 
 package buildcraft.transport.triggers;
 
-import net.minecraft.util.Icon;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 
@@ -72,34 +69,32 @@ public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 		else
 			return pipe.signalStrength[color.ordinal()] == 0;
 	}
-
+	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTextureIcon() {
+	public int getIconIndex() {
 		if (active) {
 			switch (color) {
 			case Red:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active;
 			case Blue:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active;
 			case Green:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active;
 			case Yellow:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active;
 			}
 		} else {
 			switch (color) {
 			case Red:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive;
 			case Blue:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Inactive);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Inactive;
 			case Green:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Inactive);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Green_Inactive;
 			case Yellow:
-				return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive);
+				return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive;
 			}
 		}
-
-		return null;
+		return -1;
 	}
 }

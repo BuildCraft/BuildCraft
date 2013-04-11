@@ -9,12 +9,9 @@
 
 package buildcraft.transport.triggers;
 
-import net.minecraft.util.Icon;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCAction;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ActionSignalOutput extends BCAction {
 
@@ -43,19 +40,17 @@ public class ActionSignalOutput extends BCAction {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTexture() {
+	public int getIconIndex() {
 		switch (color) {
 		case Red:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active);
+			return ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active;
 		case Blue:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active);
+			return ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active;
 		case Green:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active);
+			return ActionTriggerIconProvider.Trigger_PipeSignal_Green_Active;
 		case Yellow:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active);
+		default:
+			return ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Active;
 		}
-
-		return null;
 	}
 }

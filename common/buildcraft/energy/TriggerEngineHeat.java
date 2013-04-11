@@ -10,13 +10,10 @@
 package buildcraft.energy;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.ForgeDirection;
 
 public class TriggerEngineHeat extends BCTrigger {
 
@@ -54,17 +51,16 @@ public class TriggerEngineHeat extends BCTrigger {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTextureIcon() {
+	public int getIconIndex() {
 		switch (stage) {
 		case Blue:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Blue);
+			return ActionTriggerIconProvider.Trigger_EngineHeat_Blue;
 		case Green:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Green);
+			return ActionTriggerIconProvider.Trigger_EngineHeat_Green;
 		case Yellow:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Yellow);
+			return ActionTriggerIconProvider.Trigger_EngineHeat_Yellow;
 		default:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_EngineHeat_Red);
+			return ActionTriggerIconProvider.Trigger_EngineHeat_Red;
 		}
 	}
 }

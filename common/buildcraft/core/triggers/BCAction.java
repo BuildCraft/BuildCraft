@@ -9,7 +9,6 @@
 
 package buildcraft.core.triggers;
 
-import net.minecraft.util.Icon;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -32,8 +31,7 @@ public abstract class BCAction implements IAction {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public abstract Icon getTexture();
+	public abstract int getIconIndex();
 
 	@Override
 	public boolean hasParameter() {

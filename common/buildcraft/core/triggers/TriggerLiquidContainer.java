@@ -10,15 +10,12 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.gates.ITriggerParameter;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TriggerLiquidContainer extends BCTrigger {
 
@@ -124,17 +121,16 @@ public class TriggerLiquidContainer extends BCTrigger {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getTextureIcon() {
+	public int getIconIndex() {
 		switch (state) {
 		case Empty:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Empty);
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Empty;
 		case Contains:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Contains);
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Contains;
 		case Space:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Space);
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Space;
 		default:
-			return getIconProvider().getIcon(ActionTriggerIconProvider.Trigger_LiquidContainer_Full);
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Full;
 		}
 	}
 }

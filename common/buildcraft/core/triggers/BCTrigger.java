@@ -10,7 +10,7 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
@@ -19,7 +19,6 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.ForgeDirection;
 
 /**
  * This class has to be implemented to create new triggers kinds to BuildCraft gates. There is an instance per kind, which will get called wherever the trigger
@@ -39,15 +38,14 @@ public abstract class BCTrigger implements ITrigger {
 		return this.id;
 	}
 
-	@Override
-    @SideOnly(Side.CLIENT)
-	public abstract Icon getTextureIcon();
-    
     @Override
     @SideOnly(Side.CLIENT)
     public IIconProvider getIconProvider() {
     	return BuildCraftCore.instance.actionTriggerIconProvider;
     }
+    
+    @Override
+    public abstract int getIconIndex();
 
 	@Override
 	public boolean hasParameter() {
