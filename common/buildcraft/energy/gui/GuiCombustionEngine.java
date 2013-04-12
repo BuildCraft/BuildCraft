@@ -69,7 +69,7 @@ public class GuiCombustionEngine extends GuiEngine {
 			textureSheet = liquid.canonical().getTextureSheet();
 			liquidIcon = liquid.canonical().getRenderingIcon();
 		} else {
-			if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
+			if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID].blockID > 0) {
 				liquidIcon = Block.blocksList[liquid.itemID].getBlockTextureFromSide(0);
 				textureSheet = "/terrain.png";
 			} else {
