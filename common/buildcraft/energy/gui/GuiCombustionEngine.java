@@ -9,7 +9,10 @@
 
 package buildcraft.energy.gui;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.util.Icon;
 import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
@@ -60,7 +63,21 @@ public class GuiCombustionEngine extends GuiEngine {
 		}
 		int start = 0;
 	
-		mc.renderEngine.bindTexture(liquid.canonical().getTextureSheet());
+		Icon liquidIcon;
+		String textureSheet;
+		if(liquid.canonical().getRenderingIcon() != null) {
+			textureSheet = liquid.canonical().getTextureSheet();
+			liquidIcon = liquid.canonical().getRenderingIcon();
+		} else {
+			if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
+				liquidIcon = Block.blocksList[liquid.itemID].getBlockTextureFromSide(0);
+				textureSheet = "/terrain.png";
+			} else {
+				liquidIcon = Item.itemsList[liquid.itemID].getIconFromDamage(liquid.itemMeta);
+				textureSheet = "/gui/items.png";
+			}
+		}
+		mc.renderEngine.bindTexture(textureSheet);
 		
 		while (true) {
 			int x = 0;
@@ -73,7 +90,7 @@ public class GuiCombustionEngine extends GuiEngine {
 				squaled = 0;
 			}
 	
-			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquid.canonical().getRenderingIcon(), 16, 16 - (16 - x));
+			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquidIcon, 16, 16 - (16 - x));
 			start = start + 16;
 	
 			if (x == 0 || squaled == 0) {
@@ -84,4 +101,5 @@ public class GuiCombustionEngine extends GuiEngine {
 		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);
 	}
+
 }
