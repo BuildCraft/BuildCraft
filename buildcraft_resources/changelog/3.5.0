@@ -1,0 +1,6 @@
+
+#3.5.0
+
+- Updated: Minecraft 1.5.1. (Krapht/cpw/CovertJaguar/Flow86)
+- Changed: Hopper fill speed.
+- Bugfix: Block update is now triggered when placing/removing a facade. (Techjar)

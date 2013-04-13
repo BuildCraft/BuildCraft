@@ -3,7 +3,7 @@
     <!-- Properties -->
     
     <property name="build.dir"           value="build"/>
-	<property name="src.dir"			 value="buildcraft.131" />
+	<property name="src.dir"			 value="buildcraft.mc15" />
 	<property name="lang.dir"			 value="buildcraft.localization" />
 	<property name="resource.dir"		 value="mc.devel" />
     
@@ -15,9 +15,9 @@
 
     <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
           
-	<property name="mc.version"			 value="1.4.7"/>
-    <property name="forge.version"		 value="6.6.0.507"/>
-    <property name="bc.version"          value="3.4.4fc"/>
+	<property name="mc.version"			 value="1.5.1"/>
+    <property name="forge.version"		 value="7.7.1.650"/>
+    <property name="bc.version"          value="3.5.0"/>
     <property name="bc.version.full"     value="${bc.version}"/>
     
     <echo message="Starting build for ${bc.version.full}"/>
@@ -78,11 +78,11 @@
         
         <!-- Reobf -->
         <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c reobfuscate.bat"/>
+            <arg line="/c reobfuscate.bat --srgnames"/>
         </exec>
         
         <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-            <arg value="reobfuscate.sh" />
+            <arg value="reobfuscate.sh --srgnames" />
         </exec>
         
         <!-- Copy BC classes -->
