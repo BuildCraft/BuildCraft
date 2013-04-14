@@ -382,6 +382,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			if (d != null) {
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
 
+				bindTextureByName(liquid.canonical().getTextureSheet());
+				
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
 				}
