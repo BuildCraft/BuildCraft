@@ -58,7 +58,7 @@ public class PipeTransportPower extends PipeTransport {
 	SafeTimeTracker tracker = new SafeTimeTracker();
 
 	@Override
-	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
 	}
 
@@ -291,11 +291,6 @@ public class PipeTransportPower extends PipeTransport {
 
 	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
-	}
-
-	@Override
-	public boolean allowsConnect(PipeTransport with) {
-		return with instanceof PipeTransportPower;
 	}
 
 	/**

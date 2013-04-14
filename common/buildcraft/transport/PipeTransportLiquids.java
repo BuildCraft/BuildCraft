@@ -488,7 +488,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	}
 
 	@Override
-	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		if (tile instanceof ITankContainer) {
 			ITankContainer liq = (ITankContainer) tile;
 
@@ -501,11 +501,6 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
-	}
-
-	@Override
-	public boolean allowsConnect(PipeTransport with) {
-		return with instanceof PipeTransportLiquids;
 	}
 
 	/** ITankContainer implementation **/

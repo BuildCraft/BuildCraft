@@ -14,7 +14,7 @@ import buildcraft.transport.TileGenericPipe;
 
 public class PipeLogicSandstone extends PipeLogic {
 	@Override
-	public boolean isPipeConnected(TileEntity tile) {
+	public boolean canPipeConnect(TileEntity tile) {
 		return (tile instanceof TileGenericPipe);
 	}
 }

@@ -111,7 +111,6 @@ public class DefaultProps {
 	public static int SPRING_ID = 1522;
 
 	public static boolean CURRENT_CONTINUOUS = false;
-	public static boolean PIPES_ALWAYS_CONNECT = false;
 	public static double PIPES_DURABILITY = 0.25D;
 	public static boolean FILLER_DESTROY = false;
 	public static boolean USE_PIPELOSS = true;
