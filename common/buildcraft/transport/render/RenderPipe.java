@@ -95,11 +95,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		displayLiquidLists.get(liquidId).put(meta, d);
 
 		BlockInterface block = new BlockInterface();
-		String spriteSet = "/gui/items.png";
 
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
 			block.baseBlock = Block.blocksList[liquidId];
-			spriteSet = "/terrain.png";
 		} else {
 			block.baseBlock = Block.waterStill;
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
@@ -116,8 +114,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			d.sideHorizontal[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.sideHorizontal[s], 4864 /* GL_COMPILE */);
-
-			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
 
 			block.minX = 0.0F;
 			block.minZ = Utils.pipeMinPos + 0.01F;
@@ -137,8 +133,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.sideVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.sideVertical[s], 4864 /* GL_COMPILE */);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
-
 			block.minY = Utils.pipeMaxPos - 0.01;
 			block.maxY = 1;
 
@@ -157,8 +151,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			d.centerHorizontal[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerHorizontal[s], 4864 /* GL_COMPILE */);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
-
 			block.minX = Utils.pipeMinPos + 0.01;
 			block.minZ = Utils.pipeMinPos + 0.01;
 
@@ -176,8 +168,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 			d.centerVertical[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d.centerVertical[s], 4864 /* GL_COMPILE */);
-
-			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
 
 			block.minY = Utils.pipeMinPos + 0.01;
 			block.maxY = Utils.pipeMaxPos - 0.01;
@@ -213,8 +203,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		for (int s = 0; s < POWER_STAGES; ++s) {
 			displayPowerList[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(displayPowerList[s], 4864 /* GL_COMPILE */);
-
-			Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
 
 			float minSize = 0.005F;
 
@@ -290,7 +278,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		GL11.glTranslatef((float) x, (float) y, (float) z);
+		GL11.glTranslatef((float) x, (float) y, (float) z);		
+
+		bindTextureByName("/terrain.png");
 
 		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
 
@@ -373,7 +363,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					break;
 				default:
 				}
-	            Minecraft.getMinecraft().renderEngine.bindTexture(liquid.canonical().getTextureSheet());
+				bindTextureByName(liquid.canonical().getTextureSheet());
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}
@@ -447,10 +437,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		ItemStack itemstack = entityitem.getItemStack();
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
-        GL11.glTranslatef(0, 0.25F, 0);
-        GL11.glScalef(renderScale, renderScale, renderScale);
-        dummyEntityItem.setEntityItemStack(itemstack);
-        customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
+		GL11.glTranslatef(0, 0.25F, 0);
+		GL11.glScalef(renderScale, renderScale, renderScale);
+		dummyEntityItem.setEntityItemStack(itemstack);
+		customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
 		GL11.glPopMatrix();
 	}
 }
