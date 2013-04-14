@@ -44,8 +44,6 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		block.baseBlock = Block.waterStill;
 		block.texture = liquid.getRenderingIcon();
 
-		String spriteSet = liquid.getTextureSheet();
-
 		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
 			block.baseBlock = Block.blocksList[liquid.itemID];
 		}
@@ -53,8 +51,6 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		for (int s = 0; s < displayStages; ++s) {
 			d[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(d[s], 4864 /* GL_COMPILE */);
-
-			Minecraft.getMinecraft().renderEngine.bindTexture(spriteSet);
 
 			block.minX = 0.125 + 0.01;
 			block.minY = 0;
@@ -92,7 +88,8 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
-        Minecraft.getMinecraft().renderEngine.bindTexture(refLiquid.getTextureSheet());
+		
+       		bindTextureByName(refLiquid.getTextureSheet());
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
