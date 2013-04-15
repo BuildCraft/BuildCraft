@@ -471,7 +471,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (pipe2 != null && !(pipe2.isPipeConnected(this, side)))
 			return false;
 
-		return pipe1 != null ? pipe1.isPipeConnected(with, side) : false;
+		return pipe1 != null ? pipe1.isPipeConnected(with, side.getOpposite()) : false;
 	}
 
 	private void computeConnections() {
