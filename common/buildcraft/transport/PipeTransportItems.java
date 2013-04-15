@@ -497,8 +497,14 @@ public class PipeTransportItems extends PipeTransport {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		return tile instanceof TileGenericPipe || tile instanceof IPipeEntry || tile instanceof ISpecialInventory
-				|| (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) || (tile instanceof IMachine && ((IMachine) tile).manageSolids());
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems))
+				return false;
+		}
+
+		return tile instanceof TileGenericPipe || tile instanceof IPipeEntry || tile instanceof ISpecialInventory || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
+				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 
 	@Override

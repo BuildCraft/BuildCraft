@@ -99,6 +99,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			return all;
 		}
 
+		@Override
 		public LiquidTank readFromNBT(NBTTagCompound compoundTag) {
 			this.setCapacity(compoundTag.getInteger("capacity"));
 
@@ -109,6 +110,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			return this;
 		}
 
+		@Override
 		public NBTTagCompound writeToNBT(NBTTagCompound subTag) {
 			subTag.setInteger("capacity", this.getCapacity());
 
@@ -489,6 +491,12 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportLiquids))
+				return false;
+		}
+
 		if (tile instanceof ITankContainer) {
 			ITankContainer liq = (ITankContainer) tile;
 

@@ -59,6 +59,12 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower))
+				return false;
+		}
+
 		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
 	}
 

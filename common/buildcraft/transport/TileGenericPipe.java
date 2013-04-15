@@ -462,20 +462,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	
 	private boolean arePipesConnected(TileEntity with, ForgeDirection side) {
 		Pipe pipe1 = pipe;
-		Pipe pipe2 = null;
-
-		if (with instanceof TileGenericPipe) {
-			pipe2 = ((TileGenericPipe) with).pipe;
-		}
 
 		if (!BlockGenericPipe.isValid(pipe1))
 			return false;
 
-		if (BlockGenericPipe.isValid(pipe2) && !pipe1.transport.getClass().isAssignableFrom(pipe2.transport.getClass()))	
+		if (with instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) with).pipe;
+
+			if (!BlockGenericPipe.isValid(pipe2))
 				return false;
-		
-		if (pipe2 != null && !(pipe2.canPipeConnect(this, side.getOpposite())))
-			return false;
+
+			if (!pipe2.canPipeConnect(this, side.getOpposite()))
+				return false;
+		}
 
 		return pipe1 != null ? pipe1.canPipeConnect(with, side) : false;
 	}
