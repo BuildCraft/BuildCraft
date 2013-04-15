@@ -115,7 +115,7 @@ public class ItemFacade extends ItemBuildCraft {
 				ItemStack base = new ItemStack(b, 1);
 				if (base.getHasSubtypes()) {
 					Set<String> names = Sets.newHashSet();
-					for (int meta = 0; meta < 15; meta++) {
+					for (int meta = 0; meta <= 15; meta++) {
 						ItemStack is = new ItemStack(b, 1, meta);
 						if (!Strings.isNullOrEmpty(is.getItemName()) && names.add(is.getItemName())) {
 							ItemFacade.addFacade(is);
