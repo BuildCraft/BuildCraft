@@ -138,7 +138,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		return logic.canPipeConnect(tile) && transport.canPipeConnect(tile, side);
+		return logic.canPipeConnect(tile, side) && transport.canPipeConnect(tile, side);
 	}
 
 	/**

@@ -66,14 +66,14 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile) {
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		Pipe pipe2 = null;
 
 		if (tile instanceof TileGenericPipe) {
 			pipe2 = ((TileGenericPipe) tile).pipe;
 		}
 
-		return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood)) && super.canPipeConnect(tile);
+		return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood)) && super.canPipeConnect(tile, side);
 	}
 
 	@Override

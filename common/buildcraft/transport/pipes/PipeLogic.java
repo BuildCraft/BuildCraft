@@ -57,7 +57,7 @@ public class PipeLogic implements IDropControlInventory {
 		return false;
 	}
 
-	public boolean canPipeConnect(TileEntity tile) {
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		return true;
 	}
 
