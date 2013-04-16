@@ -43,8 +43,6 @@ public class GateIconProvider implements IIconProvider {
 	@SideOnly(Side.CLIENT)
 	private Icon[] icons;
 	
-	private boolean registered = false;
-	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int pipeIconIndex) {
@@ -54,8 +52,6 @@ public class GateIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		if (registered) return;
-		registered = true;
 		
 		icons = new Icon[MAX];
 		icons[GateIconProvider.Gate_Dark] = iconRegister.registerIcon("buildcraft:gate_dark");

@@ -47,8 +47,6 @@ public class PipeIconProvider implements IIconProvider {
 	
 	public static final int MAX								= 34;
 		
-	private boolean registered = false;
-	
 	@SideOnly(Side.CLIENT)
 	private Icon[] _icons;
 
@@ -61,8 +59,6 @@ public class PipeIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		if (registered) return;
-		registered = true;
 		
 		_icons = new Icon[PipeIconProvider.MAX];
 		

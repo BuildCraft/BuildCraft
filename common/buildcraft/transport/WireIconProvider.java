@@ -22,8 +22,6 @@ public class WireIconProvider implements IIconProvider {
 	@SideOnly(Side.CLIENT)
 	private Icon[] icons;
 	
-	private boolean registered = false;
-	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int pipeIconIndex) {
@@ -33,9 +31,6 @@ public class WireIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		if (registered) return;
-		registered = true;
-		
 		icons = new Icon[MAX];
 
 		icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerIcon("buildcraft:texture_red_dark");
