@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.proxy;
 
 import java.io.File;
@@ -100,10 +98,14 @@ public class CoreProxy {
 
 	/* REGISTRATION */
 	public void registerBlock(Block block) {
-		GameRegistry.registerBlock(block, ItemBlockBuildCraft.class, block.getUnlocalizedName());
+		GameRegistry.registerBlock(block, ItemBlockBuildCraft.class, block.getUnlocalizedName().replace("tile.", ""));
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void registerItem(Item item) {
+		GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public void registerTileEntity(Class clas, String ident) {
 		GameRegistry.registerTileEntity(clas, ident);
 	}
@@ -168,7 +170,6 @@ public class CoreProxy {
 
 	private EntityPlayer createNewPlayer(World world) {
 		EntityPlayer player = new EntityPlayer(world) {
-
 			@Override
 			public void sendChatToPlayer(String var1) {
 			}
@@ -182,7 +183,6 @@ public class CoreProxy {
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
 			}
-
 		};
 		player.username = "[BuildCraft]";
 		return player;
@@ -190,7 +190,6 @@ public class CoreProxy {
 
 	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
 		EntityPlayer player = new EntityPlayer(world) {
-
 			@Override
 			public void sendChatToPlayer(String var1) {
 			}
@@ -204,7 +203,6 @@ public class CoreProxy {
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
 			}
-
 		};
 		player.username = "[BuildCraft]";
 		player.posX = x;
@@ -235,7 +233,7 @@ public class CoreProxy {
 
 		return CoreProxy.buildCraftPlayer;
 	}
-	
+
 	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		return new EntityBlock(world, i, j, k, iSize, jSize, kSize);
 	}

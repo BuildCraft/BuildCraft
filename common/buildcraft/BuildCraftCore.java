@@ -226,6 +226,7 @@ public class BuildCraftCore {
 
 			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setUnlocalizedName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
+			CoreProxy.proxy.registerItem(wrenchItem);
 
 			Property springId = BuildCraftCore.mainConfiguration.getBlock("springBlock.id", DefaultProps.SPRING_ID);
 
@@ -241,23 +242,28 @@ public class BuildCraftCore {
 
 			if(BuildCraftCore.modifyWorld) {
 				springBlock = new BlockSpring(springId.getInt()).setUnlocalizedName("eternalSpring");
-				GameRegistry.registerBlock(springBlock, "eternalSpring");
+				CoreProxy.proxy.registerBlock(springBlock);
 			}
 
 			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
+			CoreProxy.proxy.registerItem(woodenGearItem);
 
 			stoneGearItem = (new ItemBuildCraft(stoneGearId.getInt())).setUnlocalizedName("stoneGearItem");
 			LanguageRegistry.addName(stoneGearItem, "Stone Gear");
+			CoreProxy.proxy.registerItem(stoneGearItem);
 
 			ironGearItem = (new ItemBuildCraft(ironGearId.getInt())).setUnlocalizedName("ironGearItem");
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
+			CoreProxy.proxy.registerItem(ironGearItem);
 
 			goldGearItem = (new ItemBuildCraft(goldenGearId.getInt())).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
+			CoreProxy.proxy.registerItem(goldGearItem);
 
 			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
+			CoreProxy.proxy.registerItem(diamondGearItem);
 
 			MinecraftForge.EVENT_BUS.register(this);
 
