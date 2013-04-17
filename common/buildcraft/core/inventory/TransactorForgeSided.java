@@ -35,4 +35,8 @@ public class TransactorForgeSided extends TransactorSimple {
 		return getEmptySlot(sided.getStartInventorySide(orientation), sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
 	}
 
+	@Override
+	public boolean doesConnect(TileEntity entity, ForgeDirection direction) {
+		return sided.getSizeInventorySide(direction) > 0;
+	}
 }
