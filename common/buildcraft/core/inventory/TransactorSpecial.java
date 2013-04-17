@@ -16,5 +16,10 @@ public class TransactorSpecial extends Transactor {
 	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
 		return inventory.addItem(stack, doAdd, orientation);
 	}
+	
+	@Override
+	public boolean doesConnect(TileEntity entity, ForgeDirection direction) {
+		return true;
+	}
 
 }
