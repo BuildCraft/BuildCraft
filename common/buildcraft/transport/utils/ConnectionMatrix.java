@@ -32,14 +32,19 @@ public class ConnectionMatrix {
 	}
 
 	public void writeData(DataOutputStream data) throws IOException {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			data.writeBoolean(_connected[i]);
+		byte write = 0;
+		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			if (this._connected[i]){
+				write |= 1 << i;
+			}
 		}
+		data.writeByte(write);
 	}
 
 	public void readData(DataInputStream data) throws IOException {
+		byte read = data.readByte();
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			_connected[i] = data.readBoolean();
+			_connected[i] = (read & (1 << i)) != 0;;
 		}
 	}
 }
