@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import net.minecraftforge.common.ForgeDirection;
 
-public class FacadeMatrix extends ConnectionMatrix {
+public class FacadeMatrix {
 	private final int[] _blockIds = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private final int[] _blockMetas = new int[ForgeDirection.VALID_DIRECTIONS.length];
 
@@ -31,29 +31,22 @@ public class FacadeMatrix extends ConnectionMatrix {
 		return _blockMetas[direction.ordinal()];
 	}
 
-	@Override
 	public boolean isDirty() {
-		return dirty || super.isDirty();
+		return dirty;
 	}
 
-	@Override
 	public void clean() {
-		super.clean();
 		dirty = false;
 	}
 
-	@Override
 	public void readData(DataInputStream data) throws IOException {
-		super.readData(data);
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			_blockIds[i] = data.readInt();
 			_blockMetas[i] = data.readInt();
 		}
 	}
 
-	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		super.writeData(data);
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			data.writeInt(_blockIds[i]);
 			data.writeInt(_blockMetas[i]);

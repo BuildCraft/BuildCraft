@@ -14,7 +14,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
@@ -241,10 +240,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			int blockId = this.facadeBlocks[direction.ordinal()];
-			renderState.facadeMatrix.setConnected(direction, blockId != 0 && Block.blocksList[blockId] != null);
-			if (Block.blocksList[blockId] != null) {
-				renderState.facadeMatrix.setFacade(direction, blockId, this.facadeMeta[direction.ordinal()]);
-			}
+			renderState.facadeMatrix.setFacade(direction, blockId, this.facadeMeta[direction.ordinal()]);
 		}
 
 		if (renderState.isDirty()) {
@@ -579,7 +575,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	public boolean hasFacade(ForgeDirection direction) {
 		if (this.worldObj.isRemote)
-			return renderState.facadeMatrix.isConnected(direction);
+			return renderState.facadeMatrix.getFacadeBlockId(direction) != 0;
 		return (this.facadeBlocks[direction.ordinal()] != 0);
 	}
 	

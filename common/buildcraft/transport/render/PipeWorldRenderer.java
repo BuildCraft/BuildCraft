@@ -181,7 +181,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		zeroState[2][1] = 1.0F;
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.facadeMatrix.isConnected(direction)) {
+			if (state.facadeMatrix.getFacadeBlockId(direction) != 0) {
 				state.currentTexture = Block.blocksList[state.facadeMatrix.getFacadeBlockId(direction)].getIcon(direction.ordinal(), state.facadeMatrix.getFacadeMetaId(direction));
 
 				// Hollow facade
@@ -243,7 +243,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.PipeStructureCobblestone); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.facadeMatrix.isConnected(direction) && !state.pipeConnectionMatrix.isConnected(direction)) {
+			if (state.facadeMatrix.getFacadeBlockId(direction) != 0 && !state.pipeConnectionMatrix.isConnected(direction)) {
 				float[][] rotated = deepClone(zeroState);
 				transform(rotated, direction);
 
@@ -480,41 +480,45 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		float min = Utils.pipeMinPos + 0.05F;
 		float max = Utils.pipeMaxPos - 0.05F;
 
-		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.WEST) && !state.facadeMatrix.isConnected(ForgeDirection.WEST)) {
+		if (shouldRenderNormalPipeSide(state, ForgeDirection.WEST)) {
 			block.setBlockBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos, max, max);
 			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.EAST) && !state.facadeMatrix.isConnected(ForgeDirection.EAST)) {
+		if (shouldRenderNormalPipeSide(state, ForgeDirection.EAST)) {
 			block.setBlockBounds(Utils.pipeMaxPos, min, min, Utils.pipeMaxPos + 0.10F, max, max);
 			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.DOWN) && !state.facadeMatrix.isConnected(ForgeDirection.DOWN)) {
+		if (shouldRenderNormalPipeSide(state, ForgeDirection.DOWN)) {
 			block.setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
 			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.UP) && !state.facadeMatrix.isConnected(ForgeDirection.UP)) {
+		if (shouldRenderNormalPipeSide(state, ForgeDirection.UP)) {
 			block.setBlockBounds(min, Utils.pipeMaxPos, min, max, Utils.pipeMaxPos + 0.10F, max);
 			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.NORTH) && !state.facadeMatrix.isConnected(ForgeDirection.NORTH)) {
+		if (shouldRenderNormalPipeSide(state, ForgeDirection.NORTH)) {
 			block.setBlockBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos);
 			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 
-		if (!state.pipeConnectionMatrix.isConnected(ForgeDirection.SOUTH) && !state.facadeMatrix.isConnected(ForgeDirection.SOUTH)) {
+		if (shouldRenderNormalPipeSide(state, ForgeDirection.SOUTH)) {
 			block.setBlockBounds(min, min, Utils.pipeMaxPos, max, max, Utils.pipeMaxPos + 0.10F);
 			renderblocks.setRenderBoundsFromBlock(block);
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
+	}
+	
+	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction){
+		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) != 0;
 	}
 
 	@Override
