@@ -459,6 +459,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 		if (with instanceof TileGenericPipe) {
 			pipe2 = ((TileGenericPipe) with).pipe;
+		}else{
+			if (with != null && !Transactor.getTransactorFor(with).doesConnect(with, side))
+				return false;
 		}
 
 		if (!BlockGenericPipe.isValid(pipe1))
