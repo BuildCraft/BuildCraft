@@ -102,7 +102,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class BuildCraftTransport {
 	public static BlockGenericPipe genericPipeBlock;
 
-	public static boolean alwaysConnectPipes;
 	public static boolean usePipeLoss;
 	public static int maxItemsInPipes;
 	public static float pipeDurability;
@@ -222,11 +221,6 @@ public class BuildCraftTransport {
 	@PreInit
 	public void preInitialize(FMLPreInitializationEvent evt) {
 		try {
-			Property alwaysConnect = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.alwaysConnect",
-					DefaultProps.PIPES_ALWAYS_CONNECT);
-			alwaysConnect.comment = "set to false to deactivate pipe connection rules, true by default";
-			alwaysConnectPipes = alwaysConnect.getBoolean(DefaultProps.PIPES_ALWAYS_CONNECT);
-
 			Property pipeLoss = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "power.usePipeLoss", DefaultProps.USE_PIPELOSS);
 			pipeLoss.comment = "Set to false to turn off energy loss over distance on all power pipes";
 			usePipeLoss = pipeLoss.getBoolean(DefaultProps.USE_PIPELOSS);

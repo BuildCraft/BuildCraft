@@ -14,9 +14,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
@@ -43,6 +40,10 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
 import buildcraft.transport.pipes.PipeLogic;
 import buildcraft.transport.triggers.ActionSignalOutput;
+
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -136,8 +137,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		updateSignalState();
 	}
 
-	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
-		return logic.isPipeConnected(tile) && transport.isPipeConnected(tile, side);
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		return logic.canPipeConnect(tile, side) && transport.canPipeConnect(tile, side);
 	}
 
 	/**

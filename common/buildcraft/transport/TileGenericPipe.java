@@ -453,25 +453,30 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			return null;
 	}
 
-	public boolean isPipeConnected(TileEntity with, ForgeDirection side) {
+	/**
+	 * Checks if this tile is connected to another tile
+	 * @param with - The other Tile
+	 * @param side - The orientation to get to the other tile ('with')
+	 * @return true if pipes are considered connected
+	 */
+	
+	private boolean arePipesConnected(TileEntity with, ForgeDirection side) {
 		Pipe pipe1 = pipe;
-		Pipe pipe2 = null;
-
-		if (with instanceof TileGenericPipe) {
-			pipe2 = ((TileGenericPipe) with).pipe;
-		}
 
 		if (!BlockGenericPipe.isValid(pipe1))
 			return false;
 
-		if (BlockGenericPipe.isValid(pipe2) && !pipe1.transport.getClass().isAssignableFrom(pipe2.transport.getClass())
-				&& !pipe1.transport.allowsConnect(pipe2.transport))
-			return false;
+		if (with instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) with).pipe;
 
-		if (pipe2 != null && !(pipe2.isPipeConnected(this, side)))
-			return false;
+			if (!BlockGenericPipe.isValid(pipe2))
+				return false;
 
-		return pipe1 != null ? pipe1.isPipeConnected(with, side.getOpposite()) : false;
+			if (!pipe2.canPipeConnect(this, side.getOpposite()))
+				return false;
+		}
+
+		return pipe1 != null ? pipe1.canPipeConnect(with, side) : false;
 	}
 
 	private void computeConnections() {
@@ -483,12 +488,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				t.refresh();
 
 				if (t.getTile() != null) {
-					pipeConnectionsBuffer[i] = isPipeConnected(t.getTile(), ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
-
-					if (t.getTile() instanceof TileGenericPipe) {
-						TileGenericPipe pipe = (TileGenericPipe) t.getTile();
-						pipe.pipeConnectionsBuffer[ForgeDirection.VALID_DIRECTIONS[i].getOpposite().ordinal()] = pipeConnectionsBuffer[i];
-					}
+					pipeConnectionsBuffer[i] = arePipesConnected(t.getTile(), ForgeDirection.VALID_DIRECTIONS[i]);
 				}
 			}
 		}
