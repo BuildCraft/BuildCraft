@@ -7,4 +7,5 @@ public interface ITransactor {
 
 	ItemStack add(ItemStack stack, ForgeDirection orientation, boolean doAdd);
 
+	boolean doesConnect(TileEntity entity, ForgeDirection direction);
 }
