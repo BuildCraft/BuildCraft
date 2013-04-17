@@ -31,6 +31,11 @@ public class TransactorSimple extends Transactor {
 		return injected;
 	}
 
+	@Override
+	public boolean doesConnect(TileEntity entity, ForgeDirection direction) {
+		return true;
+	}
+
 	protected int getPartialSlot(ItemStack stack, ForgeDirection orientation, int skipAhead) {
 		return getPartialSlot(stack, skipAhead, inventory.getSizeInventory());
 	}
