@@ -35,4 +35,8 @@ public class TransactorVanillaSided extends TransactorSimple {
         return sided.func_102007_a(targetSlot, stack, orientation.ordinal()) ? targetSlot : -1;
     }
 
+    @Override
+    public boolean doesConnect(TileEntity entity, ForgeDirection direction) {
+        return sided.getSizeInventorySide(direction.ordinal()).length > 0;
+    }
 }
