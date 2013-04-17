@@ -17,6 +17,8 @@ public abstract class Transactor implements ITransactor {
 		return added;
 	}
 
+	public abstract boolean doesConnect(TileEntity entity, ForgeDirection direction);
+
 	public abstract int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd);
 
 	public static ITransactor getTransactorFor(Object object) {
