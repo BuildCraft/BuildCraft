@@ -15,7 +15,7 @@ import buildcraft.core.ItemBlockBuildCraft;
 public class ItemEngine extends ItemBlockBuildCraft {
 
 	public ItemEngine(int i) {
-		super(i, "engine");
+		super(i);
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}

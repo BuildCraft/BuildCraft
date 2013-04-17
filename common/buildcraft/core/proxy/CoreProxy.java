@@ -100,8 +100,7 @@ public class CoreProxy {
 
 	/* REGISTRATION */
 	public void registerBlock(Block block) {
-		Item.itemsList[block.blockID] = null;
-		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getUnlocalizedName());
+		GameRegistry.registerBlock(block, ItemBlockBuildCraft.class, block.getUnlocalizedName());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
