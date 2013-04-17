@@ -58,7 +58,8 @@ public class Box implements IBox {
 		this.xMax = xMax;
 		this.yMax = yMax;
 		this.zMax = zMax;
-		initialized = true;
+		initialized = !(xMin == Integer.MAX_VALUE || yMin == Integer.MAX_VALUE || zMin == Integer.MAX_VALUE || xMax == Integer.MAX_VALUE ||
+		                yMax == Integer.MAX_VALUE || zMax == Integer.MAX_VALUE );
 	}
 
 	public void initialize(Box box) {
