@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -53,10 +54,11 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	@Override
-	public String getItemNameIS(ItemStack itemstack) {
+	public String getUnlocalizedName(ItemStack itemstack) {
 		return "item.Facade";
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
@@ -92,7 +94,6 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static void initialize() {
 		for (Field f : Block.class.getDeclaredFields()) {
 			if (Modifier.isStatic(f.getModifiers()) && Block.class.isAssignableFrom(f.getType())) {
@@ -102,7 +103,7 @@ public class ItemFacade extends ItemBuildCraft {
 				} catch (Exception e) {
 					continue;
 				}
-				
+
 				if (!(b.blockID == 20)){
 					if (b.blockID == 7 || b.blockID == 18 || b.blockID == 19 || b.blockID == 95) {
 						continue;
@@ -114,7 +115,7 @@ public class ItemFacade extends ItemBuildCraft {
 				ItemStack base = new ItemStack(b, 1);
 				if (base.getHasSubtypes()) {
 					Set<String> names = Sets.newHashSet();
-					for (int meta = 0; meta < 15; meta++) {
+					for (int meta = 0; meta <= 15; meta++) {
 						ItemStack is = new ItemStack(b, 1, meta);
 						if (!Strings.isNullOrEmpty(is.getItemName()) && names.add(is.getItemName())) {
 							ItemFacade.addFacade(is);
@@ -139,6 +140,12 @@ public class ItemFacade extends ItemBuildCraft {
 		return ((encoded & 0xFFF0) >>> 4);
 	}
 
+	@Override
+	public boolean shouldPassSneakingClickToBlock(World worldObj, int x, int y, int z ) {
+		// Simply send shift click to the pipe / mod block.
+		return true;
+	}
+
 	public static void addFacade(ItemStack itemStack) {
 		allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage())));
 
@@ -146,4 +153,18 @@ public class ItemFacade extends ItemBuildCraft {
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack },
 				8000, new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()))));
 	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    // NOOP
+	}
+
+	@Override
+    @SideOnly(Side.CLIENT)
+    public int getSpriteNumber()
+    {
+        return 0;
+    }
 }

@@ -99,16 +99,19 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			return all;
 		}
 
-		public void readFromNBT(NBTTagCompound compoundTag) {
+		@Override
+		public LiquidTank readFromNBT(NBTTagCompound compoundTag) {
 			this.setCapacity(compoundTag.getInteger("capacity"));
 
 			for (int i = 0; i < travelDelay; ++i) {
 				incomming[i] = compoundTag.getShort("in[" + i + "]");
 			}
 			setLiquid(LiquidStack.loadLiquidStackFromNBT(compoundTag));
+			return this;
 		}
 
-		public void writeToNBT(NBTTagCompound subTag) {
+		@Override
+		public NBTTagCompound writeToNBT(NBTTagCompound subTag) {
 			subTag.setInteger("capacity", this.getCapacity());
 
 			for (int i = 0; i < travelDelay; ++i) {
@@ -118,6 +121,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 			if (this.getLiquid() != null) {
 				this.getLiquid().writeToNBT(subTag);
 			}
+			return subTag;
 		}
 	}
 
@@ -209,7 +213,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	/**
 	 * Computes the PacketLiquidUpdate packet for transmission to a client
-	 * 
+	 *
 	 * @param initPacket
 	 *            everything is sent, no delta stuff ( first packet )
 	 * @param persistChange
@@ -257,16 +261,11 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 				continue;
 			}
 
-			if (prev.itemID != current.itemID || initPacket) {
+			if (!prev.equals(current) || initPacket) {
 				changed = true;
-				renderCache[dir.ordinal()].itemID = current.itemID;
+				renderCache[dir.ordinal()] = current;
 				delta.set(dir.ordinal() * 3 + 0);
-			}
-
-			if (prev.itemMeta != current.itemMeta || initPacket) {
-				changed = true;
-				renderCache[dir.ordinal()].itemMeta = current.itemMeta;
-				delta.set(dir.ordinal() * 3 + 1);
+                delta.set(dir.ordinal() * 3 + 1);
 			}
 
 			int displayQty = (prev.amount * 4 + current.amount) / 5;
@@ -491,7 +490,13 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 	}
 
 	@Override
-	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportLiquids))
+				return false;
+		}
+
 		if (tile instanceof ITankContainer) {
 			ITankContainer liq = (ITankContainer) tile;
 
@@ -504,11 +509,6 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 
 	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
-	}
-
-	@Override
-	public boolean allowsConnect(PipeTransport with) {
-		return with instanceof PipeTransportLiquids;
 	}
 
 	/** ITankContainer implementation **/

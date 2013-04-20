@@ -12,6 +12,7 @@ package buildcraft.transport.render;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -21,7 +22,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 
@@ -29,13 +29,14 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
@@ -59,7 +60,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
 
-	private HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
+	private final HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
 
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
@@ -94,9 +95,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		displayLiquidLists.get(liquidId).put(meta, d);
 
 		BlockInterface block = new BlockInterface();
+
 		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, meta);
+			block.baseBlock = Block.blocksList[liquidId];
 		} else {
+			block.baseBlock = Block.waterStill;
 			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
 		}
 
@@ -193,7 +196,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = 4;
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Normal);
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -219,7 +222,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = 6;
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Overload);
 
 		size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -275,17 +278,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_BLOCKS, 0);
+		GL11.glTranslatef((float) x, (float) y, (float) z);		
 
-		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+		bindTextureByName("/terrain.png");
 
 		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
 
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 			GL11.glRotatef(angleY[i], 0, 1, 0);
 			GL11.glRotatef(angleZ[i], 0, 0, 1);
+			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
 			if (pow.displayPower[i] >= 1.0) {
 				short stage = pow.displayPower[i];
@@ -310,7 +315,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		// sides
 
@@ -349,13 +354,16 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				case SOUTH:
 				case NORTH:
 					sides = true;
+					// Yes, this is kind of ugly, but was easier than transform the coordinates above.
+					GL11.glTranslatef(0.5F, 0.0F, 0.5F);
 					GL11.glRotatef(angleY[i], 0, 1, 0);
 					GL11.glRotatef(angleZ[i], 0, 0, 1);
+					GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
 					list = d.sideHorizontal[stage];
 					break;
 				default:
 				}
-
+				bindTextureByName(liquid.canonical().getTextureSheet());
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}
@@ -374,6 +382,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			if (d != null) {
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
 
+				bindTextureByName(liquid.canonical().getTextureSheet());
+				
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
 				}
@@ -396,12 +406,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (liquidId == 0)
 			return null;
 
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
-		} else if (Item.itemsList[liquidId] != null) {
-			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-		} else
-			return null;
 		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
 	}
 
@@ -435,10 +439,10 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		ItemStack itemstack = entityitem.getItemStack();
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
-        GL11.glTranslatef(0, 0.25F, 0);
-        GL11.glScalef(renderScale, renderScale, renderScale);
-        dummyEntityItem.func_92058_a(itemstack);
-        customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
+		GL11.glTranslatef(0, 0.25F, 0);
+		GL11.glScalef(renderScale, renderScale, renderScale);
+		dummyEntityItem.setEntityItemStack(itemstack);
+		customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
 		GL11.glPopMatrix();
 	}
 }

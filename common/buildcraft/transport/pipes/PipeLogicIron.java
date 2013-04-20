@@ -57,7 +57,7 @@ public class PipeLogicIron extends PipeLogic {
 
 			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer || tile instanceof TileGenericPipe) {
 
-				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
+				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, nextMetadata,0);
 				container.scheduleRenderUpdate();
 				return;
 			}
@@ -75,7 +75,7 @@ public class PipeLogicIron extends PipeLogic {
 	public void onBlockPlaced() {
 		super.onBlockPlaced();
 
-		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 1);
+		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 1,0);
 		switchPosition();
 	}
 

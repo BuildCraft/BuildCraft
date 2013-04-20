@@ -27,6 +27,7 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GateVanilla;
 import buildcraft.transport.Pipe;
 
+@Deprecated
 public class BptBlockPipe extends BptBlock {
 
 	public BptBlockPipe(int blockId) {

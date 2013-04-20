@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
@@ -34,7 +35,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 		/**
 		 * Inserts a ledger into the next-to-last position.
-		 * 
+		 *
 		 * @param ledger
 		 */
 		public void insert(Ledger ledger) {
@@ -197,7 +198,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		}
 
 		protected void drawBackground(int x, int y) {
-			int texture = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 
 			float colorR = (overlayColor >> 16 & 255) / 255.0F;
 			float colorG = (overlayColor >> 8 & 255) / 255.0F;
@@ -205,7 +205,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
 
-			mc.renderEngine.bindTexture(texture);
+            mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
 			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
 			// Add in top left corner again
@@ -216,15 +216,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
 		}
 
-		protected void drawIcon(String texture, int iconIndex, int x, int y) {
+		protected void drawIcon(Icon icon, int x, int y) {
 
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
-			int tex = mc.renderEngine.getTexture(texture);
-			mc.renderEngine.bindTexture(tex);
-			int textureRow = iconIndex >> 4;
-			int textureColumn = iconIndex - 16 * textureRow;
-			drawTexturedModalRect(x, y, 16 * textureColumn, 16 * textureRow, 16, 16);
-
+			drawTexturedModelRectFromIcon(x, y, icon, 16, 16);
 		}
 	}
 

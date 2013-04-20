@@ -9,18 +9,11 @@
 
 package buildcraft.core.triggers;
 
-import buildcraft.api.gates.Action;
-import buildcraft.core.DefaultProps;
 
-public class ActionRedstoneOutput extends Action {
+public class ActionRedstoneOutput extends BCAction {
 
 	public ActionRedstoneOutput(int id) {
 		super(id);
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		return 0 * 16 + 0;
 	}
 
 	@Override
@@ -29,7 +22,7 @@ public class ActionRedstoneOutput extends Action {
 	}
 
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	public int getIconIndex() {
+		return ActionTriggerIconProvider.Trigger_RedstoneInput_Active;
 	}
 }

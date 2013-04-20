@@ -10,12 +10,11 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 
-public class TriggerMachine extends Trigger {
+public class TriggerMachine extends BCTrigger {
 
 	boolean active;
 
@@ -23,14 +22,6 @@ public class TriggerMachine extends Trigger {
 		super(id);
 
 		this.active = active;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		if (active)
-			return 4 * 16 + 0;
-		else
-			return 4 * 16 + 1;
 	}
 
 	@Override
@@ -42,7 +33,7 @@ public class TriggerMachine extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof IMachine) {
 			IMachine machine = (IMachine) tile;
 
@@ -56,7 +47,10 @@ public class TriggerMachine extends Trigger {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	public int getIconIndex() {
+		if (active)
+			return ActionTriggerIconProvider.Trigger_Machine_Active;
+		else
+			return ActionTriggerIconProvider.Trigger_Machine_Inactive;
 	}
-}
+}	

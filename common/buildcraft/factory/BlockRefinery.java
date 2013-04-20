@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -30,6 +31,8 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockRefinery extends BlockContainer {
 
@@ -65,12 +68,12 @@ public class BlockRefinery extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving);
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 
 	@Override
@@ -86,17 +89,17 @@ public class BlockRefinery extends BlockContainer {
 
 			switch (ForgeDirection.values()[meta]) {
 			case WEST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.SOUTH.ordinal(),0);
 				break;
 			case EAST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.NORTH.ordinal(),0);
 				break;
 			case NORTH:
-				world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.WEST.ordinal(),0);
 				break;
 			case SOUTH:
 			default:
-				world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
+				world.setBlockMetadataWithNotify(i, j, k, ForgeDirection.EAST.ordinal(),0);
 				break;
 			}
 			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
@@ -131,4 +134,10 @@ public class BlockRefinery extends BlockContainer {
 		itemList.add(new ItemStack(this));
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    // NOOP
+	}
 }

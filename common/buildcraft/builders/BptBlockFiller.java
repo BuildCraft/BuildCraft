@@ -22,6 +22,7 @@ import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 
+@Deprecated
 public class BptBlockFiller extends BptBlock {
 
 	public BptBlockFiller(int blockId) {
@@ -69,7 +70,7 @@ public class BptBlockFiller extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockWithNotify(slot.x, slot.y, slot.z, slot.blockId);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId);
 
 		TileFiller filler = (TileFiller) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
 

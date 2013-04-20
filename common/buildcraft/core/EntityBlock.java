@@ -11,11 +11,15 @@ package buildcraft.core;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityBlock extends Entity {
 
-	public int texture = -1;
+	@SideOnly(Side.CLIENT)
+	public Icon texture;
 	public float shadowSize = 0;
 
 	public float rotationX = 0;
@@ -45,11 +49,6 @@ public class EntityBlock extends Entity {
 		this.motionX = 0.0;
 		this.motionY = 0.0;
 		this.motionZ = 0.0;
-	}
-
-	public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, int textureID) {
-		this(world, i, j, k, iSize, jSize, kSize);
-		texture = textureID;
 	}
 
 	@Override

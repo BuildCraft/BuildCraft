@@ -9,15 +9,18 @@
 
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityDiggingFX;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -35,28 +39,34 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.PipeWorldRenderer;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {
 		Pipe,
 		Gate
 	}
-	
+
 	static class RaytraceResult {
 		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition) {
 			this.hitPart = hitPart;
 			this.movingObjectPosition = movingObjectPosition;
 		}
-		
+
 		public Part hitPart;
 		public MovingObjectPosition movingObjectPosition;
 	}
+
+	private static Random rand = new Random();
+
+	private boolean skippedFirstIconRegister;
 
 	/* Defined subprograms ************************************************* */
 
@@ -90,47 +100,56 @@ public class BlockGenericPipe extends BlockContainer {
 		return false;
 	}
 
+	@Override
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (tile instanceof ISolidSideTile) {
+			return ((ISolidSideTile) tile).isSolidOnSide(side);
+		}
+		return false;
+	}
+
 	public boolean isACube() {
 		return false;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void addCollidingBlockToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
+	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
 		setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-		super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
 		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
 		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
-			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
-			super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
 		if (tileG != null) {
@@ -138,32 +157,32 @@ public class BlockGenericPipe extends BlockContainer {
 
 			if (tileG.hasFacade(ForgeDirection.EAST)) {
 				setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.WEST)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, facadeThickness, 1.0F, 1.0F);
-				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.UP)) {
 				setBlockBounds(0.0F, 1 - facadeThickness, 0.0F, 1.0F, 1.0F, 1.0F);
-				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.DOWN)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, facadeThickness, 1.0F);
-				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.SOUTH)) {
 				setBlockBounds(0.0F, 0.0F, 1 - facadeThickness, 1.0F, 1.0F, 1.0F);
-				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			if (tileG.hasFacade(ForgeDirection.NORTH)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, facadeThickness);
-				super.addCollidingBlockToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 		}
 
@@ -230,14 +249,14 @@ public class BlockGenericPipe extends BlockContainer {
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		RaytraceResult raytraceResult = doRayTrace(world, x, y, z, origin, direction);
-		
+
 		if (raytraceResult == null) {
 			return null;
 		} else {
 			return raytraceResult.movingObjectPosition;
 		}
 	}
-	
+
 	public RaytraceResult doRayTrace(World world, int x, int y, int z, EntityPlayer entityPlayer) {
 		double pitch = Math.toRadians(entityPlayer.rotationPitch);
 		double yaw = Math.toRadians(entityPlayer.rotationYaw);
@@ -245,39 +264,39 @@ public class BlockGenericPipe extends BlockContainer {
         double dirX = -Math.sin(yaw) * Math.cos(pitch);
         double dirY = -Math.sin(pitch);
         double dirZ = Math.cos(yaw) * Math.cos(pitch);
-        
+
         double reachDistance = 5;
-        
+
         if (entityPlayer instanceof EntityPlayerMP) {
         	reachDistance = ((EntityPlayerMP) entityPlayer).theItemInWorldManager.getBlockReachDistance();
         }
-        
-		Vec3 origin = Vec3.vec3dPool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
+
+		Vec3 origin = Vec3.fakePool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
 		Vec3 direction = origin.addVector(dirX * reachDistance, dirY * reachDistance, dirZ * reachDistance);
-		
+
 		return doRayTrace(world, x, y, z, origin, direction);
 	}
-	
+
 	public RaytraceResult doRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity pipeTileEntity = world.getBlockTileEntity(x, y, z);
 		Pipe pipe = getPipe(world, x, y, z);
-		
+
 		if (pipeTileEntity == null || !isValid(pipe)) {
 			return null;
 		}
-		
+
 		/**
-		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades] 
+		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades]
 		 */
 		MovingObjectPosition[] hits = new MovingObjectPosition[] { null, null, null, null, null, null, null, null, null };
-		
+
 		boolean needAxisCheck = false;
 		boolean needCenterCheck = true;
-		
+
 		// check along the x axis
-		
+
 		if (Utils.checkPipesConnections(world, pipeTileEntity, x - 1, y, z)) {
 			xMin = 0.0F;
 			needAxisCheck = true;
@@ -287,7 +306,7 @@ public class BlockGenericPipe extends BlockContainer {
 			xMax = 1.0F;
 			needAxisCheck = true;
 		}
-		
+
 		if (needAxisCheck) {
 			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
@@ -297,7 +316,7 @@ public class BlockGenericPipe extends BlockContainer {
 			needAxisCheck = false;
 			needCenterCheck = false; // center already checked through this axis
 		}
-		
+
 		// check along the y axis
 
 		if (Utils.checkPipesConnections(world, pipeTileEntity, x, y - 1, z)) {
@@ -309,7 +328,7 @@ public class BlockGenericPipe extends BlockContainer {
 			yMax = 1.0F;
 			needAxisCheck = true;
 		}
-		
+
 		if (needAxisCheck) {
 			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
@@ -319,7 +338,7 @@ public class BlockGenericPipe extends BlockContainer {
 			needAxisCheck = false;
 			needCenterCheck = false; // center already checked through this axis
 		}
-		
+
 		// check along the z axis
 
 		if (Utils.checkPipesConnections(world, pipeTileEntity, x, y, z - 1)) {
@@ -331,7 +350,7 @@ public class BlockGenericPipe extends BlockContainer {
 			zMax = 1.0F;
 			needAxisCheck = true;
 		}
-		
+
 		if (needAxisCheck) {
 			setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
@@ -341,7 +360,7 @@ public class BlockGenericPipe extends BlockContainer {
 			needAxisCheck = false;
 			needCenterCheck = false; // center already checked through this axis
 		}
-		
+
 		// check center (only if no axis were checked/the pipe has no connections)
 
 		if (needCenterCheck) {
@@ -349,59 +368,59 @@ public class BlockGenericPipe extends BlockContainer {
 
 			hits[0] = super.collisionRayTrace(world, x, y, z, origin, direction);
 		}
-		
+
 		// gates
-		
+
 		if (pipe.hasGate()) {
 			for (int side = 0; side < 6; side++) {
 				setBlockBoundsToGate(ForgeDirection.VALID_DIRECTIONS[side]);
-				
+
 				hits[3 + side] = super.collisionRayTrace(world, x, y, z, origin, direction);
 			}
 		}
-		
+
 		// TODO: check wires, facades
 
 		// get closest hit
-		
+
 		double minLengthSquared = Double.POSITIVE_INFINITY;
 		int minIndex = -1;
-		
+
 		for (int i = 0; i < hits.length; i++) {
 			MovingObjectPosition hit = hits[i];
 			if (hit == null) continue;
-			
+
 			double lengthSquared = hit.hitVec.squareDistanceTo(origin);
-			
+
 			if (lengthSquared < minLengthSquared) {
 				minLengthSquared = lengthSquared;
 				minIndex = i;
 			}
 		}
-		
+
 		// reset bounds
-		
+
 		setBlockBounds(0, 0, 0, 1, 1, 1);
-		
+
 		if (minIndex == -1) {
 			return null;
 		} else {
 			Part hitPart;
-			
+
 			if (minIndex < 3) {
 				hitPart = Part.Pipe;
 			} else {
 				hitPart = Part.Gate;
 			}
-			
+
 			return new RaytraceResult(hitPart, hits[minIndex]);
 		}
 	}
-	
+
 	private void setBlockBoundsToGate(ForgeDirection dir) {
 		float min = Utils.pipeMinPos + 0.05F;
 		float max = Utils.pipeMaxPos - 0.05F;
-		
+
 		switch (dir) {
 		case DOWN:
 			setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
@@ -458,11 +477,30 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune) {
 
-	@Override
+		if (CoreProxy.proxy.isRenderWorld(world))
+			return null;
+
+		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
+
+		int count = quantityDropped(metadata, fortune, world.rand);
+		for (int i = 0; i < count; i++) {
+			Pipe pipe = getPipe(world, x, y, z);
+
+			if (pipe == null) {
+				pipe = pipeRemoved.get(new BlockIndex(x, y, z));
+			}
+
+			if (pipe != null) {
+				if (pipe.itemID > 0) {
+					pipe.dropContents();
+					list.add(new ItemStack(pipe.itemID, 1, damageDropped(metadata)));
+				}
+			}
+		}
+		return list;
+	}
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}
@@ -537,17 +575,17 @@ public class BlockGenericPipe extends BlockContainer {
 
 		return meta;
 	}
-	
+
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving placer) {
-		super.onBlockPlacedBy(world, x, y, z, placer);
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving placer, ItemStack stack) {
+		super.onBlockPlacedBy(world, x, y, z, placer, stack);
 		Pipe pipe = getPipe(world, x, y, z);
 
 		if (isValid(pipe)) {
 			pipe.onBlockPlacedBy(placer);
 		}
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float xOffset, float yOffset, float zOffset) {
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, xOffset, yOffset, zOffset);
@@ -629,17 +667,17 @@ public class BlockGenericPipe extends BlockContainer {
 					pipe.container.scheduleRenderUpdate();
 					return true;
 				}
-			
+
 			boolean openGateGui = false;
 
 			if (pipe.hasGate()) {
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, entityplayer);
-				
+
 				if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
 					openGateGui = true;
 				}
 			}
-			
+
 			if (openGateGui) {
 				pipe.gate.openGui(entityplayer);
 
@@ -679,7 +717,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	/**
 	 * Drops a pipe wire item of the passed color.
-	 * 
+	 *
 	 * @param color
 	 */
 	private void dropWire(IPipe.WireColor color, World world, int i, int j, int k) {
@@ -703,12 +741,13 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	@SideOnly(Side.CLIENT)
+	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 
 		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
 		if (!(tile instanceof IPipeRenderState))
-			return 0;
-		return ((IPipeRenderState) tile).getRenderState().currentTextureIndex;
+			return null;
+		return ((IPipeRenderState) tile).getRenderState().currentTexture;
 
 		// Pipe pipe = getPipe(iblockaccess, i, j, k);
 		// if (!isValid(pipe)) {
@@ -746,13 +785,13 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean isProvidingStrongPower(IBlockAccess iblockaccess, int x, int y, int z, int l) {
+	public int isProvidingStrongPower(IBlockAccess iblockaccess, int x, int y, int z, int l) {
 		Pipe pipe = getPipe(iblockaccess, x, y, z);
 
 		if (isValid(pipe))
 			return pipe.isPoweringTo(l);
 		else
-			return false;
+			return 0;
 	}
 
 	@Override
@@ -761,13 +800,13 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean isProvidingWeakPower(IBlockAccess world, int i, int j, int k, int l) {
+	public int isProvidingWeakPower(IBlockAccess world, int i, int j, int k, int l) {
 		Pipe pipe = getPipe(world, i, j, k);
 
 		if (isValid(pipe))
 			return pipe.isIndirectlyPoweringTo(l);
 		else
-			return false;
+			return 0;
 	}
 
 	@SuppressWarnings({ "all" })
@@ -789,17 +828,16 @@ public class BlockGenericPipe extends BlockContainer {
 
 	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
 		ItemPipe item = new ItemPipe(key);
-		item.setItemName("buildcraftPipe." + clas.getSimpleName().toLowerCase());
-		GameRegistry.registerItem(item, item.getItemName());
+		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase());
+		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
 		pipes.put(item.itemID, clas);
 
 		Pipe dummyPipe = createPipe(item.itemID);
 		if (dummyPipe != null) {
-			item.setTextureFile(dummyPipe.getTextureFile());
-			item.setTextureIndex(dummyPipe.getTextureIndexForItem());
+			item.setPipeIconIndex(dummyPipe.getIconIndexForItem());
+			TransportProxy.proxy.setIconProviderFromPipe(item, dummyPipe);
 		}
-
 		return item;
 	}
 
@@ -824,7 +862,7 @@ public class BlockGenericPipe extends BlockContainer {
 		if (world.isRemote)
 			return true;
 
-		boolean placed = world.setBlockAndMetadataWithNotify(i, j, k, blockId, meta);
+		boolean placed = world.setBlock(i, j, k, blockId, meta, 1);
 
 		if (placed) {
 
@@ -852,4 +890,128 @@ public class BlockGenericPipe extends BlockContainer {
 	public static boolean isValid(Pipe pipe) {
 		return isFullyDefined(pipe);
 	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister)
+	{
+		if (!skippedFirstIconRegister){
+			skippedFirstIconRegister = true;
+			return;
+		}
+		BuildCraftTransport.instance.gateIconProvider.registerIcons(iconRegister);
+		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
+		for (int i : pipes.keySet()){
+			Pipe dummyPipe = createPipe(i);
+			if (dummyPipe != null){
+				dummyPipe.getIconProvider().registerIcons(iconRegister);
+			}
+		}
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon(int par1, int par2) {
+		return BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Stripes);
+	}
+
+	/**
+     * Spawn a digging particle effect in the world, this is a wrapper around
+     * EffectRenderer.addBlockHitEffects to allow the block more control over
+     * the particles. Useful when you have entirely different texture sheets for
+     * different sides/locations in the world.
+     *
+     * @param world The current world
+     * @param target The target the player is looking at {x/y/z/side/sub}
+     * @param effectRenderer A reference to the current effect renderer.
+     * @return True to prevent vanilla digging particles form spawning.
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
+        int x = target.blockX;
+        int y = target.blockY;
+        int z = target.blockZ;
+
+        Pipe pipe = getPipe(worldObj, x, y, z);
+    	if (pipe == null) return false;
+
+    	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
+
+        int sideHit = target.sideHit;
+
+        Block block = BuildCraftTransport.genericPipeBlock;
+        float b = 0.1F;
+        double px = x + rand.nextDouble() * (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (b * 2.0F)) + b + block.getBlockBoundsMinX();
+        double py = y + rand.nextDouble() * (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (b * 2.0F)) + b + block.getBlockBoundsMinY();
+        double pz = z + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block.getBlockBoundsMinZ();
+
+        if (sideHit == 0) {
+            py = (double) y + block.getBlockBoundsMinY() - (double) b;
+        }
+
+        if (sideHit == 1) {
+            py = (double) y + block.getBlockBoundsMaxY() + (double) b;
+        }
+
+        if (sideHit == 2) {
+            pz = (double) z + block.getBlockBoundsMinZ() - (double) b;
+        }
+
+        if (sideHit == 3) {
+            pz = (double) z + block.getBlockBoundsMaxZ() + (double) b;
+        }
+
+        if (sideHit == 4) {
+            px = (double) x + block.getBlockBoundsMinX() - (double) b;
+        }
+
+        if (sideHit == 5) {
+            px = (double) x + block.getBlockBoundsMaxX() + (double) b;
+        }
+
+        EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine);
+		fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
+        effectRenderer.addEffect(fx.func_70596_a(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+        return true;
+    }
+
+    /**
+     * Spawn particles for when the block is destroyed. Due to the nature of how
+     * this is invoked, the x/y/z locations are not always guaranteed to host
+     * your block. So be sure to do proper sanity checks before assuming that
+     * the location is this block.
+     *
+     * @param world The current world
+     * @param x X position to spawn the particle
+     * @param y Y position to spawn the particle
+     * @param z Z position to spawn the particle
+     * @param meta The metadata for the block before it was destroyed.
+     * @param effectRenderer A reference to the current effect renderer.
+     * @return True to prevent vanilla break particles from spawning.
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+    	Pipe pipe = getPipe(worldObj, x, y, z);
+    	if (pipe == null) return false;
+
+    	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
+
+        byte its = 4;
+        for (int i = 0; i < its; ++i) {
+            for (int j = 0; j < its; ++j) {
+                for (int k = 0; k < its; ++k) {
+                    double px = x + (i + 0.5D) / (double) its;
+                    double py = y + (j + 0.5D) / (double) its;
+                    double pz = z + (k + 0.5D) / (double) its;
+                    int random = rand.nextInt(6);
+                    EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta, Minecraft.getMinecraft().renderEngine);
+					fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
+                    effectRenderer.addEffect(fx.func_70596_a(x, y, z));
+                }
+            }
+        }
+        return true;
+    }
 }

@@ -137,4 +137,16 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	{
 	    return _contents;
 	}
+
+	@Override
+	public boolean isInvNameLocalized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

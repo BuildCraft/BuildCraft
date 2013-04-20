@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
+@Deprecated
 public class BptBlockLever extends BptBlockWallSide {
 
 	public BptBlockLever(int blockId) {

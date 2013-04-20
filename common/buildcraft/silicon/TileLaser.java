@@ -38,7 +38,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 	private int nextNetworkUpdate = 3;
 	private int nextLaserUpdate = 10;
-	private int nextLaserSearch = 10;
+	private int nextLaserSearch = 100;
 
 	public TileLaser() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
@@ -65,7 +65,10 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 		// If we still don't have a valid table or the existing has
 		// become invalid, we disable the laser and do nothing.
+		// Also bleed some energy from the provider which will result that a 
+		// laser will eventually run out of power and stop searching 
 		if (!isValidTable()) {
+			powerProvider.useEnergy(0F, 0.1F, true);
 			removeLaser();
 			return;
 		}
@@ -109,7 +112,6 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	}
 
 	protected void findTable() {
-
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 		int minX = xCoord - 5;
@@ -235,7 +237,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		if (powerProvider.getEnergyStored() < 200 || laser != null)
 			return 25;
 		else

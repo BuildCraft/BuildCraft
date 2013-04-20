@@ -16,7 +16,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,15 +27,15 @@ import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
-import buildcraft.core.utils.CraftingHelper;
 
 public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	private ItemStack stackList[] = new ItemStack[9];
 	private IRecipe currentRecipe = null;
-	
+
 	class LocalInventoryCrafting extends InventoryCrafting {
 
 		public LocalInventoryCrafting() {
@@ -193,7 +192,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		if(this.currentRecipe == null || !this.currentRecipe.matches(craftMatrix, worldObj))
 			currentRecipe = buildcraft.core.utils.CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
 
-		
+
 		ItemStack resultStack = null;
 		if(currentRecipe != null) {
 			resultStack = currentRecipe.getCraftingResult(craftMatrix);
@@ -274,22 +273,22 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	public StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction) {
 		TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
-		
+
 		if (tile instanceof ISpecialInventory) {
 			// Don't get stuff out of ISpecialInventory for now / we wouldn't
 			// know how to put it back... And it's not clear if we want to
 			// have workbenches automatically getting things from one another.
 			return null;
 		}
-		
+
 		IInventory inventory = null;
 		if (tile instanceof ISidedInventory){
 			inventory = new SidedInventoryAdapter((ISidedInventory) tile, direction.getOpposite());
 		} else if (tile instanceof IInventory) {
 			inventory = Utils.getInventory((IInventory) tile);
 		}
-		
-		if (inventory == null) return null; 
+
+		if (inventory == null) return null;
 
 		for (int j = 0; j < inventory.getSizeInventory(); ++j) {
 			ItemStack stack = inventory.getStackInSlot(j);
@@ -406,5 +405,19 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount) {
 		return new ItemStack[] { extractItem(doRemove, false) };
 	}
+
+    @Override
+    public boolean isInvNameLocalized()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isStackValidForSlot(int i, ItemStack itemstack)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

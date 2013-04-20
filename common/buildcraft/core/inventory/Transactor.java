@@ -24,12 +24,15 @@ public abstract class Transactor implements ITransactor {
 		if (object instanceof ISpecialInventory)
 			return new TransactorSpecial((ISpecialInventory) object);
 
+		else if (object instanceof net.minecraft.inventory.ISidedInventory)
+		    return new TransactorVanillaSided((net.minecraft.inventory.ISidedInventory) object);
+
 		// Furnaces need to be special cased to prevent vanilla XP exploits.
 		else if (object instanceof TileEntityFurnace)
 			return new TransactorFurnace((ISidedInventory) object);
 
 		else if (object instanceof ISidedInventory)
-			return new TransactorSided((ISidedInventory) object);
+			return new TransactorForgeSided((ISidedInventory) object);
 
 		else if (object instanceof IInventory)
 			return new TransactorSimple(Utils.getInventory((IInventory) object));

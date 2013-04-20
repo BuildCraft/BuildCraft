@@ -63,15 +63,15 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		prevPageButton = new GuiButton(0, j + 100, k + 23, 20, 20, "<");
 		nextPageButton = new GuiButton(1, j + 122, k + 23, 20, 20, ">");
 
-		controlList.add(prevPageButton);
-		controlList.add(nextPageButton);
+		buttonList.add(prevPageButton);
+		buttonList.add(nextPageButton);
 
 		// if (library.owner.equals(player.username)) {
 		deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtil.localize("gui.del"));
-		controlList.add(deleteButton);
+		buttonList.add(deleteButton);
 
 		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
-		controlList.add(lockButton);
+		buttonList.add(lockButton);
 		if (library.locked) {
 			lockButton.displayString = StringUtil.localize("gui.unlock");
 		} else {
@@ -110,16 +110,9 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = 0;
-		// if (library.owner.equals(player.username)) {
-		i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
-		// } else {
-		// i = mc.renderEngine
-		// .getTexture("/net/minecraft/src/buildcraft/builders/gui/library_r.png");
-		// }
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
 
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

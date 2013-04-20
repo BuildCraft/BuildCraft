@@ -22,7 +22,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPassiveItemContribution;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.proxy.CoreProxy;
@@ -37,12 +36,6 @@ public class EntityPassiveItem implements IPipedItem {
 	protected ItemStack item;
 
 	protected TileEntity container;
-
-	@Deprecated
-	protected SafeTimeTracker synchroTracker = new SafeTimeTracker();
-
-	@Deprecated
-	protected int deterministicRandomization = 0;
 
 	protected Position position;
 	protected int entityId;
@@ -179,50 +172,6 @@ public class EntityPassiveItem implements IPipedItem {
 	@Override
 	public void setContainer(TileEntity container) {
 		this.container = container;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getSynchroTracker()
-	 */
-	@Override
-	@Deprecated
-	public SafeTimeTracker getSynchroTracker() {
-		return synchroTracker;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setSynchroTracker(net.minecraft.src.buildcraft.api.SafeTimeTracker)
-	 */
-	@Override
-	@Deprecated
-	public void setSynchroTracker(SafeTimeTracker synchroTracker) {
-		this.synchroTracker = synchroTracker;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.IPipedItem#getDeterministicRandomization()
-	 */
-	@Override
-	@Deprecated
-	public int getDeterministicRandomization() {
-		return deterministicRandomization;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.minecraft.src.buildcraft.api.IPipedItem#setDeterministicRandomization(int)
-	 */
-	@Override
-	@Deprecated
-	public void setDeterministicRandomization(int deterministicRandomization) {
-		this.deterministicRandomization = deterministicRandomization;
 	}
 
 	/*

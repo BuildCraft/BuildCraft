@@ -55,7 +55,7 @@ public class Utils {
 
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given coordinates.
-	 * 
+	 *
 	 * @param stack
 	 * @param world
 	 * @param x
@@ -219,7 +219,7 @@ public class Utils {
 
 	/**
 	 * Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
-	 * 
+	 *
 	 * @param inv
 	 * @return Modified inventory if double chest, unmodified otherwise.
 	 */
@@ -315,23 +315,7 @@ public class Utils {
 			jSize = 0.10;
 		}
 
-		int texture = BuildCraftCore.redLaserTexture;
-
-		switch (kind) {
-		case Blue:
-			texture = BuildCraftCore.blueLaserTexture;
-			break;
-
-		case Red:
-			texture = BuildCraftCore.redLaserTexture;
-			break;
-
-		case Stripes:
-			texture = BuildCraftCore.stripesLaserTexture;
-			break;
-		}
-
-		EntityBlock block = new EntityBlock(world, i, j, k, iSize, jSize, kSize, texture);
+		EntityBlock block = CoreProxy.proxy.newEntityBlock(world, i, j, k, iSize, jSize, kSize, kind);
 
 		world.spawnEntityInWorld(block);
 

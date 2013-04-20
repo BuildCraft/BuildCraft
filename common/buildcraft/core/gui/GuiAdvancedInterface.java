@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
@@ -25,12 +26,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				return "";
 		}
 
-		public String getTexture() {
-			return "";
-		}
-
-		public int getTextureIndex() {
-			return 0;
+		public Icon getTexture() {
+			return null;
 		}
 
 		public ItemStack getItemStack() {
@@ -47,14 +44,10 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 			if (getItemStack() != null) {
 				drawStack(getItemStack());
-			} else if (getTexture() != null && !getTexture().equals("")) {
-				int texture = mc.renderEngine.getTexture(getTexture());
-				mc.renderEngine.bindTexture(texture);
-
-				int textureI = getTextureIndex() >> 4;
-				int textureJ = getTextureIndex() - textureI * 16;
-
-				drawTexturedModalRect(cornerX + x, cornerY + y, 16 * textureJ, 16 * textureI, 16, 16);
+			} else if (getTexture() != null) {
+			    mc.renderEngine.bindTexture("/gui/items.png");
+			    //System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getTexture().getIconName(), getTexture().getOriginX(),getTexture().getOriginY(),cornerX + x, cornerY + y);
+				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getTexture(), 16, 16);
 			}
 
 		}

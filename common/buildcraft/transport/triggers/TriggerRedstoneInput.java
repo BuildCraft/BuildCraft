@@ -10,12 +10,12 @@
 package buildcraft.transport.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
 
-public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
+public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 
 	boolean active;
 
@@ -23,14 +23,6 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 		super(id);
 
 		this.active = active;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		if (active)
-			return 0 * 16 + 0;
-		else
-			return 0 * 16 + 1;
 	}
 
 	@Override
@@ -48,9 +40,12 @@ public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
 		else
 			return !pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
 	}
-
+	
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	public int getIconIndex() {
+		if (active)
+			return ActionTriggerIconProvider.Trigger_RedstoneInput_Active;
+		else
+			return ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive;
 	}
 }

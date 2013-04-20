@@ -6,11 +6,8 @@ import buildcraft.core.utils.StringUtil;
 
 public class ItemBlockBuildCraft extends ItemBlock {
 
-	protected String name;
-
-	public ItemBlockBuildCraft(int id, String name) {
+	public ItemBlockBuildCraft(int id) {
 		super(id);
-		this.name = name;
 	}
 
 	@Override
@@ -20,7 +17,6 @@ public class ItemBlockBuildCraft extends ItemBlock {
 
 	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
-		return StringUtil.localize(getItemNameIS(itemstack));
+		return StringUtil.localize(getUnlocalizedName(itemstack));
 	}
-
 }

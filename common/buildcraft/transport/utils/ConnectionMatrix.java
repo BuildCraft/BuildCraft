@@ -3,22 +3,24 @@ package buildcraft.transport.utils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.BitSet;
 
 import net.minecraftforge.common.ForgeDirection;
 
 public class ConnectionMatrix {
 
-	private final boolean[] _connected = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+	private final BitSet _connected = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
+	private final BitSetCodec _bitSetCodec = new BitSetCodec();
 
 	private boolean dirty = false;
 
 	public boolean isConnected(ForgeDirection direction) {
-		return _connected[direction.ordinal()];
+		return _connected.get(direction.ordinal());
 	}
 
 	public void setConnected(ForgeDirection direction, boolean value) {
-		if (_connected[direction.ordinal()] != value) {
-			_connected[direction.ordinal()] = value;
+		if (_connected.get(direction.ordinal()) != value){
+			_connected.set(direction.ordinal(), value);
 			dirty = true;
 		}
 	}
@@ -32,14 +34,10 @@ public class ConnectionMatrix {
 	}
 
 	public void writeData(DataOutputStream data) throws IOException {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			data.writeBoolean(_connected[i]);
-		}
+		data.writeByte(_bitSetCodec.encode(_connected));
 	}
 
 	public void readData(DataInputStream data) throws IOException {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			_connected[i] = data.readBoolean();
-		}
+		_bitSetCodec.decode(data.readByte(), _connected);
 	}
 }

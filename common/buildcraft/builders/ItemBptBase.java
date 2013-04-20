@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -27,13 +28,12 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 		super(i);
 
 		maxStackSize = 1;
-		iconIndex = 5 * 16 + 0;
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public abstract int getIconFromDamage(int i);
+	public abstract Icon getIconFromDamage(int i);
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
@@ -56,5 +56,4 @@ public abstract class ItemBptBase extends ItemBuildCraft {
 	@Override
 	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
 	}
-
 }
