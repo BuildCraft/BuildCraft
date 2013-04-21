@@ -19,13 +19,19 @@ public class TransactorSimple extends Transactor {
 
 		int slotIndex = 0;
 		int slot = 0;
-		while ((slot = getPartialSlot(stack, orientation, slotIndex++)) >= 0 && injected < stack.stackSize) {
-			injected += addToSlot(slot, stack, injected, doAdd);
+		while (slotIndex < inventory.getSizeInventory() && injected < stack.stackSize) {
+			slot = getPartialSlot(stack, orientation, slotIndex++);
+			if (slot != -1){
+				injected += addToSlot(slot, stack, injected, doAdd);
+			}
 		}
 
 		slotIndex = 0;
-		while ((slot = getEmptySlot(stack, orientation, slotIndex++)) >= 0 && injected < stack.stackSize) {
-			injected += addToSlot(slot, stack, injected, doAdd);
+		while (slotIndex < inventory.getSizeInventory() && injected < stack.stackSize) {
+			slot = getEmptySlot(stack, orientation, slotIndex++);
+			if (slot != -1){
+				injected += addToSlot(slot, stack, injected, doAdd);
+			}
 		}
 		inventory.onInventoryChanged();
 		return injected;
