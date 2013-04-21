@@ -365,7 +365,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 				}
 			}
 
-			if (markerOrigin != this) {
+			if (markerOrigin != this && markerOrigin != null) {
 				markerOrigin.origin = new Origin();
 			}
 
@@ -376,8 +376,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 					mark.updateSignals();
 				}
 			}
-
-			markerOrigin.updateSignals();
+			if (markerOrigin != null) {
+				markerOrigin.updateSignals();
+			}
 		}
 
 		if (signals != null) {
