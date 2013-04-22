@@ -16,7 +16,6 @@ public class CraftingHelper {
 		boolean repair = false;
 		ItemStack stack1 = null;
 		ItemStack stack2 = null;
-		int var6;
 		{
 			int slotIndex = 0;
 
@@ -52,8 +51,8 @@ public class CraftingHelper {
 			}
 		} else {
 			List recipes = CraftingManager.getInstance().getRecipeList();
-			for (var6 = 0; var6 < recipes.size(); ++var6) {
-				IRecipe recipe = (IRecipe) recipes.get(var6);
+			for (int index = 0; index < recipes.size(); index++) {
+				IRecipe recipe = (IRecipe) recipes.get(index);
 
 				if (recipe.matches(crafting, world)) {
 					return recipe;
