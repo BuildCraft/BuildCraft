@@ -13,7 +13,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
@@ -21,8 +20,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import net.minecraft.block.BlockFlowing;
 
-public class BlockOilFlowing extends BlockFluid implements ILiquid {
+public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 
 	int numAdjacentSources = 0;
 	boolean isOptimalFlowDirection[] = new boolean[4];
@@ -40,11 +40,9 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return BuildCraftCore.oilModel;
 	}
 
-	private void updateFlow(World world, int i, int j, int k) {
-		int l = world.getBlockMetadata(i, j, k);
-		world.setBlock(i, j, k, blockID + 1, l, 1);
-		world.markBlockRangeForRenderUpdate(i, j, k, i, j, k);
-		world.markBlockForUpdate(i, j, k);
+	private void updateFlow(World par1World, int par2, int par3, int par4) {
+		int l = par1World.getBlockMetadata(par2, par3, par4);
+		par1World.setBlock(par2, par3, par4, this.blockID + 1, l, 2);
 	}
 
 	@Override
@@ -129,11 +127,11 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 
 	private void flowIntoBlock(World world, int i, int j, int k, int l) {
 		if (liquidCanDisplaceBlock(world, i, j, k)) {
-			int i1 = world.getBlockId(i, j, k);
-			if (i1 > 0) {
-				Block.blocksList[i1].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
+			int blockId = world.getBlockId(i, j, k);
+			if (blockId > 0) {
+				Block.blocksList[blockId].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
 			}
-			world.setBlock(i, j, k, blockID, l, 1);
+			world.setBlock(i, j, k, blockID, l, 3);
 		}
 	}
 
@@ -218,27 +216,38 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return isOptimalFlowDirection;
 	}
 
-	private boolean blockBlocksFlow(World world, int i, int j, int k) {
-		int l = world.getBlockId(i, j, k);
-		if (l == Block.doorWood.blockID || l == Block.doorIron.blockID || l == Block.signPost.blockID || l == Block.ladder.blockID || l == Block.reed.blockID) {
+	private boolean blockBlocksFlow(World par1World, int par2, int par3, int par4) {
+		int l = par1World.getBlockId(par2, par3, par4);
+
+		if (l != Block.doorWood.blockID && l != Block.doorIron.blockID && l != Block.signPost.blockID && l != Block.ladder.blockID && l != Block.reed.blockID) {
+			if (l == 0) {
+				return false;
+			} else {
+				Material material = Block.blocksList[l].blockMaterial;
+				return material == Material.portal ? true : material.blocksMovement();
+			}
+		} else {
 			return true;
 		}
-		if (l == 0) {
-			return false;
-		}
-		Material material = Block.blocksList[l].blockMaterial;
-		return material.isSolid();
 	}
 
-	protected int getSmallestFlowDecay(World world, int i, int j, int k, int l) {
-		int i1 = getFlowDecay(world, i, j, k);
+	@Override
+	protected int getSmallestFlowDecay(World par1World, int par2, int par3, int par4, int par5) {
+		int i1 = this.getFlowDecay(par1World, par2, par3, par4);
+
 		if (i1 < 0) {
-			return l;
+			return par5;
+		} else {
+			if (i1 == 0) {
+				++this.numAdjacentSources;
+			}
+
+			if (i1 >= 8) {
+				i1 = 0;
+			}
+
+			return par5 >= 0 && i1 >= par5 ? par5 : i1;
 		}
-		if (i1 >= 8) {
-			i1 = 0;
-		}
-		return l >= 0 && i1 >= l ? l : i1;
 	}
 
 	private boolean liquidCanDisplaceBlock(World world, int i, int j, int k) {
@@ -247,14 +256,6 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 			return false;
 		} else {
 			return !blockBlocksFlow(world, i, j, k);
-		}
-	}
-
-	@Override
-	public void onBlockAdded(World world, int i, int j, int k) {
-		super.onBlockAdded(world, i, j, k);
-		if (world.getBlockId(i, j, k) == blockID) {
-			world.scheduleBlockUpdate(i, j, k, blockID, tickRate(world));
 		}
 	}
 
