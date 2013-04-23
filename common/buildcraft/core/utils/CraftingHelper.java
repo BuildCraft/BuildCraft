@@ -22,8 +22,10 @@ public class CraftingHelper {
 			for (int slot = 0; slot < crafting.getSizeInventory(); slot++) {
 				ItemStack stack = crafting.getStackInSlot(slot);
 				if (stack != null) {
-					if (stack.stackSize != 1 || !stack.getItem().isRepairable())
+					if (stack.stackSize != 1 || !stack.getItem().isRepairable()){
+						repair = false;
 						break;
+					}
 					slotIndex++;
 					
 					if (slotIndex == 1) {
