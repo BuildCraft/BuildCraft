@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory.render;
 
 import java.util.HashMap;
@@ -28,7 +26,6 @@ import buildcraft.factory.TileTank;
 public class RenderTank extends TileEntitySpecialRenderer {
 
 	final static private int displayStages = 100;
-
 	private final HashMap<LiquidStack, int[]> stage = new HashMap<LiquidStack, int[]>();
 
 	private int[] getDisplayLists(LiquidStack liquid, World world) {
@@ -74,28 +71,35 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		TileTank tank = ((TileTank) tileentity);
 
 		LiquidStack liquid = tank.tank.getLiquid();
-		if (liquid == null)
-		    return;
+		if (liquid == null) {
+			return;
+		}
 
 		LiquidStack refLiquid = liquid.canonical();
 
-		if (refLiquid == null || liquid.amount <= 0)
+		if (refLiquid == null || liquid.amount <= 0) {
 			return;
+		}
 
 		int[] displayList = getDisplayLists(refLiquid, tileentity.worldObj);
-		if (displayList == null)
+		if (displayList == null) {
 			return;
+		}
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /* GL_LIGHTING */);
-		
-       		bindTextureByName(refLiquid.getTextureSheet());
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+		bindTextureByName(refLiquid.getTextureSheet());
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (displayStages - 1))]);
 
-		GL11.glEnable(2896 /* GL_LIGHTING */);
+		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
 }
