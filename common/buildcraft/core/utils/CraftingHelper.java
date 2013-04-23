@@ -45,12 +45,14 @@ public class CraftingHelper {
 			int maxDamage = stack1.getItem().getMaxDamage();
 			int damage = stack1.getItemDamageForDisplay() + stack2.getItemDamageForDisplay() - maxDamage - maxDamage * 5 / 100;
 
-			if (damage > 0) {
-				ArrayList<ItemStack> ingredients = new ArrayList<ItemStack>(2);
-				ingredients.add(stack1);
-				ingredients.add(stack2);
-				return new ShapelessRecipes(new ItemStack(stack1.itemID, 1, damage), ingredients);
+			if (damage < 0) {
+				damage = 0;
 			}
+			
+			ArrayList<ItemStack> ingredients = new ArrayList<ItemStack>(2);
+			ingredients.add(stack1);
+			ingredients.add(stack2);
+			return new ShapelessRecipes(new ItemStack(stack1.itemID, 1, damage), ingredients);
 		} else {
 			List recipes = CraftingManager.getInstance().getRecipeList();
 			for (int index = 0; index < recipes.size(); index++) {
