@@ -19,6 +19,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
@@ -27,6 +28,7 @@ import net.minecraftforge.common.Property;
 import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.WorldGen;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
@@ -280,6 +282,9 @@ public class BuildCraftCore {
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
 
+		WorldGen.biomeBlacklist.add(BiomeGenBase.sky.biomeID);
+		WorldGen.biomeBlacklist.add(BiomeGenBase.hell.biomeID);
+		WorldGen.biomeWhitelist.add(BiomeGenBase.desert.biomeID);
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
 		}
