@@ -17,6 +17,7 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.WorldGen;
 
 public class OilPopulate {
 
@@ -39,12 +40,12 @@ public class OilPopulate {
 	public static void doPopulate(World world, Random rand, int x, int z) {
 		BiomeGenBase biomegenbase = world.getBiomeGenForCoords(x + 16, z + 16);
 
-		// Do not generate oil in the End
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID) {
+		// Do not generate oil in blacklisted biomes.
+		if (!WorldGen.generateInBiome(biomegenbase)) {
 			return;
 		}
 
-		if (biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97) {
+		if (WorldGen.isBiomeWhitelisted(biomegenbase) && rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
 
 			int startX = rand.nextInt(10) + 2;

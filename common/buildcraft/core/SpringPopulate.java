@@ -16,9 +16,10 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.WorldGen;
 
 public class SpringPopulate {
-
+	
 	@ForgeSubscribe
 	public void populate(PopulateChunkEvent.Post event) {
 
@@ -41,11 +42,12 @@ public class SpringPopulate {
 		if(random.nextFloat() > 0.025f)
 			return;
 
-		// Do not generate water in the End or the Nether
+		// Do not generate water in the blacklisted biomes
 		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID)
+		if (!WorldGen.generateInBiome(biomegenbase)) {
 			return;
-
+		}
+		
 		int posX = x + random.nextInt(16);
 		int posZ = z + random.nextInt(16);
 
