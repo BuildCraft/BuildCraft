@@ -66,6 +66,11 @@ public class PacketHandlerTransport implements IPacketHandler {
 				packet.readData(data);
 				onGateSelection((EntityPlayer) player, packet);
 				break;
+			case PacketIds.PIPE_ITEM_NBT:
+				PacketPipeTransportNBT packetD = new PacketPipeTransportNBT();
+				packetD.readData(data);
+				onPipeContentNBT((EntityPlayer) player, packetD);
+				break;
 
 			/** SERVER SIDE **/
 			case PacketIds.DIAMOND_PIPE_SELECT: {
@@ -98,6 +103,12 @@ public class PacketHandlerTransport implements IPacketHandler {
 				PacketUpdate packet3 = new PacketUpdate();
 				packet3.readData(data);
 				onGateSelectionChange((EntityPlayerMP) player, packet3);
+				break;
+				
+			case PacketIds.REQUEST_ITEM_NBT:
+				PacketSimpleId packet4 = new PacketSimpleId();
+				packet4.readData(data);
+				onItemNBTRequest((EntityPlayerMP) player, packet4);
 				break;
 			}
 
@@ -146,6 +157,20 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		((ContainerGateInterface) container).setSelection(packet);
+	}
+
+	private void onPipeContentNBT(EntityPlayer player, PacketPipeTransportNBT packet) {
+		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		if (pipe == null)
+			return;
+
+		if (pipe.pipe == null)
+			return;
+
+		if (!(pipe.pipe.transport instanceof PipeTransportItems))
+			return;
+
+		((PipeTransportItems)pipe.pipe.transport).handleNBTPacket(packet);
 	}
 
 	/**
@@ -317,4 +342,22 @@ public class PacketHandlerTransport implements IPacketHandler {
 		((PipeItemsEmerald) pipe.pipe).setInventorySlotContents(packet.slot, packet.stack);
 	}
 
+	/**
+	 * Handles the client request for tag data
+	 * @param player
+	 * @param packet
+	 */
+	private void onItemNBTRequest(EntityPlayerMP player, PacketSimpleId packet) {
+		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		if (pipe == null)
+			return;
+
+		if (pipe.pipe == null)
+			return;
+
+		if (!(pipe.pipe.transport instanceof PipeTransportItems))
+			return;
+
+		((PipeTransportItems) pipe.pipe.transport).handleNBTRequestPacket(player, packet.entityId);
+	}
 }

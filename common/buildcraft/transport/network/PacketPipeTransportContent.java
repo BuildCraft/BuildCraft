@@ -23,6 +23,7 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 	private float itemY;
 	private float itemZ;
 	private float speed;
+	private boolean hasNBT;
 	public int posX;
 	public int posY;
 	public int posZ;
@@ -50,6 +51,7 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		data.writeShort(entityData.item.getItemStack().getItemDamage());
 
 		data.writeFloat(entityData.item.getSpeed());
+		data.writeBoolean(entityData.item.getItemStack().hasTagCompound());
 	}
 
 	@Override
@@ -72,6 +74,7 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		this.itemDamage = data.readShort();
 
 		this.speed = data.readFloat();
+		this.hasNBT = data.readBoolean();
 	}
 
 	public int getEntityId() {
@@ -114,6 +117,10 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		return speed;
 	}
 
+	public boolean hasNBT() {
+		return hasNBT;
+	}
+	
 	@Override
 	public int getID() {
 		return PacketIds.PIPE_CONTENTS;
