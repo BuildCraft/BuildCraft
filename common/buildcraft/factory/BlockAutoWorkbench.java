@@ -27,58 +27,50 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
+	private Icon topTexture;
+	private Icon sideTexture;
 
-	Icon topTexture;
-	Icon sideTexture;
-
-	public BlockAutoWorkbench(int i) {
-		super(i, Material.wood);
-		setHardness(1.0F);
+	public BlockAutoWorkbench(int blockID) {
+		super(blockID, Material.wood);
+		this.setHardness(1);
 	}
 
 	@Override
-	public Icon getIcon(int i, int j) {
-		if (i == 1 || i == 0)
+	public Icon getIcon(int side, int metadata) {
+		if (side == 1 || side == 0) {
 			return topTexture;
-		else
+		}else{
 			return sideTexture;
+		}
 	}
-
+	
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
-
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
-			return false;
-
-		if (entityplayer.getCurrentEquippedItem() != null) {
-			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float blockX, float blockY, float blockZ) {
+		if (player.isSneaking() || (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IItemPipe)) {
 				return false;
 		}
-
+		
 		if (!CoreProxy.proxy.isRenderWorld(world)) {
-			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
+			player.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, x, y, z);
 		}
 
 		return true;
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world) {
 		return new TileAutoWorkbench();
 	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
+	public void addCreativeItems(ArrayList list) {
+		list.add(new ItemStack(this));
 	}
+	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
-	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");
+	public void registerIcons(IconRegister register) {
+	    topTexture = register.registerIcon("buildcraft:autoWorkbench_top");
+	    sideTexture = register.registerIcon("buildcraft:autoWorkbench_side");
 	}
 }
