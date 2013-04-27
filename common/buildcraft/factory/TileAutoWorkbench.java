@@ -247,14 +247,14 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 				this.refilFromNeibour();
 				
 				if (!this.canCraft()){
-					return new ItemStack[0];
+					return null;
 				}
 			}
 			
 			this.craft();
 			item = result.copy();
 		}else{
-			return new ItemStack[0];
+			return null;
 		}
 		
 		return new ItemStack[] { item };
