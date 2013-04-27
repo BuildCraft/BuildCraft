@@ -134,7 +134,11 @@
 				<resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
 			</condition>
 		</fail>
-		
+
+	</target>
+
+	<target name="reobf" depends="compile">
+
 		<!-- Reobfuscate -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate_srg.bat"/>
@@ -169,7 +173,7 @@
 	</target>
 
 	<!-- Package the compiled files -->
-	<target name="package" depends="compile">
+	<target name="package" depends="reobf">
 
 		<delete dir="${jar.dir}"/>
 		<mkdir dir="${jar.dir}"/>
@@ -181,6 +185,21 @@
 		</copy>
 
 	</target>
+
+	<target name="run">
+
+		<!-- Start Client -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c startclient.bat"/>
+		</exec>
+
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="startclient.sh"/>
+		</exec>
+
+	</target>
+
+	<target name="test-run" depends="compile,run"/>
 
 	<!-- Default target to run -->
 	<target name="main" depends="package"/>
