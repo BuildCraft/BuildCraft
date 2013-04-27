@@ -24,6 +24,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.IMultiBlockInventory;
 import net.minecraftforge.liquids.ILiquid;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
@@ -218,35 +219,15 @@ public class Utils {
 	}
 
 	/**
-	 * Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
+	 * Ensures that the given inventory is the full inventory, i.e. takes multiblock chests into account.
 	 *
 	 * @param inv
-	 * @return Modified inventory if double chest, unmodified otherwise.
+	 * @return Modified inventory if multiblock chest, unmodified otherwise.
 	 */
 	public static IInventory getInventory(IInventory inv) {
-		if (inv instanceof TileEntityChest) {
-			TileEntityChest chest = (TileEntityChest) inv;
-			Position pos = new Position(chest.xCoord, chest.yCoord, chest.zCoord);
-			TileEntity tile;
-			IInventory chest2 = null;
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.WEST);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
-			}
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.EAST);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
-			}
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.NORTH);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
-			}
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.SOUTH);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
-			}
-			if (chest2 != null)
-				return new InventoryLargeChest("", inv, chest2);
+		TileEntity te = (TileEntity)inv;
+		if (te instanceof IMultiBlockInventory) {
+			return ((IMultiBlockInventory)te).getMultiBlockInventory();
 		}
 		return inv;
 	}
