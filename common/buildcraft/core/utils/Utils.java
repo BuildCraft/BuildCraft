@@ -472,6 +472,19 @@ public class Utils {
 				stacks[i] = null;
 			}
 	}
+	
+	public static void readStacksFromNBT(NBTTagCompound nbt, String name, IInventory inv) {
+		NBTTagList nbttaglist = nbt.getTagList(name);
+
+		for (int i = 0; i < inv.getSizeInventory(); ++i)
+			if (i < nbttaglist.tagCount()) {
+				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(i);
+
+				inv.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(nbttagcompound2));
+			} else {
+				inv.setInventorySlotContents(i, null);
+			}
+	}
 
 	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = new NBTTagList();
@@ -487,7 +500,22 @@ public class Utils {
 
 		nbt.setTag(name, nbttaglist);
 	}
+	
+	public static void writeStacksToNBT(NBTTagCompound nbt, String name, IInventory inv) {
+		NBTTagList nbttaglist = new NBTTagList();
 
+		for (int i = 0; i < inv.getSizeInventory(); ++i) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			nbttaglist.appendTag(cpt);
+			if (inv.getStackInSlot(i) != null) {
+				inv.getStackInSlot(i).writeToNBT(cpt);
+			}
+
+		}
+
+		nbt.setTag(name, nbttaglist);
+	}
+	
 	public static ItemStack consumeItem(ItemStack stack) {
 		if (stack.stackSize == 1) {
 			if (stack.getItem().hasContainerItem())
