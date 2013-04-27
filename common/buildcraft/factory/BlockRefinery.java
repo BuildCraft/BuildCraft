@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon; 
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
@@ -35,7 +36,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockRefinery extends BlockContainer {
-
+	private static Icon[] icons;
+	
 	public BlockRefinery(int i) {
 		super(i, Material.iron);
 
@@ -138,6 +140,19 @@ public class BlockRefinery extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-	    // NOOP
+		icons = new Icon[6];
+		icons[ForgeDirection.DOWN.ordinal()] = par1IconRegister.registerIcon("buildcraft:refineryBottom");
+		icons[ForgeDirection.UP.ordinal()] = par1IconRegister.registerIcon("buildcraft:refineryTop");
+		icons[ForgeDirection.NORTH.ordinal()] = par1IconRegister.registerIcon("buildcraft:refineryFront");
+		icons[ForgeDirection.SOUTH.ordinal()] = par1IconRegister.registerIcon("buildcraft:refineryBack");
+		icons[ForgeDirection.EAST.ordinal()] = par1IconRegister.registerIcon("buildcraft:refineryEast");
+		icons[ForgeDirection.WEST.ordinal()] = par1IconRegister.registerIcon("buildcraft:refineryWest");
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon(int par1, int par2)
+	{
+		return icons[par1];
 	}
 }
