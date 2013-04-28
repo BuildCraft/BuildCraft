@@ -92,7 +92,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) == this;
 	}
 	
-	public void refilFromNeibour(){
+	public void refillFromNeighbour(){
 		//pre-compute to see if there are enough items
 		{
 			ItemStack[] required = new ItemStack[this.getSizeInventory()];
@@ -236,8 +236,8 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		ItemStack result = this.craftResult.getStackInSlot(0);
 		
 		if (result != null){
-			if (!this.canCraft()){
-				this.refilFromNeibour();
+			if (!this.canCraft() && doRemove){
+				this.refillFromNeighbour();
 				
 				if (!this.canCraft()){
 					return null;
