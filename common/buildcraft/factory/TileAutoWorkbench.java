@@ -244,7 +244,9 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 				}
 			}
 			
-			this.craft();
+			if(doRemove) {
+				this.craft();
+			}
 			item = result.copy();
 		}else{
 			return null;
