@@ -285,22 +285,22 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
         	ItemStack item = this.getStackInSlot(slot);
         	
         	if (item != null){
-        		if (item.getItem().hasContainerItem()){
-                    ItemStack container = item.getItem().getContainerItemStack(item);
+        	    if (item.getItem().hasContainerItem()){
+			ItemStack container = item.getItem().getContainerItemStack(item);
                     
-                    if (container.isItemStackDamageable() && container.getItemDamage() > container.getMaxDamage()){
-						this.worldObj.playSoundEffect(this.xCoord + 0.5F, this.yCoord + 0.5F, this.zCoord + 0.5F, "random.break", 0.8F, 0.8F + this.worldObj.rand.nextFloat() * 0.4F);
+                        if (container.isItemStackDamageable() && container.getItemDamage() > container.getMaxDamage()){
+			    this.worldObj.playSoundEffect(this.xCoord + 0.5F, this.yCoord + 0.5F, this.zCoord + 0.5F, "random.break", 0.8F, 0.8F + this.worldObj.rand.nextFloat() * 0.4F);
 						
-                        container = null;
-                    }
+                            container = null;
+                        }
 		            
-                    this.crafting.setInventorySlotContents(slot, container);
-                }else{
+                        this.crafting.setInventorySlotContents(slot, container);
+                    }else{
                 	this.decrStackSize(slot, 1);                	
-                }
-        	}
+                    }
+	        }
+            }
         }
-    }
 	
 	public boolean canCraft() {
 		if (this.craftResult.getStackInSlot(0) == null){
