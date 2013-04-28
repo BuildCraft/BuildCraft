@@ -92,58 +92,59 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) == this;
 	}
 	
-	public void refillFromNeighbour(){
-		//pre-compute to see if there are enough items
-		{
-			ItemStack[] required = new ItemStack[this.getSizeInventory()];
+	public boolean canRefillFromNeighbour(){
+		ItemStack[] required = new ItemStack[this.getSizeInventory()];
+		
+		for (int slot = 0; slot < this.getSizeInventory(); slot++){
+			ItemStack item = this.getStackInSlot(slot);
 			
-			for (int slot = 0; slot < this.getSizeInventory(); slot++){
-				ItemStack item = this.getStackInSlot(slot);
-				
-				if (item != null && item.stackSize == 1 && !item.getItem().hasContainerItem()){
-					required[slot] = item.copy();
-				}
+			if (item != null && item.stackSize == 1 && !item.getItem().hasContainerItem()){
+				required[slot] = item.copy();
 			}
+		}
+		
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS){
+			TileEntity tileEntity = this.worldObj.getBlockTileEntity(side.offsetX + this.xCoord, side.offsetY + this.yCoord, side.offsetZ + this.zCoord);
 			
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS){
-				TileEntity tileEntity = this.worldObj.getBlockTileEntity(side.offsetX + this.xCoord, side.offsetY + this.yCoord, side.offsetZ + this.zCoord);
+			if (tileEntity instanceof IInventory){
+				IInventory inventory = (IInventory) tileEntity;
 				
-				if (tileEntity instanceof IInventory){
-					IInventory inventory = (IInventory) tileEntity;
+				ItemStack remaining = null;
+				for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+					ItemStack item = inventory.getStackInSlot(slot);
 					
-					ItemStack remaining = null;
-					for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
-						ItemStack item = inventory.getStackInSlot(slot);
+					if (item != null){
+						remaining = item.copy();
 						
-						if (item != null){
-							remaining = item.copy();
-							
-							for (int index = 0; index < required.length; index++){
-								if (required[index] != null && item.isItemEqual(required[index])){
-									required[index] = null;
-									
-									if (remaining.stackSize == 1){
-										remaining = null;
-										break;
-									}else{
-										remaining.stackSize--;
-									}
+						for (int index = 0; index < required.length; index++){
+							if (required[index] != null && item.isItemEqual(required[index])){
+								required[index] = null;
+								
+								if (remaining.stackSize == 1){
+									remaining = null;
+									break;
+								}else{
+									remaining.stackSize--;
 								}
 							}
 						}
 					}
 				}
 			}
-			
-			for (int index = 0; index < required.length; index++){
-				if (required[index] != null) return;
-			}
 		}
+		
+		for (int index = 0; index < required.length; index++){
+			if (required[index] != null) return false;
+		}
+		
+		return true;
+	}
+	
+	public void refillFromNeighbour(){
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS){
 			TileEntity tileEntity = this.worldObj.getBlockTileEntity(side.offsetX + this.xCoord, side.offsetY + this.yCoord, side.offsetZ + this.zCoord);
 			
 			/*
-			 * FIXME: make this support ISidedInvontory. That means forge's and vanilla's implementation
 			 * perhaps have this work with ISpecialInvenotry?
 			 */
 			
@@ -237,17 +238,16 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		
 		if (result != null){
 			if (!this.canCraft()){
-				if (!doRemove){
-					return null;
-				}
-				this.refillFromNeighbour();
-				
-				if (!this.canCraft()){
+				if (this.canRefillFromNeighbour()){
+					if (doRemove){
+						this.refillFromNeighbour();						
+					}
+				}else{
 					return null;
 				}
 			}
 			
-			if(doRemove) {
+			if (doRemove){ 
 				this.craft();
 			}
 			item = result.copy();
