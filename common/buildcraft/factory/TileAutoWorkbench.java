@@ -236,7 +236,10 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		ItemStack result = this.craftResult.getStackInSlot(0);
 		
 		if (result != null){
-			if (!this.canCraft() && doRemove){
+			if (!this.canCraft()){
+				if (!doRemove){
+					return null;
+				}
 				this.refillFromNeighbour();
 				
 				if (!this.canCraft()){
