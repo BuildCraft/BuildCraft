@@ -186,31 +186,31 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	}
 	
 	public void craft(){
-	    EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(this.worldObj, this.xCoord, this.yCoord, this.zCoord);
-	    GameRegistry.onItemCrafted(player, this.craftResult.getStackInSlot(0), this.crafting);
-	    this.craftResult.getStackInSlot(0).getItem().onCreated(this.craftResult.getStackInSlot(0), this.worldObj, player);
+		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+		GameRegistry.onItemCrafted(player, this.craftResult.getStackInSlot(0), this.crafting);
+		this.craftResult.getStackInSlot(0).getItem().onCreated(this.craftResult.getStackInSlot(0), this.worldObj, player);
 		
-            for (int slot = 0; slot < this.getSizeInventory(); slot++){
-        	ItemStack item = this.getStackInSlot(slot);
-        	
-        	if (item != null){
-        	    if (item.getItem().hasContainerItem()){
-                        ItemStack container = item.getItem().getContainerItemStack(item);
-                    
-                        if (container.isItemStackDamageable() && container.getItemDamage() > container.getMaxDamage()){
-                            MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, container));
-			    this.worldObj.playSoundEffect(this.xCoord + 0.5F, this.yCoord + 0.5F, this.zCoord + 0.5F, "random.break", 0.8F, 0.8F + this.worldObj.rand.nextFloat() * 0.4F);
+		for (int slot = 0; slot < this.getSizeInventory(); slot++){
+			ItemStack item = this.getStackInSlot(slot);
+			
+			if (item != null){
+				if (item.getItem().hasContainerItem()){
+					ItemStack container = item.getItem().getContainerItemStack(item);
+					
+					if (container.isItemStackDamageable() && container.getItemDamage() > container.getMaxDamage()){
+						MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, container));
+						this.worldObj.playSoundEffect(this.xCoord + 0.5F, this.yCoord + 0.5F, this.zCoord + 0.5F, "random.break", 0.8F, 0.8F + this.worldObj.rand.nextFloat() * 0.4F);
 						
-                            container = null;
-                        }
-		            
-                        this.crafting.setInventorySlotContents(slot, container);
-                    }else{
-                	this.decrStackSize(slot, 1);                	
-                    }
-        	}
-            }
-        }
+						container = null;
+					}
+					
+					this.crafting.setInventorySlotContents(slot, container);
+				}else{
+					this.decrStackSize(slot, 1);                	
+				}
+			}
+		}
+	}
 	
 	public boolean canCraft() {
 		if (this.craftResult.getStackInSlot(0) == null){
