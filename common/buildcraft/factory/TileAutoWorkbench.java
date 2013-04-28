@@ -108,7 +108,70 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS){
 				TileEntity tileEntity = this.worldObj.getBlockTileEntity(side.offsetX + this.xCoord, side.offsetY + this.yCoord, side.offsetZ + this.zCoord);
 				
-				if (tileEntity instanceof IInventory){
+				if (tileEntity instanceof net.minecraft.inventory.ISidedInventory){
+					net.minecraft.inventory.ISidedInventory inventory = (net.minecraft.inventory.ISidedInventory) tileEntity;
+					
+					{
+						int[] a = inventory.getSizeInventorySide(side.getOpposite().ordinal());
+						if (a == null || a.length == 0){
+							continue;
+						}
+					}
+					
+					ItemStack remaining = null;
+					for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+						ItemStack item = inventory.getStackInSlot(slot);
+						
+						if (!inventory.func_102008_b(slot, item, side.getOpposite().ordinal())){
+							continue;
+						}
+						
+						if (item != null){
+							remaining = item.copy();
+							
+							for (int index = 0; index < required.length; index++){
+								if (required[index] != null && item.isItemEqual(required[index])){
+									required[index] = null;
+									
+									if (remaining.stackSize == 1){
+										remaining = null;
+										break;
+									}else{
+										remaining.stackSize--;
+									}
+								}
+							}
+						}
+					}
+				}else if (tileEntity instanceof net.minecraftforge.common.ISidedInventory){
+					net.minecraftforge.common.ISidedInventory inventory = (net.minecraftforge.common.ISidedInventory) tileEntity;
+					
+					if (inventory.getSizeInventorySide(side.getOpposite()) <= 0){
+						continue;
+					}
+					
+					ItemStack remaining = null;
+					for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+						ItemStack item = inventory.getStackInSlot(slot);
+						
+						if (item != null){
+							remaining = item.copy();
+							
+							for (int index = 0; index < required.length; index++){
+								if (required[index] != null && item.isItemEqual(required[index])){
+									required[index] = null;
+									
+									if (remaining.stackSize == 1){
+										remaining = null;
+										break;
+									}else{
+										remaining.stackSize--;
+									}
+								}
+							}
+						}
+					}
+				}else if (tileEntity instanceof IInventory){
 					IInventory inventory = (IInventory) tileEntity;
 					
 					ItemStack remaining = null;
@@ -142,12 +205,60 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS){
 			TileEntity tileEntity = this.worldObj.getBlockTileEntity(side.offsetX + this.xCoord, side.offsetY + this.yCoord, side.offsetZ + this.zCoord);
 			
-			/*
-			 * FIXME: make this support ISidedInvontory. That means forge's and vanilla's implementation
-			 * perhaps have this work with ISpecialInvenotry?
-			 */
+			//perhaps have this work with ISpecialInvenotry?
 			
-			if (tileEntity instanceof IInventory){
+			if (tileEntity instanceof net.minecraft.inventory.ISidedInventory){
+				net.minecraft.inventory.ISidedInventory inventory = (net.minecraft.inventory.ISidedInventory) tileEntity;
+				
+				{
+					int[] a = inventory.getSizeInventorySide(side.getOpposite().ordinal());
+					if (a == null || a.length == 0){
+						continue;
+					}
+				}
+				
+				for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+					ItemStack item = inventory.getStackInSlot(slot);
+					
+					if (!inventory.func_102008_b(slot, item, side.getOpposite().ordinal())){
+						continue;
+					}
+					
+					if (item != null){
+						for (int slot1 = 0; slot1 < this.getSizeInventory(); slot1++){
+							ItemStack item1 = this.getStackInSlot(slot1);
+							if (item1 != null && item1.stackSize == 1 && item.isItemEqual(item1)){
+								item1.stackSize++;
+								inventory.decrStackSize(slot, 1);
+							}
+							
+							if (this.canCraft()) return;
+						}
+					}
+				}
+			}else if (tileEntity instanceof net.minecraftforge.common.ISidedInventory){
+				net.minecraftforge.common.ISidedInventory inventory = (net.minecraftforge.common.ISidedInventory) tileEntity;
+				
+				if (inventory.getSizeInventorySide(side.getOpposite()) <= 0){
+					continue;
+				}
+				
+				for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
+					ItemStack item = inventory.getStackInSlot(slot);
+					
+					if (item != null){
+						for (int slot1 = 0; slot1 < this.getSizeInventory(); slot1++){
+							ItemStack item1 = this.getStackInSlot(slot1);
+							if (item1 != null && item1.stackSize == 1 && item.isItemEqual(item1)){
+								item1.stackSize++;
+								inventory.decrStackSize(slot, 1);
+							}
+							
+							if (this.canCraft()) return;
+						}
+					}
+				}
+			}else if (tileEntity instanceof IInventory){
 				IInventory inventory = (IInventory) tileEntity;
 				
 				for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
