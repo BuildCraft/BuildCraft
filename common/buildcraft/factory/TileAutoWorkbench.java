@@ -42,7 +42,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	
 	@Override
 	public void onInventoryChanged() {
-		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(crafting, this.worldObj));	
+		this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(crafting, this.worldObj));	
 		super.onInventoryChanged();
 	}
 	
@@ -63,14 +63,14 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack item = this.crafting.decrStackSize(slot, amount);
-		super.onInventoryChanged();
+		this.onInventoryChanged();
 		return item;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		this.crafting.setInventorySlotContents(slot, stack);
-		super.onInventoryChanged();
+		this.onInventoryChanged();
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	@Override
 	public int getInventoryStackLimit() {
-		return 64;
+		return this.crafting.getInventoryStackLimit();
 	}
 
 	@Override
@@ -112,22 +112,20 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 			}else if (tileEntity instanceof IInventory){
 				IInventory inventory = Utils.getInventory((IInventory) tileEntity);
 				
-				ItemStack remaining = null;
 				for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
 					ItemStack item = inventory.getStackInSlot(slot);
 					
 					if (item != null){
-						remaining = item.copy();
+						int remaining = item.stackSize;
 						
 						for (int index = 0; index < required.length; index++){
 							if (required[index] != null && item.isItemEqual(required[index])){
 								required[index] = null;
 								
-								if (remaining.stackSize == 1){
-									remaining = null;
+								if (remaining <= 1){
 									break;
 								}else{
-									remaining.stackSize--;
+									remaining--;
 								}
 							}
 						}
@@ -160,22 +158,22 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 					ItemStack item = inventory.getStackInSlot(slot);
 					
 					if (item != null){
-						int left = item.stackSize;
+						int remaining = item.stackSize;
 						for (int slot1 = 0; slot1 < this.getSizeInventory(); slot1++){
 							ItemStack item1 = this.getStackInSlot(slot1);
 							if (item1 != null && item1.stackSize == 1 && !item1.getItem().hasContainerItem() && item.isItemEqual(item1)){
 								item1.stackSize++;
 								
-								left--;
-								if (left == 0){
+								remaining--;
+								if (remaining == 0){
 									break;
 								}
 							}
 						}
-						if (left == 0){
+						if (remaining <= 0){
 							inventory.setInventorySlotContents(slot, null);
 						}else{
-							inventory.decrStackSize(slot, item.stackSize - left);
+							inventory.decrStackSize(slot, item.stackSize - remaining);
 						}
 						
 						if (this.canCraft()) return;
