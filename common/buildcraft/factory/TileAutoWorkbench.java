@@ -230,7 +230,6 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		super.readFromNBT(nbt);
 		
 		Utils.readStacksFromNBT(nbt, "stackList", this);
-		this.onInventoryChanged();
 	}
 
 	@Override
