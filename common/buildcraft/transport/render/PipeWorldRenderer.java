@@ -518,7 +518,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	}
 	
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction){
-		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) != 0;
+		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0;
 	}
 
 	@Override
