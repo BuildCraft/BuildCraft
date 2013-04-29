@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
@@ -18,6 +19,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockHopper extends BlockBuildCraft {
+
+	private static icons[3];
 
 	public BlockHopper(int blockId) {
 		super(blockId, Material.iron);
@@ -74,7 +77,18 @@ public class BlockHopper extends BlockBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-//	    field_94336_cN = par1IconRegister.registerIcons("buildcraft:hopper");
+		icons = new Icon[3];
+		icons[0] = par1IconRegister.registerIcon("buildcraft:hopperBottom");
+		icons[1] = par1IconRegister.registerIcon("buildcraft:hopperTop");
+		icons[2] = par1IconRegister.registerIcon("buildcraft:hopperSide");
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon(int par1, int par2)
+	{
+		if (par1 < 2) return icons[par2];
+		return icons[3];
 	}
 
 }
