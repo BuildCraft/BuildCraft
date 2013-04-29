@@ -37,7 +37,9 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		}
 		
 		@Override
-		public void onCraftMatrixChanged(IInventory inventory) {}
+		public void onCraftMatrixChanged(IInventory inventory) {
+			onInventoryChanged();
+		}
 	}, 3, 3);
 	
 	@Override
@@ -62,15 +64,12 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		ItemStack item = this.crafting.decrStackSize(slot, amount);
-		this.onInventoryChanged();
-		return item;
+		return this.crafting.decrStackSize(slot, amount);
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		this.crafting.setInventorySlotContents(slot, stack);
-		this.onInventoryChanged();
 	}
 
 	@Override
@@ -231,7 +230,6 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		super.readFromNBT(nbt);
 		
 		Utils.readStacksFromNBT(nbt, "stackList", this);
-		this.onInventoryChanged();
 	}
 
 	@Override

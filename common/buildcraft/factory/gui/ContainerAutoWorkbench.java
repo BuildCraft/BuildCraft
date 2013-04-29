@@ -82,13 +82,6 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	}
 	
 	@Override
-	public void onCraftMatrixChanged(IInventory inventory) {
-		inventory.onInventoryChanged();
-		
-		super.onCraftMatrixChanged(inventory);
-	}
-	
-	@Override
 	public boolean canInteractWith(EntityPlayer player) {
 		return this.parent.isUseableByPlayer(player);
 	}
