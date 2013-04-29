@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockHopper extends BlockBuildCraft {
 
-	private static icons[3];
+	private static Icon icon;
 
 	public BlockHopper(int blockId) {
 		super(blockId, Material.iron);
@@ -52,12 +52,14 @@ public class BlockHopper extends BlockBuildCraft {
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (entityplayer.isSneaking()) {
 			return false;
+		}
 
 		if (entityplayer.getCurrentEquippedItem() != null) {
-			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
+			if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
 				return false;
+			}
 		}
 
 		if (!CoreProxy.proxy.isRenderWorld(world)) {
@@ -67,7 +69,7 @@ public class BlockHopper extends BlockBuildCraft {
 		return true;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
@@ -75,20 +77,13 @@ public class BlockHopper extends BlockBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-		icons = new Icon[3];
-		icons[0] = par1IconRegister.registerIcon("buildcraft:hopperBottom");
-		icons[1] = par1IconRegister.registerIcon("buildcraft:hopperTop");
-		icons[2] = par1IconRegister.registerIcon("buildcraft:hopperSide");
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2)
-	{
-		if (par1 < 2) return icons[par2];
-		return icons[3];
+	public void registerIcons(IconRegister par1IconRegister) {
+		icon = par1IconRegister.registerIcon("buildcraft:hopperBottom");
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon(int par1, int par2) {
+		return icon;
+	}
 }
