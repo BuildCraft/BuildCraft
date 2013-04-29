@@ -35,9 +35,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockEngine extends BlockContainer {
 	
-	private static Icon[] woodTextures;
-	private static Icon[] stoneTextures;
-	private static Icon[] ironTextures;
+	private static Icon woodTexture;
+	private static Icon stoneTexture;
+	private static Icon ironTexture;
 	
 	public BlockEngine(int i) {
 		super(i, Material.iron);
@@ -61,18 +61,9 @@ public class BlockEngine extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
 	{
-		woodTextures = new Icon[3];
-		woodTextures[0] = par1IconRegister.registerIcon("buildcraft:engineWoodBottom");
-		woodTextures[1] = par1IconRegister.registerIcon("buildcraft:engineWoodTop");
-		woodTextures[2] = par1IconRegister.registerIcon("buildcraft:engineWoodSide");
-		stoneTextures = new Icon[3];
-		stoneTextures[0] = par1IconRegister.registerIcon("buildcraft:engineStoneBottom");
-		stoneTextures[1] = par1IconRegister.registerIcon("buildcraft:engineStoneTop");
-		stoneTextures[2] = par1IconRegister.registerIcon("buildcraft:engineStoneSide");
-		ironTextures = new Icon[3];
-		ironTextures[0] = par1IconRegister.registerIcon("buildcraft:engineIronBottom");
-		ironTextures[1] = par1IconRegister.registerIcon("buildcraft:engineIronTop");
-		ironTextures[2] = par1IconRegister.registerIcon("buildcraft:engineIronSide"); 
+		woodTexture = par1IconRegister.registerIcon("buildcraft:engineWoodBottom");
+		stoneTexture = par1IconRegister.registerIcon("buildcraft:engineStoneBottom");
+		ironTexture = par1IconRegister.registerIcon("buildcraft:engineIronBottom");
 	}
 
 	@Override
@@ -197,22 +188,16 @@ public class BlockEngine extends BlockContainer {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2)
+	public Icon getIcon(int side, int meta)
 	{
-		switch (par2)
+		switch (meta)
 		{
 			case 0:
-				if (par1 == 0) return woodTextures[0];
-				if (par1 == 1) return woodTextures[1];
-				return woodTextures[2];
+				return woodTexture;
 			case 1:
-				if (par1 == 0) return stoneTextures[0];
-				if (par1 == 1) return stoneTextures[1];
-				return stoneTextures[2];
+				return stoneTexture;
 			case 2:
-				if (par1 == 0) return ironTextures[0];
-				if (par1 == 1) return ironTextures[1];
-				return ironTextures[2];
+				return ironTexture;
 			default:
 				return null;
 		}
