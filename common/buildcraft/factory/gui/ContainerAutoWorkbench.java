@@ -67,7 +67,7 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			}
 		}
 		
-		if (slot == 9 && output.getStack() != null){
+		if (slot == 9 && itemstack != null){
 			((SlotCrafting) output).onPickupFromSlot(player, itemstack);
 		}
 		this.parent.onInventoryChanged();
