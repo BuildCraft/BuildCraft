@@ -17,8 +17,17 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.core.BlockSpring;
+import java.util.HashSet;
+import java.util.Set;
 
 public class OilPopulate {
+
+	public static final Set<Integer> surfaceDepositBiomes = new HashSet<Integer>();
+
+	static {
+		surfaceDepositBiomes.add(BiomeGenBase.desert.biomeID);
+	}
 
 	@ForgeSubscribe
 	public void populate(PopulateChunkEvent.Post event) {
@@ -37,14 +46,14 @@ public class OilPopulate {
 	}
 
 	public static void doPopulate(World world, Random rand, int x, int z) {
-		BiomeGenBase biomegenbase = world.getBiomeGenForCoords(x + 16, z + 16);
+		BiomeGenBase biome = world.getBiomeGenForCoords(x + 16, z + 16);
 
 		// Do not generate oil in the End
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID) {
+		if (biome.biomeID == BiomeGenBase.sky.biomeID || biome.biomeID == BiomeGenBase.hell.biomeID) {
 			return;
 		}
 
-		if (biomegenbase == BiomeGenBase.desert && rand.nextFloat() > 0.97) {
+		if (surfaceDepositBiomes.contains(biome.biomeID) && rand.nextFloat() > 0.97) {
 			// Generate a small desert deposit
 
 			int startX = rand.nextInt(10) + 2;
@@ -54,13 +63,11 @@ public class OilPopulate {
 				int i = startX + x;
 				int k = startZ + z;
 
-				if (world.getBlockId(i, j, k) != 0) {
-					if (world.getBlockId(i, j, k) == Block.sand.blockID) {
-						generateSurfaceDeposit(world, rand, i, j, k, 3);
-					}
-
-					break;
+				int blockId = world.getBlockId(i, j, k);
+				if (blockId != 0 && blockId == Block.sand.blockID) {
+					generateSurfaceDeposit(world, rand, i, j, k, 3);
 				}
+				break;
 			}
 		}
 
@@ -74,25 +81,32 @@ public class OilPopulate {
 		if (mediumDeposit || largeDeposit) {
 			// Generate a large cave deposit
 
-			int cx = x, cy = 20 + rand.nextInt(10), cz = z;
-
-			int r = 0;
-
-			if (largeDeposit) {
-				r = 8 + rand.nextInt(9);
-			} else if (mediumDeposit) {
-				r = 4 + rand.nextInt(4);
+			int baseX = x, baseZ = z;
+			int wellY = 20 + rand.nextInt(10);
+			int baseY;
+			if (largeDeposit && (BuildCraftCore.debugMode || rand.nextDouble() <= 0.25)) {
+				baseY = 0;
+			} else {
+				baseY = wellY;
 			}
 
-			int r2 = r * r;
+			int radius = 0;
 
-			for (int bx = -r; bx <= r; bx++) {
-				for (int by = -r; by <= r; by++) {
-					for (int bz = -r; bz <= r; bz++) {
-						int d2 = bx * bx + by * by + bz * bz;
+			if (largeDeposit) {
+				radius = 8 + rand.nextInt(9);
+			} else if (mediumDeposit) {
+				radius = 4 + rand.nextInt(4);
+			}
 
-						if (d2 <= r2) {
-							world.setBlock(bx + cx, by + cy, bz + cz, BuildCraftEnergy.oilStill.blockID);
+			int radiusSq = radius * radius;
+
+			for (int poolX = -radius; poolX <= radius; poolX++) {
+				for (int poolY = -radius; poolY <= radius; poolY++) {
+					for (int poolZ = -radius; poolZ <= radius; poolZ++) {
+						int distance = poolX * poolX + poolY * poolY + poolZ * poolZ;
+
+						if (distance <= radiusSq) {
+							world.setBlock(poolX + baseX, poolY + wellY, poolZ + baseZ, BuildCraftEnergy.oilStill.blockID);
 						}
 					}
 				}
@@ -100,35 +114,40 @@ public class OilPopulate {
 
 			boolean started = false;
 
-			for (int y = 128; y >= cy; --y) {
-				if (!started && world.getBlockId(cx, y, cz) != 0 && world.getBlockId(cx, y, cz) != Block.leaves.blockID
-						&& world.getBlockId(cx, y, cz) != Block.wood.blockID && world.getBlockId(cx, y, cz) != Block.grass.blockID) {
-
-					started = true;
-
-					if (largeDeposit) {
-						generateSurfaceDeposit(world, rand, cx, y, cz, 20 + rand.nextInt(20));
-					} else if (mediumDeposit) {
-						generateSurfaceDeposit(world, rand, cx, y, cz, 5 + rand.nextInt(5));
+			for (int y = 128; y >= baseY; --y) {
+				if (started) {
+					int blockId = world.getBlockId(baseX, y, baseZ);
+					if (blockId == Block.bedrock.blockID) {
+						world.setBlock(baseX, y, baseZ, BuildCraftCore.springBlock.blockID, 1, 2);
+						break;
 					}
+					world.setBlock(baseX, y, baseZ, BuildCraftEnergy.oilStill.blockID);
+				} else {
+					int blockId = world.getBlockId(baseX, y, baseZ);
+					if (blockId != 0 && blockId != Block.leaves.blockID && blockId != Block.wood.blockID && blockId != Block.grass.blockID) {
+						started = true;
 
-					int ymax = 0;
+						if (largeDeposit) {
+							generateSurfaceDeposit(world, rand, baseX, y, baseZ, 20 + rand.nextInt(20));
+						} else if (mediumDeposit) {
+							generateSurfaceDeposit(world, rand, baseX, y, baseZ, 5 + rand.nextInt(5));
+						}
 
-					if (largeDeposit) {
-						ymax = (y + 30 < 128 ? y + 30 : 128);
-					} else if (mediumDeposit) {
-						ymax = (y + 4 < 128 ? y + 4 : 128);
+						int ymax = 0;
+
+						if (largeDeposit) {
+							ymax = (y + 30 < 128 ? y + 30 : 128);
+						} else if (mediumDeposit) {
+							ymax = (y + 4 < 128 ? y + 4 : 128);
+						}
+
+						for (int h = y + 1; h <= ymax; ++h) {
+							world.setBlock(baseX, h, baseZ, BuildCraftEnergy.oilStill.blockID);
+						}
+
 					}
-
-					for (int h = y + 1; h <= ymax; ++h) {
-						world.setBlock(cx, h, cz, BuildCraftEnergy.oilStill.blockID);
-					}
-
-				} else if (started) {
-					world.setBlock(cx, y, cz, BuildCraftEnergy.oilStill.blockID);
 				}
 			}
-
 		}
 	}
 

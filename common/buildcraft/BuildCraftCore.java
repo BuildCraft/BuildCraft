@@ -39,6 +39,7 @@ import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.SpringPopulate;
@@ -90,7 +91,7 @@ public class BuildCraftCore {
 
 	public static RenderMode render = RenderMode.Full;
 
-	public static boolean debugMode = false;
+	public static boolean debugMode = true;
 	public static boolean modifyWorld = false;
 	public static boolean trackNetworkUsage = false;
 
@@ -242,7 +243,7 @@ public class BuildCraftCore {
 
 			if(BuildCraftCore.modifyWorld) {
 				springBlock = new BlockSpring(springId.getInt()).setUnlocalizedName("eternalSpring");
-				CoreProxy.proxy.registerBlock(springBlock);
+				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
 
 			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");

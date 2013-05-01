@@ -33,6 +33,7 @@ import buildcraft.core.network.BuildCraftPacket;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.item.ItemBlock;
 
 public class CoreProxy {
 
@@ -98,7 +99,11 @@ public class CoreProxy {
 
 	/* REGISTRATION */
 	public void registerBlock(Block block) {
-		GameRegistry.registerBlock(block, ItemBlockBuildCraft.class, block.getUnlocalizedName().replace("tile.", ""));
+		registerBlock(block, ItemBlockBuildCraft.class);
+	}
+	
+	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
+		GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
 	}
 
 	public void registerItem(Item item) {

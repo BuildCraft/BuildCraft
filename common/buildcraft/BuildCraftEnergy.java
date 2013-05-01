@@ -28,6 +28,7 @@ import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.BlockIndex;
+import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
@@ -117,7 +118,7 @@ public class BuildCraftEnergy {
 		BuildCraftCore.mainConfiguration.save();
 
 		engineBlock = new BlockEngine(engineId.getInt(DefaultProps.ENGINE_ID));
-		GameRegistry.registerBlock(engineBlock, ItemEngine.class);
+		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 0), "Redstone Engine");
 		LanguageRegistry.addName(new ItemStack(engineBlock, 1, 1), "Steam Engine");
@@ -126,6 +127,7 @@ public class BuildCraftEnergy {
 		oilStill = (new BlockOilStill(oilStillId.getInt(DefaultProps.OIL_STILL_ID), Material.water)).setUnlocalizedName("oil");
 		CoreProxy.proxy.addName(oilStill.setUnlocalizedName("oilStill"), "Oil");
 		CoreProxy.proxy.registerBlock(oilStill);
+		BlockSpring.EnumSpring.OIL.liquidBlockId = oilStill.blockID;
 
 		oilMoving = (new BlockOilFlowing(oilMovingId.getInt(DefaultProps.OIL_MOVING_ID), Material.water)).setUnlocalizedName("oil");
 		CoreProxy.proxy.addName(oilMoving.setUnlocalizedName("oilMoving"), "Oil");
