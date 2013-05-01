@@ -181,11 +181,8 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				int[] list1 = LiquidRenderer.getLiquidDisplayLists(liquid1, tile.worldObj, false);
 
 				if (list1 != null) {
-					GL11.glPushMatrix();
-//					GL11.glTranslatef(-0.5F, 0, -0.5F);
-					bindTextureByName(liquid1.canonical().getTextureSheet());
+					bindTextureByName(LiquidRenderer.getLiquidSheet(liquid1));
 					GL11.glCallList(list1[(int) ((float) liquid1.amount / (float) TileRefinery.LIQUID_PER_SLOT * (LiquidRenderer.DISPLAY_STAGES - 1))]);
-					GL11.glPopMatrix();
 				}
 			}
 
@@ -195,7 +192,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				if (list2 != null) {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(0, 0, 1);
-					bindTextureByName(liquid2.canonical().getTextureSheet());
+					bindTextureByName(LiquidRenderer.getLiquidSheet(liquid2));
 					GL11.glCallList(list2[(int) ((float) liquid2.amount / (float) TileRefinery.LIQUID_PER_SLOT * (LiquidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}
@@ -208,7 +205,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				if (list3 != null) {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
-					bindTextureByName(liquidResult.canonical().getTextureSheet());
+					bindTextureByName(LiquidRenderer.getLiquidSheet(liquidResult));
 					GL11.glCallList(list3[(int) ((float) liquidResult.amount / (float) TileRefinery.LIQUID_PER_SLOT * (LiquidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}

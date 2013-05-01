@@ -7,63 +7,16 @@
  */
 package buildcraft.factory.render;
 
-import java.util.HashMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
+import buildcraft.core.render.LiquidRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.render.RenderEntityBlock;
-import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {
-
-	final static private int displayStages = 100;
-	private final HashMap<LiquidStack, int[]> stage = new HashMap<LiquidStack, int[]>();
-
-	private int[] getDisplayLists(LiquidStack liquid, World world) {
-
-		if (stage.containsKey(liquid)) {
-			return stage.get(liquid);
-		}
-
-		int[] d = new int[displayStages];
-		stage.put(liquid, d);
-
-		BlockInterface block = new BlockInterface();
-		block.baseBlock = Block.waterStill;
-		block.texture = liquid.getRenderingIcon();
-
-		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
-			block.baseBlock = Block.blocksList[liquid.itemID];
-		}
-
-		for (int s = 0; s < displayStages; ++s) {
-			d[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(d[s], 4864 /* GL_COMPILE */);
-
-			block.minX = 0.125 + 0.01;
-			block.minY = 0;
-			block.minZ = 0.125 + 0.01;
-
-			block.maxX = 0.875 - 0.01;
-			block.maxY = (float) s / (float) displayStages;
-			block.maxZ = 0.875 - 0.01;
-
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
-
-			GL11.glEndList();
-		}
-
-		return d;
-	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
@@ -71,17 +24,11 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		TileTank tank = ((TileTank) tileentity);
 
 		LiquidStack liquid = tank.tank.getLiquid();
-		if (liquid == null) {
+		if (liquid == null || liquid.amount <= 0) {
 			return;
 		}
 
-		LiquidStack refLiquid = liquid.canonical();
-
-		if (refLiquid == null || liquid.amount <= 0) {
-			return;
-		}
-
-		int[] displayList = getDisplayLists(refLiquid, tileentity.worldObj);
+		int[] displayList = LiquidRenderer.getLiquidDisplayLists(liquid, tileentity.worldObj, false);
 		if (displayList == null) {
 			return;
 		}
@@ -93,11 +40,12 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		bindTextureByName(refLiquid.getTextureSheet());
+		bindTextureByName(LiquidRenderer.getLiquidSheet(liquid));
 
-		GL11.glTranslatef((float) x, (float) y, (float) z);
+		GL11.glTranslatef((float) x + 0.125F, (float) y, (float) z + 0.125F);
+		GL11.glScalef(0.75F, 0.999F, 0.75F);
 
-		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (displayStages - 1))]);
+		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (LiquidRenderer.DISPLAY_STAGES - 1))]);
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();

@@ -19,6 +19,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.world.World;
+import net.minecraftforge.liquids.LiquidDictionary;
 
 /**
  *
@@ -31,36 +32,68 @@ public class LiquidRenderer {
 	public static final int DISPLAY_STAGES = 100;
 	private static final BlockInterface liquidBlock = new BlockInterface();
 
-	public static Icon getLiquidTexture(LiquidStack liquid) {
-		if (liquid == null || liquid.amount <= 0 || liquid.itemID <= 0) {
-			return null;
+	public static class LiquidTextureException extends RuntimeException {
+
+		private final LiquidStack liquid;
+
+		public LiquidTextureException(LiquidStack liquid) {
+			super();
+			this.liquid = liquid;
 		}
 
-		return liquid.canonical().getRenderingIcon();
+		@Override
+		public String getMessage() {
+			String liquidName = LiquidDictionary.findLiquidName(liquid);
+			if (liquidName == null) {
+				liquidName = String.format("ID: %d Meta: %d", liquid.itemID, liquid.itemMeta);
+			}
+			return String.format("Liquid %s has no icon. Please contact the author of the mod the liquid came from.", liquidName);
+		}
 	}
 
-	public static String setupFlowingLiquidTexture(LiquidStack liquid, Icon[] texArray) {
-		if (liquid == null || liquid.amount <= 0 || liquid.itemID <= 0) {
-			return null;
+	public static class LiquidCanonException extends RuntimeException {
+
+		private final LiquidStack liquid;
+
+		public LiquidCanonException(LiquidStack liquid) {
+			super();
+			this.liquid = liquid;
 		}
 
-		ItemStack stack = liquid.asItemStack();
-		liquid = liquid.canonical();
-		String texSheet = liquid.getTextureSheet();
-		Icon top = liquid.getRenderingIcon();
-		Icon side = top;
-		if (stack.getItem() instanceof ItemBlock) {
-			top = Block.blocksList[stack.itemID].getIcon(0, 0);
-			side = Block.blocksList[stack.itemID].getIcon(2, 0);
-			texSheet = "/terrain.png";
+		@Override
+		public String getMessage() {
+			String liquidName = LiquidDictionary.findLiquidName(liquid);
+			if (liquidName == null) {
+				liquidName = String.format("ID: %d Meta: %d", liquid.itemID, liquid.itemMeta);
+			}
+			return String.format("Liquid %s is not registered with the Liquid Dictionary. Please contact the author of the mod the liquid came from.", liquidName);
 		}
-		texArray[0] = top;
-		texArray[1] = top;
-		texArray[2] = side;
-		texArray[3] = side;
-		texArray[4] = side;
-		texArray[5] = side;
-		return texSheet;
+	}
+
+	public static Icon getLiquidTexture(LiquidStack liquid) {
+		if (liquid == null || liquid.itemID <= 0) {
+			return null;
+		}
+		LiquidStack canon = liquid.canonical();
+		if (canon == null) {
+			throw new LiquidCanonException(liquid);
+		}
+		Icon icon = canon.getRenderingIcon();
+		if (icon == null) {
+			throw new LiquidTextureException(liquid);
+		}
+		return icon;
+	}
+	
+	public static String getLiquidSheet(LiquidStack liquid) {
+		if (liquid == null || liquid.itemID <= 0) {
+			return "/terrain.png";
+		}
+		LiquidStack canon = liquid.canonical();
+		if (canon == null) {
+			throw new LiquidCanonException(liquid);
+		}
+		return canon.getTextureSheet();
 	}
 
 	public static int[] getLiquidDisplayLists(LiquidStack liquid, World world, boolean flowing) {
@@ -68,6 +101,9 @@ public class LiquidRenderer {
 			return null;
 		}
 		liquid = liquid.canonical();
+		if(liquid == null){
+			throw new LiquidCanonException(liquid);
+		}
 		Map<LiquidStack, int[]> cache = flowing ? flowingRenderCache : stillRenderCache;
 		int[] diplayLists = cache.get(liquid);
 		if (diplayLists != null) {
@@ -79,16 +115,16 @@ public class LiquidRenderer {
 		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
 			liquidBlock.baseBlock = Block.blocksList[liquid.itemID];
 			if (!flowing) {
-				liquidBlock.texture = liquid.getRenderingIcon();
+				liquidBlock.texture = getLiquidTexture(liquid);
 			}
 		} else if (Item.itemsList[liquid.itemID] != null) {
 			liquidBlock.baseBlock = Block.waterStill;
-			liquidBlock.texture = liquid.getRenderingIcon();
+			liquidBlock.texture = getLiquidTexture(liquid);
 		} else {
 			return null;
 		}
 
-		cache.put(liquid.canonical(), diplayLists);
+		cache.put(liquid, diplayLists);
 
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_BLEND);
