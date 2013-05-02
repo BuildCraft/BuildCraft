@@ -60,8 +60,8 @@ public class OilPopulate {
 		// Generate a surface oil lake
 		if (surfaceDepositBiomes.contains(biome.biomeID) && rand.nextFloat() > 0.97) {
 			int lakeX = rand.nextInt(10) + 2 + x;
-			int lakeY = world.getTopSolidOrLiquidBlock(x, z) - 1;
 			int lakeZ = rand.nextInt(10) + 2 + z;
+			int lakeY = world.getTopSolidOrLiquidBlock(lakeX, lakeZ) - 1;
 
 			int blockId = world.getBlockId(lakeX, lakeY, lakeZ);
 			if (blockId == biome.topBlock) {
