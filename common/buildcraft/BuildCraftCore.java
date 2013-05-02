@@ -91,7 +91,7 @@ public class BuildCraftCore {
 
 	public static RenderMode render = RenderMode.Full;
 
-	public static boolean debugMode = true;
+	public static boolean debugMode = false;
 	public static boolean modifyWorld = false;
 	public static boolean trackNetworkUsage = false;
 

@@ -64,10 +64,12 @@ public class OilPopulate {
 				int k = startZ + z;
 
 				int blockId = world.getBlockId(i, j, k);
-				if (blockId != 0 && blockId == Block.sand.blockID) {
-					generateSurfaceDeposit(world, rand, i, j, k, 3);
+				if (blockId != 0) {
+					if (blockId == Block.sand.blockID) {
+						generateSurfaceDeposit(world, rand, i, j, k, 3);
+					}
+					break;
 				}
-				break;
 			}
 		}
 
