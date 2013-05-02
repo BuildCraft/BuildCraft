@@ -1,11 +1,10 @@
 /**
  * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
+ * BuildCraft Open Source License. It grants rights to read, modify, compile or
+ * run the code. It does *NOT* grant the right to redistribute this software or
+ * its modifications in any form, binary or source, except if expressively
  * granted by the copyright holder.
  */
-
 package buildcraft;
 
 import java.util.TreeMap;
@@ -47,45 +46,42 @@ import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
 import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
+import com.google.common.base.Splitter;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.minecraft.world.biome.BiomeGenBase;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftEnergy {
 
 	public final static int ENERGY_REMOVE_BLOCK = 25;
 	public final static int ENERGY_EXTRACT_ITEM = 2;
-
 	public static BlockEngine engineBlock;
-
 	public static Block oilMoving;
 	public static Block oilStill;
 	public static Item bucketOil;
 	public static Item bucketFuel;
-
 	public static Item fuel;
-
 	public static LiquidStack oilLiquid;
 	public static LiquidStack fuelLiquid;
-
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
-
 	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.Blue);
 	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.Green);
 	public static BCTrigger triggerYellowEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_YELLOW_ENGINE_HEAT, EnergyStage.Yellow);
 	public static BCTrigger triggerRedEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_RED_ENGINE_HEAT, EnergyStage.Red);
-
 	@Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
@@ -134,8 +130,9 @@ public class BuildCraftEnergy {
 		CoreProxy.proxy.registerBlock(oilMoving);
 
 		// Oil and fuel
-		if (oilMoving.blockID + 1 != oilStill.blockID)
+		if (oilMoving.blockID + 1 != oilStill.blockID) {
 			throw new RuntimeException("Oil Still id must be Oil Moving id + 1");
+		}
 
 		fuel = new ItemBuildCraft(itemFuelId.getInt(DefaultProps.FUEL_ID)).setUnlocalizedName("fuel");
 		LanguageRegistry.addName(fuel, "Fuel");
@@ -182,14 +179,48 @@ public class BuildCraftEnergy {
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
-				new Object[] { "www", " g ", "GpG", Character.valueOf('w'), "plankWood", Character.valueOf('g'), Block.glass, Character.valueOf('G'),
-						BuildCraftCore.woodenGearItem, Character.valueOf('p'), Block.pistonBase });
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[] { "www", " g ", "GpG", Character.valueOf('w'), Block.cobblestone,
-				Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem, Character.valueOf('p'), Block.pistonBase });
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[] { "www", " g ", "GpG", Character.valueOf('w'), Item.ingotIron,
-				Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Block.pistonBase });
+				new Object[]{"www", " g ", "GpG", Character.valueOf('w'), "plankWood", Character.valueOf('g'), Block.glass, Character.valueOf('G'),
+			BuildCraftCore.woodenGearItem, Character.valueOf('p'), Block.pistonBase});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Block.cobblestone,
+			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.stoneGearItem, Character.valueOf('p'), Block.pistonBase});
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2), new Object[]{"www", " g ", "GpG", Character.valueOf('w'), Item.ingotIron,
+			Character.valueOf('g'), Block.glass, Character.valueOf('G'), BuildCraftCore.ironGearItem, Character.valueOf('p'), Block.pistonBase});
 	}
 
+	@Mod.IMCCallback
+	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		for (FMLInterModComms.IMCMessage m : event.getMessages()) {
+			if (m.key.equals("oil-lake-biome")) {
+				try {
+					String biomeID = m.getStringValue().trim();
+					int id = Integer.valueOf(biomeID);
+					if (id >= BiomeGenBase.biomeList.length) {
+						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
+					}
+					OilPopulate.surfaceDepositBiomes.add(id);
+				} catch (Exception ex) {
+					Logger.getLogger("Buildcraft").log(Level.WARNING,
+							String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
+				}
+				Logger.getLogger("Buildcraft").log(Level.INFO,
+						String.format("Received an successfull oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
+			} else if (m.key.equals("oil-gen-exclude")) {
+				try {
+					String biomeID = m.getStringValue().trim();
+					int id = Integer.valueOf(biomeID);
+					if (id >= BiomeGenBase.biomeList.length) {
+						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
+					}
+					OilPopulate.excludedBiomes.add(id);
+				} catch (Exception ex) {
+					Logger.getLogger("Buildcraft").log(Level.WARNING,
+							String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
+				}
+				Logger.getLogger("Buildcraft").log(Level.INFO,
+						String.format("Received an successfull oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
+			}
+		}
+	}
 	// public static int createPollution (World world, int i, int j, int k, int
 	// saturation) {
 	// int remainingSaturation = saturation;
