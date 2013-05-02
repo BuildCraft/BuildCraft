@@ -42,11 +42,12 @@ public class EngineWood extends Engine {
 
 	@Override
 	protected void computeEnergyStage() {
-		if (energy / (double) maxEnergy * 100.0 <= 25.0) {
+		double level = energy / (double) maxEnergy * 100.0;
+		if (level <= 25.0) {
 			energyStage = EnergyStage.Blue;
-		} else if (energy / (double) maxEnergy * 100.0 <= 50.0) {
+		} else if (level <= 50.0) {
 			energyStage = EnergyStage.Green;
-		} else if (energy / (double) maxEnergy * 100.0 <= 75.0) {
+		} else if (level <= 75.0) {
 			energyStage = EnergyStage.Yellow;
 		} else {
 			energyStage = EnergyStage.Red;
