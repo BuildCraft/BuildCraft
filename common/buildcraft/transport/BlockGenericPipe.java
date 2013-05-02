@@ -47,6 +47,7 @@ import buildcraft.transport.render.PipeWorldRenderer;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Locale;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {
@@ -828,7 +829,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
 		ItemPipe item = new ItemPipe(key);
-		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase());
+		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
 
 		pipes.put(item.itemID, clas);
