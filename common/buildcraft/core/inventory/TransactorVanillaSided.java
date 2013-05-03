@@ -28,11 +28,11 @@ public class TransactorVanillaSided extends TransactorSimple {
 
     private int getSlotOnSideForStack(ItemStack stack, ForgeDirection orientation, int slotIndex)
     {
-        int[] sideSlots = sided.getSizeInventorySide(orientation.ordinal());
+        int[] sideSlots = sided.getAccessibleSlotsFromSide(orientation.ordinal());
         if (slotIndex >= sideSlots.length)
             return -1;
         int targetSlot = sideSlots[slotIndex];
-        return sided.func_102007_a(targetSlot, stack, orientation.ordinal()) ? targetSlot : -1;
+        return sided.canInsertItem(targetSlot, stack, orientation.ordinal()) ? targetSlot : -1;
     }
 
 }
