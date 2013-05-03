@@ -20,6 +20,7 @@ import buildcraft.BuildCraftEnergy;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.block.BlockFlower;
+import net.minecraftforge.common.ForgeDirection;
 
 public class OilPopulate {
 
@@ -28,6 +29,7 @@ public class OilPopulate {
 
 	static {
 		surfaceDepositBiomes.add(BiomeGenBase.desert.biomeID);
+		surfaceDepositBiomes.add(BiomeGenBase.taiga.biomeID);
 
 		excludedBiomes.add(BiomeGenBase.sky.biomeID);
 		excludedBiomes.add(BiomeGenBase.hell.biomeID);
@@ -58,7 +60,7 @@ public class OilPopulate {
 		}
 
 		// Generate a surface oil lake
-		if (surfaceDepositBiomes.contains(biome.biomeID) && rand.nextFloat() > 0.97) {
+		if (surfaceDepositBiomes.contains(biome.biomeID) && rand.nextDouble() <= 0.02) { // 2%
 			int lakeX = rand.nextInt(10) + 2 + x;
 			int lakeZ = rand.nextInt(10) + 2 + z;
 			int lakeY = world.getTopSolidOrLiquidBlock(lakeX, lakeZ) - 1;
@@ -69,8 +71,9 @@ public class OilPopulate {
 			}
 		}
 
-		boolean mediumDeposit = rand.nextDouble() <= (0.15 / 100.0);
-		boolean largeDeposit = rand.nextDouble() <= (0.005 / 100.0);
+		double bonus = surfaceDepositBiomes.contains(biome.biomeID) ? 1.5 : 1;
+		boolean mediumDeposit = rand.nextDouble() <= 0.0015 * bonus; // 0.15% 
+		boolean largeDeposit = rand.nextDouble() <= 0.0005 * bonus; // 0.05%
 
 		if (BuildCraftCore.debugMode && x == 0 && z == 0) {
 			largeDeposit = true;
@@ -112,7 +115,7 @@ public class OilPopulate {
 
 			boolean started = false;
 
-			for (int y = 128; y >= baseY; --y) {
+			for (int y = world.getActualHeight(); y >= baseY; --y) {
 				if (started) {
 					int blockId = world.getBlockId(baseX, y, baseZ);
 					if (blockId == Block.bedrock.blockID) {
@@ -132,13 +135,11 @@ public class OilPopulate {
 							generateSurfaceDeposit(world, rand, baseX, y, baseZ, 5 + rand.nextInt(5));
 						}
 
-						int ymax = 0;
-
+						int wellHeight = 4;
 						if (largeDeposit) {
-							ymax = (y + 30 < 128 ? y + 30 : 128);
-						} else if (mediumDeposit) {
-							ymax = (y + 4 < 128 ? y + 4 : 128);
+							wellHeight = 16;
 						}
+						int ymax = Math.min(y + wellHeight, world.getActualHeight() - 1);
 
 						for (int h = y + 1; h <= ymax; ++h) {
 							world.setBlock(baseX, h, baseZ, BuildCraftEnergy.oilStill.blockID);
@@ -178,6 +179,11 @@ public class OilPopulate {
 		}
 	}
 
+	private static boolean isOilOrWater(World world, int x, int y, int z) {
+		int blockId = world.getBlockId(x, y, z);
+		return blockId == Block.waterMoving.blockID || blockId == Block.waterStill.blockID || blockId == BuildCraftEnergy.oilStill.blockID || blockId == BuildCraftEnergy.oilMoving.blockID;
+	}
+
 	private static boolean isOil(World world, int x, int y, int z) {
 		int blockId = world.getBlockId(x, y, z);
 		return (blockId == BuildCraftEnergy.oilStill.blockID || blockId == BuildCraftEnergy.oilMoving.blockID);
@@ -194,16 +200,18 @@ public class OilPopulate {
 			}
 
 			if (adjacentOil || force) {
-				if (world.isAirBlock(x, y + 1, z) || Block.blocksList[world.getBlockId(x, y + 1, z)] instanceof BlockFlower) {
-					int blockId = world.getBlockId(x, y, z);
-					if (blockId == Block.waterMoving.blockID || blockId == Block.waterStill.blockID || isOil(world, x, y, z)) {
+				if (world.isAirBlock(x, y + 1, z) || !world.isBlockOpaqueCube(x, y + 1, z) || Block.blocksList[world.getBlockId(x, y + 1, z)] instanceof BlockFlower) {
+					world.setBlockToAir(x, y + 1, z);
+					if (isOilOrWater(world, x, y, z)) {
 						world.setBlock(x, y, z, BuildCraftEnergy.oilStill.blockID);
 					} else {
 						world.setBlockToAir(x, y, z);
 					}
 
-					for (int i = depth; i > 0; i--) {
-						world.setBlock(x, y - i, z, BuildCraftEnergy.oilStill.blockID);
+					for (int d = depth; d > 0; d--) {
+						if (isOilOrWater(world, x, y - d - 1, z) || world.isBlockSolidOnSide(x, y - d - 1, z, ForgeDirection.UP)) {
+							world.setBlock(x, y - d, z, BuildCraftEnergy.oilStill.blockID);
+						}
 					}
 				}
 			}
