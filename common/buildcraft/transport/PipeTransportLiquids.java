@@ -17,6 +17,8 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidEvent;
+import net.minecraftforge.liquids.LiquidEvent.LiquidMotionEvent;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
@@ -360,6 +362,7 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
 						}
+						else LiquidEvent.fireEvent(new LiquidMotionEvent(liquidToPush, worldObj, xCoord, yCoord, zCoord));
 					}
 				}
 			}
@@ -388,6 +391,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 					if (liquidToPush != null) {
 						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
 						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
+						if (filled > 0)
+							LiquidEvent.fireEvent(new LiquidMotionEvent(liquidToPush, worldObj, xCoord, yCoord, zCoord));
 					}
 				}
 			}
@@ -431,6 +436,8 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 				if (liquidToPush != null) {
 					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
 					internalTanks[dir.ordinal()].drain(filled, true);
+					if (filled > 0)
+						LiquidEvent.fireEvent(new LiquidMotionEvent(liquidToPush, worldObj, xCoord, yCoord, zCoord));
 				}
 			}
 		}
