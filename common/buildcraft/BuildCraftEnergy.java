@@ -46,7 +46,6 @@ import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
 import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
-import com.google.common.base.Splitter;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -69,6 +68,7 @@ public class BuildCraftEnergy {
 
 	public final static int ENERGY_REMOVE_BLOCK = 25;
 	public final static int ENERGY_EXTRACT_ITEM = 2;
+	public static boolean spawnOilSprings = true;
 	public static BlockEngine engineBlock;
 	public static Block oilMoving;
 	public static Block oilStill;
@@ -111,6 +111,7 @@ public class BuildCraftEnergy {
 		Property bucketFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bucketFuel.id", DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "fuel.id", DefaultProps.FUEL_ID);
 
+
 		BuildCraftCore.mainConfiguration.save();
 
 		engineBlock = new BlockEngine(engineId.getInt(DefaultProps.ENGINE_ID));
@@ -123,7 +124,10 @@ public class BuildCraftEnergy {
 		oilStill = (new BlockOilStill(oilStillId.getInt(DefaultProps.OIL_STILL_ID), Material.water)).setUnlocalizedName("oil");
 		CoreProxy.proxy.addName(oilStill.setUnlocalizedName("oilStill"), "Oil");
 		CoreProxy.proxy.registerBlock(oilStill);
-		BlockSpring.EnumSpring.OIL.liquidBlockId = oilStill.blockID;
+		Property oilSpringsProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilSprings", true);
+		spawnOilSprings = oilSpringsProp.getBoolean(true);
+		BlockSpring.EnumSpring.OIL.canGen = spawnOilSprings;
+		BlockSpring.EnumSpring.OIL.liquidBlock = oilStill;
 
 		oilMoving = (new BlockOilFlowing(oilMovingId.getInt(DefaultProps.OIL_MOVING_ID), Material.water)).setUnlocalizedName("oil");
 		CoreProxy.proxy.addName(oilMoving.setUnlocalizedName("oilMoving"), "Oil");

@@ -18,16 +18,17 @@ public class BlockSpring extends Block {
 
 	public enum EnumSpring {
 
-		WATER(5, -1, Block.waterStill.blockID),
-		OIL(6000, 32, 0); // Set in BuildCraftEnergy
+		WATER(5, -1, Block.waterStill),
+		OIL(6000, 32, null); // Set in BuildCraftEnergy
 		public static final EnumSpring[] VALUES = values();
 		public final int tickRate, chance;
-		public int liquidBlockId;
+		public Block liquidBlock;
+		public boolean canGen = true;
 
-		private EnumSpring(int tickRate, int chance, int liquidBlockId) {
+		private EnumSpring(int tickRate, int chance, Block liquidBlock) {
 			this.tickRate = tickRate;
 			this.chance = chance;
-			this.liquidBlockId = liquidBlockId;
+			this.liquidBlock = liquidBlock;
 		}
 
 		public static EnumSpring fromMeta(int meta) {
@@ -54,11 +55,11 @@ public class BlockSpring extends Block {
 			list.add(new ItemStack(this, 1, type.ordinal()));
 		}
 	}
-	
+
 	@Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
+	public int damageDropped(int meta) {
+		return meta;
+	}
 
 	@Override
 	public void updateTick(World world, int x, int y, int z, Random random) {
@@ -80,13 +81,16 @@ public class BlockSpring extends Block {
 		int meta = world.getBlockMetadata(x, y, z);
 		EnumSpring spring = EnumSpring.fromMeta(meta);
 		world.scheduleBlockUpdate(x, y, z, blockID, spring.tickRate);
+		if (!spring.canGen || spring.liquidBlock == null) {
+			return;
+		}
 		if (!world.isAirBlock(x, y + 1, z)) {
 			return;
 		}
 		if (spring.chance != -1 && rand.nextInt(spring.chance) != 0) {
 			return;
 		}
-		world.setBlock(x, y + 1, z, spring.liquidBlockId);
+		world.setBlock(x, y + 1, z, spring.liquidBlock.blockID);
 	}
 
 	@Override

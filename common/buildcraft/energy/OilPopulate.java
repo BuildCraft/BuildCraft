@@ -85,7 +85,7 @@ public class OilPopulate {
 			int baseX = x, baseZ = z;
 			int wellY = 20 + rand.nextInt(10);
 			int baseY;
-			if (largeDeposit && (BuildCraftCore.debugMode || rand.nextDouble() <= 0.25)) {
+			if (largeDeposit && BuildCraftEnergy.spawnOilSprings && (BuildCraftCore.debugMode || rand.nextDouble() <= 0.25)) {
 				baseY = 0;
 			} else {
 				baseY = wellY;
@@ -119,7 +119,9 @@ public class OilPopulate {
 				if (started) {
 					int blockId = world.getBlockId(baseX, y, baseZ);
 					if (blockId == Block.bedrock.blockID) {
-						world.setBlock(baseX, y, baseZ, BuildCraftCore.springBlock.blockID, 1, 2);
+						if (BuildCraftEnergy.spawnOilSprings) {
+							world.setBlock(baseX, y, baseZ, BuildCraftCore.springBlock.blockID, 1, 2);
+						}
 						break;
 					}
 					world.setBlock(baseX, y, baseZ, BuildCraftEnergy.oilStill.blockID);
