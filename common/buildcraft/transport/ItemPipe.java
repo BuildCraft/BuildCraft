@@ -23,6 +23,7 @@ import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.logging.Level;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -75,7 +76,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 			Pipe pipe = BlockGenericPipe.createPipe(itemID);
 			if (pipe == null) {
-				BuildCraftCore.bcLog.warning("Pipe failed to create during placement at "+i+","+j+","+k);
+				BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
 				return true;
 			}
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {

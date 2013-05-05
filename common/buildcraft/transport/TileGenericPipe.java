@@ -51,6 +51,7 @@ import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.logging.Level;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
@@ -76,6 +77,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	private PipeRenderState renderState = new PipeRenderState();
 	private CoreState coreState = new CoreState();
+	private boolean deletePipe = false;
 
 	public TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
@@ -122,7 +124,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (pipe != null) {
 			pipe.readFromNBT(nbttagcompound);
 		} else {
-			BuildCraftCore.bcLog.warning("Pipe failed to load from NBT at "+xCoord+","+yCoord+","+zCoord);
+			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
+			deletePipe = true;
         }
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
@@ -154,6 +157,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	@Override
 	public void updateEntity() {
+		
+		if(deletePipe){
+			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+		}
 
 		if (pipe == null)
 			return;
@@ -251,6 +258,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	public void initialize(Pipe pipe) {
+		
+		if(pipe == null){
+			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
+			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			return;
+		}
 
 		this.pipe = pipe;
 
@@ -277,11 +290,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		computeConnections();
 		scheduleRenderUpdate();
 
-		if (pipe != null) {
-			pipe.initialize();
-		} else {
-			BuildCraftCore.bcLog.warning("Pipe failed to initialize pipe at "+xCoord+","+yCoord+","+zCoord);
-		}
+		pipe.initialize();
 
 		initialized = true;
 	}

@@ -47,7 +47,9 @@ import buildcraft.transport.render.PipeWorldRenderer;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {
@@ -822,10 +824,10 @@ public class BlockGenericPipe extends BlockContainer {
 
 	/* Registration ******************************************************** */
 
-	public static TreeMap<Integer, Class<? extends Pipe>> pipes = new TreeMap<Integer, Class<? extends Pipe>>();
+	public static Map<Integer, Class<? extends Pipe>> pipes = new HashMap<Integer, Class<? extends Pipe>>();
 
 	static long lastRemovedDate = -1;
-	public static TreeMap<BlockIndex, Pipe> pipeRemoved = new TreeMap<BlockIndex, Pipe>();
+	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
 	public static ItemPipe registerPipe(int key, Class<? extends Pipe> clas) {
 		ItemPipe item = new ItemPipe(key);
