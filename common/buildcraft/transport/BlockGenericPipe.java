@@ -843,6 +843,10 @@ public class BlockGenericPipe extends BlockContainer {
 		}
 		return item;
 	}
+	
+	public static boolean isPipeRegistered(int key) {
+		return pipes.containsKey(key);
+	}
 
 	public static Pipe createPipe(int key) {
 
