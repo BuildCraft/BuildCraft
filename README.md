@@ -24,11 +24,11 @@ Your directory structure should look like this before running ant:
 ***
 
     basedir
-    \- BuildCraft
+    \- buildcraft
      |- buildcraft_resources
      |- common
      |- ...
-    \- BuildCraft-Localization
+    \- buildcraft.localization
      |- lang
 
 ***
@@ -37,14 +37,14 @@ And like this after running ant:
 ***
 
     basedir
-    \- BuildCraft
+    \- buildcraft
      |- bin
      |- build
      |- buildcraft_resources
      |- common
      |- download
      |- ...
-    \- BuildCraft-Localization
+    \- buildcraft.localization
      |- lang
 
 ***
