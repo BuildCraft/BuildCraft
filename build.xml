@@ -1,207 +1,207 @@
 <project name="BuildCraft" default="main">
-    <property environment="env"/>
-    <!-- Properties -->
+	<property environment="env"/>
+	<!-- Properties -->
 
-    <property name="build.dir" value="build"/>
-    <property name="src.dir" value="."/>
-    <property name="lang.dir" value="../buildcraft.localization"/>
-    <property name="resources.dir" value="buildcraft_resources"/>
+	<property name="build.dir" value="build"/>
+	<property name="src.dir" value="."/>
+	<property name="lang.dir" value="../buildcraft.localization"/>
+	<property name="resources.dir" value="buildcraft_resources"/>
 
-    <property name="download.dir" value="download"/>
+	<property name="download.dir" value="download"/>
 
-    <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="jar.dir" value="bin"/>
+	<property name="classes.dir" value="${build.dir}/classes"/>
+	<property name="jar.dir" value="bin"/>
 
-    <property name="forge.dir" value="${build.dir}/forge"/>
-    <property name="mcp.dir" value="${forge.dir}/mcp"/>
+	<property name="forge.dir" value="${build.dir}/forge"/>
+	<property name="mcp.dir" value="${forge.dir}/mcp"/>
 
-    <property name="mcpsrc.dir" value="${mcp.dir}/src"/>
+	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
 
-    <property name="mc.version" value="1.5.2"/>
-    <property name="forge.version" value="7.8.0.684"/>
-    <!--	<property name="project.version" value="0.0.0"/>-->
+	<property name="mc.version" value="1.5.2"/>
+	<property name="forge.version" value="7.8.0.684"/>
+	<!--	<property name="project.version" value="0.0.0"/>-->
 
-    <property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
+	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
 
-    <available property="forge-exists" file="${download.dir}/${forge.name}"/>
-    <available file="${src.dir}/.git" type="dir" property="git.present"/>
+	<available property="forge-exists" file="${download.dir}/${forge.name}"/>
+	<available file="${src.dir}/.git" type="dir" property="git.present"/>
 
-    <condition property="out-of-date">
-        <not>
-            <and>
-                <available file="${download.dir}/${forge.name}"/>
-                <available file="${mcpsrc.dir}"/>
-            </and>
-        </not>
-    </condition>
+	<condition property="out-of-date">
+		<not>
+			<and>
+				<available file="${download.dir}/${forge.name}"/>
+				<available file="${mcpsrc.dir}"/>
+			</and>
+		</not>
+	</condition>
 
-    <mkdir dir="${download.dir}"/>
+	<mkdir dir="${download.dir}"/>
 
-    <!-- Targets -->
+	<!-- Targets -->
 
-    <!-- Clear build directory -->
-    <target name="clean">
-        <delete dir="${build.dir}"/>
-    </target>
+	<!-- Clear build directory -->
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
 
-    <!-- Set full version -->
-    <target name="initialize-version" depends="version-provided,version-not-provided,git.revision">
-        <property name="project.version.full" value="${project.version}.${build.number}"/>
-    </target>
+	<!-- Set full version -->
+	<target name="initialize-version" depends="version-provided,version-not-provided,git.revision">
+		<property name="project.version.full" value="${project.version}.${build.number}"/>
+	</target>
 
-    <!-- Set unknown build number -->
-    <target name="version-not-provided" unless="env.BUILD_NUMBER">
-        <property name="build.number" value="unknown"/>
-    </target>
+	<!-- Set unknown build number -->
+	<target name="version-not-provided" unless="env.BUILD_NUMBER">
+		<property name="build.number" value="unknown"/>
+	</target>
 
-    <!-- Set build number from environment -->
-    <target name="version-provided" if="env.BUILD_NUMBER">
-        <property name="build.number" value="${env.BUILD_NUMBER}"/>
-    </target>
-	
-    <target name="git.revision" if="git.present">
-        <exec executable="git" dir="${src.dir}" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
-            <arg value="describe"/>
-            <arg value="--tags"/>
-            <arg value="--always"/>
-            <arg value="HEAD"/>
-        </exec>
-        <condition property="project.version" value="${git.revision}" else="0.0.0">
-            <and>
-                <isset property="git.revision"/>
-                <length string="${git.revision}" trim="yes" length="0" when="greater"/>
-            </and>
-        </condition>
-    </target>	
+	<!-- Set build number from environment -->
+	<target name="version-provided" if="env.BUILD_NUMBER">
+		<property name="build.number" value="${env.BUILD_NUMBER}"/>
+	</target>
 
-    <!-- Download necessary files -->
-    <target name="download-files" depends="download-forge"/>
+	<target name="git.revision" if="git.present">
+		<exec executable="git" dir="${src.dir}" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+			<arg value="describe"/>
+			<arg value="--tags"/>
+			<arg value="--always"/>
+			<arg value="HEAD"/>
+		</exec>
+		<condition property="project.version" value="${git.revision}" else="0.0.0">
+			<and>
+				<isset property="git.revision"/>
+				<length string="${git.revision}" trim="yes" length="0" when="greater"/>
+			</and>
+		</condition>
+	</target>
 
-    <!-- Download forge (if it doesn't exist) -->
-    <target name="download-forge" unless="forge-exists">
-        <get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}" usetimestamp="True"/>
-    </target>
+	<!-- Download necessary files -->
+	<target name="download-files" depends="download-forge"/>
 
-    <!-- Setup mcp and forge -->
-    <target name="setup" depends="download-files" if="out-of-date">
+	<!-- Download forge (if it doesn't exist) -->
+	<target name="download-forge" unless="forge-exists">
+		<get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}" usetimestamp="True"/>
+	</target>
 
-        <delete dir="${forge.dir}" failonerror="false"/>
+	<!-- Setup mcp and forge -->
+	<target name="setup" depends="download-files" if="out-of-date">
 
-        <unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}"/>
+		<delete dir="${forge.dir}" failonerror="false"/>
 
-        <!-- Fix executable permissions -->
-        <chmod dir="${forge.dir}" perm="ugo+rx" includes="**.sh"/>
+		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}"/>
 
-        <!-- Install forge -->
-        <exec dir="${forge.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c install.cmd"/>
-        </exec>
+		<!-- Fix executable permissions -->
+		<chmod dir="${forge.dir}" perm="ugo+rx" includes="**.sh"/>
 
-        <exec dir="${forge.dir}" executable="sh" osfamily="unix">
-            <arg value="install.sh"/>
-        </exec>
+		<!-- Install forge -->
+		<exec dir="${forge.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c install.cmd"/>
+		</exec>
 
-    </target>
+		<exec dir="${forge.dir}" executable="sh" osfamily="unix">
+			<arg value="install.sh"/>
+		</exec>
 
-    <target name="copy-src">
-        <!-- Copy sources -->
-        <copy todir="${mcpsrc.dir}/minecraft">
-            <fileset dir="${src.dir}/common"/>
-            <filterset>
-                <filter token="VERSION" value="${project.version.full}" />
-                <filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
-        </copy>
-    </target>
+	</target>
 
-    <target name="compile" depends="initialize-version,setup,copy-src">
+	<target name="copy-src">
+		<!-- Copy sources -->
+		<copy todir="${mcpsrc.dir}/minecraft">
+			<fileset dir="${src.dir}/common"/>
+			<filterset>
+				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
+		</copy>
+	</target>
 
-        <delete dir="${classes.dir}"/>
-        <mkdir dir="${classes.dir}"/>
+	<target name="compile" depends="initialize-version,setup,copy-src">
 
-        <!-- Recompile -->
-        <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c recompile.bat"/>
-        </exec>
+		<delete dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}"/>
 
-        <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-            <arg value="recompile.sh"/>
-        </exec>
-		
-        <!-- Check for failure -->
-        <fail message="MCP failed to build">
-            <condition>
-                <resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
-            </condition>
-        </fail>
+		<!-- Recompile -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c recompile.bat"/>
+		</exec>
 
-    </target>
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="recompile.sh"/>
+		</exec>
 
-    <target name="reobf" depends="compile">
+		<!-- Check for failure -->
+		<fail message="MCP failed to build">
+			<condition>
+				<resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
+			</condition>
+		</fail>
 
-        <!-- Reobfuscate -->
-        <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c reobfuscate_srg.bat"/>
-        </exec>
+	</target>
 
-        <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-            <arg value="reobfuscate_srg.sh"/>
-        </exec>
+	<target name="reobf" depends="compile">
 
-        <!-- Copy classes -->
-        <copy todir="${classes.dir}">
-            <fileset dir="${mcp.dir}/reobf/minecraft"/>
-        </copy>
+		<!-- Reobfuscate -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c reobfuscate_srg.bat"/>
+		</exec>
 
-        <!-- Copy resources -->
-        <copy todir="${classes.dir}">
-            <fileset dir="${resources.dir}">
-                <exclude name="build.xml"/>
-            </fileset>
-        </copy>
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="reobfuscate_srg.sh"/>
+		</exec>
 
-        <!-- Copy localizations -->
-        <copy todir="${classes.dir}" failonerror="false">
-            <fileset dir="${lang.dir}">
-                <exclude name="README.md"/>
-            </fileset>
-        </copy>
+		<!-- Copy classes -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${mcp.dir}/reobf/minecraft"/>
+		</copy>
 
-        <!-- Reset src dir to post-forge-install state -->
-        <delete dir="${mcpsrc.dir}/minecraft/buildcraft"/>
+		<!-- Copy resources -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${resources.dir}">
+				<exclude name="build.xml"/>
+			</fileset>
+		</copy>
 
-    </target>
+		<!-- Copy localizations -->
+		<copy todir="${classes.dir}" failonerror="false">
+			<fileset dir="${lang.dir}">
+				<exclude name="README.md"/>
+			</fileset>
+		</copy>
 
-    <!-- Package the compiled files -->
-    <target name="package" depends="reobf">
+		<!-- Reset src dir to post-forge-install state -->
+		<delete dir="${mcpsrc.dir}/minecraft/buildcraft"/>
 
-        <delete dir="${jar.dir}"/>
-        <mkdir dir="${jar.dir}"/>
-        <jar destfile="${jar.dir}/${ant.project.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}"/>
-        <copy todir="${jar.dir}/changelog">
-            <fileset dir="${resources.dir}/changelog">
-                <include name="*" />
-            </fileset>
-        </copy>
+	</target>
 
-    </target>
+	<!-- Package the compiled files -->
+	<target name="package" depends="reobf">
 
-    <target name="run">
+		<delete dir="${jar.dir}"/>
+		<mkdir dir="${jar.dir}"/>
+		<jar destfile="${jar.dir}/${ant.project.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}"/>
+		<copy todir="${jar.dir}/changelog">
+			<fileset dir="${resources.dir}/changelog">
+				<include name="*" />
+			</fileset>
+		</copy>
 
-        <!-- Start Client -->
-        <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c startclient.bat"/>
-        </exec>
+	</target>
 
-        <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-            <arg value="startclient.sh"/>
-        </exec>
+	<target name="run">
 
-    </target>
+		<!-- Start Client -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c startclient.bat"/>
+		</exec>
 
-    <target name="test-run" depends="compile,run"/>
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="startclient.sh"/>
+		</exec>
 
-    <!-- Default target to run -->
-    <target name="main" depends="package"/>
+	</target>
+
+	<target name="test-run" depends="compile,run"/>
+
+	<!-- Default target to run -->
+	<target name="main" depends="package"/>
 
 </project>
