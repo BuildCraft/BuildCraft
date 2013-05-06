@@ -9,7 +9,9 @@
 
 package buildcraft.factory;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -193,7 +195,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	private void initializePumpFromPosition(int x, int y, int z) {
 		int liquidId = 0;
 
-		TreeSet<BlockIndex> markedBlocks = new TreeSet<BlockIndex>();
+		Set<BlockIndex> markedBlocks = new HashSet<BlockIndex>();
 		TreeSet<BlockIndex> lastFound = new TreeSet<BlockIndex>();
 
 		if (!blocksToPump.containsKey(y)) {
@@ -230,15 +232,13 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 		}
 	}
 
-	public void addToPumpIfLiquid(BlockIndex index, TreeSet<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound, LinkedList<BlockIndex> pumpList,
+	public void addToPumpIfLiquid(BlockIndex index, Set<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound, LinkedList<BlockIndex> pumpList,
 			int liquidId) {
 
 		if (liquidId != worldObj.getBlockId(index.i, index.j, index.k))
 			return;
 
-		if (!markedBlocks.contains(index)) {
-			markedBlocks.add(index);
-
+		if (markedBlocks.add(index)) {
 			if ((index.i - xCoord) * (index.i - xCoord) + (index.k - zCoord) * (index.k - zCoord) > 64 * 64)
 				return;
 

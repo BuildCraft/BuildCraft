@@ -75,4 +75,9 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	public String toString() {
 		return "{" + i + ", " + j + ", " + k + "}";
 	}
+
+	@Override
+	public int hashCode() {
+		return i + j << 8 + k << 16;
+	}
 }
