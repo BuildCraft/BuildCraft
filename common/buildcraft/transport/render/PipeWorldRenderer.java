@@ -162,6 +162,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		}
 
 		pipeFacadeRenderer(renderblocks, block, state, x, y, z);
+		pipePlugRenderer(renderblocks, block, state, x, y, z);
 
 	}
 
@@ -346,6 +347,36 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		// block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1F - facadeThickness);
 		// renderblocks.renderStandardBlock(block, x, y, z);
 		// }
+	}
+
+	private void pipePlugRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
+		
+		float zFightOffset = 1F / 4096F;
+
+		float[][] zeroState = new float[3][2];
+		// X START - END
+		zeroState[0][0] = 0.25F - zFightOffset / 2;
+		zeroState[0][1] = 0.75F + zFightOffset / 2;
+		// Y START - END
+		zeroState[1][0] = 0.75F;
+		zeroState[1][1] = 0.875F - zFightOffset;
+		// Z START - END
+		zeroState[2][0] = 0.25F;
+		zeroState[2][1] = 0.75F;
+		
+		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.PipeStructureCobblestone); // Structure Pipe
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (state.plugMatrix.isConnected(direction)) {
+				float[][] rotated = deepClone(zeroState);
+				transform(rotated, direction);
+
+				block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+				renderblocks.setRenderBoundsFromBlock(block);
+				renderblocks.renderStandardBlock(block, x, y, z);
+			}
+		}
+		
 	}
 
 	private void pipeWireRender(RenderBlocks renderblocks, Block block, PipeRenderState state, float cx, float cy, float cz, IPipe.WireColor color, int x,
