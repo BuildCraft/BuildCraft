@@ -474,11 +474,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	
 	protected boolean arePipesConnected(TileEntity with, ForgeDirection side) {
 		Pipe pipe1 = pipe;
+		
+		if (hasPlug(side)) return false;
 
 		if (!BlockGenericPipe.isValid(pipe1))
 			return false;
 
 		if (with instanceof TileGenericPipe) {
+			if (((TileGenericPipe)with).hasPlug(side.getOpposite())) return false;
 			Pipe pipe2 = ((TileGenericPipe) with).pipe;
 
 			if (!BlockGenericPipe.isValid(pipe2))
@@ -700,6 +703,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		plugs[forgeDirection.ordinal()] = false;
 		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 	}
 
@@ -708,6 +712,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		
 		plugs[forgeDirection.ordinal()] = true;
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 		return true;
 	}
