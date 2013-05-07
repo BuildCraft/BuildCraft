@@ -357,6 +357,7 @@ public class BuildCraftTransport {
 			Property pipePlugId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipePlug.id", DefaultProps.PIPE_PLUG_ID);
 			plugItem = new ItemPlug(pipePlugId.getInt());
 			plugItem.setUnlocalizedName("pipePlug");
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
 
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
