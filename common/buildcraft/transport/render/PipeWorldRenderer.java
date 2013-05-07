@@ -358,8 +358,8 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		zeroState[0][0] = 0.25F - zFightOffset / 2;
 		zeroState[0][1] = 0.75F + zFightOffset / 2;
 		// Y START - END
-		zeroState[1][0] = 0.75F;
-		zeroState[1][1] = 0.875F - zFightOffset;
+		zeroState[1][0] = 0.125F;
+		zeroState[1][1] = 0.25F;
 		// Z START - END
 		zeroState[2][0] = 0.25F;
 		zeroState[2][1] = 0.75F;
@@ -549,7 +549,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	}
 	
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction){
-		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0;
+		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction);
 	}
 
 	@Override

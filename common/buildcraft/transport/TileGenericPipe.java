@@ -253,16 +253,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			renderState.facadeMatrix.setFacade(direction, blockId, this.facadeMeta[direction.ordinal()]);
 		}
 
-		if (renderState.isDirty()) {
-			worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-			renderState.clean();
-		}
-		
 		//Plugs
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
 			renderState.plugMatrix.setConnected(direction, plugs[direction.ordinal()]);
 		}
-
+		
+		if (renderState.isDirty()) {
+			worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+			renderState.clean();
+		}
 	}
 
 	public void initialize(Pipe pipe) {
@@ -689,5 +688,27 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				return true;
 		}
 		return false;
+	}
+
+	public boolean hasPlug(ForgeDirection forgeDirection) {
+		return plugs[forgeDirection.ordinal()];
+	}
+
+	public void removeAndDropPlug(ForgeDirection forgeDirection) {
+		if (!hasPlug(forgeDirection)) return;
+		
+		plugs[forgeDirection.ordinal()] = false;
+		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		scheduleRenderUpdate();
+	}
+
+	public boolean addPlug(ForgeDirection forgeDirection) {
+		if (hasPlug(forgeDirection)) return false;
+		
+		plugs[forgeDirection.ordinal()] = true;
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		scheduleRenderUpdate();
+		return true;
 	}
 }

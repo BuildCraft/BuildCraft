@@ -461,6 +461,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			if (container.hasFacade(direction)) {
 				container.dropFacade(direction);
 			}
+			if (container.hasPlug(direction)){
+				container.removeAndDropPlug(direction);
+			}
 		}
 
 		if (broadcastRedstone) {
