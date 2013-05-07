@@ -13,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,7 +52,6 @@ import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.logging.Level;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
@@ -91,6 +91,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	private int[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
 	public TileGenericPipe() {
 
@@ -110,6 +111,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			nbttagcompound.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
 			nbttagcompound.setInteger("facadeMeta[" + i + "]", facadeMeta[i]);
+			nbttagcompound.setBoolean("plug[" + i + "]", plugs[i]);
 		}
 
 	}
@@ -131,6 +133,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			facadeBlocks[i] = nbttagcompound.getInteger("facadeBlocks[" + i + "]");
 			facadeMeta[i] = nbttagcompound.getInteger("facadeMeta[" + i + "]");
+			plugs[i] = nbttagcompound.getBoolean("plug[" + i + "]");
 		}
 
 	}
@@ -253,6 +256,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (renderState.isDirty()) {
 			worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 			renderState.clean();
+		}
+		
+		//Plugs
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
+			renderState.plugMatrix.setConnected(direction, plugs[direction.ordinal()]);
 		}
 
 	}
