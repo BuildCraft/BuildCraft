@@ -37,6 +37,7 @@ import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGate;
 import buildcraft.transport.ItemPipe;
+import buildcraft.transport.ItemPlug;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
@@ -139,6 +140,7 @@ public class BuildCraftTransport {
 	public static Item pipePowerGold;
 
 	public static Item facadeItem;
+	public static Item plugItem;
 
 	// public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
@@ -351,6 +353,10 @@ public class BuildCraftTransport {
 			Property pipeFacadeId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipeFacade.id", DefaultProps.PIPE_FACADE_ID);
 			facadeItem = new ItemFacade(pipeFacadeId.getInt());
 			facadeItem.setUnlocalizedName("pipeFacade");
+			
+			Property pipePlugId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipePlug.id", DefaultProps.PIPE_PLUG_ID);
+			plugItem = new ItemPlug(pipePlugId.getInt());
+			plugItem.setUnlocalizedName("pipePlug");
 
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
