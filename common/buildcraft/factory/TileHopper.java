@@ -106,4 +106,12 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void closeChest() {
 	}
+	
+	 @Override
+    public boolean isStackValidForSlot(int i, ItemStack itemstack)
+    {
+        
+		 return true;
+		  
+    }
 }
