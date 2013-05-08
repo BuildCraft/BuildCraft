@@ -504,6 +504,6 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
     public boolean isStackValidForSlot(int i, ItemStack itemstack)
     {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 }
