@@ -13,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,7 +52,6 @@ import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.logging.Level;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
@@ -91,6 +91,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	private int[] facadeBlocks = new int[ForgeDirection.VALID_DIRECTIONS.length];
 	private int[] facadeMeta = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private boolean[] plugs = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
 	public TileGenericPipe() {
 
@@ -110,6 +111,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			nbttagcompound.setInteger("facadeBlocks[" + i + "]", facadeBlocks[i]);
 			nbttagcompound.setInteger("facadeMeta[" + i + "]", facadeMeta[i]);
+			nbttagcompound.setBoolean("plug[" + i + "]", plugs[i]);
 		}
 
 	}
@@ -131,6 +133,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			facadeBlocks[i] = nbttagcompound.getInteger("facadeBlocks[" + i + "]");
 			facadeMeta[i] = nbttagcompound.getInteger("facadeMeta[" + i + "]");
+			plugs[i] = nbttagcompound.getBoolean("plug[" + i + "]");
 		}
 
 	}
@@ -250,11 +253,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			renderState.facadeMatrix.setFacade(direction, blockId, this.facadeMeta[direction.ordinal()]);
 		}
 
+		//Plugs
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
+			renderState.plugMatrix.setConnected(direction, plugs[direction.ordinal()]);
+		}
+		
 		if (renderState.isDirty()) {
 			worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 			renderState.clean();
 		}
-
 	}
 
 	public void initialize(Pipe pipe) {
@@ -470,11 +477,14 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	
 	protected boolean arePipesConnected(TileEntity with, ForgeDirection side) {
 		Pipe pipe1 = pipe;
+		
+		if (hasPlug(side)) return false;
 
 		if (!BlockGenericPipe.isValid(pipe1))
 			return false;
 
 		if (with instanceof TileGenericPipe) {
+			if (((TileGenericPipe)with).hasPlug(side.getOpposite())) return false;
 			Pipe pipe2 = ((TileGenericPipe) with).pipe;
 
 			if (!BlockGenericPipe.isValid(pipe2))
@@ -684,5 +694,29 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 				return true;
 		}
 		return false;
+	}
+
+	public boolean hasPlug(ForgeDirection forgeDirection) {
+		return plugs[forgeDirection.ordinal()];
+	}
+
+	public void removeAndDropPlug(ForgeDirection forgeDirection) {
+		if (!hasPlug(forgeDirection)) return;
+		
+		plugs[forgeDirection.ordinal()] = false;
+		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		scheduleNeighborChange(); //To force recalculation of connections
+		scheduleRenderUpdate();
+	}
+
+	public boolean addPlug(ForgeDirection forgeDirection) {
+		if (hasPlug(forgeDirection)) return false;
+		
+		plugs[forgeDirection.ordinal()] = true;
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		scheduleNeighborChange(); //To force recalculation of connections
+		scheduleRenderUpdate();
+		return true;
 	}
 }

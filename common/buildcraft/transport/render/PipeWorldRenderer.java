@@ -162,6 +162,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		}
 
 		pipeFacadeRenderer(renderblocks, block, state, x, y, z);
+		pipePlugRenderer(renderblocks, block, state, x, y, z);
 
 	}
 
@@ -252,100 +253,59 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 				renderblocks.renderStandardBlock(block, x, y, z);
 			}
 		}
+	}
 
-		/** WHOLE BUNCH OF OLD (WORKING) RENDER CODE, WILL CLEAN UP LATER **/
+	private void pipePlugRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
+		
+		float zFightOffset = 1F / 4096F;
 
-		// if (state.facadeMatrix.isConnected(ForgeDirection.WEST)){
-		// MinecraftForgeClient.bindTexture(state.facadeMatrix.getTextureFile(ForgeDirection.WEST));
-		// state.currentTextureIndex = state.facadeMatrix.getTextureIndex(ForgeDirection.WEST);
-		// block.setBlockBounds(0.0F - zFightOffset, 0.0F, 0.0F, facadeThickness, 1.0F, 1F);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.EAST)){
-		// MinecraftForgeClient.bindTexture(state.facadeMatrix.getTextureFile(ForgeDirection.EAST));
-		// state.currentTextureIndex = state.facadeMatrix.getTextureIndex(ForgeDirection.EAST);
-		// block.setBlockBounds(1F-facadeThickness, 0.0F, 0.0F, 1.0F + zFightOffset, 1.0F, 1F);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.DOWN)){
-		// MinecraftForgeClient.bindTexture(state.facadeMatrix.getTextureFile(ForgeDirection.DOWN));
-		// state.currentTextureIndex = state.facadeMatrix.getTextureIndex(ForgeDirection.DOWN);
-		// block.setBlockBounds(0.0F, 0.0F - zFightOffset, 0.0F, 1.0F, facadeThickness, 1F);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.UP)){
-		// MinecraftForgeClient.bindTexture(state.facadeMatrix.getTextureFile(ForgeDirection.UP));
-		// state.currentTextureIndex = state.facadeMatrix.getTextureIndex(ForgeDirection.UP);
-		//
-		// if (state.pipeConnectionMatrix.isConnected(ForgeDirection.UP)){
-		// block.setBlockBounds(0.0F, 1F-facadeThickness, 0.0F, 1.0F - Utils.pipeMaxPos, 1.0F + zFightOffset / 2 , 1F);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		//
-		// block.setBlockBounds(0.0F, 1F-facadeThickness, 0.0F, 1.0F, 1.0F + zFightOffset , 1F - Utils.pipeMaxPos);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		//
-		// block.setBlockBounds(0.0F + Utils.pipeMaxPos, 1F-facadeThickness, 0.0F, 1.0F, 1.0F + zFightOffset / 2 , 1F);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		//
-		// block.setBlockBounds(0.0F, 1F-facadeThickness, 0.0F + Utils.pipeMaxPos, 1.0F, 1.0F + zFightOffset , 1F);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// } else {
-		// block.setBlockBounds(0.0F, 1F-facadeThickness, 0.0F, 1.0F, 1.0F + zFightOffset , 1F);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.NORTH)){
-		// MinecraftForgeClient.bindTexture(state.facadeMatrix.getTextureFile(ForgeDirection.NORTH));
-		// state.currentTextureIndex = state.facadeMatrix.getTextureIndex(ForgeDirection.NORTH);
-		// block.setBlockBounds(0.0F, 0.0F, 0.0F - zFightOffset, 1.0F, 1F, facadeThickness);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.SOUTH)){
-		// MinecraftForgeClient.bindTexture(state.facadeMatrix.getTextureFile(ForgeDirection.SOUTH));
-		// state.currentTextureIndex = state.facadeMatrix.getTextureIndex(ForgeDirection.SOUTH);
-		// block.setBlockBounds(0.0F, 0.0F, 1F-facadeThickness, 1.0F, 1F, 1.0F + zFightOffset);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// MinecraftForgeClient.bindTexture(DefaultProps.TEXTURE_BLOCKS);
-		// state.currentTextureIndex = 7 * 16 + 13; // Structure Pipe
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.WEST) && !state.pipeConnectionMatrix.isConnected(ForgeDirection.WEST)){
-		// block.setBlockBounds(0 + facadeThickness, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.EAST) && !state.pipeConnectionMatrix.isConnected(ForgeDirection.EAST)){
-		// block.setBlockBounds(Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMinPos, 1F - facadeThickness, Utils.pipeMaxPos, Utils.pipeMaxPos);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.DOWN) && !state.pipeConnectionMatrix.isConnected(ForgeDirection.DOWN)){
-		// block.setBlockBounds(Utils.pipeMinPos, 0 + facadeThickness, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMaxPos);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.UP) && !state.pipeConnectionMatrix.isConnected(ForgeDirection.UP)){
-		// block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1F - facadeThickness, Utils.pipeMaxPos);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.NORTH) && !state.pipeConnectionMatrix.isConnected(ForgeDirection.NORTH)){
-		// block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0 + facadeThickness, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMinPos);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
-		//
-		// if (state.facadeMatrix.isConnected(ForgeDirection.SOUTH) && !state.pipeConnectionMatrix.isConnected(ForgeDirection.SOUTH)){
-		// block.setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1F - facadeThickness);
-		// renderblocks.renderStandardBlock(block, x, y, z);
-		// }
+		float[][] zeroState = new float[3][2];
+		// X START - END
+		zeroState[0][0] = 0.25F + zFightOffset;
+		zeroState[0][1] = 0.75F - zFightOffset;
+		// Y START - END
+		zeroState[1][0] = 0.125F;
+		zeroState[1][1] = 0.25F;
+		// Z START - END
+		zeroState[2][0] = 0.25F + zFightOffset;
+		zeroState[2][1] = 0.75F - zFightOffset;
+		
+		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.PipeStructureCobblestone); // Structure Pipe
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (state.plugMatrix.isConnected(direction)) {
+				float[][] rotated = deepClone(zeroState);
+				transform(rotated, direction);
+
+				block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+				renderblocks.setRenderBoundsFromBlock(block);
+				renderblocks.renderStandardBlock(block, x, y, z);
+			}
+		}
+		
+		// X START - END
+		zeroState[0][0] = 0.25F + 0.125F/2 + zFightOffset;
+		zeroState[0][1] = 0.75F - 0.125F/2 + zFightOffset;
+		// Y START - END
+		zeroState[1][0] = 0.25F;
+		zeroState[1][1] = 0.25F + 0.125F;
+		// Z START - END
+		zeroState[2][0] = 0.25F + 0.125F/2;
+		zeroState[2][1] = 0.75F - 0.125F/2;
+		
+		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.PipeStructureCobblestone); // Structure Pipe
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (state.plugMatrix.isConnected(direction)) {
+				float[][] rotated = deepClone(zeroState);
+				transform(rotated, direction);
+
+				block.setBlockBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+				renderblocks.setRenderBoundsFromBlock(block);
+				renderblocks.renderStandardBlock(block, x, y, z);
+			}
+		}
+		
 	}
 
 	private void pipeWireRender(RenderBlocks renderblocks, Block block, PipeRenderState state, float cx, float cy, float cz, IPipe.WireColor color, int x,
@@ -518,7 +478,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	}
 	
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction){
-		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0;
+		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction);
 	}
 
 	@Override

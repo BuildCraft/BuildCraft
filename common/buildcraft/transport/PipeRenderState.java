@@ -21,6 +21,7 @@ public class PipeRenderState implements IClientState {
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
+	public final ConnectionMatrix plugMatrix = new ConnectionMatrix();
 
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 
@@ -63,7 +64,7 @@ public class PipeRenderState implements IClientState {
 	}
 
 	public boolean isDirty() {
-		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty() || facadeMatrix.isDirty();
+		return dirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty() || wireMatrix.isDirty() || facadeMatrix.isDirty() || plugMatrix.isDirty();
 	}
 
 	@Override
@@ -74,6 +75,7 @@ public class PipeRenderState implements IClientState {
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
 		facadeMatrix.writeData(data);
+		plugMatrix.writeData(data);
 	}
 
 	@Override
@@ -84,5 +86,6 @@ public class PipeRenderState implements IClientState {
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);
 		facadeMatrix.readData(data);
+		plugMatrix.readData(data);
 	}
 }
