@@ -63,12 +63,12 @@ public class TransactorSimple extends Transactor {
 	}
 
 	protected int getEmptySlot(ItemStack stack, ForgeDirection orientation, int slotIndex) {
-		return getEmptySlot(0, inventory.getSizeInventory());
+		return getEmptySlot(stack, 0, inventory.getSizeInventory());
 	}
 
-	protected int getEmptySlot(int startSlot, int endSlot) {
+	protected int getEmptySlot(ItemStack stack, int startSlot, int endSlot) {
 		for (int i = startSlot; i < endSlot; i++)
-			if (inventory.getStackInSlot(i) == null)
+			if (inventory.getStackInSlot(i) == null && inventory.isStackValidForSlot(i, stack))
 				return i;
 
 		return -1;

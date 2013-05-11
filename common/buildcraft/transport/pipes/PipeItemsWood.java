@@ -147,7 +147,17 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			return stacks;
 		}
 
-		if (inventory instanceof ISidedInventory) {
+		if (inventory instanceof net.minecraft.inventory.ISidedInventory) {
+			net.minecraft.inventory.ISidedInventory sidedInv = (net.minecraft.inventory.ISidedInventory) inventory;
+
+			int[] slots = sidedInv.getAccessibleSlotsFromSide(from.ordinal());
+
+			ItemStack result = checkExtractGeneric(sidedInv, doRemove, from, slots);
+
+			if (result != null)
+				return new ItemStack[] { result };
+			
+		} else if (inventory instanceof ISidedInventory) {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 
 			int first = sidedInv.getStartInventorySide(from);
@@ -155,10 +165,11 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			IInventory inv = Utils.getInventory(inventory);
 
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, first, last);
+			ItemStack result = checkExtractGeneric(sidedInv, doRemove, from, first, last);
 
 			if (result != null)
 				return new ItemStack[] { result };
+			
 		} else if (inventory.getSizeInventory() == 2) {
 			// This is an input-output inventory
 
@@ -211,12 +222,16 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 		return null;
 	}
-
+	
 	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
-		for (int k = start; k <= stop; ++k) {
+		return checkExtractGeneric(Utils.createSidedInventoryWrapper(inventory), doRemove, from, Utils.createSlotArray(start, stop));
+	}
+	
+	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from, int[] slots) {
+		for(int k : slots) {
 			ItemStack slot = inventory.getStackInSlot(k);
 
-			if (slot != null && slot.stackSize > 0) {
+			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
 				if (doRemove) {
 					return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
 				} else {

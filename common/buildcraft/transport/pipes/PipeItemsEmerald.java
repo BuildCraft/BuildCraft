@@ -168,8 +168,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	}
 
 	@Override
-	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
-		for (int i = start; i <= stop; ++i) {
+	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from, int[] slots) {
+		for (int i : slots) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack != null && stack.stackSize > 0) {
 				ItemStack filter = getCurrentFilter();
@@ -177,6 +177,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 					return null;
 				}
 				if (!filter.isItemEqual(stack)) {
+					continue;
+				}
+				if (!inventory.canExtractItem(i, stack, from.ordinal())) {
 					continue;
 				}
 				if (doRemove) {
