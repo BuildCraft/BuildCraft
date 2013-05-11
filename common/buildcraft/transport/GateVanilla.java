@@ -15,7 +15,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.ActionEnergyPulser;
@@ -87,19 +87,19 @@ public class GateVanilla extends Gate {
 	public String getName() {
 		switch (kind) {
 		case Single:
-			return StringUtil.localize("item.pipeGate.0");
+			return StringUtils.localize("item.pipeGate.0");
 		case AND_2:
-			return StringUtil.localize("item.pipeGate.1");
+			return StringUtils.localize("item.pipeGate.1");
 		case AND_3:
-			return StringUtil.localize("item.pipeGate.3");
+			return StringUtils.localize("item.pipeGate.3");
 		case AND_4:
-			return StringUtil.localize("item.pipeGate.5");
+			return StringUtils.localize("item.pipeGate.5");
 		case OR_2:
-			return StringUtil.localize("item.pipeGate.2");
+			return StringUtils.localize("item.pipeGate.2");
 		case OR_3:
-			return StringUtil.localize("item.pipeGate.4");
+			return StringUtils.localize("item.pipeGate.4");
 		case OR_4:
-			return StringUtil.localize("item.pipeGate.6");
+			return StringUtils.localize("item.pipeGate.6");
 		default:
 			return "";
 		}

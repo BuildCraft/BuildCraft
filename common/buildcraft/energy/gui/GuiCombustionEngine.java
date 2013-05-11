@@ -18,7 +18,7 @@ import net.minecraftforge.liquids.LiquidStack;
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.EngineIron;
 import buildcraft.energy.TileEngine;
 
@@ -31,9 +31,9 @@ public class GuiCombustionEngine extends GuiEngine {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
-		String title = StringUtil.localize("tile.engineIron");
+		String title = StringUtils.localize("tile.engineIron");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
 
 	@Override

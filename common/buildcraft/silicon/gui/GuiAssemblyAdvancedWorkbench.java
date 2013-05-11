@@ -12,7 +12,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
 
 public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
@@ -39,12 +39,12 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 			if (!isFullyOpened())
 				return;
 
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.energy"), x + 22, y + 8, headerColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
 			fontRenderer.drawString(String.format("%2.1f MJ", workbench.getRequiredEnergy()), x + 22, y + 32, textColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
 			fontRenderer.drawString(String.format("%2.1f MJ", workbench.getStoredEnergy()), x + 22, y + 56, textColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
 			fontRenderer.drawString(String.format("%3.2f MJ/t", workbench.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
@@ -93,9 +93,9 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
-		String title = StringUtil.localize("tile.assemblyWorkbenchBlock");
+		String title = StringUtils.localize("tile.assemblyWorkbenchBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 		drawForegroundSelection(par1, par2);
 	}
 

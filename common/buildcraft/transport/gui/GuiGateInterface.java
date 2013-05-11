@@ -21,7 +21,7 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
@@ -228,7 +228,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		String name = _container.getGateName();
 
 		fontRenderer.drawString(name, getCenteredOffset(name), 15, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}

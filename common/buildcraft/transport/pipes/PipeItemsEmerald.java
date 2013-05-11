@@ -20,7 +20,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.inventory.ISelectiveInventory;
 import buildcraft.api.inventory.ISpecialInventory;
@@ -76,7 +75,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	@Override
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
-		// ISELECTIVEINVENTORY
+		/* ISELECTIVEINVENTORY */
 		if (inventory instanceof ISelectiveInventory) {
 			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored());
 			if (doRemove) {
@@ -88,41 +87,53 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				incrementFilter();
 			}
 			return stacks;
-		}
-
-
-		// ISPECIALINVENTORY
-		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
-			if (stacks != null) {
-				for (ItemStack stack : stacks) {
-					if(stack == null)
-						continue;
-
-					boolean matches = false;
-					for (int i = 0; i < filters.getSizeInventory(); i++) {
-						ItemStack filter = filters.getStackInSlot(i);
-						if (filter != null && filter.isItemEqual(stack)) {
-							matches = true;
-							break;
-						}
-					}
-					if (!matches) {
-						return null;
-					}
-				}
-				if (doRemove) {
-					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
+			
+		/* ISPECIALINVENTORY */
+		} else if (inventory instanceof ISpecialInventory) {
+				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
+				if (stacks != null) {
 					for (ItemStack stack : stacks) {
-						if (stack != null) {
-							getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+						if(stack == null)
+							continue;
+
+						boolean matches = false;
+						for (int i = 0; i < filters.getSizeInventory(); i++) {
+							ItemStack filter = filters.getStackInSlot(i);
+							if (filter != null && filter.isItemEqual(stack)) {
+								matches = true;
+								break;
+							}
+						}
+						if (!matches) {
+							return null;
+						}
+					}
+					if (doRemove) {
+						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
+						for (ItemStack stack : stacks) {
+							if (stack != null) {
+								getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+							}
 						}
 					}
 				}
+				return stacks;
+
+		} else {
+			
+			// This is a generic inventory
+			IInventory inv = Utils.getInventory(inventory);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
+
+			if (result != null) {
+				return new ItemStack[]{result};
 			}
-			return stacks;
 		}
 
+		return null;
+
+
+		/*
 		if (inventory instanceof ISidedInventory) {
 			ISidedInventory sidedInv = (ISidedInventory) inventory;
 
@@ -147,7 +158,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 			}
 		}
 
-		return null;
+		return null; */
 	}
 
 	private void incrementFilter() {

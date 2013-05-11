@@ -19,7 +19,7 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 
@@ -48,7 +48,7 @@ public class GuiDiamondPipe extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		fontRenderer.drawString(filterInventory.getInvName(), getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}

@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 
 public class GuiFiller extends GuiBuildCraft {
 
@@ -33,10 +33,10 @@ public class GuiFiller extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtil.localize("tile.fillerBlock");
+		String title = StringUtils.localize("tile.fillerBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.filling.resources"), 8, 74, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, 142, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.filling.resources"), 8, 74, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, 142, 0x404040);
 
 		if (filler.currentPattern != null) {
 			drawForegroundSelection(filler.currentPattern.getName());

@@ -14,9 +14,7 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -521,75 +519,11 @@ public class Utils {
 		return result;
 	}
 	
-	public static int[] createSlotArray(int first, int last) {
-		int[] rv = new int[last - first + 1];
-		for(int k = first; k <= last; k++)
-			rv[k - first] = k;
-		return rv;
+	public static int[] createSlotArray(int first, int count) {
+		int[] slots = new int[count];
+		for(int k = first; k < first + count; k++)
+			slots[k - first] = k;
+		return slots;
 	}
 	
-	public static ISidedInventory createSidedInventoryWrapper(final IInventory inv) {
-		if(inv instanceof ISidedInventory)
-			return (ISidedInventory)inv;
-		
-		abstract class InventoryWrapper implements net.minecraft.inventory.ISidedInventory {
-			@Override public int getSizeInventory() {return inv.getSizeInventory();}
-			@Override public ItemStack getStackInSlot(int i) {return inv.getStackInSlot(i);}
-			@Override public ItemStack decrStackSize(int i, int j) {return inv.decrStackSize(i, j);}
-			@Override public ItemStack getStackInSlotOnClosing(int i) {return inv.getStackInSlotOnClosing(i);}
-			@Override public void setInventorySlotContents(int i, ItemStack itemstack) {inv.setInventorySlotContents(i, itemstack);}
-			@Override public String getInvName() {return inv.getInvName();}
-			@Override public boolean isInvNameLocalized() {return inv.isInvNameLocalized();}
-			@Override public int getInventoryStackLimit() {return inv.getInventoryStackLimit();}
-			@Override public void onInventoryChanged() {inv.onInventoryChanged();}
-			@Override public boolean isUseableByPlayer(EntityPlayer entityplayer) {return inv.isUseableByPlayer(entityplayer);}
-			@Override public void openChest() {inv.openChest();}
-			@Override public void closeChest() {inv.closeChest();}
-			@Override public boolean isStackValidForSlot(int i, ItemStack itemstack) {return inv.isStackValidForSlot(i, itemstack);}
-		}
-		
-		if(inv instanceof net.minecraftforge.common.ISidedInventory) {
-			final net.minecraftforge.common.ISidedInventory sided = (net.minecraftforge.common.ISidedInventory)inv;
-			return new InventoryWrapper() {
-				@Override
-				public int[] getAccessibleSlotsFromSide(int var1) {
-					int first = sided.getStartInventorySide(ForgeDirection.VALID_DIRECTIONS[var1]);
-					int size = sided.getSizeInventorySide(ForgeDirection.VALID_DIRECTIONS[var1]);
-					return createSlotArray(first, first + size - 1);
-				}
-				
-				@Override
-				public boolean canInsertItem(int i, ItemStack itemstack, int j) {
-					return true;
-				}
-				
-				@Override
-				public boolean canExtractItem(int i, ItemStack itemstack, int j) {
-					return true;
-				}
-			};
-		}
-		
-		final int[] all_slots = createSlotArray(0, inv.getSizeInventory() - 1);
-			
-		return new InventoryWrapper() {
-			@Override
-			public int[] getAccessibleSlotsFromSide(int var1) {
-				return all_slots;
-			}
-			
-			@Override
-			public boolean canInsertItem(int i, ItemStack itemstack, int j) {
-				return true;
-			}
-			
-			@Override
-			public boolean canExtractItem(int i, ItemStack itemstack, int j) {
-				return true;
-			}
-		};
-	}
-
-	
-
 }

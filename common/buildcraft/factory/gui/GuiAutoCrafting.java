@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileAutoWorkbench;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
@@ -34,9 +34,9 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtil.localize("tile.autoWorkbenchBlock");
+		String title = StringUtils.localize("tile.autoWorkbenchBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.RedstonePowerFramework;
+import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -134,7 +135,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	 */
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
-		// / ISPECIALINVENTORY
+		/* ISPECIALINVENTORY */
 		if (inventory instanceof ISpecialInventory) {
 			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerProvider.getEnergyStored());
 			if (stacks != null && doRemove) {
@@ -145,8 +146,18 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 				}
 			}
 			return stacks;
+		} else {
+			
+			IInventory inv = Utils.getInventory(inventory);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
+
+			if (result != null)
+				return new ItemStack[] { result };
 		}
 
+		return null;
+
+		/*
 		if (inventory instanceof ISidedInventory) {
 			net.minecraft.inventory.ISidedInventory sidedInv = (ISidedInventory) inventory;
 
@@ -156,7 +167,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			if (result != null)
 				return new ItemStack[] { result };
-			
+		
 		} else if (inventory instanceof net.minecraftforge.common.ISidedInventory) {
 			net.minecraftforge.common.ISidedInventory sidedInv = (net.minecraftforge.common.ISidedInventory) inventory;
 
@@ -219,12 +230,11 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			if (result != null)
 				return new ItemStack[] { result };
 		}
-
-		return null;
+		 */
 	}
 	
 	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
-		return checkExtractGeneric(Utils.createSidedInventoryWrapper(inventory), doRemove, from, Utils.createSlotArray(start, stop));
+		return checkExtractGeneric(InventoryWrapper.getWrappedInventory(inventory), doRemove, from, Utils.createSlotArray(start, stop - start));
 	}
 	
 	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from, int[] slots) {

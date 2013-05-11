@@ -14,7 +14,7 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -27,7 +27,7 @@ public class ItemBucketOil extends ItemBucket {
 
 	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
-		return StringUtil.localize(getUnlocalizedName(itemstack));
+		return StringUtils.localize(getUnlocalizedName(itemstack));
 	}
 
 	@Override
