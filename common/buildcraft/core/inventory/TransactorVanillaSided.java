@@ -32,7 +32,7 @@ public class TransactorVanillaSided extends TransactorSimple {
         if (slotIndex >= sideSlots.length)
             return -1;
         int targetSlot = sideSlots[slotIndex];
-        return sided.canInsertItem(targetSlot, stack, orientation.ordinal()) ? targetSlot : -1;
+        return sided.isStackValidForSlot(targetSlot, stack) && sided.canInsertItem(targetSlot, stack, orientation.ordinal()) ? targetSlot : -1;
     }
 
 }
