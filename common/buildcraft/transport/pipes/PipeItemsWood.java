@@ -9,11 +9,11 @@
 package buildcraft.transport.pipes;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -147,8 +147,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			return stacks;
 		}
 
-		if (inventory instanceof net.minecraft.inventory.ISidedInventory) {
-			net.minecraft.inventory.ISidedInventory sidedInv = (net.minecraft.inventory.ISidedInventory) inventory;
+		if (inventory instanceof ISidedInventory) {
+			net.minecraft.inventory.ISidedInventory sidedInv = (ISidedInventory) inventory;
 
 			int[] slots = sidedInv.getAccessibleSlotsFromSide(from.ordinal());
 
@@ -157,8 +157,8 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			if (result != null)
 				return new ItemStack[] { result };
 			
-		} else if (inventory instanceof ISidedInventory) {
-			ISidedInventory sidedInv = (ISidedInventory) inventory;
+		} else if (inventory instanceof net.minecraftforge.common.ISidedInventory) {
+			net.minecraftforge.common.ISidedInventory sidedInv = (net.minecraftforge.common.ISidedInventory) inventory;
 
 			int first = sidedInv.getStartInventorySide(from);
 			int last = first + sidedInv.getSizeInventorySide(from) - 1;
@@ -227,7 +227,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		return checkExtractGeneric(Utils.createSidedInventoryWrapper(inventory), doRemove, from, Utils.createSlotArray(start, stop));
 	}
 	
-	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from, int[] slots) {
+	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from, int[] slots) {
 		for(int k : slots) {
 			ItemStack slot = inventory.getStackInSlot(k);
 

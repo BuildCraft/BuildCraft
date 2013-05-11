@@ -32,7 +32,7 @@ public class TransactorForgeSided extends TransactorSimple {
 
 	@Override
 	protected int getEmptySlot(ItemStack stack, ForgeDirection orientation, int slotIndex) {
-		return getEmptySlot(sided.getStartInventorySide(orientation), sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
+		return getEmptySlot(stack, sided.getStartInventorySide(orientation), sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
 	}
 
 }

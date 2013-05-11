@@ -80,16 +80,12 @@ public class SidedInventoryAdapter implements IInventory {
 	}
 
     @Override
-    public boolean isInvNameLocalized()
-    {
-        // TODO Auto-generated method stub
+    public boolean isInvNameLocalized() {
         return false;
     }
 
     @Override
-    public boolean isStackValidForSlot(int i, ItemStack itemstack)
-    {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+        return true;
     }
 }
