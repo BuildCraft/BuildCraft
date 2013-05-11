@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders;
 
 import net.minecraft.item.ItemStack;
@@ -34,21 +32,16 @@ public class FillerFlattener extends FillerPattern {
 
 		boolean[][] blockedColumns = new boolean[sizeX][sizeZ];
 
-		for (int i = 0; i < blockedColumns.length; ++i) {
-			for (int j = 0; j < blockedColumns[0].length; ++j) {
-				blockedColumns[i][j] = false;
-			}
-		}
-
-		boolean found = false;
+		boolean found;
 		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
 		for (int y = yMin - 1; y >= 0; --y) {
 			found = false;
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					if (!BlockUtil.canChangeBlock(tile.worldObj, x, y, z))
+					if (!BlockUtil.canChangeBlock(tile.worldObj, x, y, z)) {
 						return true;
+					}
 					if (!blockedColumns[x - xMin][z - zMin]) {
 						if (!BlockUtil.isSoftBlock(tile.worldObj, x, y, z)) {
 							blockedColumns[x - xMin][z - zMin] = true;
@@ -68,17 +61,19 @@ public class FillerFlattener extends FillerPattern {
 		}
 
 		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
+			BlockUtil.breakBlock(tile.worldObj, lastX, lastY - 1, lastZ);
 			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(tile.worldObj), tile.worldObj, lastX, lastY - 1, lastZ, 1, 0.0f,
 					0.0f, 0.0f);
 		}
 
-		if (lastX != Integer.MAX_VALUE)
+		if (lastX != Integer.MAX_VALUE) {
 			return false;
+		}
 
 		return !empty(xMin, yMin, zMin, xMax, 64 * 4, zMax, tile.worldObj);
 	}
 
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getTexture() {
 		return BuilderProxyClient.fillerFlattenTexture;
@@ -88,5 +83,4 @@ public class FillerFlattener extends FillerPattern {
 	public String getName() {
 		return "Flatten";
 	}
-
 }
