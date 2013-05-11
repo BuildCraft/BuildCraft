@@ -107,6 +107,8 @@ public class BuildCraftBuilders {
 	public static ItemBptTemplate templateItem;
 	public static ItemBptBluePrint blueprintItem;
 	public static boolean fillerDestroy;
+	public static int fillerLifespanTough;
+	public static int fillerLifespanNormal;
 
 	private static BptRootIndex rootBptIndex;
 
@@ -236,6 +238,14 @@ public class BuildCraftBuilders {
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
+		
+		Property fillerLifespanToughProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.tough", DefaultProps.FILLER_LIFESPAN_TOUGH);
+		fillerLifespanToughProp.comment = "Lifespan in ticks of items dropped by the filler from 'tough' blocks (those that can't be broken by hand)";
+		fillerLifespanTough = fillerLifespanToughProp.getInt(DefaultProps.FILLER_LIFESPAN_TOUGH);
+		
+		Property fillerLifespanNormalProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.other", DefaultProps.FILLER_LIFESPAN_NORMAL);
+		fillerLifespanNormalProp.comment = "Lifespan in ticks of items dropped by the filler from non-tough blocks (those that can be broken by hand)";
+		fillerLifespanNormal = fillerLifespanNormalProp.getInt(DefaultProps.FILLER_LIFESPAN_NORMAL);
 
 		templateItem = new ItemBptTemplate(templateItemId.getInt());
 		templateItem.setUnlocalizedName("templateItem");

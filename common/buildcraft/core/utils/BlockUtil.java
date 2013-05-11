@@ -97,6 +97,13 @@ public class BlockUtil {
 
 		return blockID == 0 || block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
 	}
+	
+	/**
+	 * Returns true if a block cannot be harvested without a tool.
+	 */
+	public static boolean isToughBlock(World world, int x, int y, int z) {
+		return !world.getBlockMaterial(x, y, z).isToolNotRequired();
+	}
 
 	/**
 	 * Create an explosion which only affects a single block.
