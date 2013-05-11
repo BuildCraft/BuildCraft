@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,7 +26,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.liquids.ILiquid;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
@@ -528,9 +528,9 @@ public class Utils {
 		return rv;
 	}
 	
-	public static net.minecraft.inventory.ISidedInventory createSidedInventoryWrapper(final IInventory inv) {
-		if(inv instanceof net.minecraft.inventory.ISidedInventory)
-			return (net.minecraft.inventory.ISidedInventory)inv;
+	public static ISidedInventory createSidedInventoryWrapper(final IInventory inv) {
+		if(inv instanceof ISidedInventory)
+			return (ISidedInventory)inv;
 		
 		abstract class InventoryWrapper implements net.minecraft.inventory.ISidedInventory {
 			@Override public int getSizeInventory() {return inv.getSizeInventory();}
@@ -548,8 +548,8 @@ public class Utils {
 			@Override public boolean isStackValidForSlot(int i, ItemStack itemstack) {return inv.isStackValidForSlot(i, itemstack);}
 		}
 		
-		if(inv instanceof ISidedInventory) {
-			final ISidedInventory sided = (ISidedInventory)inv;
+		if(inv instanceof net.minecraftforge.common.ISidedInventory) {
+			final net.minecraftforge.common.ISidedInventory sided = (net.minecraftforge.common.ISidedInventory)inv;
 			return new InventoryWrapper() {
 				@Override
 				public int[] getAccessibleSlotsFromSide(int var1) {
