@@ -25,42 +25,75 @@ import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * BlockMiningWell
+ * 
+ * Mines out a 1 block well down to bedrock
+ * 
+ * @author SpaceToad
+ * @author BuildCraft team
+ */
 public class BlockMiningWell extends BlockMachineRoot {
 
-	Icon textureFront, textureSides, textureBack, textureTop;
+	/** Icon array containing the icons used for this block */
+	private Icon[] iconBuffer;
 
-	public BlockMiningWell(int i) {
-		super(i, Material.ground);
+	public BlockMiningWell(int id) {
+		super(id, Material.iron);
 
-		setHardness(1.5F);
-		setResistance(10F);
-		setStepSound(soundStoneFootstep);
+		this.setHardness(1.5F);
+		this.setResistance(10F);
+		this.setStepSound(soundStoneFootstep);
 	}
 
+	/**
+	 * Returns the icon for each side of the block.
+	 */
 	@Override
-	public Icon getIcon(int i, int j) {
-		if (j == 0 && i == 3)
-			return textureFront;
-
-		if (i == 1)
-			return textureTop;
-		else if (i == 0)
-			return textureBack;
-		else if (i == j)
-			return textureFront;
-		else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i)
-			return textureBack;
-		else
-			return textureSides;
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon(int side, int meta) {
+		if (meta == 0 && side == 3 || side == meta)
+			return iconBuffer[2];
+		
+		if (meta < 6 && ForgeDirection.values()[meta].getOpposite().ordinal() == side)
+			return iconBuffer[0];
+		
+		switch(side) {
+			case 0:
+				return iconBuffer[0];
+			case 1:
+				return iconBuffer[1];
+			default:
+				return iconBuffer[3];
+		}
 	}
-
+	
+	/**
+	 * Registers the blocks icons with the IconRegister.
+	 */
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
-
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister) {
+		iconBuffer = new Icon[4];
+		
+		iconBuffer[0] = par1IconRegister.registerIcon("buildcraft:miningwell_back");
+		iconBuffer[1] = par1IconRegister.registerIcon("buildcraft:miningwell_top");
+		iconBuffer[2] = par1IconRegister.registerIcon("buildcraft:miningwell_front");
+		iconBuffer[3] = par1IconRegister.registerIcon("buildcraft:miningwell_side");
+	}
+	
+	/**
+	 * Called when the block is placed in the world.
+	 */
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving entity, ItemStack stack) {
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entity.posX, entity.posY, entity.posZ), new Position(x, y, z));
+		world.setBlockMetadataWithNotify(x, y, z, orientation.getOpposite().ordinal(), 1);
 	}
 
+	/**
+	 * Called when the block is broken.
+	 */
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
 		super.breakBlock(world, x, y, z, id, meta);
@@ -74,24 +107,28 @@ public class BlockMiningWell extends BlockMachineRoot {
 		}
 	}
 
-	@Override
-	public TileEntity createNewTileEntity(World var1) {
-		return new TileMiningWell();
-	}
-
+	/**
+	 * Adds the item to the creative tab.
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
 	}
 
+	/**
+	 * Returns a new instance of the TileEntity for this block.
+	 */
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
-        textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
-        textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
-        textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
+	public TileEntity createTileEntity(World world, int meta) {
+		return new TileMiningWell();
+	}
+	
+	/**
+	 * Returns true if this block has a TileEntity
+	 */
+	@Override
+	public boolean hasTileEntity(int meta) {
+		return true;
 	}
 }

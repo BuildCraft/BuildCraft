@@ -11,7 +11,6 @@ package buildcraft.factory;
 
 import java.util.ArrayList;
 
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemStack;
@@ -23,53 +22,85 @@ import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockPump extends BlockContainer {
+/**
+ * BlockPump
+ * 
+ * Designed to reach down and suck liquids up below the block.
+ * 
+ * @author SpaceToad
+ * @author BuildCraft team
+ */
+public class BlockPump extends BlockMachineRoot {
 
-	private Icon textureTop;
-    private Icon textureBottom;
-    private Icon textureSide;
+	/** Icon array containing the icons used for this block */
+	private Icon[] iconBuffer;
 
-    public BlockPump(int i) {
-		super(i, Material.iron);
-		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+    public BlockPump(int id) {
+		super(id, Material.iron);
+		
+		this.setHardness(5F);
+		this.setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		this.setStepSound(soundStoneFootstep);
 	}
 
+	/**
+	 * Returns the icon for each side of the block.
+	 */
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
-		return new TilePump();
-	}
-
-	@Override
-	public Icon getIcon(int i, int j) {
-		switch (i) {
-		case 0:
-			return textureBottom;
-		case 1:
-			return textureTop;
-		default:
-			return textureSide;
+	public Icon getIcon(int side, int meta) {
+		switch (side) {
+			case 0:
+				return iconBuffer[0];
+			case 1:
+				return iconBuffer[1];
+			default:
+				return iconBuffer[2];
 		}
 	}
-
+	
+	/**
+	 * Registers the blocks icons with the IconRegister.
+	 */
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, par5, par6);
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister ir) {
+		iconBuffer = new Icon[3];
+		iconBuffer[0] = ir.registerIcon("buildcraft:pump_bottom");
+		iconBuffer[1] = ir.registerIcon("buildcraft:pump_top");
+		iconBuffer[2] = ir.registerIcon("buildcraft:pump_side");
 	}
 
+	/**
+	 * Called when the block is broken.
+	 */
+	@Override
+	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
+		Utils.preDestroyBlock(world, x, y, z);
+		super.breakBlock(world, x, y, z, id, meta);
+	}
+
+	/**
+	 * Adds the item to the creative tab.
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
 	}
 
+	/**
+	 * Returns a new instance of the TileEntity for this block.
+	 */
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    textureTop = par1IconRegister.registerIcon("buildcraft:pump_top");
-	    textureBottom = par1IconRegister.registerIcon("buildcraft:pump_bottom");
-	    textureSide = par1IconRegister.registerIcon("buildcraft:pump_side");
+	public TileEntity createTileEntity(World world, int meta) {
+		return new TilePump();
+	}
+	
+	/**
+	 * Returns true if this block has a TileEntity
+	 */
+	@Override
+	public boolean hasTileEntity(int meta) {
+		return true;
 	}
 }
