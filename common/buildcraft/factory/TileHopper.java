@@ -108,10 +108,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 	
 	 @Override
-    public boolean isStackValidForSlot(int i, ItemStack itemstack)
-    {
-        
+    public boolean isStackValidForSlot(int i, ItemStack itemstack) {
 		 return true;
-		  
     }
 }

@@ -1,5 +1,6 @@
 package buildcraft.core.inventory;
 
+import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -29,12 +30,14 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	@Override public boolean isStackValidForSlot(int slotIndex, ItemStack itemstack) { return inventory.isStackValidForSlot(slotIndex, itemstack); }
 
 	/* STATIC HELPER */
-	public static ISidedInventory getWrappedInventory(IInventory inventory) {
+	public static ISidedInventory getWrappedInventory(Object inventory) {
 		if(inventory instanceof ISidedInventory)
 			return (ISidedInventory)inventory;
 		else if(inventory instanceof net.minecraftforge.common.ISidedInventory)
 			return new InventoryWrapperForge((net.minecraftforge.common.ISidedInventory)inventory);
+		else if(inventory instanceof IInventory)
+			return new InventoryWrapperSimple(Utils.getInventory((IInventory)inventory));
 		else
-			return new InventoryWrapperSimple(inventory);
+			return null;
 	}
 }

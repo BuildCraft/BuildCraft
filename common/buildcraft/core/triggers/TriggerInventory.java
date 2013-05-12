@@ -10,13 +10,12 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.utils.SidedInventoryAdapter;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.inventory.InventoryWrapper;
 
 public class TriggerInventory extends BCTrigger {
 
@@ -63,11 +62,7 @@ public class TriggerInventory extends BCTrigger {
 		}
 
 		if (tile instanceof IInventory) {
-			IInventory inv = Utils.getInventory(((IInventory) tile));
-			if (side != ForgeDirection.UNKNOWN && inv instanceof ISidedInventory) {
-				inv = new SidedInventoryAdapter((ISidedInventory) inv, side);
-			}
-
+			ISidedInventory inv = InventoryWrapper.getWrappedInventory(tile);
 			int invSize = inv.getSizeInventory();
 
 			if (invSize <= 0)
@@ -76,7 +71,7 @@ public class TriggerInventory extends BCTrigger {
 			boolean foundItems = false;
 			boolean foundSpace = false;
 
-			for (int i = 0; i < invSize; ++i) {
+			for (int i : inv.getAccessibleSlotsFromSide(side.ordinal())) {
 				ItemStack stack = inv.getStackInSlot(i);
 
 				boolean slotEmpty = stack == null || stack.stackSize == 0;
