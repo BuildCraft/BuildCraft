@@ -114,7 +114,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 				for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
 					ItemStack item = inventory.getStackInSlot(slot);
 					
-					if (item != null){
+					if (item != null && item.stackSize > 0){
 						int remaining = item.stackSize;
 						
 						for (int index = 0; index < required.length; index++){
