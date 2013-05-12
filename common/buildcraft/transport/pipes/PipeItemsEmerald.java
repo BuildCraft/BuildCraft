@@ -87,7 +87,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				incrementFilter();
 			}
 			return stacks;
-			
+
 		/* ISPECIALINVENTORY */
 		} else if (inventory instanceof ISpecialInventory) {
 				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
@@ -120,10 +120,10 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				return stacks;
 
 		} else {
-			
+
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
 			if (result != null) {
 				return new ItemStack[]{result};
@@ -179,8 +179,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	}
 
 	@Override
-	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from, int[] slots) {
-		for (int i : slots) {
+	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack != null && stack.stackSize > 0) {
 				ItemStack filter = getCurrentFilter();
