@@ -9,9 +9,9 @@
 package buildcraft.transport.pipes;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
@@ -25,7 +25,6 @@ import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.RedstonePowerFramework;
-import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -106,9 +105,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			if (!PipeManager.canExtractItems(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
 				return;
 
-			IInventory inventory = (IInventory) tile;
-
-			ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.getOpposite());
+			ItemStack[] extracted = checkExtract(tile, true, pos.orientation.getOpposite());
 			if (extracted == null)
 				return;
 
@@ -133,11 +130,11 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	 * Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain cases, the extractable slot depends on the
 	 * position of the pipe.
 	 */
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(TileEntity tile, boolean doRemove, ForgeDirection from) {
 
-		/* ISPECIALINVENTORY */
-		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerProvider.getEnergyStored());
+		// / ISPECIALINVENTORY
+		if (tile instanceof ISpecialInventory) {
+			ItemStack[] stacks = ((ISpecialInventory) tile).extractItem(doRemove, from, (int) powerProvider.getEnergyStored());
 			if (stacks != null && doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
@@ -146,9 +143,41 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 				}
 			}
 			return stacks;
-		} else {
+		}else if (tile instanceof net.minecraftforge.common.ISidedInventory) {
+			//handles forge's ISidedInvenotry implementation
 			
-			IInventory inv = Utils.getInventory(inventory);
+			net.minecraftforge.common.ISidedInventory sidedInv = (net.minecraftforge.common.ISidedInventory) tile;
+
+			int first = sidedInv.getStartInventorySide(from);
+			int last = first + sidedInv.getSizeInventorySide(from) - 1;
+
+			ItemStack result = checkExtractGeneric((IInventory) tile, doRemove, from, first, last);
+
+			if (result != null) return new ItemStack[] { result };
+		}else if (tile instanceof net.minecraft.inventory.ISidedInventory){
+			//handles mojangs's ISidedInventory implementation
+			
+			net.minecraft.inventory.ISidedInventory sidedInv = (net.minecraft.inventory.ISidedInventory) tile;
+
+			int[] a = sidedInv.getSizeInventorySide(from.ordinal());
+			
+			if (a != null){
+				for (int b : a){
+					ItemStack stack = sidedInv.getStackInSlot(b);
+					if (stack != null && sidedInv.func_102008_b(b, stack, from.ordinal())){
+						if (doRemove){
+							return new ItemStack[] { sidedInv.decrStackSize(b, (int) powerProvider.useEnergy(1, stack.stackSize, true)) };
+						}else{
+							return new ItemStack[] { stack };
+						}
+					}
+				}
+			}
+			return null;
+		}else{
+			// This is a generic inventory
+			IInventory inv = Utils.getInventory((IInventory) tile);
+
 			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
 
 			if (result != null)
@@ -156,92 +185,13 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		}
 
 		return null;
-
-		/*
-		if (inventory instanceof ISidedInventory) {
-			net.minecraft.inventory.ISidedInventory sidedInv = (ISidedInventory) inventory;
-
-			int[] slots = sidedInv.getAccessibleSlotsFromSide(from.ordinal());
-
-			ItemStack result = checkExtractGeneric(sidedInv, doRemove, from, slots);
-
-			if (result != null)
-				return new ItemStack[] { result };
-		
-		} else if (inventory instanceof net.minecraftforge.common.ISidedInventory) {
-			net.minecraftforge.common.ISidedInventory sidedInv = (net.minecraftforge.common.ISidedInventory) inventory;
-
-			int first = sidedInv.getStartInventorySide(from);
-			int last = first + sidedInv.getSizeInventorySide(from) - 1;
-
-			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(sidedInv, doRemove, from, first, last);
-
-			if (result != null)
-				return new ItemStack[] { result };
-			
-		} else if (inventory.getSizeInventory() == 2) {
-			// This is an input-output inventory
-
-			int slotIndex = 0;
-
-			if (from == ForgeDirection.DOWN || from == ForgeDirection.UP) {
-				slotIndex = 0;
-			} else {
-				slotIndex = 1;
-			}
-
-			ItemStack slot = inventory.getStackInSlot(slotIndex);
-
-			if (slot != null && slot.stackSize > 0) {
-				if (doRemove)
-					return new ItemStack[] { inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true)) };
-				else
-					return new ItemStack[] { slot };
-			}
-		} else if (inventory.getSizeInventory() == 3) {
-			// This is a furnace-like inventory
-
-			int slotIndex = 0;
-
-			if (from == ForgeDirection.UP) {
-				slotIndex = 0;
-			} else if (from == ForgeDirection.DOWN) {
-				slotIndex = 1;
-			} else {
-				slotIndex = 2;
-			}
-
-			ItemStack slot = inventory.getStackInSlot(slotIndex);
-
-			if (slot != null && slot.stackSize > 0) {
-				if (doRemove)
-					return new ItemStack[] { inventory.decrStackSize(slotIndex, (int) powerProvider.useEnergy(1, slot.stackSize, true)) };
-				else
-					return new ItemStack[] { slot };
-			}
-		} else {
-			// This is a generic inventory
-			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
-
-			if (result != null)
-				return new ItemStack[] { result };
-		}
-		 */
 	}
-	
+
 	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
-		return checkExtractGeneric(InventoryWrapper.getWrappedInventory(inventory), doRemove, from, Utils.createSlotArray(start, stop - start));
-	}
-	
-	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from, int[] slots) {
-		for(int k : slots) {
+		for (int k = start; k <= stop; ++k) {
 			ItemStack slot = inventory.getStackInSlot(k);
 
-			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
+			if (slot != null && slot.stackSize > 0) {
 				if (doRemove) {
 					return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
 				} else {
