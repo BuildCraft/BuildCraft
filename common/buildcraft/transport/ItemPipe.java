@@ -105,7 +105,11 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIconFromDamage(int par1) {
-		return iconProvider.getIcon(pipeIconIndex);
+		if (iconProvider != null) { // invalid pipes won't have this set
+			return iconProvider.getIcon(pipeIconIndex);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
