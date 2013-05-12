@@ -73,11 +73,11 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	 * on the position of the pipe.
 	 */
 	@Override
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(TileEntity tile, boolean doRemove, ForgeDirection from) {
 
-		/* ISELECTIVEINVENTORY */
-		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored());
+		// ISELECTIVEINVENTORY
+		if (tile instanceof ISelectiveInventory) {
+			ItemStack[] stacks = ((ISelectiveInventory) tile).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored());
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
@@ -87,78 +87,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				incrementFilter();
 			}
 			return stacks;
-			
-		/* ISPECIALINVENTORY */
-		} else if (inventory instanceof ISpecialInventory) {
-				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
-				if (stacks != null) {
-					for (ItemStack stack : stacks) {
-						if(stack == null)
-							continue;
-
-						boolean matches = false;
-						for (int i = 0; i < filters.getSizeInventory(); i++) {
-							ItemStack filter = filters.getStackInSlot(i);
-							if (filter != null && filter.isItemEqual(stack)) {
-								matches = true;
-								break;
-							}
-						}
-						if (!matches) {
-							return null;
-						}
-					}
-					if (doRemove) {
-						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
-						for (ItemStack stack : stacks) {
-							if (stack != null) {
-								getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
-							}
-						}
-					}
-				}
-				return stacks;
-
-		} else {
-			
-			// This is a generic inventory
-			IInventory inv = Utils.getInventory(inventory);
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
+		}else{
+			return super.checkExtract(tile, doRemove, from);
 		}
-
-		return null;
-
-
-		/*
-		if (inventory instanceof ISidedInventory) {
-			ISidedInventory sidedInv = (ISidedInventory) inventory;
-
-			int first = sidedInv.getStartInventorySide(from);
-			int last = first + sidedInv.getSizeInventorySide(from) - 1;
-
-			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, first, last);
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
-		} else {
-			// This is a generic inventory
-			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
-		}
-
-		return null; */
 	}
 
 	private void incrementFilter() {
