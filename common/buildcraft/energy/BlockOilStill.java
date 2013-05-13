@@ -65,15 +65,4 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	{
 		setBurnProperties(blockID, 100, 100);
 	}
-	
-	@Override
-	public void onNeighborBlockChange(World World, int x, int y, int z, int id)
-	{
-		if (id == Block.fire.blockID ||
-			id == Block.lavaStill.blockID || id == Block.lavaMoving.blockID)
-		{
-			World.createExplosion(null, x, y, z, 10, true);
-		}
-	}
-
 }
