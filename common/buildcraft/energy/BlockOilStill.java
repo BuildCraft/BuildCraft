@@ -59,5 +59,21 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	public void registerIcons(IconRegister iconRegister) {
 		this.theIcon = new Icon[] { iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow") };
 	}
+	
+	@Override
+	public void initializeBlock()
+	{
+		setBurnProperties(blockID, 100, 100);
+	}
+	
+	@Override
+	public void onNeighborBlockChange(World World, int x, int y, int z, int id)
+	{
+		if (id == Block.fire.blockID ||
+			id == Block.lavaStill.blockID || id == Block.lavaMoving.blockID)
+		{
+			World.createExplosion(null, x, y, z, 10, true);
+		}
+	}
 
 }
