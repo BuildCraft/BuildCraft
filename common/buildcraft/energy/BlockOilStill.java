@@ -1,12 +1,10 @@
-/** 
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
- * License 1.0, or MMPL. Please check the contents of the license located in
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.energy;
 
 import net.minecraft.block.BlockStationary;
@@ -19,6 +17,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.ForgeDirection;
 
 public class BlockOilStill extends BlockStationary implements ILiquid {
 
@@ -57,12 +57,26 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		this.theIcon = new Icon[] { iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow") };
+		this.theIcon = new Icon[]{iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
 	}
-	
+
 	@Override
-	public void initializeBlock()
-	{
-		setBurnProperties(blockID, 100, 100);
+	public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return 300;
+	}
+
+	@Override
+	public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return 1;
+	}
+
+	@Override
+	public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return true;
+	}
+
+	@Override
+	public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side) {
+		return true;
 	}
 }

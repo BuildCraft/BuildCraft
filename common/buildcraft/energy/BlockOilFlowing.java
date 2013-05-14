@@ -20,6 +20,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.ForgeDirection;
 
 public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 
@@ -283,10 +285,24 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 	public void registerIcons(IconRegister iconRegister) {
 		this.theIcon = new Icon[]{iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
 	}
-	
+
 	@Override
-	public void initializeBlock()
-	{
-		setBurnProperties(blockID, 100, 100);
+	public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return 300;
+	}
+
+	@Override
+	public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return 1;
+	}
+
+	@Override
+	public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return true;
+	}
+
+	@Override
+	public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side) {
+		return true;
 	}
 }
