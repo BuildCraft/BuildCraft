@@ -1,6 +1,5 @@
 package buildcraft.core.gui.buttons;
 
-import static buildcraft.core.gui.buttons.GuiBetterButton.BUTTON_TEXTURES;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -15,40 +14,52 @@ import org.lwjgl.opengl.GL11;
 public class GuiMultiButton extends GuiBetterButton {
 
 	private final MultiButtonController control;
-	protected int texOffset = 88;
 
 	public GuiMultiButton(int id, int x, int y, int width, MultiButtonController control) {
-		super(id, x, y, width, 20, "");
-		this.control = control.copy();
+		super(id, x, y, width, StandardButtonTextureSets.LARGE_BUTTON, "");
+		this.control = control;
 	}
 
 	@Override
-	public void drawButton(Minecraft minecraft, int i, int j) {
+	public int getHeight() {
+		return texture.getHeight();
+	}
+
+	@Override
+	public void drawButton(Minecraft minecraft, int x, int y) {
 		if (!drawButton) {
 			return;
 		}
 		FontRenderer fontrenderer = minecraft.fontRenderer;
-		minecraft.renderEngine.bindTexture(BUTTON_TEXTURES);
+		bindButtonTextures(minecraft);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		boolean flag = i >= xPosition && j >= yPosition && i < xPosition + width && j < yPosition + height;
+		IMultiButtonState state = control.getButtonState();
+		IButtonTextureSet tex = state.getTextureSet();
+		int xOffset = tex.getX();
+		int yOffset = tex.getY();
+		int h = tex.getHeight();
+		int w = tex.getWidth();
+		boolean flag = x >= xPosition && y >= yPosition && x < xPosition + width && y < yPosition + h;
 		int hoverState = getHoverState(flag);
-		drawTexturedModalRect(xPosition, yPosition, 0, texOffset + hoverState * height, width / 2, height);
-		drawTexturedModalRect(xPosition + width / 2, yPosition, 200 - width / 2, texOffset + hoverState * height, width / 2, height);
-		mouseDragged(minecraft, i, j);
-		displayString = control.getButtonState().getLabel();
-		if (!enabled) {
-			drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, 0xffa0a0a0);
-		} else if (flag) {
-			drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, 0xffffa0);
-		} else {
-			drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, 0xe0e0e0);
+		drawTexturedModalRect(xPosition, yPosition, xOffset, yOffset + hoverState * h, width / 2, h);
+		drawTexturedModalRect(xPosition + width / 2, yPosition, xOffset + w - width / 2, yOffset + hoverState * h, width / 2, h);
+		mouseDragged(minecraft, x, y);
+		displayString = state.getLabel();
+		if (!displayString.equals("")) {
+			if (!enabled) {
+				drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (h - 8) / 2, 0xffa0a0a0);
+			} else if (flag) {
+				drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (h - 8) / 2, 0xffffa0);
+			} else {
+				drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (h - 8) / 2, 0xe0e0e0);
+			}
 		}
 	}
 
 	@Override
 	public boolean mousePressed(Minecraft par1Minecraft, int par2, int par3) {
 		boolean pressed = super.mousePressed(par1Minecraft, par2, par3);
-		if (pressed) {
+		if (pressed && enabled) {
 			control.incrementState();
 		}
 		return pressed;
