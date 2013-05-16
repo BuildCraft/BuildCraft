@@ -36,13 +36,10 @@ public class OilPopulate {
 	public final Set<Integer> surfaceDepositBiomes = new HashSet<Integer>();
 	public final Set<Integer> excludedBiomes = new HashSet<Integer>();
 	private static final String CHUNK_TAG = "buildcraft";
-	private static final String SEED_TAG = "oilGenSeed";
 	private static final String GROUND_TAG = "oilGenGroundLevel";
-//	private static final String FINISHED_TAG = "oilGenFinished";
 	private static final byte GEN_AREA = 2;
 	private static final Map<Chunk, NBTTagCompound> chunkData = new HashMap<Chunk, NBTTagCompound>();
 	private static EventType eventType = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL");
-	private Chunk currentChunk;
 
 	private OilPopulate() {
 		BuildCraftCore.debugMode = true;
@@ -64,39 +61,36 @@ public class OilPopulate {
 			return;
 		}
 
-//		if (event.chunkX == 17 && event.chunkZ == 19) {
-//			System.out.println("tester");
-//		}
-		currentChunk = event.world.getChunkFromChunkCoords(event.chunkX, event.chunkZ);
+		generateOil(event.world, event.rand, event.chunkX, event.chunkZ);
+	}
 
+	public void generateOil(World world, Random rand, int chunkX, int chunkZ) {
 		for (int i = -GEN_AREA; i <= GEN_AREA; i++) {
 			for (int k = -GEN_AREA; k <= GEN_AREA; k++) {
-				int cx = event.chunkX + i;
-				int cz = event.chunkZ + k;
-				if (event.chunkProvider.chunkExists(cx, cz)) {
-//					if (cx == 17 && cz == 20) {
-//						System.out.println("source");
-//					}
-					Chunk chunk = event.world.getChunkFromChunkCoords(cx, cz);
-					NBTTagCompound nbt = getChunkBuildcraftData(chunk);
-					long seed;
-					if (nbt.hasKey(SEED_TAG)) {
-						seed = nbt.getLong(SEED_TAG);
-					} else {
-						seed = event.rand.nextLong();
-						nbt.setLong(SEED_TAG, seed);
-					}
-					Random rand = new Random(seed);
-					doPopulate(event.world, rand, chunk);
+				int cx = chunkX + i;
+				int cz = chunkZ + k;
+				if (cx == chunkX && cz == chunkZ) {
+					continue;
+				}
+				if (world.getChunkProvider().chunkExists(cx, cz)) {
+					Random r = getRandom(world, cx, cz);
+					doPopulate(world, r, cx, cz, false);
 				}
 			}
 		}
+
+		Random r = getRandom(world, chunkX, chunkZ);
+		doPopulate(world, r, chunkX, chunkZ, true);
 	}
 
-	public void doPopulate(World world, Random rand, Chunk chunk) {
+	private Random getRandom(World world, int chunkX, int chunkZ) {
+		return new Random(world.getSeed() + chunkX + chunkZ * 90373);
+	}
+
+	public void doPopulate(World world, Random rand, int chunkX, int chunkZ, boolean modifyNeighbors) {
 		// shift to world coordinates
-		int x = chunk.xPosition * 16 + 8;
-		int z = chunk.zPosition * 16 + 8;
+		int x = chunkX * 16 + 8;
+		int z = chunkZ * 16 + 8;
 
 		BiomeGenBase biome = world.getBiomeGenForCoords(x + 8, z + 8);
 
@@ -113,7 +107,7 @@ public class OilPopulate {
 
 			int blockId = world.getBlockId(lakeX, lakeY, lakeZ);
 			if (blockId == biome.topBlock) {
-				generateSurfaceDeposit(world, rand, lakeX, lakeY, lakeZ, 3);
+				generateSurfaceDeposit(world, rand, lakeX, lakeY, lakeZ, 2 + rand.nextInt(5), modifyNeighbors);
 			}
 		}
 
@@ -153,13 +147,14 @@ public class OilPopulate {
 					for (int poolZ = -radius; poolZ <= radius; poolZ++) {
 						int distance = poolX * poolX + poolY * poolY + poolZ * poolZ;
 
-						if (distance <= radiusSq) {
-							setBlock(world, poolX + wellX, poolY + wellY, poolZ + wellZ, BuildCraftEnergy.oilStill.blockID);
+						if (distance <= radiusSq && canReplaceInChunk(chunkX, chunkZ, poolX + wellX, poolZ + wellZ, modifyNeighbors)) {
+							world.setBlock(poolX + wellX, poolY + wellY, poolZ + wellZ, BuildCraftEnergy.oilStill.blockID);
 						}
 					}
 				}
 			}
 
+			Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 			int groundLevel = getGroundLevel(chunk);
 			if (groundLevel <= 0) {
 				groundLevel = getTopBlock(world, chunk, wellX, wellZ);
@@ -170,9 +165,9 @@ public class OilPopulate {
 				if (BuildCraftCore.debugMode) {
 					lakeRadius += 40;
 				}
-				generateSurfaceDeposit(world, rand, wellX, groundLevel, wellZ, lakeRadius);
+				generateSurfaceDeposit(world, rand, wellX, groundLevel, wellZ, lakeRadius, modifyNeighbors);
 			} else if (mediumDeposit) {
-				generateSurfaceDeposit(world, rand, wellX, groundLevel, wellZ, 5 + rand.nextInt(5));
+				generateSurfaceDeposit(world, rand, wellX, groundLevel, wellZ, 5 + rand.nextInt(5), modifyNeighbors);
 			}
 
 			int wellHeight = 4;
@@ -183,33 +178,47 @@ public class OilPopulate {
 
 			if (world.getBlockId(wellX, baseY, wellZ) == Block.bedrock.blockID) {
 				if (BuildCraftEnergy.spawnOilSprings) {
-					setBlock(world, wellX, baseY, wellZ, BuildCraftCore.springBlock.blockID, 1);
+					world.setBlock(wellX, baseY, wellZ, BuildCraftCore.springBlock.blockID, 1, 3);
 				}
 			}
 			for (int y = baseY + 1; y <= maxHeight; ++y) {
-				setBlock(world, wellX, y, wellZ, BuildCraftEnergy.oilStill.blockID);
+				world.setBlock(wellX, y, wellZ, BuildCraftEnergy.oilStill.blockID);
 			}
 		}
 	}
 
-	public void generateSurfaceDeposit(World world, Random rand, int x, int y, int z, int radius) {
+	public void generateSurfaceDeposit(World world, Random rand, int x, int y, int z, int radius, boolean modifyNeighbors) {
 		int depth = rand.nextDouble() < 0.5 ? 1 : 2;
 
 		setOilForLake(world, x, y, z, depth);
+
+		int chunkX = x / 16;
+		int chunkZ = z / 16;
 
 		for (int w = 1; w <= radius; ++w) {
 			float proba = (float) (radius - w + 4) / (float) (radius + 4);
 
 			for (int d = -w; d <= w; ++d) {
-				setOilWithProba(world, rand, proba, x + d, y, z + w, depth);
-				setOilWithProba(world, rand, proba, x + d, y, z - w, depth);
-				setOilWithProba(world, rand, proba, x + w, y, z + d, depth);
-				setOilWithProba(world, rand, proba, x - w, y, z + d, depth);
+				if (canReplaceInChunk(chunkX, chunkZ, x + d, z + w, modifyNeighbors)) {
+					setOilWithProba(world, rand, proba, x + d, y, z + w, depth);
+				}
+				if (canReplaceInChunk(chunkX, chunkZ, x + d, z - w, modifyNeighbors)) {
+					setOilWithProba(world, rand, proba, x + d, y, z - w, depth);
+				}
+				if (canReplaceInChunk(chunkX, chunkZ, x + w, z + d, modifyNeighbors)) {
+					setOilWithProba(world, rand, proba, x + w, y, z + d, depth);
+				}
+				if (canReplaceInChunk(chunkX, chunkZ, x - w, z + d, modifyNeighbors)) {
+					setOilWithProba(world, rand, proba, x - w, y, z + d, depth);
+				}
 			}
 		}
 
 		for (int dx = x - radius; dx <= x + radius; ++dx) {
 			for (int dz = z - radius; dz <= z + radius; ++dz) {
+				if (!canReplaceInChunk(x / 16, z / 16, dx, dz, modifyNeighbors)) {
+					continue;
+				}
 				if (isOil(world, dx, y - 1, dz)) {
 					continue;
 				}
@@ -270,14 +279,14 @@ public class OilPopulate {
 		if (world.isAirBlock(x, y + 1, z) || !world.isBlockOpaqueCube(x, y + 1, z) || Block.blocksList[world.getBlockId(x, y + 1, z)] instanceof BlockFlower) {
 			world.setBlockToAir(x, y + 1, z);
 			if (isOilOrWater(world, x, y, z)) {
-				setBlock(world, x, y, z, BuildCraftEnergy.oilStill.blockID);
+				world.setBlock(x, y, z, BuildCraftEnergy.oilStill.blockID);
 			} else {
-				setBlock(world, x, y, z, 0, 0, 2);
+				world.setBlock(x, y, z, 0, 0, 2);
 			}
 
 			for (int d = depth; d > 0; d--) {
 				if (isOilOrWater(world, x, y - d - 1, z) || world.isBlockSolidOnSide(x, y - d - 1, z, ForgeDirection.UP)) {
-					setBlock(world, x, y - d, z, BuildCraftEnergy.oilStill.blockID);
+					world.setBlock(x, y - d, z, BuildCraftEnergy.oilStill.blockID);
 				}
 			}
 		}
@@ -309,20 +318,13 @@ public class OilPopulate {
 		return buildcraftData;
 	}
 
-	private boolean canReplaceInChunk(World world, int chunkX, int chunkZ) {
-		return currentChunk.isAtLocation(chunkX, chunkZ);
-//		if (chunkX == 17 && chunkZ == 19) {
-//			System.out.println("place");
-//		}
-//		Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-//		NBTTagCompound nbt = getChunkBuildcraftData(chunk);
-//		return !nbt.getBoolean(FINISHED_TAG);
+	private boolean canReplaceInChunk(int chunkX, int chunkZ, int x, int z, boolean modifyNeighbors) {
+		if (modifyNeighbors) {
+			return true;
+		}
+		return chunkX == x / 16 && chunkZ == z / 16;
 	}
 
-//	private void setFinished(Chunk chunk) {
-//		NBTTagCompound nbt = getChunkBuildcraftData(chunk);
-//		nbt.setBoolean(FINISHED_TAG, true);
-//	}
 	private void setGroundLevel(Chunk chunk, int height) {
 		NBTTagCompound nbt = getChunkBuildcraftData(chunk);
 		nbt.setInteger(GROUND_TAG, height);
@@ -358,19 +360,5 @@ public class OilPopulate {
 		}
 
 		return -1;
-	}
-
-	private void setBlock(World world, int x, int y, int z, int blockId) {
-		setBlock(world, x, y, z, blockId, 0, 3);
-	}
-
-	private void setBlock(World world, int x, int y, int z, int blockId, int meta) {
-		setBlock(world, x, y, z, blockId, meta, 3);
-	}
-
-	private void setBlock(World world, int x, int y, int z, int blockId, int meta, int update) {
-		if (canReplaceInChunk(world, x / 16, z / 16)) {
-			world.setBlock(x, y, z, blockId, meta, update);
-		}
 	}
 }
