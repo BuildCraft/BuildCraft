@@ -25,6 +25,7 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -48,6 +49,8 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	LiquidTank tank;
 	double tubeY = Double.NaN;
 	int aimY = 0;
+	
+	private boolean explodeNextTick;
 
 	private IPowerProvider powerProvider;
 
@@ -62,11 +65,16 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-
+		
 		if (tube == null)
 			return;
-
+		
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+			if (explodeNextTick) {
+				worldObj.newExplosion(null, xCoord+0.5, yCoord+0.5, zCoord+0.5, 3.0f, false, true);
+				return;
+			}
+
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
 
@@ -85,6 +93,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 				if (isPumpableLiquid(index)) {
 					LiquidStack liquidToPump = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
 
+					if(!BuildCraftFactory.pumpDimensionList.isLiquidAllowed(liquidToPump, worldObj.provider.dimensionId)) {
+						explodeNextTick = true;
+						return;
+					}
+					
 					if (tank.fill(liquidToPump, false) == liquidToPump.amount) {
 
 						if (powerProvider.useEnergy(10, 10, true) == 10) {
@@ -210,6 +223,8 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 			return;
 
 		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList, liquidId);
+		
+		long timeoutTime = System.currentTimeMillis() + 1000;
 
 		while (lastFound.size() > 0) {
 			TreeSet<BlockIndex> visitIteration = new TreeSet<BlockIndex>(lastFound);
@@ -228,6 +243,9 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 				pumpList = blocksToPump.get(index.j + 1);
 
 				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList, liquidId);
+				
+				if(System.currentTimeMillis() > timeoutTime)
+					return;
 			}
 		}
 	}
