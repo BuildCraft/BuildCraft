@@ -90,7 +90,8 @@ public class BuildCraftEnergy {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
 		if (BuildCraftCore.modifyWorld) {
-			MinecraftForge.EVENT_BUS.register(new OilPopulate());
+			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
+			MinecraftForge.TERRAIN_GEN_BUS.register(OilPopulate.INSTANCE);
 		}
 
 		new BptBlockEngine(engineBlock.blockID);
@@ -201,7 +202,7 @@ public class BuildCraftEnergy {
 					if (id >= BiomeGenBase.biomeList.length) {
 						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
 					}
-					OilPopulate.surfaceDepositBiomes.add(id);
+					OilPopulate.INSTANCE.surfaceDepositBiomes.add(id);
 				} catch (Exception ex) {
 					Logger.getLogger("Buildcraft").log(Level.WARNING,
 							String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
@@ -215,7 +216,7 @@ public class BuildCraftEnergy {
 					if (id >= BiomeGenBase.biomeList.length) {
 						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
 					}
-					OilPopulate.excludedBiomes.add(id);
+					OilPopulate.INSTANCE.excludedBiomes.add(id);
 				} catch (Exception ex) {
 					Logger.getLogger("Buildcraft").log(Level.WARNING,
 							String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
