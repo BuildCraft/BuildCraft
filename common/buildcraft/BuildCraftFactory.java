@@ -42,6 +42,7 @@ import buildcraft.factory.BptBlockTank;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.FactoryProxyClient;
 import buildcraft.factory.GuiHandler;
+import buildcraft.factory.PumpDimensionList;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileHopper;
 import buildcraft.factory.TileMiningWell;
@@ -82,6 +83,8 @@ public class BuildCraftFactory {
 	public static boolean hopperDisabled;
 
 	public static boolean allowMining = true;
+	
+	public static PumpDimensionList pumpDimensionList;
 
 	@Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
@@ -155,6 +158,8 @@ public class BuildCraftFactory {
 	@PreInit
 	public void initialize(FMLPreInitializationEvent evt) {
 		allowMining = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "mining.enabled", true).getBoolean(true);
+		
+		pumpDimensionList = new PumpDimensionList(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pumping.controlList", DefaultProps.PUMP_DIMENSION_LIST).getString());
 
 		Property miningWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
 		Property plainPipeId = BuildCraftCore.mainConfiguration.getBlock("drill.id", DefaultProps.DRILL_ID);
