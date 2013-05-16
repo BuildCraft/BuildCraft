@@ -264,7 +264,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 					continue;
 				}
 				GuiBetterButton betterButton = (GuiBetterButton) button;
-				ToolTip tips = betterButton.getToolsTips();
+				ToolTip tips = betterButton.getToolTip();
 				if (tips == null) {
 					continue;
 				}

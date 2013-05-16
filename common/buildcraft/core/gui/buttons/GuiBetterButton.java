@@ -17,7 +17,7 @@ public class GuiBetterButton extends GuiButton {
 
 	public static final String BUTTON_TEXTURES = "/gfx/buildcraft/gui/buttons.png";
 	protected final IButtonTextureSet texture;
-	private ToolTip tooltips;
+	private ToolTip toolTip;
 
 	public GuiBetterButton(int id, int x, int y, String label) {
 		this(id, x, y, 200, StandardButtonTextureSets.LARGE_BUTTON, label);
@@ -78,11 +78,11 @@ public class GuiBetterButton extends GuiButton {
 		drawCenteredString(fontrenderer, displayString, xPosition + width / 2, yPosition + (h - 8) / 2, getTextColor(mouseOver));
 	}
 
-	public ToolTip getToolsTips() {
-		return tooltips;
+	public ToolTip getToolTip() {
+		return toolTip;
 	}
 
-	public void setToolTips(ToolTip tips) {
-		this.tooltips = tips;
+	public void setToolTip(ToolTip tips) {
+		this.toolTip = tips;
 	}
 }
