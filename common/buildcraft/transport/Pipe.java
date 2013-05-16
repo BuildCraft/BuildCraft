@@ -210,8 +210,11 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		for (int i = 0; i < 4; ++i) {
 			nbttagcompound.setBoolean("wireSet[" + i + "]", wireSet[i]);
+			nbttagcompound.setBoolean("wireState[" + i + "]", broadcastSignal[i]);
 		}
 
+		nbttagcompound.setBoolean("redstoneState", broadcastRedstone);
+		
 		for (int i = 0; i < 8; ++i) {
 			nbttagcompound.setInteger("action[" + i + "]", activatedActions[i] != null ? activatedActions[i].getId() : 0);
 			nbttagcompound.setInteger("trigger[" + i + "]", activatedTriggers[i] != null ? activatedTriggers[i].getId() : 0);
@@ -245,8 +248,11 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		for (int i = 0; i < 4; ++i) {
 			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
+			broadcastSignal[i] = nbttagcompound.getBoolean("wireState[" + i + "]");
 		}
 
+		broadcastRedstone = nbttagcompound.getBoolean("redstoneState");
+		
 		for (int i = 0; i < 8; ++i) {
 			activatedActions[i] = ActionManager.actions[nbttagcompound.getInteger("action[" + i + "]")];
 			activatedTriggers[i] = ActionManager.triggers[nbttagcompound.getInteger("trigger[" + i + "]")];
