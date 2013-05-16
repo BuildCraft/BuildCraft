@@ -92,7 +92,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) == this;
 	}
 	
-	public boolean canRefillFromNeighbour(){
+	public boolean canRefillFromNeighbour(ForgeDirection ignore){
 		ItemStack[] required = new ItemStack[this.getSizeInventory()];
 		
 		for (int slot = 0; slot < this.getSizeInventory(); slot++){
@@ -104,10 +104,80 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		}
 		
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS){
+			
+			//prevents refill function from requesting form the TileEntity that's requesting the item from this table.
+			//Prevents possible StackOverflowException. Accepts null
+			if (ignore == side){
+				continue;
+			}
+			
 			TileEntity tileEntity = this.worldObj.getBlockTileEntity(side.offsetX + this.xCoord, side.offsetY + this.yCoord, side.offsetZ + this.zCoord);
 			
 			if (tileEntity instanceof ISpecialInventory){
+				//maybe allow dazy chaining?
+			}else if (tileEntity instanceof net.minecraft.inventory.ISidedInventory){
+				//valilla's implementation of ISidedInvenory
 				
+				net.minecraft.inventory.ISidedInventory inventory = (net.minecraft.inventory.ISidedInventory) tileEntity;
+				int[] slots = inventory.getSizeInventorySide(side.getOpposite().ordinal());
+				
+				if (slots == null || slots.length == 0){
+					continue;
+				}
+				
+				for (int slot : slots){
+					ItemStack item = inventory.getStackInSlot(slot);
+					
+					if (!inventory.func_102008_b(slot, item, side.getOpposite().ordinal())){
+						continue;
+					}
+					
+					if (item != null && item.stackSize > 0){
+						int remaining = item.stackSize;
+						
+						for (int index = 0; index < required.length; index++){
+							if (required[index] != null && item.isItemEqual(required[index])){
+								required[index] = null;
+								
+								if (remaining <= 1){
+									break;
+								}else{
+									remaining--;
+								}
+							}
+						}
+					}
+				}
+			}else if (tileEntity instanceof net.minecraftforge.common.ISidedInventory){
+				//Forge's implementation of ISidedInventory
+				
+				net.minecraftforge.common.ISidedInventory inventory = (net.minecraftforge.common.ISidedInventory) tileEntity;
+				int startSlot = inventory.getStartInventorySide(side.getOpposite());
+				int size = inventory.getSizeInventorySide(side.getOpposite());
+				
+				for (int slot = startSlot; slot < startSlot + size; slot++){
+					if (slot < 0){
+						continue;
+					}
+					
+					ItemStack item = inventory.getStackInSlot(slot);
+					
+					if (item != null && item.stackSize > 0){
+						int remaining = item.stackSize;
+						
+						for (int index = 0; index < required.length; index++){
+							if (required[index] != null && item.isItemEqual(required[index])){
+								required[index] = null;
+								
+								if (remaining <= 1){
+									break;
+								}else{
+									remaining--;
+								}
+							}
+						}
+					}
+				}
 			}else if (tileEntity instanceof IInventory){
 				IInventory inventory = Utils.getInventory((IInventory) tileEntity);
 				
@@ -140,23 +210,100 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		return true;
 	}
 	
-	public void refillFromNeighbour(){
+	public void refillFromNeighbour(ForgeDirection ignore){
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS){
+			//prevents refill function from requesting form the TileEntity that's requesting the item from this table.
+			//Prevents possible StackOverflowException. Accepts null
+			if (ignore == side){
+				continue;
+			}
+			
 			TileEntity tileEntity = this.worldObj.getBlockTileEntity(side.offsetX + this.xCoord, side.offsetY + this.yCoord, side.offsetZ + this.zCoord);
 			
-			/*
-			 * FIXME: make this support ISidedInvontory. That means forge's and vanilla's implementation
-			 * perhaps have this work with ISpecialInvenotry?
-			 */
 			if (tileEntity instanceof ISpecialInventory){
+				//maybe allow dazy chaining?
+			}else if (tileEntity instanceof net.minecraft.inventory.ISidedInventory){
+				//valilla's implementation of ISidedInvenory
 				
+				net.minecraft.inventory.ISidedInventory inventory = (net.minecraft.inventory.ISidedInventory) tileEntity;
+				int[] slots = inventory.getSizeInventorySide(side.getOpposite().ordinal());
+				
+				if (slots == null || slots.length == 0){
+					continue;
+				}
+				
+				for (int slot : slots){
+					ItemStack item = inventory.getStackInSlot(slot);
+					
+					if (!inventory.func_102008_b(slot, item, side.getOpposite().ordinal())){
+						continue;
+					}
+					
+					if (item != null && item.stackSize > 0){
+						int remaining = item.stackSize;
+						for (int slot1 = 0; slot1 < this.getSizeInventory(); slot1++){
+							ItemStack item1 = this.getStackInSlot(slot1);
+							if (item1 != null && item1.stackSize == 1 && !item1.getItem().hasContainerItem() && item.isItemEqual(item1)){
+								item1.stackSize++;
+								
+								remaining--;
+								if (remaining == 0){
+									break;
+								}
+							}
+						}
+						if (remaining <= 0){
+							inventory.setInventorySlotContents(slot, null);
+						}else{
+							inventory.decrStackSize(slot, item.stackSize - remaining);
+						}
+						
+						if (this.canCraft()) return;
+					}
+				}
+			}else if (tileEntity instanceof net.minecraftforge.common.ISidedInventory){
+				//Forge's implementation of ISidedInventory
+				
+				net.minecraftforge.common.ISidedInventory inventory = (net.minecraftforge.common.ISidedInventory) tileEntity;
+				int startSlot = inventory.getStartInventorySide(side.getOpposite());
+				int size = inventory.getSizeInventorySide(side.getOpposite());
+				
+				for (int slot = startSlot; slot < startSlot + size; slot++){
+					if (slot < 0){
+						continue;
+					}
+					
+					ItemStack item = inventory.getStackInSlot(slot);
+					
+					if (item != null && item.stackSize > 0){
+						int remaining = item.stackSize;
+						for (int slot1 = 0; slot1 < this.getSizeInventory(); slot1++){
+							ItemStack item1 = this.getStackInSlot(slot1);
+							if (item1 != null && item1.stackSize == 1 && !item1.getItem().hasContainerItem() && item.isItemEqual(item1)){
+								item1.stackSize++;
+								
+								remaining--;
+								if (remaining == 0){
+									break;
+								}
+							}
+						}
+						if (remaining <= 0){
+							inventory.setInventorySlotContents(slot, null);
+						}else{
+							inventory.decrStackSize(slot, item.stackSize - remaining);
+						}
+						
+						if (this.canCraft()) return;
+					}
+				}
 			}else if (tileEntity instanceof IInventory){
 				IInventory inventory = Utils.getInventory((IInventory) tileEntity);
 				
 				for (int slot = 0; slot < inventory.getSizeInventory(); slot++){
 					ItemStack item = inventory.getStackInSlot(slot);
 					
-					if (item != null){
+					if (item != null && item.stackSize > 0){
 						int remaining = item.stackSize;
 						for (int slot1 = 0; slot1 < this.getSizeInventory(); slot1++){
 							ItemStack item1 = this.getStackInSlot(slot1);
@@ -203,7 +350,7 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 					
 					this.crafting.setInventorySlotContents(slot, container);
 				}else{
-					this.decrStackSize(slot, 1);                	
+					this.decrStackSize(slot, 1);           	
 				}
 			}
 		}
@@ -254,9 +401,9 @@ public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 		
 		if (result != null){
 			if (!this.canCraft()){
-				if (this.canRefillFromNeighbour()){
+				if (this.canRefillFromNeighbour(from)){
 					if (doRemove){
-						this.refillFromNeighbour();						
+						this.refillFromNeighbour(from);						
 					}
 				}else{
 					return null;
