@@ -9,39 +9,33 @@ package buildcraft.energy;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import com.google.common.collect.MapMaker;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
-import net.minecraftforge.event.world.ChunkDataEvent;
 
 public class OilPopulate {
 
 	public static final OilPopulate INSTANCE = new OilPopulate();
 	public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0], new Object[0]);
-	private static final String CHUNK_TAG = "buildcraft";
-	private static final String GROUND_TAG = "oilGenGroundLevel";
-	private static final byte GEN_AREA = 2;
 	private static final byte LARGE_WELL_HEIGHT = 16;
-	private static final byte MEDIUM_WELL_HEIGHT = 4;
+	private static final byte MEDIUM_WELL_HEIGHT = 6;
+	public final Set<Integer> excessiveBiomes = new HashSet<Integer>();
 	public final Set<Integer> surfaceDepositBiomes = new HashSet<Integer>();
 	public final Set<Integer> excludedBiomes = new HashSet<Integer>();
-	private final Map<Chunk, Integer> chunkData = new MapMaker().weakKeys().makeMap();
 
 	private enum GenType {
 
@@ -49,7 +43,7 @@ public class OilPopulate {
 	};
 
 	private OilPopulate() {
-		BuildCraftCore.debugMode = true;
+//		BuildCraftCore.debugMode = true;
 		surfaceDepositBiomes.add(BiomeGenBase.desert.biomeID);
 		surfaceDepositBiomes.add(BiomeGenBase.taiga.biomeID);
 
@@ -58,10 +52,7 @@ public class OilPopulate {
 	}
 
 	@ForgeSubscribe
-	public void populate(PopulateChunkEvent.Populate event) {
-		if (event.type != EventType.LAKE) {
-			return;
-		}
+	public void populate(PopulateChunkEvent.Pre event) {
 		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkX, event.hasVillageGenerated, EVENT_TYPE);
 
 		if (!doGen) {
@@ -72,43 +63,10 @@ public class OilPopulate {
 	}
 
 	public void generateOil(World world, Random rand, int chunkX, int chunkZ) {
-		Chunk targetChunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-
-//		if (chunkX == 16 && chunkZ == 40) {
-//			System.out.println("target");
-//		}
-		for (int i = -GEN_AREA; i <= GEN_AREA; i++) {
-			for (int k = -GEN_AREA; k <= GEN_AREA; k++) {
-				int cx = chunkX + i;
-				int cz = chunkZ + k;
-				if (cx == chunkX && cz == chunkZ) {
-					continue;
-				}
-				if (world.getChunkProvider().chunkExists(cx, cz)) {
-					Chunk currentChunk = world.getChunkFromChunkCoords(cx, cz);
-					Random r = getRandom(world, cx, cz);
-					doPopulate(world, r, targetChunk, currentChunk);
-				}
-			}
-		}
-
-		Random r = getRandom(world, chunkX, chunkZ);
-		doPopulate(world, r, null, targetChunk);
-	}
-
-	private Random getRandom(World world, int chunkX, int chunkZ) {
-		return new Random(world.getSeed() + chunkX + chunkZ * 90373);
-	}
-
-	private void doPopulate(World world, Random rand, Chunk targetChunk, Chunk currentChunk) {
-
-//		if (currentChunk.xPosition == 17 && currentChunk.zPosition == 41) {
-//			System.out.println("source");
-//		}
 
 		// shift to world coordinates
-		int x = currentChunk.xPosition * 16 + rand.nextInt(16);
-		int z = currentChunk.zPosition * 16 + rand.nextInt(16);
+		int x = chunkX * 16 + 8 + rand.nextInt(16);
+		int z = chunkZ * 16 + 8 + rand.nextInt(16);
 
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 
@@ -119,30 +77,36 @@ public class OilPopulate {
 
 		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID);
 
-		double bonus = oilBiome ? 1.5 : 1.0;
+		double bonus = oilBiome ? 4.0 : 1.0;
+		if(excessiveBiomes.contains(biome.biomeID)){
+			bonus *= 50;
+		}
 		if (BuildCraftCore.debugMode) {
 			bonus *= 20;
 		}
 		GenType type = GenType.NONE;
-		if (rand.nextDouble() <= 0.0005 * bonus) {// 0.05%
+		if (rand.nextDouble() <= 0.001 * bonus) {// 0.1%
 			type = GenType.LARGE;
-		} else if (rand.nextDouble() <= 0.0015 * bonus) {// 0.15%
+		} else if (rand.nextDouble() <= 0.003 * bonus) {// 0.3%
 			type = GenType.MEDIUM;
-		} else if (oilBiome && rand.nextDouble() <= 0.02) {// 2%
+		} else if (oilBiome && rand.nextDouble() <= 0.02 * bonus) {// 2%
 			type = GenType.LAKE;
 		}
-//		if (currentChunk.xPosition == 17 && currentChunk.zPosition == 41 && type != GenType.NONE) {
-//			System.out.println("well!");
-//		}
+
 		if (type == GenType.NONE) {
 			return;
 		}
 
+
 		// Find ground level
-		int groundLevel = getGroundLevel(currentChunk);
-		if (groundLevel <= 0) {
-			groundLevel = getTopBlock(world, currentChunk, x, z, type);
-			setGroundLevel(currentChunk, groundLevel);
+		int groundLevel = getTopBlock(world, x, z);
+		if (groundLevel < 0) {
+			return;
+		}
+
+		double deviation = surfaceDeviation(world, x, groundLevel, z, 8);
+		if (deviation > 0.45) {
+			return;
 		}
 
 		// Generate a Well
@@ -176,7 +140,7 @@ public class OilPopulate {
 					for (int poolZ = -radius; poolZ <= radius; poolZ++) {
 						int distance = poolX * poolX + poolY * poolY + poolZ * poolZ;
 
-						if (distance <= radiusSq && canReplaceInChunk(targetChunk, poolX + wellX, poolZ + wellZ)) {
+						if (distance <= radiusSq) {
 							world.setBlock(poolX + wellX, poolY + wellY, poolZ + wellZ, BuildCraftEnergy.oilStill.blockID);
 						}
 					}
@@ -186,14 +150,14 @@ public class OilPopulate {
 			// Generate Lake around Spout
 			int lakeRadius;
 			if (type == GenType.LARGE) {
-				lakeRadius = 20 + rand.nextInt(20);
-				if (BuildCraftCore.debugMode) {
-					lakeRadius += 40;
-				}
+				lakeRadius = 25 + rand.nextInt(20);
+//				if (BuildCraftCore.debugMode) {
+//					lakeRadius += 40;
+//				}
 			} else {
-				lakeRadius = 5 + rand.nextInt(5);
+				lakeRadius = 5 + rand.nextInt(10);
 			}
-			generateSurfaceDeposit(world, rand, targetChunk, wellX, groundLevel, wellZ, lakeRadius);
+			generateSurfaceDeposit(world, rand, biome, wellX, groundLevel, wellZ, lakeRadius);
 
 			// Generate Spout
 			int baseY;
@@ -203,14 +167,21 @@ public class OilPopulate {
 				baseY = wellY;
 			}
 
-			if (canReplaceInChunk(targetChunk, wellX, wellZ)) {
-				if (world.getBlockId(wellX, baseY, wellZ) == Block.bedrock.blockID) {
-					if (BuildCraftEnergy.spawnOilSprings) {
-						world.setBlock(wellX, baseY, wellZ, BuildCraftCore.springBlock.blockID, 1, 3);
-					}
+			if (world.getBlockId(wellX, baseY, wellZ) == Block.bedrock.blockID) {
+				if (BuildCraftEnergy.spawnOilSprings) {
+					world.setBlock(wellX, baseY, wellZ, BuildCraftCore.springBlock.blockID, 1, 3);
 				}
-				for (int y = baseY + 1; y <= maxHeight; ++y) {
-					world.setBlock(wellX, y, wellZ, BuildCraftEnergy.oilStill.blockID);
+			}
+			for (int y = baseY + 1; y <= maxHeight; ++y) {
+				world.setBlock(wellX, y, wellZ, BuildCraftEnergy.oilStill.blockID);
+			}
+
+			if (type == GenType.LARGE) {
+				for (int y = wellY; y <= maxHeight - wellHeight / 2; ++y) {
+					world.setBlock(wellX + 1, y, wellZ, BuildCraftEnergy.oilStill.blockID);
+					world.setBlock(wellX - 1, y, wellZ, BuildCraftEnergy.oilStill.blockID);
+					world.setBlock(wellX, y, wellZ + 1, BuildCraftEnergy.oilStill.blockID);
+					world.setBlock(wellX, y, wellZ - 1, BuildCraftEnergy.oilStill.blockID);
 				}
 			}
 
@@ -222,64 +193,93 @@ public class OilPopulate {
 
 			int blockId = world.getBlockId(lakeX, lakeY, lakeZ);
 			if (blockId == biome.topBlock) {
-				generateSurfaceDeposit(world, rand, targetChunk, lakeX, lakeY, lakeZ, 2 + rand.nextInt(5));
+				generateSurfaceDeposit(world, rand, biome, lakeX, lakeY, lakeZ, 5 + rand.nextInt(10));
 			}
 		}
 	}
 
 	public void generateSurfaceDeposit(World world, Random rand, int x, int y, int z, int radius) {
-		generateSurfaceDeposit(world, rand, null, x, y, z, radius);
+		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
+		generateSurfaceDeposit(world, rand, biome, x, y, z, radius);
 	}
 
-	private void generateSurfaceDeposit(World world, Random rand, Chunk targetChunk, int x, int y, int z, int radius) {
+	private void generateSurfaceDeposit(World world, Random rand, BiomeGenBase biome, int x, int y, int z, int radius) {
 		int depth = rand.nextDouble() < 0.5 ? 1 : 2;
 
 		// Center
-		setOilForLake(world, targetChunk, x, y, z, depth);
+		setOilColumnForLake(world, biome, x, y, z, depth);
 
 		// Generate tendrils, from the center outward
 		for (int w = 1; w <= radius; ++w) {
 			float proba = (float) (radius - w + 4) / (float) (radius + 4);
 
-			for (int d = -w; d <= w; ++d) {
-				setOilWithProba(world, targetChunk, rand, proba, x + d, y, z + w, depth);
-				setOilWithProba(world, targetChunk, rand, proba, x + d, y, z - w, depth);
-				setOilWithProba(world, targetChunk, rand, proba, x + w, y, z + d, depth);
-				setOilWithProba(world, targetChunk, rand, proba, x - w, y, z + d, depth);
+			setOilWithProba(world, biome, rand, proba, x, y, z + w, depth);
+			setOilWithProba(world, biome, rand, proba, x, y, z - w, depth);
+			setOilWithProba(world, biome, rand, proba, x + w, y, z, depth);
+			setOilWithProba(world, biome, rand, proba, x - w, y, z, depth);
 
+			for (int i = 1; i <= w; ++i) {
+				setOilWithProba(world, biome, rand, proba, x + i, y, z + w, depth);
+				setOilWithProba(world, biome, rand, proba, x + i, y, z - w, depth);
+				setOilWithProba(world, biome, rand, proba, x + w, y, z + i, depth);
+				setOilWithProba(world, biome, rand, proba, x - w, y, z + i, depth);
+
+				setOilWithProba(world, biome, rand, proba, x - i, y, z + w, depth);
+				setOilWithProba(world, biome, rand, proba, x - i, y, z - w, depth);
+				setOilWithProba(world, biome, rand, proba, x + w, y, z - i, depth);
+				setOilWithProba(world, biome, rand, proba, x - w, y, z - i, depth);
 			}
 		}
 
 		// Fill in holes
 		for (int dx = x - radius; dx <= x + radius; ++dx) {
 			for (int dz = z - radius; dz <= z + radius; ++dz) {
-				if (!canReplaceInChunk(targetChunk, dx, dz)) {
-					continue;
-				}
 				if (isOil(world, dx, y - 1, dz)) {
 					continue;
 				}
 				if (isOilSurrounded(world, dx, y - 1, dz)) {
-					setOilForLake(world, targetChunk, dx, y, dz, depth);
+					setOilColumnForLake(world, biome, dx, y, dz, depth);
 				}
 			}
 		}
 	}
 
+	/**
+	 * TODO: This might need adjustment when more liquids have blocks
+	 */
 	private boolean isOilOrWater(World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
-			return false;
-		}
 		int blockId = world.getBlockId(x, y, z);
-		return blockId == Block.waterMoving.blockID || blockId == Block.waterStill.blockID || blockId == BuildCraftEnergy.oilStill.blockID || blockId == BuildCraftEnergy.oilMoving.blockID;
+		Block block = Block.blocksList[blockId];
+		return block instanceof BlockFluid && block.blockMaterial != Material.lava;
 	}
 
 	private boolean isOil(World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
-			return false;
-		}
 		int blockId = world.getBlockId(x, y, z);
 		return (blockId == BuildCraftEnergy.oilStill.blockID || blockId == BuildCraftEnergy.oilMoving.blockID);
+	}
+
+	private boolean isReplaceableForLake(World world, BiomeGenBase biome, int x, int y, int z) {
+		int blockId = world.getBlockId(x, y, z);
+		if (blockId == 0) {
+			return true;
+		}
+		if (blockId == biome.fillerBlock || blockId == biome.topBlock) {
+			return true;
+		}
+		Block block = Block.blocksList[blockId];
+		if (!block.blockMaterial.blocksMovement()) {
+			return true;
+		}
+		if (block.isGenMineableReplaceable(world, x, y, z, Block.stone.blockID)) {
+			return true;
+		}
+		if (block instanceof BlockFlower) {
+			return true;
+		}
+		if (!world.isBlockOpaqueCube(x, y, z)) {
+			return true;
+		}
+		return false;
 	}
 
 	private boolean isOilAdjacent(World world, int x, int y, int z) {
@@ -296,33 +296,28 @@ public class OilPopulate {
 				&& isOil(world, x, y, z - 1);
 	}
 
-	private void setOilWithProba(World world, Chunk targetChunk, Random rand, float proba, int x, int y, int z, int depth) {
-//		if (x / 16 == 16 && z / 16 == 40) {
-//			System.out.println("spawn tendril");
-//		}
-		if (!world.blockExists(x, y, z)) {
-			return;
-		}
-		if (rand.nextFloat() <= proba && world.getBlockId(x, y - 2, z) != 0) {
+	private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, int x, int y, int z, int depth) {
+		if (rand.nextFloat() <= proba && world.getBlockId(x, y - depth - 1, z) != 0) {
 			if (isOilAdjacent(world, x, y - 1, z)) {
-				setOilForLake(world, targetChunk, x, y, z, depth);
+				setOilColumnForLake(world, biome, x, y, z, depth);
 			}
 		}
 	}
 
-	private void setOilForLake(World world, Chunk targetChunk, int x, int y, int z, int depth) {
-		if (!canReplaceInChunk(targetChunk, x, z)) {
-			return;
-		}
-		if (!world.blockExists(x, y, z)) {
-			return;
-		}
-		if (world.isAirBlock(x, y + 1, z) || !world.isBlockOpaqueCube(x, y + 1, z) || Block.blocksList[world.getBlockId(x, y + 1, z)] instanceof BlockFlower) {
-			world.setBlockToAir(x, y + 1, z);
+	private void setOilColumnForLake(World world, BiomeGenBase biome, int x, int y, int z, int depth) {
+		if (isReplaceableForLake(world, biome, x, y + 1, z)) {
+			if (!world.isAirBlock(x, y + 2, z)) {
+				return;
+			}
+			if (isOilOrWater(world, x, y + 1, z)) {
+				world.setBlock(x, y + 1, z, BuildCraftEnergy.oilStill.blockID);
+			} else {
+				world.setBlockToAir(x, y + 1, z);
+			}
 			if (isOilOrWater(world, x, y, z)) {
 				world.setBlock(x, y, z, BuildCraftEnergy.oilStill.blockID);
 			} else {
-				world.setBlock(x, y, z, 0, 0, 2);
+				world.setBlockToAir(x, y, z);
 			}
 
 			for (int d = depth; d > 0; d--) {
@@ -333,46 +328,8 @@ public class OilPopulate {
 		}
 	}
 
-	@ForgeSubscribe
-	public void saveChunk(ChunkDataEvent.Save event) {
-		Integer groundLevel = chunkData.remove(event.getChunk());
-		if (groundLevel != null) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			nbt.setInteger(GROUND_TAG, groundLevel);
-			event.getData().setTag(CHUNK_TAG, nbt);
-		}
-	}
-
-	@ForgeSubscribe
-	public void loadChunk(ChunkDataEvent.Load event) {
-		if (!chunkData.containsKey(event.getChunk())) {
-			Integer groundLevel = event.getData().getCompoundTag(CHUNK_TAG).getInteger(GROUND_TAG);
-			if (groundLevel > 0) {
-				chunkData.put(event.getChunk(), groundLevel);
-			}
-		}
-	}
-
-	private boolean canReplaceInChunk(Chunk targetChunk, int x, int z) {
-//		if (x / 16 == 16 && z / 16 == 40) {
-//			System.out.println("fill target");
-//		}
-		if (targetChunk == null) {
-			return true;
-		}
-		return targetChunk.xPosition == x / 16 && targetChunk.zPosition == z / 16;
-	}
-
-	private void setGroundLevel(Chunk chunk, int height) {
-		chunkData.put(chunk, height);
-	}
-
-	private int getGroundLevel(Chunk chunk) {
-		Integer groundLevel = chunkData.get(chunk);
-		return groundLevel != null ? groundLevel : -1;
-	}
-
-	private int getTopBlock(World world, Chunk chunk, int x, int z, GenType type) {
+	private int getTopBlock(World world, int x, int z) {
+		Chunk chunk = world.getChunkFromBlockCoords(x, z);
 		int y = chunk.getTopFilledSegment() + 15;
 
 		int trimmedX = x & 15;
@@ -381,33 +338,33 @@ public class OilPopulate {
 		for (; y > 0; --y) {
 			int blockId = chunk.getBlockID(trimmedX, y, trimmedZ);
 			Block block = Block.blocksList[blockId];
-			if (blockId == 0 || block.blockMaterial == Material.leaves) {
+			if (blockId == 0) {
 				continue;
 			}
-			if (blockId == BuildCraftEnergy.oilStill.blockID && y > 70) {
-				System.out.println("Fail!");
-				if (type != GenType.LAKE) {
-					int wellHeight = type == GenType.LARGE ? LARGE_WELL_HEIGHT : MEDIUM_WELL_HEIGHT;
-					int groundLevel = y - wellHeight;
-					blockId = chunk.getBlockID(trimmedX, groundLevel, trimmedZ);
-					if (blockId == BuildCraftEnergy.oilStill.blockID) {
-						return groundLevel;
-					}
-				}
+			if (block instanceof BlockFluid) {
 				return y;
 			}
+			if (!block.blockMaterial.blocksMovement()) {
+				continue;
+			}
 			if (block instanceof BlockFlower) {
-				continue;
-			}
-			if (Block.blocksList[blockId].isWood(world, x, y, z)) {
-				continue;
-			}
-			if (Block.blocksList[blockId].isBlockFoliage(world, x, y, z)) {
 				continue;
 			}
 			return y;
 		}
 
 		return -1;
+	}
+
+	private double surfaceDeviation(World world, int x, int y, int z, int radius) {
+		int diameter = radius * 2;
+		double centralTendancy = y;
+		double deviation = 0;
+		for (int i = 0; i < diameter; i++) {
+			for (int k = 0; k < diameter; k++) {
+				deviation += getTopBlock(world, x - radius + i, z - radius + k) - centralTendancy;
+			}
+		}
+		return Math.abs(deviation / centralTendancy);
 	}
 }

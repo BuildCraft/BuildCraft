@@ -44,8 +44,10 @@ import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
+import buildcraft.energy.worldgen.BiomeOilDesert;
 import buildcraft.energy.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
+import buildcraft.energy.worldgen.BiomeInitializer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -69,6 +71,7 @@ public class BuildCraftEnergy {
 	public final static int ENERGY_REMOVE_BLOCK = 25;
 	public final static int ENERGY_EXTRACT_ITEM = 2;
 	public static boolean spawnOilSprings = true;
+	public static BiomeOilDesert biomeOilDesert;
 	public static BlockEngine engineBlock;
 	public static Block oilMoving;
 	public static Block oilStill;
@@ -91,7 +94,7 @@ public class BuildCraftEnergy {
 
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
-			MinecraftForge.TERRAIN_GEN_BUS.register(OilPopulate.INSTANCE);
+			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
 		}
 
 		new BptBlockEngine(engineBlock.blockID);
@@ -111,9 +114,27 @@ public class BuildCraftEnergy {
 		Property bucketOilId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bucketOil.id", DefaultProps.BUCKET_OIL_ID);
 		Property bucketFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bucketFuel.id", DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "fuel.id", DefaultProps.FUEL_ID);
-
-
+		Property oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", 160);
 		BuildCraftCore.mainConfiguration.save();
+
+		class BiomeIdException extends RuntimeException {
+
+			public BiomeIdException(String biome, int id) {
+				super(String.format("You have a Biome Id conflict at %d for %s", id, biome));
+			}
+		}
+
+//		int oilDesertId = oilDesertBiomeId.getInt();
+		int oilDesertId = -1;
+		if (oilDesertId > 0) {
+			if (BiomeGenBase.biomeList[oilDesertId] != null) {
+				throw new BiomeIdException("oilDesert", oilDesertId);
+			}
+			biomeOilDesert = new BiomeOilDesert(oilDesertId);
+			OilPopulate.INSTANCE.excessiveBiomes.add(biomeOilDesert.biomeID);
+			OilPopulate.INSTANCE.surfaceDepositBiomes.add(biomeOilDesert.biomeID);
+		}
+
 
 		engineBlock = new BlockEngine(engineId.getInt(DefaultProps.ENGINE_ID));
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
