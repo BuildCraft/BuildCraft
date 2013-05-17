@@ -50,8 +50,6 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	double tubeY = Double.NaN;
 	int aimY = 0;
 	
-	private boolean explodeNextTick;
-
 	private IPowerProvider powerProvider;
 
 	public TilePump() {
@@ -70,11 +68,6 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 			return;
 		
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-			if (explodeNextTick) {
-				worldObj.newExplosion(null, xCoord+0.5, yCoord+0.5, zCoord+0.5, 3.0f, false, true);
-				return;
-			}
-
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
 
@@ -93,11 +86,6 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 				if (isPumpableLiquid(index)) {
 					LiquidStack liquidToPump = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
 
-					if(!BuildCraftFactory.pumpDimensionList.isLiquidAllowed(liquidToPump, worldObj.provider.dimensionId)) {
-						explodeNextTick = true;
-						return;
-					}
-					
 					if (tank.fill(liquidToPump, false) == liquidToPump.amount) {
 
 						if (powerProvider.useEnergy(10, 10, true) == 10) {
@@ -275,7 +263,14 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	}
 
 	private boolean isLiquid(BlockIndex index) {
-		return index != null && (Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k)) != null);
+		if(index == null)
+			return false;
+		
+		LiquidStack liquid = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
+		if(liquid == null)
+			return false;
+		
+		return BuildCraftFactory.pumpDimensionList.isLiquidAllowed(liquid, worldObj.provider.dimensionId);
 	}
 
 	@Override
