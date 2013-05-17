@@ -46,10 +46,18 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 		par1World.setBlock(par2, par3, par4, this.blockID + 1, l, 2);
 	}
 
+	/**
+	 * How many world ticks before ticking
+	 */
+	@Override
+	public int tickRate(World par1World) {
+		return 20;
+	}
+
 	@Override
 	public void updateTick(World world, int x, int y, int z, Random random) {
 		int oldDecay = this.getFlowDecay(world, x, y, z);
-		byte increment = 1;
+		byte viscosity = 2;
 		int flowDecay;
 
 		if (oldDecay > 0) {
@@ -58,7 +66,7 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 			minFlowDecay = this.getSmallestFlowDecay(world, x + 1, y, z, minFlowDecay);
 			minFlowDecay = this.getSmallestFlowDecay(world, x, y, z - 1, minFlowDecay);
 			minFlowDecay = this.getSmallestFlowDecay(world, x, y, z + 1, minFlowDecay);
-			flowDecay = minFlowDecay + increment;
+			flowDecay = minFlowDecay + viscosity;
 
 			if (flowDecay >= 8 || minFlowDecay < 0) {
 				flowDecay = -1;
@@ -73,8 +81,16 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 				}
 			}
 
+			boolean update = true;
+			if (oldDecay < 8 && flowDecay < 8 && flowDecay > oldDecay && random.nextDouble() < 0.2) {
+				flowDecay = oldDecay;
+				update = false;
+			}
+
 			if (flowDecay == oldDecay) {
-				this.updateFlow(world, x, y, z);
+				if (update) {
+					this.updateFlow(world, x, y, z);
+				}
 			} else {
 				oldDecay = flowDecay;
 
@@ -98,7 +114,7 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 			}
 		} else if (oldDecay >= 0 && (oldDecay == 0 || this.blockBlocksFlow(world, x, y - 1, z))) {
 			boolean[] flowDirection = this.getOptimalFlowDirections(world, x, y, z);
-			flowDecay = oldDecay + increment;
+			flowDecay = oldDecay + viscosity;
 
 			if (oldDecay >= 8) {
 				flowDecay = 1;
