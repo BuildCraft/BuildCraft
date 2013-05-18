@@ -78,10 +78,9 @@ public class OilPopulate {
 		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID);
 
 		double bonus = oilBiome ? 4.0 : 1.0;
-		if(excessiveBiomes.contains(biome.biomeID)){
-			bonus *= 50;
-		}
-		if (BuildCraftCore.debugMode) {
+		if (excessiveBiomes.contains(biome.biomeID)) {
+			bonus *= 40;
+		} else if (BuildCraftCore.debugMode) {
 			bonus *= 20;
 		}
 		GenType type = GenType.NONE;
@@ -141,7 +140,7 @@ public class OilPopulate {
 						int distance = poolX * poolX + poolY * poolY + poolZ * poolZ;
 
 						if (distance <= radiusSq) {
-							world.setBlock(poolX + wellX, poolY + wellY, poolZ + wellZ, BuildCraftEnergy.oilStill.blockID);
+							world.setBlock(poolX + wellX, poolY + wellY, poolZ + wellZ, BuildCraftEnergy.oilStill.blockID, 0, distance == radiusSq ? 3 : 2);
 						}
 					}
 				}
@@ -207,7 +206,7 @@ public class OilPopulate {
 		int depth = rand.nextDouble() < 0.5 ? 1 : 2;
 
 		// Center
-		setOilColumnForLake(world, biome, x, y, z, depth);
+		setOilColumnForLake(world, biome, x, y, z, depth, 2);
 
 		// Generate tendrils, from the center outward
 		for (int w = 1; w <= radius; ++w) {
@@ -238,7 +237,7 @@ public class OilPopulate {
 					continue;
 				}
 				if (isOilSurrounded(world, dx, y - 1, dz)) {
-					setOilColumnForLake(world, biome, dx, y, dz, depth);
+					setOilColumnForLake(world, biome, dx, y, dz, depth, 2);
 				}
 			}
 		}
@@ -299,30 +298,30 @@ public class OilPopulate {
 	private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, int x, int y, int z, int depth) {
 		if (rand.nextFloat() <= proba && world.getBlockId(x, y - depth - 1, z) != 0) {
 			if (isOilAdjacent(world, x, y - 1, z)) {
-				setOilColumnForLake(world, biome, x, y, z, depth);
+				setOilColumnForLake(world, biome, x, y, z, depth, 3);
 			}
 		}
 	}
 
-	private void setOilColumnForLake(World world, BiomeGenBase biome, int x, int y, int z, int depth) {
+	private void setOilColumnForLake(World world, BiomeGenBase biome, int x, int y, int z, int depth, int update) {
 		if (isReplaceableForLake(world, biome, x, y + 1, z)) {
 			if (!world.isAirBlock(x, y + 2, z)) {
 				return;
 			}
 			if (isOilOrWater(world, x, y + 1, z)) {
-				world.setBlock(x, y + 1, z, BuildCraftEnergy.oilStill.blockID);
+				world.setBlock(x, y + 1, z, BuildCraftEnergy.oilStill.blockID, 0, update);
 			} else {
-				world.setBlockToAir(x, y + 1, z);
+				world.setBlock(x, y + 1, z, 0, 0, 2);
 			}
 			if (isOilOrWater(world, x, y, z)) {
-				world.setBlock(x, y, z, BuildCraftEnergy.oilStill.blockID);
+				world.setBlock(x, y, z, BuildCraftEnergy.oilStill.blockID, 0, update);
 			} else {
-				world.setBlockToAir(x, y, z);
+				world.setBlock(x, y, z, 0, 0, 2);
 			}
 
 			for (int d = depth; d > 0; d--) {
 				if (isOilOrWater(world, x, y - d - 1, z) || world.isBlockSolidOnSide(x, y - d - 1, z, ForgeDirection.UP)) {
-					world.setBlock(x, y - d, z, BuildCraftEnergy.oilStill.blockID);
+					world.setBlock(x, y - d, z, BuildCraftEnergy.oilStill.blockID, 0, d == 1 ? update : 2);
 				}
 			}
 		}
