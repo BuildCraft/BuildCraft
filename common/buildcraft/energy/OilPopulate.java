@@ -7,20 +7,20 @@
  */
 package buildcraft.energy;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlower;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import java.util.HashSet;
-import java.util.Set;
-import net.minecraft.block.BlockFlower;
-import net.minecraftforge.common.ForgeDirection;
 
 public class OilPopulate {
 

@@ -12,6 +12,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
@@ -19,7 +20,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.render.LiquidRenderer;
 import buildcraft.factory.TileRefinery;
-import net.minecraftforge.liquids.LiquidStack;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 

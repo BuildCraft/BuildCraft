@@ -3,6 +3,8 @@ package buildcraft.core.gui;
 import java.util.ArrayList;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
@@ -14,8 +16,6 @@ import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.utils.SessionVars;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.InventoryPlayer;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 

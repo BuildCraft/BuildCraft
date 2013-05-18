@@ -10,9 +10,11 @@
 package buildcraft.transport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
-import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -47,9 +49,6 @@ import buildcraft.transport.render.PipeWorldRenderer;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 public class BlockGenericPipe extends BlockContainer {
 	static enum Part {

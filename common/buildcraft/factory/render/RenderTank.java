@@ -7,13 +7,13 @@
  */
 package buildcraft.factory.render;
 
-import buildcraft.core.render.LiquidRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.liquids.LiquidStack;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.core.render.LiquidRenderer;
 import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {
