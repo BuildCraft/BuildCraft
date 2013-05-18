@@ -53,6 +53,7 @@ import buildcraft.transport.pipes.PipeItemsCobblestone;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsGold;
+import buildcraft.transport.pipes.PipeItemsInsertion;
 import buildcraft.transport.pipes.PipeItemsIron;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsSandstone;
@@ -123,6 +124,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsGold;
 	public static Item pipeItemsDiamond;
 	public static Item pipeItemsObsidian;
+	public static Item pipeItemsInsertion;
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
 
@@ -284,6 +286,7 @@ public class BuildCraftTransport {
 			pipeItemsGold = createPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
 			pipeItemsDiamond = createPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
 			pipeItemsObsidian = createPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
+			pipeItemsInsertion = createPipe(DefaultProps.PIPE_ITEMS_INSERTION_ID, PipeItemsInsertion.class, "Insertion Transport Pipe", Block.stone, Block.glass, Block.stone, Item.redstone);
 
 			pipeLiquidsWood = createPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood, null);
 			pipeLiquidsCobblestone = createPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone, null);
@@ -446,6 +449,10 @@ public class BuildCraftTransport {
 	}
 
 	public static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3) {
+		return createPipe(defaultID, clas, descr, ingredient1, ingredient2, ingredient3, null);
+	}
+	
+	public static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object ingredient1, Object ingredient2, Object ingredient3, Object ingredientTop) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0)) + clas.getSimpleName().substring(1);
 
 		Property prop = BuildCraftCore.mainConfiguration.getItem(name + ".id", defaultID);
@@ -460,7 +467,11 @@ public class BuildCraftTransport {
 
 		if (ingredient1 != null && ingredient2 != null && ingredient3 != null) {
 			recipe.result = new ItemStack(res, 8);
-			recipe.input = new Object[] { "ABC", Character.valueOf('A'), ingredient1, Character.valueOf('B'), ingredient2, Character.valueOf('C'), ingredient3 };
+			if(ingredientTop != null) {
+				recipe.input = new Object[] {" T ", "ABC", 'A', ingredient1, 'B', ingredient2, 'C', ingredient3, 'T', ingredientTop};
+			} else {
+				recipe.input = new Object[] { "ABC", Character.valueOf('A'), ingredient1, Character.valueOf('B'), ingredient2, Character.valueOf('C'), ingredient3 };
+			}
 
 			pipeRecipes.add(recipe);
 		} else if (ingredient1 != null && ingredient2 != null) {

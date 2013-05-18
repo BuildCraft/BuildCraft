@@ -44,8 +44,9 @@ public class PipeIconProvider implements IIconProvider {
 	public static final int Power_Overload		 			= 32;
 	
 	public static final int Stripes 						= 33;
+	public static final int PipeItemsInsertion				= 34;
 	
-	public static final int MAX								= 34;
+	public static final int MAX								= 35;
 		
 	@SideOnly(Side.CLIENT)
 	private Icon[] _icons;
@@ -106,6 +107,7 @@ public class PipeIconProvider implements IIconProvider {
 		_icons[PipeIconProvider.Power_Normal] = iconRegister.registerIcon("buildcraft:texture_cyan");
 		_icons[PipeIconProvider.Power_Overload] = iconRegister.registerIcon("buildcraft:texture_red_dark");
 		_icons[PipeIconProvider.Stripes] = iconRegister.registerIcon("buildcraft:pipeStripes");
+		_icons[PipeIconProvider.PipeItemsInsertion] = iconRegister.registerIcon("buildcraft:pipeItemsInsertion");
 	}
 
 }

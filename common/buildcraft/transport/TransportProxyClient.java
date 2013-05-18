@@ -36,6 +36,7 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsDiamond.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsObsidian.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsEmerald.itemID, pipeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsInsertion.itemID, pipeItemRenderer);
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsWood.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsCobblestone.itemID, pipeItemRenderer);
