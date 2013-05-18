@@ -8,9 +8,9 @@ import net.minecraft.world.biome.BiomeGenDesert;
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class BiomeOilDesert extends BiomeGenDesert {
+public class BiomeGenOilDesert extends BiomeGenDesert {
 
-	public BiomeOilDesert(int id) {
+	public BiomeGenOilDesert(int id) {
 		super(id);
 		setColor(16421912);
 		setBiomeName("Desert Oil Field");

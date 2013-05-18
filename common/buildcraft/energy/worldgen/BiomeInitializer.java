@@ -16,7 +16,14 @@ public class BiomeInitializer {
 	@ForgeSubscribe
 	public void initBiomes(WorldTypeEvent.InitBiomeGens event) {
 		if (BuildCraftEnergy.biomeOilDesert != null) {
+			event.newBiomeGens[0] = new GenLayerAddOilDesert(1500L, event.newBiomeGens[0]);
 			event.newBiomeGens[1] = new GenLayerAddOilDesert(1500L, event.newBiomeGens[1]);
+			event.newBiomeGens[2] = new GenLayerAddOilDesert(1500L, event.newBiomeGens[2]);
+		}
+		if (BuildCraftEnergy.biomeOilOcean != null) {
+			event.newBiomeGens[0] = new GenLayerAddOilOcean(1500L, event.newBiomeGens[0]);
+			event.newBiomeGens[1] = new GenLayerAddOilOcean(1500L, event.newBiomeGens[1]);
+			event.newBiomeGens[2] = new GenLayerAddOilOcean(1500L, event.newBiomeGens[2]);
 		}
 	}
 }

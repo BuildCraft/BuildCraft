@@ -44,9 +44,10 @@ import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
-import buildcraft.energy.worldgen.BiomeOilDesert;
-import buildcraft.energy.OilPopulate;
+import buildcraft.energy.worldgen.BiomeGenOilDesert;
+import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
+import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -71,7 +72,8 @@ public class BuildCraftEnergy {
 	public final static int ENERGY_REMOVE_BLOCK = 25;
 	public final static int ENERGY_EXTRACT_ITEM = 2;
 	public static boolean spawnOilSprings = true;
-	public static BiomeOilDesert biomeOilDesert;
+	public static BiomeGenOilDesert biomeOilDesert;
+	public static BiomeGenOilOcean biomeOilOcean;
 	public static BlockEngine engineBlock;
 	public static Block oilMoving;
 	public static Block oilStill;
@@ -115,6 +117,7 @@ public class BuildCraftEnergy {
 		Property bucketFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bucketFuel.id", DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "fuel.id", DefaultProps.FUEL_ID);
 		Property oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", 160);
+		Property oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", 161);
 		BuildCraftCore.mainConfiguration.save();
 
 		class BiomeIdException extends RuntimeException {
@@ -124,15 +127,24 @@ public class BuildCraftEnergy {
 			}
 		}
 
-//		int oilDesertId = oilDesertBiomeId.getInt();
-		int oilDesertId = -1;
+		int oilDesertId = oilDesertBiomeId.getInt();
 		if (oilDesertId > 0) {
 			if (BiomeGenBase.biomeList[oilDesertId] != null) {
 				throw new BiomeIdException("oilDesert", oilDesertId);
 			}
-			biomeOilDesert = new BiomeOilDesert(oilDesertId);
+			biomeOilDesert = new BiomeGenOilDesert(oilDesertId);
 			OilPopulate.INSTANCE.excessiveBiomes.add(biomeOilDesert.biomeID);
 			OilPopulate.INSTANCE.surfaceDepositBiomes.add(biomeOilDesert.biomeID);
+		}
+		
+		int oilOceanId = oilOceanBiomeId.getInt();
+		if (oilOceanId > 0) {
+			if (BiomeGenBase.biomeList[oilOceanId] != null) {
+				throw new BiomeIdException("oilOcean", oilOceanId);
+			}
+			biomeOilOcean = new BiomeGenOilOcean(oilOceanId);
+			OilPopulate.INSTANCE.excessiveBiomes.add(biomeOilOcean.biomeID);
+			OilPopulate.INSTANCE.surfaceDepositBiomes.add(biomeOilOcean.biomeID);
 		}
 
 
