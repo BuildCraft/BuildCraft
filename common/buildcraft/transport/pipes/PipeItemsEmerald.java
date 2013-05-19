@@ -132,33 +132,6 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 		return null;
 
-
-		/*
-		if (inventory instanceof ISidedInventory) {
-			ISidedInventory sidedInv = (ISidedInventory) inventory;
-
-			int first = sidedInv.getStartInventorySide(from);
-			int last = first + sidedInv.getSizeInventorySide(from) - 1;
-
-			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, first, last);
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
-		} else {
-			// This is a generic inventory
-			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
-		}
-
-		return null; */
 	}
 
 	private void incrementFilter() {
