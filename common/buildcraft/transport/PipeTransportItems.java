@@ -309,11 +309,7 @@ public class PipeTransportItems extends PipeTransport {
 				}
 
 			} else if (!data.toCenter && endReached(pos)) {
-				Position destPos = new Position(xCoord, yCoord, zCoord, data.output);
-
-				destPos.moveForwards(1.0);
-
-				TileEntity tile = worldObj.getBlockTileEntity((int) destPos.x, (int) destPos.y, (int) destPos.z);
+				TileEntity tile = container.getTile(data.output);
 
 				if (travelHook != null) {
 					travelHook.endReached(this, data, tile);

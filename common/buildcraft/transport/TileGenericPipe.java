@@ -590,7 +590,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
 		scheduleRenderUpdate();
 		return true;
 	}
@@ -613,7 +613,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		dropFacadeItem(direction);
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
 		scheduleRenderUpdate();
 	}
 
@@ -705,7 +705,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		
 		plugs[forgeDirection.ordinal()] = false;
 		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 	}
@@ -714,7 +714,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (hasPlug(forgeDirection)) return false;
 		
 		plugs[forgeDirection.ordinal()] = true;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord));
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 		return true;
