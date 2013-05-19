@@ -47,8 +47,11 @@ import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
-import buildcraft.energy.OilPopulate;
+import buildcraft.energy.worldgen.BiomeGenOilDesert;
+import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
+import buildcraft.energy.worldgen.BiomeGenOilOcean;
+import buildcraft.energy.worldgen.BiomeInitializer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -69,6 +72,8 @@ public class BuildCraftEnergy {
 	public final static int ENERGY_REMOVE_BLOCK = 25;
 	public final static int ENERGY_EXTRACT_ITEM = 2;
 	public static boolean spawnOilSprings = true;
+	public static BiomeGenOilDesert biomeOilDesert;
+	public static BiomeGenOilOcean biomeOilOcean;
 	public static BlockEngine engineBlock;
 	public static Block oilMoving;
 	public static Block oilStill;
@@ -90,7 +95,8 @@ public class BuildCraftEnergy {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
 		if (BuildCraftCore.modifyWorld) {
-			MinecraftForge.EVENT_BUS.register(new OilPopulate());
+			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
+			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
 		}
 
 		new BptBlockEngine(engineBlock.blockID);
@@ -110,9 +116,37 @@ public class BuildCraftEnergy {
 		Property bucketOilId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bucketOil.id", DefaultProps.BUCKET_OIL_ID);
 		Property bucketFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "bucketFuel.id", DefaultProps.BUCKET_FUEL_ID);
 		Property itemFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "fuel.id", DefaultProps.FUEL_ID);
-
-
+		Property oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", 160);
+		Property oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", 161);
 		BuildCraftCore.mainConfiguration.save();
+
+		class BiomeIdException extends RuntimeException {
+
+			public BiomeIdException(String biome, int id) {
+				super(String.format("You have a Biome Id conflict at %d for %s", id, biome));
+			}
+		}
+
+		int oilDesertId = oilDesertBiomeId.getInt();
+		if (oilDesertId > 0) {
+			if (BiomeGenBase.biomeList[oilDesertId] != null) {
+				throw new BiomeIdException("oilDesert", oilDesertId);
+			}
+			biomeOilDesert = new BiomeGenOilDesert(oilDesertId);
+			OilPopulate.INSTANCE.excessiveBiomes.add(biomeOilDesert.biomeID);
+			OilPopulate.INSTANCE.surfaceDepositBiomes.add(biomeOilDesert.biomeID);
+		}
+		
+		int oilOceanId = oilOceanBiomeId.getInt();
+		if (oilOceanId > 0) {
+			if (BiomeGenBase.biomeList[oilOceanId] != null) {
+				throw new BiomeIdException("oilOcean", oilOceanId);
+			}
+			biomeOilOcean = new BiomeGenOilOcean(oilOceanId);
+			OilPopulate.INSTANCE.excessiveBiomes.add(biomeOilOcean.biomeID);
+			OilPopulate.INSTANCE.surfaceDepositBiomes.add(biomeOilOcean.biomeID);
+		}
+
 
 		engineBlock = new BlockEngine(engineId.getInt(DefaultProps.ENGINE_ID));
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
@@ -201,7 +235,7 @@ public class BuildCraftEnergy {
 					if (id >= BiomeGenBase.biomeList.length) {
 						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
 					}
-					OilPopulate.surfaceDepositBiomes.add(id);
+					OilPopulate.INSTANCE.surfaceDepositBiomes.add(id);
 				} catch (Exception ex) {
 					Logger.getLogger("Buildcraft").log(Level.WARNING,
 							String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
@@ -215,7 +249,7 @@ public class BuildCraftEnergy {
 					if (id >= BiomeGenBase.biomeList.length) {
 						throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.biomeList.length);
 					}
-					OilPopulate.excludedBiomes.add(id);
+					OilPopulate.INSTANCE.excludedBiomes.add(id);
 				} catch (Exception ex) {
 					Logger.getLogger("Buildcraft").log(Level.WARNING,
 							String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
