@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 

@@ -104,8 +104,13 @@ public class ItemFacade extends ItemBuildCraft {
 					continue;
 				}
 
-				if (!(b.blockID == 20)){
-					if (b.blockID == 7 || b.blockID == 18 || b.blockID == 19 || b.blockID == 95) {
+				if (!(b.blockID == 20)){	//Explicitly allow glass
+					if (b.blockID == 7 //Bedrock
+							|| b.blockID == 2 //Grass block
+							|| b.blockID == 18 //Oak leaves 
+							|| b.blockID == 19 //Sponge
+							|| b.blockID == 95 //Locked chest
+							) {  
 						continue;
 					}
 					if (!b.isOpaqueCube() || b.hasTileEntity(0) || !b.renderAsNormalBlock()) {

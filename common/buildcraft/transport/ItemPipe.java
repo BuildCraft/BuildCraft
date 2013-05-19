@@ -9,6 +9,8 @@
 
 package buildcraft.transport;
 
+import java.util.logging.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +25,6 @@ import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.logging.Level;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 

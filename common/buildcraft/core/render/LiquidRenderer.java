@@ -7,19 +7,21 @@
  */
 package buildcraft.core.render;
 
-import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-import net.minecraftforge.liquids.LiquidStack;
-import org.lwjgl.opengl.GL11;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.liquids.LiquidDictionary;
+import net.minecraftforge.liquids.LiquidStack;
+
+import org.lwjgl.opengl.GL11;
+
+import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 
 /**
  *

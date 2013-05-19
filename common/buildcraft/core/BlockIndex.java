@@ -89,6 +89,6 @@ public class BlockIndex implements Comparable<BlockIndex> {
 
 	@Override
 	public int hashCode() {
-		return i + j << 8 + k << 16;
+		return (i * 37 + j) * 37 + k;
 	}
 }

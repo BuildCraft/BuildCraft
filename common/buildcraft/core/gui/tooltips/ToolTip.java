@@ -1,8 +1,9 @@
 package buildcraft.core.gui.tooltips;
 
-import com.google.common.collect.ForwardingList;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ForwardingList;
 
 /**
  *
