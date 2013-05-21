@@ -10,7 +10,7 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public class OreStack {
 
-    public int oreID;
+	public int oreID;
 	public int stackSize;
 
 	public OreStack(String name){ this(name, 1); }
@@ -32,9 +32,9 @@ public class OreStack {
 		return oreID == OreDictionary.getOreID(item);
 	}
 
-    public String toString()
-    {
-        return stackSize + "x" + OreDictionary.getOreName(oreID);
-    }
+	public String toString()
+	{
+		return stackSize + "x" + OreDictionary.getOreName(oreID);
+	}
 	
 }

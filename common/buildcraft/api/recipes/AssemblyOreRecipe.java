@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 
 public class AssemblyOreRecipe extends AssemblyRecipe {
 
-    public ArrayList recipe = new ArrayList();
+	public ArrayList recipe = new ArrayList();
 	
 	public AssemblyOreRecipe(Object[] input, int energy, ItemStack output) {
 		super(null, energy, output);
@@ -16,15 +16,15 @@ public class AssemblyOreRecipe extends AssemblyRecipe {
 			else if (x instanceof OreStack) recipe.add(((OreStack) x).copy());
 			else if (x instanceof String) recipe.add(new OreStack((String) x));
 			else
-            {
-                String ret = "Invalid assembly ore recipe: ";
-                for (Object tmp :  recipe)
-                {
-                    ret += tmp + ", ";
-                }
-                ret += output;
-                throw new RuntimeException(ret);
-            }
+			{
+				String ret = "Invalid assembly ore recipe: ";
+				for (Object tmp :  recipe)
+				{
+					ret += tmp + ", ";
+				}
+				ret += output;
+				throw new RuntimeException(ret);
+			}
 		}
 	}
 	
