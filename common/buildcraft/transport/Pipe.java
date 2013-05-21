@@ -206,14 +206,14 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			NBTTagCompound nbttagcompoundC = new NBTTagCompound();
 			gate.writeToNBT(nbttagcompoundC);
 			nbttagcompound.setTag("Gate", nbttagcompoundC);
+			// Wire states are stored for pipes with gates only
+			for (int i = 0; i < 4; ++i)
+				nbttagcompound.setBoolean("wireState[" + i + "]", broadcastSignal[i]);
+			nbttagcompound.setBoolean("redstoneState", broadcastRedstone);
 		}
 
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0; i < 4; ++i)
 			nbttagcompound.setBoolean("wireSet[" + i + "]", wireSet[i]);
-			nbttagcompound.setBoolean("wireState[" + i + "]", broadcastSignal[i]);
-		}
-
-		nbttagcompound.setBoolean("redstoneState", broadcastRedstone);
 		
 		for (int i = 0; i < 8; ++i) {
 			nbttagcompound.setInteger("action[" + i + "]", activatedActions[i] != null ? activatedActions[i].getId() : 0);
@@ -245,13 +245,15 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 				gate.kind = kind;
 			}
 		}
-
-		for (int i = 0; i < 4; ++i) {
-			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
-			broadcastSignal[i] = nbttagcompound.getBoolean("wireState[" + i + "]");
+		// Wire states are restored for pipes with gates
+		if (gate != null) {
+			for (int i = 0; i < 4; ++i)
+				broadcastSignal[i] = nbttagcompound.getBoolean("wireState[" + i + "]");
+			broadcastRedstone = nbttagcompound.getBoolean("redstoneState");
 		}
 
-		broadcastRedstone = nbttagcompound.getBoolean("redstoneState");
+		for (int i = 0; i < 4; ++i)
+			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
 		
 		for (int i = 0; i < 8; ++i) {
 			activatedActions[i] = ActionManager.actions[nbttagcompound.getInteger("action[" + i + "]")];
