@@ -9,12 +9,12 @@
 
 package buildcraft.core.triggers;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.inventory.InventoryWrapper;
 
 public class TriggerInventory extends BCTrigger {
@@ -60,7 +60,30 @@ public class TriggerInventory extends BCTrigger {
 		if (parameter != null) {
 			searchedStack = parameter.getItem();
 		}
-
+		
+		if (tile instanceof ISpecialInventory)
+		{
+			ISpecialInventory special = (ISpecialInventory) tile;
+			ItemStack[] arr;
+			int n;
+			switch (state)
+			{
+				case Contains:
+					arr = special.extractItem(false, side, 1);
+					return arr != null && arr.length > 0 && arr[0] != null && arr[0].stackSize > 0
+							&& (searchedStack == null || arr[0].isItemEqual(searchedStack));
+				case Empty:
+					arr = special.extractItem(false, side, 1);
+					return arr == null || arr.length == 0 || arr[0] == null || arr[0].stackSize == 0;
+				case Full:
+					break;
+				case Space:
+					if (searchedStack == null) break;
+					n = special.addItem(searchedStack, false, side);
+					return n > 0;
+			}
+		}
+		
 		if (tile instanceof IInventory) {
 			ISidedInventory inv = InventoryWrapper.getWrappedInventory(tile);
 			int invSize = inv.getSizeInventory();
