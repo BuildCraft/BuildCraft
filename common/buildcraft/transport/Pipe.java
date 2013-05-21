@@ -209,6 +209,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			// Wire states are stored for pipes with gates only
 			for (int i = 0; i < 4; ++i)
 				nbttagcompound.setBoolean("wireState[" + i + "]", broadcastSignal[i]);
+			nbttagcompound.setBoolean("redstoneState", broadcastRedstone);
 		}
 
 		for (int i = 0; i < 4; ++i)
@@ -245,9 +246,11 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			}
 		}
 		// Wire states are restored for pipes with gates
-		if (gate != null)
+		if (gate != null) {
 			for (int i = 0; i < 4; ++i)
 				broadcastSignal[i] = nbttagcompound.getBoolean("wireState[" + i + "]");
+			broadcastRedstone = nbttagcompound.getBoolean("redstoneState");
+		}
 
 		for (int i = 0; i < 4; ++i)
 			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
