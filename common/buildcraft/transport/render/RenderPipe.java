@@ -30,6 +30,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipedItem;
+import buildcraft.core.render.LiquidRenderer;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
@@ -366,7 +367,11 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					break;
 				default:
 				}
-				bindTextureByName(liquid.canonical().getTextureSheet());
+				LiquidStack canon = liquid.canonical();
+				if (canon == null) {
+					throw new LiquidRenderer.LiquidCanonException(liquid);
+				}
+				bindTextureByName(canon.getTextureSheet());
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}
