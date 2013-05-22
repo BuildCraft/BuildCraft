@@ -14,25 +14,31 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.api.core.SafeTimeTracker;
 
-public class TileBuffer {
+public final class TileBuffer {
 
 	private int blockID = 0;
 	private TileEntity tile;
-	private SafeTimeTracker tracker = new SafeTimeTracker();
-	private World world;
-	int x, y, z;
+	private final SafeTimeTracker tracker = new SafeTimeTracker();
+	private final World world;
+	final int x, y, z;
+	private final boolean loadUnloaded;
 
-	public void initialize(World world, int x, int y, int z) {
+	public TileBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
 		this.world = world;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.loadUnloaded = loadUnloaded;
 
 		refresh();
 	}
 
-	public void refresh() {
+	public final void refresh() {
 		tile = null;
+		blockID = 0;
+		if (!loadUnloaded && !world.blockExists(x, y, z)) {
+			return;
+		}
 		blockID = world.getBlockId(this.x, this.y, this.z);
 
 		Block block = Block.blocksList[blockID];

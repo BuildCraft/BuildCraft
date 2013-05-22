@@ -649,4 +649,9 @@ public class PipeTransportItems extends PipeTransport {
 
 		travelingEntities.clear();
 	}
+	
+	@Override
+	public boolean delveIntoUnloadedChunks() {
+		return true;
+	}
 }

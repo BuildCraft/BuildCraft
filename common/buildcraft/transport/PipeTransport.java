@@ -88,4 +88,8 @@ public abstract class PipeTransport {
 	public void sendDescriptionPacket() {
 
 	}
+	
+	public boolean delveIntoUnloadedChunks() {
+		return false;
+	}
 }
