@@ -68,6 +68,8 @@ public class PipeItemRenderer implements IItemRenderer {
 			return true;
 		case INVENTORY:
 			return true;
+		case EQUIPPED_FIRST_PERSON:
+			return true;
 		default:
 			return false;
 		}
@@ -85,6 +87,7 @@ public class PipeItemRenderer implements IItemRenderer {
 			renderPipeItem((RenderBlocks) data[0], item, -0.5f, -0.5f, -0.5f);
 			break;
 		case EQUIPPED:
+		case EQUIPPED_FIRST_PERSON:
 			renderPipeItem((RenderBlocks) data[0], item, -0.4f, 0.50f, 0.35f);
 			break;
 		case INVENTORY:
