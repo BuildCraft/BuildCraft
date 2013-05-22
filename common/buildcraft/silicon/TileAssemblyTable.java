@@ -12,9 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.recipes.AssemblyOreRecipe;
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.OreStack;
+import buildcraft.api.recipes.*;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
@@ -102,8 +100,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 			if (currentRecipe.canBeDone(items)) {
 
-				if (currentRecipe instanceof AssemblyOreRecipe) assembleOre();
-				else assemble();
+				assemble();
 
 				ItemStack remaining = currentRecipe.output.copy();
 				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
@@ -126,11 +123,17 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	
 	private void assemble()
 	{
-		for (ItemStack in : currentRecipe.input) {
+		Object[] stacks;
+		if (currentRecipe instanceof AssemblyOreRecipe)
+			stacks = ((AssemblyOreRecipe) currentRecipe).recipe.toArray();
+		else stacks = currentRecipe.input;
+		for (Object in : stacks) {
 			if (in == null) {
 				continue; // Optimisation, reduces calculation for a null ingredient
 			}
-
+			
+			StackWrapper stack = new StackWrapper(in);
+			
 			int found = 0; // Amount of ingredient found in inventory
 
 			for (int i = 0; i < items.length; ++i) {
@@ -138,84 +141,19 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 					continue; // Broken out of large if statement, increases clarity
 				}
 
-				if (items[i].isItemEqual(in)) {
+				if (stack.isItemEqual(items[i])) {
 
 					int supply = items[i].stackSize;
-					int toBeFound = in.stackSize - found;
+					int toBeFound = stack.stackSize - found;
 
 					if (supply >= toBeFound) {
 						found += decrStackSize(i, toBeFound).stackSize; // Adds the amount of ingredient taken (in this case the total still needed)
 					} else {
 						found += decrStackSize(i, supply).stackSize; // Adds the amount of ingredient taken (in this case the total in that slot)
 					}
-					if (found >= in.stackSize) {
+					if (found >= stack.stackSize) {
 						break; // Breaks out of the for loop when the required amount of ingredient has been taken
 					}
-				}
-			}
-		}
-	}
-	
-	private void assembleOre()
-	{
-		AssemblyOreRecipe recipe = (AssemblyOreRecipe) currentRecipe;
-		for (Object in : recipe.recipe) {
-			if (in == null) {
-				continue; // Optimisation, reduces calculation for a null ingredient
-			}
-
-			if (in instanceof ItemStack) doAssembleOre((ItemStack) in);
-			if (in instanceof OreStack) doAssembleOre((OreStack) in);
-		}
-	}
-	
-	private void doAssembleOre(ItemStack in)
-	{
-		int found = 0; // Amount of ingredient found in inventory
-		
-		for (int i = 0; i < items.length; ++i) {
-			if (items[i] == null) {
-				continue; // Broken out of large if statement, increases clarity
-			}
-			
-			if (items[i].isItemEqual(in)) {
-
-				int supply = items[i].stackSize;
-				int toBeFound = in.stackSize - found;
-
-				if (supply >= toBeFound) {
-					found += decrStackSize(i, toBeFound).stackSize; // Adds the amount of ingredient taken (in this case the total still needed)
-				} else {
-					found += decrStackSize(i, supply).stackSize; // Adds the amount of ingredient taken (in this case the total in that slot)
-				}
-				if (found >= in.stackSize) {
-					break; // Breaks out of the for loop when the required amount of ingredient has been taken
-				}
-			}
-		}
-	}
-	
-	private void doAssembleOre(OreStack in)
-	{
-		int found = 0; // Amount of ingredient found in inventory
-		
-		for (int i = 0; i < items.length; ++i) {
-			if (items[i] == null) {
-				continue; // Broken out of large if statement, increases clarity
-			}
-			
-			if (in.isItemEqual(items[i])) {
-
-				int supply = items[i].stackSize;
-				int toBeFound = in.stackSize - found;
-
-				if (supply >= toBeFound) {
-					found += decrStackSize(i, toBeFound).stackSize; // Adds the amount of ingredient taken (in this case the total still needed)
-				} else {
-					found += decrStackSize(i, supply).stackSize; // Adds the amount of ingredient taken (in this case the total in that slot)
-				}
-				if (found >= in.stackSize) {
-					break; // Breaks out of the for loop when the required amount of ingredient has been taken
 				}
 			}
 		}

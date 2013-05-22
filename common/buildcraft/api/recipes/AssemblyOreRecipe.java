@@ -36,53 +36,27 @@ public class AssemblyOreRecipe extends AssemblyRecipe {
 			if (in == null) {
 				continue;
 			}
+			
+			StackWrapper stack = new StackWrapper(in);
+			
+			int found = 0; // Amount of ingredient found in inventory
 
-			if (in instanceof ItemStack && !check((ItemStack) in, items)) return false;
-			if (in instanceof OreStack && !check((OreStack) in, items)) return false;
+			for (ItemStack item : items) {
+				if (item == null) {
+					continue;
+				}
+
+				if (stack.isItemEqual(item)) {
+					found += item.stackSize; // Adds quantity of stack to amount
+												// found
+				}
+			}
+
+			if (found < stack.stackSize)
+				return false; // Return false if the amount of ingredient found
+								// is not enough
 		}
 
-		return true;
-	}
-	
-	private boolean check(ItemStack in, ItemStack[] items)
-	{
-		int found = 0; // Amount of ingredient found in inventory
-
-		for (ItemStack item : items) {
-			if (item == null) {
-				continue;
-			}
-
-			if (item.isItemEqual(in)) {
-				found += item.stackSize; // Adds quantity of stack to amount
-											// found
-			}
-		}
-
-		if (found < in.stackSize)
-			return false; // Return false if the amount of ingredient found
-							// is not enough
-		return true;
-	}
-	
-	private boolean check(OreStack in, ItemStack[] items)
-	{
-		int found = 0; // Amount of ingredient found in inventory
-
-		for (ItemStack item : items) {
-			if (item == null) {
-				continue;
-			}
-
-			if (in.isItemEqual(item)) {
-				found += item.stackSize; // Adds quantity of stack to amount
-											// found
-			}
-		}
-
-		if (found < in.stackSize)
-			return false; // Return false if the amount of ingredient found
-							// is not enough
 		return true;
 	}
 }
