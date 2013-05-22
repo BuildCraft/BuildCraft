@@ -128,7 +128,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		} else {
 			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
 			deletePipe = true;
-        }
+		}
 
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			facadeBlocks[i] = nbttagcompound.getInteger("facadeBlocks[" + i + "]");
@@ -265,6 +265,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	public void initialize(Pipe pipe) {
+
+		this.blockType = getBlockType();
 		
 		if(pipe == null){
 			BuildCraftCore.bcLog.log(Level.WARNING, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
