@@ -74,6 +74,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		return result;
 	}
 
+	@Override
 	public void receiveLaserEnergy(float energy) {
 		energyStored += energy;
 		recentEnergy[tick] += energy;
@@ -130,7 +131,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				}
 
 				ItemStack remaining = currentRecipe.output.copy();
-				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
+				ItemStack added = Utils.addToRandomInventory(remaining, worldObj, xCoord, yCoord, zCoord);
 				remaining.stackSize -= added.stackSize;
 
 				if (remaining.stackSize > 0) {
@@ -493,17 +494,15 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		return zCoord;
 	}
 
-    @Override
-    public boolean isInvNameLocalized()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean isInvNameLocalized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public boolean isStackValidForSlot(int i, ItemStack itemstack)
-    {
-        // TODO Auto-generated method stub
-        return true;
-    }
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

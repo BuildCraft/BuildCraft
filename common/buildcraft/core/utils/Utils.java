@@ -55,37 +55,33 @@ public class Utils {
 
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given coordinates.
-	 *
+	 * 
 	 * @param stack
 	 * @param world
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @param from
 	 * @return ItemStack representing what was added.
 	 */
-	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z, ForgeDirection from) {
-		LinkedList<ITransactor> possibleInventories = new LinkedList<ITransactor>();
+	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z) {
+		LinkedList<Object[]> possibleInventories = new LinkedList<Object[]>();
 
 		// Determine inventories which can accept (at least part of) this stack.
 		for (ForgeDirection orientation : ForgeDirection.values()) {
-			if (from.getOpposite() == orientation) {
-				continue;
-			}
-
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
 			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
-			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, from, false).stackSize > 0) {
-				possibleInventories.add(transactor);
+			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
+				possibleInventories.add(new Object[] { orientation, transactor });
 			}
 		}
 
 		if (possibleInventories.size() > 0) {
 			int choice = world.rand.nextInt(possibleInventories.size());
-			return possibleInventories.get(choice).add(stack, from, true);
+			Object[] chosen = possibleInventories.get(choice);
+			return ((ITransactor) chosen[0]).add(stack, ((ForgeDirection) chosen[1]).getOpposite(), true);
 		}
 
 		ItemStack added = stack.copy();
@@ -219,7 +215,7 @@ public class Utils {
 
 	/**
 	 * Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
-	 *
+	 * 
 	 * @param inv
 	 * @return Modified inventory if double chest, unmodified otherwise.
 	 */
@@ -518,12 +514,12 @@ public class Utils {
 		System.arraycopy(second, 0, result, first.length, second.length);
 		return result;
 	}
-	
+
 	public static int[] createSlotArray(int first, int count) {
 		int[] slots = new int[count];
-		for(int k = first; k < first + count; k++)
+		for (int k = first; k < first + count; k++)
 			slots[k - first] = k;
 		return slots;
 	}
-	
+
 }

@@ -71,7 +71,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 		for (ItemStack stack : stacks) {
 
-			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
+			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
 			stack.stackSize -= added.stackSize;
 			if (stack.stackSize <= 0) {
 				continue;

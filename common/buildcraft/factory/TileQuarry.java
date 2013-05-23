@@ -444,7 +444,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	private void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
-		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
+		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
 		stack.stackSize -= added.stackSize;
 
 		// Second, try to add to adjacent pipes
