@@ -12,7 +12,6 @@ package buildcraft.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.power.IPowerReceptor;
@@ -120,9 +119,4 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
         return false;
     }
 
-    public boolean isStackValidForSlot(int i, ItemStack itemstack)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
 }

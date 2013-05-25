@@ -442,6 +442,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public int getInventoryStackLimit() {
 		return 64;
 	}
+	
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {

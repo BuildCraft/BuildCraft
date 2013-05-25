@@ -292,6 +292,14 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			engine.setInventorySlotContents(i, itemstack);
 		}
 	}
+	
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		if (engine != null){
+			return engine.isStackValidForSlot(i, itemstack);
+		}
+		return false;
+	}
 
 	@Override
 	public String getInvName() {
