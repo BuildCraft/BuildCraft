@@ -62,10 +62,10 @@ public class GuiCombustionEngine extends GuiEngine {
 			return;
 		}
 		int start = 0;
-	
+
 		Icon liquidIcon;
 		String textureSheet;
-		if(liquid.canonical().getRenderingIcon() != null) {
+		if(liquid.canonical() != null && liquid.canonical().getRenderingIcon() != null) {
 			textureSheet = liquid.canonical().getTextureSheet();
 			liquidIcon = liquid.canonical().getRenderingIcon();
 		} else {
@@ -78,10 +78,10 @@ public class GuiCombustionEngine extends GuiEngine {
 			}
 		}
 		mc.renderEngine.bindTexture(textureSheet);
-		
+
 		while (true) {
 			int x = 0;
-	
+
 			if (squaled > 16) {
 				x = 16;
 				squaled -= 16;
@@ -89,15 +89,15 @@ public class GuiCombustionEngine extends GuiEngine {
 				x = squaled;
 				squaled = 0;
 			}
-	
+
 			drawTexturedModelRectFromIcon(j + col, k + line + 58 - x - start, liquidIcon, 16, 16 - (16 - x));
 			start = start + 16;
-	
+
 			if (x == 0 || squaled == 0) {
 				break;
 			}
 		}
-	
+
 		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
 		drawTexturedModalRect(j + col, k + line, 176, 0, 16, 60);
 	}
