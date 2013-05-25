@@ -253,8 +253,11 @@ public class EngineIron extends Engine {
 
 	@Override
 	public void delete() {
-
-	}
+		ItemStack stack = tile.getStackInSlot(0);
+		if (stack != null) {
+			Utils.dropItems(tile.worldObj, stack, tile.xCoord, tile.yCoord, tile.zCoord);
+		}
+	}		
 
 	@Override
 	public void getGUINetworkData(int i, int j) {
