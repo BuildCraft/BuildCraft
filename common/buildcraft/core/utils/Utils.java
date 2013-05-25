@@ -46,16 +46,21 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Utils {
 
 	public static final float pipeMinPos = 0.25F;
 	public static final float pipeMaxPos = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
+	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
 	/**
-	 * Tries to add the passed stack to any valid inventories around the given coordinates.
-	 * 
+	 * Tries to add the passed stack to any valid inventories around the given
+	 * coordinates.
+	 *
 	 * @param stack
 	 * @param world
 	 * @param x
@@ -64,24 +69,16 @@ public class Utils {
 	 * @return ItemStack representing what was added.
 	 */
 	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z) {
-		LinkedList<Object[]> possibleInventories = new LinkedList<Object[]>();
-
-		// Determine inventories which can accept (at least part of) this stack.
-		for (ForgeDirection orientation : ForgeDirection.values()) {
+		Collections.shuffle(directions);
+		for (ForgeDirection orientation : directions) {
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
 			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
-				possibleInventories.add(new Object[] { orientation, transactor });
+				return transactor.add(stack, orientation.getOpposite(), true);
 			}
-		}
-
-		if (possibleInventories.size() > 0) {
-			int choice = world.rand.nextInt(possibleInventories.size());
-			Object[] chosen = possibleInventories.get(choice);
-			return ((ITransactor) chosen[0]).add(stack, ((ForgeDirection) chosen[1]).getOpposite(), true);
 		}
 
 		ItemStack added = stack.copy();
