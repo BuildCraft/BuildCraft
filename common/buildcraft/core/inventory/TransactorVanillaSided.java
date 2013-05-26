@@ -29,7 +29,7 @@ public class TransactorVanillaSided extends TransactorSimple {
     private int getSlotOnSideForStack(ItemStack stack, ForgeDirection orientation, int slotIndex)
     {
         int[] sideSlots = sided.getAccessibleSlotsFromSide(orientation.ordinal());
-        if (slotIndex >= sideSlots.length)
+        if (sideSlots == null || slotIndex >= sideSlots.length)
             return -1;
         int targetSlot = sideSlots[slotIndex];
         return sided.isStackValidForSlot(targetSlot, stack) && sided.canInsertItem(targetSlot, stack, orientation.ordinal()) ? targetSlot : -1;
