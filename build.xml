@@ -21,6 +21,8 @@
 	<property name="forge.version" value="7.8.0.684"/>
 	<!--	<property name="project.version" value="0.0.0"/>-->
 
+	<property name="buildcraft.name" value="buildcraft"/>
+
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
 
 	<available property="forge-exists" file="${download.dir}/${forge.name}"/>
@@ -177,7 +179,7 @@
 
 		<delete dir="${jar.dir}"/>
 		<mkdir dir="${jar.dir}"/>
-		<jar destfile="${jar.dir}/${ant.project.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}"/>
+		<jar destfile="${jar.dir}/${buildcraft.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}"/>
 		<copy todir="${jar.dir}/changelog">
 			<fileset dir="${resources.dir}/changelog">
 				<include name="*" />
