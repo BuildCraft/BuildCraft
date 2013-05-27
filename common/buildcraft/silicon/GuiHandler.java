@@ -3,9 +3,9 @@ package buildcraft.silicon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import buildcraft.silicon.gui.ContainerAssemblyAdvancedWorkbench;
+import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
-import buildcraft.silicon.gui.GuiAssemblyAdvancedWorkbench;
+import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import cpw.mods.fml.common.network.IGuiHandler;
 
@@ -27,9 +27,9 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiAssemblyTable(player.inventory, (TileAssemblyTable) tile);
 
 		case 1:
-			if (!(tile instanceof TileAssemblyAdvancedWorkbench))
+			if (!(tile instanceof TileAdvancedCraftingTable))
 				return null;
-			return new GuiAssemblyAdvancedWorkbench(player.inventory, (TileAssemblyAdvancedWorkbench) tile);
+			return new GuiAdvancedCraftingTable(player.inventory, (TileAdvancedCraftingTable) tile);
 		default:
 			return null;
 		}
@@ -51,9 +51,9 @@ public class GuiHandler implements IGuiHandler {
 			return new ContainerAssemblyTable(player.inventory, (TileAssemblyTable) tile);
 
 		case 1:
-			if (!(tile instanceof TileAssemblyAdvancedWorkbench))
+			if (!(tile instanceof TileAdvancedCraftingTable))
 				return null;
-			return new ContainerAssemblyAdvancedWorkbench(player.inventory, (TileAssemblyAdvancedWorkbench) tile);
+			return new ContainerAdvancedCraftingTable(player.inventory, (TileAdvancedCraftingTable) tile);
 		default:
 			return null;
 		}

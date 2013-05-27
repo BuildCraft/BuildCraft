@@ -18,12 +18,12 @@ import buildcraft.core.utils.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockAssemblyTable extends BlockContainer {
+public class BlockLaserTable extends BlockContainer {
 
     @SideOnly(Side.CLIENT)
     private Icon[][] icons;
 
-	public BlockAssemblyTable(int i) {
+	public BlockLaserTable(int i) {
 		super(i, Material.iron);
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
@@ -72,7 +72,7 @@ public class BlockAssemblyTable extends BlockContainer {
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
-		return metadata == 0 ? new TileAssemblyTable() : new TileAssemblyAdvancedWorkbench();
+		return metadata == 0 ? new TileAssemblyTable() : new TileAdvancedCraftingTable();
 	}
 
 	@Override

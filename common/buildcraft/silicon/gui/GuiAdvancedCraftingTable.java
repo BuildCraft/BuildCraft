@@ -1,21 +1,17 @@
 package buildcraft.silicon.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
+import buildcraft.silicon.TileAdvancedCraftingTable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
+import org.lwjgl.opengl.GL11;
 
-public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
+public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 	class AssemblyWorkbenchLedger extends Ledger {
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
@@ -56,38 +52,13 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 
 	}
 
-	class OutputSlot extends AdvancedSlot {
+	TileAdvancedCraftingTable workbench;
 
-		public IRecipe recipe;
-
-		public OutputSlot(int x, int y) {
-			super(x, y);
-		}
-
-		@Override
-		public ItemStack getItemStack() {
-			return workbench.getOutputSlot();
-		}
-	}
-
-	TileAssemblyAdvancedWorkbench workbench;
-
-	public GuiAssemblyAdvancedWorkbench(InventoryPlayer playerInventory, TileAssemblyAdvancedWorkbench advancedWorkbench) {
-		super(new ContainerAssemblyAdvancedWorkbench(playerInventory, advancedWorkbench), advancedWorkbench);
+	public GuiAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable advancedWorkbench) {
+		super(new ContainerAdvancedCraftingTable(playerInventory, advancedWorkbench), advancedWorkbench);
 		this.workbench = advancedWorkbench;
 		xSize = 175;
 		ySize = 240;
-
-		slots = new AdvancedSlot[10];
-
-		int id = 0;
-		for (int k = 0; k < 3; k++) {
-			for (int j1 = 0; j1 < 3; j1++) {
-				slots[id++] = new IInventorySlot(31 + j1 * 18, 16 + k * 18, workbench.getCraftingSlots(), j1 + k * 3);
-			}
-		}
-
-		slots[id] = new OutputSlot(124, 35);
 	}
 
 	@Override
@@ -96,7 +67,6 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 		String title = StringUtils.localize("tile.assemblyWorkbenchBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
-		drawForegroundSelection(par1, par2);
 	}
 
 	@Override
@@ -106,37 +76,6 @@ public class GuiAssemblyAdvancedWorkbench extends GuiAdvancedInterface {
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
-		drawBackgroundSlots();
-	}
-
-	@Override
-	protected void mouseClicked(int i, int j, int k) {
-		super.mouseClicked(i, j, k);
-
-		int cornerX = (width - xSize) / 2;
-		int cornerY = (height - ySize) / 2;
-
-		int position = getSlotAtLocation(i - cornerX, j - cornerY);
-
-		IInventorySlot slot = null;
-
-		if (position >= 0 && position < 9) {
-			slot = (IInventorySlot) slots[position];
-		}
-
-		if (slot != null) {
-			ItemStack playerStack = mc.thePlayer.inventory.getItemStack();
-
-			ItemStack newStack;
-			if (playerStack != null) {
-				newStack = new ItemStack(playerStack.itemID, 1, playerStack.getItemDamage());
-			} else {
-				newStack = null;
-			}
-
-			workbench.updateCraftingMatrix(position, newStack);
-		}
-
 	}
 
 	@Override

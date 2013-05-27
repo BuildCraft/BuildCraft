@@ -27,7 +27,7 @@ import buildcraft.core.utils.Utils;
 
 import com.google.common.collect.Lists;
 
-public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInventory, ILaserTarget, IMachine {
+public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine {
 	private final class InternalInventoryCraftingContainer extends Container {
 		@Override
 		public boolean canInteractWith(EntityPlayer var1) {
@@ -84,7 +84,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 
 	private final class InternalPlayer extends EntityPlayer {
 		public InternalPlayer() {
-			super(TileAssemblyAdvancedWorkbench.this.worldObj);
+			super(TileAdvancedCraftingTable.this.worldObj);
 		}
 
 		@Override
@@ -105,7 +105,7 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	public InventoryCraftResult craftResult;
 	private InternalInventoryCrafting internalInventoryCrafting;
 
-	public TileAssemblyAdvancedWorkbench() {
+	public TileAdvancedCraftingTable() {
 		craftingSlots = new SimpleInventory(9, "CraftingSlots", 1);
 		storageSlots = new ItemStack[27];
 		craftResult = new InventoryCraftResult();
@@ -381,8 +381,8 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 		return craftingSlots;
 	}
 
-	public ItemStack getOutputSlot() {
-		return craftResult.getStackInSlot(0);
+	public IInventory getOutputSlot() {
+		return craftResult;
 	}
 
 	@Override

@@ -13,9 +13,11 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.buttons.GuiBetterButton;
+import buildcraft.core.gui.slots.SlotBase;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.utils.SessionVars;
+import net.minecraft.inventory.Slot;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
@@ -276,6 +278,25 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				}
 			}
 		}
+		for (Object obj : inventorySlots.inventorySlots) {
+			if (!(obj instanceof SlotBase)) {
+				continue;
+			}
+			SlotBase slot = (SlotBase) obj;
+			if (slot.getStack() != null) {
+				continue;
+			}
+			ToolTip tips = slot.getToolTip();
+			if (tips == null) {
+				continue;
+			}
+			boolean mouseOver = isMouseOverSlot(slot, mouseX, mouseY);
+			tips.onTick(mouseOver);
+			if (mouseOver && tips.isReady()) {
+				tips.refresh();
+				drawToolTips(tips, mouseX, mouseY);
+			}
+		}
 
 		GL11.glPopMatrix();
 		GL11.glEnable(GL11.GL_LIGHTING);
@@ -293,6 +314,17 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	protected int getCenteredOffset(String string, int xWidth) {
 		return (xWidth - fontRenderer.getStringWidth(string)) / 2;
+	}
+
+	/**
+	 * Returns if the passed mouse position is over the specified slot.
+	 */
+	private boolean isMouseOverSlot(Slot slot, int mouseX, int mouseY) {
+		int left = this.guiLeft;
+		int top = this.guiTop;
+		mouseX -= left;
+		mouseY -= top;
+		return mouseX >= slot.xDisplayPosition - 1 && mouseX < slot.xDisplayPosition + 16 + 1 && mouseY >= slot.yDisplayPosition - 1 && mouseY < slot.yDisplayPosition + 16 + 1;
 	}
 
 	// / MOUSE CLICKS

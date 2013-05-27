@@ -3,8 +3,8 @@ package buildcraft.silicon;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-public class ItemAssemblyTable extends ItemBlock {
-	public ItemAssemblyTable(int par1) {
+public class ItemLaserTable extends ItemBlock {
+	public ItemLaserTable(int par1) {
 		super(par1);
 		setMaxDamage(0);
 		setHasSubtypes(true);

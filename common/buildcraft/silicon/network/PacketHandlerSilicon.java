@@ -13,7 +13,7 @@ import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
-import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
+import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
@@ -81,16 +81,16 @@ public class PacketHandlerSilicon implements IPacketHandler {
 		return (TileAssemblyTable) tile;
 	}
 
-	private TileAssemblyAdvancedWorkbench getAdvancedWorkbench(World world, int x, int y, int z) {
+	private TileAdvancedCraftingTable getAdvancedWorkbench(World world, int x, int y, int z) {
 
 		if (!world.blockExists(x, y, z))
 			return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileAssemblyAdvancedWorkbench))
+		if (!(tile instanceof TileAdvancedCraftingTable))
 			return null;
 
-		return (TileAssemblyAdvancedWorkbench) tile;
+		return (TileAdvancedCraftingTable) tile;
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class PacketHandlerSilicon implements IPacketHandler {
 	 */
 	private void onAdvancedWorkbenchSet(EntityPlayer player, PacketSlotChange packet1) {
 
-		TileAssemblyAdvancedWorkbench tile = getAdvancedWorkbench(player.worldObj, packet1.posX, packet1.posY, packet1.posZ);
+		TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.posX, packet1.posY, packet1.posZ);
 		if (tile == null)
 			return;
 
