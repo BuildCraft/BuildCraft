@@ -16,8 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.IMachine;
+import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
@@ -26,9 +26,12 @@ import buildcraft.core.utils.SimpleInventory;
 import buildcraft.core.utils.Utils;
 
 import com.google.common.collect.Lists;
+import net.minecraftforge.common.ForgeDirection;
 
 public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine {
+
 	private final class InternalInventoryCraftingContainer extends Container {
+
 		@Override
 		public boolean canInteractWith(EntityPlayer var1) {
 			return false;
@@ -36,6 +39,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	private final class InternalInventoryCrafting extends InventoryCrafting {
+
 		int[] bindings = new int[9];
 		ItemStack[] tempStacks;
 		public int[] hitCount;
@@ -71,10 +75,15 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 		@Override
 		public ItemStack decrStackSize(int par1, int par2) {
-			if (tempStacks != null)
-				return tempStacks[bindings[par1]].splitStack(par2);
-			else
+			if (tempStacks != null) {
+				ItemStack result = tempStacks[bindings[par1]].splitStack(par2);
+				if (tempStacks[bindings[par1]].stackSize <= 0) {
+					tempStacks[bindings[par1]] = null;
+				}
+				return result;
+			} else {
 				return null;
+			}
 		}
 
 		public void recipeUpdate(boolean flag) {
@@ -83,6 +92,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	private final class InternalPlayer extends EntityPlayer {
+
 		public InternalPlayer() {
 			super(TileAdvancedCraftingTable.this.worldObj);
 		}
@@ -101,7 +111,6 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			return null;
 		}
 	}
-
 	public InventoryCraftResult craftResult;
 	private InternalInventoryCrafting internalInventoryCrafting;
 
@@ -110,12 +119,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		storageSlots = new ItemStack[27];
 		craftResult = new InventoryCraftResult();
 	}
-
 	private SimpleInventory craftingSlots;
 	private ItemStack[] storageSlots;
-
 	private SlotCrafting craftSlot;
-
 	private float storedEnergy;
 	private float[] recentEnergy = new float[20];
 	private boolean craftable;
@@ -131,8 +137,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public ItemStack getStackInSlot(int var1) {
-		if (var1 < storageSlots.length)
+		if (var1 < storageSlots.length) {
 			return storageSlots[var1];
+		}
 		return null;
 	}
 
@@ -163,20 +170,23 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int var1) {
-		if (var1 >= storageSlots.length)
+		if (var1 >= storageSlots.length) {
 			return null;
+		}
 		if (this.storageSlots[var1] != null) {
 			ItemStack var2 = this.storageSlots[var1];
 			this.storageSlots[var1] = null;
 			return var2;
-		} else
+		} else {
 			return null;
+		}
 	}
 
 	@Override
 	public void setInventorySlotContents(int var1, ItemStack var2) {
-		if (var1 >= storageSlots.length)
+		if (var1 >= storageSlots.length) {
 			return;
+		}
 		this.storageSlots[var1] = var2;
 
 		if (var2 != null && var2.stackSize > this.getInventoryStackLimit()) {
@@ -272,8 +282,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			craftSlot = new SlotCrafting(internalPlayer, internalInventoryCrafting, craftResult, 0, 0, 0);
 			updateCraftingResults();
 		}
-		if (!CoreProxy.proxy.isSimulating(worldObj))
+		if (!CoreProxy.proxy.isSimulating(worldObj)) {
 			return;
+		}
 		updateCraftingResults();
 		tick++;
 		tick = tick % recentEnergy.length;
@@ -323,25 +334,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			for (ItemStack output : outputs) {
 				boolean putToPipe = Utils.addToRandomPipeEntry(this, ForgeDirection.UP, output);
 				if (!putToPipe) {
-					for (int i = 0; i < storageSlots.length; i++) {
-						if (output.stackSize <= 0) {
-							break;
-						}
-						if (storageSlots[i] != null && output.isStackable() && output.isItemEqual(storageSlots[i])) {
-							storageSlots[i].stackSize += output.stackSize;
-							if (storageSlots[i].stackSize > output.getMaxStackSize()) {
-								output.stackSize = storageSlots[i].stackSize - output.getMaxStackSize();
-								storageSlots[i].stackSize = output.getMaxStackSize();
-							} else {
-								output.stackSize = 0;
-							}
-						} else if (storageSlots[i] == null) {
-							storageSlots[i] = output.copy();
-							output.stackSize = 0;
-						}
-					}
+					output.stackSize -= Transactor.getTransactorFor(this).add(output, ForgeDirection.UP, true).stackSize;
 					if (output.stackSize > 0) {
-						output = Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord);
+						output.stackSize -= Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord).stackSize;
 					}
 					if (output.stackSize > 0) {
 						Utils.dropItems(worldObj, output, xCoord, yCoord, zCoord);
@@ -365,8 +360,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			return;
 		}
 		internalInventoryCrafting.recipeUpdate(true);
-		if (this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj))
+		if (this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj)) {
 			currentRecipe = CraftingHelper.findMatchingRecipe(internalInventoryCrafting, worldObj);
+		}
 
 		ItemStack resultStack = null;
 		if (currentRecipe != null) {
@@ -434,20 +430,20 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	public void getGUINetworkData(int i, int j) {
 		int currentStored = (int) (storedEnergy * 100.0);
 		switch (i) {
-		case 1:
-			currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
-			storedEnergy = (currentStored / 100.0f);
-			break;
-		case 3:
-			currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
-			storedEnergy = (currentStored / 100.0f);
-			break;
-		case 4:
-			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
-			break;
-		case 5:
-			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
-			break;
+			case 1:
+				currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
+				storedEnergy = (currentStored / 100.0f);
+				break;
+			case 3:
+				currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
+				storedEnergy = (currentStored / 100.0f);
+				break;
+			case 4:
+				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
+				break;
+			case 5:
+				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
+				break;
 		}
 	}
 
@@ -471,8 +467,6 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
-
 }

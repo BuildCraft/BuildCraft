@@ -81,7 +81,7 @@ public class BuildCraftSilicon {
 		CoreProxy.proxy.registerBlock(laserBlock);
 
 		assemblyTableBlock = new BlockLaserTable(assemblyTableId.getInt());
-		GameRegistry.registerBlock(assemblyTableBlock, ItemLaserTable.class);
+		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 0), "Assembly Table");
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 1), "Advanced Crafting Table");
