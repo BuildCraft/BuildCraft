@@ -47,6 +47,10 @@ public class TransactorSimple extends Transactor {
 			if (inventory.getStackInSlot(i) == null) {
 				continue;
 			}
+			
+			if(!inventory.isStackValidForSlot(i, stack)){
+				continue;
+			}
 
 			if (!inventory.getStackInSlot(i).isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(inventory.getStackInSlot(i), stack)) {
 				continue;
