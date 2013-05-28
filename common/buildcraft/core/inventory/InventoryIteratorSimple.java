@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class InventoryIteratorSimple implements Iterable<IInvSlot> {
+class InventoryIteratorSimple implements Iterable<IInvSlot> {
 
 	private final IInventory inv;
 

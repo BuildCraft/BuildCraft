@@ -9,7 +9,7 @@ import net.minecraftforge.common.ForgeDirection;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class InventoryIteratorSided implements Iterable<IInvSlot> {
+class InventoryIteratorSided implements Iterable<IInvSlot> {
 
     private final ISidedInventory inv;
     private final int side;
