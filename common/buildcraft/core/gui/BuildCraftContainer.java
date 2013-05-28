@@ -8,6 +8,7 @@
 package buildcraft.core.gui;
 
 import buildcraft.core.gui.slots.IPhantomSlot;
+import buildcraft.core.gui.slots.SlotBase;
 import buildcraft.core.inventory.StackMergeHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -17,7 +18,7 @@ import net.minecraft.item.ItemStack;
 
 public abstract class BuildCraftContainer extends Container {
 
-	private final StackMergeHelper STACK_MERGE = new StackMergeHelper();
+	private final StackMergeHelper MERGE_HELPER = new StackMergeHelper();
 	private int inventorySize;
 
 	public BuildCraftContainer(int inventorySize) {
@@ -58,7 +59,7 @@ public abstract class BuildCraftContainer extends Container {
 				adjustPhantomSlot(slot, mouseButton, modifier);
 				slot.onPickupFromSlot(player, playerInv.getItemStack());
 			} else if (slot.isItemValid(stackHeld)) {
-				if (STACK_MERGE.canStacksMerge(stackSlot, stackHeld)) {
+				if (MERGE_HELPER.canStacksMerge(stackSlot, stackHeld)) {
 					adjustPhantomSlot(slot, mouseButton, modifier);
 				} else {
 					fillPhantomSlot(slot, stackHeld, mouseButton, modifier);
@@ -105,27 +106,99 @@ public abstract class BuildCraftContainer extends Container {
 		slot.putStack(phantomStack);
 	}
 
+	protected boolean shiftItemStack(ItemStack stackToShift, int start, int end) {
+		boolean changed = false;
+		if (stackToShift.isStackable()) {
+			for (int slotIndex = start; stackToShift.stackSize > 0 && slotIndex < end; slotIndex++) {
+				Slot slot = (Slot) inventorySlots.get(slotIndex);
+				ItemStack stackInSlot = slot.getStack();
+				if (stackInSlot != null && MERGE_HELPER.canStacksMerge(stackInSlot, stackToShift)) {
+					int resultingStackSize = stackInSlot.stackSize + stackToShift.stackSize;
+					int max = Math.min(stackToShift.getMaxStackSize(), slot.getSlotStackLimit());
+					if (resultingStackSize <= max) {
+						stackToShift.stackSize = 0;
+						stackInSlot.stackSize = resultingStackSize;
+						slot.onSlotChanged();
+						changed = true;
+					} else if (stackInSlot.stackSize < max) {
+						stackToShift.stackSize -= max - stackInSlot.stackSize;
+						stackInSlot.stackSize = max;
+						slot.onSlotChanged();
+						changed = true;
+					}
+				}
+			}
+		}
+		if (stackToShift.stackSize > 0) {
+			for (int slotIndex = start; stackToShift.stackSize > 0 && slotIndex < end; slotIndex++) {
+				Slot slot = (Slot) inventorySlots.get(slotIndex);
+				ItemStack stackInSlot = slot.getStack();
+				if (stackInSlot == null) {
+					int max = Math.min(stackToShift.getMaxStackSize(), slot.getSlotStackLimit());
+					stackInSlot = stackToShift.copy();
+					stackInSlot.stackSize = Math.min(stackToShift.stackSize, max);
+					stackToShift.stackSize -= stackInSlot.stackSize;
+					slot.putStack(stackInSlot);
+					slot.onSlotChanged();
+					changed = true;
+				}
+			}
+		}
+		return changed;
+	}
+
+	private boolean tryShiftItem(ItemStack stackToShift, int numSlots) {
+		for (int machineIndex = 0; machineIndex < numSlots - 9 * 4; machineIndex++) {
+			Slot slot = (Slot) inventorySlots.get(machineIndex);
+			if (slot instanceof SlotBase && !((SlotBase) slot).canShift()) {
+				continue;
+			}
+			if (slot instanceof IPhantomSlot) {
+				continue;
+			}
+			if (!slot.isItemValid(stackToShift)) {
+				continue;
+			}
+			if (shiftItemStack(stackToShift, machineIndex, machineIndex + 1)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer pl, int i) {
-		ItemStack itemstack = null;
-		Slot slot = (Slot) inventorySlots.get(i);
+	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
+		ItemStack originalStack = null;
+		Slot slot = (Slot) inventorySlots.get(slotIndex);
+		int numSlots = inventorySlots.size();
 		if (slot != null && slot.getHasStack()) {
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
-			if (i < inventorySize) {
-				if (!mergeItemStack(itemstack1, inventorySize, inventorySlots.size(), true)) {
+			ItemStack stackInSlot = slot.getStack();
+			originalStack = stackInSlot.copy();
+			if (slotIndex >= numSlots - 9 * 4 && tryShiftItem(stackInSlot, numSlots)) {
+				// NOOP
+			} else if (slotIndex >= numSlots - 9 * 4 && slotIndex < numSlots - 9) {
+				if (!shiftItemStack(stackInSlot, numSlots - 9, numSlots)) {
 					return null;
 				}
-			} else if (!mergeItemStack(itemstack1, 0, inventorySize, false)) {
+			} else if (slotIndex >= numSlots - 9 && slotIndex < numSlots) {
+				if (!shiftItemStack(stackInSlot, numSlots - 9 * 4, numSlots - 9)) {
+					return null;
+				}
+			} else if (!shiftItemStack(stackInSlot, numSlots - 9 * 4, numSlots)) {
 				return null;
 			}
-			if (itemstack1.stackSize == 0) {
+			slot.onSlotChange(stackInSlot, originalStack);
+			if (stackInSlot.stackSize <= 0) {
 				slot.putStack(null);
 			} else {
 				slot.onSlotChanged();
 			}
+			if (stackInSlot.stackSize == originalStack.stackSize) {
+				return null;
+			}
+			slot.onPickupFromSlot(player, stackInSlot);
 		}
-		return itemstack;
+		return originalStack;
 	}
 
 	public int getInventorySize() {
