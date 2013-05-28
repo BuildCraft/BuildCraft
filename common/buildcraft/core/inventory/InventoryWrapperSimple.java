@@ -20,7 +20,7 @@ public class InventoryWrapperSimple extends InventoryWrapper {
 
 	@Override
 	public boolean canInsertItem(int slotIndex, ItemStack itemstack, int side) {
-		return true;
+		return isStackValidForSlot(slotIndex, itemstack);
 	}
 
 	@Override
