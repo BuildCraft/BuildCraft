@@ -22,10 +22,12 @@ import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
+import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
 public class OilPopulate {
 
@@ -75,7 +77,9 @@ public class OilPopulate {
 			return;
 		}
 
-		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID);
+		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID)
+				|| BiomeDictionary.isBiomeOfType(biome, DESERT)
+				|| (BiomeDictionary.isBiomeOfType(biome, FOREST) && BiomeDictionary.isBiomeOfType(biome, FROZEN));
 
 		double bonus = oilBiome ? 4.0 : 1.0;
 		if (excessiveBiomes.contains(biome.biomeID)) {
