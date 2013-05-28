@@ -1,6 +1,7 @@
 package buildcraft.energy.worldgen;
 
 import net.minecraft.world.biome.BiomeGenOcean;
+import net.minecraftforge.common.BiomeDictionary;
 
 /**
  *
@@ -8,7 +9,15 @@ import net.minecraft.world.biome.BiomeGenOcean;
  */
 public class BiomeGenOilOcean extends BiomeGenOcean {
 
-	public BiomeGenOilOcean(int id) {
+	public static BiomeGenOilOcean makeBiome(int id) {
+		BiomeGenOilOcean biome = new BiomeGenOilOcean(id);
+		BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.WATER);
+		OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
+		OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
+		return biome;
+	}
+
+	private BiomeGenOilOcean(int id) {
 		super(id);
 		setBiomeName("Ocean Oil Field");
 		setColor(112);

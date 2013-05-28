@@ -79,6 +79,7 @@ public class OilPopulate {
 
 		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID)
 				|| BiomeDictionary.isBiomeOfType(biome, DESERT)
+				|| BiomeDictionary.isBiomeOfType(biome, WASTELAND)
 				|| (BiomeDictionary.isBiomeOfType(biome, FOREST) && BiomeDictionary.isBiomeOfType(biome, FROZEN));
 
 		double bonus = oilBiome ? 4.0 : 1.0;

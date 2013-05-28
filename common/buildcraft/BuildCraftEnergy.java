@@ -64,6 +64,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.BiomeDictionary;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -132,9 +133,7 @@ public class BuildCraftEnergy {
 			if (BiomeGenBase.biomeList[oilDesertId] != null) {
 				throw new BiomeIdException("oilDesert", oilDesertId);
 			}
-			biomeOilDesert = new BiomeGenOilDesert(oilDesertId);
-			OilPopulate.INSTANCE.excessiveBiomes.add(biomeOilDesert.biomeID);
-			OilPopulate.INSTANCE.surfaceDepositBiomes.add(biomeOilDesert.biomeID);
+			biomeOilDesert = BiomeGenOilDesert.makeBiome(oilDesertId);			
 		}
 		
 		int oilOceanId = oilOceanBiomeId.getInt();
@@ -142,9 +141,7 @@ public class BuildCraftEnergy {
 			if (BiomeGenBase.biomeList[oilOceanId] != null) {
 				throw new BiomeIdException("oilOcean", oilOceanId);
 			}
-			biomeOilOcean = new BiomeGenOilOcean(oilOceanId);
-			OilPopulate.INSTANCE.excessiveBiomes.add(biomeOilOcean.biomeID);
-			OilPopulate.INSTANCE.surfaceDepositBiomes.add(biomeOilOcean.biomeID);
+			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanId);
 		}
 
 

@@ -3,6 +3,7 @@ package buildcraft.energy.worldgen;
 import java.util.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenDesert;
+import net.minecraftforge.common.BiomeDictionary;
 
 /**
  *
@@ -10,7 +11,15 @@ import net.minecraft.world.biome.BiomeGenDesert;
  */
 public class BiomeGenOilDesert extends BiomeGenDesert {
 
-	public BiomeGenOilDesert(int id) {
+	public static BiomeGenOilDesert makeBiome(int id) {
+		BiomeGenOilDesert biome = new BiomeGenOilDesert(id);
+		BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.DESERT);
+		OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
+		OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
+		return biome;
+	}
+
+	private BiomeGenOilDesert(int id) {
 		super(id);
 		setColor(16421912);
 		setBiomeName("Desert Oil Field");
