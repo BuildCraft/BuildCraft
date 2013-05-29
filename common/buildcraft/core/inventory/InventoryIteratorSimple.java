@@ -70,5 +70,10 @@ class InventoryIteratorSimple implements Iterable<IInvSlot> {
 		public ItemStack decreaseStackInSlot() {
 			return inv.decrStackSize(slot, 1);
 		}
+
+		@Override
+		public int getIndex() {
+			return slot;
+		}
 	}
 }

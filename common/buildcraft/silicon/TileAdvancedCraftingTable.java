@@ -22,8 +22,9 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
-import buildcraft.core.utils.SimpleInventory;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.utils.Utils;
+import buildcraft.factory.TileAutoWorkbench;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeDirection;
@@ -95,6 +96,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 		public InternalPlayer() {
 			super(TileAdvancedCraftingTable.this.worldObj);
+			posX = TileAdvancedCraftingTable.this.xCoord;
+			posY = TileAdvancedCraftingTable.this.yCoord + 1;
+			posZ = TileAdvancedCraftingTable.this.zCoord;
 		}
 
 		@Override
@@ -339,7 +343,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 						output.stackSize -= Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord).stackSize;
 					}
 					if (output.stackSize > 0) {
-						Utils.dropItems(worldObj, output, xCoord, yCoord, zCoord);
+						Utils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
 					}
 				}
 			}

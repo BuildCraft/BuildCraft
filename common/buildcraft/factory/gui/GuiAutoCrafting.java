@@ -1,14 +1,13 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory.gui;
 
+import buildcraft.core.DefaultProps;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.world.World;
 
@@ -20,8 +19,11 @@ import buildcraft.factory.TileAutoWorkbench;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 
+	private TileAutoWorkbench bench;
+
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
 		super(new ContainerAutoWorkbench(inventoryplayer, tile), tile);
+		this.bench = tile;
 	}
 
 	@Override
@@ -40,12 +42,15 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture("/gui/crafting.png");
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
+		int x = (width - xSize) / 2;
+		int y = (height - ySize) / 2;
+		drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+		if (bench.progress > 0) {
+			int progress = bench.getProgressScaled(23);
+			drawTexturedModalRect(x + 89, y + 45, 176, 0, progress + 1, 12);
+		}
 	}
-
 }

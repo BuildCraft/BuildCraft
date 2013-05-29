@@ -76,5 +76,10 @@ class InventoryIteratorSided implements Iterable<IInvSlot> {
             return inv.decrStackSize(slot, 1);
         }
 
+		@Override
+		public int getIndex() {
+			return slot;
+		}
+
     }
 }

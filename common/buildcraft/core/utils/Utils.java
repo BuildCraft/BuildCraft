@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.utils;
 
 import java.util.Arrays;
@@ -49,9 +47,12 @@ import buildcraft.energy.TileEngine;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import net.minecraft.nbt.NBTTagString;
 
 public class Utils {
 
+	public static final Random RANDOM = new Random();
 	public static final float pipeMinPos = 0.25F;
 	public static final float pipeMaxPos = 0.75F;
 	public static float pipeNormalSpeed = 0.01F;
@@ -88,7 +89,8 @@ public class Utils {
 	}
 
 	/**
-	 * Depending on the kind of item in the pipe, set the floor at a different level to optimize graphical aspect.
+	 * Depending on the kind of item in the pipe, set the floor at a different
+	 * level to optimize graphical aspect.
 	 */
 	public static float getPipeFloorOf(ItemStack item) {
 		return pipeMinPos;
@@ -99,14 +101,15 @@ public class Utils {
 		double Dz = pos1.z - pos2.z;
 		double angle = Math.atan2(Dz, Dx) / Math.PI * 180 + 180;
 
-		if (angle < 45 || angle > 315)
+		if (angle < 45 || angle > 315) {
 			return ForgeDirection.EAST;
-		else if (angle < 135)
+		} else if (angle < 135) {
 			return ForgeDirection.SOUTH;
-		else if (angle < 225)
+		} else if (angle < 225) {
 			return ForgeDirection.WEST;
-		else
+		} else {
 			return ForgeDirection.NORTH;
+		}
 	}
 
 	public static ForgeDirection get3dOrientation(Position pos1, Position pos2) {
@@ -114,18 +117,21 @@ public class Utils {
 		double Dy = pos1.y - pos2.y;
 		double angle = Math.atan2(Dy, Dx) / Math.PI * 180 + 180;
 
-		if (angle > 45 && angle < 135)
+		if (angle > 45 && angle < 135) {
 			return ForgeDirection.UP;
-		else if (angle > 225 && angle < 315)
+		} else if (angle > 225 && angle < 315) {
 			return ForgeDirection.DOWN;
-		else
+		} else {
 			return get2dOrientation(pos1, pos2);
+		}
 	}
 
 	/**
-	 * Look around the tile given in parameter in all 6 position, tries to add the items to a random pipe entry around. Will make sure that the location from
-	 * which the items are coming from (identified by the from parameter) isn't used again so that entities doesn't go backwards. Returns true if successful,
-	 * false otherwise.
+	 * Look around the tile given in parameter in all 6 position, tries to add
+	 * the items to a random pipe entry around. Will make sure that the location
+	 * from which the items are coming from (identified by the from parameter)
+	 * isn't used again so that entities doesn't go backwards. Returns true if
+	 * successful, false otherwise.
 	 */
 	public static boolean addToRandomPipeEntry(TileEntity tile, ForgeDirection from, ItemStack items) {
 		World w = tile.worldObj;
@@ -145,10 +151,11 @@ public class Utils {
 			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems()) {
-				if (pipeEntry instanceof IPipeConnection)
+				if (pipeEntry instanceof IPipeConnection) {
 					if (!((IPipeConnection) pipeEntry).isPipeConnected(o.getOpposite())) {
 						continue;
 					}
+				}
 				possiblePipes.add(o);
 			}
 		}
@@ -174,13 +181,15 @@ public class Utils {
 			pipeEntry.entityEntering(entity, entityPos.orientation);
 			items.stackSize = 0;
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
-		if (stack.stackSize <= 0)
+		if (stack.stackSize <= 0) {
 			return;
+		}
 
 		float f1 = 0.7F;
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
@@ -211,8 +220,9 @@ public class Utils {
 	}
 
 	/**
-	 * Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
-	 * 
+	 * Ensures that the given inventory is the full inventory, i.e. takes double
+	 * chests into account.
+	 *
 	 * @param inv
 	 * @return Modified inventory if double chest, unmodified otherwise.
 	 */
@@ -238,8 +248,9 @@ public class Utils {
 			if (tile instanceof TileEntityChest) {
 				chest2 = (IInventory) tile;
 			}
-			if (chest2 != null)
+			if (chest2 != null) {
 				return new InventoryLargeChest("", inv, chest2);
+			}
 		}
 		return inv;
 	}
@@ -252,30 +263,37 @@ public class Utils {
 		TileEntity a5 = world.getBlockTileEntity(i, j + 1, k);
 		TileEntity a6 = world.getBlockTileEntity(i, j - 1, k);
 
-		if (a1 instanceof IAreaProvider)
+		if (a1 instanceof IAreaProvider) {
 			return (IAreaProvider) a1;
+		}
 
-		if (a2 instanceof IAreaProvider)
+		if (a2 instanceof IAreaProvider) {
 			return (IAreaProvider) a2;
+		}
 
-		if (a3 instanceof IAreaProvider)
+		if (a3 instanceof IAreaProvider) {
 			return (IAreaProvider) a3;
+		}
 
-		if (a4 instanceof IAreaProvider)
+		if (a4 instanceof IAreaProvider) {
 			return (IAreaProvider) a4;
+		}
 
-		if (a5 instanceof IAreaProvider)
+		if (a5 instanceof IAreaProvider) {
 			return (IAreaProvider) a5;
+		}
 
-		if (a6 instanceof IAreaProvider)
+		if (a6 instanceof IAreaProvider) {
 			return (IAreaProvider) a6;
+		}
 
 		return null;
 	}
 
 	public static EntityBlock createLaser(World world, Position p1, Position p2, LaserKind kind) {
-		if (p1.equals(p2))
+		if (p1.equals(p2)) {
 			return null;
+		}
 
 		double iSize = p2.x - p1.x;
 		double jSize = p2.y - p1.y;
@@ -359,38 +377,42 @@ public class Utils {
 	}
 
 	public static int liquidId(int blockId) {
-		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID)
+		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
 			return Block.waterStill.blockID;
-		else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID)
+		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
 			return Block.lavaStill.blockID;
-		else if (Block.blocksList[blockId] instanceof ILiquid)
+		} else if (Block.blocksList[blockId] instanceof ILiquid) {
 			return ((ILiquid) Block.blocksList[blockId]).stillLiquidId();
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	public static LiquidStack liquidFromBlockId(int blockId) {
-		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID)
+		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
 			return new LiquidStack(Block.waterStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID)
+		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
 			return new LiquidStack(Block.lavaStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		else if (Block.blocksList[blockId] instanceof ILiquid) {
+		} else if (Block.blocksList[blockId] instanceof ILiquid) {
 			ILiquid liquid = (ILiquid) Block.blocksList[blockId];
-			if (liquid.isMetaSensitive())
+			if (liquid.isMetaSensitive()) {
 				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, liquid.stillLiquidMeta());
-			else
+			} else {
 				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		} else
+			}
+		} else {
 			return null;
+		}
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 
-		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world))
+		if (tile instanceof IInventory && !CoreProxy.proxy.isRenderWorld(world)) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
 				dropItems(world, (IInventory) tile, i, j, k);
 			}
+		}
 
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
@@ -398,11 +420,13 @@ public class Utils {
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
-		if (tile1 == null || tile2 == null)
+		if (tile1 == null || tile2 == null) {
 			return false;
+		}
 
-		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection))
+		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection)) {
 			return false;
+		}
 
 		ForgeDirection o = ForgeDirection.UNKNOWN;
 
@@ -420,11 +444,13 @@ public class Utils {
 			o = ForgeDirection.SOUTH;
 		}
 
-		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o))
+		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o)) {
 			return false;
+		}
 
-		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.getOpposite()))
+		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.getOpposite())) {
 			return false;
+		}
 
 		return true;
 	}
@@ -440,23 +466,70 @@ public class Utils {
 		Block b1 = Block.blocksList[blockAccess.getBlockId(x1, y1, z1)];
 		Block b2 = Block.blocksList[blockAccess.getBlockId(x2, y2, z2)];
 
-		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection))
+		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection)) {
 			return false;
+		}
 
-		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2))
+		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2)) {
 			return false;
+		}
 
-		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1))
+		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1)) {
 			return false;
+		}
 
 		return true;
 
 	}
 
+	public static NBTTagCompound getItemData(ItemStack stack) {
+		NBTTagCompound nbt = stack.getTagCompound();
+		if (nbt == null) {
+			nbt = new NBTTagCompound("tag");
+			stack.setTagCompound(nbt);
+		}
+		return nbt;
+	}
+
+	public static void addItemToolTip(ItemStack stack, String tag, String msg) {
+		NBTTagCompound nbt = getItemData(stack);
+		NBTTagCompound display = nbt.getCompoundTag("display");
+		nbt.setCompoundTag("display", display);
+		NBTTagList lore = display.getTagList("Lore");
+		display.setTag("Lore", lore);
+		lore.appendTag(new NBTTagString(tag, msg));
+	}
+
+	public static void writeInvToNBT(IInventory inv, String tag, NBTTagCompound data) {
+		NBTTagList list = new NBTTagList();
+		for (byte slot = 0; slot < inv.getSizeInventory(); slot++) {
+			ItemStack stack = inv.getStackInSlot(slot);
+			if (stack != null) {
+				NBTTagCompound itemTag = new NBTTagCompound();
+				itemTag.setByte("Slot", slot);
+				stack.writeToNBT(itemTag);
+				list.appendTag(itemTag);
+			}
+		}
+		data.setTag(tag, list);
+	}
+
+	public static void readInvFromNBT(IInventory inv, String tag, NBTTagCompound data) {
+		NBTTagList list = data.getTagList(tag);
+		for (byte entry = 0; entry < list.tagCount(); entry++) {
+			NBTTagCompound itemTag = (NBTTagCompound) list.tagAt(entry);
+			int slot = itemTag.getByte("Slot");
+			if (slot >= 0 && slot < inv.getSizeInventory()) {
+				ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
+				inv.setInventorySlotContents(slot, stack);
+			}
+		}
+	}
+
 	public static void readStacksFromNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
 		NBTTagList nbttaglist = nbt.getTagList(name);
 
-		for (int i = 0; i < stacks.length; ++i)
+		for (int i = 0; i < stacks.length; ++i) {
 			if (i < nbttaglist.tagCount()) {
 				NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(i);
 
@@ -464,6 +537,7 @@ public class Utils {
 			} else {
 				stacks[i] = null;
 			}
+		}
 	}
 
 	public static void writeStacksToNBT(NBTTagCompound nbt, String name, ItemStack[] stacks) {
@@ -483,10 +557,11 @@ public class Utils {
 
 	public static ItemStack consumeItem(ItemStack stack) {
 		if (stack.stackSize == 1) {
-			if (stack.getItem().hasContainerItem())
+			if (stack.getItem().hasContainerItem()) {
 				return stack.getItem().getContainerItemStack(stack);
-			else
+			} else {
 				return null;
+			}
 		} else {
 			stack.splitStack(1);
 
@@ -514,9 +589,9 @@ public class Utils {
 
 	public static int[] createSlotArray(int first, int count) {
 		int[] slots = new int[count];
-		for (int k = first; k < first + count; k++)
+		for (int k = first; k < first + count; k++) {
 			slots[k - first] = k;
+		}
 		return slots;
 	}
-
 }

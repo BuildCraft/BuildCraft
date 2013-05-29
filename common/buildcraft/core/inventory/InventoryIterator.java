@@ -29,6 +29,8 @@ public class InventoryIterator {
 	}
 
 	public interface IInvSlot {
+		
+		int getIndex();
 
 		boolean canPutStackInSlot(ItemStack stack);
 

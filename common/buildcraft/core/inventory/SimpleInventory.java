@@ -5,23 +5,23 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
+package buildcraft.core.inventory;
 
-package buildcraft.core.utils;
-
+import buildcraft.core.utils.INBTTagable;
+import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 
 public class SimpleInventory implements IInventory, INBTTagable {
 
 	private final ItemStack[] _contents;
 	private final String _name;
 	private final int _stackLimit;
-
-	// private final LinkedList<ISimpleInventoryEventHandler> _listener = new
-	// LinkedList<ISimpleInventoryEventHandler>();
+	private final LinkedList<TileEntity> _listener = new LinkedList<TileEntity>();
 
 	public SimpleInventory(int size, String name, int stackLimit) {
 		_contents = new ItemStack[size];
@@ -41,19 +41,24 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public ItemStack decrStackSize(int slotId, int count) {
-		if (_contents[slotId] == null)
+		if (_contents[slotId] == null) {
 			return null;
-		if (_contents[slotId].stackSize > count)
-			return _contents[slotId].splitStack(count);
+		}
+		if (_contents[slotId].stackSize > count) {
+			ItemStack result =  _contents[slotId].splitStack(count);			
+			onInventoryChanged();
+			return result;
+		}
 		ItemStack stack = _contents[slotId];
 		_contents[slotId] = null;
+		onInventoryChanged();
 		return stack;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slotId, ItemStack itemstack) {
 		_contents[slotId] = itemstack;
-
+		onInventoryChanged();
 	}
 
 	@Override
@@ -68,9 +73,9 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public void onInventoryChanged() {
-		// for (ISimpleInventoryEventHandler handler : _listener){
-		// handler.InventoryChanged(this);
-		// }
+		for (TileEntity handler : _listener) {
+			handler.onInventoryChanged();
+		}
 	}
 
 	@Override
@@ -111,42 +116,32 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		nbttagcompound.setTag("items", nbttaglist);
 	}
 
-	// public void addListener(ISimpleInventoryEventHandler listner){
-	// if (!_listener.contains(listner)){
-	// _listener.add(listner);
-	// }
-	// }
-	//
-	// public void removeListener(ISimpleInventoryEventHandler listner){
-	// if (_listener.contains(listner)){
-	// _listener.remove(listner);
-	// }
-	// }
+	public void addListener(TileEntity listner) {
+		_listener.add(listner);
+	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int i) {
-		if (this._contents[i] == null)
+		if (this._contents[i] == null) {
 			return null;
+		}
 
 		ItemStack stackToTake = this._contents[i];
 		this._contents[i] = null;
 		return stackToTake;
 	}
 
-	public ItemStack[] getItemStacks()
-	{
-	    return _contents;
+	public ItemStack[] getItemStacks() {
+		return _contents;
 	}
 
 	@Override
 	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

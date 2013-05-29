@@ -10,7 +10,7 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.SimpleInventory;
+import buildcraft.core.inventory.SimpleInventory;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
 

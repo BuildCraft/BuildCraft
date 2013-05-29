@@ -26,7 +26,7 @@ import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.SimpleInventory;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
