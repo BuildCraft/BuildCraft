@@ -184,19 +184,9 @@ public class TileAutoWorkbench extends TileEntity implements ISidedInventory {
 		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
 			return;
 		}
-		for (IInvSlot slot : InventoryIterator.getIterable(invBuffer, ForgeDirection.UP)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack != null) {
-				if (gridHasItem(stack)) {
-					stack.stackSize -= transactor.add(stack, ForgeDirection.DOWN, true).stackSize;
-					if (stack.stackSize <= 0) {
-						slot.setStackInSlot(null);
-					}
-				} else {
-					Utils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
-				}
-			}
-		}
+
+		processHiddenBuffer();
+
 		if (craftSlot == null) {
 			internalPlayer = new InternalPlayer();
 			craftSlot = new SlotCrafting(internalPlayer, craftMatrix, craftResult, 0, 0, 0);
@@ -214,6 +204,28 @@ public class TileAutoWorkbench extends TileEntity implements ISidedInventory {
 		return (progress * i) / CRAFT_TIME;
 	}
 
+	/**
+	 * Moves items out of the hidden input buffer into the craft grid.
+	 */
+	private void processHiddenBuffer() {
+		for (IInvSlot slot : InventoryIterator.getIterable(invBuffer, ForgeDirection.UP)) {
+			ItemStack stack = slot.getStackInSlot();
+			if (stack != null) {
+				if (gridHasItem(stack)) {
+					stack.stackSize -= transactor.add(stack, ForgeDirection.DOWN, true).stackSize;
+					if (stack.stackSize <= 0) {
+						slot.setStackInSlot(null);
+					}
+				} else {
+					Utils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Increment craft job, find recipes, produce output
+	 */
 	private void updateCrafting() {
 		IRecipe recipe = findRecipe();
 		if (recipe == null) {
@@ -278,6 +290,12 @@ public class TileAutoWorkbench extends TileEntity implements ISidedInventory {
 		return slot == SLOT_RESULT && !isLast();
 	}
 
+	/**
+	 * Check if the item exists in the crafting grid.
+	 *
+	 * @param input
+	 * @return true if in grid
+	 */
 	private boolean gridHasItem(ItemStack input) {
 		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
 			ItemStack stack = slot.getStackInSlot();
@@ -288,6 +306,11 @@ public class TileAutoWorkbench extends TileEntity implements ISidedInventory {
 		return false;
 	}
 
+	/**
+	 * Returns true if there are only enough inputs for a single craft job.
+	 *
+	 * @return true or false
+	 */
 	public boolean isLast() {
 		int minStackSize = 64;
 		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
