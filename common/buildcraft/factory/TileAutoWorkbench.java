@@ -140,6 +140,15 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		super.readFromNBT(data);
 		inv.readFromNBT(data);
 		Utils.readInvFromNBT(craftMatrix, "matrix", data);
+
+		// Legacy Code
+		if (data.hasKey("stackList")) {
+			ItemStack[] stacks = new ItemStack[9];
+			Utils.readStacksFromNBT(data, "stackList", stacks);
+			for (int i = 0; i < 9; i++) {
+				craftMatrix.setInventorySlotContents(i, stacks[i]);
+			}
+		}
 	}
 
 	@Override
