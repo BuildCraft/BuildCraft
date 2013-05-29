@@ -24,7 +24,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.utils.Utils;
-import buildcraft.factory.TileAutoWorkbench;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeDirection;
