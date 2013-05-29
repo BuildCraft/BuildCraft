@@ -99,6 +99,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			posX = TileAdvancedCraftingTable.this.xCoord;
 			posY = TileAdvancedCraftingTable.this.yCoord + 1;
 			posZ = TileAdvancedCraftingTable.this.zCoord;
+			username = "[Buildcraft]";
 		}
 
 		@Override

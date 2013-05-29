@@ -68,6 +68,7 @@ public class TileAutoWorkbench extends TileEntity implements ISidedInventory {
 			posX = TileAutoWorkbench.this.xCoord;
 			posY = TileAutoWorkbench.this.yCoord + 1;
 			posZ = TileAutoWorkbench.this.zCoord;
+			username = "[Buildcraft]";
 		}
 
 		@Override
