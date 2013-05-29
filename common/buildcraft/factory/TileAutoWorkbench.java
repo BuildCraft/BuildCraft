@@ -19,7 +19,6 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import buildcraft.core.inventory.StackMergeHelper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
@@ -266,7 +265,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		inv.setInventorySlotContents(SLOT_RESULT, result);
 
 		// clean fake player inventory (crafting handler support)
-		for (IInvSlot slot : InventoryIterator.getIterable(internalPlayer.inventory, ForgeDirection.DOWN)) {
+		for (IInvSlot slot : InventoryIterator.getIterable(internalPlayer.inventory, ForgeDirection.UP)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null) {
 				slot.setStackInSlot(null);
@@ -321,20 +320,20 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	/**
-	 * Check if the item exists in the crafting grid.
+	 * Check if there is room for the stack in the crafting grid.
 	 *
 	 * @param input
 	 * @return true if in grid
 	 */
 	private boolean gridHasRoomFor(ItemStack input) {
+		int space = 0;
 		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
 			ItemStack stack = slot.getStackInSlot();
-			if (MERGE_HELPER.canStacksMerge(stack, input)
-					&& input.stackSize + stack.stackSize <= craftMatrix.getInventoryStackLimit()) {
-				return true;
+			if (MERGE_HELPER.canStacksMerge(stack, input)) {
+				space += stack.getMaxStackSize() - stack.stackSize;
 			}
 		}
-		return false;
+		return space >= input.stackSize;
 	}
 
 	/**
