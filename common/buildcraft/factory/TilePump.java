@@ -49,7 +49,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	LiquidTank tank;
 	double tubeY = Double.NaN;
 	int aimY = 0;
-	
+
 	private IPowerProvider powerProvider;
 
 	public TilePump() {
@@ -63,10 +63,10 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		
+
 		if (tube == null)
 			return;
-		
+
 		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
 			if (tube.posY - aimY > 0.01) {
 				tubeY = tube.posY - 0.01;
@@ -113,8 +113,9 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 								if (isLiquid(new BlockIndex(xCoord, y, zCoord))) {
 									aimY = y;
 									return;
-								} else if (worldObj.getBlockId(xCoord, y, zCoord) != 0)
+								} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
 									return;
+								}
 							}
 						}
 					}
@@ -211,7 +212,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 			return;
 
 		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList, liquidId);
-		
+
 		long timeoutTime = System.currentTimeMillis() + 1000;
 
 		while (lastFound.size() > 0) {
@@ -231,7 +232,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 				pumpList = blocksToPump.get(index.j + 1);
 
 				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList, liquidId);
-				
+
 				if(System.currentTimeMillis() > timeoutTime)
 					return;
 			}
@@ -265,11 +266,11 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	private boolean isLiquid(BlockIndex index) {
 		if(index == null)
 			return false;
-		
+
 		LiquidStack liquid = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
 		if(liquid == null)
 			return false;
-		
+
 		return BuildCraftFactory.pumpDimensionList.isLiquidAllowed(liquid, worldObj.provider.dimensionId);
 	}
 
