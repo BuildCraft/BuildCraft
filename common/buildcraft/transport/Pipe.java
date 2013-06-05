@@ -86,6 +86,38 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 
 	}
+	
+	// IPipe Interface update
+	@Override
+	public PipeLogic getLogic() {
+		return this.logic;
+	}
+
+	@Override
+	public PipeTransport getTransport() {
+		return this.transport;
+	}
+
+	@Override
+	public World getWorld() {
+		return this.worldObj;
+	}
+
+	@Override
+	public int getXPosition() {
+		return this.xCoord;
+	}
+
+	@Override
+	public int getYPosition() {
+		return this.yCoord;
+	}
+
+	@Override
+	public int getZPosition() {
+		return this.zCoord;
+	}
+
 
 	private void setPosition(int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
