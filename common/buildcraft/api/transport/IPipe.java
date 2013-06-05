@@ -9,7 +9,11 @@
 
 package buildcraft.api.transport;
 
+import buildcraft.transport.PipeTransport;
+import buildcraft.transport.pipes.PipeLogic;
+import buildcraft.transport.pipes.PipeLogicStone;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public interface IPipe {
 
@@ -41,5 +45,15 @@ public interface IPipe {
 	public TileEntity getContainer();
 
 	public boolean isWireConnectedTo(TileEntity tile, WireColor color);
+
+	public PipeLogic getLogic();
+	
+	public PipeTransport getTransport();
+
+	public World getWorld();
+
+	int getXPosition();
+	int getYPosition();
+	int getZPosition();
 
 }
