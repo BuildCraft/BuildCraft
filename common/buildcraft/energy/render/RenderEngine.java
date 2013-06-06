@@ -53,7 +53,8 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	public RenderEngine() {
 
 		// constructor:
-		box = new ModelRenderer(model, 0, 1);
+		box = new ModelRenderer(model, 0, 0);
+		box.setTextureSize(128, 32);
 		box.addBox(-8F, -8F, -8F, 16, 4, 16);
 		box.rotationPointX = 8;
 		box.rotationPointY = 8;
@@ -65,14 +66,15 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		trunk.rotationPointY = 8F;
 		trunk.rotationPointZ = 8F;
 
-		movingBox = new ModelRenderer(model, 0, 1);
-		movingBox.addBox(-8F, -4, -8F, 16, 4, 16);
+		movingBox = new ModelRenderer(model, 64, 0);
+		movingBox.setTextureSize(128, 32);
+		movingBox.addBox(-7F, -4F, -7F, 14, 4, 14);
 		movingBox.rotationPointX = 8F;
 		movingBox.rotationPointY = 8F;
 		movingBox.rotationPointZ = 8F;
 
 		chamber = new ModelRenderer(model, 1, 1);
-		chamber.addBox(-5F, -4, -5F, 10, 2, 10);
+		chamber.addBox(-5F, -4.5F, -5F, 10, 2, 10);
 		chamber.rotationPointX = 8F;
 		chamber.rotationPointY = 8F;
 		chamber.rotationPointZ = 8F;
@@ -116,10 +118,10 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float step;
 
-		if (progress > 0.5) {
-			step = 7.99F - (progress - 0.5F) * 2F * 7.99F;
+		if((double)progress > 0.5D) {
+        	step = 8.0F - (progress - 0.5F) * 2.0F * 8.0F;
 		} else {
-			step = progress * 2F * 7.99F;
+			step = progress * 16.0F;
 		}
 
 		float translatefact = step / 16;
