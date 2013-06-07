@@ -7,8 +7,12 @@
  */
 package buildcraft.core.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -17,6 +21,7 @@ import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.IBlockAccess;
@@ -44,11 +49,6 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import net.minecraft.nbt.NBTTagString;
 
 public class Utils {
 
@@ -229,28 +229,29 @@ public class Utils {
 	public static IInventory getInventory(IInventory inv) {
 		if (inv instanceof TileEntityChest) {
 			TileEntityChest chest = (TileEntityChest) inv;
-			Position pos = new Position(chest.xCoord, chest.yCoord, chest.zCoord);
-			TileEntity tile;
-			IInventory chest2 = null;
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.WEST);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
+			
+			TileEntityChest adjacent = null;
+			
+			if (chest.adjacentChestXNeg != null){
+				adjacent = chest.adjacentChestXNeg;  
 			}
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.EAST);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
+			
+			if (chest.adjacentChestXPos != null){
+				adjacent = chest.adjacentChestXPos;  
 			}
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.NORTH);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
+			
+			if (chest.adjacentChestZNeg != null){
+				adjacent = chest.adjacentChestZNeg;  
 			}
-			tile = Utils.getTile(chest.worldObj, pos, ForgeDirection.SOUTH);
-			if (tile instanceof TileEntityChest) {
-				chest2 = (IInventory) tile;
+			
+			if (chest.adjacentChestZPosition != null){
+				adjacent = chest.adjacentChestZPosition;  
 			}
-			if (chest2 != null) {
-				return new InventoryLargeChest("", inv, chest2);
+			
+			if (adjacent != null){
+				return new InventoryLargeChest("", inv, adjacent);
 			}
+			return inv;
 		}
 		return inv;
 	}
