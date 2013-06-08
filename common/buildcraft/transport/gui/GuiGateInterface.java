@@ -17,11 +17,13 @@ import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.FallbackWrapper;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
@@ -57,14 +59,17 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 
         @SideOnly(Side.CLIENT)
-		@Override
-		public Icon getTexture() {
-			ITrigger trigger = pipe.getTrigger(slot);
-			if (trigger != null)
-				return trigger.getIconProvider().getIcon(trigger.getIconIndex());
-			else
-				return null;
-		}
+        @Override
+        public Icon getTexture() {
+        	ITrigger trigger = pipe.getTrigger(slot);
+        	if (trigger instanceof FallbackWrapper) {
+        	    return ((FallbackWrapper)trigger).getIcon();
+        	}
+        	if (trigger != null)
+        		return trigger.getIconProvider().getIcon(trigger.getIconIndex());
+        	else
+        		return null;
+        }
 
 		@Override
 		public boolean isDefined() {
@@ -151,6 +156,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(new ContainerGateInterface(playerInventory, pipe), null);
 
+		Pipe.fixTriggers();
 		_container = (ContainerGateInterface) this.inventorySlots;
 
 		this.playerInventory = playerInventory;

@@ -9,10 +9,12 @@
 
 package buildcraft.transport;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -23,7 +25,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ActionManager;
@@ -41,8 +45,12 @@ import buildcraft.transport.Gate.GateConditional;
 import buildcraft.transport.pipes.PipeLogic;
 import buildcraft.transport.triggers.ActionSignalOutput;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -260,6 +268,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			activatedTriggers[i] = ActionManager.triggers[nbttagcompound.getInteger("trigger[" + i + "]")];
 		}
 
+		// Force any triggers to be resolved
+		fixTriggers();
 		for (int i = 0; i < 8; ++i)
 			if (nbttagcompound.hasKey("triggerParameters[" + i + "]")) {
 				triggerParameters[i] = new TriggerParameter();
@@ -708,5 +718,22 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	 */
 	public void onChunkUnload() {
 	}
+
+    private static boolean fixedTriggers = false;
+    public static void fixTriggers()	{
+        if (fixedTriggers) return;
+        for (int i = 0; i < ActionManager.triggers.length; i++) {
+            try {
+                ITrigger t = ActionManager.triggers[i];
+                t = new FallbackWrapper(t);
+                ActionManager.triggers[i] = t;
+                BuildCraftCore.bcLog.severe("Trigger "+ t.getClass() +" using OLD API found, using a falling back wrapper!");
+            } catch (RuntimeException e) {
+                // Carry on
+            }
+        }
+        fixedTriggers = true;
+
+    }
 
 }
