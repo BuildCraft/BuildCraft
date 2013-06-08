@@ -31,7 +31,7 @@
 	<condition property="out-of-date">
 		<not>
 			<and>
-				<available file="${download.dir}/${forge.name}"/>
+				<isset property="forge-exists"/>
 				<available file="${mcpsrc.dir}"/>
 			</and>
 		</not>
