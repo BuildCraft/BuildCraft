@@ -61,11 +61,12 @@
 		<property name="build.number" value="${env.BUILD_NUMBER}"/>
 	</target>
 
-	<target name="git.revision" if="git.present">
+	<target name="git.revision">
 		<exec executable="git" dir="${src.dir}" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
 			<arg value="describe"/>
 			<arg value="--tags"/>
 			<arg value="--always"/>
+			<arg value="--match='[^(jenkins)]*'"/>
 			<arg value="HEAD"/>
 		</exec>
 		<condition property="project.version" value="${git.revision}" else="0.0.0">
