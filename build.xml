@@ -67,7 +67,6 @@
 			<arg line="--match &quot;[^(jenkins)]*&quot;"/>
 			<arg value="--tags"/>
 		</exec>
-		<echo>${git.revision}</echo>
 		<loadresource property="git.clean.revision">
 			<propertyresource name="git.revision"/>
 			<filterchain>
@@ -91,6 +90,7 @@
 				<length string="${git.revision}" trim="yes" length="0" when="greater"/>
 			</and>
 		</condition>
+		<echo>Building buildcraft version ${project.complete.version} (${project.version})</echo>
 	</target>
 
 	<!-- Download necessary files -->
