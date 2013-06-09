@@ -66,7 +66,6 @@
 			<arg value="describe"/>
 			<arg line="--match &quot;[^(jenkins)]*&quot;"/>
 			<arg value="--tags"/>
-			<arg line="--abbrev=0"/>
 		</exec>
 		<echo>${git.revision}</echo>
 		<loadresource property="git.clean.revision">
@@ -74,6 +73,7 @@
 			<filterchain>
 				<tokenfilter>
 					<filetokenizer/>
+					<replaceregex pattern="-[a-z0-9]+$" replace=""/>
 					<replacestring from="-" to="."/>
 				</tokenfilter>
 			</filterchain>
@@ -83,6 +83,12 @@
 			<and>
 				<isset property="git.clean.revision"/>
 				<length string="${git.clean.revision}" trim="yes" length="0" when="greater"/>
+			</and>
+		</condition>
+		<condition property="project.complete.version" value="${git.revision}" else="0.0.0">
+			<and>
+				<isset property="git.revision"/>
+				<length string="${git.revision}" trim="yes" length="0" when="greater"/>
 			</and>
 		</condition>
 	</target>
@@ -116,12 +122,19 @@
 
 	</target>
 
-	<target name="copy-src">
+	<target name="clean-src">
+		<delete verbose="true">
+			<fileset dir="${mcpsrc.dir}/minecraft">
+				<present present="both" targetdir="${src.dir}/common" /> 
+			</fileset>
+		</delete>
+	</target>
+	<target name="copy-src" depends="clean-src,initialize-version">
 		<!-- Copy sources -->
-		<copy todir="${mcpsrc.dir}/minecraft">
+		<copy todir="${mcpsrc.dir}/minecraft" verbose="true">
 			<fileset dir="${src.dir}/common"/>
 			<filterset>
-				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="VERSION" value="${project.complete.version}" />
 				<filter token="BUILD_NUMBER" value="${build.number}" />
 			</filterset>
 		</copy>
