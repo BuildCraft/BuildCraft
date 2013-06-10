@@ -16,7 +16,8 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		int blockId = world.getBlockId(x, y, z);
-		if (Block.blocksList[blockId].rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
+		Block block = Block.blocksList[blockId];
+		if (block != null && block.rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
 			player.swingItem();
 			return !world.isRemote;
 		}
