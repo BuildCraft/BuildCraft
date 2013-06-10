@@ -309,7 +309,7 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 
 	@Override
 	public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
-		return 1;
+		return 0;
 	}
 
 	@Override

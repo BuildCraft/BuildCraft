@@ -67,7 +67,7 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 
 	@Override
 	public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
-		return 1;
+		return 0;
 	}
 
 	@Override

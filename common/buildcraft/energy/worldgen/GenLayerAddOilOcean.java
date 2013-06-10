@@ -27,7 +27,7 @@ public class GenLayerAddOilOcean extends GenLayer {
 				final int currentBiomeId = inputBiomeIDs[xIter + 1 + (yIter + 1) * (width + 2)];
 
 				if (currentBiomeId == BiomeGenBase.ocean.biomeID
-						&& SimplexNoise.noise((xIter + x) * 0.0008, (yIter + y) * 0.0008) > 0.8) {
+						&& SimplexNoise.noise((xIter + x) * 0.0006, (yIter + y) * 0.0006) > 0.85) {
 					outputBiomeIDs[xIter + yIter * width] = BuildCraftEnergy.biomeOilOcean.biomeID;
 				} else {
 					outputBiomeIDs[xIter + yIter * width] = currentBiomeId;
