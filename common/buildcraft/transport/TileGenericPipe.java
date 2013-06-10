@@ -52,6 +52,7 @@ import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 
 public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
@@ -591,7 +592,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 		this.facadeBlocks[direction.ordinal()] = blockid;
 		this.facadeMeta[direction.ordinal()] = meta;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
 		scheduleRenderUpdate();
 		return true;
 	}
@@ -614,7 +615,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		dropFacadeItem(direction);
 		this.facadeBlocks[direction.ordinal()] = 0;
 		this.facadeMeta[direction.ordinal()] = 0;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
 		scheduleRenderUpdate();
 	}
 
@@ -706,7 +707,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		
 		plugs[forgeDirection.ordinal()] = false;
 		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 	}
@@ -715,9 +716,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		if (hasPlug(forgeDirection)) return false;
 		
 		plugs[forgeDirection.ordinal()] = true;
-		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockType().blockID);
+		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 		return true;
+	}
+
+	public int getBlockId() {
+		Block block = getBlockType();
+		if (block != null) {
+			return block.blockID;
+		}
+		return 0;
 	}
 }
