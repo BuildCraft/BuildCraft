@@ -227,6 +227,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 				continue;
 			}
 			if (!gridHasRoomFor(stack)) {
+				slot.setStackInSlot(null);
 				Utils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
 				continue;
 			}
