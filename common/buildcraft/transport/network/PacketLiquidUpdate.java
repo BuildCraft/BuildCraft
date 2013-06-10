@@ -9,11 +9,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.PipeTransportLiquids;
-import buildcraft.transport.TileGenericPipe;
 
 public class PacketLiquidUpdate extends PacketCoordinates {
 
@@ -41,17 +41,17 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 			return;
 
 		TileEntity entity = world.getBlockTileEntity(posX, posY, posZ);
-		if (!(entity instanceof TileGenericPipe))
+		if (!(entity instanceof IPipeTile))
 			return;
 
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
+		IPipeTile pipe = (IPipeTile) entity;
+		if (pipe.getPipe() == null)
 			return;
 
-		if (!(pipe.pipe.transport instanceof PipeTransportLiquids))
+		if (!(pipe.getPipe().getTransport() instanceof PipeTransportLiquids))
 			return;
 
-		PipeTransportLiquids transLiq = ((PipeTransportLiquids) pipe.pipe.transport);
+		PipeTransportLiquids transLiq = ((PipeTransportLiquids) pipe.getPipe().getTransport());
 
 		renderCache = transLiq.renderCache;
 

@@ -77,7 +77,7 @@ public class PipeTransportPower extends PipeTransport {
 	private void updateTiles() {
 		for (int i = 0; i < 6; ++i) {
 			TileEntity tile = container.getTile(ForgeDirection.VALID_DIRECTIONS[i]);
-			if (Utils.checkPipesConnections(tile, container)) {
+			if (Utils.checkPipesConnections(container,tile)) {
 				tiles[i] = tile;
 			} else {
 				tiles[i] = null;

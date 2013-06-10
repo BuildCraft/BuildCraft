@@ -9,9 +9,23 @@
 
 package buildcraft.api.transport;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+
 public interface IPipeTile {
 
 	IPipe getPipe();
 
 	boolean isInitialized();
+
+	TileEntity getTile(ForgeDirection o);
+	
+	int getXCoord();
+	int getYCoord();
+	int getZCoord();
+
+	void scheduleRenderUpdate();
+
+	World getWorld();
 }

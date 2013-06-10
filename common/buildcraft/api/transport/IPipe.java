@@ -9,13 +9,11 @@
 
 package buildcraft.api.transport;
 
-import buildcraft.transport.PipeTransport;
-import buildcraft.transport.pipes.PipeLogic;
-import buildcraft.transport.pipes.PipeLogicStone;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
-public interface IPipe {
+public interface IPipe{ // extends IPipeConnection
 
 	enum DrawingState {
 		DrawingPipe, DrawingRedWire, DrawingBlueWire, DrawingGreenWire, DrawingYellowWire, DrawingGate
@@ -39,21 +37,23 @@ public interface IPipe {
 	}
 
 	public boolean isWired(WireColor color);
+	public boolean isWireConnectedTo(TileEntity tile, WireColor color);
+	public int signalStrength(WireColor color);
+
+	public boolean hasGate();
 
 	public boolean hasInterface();
 
 	public TileEntity getContainer();
 
-	public boolean isWireConnectedTo(TileEntity tile, WireColor color);
-
-	public PipeLogic getLogic();
-	
-	public PipeTransport getTransport();
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection o);
+	public IPipeLogic getLogic();	// primarily used for instanceof testing
+	public IPipeTransport getTransport();
 
 	public World getWorld();
 
 	int getXPosition();
 	int getYPosition();
 	int getZPosition();
-
+	
 }

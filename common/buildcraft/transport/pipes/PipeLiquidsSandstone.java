@@ -13,11 +13,11 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.IPipeTransportLiquidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportLiquids;
-import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -42,7 +42,7 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 		if (container.tileBuffer == null || container.tileBuffer[from.ordinal()] == null)
 			return 0;
 
-		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe))
+		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof IPipeTile))
 			return 0;
 
 		return ((PipeTransportLiquids) this.transport).getTanks(ForgeDirection.UNKNOWN)[from.ordinal()].fill(resource, doFill);

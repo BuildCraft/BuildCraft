@@ -15,11 +15,11 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -97,12 +97,12 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 			if (Utils.checkPipesConnections(container, container.getTile(o))) {
 				TileEntity tile = container.getTile(o);
 
-				if (tile instanceof TileGenericPipe) {
-					if (((TileGenericPipe) tile).pipe == null) {
+				if (tile instanceof IPipeTile) {
+					if (((IPipeTile) tile).getPipe() == null) {
 						continue; // Null pointer protection
 					}
 
-					PipeTransportPower trans = (PipeTransportPower) ((TileGenericPipe) tile).pipe.transport;
+					PipeTransportPower trans = (PipeTransportPower) ((IPipeTile) tile).getPipe().getTransport();
 
 					float energyToRemove;
 

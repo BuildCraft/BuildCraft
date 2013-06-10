@@ -84,7 +84,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 
-	public Pipe pipe;
+	protected Pipe pipe;
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
@@ -719,5 +719,25 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		scheduleNeighborChange(); //To force recalculation of connections
 		scheduleRenderUpdate();
 		return true;
+	}
+
+	@Override
+	public final int getXCoord() {
+		return xCoord;
+	}
+
+	@Override
+	public final int getYCoord() {
+		return yCoord;
+	}
+
+	@Override
+	public final int getZCoord() {
+		return zCoord;
+	}
+
+	@Override
+	public World getWorld() {
+		return this.worldObj;
 	}
 }

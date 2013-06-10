@@ -10,9 +10,10 @@
 package buildcraft.transport;
 
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.IPipe;
 
 public interface ITriggerPipe {
 
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter);
+	public boolean isTriggerActive(IPipe pipe, ITriggerParameter parameter);
 
 }
