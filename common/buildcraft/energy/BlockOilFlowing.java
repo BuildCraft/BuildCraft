@@ -1,26 +1,29 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.energy;
 
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
+import net.minecraft.block.BlockFlowing;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.core.DefaultProps;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockOilFlowing extends BlockFluid implements ILiquid {
+public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 
 	int numAdjacentSources = 0;
 	boolean isOptimalFlowDirection[] = new boolean[4];
@@ -38,93 +41,114 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return BuildCraftCore.oilModel;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	private void updateFlow(World par1World, int par2, int par3, int par4) {
+		int l = par1World.getBlockMetadata(par2, par3, par4);
+		par1World.setBlock(par2, par3, par4, this.blockID + 1, l, 2);
 	}
 
-	private void updateFlow(World world, int i, int j, int k) {
-		int l = world.getBlockMetadata(i, j, k);
-		world.setBlockAndMetadata(i, j, k, blockID + 1, l);
-		world.markBlockRangeForRenderUpdate(i, j, k, i, j, k);
-		world.markBlockForUpdate(i, j, k);
+	/**
+	 * How many world ticks before ticking
+	 */
+	@Override
+	public int tickRate(World par1World) {
+		return 20;
 	}
 
 	@Override
-	public void updateTick(World world, int i, int j, int k, Random random) {
-		int l = getFlowDecay(world, i, j, k);
-		byte byte0 = 1;
-		boolean flag = true;
-		if (l > 0) {
-			int i1 = -100;
-			numAdjacentSources = 0;
-			i1 = getSmallestFlowDecay(world, i - 1, j, k, i1);
-			i1 = getSmallestFlowDecay(world, i + 1, j, k, i1);
-			i1 = getSmallestFlowDecay(world, i, j, k - 1, i1);
-			i1 = getSmallestFlowDecay(world, i, j, k + 1, i1);
-			int j1 = i1 + byte0;
-			if (j1 >= 8 || i1 < 0) {
-				j1 = -1;
+	public void updateTick(World world, int x, int y, int z, Random random) {
+		int oldDecay = this.getFlowDecay(world, x, y, z);
+		byte viscosity = 2;
+		int flowDecay;
+
+		if (oldDecay > 0) {
+			this.numAdjacentSources = 0;
+			int minFlowDecay = this.getSmallestFlowDecay(world, x - 1, y, z, -100);
+			minFlowDecay = this.getSmallestFlowDecay(world, x + 1, y, z, minFlowDecay);
+			minFlowDecay = this.getSmallestFlowDecay(world, x, y, z - 1, minFlowDecay);
+			minFlowDecay = this.getSmallestFlowDecay(world, x, y, z + 1, minFlowDecay);
+			flowDecay = minFlowDecay + viscosity;
+
+			if (flowDecay >= 8 || minFlowDecay < 0) {
+				flowDecay = -1;
 			}
-			if (getFlowDecay(world, i, j + 1, k) >= 0) {
-				int l1 = getFlowDecay(world, i, j + 1, k);
-				if (l1 >= 8) {
-					j1 = l1;
+
+			int decayAbove = getFlowDecay(world, x, y + 1, z);
+			if (decayAbove >= 0) {
+				if (decayAbove >= 8) {
+					flowDecay = decayAbove;
 				} else {
-					j1 = l1 + 8;
+					flowDecay = decayAbove + 8;
 				}
 			}
-			if (j1 != l) {
-				l = j1;
-				if (l < 0) {
-					world.setBlockWithNotify(i, j, k, 0);
-				} else {
-					world.setBlockMetadataWithNotify(i, j, k, l);
-					world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
-					world.notifyBlocksOfNeighborChange(i, j, k, blockID);
+
+			boolean update = true;
+			if (oldDecay < 8 && flowDecay < 8 && flowDecay > oldDecay && random.nextDouble() < 0.2) {
+				flowDecay = oldDecay;
+				update = false;
+			}
+
+			if (flowDecay == oldDecay) {
+				if (update) {
+					this.updateFlow(world, x, y, z);
 				}
-			} else if (flag) {
-				updateFlow(world, i, j, k);
+			} else {
+				oldDecay = flowDecay;
+
+				if (flowDecay < 0) {
+					world.setBlockToAir(x, y, z);
+				} else {
+					world.setBlockMetadataWithNotify(x, y, z, flowDecay, 2);
+					world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate(world));
+					world.notifyBlocksOfNeighborChange(x, y, z, this.blockID);
+				}
 			}
 		} else {
-			updateFlow(world, i, j, k);
+			this.updateFlow(world, x, y, z);
 		}
-		if (liquidCanDisplaceBlock(world, i, j - 1, k)) {
-			if (l >= 8) {
-				world.setBlockAndMetadataWithNotify(i, j - 1, k, blockID, l);
+
+		if (this.liquidCanDisplaceBlock(world, x, y - 1, z)) {
+			if (oldDecay >= 8) {
+				this.flowIntoBlock(world, x, y - 1, z, oldDecay);
 			} else {
-				world.setBlockAndMetadataWithNotify(i, j - 1, k, blockID, l + 8);
+				this.flowIntoBlock(world, x, y - 1, z, oldDecay + 8);
 			}
-		} else if (l >= 0 && (l == 0 || blockBlocksFlow(world, i, j - 1, k))) {
-			boolean aflag[] = getOptimalFlowDirections(world, i, j, k);
-			int k1 = l + byte0;
-			if (l >= 8) {
-				k1 = 1;
+		} else if (oldDecay >= 0 && (oldDecay == 0 || this.blockBlocksFlow(world, x, y - 1, z))) {
+			boolean[] flowDirection = this.getOptimalFlowDirections(world, x, y, z);
+			flowDecay = oldDecay + viscosity;
+
+			if (oldDecay >= 8) {
+				flowDecay = 1;
 			}
-			if (k1 >= 8)
+
+			if (flowDecay >= 8) {
 				return;
-			if (aflag[0]) {
-				flowIntoBlock(world, i - 1, j, k, k1);
 			}
-			if (aflag[1]) {
-				flowIntoBlock(world, i + 1, j, k, k1);
+
+			if (flowDirection[0]) {
+				this.flowIntoBlock(world, x - 1, y, z, flowDecay);
 			}
-			if (aflag[2]) {
-				flowIntoBlock(world, i, j, k - 1, k1);
+
+			if (flowDirection[1]) {
+				this.flowIntoBlock(world, x + 1, y, z, flowDecay);
 			}
-			if (aflag[3]) {
-				flowIntoBlock(world, i, j, k + 1, k1);
+
+			if (flowDirection[2]) {
+				this.flowIntoBlock(world, x, y, z - 1, flowDecay);
+			}
+
+			if (flowDirection[3]) {
+				this.flowIntoBlock(world, x, y, z + 1, flowDecay);
 			}
 		}
 	}
 
 	private void flowIntoBlock(World world, int i, int j, int k, int l) {
 		if (liquidCanDisplaceBlock(world, i, j, k)) {
-			int i1 = world.getBlockId(i, j, k);
-			if (i1 > 0) {
-				Block.blocksList[i1].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
+			int blockId = world.getBlockId(i, j, k);
+			if (blockId > 0) {
+				Block.blocksList[blockId].dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
 			}
-			world.setBlockAndMetadataWithNotify(i, j, k, blockID, l);
+			world.setBlock(i, j, k, blockID, l, 3);
 		}
 	}
 
@@ -152,8 +176,9 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 			if (blockBlocksFlow(world, l1, i2, j2) || world.getBlockMaterial(l1, i2, j2) == blockMaterial && world.getBlockMetadata(l1, i2, j2) == 0) {
 				continue;
 			}
-			if (!blockBlocksFlow(world, l1, i2 - 1, j2))
+			if (!blockBlocksFlow(world, l1, i2 - 1, j2)) {
 				return l;
+			}
 			if (l >= 4) {
 				continue;
 			}
@@ -208,39 +233,46 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return isOptimalFlowDirection;
 	}
 
-	private boolean blockBlocksFlow(World world, int i, int j, int k) {
-		int l = world.getBlockId(i, j, k);
-		if (l == Block.doorWood.blockID || l == Block.doorSteel.blockID || l == Block.signPost.blockID || l == Block.ladder.blockID || l == Block.reed.blockID)
+	private boolean blockBlocksFlow(World par1World, int par2, int par3, int par4) {
+		int l = par1World.getBlockId(par2, par3, par4);
+
+		if (l != Block.doorWood.blockID && l != Block.doorIron.blockID && l != Block.signPost.blockID && l != Block.ladder.blockID && l != Block.reed.blockID) {
+			if (l == 0) {
+				return false;
+			} else {
+				Material material = Block.blocksList[l].blockMaterial;
+				return material == Material.portal ? true : material.blocksMovement();
+			}
+		} else {
 			return true;
-		if (l == 0)
-			return false;
-		Material material = Block.blocksList[l].blockMaterial;
-		return material.isSolid();
+		}
 	}
 
-	protected int getSmallestFlowDecay(World world, int i, int j, int k, int l) {
-		int i1 = getFlowDecay(world, i, j, k);
-		if (i1 < 0)
-			return l;
-		if (i1 >= 8) {
-			i1 = 0;
+	@Override
+	protected int getSmallestFlowDecay(World par1World, int par2, int par3, int par4, int par5) {
+		int i1 = this.getFlowDecay(par1World, par2, par3, par4);
+
+		if (i1 < 0) {
+			return par5;
+		} else {
+			if (i1 == 0) {
+				++this.numAdjacentSources;
+			}
+
+			if (i1 >= 8) {
+				i1 = 0;
+			}
+
+			return par5 >= 0 && i1 >= par5 ? par5 : i1;
 		}
-		return l >= 0 && i1 >= l ? l : i1;
 	}
 
 	private boolean liquidCanDisplaceBlock(World world, int i, int j, int k) {
 		Material material = world.getBlockMaterial(i, j, k);
-		if (material == blockMaterial)
+		if (material == blockMaterial) {
 			return false;
-		else
+		} else {
 			return !blockBlocksFlow(world, i, j, k);
-	}
-
-	@Override
-	public void onBlockAdded(World world, int i, int j, int k) {
-		super.onBlockAdded(world, i, j, k);
-		if (world.getBlockId(i, j, k) == blockID) {
-			world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
 		}
 	}
 
@@ -264,4 +296,29 @@ public class BlockOilFlowing extends BlockFluid implements ILiquid {
 		return true;
 	}
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister) {
+		this.theIcon = new Icon[]{iconRegister.registerIcon("buildcraft:oil"), iconRegister.registerIcon("buildcraft:oil_flow")};
+	}
+
+	@Override
+	public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return 300;
+	}
+
+	@Override
+	public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return 1;
+	}
+
+	@Override
+	public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
+		return true;
+	}
+
+	@Override
+	public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side) {
+		return true;
+	}
 }

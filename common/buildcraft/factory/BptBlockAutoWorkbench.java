@@ -18,6 +18,7 @@ import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
+@Deprecated
 public class BptBlockAutoWorkbench extends BptBlock {
 
 	public BptBlockAutoWorkbench(int blockId) {

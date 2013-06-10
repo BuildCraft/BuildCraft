@@ -46,13 +46,14 @@ public abstract class Engine {
 	}
 
 	protected void computeEnergyStage() {
-		if (energy / (double) maxEnergy * 100.0 <= 25.0) {
+		double level = energy / (double) maxEnergy * 100.0;
+		if (level <= 25.0) {
 			energyStage = EnergyStage.Blue;
-		} else if (energy / (double) maxEnergy * 100.0 <= 50.0) {
+		} else if (level <= 50.0) {
 			energyStage = EnergyStage.Green;
-		} else if (energy / (double) maxEnergy * 100.0 <= 75.0) {
+		} else if (level <= 75.0) {
 			energyStage = EnergyStage.Yellow;
-		} else if (energy / (double) maxEnergy * 100.0 <= 100.0) {
+		} else if (level <= 100.0) {
 			energyStage = EnergyStage.Red;
 		} else {
 			energyStage = EnergyStage.Explosion;
@@ -200,6 +201,10 @@ public abstract class Engine {
 	}
 
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
+	}
+	
+	public boolean isStackValidForSlot(int i, ItemStack itemstack){
+		return false;
 	}
 
 	public abstract ILiquidTank getTank(ForgeDirection direction, LiquidStack type);

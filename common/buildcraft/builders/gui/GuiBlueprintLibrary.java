@@ -23,7 +23,7 @@ import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
@@ -63,19 +63,19 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		prevPageButton = new GuiButton(0, j + 100, k + 23, 20, 20, "<");
 		nextPageButton = new GuiButton(1, j + 122, k + 23, 20, 20, ">");
 
-		controlList.add(prevPageButton);
-		controlList.add(nextPageButton);
+		buttonList.add(prevPageButton);
+		buttonList.add(nextPageButton);
 
 		// if (library.owner.equals(player.username)) {
-		deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtil.localize("gui.del"));
-		controlList.add(deleteButton);
+		deleteButton = new GuiButton(2, j + 100, k + 114, 25, 20, StringUtils.localize("gui.del"));
+		buttonList.add(deleteButton);
 
-		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtil.localize("gui.lock"));
-		controlList.add(lockButton);
+		lockButton = new GuiButton(3, j + 127, k + 114, 40, 20, StringUtils.localize("gui.lock"));
+		buttonList.add(lockButton);
 		if (library.locked) {
-			lockButton.displayString = StringUtil.localize("gui.unlock");
+			lockButton.displayString = StringUtils.localize("gui.unlock");
 		} else {
-			lockButton.displayString = StringUtil.localize("gui.lock");
+			lockButton.displayString = StringUtils.localize("gui.lock");
 		}
 	}
 
@@ -83,7 +83,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		// fontRenderer.drawString(library.owner + "'s Library", 6, 6,
 		// 0x404040);
-		String title = StringUtil.localize("tile.libraryBlock");
+		String title = StringUtils.localize("tile.libraryBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
@@ -110,16 +110,9 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = 0;
-		// if (library.owner.equals(player.username)) {
-		i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
-		// } else {
-		// i = mc.renderEngine
-		// .getTexture("/net/minecraft/src/buildcraft/builders/gui/library_r.png");
-		// }
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
 
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
@@ -134,9 +127,9 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	@Override
 	public void updateScreen() {
 		if (library.locked) {
-			lockButton.displayString = StringUtil.localize("gui.unlock");
+			lockButton.displayString = StringUtils.localize("gui.unlock");
 		} else {
-			lockButton.displayString = StringUtil.localize("gui.lock");
+			lockButton.displayString = StringUtils.localize("gui.lock");
 		}
 	}
 

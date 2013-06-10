@@ -15,10 +15,11 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 
 public class GateVanilla extends Gate {
 
@@ -86,19 +87,19 @@ public class GateVanilla extends Gate {
 	public String getName() {
 		switch (kind) {
 		case Single:
-			return StringUtil.localize("item.pipeGate.0");
+			return StringUtils.localize("item.pipeGate.0");
 		case AND_2:
-			return StringUtil.localize("item.pipeGate.1");
+			return StringUtils.localize("item.pipeGate.1");
 		case AND_3:
-			return StringUtil.localize("item.pipeGate.3");
+			return StringUtils.localize("item.pipeGate.3");
 		case AND_4:
-			return StringUtil.localize("item.pipeGate.5");
+			return StringUtils.localize("item.pipeGate.5");
 		case OR_2:
-			return StringUtil.localize("item.pipeGate.2");
+			return StringUtils.localize("item.pipeGate.2");
 		case OR_3:
-			return StringUtil.localize("item.pipeGate.4");
+			return StringUtils.localize("item.pipeGate.4");
 		case OR_4:
-			return StringUtil.localize("item.pipeGate.6");
+			return StringUtils.localize("item.pipeGate.6");
 		default:
 			return "";
 		}
@@ -117,7 +118,7 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Tries to add an energy pulser to gates that accept energy.
-	 * 
+	 *
 	 * @param pipe
 	 * @return
 	 */
@@ -133,7 +134,7 @@ public class GateVanilla extends Gate {
 
 	/**
 	 * Drops a gate item of the specified kind.
-	 * 
+	 *
 	 * @param kind
 	 * @param world
 	 * @param i
@@ -202,6 +203,7 @@ public class GateVanilla extends Gate {
 
 		if (hasPulser()) {
 			list.add(BuildCraftTransport.actionEnergyPulser);
+			list.add(BuildCraftTransport.actionSingleEnergyPulse);
 		}
 
 	}
@@ -214,13 +216,15 @@ public class GateVanilla extends Gate {
 	}
 
 	@Override
-	public boolean resolveAction(IAction action) {
+	public boolean resolveAction(IAction action, int count) {
 
 		if (action instanceof ActionEnergyPulser) {
-			pulser.enablePulse();
+			pulser.enablePulse(count);
+			return true;
+		} else if (action instanceof ActionSingleEnergyPulse) {
+			pulser.enableSinglePulse(count);
 			return true;
 		}
-
 		return false;
 	}
 
@@ -250,74 +254,40 @@ public class GateVanilla extends Gate {
 
 	}
 
-	// / TEXTURES
+	// / ICONS
 	@Override
-	public final int getTexture(boolean isSignalActive) {
+	public final int getTextureIconIndex(boolean isSignalActive) {
 
 		boolean isGateActive = isSignalActive;
 		if (hasPulser() && pulser.isActive()) {
 			isGateActive = true;
 		}
-
-		int n = getTextureRow();
-		switch (kind) {
-		case None:
-			break;
-		case Single:
-			if (!isGateActive)
-				return n * 16 + 12;
-			else
-				return n * 16 + 13;
-		case AND_2:
-			if (!isGateActive) {
-				if (hasPulser())
-					return 9 * 16 + 0;
-				else
-					return 6 * 16 + 7;
-			} else if (hasPulser())
-				return 9 * 16 + 1;
-			else
-				return 6 * 16 + 8;
-		case OR_2:
-			if (!isGateActive) {
-				if (hasPulser())
-					return 9 * 16 + 2;
-				else
-					return 6 * 16 + 9;
-			} else if (hasPulser())
-				return 9 * 16 + 3;
-			else
-				return 6 * 16 + 10;
-		case AND_3:
-			if (!isGateActive)
-				return n * 16 + 4;
-			else
-				return n * 16 + 5;
-		case OR_3:
-			if (!isGateActive)
-				return n * 16 + 6;
-			else
-				return n * 16 + 7;
-		case AND_4:
-			if (!isGateActive)
-				return n * 16 + 8;
-			else
-				return n * 16 + 9;
-		case OR_4:
-			if (!isGateActive)
-				return n * 16 + 10;
-			else
-				return n * 16 + 11;
+	
+		if (!hasPulser()){
+			switch (kind){
+				case None: return 0;
+				case Single: return isGateActive ? GateIconProvider.Gate_Lit : GateIconProvider.Gate_Dark;
+				case AND_2: return isGateActive ? GateIconProvider.Gate_Iron_And_Lit : GateIconProvider.Gate_Iron_And_Dark;
+				case OR_2: return isGateActive ? GateIconProvider.Gate_Iron_Or_Lit : GateIconProvider.Gate_Iron_Or_Dark;
+				case AND_3: return isGateActive ? GateIconProvider.Gate_Gold_And_Lit : GateIconProvider.Gate_Gold_And_Dark;
+				case OR_3: return isGateActive ? GateIconProvider.Gate_Gold_Or_Lit : GateIconProvider.Gate_Gold_Or_Dark;
+				case AND_4: return isGateActive ? GateIconProvider.Gate_Diamond_And_Lit : GateIconProvider.Gate_Diamond_And_Dark;
+				case OR_4: return isGateActive ? GateIconProvider.Gate_Diamond_Or_Lit : GateIconProvider.Gate_Diamond_Or_Dark;
+			}
+		} else {
+			switch (kind){
+				case None: return 0; 
+				case Single: return isGateActive ? GateIconProvider.Gate_Autarchic_Lit : GateIconProvider.Gate_Autarchic_Dark;
+				case AND_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_And_Lit : GateIconProvider.Gate_Autarchic_Iron_And_Dark;
+				case OR_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_Or_Lit : GateIconProvider.Gate_Autarchic_Iron_Or_Dark;
+				case AND_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_And_Lit : GateIconProvider.Gate_Autarchic_Gold_And_Dark;
+				case OR_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_Or_Lit : GateIconProvider.Gate_Autarchic_Gold_Or_Dark;
+				case AND_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_And_Lit : GateIconProvider.Gate_Autarchic_Diamond_And_Dark;
+				case OR_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_Or_Lit : GateIconProvider.Gate_Autarchic_Diamond_Or_Dark;
+			}
 		}
 
 		return 0;
-	}
-
-	private int getTextureRow() {
-		if (hasPulser())
-			return 9;
-		else
-			return 8;
 	}
 
 	@Override

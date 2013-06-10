@@ -3,7 +3,7 @@
     <!-- Properties -->
     
     <property name="build.dir"           value="build"/>
-	<property name="src.dir"			 value="buildcraft.131" />
+	<property name="src.dir"			 value="buildcraft.mc15" />
 	<property name="lang.dir"			 value="buildcraft.localization" />
 	<property name="resource.dir"		 value="mc.devel" />
     
@@ -15,9 +15,9 @@
 
     <property name="clientsrc.dir"       value="${mcp.dir}/src/minecraft"/>
           
-	<property name="mc.version"			 value="1.4.7"/>
-    <property name="forge.version"		 value="6.6.0.507"/>
-    <property name="bc.version"          value="3.4.2"/>
+	<property name="mc.version"			 value="1.5.2"/>
+    <property name="forge.version"		 value="7.8.0.710"/>
+    <property name="bc.version"          value="3.6.0"/>
     <property name="bc.version.full"     value="${bc.version}"/>
     
     <echo message="Starting build for ${bc.version.full}"/>
@@ -30,6 +30,12 @@
     
     <target name="setup">
         
+		<!-- Pull localizations -->
+		<echo message="Pulling localizations..." />
+		<exec dir="${lang.dir}" executable="git" osfamily="windows" failonerror="true">
+			<arg line="pull" />
+		</exec>
+		
 		<echo message="Unpacking Forge..." />
         <unzip dest="${build.dir}">
             <fileset dir="${resource.dir}">
@@ -78,11 +84,11 @@
         
         <!-- Reobf -->
         <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c reobfuscate.bat"/>
+            <arg line="/c reobfuscate.bat --srgnames"/>
         </exec>
         
         <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-            <arg value="reobfuscate.sh" />
+            <arg value="reobfuscate.sh --srgnames" />
         </exec>
         
         <!-- Copy BC classes -->
@@ -94,8 +100,18 @@
         <copy todir="${classes.dir}/client">
             <fileset dir="${src.dir}/buildcraft_resources">
                 <exclude name="build.xml"/>
+            	<exclude name="build.number"/>
         	</fileset>
         </copy>
+        <copy todir="${classes.dir}/client" overwrite="true" failonerror="true">
+            <fileset dir="${src.dir}/buildcraft_resources">
+                <include name="mcmod.info"/>
+            </fileset>
+           	<filterset>
+        		<filter token="VERSION" value="${bc.version.full} (${build.number})" />
+            </filterset>
+        </copy>
+
     	<!-- Copy localizations -->
     	<copy todir="${classes.dir}/client">
     		<fileset dir="${lang.dir}">

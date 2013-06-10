@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileRefinery;
 
 public class GuiRefinery extends GuiAdvancedInterface {
@@ -43,20 +43,19 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtil.localize("tile.refineryBlock");
+		String title = StringUtils.localize("tile.refineryBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRenderer.drawString("->", 63, 59, 0x404040);
 		fontRenderer.drawString("<-", 106, 59, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/refinery_filter.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/refinery_filter.png");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

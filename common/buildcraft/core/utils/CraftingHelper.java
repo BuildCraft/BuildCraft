@@ -12,6 +12,7 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 
 public class CraftingHelper {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static IRecipe findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World)
     {
         int var3 = 0;

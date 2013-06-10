@@ -12,12 +12,15 @@ package buildcraft.silicon.gui;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
@@ -25,7 +28,7 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 
@@ -50,17 +53,18 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			drawBackground(x, y);
 
 			// Draw icon
-			drawIcon(DefaultProps.TEXTURE_ICONS, 0, x + 3, y + 4);
+			Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
+			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
 				return;
 
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.energy"), x + 22, y + 8, headerColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
 			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getRequiredEnergy()), x + 22, y + 32, textColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
 			fontRenderer.drawString(String.format("%2.1f MJ", assemblyTable.getStoredEnergy()), x + 22, y + 56, textColour);
-			fontRenderer.drawStringWithShadow(StringUtil.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
+			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
 			fontRenderer.drawString(String.format("%3.2f MJ/t", assemblyTable.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
@@ -131,17 +135,16 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
-		String title = StringUtil.localize("tile.assemblyTableBlock");
+		String title = StringUtils.localize("tile.assemblyTableBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 15, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 		drawForegroundSelection(par1, par2);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

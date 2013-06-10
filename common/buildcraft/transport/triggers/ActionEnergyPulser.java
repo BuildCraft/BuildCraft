@@ -1,24 +1,19 @@
 package buildcraft.transport.triggers;
 
-import buildcraft.api.gates.Action;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCAction;
 
-public class ActionEnergyPulser extends Action {
+public class ActionEnergyPulser extends BCAction {
 
 	public ActionEnergyPulser(int id) {
 		super(id);
 	}
 
 	@Override
-	public int getIndexInTexture() {
-		return 4 * 16 + 0;
+	public int getIconIndex() {
+		return ActionTriggerIconProvider.Trigger_Machine_Active;
 	}
-
-	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
-	}
-
+	
 	@Override
 	public String getDescription() {
 		return "Energy Pulser";

@@ -113,4 +113,10 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	}
 
+    public boolean isInvNameLocalized()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

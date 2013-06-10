@@ -16,10 +16,8 @@ import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
-import buildcraft.core.DefaultProps;
 
-public class TriggerLiquidContainer extends Trigger {
+public class TriggerLiquidContainer extends BCTrigger {
 
 	public enum State {
 		Empty, Contains, Space, Full
@@ -30,20 +28,6 @@ public class TriggerLiquidContainer extends Trigger {
 	public TriggerLiquidContainer(int id, State state) {
 		super(id);
 		this.state = state;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (state) {
-		case Empty:
-			return 2 * 16 + 0;
-		case Contains:
-			return 2 * 16 + 1;
-		case Space:
-			return 2 * 16 + 2;
-		default:
-			return 2 * 16 + 3;
-		}
 	}
 
 	@Override
@@ -69,7 +53,7 @@ public class TriggerLiquidContainer extends Trigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
 		if (tile instanceof ITankContainer) {
 			ITankContainer container = (ITankContainer) tile;
 
@@ -137,7 +121,16 @@ public class TriggerLiquidContainer extends Trigger {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	public int getIconIndex() {
+		switch (state) {
+		case Empty:
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Empty;
+		case Contains:
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Contains;
+		case Space:
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Space;
+		default:
+			return ActionTriggerIconProvider.Trigger_LiquidContainer_Full;
+		}
 	}
 }

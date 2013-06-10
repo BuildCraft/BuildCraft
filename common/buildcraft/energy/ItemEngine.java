@@ -15,7 +15,7 @@ import buildcraft.core.ItemBlockBuildCraft;
 public class ItemEngine extends ItemBlockBuildCraft {
 
 	public ItemEngine(int i) {
-		super(i, "engine");
+		super(i);
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}
@@ -25,8 +25,8 @@ public class ItemEngine extends ItemBlockBuildCraft {
 		return i;
 	}
 
-	@SuppressWarnings({ "all" })
-	public String getItemNameIS(ItemStack itemstack) {
+	@Override
+	public String getUnlocalizedName(ItemStack itemstack) {
 		if (itemstack.getItemDamage() == 0)
 			return "tile.engineWood";
 		else if (itemstack.getItemDamage() == 1)

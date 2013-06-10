@@ -10,8 +10,6 @@ package buildcraft.core.utils;
 
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +22,7 @@ import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.BuildCraftAPI;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class BlockUtil {
 
@@ -31,6 +30,9 @@ public class BlockUtil {
 		Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
 		if (block == null)
+			return null;
+
+		if (block.isAirBlock(world, i, j, k))
 			return null;
 
 		int meta = world.getBlockMetadata(i, j, k);
@@ -61,7 +63,7 @@ public class BlockUtil {
 			}
 		}
 
-		world.setBlockWithNotify(x, y, z, 0);
+		world.setBlock(x, y, z, 0);
 	}
 
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
@@ -99,6 +101,7 @@ public class BlockUtil {
 	/**
 	 * Create an explosion which only affects a single block.
 	 */
+	@SuppressWarnings("unchecked")
 	public static void explodeBlock(World world, int x, int y, int z) {
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) return;
 

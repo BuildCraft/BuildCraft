@@ -14,16 +14,20 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ITankContainer;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportLiquids;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
@@ -31,8 +35,9 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	int liquidToExtract;
 
 	private IPowerProvider powerProvider;
-	protected int baseTexture = 7 * 16 + 0;
-	protected int plainTexture = 1 * 16 + 15;
+
+	protected int standardIconIndex = PipeIconProvider.PipeLiquidsWood_Standard;
+	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
 
 	long lastMining = 0;
 	boolean lastPower = false;
@@ -120,26 +125,27 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
+	public int getIconIndex(ForgeDirection direction) {
 		if (direction == ForgeDirection.UNKNOWN)
-			return baseTexture;
+			return standardIconIndex;
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
 			if (metadata == direction.ordinal())
-				return plainTexture;
+				return solidIconIndex;
 			else
-				return baseTexture;
+				return standardIconIndex;
 		}
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		return getPowerProvider().getMaxEnergyReceived();
 	}
 

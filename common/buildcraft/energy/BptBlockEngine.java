@@ -17,6 +17,7 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.Version;
 
+@Deprecated
 public class BptBlockEngine extends BptBlock {
 
 	public BptBlockEngine(int blockId) {
@@ -41,7 +42,7 @@ public class BptBlockEngine extends BptBlock {
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+		context.world().setBlock(slot.x, slot.y, slot.z, slot.blockId, slot.meta,1);
 
 		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
 

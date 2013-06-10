@@ -14,11 +14,13 @@ import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
@@ -28,15 +30,21 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockEngine extends BlockContainer {
-
+	
+	private static Icon woodTexture;
+	private static Icon stoneTexture;
+	private static Icon ironTexture;
+	
 	public BlockEngine(int i) {
 		super(i, Material.iron);
 
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-		setBlockName("engineBlock");
+		setUnlocalizedName("engineBlock");
 	}
 
 	@Override
@@ -47,6 +55,15 @@ public class BlockEngine extends BlockContainer {
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+		woodTexture = par1IconRegister.registerIcon("buildcraft:engineWoodBottom");
+		stoneTexture = par1IconRegister.registerIcon("buildcraft:engineStoneBottom");
+		ironTexture = par1IconRegister.registerIcon("buildcraft:engineIronBottom");
 	}
 
 	@Override
@@ -168,4 +185,21 @@ public class BlockEngine extends BlockContainer {
 			tile.checkRedstonePower();
 		}
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon(int side, int meta)
+	{
+		switch (meta)
+		{
+			case 0:
+				return woodTexture;
+			case 1:
+				return stoneTexture;
+			case 2:
+				return ironTexture;
+			default:
+				return null;
+		}
+	} 
 }

@@ -197,7 +197,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 						path = ((TilePathMarker) tile).getPath();
 
 						for (BlockIndex b : path) {
-							worldObj.setBlockWithNotify(b.i, b.j, b.k, 0);
+							worldObj.setBlock(b.i, b.j, b.k, 0);
 
 							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.i, b.j, b.k, BuildCraftBuilders.pathMarkerBlock.blockID, 0);
 						}
@@ -442,6 +442,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public int getInventoryStackLimit() {
 		return 64;
 	}
+	
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
@@ -561,7 +567,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		if ((bluePrintBuilder != null || currentPathIterator != null) && !done)
 			return powerProvider.getMaxEnergyReceived();
 		else

@@ -142,32 +142,32 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, -1F, 0.0F);
-		renderblocks.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, i));
+		renderblocks.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(0, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		renderblocks.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, i));
+		renderblocks.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(1, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, -1F);
-		renderblocks.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, i));
+		renderblocks.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(2, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		renderblocks.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, i));
+		renderblocks.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(3, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		renderblocks.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, i));
+		renderblocks.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(4, i));
 		tessellator.draw();
 
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		renderblocks.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, i));
+		renderblocks.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, i));
 		tessellator.draw();
 	}
 
@@ -179,13 +179,13 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 	/*
 	 * @Override public void handlePacket(Packet230ModLoader packet) { switch (PacketIds.values()[packet.packetType]) { case AssemblyTableSelect: GuiScreen
 	 * screen = ModLoader.getMinecraftInstance().currentScreen;
-	 * 
+	 *
 	 * if (screen instanceof GuiAssemblyTable) { GuiAssemblyTable gui = (GuiAssemblyTable) screen; SelectionMessage message = new SelectionMessage();
-	 * 
+	 *
 	 * TileAssemblyTable.selectionMessageWrapper.updateFromPacket(message, packet);
-	 * 
+	 *
 	 * gui.handleSelectionMessage (message); }
-	 * 
+	 *
 	 * break; } }
 	 */
 

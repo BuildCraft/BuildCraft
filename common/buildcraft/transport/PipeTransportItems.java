@@ -18,7 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,7 +43,10 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportContent;
+import buildcraft.transport.network.PacketPipeTransportNBT;
+import buildcraft.transport.network.PacketSimpleId;
 import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 public class PipeTransportItems extends PipeTransport {
 
@@ -304,11 +309,7 @@ public class PipeTransportItems extends PipeTransport {
 				}
 
 			} else if (!data.toCenter && endReached(pos)) {
-				Position destPos = new Position(xCoord, yCoord, zCoord, data.output);
-
-				destPos.moveForwards(1.0);
-
-				TileEntity tile = worldObj.getBlockTileEntity((int) destPos.x, (int) destPos.y, (int) destPos.z);
+				TileEntity tile = container.getTile(data.output);
 
 				if (travelHook != null) {
 					travelHook.endReached(this, data, tile);
@@ -449,7 +450,19 @@ public class PipeTransportItems extends PipeTransport {
 			item = data.item;
 		}
 
-		item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
+		if(item.getItemStack() == null) {
+			item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
+			if(packet.hasNBT()) {
+				PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, this.xCoord, this.yCoord, this.zCoord, packet.getEntityId()).getPacket());
+			}
+		} else {
+			if(item.getItemStack().itemID != packet.getItemId() || item.getItemStack().stackSize != packet.getStackSize() || item.getItemStack().getItemDamage() != packet.getItemDamage() || item.getItemStack().hasTagCompound() != packet.hasNBT()) {
+				item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
+				if(packet.hasNBT()) {
+					PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, this.xCoord, this.yCoord, this.zCoord, packet.getEntityId()).getPacket());
+				}		
+			}
+		}
 
 		if (item.getPosition() == null) {
 			item.setPosition(packet.getPosX(), packet.getPosY(), packet.getPosZ());
@@ -467,6 +480,24 @@ public class PipeTransportItems extends PipeTransport {
 		travelingEntities.put(item.getEntityId(), data);
 	}
 
+	/**
+	 * Handles the NBT tag Request from player of the entityId
+	 */
+	public void handleNBTRequestPacket(EntityPlayer player, int entityId) {
+		EntityData data = travelingEntities.get(entityId);
+		if(data == null || data.item == null || data.item.getItemStack() == null) return;
+		PacketDispatcher.sendPacketToPlayer(new PacketPipeTransportNBT(PacketIds.PIPE_ITEM_NBT, this.xCoord, this.yCoord, this.zCoord, entityId, data.item.getItemStack().getTagCompound()).getPacket(), (Player) player);
+	}
+
+	/**
+	 * Handles the Item NBT tag information of the packet
+	 */
+	public void handleNBTPacket(PacketPipeTransportNBT packet) {
+		EntityData data = travelingEntities.get(packet.getEntityId());
+		if(data == null || data.item == null || data.item.getItemStack() == null) return;
+		data.item.getItemStack().setTagCompound(packet.getTagCompound());
+	}
+	
 	/**
 	 * Creates a packet describing a stack of items inside a pipe.
 	 *
@@ -495,9 +526,15 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	@Override
-	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
-		return tile instanceof TileGenericPipe || tile instanceof IPipeEntry || tile instanceof ISpecialInventory
-				|| (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) || (tile instanceof IMachine && ((IMachine) tile).manageSolids());
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems))
+				return false;
+		}
+
+		return tile instanceof TileGenericPipe || tile instanceof IPipeEntry || tile instanceof ISpecialInventory || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
+				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 
 	@Override
@@ -612,9 +649,9 @@ public class PipeTransportItems extends PipeTransport {
 
 		travelingEntities.clear();
 	}
-
+	
 	@Override
-	public boolean allowsConnect(PipeTransport with) {
-		return with instanceof PipeTransportItems;
+	public boolean delveIntoUnloadedChunks() {
+		return true;
 	}
 }

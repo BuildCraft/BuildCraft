@@ -5,6 +5,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
 import buildcraft.transport.render.PipeItemRenderer;
 import buildcraft.transport.render.PipeWorldRenderer;
+import buildcraft.transport.render.PlugItemRenderer;
 import buildcraft.transport.render.RenderPipe;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -13,6 +14,7 @@ public class TransportProxyClient extends TransportProxy {
 	public final static PipeItemRenderer pipeItemRenderer = new PipeItemRenderer();
 	public final static PipeWorldRenderer pipeWorldRenderer = new PipeWorldRenderer();
 	public final static FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
+	public final static PlugItemRenderer plugItemRenderer = new PlugItemRenderer();
 
 	@Override
 	public void registerTileEntities() {
@@ -53,8 +55,14 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsSandstone.itemID, pipeItemRenderer);
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem.itemID, facadeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.plugItem.itemID, plugItemRenderer);
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
+	}
+	
+	@Override
+	public void setIconProviderFromPipe(ItemPipe item, Pipe dummyPipe) {
+		item.setPipesIcons(dummyPipe.getIconProvider());
 	}
 }

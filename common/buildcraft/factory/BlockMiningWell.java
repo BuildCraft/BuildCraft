@@ -12,19 +12,22 @@ package buildcraft.factory;
 import java.util.ArrayList;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockMiningWell extends BlockMachineRoot {
 
-	int textureFront, textureSides, textureBack, textureTop;
+	Icon textureFront, textureSides, textureBack, textureTop;
 
 	public BlockMiningWell(int i) {
 		super(i, Material.ground);
@@ -32,15 +35,10 @@ public class BlockMiningWell extends BlockMachineRoot {
 		setHardness(1.5F);
 		setResistance(10F);
 		setStepSound(soundStoneFootstep);
-
-		textureFront = 16 * 2 + 3;
-		textureSides = 16 * 2 + 5;
-		textureBack = 16 * 2 + 6;
-		textureTop = 16 * 2 + 4;
 	}
 
 	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+	public Icon getIcon(int i, int j) {
 		if (j == 0 && i == 3)
 			return textureFront;
 
@@ -57,10 +55,10 @@ public class BlockMiningWell extends BlockMachineRoot {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
 	}
 
 	@Override
@@ -72,7 +70,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 			if (pipeID != BuildCraftFactory.plainPipeBlock.blockID) {
 				break;
 			}
-			world.setBlockWithNotify(x, depth, z, 0);
+			world.setBlock(x, depth, z, 0);
 		}
 	}
 
@@ -81,14 +79,19 @@ public class BlockMiningWell extends BlockMachineRoot {
 		return new TileMiningWell();
 	}
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
+        textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
+        textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
+        textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
 	}
 }

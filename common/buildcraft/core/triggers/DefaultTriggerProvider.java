@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
@@ -18,8 +19,9 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 
 	@Override
 	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
-		if (tile instanceof IOverrideDefaultTriggers)
+		if (tile instanceof IOverrideDefaultTriggers) {
 			return ((IOverrideDefaultTriggers) tile).getTriggers();
+		}
 
 		LinkedList<ITrigger> res = new LinkedList<ITrigger>();
 
@@ -30,11 +32,14 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerFullInventory);
 		}
 
-		if (tile instanceof ITankContainer && ((ITankContainer) tile).getTanks(ForgeDirection.UNKNOWN).length > 0) {
-			res.add(BuildCraftCore.triggerEmptyLiquid);
-			res.add(BuildCraftCore.triggerContainsLiquid);
-			res.add(BuildCraftCore.triggerSpaceLiquid);
-			res.add(BuildCraftCore.triggerFullLiquid);
+		if (tile instanceof ITankContainer) {
+			ILiquidTank[] tanks = ((ITankContainer) tile).getTanks(ForgeDirection.UNKNOWN);
+			if (tanks != null && tanks.length > 0) {
+				res.add(BuildCraftCore.triggerEmptyLiquid);
+				res.add(BuildCraftCore.triggerContainsLiquid);
+				res.add(BuildCraftCore.triggerSpaceLiquid);
+				res.add(BuildCraftCore.triggerFullLiquid);
+			}
 		}
 
 		if (tile instanceof IMachine) {
@@ -54,5 +59,4 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 	public LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
 		return null;
 	}
-
 }

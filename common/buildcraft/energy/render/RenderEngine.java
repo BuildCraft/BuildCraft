@@ -1,19 +1,23 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.energy.render;
 
+import static net.minecraftforge.common.ForgeDirection.DOWN;
+import static net.minecraftforge.common.ForgeDirection.EAST;
+import static net.minecraftforge.common.ForgeDirection.NORTH;
+import static net.minecraftforge.common.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.ForgeDirection.UP;
+import static net.minecraftforge.common.ForgeDirection.WEST;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
@@ -30,12 +34,21 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	private ModelBase model = new ModelBase() {
 	};
-
 	private ModelRenderer box;
 	private ModelRenderer trunk;
 	private ModelRenderer movingBox;
 	private ModelRenderer chamber;
 	private String baseTexture;
+	private static final float[] angleMap = new float[6];
+
+	static {
+		angleMap[EAST.ordinal()] = (float) -Math.PI / 2;
+		angleMap[WEST.ordinal()] = (float) Math.PI / 2;
+		angleMap[UP.ordinal()] = 0;
+		angleMap[DOWN.ordinal()] = (float) Math.PI;
+		angleMap[SOUTH.ordinal()] = (float) Math.PI / 2;
+		angleMap[NORTH.ordinal()] = (float) -Math.PI / 2;
+	}
 
 	public RenderEngine() {
 
@@ -68,6 +81,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	public RenderEngine(String baseTexture) {
 		this();
 		this.baseTexture = baseTexture;
+		setTileEntityRenderer(TileEntityRenderer.instance);
 	}
 
 	@Override
@@ -87,11 +101,16 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	private void render(EnergyStage energy, float progress, ForgeDirection orientation, String baseTexture, double x, double y, double z) {
 
-		if (BuildCraftCore.render == RenderMode.NoDynamic)
+		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;
+		}
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /* GL_LIGHTING */);
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glColor3f(1, 1, 1);
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
@@ -103,35 +122,21 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 			step = progress * 2F * 7.99F;
 		}
 
-		float[] angle = { 0, 0, 0 };
-		float[] translate = { 0, 0, 0 };
 		float translatefact = step / 16;
 
+		float[] angle = {0, 0, 0};
+		float[] translate = {orientation.offsetX, orientation.offsetY, orientation.offsetZ};
+
 		switch (orientation) {
-		case EAST:
-			angle[2] = (float) -Math.PI / 2;
-			translate[0] = 1;
-			break;
-		case WEST:
-			angle[2] = (float) Math.PI / 2;
-			translate[0] = -1;
-			break;
-		case UP:
-			translate[1] = 1;
-			break;
-		case DOWN:
-			angle[2] = (float) Math.PI;
-			translate[1] = -1;
-			break;
-		case SOUTH:
-			angle[0] = (float) Math.PI / 2;
-			translate[2] = 1;
-			break;
-		case NORTH:
-			angle[0] = (float) -Math.PI / 2;
-			translate[2] = -1;
-			break;
-		default:
+			case EAST:
+			case WEST:
+			case DOWN:
+				angle[2] = angleMap[orientation.ordinal()];
+				break;
+			case SOUTH:
+			case NORTH:
+				angle[0] = angleMap[orientation.ordinal()];
+				break;
 		}
 
 		box.rotateAngleX = angle[0];
@@ -152,7 +157,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float factor = (float) (1.0 / 16.0);
 
-		ForgeHooksClient.bindTexture(baseTexture, 0);
+		bindTextureByName(baseTexture);
 
 		box.render(factor);
 
@@ -160,7 +165,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png", 0);
+		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
 
 		float chamberf = 2F / 16F;
 
@@ -176,25 +181,25 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		String texture = "";
 
 		switch (energy) {
-		case Blue:
-			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png";
-			break;
-		case Green:
-			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png";
-			break;
-		case Yellow:
-			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png";
-			break;
-		default:
-			texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png";
-			break;
+			case Blue:
+				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png";
+				break;
+			case Green:
+				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png";
+				break;
+			case Yellow:
+				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png";
+				break;
+			default:
+				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png";
+				break;
 		}
 
-		ForgeHooksClient.bindTexture(texture, 0);
+		bindTextureByName(texture);
 
 		trunk.render(factor);
 
-		GL11.glEnable(2896 /* GL_LIGHTING */);
+		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
 }

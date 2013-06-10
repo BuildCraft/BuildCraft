@@ -8,28 +8,29 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.inventory.ISelectiveInventory;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.inventory.ISelectiveInventory;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.SimpleInventory;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory, IClientState {
 
@@ -39,8 +40,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
 		super(transport, new PipeLogicEmerald(), itemID);
 
-		baseTexture = 6 * 16 + 13;
-		plainTexture = baseTexture + 1;
+		standardIconIndex = PipeIconProvider.PipeItemsEmerald_Standard;
+		solidIconIndex = PipeIconProvider.PipeAllEmerald_Solid;
 	}
 
 	public PipeItemsEmerald(int itemID) {
@@ -74,7 +75,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	@Override
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
-		// ISELECTIVEINVENTORY
+		/* ISELECTIVEINVENTORY */
 		if (inventory instanceof ISelectiveInventory) {
 			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored());
 			if (doRemove) {
@@ -86,59 +87,43 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				incrementFilter();
 			}
 			return stacks;
-		}
 
-
-		// ISPECIALINVENTORY
-		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
-			if (stacks != null) {
-				for (ItemStack stack : stacks) {
-					if(stack == null)
-						continue;
-					
-					boolean matches = false;
-					for (int i = 0; i < filters.getSizeInventory(); i++) {
-						ItemStack filter = filters.getStackInSlot(i);
-						if (filter != null && filter.isItemEqual(stack)) {
-							matches = true;
-							break;
-						}
-					}
-					if (!matches) {
-						return null;
-					}
-				}
-				if (doRemove) {
-					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
+		/* ISPECIALINVENTORY */
+		} else if (inventory instanceof ISpecialInventory) {
+				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
+				if (stacks != null) {
 					for (ItemStack stack : stacks) {
-						if (stack != null) {
-							getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+						if(stack == null)
+							continue;
+
+						boolean matches = false;
+						for (int i = 0; i < filters.getSizeInventory(); i++) {
+							ItemStack filter = filters.getStackInSlot(i);
+							if (filter != null && filter.isItemEqual(stack)) {
+								matches = true;
+								break;
+							}
+						}
+						if (!matches) {
+							return null;
+						}
+					}
+					if (doRemove) {
+						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
+						for (ItemStack stack : stacks) {
+							if (stack != null) {
+								getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+							}
 						}
 					}
 				}
-			}
-			return stacks;
-		}
+				return stacks;
 
-		if (inventory instanceof ISidedInventory) {
-			ISidedInventory sidedInv = (ISidedInventory) inventory;
-
-			int first = sidedInv.getStartInventorySide(from);
-			int last = first + sidedInv.getSizeInventorySide(from) - 1;
-
-			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, first, last);
-
-			if (result != null) {
-				return new ItemStack[]{result};
-			}
 		} else {
+
 			// This is a generic inventory
 			IInventory inv = Utils.getInventory(inventory);
-
-			ItemStack result = checkExtractGeneric(inv, doRemove, from, 0, inv.getSizeInventory() - 1);
+			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
 			if (result != null) {
 				return new ItemStack[]{result};
@@ -146,6 +131,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 		}
 
 		return null;
+
 	}
 
 	private void incrementFilter() {
@@ -166,8 +152,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	}
 
 	@Override
-	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from, int start, int stop) {
-		for (int i = start; i <= stop; ++i) {
+	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack != null && stack.stackSize > 0) {
 				ItemStack filter = getCurrentFilter();
@@ -175,6 +161,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 					return null;
 				}
 				if (!filter.isItemEqual(stack)) {
+					continue;
+				}
+				if (!inventory.canExtractItem(i, stack, from.ordinal())) {
 					continue;
 				}
 				if (doRemove) {
@@ -191,15 +180,17 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 	/* SAVING & LOADING */
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		super.readFromNBT(nbttagcompound);
-		filters.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		filters.readFromNBT(nbt);
+		currentFilter = nbt.getInteger("currentFilter");
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
-		filters.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		filters.writeToNBT(nbt);
+		nbt.setInteger("currentFilter", currentFilter);
 	}
 
 	// ICLIENTSTATE
@@ -292,5 +283,17 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 
+	}
+
+	@Override
+	public boolean isInvNameLocalized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

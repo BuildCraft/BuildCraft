@@ -17,6 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * This class records a slot, either from a blueprint or from a block placed in the world.
  */
+
+@Deprecated
 public class BptSlotInfo {
 
 	public int blockId = 0;

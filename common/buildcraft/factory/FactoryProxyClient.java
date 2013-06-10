@@ -2,8 +2,11 @@ package buildcraft.factory;
 
 import java.lang.reflect.Method;
 
+import net.minecraft.util.Icon;
+import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.core.EntityBlock;
 import buildcraft.core.render.RenderVoid;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
@@ -15,7 +18,11 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class FactoryProxyClient extends FactoryProxy {
-	@Override
+	public static Icon pumpTexture;
+    public static Icon drillTexture;
+    public static Icon drillHeadTexture;
+
+    @Override
 	public void initializeTileEntities() {
 		super.initializeTileEntities();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
@@ -45,4 +52,28 @@ public class FactoryProxyClient extends FactoryProxy {
 			BuildCraftCore.bcLog.fine("NEI not detected.");
 		}
 	}
+
+	@Override
+	public EntityBlock newPumpTube(World w)
+	{
+	    EntityBlock eb = super.newPumpTube(w);
+	    eb.texture = pumpTexture;
+	    return eb;
+	}
+
+	@Override
+	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e)
+	{
+	    EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
+        eb.texture = drillTexture;
+        return eb;
+	}
+
+	@Override
+    public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e)
+    {
+        EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
+        eb.texture = drillHeadTexture;
+        return eb;
+    }
 }

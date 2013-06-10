@@ -14,27 +14,32 @@ import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
-import net.minecraft.command.CommandHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.gates.Action;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.api.gates.Trigger;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
+import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.SpringPopulate;
@@ -48,6 +53,9 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.triggers.ActionRedstoneOutput;
+import buildcraft.core.triggers.ActionTriggerIconProvider;
+import buildcraft.core.triggers.BCAction;
+import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
 import buildcraft.core.triggers.TriggerInventory;
@@ -72,9 +80,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[6.5.0.0,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[7.7.2.682,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {
@@ -104,7 +112,7 @@ public class BuildCraftCore {
 	public static boolean continuousCurrentModel;
 
 	public static Block springBlock;
-	
+
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -112,33 +120,40 @@ public class BuildCraftCore {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 
-	public static int redLaserTexture;
-	public static int blueLaserTexture;
-	public static int stripesLaserTexture;
-	public static int transparentTexture;
+	@SideOnly(Side.CLIENT)
+	public static Icon redLaserTexture;
+    @SideOnly(Side.CLIENT)
+	public static Icon blueLaserTexture;
+    @SideOnly(Side.CLIENT)
+	public static Icon stripesLaserTexture;
+    @SideOnly(Side.CLIENT)
+	public static Icon transparentTexture;
+
+    @SideOnly(Side.CLIENT)
+    public static IIconProvider iconProvider;
 
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
 	public static int oilModel;
 
-	public static Trigger triggerMachineActive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_ACTIVE, true);
-	public static Trigger triggerMachineInactive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_INACTIVE, false);
-	public static Trigger triggerEmptyInventory = new TriggerInventory(DefaultProps.TRIGGER_EMPTY_INVENTORY, TriggerInventory.State.Empty);
-	public static Trigger triggerContainsInventory = new TriggerInventory(DefaultProps.TRIGGER_CONTAINS_INVENTORY, TriggerInventory.State.Contains);
-	public static Trigger triggerSpaceInventory = new TriggerInventory(DefaultProps.TRIGGER_SPACE_INVENTORY, TriggerInventory.State.Space);
-	public static Trigger triggerFullInventory = new TriggerInventory(DefaultProps.TRIGGER_FULL_INVENTORY, TriggerInventory.State.Full);
-	public static Trigger triggerEmptyLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_EMPTY_LIQUID, TriggerLiquidContainer.State.Empty);
-	public static Trigger triggerContainsLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_CONTAINS_LIQUID, TriggerLiquidContainer.State.Contains);
-	public static Trigger triggerSpaceLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_SPACE_LIQUID, TriggerLiquidContainer.State.Space);
-	public static Trigger triggerFullLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerLiquidContainer.State.Full);
-	public static Trigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
-	public static Trigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
+	public static BCTrigger triggerMachineActive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_ACTIVE, true);
+	public static BCTrigger triggerMachineInactive = new TriggerMachine(DefaultProps.TRIGGER_MACHINE_INACTIVE, false);
+	public static BCTrigger triggerEmptyInventory = new TriggerInventory(DefaultProps.TRIGGER_EMPTY_INVENTORY, TriggerInventory.State.Empty);
+	public static BCTrigger triggerContainsInventory = new TriggerInventory(DefaultProps.TRIGGER_CONTAINS_INVENTORY, TriggerInventory.State.Contains);
+	public static BCTrigger triggerSpaceInventory = new TriggerInventory(DefaultProps.TRIGGER_SPACE_INVENTORY, TriggerInventory.State.Space);
+	public static BCTrigger triggerFullInventory = new TriggerInventory(DefaultProps.TRIGGER_FULL_INVENTORY, TriggerInventory.State.Full);
+	public static BCTrigger triggerEmptyLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_EMPTY_LIQUID, TriggerLiquidContainer.State.Empty);
+	public static BCTrigger triggerContainsLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_CONTAINS_LIQUID, TriggerLiquidContainer.State.Contains);
+	public static BCTrigger triggerSpaceLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_SPACE_LIQUID, TriggerLiquidContainer.State.Space);
+	public static BCTrigger triggerFullLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerLiquidContainer.State.Full);
+	public static BCTrigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
+	public static BCTrigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
 
-	public static Action actionRedstone = new ActionRedstoneOutput(DefaultProps.ACTION_REDSTONE);
-	public static Action actionOn = new ActionMachineControl(DefaultProps.ACTION_ON, Mode.On);
-	public static Action actionOff = new ActionMachineControl(DefaultProps.ACTION_OFF, Mode.Off);
-	public static Action actionLoop = new ActionMachineControl(DefaultProps.ACTION_LOOP, Mode.Loop);
+	public static BCAction actionRedstone = new ActionRedstoneOutput(DefaultProps.ACTION_REDSTONE);
+	public static BCAction actionOn = new ActionMachineControl(DefaultProps.ACTION_ON, Mode.On);
+	public static BCAction actionOff = new ActionMachineControl(DefaultProps.ACTION_OFF, Mode.Off);
+	public static BCAction actionLoop = new ActionMachineControl(DefaultProps.ACTION_LOOP, Mode.Loop);
 
 	public static boolean loadDefaultRecipes = true;
 	public static boolean forcePneumaticPower = true;
@@ -147,6 +162,8 @@ public class BuildCraftCore {
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
 	public static Logger bcLog = Logger.getLogger("Buildcraft");
+
+	public IIconProvider actionTriggerIconProvider = new ActionTriggerIconProvider();
 
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
@@ -164,11 +181,6 @@ public class BuildCraftCore {
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
-
-			redLaserTexture = 0 * 16 + 2;
-			blueLaserTexture = 0 * 16 + 1;
-			stripesLaserTexture = 0 * 16 + 3;
-			transparentTexture = 0 * 16 + 0;
 
 			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
 					DefaultProps.CURRENT_CONTINUOUS);
@@ -202,7 +214,7 @@ public class BuildCraftCore {
 
 			String powerFrameworkClassName = "buildcraft.energy.PneumaticPowerFramework";
 			if (!forcePneumaticPower) {
-				powerFrameworkClassName = powerFrameworkClass.value;
+				powerFrameworkClassName = powerFrameworkClass.getString();
 			}
 			try {
 				PowerFramework.currentFramework = (PowerFramework) Class.forName(powerFrameworkClassName).getConstructor().newInstance();
@@ -213,11 +225,12 @@ public class BuildCraftCore {
 
 			Property wrenchId = BuildCraftCore.mainConfiguration.getItem("wrench.id", DefaultProps.WRENCH_ID);
 
-			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setIconIndex(0 * 16 + 2).setItemName("wrenchItem");
+			wrenchItem = (new ItemWrench(wrenchId.getInt(DefaultProps.WRENCH_ID))).setUnlocalizedName("wrenchItem");
 			LanguageRegistry.addName(wrenchItem, "Wrench");
+			CoreProxy.proxy.registerItem(wrenchItem);
 
 			Property springId = BuildCraftCore.mainConfiguration.getBlock("springBlock.id", DefaultProps.SPRING_ID);
-			
+
 			Property woodenGearId = BuildCraftCore.mainConfiguration.getItem("woodenGearItem.id", DefaultProps.WOODEN_GEAR_ID);
 			Property stoneGearId = BuildCraftCore.mainConfiguration.getItem("stoneGearItem.id", DefaultProps.STONE_GEAR_ID);
 			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
@@ -229,26 +242,36 @@ public class BuildCraftCore {
 			BuildCraftCore.modifyWorld = modifyWorld.getBoolean(true);
 
 			if(BuildCraftCore.modifyWorld) {
-				springBlock = new BlockSpring(Integer.parseInt(springId.value)).setBlockName("eternalSpring");
-				GameRegistry.registerBlock(springBlock, "eternalSpring");
+				springBlock = new BlockSpring(springId.getInt()).setUnlocalizedName("eternalSpring");
+				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
-			
-			woodenGearItem = (new ItemBuildCraft(Integer.parseInt(woodenGearId.value))).setIconIndex(1 * 16 + 0).setItemName("woodenGearItem");
+
+			woodenGearItem = (new ItemBuildCraft(woodenGearId.getInt())).setUnlocalizedName("woodenGearItem");
 			LanguageRegistry.addName(woodenGearItem, "Wooden Gear");
+			CoreProxy.proxy.registerItem(woodenGearItem);
 
-			stoneGearItem = (new ItemBuildCraft(Integer.parseInt(stoneGearId.value))).setIconIndex(1 * 16 + 1).setItemName("stoneGearItem");
+			stoneGearItem = (new ItemBuildCraft(stoneGearId.getInt())).setUnlocalizedName("stoneGearItem");
 			LanguageRegistry.addName(stoneGearItem, "Stone Gear");
+			CoreProxy.proxy.registerItem(stoneGearItem);
 
-			ironGearItem = (new ItemBuildCraft(Integer.parseInt(ironGearId.value))).setIconIndex(1 * 16 + 2).setItemName("ironGearItem");
+			ironGearItem = (new ItemBuildCraft(ironGearId.getInt())).setUnlocalizedName("ironGearItem");
 			LanguageRegistry.addName(ironGearItem, "Iron Gear");
+			CoreProxy.proxy.registerItem(ironGearItem);
 
-			goldGearItem = (new ItemBuildCraft(Integer.parseInt(goldenGearId.value))).setIconIndex(1 * 16 + 3).setItemName("goldGearItem");
+			goldGearItem = (new ItemBuildCraft(goldenGearId.getInt())).setUnlocalizedName("goldGearItem");
 			LanguageRegistry.addName(goldGearItem, "Gold Gear");
+			CoreProxy.proxy.registerItem(goldGearItem);
 
-			diamondGearItem = (new ItemBuildCraft(Integer.parseInt(diamondGearId.value))).setIconIndex(1 * 16 + 4).setItemName("diamondGearItem");
+			diamondGearItem = (new ItemBuildCraft(diamondGearId.getInt())).setUnlocalizedName("diamondGearItem");
 			LanguageRegistry.addName(diamondGearItem, "Diamond Gear");
+			CoreProxy.proxy.registerItem(diamondGearItem);
+
+			MinecraftForge.EVENT_BUS.register(this);
+
 		} finally {
-			mainConfiguration.save();
+			if (mainConfiguration.hasChanged()) {
+				mainConfiguration.save();
+			}
 		}
 	}
 
@@ -292,6 +315,7 @@ public class BuildCraftCore {
 
 		BuildCraftAPI.softBlocks[Block.snow.blockID] = true;
 		BuildCraftAPI.softBlocks[Block.vine.blockID] = true;
+		BuildCraftAPI.softBlocks[Block.fire.blockID] = true;
 		TickRegistry.registerTickHandler(new TickHandlerCoreClient(), Side.CLIENT);
 
 	}
@@ -299,6 +323,22 @@ public class BuildCraftCore {
 	@ServerStarting
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandBuildCraft());
+	}
+
+	@ForgeSubscribe
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Pre event){
+		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
+			iconProvider = new CoreIconProvider();
+			iconProvider.registerIcons(event.map);
+			actionTriggerIconProvider.registerIcons(event.map);
+		} else if (event.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+	        BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
+	        BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
+	        BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");
+	        BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraft:blockTransparentLaser");
+		}
+
 	}
 
 	public void loadRecipes() {

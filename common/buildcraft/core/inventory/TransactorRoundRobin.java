@@ -1,5 +1,6 @@
 package buildcraft.core.inventory;
 
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
@@ -13,16 +14,15 @@ public class TransactorRoundRobin extends TransactorSimple {
 	@Override
 	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
 
-		int oneLessThanStackSize = stack.stackSize - 1;
 		int added = 0;
 
 		for (int itemLoop = 0; itemLoop < stack.stackSize; ++itemLoop) { // add 1 item n times.
 
-			int minSimilar = Integer.MAX_VALUE;
-			int minSlot = -1;
+			int smallestStackSize = Integer.MAX_VALUE;
+			IInvSlot minSlot = null;
 
-			for (int j = 0; j < inventory.getSizeInventory() && minSimilar > 1; ++j) {
-				ItemStack stackInInventory = inventory.getStackInSlot(j);
+			for (IInvSlot slot : InventoryIterator.getIterable(inventory, orientation)) {
+				ItemStack stackInInventory = slot.getStackInSlot();
 
 				if (stackInInventory == null) {
 					continue;
@@ -36,15 +36,17 @@ public class TransactorRoundRobin extends TransactorSimple {
 					continue;
 				}
 
-				if (stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID && stackInInventory.getItemDamage() == stack.getItemDamage()
-						&& stackInInventory.stackSize < minSimilar) {
-					minSimilar = stackInInventory.stackSize;
-					minSlot = j;
+				if (MERGE_HELPER.canStacksMerge(stack, stackInInventory) && stackInInventory.stackSize < smallestStackSize) {
+					smallestStackSize = stackInInventory.stackSize;
+					minSlot = slot;
+				}
+				if (smallestStackSize <= 1) {
+					break;
 				}
 			}
 
-			if (minSlot != -1) {
-				added += addToSlot(minSlot, stack, oneLessThanStackSize, doAdd); // add 1 item n times, into the selected slot
+			if (minSlot != null) {
+				added += addToSlot(minSlot, stack, stack.stackSize - 1, doAdd); // add 1 item n times, into the selected slot
 			} else {
 				break;
 			}
@@ -53,5 +55,4 @@ public class TransactorRoundRobin extends TransactorSimple {
 
 		return added;
 	}
-
 }

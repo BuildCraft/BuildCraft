@@ -30,7 +30,7 @@ public class BptItemPipeWooden extends BptItem {
 
 	@Override
 	public void postProcessing(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockMetadata(slot.x, slot.y, slot.z, slot.meta);
+		context.world().setBlockMetadataWithNotify(slot.x, slot.y, slot.z, slot.meta,0);
 	}
 
 	@Override

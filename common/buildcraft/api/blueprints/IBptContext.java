@@ -17,6 +17,8 @@ import buildcraft.api.core.Position;
 /**
  * This interface provide contextual information when building or initializing blueprint slots.
  */
+
+@Deprecated
 public interface IBptContext {
 
 	/**

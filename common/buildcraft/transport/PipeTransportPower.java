@@ -58,7 +58,13 @@ public class PipeTransportPower extends PipeTransport {
 	SafeTimeTracker tracker = new SafeTimeTracker();
 
 	@Override
-	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower))
+				return false;
+		}
+
 		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
 	}
 
@@ -161,7 +167,7 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
-				int request = receptor.powerRequest();
+				int request = receptor.powerRequest(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
 
 				if (request > 0) {
 					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
@@ -244,7 +250,7 @@ public class PipeTransportPower extends PipeTransport {
 
 			if (internalNextPower[from.ordinal()] >= MAX_POWER_INTERNAL) {
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, false);
-				worldObj.setBlockWithNotify(xCoord, yCoord, zCoord, 0);
+				worldObj.setBlock(xCoord, yCoord, zCoord, 0);
 			}
 		}
 	}
@@ -291,11 +297,6 @@ public class PipeTransportPower extends PipeTransport {
 
 	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
-	}
-
-	@Override
-	public boolean allowsConnect(PipeTransport with) {
-		return with instanceof PipeTransportPower;
 	}
 
 	/**

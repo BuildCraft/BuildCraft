@@ -3,6 +3,7 @@ package buildcraft.core.render;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
@@ -62,27 +63,27 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 			tessellator.startDrawingQuads();
 			tessellator.setNormal(0.0F, -1F, 0.0F);
-			renderer.renderBottomFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(0, metadata));
+			renderer.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(0, metadata));
 			tessellator.draw();
 			tessellator.startDrawingQuads();
 			tessellator.setNormal(0.0F, 1.0F, 0.0F);
-			renderer.renderTopFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(1, metadata));
+			renderer.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(1, metadata));
 			tessellator.draw();
 			tessellator.startDrawingQuads();
 			tessellator.setNormal(0.0F, 0.0F, -1F);
-			renderer.renderEastFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(2, metadata));
+			renderer.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(2, metadata));
 			tessellator.draw();
 			tessellator.startDrawingQuads();
 			tessellator.setNormal(0.0F, 0.0F, 1.0F);
-			renderer.renderWestFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(3, metadata));
+			renderer.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(3, metadata));
 			tessellator.draw();
 			tessellator.startDrawingQuads();
 			tessellator.setNormal(-1F, 0.0F, 0.0F);
-			renderer.renderNorthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(4, metadata));
+			renderer.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(4, metadata));
 			tessellator.draw();
 			tessellator.startDrawingQuads();
 			tessellator.setNormal(1.0F, 0.0F, 0.0F);
-			renderer.renderSouthFace(block, 0.0D, 0.0D, 0.0D, block.getBlockTextureFromSideAndMetadata(5, metadata));
+			renderer.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, metadata));
 			tessellator.draw();
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
@@ -96,7 +97,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 			// renderblocks.renderStandardBlock(block, i, j, k);
 
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
-
+		    Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
 			legacyPipeRender(renderer, world, x, y, z, block, modelId);
 
 		}
@@ -114,7 +115,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		return BuildCraftCore.blockByEntityModel;
 	}
 
-	/* LEGACY PIPE RENDERING */
+	/* LEGACY PIPE RENDERING and quarry frames! */
 	private void legacyPipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 		float minSize = Utils.pipeMinPos;
 		float maxSize = Utils.pipeMaxPos;

@@ -234,6 +234,11 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	public String getInvName() {
 		return "Filler";
 	}
+	
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		return true;
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -356,7 +361,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		if (isActive())
 			return powerProvider.getMaxEnergyReceived();
 		else

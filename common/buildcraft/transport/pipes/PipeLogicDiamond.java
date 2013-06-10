@@ -18,7 +18,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.SimpleInventory;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.transport.BlockGenericPipe;
 
 public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
@@ -132,5 +132,19 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 		}
 
 	}
+
+    @Override
+    public boolean isInvNameLocalized()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isStackValidForSlot(int i, ItemStack itemstack)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

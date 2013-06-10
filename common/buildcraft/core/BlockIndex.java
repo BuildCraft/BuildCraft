@@ -75,4 +75,20 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	public String toString() {
 		return "{" + i + ", " + j + ", " + k + "}";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof BlockIndex) {
+			BlockIndex b = (BlockIndex) obj;
+
+			return b.i == i && b.j == j && b.k == k;
+		}
+
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return (i * 37 + j) * 37 + k;
+	}
 }

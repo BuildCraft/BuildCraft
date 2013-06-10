@@ -10,18 +10,15 @@
 package buildcraft.core.triggers;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
-import buildcraft.api.gates.ITriggerDirectional;
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.Trigger;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.SidedInventoryAdapter;
-import buildcraft.core.utils.Utils;
+import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.core.inventory.InventoryWrapper;
 
-public class TriggerInventory extends Trigger implements ITriggerDirectional {
+public class TriggerInventory extends BCTrigger {
 
 	public enum State {
 		Empty, Contains, Space, Full
@@ -33,20 +30,6 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 		super(id);
 
 		this.state = state;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (state) {
-		case Empty:
-			return 2 * 16 + 4;
-		case Contains:
-			return 2 * 16 + 5;
-		case Space:
-			return 2 * 16 + 6;
-		default:
-			return 2 * 16 + 7;
-		}
 	}
 
 	@Override
@@ -79,12 +62,28 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 			searchedStack = parameter.getItem();
 		}
 
-		if (tile instanceof IInventory) {
-			IInventory inv = Utils.getInventory(((IInventory) tile));
-			if (side != ForgeDirection.UNKNOWN && inv instanceof ISidedInventory) {
-				inv = new SidedInventoryAdapter((ISidedInventory) inv, side);
+		if (tile instanceof ISpecialInventory) {
+			ISpecialInventory specialInventory = (ISpecialInventory) tile;
+			ItemStack[] itemStacks;
+			switch (state) {
+			case Contains:
+				itemStacks = specialInventory.extractItem(false, side, 1);
+				return itemStacks != null && itemStacks.length > 0 && itemStacks[0] != null && itemStacks[0].stackSize > 0 && (searchedStack == null || itemStacks[0].isItemEqual(searchedStack));
+			case Empty:
+				itemStacks = specialInventory.extractItem(false, side, 1);
+				return itemStacks == null || itemStacks.length == 0 || itemStacks[0] == null || itemStacks[0].stackSize == 0;
+			case Full:
+				break;
+			case Space:
+				if (searchedStack == null)
+					break;
+				int added = specialInventory.addItem(searchedStack, false, side);
+				return added > 0;
 			}
+		}
 
+		if (tile instanceof IInventory) {
+			ISidedInventory inv = InventoryWrapper.getWrappedInventory(tile);
 			int invSize = inv.getSizeInventory();
 
 			if (invSize <= 0)
@@ -93,7 +92,7 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 			boolean foundItems = false;
 			boolean foundSpace = false;
 
-			for (int i = 0; i < invSize; ++i) {
+			for (int i : inv.getAccessibleSlotsFromSide(side.ordinal())) {
 				ItemStack stack = inv.getStackInSlot(i);
 
 				boolean slotEmpty = stack == null || stack.stackSize == 0;
@@ -129,12 +128,16 @@ public class TriggerInventory extends Trigger implements ITriggerDirectional {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
-		return isTriggerActive(ForgeDirection.UNKNOWN, tile, parameter);
-	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	public int getIconIndex() {
+		switch (state) {
+		case Empty:
+			return ActionTriggerIconProvider.Trigger_Inventory_Empty;
+		case Contains:
+			return ActionTriggerIconProvider.Trigger_Inventory_Contains;
+		case Space:
+			return ActionTriggerIconProvider.Trigger_Inventory_Space;
+		default:
+			return ActionTriggerIconProvider.Trigger_Inventory_Full;
+		}
 	}
 }

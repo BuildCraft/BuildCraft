@@ -1,9 +1,7 @@
 package buildcraft.core.triggers;
 
-import buildcraft.api.gates.Action;
-import buildcraft.core.DefaultProps;
 
-public class ActionMachineControl extends Action {
+public class ActionMachineControl extends BCAction {
 
 	public enum Mode {
 		Unknown, On, Off, Loop
@@ -15,20 +13,6 @@ public class ActionMachineControl extends Action {
 		super(id);
 
 		this.mode = mode;
-	}
-
-	@Override
-	public int getIndexInTexture() {
-		switch (mode) {
-		case On:
-			return 4 * 16 + 2;
-		case Off:
-			return 4 * 16 + 3;
-		case Loop:
-			return 4 * 16 + 4;
-		default:
-			return 0;
-		}
 	}
 
 	@Override
@@ -44,10 +28,17 @@ public class ActionMachineControl extends Action {
 			return "";
 		}
 	}
-
+	
 	@Override
-	public String getTexture() {
-		return DefaultProps.TEXTURE_TRIGGERS;
+	public int getIconIndex() {
+		switch (mode) {
+		case On:
+			return ActionTriggerIconProvider.Action_MachineControl_On;
+		case Off:
+			return ActionTriggerIconProvider.Action_MachineControl_Off;
+		case Loop:
+		default:
+			return ActionTriggerIconProvider.Action_MachineControl_Loop;
+		}		
 	}
-
 }

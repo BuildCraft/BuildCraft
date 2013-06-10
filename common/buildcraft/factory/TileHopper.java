@@ -6,11 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.SimpleInventory;
+import buildcraft.core.inventory.SimpleInventory;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
 
@@ -34,7 +34,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getWorldTime() % 5 != 0)
+		if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getWorldTime() % 2 != 0)
 			return;
 
 		TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
@@ -106,4 +106,9 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void closeChest() {
 	}
+	
+	 @Override
+    public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		 return true;
+    }
 }

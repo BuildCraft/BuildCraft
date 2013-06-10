@@ -2,13 +2,17 @@ package buildcraft.core;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-
 public class ItemRedstoneChipset extends ItemBuildCraft {
+
+    @SideOnly(Side.CLIENT)
+    private Icon[] icons;
 
 	public ItemRedstoneChipset(int i) {
 		super(i);
@@ -19,31 +23,33 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 
 	@SuppressWarnings({ "all" })
 	@Override
-	public int getIconFromDamage(int i) {
-		switch (i) {
-		case 0:
-			return 6 * 16 + 0;
-		case 1:
-			return 6 * 16 + 1;
-		case 2:
-			return 6 * 16 + 2;
-		case 3:
-			return 6 * 16 + 3;
-		default:
-			return 6 * 16 + 4;
-		}
+	public Icon getIconFromDamage(int i) {
+	    return i < icons.length ? icons[i] : null;
 	}
 
 	@Override
-	public String getItemNameIS(ItemStack itemstack) {
-		return (new StringBuilder()).append(super.getItemName()).append(".").append(itemstack.getItemDamage()).toString();
+	public String getUnlocalizedName(ItemStack itemstack) {
+		return (new StringBuilder()).append(super.getUnlocalizedName()).append(".").append(itemstack.getItemDamage()).toString();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List itemList) {
 		for (int i = 0; i < 5; i++) {
 			itemList.add(new ItemStack(this, 1, i));
 		}
+	}
+
+	private static String[] chipsetNames = { "redstone_red", "redstone_iron", "redstone_gold", "redstone_diamond", "redstone_pulsating" };
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    icons = new Icon[chipsetNames.length];
+	    int i = 0;
+	    for (String csName : chipsetNames) {
+	        icons[i++] = par1IconRegister.registerIcon("buildcraft:"+csName+"_chipset");
+	    }
 	}
 }

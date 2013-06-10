@@ -13,16 +13,21 @@ import java.util.Iterator;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.FallbackWrapper;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
 
@@ -53,23 +58,18 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				return "";
 		}
 
-		@Override
-		public String getTexture() {
-			ITrigger trigger = pipe.getTrigger(slot);
-			if (trigger != null)
-				return trigger.getTextureFile();
-			else
-				return "";
-		}
-
-		@Override
-		public int getTextureIndex() {
-			ITrigger trigger = pipe.getTrigger(slot);
-			if (trigger != null)
-				return trigger.getIndexInTexture();
-			else
-				return 0;
-		}
+        @SideOnly(Side.CLIENT)
+        @Override
+        public Icon getTexture() {
+        	ITrigger trigger = pipe.getTrigger(slot);
+        	if (trigger instanceof FallbackWrapper) {
+        	    return ((FallbackWrapper)trigger).getIcon();
+        	}
+        	if (trigger != null)
+        		return trigger.getIconProvider().getIcon(trigger.getIconIndex());
+        	else
+        		return null;
+        }
 
 		@Override
 		public boolean isDefined() {
@@ -102,22 +102,14 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				return "";
 		}
 
+		@SideOnly(Side.CLIENT)
 		@Override
-		public String getTexture() {
+		public Icon getTexture() {
 			IAction action = pipe.getAction(slot);
 			if (action != null)
-				return action.getTexture();
+				return action.getIconProvider().getIcon(action.getIconIndex());
 			else
-				return "";
-		}
-
-		@Override
-		public int getTextureIndex() {
-			IAction action = pipe.getAction(slot);
-			if (action != null)
-				return action.getIndexInTexture();
-			else
-				return 0;
+				return null;
 		}
 
 		@Override
@@ -164,6 +156,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(new ContainerGateInterface(playerInventory, pipe), null);
 
+		Pipe.fixTriggers();
 		_container = (ContainerGateInterface) this.inventorySlots;
 
 		this.playerInventory = playerInventory;
@@ -241,7 +234,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		String name = _container.getGateName();
 
 		fontRenderer.drawString(name, getCenteredOffset(name), 15, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
 		drawForegroundSelection(par1, par2);
 	}
@@ -250,12 +243,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
 		_container.synchronize();
-		int texture = 0;
-
-		texture = mc.renderEngine.getTexture(_container.getGateGuiFile());
-
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		
+		String texture = _container.getGateGuiFile();
+		
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(texture);
+
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

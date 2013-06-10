@@ -19,13 +19,16 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, IClientState {
 
@@ -34,15 +37,23 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
+	@SideOnly(Side.CLIENT)
+	public IIconProvider getIconProvider() {
+		return BuildCraftTransport.instance.pipeIconProvider;
 	}
 
 	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
-			return 1 * 16 + 5;
-		return BuildCraftTransport.diamondTextures[direction.ordinal()];
+	public int getIconIndex(ForgeDirection direction) {
+		switch(direction){
+			case UNKNOWN: return PipeIconProvider.PipeItemsDiamond_Center;
+			case DOWN: return PipeIconProvider.PipeItemsDiamond_Down;
+			case UP: return PipeIconProvider.PipeItemsDiamond_Up;
+			case NORTH: return PipeIconProvider.PipeItemsDiamond_North;
+			case SOUTH: return PipeIconProvider.PipeItemsDiamond_South;
+			case WEST: return PipeIconProvider.PipeItemsDiamond_West;
+			case EAST: return PipeIconProvider.PipeItemsDiamond_East;
+			default: throw new IllegalArgumentException("direction out of bounds");
+		}
 	}
 
 	@Override

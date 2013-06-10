@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 
@@ -123,7 +122,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			BptSlot slot = list.getFirst();
 
 			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
-			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z))) {
+			if (slot.blockId == world.getBlockId(slot.x, slot.y, slot.z)) {
 				list.removeFirst();
 			} else if (slot.mode == Mode.ClearIfInvalid) {
 				result = slot;

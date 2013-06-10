@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -11,18 +11,22 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockPathMarker extends BlockMarker {
 
-	public BlockPathMarker(int i) {
-		super(i);
+	private Icon activeMarker;
 
-		blockIndexInTexture = 3 * 16 + 10;
+    public BlockPathMarker(int i) {
+		super(i);
 	}
 
 	@Override
@@ -38,18 +42,26 @@ public class BlockPathMarker extends BlockMarker {
 
 	@SuppressWarnings({ "all" })
 	// @Override (client only)
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		TilePathMarker marker = (TilePathMarker) iblockaccess.getBlockTileEntity(i, j, k);
 
 		if (l == 1 || (marker != null && marker.tryingToConnect))
-			return 3 * 16 + 11;
+			return activeMarker;
 		else
-			return 3 * 16 + 10;
+			return super.getBlockTexture(iblockaccess, i, j, k, l);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister)
+	{
+	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockPathMarker");
+	    activeMarker = par1IconRegister.registerIcon("buildcraft:blockPathMarkerActive");
 	}
 }

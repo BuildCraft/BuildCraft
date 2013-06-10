@@ -9,7 +9,9 @@
 
 package buildcraft.factory;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -23,6 +25,7 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -89,7 +92,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 							index = getNextIndexToPump(true);
 
 							if (liquidToPump.itemID != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
-								worldObj.setBlockWithNotify(index.i, index.j, index.k, 0);
+								worldObj.setBlock(index.i, index.j, index.k, 0);
 							}
 
 							tank.fill(liquidToPump, true);
@@ -110,8 +113,9 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 								if (isLiquid(new BlockIndex(xCoord, y, zCoord))) {
 									aimY = y;
 									return;
-								} else if (worldObj.getBlockId(xCoord, y, zCoord) != 0)
+								} else if (!worldObj.isAirBlock(xCoord, y, zCoord)) {
 									return;
+								}
 							}
 						}
 					}
@@ -140,8 +144,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 
 	@Override
 	public void initialize() {
-		tube = new EntityBlock(worldObj);
-		tube.texture = 6 * 16 + 6;
+	    tube = FactoryProxy.proxy.newPumpTube(worldObj);
 
 		if (!Double.isNaN(tubeY)) {
 			tube.posY = tubeY;
@@ -194,7 +197,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	private void initializePumpFromPosition(int x, int y, int z) {
 		int liquidId = 0;
 
-		TreeSet<BlockIndex> markedBlocks = new TreeSet<BlockIndex>();
+		Set<BlockIndex> markedBlocks = new HashSet<BlockIndex>();
 		TreeSet<BlockIndex> lastFound = new TreeSet<BlockIndex>();
 
 		if (!blocksToPump.containsKey(y)) {
@@ -209,6 +212,8 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 			return;
 
 		addToPumpIfLiquid(new BlockIndex(x, y, z), markedBlocks, lastFound, pumpList, liquidId);
+
+		long timeoutTime = System.currentTimeMillis() + 1000;
 
 		while (lastFound.size() > 0) {
 			TreeSet<BlockIndex> visitIteration = new TreeSet<BlockIndex>(lastFound);
@@ -227,19 +232,20 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 				pumpList = blocksToPump.get(index.j + 1);
 
 				addToPumpIfLiquid(new BlockIndex(index.i, index.j + 1, index.k), markedBlocks, lastFound, pumpList, liquidId);
+
+				if(System.currentTimeMillis() > timeoutTime)
+					return;
 			}
 		}
 	}
 
-	public void addToPumpIfLiquid(BlockIndex index, TreeSet<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound, LinkedList<BlockIndex> pumpList,
+	public void addToPumpIfLiquid(BlockIndex index, Set<BlockIndex> markedBlocks, TreeSet<BlockIndex> lastFound, LinkedList<BlockIndex> pumpList,
 			int liquidId) {
 
 		if (liquidId != worldObj.getBlockId(index.i, index.j, index.k))
 			return;
 
-		if (!markedBlocks.contains(index)) {
-			markedBlocks.add(index);
-
+		if (markedBlocks.add(index)) {
 			if ((index.i - xCoord) * (index.i - xCoord) + (index.k - zCoord) * (index.k - zCoord) > 64 * 64)
 				return;
 
@@ -258,7 +264,14 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	}
 
 	private boolean isLiquid(BlockIndex index) {
-		return index != null && (Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k)) != null);
+		if(index == null)
+			return false;
+
+		LiquidStack liquid = Utils.liquidFromBlockId(worldObj.getBlockId(index.i, index.j, index.k));
+		if(liquid == null)
+			return false;
+
+		return BuildCraftFactory.pumpDimensionList.isLiquidAllowed(liquid, worldObj.provider.dimensionId);
 	}
 
 	@Override

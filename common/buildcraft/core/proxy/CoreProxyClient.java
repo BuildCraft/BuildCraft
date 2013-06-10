@@ -26,9 +26,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
+import buildcraft.api.core.LaserKind;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityPowerLaser;
@@ -67,6 +66,7 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	/* WRAPPER */
+	@SuppressWarnings("rawtypes")
 	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
 		if (Block.blocksList[id] == null)
 			return;
@@ -115,9 +115,6 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingOil());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
-
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
-		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
 	}
 
 	@Override
@@ -131,7 +128,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* NETWORKING */
 	@Override
 	public void sendToServer(Packet packet) {
-		FMLClientHandler.instance().getClient().getSendQueue().addToSendQueue(packet);
+		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
 	}
 
 	/* FILE SYSTEM */
@@ -173,5 +170,23 @@ public class CoreProxyClient extends CoreProxy {
 
 		return CoreProxy.buildCraftPlayer;
 	}
+	
+	@Override
+	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
+		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
+		switch (laserKind) {
+		case Blue:
+			eb.texture = BuildCraftCore.blueLaserTexture;
+			break;
 
+		case Red:
+			eb.texture = BuildCraftCore.redLaserTexture;
+			break;
+
+		case Stripes:
+			eb.texture = BuildCraftCore.stripesLaserTexture;
+			break;
+		}
+		return eb;
+	}
 }

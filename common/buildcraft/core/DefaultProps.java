@@ -32,6 +32,8 @@ public class DefaultProps {
 
 	public static final String DEFAULT_LANGUAGE = "en_US";
 
+	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/Lava";
+
 	public static int WOODEN_GEAR_ID = 19100;
 	public static int STONE_GEAR_ID = 19101;
 	public static int IRON_GEAR_ID = 19102;
@@ -54,6 +56,7 @@ public class DefaultProps {
 	// Moving to safer id range
 	public static int GATE_AUTARCHIC_ID = 19140;
 	public static int PIPE_FACADE_ID = 19141;
+	public static int PIPE_PLUG_ID = 19142;
 
 	public static int PIPE_ITEMS_WOOD_ID = 19160;
 	public static int PIPE_ITEMS_COBBLESTONE_ID = 19161;
@@ -111,7 +114,6 @@ public class DefaultProps {
 	public static int SPRING_ID = 1522;
 
 	public static boolean CURRENT_CONTINUOUS = false;
-	public static boolean PIPES_ALWAYS_CONNECT = false;
 	public static double PIPES_DURABILITY = 0.25D;
 	public static boolean FILLER_DESTROY = false;
 	public static boolean USE_PIPELOSS = true;
@@ -154,4 +156,6 @@ public class DefaultProps {
 	public static int ACTION_OFF = 7;
 	public static int ACTION_LOOP = 8;
 	public static int ACTION_ENERGY_PULSER = 9;
+	public static int ACTION_SINGLE_ENERGY_PULSE = 10;
+
 }

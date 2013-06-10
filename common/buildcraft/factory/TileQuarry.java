@@ -389,6 +389,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		nbttagcompound.setTag("box", boxTag);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void positionReached() {
 		inProcess = false;
 
@@ -417,7 +418,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			}
 
 			worldObj.playAuxSFXAtEntity(null, 2001, i, j, k, blockId + (worldObj.getBlockMetadata(i, j, k) << 12));
-			worldObj.setBlockWithNotify(i, j, k, 0);
+			worldObj.setBlock(i, j, k, 0);
 		}
 
 		// Collect any lost items laying around
@@ -443,7 +444,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	private void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
-		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
+		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
 		stack.stackSize -= added.stackSize;
 
 		// Second, try to add to adjacent pipes
@@ -725,6 +726,11 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	@Override
 	public int getInventoryStackLimit() {
 		return 0;
+	}
+	
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		return false;
 	}
 
 	@Override

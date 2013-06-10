@@ -22,7 +22,7 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtil;
+import buildcraft.core.utils.StringUtils;
 
 public class GuiTemplate extends GuiBuildCraft {
 
@@ -41,9 +41,9 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtil.localize("tile.architectBlock");
+		String title = StringUtils.localize("tile.architectBlock");
 		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 152, 0x404040);
+		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 152, 0x404040);
 
 		if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
 			fontRenderer.drawString(template.name + "|", 51, 62, 0x404040);
@@ -54,9 +54,8 @@ public class GuiTemplate extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

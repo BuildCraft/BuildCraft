@@ -19,12 +19,12 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemRedstoneChipset;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.BlockAssemblyTable;
+import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.GuiHandler;
-import buildcraft.silicon.ItemAssemblyTable;
+import buildcraft.silicon.ItemLaserTable;
 import buildcraft.silicon.SiliconProxy;
-import buildcraft.silicon.TileAssemblyAdvancedWorkbench;
+import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.network.PacketHandlerSilicon;
@@ -44,7 +44,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class BuildCraftSilicon {
 	public static Item redstoneChipset;
 	public static BlockLaser laserBlock;
-	public static BlockAssemblyTable assemblyTableBlock;
+	public static BlockLaserTable assemblyTableBlock;
 
 	@Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
@@ -54,7 +54,7 @@ public class BuildCraftSilicon {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
 		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
-		CoreProxy.proxy.registerTileEntity(TileAssemblyAdvancedWorkbench.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
+		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 
 		new BptBlockRotateMeta(laserBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
 		new BptBlockInventory(assemblyTableBlock.blockID);
@@ -76,18 +76,18 @@ public class BuildCraftSilicon {
 
 		BuildCraftCore.mainConfiguration.save();
 
-		laserBlock = new BlockLaser(Integer.parseInt(laserId.value));
-		CoreProxy.proxy.addName(laserBlock.setBlockName("laserBlock"), "Laser");
+		laserBlock = new BlockLaser(laserId.getInt());
+		CoreProxy.proxy.addName(laserBlock.setUnlocalizedName("laserBlock"), "Laser");
 		CoreProxy.proxy.registerBlock(laserBlock);
 
-		assemblyTableBlock = new BlockAssemblyTable(Integer.parseInt(assemblyTableId.value));
-		GameRegistry.registerBlock(assemblyTableBlock, ItemAssemblyTable.class);
+		assemblyTableBlock = new BlockLaserTable(assemblyTableId.getInt());
+		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 0), "Assembly Table");
 		LanguageRegistry.addName(new ItemStack(assemblyTableBlock, 0, 1), "Advanced Crafting Table");
 
-		redstoneChipset = new ItemRedstoneChipset(Integer.parseInt(redstoneChipsetId.value));
-		redstoneChipset.setItemName("redstoneChipset");
+		redstoneChipset = new ItemRedstoneChipset(redstoneChipsetId.getInt());
+		redstoneChipset.setUnlocalizedName("redstoneChipset");
 
 	}
 

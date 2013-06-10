@@ -120,7 +120,8 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				if (isPoweredTile(tile)) {
 					IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
 
-					float extracted = engine.extractEnergy(receptor.getMinEnergyReceived(), receptor.getMaxEnergyReceived(), true);
+					float extracted = engine.extractEnergy(receptor.getMinEnergyReceived(),
+							Math.min(receptor.getMaxEnergyReceived(), receptor.getMaxEnergyStored() - (int) receptor.getEnergyStored()), true);
 
 					if (extracted > 0) {
 						receptor.receiveEnergy(extracted, engine.orientation.getOpposite());
@@ -291,6 +292,14 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			engine.setInventorySlotContents(i, itemstack);
 		}
 	}
+	
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		if (engine != null){
+			return engine.isStackValidForSlot(i, itemstack);
+		}
+		return false;
+	}
 
 	@Override
 	public String getInvName() {
@@ -389,7 +398,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	@Override
-	public int powerRequest() {
+	public int powerRequest(ForgeDirection from) {
 		return 0;
 	}
 
