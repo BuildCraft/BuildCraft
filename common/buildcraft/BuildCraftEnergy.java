@@ -55,16 +55,17 @@ import buildcraft.energy.worldgen.BiomeInitializer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.BiomeDictionary;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -91,26 +92,8 @@ public class BuildCraftEnergy {
 	@Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
-	@Init
-	public static void load(FMLInitializationEvent evt) {
-		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
-
-		if (BuildCraftCore.modifyWorld) {
-			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
-			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
-		}
-
-		new BptBlockEngine(engineBlock.blockID);
-
-		if (BuildCraftCore.loadDefaultRecipes) {
-			loadRecipes();
-		}
-		EnergyProxy.proxy.registerBlockRenderers();
-		EnergyProxy.proxy.registerTileEntities();
-	}
-
 	@PreInit
-	public void initialize(FMLPreInitializationEvent evt) {
+	public void preInit(FMLPreInitializationEvent evt) {
 		Property engineId = BuildCraftCore.mainConfiguration.getBlock("engine.id", DefaultProps.ENGINE_ID);
 		Property oilStillId = BuildCraftCore.mainConfiguration.getBlock("oilStill.id", DefaultProps.OIL_STILL_ID);
 		Property oilMovingId = BuildCraftCore.mainConfiguration.getBlock("oilMoving.id", DefaultProps.OIL_MOVING_ID);
@@ -133,9 +116,9 @@ public class BuildCraftEnergy {
 			if (BiomeGenBase.biomeList[oilDesertId] != null) {
 				throw new BiomeIdException("oilDesert", oilDesertId);
 			}
-			biomeOilDesert = BiomeGenOilDesert.makeBiome(oilDesertId);			
+			biomeOilDesert = BiomeGenOilDesert.makeBiome(oilDesertId);
 		}
-		
+
 		int oilOceanId = oilOceanBiomeId.getInt();
 		if (oilOceanId > 0) {
 			if (BiomeGenBase.biomeList[oilOceanId] != null) {
@@ -200,6 +183,27 @@ public class BuildCraftEnergy {
 				new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
 
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@Init
+	public void init(FMLInitializationEvent evt) {
+		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
+
+		new BptBlockEngine(engineBlock.blockID);
+
+		if (BuildCraftCore.loadDefaultRecipes) {
+			loadRecipes();
+		}
+		EnergyProxy.proxy.registerBlockRenderers();
+		EnergyProxy.proxy.registerTileEntities();
+	}
+
+	@PostInit
+	public void postInit(FMLPostInitializationEvent evt) {
+		if (BuildCraftCore.modifyWorld) {
+			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
+			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
+		}
 	}
 
 	@ForgeSubscribe

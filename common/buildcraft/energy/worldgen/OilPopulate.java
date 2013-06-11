@@ -79,19 +79,19 @@ public class OilPopulate {
 
 		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID)
 				|| BiomeDictionary.isBiomeOfType(biome, DESERT)
-				|| BiomeDictionary.isBiomeOfType(biome, WASTELAND)
+				|| (BiomeDictionary.isBiomeOfType(biome, WASTELAND) && !BiomeDictionary.isBiomeOfType(biome, FROZEN))
 				|| (BiomeDictionary.isBiomeOfType(biome, FOREST) && BiomeDictionary.isBiomeOfType(biome, FROZEN));
 
 		double bonus = oilBiome ? 4.0 : 1.0;
 		if (excessiveBiomes.contains(biome.biomeID)) {
-			bonus *= 30;
+			bonus *= 35;
 		} else if (BuildCraftCore.debugMode) {
 			bonus *= 20;
 		}
 		GenType type = GenType.NONE;
-		if (rand.nextDouble() <= 0.001 * bonus) {// 0.1%
+		if (rand.nextDouble() <= 0.0004 * bonus) {// 0.04%
 			type = GenType.LARGE;
-		} else if (rand.nextDouble() <= 0.003 * bonus) {// 0.3%
+		} else if (rand.nextDouble() <= 0.001 * bonus) {// 0.1%
 			type = GenType.MEDIUM;
 		} else if (oilBiome && rand.nextDouble() <= 0.02 * bonus) {// 2%
 			type = GenType.LAKE;
