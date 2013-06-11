@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -44,6 +45,9 @@ public class ItemFacade extends ItemBuildCraft {
 		String name = super.getItemDisplayName(itemstack);
 		int decodedBlockId = ItemFacade.getBlockId(itemstack.getItemDamage());
 		int decodedMeta = ItemFacade.getMetaData(itemstack.getItemDamage());
+		if (decodedBlockId < Block.blocksList.length && Block.blocksList[decodedBlockId] != null && Block.blocksList[decodedBlockId].getRenderType() == 31) {
+		    decodedMeta &= 0x3;
+        }
 		ItemStack newStack = new ItemStack(decodedBlockId, 1, decodedMeta);
 		if (Item.itemsList[decodedBlockId] != null) {
 			name += ": " + CoreProxy.proxy.getItemDisplayName(newStack);
@@ -107,10 +111,10 @@ public class ItemFacade extends ItemBuildCraft {
 				if (!(b.blockID == 20)){	//Explicitly allow glass
 					if (b.blockID == 7 //Bedrock
 							|| b.blockID == 2 //Grass block
-							|| b.blockID == 18 //Oak leaves 
+							|| b.blockID == 18 //Oak leaves
 							|| b.blockID == 19 //Sponge
 							|| b.blockID == 95 //Locked chest
-							) {  
+							) {
 						continue;
 					}
 					if (!b.isOpaqueCube() || b.hasTileEntity(0) || !b.renderAsNormalBlock()) {
@@ -157,6 +161,21 @@ public class ItemFacade extends ItemBuildCraft {
 		// 3 Structurepipes + this block makes 6 facades
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack },
 				8000, new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()))));
+		if (itemStack.itemID < Block.blocksList.length && Block.blocksList[itemStack.itemID] != null) {
+		    Block bl = Block.blocksList[itemStack.itemID];
+
+		    // Special handling for logs
+	        if (bl.getRenderType() == 31) {
+	            ItemStack mainLog = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()));
+	            ItemStack rotLog1 = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage() | 4));
+                ItemStack rotLog2 = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage() | 8));
+                allFacades.add(rotLog1);
+                allFacades.add(rotLog2);
+                CoreProxy.proxy.addShapelessRecipe(rotLog1, new Object[] { mainLog });
+                CoreProxy.proxy.addShapelessRecipe(rotLog2, new Object[] { rotLog1 });
+                CoreProxy.proxy.addShapelessRecipe(mainLog, new Object[] { rotLog2 });
+	        }
+		}
 	}
 
 	@Override
