@@ -210,7 +210,7 @@ public class GateVanilla extends Gate {
 
 	@Override
 	public void startResolution() {
-		if (hasPulser()) {
+		if (hasPulser() && pulser.isActive()) {
 			pulser.disablePulse();
             pipe.container.scheduleRenderUpdate();
 		}
