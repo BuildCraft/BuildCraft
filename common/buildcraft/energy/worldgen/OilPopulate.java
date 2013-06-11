@@ -82,11 +82,11 @@ public class OilPopulate {
 				|| (BiomeDictionary.isBiomeOfType(biome, WASTELAND) && !BiomeDictionary.isBiomeOfType(biome, FROZEN))
 				|| (BiomeDictionary.isBiomeOfType(biome, FOREST) && BiomeDictionary.isBiomeOfType(biome, FROZEN));
 
-		double bonus = oilBiome ? 4.0 : 1.0;
+		double bonus = oilBiome ? 5.0 : 1.0;
 		if (excessiveBiomes.contains(biome.biomeID)) {
-			bonus *= 35;
+			bonus *= 30.0;
 		} else if (BuildCraftCore.debugMode) {
-			bonus *= 20;
+			bonus *= 20.0;
 		}
 		GenType type = GenType.NONE;
 		if (rand.nextDouble() <= 0.0004 * bonus) {// 0.04%
