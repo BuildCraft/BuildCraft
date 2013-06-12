@@ -20,18 +20,19 @@ import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
-import buildcraft.transport.pipes.PipePowerCobblestone;
 import java.util.Arrays;
 
 public class PipeTransportPower extends PipeTransport {
 
 	private static final short MAX_DISPLAY = 100;
-	private static final double DISPLAY_SMOOTHING = 5.0;
+	private static final int DISPLAY_SMOOTHING = 10;
+	private static final int OVERLOAD_TICKS = 60;
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
 	public double[] displayPower = new double[6];
+	public double[] prevDisplayPower = new double[6];
 	public short[] clientDisplayPower = new short[6];
-	public boolean overload;
+	public int overload;
 	public int[] powerQuery = new int[6];
 	public int[] nextPowerQuery = new int[6];
 	public long currentDate;
@@ -95,58 +96,66 @@ public class PipeTransportPower extends PipeTransport {
 
 		// Send the power to nearby pipes who requested it
 
-		double highestPower = 0;
+		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
+		Arrays.fill(displayPower, 0.0);
 
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
-				double div = 0;
+				double totalPowerQuery = 0;
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0)
 						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IPowerReceptor) {
-							div += powerQuery[j];
+							totalPowerQuery += powerQuery[j];
 						}
 				}
 
-				if (internalPower[i] > highestPower) {
-					highestPower = internalPower[i];
-				}
-
 				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0 && internalPower[i] > 0) {
-						double watts = (internalPower[i] / div * powerQuery[j]);
+					if (j != i && powerQuery[j] > 0) {
+						double watts = 0.0;
 
 						if (tiles[j] instanceof TileGenericPipe) {
+							watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
 							TileGenericPipe nearbyTile = (TileGenericPipe) tiles[j];
 
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
 							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
-
-							displayPower[j] = (displayPower[j] * (DISPLAY_SMOOTHING - 1.0) + watts) / DISPLAY_SMOOTHING;
-							displayPower[i] = (displayPower[i] * (DISPLAY_SMOOTHING - 1.0) + watts) / DISPLAY_SMOOTHING;
-
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof IPowerReceptor) {
+							watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
 
 							IPowerProvider prov = pow.getPowerProvider();
 
 							if (prov != null) {
 								prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
-
-								displayPower[j] = (displayPower[j] * (DISPLAY_SMOOTHING - 1.0) + watts) / DISPLAY_SMOOTHING;
-								displayPower[i] = (displayPower[i] * (DISPLAY_SMOOTHING - 1.0) + watts) / DISPLAY_SMOOTHING;
-
 								internalPower[i] -= watts;
 							}
 						}
+
+						displayPower[j] += watts;
+						displayPower[i] += watts;
 					}
 				}
 			}
 		}
 
-		overload = highestPower > maxPower * 0.9;
+		double highestPower = 0;
+		for (int i = 0; i < 6; i++) {
+			displayPower[i] = (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0) + displayPower[i]) / DISPLAY_SMOOTHING;
+			if (displayPower[i] > highestPower) {
+				highestPower = displayPower[i];
+			}
+		}
+
+		overload += highestPower > maxPower * 0.95 ? 1 : -1;
+		if (overload < 0) {
+			overload = 0;
+		}
+		if (overload > OVERLOAD_TICKS) {
+			overload = OVERLOAD_TICKS;
+		}
 
 		// Compute the tiles requesting energy that are not pipes
 
@@ -163,7 +172,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		// Sum the amount of energy requested on each side
 
-		int transferQuery[] = {0, 0, 0, 0, 0, 0};
+		int[] transferQuery = new int[6];
 
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
@@ -207,7 +216,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			packet.displayPower = clientDisplayPower;
-			packet.overload = overload;
+			packet.overload = overload >= OVERLOAD_TICKS;
 			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
 
@@ -220,8 +229,23 @@ public class PipeTransportPower extends PipeTransport {
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
 
+			double[] next = Arrays.copyOf(internalPower, 6);
 			internalPower = internalNextPower;
-			internalNextPower = new double[6];
+			internalNextPower = next;
+			for (int i = 0; i < powerQuery.length; i++) {
+				int sum = 0;
+				for (int j = 0; j < powerQuery.length; j++) {
+					if (i != j) {
+						sum += powerQuery[j];
+					}
+				}
+				if (sum == 0 && internalNextPower[i] > 0) {
+					internalNextPower[i] -= 1;
+					if (internalNextPower[i] < 0) {
+						internalNextPower[i] = 0;
+					}
+				}
+			}
 		}
 	}
 
@@ -291,6 +315,6 @@ public class PipeTransportPower extends PipeTransport {
 	 */
 	public void handlePowerPacket(PacketPowerUpdate packetPower) {
 		clientDisplayPower = packetPower.displayPower;
-		overload = packetPower.overload;
+		overload = packetPower.overload ? OVERLOAD_TICKS : 0;
 	}
 }

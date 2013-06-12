@@ -282,7 +282,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		bindTextureByName("/terrain.png");
 
-		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
+		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
