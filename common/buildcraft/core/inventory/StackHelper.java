@@ -10,9 +10,11 @@
 package buildcraft.core.inventory;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
-public class StackMergeHelper {
+public class StackHelper {
 
+	/* STACK MERGING */
 	/**
 	 * Checks if two ItemStacks are identical enough to be merged
 	 * @param stack1 - The first stack
@@ -44,5 +46,50 @@ public class StackMergeHelper {
 		}
 		return mergeCount;
 	}
+	
+	/* ITEM COMPARISONS */
+	
+	/**
+	 * Determines whether the given itemstacks should be considered equivalent for crafting purposes.
+	 * @param base The stack to compare to.
+	 * @param comparison The stack to compare.
+	 * @param oreDictionary true to take the Forge OreDictionary into account.
+	 * @return true if comparison should be considered a crafting equivalent for base.
+	 */
+	public boolean isCraftingEquivalent(ItemStack base, ItemStack comparison, boolean oreDictionary) {
+		if(isIdenticalItem(base, comparison))
+			return true;
+
+		if(oreDictionary) {
+			int idBase = OreDictionary.getOreID(base);
+			int idComp = OreDictionary.getOreID(comparison);
+			if(idBase >= 0 && idComp >= 0) {
+				if(idBase == idComp)
+					return true;
+			}
+		}
 		
+		return false;
+	}
+
+	/**
+	 * Compares item id, damage and NBT. Accepts wildcard damage in the base itemstack.
+	 * @param base The stack to compare to.
+	 * @param comparison The stack to compare.
+	 * @return true if id, damage and NBT match.
+	 */
+	public boolean isIdenticalItem(ItemStack base, ItemStack comparison) {
+		if (base == null || comparison == null)
+			return false;
+
+		if (base.itemID != comparison.itemID)
+			return false;
+
+		if (base.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+			if (base.getItemDamage() != comparison.getItemDamage())
+				return false;
+
+		return ItemStack.areItemStackTagsEqual(base, comparison);
+	}
+
 }

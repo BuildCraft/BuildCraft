@@ -19,7 +19,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.core.inventory.StackMergeHelper;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.inventory.SimpleInventory;
@@ -33,7 +33,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
 
-	private static final StackMergeHelper MERGE_HELPER = new StackMergeHelper();
+	private static final StackHelper MERGE_HELPER = new StackHelper();
 	public static final int SLOT_RESULT = 0;
 	public static final int CRAFT_TIME = 256;
 	public static final int UPDATE_TIME = 16;

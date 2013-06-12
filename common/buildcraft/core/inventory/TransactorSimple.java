@@ -9,7 +9,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TransactorSimple extends Transactor {
 
-	protected static final StackMergeHelper MERGE_HELPER = new StackMergeHelper();
+	protected static final StackHelper MERGE_HELPER = new StackHelper();
 	protected IInventory inventory;
 
 	public TransactorSimple(IInventory inventory) {

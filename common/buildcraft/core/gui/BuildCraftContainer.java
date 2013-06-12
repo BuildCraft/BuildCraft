@@ -9,7 +9,7 @@ package buildcraft.core.gui;
 
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
-import buildcraft.core.inventory.StackMergeHelper;
+import buildcraft.core.inventory.StackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -18,7 +18,7 @@ import net.minecraft.item.ItemStack;
 
 public abstract class BuildCraftContainer extends Container {
 
-	private final StackMergeHelper MERGE_HELPER = new StackMergeHelper();
+	private final StackHelper MERGE_HELPER = new StackHelper();
 	private int inventorySize;
 
 	public BuildCraftContainer(int inventorySize) {

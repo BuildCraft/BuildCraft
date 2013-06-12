@@ -17,6 +17,7 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
@@ -25,6 +26,8 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection, ILaserTarget {
+
+	private final StackHelper STACK_HELPER = new StackHelper();
 
 	ItemStack[] items = new ItemStack[12];
 
@@ -114,7 +117,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 							continue; // Broken out of large if statement, increases clarity
 						}
 
-						if (items[i].isItemEqual(in)) {
+						if (STACK_HELPER.isCraftingEquivalent(in, items[i], true)) {
 
 							int supply = items[i].stackSize;
 							int toBeFound = in.stackSize - found;
@@ -159,6 +162,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			return energyStored / currentRecipe.energy * ratio;
 	}
 
+	/* IINVENTORY */
 	@Override
 	public int getSizeInventory() {
 		return items.length;
@@ -212,17 +216,8 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
-	@Override
-	public void openChest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void closeChest() {
-		// TODO Auto-generated method stub
-
-	}
+	@Override public void openChest() {}
+	@Override public void closeChest() {}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
