@@ -114,7 +114,10 @@ public abstract class FillerPattern implements IFillerPattern {
 			if (BuildCraftBuilders.fillerDestroy) {
 				world.setBlock(lastX, lastY, lastZ, 0);
 			} else {
-				BlockUtil.breakBlock(world, lastX, lastY, lastZ, 20);
+				if(BlockUtil.isToughBlock(world, lastX, lastY, lastZ))
+					BlockUtil.breakBlock(world, lastX, lastY, lastZ, BuildCraftBuilders.fillerLifespanTough);
+				else
+					BlockUtil.breakBlock(world, lastX, lastY, lastZ, BuildCraftBuilders.fillerLifespanNormal);
 			}
 			return true;
 		}
