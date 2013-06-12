@@ -858,7 +858,7 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 
 		} catch (Throwable t) {
-			BuildCraftCore.bcLog.warning("Failed to create pipe with (" + key + "). No valid contructor found.");
+			BuildCraftCore.bcLog.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
 		}
 
 		return null;
