@@ -1,5 +1,6 @@
 package buildcraft.silicon;
 
+import buildcraft.api.gates.IAction;
 import java.util.LinkedList;
 
 import net.minecraft.entity.item.EntityItem;
@@ -458,7 +459,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return false;
 	}
 

@@ -1,5 +1,8 @@
 package buildcraft.silicon;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionReceptor;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,12 +26,13 @@ import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.Utils;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine {
+public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor {
 
 	private final class InternalInventoryCraftingContainer extends Container {
 
@@ -139,6 +143,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private int recentEnergyAverage;
 	private InternalPlayer internalPlayer;
 	private IRecipe currentRecipe;
+	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
 	@Override
 	public int getSizeInventory() {
@@ -295,6 +300,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		if (!CoreProxy.proxy.isSimulating(worldObj)) {
 			return;
 		}
+		if (lastMode == ActionMachineControl.Mode.Off) {
+			return;
+		}
 		updateCraftingResults();
 		tick++;
 		tick = tick % recentEnergy.length;
@@ -393,7 +401,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public boolean hasCurrentWork() {
-		return craftable;
+		return craftable && lastMode != ActionMachineControl.Mode.Off;
 	}
 
 	@Override
@@ -433,8 +441,8 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public boolean allowActions() {
-		return true;
+	public boolean allowAction(IAction action) {
+		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
 	}
 
 	public void getGUINetworkData(int id, int data) {
@@ -478,5 +486,14 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	@Override
 	public boolean isStackValidForSlot(int slot, ItemStack stack) {
 		return true;
+	}
+
+	@Override
+	public void actionActivated(IAction action) {
+		if (action == BuildCraftCore.actionOn) {
+			lastMode = ActionMachineControl.Mode.On;
+		} else if (action == BuildCraftCore.actionOff) {
+			lastMode = ActionMachineControl.Mode.Off;
+		}
 	}
 }

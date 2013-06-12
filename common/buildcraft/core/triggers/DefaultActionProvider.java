@@ -8,6 +8,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.core.IMachine;
+import cpw.mods.fml.common.FMLLog;
+import java.util.logging.Level;
 
 public class DefaultActionProvider implements IActionProvider {
 
@@ -17,13 +19,20 @@ public class DefaultActionProvider implements IActionProvider {
 
 		res.add(BuildCraftCore.actionRedstone);
 
-		if (tile instanceof IMachine && ((IMachine) tile).allowActions()) {
-			res.add(BuildCraftCore.actionOn);
-			res.add(BuildCraftCore.actionOff);
-			res.add(BuildCraftCore.actionLoop);
+		try {
+			if (tile instanceof IMachine) {
+				IMachine machine = (IMachine) tile;
+				if (machine.allowAction(BuildCraftCore.actionOn))
+					res.add(BuildCraftCore.actionOn);
+				if (machine.allowAction(BuildCraftCore.actionOff))
+					res.add(BuildCraftCore.actionOff);
+				if (machine.allowAction(BuildCraftCore.actionLoop))
+					res.add(BuildCraftCore.actionLoop);
+			}
+		} catch (Throwable error) {
+			FMLLog.log("Buildcraft", Level.SEVERE, "Outdated API detected, please update your mods!");
 		}
 
 		return res;
 	}
-
 }

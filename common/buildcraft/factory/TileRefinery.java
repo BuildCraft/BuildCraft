@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +21,7 @@ import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -36,31 +35,29 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	private int[] filters = new int[2];
 	private int[] filtersMeta = new int[2];
-
 	public static int LIQUID_PER_SLOT = LiquidContainerRegistry.BUCKET_VOLUME * 4;
-
 	public LiquidTank ingredient1 = new LiquidTank(LIQUID_PER_SLOT);
 	public LiquidTank ingredient2 = new LiquidTank(LIQUID_PER_SLOT);
 	public LiquidTank result = new LiquidTank(LIQUID_PER_SLOT);
 	public float animationSpeed = 1;
 	private int animationStage = 0;
-
 	SafeTimeTracker time = new SafeTimeTracker();
-
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
-
 	IPowerProvider powerProvider;
-
 	private boolean isActive;
 
 	public TileRefinery() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(20, 25, 100, 25, 1000);
 
 		filters[0] = 0;
 		filters[1] = 0;
 		filtersMeta[0] = 0;
 		filtersMeta[1] = 0;
+	}
+
+	private void initPowerProvider() {
+		powerProvider.configure(20, 25, 100, 25, 1000);
+		powerProvider.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -80,7 +77,6 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-
 	}
 
 	@Override
@@ -92,7 +88,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	public int getInventoryStackLimit() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
 		return false;
@@ -120,7 +116,6 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public void doWork() {
-
 	}
 
 	@Override
@@ -260,7 +255,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		animationSpeed = nbttagcompound.getFloat("animationSpeed");
 
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
-		powerProvider.configure(20, 25, 100, 25, 1000);
+		initPowerProvider();
 
 		filters[0] = nbttagcompound.getInteger("filters_0");
 		filters[1] = nbttagcompound.getInteger("filters_1");
@@ -365,25 +360,25 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return false;
 	}
 
 	/* SMP GUI */
 	public void getGUINetworkData(int i, int j) {
 		switch (i) {
-		case 0:
-			filters[0] = j;
-			break;
-		case 1:
-			filters[1] = j;
-			break;
-		case 2:
-			filtersMeta[0] = j;
-			break;
-		case 3:
-			filtersMeta[1] = j;
-			break;
+			case 0:
+				filters[0] = j;
+				break;
+			case 1:
+				filters[1] = j;
+				break;
+			case 2:
+				filtersMeta[0] = j;
+				break;
+			case 3:
+				filtersMeta[1] = j;
+				break;
 		}
 	}
 
@@ -449,7 +444,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	@Override
 	public ILiquidTank[] getTanks(ForgeDirection direction) {
-		return new ILiquidTank[] { ingredient1, ingredient2, result };
+		return new ILiquidTank[]{ingredient1, ingredient2, result};
 	}
 
 	@Override
@@ -501,7 +496,6 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	// Network
-
 	@Override
 	public PacketPayload getPacketPayload() {
 		PacketPayload payload = new PacketPayload(9, 1, 0);

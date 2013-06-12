@@ -67,6 +67,8 @@ import buildcraft.transport.pipes.PipeLiquidsSandstone;
 import buildcraft.transport.pipes.PipeLiquidsStone;
 import buildcraft.transport.pipes.PipeLiquidsVoid;
 import buildcraft.transport.pipes.PipeLiquidsWood;
+import buildcraft.transport.pipes.PipePowerCobblestone;
+import buildcraft.transport.pipes.PipePowerDiamond;
 import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
@@ -103,7 +105,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class BuildCraftTransport {
 	public static BlockGenericPipe genericPipeBlock;
 
-	public static boolean usePipeLoss;
 	public static int maxItemsInPipes;
 	public static float pipeDurability;
 
@@ -136,8 +137,10 @@ public class BuildCraftTransport {
 	public static Item pipeLiquidsEmerald;
 
 	public static Item pipePowerWood;
+	public static Item pipePowerCobblestone;
 	public static Item pipePowerStone;
 	public static Item pipePowerGold;
+	public static Item pipePowerDiamond;
 
 	public static Item facadeItem;
 	public static Item plugItem;
@@ -223,10 +226,6 @@ public class BuildCraftTransport {
 	@PreInit
 	public void preInitialize(FMLPreInitializationEvent evt) {
 		try {
-			Property pipeLoss = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "power.usePipeLoss", DefaultProps.USE_PIPELOSS);
-			pipeLoss.comment = "Set to false to turn off energy loss over distance on all power pipes";
-			usePipeLoss = pipeLoss.getBoolean(DefaultProps.USE_PIPELOSS);
-
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
 			pipeDurability = (float) durability.getDouble(DefaultProps.PIPES_DURABILITY);
@@ -293,8 +292,10 @@ public class BuildCraftTransport {
 			pipeLiquidsEmerald = createPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeLiquidsEmerald.class, "Emerald Waterproof Pipe", pipeWaterproof, pipeItemsEmerald, null);
 
 			pipePowerWood = createPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone, pipeItemsWood, null);
+			pipePowerCobblestone = createPipe(DefaultProps.PIPE_POWER_COBBLESTONE_ID, PipePowerCobblestone.class, "Cobblestone Conductive Pipe", Item.redstone, pipeItemsCobblestone, null);
 			pipePowerStone = createPipe(DefaultProps.PIPE_POWER_STONE_ID, PipePowerStone.class, "Stone Conductive Pipe", Item.redstone, pipeItemsStone, null);
 			pipePowerGold = createPipe(DefaultProps.PIPE_POWER_GOLD_ID, PipePowerGold.class, "Golden Conductive Pipe", Item.redstone, pipeItemsGold, null);
+			pipePowerDiamond = createPipe(DefaultProps.PIPE_POWER_DIAMOND_ID, PipePowerDiamond.class, "Diamond Conductive Pipe", Item.redstone, pipeItemsDiamond, null);
 
 			pipeStructureCobblestone = createPipe(DefaultProps.PIPE_STRUCTURE_COBBLESTONE_ID, PipeStructureCobblestone.class, "Cobblestone Structure Pipe", Block.gravel, pipeItemsCobblestone, null);
 

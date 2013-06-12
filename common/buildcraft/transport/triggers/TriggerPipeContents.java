@@ -106,14 +106,14 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 			PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
 
 			if (kind == Kind.Empty) {
-				for (short s : transportPower.displayPower)
-					if (s != 0)
+				for (double s : transportPower.displayPower)
+					if (s > 0)
 						return false;
 
 				return true;
 			} else {
-				for (short s : transportPower.displayPower)
-					if (s != 0)
+				for (double s : transportPower.displayPower)
+					if (s > 0)
 						return true;
 
 				return false;

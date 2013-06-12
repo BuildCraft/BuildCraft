@@ -17,12 +17,10 @@ import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class PipePowerGold extends Pipe {
+public class PipePowerCobblestone extends Pipe {
 
-	public PipePowerGold(int itemID) {
-		super(new PipeTransportPower(), new PipeLogicGold(), itemID);
-
-		((PipeTransportPower) transport).maxPower = 64;
+	public PipePowerCobblestone(int itemID) {
+		super(new PipeTransportPower(), new PipeLogicStone(), itemID);
 	}
 
 	@Override
@@ -33,7 +31,7 @@ public class PipePowerGold extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipePowerGold;
+		return PipeIconProvider.PipePowerCobblestone;
 	}
 
 }

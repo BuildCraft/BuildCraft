@@ -1,14 +1,13 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.silicon;
 
+import buildcraft.BuildCraftCore;
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,43 +15,55 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityEnergyLaser;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.factory.TileMachine;
 
-public class TileLaser extends TileBuildCraft implements IPowerReceptor {
+public class TileLaser extends TileMachine implements IPowerReceptor, IActionReceptor {
 
 	private EntityEnergyLaser laser = null;
-
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker();
-
 	private ILaserTarget laserTarget;
-
 	public IPowerProvider powerProvider;
-
 	private int nextNetworkUpdate = 3;
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 100;
+	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
 	public TileLaser() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(20, 25, 25, 25, 1000);
+		initPowerProvider();
 	}
 
+	private void initPowerProvider() {
+		powerProvider.configure(20, 25, 25, 25, 1000);
+		powerProvider.configurePowerPerdition(1, 1);
+	}
+	
 	@Override
 	public void updateEntity() {
+		super.updateEntity();
 
 		if (!CoreProxy.proxy.isSimulating(worldObj))
 			return;
 
 		// Disable the laser and do nothing if no energy is available.
 		if (powerProvider.getEnergyStored() == 0) {
+			removeLaser();
+			return;
+		}
+
+		// If a gate disabled us, remove laser and do nothing.
+		if (lastMode == ActionMachineControl.Mode.Off) {
 			removeLaser();
 			return;
 		}
@@ -65,10 +76,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 		// If we still don't have a valid table or the existing has
 		// become invalid, we disable the laser and do nothing.
-		// Also bleed some energy from the provider which will result that a 
-		// laser will eventually run out of power and stop searching 
 		if (!isValidTable()) {
-			powerProvider.useEnergy(0F, 0.1F, true);
 			removeLaser();
 			return;
 		}
@@ -122,25 +130,25 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		int maxZ = zCoord + 5;
 
 		switch (ForgeDirection.values()[meta]) {
-		case WEST:
-			maxX = xCoord;
-			break;
-		case EAST:
-			minX = xCoord;
-			break;
-		case DOWN:
-			maxY = yCoord;
-			break;
-		case UP:
-			minY = yCoord;
-			break;
-		case NORTH:
-			maxZ = zCoord;
-			break;
-		default:
-		case SOUTH:
-			minZ = zCoord;
-			break;
+			case WEST:
+				maxX = xCoord;
+				break;
+			case EAST:
+				minX = xCoord;
+				break;
+			case DOWN:
+				maxY = yCoord;
+				break;
+			case UP:
+				minY = yCoord;
+				break;
+			case NORTH:
+				maxZ = zCoord;
+				break;
+			default:
+			case SOUTH:
+				minZ = zCoord;
+				break;
 		}
 
 		LinkedList<BlockIndex> targets = new LinkedList<BlockIndex>();
@@ -182,25 +190,25 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
 		switch (ForgeDirection.values()[meta]) {
 
-		case WEST:
-			px = -0.3;
-			break;
-		case EAST:
-			px = 0.3;
-			break;
-		case DOWN:
-			py = -0.3;
-			break;
-		case UP:
-			py = 0.3;
-			break;
-		case NORTH:
-			pz = -0.3;
-			break;
-		case SOUTH:
-		default:
-			pz = 0.3;
-			break;
+			case WEST:
+				px = -0.3;
+				break;
+			case EAST:
+				px = 0.3;
+				break;
+			case DOWN:
+				py = -0.3;
+				break;
+			case UP:
+				py = 0.3;
+				break;
+			case NORTH:
+				pz = -0.3;
+				break;
+			case SOUTH:
+			default:
+				pz = 0.3;
+				break;
 		}
 
 		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
@@ -237,26 +245,18 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 	}
 
 	@Override
-	public int powerRequest(ForgeDirection from) {
-		if (powerProvider.getEnergyStored() < 200 || laser != null)
-			return 25;
-		else
-			return 0;
-	}
-
-	@Override
 	public void sendNetworkUpdate() {
 		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate)) {
 			super.sendNetworkUpdate();
 		}
-	};
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
-		powerProvider.configure(20, 25, 25, 25, 1000);
+		initPowerProvider();
 	}
 
 	@Override
@@ -272,4 +272,32 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 		removeLaser();
 	}
 
+	@Override
+	public boolean isActive() {
+		return laser != null;
+	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return false;
+	}
+
+	@Override
+	public boolean allowAction(IAction action) {
+		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
+	}
+
+	@Override
+	public void actionActivated(IAction action) {
+		if (action == BuildCraftCore.actionOn) {
+			lastMode = ActionMachineControl.Mode.On;
+		} else if (action == BuildCraftCore.actionOff) {
+			lastMode = ActionMachineControl.Mode.Off;
+		}
+	}
 }

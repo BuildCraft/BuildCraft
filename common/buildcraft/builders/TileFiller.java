@@ -23,19 +23,17 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
+import buildcraft.factory.TileMachine;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
 
-public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
+public class TileFiller extends TileMachine implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
 
 	private static int[] SLOTS_GRID = Utils.createSlotArray(0, 9);
 	private static int[] SLOTS_INPUT = Utils.createSlotArray(9, 27);
@@ -54,8 +52,12 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	public TileFiller() {
 		contents = new ItemStack[getSizeInventory()];
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		initPowerProvider();
+	}
+
+	private void initPowerProvider() {
 		powerProvider.configure(20, 25, 50, 25, 100);
-		powerProvider.configurePowerPerdition(25, 40);
+		powerProvider.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -354,14 +356,6 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public int powerRequest(ForgeDirection from) {
-		if (isActive())
-			return powerProvider.getMaxEnergyReceived();
-		else
-			return 0;
-	}
-
-	@Override
 	public void actionActivated(IAction action) {
 		if (action == BuildCraftCore.actionOn) {
 			lastMode = ActionMachineControl.Mode.On;
@@ -373,14 +367,15 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return true;
 	}
 
 	@Override
 	public boolean isStackValidForSlot(int slot, ItemStack stack) {
 		if (slot < 9) {
-			if(getStackInSlot(slot) != null) return false;
+			if (getStackInSlot(slot) != null)
+				return false;
 			return stack.itemID == Block.brick.blockID || stack.itemID == Block.glass.blockID;
 		}
 		return true;

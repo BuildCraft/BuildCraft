@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -34,6 +35,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	public TileMiningWell() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 1, 25, 25, 1000);
+		powerProvider.configurePowerPerdition(1, 1);
 	}
 
 	/**
@@ -131,7 +133,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return false;
 	}
 }
