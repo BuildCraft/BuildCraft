@@ -20,6 +20,8 @@ import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
+import buildcraft.transport.pipes.PipePowerCobblestone;
+import java.util.Arrays;
 
 public class PipeTransportPower extends PipeTransport {
 
@@ -68,6 +70,9 @@ public class PipeTransportPower extends PipeTransport {
 				tiles[i] = tile;
 			} else {
 				tiles[i] = null;
+				internalPower[i] = 0;
+				internalNextPower[i] = 0;
+				displayPower[i] = 0;
 			}
 		}
 	}
@@ -103,21 +108,20 @@ public class PipeTransportPower extends PipeTransport {
 						}
 				}
 
-				double totalWatt = internalPower[i];
-				if (totalWatt > highestPower) {
-					highestPower = totalWatt;
+				if (internalPower[i] > highestPower) {
+					highestPower = internalPower[i];
 				}
 
 				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0) {
-						double watts = (totalWatt / div * powerQuery[j]);
+					if (j != i && powerQuery[j] > 0 && internalPower[i] > 0) {
+						double watts = (internalPower[i] / div * powerQuery[j]);
 
 						if (tiles[j] instanceof TileGenericPipe) {
 							TileGenericPipe nearbyTile = (TileGenericPipe) tiles[j];
 
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
-							nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
+							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 
 							displayPower[j] = (displayPower[j] * (DISPLAY_SMOOTHING - 1.0) + watts) / DISPLAY_SMOOTHING;
 							displayPower[i] = (displayPower[i] * (DISPLAY_SMOOTHING - 1.0) + watts) / DISPLAY_SMOOTHING;
@@ -169,6 +173,8 @@ public class PipeTransportPower extends PipeTransport {
 					transferQuery[i] += powerQuery[j];
 				}
 			}
+
+			transferQuery[i] = Math.min(transferQuery[i], maxPower);
 		}
 
 		// Transfer the requested energy to nearby pipes
@@ -212,38 +218,35 @@ public class PipeTransportPower extends PipeTransport {
 			currentDate = worldObj.getWorldTime();
 
 			powerQuery = nextPowerQuery;
-			nextPowerQuery = new int[]{0, 0, 0, 0, 0, 0};
+			nextPowerQuery = new int[6];
 
 			internalPower = internalNextPower;
 			internalNextPower = new double[6];
-			for (int i = 0; i < nextPowerQuery.length; i++) {
-				if (powerQuery[i] == 0.0d && internalNextPower[i] > 0) {
-					internalNextPower[i] -= 1;
-				}
-			}
 		}
 	}
 
-	public void receiveEnergy(ForgeDirection from, double val) {
+	public double receiveEnergy(ForgeDirection from, double val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-			((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
+			return ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
 		} else {
 			internalNextPower[from.ordinal()] += val;
 
-			if (internalNextPower[from.ordinal()] >= maxPower) {
+			if (internalNextPower[from.ordinal()] > maxPower) {
+				val = internalNextPower[from.ordinal()] - maxPower;
 				internalNextPower[from.ordinal()] = maxPower;
 			}
 		}
+		return val;
 	}
 
-	public void requestEnergy(ForgeDirection from, int i) {
+	public void requestEnergy(ForgeDirection from, int amount) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, i);
+			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
 			step();
-			nextPowerQuery[from.ordinal()] += i;
+			nextPowerQuery[from.ordinal()] += amount;
 		}
 	}
 
