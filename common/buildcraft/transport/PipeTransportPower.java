@@ -229,7 +229,7 @@ public class PipeTransportPower extends PipeTransport {
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
 
-			double[] next = Arrays.copyOf(internalPower, 6);
+			double[] next = internalPower;
 			internalPower = internalNextPower;
 			internalNextPower = next;
 			for (int i = 0; i < powerQuery.length; i++) {
@@ -269,7 +269,6 @@ public class PipeTransportPower extends PipeTransport {
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
-			step();
 			nextPowerQuery[from.ordinal()] += amount;
 		}
 	}
