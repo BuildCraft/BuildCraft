@@ -88,4 +88,8 @@ public class EntityBlock extends Entity {
 		nbttagcompound.setDouble("kSize", kSize);
 	}
 
+	@Override
+	public int getBrightnessForRender(float par1) {
+		return 210;
+	}
 }
