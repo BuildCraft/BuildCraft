@@ -9,34 +9,45 @@
 
 package buildcraft.factory;
 
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IMachine;
 
-public abstract class BlockMachineRoot extends BlockContainer {
+public abstract class BlockMachineRoot extends Block {
 
-	protected BlockMachineRoot(int i, Material material) {
-		super(i, material);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+	protected BlockMachineRoot(int id, Material material) {
+		super(id, material);
+		this.setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
+	
+    /**
+     * How bright to render this block based on the light its receiving.
+     */
 	@Override
-	public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
-		for (int x = i - 1; x <= i + 1; ++x) {
-			for (int y = j - 1; y <= j + 1; ++y) {
-				for (int z = k - 1; z <= k + 1; ++z) {
-					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
+	public float getBlockBrightness(IBlockAccess world, int x, int y, int z) {
+		for (int xPos = x - 1; xPos <= x + 1; xPos++) {
+			for (int yPos = y - 1; yPos <= y + 1; yPos++) {
+				for (int zPos = z - 1; zPos <= z + 1; zPos++) {
+					TileEntity tile = world.getBlockTileEntity(xPos, yPos, zPos);
 
-					if (tile instanceof IMachine && ((IMachine) tile).isActive())
-						return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
+					if (tile instanceof IMachine && ((IMachine) tile).isActive()) {
+						return super.getBlockBrightness(world, x, y, z) + 0.5F;
+					}
 				}
 			}
 		}
-
-		return super.getBlockBrightness(iblockaccess, i, j, k);
+		return super.getBlockBrightness(world, x, y, z);
 	}
+	
+	@Override
+	public abstract boolean hasTileEntity(int meta);
+	
+	@Override
+	public abstract TileEntity createTileEntity(World world, int meta);
 
 }
