@@ -14,8 +14,7 @@ import buildcraft.api.core.IBox;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class FillerFlattener extends FillerPattern {
-
+public class FillerHorizon extends FillerPattern {
 
 	@Override
 	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
@@ -24,23 +23,22 @@ public class FillerFlattener extends FillerPattern {
 		int zMin = (int) box.pMin().z;
 
 		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
 		int zMax = (int) box.pMax().z;
 
 		if (flatten(xMin, 1, zMin, xMax, yMin - 1, zMax, tile.worldObj, stackToPlace)) {
 			return false;
 		}
-		return !empty(xMin, yMin, zMin, xMax, yMax, zMax, tile.worldObj);
+		return !empty(xMin, yMin, zMin, xMax, tile.worldObj.getActualHeight(), zMax, tile.worldObj);
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getTexture() {
-		return BuilderProxyClient.fillerFlattenTexture;
+		return BuilderProxyClient.fillerHorizonTexture;
 	}
 
 	@Override
 	public String getName() {
-		return "Flatten";
+		return "Horizon";
 	}
 }

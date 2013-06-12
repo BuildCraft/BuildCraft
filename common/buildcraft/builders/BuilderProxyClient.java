@@ -9,6 +9,7 @@ public class BuilderProxyClient extends BuilderProxy {
 	public static Icon fillerWallsTexture;
 	public static Icon fillerStairsTexture;
 	public static Icon fillerFlattenTexture;
+	public static Icon fillerHorizonTexture;
 	public static Icon fillerPyramidTexture;
 
     @Override

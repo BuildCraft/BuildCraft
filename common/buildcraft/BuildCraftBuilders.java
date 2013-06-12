@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011-2012 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft;
 
 import java.io.IOException;
@@ -58,6 +56,7 @@ import buildcraft.builders.FillerFillPyramid;
 import buildcraft.builders.FillerFillStairs;
 import buildcraft.builders.FillerFillWalls;
 import buildcraft.builders.FillerFlattener;
+import buildcraft.builders.FillerHorizon;
 import buildcraft.builders.FillerRegistry;
 import buildcraft.builders.FillerRemover;
 import buildcraft.builders.GuiHandler;
@@ -91,13 +90,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
-@NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
+@NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftBuilders {
 
 	public static final int LIBRARY_PAGE_SIZE = 12;
-
 	public static final int MAX_BLUEPRINTS_NAME_SIZE = 14;
-
 	public static BlockMarker markerBlock;
 	public static BlockPathMarker pathMarkerBlock;
 	public static BlockFiller fillerBlock;
@@ -109,13 +106,9 @@ public class BuildCraftBuilders {
 	public static boolean fillerDestroy;
 	public static int fillerLifespanTough;
 	public static int fillerLifespanNormal;
-
 	private static BptRootIndex rootBptIndex;
-
 	public static TreeMap<String, BptPlayerIndex> playerLibrary = new TreeMap<String, BptPlayerIndex>();
-
 	private static LinkedList<IBuilderHook> hooks = new LinkedList<IBuilderHook>();
-
 	@Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
@@ -148,18 +141,18 @@ public class BuildCraftBuilders {
 		new BptBlockWallSide(Block.torchWood.blockID);
 		new BptBlockWallSide(Block.torchRedstoneActive.blockID);
 
-		new BptBlockRotateMeta(Block.ladder.blockID, new int[] { 2, 5, 3, 4 }, true);
-		new BptBlockRotateMeta(Block.fenceGate.blockID, new int[] { 0, 1, 2, 3 }, true);
+		new BptBlockRotateMeta(Block.ladder.blockID, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateMeta(Block.fenceGate.blockID, new int[]{0, 1, 2, 3}, true);
 
-		new BptBlockRotateInventory(Block.furnaceIdle.blockID, new int[] { 2, 5, 3, 4 }, true);
-		new BptBlockRotateInventory(Block.chest.blockID, new int[] { 2, 5, 3, 4 }, true);
-		new BptBlockRotateInventory(Block.lockedChest.blockID, new int[] { 2, 5, 3, 4 }, true);
-		new BptBlockRotateInventory(Block.dispenser.blockID, new int[] { 2, 5, 3, 4 }, true);
+		new BptBlockRotateInventory(Block.furnaceIdle.blockID, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Block.chest.blockID, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Block.lockedChest.blockID, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(Block.dispenser.blockID, new int[]{2, 5, 3, 4}, true);
 
 		new BptBlockInventory(Block.brewingStand.blockID);
 
-		new BptBlockRotateMeta(Block.vine.blockID, new int[] { 1, 4, 8, 2 }, false);
-		new BptBlockRotateMeta(Block.trapdoor.blockID, new int[] { 0, 1, 2, 3 }, false);
+		new BptBlockRotateMeta(Block.vine.blockID, new int[]{1, 4, 8, 2}, false);
+		new BptBlockRotateMeta(Block.trapdoor.blockID, new int[]{0, 1, 2, 3}, false);
 
 		new BptBlockLever(Block.woodenButton.blockID);
 		new BptBlockLever(Block.stoneButton.blockID);
@@ -209,8 +202,8 @@ public class BuildCraftBuilders {
 
 		// BUILDCRAFT BLOCKS
 
-		new BptBlockRotateInventory(architectBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
-		new BptBlockRotateInventory(builderBlock.blockID, new int[] { 2, 5, 3, 4 }, true);
+		new BptBlockRotateInventory(architectBlock.blockID, new int[]{2, 5, 3, 4}, true);
+		new BptBlockRotateInventory(builderBlock.blockID, new int[]{2, 5, 3, 4}, true);
 
 		new BptBlockInventory(libraryBlock.blockID);
 
@@ -238,11 +231,11 @@ public class BuildCraftBuilders {
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
-		
+
 		Property fillerLifespanToughProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.tough", DefaultProps.FILLER_LIFESPAN_TOUGH);
 		fillerLifespanToughProp.comment = "Lifespan in ticks of items dropped by the filler from 'tough' blocks (those that can't be broken by hand)";
 		fillerLifespanTough = fillerLifespanToughProp.getInt(DefaultProps.FILLER_LIFESPAN_TOUGH);
-		
+
 		Property fillerLifespanNormalProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.lifespan.other", DefaultProps.FILLER_LIFESPAN_NORMAL);
 		fillerLifespanNormalProp.comment = "Lifespan in ticks of items dropped by the filler from non-tough blocks (those that can be broken by hand)";
 		fillerLifespanNormal = fillerLifespanNormalProp.getInt(DefaultProps.FILLER_LIFESPAN_NORMAL);
@@ -286,9 +279,8 @@ public class BuildCraftBuilders {
 		GameRegistry.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
 		GameRegistry.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
 
-		if (BuildCraftCore.mainConfiguration.hasChanged())
-		{
-		    BuildCraftCore.mainConfiguration.save();
+		if (BuildCraftCore.mainConfiguration.hasChanged()) {
+			BuildCraftCore.mainConfiguration.save();
 		}
 
 		MinecraftForge.EVENT_BUS.register(this);
@@ -304,48 +296,44 @@ public class BuildCraftBuilders {
 
 	public static void loadRecipes() {
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[] { "ppp", "pip", "ppp", Character.valueOf('i'),
-				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('p'), Item.paper });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
+			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('p'), Item.paper});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[] { "ppp", "pip", "ppp", Character.valueOf('i'),
-				new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
+			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[] { "l ", "r ", Character.valueOf('l'),
-				new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'), Block.torchRedstoneActive });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
+			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'), Block.torchRedstoneActive});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[] { "l ", "r ", Character.valueOf('l'),
-				new ItemStack(Item.dyePowder, 1, 2), Character.valueOf('r'), Block.torchRedstoneActive });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
+			new ItemStack(Item.dyePowder, 1, 2), Character.valueOf('r'), Block.torchRedstoneActive});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[] { "btb", "ycy", "gCg", Character.valueOf('b'),
-				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-				Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('C'), Block.chest });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
+			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('C'), Block.chest});
 
 		/*
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[] { "btb", "ycy", "gCg", Character.valueOf('b'),
-				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-				Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest });
-				*/
+		 CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[] { "btb", "ycy", "gCg", Character.valueOf('b'),
+		 new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+		 Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest });
+		 */
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[] { "btb", "ycy", "gCg", Character.valueOf('b'),
-				new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-				Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'),
-				new ItemStack(templateItem, 1) });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
+			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'),
+			new ItemStack(templateItem, 1)});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[] { "bbb", "bBb", "bbb", Character.valueOf('b'),
-				new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf });
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", Character.valueOf('b'),
+			new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf});
+		
 		// / INIT FILLER PATTERNS
-		FillerManager.registry.addRecipe(new FillerFillAll(), new Object[] { "bbb", "bbb", "bbb", Character.valueOf('b'), new ItemStack(Block.brick, 1) });
-
-		FillerManager.registry.addRecipe(new FillerFlattener(), new Object[] { "   ", "ggg", "bbb", Character.valueOf('g'), Block.glass,
-				Character.valueOf('b'), Block.brick });
-
-		FillerManager.registry.addRecipe(new FillerRemover(), new Object[] { "ggg", "ggg", "ggg", Character.valueOf('g'), Block.glass });
-
-		FillerManager.registry.addRecipe(new FillerFillWalls(), new Object[] { "bbb", "b b", "bbb", Character.valueOf('b'), Block.brick });
-
-		FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[] { "   ", " b ", "bbb", Character.valueOf('b'), Block.brick });
-
-		FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[] { "  b", " bb", "bbb", Character.valueOf('b'), Block.brick });
+		FillerManager.registry.addRecipe(new FillerFillAll(), new Object[]{"bbb", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick});
+		FillerManager.registry.addRecipe(new FillerFlattener(), new Object[]{"ggg", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick});
+		FillerManager.registry.addRecipe(new FillerHorizon(), new Object[]{"ggg", "ggg", "bbb", 'g', Block.glass, 'b', Block.brick});
+		FillerManager.registry.addRecipe(new FillerRemover(), new Object[]{"ggg", "ggg", "ggg", 'g', Block.glass, 'b', Block.brick});
+		FillerManager.registry.addRecipe(new FillerFillWalls(), new Object[]{"bbb", "b b", "bbb", 'g', Block.glass, 'b', Block.brick});
+		FillerManager.registry.addRecipe(new FillerFillPyramid(), new Object[]{"   ", " b ", "bbb", 'g', Block.glass, 'b', Block.brick});
+		FillerManager.registry.addRecipe(new FillerFillStairs(), new Object[]{"  b", " bb", "bbb", 'g', Block.glass, 'b', Block.brick});
 	}
 
 	public static BptPlayerIndex getPlayerIndex(String name) {
@@ -403,20 +391,18 @@ public class BuildCraftBuilders {
 		TilePathMarker.clearAvailableMarkersList();
 	}
 
-
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
-	    if (evt.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
-	        TextureMap terrainMap = evt.map;
-	        BuilderProxyClient.fillerFillAllTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/fillAll");
-	        BuilderProxyClient.fillerClearTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/clear");
-	        BuilderProxyClient.fillerWallsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/walls");
-	        BuilderProxyClient.fillerStairsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/stairs");
-	        BuilderProxyClient.fillerFlattenTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/flatten");
-	        BuilderProxyClient.fillerPyramidTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/pyramid");
-	    }
+		if (evt.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+			TextureMap terrainMap = evt.map;
+			BuilderProxyClient.fillerFillAllTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/fillAll");
+			BuilderProxyClient.fillerClearTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/clear");
+			BuilderProxyClient.fillerWallsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/walls");
+			BuilderProxyClient.fillerStairsTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/stairs");
+			BuilderProxyClient.fillerFlattenTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/flatten");
+			BuilderProxyClient.fillerHorizonTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/horizon");
+			BuilderProxyClient.fillerPyramidTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/pyramid");
+		}
 	}
-
-
 }
