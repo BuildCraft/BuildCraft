@@ -36,9 +36,7 @@ public class BlockMarker extends BlockContainer {
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
-	private AxisAlignedBB getBoudingBox(IBlockAccess world, int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
-
+	private AxisAlignedBB getBoundingBox(int meta) {
 		double w = 0.15;
 		double h = 0.65;
 
@@ -61,14 +59,16 @@ public class BlockMarker extends BlockContainer {
 
 	@Override
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
-		AxisAlignedBB bBox = getBoudingBox(world, x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		AxisAlignedBB bBox = getBoundingBox(meta);
 		bBox.offset(x, y, z);
 		return bBox;
 	}
 
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		AxisAlignedBB bb = getBoudingBox(world, x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		AxisAlignedBB bb = getBoundingBox(meta);
 		setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
 	}
 
