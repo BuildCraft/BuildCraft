@@ -858,7 +858,7 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 
 		} catch (Throwable t) {
-			t.printStackTrace();
+			BuildCraftCore.bcLog.warning("Failed to create pipe with (" + key + "). No valid contructor found.");
 		}
 
 		return null;
