@@ -210,8 +210,9 @@ public class GateVanilla extends Gate {
 
 	@Override
 	public void startResolution() {
-		if (hasPulser()) {
+		if (hasPulser() && pulser.isActive()) {
 			pulser.disablePulse();
+			pipe.container.scheduleRenderUpdate();
 		}
 	}
 
@@ -220,9 +221,11 @@ public class GateVanilla extends Gate {
 
 		if (action instanceof ActionEnergyPulser) {
 			pulser.enablePulse(count);
+			pipe.container.scheduleRenderUpdate();
 			return true;
 		} else if (action instanceof ActionSingleEnergyPulse) {
 			pulser.enableSinglePulse(count);
+			pipe.container.scheduleRenderUpdate();
 			return true;
 		}
 		return false;
