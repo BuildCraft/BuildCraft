@@ -36,6 +36,7 @@ import buildcraft.core.utils.Utils;
 import com.google.common.collect.Lists;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -292,7 +293,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			}
 			boolean matchedStorage = false;
 			for (int i = 0; i < tempStorage.length; i++) {
-				if (tempStorage[i] != null && craftingSlots.getStackInSlot(j).isItemEqual(tempStorage[i])
+				if (tempStorage[i] != null && craftingSlots.getStackInSlot(j).itemID == tempStorage[i].itemID
+						&& (craftingSlots.getStackInSlot(j).getItemDamage() == OreDictionary.WILDCARD_VALUE
+							|| craftingSlots.getStackInSlot(j).getItemDamage() == tempStorage[i].getItemDamage())
 						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].stackSize
 						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].getMaxStackSize()) {
 					internalInventoryCrafting.bindings[j] = i;
