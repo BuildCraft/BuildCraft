@@ -66,6 +66,7 @@ public class DefaultProps {
 	public static int PIPE_ITEMS_DIAMOND_ID = 19165;
 	public static int PIPE_ITEMS_OBSIDIAN_ID = 19166;
 	public static int PIPE_ITEMS_EMERALD_ID = 19167;
+	public static int PIPE_ITEMS_QUARTZ_ID = 19168;
 
 	public static int PIPE_LIQUIDS_WOOD_ID = 19180;
 	public static int PIPE_LIQUIDS_COBBLESTONE_ID = 19181;
@@ -75,6 +76,7 @@ public class DefaultProps {
 	public static int PIPE_LIQUIDS_DIAMOND_ID = 19185;
 	public static int PIPE_LIQUIDS_OBSIDIAN_ID = 19186;
 	public static int PIPE_LIQUIDS_EMERALD_ID = 19187;
+	public static int PIPE_LIQUIDS_QUARTZ_ID = 19188;
 
 	public static int PIPE_POWER_WOOD_ID = 19200;
 	public static int PIPE_POWER_COBBLESTONE_ID = 19201;
@@ -83,6 +85,8 @@ public class DefaultProps {
 	public static int PIPE_POWER_GOLD_ID = 19204;
 	public static int PIPE_POWER_DIAMOND_ID = 19205;
 	public static int PIPE_POWER_OBSIDIAN_ID = 19206;
+	public static int PIPE_POWER_EMERALD_ID = 19207;
+	public static int PIPE_POWER_QUARTZ_ID = 19208;
 
 	public static int PIPE_ITEMS_VOID_ID = 19220;
 	public static int PIPE_LIQUIDS_VOID_ID = 19221;

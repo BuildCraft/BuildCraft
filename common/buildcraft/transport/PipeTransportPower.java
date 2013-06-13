@@ -210,7 +210,7 @@ public class PipeTransportPower extends PipeTransport {
 		if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 
-			double displayFactor = MAX_DISPLAY / 256.0;
+			double displayFactor = MAX_DISPLAY / 1024.0;
 			for (int i = 0; i < clientDisplayPower.length; i++) {
 				clientDisplayPower[i] = (short) (displayPower[i] * displayFactor + .9999);
 			}
