@@ -22,7 +22,7 @@ public class PipePowerDiamond extends Pipe {
 	public PipePowerDiamond(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicGold(), itemID);
 
-		((PipeTransportPower) transport).maxPower = 256;
+		((PipeTransportPower) transport).maxPower = 1024;
 	}
 
 	@Override

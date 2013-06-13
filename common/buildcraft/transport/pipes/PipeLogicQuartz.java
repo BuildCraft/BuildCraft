@@ -14,7 +14,7 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class PipeLogicStone extends PipeLogic {
+public class PipeLogicQuartz extends PipeLogic {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
@@ -25,11 +25,11 @@ public class PipeLogicStone extends PipeLogic {
 		}
 
 		if (pipe2 != null) {
-			if (pipe2.logic instanceof PipeLogicCobblestone) {
+			if (pipe2.logic instanceof PipeLogicStone) {
 				return false;
 			}
 
-			if (pipe2.logic instanceof PipeLogicQuartz) {
+			if (pipe2.logic instanceof PipeLogicCobblestone) {
 				return false;
 			}
 		}
