@@ -147,6 +147,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
 	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(DOWN, NORTH, SOUTH, EAST, WEST);
+	private static final float REQUIRED_POWER = 500F;
 	private final SimpleInventory craftingSlots;
 	private final SimpleInventory storageSlots;
 	private final InventoryMapper invInput;
@@ -242,7 +243,11 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	public float getRequiredEnergy() {
-		return craftResult.getStackInSlot(0) != null ? 500f : 0f;
+		return craftResult.getStackInSlot(0) != null ? REQUIRED_POWER : 0f;
+	}
+
+	public int getProgressScaled(int i) {
+		return (int) ((storedEnergy * i) / REQUIRED_POWER);
 	}
 
 	@Override
@@ -347,7 +352,8 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		}
 		for (IInvSlot slot : InventoryIterator.getIterable(craftingSlots, ForgeDirection.UP)) {
 			ItemStack ingred = slot.getStackInSlot();
-			if(ingred == null) continue;
+			if (ingred == null)
+				continue;
 			IStackFilter filter = new CraftingFilter(ingred);
 			if (InvUtils.countItems(invInput, ForgeDirection.UP, filter) < InvUtils.countItems(craftingSlots, ForgeDirection.UP, filter)) {
 				for (ForgeDirection side : SEARCH_SIDES) {
