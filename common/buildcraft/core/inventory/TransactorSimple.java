@@ -10,7 +10,6 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TransactorSimple extends Transactor {
 
-	protected static final StackHelper MERGE_HELPER = new StackHelper();
 	protected IInventory inventory;
 
 	public TransactorSimple(IInventory inventory) {
@@ -45,7 +44,7 @@ public class TransactorSimple extends Transactor {
 		}
 		for (IInvSlot slot : slots) {
 			ItemStack stackInSlot = slot.getStackInSlot();
-			if (stackInSlot == null || MERGE_HELPER.canStacksMerge(stackInSlot, stack)) {
+			if (stackInSlot == null || StackHelper.instance().canStacksMerge(stackInSlot, stack)) {
 				int used = addToSlot(slot, stack, injected, doAdd);
 				if (used > 0) {
 					injected += used;
@@ -81,7 +80,7 @@ public class TransactorSimple extends Transactor {
 			return wanted;
 		}
 
-		if (!MERGE_HELPER.canStacksMerge(stack, stackInSlot)) {
+		if (!StackHelper.instance().canStacksMerge(stack, stackInSlot)) {
 			return 0;
 		}
 

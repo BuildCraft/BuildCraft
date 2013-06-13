@@ -30,12 +30,16 @@ import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.inventory.filters.CraftingFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.Utils;
-
 import com.google.common.collect.Lists;
+import java.util.EnumSet;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraftforge.common.ForgeDirection;
+import static net.minecraftforge.common.ForgeDirection.*;
 
 public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -142,6 +146,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		craftResult = new InventoryCraftResult();
 	}
 	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
+	private static final EnumSet<ForgeDirection> SEARCH_SIDES = EnumSet.of(DOWN, NORTH, SOUTH, EAST, WEST);
 	private final SimpleInventory craftingSlots;
 	private final SimpleInventory storageSlots;
 	private final InventoryMapper invInput;
@@ -292,7 +297,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			}
 			boolean matchedStorage = false;
 			for (int i = 0; i < tempStorage.length; i++) {
-				if (tempStorage[i] != null && craftingSlots.getStackInSlot(j).isItemEqual(tempStorage[i])
+				if (tempStorage[i] != null && StackHelper.instance().isCraftingEquivalent(craftingSlots.getStackInSlot(j), tempStorage[i], true)
 						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].stackSize
 						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].getMaxStackSize()) {
 					internalInventoryCrafting.bindings[j] = i;
@@ -342,12 +347,14 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		}
 		for (IInvSlot slot : InventoryIterator.getIterable(craftingSlots, ForgeDirection.UP)) {
 			ItemStack ingred = slot.getStackInSlot();
-			if (ingred != null && InvUtils.countItems(invInput, ForgeDirection.UP, ingred) < InvUtils.countItems(craftingSlots, ForgeDirection.UP, ingred)) {
-				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if(ingred == null) continue;
+			IStackFilter filter = new CraftingFilter(ingred);
+			if (InvUtils.countItems(invInput, ForgeDirection.UP, filter) < InvUtils.countItems(craftingSlots, ForgeDirection.UP, filter)) {
+				for (ForgeDirection side : SEARCH_SIDES) {
 					TileEntity tile = cache[side.ordinal()].getTile();
 					if (tile instanceof IInventory) {
 						IInventory inv = Utils.getInventory(((IInventory) tile));
-						ItemStack result = InvUtils.moveOneItem(inv, side.getOpposite(), invInput, side, ingred);
+						ItemStack result = InvUtils.moveOneItem(inv, side.getOpposite(), invInput, side, filter);
 						if (result != null) {
 							return;
 						}

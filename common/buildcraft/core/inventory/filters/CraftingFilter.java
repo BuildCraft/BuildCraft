@@ -5,14 +5,15 @@ import net.minecraft.item.ItemStack;
 
 /**
  * Returns true if the stack matches any one one of the filter stacks.
+ * Checks the OreDictionary and wildcards.
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ArrayStackFilter implements IStackFilter {
+public class CraftingFilter implements IStackFilter {
 
 	private final ItemStack[] stacks;
 
-	public ArrayStackFilter(ItemStack... stacks) {
+	public CraftingFilter(ItemStack... stacks) {
 		this.stacks = stacks;
 	}
 
@@ -22,7 +23,7 @@ public class ArrayStackFilter implements IStackFilter {
 			return true;
 		}
 		for (ItemStack s : stacks) {
-			if (StackHelper.instance().canStacksMerge(s, stack)) {
+			if (StackHelper.instance().isCraftingEquivalent(s, stack, true)) {
 				return true;
 			}
 		}

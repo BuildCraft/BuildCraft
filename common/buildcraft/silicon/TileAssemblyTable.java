@@ -27,20 +27,13 @@ import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection, ILaserTarget {
 
-	private final StackHelper STACK_HELPER = new StackHelper();
-
 	ItemStack[] items = new ItemStack[12];
-
 	LinkedList<AssemblyRecipe> plannedOutput = new LinkedList<AssemblyRecipe>();
-
 	public AssemblyRecipe currentRecipe;
-
 	private float currentRequiredEnergy = 0;
 	private float energyStored = 0;
 	private float[] recentEnergy = new float[20];
-
 	private int tick = 0;
-
 	private int recentEnergyAverage;
 
 	public static class SelectionMessage {
@@ -50,20 +43,17 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		 */
 		@TileNetworkData
 		public boolean select = true;
-
 		/**
 		 * Id of the item to be crafted
 		 */
 		@TileNetworkData
 		public int itemID = 0;
-
 		/**
 		 * Dmg of the item to be crafted
 		 */
 		@TileNetworkData
 		public int itemDmg = 0;
 	}
-
 	public static TilePacketWrapper selectionMessageWrapper = new TilePacketWrapper(SelectionMessage.class);
 
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
@@ -117,7 +107,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 							continue; // Broken out of large if statement, increases clarity
 						}
 
-						if (STACK_HELPER.isCraftingEquivalent(in, items[i], true)) {
+						if (StackHelper.instance().isCraftingEquivalent(in, items[i], true)) {
 
 							int supply = items[i].stackSize;
 							int toBeFound = in.stackSize - found;
@@ -216,8 +206,13 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
-	@Override public void openChest() {}
-	@Override public void closeChest() {}
+	@Override
+	public void openChest() {
+	}
+
+	@Override
+	public void closeChest() {
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
@@ -398,28 +393,28 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		int currentStored = (int) (energyStored * 100.0);
 		int requiredEnergy = (int) (currentRequiredEnergy * 100.0);
 		switch (i) {
-		case 0:
-			requiredEnergy = (requiredEnergy & 0xFFFF0000) | (j & 0xFFFF);
-			currentRequiredEnergy = (requiredEnergy / 100.0f);
-			break;
-		case 1:
-			currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
-			energyStored = (currentStored / 100.0f);
-			break;
-		case 2:
-			requiredEnergy = (requiredEnergy & 0xFFFF) | ((j & 0xFFFF) << 16);
-			currentRequiredEnergy = (requiredEnergy / 100.0f);
-			break;
-		case 3:
-			currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
-			energyStored = (currentStored / 100.0f);
-			break;
-		case 4:
-			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
-			break;
-		case 5:
-			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
-			break;
+			case 0:
+				requiredEnergy = (requiredEnergy & 0xFFFF0000) | (j & 0xFFFF);
+				currentRequiredEnergy = (requiredEnergy / 100.0f);
+				break;
+			case 1:
+				currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
+				energyStored = (currentStored / 100.0f);
+				break;
+			case 2:
+				requiredEnergy = (requiredEnergy & 0xFFFF) | ((j & 0xFFFF) << 16);
+				currentRequiredEnergy = (requiredEnergy / 100.0f);
+				break;
+			case 3:
+				currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
+				energyStored = (currentStored / 100.0f);
+				break;
+			case 4:
+				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
+				break;
+			case 5:
+				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
+				break;
 		}
 	}
 
