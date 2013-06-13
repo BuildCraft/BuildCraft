@@ -304,7 +304,7 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 
 	@Override
 	public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, ForgeDirection face) {
-		return 300;
+		return BuildCraftEnergy.canOilBurn ? 300 : 0;
 	}
 
 	@Override
@@ -314,11 +314,11 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 
 	@Override
 	public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, ForgeDirection face) {
-		return true;
+		return BuildCraftEnergy.canOilBurn;
 	}
 
 	@Override
 	public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side) {
-		return true;
+		return BuildCraftEnergy.canOilBurn;
 	}
 }
