@@ -14,6 +14,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotLimited;
 
 public class ContainerFiller extends BuildCraftContainer {
 
@@ -27,7 +28,7 @@ public class ContainerFiller extends BuildCraftContainer {
 
 		for (int k = 0; k < 3; k++) {
 			for (int j1 = 0; j1 < 3; j1++) {
-				addSlotToContainer(new Slot(fillerInventory, j1 + k * 3, 31 + j1 * 18, 16 + k * 18));
+				addSlotToContainer(new SlotLimited(fillerInventory, j1 + k * 3, 31 + j1 * 18, 16 + k * 18, 1));
 			}
 		}
 
