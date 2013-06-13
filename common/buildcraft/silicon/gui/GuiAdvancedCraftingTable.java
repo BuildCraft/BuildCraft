@@ -12,7 +12,9 @@ import net.minecraft.inventory.IInventory;
 import org.lwjgl.opengl.GL11;
 
 public class GuiAdvancedCraftingTable extends GuiBuildCraft {
+
 	class AssemblyWorkbenchLedger extends Ledger {
+
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
 		int textColour = 0x000000;
@@ -49,9 +51,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 		public String getTooltip() {
 			return String.format("%3.2f MJ/t", workbench.getRecentEnergyAverage() / 100.0f);
 		}
-
 	}
-
 	TileAdvancedCraftingTable workbench;
 
 	public GuiAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable advancedWorkbench) {
@@ -70,12 +70,16 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
+		if (workbench.getStoredEnergy() > 0) {
+			int progress = workbench.getProgressScaled(24);
+			drawTexturedModalRect(cornerX + 93, cornerY + 32, 176, 0, progress + 1, 18);
+		}
 	}
 
 	@Override
