@@ -1,6 +1,7 @@
 package buildcraft.core.inventory;
 
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.inventory.filters.IStackFilter;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.inventory.IInventory;
@@ -98,5 +99,22 @@ public class TransactorSimple extends Transactor {
 			slot.setStackInSlot(stackInSlot);
 		}
 		return wanted;
+	}
+
+	@Override
+	public ItemStack remove(IStackFilter filter, ForgeDirection orientation, boolean doRemove) {
+		for (IInvSlot slot : InventoryIterator.getIterable(inventory, orientation)) {
+			ItemStack stack = slot.getStackInSlot();
+			if (stack != null && slot.canTakeStackFromSlot(stack) && filter.matches(stack)) {
+				if (doRemove) {
+					return slot.decreaseStackInSlot();
+				} else {
+					ItemStack output = stack.copy();
+					output.stackSize = 1;
+					return output;
+				}
+			}
+		}
+		return null;
 	}
 }
