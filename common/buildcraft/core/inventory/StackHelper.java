@@ -62,10 +62,12 @@ public class StackHelper {
 
 		if(oreDictionary) {
 			int idBase = OreDictionary.getOreID(base);
-			int idComp = OreDictionary.getOreID(comparison);
-			if(idBase >= 0 && idComp >= 0) {
-				if(idBase == idComp)
-					return true;
+			if(idBase >= 0) {
+				int idComp = OreDictionary.getOreID(comparison);
+				if(idComp >= 0) {
+					if(idBase == idComp)
+						return true;
+				}
 			}
 		}
 		
