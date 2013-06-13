@@ -1,33 +1,40 @@
 package buildcraft.silicon.gui;
 
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotOutput;
 import buildcraft.core.gui.slots.SlotPhantom;
 import buildcraft.core.gui.slots.SlotUntouchable;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import net.minecraft.inventory.ICrafting;
 
 public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
+
 	private TileAdvancedCraftingTable workbench;
 
 	public ContainerAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable table) {
 		super(table.getSizeInventory());
 		this.workbench = table;
 
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				addSlotToContainer(new SlotPhantom(table.getCraftingSlots(), x + y * 3, 31 + x * 18, 16 + y * 18));
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+				addSlotToContainer(new SlotPhantom(table.getCraftingSlots(), x + y * 3, 33 + x * 18, 16 + y * 18));
 			}
 		}
-		
-		addSlotToContainer(new SlotUntouchable(table.getOutputSlot(), 0, 125, 34));
 
-		for (int k = 0; k < 3; k++) {
-			for (int j1 = 0; j1 < 9; j1++) {
-				addSlotToContainer(new Slot(workbench, j1 + k * 9, 8 + j1 * 18, 85 + k * 18));
+		addSlotToContainer(new SlotUntouchable(table.getOutputSlot(), 0, 127, 34));
+
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 5; x++) {
+				addSlotToContainer(new Slot(workbench, x + y * 5, 15 + x * 18, 85 + y * 18));
+			}
+		}
+
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+				addSlotToContainer(new SlotOutput(workbench, 15 + x + y * 3, 109 + x * 18, 85 + y * 18));
 			}
 		}
 
@@ -61,5 +68,4 @@ public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
 	public void updateProgressBar(int par1, int par2) {
 		workbench.getGUINetworkData(par1, par2);
 	}
-
 }

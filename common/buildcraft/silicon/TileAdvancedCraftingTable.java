@@ -3,7 +3,6 @@ package buildcraft.silicon;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,10 +15,15 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuffer;
+import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.inventory.InventoryCopy;
+import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
+import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -30,9 +34,10 @@ import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.utils.Utils;
 
 import com.google.common.collect.Lists;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor {
+public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
 	private final class InternalInventoryCraftingContainer extends Container {
 
@@ -130,122 +135,68 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	public TileAdvancedCraftingTable() {
 		craftingSlots = new SimpleInventory(9, "CraftingSlots", 1);
-		storageSlots = new ItemStack[27];
+		storageSlots = new SimpleInventory(24, "StorageSlots", 64);
+		storageSlots.addListener(this);
+		invInput = new InventoryMapper(storageSlots, 0, 15);
+		invOutput = new InventoryMapper(storageSlots, 15, 9);
 		craftResult = new InventoryCraftResult();
 	}
-	private SimpleInventory craftingSlots;
-	private ItemStack[] storageSlots;
+	private static final int[] SLOTS = Utils.createSlotArray(0, 24);
+	private final SimpleInventory craftingSlots;
+	private final SimpleInventory storageSlots;
+	private final InventoryMapper invInput;
+	private final InventoryMapper invOutput;
 	private SlotCrafting craftSlot;
 	private float storedEnergy;
 	private float[] recentEnergy = new float[20];
 	private boolean craftable;
+	private boolean justCrafted;
 	private int tick;
 	private int recentEnergyAverage;
 	private InternalPlayer internalPlayer;
 	private IRecipe currentRecipe;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
+	private TileBuffer[] cache;
 
 	@Override
 	public int getSizeInventory() {
-		return 27;
+		return storageSlots.getSizeInventory();
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		if (slot < storageSlots.length) {
-			return storageSlots[slot];
-		}
-		return null;
+		return storageSlots.getStackInSlot(slot);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		if (slot < storageSlots.length && storageSlots[slot] != null) {
-			ItemStack var3;
-
-			if (this.storageSlots[slot].stackSize <= amount) {
-				var3 = this.storageSlots[slot];
-				this.storageSlots[slot] = null;
-				this.onInventoryChanged();
-				return var3;
-			} else {
-				var3 = this.storageSlots[slot].splitStack(amount);
-
-				if (this.storageSlots[slot].stackSize == 0) {
-					this.storageSlots[slot] = null;
-				}
-
-				this.onInventoryChanged();
-				return var3;
-			}
-
-		}
-		return null;
+		return storageSlots.decrStackSize(slot, amount);
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (slot >= storageSlots.length) {
-			return null;
-		}
-		if (this.storageSlots[slot] != null) {
-			ItemStack var2 = this.storageSlots[slot];
-			this.storageSlots[slot] = null;
-			return var2;
-		} else {
-			return null;
-		}
+		return storageSlots.getStackInSlotOnClosing(slot);
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		if (slot >= storageSlots.length) {
-			return;
-		}
-		this.storageSlots[slot] = stack;
-
-		if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
-			stack.stackSize = this.getInventoryStackLimit();
-		}
-
-		this.onInventoryChanged();
+		storageSlots.setInventorySlotContents(slot, stack);
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound par1nbtTagCompound) {
-		super.writeToNBT(par1nbtTagCompound);
-		NBTTagList var2 = new NBTTagList();
-
-		for (int var3 = 0; var3 < this.storageSlots.length; ++var3) {
-			if (this.storageSlots[var3] != null) {
-				NBTTagCompound var4 = new NBTTagCompound();
-				var4.setByte("Slot", (byte) var3);
-				this.storageSlots[var3].writeToNBT(var4);
-				var2.appendTag(var4);
-			}
-		}
-
-		par1nbtTagCompound.setTag("StorageSlots", var2);
-		craftingSlots.writeToNBT(par1nbtTagCompound);
-		par1nbtTagCompound.setFloat("StoredEnergy", storedEnergy);
+	public void writeToNBT(NBTTagCompound data) {
+		super.writeToNBT(data);
+		storageSlots.writeToNBT(data, "StorageSlots");
+		craftingSlots.writeToNBT(data);
+		data.setFloat("StoredEnergy", storedEnergy);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound par1nbtTagCompound) {
-		super.readFromNBT(par1nbtTagCompound);
-		NBTTagList var2 = par1nbtTagCompound.getTagList("StorageSlots");
-		this.storageSlots = new ItemStack[27];
-
-		for (int var3 = 0; var3 < var2.tagCount(); ++var3) {
-			NBTTagCompound var4 = (NBTTagCompound) var2.tagAt(var3);
-			int var5 = var4.getByte("Slot") & 255;
-
-			if (var5 >= 0 && var5 < this.storageSlots.length) {
-				this.storageSlots[var5] = ItemStack.loadItemStackFromNBT(var4);
-			}
-		}
-		craftingSlots.readFromNBT(par1nbtTagCompound);
-		storedEnergy = par1nbtTagCompound.getFloat("StoredEnergy");
+	public void readFromNBT(NBTTagCompound data) {
+		super.readFromNBT(data);
+		storageSlots.readFromNBT(data, "StorageSlots");
+		craftingSlots.readFromNBT(data);
+		storedEnergy = data.getFloat("StoredEnergy");
 	}
 
 	@Override
@@ -261,7 +212,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public int getInventoryStackLimit() {
-		return 64;
+		return storageSlots.getInventoryStackLimit();
 	}
 
 	@Override
@@ -290,6 +241,12 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
+	public void invalidate() {
+		super.invalidate();
+		cache = null;
+	}
+
+	@Override
 	public void updateEntity() {
 		if (internalPlayer == null) {
 			internalInventoryCrafting = new InternalInventoryCrafting();
@@ -304,60 +261,96 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			return;
 		}
 		updateCraftingResults();
+		findIngredients();
+		justCrafted = false;
 		tick++;
 		tick = tick % recentEnergy.length;
 		recentEnergy[tick] = 0.0f;
-		while (storedEnergy >= getRequiredEnergy() && craftResult.getStackInSlot(0) != null) {
-			ItemStack[] tempStorage = Arrays.copyOf(storageSlots, storageSlots.length);
-			internalInventoryCrafting.tempStacks = tempStorage;
-			internalInventoryCrafting.hitCount = new int[27];
-			for (int j = 0; j < craftingSlots.getSizeInventory(); j++) {
-				if (craftingSlots.getStackInSlot(j) == null) {
-					internalInventoryCrafting.bindings[j] = -1;
-					continue;
+		if (craftResult.getStackInSlot(0) != null) {
+			internalInventoryCrafting.tempStacks = new InventoryCopy(storageSlots).getItemStacks();
+			internalInventoryCrafting.hitCount = new int[internalInventoryCrafting.tempStacks.length];
+			if (hasIngredients() && InvUtils.isRoomForStack(craftResult.getStackInSlot(0), ForgeDirection.UP, invOutput)) {
+				if (storedEnergy >= getRequiredEnergy()) {
+					craftItem();
+					justCrafted = true;
 				}
-				boolean matchedStorage = false;
-				for (int i = 0; i < tempStorage.length; i++) {
-					if (tempStorage[i] != null && craftingSlots.getStackInSlot(j).isItemEqual(tempStorage[i])
-							&& internalInventoryCrafting.hitCount[i] < tempStorage[i].stackSize
-							&& internalInventoryCrafting.hitCount[i] < tempStorage[i].getMaxStackSize()) {
-						internalInventoryCrafting.bindings[j] = i;
-						internalInventoryCrafting.hitCount[i]++;
-						matchedStorage = true;
-						break;
-					}
-				}
-				if (!matchedStorage) {
-					craftable = false;
-					internalInventoryCrafting.tempStacks = null;
-					internalInventoryCrafting.hitCount = null;
-					return;
-				}
+			} else {
+				craftable = false;
+				internalInventoryCrafting.tempStacks = null;
+				internalInventoryCrafting.hitCount = null;
+				storedEnergy = 0;
 			}
-			craftSlot.onPickupFromSlot(internalPlayer, craftResult.getStackInSlot(0));
+		}
+	}
+
+	private boolean hasIngredients() {
+		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
+		for (int j = 0; j < craftingSlots.getSizeInventory(); j++) {
+			if (craftingSlots.getStackInSlot(j) == null) {
+				internalInventoryCrafting.bindings[j] = -1;
+				continue;
+			}
+			boolean matchedStorage = false;
 			for (int i = 0; i < tempStorage.length; i++) {
-				if (tempStorage[i] != null && tempStorage[i].stackSize <= 0) {
-					tempStorage[i] = null;
+				if (tempStorage[i] != null && craftingSlots.getStackInSlot(j).isItemEqual(tempStorage[i])
+						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].stackSize
+						&& internalInventoryCrafting.hitCount[i] < tempStorage[i].getMaxStackSize()) {
+					internalInventoryCrafting.bindings[j] = i;
+					internalInventoryCrafting.hitCount[i]++;
+					matchedStorage = true;
+					break;
 				}
 			}
-			storageSlots = tempStorage;
-			storedEnergy -= getRequiredEnergy();
-			List<ItemStack> outputs = Lists.newArrayList(craftResult.getStackInSlot(0).copy());
-			for (int i = 0; i < internalPlayer.inventory.mainInventory.length; i++) {
-				if (internalPlayer.inventory.mainInventory[i] != null) {
-					outputs.add(internalPlayer.inventory.mainInventory[i]);
-					internalPlayer.inventory.mainInventory[i] = null;
-				}
+			if (!matchedStorage) {
+				return false;
 			}
-			for (ItemStack output : outputs) {
-				boolean putToPipe = Utils.addToRandomPipeEntry(this, ForgeDirection.UP, output);
-				if (!putToPipe) {
-					output.stackSize -= Transactor.getTransactorFor(this).add(output, ForgeDirection.UP, true).stackSize;
-					if (output.stackSize > 0) {
-						output.stackSize -= Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord).stackSize;
-					}
-					if (output.stackSize > 0) {
-						Utils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
+		}
+		return true;
+	}
+
+	private void craftItem() {
+		craftSlot.onPickupFromSlot(internalPlayer, craftResult.getStackInSlot(0));
+		ItemStack[] tempStorage = internalInventoryCrafting.tempStacks;
+		for (int i = 0; i < tempStorage.length; i++) {
+			if (tempStorage[i] != null && tempStorage[i].stackSize <= 0) {
+				tempStorage[i] = null;
+			}
+			storageSlots.getItemStacks()[i] = tempStorage[i];
+		}
+		storedEnergy -= getRequiredEnergy();
+		List<ItemStack> outputs = Lists.newArrayList(craftResult.getStackInSlot(0).copy());
+		for (int i = 0; i < internalPlayer.inventory.mainInventory.length; i++) {
+			if (internalPlayer.inventory.mainInventory[i] != null) {
+				outputs.add(internalPlayer.inventory.mainInventory[i]);
+				internalPlayer.inventory.mainInventory[i] = null;
+			}
+		}
+		for (ItemStack output : outputs) {
+			output.stackSize -= Transactor.getTransactorFor(invOutput).add(output, ForgeDirection.UP, true).stackSize;
+			if (output.stackSize > 0) {
+				output.stackSize -= Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord).stackSize;
+			}
+			if (output.stackSize > 0) {
+				Utils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
+			}
+		}
+	}
+
+	private void findIngredients() {
+		if (cache == null) {
+			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		}
+		for (IInvSlot slot : InventoryIterator.getIterable(craftingSlots, ForgeDirection.UP)) {
+			ItemStack ingred = slot.getStackInSlot();
+			if (ingred != null && InvUtils.countItems(invInput, ForgeDirection.UP, ingred) < InvUtils.countItems(craftingSlots, ForgeDirection.UP, ingred)) {
+				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+					TileEntity tile = cache[side.ordinal()].getTile();
+					if (tile instanceof IInventory) {
+						IInventory inv = Utils.getInventory(((IInventory) tile));
+						ItemStack result = InvUtils.moveOneItem(inv, side.getOpposite(), invInput, side, ingred);
+						if (result != null) {
+							return;
+						}
 					}
 				}
 			}
@@ -401,7 +394,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public boolean hasCurrentWork() {
-		return craftable && lastMode != ActionMachineControl.Mode.Off;
+		return craftable && !justCrafted && lastMode != ActionMachineControl.Mode.Off;
 	}
 
 	@Override
@@ -484,8 +477,23 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		return SLOTS;
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		return isStackValidForSlot(slot, stack);
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		return slot >= 15;
+	}
+
+	@Override
 	public boolean isStackValidForSlot(int slot, ItemStack stack) {
-		return true;
+		return slot < 15;
 	}
 
 	@Override
