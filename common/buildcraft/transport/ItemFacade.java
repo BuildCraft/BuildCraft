@@ -12,6 +12,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -43,8 +44,8 @@ public class ItemFacade extends ItemBuildCraft {
 	@Override
 	public String getItemDisplayName(ItemStack itemstack) {
 		String name = super.getItemDisplayName(itemstack);
-		int decodedBlockId = ItemFacade.getBlockId(itemstack.getItemDamage());
-		int decodedMeta = ItemFacade.getMetaData(itemstack.getItemDamage());
+		int decodedBlockId = ItemFacade.getBlockId(itemstack);
+		int decodedMeta = ItemFacade.getMetaData(itemstack);
 		if (decodedBlockId < Block.blocksList.length && Block.blocksList[decodedBlockId] != null && Block.blocksList[decodedBlockId].getRenderType() == 31) {
 		    decodedMeta &= 0x3;
         }
@@ -87,8 +88,8 @@ public class ItemFacade extends ItemBuildCraft {
 			pipeTile.dropFacade(ForgeDirection.VALID_DIRECTIONS[side]);
 			return true;
 		} else {
-			if (((TileGenericPipe) tile).addFacade(ForgeDirection.values()[side], ItemFacade.getBlockId(stack.getItemDamage()),
-					ItemFacade.getMetaData(stack.getItemDamage()))) {
+			if (((TileGenericPipe) tile).addFacade(ForgeDirection.values()[side], ItemFacade.getBlockId(stack),
+					ItemFacade.getMetaData(stack))) {
 				if (!player.capabilities.isCreativeMode) {
 					stack.stackSize--;
 				}
@@ -141,12 +142,14 @@ public class ItemFacade extends ItemBuildCraft {
 		return metaData & 0xF | ((blockId & 0xFFF) << 4);
 	}
 
-	public static int getMetaData(int encoded) {
-		return encoded & 0x0000F;
+	public static int getMetaData(ItemStack stack) {
+		if(stack.hasTagCompound() && stack.getTagCompound().hasKey("meta"))
+			return stack.getTagCompound().getInteger("meta");
+		return stack.getItemDamage() & 0x0000F;
 	}
 
-	public static int getBlockId(int encoded) {
-		return ((encoded & 0xFFF0) >>> 4);
+	public static int getBlockId(ItemStack stack) {
+		return ((stack.getItemDamage() & 0xFFF0) >>> 4);
 	}
 
 	@Override
@@ -156,19 +159,23 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static void addFacade(ItemStack itemStack) {
-		allFacades.add(new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage())));
+		ItemStack facade = getStack(itemStack.itemID, itemStack.getItemDamage());
+		allFacades.add(facade);
+		
+		ItemStack facade6 = facade.copy();
+		facade6.stackSize = 6;
 
 		// 3 Structurepipes + this block makes 6 facades
 		AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] { new ItemStack(BuildCraftTransport.pipeStructureCobblestone, 3), itemStack },
-				8000, new ItemStack(BuildCraftTransport.facadeItem, 6, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()))));
+				8000, facade6));
 		if (itemStack.itemID < Block.blocksList.length && Block.blocksList[itemStack.itemID] != null) {
 		    Block bl = Block.blocksList[itemStack.itemID];
 
 		    // Special handling for logs
 	        if (bl.getRenderType() == 31) {
-	            ItemStack mainLog = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage()));
-	            ItemStack rotLog1 = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage() | 4));
-                ItemStack rotLog2 = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(itemStack.itemID, itemStack.getItemDamage() | 8));
+	            ItemStack mainLog = getStack(itemStack.itemID, itemStack.getItemDamage());
+	            ItemStack rotLog1 = getStack(itemStack.itemID, itemStack.getItemDamage() | 4);
+                ItemStack rotLog2 = getStack(itemStack.itemID, itemStack.getItemDamage() | 8);
                 allFacades.add(rotLog1);
                 allFacades.add(rotLog2);
                 CoreProxy.proxy.addShapelessRecipe(rotLog1, new Object[] { mainLog });
@@ -191,4 +198,12 @@ public class ItemFacade extends ItemBuildCraft {
     {
         return 0;
     }
+	
+	public static ItemStack getStack(int blockID, int metadata) {
+		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(blockID, 0));
+		NBTTagCompound nbt = new NBTTagCompound("tag");
+		nbt.setInteger("meta", metadata);
+		stack.setTagCompound(nbt);
+		return stack;
+	}
 }
