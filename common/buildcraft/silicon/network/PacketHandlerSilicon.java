@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.silicon.TileAdvancedCraftingTable;
@@ -30,13 +31,13 @@ public class PacketHandlerSilicon implements IPacketHandler {
 			int packetID = data.read();
 			switch (packetID) {
 			case PacketIds.SELECTION_ASSEMBLY_SEND:
-				PacketUpdate packetT = new PacketUpdate();
+				PacketNBT packetT = new PacketNBT();
 				packetT.readData(data);
 				onSelectionUpdate((EntityPlayer) player, packetT);
 				break;
 
 			case PacketIds.SELECTION_ASSEMBLY:
-				PacketUpdate packetA = new PacketUpdate();
+				PacketNBT packetA = new PacketNBT();
 				packetA.readData(data);
 				onAssemblySelect((EntityPlayer) player, packetA);
 				break;
@@ -58,13 +59,13 @@ public class PacketHandlerSilicon implements IPacketHandler {
 
 	}
 
-	private void onSelectionUpdate(EntityPlayer player, PacketUpdate packet) {
+	private void onSelectionUpdate(EntityPlayer player, PacketNBT packet) {
 
 		Container container = player.openContainer;
 
 		if (container instanceof ContainerAssemblyTable) {
 			SelectionMessage message = new SelectionMessage();
-			TileAssemblyTable.selectionMessageWrapper.fromPayload(message, packet.payload);
+			message.fromNBT(packet.getTagCompound());
 			((ContainerAssemblyTable) container).handleSelectionMessage(message);
 		}
 	}
@@ -112,16 +113,16 @@ public class PacketHandlerSilicon implements IPacketHandler {
 	 * Sets the selection on an assembly table according to player request.
 	 * 
 	 * @param player
-	 * @param packet
+	 * @param packetA
 	 */
-	private void onAssemblySelect(EntityPlayer player, PacketUpdate packet) {
+	private void onAssemblySelect(EntityPlayer player, PacketNBT packetA) {
 
-		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		TileAssemblyTable tile = getAssemblyTable(player.worldObj, packetA.posX, packetA.posY, packetA.posZ);
 		if (tile == null)
 			return;
 
 		TileAssemblyTable.SelectionMessage message = new TileAssemblyTable.SelectionMessage();
-		TileAssemblyTable.selectionMessageWrapper.fromPayload(message, packet.payload);
+		message.fromNBT(packetA.getTagCompound());
 		tile.handleSelectionMessage(message);
 	}
 
