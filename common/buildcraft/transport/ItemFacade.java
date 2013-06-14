@@ -138,10 +138,6 @@ public class ItemFacade extends ItemBuildCraft {
 		}
 	}
 
-	public static int encode(int blockId, int metaData) {
-		return metaData & 0xF | ((blockId & 0xFFF) << 4);
-	}
-
 	public static int getMetaData(ItemStack stack) {
 		if(stack.hasTagCompound() && stack.getTagCompound().hasKey("meta"))
 			return stack.getTagCompound().getInteger("meta");
@@ -149,6 +145,8 @@ public class ItemFacade extends ItemBuildCraft {
 	}
 
 	public static int getBlockId(ItemStack stack) {
+		if(stack.hasTagCompound() && stack.getTagCompound().hasKey("id"))
+			return stack.getTagCompound().getInteger("id");
 		return ((stack.getItemDamage() & 0xFFF0) >>> 4);
 	}
 
@@ -200,9 +198,10 @@ public class ItemFacade extends ItemBuildCraft {
     }
 	
 	public static ItemStack getStack(int blockID, int metadata) {
-		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, ItemFacade.encode(blockID, 0));
+		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound("tag");
 		nbt.setInteger("meta", metadata);
+		nbt.setInteger("id", blockID);
 		stack.setTagCompound(nbt);
 		return stack;
 	}
