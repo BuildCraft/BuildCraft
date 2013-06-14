@@ -3,6 +3,8 @@ package buildcraft.silicon;
 import buildcraft.api.gates.IAction;
 import java.util.LinkedList;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -76,7 +78,12 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public void updateEntity() {
+	public boolean canUpdate() {
+		return !FMLCommonHandler.instance().getEffectiveSide().isClient();
+	}
+
+	@Override
+	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
 		tick++;
 		tick = tick % recentEnergy.length;
 		recentEnergy[tick] = 0.0f;
