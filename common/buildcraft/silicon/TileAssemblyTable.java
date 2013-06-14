@@ -19,6 +19,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.network.TilePacketWrapper;
@@ -38,23 +39,23 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	public static class SelectionMessage {
 
-		/**
-		 * If true, select, if false, unselect
-		 */
-		@TileNetworkData
-		public boolean select = true;
-		/**
-		 * Id of the item to be crafted
-		 */
-		@TileNetworkData
-		public int itemID = 0;
-		/**
-		 * Dmg of the item to be crafted
-		 */
-		@TileNetworkData
-		public int itemDmg = 0;
+		public boolean select;
+		public ItemStack stack;
+		public NBTTagCompound getNBT() {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setBoolean("s", select);
+			NBTTagCompound itemNBT = new NBTTagCompound();
+			stack.writeToNBT(itemNBT);
+			nbt.setCompoundTag("i", itemNBT);
+			return nbt;
+		}
+		public void fromNBT(NBTTagCompound nbt) {
+			select = nbt.getBoolean("s");
+			NBTTagCompound itemNBT = nbt.getCompoundTag("i");
+			stack = ItemStack.loadItemStackFromNBT(itemNBT);
+		}
+		
 	}
-	public static TilePacketWrapper selectionMessageWrapper = new TilePacketWrapper(SelectionMessage.class);
 
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
 		LinkedList<AssemblyRecipe> result = new LinkedList<AssemblyRecipe>();
@@ -353,7 +354,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	public void handleSelectionMessage(SelectionMessage message) {
 		for (AssemblyRecipe recipe : AssemblyRecipe.assemblyRecipes) {
-			if (recipe.output.itemID == message.itemID && recipe.output.getItemDamage() == message.itemDmg) {
+			if (recipe.output.isItemEqual(message.stack) && ItemStack.areItemStackTagsEqual(recipe.output, message.stack)) {
 				if (message.select) {
 					planOutput(recipe);
 				} else {
@@ -369,8 +370,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 			SelectionMessage message = new SelectionMessage();
 
-			message.itemID = r.output.itemID;
-			message.itemDmg = r.output.getItemDamage();
+			message.stack = r.output;	
 
 			if (isPlanned(r)) {
 				message.select = true;
@@ -378,7 +378,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				message.select = false;
 			}
 
-			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY_SEND, selectionMessageWrapper.toPayload(xCoord, yCoord, zCoord, message));
+			PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY_SEND, message.getNBT(), xCoord, yCoord, zCoord);
 			packet.posX = xCoord;
 			packet.posY = yCoord;
 			packet.posZ = zCoord;

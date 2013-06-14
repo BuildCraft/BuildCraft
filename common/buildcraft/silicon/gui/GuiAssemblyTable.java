@@ -25,6 +25,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
@@ -193,17 +194,11 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 				message.select = true;
 			}
 
-			message.itemID = slot.recipe.output.itemID;
-			message.itemDmg = slot.recipe.output.getItemDamage();
+			message.stack = slot.recipe.output;
 
 			if (CoreProxy.proxy.isRenderWorld(assemblyTable.worldObj)) {
-				PacketPayload payload = TileAssemblyTable.selectionMessageWrapper.toPayload(assemblyTable.xCoord, assemblyTable.yCoord, assemblyTable.zCoord,
-						message);
 
-				PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY, payload);
-				packet.posX = assemblyTable.xCoord;
-				packet.posY = assemblyTable.yCoord;
-				packet.posZ = assemblyTable.zCoord;
+				PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY, message.getNBT(), assemblyTable.xCoord, assemblyTable.yCoord, assemblyTable.zCoord);
 
 				CoreProxy.proxy.sendToServer(packet.getPacket());
 			}

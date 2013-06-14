@@ -17,9 +17,9 @@ import buildcraft.transport.PipeIconProvider;
 public class FacadeItemRenderer implements IItemRenderer {
 
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
-
-		int decodedMeta = ItemFacade.getMetaData(item.getItemDamage());
-		int decodedBlockId = ItemFacade.getBlockId(item.getItemDamage());
+		
+		int decodedMeta = ItemFacade.getMetaData(item);
+		int decodedBlockId = ItemFacade.getBlockId(item);
 
 		Tessellator tessellator = Tessellator.instance;
 
