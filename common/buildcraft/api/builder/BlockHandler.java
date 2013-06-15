@@ -21,11 +21,7 @@ public class BlockHandler {
 	private static final BlockHandler DEFAULT_HANDLER = new BlockHandler();
 	private static final Map<Integer, BlockHandler> handlers = new HashMap<Integer, BlockHandler>();
 
-	public static BlockHandler getHandler(World world, int x, int y, int z) {
-		if (world.isAirBlock(x, y, z)) {
-			return null;
-		}
-		int blockId = world.getBlockId(x, y, z);
+	public static BlockHandler getHandler(int blockId) {
 		BlockHandler handler = handlers.get(blockId);
 		if (handler == null) {
 			return DEFAULT_HANDLER;
