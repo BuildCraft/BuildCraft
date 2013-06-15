@@ -39,15 +39,18 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 		TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
 
-		if (tile == null) return;
+		if (tile == null)
+			return;
 
 		ITransactor transactor = Transactor.getTransactorFor(tile);
 
-		if (transactor == null) return;
+		if (transactor == null)
+			return;
 
-		for(int internalSlot = 0; internalSlot < _inventory.getSizeInventory(); internalSlot++) {
+		for (int internalSlot = 0; internalSlot < _inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = _inventory.getStackInSlot(internalSlot);
-			if(stackInSlot == null) continue;
+			if (stackInSlot == null)
+				continue;
 
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
 			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
@@ -57,8 +60,9 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 	}
 
-	/** IInventory Implementation **/
-
+	/**
+	 * IInventory Implementation *
+	 */
 	@Override
 	public int getSizeInventory() {
 		return _inventory.getSizeInventory();
@@ -96,7 +100,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this && entityPlayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64.0D;
 	}
 
 	@Override
@@ -106,9 +110,9 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public void closeChest() {
 	}
-	
-	 @Override
-    public boolean isStackValidForSlot(int i, ItemStack itemstack) {
-		 return true;
-    }
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		return true;
+	}
 }
