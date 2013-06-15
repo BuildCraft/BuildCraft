@@ -7,18 +7,15 @@
  */
 package buildcraft.transport.pipes;
 
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -27,13 +24,15 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	private IPowerProvider powerProvider;
 	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
 	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
+	private int[] powerSources = new int[6];
 
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 2, 1000, 1, 1000);
+		powerProvider.configure(50, 2, 1000, 1, 1500);
 		powerProvider.configurePowerPerdition(1, 10);
+		((PipeTransportPower) transport).maxPower = 32;
 	}
 
 	@Override
@@ -77,35 +76,48 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		if (worldObj.isRemote)
 			return;
 
+		int sources = 0;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (Utils.checkPipesConnections(container, container.getTile(o))) {
-				TileEntity tile = container.getTile(o);
+			if (!container.isPipeConnected(o)) {
+				powerSources[o.ordinal()] = 0;
+				continue;
+			}
+			if (powerSources[o.ordinal()] > 0) {
+				powerSources[o.ordinal()]--;
+			}
+			if (powerProvider.isPowerSource(o)) {
+				powerSources[o.ordinal()] = 40;
+			}
+			if (powerSources[o.ordinal()] > 0) {
+				sources++;
+			}
+		}
 
-				if (tile instanceof TileGenericPipe) {
-					if (((TileGenericPipe) tile).pipe == null) {
-						continue; // Null pointer protection
-					}
+		if (sources <= 0)
+			return;
 
-					PipeTransportPower trans = (PipeTransportPower) ((TileGenericPipe) tile).pipe.transport;
+		float energyToRemove;
 
-					float energyToRemove;
+		if (powerProvider.getEnergyStored() > 40) {
+			energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
+		} else if (powerProvider.getEnergyStored() > 10) {
+			energyToRemove = powerProvider.getEnergyStored() / 10;
+		} else {
+			energyToRemove = 1;
+		}
+		energyToRemove /= (float) sources;
 
-					if (powerProvider.getEnergyStored() > 40) {
-						energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
-					} else if (powerProvider.getEnergyStored() > 10) {
-						energyToRemove = powerProvider.getEnergyStored() / 10;
-					} else {
-						energyToRemove = 1;
-					}
+		PipeTransportPower trans = (PipeTransportPower) transport;
 
-					float energyUsable = powerProvider.useEnergy(1, energyToRemove, false);
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (powerSources[o.ordinal()] <= 0)
+				continue;
 
-					float energySend = Math.min(energyUsable, ((PipeTransportPower) transport).powerQuery[o.ordinal()]);
-					if (energySend > 0) {
-						trans.receiveEnergy(o.getOpposite(), energySend);
-						powerProvider.useEnergy(1, energySend, true);
-					}
-				}
+			float energyUsable = powerProvider.useEnergy(1, energyToRemove, false);
+
+			float energySend = (float) trans.receiveEnergy(o, energyUsable);
+			if (energySend > 0) {
+				powerProvider.useEnergy(1, energySend, true);
 			}
 		}
 	}
