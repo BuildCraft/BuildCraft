@@ -2,7 +2,9 @@ package buildcraft.api.builder;
 
 import buildcraft.core.utils.Utils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -13,6 +15,28 @@ import net.minecraftforge.common.ForgeDirection;
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlockHandler {
+
+	private static final BlockHandler DEFAULT_HANDLER = new BlockHandler();
+	private static final Map<Integer, BlockHandler> handlers = new HashMap<Integer, BlockHandler>();
+
+	public static BlockHandler getHandler(World world, int x, int y, int z) {
+		if (world.isAirBlock(x, y, z)) {
+			return null;
+		}
+		int blockId = world.getBlockId(x, y, z);
+		BlockHandler handler = handlers.get(blockId);
+		if (handler == null) {
+			return DEFAULT_HANDLER;
+		}
+		return handler;
+	}
+
+	public static void registerHandler(int blockId, BlockHandler handler) {
+		handlers.put(blockId, handler);
+	}
+
+	protected BlockHandler() {
+	}
 
 	/**
 	 * By default we will ignore all blocks with Tile Entities.
