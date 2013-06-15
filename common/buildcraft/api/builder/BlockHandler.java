@@ -11,6 +11,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 /**
+ * BlockHandlers are used to serialize blocks for saving/loading from
+ * Blueprints.
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
@@ -81,9 +83,15 @@ public class BlockHandler {
 	}
 
 	/**
-	 * This will only work for simple blocks without tile entities and will in
-	 * fact break on Ore blocks as well. Which is why those blocks can't be
-	 * saved by default.
+	 * Provide a list of all the items that must be present to build this
+	 * schematic.
+	 *
+	 * If you need axillary items like a painter or gate, list them as well.
+	 * Items will be consumed in the consumeItems() callback below.
+	 *
+	 * This default implementation will only work for simple blocks without tile
+	 * entities and will in fact break on Ore blocks as well. Which is why those
+	 * blocks can't be saved by default.
 	 */
 	public List<ItemStack> getCostForSchematic(BlockSchematic schematic) {
 		List<ItemStack> cost = new ArrayList<ItemStack>();
@@ -118,8 +126,8 @@ public class BlockHandler {
 	}
 
 	/**
-	 * Should this place the block or should the block already be placed and
-	 * this just initializes it?
+	 * FEEDBACK REQUIRED: Should this place the block or should the block
+	 * already be placed and this just initializes it?
 	 *
 	 * The ForgeDirection parameter can be use to determine the orientation of
 	 * the blueprint. Blueprints are always saved facing North. This function
