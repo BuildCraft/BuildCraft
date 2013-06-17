@@ -30,6 +30,7 @@ import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
+import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GateIconProvider;
 import buildcraft.transport.GuiHandler;
@@ -138,6 +139,7 @@ public class BuildCraftTransport {
 	public static Item pipePowerDiamond;
 	public static Item facadeItem;
 	public static Item plugItem;
+	public static BlockFilteredBuffer filteredBufferBlock;
 	// public static Item pipeItemsStipes;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
@@ -341,6 +343,12 @@ public class BuildCraftTransport {
 			Property pipePlugId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipePlug.id", DefaultProps.PIPE_PLUG_ID);
 			plugItem = new ItemPlug(pipePlugId.getInt());
 			plugItem.setUnlocalizedName("pipePlug");
+			
+			Property filteredBufferId = BuildCraftCore.mainConfiguration.getBlock("filteredBuffer.id", DefaultProps.FILTERED_BUFFER);
+			filteredBufferBlock = new BlockFilteredBuffer(filteredBufferId.getInt());
+			CoreProxy.proxy.registerBlock(filteredBufferBlock.setUnlocalizedName("filteredBufferBlock"));
+			CoreProxy.proxy.addName(filteredBufferBlock, "Filtered Buffer");
+
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[]{new ItemStack(pipeStructureCobblestone)}, 1000, new ItemStack(plugItem, 8)));
 
 		} finally {
@@ -404,6 +412,11 @@ public class BuildCraftTransport {
 				CoreProxy.proxy.addCraftingRecipe(pipe.result, pipe.input);
 			}
 		}
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
+				new Object[] { "wdw", "wcw", "wpw", Character.valueOf('w'), "plankWood", Character.valueOf('d'),
+						BuildCraftCore.goldGearItem, Character.valueOf('c'), Block.chest, Character.valueOf('p'),
+						Block.pistonBase });
 	}
 
 	@IMCCallback
