@@ -2,10 +2,11 @@
 	<property environment="env"/>
 	<!-- Properties -->
 
+	<dirname property="imported.basedir" file="${ant.file.BuildCraft}"/>
 	<property name="build.dir" value="build"/>
-	<property name="src.dir" value="."/>
+	<property name="src.dir" value="${imported.basedir}"/>
 	<property name="lang.dir" value="../buildcraft.localization"/>
-	<property name="resources.dir" value="buildcraft_resources"/>
+	<property name="resources.dir" value="${imported.basedir}/buildcraft_resources"/>
 
 	<property name="download.dir" value="download"/>
 
@@ -18,7 +19,7 @@
 	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
 
 	<property name="mc.version" value="1.5.2"/>
-	<property name="forge.version" value="7.8.0.684"/>
+	<property name="forge.version" value="7.8.0.686"/>
 	<!--	<property name="project.version" value="0.0.0"/>-->
 
 	<property name="buildcraft.name" value="buildcraft"/>
