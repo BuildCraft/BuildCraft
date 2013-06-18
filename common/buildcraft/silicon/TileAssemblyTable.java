@@ -22,9 +22,6 @@ import buildcraft.core.IMachine;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
-import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
@@ -56,7 +53,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			NBTTagCompound itemNBT = nbt.getCompoundTag("i");
 			stack = ItemStack.loadItemStackFromNBT(itemNBT);
 		}
-		
+
 	}
 
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
@@ -154,10 +151,10 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	public float getCompletionRatio(float ratio) {
 		if (currentRecipe == null)
 			return 0;
-		else if (energyStored >= currentRecipe.energy)
+		else if (energyStored >= currentRequiredEnergy)
 			return ratio;
 		else
-			return energyStored / currentRecipe.energy * ratio;
+			return energyStored / currentRequiredEnergy * ratio;
 	}
 
 	/* IINVENTORY */
@@ -377,7 +374,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 			SelectionMessage message = new SelectionMessage();
 
-			message.stack = r.output;	
+			message.stack = r.output;
 
 			if (isPlanned(r)) {
 				message.select = true;
