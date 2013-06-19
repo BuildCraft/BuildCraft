@@ -12,7 +12,7 @@ a problem that might have fixed been already. Such things makes for very grumpy 
 less time coding and more time doing stuff that makes them less grumpy.
 
 ### Compiling and packaging Buildcraft
-1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) is installed correctly on your system.
+1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) and `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
  * Linux users will need the latest version of astyle installed as well.
 1. Create a base directory for the build
 1. Clone the Buildcraft repository into `basedir/BuildCraft/`
