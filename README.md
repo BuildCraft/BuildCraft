@@ -5,11 +5,15 @@ If you wish to submit a pull request to fix bugs or broken behaviour feel free t
 features or change existing behaviour or balance, please discuss it with Sengir or Krapht before submiting the pull request.
 
 ### Reporting issues
-Issues are for bugs/crashes, please do not use them to ask general questions.
-Always include the version you are having trouble with. Or if you're building from source, which source you're building.
+* Before reporting an issue, please check that it has not been reported before.
+* Issues are for bugs/crashes, please do not use them to ask general questions.
+* Always include the version you are having trouble with. Or if you're building from source, which source you're building.
 If you don't, we might assume that you are using latest-greatest and waste a bunch of time trying to reproduce 
 a problem that might have fixed been already. Such things makes for very grumpy devs. Grumpy devs spend 
 less time coding and more time doing stuff that makes them less grumpy.
+
+#### Frequently reported
+java.lang.AbstractMethodError - Incompatibility between BC/Forge/Mod using BC API. Usually not a BC issue
 
 ### Compiling and packaging Buildcraft
 1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) and `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
