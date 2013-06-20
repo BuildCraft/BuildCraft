@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport;
 
 import java.util.logging.Level;
@@ -23,14 +21,15 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.transport.pipes.PipePowerCobblestone;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	@SideOnly(Side.CLIENT)
 	private IIconProvider iconProvider;
-
 	private int pipeIconIndex;
 
 	protected ItemPipe(int i) {
@@ -43,37 +42,35 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
 		Block block = BuildCraftTransport.genericPipeBlock;
 
-        int id = world.getBlockId(i, j, k);
+		int id = world.getBlockId(i, j, k);
 
-        if (id == Block.snow.blockID) {
-            side = 1;
-        }
-        else if (id != Block.vine.blockID && id != Block.tallGrass.blockID && id != Block.deadBush.blockID
-                && (Block.blocksList[id] == null || !Block.blocksList[id].isBlockReplaceable(world, i, j, k)))
-        {
-            if (side == 0) {
-                j--;
-            }
-            if (side == 1) {
-                j++;
-            }
-            if (side == 2) {
-                k--;
-            }
-            if (side == 3) {
-                k++;
-            }
-            if (side == 4) {
-                i--;
-            }
-            if (side == 5) {
-                i++;
-            }
-        }
+		if (id == Block.snow.blockID) {
+			side = 1;
+		} else if (id != Block.vine.blockID && id != Block.tallGrass.blockID && id != Block.deadBush.blockID
+				&& (Block.blocksList[id] == null || !Block.blocksList[id].isBlockReplaceable(world, i, j, k))) {
+			if (side == 0) {
+				j--;
+			}
+			if (side == 1) {
+				j++;
+			}
+			if (side == 2) {
+				k--;
+			}
+			if (side == 3) {
+				k++;
+			}
+			if (side == 4) {
+				i--;
+			}
+			if (side == 5) {
+				i++;
+			}
+		}
 
 		if (itemstack.stackSize == 0)
 			return false;
-		if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer,itemstack)) {
+		if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer, itemstack)) {
 
 			Pipe pipe = BlockGenericPipe.createPipe(itemID);
 			if (pipe == null) {
@@ -95,11 +92,11 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void setPipesIcons(IIconProvider iconProvider){
+	public void setPipesIcons(IIconProvider iconProvider) {
 		this.iconProvider = iconProvider;
 	}
 
-	public void setPipeIconIndex(int index){
+	public void setPipeIconIndex(int index) {
 		this.pipeIconIndex = index;
 	}
 
@@ -115,14 +112,23 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
-	    // NOOP
+	public void registerIcons(IconRegister par1IconRegister) {
+		// NOOP
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {
 		return 0;
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+		super.addInformation(stack, player, list, advanced);
+		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(itemID);
+		Integer capacity = PipeTransportPower.powerCapacities.get(pipe);
+		if (capacity != null) {
+			list.add(String.format("%d MJ/t", capacity));
+		}
 	}
 }
