@@ -32,7 +32,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
 		powerProvider.configure(50, 2, 1000, 1, 1500);
 		powerProvider.configurePowerPerdition(1, 10);
-		((PipeTransportPower) transport).maxPower = 32;
+		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
 
 	@Override
