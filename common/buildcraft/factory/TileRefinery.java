@@ -48,6 +48,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 	public TileRefinery() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		initPowerProvider();
 
 		filters[0] = 0;
 		filters[1] = 0;
