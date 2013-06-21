@@ -81,7 +81,7 @@ public class StackHelper {
 	 * base.
 	 */
 	public boolean isCraftingEquivalent(ItemStack base, ItemStack comparison, boolean oreDictionary) {
-		if (isIdenticalItem(base, comparison))
+		if (isMatchingItem(base, comparison))
 			return true;
 
 		if (oreDictionary) {
@@ -100,22 +100,24 @@ public class StackHelper {
 
 	/**
 	 * Compares item id, damage and NBT. Accepts wildcard damage in the base
-	 * itemstack.
+	 * ItemStack. Ignores damage entirely if the item doesn't have subtypes.
 	 *
 	 * @param base The stack to compare to.
 	 * @param comparison The stack to compare.
 	 * @return true if id, damage and NBT match.
 	 */
-	public boolean isIdenticalItem(ItemStack base, ItemStack comparison) {
+	public boolean isMatchingItem(ItemStack base, ItemStack comparison) {
 		if (base == null || comparison == null)
 			return false;
 
 		if (base.itemID != comparison.itemID)
 			return false;
 
-		if (base.getItemDamage() != OreDictionary.WILDCARD_VALUE)
-			if (base.getItemDamage() != comparison.getItemDamage())
-				return false;
+		if (base.getItem().getHasSubtypes()) {
+			if (base.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+				if (base.getItemDamage() != comparison.getItemDamage())
+					return false;
+		}
 
 		return ItemStack.areItemStackTagsEqual(base, comparison);
 	}
