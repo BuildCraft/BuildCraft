@@ -290,6 +290,11 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 				internalInventoryCrafting.hitCount = null;
 				storedEnergy = 0;
 			}
+		} else {
+			craftable = false;
+			internalInventoryCrafting.tempStacks = null;
+			internalInventoryCrafting.hitCount = null;
+			storedEnergy = 0;
 		}
 	}
 
@@ -315,7 +320,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 				return false;
 			}
 		}
-		return true;
+		return currentRecipe.matches(internalInventoryCrafting, worldObj);
 	}
 
 	private void craftItem() {
