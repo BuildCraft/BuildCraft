@@ -1,11 +1,10 @@
 /**
  * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
+ * BuildCraft Open Source License. It grants rights to read, modify, compile or
+ * run the code. It does *NOT* grant the right to redistribute this software or
+ * its modifications in any form, binary or source, except if expressively
  * granted by the copyright holder.
  */
-
 package buildcraft.transport.pipes;
 
 import net.minecraft.inventory.IInventory;
@@ -36,7 +35,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
-
 	protected int standardIconIndex = PipeIconProvider.PipeItemsWood_Standard;
 	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
 
@@ -130,8 +128,9 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	/**
-	 * Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain cases, the extractable slot depends on the
-	 * position of the pipe.
+	 * Return the itemstack that can be if something can be extracted from this
+	 * inventory, null if none. On certain cases, the extractable slot depends
+	 * on the position of the pipe.
 	 */
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
 
@@ -152,7 +151,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 			ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
 			if (result != null)
-				return new ItemStack[] { result };
+				return new ItemStack[]{result};
 		}
 
 		return null;
@@ -181,7 +180,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int powerRequest(ForgeDirection from) {
-		return getPowerProvider().getMaxEnergyReceived();
+		return 0;
 	}
 
 	@Override
