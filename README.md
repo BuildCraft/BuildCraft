@@ -13,8 +13,8 @@ a problem that might have fixed been already. Such things makes for very grumpy 
 less time coding and more time doing stuff that makes them less grumpy.
 
 #### Frequently reported
-java.lang.AbstractMethodError - Incompatibility between BC/Forge/Mod using BC API. Usually not a BC issue
-Quarry causes flickering - Try without optifine, if it still flickers, report it
+* java.lang.AbstractMethodError - Incompatibility between BC/Forge/Mod using BC API. Usually not a BC issue
+* Quarry causes flickering - Try without optifine, if it still flickers, report it
 
 ### Compiling and packaging Buildcraft
 1. Ensure that `Apache Ant` (found [here](http://ant.apache.org/)) and `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
