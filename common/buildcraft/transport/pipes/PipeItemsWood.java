@@ -180,7 +180,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int powerRequest(ForgeDirection from) {
-		return 0;
+		return getPowerProvider().getMaxEnergyReceived();
 	}
 
 	@Override
