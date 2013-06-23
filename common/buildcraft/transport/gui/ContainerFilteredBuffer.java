@@ -21,9 +21,25 @@ public class ContainerFilteredBuffer extends BuildCraftContainer {
 			this.filteredBuffer = filteredBuffer;
 		}
 	    
+		@Override
 	    public boolean isItemValid(ItemStack itemStack) {
 	    	return filteredBuffer.isStackValidForSlot(this.getSlotIndex(), itemStack);
 	    }
+	}
+	
+	private class SlotPhantomLockable extends SlotPhantom
+	{
+		final IInventory locks;
+		
+		public SlotPhantomLockable(IInventory storage, IInventory locks, int par2, int par3, int par4) {
+			super(storage, par2, par3, par4);
+			this.locks = locks;
+		}
+		
+		@Override
+		public boolean canAdjust() {
+			return locks.getStackInSlot(this.getSlotIndex()) == null;
+		}
 	}
 	
 	IInventory playerInventory;
@@ -39,7 +55,7 @@ public class ContainerFilteredBuffer extends BuildCraftContainer {
 		
 		for (int col = 0; col < 9; col++) {
 			// Filtered Buffer filter slots
-			addSlotToContainer(new SlotPhantom(filters, col, 8 + col * 18, 27));
+			addSlotToContainer(new SlotPhantomLockable(filters, tile, col, 8 + col * 18, 27));
 			// Filtered Buffer inventory slots
 			addSlotToContainer(new SlotFiltered(tile, col, 8 + col * 18, 61));
 		}

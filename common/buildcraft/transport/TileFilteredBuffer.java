@@ -16,7 +16,7 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.inventory.SimpleInventory;
 
-public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IOverrideDefaultTriggers {
+public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 	
 	private final SimpleInventory inventoryFilters = new SimpleInventory(9, "FilteredBufferFilters", 1);
 	
@@ -136,11 +136,5 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IO
 		NBTTagCompound inventoryFiltersTag = new NBTTagCompound();
 		inventoryFilters.writeToNBT(inventoryFiltersTag);
 		nbtTagCompound.setTag("inventoryFilters", inventoryFiltersTag);
-	}
-
-	@Override
-	public LinkedList<ITrigger> getTriggers() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
