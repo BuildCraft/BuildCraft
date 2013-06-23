@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory;
 
 import java.util.List;
@@ -29,7 +27,6 @@ import buildcraft.core.utils.Utils;
 public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
 
 	boolean isDigging = true;
-
 	IPowerProvider powerProvider;
 
 	public TileMiningWell() {
@@ -39,7 +36,8 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	/**
-	 * Dig the next available piece of land if not done. As soon as it reaches bedrock, lava or goes below 0, it's considered done.
+	 * Dig the next available piece of land if not done. As soon as it reaches
+	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
 	public void doWork() {
@@ -99,6 +97,14 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
 			entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
 			world.spawnEntityInWorld(entityitem);
+		}
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		if (worldObj != null && yCoord > 2) {
+			BuildCraftFactory.miningWellBlock.removePipes(worldObj, xCoord, yCoord, zCoord);
 		}
 	}
 

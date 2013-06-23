@@ -33,7 +33,6 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
 
-	private static final StackHelper MERGE_HELPER = new StackHelper();
 	public static final int SLOT_RESULT = 0;
 	public static final int CRAFT_TIME = 256;
 	public static final int UPDATE_TIME = 16;
@@ -330,7 +329,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		int space = 0;
 		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
 			ItemStack stack = slot.getStackInSlot();
-			if (MERGE_HELPER.canStacksMerge(stack, input)) {
+			if (StackHelper.instance().canStacksMerge(stack, input)) {
 				space += stack.getMaxStackSize() - stack.stackSize;
 			}
 		}

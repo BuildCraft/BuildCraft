@@ -1,18 +1,17 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.api.core.SafeTimeTracker;
+import net.minecraftforge.common.ForgeDirection;
 
 public final class TileBuffer {
 
@@ -81,4 +80,12 @@ public final class TileBuffer {
 		return null;
 	}
 
+	public static TileBuffer[] makeBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
+		TileBuffer[] buffer = new TileBuffer[6];
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection d = ForgeDirection.getOrientation(i);
+			buffer[i] = new TileBuffer(world, x + d.offsetX, y + d.offsetY, z + d.offsetZ, loadUnloaded);
+		}
+		return buffer;
+	}
 }

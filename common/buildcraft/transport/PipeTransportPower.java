@@ -20,13 +20,26 @@ import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
+import buildcraft.transport.pipes.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PipeTransportPower extends PipeTransport {
 
 	private static final short MAX_DISPLAY = 100;
 	private static final int DISPLAY_SMOOTHING = 10;
 	private static final int OVERLOAD_TICKS = 60;
+	public static final Map<Class<? extends Pipe>, Integer> powerCapacities = new HashMap<Class<? extends Pipe>, Integer>();
+
+	static {
+		powerCapacities.put(PipePowerCobblestone.class, 8);
+		powerCapacities.put(PipePowerStone.class, 16);
+		powerCapacities.put(PipePowerWood.class, 32);
+		powerCapacities.put(PipePowerQuartz.class, 64);
+		powerCapacities.put(PipePowerGold.class, 256);
+		powerCapacities.put(PipePowerDiamond.class, 1024);
+	}
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
 	public double[] displayPower = new double[6];
@@ -46,6 +59,10 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 	SafeTimeTracker tracker = new SafeTimeTracker();
+
+	public void initFromPipe(Class<? extends Pipe> pipeClass) {
+		maxPower = powerCapacities.get(pipeClass);
+	}
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
@@ -210,7 +227,7 @@ public class PipeTransportPower extends PipeTransport {
 		if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
 
-			double displayFactor = MAX_DISPLAY / 256.0;
+			double displayFactor = MAX_DISPLAY / 1024.0;
 			for (int i = 0; i < clientDisplayPower.length; i++) {
 				clientDisplayPower[i] = (short) (displayPower[i] * displayFactor + .9999);
 			}
@@ -232,20 +249,17 @@ public class PipeTransportPower extends PipeTransport {
 			double[] next = internalPower;
 			internalPower = internalNextPower;
 			internalNextPower = next;
-			for (int i = 0; i < powerQuery.length; i++) {
-				int sum = 0;
-				for (int j = 0; j < powerQuery.length; j++) {
-					if (i != j) {
-						sum += powerQuery[j];
-					}
-				}
-				if (sum == 0 && internalNextPower[i] > 0) {
-					internalNextPower[i] -= 1;
-					if (internalNextPower[i] < 0) {
-						internalNextPower[i] = 0;
-					}
-				}
-			}
+//			for (int i = 0; i < powerQuery.length; i++) {
+//				int sum = 0;
+//				for (int j = 0; j < powerQuery.length; j++) {
+//					if (i != j) {
+//						sum += powerQuery[j];
+//					}
+//				}
+//				if (sum == 0 && internalNextPower[i] > 0) {
+//					internalNextPower[i] -= 1;
+//				}
+//			}
 		}
 	}
 
@@ -257,7 +271,7 @@ public class PipeTransportPower extends PipeTransport {
 			internalNextPower[from.ordinal()] += val;
 
 			if (internalNextPower[from.ordinal()] > maxPower) {
-				val = internalNextPower[from.ordinal()] - maxPower;
+				val -= internalNextPower[from.ordinal()] - maxPower;
 				internalNextPower[from.ordinal()] = maxPower;
 			}
 		}

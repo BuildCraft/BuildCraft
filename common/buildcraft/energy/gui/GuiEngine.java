@@ -40,11 +40,11 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(engine.getCurrentOutput() + " MJ/t", x + 22, y + 32, textColour);
+			fontRenderer.drawString(String.format("%.1f MJ/t", engine.getCurrentOutput()), x + 22, y + 32, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
-			fontRenderer.drawString(engine.getEnergyStored() + " MJ", x + 22, y + 56, textColour);
+			fontRenderer.drawString(String.format("%.1f MJ", engine.getEnergyStored()), x + 22, y + 56, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(((double) engine.getHeat() / (double) 100 + 20.0) + " \u00B0C", x + 22, y + 80, textColour);
+			fontRenderer.drawString(String.format("%.2f \u00B0C", (engine.getHeat() / 100.0) + 20.0), x + 22, y + 80, textColour);
 
 		}
 
@@ -52,7 +52,6 @@ public abstract class GuiEngine extends GuiBuildCraft {
 		public String getTooltip() {
 			return engine.getCurrentOutput() + " MJ/t";
 		}
-
 	}
 
 	public GuiEngine(BuildCraftContainer container, IInventory inventory) {
@@ -64,5 +63,4 @@ public abstract class GuiEngine extends GuiBuildCraft {
 		super.initLedgers(inventory);
 		ledgerManager.add(new EngineLedger(((TileEngine) tile).engine));
 	}
-
 }

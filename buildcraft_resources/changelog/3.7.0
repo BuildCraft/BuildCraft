@@ -1,0 +1,19 @@
+
+#3.7.0
+
+- Added: Horizontal filler pattern. (CovertJaguar)
+- Added: Quartz transport and conductive pipes. Transport has half the friction of stone and won't connect to stone or cobblestone. Conductive has 64 MJ/t capacity. (CovertJaguar)
+- Changed: Redone mechanics for conductive pipes. No more explosions, no more power loops, no more loss over distance. Type of pipe now determines max carried power. (CovertJaguar)
+- Changed: Buffed Automatic Crafting Table. (CovertJaguar)
+- Changed: Support for metadata >= 16 on facade calls. (Binnie)
+- Changed: Multiple engines can now connect to a single wooden pipe.
+- Changed: Some tweaks to oils, oil biomes. (CovertJaguar)
+- Changed: Combustion engines accept liquids via right-click. (CovertJaguar)
+- Changed: Flatten pattern now less stupid. (CovertJaguar)
+- Changed: Some filler changes. (immibis)
+- Bugfix: Mining well breaks pipes when invalidated. (CovertJaguar)
+- Bugfix: Wooden pipes now render power. (CovertJaguar)
+- Bugfix: Markers are now less derpy. (CovertJaguar)
+- Bugfix: Fixed minor AWB gui issue. (CovertJaguar)
+- Bugfix: Fixed ACT eating Minium Stones. (CovertJaguar)
+- Bugfix: Fixed dupe bug. (SandGrainOne)

@@ -604,7 +604,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 	
 	private void dropFacadeItem(ForgeDirection direction){
-		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.facadeItem, 1,	ItemFacade.encode(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()])), this.xCoord, this.yCoord, this.zCoord);
+		Utils.dropItems(worldObj, ItemFacade.getStack(this.facadeBlocks[direction.ordinal()], this.facadeMeta[direction.ordinal()]), this.xCoord, this.yCoord, this.zCoord);
 	}
 
 	public void dropFacade(ForgeDirection direction) {

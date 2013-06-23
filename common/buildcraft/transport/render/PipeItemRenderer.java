@@ -1,6 +1,7 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.Item;
@@ -23,6 +24,8 @@ public class PipeItemRenderer implements IItemRenderer {
 
 		Block block = BuildCraftTransport.genericPipeBlock;
 		Icon icon = ((ItemPipe) Item.itemsList[item.itemID]).getIconFromDamage(0);
+
+		if (icon == null) icon = Minecraft.getMinecraft().renderEngine.getMissingIcon(0);
 
 		block.setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 		block.setBlockBoundsForItemRender();

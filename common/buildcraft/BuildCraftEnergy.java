@@ -84,6 +84,7 @@ public class BuildCraftEnergy {
 	public static Item fuel;
 	public static LiquidStack oilLiquid;
 	public static LiquidStack fuelLiquid;
+	public static boolean canOilBurn;
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.Blue);
 	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.Green);
@@ -102,6 +103,7 @@ public class BuildCraftEnergy {
 		Property itemFuelId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "fuel.id", DefaultProps.FUEL_ID);
 		Property oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilDesert", 160);
 		Property oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "oilOcean", 161);
+		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
 		BuildCraftCore.mainConfiguration.save();
 
 		class BiomeIdException extends RuntimeException {
