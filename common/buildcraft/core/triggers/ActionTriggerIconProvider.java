@@ -40,6 +40,9 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_PipeSignal_Yellow_Inactive 	= 28;
 	public static final int Trigger_RedstoneInput_Active 		= 29;
 	public static final int Trigger_RedstoneInput_Inactive 		= 30;
+	public static final int Trigger_Inventory_Below25 			= 7;
+	public static final int Trigger_Inventory_Below50 			= 7;
+	public static final int Trigger_Inventory_Below75 			= 7;
 
 	public static final int MAX 								= 31;
 

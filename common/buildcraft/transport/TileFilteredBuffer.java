@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.TileBuildCraft;
@@ -16,7 +17,7 @@ import buildcraft.core.inventory.Transactor;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.inventory.SimpleInventory;
 
-public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
+public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IOverrideDefaultTriggers {
 	
 	private final SimpleInventory inventoryFilters = new SimpleInventory(9, "FilteredBufferFilters", 1);
 	
@@ -113,6 +114,17 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 			return true;
 		
 		return false;
+	}
+	
+	@Override
+	public LinkedList<ITrigger> getTriggers() {
+		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
+
+		result.add(BuildCraftTransport.triggerInventoryBelow25);
+		result.add(BuildCraftTransport.triggerInventoryBelow50);
+		result.add(BuildCraftTransport.triggerInventoryBelow75);
+
+		return result;
 	}
 
 	@Override

@@ -153,6 +153,9 @@ public class DefaultProps {
 	public static int TRIGGER_GREEN_ENGINE_HEAT = 26;
 	public static int TRIGGER_YELLOW_ENGINE_HEAT = 27;
 	public static int TRIGGER_RED_ENGINE_HEAT = 28;
+	public static int TRIGGER_INVENTORY_LEVEL_BELOW25 = 29;
+	public static int TRIGGER_INVENTORY_LEVEL_BELOW50 = 30;
+	public static int TRIGGER_INVENTORY_LEVEL_BELOW75 = 31;
 
 	public static int ACTION_REDSTONE = 1;
 	public static int ACTION_RED_SIGNAL = 2;
