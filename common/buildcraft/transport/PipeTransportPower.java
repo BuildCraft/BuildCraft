@@ -140,14 +140,15 @@ public class PipeTransportPower extends PipeTransport {
 							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof IPowerReceptor) {
-							watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
+							if (pow.powerRequest(ForgeDirection.VALID_DIRECTIONS[j].getOpposite()) > 0) {
+								watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
+								IPowerProvider prov = pow.getPowerProvider();
 
-							IPowerProvider prov = pow.getPowerProvider();
-
-							if (prov != null) {
-								prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
-								internalPower[i] -= watts;
+								if (prov != null) {
+									prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+									internalPower[i] -= watts;
+								}
 							}
 						}
 

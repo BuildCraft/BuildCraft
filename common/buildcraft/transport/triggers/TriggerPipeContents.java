@@ -21,6 +21,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.pipes.PipePowerWood;
 
 public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
@@ -127,12 +128,8 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 					return false;
 				case RequestsEnergy:
-					for (double s : transportPower.powerQuery) {
-						if (s > 0)
-							return true;
-					}
-
-					return false;
+					PipePowerWood wood = (PipePowerWood) pipe;
+					return wood.requestsPower();
 				case TooMuchEnergy:
 					return transportPower.isOverloaded();
 			}

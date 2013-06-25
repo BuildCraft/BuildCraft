@@ -9,6 +9,7 @@ import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipe;
+import buildcraft.transport.pipes.PipePowerWood;
 
 public class PipeTriggerProvider implements ITriggerProvider {
 
@@ -31,8 +32,10 @@ public class PipeTriggerProvider implements ITriggerProvider {
 		} else if (pipe.transport instanceof PipeTransportPower) {
 			result.add(BuildCraftTransport.triggerPipeEmpty);
 			result.add(BuildCraftTransport.triggerPipeContainsEnergy);
-			result.add(BuildCraftTransport.triggerPipeRequestsEnergy);
 			result.add(BuildCraftTransport.triggerPipeTooMuchEnergy);
+			if (pipe instanceof PipePowerWood) {
+				result.add(BuildCraftTransport.triggerPipeRequestsEnergy);
+			}
 		} else if (pipe.transport instanceof PipeTransportLiquids) {
 			result.add(BuildCraftTransport.triggerPipeEmpty);
 			result.add(BuildCraftTransport.triggerPipeLiquids);
@@ -45,5 +48,4 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
 		return null;
 	}
-
 }
