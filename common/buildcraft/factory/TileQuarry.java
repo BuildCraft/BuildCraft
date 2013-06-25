@@ -78,7 +78,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 25, 100, 25, MAX_ENERGY);
+		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
 		powerProvider.configurePowerPerdition(2, 1);
 	}
 
@@ -194,7 +194,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	protected void buildFrame() {
 
-		powerProvider.configure(20, 25, 100, 25, MAX_ENERGY);
+		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
 		if (powerProvider.useEnergy(25, 25, true) != 25)
 			return;
 
@@ -211,7 +211,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	protected void dig() {
-		powerProvider.configure(20, 30, 500, 50, MAX_ENERGY);
+		powerProvider.configure(20, 100, 500, 60, MAX_ENERGY);
 		if (powerProvider.useEnergy(60, 60, true) != 60)
 			return;
 

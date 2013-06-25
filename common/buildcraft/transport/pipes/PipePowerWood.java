@@ -18,18 +18,28 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	private IPowerProvider powerProvider;
 	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
 	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
-	private int[] powerSources = new int[6];
+
+	private boolean[] powerSources = new boolean[6];
+	private boolean full;
 
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+
+		initPowerProvider();
+		((PipeTransportPower) transport).initFromPipe(getClass());
+	}
+
+	private void initPowerProvider() {
 		powerProvider.configure(50, 2, 1000, 1, 1500);
 		powerProvider.configurePowerPerdition(1, 10);
 		((PipeTransportPower) transport).initFromPipe(getClass());
@@ -76,26 +86,26 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		if (worldObj.isRemote)
 			return;
 
+		if (powerProvider.getEnergyStored() <= 0)
+			return;
+
 		int sources = 0;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			if (!container.isPipeConnected(o)) {
-				powerSources[o.ordinal()] = 0;
+				powerSources[o.ordinal()] = false;
 				continue;
 			}
-			if (powerSources[o.ordinal()] > 0) {
-				powerSources[o.ordinal()]--;
-			}
 			if (powerProvider.isPowerSource(o)) {
-				powerSources[o.ordinal()] = 40;
+				powerSources[o.ordinal()] = true;
 			}
-			if (powerSources[o.ordinal()] > 0) {
+			if (powerSources[o.ordinal()]) {
 				sources++;
 			}
 		}
-
+		
 		if (sources <= 0)
 			return;
-
+		
 		float energyToRemove;
 
 		if (powerProvider.getEnergyStored() > 40) {
@@ -110,7 +120,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		PipeTransportPower trans = (PipeTransportPower) transport;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (powerSources[o.ordinal()] <= 0)
+			if (!powerSources[o.ordinal()])
 				continue;
 
 			float energyUsable = powerProvider.useEnergy(1, energyToRemove, false);
@@ -122,8 +132,33 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		}
 	}
 
+	public boolean requestsPower() {
+		if (full) {
+			boolean request = powerProvider.getEnergyStored() < powerProvider.getMaxEnergyStored() / 2;
+			if (request) {
+				full = false;
+			}
+			return request;
+		}
+		full = powerProvider.getEnergyStored() >= powerProvider.getMaxEnergyStored() - 10;
+		return !full;
+	}
+
 	@Override
 	public int powerRequest(ForgeDirection from) {
 		return getPowerProvider().getMaxEnergyReceived();
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound data) {
+		super.writeToNBT(data);
+		powerProvider.writeToNBT(data);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound data) {
+		super.readFromNBT(data);
+		PowerFramework.currentFramework.loadPowerProvider(this, data);
+		initPowerProvider();
 	}
 }

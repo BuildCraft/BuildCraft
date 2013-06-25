@@ -55,6 +55,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 
 	private void initPowerProvider() {
 		powerProvider.configure(20, 1, 8, 10, 100);
+		powerProvider.configurePowerPerdition(1, 100);
 	}
 
 	// TODO, manage this by different levels (pump what's above first...)
