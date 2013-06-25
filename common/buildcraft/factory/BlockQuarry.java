@@ -63,7 +63,7 @@ public class BlockQuarry extends BlockMachineRoot {
 		if (j == 0 && i == 3)
 			return textureFront;
 
-		if (i == j)
+		if (i == j && i>1) // Front can't be top or bottom.
 			return textureFront;
 
 		switch (i) {
