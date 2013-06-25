@@ -143,7 +143,9 @@
 
 	<target name="compile" depends="initialize-version,setup,copy-src">
 
-		<delete dir="${classes.dir}"/>
+		<delete includeemptydirs="true">
+			<fileset dir="${classes.dir}" includes="**/*"/>
+		</delete>
 		<mkdir dir="${classes.dir}"/>
 
 		<!-- Recompile -->
@@ -202,7 +204,9 @@
 	<!-- Package the compiled files -->
 	<target name="package" depends="reobf">
 
-		<delete dir="${jar.dir}"/>
+		<delete includeemptydirs="true">
+			<fileset dir="${jar.dir}" includes="**/*"/>
+		</delete>
 		<mkdir dir="${jar.dir}"/>
 		<jar destfile="${jar.dir}/${buildcraft.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}"/>
 		<copy todir="${jar.dir}/changelog">
