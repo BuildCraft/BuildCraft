@@ -73,7 +73,16 @@ public class PipeTransportPower extends PipeTransport {
 			return true;
 		}
 
-		return tile instanceof IPowerReceptor && ((IPowerReceptor)tile).getPowerProvider(side) != null;
+		if (tile instanceof IPowerReceptor) {
+			IPowerReceptor receptor = (IPowerReceptor) tile;
+			PowerProvider provider = receptor.getPowerProvider(side.getOpposite());
+			if (provider == null)
+				return false;
+			if (container.pipe instanceof PipePowerWood || provider.canAcceptPowerFromPipes)
+				return true;
+		}
+
+		return false;
 	}
 
 	@Override
