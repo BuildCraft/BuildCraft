@@ -40,11 +40,13 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_PipeSignal_Yellow_Inactive 	= 28;
 	public static final int Trigger_RedstoneInput_Active 		= 29;
 	public static final int Trigger_RedstoneInput_Inactive 		= 30;
+	public static final int Trigger_PipeContents_RequestsEnergy	= 31;
+	public static final int Trigger_PipeContents_TooMuchEnergy	= 32;
 	public static final int Trigger_Inventory_Below25 			= 7;
 	public static final int Trigger_Inventory_Below50 			= 7;
 	public static final int Trigger_Inventory_Below75 			= 7;
 
-	public static final int MAX 								= 31;
+	public static final int MAX 								= 33;
 
 
 	@SideOnly(Side.CLIENT)
@@ -83,6 +85,8 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsitems");
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsliquid");
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsenergy");
+		icons[ActionTriggerIconProvider.Trigger_PipeContents_RequestsEnergy] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_requestsenergy");
+		icons[ActionTriggerIconProvider.Trigger_PipeContents_TooMuchEnergy] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_toomuchenergy");
 		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Red_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_active");
 		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Red_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_inactive");
 		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Blue_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_active");

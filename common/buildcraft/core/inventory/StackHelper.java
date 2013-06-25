@@ -71,7 +71,8 @@ public class StackHelper {
 
 	/* ITEM COMPARISONS */
 	/**
-	 * Determines whether the given itemstacks should be considered equivalent
+
+	 * Determines whether the given ItemStack should be considered equivalent
 	 * for crafting purposes.
 	 *
 	 * @param base The stack to compare to.
@@ -81,7 +82,7 @@ public class StackHelper {
 	 * base.
 	 */
 	public boolean isCraftingEquivalent(ItemStack base, ItemStack comparison, boolean oreDictionary) {
-		if (isMatchingItem(base, comparison))
+		if (isMatchingItem(base, comparison, true, false))
 			return true;
 
 		if (oreDictionary) {
@@ -99,26 +100,54 @@ public class StackHelper {
 	}
 
 	/**
-	 * Compares item id, damage and NBT. Accepts wildcard damage in the base
-	 * ItemStack. Ignores damage entirely if the item doesn't have subtypes.
+	 * Compares item id, damage and NBT. Accepts wildcard damage. Ignores damage
+	 * entirely if the item doesn't have subtypes.
 	 *
 	 * @param base The stack to compare to.
 	 * @param comparison The stack to compare.
 	 * @return true if id, damage and NBT match.
 	 */
 	public boolean isMatchingItem(ItemStack base, ItemStack comparison) {
-		if (base == null || comparison == null)
-			return false;
+		return isMatchingItem(base, comparison, true, true);
+	}
 
-		if (base.itemID != comparison.itemID)
+	/**
+	 * Compares item id, and optionally damage and NBT. Accepts wildcard damage.
+	 * Ignores damage entirely if the item doesn't have subtypes.
+	 *
+	 * @param a ItemStack
+	 * @param b ItemStack
+	 * @param matchDamage
+	 * @param matchNBT
+	 * @return true if matches
+	 */
+	public static boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT) {
+		if (a == null || b == null) {
 			return false;
-
-		if (base.getItem().getHasSubtypes()) {
-			if (base.getItemDamage() != OreDictionary.WILDCARD_VALUE)
-				if (base.getItemDamage() != comparison.getItemDamage())
-					return false;
 		}
+		if (a.itemID != b.itemID) {
+			return false;
+		}
+		if (matchDamage && a.getHasSubtypes()) {
+			if (!isWildcard(a) && !isWildcard(b)) {
+				if (a.getItemDamage() != b.getItemDamage()) {
+					return false;
+				}
+			}
+		}
+		if (matchNBT) {
+			if (a.stackTagCompound != null && !a.stackTagCompound.equals(b.stackTagCompound)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-		return ItemStack.areItemStackTagsEqual(base, comparison);
+	public static boolean isWildcard(ItemStack stack) {
+		return isWildcard(stack.getItemDamage());
+	}
+
+	public static boolean isWildcard(int damage) {
+		return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
 	}
 }
