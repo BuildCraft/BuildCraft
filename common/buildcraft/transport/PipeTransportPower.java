@@ -233,10 +233,14 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			packet.displayPower = clientDisplayPower;
-			packet.overload = overload >= OVERLOAD_TICKS;
+			packet.overload = isOverloaded();
 			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
 
+	}
+
+	public boolean isOverloaded() {
+		return overload >= OVERLOAD_TICKS;
 	}
 
 	public void step() {
