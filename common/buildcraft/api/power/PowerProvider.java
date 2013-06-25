@@ -12,7 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 
-public final class PowerProvider {
+public class PowerProvider {
 
 	protected int minEnergyReceived;
 	protected int maxEnergyReceived;
