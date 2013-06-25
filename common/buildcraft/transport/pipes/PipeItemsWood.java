@@ -17,13 +17,11 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.EntityPassiveItem;
-import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
@@ -34,15 +32,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
-	private IPowerProvider powerProvider;
+	protected PowerProvider powerProvider;
 	protected int standardIconIndex = PipeIconProvider.PipeItemsWood_Standard;
 	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
 
 	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
 		super(transport, logic, itemID);
 
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 64, 1, 64);
+		powerProvider = new PowerProvider(false);
+		powerProvider.configure(1, 64, 1, 64);
 		powerProvider.configurePowerPerdition(64, 1);
 	}
 
@@ -75,17 +73,12 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
@@ -176,17 +169,5 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		}
 
 		return null;
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		return getPowerProvider().getMaxEnergyReceived();
-	}
-
-	@Override
-	public boolean canConnectRedstone() {
-		if (PowerFramework.currentFramework instanceof RedstonePowerFramework)
-			return true;
-		return super.canConnectRedstone();
 	}
 }

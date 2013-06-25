@@ -27,9 +27,7 @@ import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IBuilderInventory;
@@ -56,12 +54,12 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	public int orientation;
 
-	IPowerProvider provider;
+	PowerProvider provider;
 
 	public boolean isRedstonePowered = false;
 
 	public TileEngine() {
-		provider = PowerFramework.currentFramework.createPowerProvider();
+		provider = new PowerProvider(false);
 		provider.configurePowerPerdition(1, 100);
 	}
 
@@ -73,7 +71,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			}
 
 			engine.orientation = ForgeDirection.VALID_DIRECTIONS[orientation];
-			provider.configure(0, engine.minEnergyReceived(), engine.maxEnergyReceived(), 1, engine.maxEnergy);
+			provider.configure(engine.minEnergyReceived(), engine.maxEnergyReceived(), 1, engine.maxEnergy);
 			checkRedstonePower();
 		}
 	}
@@ -119,7 +117,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 				TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 				if (isPoweredTile(tile)) {
-					IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
+					PowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider(engine.orientation.getOpposite());
 
 					float extracted = engine.extractEnergy(receptor.getMinEnergyReceived(),
 							Math.min(receptor.getMaxEnergyReceived(), receptor.getMaxEnergyStored() - (int) receptor.getEnergyStored()), true);
@@ -139,7 +137,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (isPoweredTile(tile)) {
-				IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
+				PowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider(engine.orientation.getOpposite());
 
 				if (engine.extractEnergy(receptor.getMinEnergyReceived(), receptor.getMaxEnergyReceived(), false) > 0) {
 					progressPart = 1;
@@ -359,17 +357,12 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		this.provider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return provider;
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
@@ -378,9 +371,9 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	public boolean isPoweredTile(TileEntity tile) {
 		if (tile instanceof IPowerReceptor) {
-			IPowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider();
+			PowerProvider receptor = ((IPowerReceptor) tile).getPowerProvider(engine.orientation.getOpposite());
 
-			return receptor != null && receptor.getClass().getSuperclass().equals(PowerProvider.class);
+			return receptor != null;
 		}
 
 		return false;
@@ -394,11 +387,6 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	@Override
 	public void closeChest() {
 
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		return 0;
 	}
 
 	@Override

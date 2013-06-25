@@ -24,9 +24,8 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
@@ -56,7 +55,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public @TileNetworkData
 	Box box = new Box();
 
-	private IPowerProvider powerProvider;
+	private PowerProvider powerProvider;
 
 	private LinkedList<BlockIndex> path;
 
@@ -178,8 +177,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public TileBuilder() {
 		super();
 
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(10, 25, 25, 25, 25);
+		powerProvider = new PowerProvider();
+		powerProvider.configure(25, 25, 25, 25);
 	}
 
 	@Override
@@ -272,7 +271,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
@@ -526,12 +525,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 
@@ -567,13 +561,13 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	}
 
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		if ((bluePrintBuilder != null || currentPathIterator != null) && !done)
-			return powerProvider.getMaxEnergyReceived();
-		else
-			return 0;
-	}
+//	@Override
+//	public int powerRequest(ForgeDirection from) {
+//		if ((bluePrintBuilder != null || currentPathIterator != null) && !done)
+//			return powerProvider.getMaxEnergyReceived();
+//		else
+//			return 0;
+//	}
 
 	@Override
 	public void updateEntity() {

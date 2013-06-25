@@ -22,16 +22,16 @@ import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileRefinery extends TileMachine implements ITankContainer, IPowerReceptor, IInventory, IMachine {
+public class TileRefinery extends TileBuildCraft implements ITankContainer, IPowerReceptor, IInventory, IMachine {
 
 	private int[] filters = new int[2];
 	private int[] filtersMeta = new int[2];
@@ -43,11 +43,11 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	private int animationStage = 0;
 	SafeTimeTracker time = new SafeTimeTracker();
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
-	IPowerProvider powerProvider;
+	PowerProvider powerProvider;
 	private boolean isActive;
 
 	public TileRefinery() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider = new PowerProvider();
 		initPowerProvider();
 
 		filters[0] = 0;
@@ -57,7 +57,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 25, 100, 25, 1000);
+		powerProvider.configure(25, 100, 25, 1000);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 
@@ -106,17 +106,12 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 	}
 
 	@Override
@@ -255,7 +250,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		animationStage = nbttagcompound.getInteger("animationStage");
 		animationSpeed = nbttagcompound.getFloat("animationSpeed");
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerProvider.readFromNBT(nbttagcompound);
 		initPowerProvider();
 
 		filters[0] = nbttagcompound.getInteger("filters_0");
@@ -282,7 +277,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 		nbttagcompound.setInteger("animationStage", animationStage);
 		nbttagcompound.setFloat("animationSpeed", animationSpeed);
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerProvider.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setInteger("filters_0", filters[0]);
 		nbttagcompound.setInteger("filters_1", filters[1]);

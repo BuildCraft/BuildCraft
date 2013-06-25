@@ -18,22 +18,21 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
-import buildcraft.factory.TileMachine;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.ISidedInventory;
 
-public class TileFiller extends TileMachine implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
+public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
 
 	private static int[] SLOTS_GRID = Utils.createSlotArray(0, 9);
 	private static int[] SLOTS_INPUT = Utils.createSlotArray(9, 27);
@@ -46,17 +45,17 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	public IFillerPattern currentPattern;
 	boolean forceDone = false;
 	private ItemStack contents[];
-	IPowerProvider powerProvider;
+	PowerProvider powerProvider;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
 	public TileFiller() {
 		contents = new ItemStack[getSizeInventory()];
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider = new PowerProvider();
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 25, 50, 25, 100);
+		powerProvider.configure(25, 50, 25, 100);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 
@@ -96,12 +95,12 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 		}
 
 		if (powerProvider.getEnergyStored() >= 25) {
-			doWork();
+			doWork(null);
 		}
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
@@ -138,7 +137,7 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 		}
 
 		if (powerProvider.getEnergyStored() >= 25) {
-			doWork();
+			doWork(null);
 		}
 	}
 
@@ -323,12 +322,7 @@ public class TileFiller extends TileMachine implements ISidedInventory, IPowerRe
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 

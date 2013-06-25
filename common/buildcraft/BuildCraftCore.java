@@ -28,7 +28,6 @@ import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
-import buildcraft.api.power.PowerFramework;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
@@ -41,7 +40,6 @@ import buildcraft.core.EntityRobot;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
-import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCoreClient;
 import buildcraft.core.Version;
@@ -211,17 +209,6 @@ public class BuildCraftCore {
 			Property longFactor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.stateRefreshPeriod", 40);
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
-
-			String powerFrameworkClassName = "buildcraft.energy.PneumaticPowerFramework";
-			if (!forcePneumaticPower) {
-				powerFrameworkClassName = powerFrameworkClass.getString();
-			}
-			try {
-				PowerFramework.currentFramework = (PowerFramework) Class.forName(powerFrameworkClassName).getConstructor().newInstance();
-			} catch (Throwable e) {
-				bcLog.throwing("BuildCraftCore", "loadConfiguration", e);
-				PowerFramework.currentFramework = new RedstonePowerFramework();
-			}
 
 			Property wrenchId = BuildCraftCore.mainConfiguration.getItem("wrench.id", DefaultProps.WRENCH_ID);
 

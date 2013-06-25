@@ -17,35 +17,35 @@ import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityEnergyLaser;
+import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
-import buildcraft.factory.TileMachine;
 
-public class TileLaser extends TileMachine implements IPowerReceptor, IActionReceptor {
+public class TileLaser extends TileBuildCraft implements IPowerReceptor, IActionReceptor, IMachine {
 
 	private EntityEnergyLaser laser = null;
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker();
 	private ILaserTarget laserTarget;
-	public IPowerProvider powerProvider;
+	public PowerProvider powerProvider;
 	private int nextNetworkUpdate = 3;
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 100;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
 	public TileLaser() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider = new PowerProvider();
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 25, 25, 25, 1000);
+		powerProvider.configure(25, 25, 25, 1000);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 	
@@ -230,18 +230,14 @@ public class TileLaser extends TileMachine implements IPowerReceptor, IActionRec
 		}
 	}
 
+	
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 	}
 
 	@Override
@@ -255,7 +251,7 @@ public class TileLaser extends TileMachine implements IPowerReceptor, IActionRec
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerProvider.readFromNBT(nbttagcompound);
 		initPowerProvider();
 	}
 
@@ -263,7 +259,7 @@ public class TileLaser extends TileMachine implements IPowerReceptor, IActionRec
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerProvider.writeToNBT(nbttagcompound);
 	}
 
 	@Override

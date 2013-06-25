@@ -10,9 +10,8 @@ package buildcraft.transport.pipes;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -25,7 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
-	private IPowerProvider powerProvider;
+	private PowerProvider powerProvider;
 	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
 	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
 	private boolean[] powerSources = new boolean[6];
@@ -34,13 +33,13 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider = new PowerProvider(false);
 		initPowerProvider();
 		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(50, 2, 1000, 1, 1500);
+		powerProvider.configure(2, 1000, 1, 1500);
 		powerProvider.configurePowerPerdition(1, 10);
 	}
 
@@ -64,18 +63,14 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		}
 	}
 
-	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		// TODO Auto-generated method stub
 	}
 
@@ -143,10 +138,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		return !full;
 	}
 
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		return getPowerProvider().getMaxEnergyReceived();
-	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
@@ -157,7 +148,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		PowerFramework.currentFramework.loadPowerProvider(this, data);
+		powerProvider.readFromNBT(data);
 		initPowerProvider();
 	}
 }

@@ -27,15 +27,15 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBlueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -51,7 +51,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
-public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
+public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 
 	public @TileNetworkData
 	Box box = new Box();
@@ -68,17 +68,17 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public EntityRobot builder;
 	BptBuilderBase bluePrintBuilder;
 	public EntityMechanicalArm arm;
-	public IPowerProvider powerProvider;
+	public PowerProvider powerProvider;
 	boolean isDigging = false;
 	public static final int MAX_ENERGY = 15000;
 
 	public TileQuarry() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider = new PowerProvider();
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
+		powerProvider.configure(50, 100, 25, MAX_ENERGY);
 		powerProvider.configurePowerPerdition(2, 1);
 	}
 
@@ -189,16 +189,14 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 	}
 
 	protected void buildFrame() {
 
-		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
+		powerProvider.configure(50, 100, 25, MAX_ENERGY);
 		if (powerProvider.useEnergy(25, 25, true) != 25)
 			return;
-
-		powerProvider.getTimeTracker().markTime(worldObj);
 
 		if (builder == null) {
 			builder = new EntityRobot(worldObj, box);
@@ -211,7 +209,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	protected void dig() {
-		powerProvider.configure(20, 100, 500, 60, MAX_ENERGY);
+		powerProvider.configure(100, 500, 60, MAX_ENERGY);
 		if (powerProvider.useEnergy(60, 60, true) != 60)
 			return;
 
@@ -336,7 +334,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerProvider.readFromNBT(nbttagcompound);
 		initPowerProvider();
 
 		if (nbttagcompound.hasKey("box")) {
@@ -374,7 +372,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerProvider.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);
@@ -402,7 +400,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int blockId = worldObj.getBlockId(i, j, k);
 
 		if (isQuarriableBlock(i, j, k)) {
-			powerProvider.getTimeTracker().markTime(worldObj);
 
 			// Share this with mining well!
 
@@ -666,14 +663,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		isDigging = true;
 	}
 
-	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-
-	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 

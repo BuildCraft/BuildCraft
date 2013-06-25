@@ -31,8 +31,8 @@ import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
@@ -189,7 +189,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			refreshRenderState = false;
 		}
 
-		IPowerProvider provider = getPowerProvider();
+		PowerProvider provider = getPowerProvider(null);
 
 		if (provider != null) {
 			provider.update(this);
@@ -329,25 +329,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			((IPowerReceptor) pipe).setPowerProvider(provider);
-		}
-
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
-			return ((IPowerReceptor) pipe).getPowerProvider();
+			return ((IPowerReceptor) pipe).getPowerProvider(null);
 		else
 			return null;
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			((IPowerReceptor) pipe).doWork();
+			((IPowerReceptor) pipe).doWork(null);
 		}
 	}
 
@@ -420,13 +412,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			packet.addStateForSerialization((byte) 2, (IClientState) pipe);
 		}
 		return packet.getPacket();
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
-			return ((IPowerReceptor) pipe).powerRequest(from);
-		return 0;
 	}
 
 	@Override

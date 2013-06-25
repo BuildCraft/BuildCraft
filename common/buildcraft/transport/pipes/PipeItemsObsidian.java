@@ -22,9 +22,8 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.proxy.CoreProxy;
@@ -37,7 +36,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
-	private IPowerProvider powerProvider;
+	private PowerProvider powerProvider;
 
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
@@ -51,8 +50,8 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			entitiesDropped[i] = -1;
 		}
 
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(25, 1, 64, 1, 256);
+		powerProvider = new PowerProvider();
+		powerProvider.configure(1, 64, 1, 256);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 
@@ -145,7 +144,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		for (int j = 1; j < 5; ++j)
 			if (trySucc(j))
 				return;
@@ -285,17 +284,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		return getPowerProvider().getMaxEnergyReceived();
 	}
 }

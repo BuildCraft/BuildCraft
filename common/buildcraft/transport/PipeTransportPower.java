@@ -13,8 +13,8 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
@@ -141,14 +141,12 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof IPowerReceptor) {
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
-							if (pow.powerRequest(ForgeDirection.VALID_DIRECTIONS[j].getOpposite()) > 0) {
-								watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
-								IPowerProvider prov = pow.getPowerProvider();
+							PowerProvider prov = pow.getPowerProvider(ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 
-								if (prov != null) {
-									prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
-									internalPower[i] -= watts;
-								}
+							if (prov != null && prov.canAcceptPowerFromPipes && prov.powerRequest() > 0) {
+								watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
+								prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+								internalPower[i] -= watts;
 							}
 						}
 
@@ -180,10 +178,13 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
-				int request = receptor.powerRequest(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
+				PowerProvider prov = receptor.getPowerProvider(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
+				if (prov != null && prov.canAcceptPowerFromPipes) {
+					int request = prov.powerRequest();
 
-				if (request > 0) {
-					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
+					if (request > 0) {
+						requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
+					}
 				}
 			}
 		}
