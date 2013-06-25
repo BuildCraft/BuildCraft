@@ -70,9 +70,10 @@ public class PipeTransportPower extends PipeTransport {
 			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower))
 				return false;
+			return true;
 		}
 
-		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
+		return tile instanceof IPowerReceptor && ((IPowerReceptor)tile).getPowerProvider(side) != null;
 	}
 
 	@Override
@@ -180,7 +181,7 @@ public class PipeTransportPower extends PipeTransport {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
 				PowerProvider prov = receptor.getPowerProvider(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
 				if (prov != null && prov.canAcceptPowerFromPipes) {
-					int request = prov.powerRequest();
+					float request = prov.powerRequest();
 
 					if (request > 0) {
 						requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
@@ -284,7 +285,7 @@ public class PipeTransportPower extends PipeTransport {
 		return val;
 	}
 
-	public void requestEnergy(ForgeDirection from, int amount) {
+	public void requestEnergy(ForgeDirection from, float amount) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);

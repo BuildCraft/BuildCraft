@@ -15,5 +15,5 @@ public interface IPipeTransportPowerHook {
 
 	public double receiveEnergy(ForgeDirection from, double val);
 
-	public void requestEnergy(ForgeDirection from, int i);
+	public void requestEnergy(ForgeDirection from, float amount);
 }

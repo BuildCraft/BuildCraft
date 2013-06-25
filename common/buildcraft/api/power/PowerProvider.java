@@ -130,9 +130,8 @@ public final class PowerProvider {
 		data.setCompoundTag(tag, nbt);
 	}
 
-	public int powerRequest() {
-		float needed = maxEnergyStored - energyStored;
-		return (int) Math.ceil(Math.min(maxEnergyReceived, needed));
+	public float powerRequest() {
+		return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
 	}
 
 	public float receiveEnergy(float quantity, ForgeDirection from) {
