@@ -143,10 +143,10 @@
 
 	<target name="compile" depends="initialize-version,setup,copy-src">
 
+		<mkdir dir="${classes.dir}"/>
 		<delete includeemptydirs="true">
 			<fileset dir="${classes.dir}" includes="**/*"/>
 		</delete>
-		<mkdir dir="${classes.dir}"/>
 
 		<!-- Recompile -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
@@ -204,10 +204,10 @@
 	<!-- Package the compiled files -->
 	<target name="package" depends="reobf">
 
+		<mkdir dir="${jar.dir}"/>
 		<delete includeemptydirs="true">
 			<fileset dir="${jar.dir}" includes="**/*"/>
 		</delete>
-		<mkdir dir="${jar.dir}"/>
 		<jar destfile="${jar.dir}/${buildcraft.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}"/>
 		<copy todir="${jar.dir}/changelog">
 			<fileset dir="${resources.dir}/changelog">
