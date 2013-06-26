@@ -55,9 +55,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			
 			if (tile instanceof IPipeEntry && ((IPipeEntry) tile).acceptItems()) {
 				Utils.addToPipeEntry(this, ForgeDirection.DOWN, clonedStack);
-				System.out.println("Pipe!");
 			}else if (transactor != null && transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
-				System.out.println("Direct!");
 			}else {
 				return;
 			}
