@@ -227,9 +227,6 @@ public final class PowerProvider {
 	 * @return the amount of power used
 	 */
 	public float receiveEnergy(float quantity, ForgeDirection from) {
-		if (quantity < minEnergyReceived) {
-			return 0;
-		}
 		if (quantity > maxEnergyReceived) {
 			quantity -= quantity - maxEnergyReceived;
 		}
