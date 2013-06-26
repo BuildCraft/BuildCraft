@@ -68,18 +68,15 @@ public final class PowerProvider {
 		this.powerLossRegularity = powerLossRegularity;
 	}
 
-	public boolean update(IPowerReceptor receptor) {
+	public void update(IPowerReceptor receptor) {
 		applyPerdition();
-
-		boolean work = applyWork();
+		applyWork();
 
 		for (int i = 0; i < 6; ++i) {
 			if (powerSources[i] > 0) {
 				powerSources[i]--;
 			}
 		}
-
-		return work;
 	}
 
 	private void applyPerdition() {
@@ -92,13 +89,11 @@ public final class PowerProvider {
 		}
 	}
 
-	private boolean applyWork() {
+	private void applyWork() {
 		TileEntity tile = (TileEntity) receptor;
 		if (energyStored >= minActivationEnergy && doWorkTracker.markTimeIfDelay(tile.worldObj, 1)) {
 			receptor.doWork(this);
-			return true;
 		}
-		return false;
 	}
 
 	public float useEnergy(float min, float max, boolean doUse) {
