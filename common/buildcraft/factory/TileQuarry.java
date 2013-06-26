@@ -73,7 +73,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public static final int MAX_ENERGY = 15000;
 
 	public TileQuarry() {
-		powerProvider = new PowerProvider();
+		powerProvider = new PowerProvider(this);
 		initPowerProvider();
 	}
 

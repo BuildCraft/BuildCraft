@@ -50,7 +50,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	public TileFiller() {
 		contents = new ItemStack[getSizeInventory()];
-		powerProvider = new PowerProvider();
+		powerProvider = new PowerProvider(this);
 		initPowerProvider();
 	}
 

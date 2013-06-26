@@ -177,7 +177,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public TileBuilder() {
 		super();
 
-		powerProvider = new PowerProvider();
+		powerProvider = new PowerProvider(this);
 		powerProvider.configure(25, 25, 25, 25);
 	}
 

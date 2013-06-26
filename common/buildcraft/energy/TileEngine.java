@@ -59,7 +59,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	public boolean isRedstonePowered = false;
 
 	public TileEngine() {
-		provider = new PowerProvider(false);
+		provider = new PowerProvider(this, false);
 		provider.configurePowerPerdition(1, 100);
 	}
 

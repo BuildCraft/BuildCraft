@@ -14,23 +14,26 @@ import buildcraft.api.core.SafeTimeTracker;
 
 public final class PowerProvider {
 
-	protected int minEnergyReceived;
-	protected int maxEnergyReceived;
-	protected int maxEnergyStored;
-	protected int minActivationEnergy;
-	protected float energyStored = 0;
-	protected int powerLoss = 1;
-	protected int powerLossRegularity = 1;
+	private int minEnergyReceived;
+	private int maxEnergyReceived;
+	private int maxEnergyStored;
+	private int minActivationEnergy;
+	private float energyStored = 0;
+	private int powerLoss = 1;
+	private int powerLossRegularity = 1;
 	public final boolean canAcceptPowerFromPipes;
-	public SafeTimeTracker energyLossTracker = new SafeTimeTracker();
-	public int[] powerSources = {0, 0, 0, 0, 0, 0};
+	private SafeTimeTracker energyLossTracker = new SafeTimeTracker();
+	private SafeTimeTracker doWorkTracker = new SafeTimeTracker();
+	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
+	private final IPowerReceptor receptor;
 
-	public PowerProvider() {
-		this.canAcceptPowerFromPipes = true;
+	public PowerProvider(IPowerReceptor receptor) {
+		this(receptor, true);
 	}
 
-	public PowerProvider(boolean canAcceptPowerFromPipes) {
+	public PowerProvider(IPowerReceptor receptor, boolean canAcceptPowerFromPipes) {
 		this.canAcceptPowerFromPipes = canAcceptPowerFromPipes;
+		this.receptor = receptor;
 	}
 
 	public int getMinEnergyReceived() {
@@ -66,21 +69,9 @@ public final class PowerProvider {
 	}
 
 	public boolean update(IPowerReceptor receptor) {
-		TileEntity tile = (TileEntity) receptor;
-		boolean result = false;
+		applyPerdition();
 
-		if (energyStored >= minActivationEnergy) {
-			receptor.doWork(this);
-			result = true;
-		}
-
-		if (powerLoss > 0 && energyLossTracker.markTimeIfDelay(tile.worldObj, powerLossRegularity)) {
-
-			energyStored -= powerLoss;
-			if (energyStored < 0) {
-				energyStored = 0;
-			}
-		}
+		boolean work = applyWork();
 
 		for (int i = 0; i < 6; ++i) {
 			if (powerSources[i] > 0) {
@@ -88,7 +79,26 @@ public final class PowerProvider {
 			}
 		}
 
-		return result;
+		return work;
+	}
+
+	private void applyPerdition() {
+		TileEntity tile = (TileEntity) receptor;
+		if (powerLoss > 0 && energyLossTracker.markTimeIfDelay(tile.worldObj, powerLossRegularity)) {
+			energyStored -= powerLoss;
+			if (energyStored < 0) {
+				energyStored = 0;
+			}
+		}
+	}
+
+	private boolean applyWork() {
+		TileEntity tile = (TileEntity) receptor;
+		if (energyStored >= minActivationEnergy && doWorkTracker.markTimeIfDelay(tile.worldObj, 1)) {
+			receptor.doWork(this);
+			return true;
+		}
+		return false;
 	}
 
 	public float useEnergy(float min, float max, boolean doUse) {
@@ -143,6 +153,10 @@ public final class PowerProvider {
 			quantity -= energyStored - maxEnergyStored;
 			energyStored = maxEnergyStored;
 		}
+
+		applyPerdition();
+		applyWork();
+
 		return quantity;
 	}
 

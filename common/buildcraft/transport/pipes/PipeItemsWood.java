@@ -39,7 +39,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
 		super(transport, logic, itemID);
 
-		powerProvider = new PowerProvider(false);
+		powerProvider = new PowerProvider(this, false);
 		powerProvider.configure(1, 64, 1, 64);
 		powerProvider.configurePowerPerdition(64, 1);
 	}

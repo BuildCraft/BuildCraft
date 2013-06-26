@@ -30,7 +30,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	PowerProvider powerProvider;
 
 	public TileMiningWell() {
-		powerProvider = new PowerProvider();
+		powerProvider = new PowerProvider(this);
 		powerProvider.configure(100, 100, 60, 1000);
 		powerProvider.configurePowerPerdition(1, 1);
 	}

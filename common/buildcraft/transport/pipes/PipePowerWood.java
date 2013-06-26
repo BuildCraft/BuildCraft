@@ -12,15 +12,12 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerProvider;
-import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
@@ -33,7 +30,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
-		powerProvider = new PowerProvider(false);
+		powerProvider = new PowerProvider(this, false);
 		initPowerProvider();
 		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
@@ -62,7 +59,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 				return standardIconIndex;
 		}
 	}
-
 
 	@Override
 	public PowerProvider getPowerProvider(ForgeDirection side) {
@@ -96,10 +92,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 				sources++;
 			}
 		}
-		
+
 		if (sources <= 0)
 			return;
-		
+
 		float energyToRemove;
 
 		if (powerProvider.getEnergyStored() > 40) {
@@ -137,7 +133,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		full = powerProvider.getEnergyStored() >= powerProvider.getMaxEnergyStored() - 10;
 		return !full;
 	}
-
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {

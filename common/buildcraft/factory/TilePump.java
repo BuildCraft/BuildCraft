@@ -48,7 +48,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	private PowerProvider powerProvider;
 
 	public TilePump() {
-		powerProvider = new PowerProvider();
+		powerProvider = new PowerProvider(this);
 		initPowerProvider();
 		tank = new LiquidTank(MAX_LIQUID);
 	}

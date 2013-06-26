@@ -47,7 +47,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	protected PipeLiquidsWood(PipeLogic logic, int itemID) {
 		super(new PipeTransportLiquids(), logic, itemID);
 
-		powerProvider = new PowerProvider(false);
+		powerProvider = new PowerProvider(this, false);
 		powerProvider.configure(1, 100, 1, 250);
 		powerProvider.configurePowerPerdition(1, 1);
 	}

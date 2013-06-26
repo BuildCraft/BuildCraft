@@ -50,7 +50,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			entitiesDropped[i] = -1;
 		}
 
-		powerProvider = new PowerProvider();
+		powerProvider = new PowerProvider(this);
 		powerProvider.configure(1, 64, 1, 256);
 		powerProvider.configurePowerPerdition(1, 1);
 	}

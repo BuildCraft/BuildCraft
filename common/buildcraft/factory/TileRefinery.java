@@ -47,7 +47,7 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 	private boolean isActive;
 
 	public TileRefinery() {
-		powerProvider = new PowerProvider();
+		powerProvider = new PowerProvider(this);
 		initPowerProvider();
 
 		filters[0] = 0;
