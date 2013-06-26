@@ -6,16 +6,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeEntry;
+import buildcraft.api.transport.IPipedItem;
+import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.core.inventory.SimpleInventory;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory _inventory = new SimpleInventory(4, "Hopper", 64);
-
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
@@ -31,7 +37,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		nbtTagCompound.setTag("inventory", inventoryTag);
 	}
 
-	@Override
+	@Override 
 	public void updateEntity() {
 		super.updateEntity();
 		if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getWorldTime() % 2 != 0)
@@ -44,19 +50,24 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 		ITransactor transactor = Transactor.getTransactorFor(tile);
 
-		if (transactor == null)
-			return;
-
 		for (int internalSlot = 0; internalSlot < _inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = _inventory.getStackInSlot(internalSlot);
 			if (stackInSlot == null)
 				continue;
 
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
-				_inventory.decrStackSize(internalSlot, 1);
+			
+			if (tile instanceof IPipeEntry && ((IPipeEntry) tile).acceptItems()) {
+				Utils.addToPipeEntry(this, ForgeDirection.DOWN, clonedStack);
+				System.out.println("Pipe!");
+			}else if (transactor != null && transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
+				System.out.println("Direct!");
+			}else {
 				return;
 			}
+				
+			_inventory.decrStackSize(internalSlot, 1);
+			return;
 		}
 	}
 

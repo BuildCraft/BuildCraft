@@ -262,7 +262,7 @@ public class BuildCraftFactory {
 		if (!hopperDisabled) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock),
 					new Object[] { "ICI", "IGI", " I ", Character.valueOf('I'), Item.ingotIron, Character.valueOf('C'), Block.chest, Character.valueOf('G'),
-							BuildCraftCore.stoneGearItem });
+							Block.pistonBase });
 		}
 
 	}
