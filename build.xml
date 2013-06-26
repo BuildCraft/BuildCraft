@@ -209,7 +209,7 @@
 			<fileset dir="${jar.dir}" includes="**/*"/>
 		</delete>
 		<condition property="jar.file.name" value="${buildcraft.name}-${mc.version}-${project.version.full}.jar" else="${buildcraft.name}-universal-${mc.version}-${project.version.full}.jar">
-			<isset property="env.LONG_JAR_NAME"/>
+			<isset property="forge-long-name"/>
 		</condition>
 		
 		<jar destfile="${jar.file.name}" basedir="${classes.dir}"/>
