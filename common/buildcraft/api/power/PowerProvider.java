@@ -16,16 +16,17 @@ public final class PowerProvider {
 
 	public static class PerditionCalculator {
 
+		public static final float DEFAULT = 10F;
 		protected final SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 		private final float powerLoss;
 
 		public PerditionCalculator() {
-			powerLoss = 10;
+			powerLoss = DEFAULT;
 		}
 
 		public PerditionCalculator(float powerLoss) {
 			if (powerLoss < 0) {
-				powerLoss = 10;
+				powerLoss = DEFAULT;
 			}
 			this.powerLoss = powerLoss;
 		}
@@ -38,11 +39,11 @@ public final class PowerProvider {
 			return current;
 		}
 	}
-	public static final PerditionCalculator DEFUALT_PERDITION = new PerditionCalculator(10);
+	public static final PerditionCalculator DEFUALT_PERDITION = new PerditionCalculator();
 	private int minEnergyReceived;
 	private int maxEnergyReceived;
 	private int maxEnergyStored;
-	private int minActivationEnergy;
+	private int activationEnergy;
 	private float energyStored = 0;
 	public final boolean canAcceptPowerFromPipes;
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
@@ -73,18 +74,39 @@ public final class PowerProvider {
 	}
 
 	public int getActivationEnergy() {
-		return this.minActivationEnergy;
+		return this.activationEnergy;
 	}
 
 	public float getEnergyStored() {
 		return this.energyStored;
 	}
 
-	public void configure(int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
+	/**
+	 * Setup your PowerProvider's settings.
+	 *
+	 * @param minEnergyReceived This is the minimum about of power that will be
+	 * accepted by the PowerProvider. This should generally be greater than the
+	 * activationEnergy if you plan to use the doWork() callback. Anything
+	 * greater than 1 will prevent Redstone Engines from powering this Provider.
+	 * @param maxEnergyReceived The maximum amount of power accepted by the
+	 * PowerProvider. This should generally be less than 500. Too low and larger
+	 * engines will overheat while trying to power the machine. Too high, and
+	 * the engines will never warm up. Greater values also place greater strain
+	 * on the power net.
+	 * @param activationEnergy If the stored energy is greater than this value,
+	 * the doWork() callback is called (once per tick).
+	 * @param maxStoredEnergy The maximum amount of power this PowerProvider can
+	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
+	 * being common.
+	 */
+	public void configure(int minEnergyReceived, int maxEnergyReceived, int activationEnergy, int maxStoredEnergy) {
+		if (minEnergyReceived > maxEnergyReceived) {
+			maxEnergyReceived = minEnergyReceived;
+		}
 		this.minEnergyReceived = minEnergyReceived;
 		this.maxEnergyReceived = maxEnergyReceived;
 		this.maxEnergyStored = maxStoredEnergy;
-		this.minActivationEnergy = minActivationEnergy;
+		this.activationEnergy = activationEnergy;
 	}
 
 	public void update() {
@@ -130,7 +152,7 @@ public final class PowerProvider {
 	}
 
 	private void applyWork() {
-		if (energyStored >= minActivationEnergy) {
+		if (energyStored >= activationEnergy) {
 			TileEntity tile = (TileEntity) receptor;
 			if (doWorkTracker.markTimeIfDelay(tile.worldObj, 1)) {
 				receptor.doWork(this);
@@ -177,11 +199,29 @@ public final class PowerProvider {
 		data.setCompoundTag(tag, nbt);
 	}
 
+	/**
+	 * The amount of power that this PowerProvider currently needs.
+	 *
+	 * @return
+	 */
 	public float powerRequest() {
 		return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
 	}
 
+	/**
+	 * Add power to the Provider from an external source.
+	 *
+	 * @param quantity
+	 * @param from
+	 * @return the amount of power used
+	 */
 	public float receiveEnergy(float quantity, ForgeDirection from) {
+		if (quantity < minEnergyReceived) {
+			return 0;
+		}
+		if (quantity > maxEnergyReceived) {
+			quantity -= quantity - maxEnergyReceived;
+		}
 		if (from != null)
 			powerSources[from.ordinal()] = 2;
 
@@ -194,6 +234,8 @@ public final class PowerProvider {
 	/**
 	 * Internal use only you should NEVER call this function on a PowerProvider
 	 * you don't own.
+	 *
+	 * @return the amount the power changed by
 	 */
 	public float addEnergy(float quantity) {
 		energyStored += quantity;
@@ -202,6 +244,7 @@ public final class PowerProvider {
 			quantity -= energyStored - maxEnergyStored;
 			energyStored = maxEnergyStored;
 		} else if (energyStored < 0) {
+			quantity -= energyStored;
 			energyStored = 0;
 		}
 
