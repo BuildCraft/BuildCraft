@@ -257,8 +257,13 @@ public final class PowerProvider {
 	 * Internal use only you should NEVER call this function on a PowerProvider
 	 * you don't own.
 	 */
-	public void setEnergy(float energy) {
-		this.energyStored = energy;
+	public void setEnergy(float quantity) {
+		this.energyStored = quantity;
+		if (energyStored > maxEnergyStored) {
+			energyStored = maxEnergyStored;
+		} else if (energyStored < 0) {
+			energyStored = 0;
+		}
 	}
 
 	public boolean isPowerSource(ForgeDirection from) {

@@ -192,7 +192,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 		PowerProvider provider = getPowerProvider(null);
 
 		if (provider != null) {
-			provider.update(this);
+			provider.update();
 		}
 
 		if (pipe != null) {
