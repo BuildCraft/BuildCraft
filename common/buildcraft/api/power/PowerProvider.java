@@ -16,17 +16,18 @@ public final class PowerProvider {
 
 	public static class PerditionCalculator {
 
-		public static final float DEFAULT = 10F;
+		public static final float DEFAULT_POWERLOSS = 10F;
+		public static final float MIN_POWERLOSS = 0.01F;
 		protected final SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 		private final float powerLoss;
 
 		public PerditionCalculator() {
-			powerLoss = DEFAULT;
+			powerLoss = DEFAULT_POWERLOSS;
 		}
 
 		public PerditionCalculator(float powerLoss) {
-			if (powerLoss < 0) {
-				powerLoss = DEFAULT;
+			if (powerLoss < MIN_POWERLOSS) {
+				powerLoss = MIN_POWERLOSS;
 			}
 			this.powerLoss = powerLoss;
 		}
@@ -121,7 +122,8 @@ public final class PowerProvider {
 	}
 
 	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
-		if (powerLossRegularity == 0) {
+		if (powerLoss == 0 || powerLossRegularity == 0) {
+			perdition = new PerditionCalculator(0);
 			return;
 		}
 		perdition = new PerditionCalculator((float) powerLoss / (float) powerLossRegularity * 10.0F);
@@ -160,6 +162,15 @@ public final class PowerProvider {
 		}
 	}
 
+	/**
+	 * Extract energy from the PowerProvider. You must call this even if
+	 * doWork() triggers.
+	 *
+	 * @param min
+	 * @param max
+	 * @param doUse
+	 * @return amount used
+	 */
 	public float useEnergy(float min, float max, boolean doUse) {
 		float result = 0;
 
