@@ -14,18 +14,42 @@ import buildcraft.api.core.SafeTimeTracker;
 
 public final class PowerProvider {
 
+	public static class PerditionCalculator {
+
+		protected SafeTimeTracker energyLossTracker = new SafeTimeTracker();
+		private final float powerLoss;
+
+		public PerditionCalculator() {
+			powerLoss = 10;
+		}
+
+		public PerditionCalculator(float powerLoss) {
+			if (powerLoss < 0) {
+				powerLoss = 10;
+			}
+			this.powerLoss = powerLoss;
+		}
+
+		public float applyPerdition(PowerProvider provider, float current) {
+			current -= powerLoss;
+			if (current < 0) {
+				current = 0;
+			}
+			return current;
+		}
+	}
+	public static final PerditionCalculator DEFUALT_PERDITION = new PerditionCalculator(10);
 	private int minEnergyReceived;
 	private int maxEnergyReceived;
 	private int maxEnergyStored;
 	private int minActivationEnergy;
 	private float energyStored = 0;
-	private int powerLoss = 1;
-	private int powerLossRegularity = 1;
 	public final boolean canAcceptPowerFromPipes;
-	private SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 	private SafeTimeTracker doWorkTracker = new SafeTimeTracker();
+	private SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
 	public final IPowerReceptor receptor;
+	private PerditionCalculator perdition;
 
 	public PowerProvider(IPowerReceptor receptor) {
 		this(receptor, true);
@@ -63,11 +87,6 @@ public final class PowerProvider {
 		this.minActivationEnergy = minActivationEnergy;
 	}
 
-	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
-		this.powerLoss = powerLoss;
-		this.powerLossRegularity = powerLossRegularity;
-	}
-
 	public void update() {
 		applyPerdition();
 		applyWork();
@@ -79,13 +98,32 @@ public final class PowerProvider {
 		}
 	}
 
+	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
+		if (powerLossRegularity == 0) {
+			return;
+		}
+		perdition = new PerditionCalculator((float) powerLoss / (float) powerLossRegularity * 10.0F);
+	}
+
+	public void setPerdition(PerditionCalculator perdition) {
+		this.perdition = perdition;
+	}
+
+	public PerditionCalculator getPerdition() {
+		if (perdition == null)
+			return DEFUALT_PERDITION;
+		return perdition;
+	}
+
 	private void applyPerdition() {
-		if (powerLoss > 0) {
+		if (energyStored > 0) {
 			TileEntity tile = (TileEntity) receptor;
-			if (energyLossTracker.markTimeIfDelay(tile.worldObj, powerLossRegularity)) {
-				energyStored -= powerLoss;
-				if (energyStored < 0) {
-					energyStored = 0;
+			if (energyLossTracker.markTimeIfDelay(tile.worldObj, 10)) {
+				float newEnergy = getPerdition().applyPerdition(this, energyStored);
+				if (newEnergy == 0 || newEnergy < energyStored) {
+					energyStored = newEnergy;
+				} else {
+					energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored);
 				}
 			}
 		}
@@ -144,19 +182,40 @@ public final class PowerProvider {
 	}
 
 	public float receiveEnergy(float quantity, ForgeDirection from) {
-		powerSources[from.ordinal()] = 2;
+		if (from != null)
+			powerSources[from.ordinal()] = 2;
 
+		quantity = addEnergy(quantity);
+		applyWork();
+
+		return quantity;
+	}
+
+	/**
+	 * Internal use only you should NEVER call this function on a PowerProvider
+	 * you don't own.
+	 */
+	public float addEnergy(float quantity) {
 		energyStored += quantity;
 
 		if (energyStored > maxEnergyStored) {
 			quantity -= energyStored - maxEnergyStored;
 			energyStored = maxEnergyStored;
+		} else if (energyStored < 0) {
+			energyStored = 0;
 		}
 
 		applyPerdition();
-		applyWork();
 
 		return quantity;
+	}
+
+	/**
+	 * Internal use only you should NEVER call this function on a PowerProvider
+	 * you don't own.
+	 */
+	public void setEnergy(float energy) {
+		this.energyStored = energy;
 	}
 
 	public boolean isPowerSource(ForgeDirection from) {
