@@ -68,7 +68,7 @@ public final class PowerProvider {
 		this.powerLossRegularity = powerLossRegularity;
 	}
 
-	public void update(IPowerReceptor receptor) {
+	public void update() {
 		applyPerdition();
 		applyWork();
 
