@@ -25,7 +25,7 @@ public final class PowerProvider {
 	private SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 	private SafeTimeTracker doWorkTracker = new SafeTimeTracker();
 	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
-	private final IPowerReceptor receptor;
+	public final IPowerReceptor receptor;
 
 	public PowerProvider(IPowerReceptor receptor) {
 		this(receptor, true);
