@@ -208,7 +208,7 @@
 		<delete includeemptydirs="true">
 			<fileset dir="${jar.dir}" includes="**/*"/>
 		</delete>
-		<condition property="jar.file.name" value="${buildcraft.name}-${mc.version}-${project.version.full}.jar" else="${buildcraft.name}-universal-${mc.version}-${project.version.full}.jar">
+		<condition property="jar.file.name" value="${jar.dir}/${buildcraft.name}-${mc.version}-${project.version.full}.jar" else="${jar.dir}/${buildcraft.name}-universal-${mc.version}-${project.version.full}.jar">
 			<isset property="forge-long-name"/>
 		</condition>
 		
