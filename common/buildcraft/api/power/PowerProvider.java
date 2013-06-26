@@ -80,19 +80,23 @@ public final class PowerProvider {
 	}
 
 	private void applyPerdition() {
-		TileEntity tile = (TileEntity) receptor;
-		if (powerLoss > 0 && energyLossTracker.markTimeIfDelay(tile.worldObj, powerLossRegularity)) {
-			energyStored -= powerLoss;
-			if (energyStored < 0) {
-				energyStored = 0;
+		if (powerLoss > 0) {
+			TileEntity tile = (TileEntity) receptor;
+			if (energyLossTracker.markTimeIfDelay(tile.worldObj, powerLossRegularity)) {
+				energyStored -= powerLoss;
+				if (energyStored < 0) {
+					energyStored = 0;
+				}
 			}
 		}
 	}
 
 	private void applyWork() {
-		TileEntity tile = (TileEntity) receptor;
-		if (energyStored >= minActivationEnergy && doWorkTracker.markTimeIfDelay(tile.worldObj, 1)) {
-			receptor.doWork(this);
+		if (energyStored >= minActivationEnergy) {
+			TileEntity tile = (TileEntity) receptor;
+			if (doWorkTracker.markTimeIfDelay(tile.worldObj, 1)) {
+				receptor.doWork(this);
+			}
 		}
 	}
 
