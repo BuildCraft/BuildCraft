@@ -16,7 +16,7 @@ public final class PowerProvider {
 
 	public static class PerditionCalculator {
 
-		protected SafeTimeTracker energyLossTracker = new SafeTimeTracker();
+		protected final SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 		private final float powerLoss;
 
 		public PerditionCalculator() {
@@ -45,8 +45,8 @@ public final class PowerProvider {
 	private int minActivationEnergy;
 	private float energyStored = 0;
 	public final boolean canAcceptPowerFromPipes;
-	private SafeTimeTracker doWorkTracker = new SafeTimeTracker();
-	private SafeTimeTracker energyLossTracker = new SafeTimeTracker();
+	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
+	private final SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
 	public final IPowerReceptor receptor;
 	private PerditionCalculator perdition;
