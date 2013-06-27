@@ -36,7 +36,7 @@ public class PipeItemsVoid extends Pipe implements IItemTravelingHook {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeItemsVoid;
+		return PipeIconProvider.TYPE.PipeItemsVoid.ordinal();
 	}
 
 	// This is called if the void pipe is only connected to one pipe

@@ -728,5 +728,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
         fixedTriggers = true;
 
     }
+	
+	public World getWorldObj(){
+		return worldObj;
+	}
 
 }

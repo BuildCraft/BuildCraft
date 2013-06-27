@@ -34,8 +34,8 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 	private PowerProvider powerProvider;
 
-	protected int standardIconIndex = PipeIconProvider.PipeLiquidsWood_Standard;
-	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsWood_Standard.ordinal();
+	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
 	long lastMining = 0;
 	boolean lastPower = false;

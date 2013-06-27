@@ -63,7 +63,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeItemsObsidian;
+		return PipeIconProvider.TYPE.PipeItemsObsidian.ordinal();
 	}
 
 	@Override

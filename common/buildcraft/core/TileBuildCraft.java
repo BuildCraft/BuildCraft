@@ -22,6 +22,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import net.minecraft.world.World;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 

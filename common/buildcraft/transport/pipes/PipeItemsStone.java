@@ -38,7 +38,7 @@ public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeItemsStone;
+		return PipeIconProvider.TYPE.PipeItemsStone.ordinal();
 	}
 
 	@Override

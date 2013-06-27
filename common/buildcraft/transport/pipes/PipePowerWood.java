@@ -22,8 +22,8 @@ import net.minecraft.nbt.NBTTagCompound;
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	private PowerProvider powerProvider;
-	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
-	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
+	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	private boolean[] powerSources = new boolean[6];
 	private boolean full;
 

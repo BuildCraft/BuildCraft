@@ -19,8 +19,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeLiquidsIron extends Pipe {
 	
-	protected int standardIconIndex = PipeIconProvider.PipeLiquidsIron_Standard;
-	protected int solidIconIndex = PipeIconProvider.PipeAllIron_Solid;
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsIron_Standard.ordinal();
+	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
 
 
 	public PipeLiquidsIron(int itemID) {

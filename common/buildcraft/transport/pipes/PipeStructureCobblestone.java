@@ -23,6 +23,6 @@ public class PipeStructureCobblestone extends Pipe {
 	
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeStructureCobblestone;
+		return PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal();
 	}
 }

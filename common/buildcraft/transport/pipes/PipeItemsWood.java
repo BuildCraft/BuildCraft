@@ -33,8 +33,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 	protected PowerProvider powerProvider;
-	protected int standardIconIndex = PipeIconProvider.PipeItemsWood_Standard;
-	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
+	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
 	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
 		super(transport, logic, itemID);

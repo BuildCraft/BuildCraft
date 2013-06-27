@@ -20,8 +20,8 @@ public class PipeLiquidsEmerald extends PipeLiquidsWood {
 	public PipeLiquidsEmerald(int itemID) {
 		super(new PipeLogicEmerald(), itemID);
 
-		standardIconIndex = PipeIconProvider.PipeLiquidsEmerald_Standard;
-		solidIconIndex = PipeIconProvider.PipeAllEmerald_Solid;
+		standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsEmerald_Standard.ordinal();
+		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 
 		((PipeTransportLiquids) transport).flowRate = 40;
 		((PipeTransportLiquids) transport).travelDelay = 4;

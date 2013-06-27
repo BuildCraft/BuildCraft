@@ -33,7 +33,7 @@ public class PipeLiquidsStone extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeLiquidsStone;
+		return PipeIconProvider.TYPE.PipeLiquidsStone.ordinal();
 	}
 
 }

@@ -19,8 +19,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsIron extends Pipe {
 
-	private int standardIconIndex = PipeIconProvider.PipeItemsIron_Standard;
-	private int solidIconIndex = PipeIconProvider.PipeAllIron_Solid;
+	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsIron_Standard.ordinal();
+	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
 
 	public PipeItemsIron(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicIron(), itemID);
@@ -35,7 +35,7 @@ public class PipeItemsIron extends Pipe {
 		else {
 			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-			if (metadata == direction.ordinal())
+			if (metadata != direction.ordinal())
 				return solidIconIndex;
 			else
 				return standardIconIndex;

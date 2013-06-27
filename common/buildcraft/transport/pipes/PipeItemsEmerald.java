@@ -40,8 +40,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
 		super(transport, new PipeLogicEmerald(), itemID);
 
-		standardIconIndex = PipeIconProvider.PipeItemsEmerald_Standard;
-		solidIconIndex = PipeIconProvider.PipeAllEmerald_Solid;
+		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
+		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 	}
 
 	public PipeItemsEmerald(int itemID) {

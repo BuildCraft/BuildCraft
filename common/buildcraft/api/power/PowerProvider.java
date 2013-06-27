@@ -8,7 +8,6 @@
 package buildcraft.api.power;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 
@@ -141,8 +140,7 @@ public final class PowerProvider {
 
 	private void applyPerdition() {
 		if (energyStored > 0) {
-			TileEntity tile = (TileEntity) receptor;
-			if (energyLossTracker.markTimeIfDelay(tile.worldObj, 10)) {
+			if (energyLossTracker.markTimeIfDelay(receptor.getWorldObj(), 10)) {
 				float newEnergy = getPerdition().applyPerdition(this, energyStored);
 				if (newEnergy == 0 || newEnergy < energyStored) {
 					energyStored = newEnergy;
@@ -155,8 +153,7 @@ public final class PowerProvider {
 
 	private void applyWork() {
 		if (energyStored >= activationEnergy) {
-			TileEntity tile = (TileEntity) receptor;
-			if (doWorkTracker.markTimeIfDelay(tile.worldObj, 1)) {
+			if (doWorkTracker.markTimeIfDelay(receptor.getWorldObj(), 1)) {
 				receptor.doWork(this);
 			}
 		}

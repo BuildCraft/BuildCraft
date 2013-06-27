@@ -7,6 +7,7 @@
  */
 package buildcraft.api.power;
 
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public interface IPowerReceptor {
@@ -14,4 +15,6 @@ public interface IPowerReceptor {
 	public PowerProvider getPowerProvider(ForgeDirection side);
 
 	public void doWork(PowerProvider workProvider);
+	
+	public World getWorldObj();
 }
