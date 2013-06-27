@@ -41,7 +41,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 		powerProvider = new PowerProvider(this, false);
 		powerProvider.configure(1, 64, 1, 64);
-		powerProvider.configurePowerPerdition(64, 1);
+		powerProvider.configurePowerPerdition(0, 0);
 	}
 
 	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
@@ -105,7 +105,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			for (ItemStack stack : extracted) {
 				if (stack == null || stack.stackSize == 0) {
-					powerProvider.useEnergy(1, 1, false);
+					powerProvider.useEnergy(1, 1, true);
 					continue;
 				}
 
@@ -118,6 +118,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 				((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
 			}
 		}
+		powerProvider.setEnergy(0);
 	}
 
 	/**

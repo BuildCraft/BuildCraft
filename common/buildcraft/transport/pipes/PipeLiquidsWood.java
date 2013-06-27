@@ -49,7 +49,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 		powerProvider = new PowerProvider(this, false);
 		powerProvider.configure(1, 100, 1, 250);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerProvider.configurePowerPerdition(0, 0);
 	}
 
 	/**
@@ -79,6 +79,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 				liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
 			}
 		}
+		powerProvider.useEnergy(1, 1, true);
 	}
 
 	@Override
