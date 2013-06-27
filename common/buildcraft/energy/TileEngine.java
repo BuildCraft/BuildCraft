@@ -62,6 +62,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	public TileEngine() {
 		provider = PowerFramework.currentFramework.createPowerProvider();
+		provider.configurePowerPerdition(1, 100);
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public abstract class PowerProvider implements IPowerProvider {
 	protected float energyStored = 0;
 
 	protected int powerLoss = 1;
-	protected int powerLossRegularity = 100;
+	protected int powerLossRegularity = 1;
 
 	public SafeTimeTracker timeTracker = new SafeTimeTracker();
 	public SafeTimeTracker energyLossTracker = new SafeTimeTracker();

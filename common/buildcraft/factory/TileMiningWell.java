@@ -31,7 +31,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 
 	public TileMiningWell() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 25, 25, 1000);
+		powerProvider.configure(50, 100, 100, 60, 1000);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 
@@ -41,7 +41,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	 */
 	@Override
 	public void doWork() {
-		if (powerProvider.useEnergy(25, 25, true) < 25)
+		if (powerProvider.useEnergy(60, 60, true) != 60)
 			return;
 
 		World world = worldObj;
@@ -52,7 +52,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			depth = depth - 1;
 		}
 
-		if (depth < 0 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
+		if (depth < 1 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
 			isDigging = false;
 			return;
 		}
