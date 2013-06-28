@@ -21,7 +21,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.relauncher.Side;
@@ -34,7 +33,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 
     public BlockBlueprintLibrary(int i) {
 		super(i, Material.wood);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		//setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 		setHardness(0.7F);
 	}
 
