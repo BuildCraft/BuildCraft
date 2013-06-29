@@ -7,42 +7,20 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.inventory.SimpleInventory;
 
 public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IOverrideDefaultTriggers {
 	
 	private final SimpleInventory inventoryFilters = new SimpleInventory(9, "FilteredBufferFilters", 1);
-	
 	private final SimpleInventory inventoryStorage = new SimpleInventory(9, "FilteredBufferStorage", 64);
 
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getWorldTime() % 2 != 0) {
-			return;
-		}
-
-		TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
-
-		if (tile == null) {
-			return;
-		}
-
-		ITransactor transactor = Transactor.getTransactorFor(tile);
-
-		if (transactor == null) {
-			return;
-		}
-
-		return;
 	}
 	
 	public IInventory getFilters() {

@@ -78,7 +78,7 @@ import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
-import buildcraft.transport.triggers.TriggerInventoryLevel;
+import buildcraft.transport.triggers.TriggerFilteredBufferInventoryLevel;
 import buildcraft.transport.triggers.TriggerPipeContents;
 import buildcraft.transport.triggers.TriggerPipeContents.Kind;
 import buildcraft.transport.triggers.TriggerPipeSignal;
@@ -162,9 +162,9 @@ public class BuildCraftTransport {
 	public static BCTrigger triggerGreenSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_GREEN_SIGNAL_INACTIVE, false, IPipe.WireColor.Green);
 	public static BCTrigger triggerYellowSignalActive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_ACTIVE, true, IPipe.WireColor.Yellow);
 	public static BCTrigger triggerYellowSignalInactive = new TriggerPipeSignal(DefaultProps.TRIGGER_YELLOW_SIGNAL_INACTIVE, false, IPipe.WireColor.Yellow);
-	public static BCTrigger triggerInventoryBelow25 = new TriggerInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW25, TriggerInventoryLevel.State.Below25);
-	public static BCTrigger triggerInventoryBelow50 = new TriggerInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW50, TriggerInventoryLevel.State.Below50);
-	public static BCTrigger triggerInventoryBelow75 = new TriggerInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW75, TriggerInventoryLevel.State.Below75);
+	public static BCTrigger triggerInventoryBelow25 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW25, TriggerFilteredBufferInventoryLevel.State.Below25);
+	public static BCTrigger triggerInventoryBelow50 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW50, TriggerFilteredBufferInventoryLevel.State.Below50);
+	public static BCTrigger triggerInventoryBelow75 = new TriggerFilteredBufferInventoryLevel(DefaultProps.TRIGGER_INVENTORY_LEVEL_BELOW75, TriggerFilteredBufferInventoryLevel.State.Below75);
 	public static BCAction actionRedSignal = new ActionSignalOutput(DefaultProps.ACTION_RED_SIGNAL, IPipe.WireColor.Red);
 	public static BCAction actionBlueSignal = new ActionSignalOutput(DefaultProps.ACTION_BLUE_SIGNAL, IPipe.WireColor.Blue);
 	public static BCAction actionGreenSignal = new ActionSignalOutput(DefaultProps.ACTION_GREEN_SIGNAL, IPipe.WireColor.Green);
@@ -427,7 +427,7 @@ public class BuildCraftTransport {
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				new Object[] { "wdw", "wcw", "wpw", Character.valueOf('w'), "plankWood", Character.valueOf('d'),
-						BuildCraftCore.goldGearItem, Character.valueOf('c'), Block.chest, Character.valueOf('p'),
+						BuildCraftTransport.pipeItemsDiamond, Character.valueOf('c'), Block.chest, Character.valueOf('p'),
 						Block.pistonBase });
 	}
 

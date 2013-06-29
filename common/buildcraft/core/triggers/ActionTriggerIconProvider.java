@@ -42,11 +42,11 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_RedstoneInput_Inactive 		= 30;
 	public static final int Trigger_PipeContents_RequestsEnergy	= 31;
 	public static final int Trigger_PipeContents_TooMuchEnergy	= 32;
-	public static final int Trigger_Inventory_Below25 			= 7;
-	public static final int Trigger_Inventory_Below50 			= 7;
-	public static final int Trigger_Inventory_Below75 			= 7;
+	public static final int Trigger_Inventory_Below25 			= 33;
+	public static final int Trigger_Inventory_Below50 			= 34;
+	public static final int Trigger_Inventory_Below75 			= 35;
 
-	public static final int MAX 								= 33;
+	public static final int MAX 								= 36;
 
 
 	@SideOnly(Side.CLIENT)
@@ -97,6 +97,9 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_PipeSignal_Yellow_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_inactive");
 		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_active");
 		icons[ActionTriggerIconProvider.Trigger_RedstoneInput_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_redstoneinput_inactive");
+		icons[ActionTriggerIconProvider.Trigger_Inventory_Below25] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below25");
+		icons[ActionTriggerIconProvider.Trigger_Inventory_Below50] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below50");
+		icons[ActionTriggerIconProvider.Trigger_Inventory_Below75] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_below75");
 	}
 
 }

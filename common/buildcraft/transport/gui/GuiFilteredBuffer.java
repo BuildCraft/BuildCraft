@@ -6,7 +6,6 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileFilteredBuffer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInvBasic;
 import net.minecraft.inventory.IInventory;
 
 public class GuiFilteredBuffer extends GuiContainer {

@@ -37,7 +37,6 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 		
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
 
-		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}

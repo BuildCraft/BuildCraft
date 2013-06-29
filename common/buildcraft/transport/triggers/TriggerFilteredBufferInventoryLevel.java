@@ -18,7 +18,7 @@ import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.TileFilteredBuffer;
 
-public class TriggerInventoryLevel extends BCTrigger {
+public class TriggerFilteredBufferInventoryLevel extends BCTrigger {
 
 	public enum State {
 		Below25, Below50, Below75
@@ -26,7 +26,7 @@ public class TriggerInventoryLevel extends BCTrigger {
 
 	public State state;
 
-	public TriggerInventoryLevel(int id, State state) {
+	public TriggerFilteredBufferInventoryLevel(int id, State state) {
 		super(id);
 
 		this.state = state;
