@@ -21,6 +21,7 @@ public class ItemBptBluePrint extends ItemBptBase {
 
 	public ItemBptBluePrint(int i) {
 		super(i);
+		setCreativeTab(null);
 	}
 
 	@Override

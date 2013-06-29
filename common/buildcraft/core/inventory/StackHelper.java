@@ -88,10 +88,9 @@ public class StackHelper {
 		if (oreDictionary) {
 			int idBase = OreDictionary.getOreID(base);
 			if (idBase >= 0) {
-				int idComp = OreDictionary.getOreID(comparison);
-				if (idComp >= 0) {
-					if (idBase == idComp)
-						return true;
+				for(ItemStack itemstack : OreDictionary.getOres(idBase)) {
+	                if(comparison.itemID == itemstack.itemID && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage()))
+	                	return true;
 				}
 			}
 		}

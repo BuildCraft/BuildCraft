@@ -208,7 +208,11 @@
 		<delete includeemptydirs="true">
 			<fileset dir="${jar.dir}" includes="**/*"/>
 		</delete>
-		<jar destfile="${jar.dir}/${buildcraft.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}"/>
+		<condition property="jar.file.name" value="${jar.dir}/${buildcraft.name}-${mc.version}-${project.version.full}.jar" else="${jar.dir}/${buildcraft.name}-universal-${mc.version}-${project.version.full}.jar">
+			<isset property="forge-long-name"/>
+		</condition>
+		
+		<jar destfile="${jar.file.name}" basedir="${classes.dir}"/>
 		<copy todir="${jar.dir}/changelog">
 			<fileset dir="${resources.dir}/changelog">
 				<include name="*" />
