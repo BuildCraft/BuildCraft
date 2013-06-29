@@ -101,10 +101,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 				sources++;
 			}
 		}
-
+	
 		if (sources <= 0)
 			return;
-
+	
 		float energyToRemove;
 
 		if (powerProvider.getEnergyStored() > 40) {
