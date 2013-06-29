@@ -71,7 +71,6 @@ public class StackHelper {
 
 	/* ITEM COMPARISONS */
 	/**
-
 	 * Determines whether the given ItemStack should be considered equivalent
 	 * for crafting purposes.
 	 *

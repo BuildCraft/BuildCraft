@@ -13,9 +13,11 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +28,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	private IPowerProvider powerProvider;
 	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
 	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
-
 	private boolean[] powerSources = new boolean[6];
 	private boolean full;
 
@@ -34,7 +35,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-
 		initPowerProvider();
 		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
@@ -42,7 +42,6 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	private void initPowerProvider() {
 		powerProvider.configure(50, 2, 1000, 1, 1500);
 		powerProvider.configurePowerPerdition(1, 10);
-		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
 
 	@Override
@@ -102,10 +101,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 				sources++;
 			}
 		}
-		
+
 		if (sources <= 0)
 			return;
-		
+
 		float energyToRemove;
 
 		if (powerProvider.getEnergyStored() > 40) {

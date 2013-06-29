@@ -24,12 +24,12 @@ public class GuiHandler implements IGuiHandler {
 			return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-        
-        if (tile instanceof TileFilteredBuffer) {
-            TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-            return new ContainerFilteredBuffer(player.inventory, filteredBuffer);
-        }
-        
+		
+		if (tile instanceof TileFilteredBuffer) {
+			TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
+			return new ContainerFilteredBuffer(player.inventory, filteredBuffer);
+		}
+
 		if (!(tile instanceof TileGenericPipe))
 			return null;
 
@@ -59,12 +59,12 @@ public class GuiHandler implements IGuiHandler {
 			return null;
 
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
-        
-        if (tile instanceof TileFilteredBuffer) {
-            TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-            return new GuiFilteredBuffer(player.inventory, filteredBuffer);
-        }
-        
+		
+		if (tile instanceof TileFilteredBuffer) {
+			TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
+			return new GuiFilteredBuffer(player.inventory, filteredBuffer);
+		}
+		
 		if (!(tile instanceof TileGenericPipe))
 			return null;
 
