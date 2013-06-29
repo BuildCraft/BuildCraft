@@ -16,7 +16,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerProvider;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
@@ -42,15 +41,15 @@ public class PipeTransportPower extends PipeTransport {
 	}
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
-	public double[] displayPower = new double[6];
-	public double[] prevDisplayPower = new double[6];
+	public float[] displayPower = new float[6];
+	public float[] prevDisplayPower = new float[6];
 	public short[] clientDisplayPower = new short[6];
 	public int overload;
 	public int[] powerQuery = new int[6];
 	public int[] nextPowerQuery = new int[6];
 	public long currentDate;
-	public double[] internalPower = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-	public double[] internalNextPower = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	public float[] internalPower = new float[6];
+	public float[] internalNextPower = new float[6];
 	public int maxPower = 8;
 
 	public PipeTransportPower() {
@@ -124,11 +123,11 @@ public class PipeTransportPower extends PipeTransport {
 		// Send the power to nearby pipes who requested it
 
 		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
-		Arrays.fill(displayPower, 0.0);
+		Arrays.fill(displayPower, 0.0F);
 
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
-				double totalPowerQuery = 0;
+				float totalPowerQuery = 0;
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0)
@@ -139,10 +138,10 @@ public class PipeTransportPower extends PipeTransport {
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
-						double watts = 0.0;
+						float watts = 0.0F;
 
 						if (tiles[j] instanceof TileGenericPipe) {
-							watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
+							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
 							TileGenericPipe nearbyTile = (TileGenericPipe) tiles[j];
 
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
@@ -154,8 +153,8 @@ public class PipeTransportPower extends PipeTransport {
 							PowerProvider prov = pow.getPowerProvider(ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 
 							if (prov != null && prov.canAcceptPowerFromPipes && prov.powerRequest() > 0) {
-								watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
-								prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+								watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
+								watts = prov.receiveEnergy(watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 								internalPower[i] -= watts;
 							}
 						}
@@ -169,7 +168,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		double highestPower = 0;
 		for (int i = 0; i < 6; i++) {
-			displayPower[i] = (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0) + displayPower[i]) / DISPLAY_SMOOTHING;
+			displayPower[i] = (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING;
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
 			}
@@ -262,7 +261,7 @@ public class PipeTransportPower extends PipeTransport {
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
 
-			double[] next = internalPower;
+			float[] next = internalPower;
 			internalPower = internalNextPower;
 			internalNextPower = next;
 //			for (int i = 0; i < powerQuery.length; i++) {
@@ -279,7 +278,7 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
-	public double receiveEnergy(ForgeDirection from, double val) {
+	public float receiveEnergy(ForgeDirection from, float val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			return ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
@@ -315,8 +314,8 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = nbttagcompound.getInteger("powerQuery[" + i + "]");
 			nextPowerQuery[i] = nbttagcompound.getInteger("nextPowerQuery[" + i + "]");
-			internalPower[i] = nbttagcompound.getDouble("internalPower[" + i + "]");
-			internalNextPower[i] = nbttagcompound.getDouble("internalNextPower[" + i + "]");
+			internalPower[i] = (float) nbttagcompound.getDouble("internalPower[" + i + "]");
+			internalNextPower[i] = (float) nbttagcompound.getDouble("internalNextPower[" + i + "]");
 		}
 
 	}

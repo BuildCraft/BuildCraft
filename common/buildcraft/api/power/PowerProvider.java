@@ -15,9 +15,8 @@ public final class PowerProvider {
 
 	public static class PerditionCalculator {
 
-		public static final float DEFAULT_POWERLOSS = 10F;
+		public static final float DEFAULT_POWERLOSS = 1F;
 		public static final float MIN_POWERLOSS = 0.01F;
-		protected final SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 		private final float powerLoss;
 
 		public PerditionCalculator() {
@@ -40,14 +39,13 @@ public final class PowerProvider {
 		}
 	}
 	public static final PerditionCalculator DEFUALT_PERDITION = new PerditionCalculator();
-	private int minEnergyReceived;
-	private int maxEnergyReceived;
-	private int maxEnergyStored;
-	private int activationEnergy;
+	private float minEnergyReceived;
+	private float maxEnergyReceived;
+	private float maxEnergyStored;
+	private float activationEnergy;
 	private float energyStored = 0;
 	public final boolean canAcceptPowerFromPipes;
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
-	private final SafeTimeTracker energyLossTracker = new SafeTimeTracker();
 	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
 	public final IPowerReceptor receptor;
 	private PerditionCalculator perdition;
@@ -61,19 +59,19 @@ public final class PowerProvider {
 		this.receptor = receptor;
 	}
 
-	public int getMinEnergyReceived() {
+	public float getMinEnergyReceived() {
 		return this.minEnergyReceived;
 	}
 
-	public int getMaxEnergyReceived() {
+	public float getMaxEnergyReceived() {
 		return this.maxEnergyReceived;
 	}
 
-	public int getMaxEnergyStored() {
+	public float getMaxEnergyStored() {
 		return this.maxEnergyStored;
 	}
 
-	public int getActivationEnergy() {
+	public float getActivationEnergy() {
 		return this.activationEnergy;
 	}
 
@@ -99,7 +97,7 @@ public final class PowerProvider {
 	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
 	 * being common.
 	 */
-	public void configure(int minEnergyReceived, int maxEnergyReceived, int activationEnergy, int maxStoredEnergy) {
+	public void configure(float minEnergyReceived, float maxEnergyReceived, float activationEnergy, float maxStoredEnergy) {
 		if (minEnergyReceived > maxEnergyReceived) {
 			maxEnergyReceived = minEnergyReceived;
 		}
@@ -140,13 +138,11 @@ public final class PowerProvider {
 
 	private void applyPerdition() {
 		if (energyStored > 0) {
-			if (energyLossTracker.markTimeIfDelay(receptor.getWorldObj(), 10)) {
-				float newEnergy = getPerdition().applyPerdition(this, energyStored);
-				if (newEnergy == 0 || newEnergy < energyStored) {
-					energyStored = newEnergy;
-				} else {
-					energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored);
-				}
+			float newEnergy = getPerdition().applyPerdition(this, energyStored);
+			if (newEnergy == 0 || newEnergy < energyStored) {
+				energyStored = newEnergy;
+			} else {
+				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored);
 			}
 		}
 	}
@@ -216,6 +212,10 @@ public final class PowerProvider {
 		return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
 	}
 
+	public float receiveEnergy(float quantity, ForgeDirection from) {
+		return receiveEnergy(quantity, from, false);
+	}
+
 	/**
 	 * Add power to the Provider from an external source.
 	 *
@@ -223,9 +223,14 @@ public final class PowerProvider {
 	 * @param from
 	 * @return the amount of power used
 	 */
-	public float receiveEnergy(float quantity, ForgeDirection from) {
-		if (quantity > maxEnergyReceived) {
-			quantity -= quantity - maxEnergyReceived;
+	public float receiveEnergy(float quantity, ForgeDirection from, boolean boundsCheck) {
+		if (boundsCheck) {
+			if (quantity < minEnergyReceived) {
+				quantity = minEnergyReceived;
+			}
+			if (quantity > maxEnergyReceived) {
+				quantity = maxEnergyReceived;
+			}
 		}
 		if (from != null)
 			powerSources[from.ordinal()] = 2;

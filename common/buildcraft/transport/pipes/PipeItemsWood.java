@@ -82,19 +82,22 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
-		World w = worldObj;
+		extractItems();
+		powerProvider.setEnergy(0);
+	}
 
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+	private void extractItems() {
+		int meta = container.getBlockMetadata();
 
 		if (meta > 5)
 			return;
-
+		
 		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
 		pos.moveForwards(1);
-		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 		if (tile instanceof IInventory) {
-			if (!PipeManager.canExtractItems(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+			if (!PipeManager.canExtractItems(this, worldObj, (int) pos.x, (int) pos.y, (int) pos.z))
 				return;
 
 			IInventory inventory = (IInventory) tile;
@@ -113,12 +116,11 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 				entityPos.moveForwards(0.6);
 
-				IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, stack);
+				IPipedItem entity = new EntityPassiveItem(worldObj, entityPos.x, entityPos.y, entityPos.z, stack);
 
 				((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
 			}
 		}
-		powerProvider.setEnergy(0);
 	}
 
 	/**

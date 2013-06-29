@@ -55,7 +55,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(25, 50, 25, 100);
+		powerProvider.configure(30, 50, 25, 100);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 
@@ -95,7 +95,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 		}
 
 		if (powerProvider.getEnergyStored() >= 25) {
-			doWork(null);
+			doWork(powerProvider);
 		}
 	}
 
@@ -137,7 +137,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 		}
 
 		if (powerProvider.getEnergyStored() >= 25) {
-			doWork(null);
+			doWork(workProvider);
 		}
 	}
 

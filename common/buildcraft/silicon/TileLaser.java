@@ -38,14 +38,14 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	private int nextLaserUpdate = 10;
 	private int nextLaserSearch = 100;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
-
+	
 	public TileLaser() {
 		powerProvider = new PowerProvider(this);
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(25, 25, 25, 1000);
+		powerProvider.configure(25, 150, 25, 1000);
 		powerProvider.configurePowerPerdition(1, 1);
 	}
 	
