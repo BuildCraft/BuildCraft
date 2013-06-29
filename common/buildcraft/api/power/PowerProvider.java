@@ -227,8 +227,7 @@ public final class PowerProvider {
 		if (boundsCheck) {
 			if (quantity < minEnergyReceived) {
 				quantity = minEnergyReceived;
-			}
-			if (quantity > maxEnergyReceived) {
+			} else if (quantity > maxEnergyReceived) {
 				quantity = maxEnergyReceived;
 			}
 		}

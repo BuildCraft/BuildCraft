@@ -30,9 +30,11 @@ public class TileEngineLegacy extends TileEngine {
 	public void updateEntity() {
 		worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
 		TileEntity newTile = worldObj.getBlockTileEntity(xCoord, yCoord, zCoord);
-		newTile.readFromNBT(nbt);
-		sendNetworkUpdate();
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		if (newTile instanceof TileEngine) {
+			newTile.readFromNBT(nbt);
+			sendNetworkUpdate();
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
 	}
 
 	@Override
