@@ -19,6 +19,6 @@ public class GuiIds {
 	public static final int PIPE_DIAMOND = 50;
 	public static final int GATES = 51;
 	public static final int PIPE_EMERALD_ITEM = 52;
-	
+
 	public static final int FILTERED_BUFFER = 60;
 }
