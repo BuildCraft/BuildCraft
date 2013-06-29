@@ -223,7 +223,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			if (extracted > 0) {
 				float needed = receptor.receiveEnergy(extracted, orientation.getOpposite(), true);
 				extractEnergy(receptor.getMinEnergyReceived(), needed, true); // Comment out for constant power
-//				extractEnergy(0, needed, true); // Uncomment for constant power
+//				currentOutput = extractEnergy(0, needed, true); // Uncomment for constant power
 			}
 		}
 	}
