@@ -30,6 +30,8 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 import net.minecraft.inventory.ICrafting;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagFloat;
 
 public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IInventory, IOverrideDefaultTriggers, IPipeConnection {
 
@@ -227,13 +229,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 			}
 		}
 	}
-	
+
 	// Uncomment out for constant power
 //	public float getActualOutput() {
 //		float heatLevel = getIdealHeatLevel();
 //		return getCurrentOutput() * heatLevel;
 //	}
-
 	protected void burn() {
 	}
 
@@ -284,7 +285,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		orientation = ForgeDirection.getOrientation(data.getInteger("orientation"));
 		progress = data.getFloat("progress");
 		energy = data.getFloat("energyF");
-		heat = data.getFloat("heat");
+		NBTBase tag = data.getTag("heat");
+		if (tag instanceof NBTTagFloat) {
+			heat = data.getFloat("heat");
+		}
 		inv.readFromNBT(data);
 	}
 

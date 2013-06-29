@@ -7,7 +7,6 @@
  */
 package buildcraft.energy;
 
-import buildcraft.BuildCraftEnergy;
 import buildcraft.core.DefaultProps;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -21,18 +20,27 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class TileEngineLegacy extends TileEngine {
 
+	private NBTTagCompound nbt;
+
 	public TileEngineLegacy() {
 		super(0);
 	}
 
 	@Override
 	public void updateEntity() {
-		int meta = getBlockMetadata();
-		NBTTagCompound nbt = new NBTTagCompound();
-		writeToNBT(nbt);
-		TileEntity newTile = BuildCraftEnergy.engineBlock.createTileEntity(worldObj, meta);
+		worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
+		TileEntity newTile = worldObj.getBlockTileEntity(xCoord, yCoord, zCoord);
 		newTile.readFromNBT(nbt);
-		worldObj.setBlockTileEntity(xCoord, yCoord, zCoord, newTile);
+		sendNetworkUpdate();
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound data) {
+		nbt = (NBTTagCompound) data.copy();
+		this.xCoord = data.getInteger("x");
+		this.yCoord = data.getInteger("y");
+		this.zCoord = data.getInteger("z");
 	}
 
 	@Override
