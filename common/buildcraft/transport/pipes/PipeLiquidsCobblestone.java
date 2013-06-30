@@ -31,6 +31,6 @@ public class PipeLiquidsCobblestone extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeLiquidsCobblestone;
+		return PipeIconProvider.TYPE.PipeLiquidsCobblestone.ordinal();
 	}
 }

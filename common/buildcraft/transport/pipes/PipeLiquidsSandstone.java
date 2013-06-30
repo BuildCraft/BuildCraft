@@ -34,7 +34,7 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeLiquidsSandstone;
+		return PipeIconProvider.TYPE.PipeLiquidsSandstone.ordinal();
 	}
 
 	@Override

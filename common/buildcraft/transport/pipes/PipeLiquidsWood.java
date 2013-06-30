@@ -17,11 +17,9 @@ import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerProvider;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.RedstonePowerFramework;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -34,10 +32,10 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public @TileNetworkData
 	int liquidToExtract;
 
-	private IPowerProvider powerProvider;
+	private PowerProvider powerProvider;
 
-	protected int standardIconIndex = PipeIconProvider.PipeLiquidsWood_Standard;
-	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsWood_Standard.ordinal();
+	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
 	long lastMining = 0;
 	boolean lastPower = false;
@@ -49,16 +47,16 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	protected PipeLiquidsWood(PipeLogic logic, int itemID) {
 		super(new PipeTransportLiquids(), logic, itemID);
 
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 100, 1, 250);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerProvider = new PowerProvider(this, false);
+		powerProvider.configure(1, 100, 1, 250);
+		powerProvider.configurePowerPerdition(0, 0);
 	}
 
 	/**
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
 	@Override
-	public void doWork() {
+	public void doWork(PowerProvider workProvider) {
 		if (powerProvider.getEnergyStored() <= 0)
 			return;
 
@@ -81,15 +79,11 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 				liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
 			}
 		}
+		powerProvider.useEnergy(1, 1, true);
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerProvider getPowerProvider(ForgeDirection side) {
 		return powerProvider;
 	}
 
@@ -142,17 +136,5 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 			else
 				return standardIconIndex;
 		}
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		return getPowerProvider().getMaxEnergyReceived();
-	}
-
-	@Override
-	public boolean canConnectRedstone() {
-		if (PowerFramework.currentFramework instanceof RedstonePowerFramework)
-			return true;
-		return super.canConnectRedstone();
 	}
 }

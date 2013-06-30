@@ -139,7 +139,7 @@ public class DefaultProps {
 	public static int TRIGGER_PIPE_EMPTY = 13;
 	public static int TRIGGER_PIPE_ITEMS = 14;
 	public static int TRIGGER_PIPE_LIQUIDS = 15;
-	public static int TRIGGER_PIPE_ENERGY = 16;
+	public static int TRIGGER_PIPE_CONTAINS_ENERGY = 16;
 	public static int TRIGGER_RED_SIGNAL_ACTIVE = 17;
 	public static int TRIGGER_RED_SIGNAL_INACTIVE = 18;
 	public static int TRIGGER_BLUE_SIGNAL_ACTIVE = 19;
@@ -152,6 +152,8 @@ public class DefaultProps {
 	public static int TRIGGER_GREEN_ENGINE_HEAT = 26;
 	public static int TRIGGER_YELLOW_ENGINE_HEAT = 27;
 	public static int TRIGGER_RED_ENGINE_HEAT = 28;
+	public static int TRIGGER_PIPE_REQUESTS_ENERGY = 29;
+	public static int TRIGGER_PIPE_TOO_MUCH_ENERGY = 30;
 
 	public static int ACTION_REDSTONE = 1;
 	public static int ACTION_RED_SIGNAL = 2;

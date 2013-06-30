@@ -42,11 +42,11 @@ import buildcraft.energy.BlockOilFlowing;
 import buildcraft.energy.BlockOilStill;
 import buildcraft.energy.BptBlockEngine;
 import buildcraft.energy.EnergyProxy;
-import buildcraft.energy.Engine.EnergyStage;
 import buildcraft.energy.GuiHandler;
 import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
+import buildcraft.energy.TileEngine.EnergyStage;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
@@ -86,10 +86,10 @@ public class BuildCraftEnergy {
 	public static LiquidStack fuelLiquid;
 	public static boolean canOilBurn;
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
-	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.Blue);
-	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.Green);
-	public static BCTrigger triggerYellowEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_YELLOW_ENGINE_HEAT, EnergyStage.Yellow);
-	public static BCTrigger triggerRedEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_RED_ENGINE_HEAT, EnergyStage.Red);
+	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.BLUE);
+	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.GREEN);
+	public static BCTrigger triggerYellowEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_YELLOW_ENGINE_HEAT, EnergyStage.YELLOW);
+	public static BCTrigger triggerRedEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_RED_ENGINE_HEAT, EnergyStage.RED);
 	@Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
@@ -177,7 +177,8 @@ public class BuildCraftEnergy {
 		IronEngineFuel.fuels.add(new IronEngineFuel(LiquidDictionary.getLiquid("Fuel", LiquidContainerRegistry.BUCKET_VOLUME), 6, 100000));
 
 		// Iron Engine Coolants
-		IronEngineCoolant.coolants.add(new IronEngineCoolant(new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME), 1.0f));
+		IronEngineCoolant.addCoolant(new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME), 0.0025F);
+		IronEngineCoolant.addCoolant(Block.ice.blockID, 0, new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME * 2));
 
 		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(LiquidDictionary.getLiquid("Oil", LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(
 				bucketOil), new ItemStack(Item.bucketEmpty)));

@@ -22,6 +22,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import net.minecraft.world.World;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 
@@ -58,8 +59,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 		if (this instanceof IPowerReceptor) {
 			IPowerReceptor receptor = ((IPowerReceptor) this);
-
-			receptor.getPowerProvider().update(receptor);
+			receptor.getPowerProvider(null).update();
 		}
 	}
 

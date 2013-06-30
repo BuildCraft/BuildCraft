@@ -1,6 +1,8 @@
 package buildcraft.silicon;
 
 import buildcraft.api.gates.IAction;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -22,16 +24,13 @@ import buildcraft.core.IMachine;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
-import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection, ILaserTarget {
 
 	ItemStack[] items = new ItemStack[12];
-	LinkedList<AssemblyRecipe> plannedOutput = new LinkedList<AssemblyRecipe>();
+	LinkedHashSet<AssemblyRecipe> plannedOutput = new LinkedHashSet<AssemblyRecipe>();
 	public AssemblyRecipe currentRecipe;
 	private float currentRequiredEnergy = 0;
 	private float energyStored = 0;
@@ -56,7 +55,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			NBTTagCompound itemNBT = nbt.getCompoundTag("i");
 			stack = ItemStack.loadItemStackFromNBT(itemNBT);
 		}
-		
+
 	}
 
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
@@ -154,10 +153,10 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	public float getCompletionRatio(float ratio) {
 		if (currentRecipe == null)
 			return 0;
-		else if (energyStored >= currentRecipe.energy)
+		else if (energyStored >= currentRequiredEnergy)
 			return ratio;
 		else
-			return energyStored / currentRecipe.energy * ratio;
+			return energyStored / currentRequiredEnergy * ratio;
 	}
 
 	/* IINVENTORY */
@@ -240,6 +239,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
 					plannedOutput.add(r);
+					break;
 				}
 			}
 		}
@@ -281,20 +281,11 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		}
 	}
 
-	public void cleanPlannedOutput() {
-		plannedOutput.clear();
-	}
-
 	public boolean isPlanned(AssemblyRecipe recipe) {
 		if (recipe == null)
 			return false;
 
-		for (AssemblyRecipe r : plannedOutput) {
-			if (r == recipe)
-				return true;
-		}
-
-		return false;
+		return plannedOutput.contains(recipe);
 	}
 
 	public boolean isAssembling(AssemblyRecipe recipe) {
@@ -327,8 +318,8 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 		plannedOutput.remove(recipe);
 
-		if (plannedOutput.size() != 0) {
-			setCurrentRecipe(plannedOutput.getFirst());
+		if (!plannedOutput.isEmpty()) {
+			setCurrentRecipe(plannedOutput.iterator().next());
 		}
 	}
 
@@ -377,7 +368,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 			SelectionMessage message = new SelectionMessage();
 
-			message.stack = r.output;	
+			message.stack = r.output;
 
 			if (isPlanned(r)) {
 				message.select = true;

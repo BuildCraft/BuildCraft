@@ -31,6 +31,6 @@ public class PipeItemsSandstone extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeItemsSandstone;
+		return PipeIconProvider.TYPE.PipeItemsSandstone.ordinal();
 	}
 }

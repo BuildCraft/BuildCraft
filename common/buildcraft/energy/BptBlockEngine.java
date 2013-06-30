@@ -37,7 +37,7 @@ public class BptBlockEngine extends BptBlock {
 	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
 		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(x, y, z);
 
-		bptSlot.cpt.setInteger("orientation", engine.engine.orientation.ordinal());
+		bptSlot.cpt.setInteger("orientation", engine.orientation.ordinal());
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class BptBlockEngine extends BptBlock {
 
 		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
 
-		engine.orientation = slot.cpt.getInteger("orientation");
+		engine.orientation = ForgeDirection.getOrientation(slot.cpt.getInteger("orientation"));
 	}
 
 	@Override

@@ -64,13 +64,16 @@ public class BlockMiningWell extends BlockMachineRoot {
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
 		super.breakBlock(world, x, y, z, id, meta);
-
+		removePipes(world, x, y, z);
+	}
+	
+	public void removePipes(World world, int x, int y, int z) {
 		for (int depth = y - 1; depth > 0; depth--) {
 			int pipeID = world.getBlockId(x, depth, z);
 			if (pipeID != BuildCraftFactory.plainPipeBlock.blockID) {
 				break;
 			}
-			world.setBlock(x, depth, z, 0);
+			world.setBlockToAir(x, depth, z);
 		}
 	}
 

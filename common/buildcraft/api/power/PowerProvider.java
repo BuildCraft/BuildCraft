@@ -1,129 +1,169 @@
-/** 
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
- * License 1.0, or MMPL. Please check the contents of the license located in
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.api.power;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 
-public abstract class PowerProvider implements IPowerProvider {
+public final class PowerProvider {
 
-	protected int latency;
-	protected int minEnergyReceived;
-	protected int maxEnergyReceived;
-	protected int maxEnergyStored;
-	protected int minActivationEnergy;
-	protected float energyStored = 0;
+	public static class PerditionCalculator {
 
-	protected int powerLoss = 1;
-	protected int powerLossRegularity = 100;
+		public static final float DEFAULT_POWERLOSS = 1F;
+		public static final float MIN_POWERLOSS = 0.01F;
+		private final float powerLoss;
 
-	public SafeTimeTracker timeTracker = new SafeTimeTracker();
-	public SafeTimeTracker energyLossTracker = new SafeTimeTracker();
+		public PerditionCalculator() {
+			powerLoss = DEFAULT_POWERLOSS;
+		}
 
-	public int[] powerSources = { 0, 0, 0, 0, 0, 0 };
+		public PerditionCalculator(float powerLoss) {
+			if (powerLoss < MIN_POWERLOSS) {
+				powerLoss = MIN_POWERLOSS;
+			}
+			this.powerLoss = powerLoss;
+		}
 
-	@Override
-	public SafeTimeTracker getTimeTracker() {
-		return this.timeTracker;
+		public float applyPerdition(PowerProvider provider, float current) {
+			current -= powerLoss;
+			if (current < 0) {
+				current = 0;
+			}
+			return current;
+		}
+	}
+	public static final PerditionCalculator DEFUALT_PERDITION = new PerditionCalculator();
+	private float minEnergyReceived;
+	private float maxEnergyReceived;
+	private float maxEnergyStored;
+	private float activationEnergy;
+	private float energyStored = 0;
+	public final boolean canAcceptPowerFromPipes;
+	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
+	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
+	public final IPowerReceptor receptor;
+	private PerditionCalculator perdition;
+
+	public PowerProvider(IPowerReceptor receptor) {
+		this(receptor, true);
 	}
 
-	@Override
-	public int getLatency() {
-		return this.latency;
+	public PowerProvider(IPowerReceptor receptor, boolean canAcceptPowerFromPipes) {
+		this.canAcceptPowerFromPipes = canAcceptPowerFromPipes;
+		this.receptor = receptor;
 	}
 
-	@Override
-	public int getMinEnergyReceived() {
+	public float getMinEnergyReceived() {
 		return this.minEnergyReceived;
 	}
 
-	@Override
-	public int getMaxEnergyReceived() {
+	public float getMaxEnergyReceived() {
 		return this.maxEnergyReceived;
 	}
 
-	@Override
-	public int getMaxEnergyStored() {
+	public float getMaxEnergyStored() {
 		return this.maxEnergyStored;
 	}
 
-	@Override
-	public int getActivationEnergy() {
-		return this.minActivationEnergy;
+	public float getActivationEnergy() {
+		return this.activationEnergy;
 	}
 
-	@Override
 	public float getEnergyStored() {
 		return this.energyStored;
 	}
 
-	@Override
-	public void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
-		this.latency = latency;
+	/**
+	 * Setup your PowerProvider's settings.
+	 *
+	 * @param minEnergyReceived This is the minimum about of power that will be
+	 * accepted by the PowerProvider. This should generally be greater than the
+	 * activationEnergy if you plan to use the doWork() callback. Anything
+	 * greater than 1 will prevent Redstone Engines from powering this Provider.
+	 * @param maxEnergyReceived The maximum amount of power accepted by the
+	 * PowerProvider. This should generally be less than 500. Too low and larger
+	 * engines will overheat while trying to power the machine. Too high, and
+	 * the engines will never warm up. Greater values also place greater strain
+	 * on the power net.
+	 * @param activationEnergy If the stored energy is greater than this value,
+	 * the doWork() callback is called (once per tick).
+	 * @param maxStoredEnergy The maximum amount of power this PowerProvider can
+	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
+	 * being common.
+	 */
+	public void configure(float minEnergyReceived, float maxEnergyReceived, float activationEnergy, float maxStoredEnergy) {
+		if (minEnergyReceived > maxEnergyReceived) {
+			maxEnergyReceived = minEnergyReceived;
+		}
 		this.minEnergyReceived = minEnergyReceived;
 		this.maxEnergyReceived = maxEnergyReceived;
 		this.maxEnergyStored = maxStoredEnergy;
-		this.minActivationEnergy = minActivationEnergy;
+		this.activationEnergy = activationEnergy;
 	}
 
-	@Override
-	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
-		this.powerLoss = powerLoss;
-		this.powerLossRegularity = powerLossRegularity;
-	}
-
-	@Override
-	public boolean update(IPowerReceptor receptor) {
-		if (!preConditions(receptor))
-			return false;
-
-		TileEntity tile = (TileEntity) receptor;
-		boolean result = false;
-
-		if (energyStored >= minActivationEnergy) {
-			if (latency == 0) {
-				receptor.doWork();
-				result = true;
-			} else {
-				if (timeTracker.markTimeIfDelay(tile.worldObj, latency)) {
-					receptor.doWork();
-					result = true;
-				}
-			}
-		}
-
-		if (powerLoss > 0 && energyLossTracker.markTimeIfDelay(tile.worldObj, powerLossRegularity)) {
-
-			energyStored -= powerLoss;
-			if (energyStored < 0) {
-				energyStored = 0;
-			}
-		}
+	public void update() {
+		applyPerdition();
+		applyWork();
 
 		for (int i = 0; i < 6; ++i) {
 			if (powerSources[i] > 0) {
 				powerSources[i]--;
 			}
 		}
-
-		return result;
 	}
 
-	@Override
-	public boolean preConditions(IPowerReceptor receptor) {
-		return true;
+	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
+		if (powerLoss == 0 || powerLossRegularity == 0) {
+			perdition = new PerditionCalculator(0);
+			return;
+		}
+		perdition = new PerditionCalculator((float) powerLoss / (float) powerLossRegularity * 10.0F);
 	}
 
-	@Override
+	public void setPerdition(PerditionCalculator perdition) {
+		this.perdition = perdition;
+	}
+
+	public PerditionCalculator getPerdition() {
+		if (perdition == null)
+			return DEFUALT_PERDITION;
+		return perdition;
+	}
+
+	private void applyPerdition() {
+		if (energyStored > 0) {
+			float newEnergy = getPerdition().applyPerdition(this, energyStored);
+			if (newEnergy == 0 || newEnergy < energyStored) {
+				energyStored = newEnergy;
+			} else {
+				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored);
+			}
+		}
+	}
+
+	private void applyWork() {
+		if (energyStored >= activationEnergy) {
+			if (doWorkTracker.markTimeIfDelay(receptor.getWorldObj(), 1)) {
+				receptor.doWork(this);
+			}
+		}
+	}
+
+	/**
+	 * Extract energy from the PowerProvider. You must call this even if
+	 * doWork() triggers.
+	 *
+	 * @param min
+	 * @param max
+	 * @param doUse
+	 * @return amount used
+	 */
 	public float useEnergy(float min, float max, boolean doUse) {
 		float result = 0;
 
@@ -144,43 +184,97 @@ public abstract class PowerProvider implements IPowerProvider {
 		return result;
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		latency = nbttagcompound.getInteger("latency");
-		minEnergyReceived = nbttagcompound.getInteger("minEnergyReceived");
-		maxEnergyReceived = nbttagcompound.getInteger("maxEnergyReceived");
-		maxEnergyStored = nbttagcompound.getInteger("maxStoreEnergy");
-		minActivationEnergy = nbttagcompound.getInteger("minActivationEnergy");
+	public void readFromNBT(NBTTagCompound data) {
+		readFromNBT(data, "powerProvider");
+	}
 
-		try {
-			energyStored = nbttagcompound.getFloat("storedEnergy");
-		} catch (Throwable c) {
+	public void readFromNBT(NBTTagCompound data, String tag) {
+		NBTTagCompound nbt = data.getCompoundTag(tag);
+		energyStored = nbt.getFloat("storedEnergy");
+	}
+
+	public void writeToNBT(NBTTagCompound data) {
+		writeToNBT(data, "powerProvider");
+	}
+
+	public void writeToNBT(NBTTagCompound data, String tag) {
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setFloat("storedEnergy", energyStored);
+		data.setCompoundTag(tag, nbt);
+	}
+
+	/**
+	 * The amount of power that this PowerProvider currently needs.
+	 *
+	 * @return
+	 */
+	public float powerRequest() {
+		return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
+	}
+
+	public float receiveEnergy(float quantity, ForgeDirection from) {
+		return receiveEnergy(quantity, from, false);
+	}
+
+	/**
+	 * Add power to the Provider from an external source.
+	 *
+	 * @param quantity
+	 * @param from
+	 * @return the amount of power used
+	 */
+	public float receiveEnergy(float quantity, ForgeDirection from, boolean boundsCheck) {
+		if (boundsCheck) {
+			if (quantity < minEnergyReceived) {
+				quantity = minEnergyReceived;
+			} else if (quantity > maxEnergyReceived) {
+				quantity = maxEnergyReceived;
+			}
+		}
+		if (from != null)
+			powerSources[from.ordinal()] = 2;
+
+		quantity = addEnergy(quantity);
+		applyWork();
+
+		return quantity;
+	}
+
+	/**
+	 * Internal use only you should NEVER call this function on a PowerProvider
+	 * you don't own.
+	 *
+	 * @return the amount the power changed by
+	 */
+	public float addEnergy(float quantity) {
+		energyStored += quantity;
+
+		if (energyStored > maxEnergyStored) {
+			quantity -= energyStored - maxEnergyStored;
+			energyStored = maxEnergyStored;
+		} else if (energyStored < 0) {
+			quantity -= energyStored;
+			energyStored = 0;
+		}
+
+		applyPerdition();
+
+		return quantity;
+	}
+
+	/**
+	 * Internal use only you should NEVER call this function on a PowerProvider
+	 * you don't own.
+	 */
+	public void setEnergy(float quantity) {
+		this.energyStored = quantity;
+		if (energyStored > maxEnergyStored) {
+			energyStored = maxEnergyStored;
+		} else if (energyStored < 0) {
 			energyStored = 0;
 		}
 	}
 
-	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setInteger("latency", latency);
-		nbttagcompound.setInteger("minEnergyReceived", minEnergyReceived);
-		nbttagcompound.setInteger("maxEnergyReceived", maxEnergyReceived);
-		nbttagcompound.setInteger("maxStoreEnergy", maxEnergyStored);
-		nbttagcompound.setInteger("minActivationEnergy", minActivationEnergy);
-		nbttagcompound.setFloat("storedEnergy", energyStored);
-	}
-
-	@Override
-	public void receiveEnergy(float quantity, ForgeDirection from) {
-		powerSources[from.ordinal()] = 2;
-
-		energyStored += quantity;
-
-		if (energyStored > maxEnergyStored) {
-			energyStored = maxEnergyStored;
-		}
-	}
-
-	@Override
 	public boolean isPowerSource(ForgeDirection from) {
 		return powerSources[from.ordinal()] != 0;
 	}

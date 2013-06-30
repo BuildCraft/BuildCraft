@@ -19,11 +19,14 @@ public class EnergyPulser {
 	}
 
 	public void update() {
+	    if (!isActive && hasPulsed)
+	        hasPulsed = false;
+
 		if (powerReceptor == null || !isActive || tick++ % 10 != 0)
 			return;
 
 		if (!singlePulse || !hasPulsed) {
-			powerReceptor.getPowerProvider().receiveEnergy(Math.min(1 << (pulseCount - 1), 64), ForgeDirection.WEST);
+			powerReceptor.getPowerProvider(null).receiveEnergy(Math.min(1 << (pulseCount - 1), 64), ForgeDirection.WEST);
 			hasPulsed = true;
 		}
 	}

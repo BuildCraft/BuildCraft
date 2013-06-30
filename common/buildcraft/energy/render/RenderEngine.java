@@ -26,9 +26,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
-import buildcraft.energy.Engine;
-import buildcraft.energy.Engine.EnergyStage;
-import buildcraft.energy.IEngineProvider;
+import buildcraft.energy.TileEngine;
+import buildcraft.energy.TileEngine.EnergyStage;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
@@ -86,13 +85,13 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	@Override
 	public void inventoryRender(double x, double y, double z, float f, float f1) {
-		render(EnergyStage.Blue, 0.25F, ForgeDirection.UP, baseTexture, x, y, z);
+		render(EnergyStage.BLUE, 0.25F, ForgeDirection.UP, baseTexture, x, y, z);
 	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
-		Engine engine = ((IEngineProvider) tileentity).getEngine();
+		TileEngine engine = ((TileEngine) tileentity);
 
 		if (engine != null) {
 			render(engine.getEnergyStage(), engine.progress, engine.orientation, engine.getTextureFile(), x, y, z);
@@ -181,13 +180,13 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		String texture = "";
 
 		switch (energy) {
-			case Blue:
+			case BLUE:
 				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png";
 				break;
-			case Green:
+			case GREEN:
 				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png";
 				break;
-			case Yellow:
+			case YELLOW:
 				texture = DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png";
 				break;
 			default:

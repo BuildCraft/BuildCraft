@@ -22,7 +22,7 @@ public class ArrayStackFilter implements IStackFilter {
 			return true;
 		}
 		for (ItemStack s : stacks) {
-			if (StackHelper.instance().canStacksMerge(s, stack)) {
+			if (StackHelper.instance().isMatchingItem(s, stack)) {
 				return true;
 			}
 		}
