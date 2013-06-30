@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport;
 
 import java.util.ArrayList;
@@ -17,6 +24,10 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.proxy.CoreProxy;
 
+/**
+ *
+ * @author SandGrainOne
+ */
 public class BlockFilteredBuffer extends BlockBuildCraft {
 
 	private static Icon blockTexture;
@@ -32,9 +43,9 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, 
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer,
 			int par6, float par7, float par8, float par9) {
-		
+
 		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
 
 		if (entityplayer.isSneaking()) {
@@ -54,7 +65,7 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 		return true;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		itemList.add(new ItemStack(this));

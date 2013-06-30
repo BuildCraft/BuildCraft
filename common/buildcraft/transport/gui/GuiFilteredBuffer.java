@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.gui;
 
 import org.lwjgl.opengl.GL11;
@@ -8,6 +15,10 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 
+/**
+ *
+ * @author SandGrainOne
+ */
 public class GuiFilteredBuffer extends GuiContainer {
 
 	IInventory playerInventory;
@@ -31,11 +42,11 @@ public class GuiFilteredBuffer extends GuiContainer {
 		int cornerY = (height - ySize) / 2;
 
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);
-		
+
 		IInventory filters = filteredBuffer.getFilters();
 
 		for (int col = 0; col < filters.getSizeInventory(); col++) {
-			if(filters.getStackInSlot(col) == null) {
+			if (filters.getStackInSlot(col) == null) {
 				drawTexturedModalRect(cornerX + 7 + col * 18, cornerY + 60, 176, 0, 18, 18);
 			}
 		}
