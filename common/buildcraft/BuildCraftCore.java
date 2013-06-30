@@ -8,6 +8,7 @@
 
 package buildcraft;
 
+import buildcraft.api.builder.BlueprintDatabase;
 import java.io.File;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -161,7 +162,7 @@ public class BuildCraftCore {
 
 	public static BptItem[] itemBptProps = new BptItem[Item.itemsList.length];
 
-	public static Logger bcLog = Logger.getLogger("Buildcraft");
+	public static final Logger bcLog = Logger.getLogger("Buildcraft");
 
 	public IIconProvider actionTriggerIconProvider = new ActionTriggerIconProvider();
 
@@ -177,7 +178,8 @@ public class BuildCraftCore {
 		bcLog.info("Starting BuildCraft " + Version.getVersion());
 		bcLog.info("Copyright (c) SpaceToad, 2011");
 		bcLog.info("http://www.mod-buildcraft.com");
-
+		
+		BlueprintDatabase.configFolder = evt.getModConfigurationDirectory();
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
@@ -236,10 +238,10 @@ public class BuildCraftCore {
 			Property ironGearId = BuildCraftCore.mainConfiguration.getItem("ironGearItem.id", DefaultProps.IRON_GEAR_ID);
 			Property goldenGearId = BuildCraftCore.mainConfiguration.getItem("goldenGearItem.id", DefaultProps.GOLDEN_GEAR_ID);
 			Property diamondGearId = BuildCraftCore.mainConfiguration.getItem("diamondGearItem.id", DefaultProps.DIAMOND_GEAR_ID);
-			Property modifyWorld = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
-			modifyWorld.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
+			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
+			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 
-			BuildCraftCore.modifyWorld = modifyWorld.getBoolean(true);
+			modifyWorld = modifyWorldProp.getBoolean(true);
 
 			if(BuildCraftCore.modifyWorld) {
 				springBlock = new BlockSpring(springId.getInt()).setUnlocalizedName("eternalSpring");
