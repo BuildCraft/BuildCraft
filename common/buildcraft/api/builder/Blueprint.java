@@ -1,16 +1,21 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011-2012 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.api.builder;
 
+import buildcraft.core.inventory.StackHelper;
+import buildcraft.factory.TileQuarry;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -22,12 +27,13 @@ import net.minecraft.nbt.NBTTagList;
  */
 public class Blueprint {
 
-	private final String version = "Blueprint-1.0";
+	private final String version = "Blueprint-2.0";
 	private final UUID uuid;
 	private String name;
 	private String creator;
 	private final BlockSchematic[][][] blocks;
-	private final int sizeX, sizeY, sizeZ;
+	public final int sizeX, sizeY, sizeZ;
+	private List<ItemStack> costs;
 
 	public Blueprint(int sizeX, int sizeY, int sizeZ) {
 		this(sizeX, sizeY, sizeZ, UUID.randomUUID());
@@ -56,6 +62,23 @@ public class Blueprint {
 		blocks[x][y][z] = block;
 	}
 
+	/**
+	 * Helper function for creating Blueprints in code.
+	 *
+	 * Not recommended for use with complex blocks.
+	 *
+	 * @see TileQuarry
+	 */
+	public void setBlock(int x, int y, int z, int id, int meta) {
+		Block block = Block.blocksList[id];
+		if (block == null) {
+			return;
+		}
+		BlockSchematic schematic = new BlockSchematic(block.getUnlocalizedName());
+		schematic.metadata = meta;
+		setBlock(x, y, z, schematic);
+	}
+
 	public BlockSchematic getBlock(int x, int y, int z) {
 		return blocks[x][y][z];
 	}
@@ -73,8 +96,8 @@ public class Blueprint {
 	 *
 	 * @return List<BlockScematic>
 	 */
-	public List<BlockSchematic> getBuildList() {
-		List<BlockSchematic> list = new LinkedList<BlockSchematic>();
+	public LinkedList<BlockSchematic> getBuildList() {
+		LinkedList<BlockSchematic> list = new LinkedList<BlockSchematic>();
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
 				for (int z = 0; z < sizeZ; z++) {
@@ -83,6 +106,29 @@ public class Blueprint {
 			}
 		}
 		return list;
+	}
+
+	public List<ItemStack> getCost() {
+		if (costs != null)
+			return costs;
+		List<ItemStack> stacks = new ArrayList<ItemStack>();
+		for (BlockSchematic schematic : getBuildList()) {
+			BlockHandler handler = BlockHandler.getHandler(schematic);
+			List<ItemStack> requirements = handler.getCostForSchematic(schematic);
+			for (ItemStack newStack : requirements) {
+				if (newStack.stackSize <= 0)
+					continue;
+				for (ItemStack oldStack : stacks) {
+					if (StackHelper.instance().canStacksMerge(oldStack, newStack)) {
+						newStack.stackSize -= StackHelper.instance().mergeStacks(oldStack, newStack, true);
+					}
+				}
+				if (newStack.stackSize > 0)
+					stacks.add(newStack);
+			}
+		}
+		costs = Collections.unmodifiableList(stacks);
+		return costs;
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
@@ -117,7 +163,7 @@ public class Blueprint {
 		int sizeZ = nbt.getInteger("sizeZ");
 
 		Blueprint blueprint = new Blueprint(sizeX, sizeY, sizeZ, new UUID(most, least));
-		
+
 		blueprint.name = nbt.getString("name");
 		blueprint.creator = nbt.getString("creator");
 

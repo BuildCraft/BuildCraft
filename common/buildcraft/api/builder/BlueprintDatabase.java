@@ -70,7 +70,7 @@ public class BlueprintDatabase {
 		try {
 			CompressedStreamTools.write(nbt, blueprintFile);
 		} catch (IOException ex) {
-			Logger.getLogger("Buildcraft").log(Level.WARNING, "Failed to save Blueprint file: {0} {1}", new Object[]{blueprintFile.getName(), ex.getMessage()});
+			Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
 		}
 	}
 
@@ -97,7 +97,7 @@ public class BlueprintDatabase {
 				nbt = CompressedStreamTools.read(blueprintFile);
 				break;
 			} catch (IOException ex) {
-				Logger.getLogger("Buildcraft").log(Level.WARNING, "Failed to load Blueprint file: {0} {1}", new Object[]{blueprintFile.getName(), ex.getMessage()});
+				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to load Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
 			}
 		}
 
@@ -120,7 +120,7 @@ public class BlueprintDatabase {
 				NBTTagCompound nbt = CompressedStreamTools.read(blueprintFile);
 				addBlueprint(Blueprint.readFromNBT(nbt));
 			} catch (IOException ex) {
-				Logger.getLogger("Buildcraft").log(Level.WARNING, "Failed to load Blueprint file: {0} {1}", new Object[]{blueprintFile.getName(), ex.getMessage()});
+				Logger.getLogger("Buildcraft").log(Level.SEVERE, String.format("Failed to load Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
 			}
 		}
 	}

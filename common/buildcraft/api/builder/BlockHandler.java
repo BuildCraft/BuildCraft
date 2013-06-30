@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -27,6 +28,15 @@ public class BlockHandler {
 			return DEFAULT_HANDLER;
 		}
 		return handler;
+	}
+
+	public static BlockHandler getHandler(BlockSchematic schematic) {
+//		BlockHandler handler = handlers.get(s); // TODO: replace with mapping -> id code
+//		if (handler == null) {
+//			return DEFAULT_HANDLER;
+//		}
+//		return handler;
+		return null;
 	}
 
 	public static void registerHandler(int blockId, BlockHandler handler) {
@@ -99,18 +109,43 @@ public class BlockHandler {
 	}
 
 	/**
-	 * Called when items are consumed for this block, an array containing all
-	 * the items listed as a cost is passed in. Use them as you see fit.
+	 * Called when items are consumed for this block. The builder's inventory is
+	 * passed in. Use them as you see fit.
 	 *
 	 * If the function returns false, the block is not placed. You should not
 	 * modify any ItemStack until you have determined that everything you
 	 * require is present.
 	 */
-	public boolean consumeItems(ItemStack[] stacks) {
-		for (int i = 0; i < stacks.length; i++) {
-			stacks[i] = Utils.consumeItem(stacks[i]);
+	public boolean consumeItems(BlockSchematic schematic, IInventory builderInventory) {
+		List<ItemStack> requiredItems = getCostForSchematic(schematic);
+		List<Integer> slotsToConsume = new ArrayList<Integer>();
+		for (ItemStack cost : requiredItems) {
+			boolean found = false;
+			for (int slot = 0; slot < builderInventory.getSizeInventory(); slot++) {
+				if (areItemsEqual(builderInventory.getStackInSlot(slot), cost)) {
+					slotsToConsume.add(slot);
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				return false;
+		}
+		for (Integer slot : slotsToConsume) {
+			builderInventory.setInventorySlotContents(slot, Utils.consumeItem(builderInventory.getStackInSlot(slot)));
 		}
 		return true;
+	}
+
+	private boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
+		if (stack1 == null || stack2 == null)
+			return false;
+		if (!stack1.isItemEqual(stack2))
+			return false;
+		if (!ItemStack.areItemStackTagsEqual(stack1, stack2))
+			return false;
+		return true;
+
 	}
 
 	/**
@@ -129,7 +164,8 @@ public class BlockHandler {
 	 * the blueprint. Blueprints are always saved facing North. This function
 	 * will have to rotate the block accordingly.
 	 */
-	public void readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, BlockSchematic schematic) {
+	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, BlockSchematic schematic) {
+		return false;
 	}
 
 	/**
