@@ -5,8 +5,10 @@
  * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.builder;
+package buildcraft.builders;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.factory.TileQuarry;
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 /**
  * This class is used to represent the data of the blueprint as it exists in the
@@ -33,6 +37,8 @@ public class Blueprint {
 	private String creator;
 	private final BlockSchematic[][][] blocks;
 	public final int sizeX, sizeY, sizeZ;
+	public int anchorX, anchorY, anchorZ;
+	public ForgeDirection anchorOrientation = ForgeDirection.NORTH;
 	private List<ItemStack> costs;
 
 	public Blueprint(int sizeX, int sizeY, int sizeZ) {
@@ -55,28 +61,45 @@ public class Blueprint {
 		this.name = name;
 	}
 
-	public void setBlock(int x, int y, int z, BlockSchematic block) {
-		block.x = x;
-		block.y = y;
-		block.z = z;
-		blocks[x][y][z] = block;
+	private void setBlock(World world, int x, int y, int z, BlockSchematic schematic) {
+		if (schematic == null)
+			return;
+		schematic.x = x;
+		schematic.y = y;
+		schematic.z = z;
+		blocks[x][y][z] = schematic;
+	}
+
+	public void setBlock(World world, int x, int y, int z, Block block) {
+		BlockHandler handler = BlockHandler.get(block);
+		try {
+			if (handler.canSaveBlockToSchematic(world, x, y, z)) {
+				BlockSchematic schematic = new BlockSchematic(block);
+				handler.saveToSchematic(world, x, y, z, schematic.blockData);
+				setBlock(world, x, y, z, schematic);
+			}
+		} catch (Throwable error) {
+			BuildCraftCore.bcLog.severe(String.format("Error while trying to save block [%s:%d] to blueprint, skipping.", block.getUnlocalizedName(), block.blockID));
+			BuildCraftCore.bcLog.throwing(getClass().getCanonicalName(), "setBlock", error);
+		}
 	}
 
 	/**
 	 * Helper function for creating Blueprints in code.
 	 *
-	 * Not recommended for use with complex blocks.
+	 * Not recommended for use with complex blocks because it doesn't go through
+	 * a hander to get a BlockSchematic.
 	 *
 	 * @see TileQuarry
 	 */
-	public void setBlock(int x, int y, int z, int id, int meta) {
+	public void setBlock(World world, int x, int y, int z, int id, int meta) {
 		Block block = Block.blocksList[id];
 		if (block == null) {
 			return;
 		}
 		BlockSchematic schematic = new BlockSchematic(block);
-		schematic.blockMeta = meta;
-		setBlock(x, y, z, schematic);
+		schematic.blockData.setByte("blockMeta", (byte) meta);
+		setBlock(world, x, y, z, schematic);
 	}
 
 	public BlockSchematic getBlock(int x, int y, int z) {
@@ -114,8 +137,8 @@ public class Blueprint {
 			return costs;
 		List<ItemStack> stacks = new ArrayList<ItemStack>();
 		for (BlockSchematic schematic : getBuildList()) {
-			BlockHandler handler = BlockHandler.getHandler(schematic);
-			List<ItemStack> requirements = handler.getCostForSchematic(schematic);
+			BlockHandler handler = BlockHandler.get(schematic.block);
+			List<ItemStack> requirements = handler.getCostForSchematic(schematic.blockData);
 			for (ItemStack newStack : requirements) {
 				if (newStack.stackSize <= 0)
 					continue;
@@ -154,6 +177,10 @@ public class Blueprint {
 		nbt.setInteger("sizeX", sizeX);
 		nbt.setInteger("sizeY", sizeY);
 		nbt.setInteger("sizeZ", sizeZ);
+		nbt.setInteger("anchorX", sizeX);
+		nbt.setInteger("anchorY", sizeY);
+		nbt.setInteger("anchorZ", sizeZ);
+		nbt.setByte("anchorOrientation", (byte) anchorOrientation.ordinal());
 	}
 
 	public static Blueprint readFromNBT(NBTTagCompound nbt) {
@@ -167,6 +194,12 @@ public class Blueprint {
 
 		blueprint.name = nbt.getString("name");
 		blueprint.creator = nbt.getString("creator");
+
+		blueprint.anchorX = nbt.getInteger("anchorX");
+		blueprint.anchorY = nbt.getInteger("anchorY");
+		blueprint.anchorZ = nbt.getInteger("anchorZ");
+
+		blueprint.anchorOrientation = ForgeDirection.getOrientation(nbt.getByte("anchorOrientation"));
 
 		NBTTagList blockList = nbt.getTagList("blocks");
 		for (int i = 0; i < blockList.tagCount(); i++) {

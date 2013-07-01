@@ -1,12 +1,10 @@
-/** 
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
- * License 1.0, or MMPL. Please check the contents of the license located in
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,25 +21,21 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBase;
 import buildcraft.core.blueprints.BptBlueprint;
 import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.BptTemplate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import net.minecraft.block.Block;
 
 public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	public @TileNetworkData
 	Box box = new Box();
-
 	private ItemStack items[] = new ItemStack[2];
-
 	private boolean isComputing = false;
 	public int computingTime = 0;
-
 	public @TileNetworkData
 	String name = "";
-
 	// Use that field to avoid creating several times the same template if
 	// they're the same!
 	private int lastBptId = 0;
@@ -141,21 +135,23 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 			mask0 = 1;
 		}
 
-		BptBase result = new BptTemplate(box.sizeX(), box.sizeY(), box.sizeZ());
+		Blueprint blueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
-					if (worldObj.getBlockId(x, y, z) != 0) {
-						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask1);
-					} else {
-						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask0);
+					if (!worldObj.isAirBlock(x, y, z)) {
+						Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
+						if (block != null) {
+							blueprint.setBlock(worldObj, x - box.xMin, y - box.yMin, z - box.zMin, block);
+						}
 					}
 				}
 			}
 		}
 
-		return result;
+//		return blueprint;
+		return null;
 	}
 
 	private BptBase createBptBlueprint() {
@@ -241,7 +237,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	public int getInventoryStackLimit() {
 		return 1;
 	}
-	
+
 	@Override
 	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
@@ -366,11 +362,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	@Override
 	public void openChest() {
-
 	}
 
 	@Override
 	public void closeChest() {
-
 	}
 }

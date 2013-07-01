@@ -1,6 +1,5 @@
 package buildcraft.api.builder;
 
-import buildcraft.core.utils.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -20,30 +20,24 @@ import net.minecraftforge.common.ForgeDirection;
  */
 public class BlockHandler {
 
-	private static final BlockHandler DEFAULT_HANDLER = new BlockHandler();
-	private static final Map<Integer, BlockHandler> handlers = new HashMap<Integer, BlockHandler>();
+	private static final Map<Block, BlockHandler> handlers = new HashMap<Block, BlockHandler>();
+	private final Block block;
 
-	public static BlockHandler getHandler(int blockId) {
-		BlockHandler handler = handlers.get(blockId);
+	public static BlockHandler get(Block block) {
+		BlockHandler handler = handlers.get(block);
 		if (handler == null) {
-			return DEFAULT_HANDLER;
+			handler = new BlockHandler(block);
+			registerHandler(block, handler);
 		}
 		return handler;
 	}
 
-	public static BlockHandler getHandler(BlockSchematic schematic) {
-		BlockHandler handler = null; // TODO: replace with mapping -> id code
-		if (handler == null) {
-			return DEFAULT_HANDLER;
-		}
-		return handler;
+	public static void registerHandler(Block block, BlockHandler handler) {
+		handlers.put(block, handler);
 	}
 
-	public static void registerHandler(int blockId, BlockHandler handler) {
-		handlers.put(blockId, handler);
-	}
-
-	protected BlockHandler() {
+	public BlockHandler(Block block) {
+		this.block = block;
 	}
 
 	/**
@@ -52,17 +46,9 @@ public class BlockHandler {
 	 * We will also skip any blocks that drop actual items like Ore blocks.
 	 */
 	public boolean canSaveBlockToSchematic(World world, int x, int y, int z) {
-		if (world.isAirBlock(x, y, z)) {
-			return false;
-		}
-		int blockId = world.getBlockId(x, y, z);
-		Block block = Block.blocksList[blockId];
-		if (block == null) {
-			return false;
-		}
 		int meta = world.getBlockMetadata(x, y, z);
 		try {
-			if (block.idDropped(meta, null, 0) != blockId) {
+			if (block.idDropped(meta, null, 0) != block.blockID) {
 				return false;
 			}
 		} catch (NullPointerException ex) {
@@ -74,18 +60,20 @@ public class BlockHandler {
 	/**
 	 * It is assumed that Blueprints always face North on save.
 	 *
-	 * Tile Entities should store some NBT data in the BlockSchematic.blockData
-	 * tag.
+	 * Store any info you need to reproduce the block in the data tag.
 	 */
-	public BlockSchematic saveBlockToSchematic(World world, int x, int y, int z) {
-		int blockId = world.getBlockId(x, y, z);
-		Block block = Block.blocksList[blockId];
-		if (block == null) {
-			return null;
-		}
-		BlockSchematic schematic = new BlockSchematic(block);
-		schematic.blockMeta = world.getBlockMetadata(x, y, z);
-		return schematic;
+	public void saveToSchematic(World world, int x, int y, int z, NBTTagCompound blockData) {
+		blockData.setByte("blockMeta", (byte) world.getBlockMetadata(x, y, z));
+	}
+
+	/**
+	 * It is assumed that Blueprints always face North on save.
+	 *
+	 * Store any info you need to reproduce the block in the data tag.
+	 */
+	public void saveToSchematic(ItemStack stack, NBTTagCompound blockData) {
+		if (stack.getHasSubtypes())
+			blockData.setByte("blockMeta", (byte) stack.getItemDamage());
 	}
 
 	/**
@@ -93,48 +81,16 @@ public class BlockHandler {
 	 * schematic.
 	 *
 	 * If you need axillary items like a painter or gate, list them as well.
-	 * Items will be consumed in the consumeItems() callback below.
+	 * Items will be consumed in the readBlockFromSchematic() function below.
 	 *
 	 * This default implementation will only work for simple blocks without tile
 	 * entities and will in fact break on Ore blocks as well. Which is why those
 	 * blocks can't be saved by default.
 	 */
-	public List<ItemStack> getCostForSchematic(BlockSchematic schematic) {
+	public List<ItemStack> getCostForSchematic(NBTTagCompound blockData) {
 		List<ItemStack> cost = new ArrayList<ItemStack>();
-		Block block = null; // TODO: replace with mapping -> id code
-		if (block != null) {
-			cost.add(new ItemStack(block.idDropped(schematic.blockMeta, Utils.RANDOM, 0), 1, block.damageDropped(schematic.blockMeta)));
-		}
+		cost.add(new ItemStack(block.idDropped(blockData.getByte("blockMeta"), BlueprintHelpers.RANDOM, 0), 1, block.damageDropped(blockData.getByte("blockMeta"))));
 		return cost;
-	}
-
-	/**
-	 * Called when items are consumed for this block. The builder's inventory is
-	 * passed in. Use them as you see fit.
-	 *
-	 * If the function returns false, the block is not placed. You should not
-	 * modify any ItemStack until you have determined that everything you
-	 * require is present.
-	 */
-	public boolean consumeItems(BlockSchematic schematic, IInventory builderInventory) {
-		List<ItemStack> requiredItems = getCostForSchematic(schematic);
-		List<Integer> slotsToConsume = new ArrayList<Integer>();
-		for (ItemStack cost : requiredItems) {
-			boolean found = false;
-			for (int slot = 0; slot < builderInventory.getSizeInventory(); slot++) {
-				if (areItemsEqual(builderInventory.getStackInSlot(slot), cost)) {
-					slotsToConsume.add(slot);
-					found = true;
-					break;
-				}
-			}
-			if (!found)
-				return false;
-		}
-		for (Integer slot : slotsToConsume) {
-			builderInventory.setInventorySlotContents(slot, Utils.consumeItem(builderInventory.getStackInSlot(slot)));
-		}
-		return true;
 	}
 
 	private boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
@@ -152,7 +108,7 @@ public class BlockHandler {
 	 * Can the block be placed currently or is it waiting on some other block to
 	 * be placed first?
 	 */
-	public boolean canPlaceNow(World world, int x, int y, int z, ForgeDirection blueprintOrientation, BlockSchematic schematic) {
+	public boolean canPlaceNow(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound blockData) {
 		return true;
 	}
 
@@ -162,26 +118,44 @@ public class BlockHandler {
 	 * The ForgeDirection parameter can be use to determine the orientation of
 	 * the blueprint. Blueprints are always saved facing North. This function
 	 * will have to rotate the block accordingly.
+	 *
+	 * The builder's inventory is passed in so you can consume the items you
+	 * need. Use them as you see fit.
+	 *
+	 * If the function returns false, the block was not placed. You should not
+	 * modify any ItemStack in the inventory until you have determined that
+	 * everything you require is present.
 	 */
-	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, BlockSchematic schematic, EntityPlayer bcPlayer) {
-		if (schematic.blockId != 0) {
-			return world.setBlock(x, y, z, schematic.blockId, schematic.blockMeta, 3);
+	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound blockData, IInventory builderInventory, EntityPlayer bcPlayer) {
+		if (builderInventory != null) {
+			List<ItemStack> requiredItems = getCostForSchematic(blockData);
+			List<Integer> slotsToConsume = new ArrayList<Integer>();
+			for (ItemStack cost : requiredItems) {
+				boolean found = false;
+				for (int slot = 0; slot < builderInventory.getSizeInventory(); slot++) {
+					if (areItemsEqual(builderInventory.getStackInSlot(slot), cost)) {
+						slotsToConsume.add(slot);
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+			for (Integer slot : slotsToConsume) {
+				builderInventory.setInventorySlotContents(slot, BlueprintHelpers.consumeItem(builderInventory.getStackInSlot(slot)));
+			}
 		}
-		return false;
+		return world.setBlock(x, y, z, block.blockID, blockData.getByte("blockMeta"), 3);
 	}
 
 	/**
 	 * Checks if the block matches the schematic.
 	 */
-	public boolean doesBlockMatchSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, BlockSchematic schematic) {
-		int blockId = world.getBlockId(x, y, z);
-		Block block = Block.blocksList[blockId];
-		if (block == null) {
+	public boolean doesBlockMatchSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound blockData) {
+		if (block.blockID != world.getBlockId(x, y, z))
 			return false;
-		}
-		if (!schematic.blockName.equals(block.getUnlocalizedName())) {
-			return false;
-		}
-		return schematic.blockMeta == world.getBlockMetadata(x, y, z);
+
+		return !blockData.hasKey("blockMeta") || blockData.getByte("blockMeta") == world.getBlockMetadata(x, y, z);
 	}
 }

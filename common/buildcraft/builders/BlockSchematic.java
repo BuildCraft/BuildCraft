@@ -1,4 +1,4 @@
-package buildcraft.api.builder;
+package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,28 +9,20 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public final class BlockSchematic {
 
-	public final String blockName;
-	public final int blockId;
-	public int blockMeta = 0;
-	public NBTTagCompound blockData = null;
+	public final Block block;
+	public NBTTagCompound blockData = new NBTTagCompound();
 	public int x, y, z;
 
 	public BlockSchematic(Block block) {
-		this(block.getUnlocalizedName(), block.blockID);
+		this.block = block;
 	}
 
 	public BlockSchematic(String blockName) {
-		this(blockName, 0); // TODO: Add block id from name
-	}
-
-	public BlockSchematic(String blockName, int blockId) {
-		this.blockName = blockName;
-		this.blockId = blockId;
+		this((Block) null); // TODO: Add block from name code
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setString("blockName", blockName);
-		nbt.setByte("blockMeta", (byte) blockMeta);
+		nbt.setString("blockName", block.getUnlocalizedName());
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
@@ -39,13 +31,10 @@ public final class BlockSchematic {
 
 	public static BlockSchematic readFromNBT(NBTTagCompound nbt) {
 		BlockSchematic block = new BlockSchematic(nbt.getString("blockName"));
-		block.blockMeta = nbt.getInteger("blockMeta");
 		block.x = nbt.getInteger("x");
 		block.y = nbt.getInteger("y");
 		block.z = nbt.getInteger("z");
-		if (nbt.hasKey("blockData")) {
-			block.blockData = nbt.getCompoundTag("blockData");
-		}
+		block.blockData = nbt.getCompoundTag("blockData");
 		return block;
 	}
 }

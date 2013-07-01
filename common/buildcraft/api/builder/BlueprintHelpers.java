@@ -1,5 +1,7 @@
 package buildcraft.api.builder;
 
+import java.util.Random;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 
 /**
@@ -7,12 +9,14 @@ import net.minecraftforge.common.ForgeDirection;
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlueprintHelpers {
+	
+	public static final Random RANDOM = new Random();
 
 	/**
 	 * Takes a schematic orientation and blueprint orientation and returns the
 	 * orientation that should be used in the world. Admittedly this is not
-	 * sufficient for 24-point rotation. If you need something more complex,
-	 * you will have to handle it yourself.
+	 * sufficient for 24-point rotation. If you need something more complex, you
+	 * will have to handle it yourself.
 	 */
 	public static ForgeDirection rotateOrientation(ForgeDirection schematicOrientation, ForgeDirection blueprintOrientation) {
 		if (schematicOrientation == ForgeDirection.UP || schematicOrientation == ForgeDirection.DOWN) {
@@ -28,5 +32,24 @@ public class BlueprintHelpers {
 			return schematicOrientation.getRotation(ForgeDirection.UP);
 		}
 		return schematicOrientation;
+	}
+
+	/**
+	 * Takes an ItemStack and uses one. Replaces containers as needed.
+	 * 
+	 * @return the new ItemStack
+	 */
+	public static ItemStack consumeItem(ItemStack stack) {
+		if (stack.stackSize == 1) {
+			if (stack.getItem().hasContainerItem()) {
+				return stack.getItem().getContainerItemStack(stack);
+			} else {
+				return null;
+			}
+		} else {
+			stack.splitStack(1);
+
+			return stack;
+		}
 	}
 }

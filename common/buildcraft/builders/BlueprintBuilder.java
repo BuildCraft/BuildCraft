@@ -6,9 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.builder;
+package buildcraft.builders;
 
-import buildcraft.api.builder.BlueprintBuilder.SchematicBuilder;
+import buildcraft.api.builder.BlockHandler;
+import buildcraft.builders.BlueprintBuilder.SchematicBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -60,7 +61,7 @@ public class BlueprintBuilder {
 
 		private SchematicBuilder(BlockSchematic schematic) {
 			this.schematic = schematic;
-			this.handler = BlockHandler.getHandler(schematic);
+			this.handler = BlockHandler.get(schematic.block);
 		}
 
 		public int getX() {
@@ -94,11 +95,11 @@ public class BlueprintBuilder {
 		}
 
 		public boolean blockExists() {
-			return handler.doesBlockMatchSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic);
+			return handler.doesBlockMatchSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic.blockData);
 		}
 
 		public boolean canBuild() {
-			return handler.canPlaceNow(worldObj, getX(), getY(), getZ(), orientation, schematic);
+			return handler.canPlaceNow(worldObj, getX(), getY(), getZ(), orientation, schematic.blockData);
 		}
 
 		public boolean build(EntityPlayer bcPlayer) {
@@ -113,11 +114,7 @@ public class BlueprintBuilder {
 			if (!canBuild())
 				return false;
 
-			if (inv != null && !handler.consumeItems(schematic, inv)) {
-				return false;
-			}
-
-			boolean built = handler.readBlockFromSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic, bcPlayer);
+			boolean built = handler.readBlockFromSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic.blockData, inv, bcPlayer);
 
 			if (built) {
 				markComplete();

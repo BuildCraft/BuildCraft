@@ -8,7 +8,7 @@
 
 package buildcraft;
 
-import buildcraft.api.builder.BlueprintDatabase;
+import buildcraft.builders.BlueprintDatabase;
 import java.io.File;
 import java.util.TreeMap;
 import java.util.logging.Logger;
