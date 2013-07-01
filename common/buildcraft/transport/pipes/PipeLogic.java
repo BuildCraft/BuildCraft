@@ -14,16 +14,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.transport.IPipeLogic;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.IDropControlInventory;
-import buildcraft.transport.TileGenericPipe;
 
-public class PipeLogic implements IDropControlInventory {
+public class PipeLogic implements IDropControlInventory, IPipeLogic {
 
 	public int xCoord;
 	public int yCoord;
 	public int zCoord;
 	public World worldObj;
-	public TileGenericPipe container;
+	public IPipeTile container;
 
 	public void setPosition(int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
@@ -35,7 +36,7 @@ public class PipeLogic implements IDropControlInventory {
 		this.worldObj = worldObj;
 	}
 
-	public void setTile(TileGenericPipe tile) {
+	public void setTile(IPipeTile tile) {
 		this.container = tile;
 	}
 

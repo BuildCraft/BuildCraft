@@ -34,6 +34,7 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.triggers.ActionRedstoneOutput;
@@ -91,6 +92,38 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 
 	}
+	
+	// IPipe Interface update
+	@Override
+	public PipeLogic getLogic() {
+		return this.logic;
+	}
+
+	@Override
+	public PipeTransport getTransport() {
+		return this.transport;
+	}
+
+	@Override
+	public World getWorld() {
+		return this.worldObj;
+	}
+
+	@Override
+	public int getXPosition() {
+		return this.xCoord;
+	}
+
+	@Override
+	public int getYPosition() {
+		return this.yCoord;
+	}
+
+	@Override
+	public int getZPosition() {
+		return this.zCoord;
+	}
+
 
 	private void setPosition(int xCoord, int yCoord, int zCoord) {
 		this.xCoord = xCoord;
@@ -666,7 +699,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		ForgeDirection target_orientation = ForgeDirection.UNKNOWN;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
-			if (Utils.checkPipesConnections(container.getTile(o), container)) {
+			if (Utils.checkPipesConnections(container, container.getTile(o))) {
 
 				Connections_num++;
 
@@ -728,5 +761,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
         fixedTriggers = true;
 
     }
-
+    
+	@Override
+	public int signalStrength(WireColor color) {
+		return signalStrength[color.ordinal()];
+	}
 }

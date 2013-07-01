@@ -14,7 +14,6 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
-import buildcraft.transport.Pipe;
 
 public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 
@@ -63,11 +62,11 @@ public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
+	public boolean isTriggerActive(IPipe pipe, ITriggerParameter parameter) {
 		if (active)
-			return pipe.signalStrength[color.ordinal()] > 0;
+			return pipe.signalStrength(color) > 0;
 		else
-			return pipe.signalStrength[color.ordinal()] == 0;
+			return pipe.signalStrength(color) == 0;
 	}
 	
 	@Override

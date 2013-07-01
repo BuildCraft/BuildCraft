@@ -10,6 +10,8 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -160,17 +162,17 @@ public class PacketHandlerTransport implements IPacketHandler {
 	}
 
 	private void onPipeContentNBT(EntityPlayer player, PacketPipeTransportNBT packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		IPipeTile pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
 		if (pipe == null)
 			return;
 
-		if (pipe.pipe == null)
+		if (pipe.getPipe() == null)
 			return;
 
-		if (!(pipe.pipe.transport instanceof PipeTransportItems))
+		if (!(pipe.getPipe().getTransport() instanceof PipeTransportItems))
 			return;
 
-		((PipeTransportItems)pipe.pipe.transport).handleNBTPacket(packet);
+		((PipeTransportItems)pipe.getPipe().getTransport()).handleNBTPacket(packet);
 	}
 
 	/**
@@ -213,13 +215,13 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
+		if (pipe.getPipe() == null)
 			return;
 
-		if (!(pipe.pipe.transport instanceof PipeTransportItems))
+		if (!(pipe.getPipe().getTransport() instanceof PipeTransportItems))
 			return;
 
-		((PipeTransportItems) pipe.pipe.transport).handleItemPacket(packet);
+		((PipeTransportItems) pipe.getPipe().getTransport()).handleItemPacket(packet);
 	}
 
 	/**
@@ -237,13 +239,13 @@ public class PacketHandlerTransport implements IPacketHandler {
 			return;
 
 		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
+		if (pipe.getPipe() == null)
 			return;
 
-		if (!(pipe.pipe.transport instanceof PipeTransportPower))
+		if (!(pipe.getPipe().getTransport() instanceof PipeTransportPower))
 			return;
 
-		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
+		((PipeTransportPower) pipe.getPipe().getTransport()).handlePowerPacket(packetPower);
 
 	}
 
@@ -297,7 +299,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param z
 	 * @return
 	 */
-	private TileGenericPipe getPipe(World world, int x, int y, int z) {
+	private IPipeTile getPipe(World world, int x, int y, int z) {
 		if (!world.blockExists(x, y, z))
 			return null;
 
@@ -315,14 +317,14 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param packet
 	 */
 	private void onDiamondPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		IPipeTile pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
 		if (pipe == null)
 			return;
 
-		if (!(pipe.pipe.logic instanceof PipeLogicDiamond))
+		if (!(pipe.getPipe().getLogic() instanceof PipeLogicDiamond))
 			return;
 
-		((PipeLogicDiamond) pipe.pipe.logic).setInventorySlotContents(packet.slot, packet.stack);
+		((PipeLogicDiamond) pipe.getPipe().getLogic()).setInventorySlotContents(packet.slot, packet.stack);
 	}
 	
 	/**
@@ -332,14 +334,14 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param packet
 	 */
 	private void onEmeraldPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		IPipeTile pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
 		if (pipe == null)
 			return;
 
-		if (!(pipe.pipe instanceof PipeItemsEmerald))
+		if (!(pipe.getPipe() instanceof PipeItemsEmerald))
 			return;
 
-		((PipeItemsEmerald) pipe.pipe).setInventorySlotContents(packet.slot, packet.stack);
+		((PipeItemsEmerald) pipe.getPipe()).setInventorySlotContents(packet.slot, packet.stack);
 	}
 
 	/**
@@ -348,16 +350,16 @@ public class PacketHandlerTransport implements IPacketHandler {
 	 * @param packet
 	 */
 	private void onItemNBTRequest(EntityPlayerMP player, PacketSimpleId packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		IPipeTile pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
 		if (pipe == null)
 			return;
 
-		if (pipe.pipe == null)
+		if (pipe.getPipe() == null)
 			return;
 
-		if (!(pipe.pipe.transport instanceof PipeTransportItems))
+		if (!(pipe.getPipe().getTransport() instanceof PipeTransportItems))
 			return;
 
-		((PipeTransportItems) pipe.pipe.transport).handleNBTRequestPacket(player, packet.entityId);
+		((PipeTransportItems) pipe.getPipe().getTransport()).handleNBTRequestPacket(player, packet.entityId);
 	}
 }

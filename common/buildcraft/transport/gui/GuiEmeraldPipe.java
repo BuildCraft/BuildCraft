@@ -11,10 +11,10 @@ import net.minecraft.inventory.IInventory;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 
 public class GuiEmeraldPipe extends GuiBuildCraft {
@@ -22,10 +22,10 @@ public class GuiEmeraldPipe extends GuiBuildCraft {
 	IInventory playerInventory;
 	PipeItemsEmerald filterInventory;
 
-	public GuiEmeraldPipe(IInventory playerInventory, TileGenericPipe tile) {
-		super(new ContainerEmeraldPipe(playerInventory, (IInventory) tile.pipe), (IInventory) tile.pipe);
+	public GuiEmeraldPipe(IInventory playerInventory, IPipeTile tile) {
+		super(new ContainerEmeraldPipe(playerInventory, (IInventory) tile.getPipe()), (IInventory) tile.getPipe());
 		this.playerInventory = playerInventory;
-		this.filterInventory = (PipeItemsEmerald) tile.pipe;
+		this.filterInventory = (PipeItemsEmerald) tile.getPipe();
 		xSize = 175;
 		ySize = 132;
 	}

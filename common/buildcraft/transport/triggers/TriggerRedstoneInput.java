@@ -10,10 +10,10 @@
 package buildcraft.transport.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.transport.ITriggerPipe;
-import buildcraft.transport.Pipe;
 
 public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 
@@ -34,11 +34,11 @@ public class TriggerRedstoneInput extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
+	public boolean isTriggerActive(IPipe pipe, ITriggerParameter parameter) {
 		if (active)
-			return pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			return pipe.getWorld().isBlockIndirectlyGettingPowered(pipe.getXPosition(), pipe.getYPosition(), pipe.getZPosition());
 		else
-			return !pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			return !pipe.getWorld().isBlockIndirectlyGettingPowered(pipe.getXPosition(), pipe.getYPosition(), pipe.getZPosition());
 	}
 	
 	@Override

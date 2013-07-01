@@ -41,6 +41,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.proxy.CoreProxy;
@@ -122,34 +123,34 @@ public class BlockGenericPipe extends BlockContainer {
 		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
-		TileGenericPipe tileG = (TileGenericPipe) tile1;
+		IPipeTile tileG = (IPipeTile) tile1;
 
-		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k)) {
+		if (Utils.checkPipesConnections(world, tileG, i - 1, j, k)) {
 			setBlockBounds(0.0F, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k)) {
+		if (Utils.checkPipesConnections(world, tileG, i + 1, j, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, 1.0F, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k)) {
+		if (Utils.checkPipesConnections(world, tileG, i, j - 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, 0.0F, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k)) {
+		if (Utils.checkPipesConnections(world, tileG, i, j + 1, k)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, 1.0F, Utils.pipeMaxPos);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1)) {
+		if (Utils.checkPipesConnections(world, tileG, i, j, k - 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, 0.0F, Utils.pipeMaxPos, Utils.pipeMaxPos, Utils.pipeMaxPos);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1)) {
+		if (Utils.checkPipesConnections(world, tileG, i, j, k + 1)) {
 			setBlockBounds(Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMinPos, Utils.pipeMaxPos, Utils.pipeMaxPos, 1.0F);
 			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 		}
@@ -196,29 +197,29 @@ public class BlockGenericPipe extends BlockContainer {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
-		TileGenericPipe tileG = (TileGenericPipe) tile1;
+		IPipeTile tileG = (IPipeTile) tile1;
 
-		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.WEST))) {
+		if (Utils.checkPipesConnections(world, tileG, i - 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.WEST))) {
 			xMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.EAST))) {
+		if (Utils.checkPipesConnections(world, tileG, i + 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.EAST))) {
 			xMax = 1.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.DOWN))) {
+		if (Utils.checkPipesConnections(world, tileG, i, j - 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.DOWN))) {
 			yMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.UP))) {
+		if (Utils.checkPipesConnections(world, tileG, i, j + 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.UP))) {
 			yMax = 1.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1) || (tileG != null && tileG.hasFacade(ForgeDirection.NORTH))) {
+		if (Utils.checkPipesConnections(world, tileG, i, j, k - 1) || (tileG != null && tileG.hasFacade(ForgeDirection.NORTH))) {
 			zMin = 0.0F;
 		}
 
-		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1) || (tileG != null && tileG.hasFacade(ForgeDirection.SOUTH))) {
+		if (Utils.checkPipesConnections(world, tileG, i, j, k + 1) || (tileG != null && tileG.hasFacade(ForgeDirection.SOUTH))) {
 			zMax = 1.0F;
 		}
 
@@ -282,10 +283,12 @@ public class BlockGenericPipe extends BlockContainer {
 	public RaytraceResult doRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
-		TileEntity pipeTileEntity = world.getBlockTileEntity(x, y, z);
-		Pipe pipe = getPipe(world, x, y, z);
-
-		if (pipeTileEntity == null || !isValid(pipe)) {
+		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+		if(tileEntity==null || !(tileEntity instanceof IPipeTile) || tileEntity.isInvalid())
+			return null;
+		IPipeTile pipeTileEntity = (IPipeTile) tileEntity;
+		IPipe pipe = pipeTileEntity.getPipe();
+		if ( !isValid(pipe)) {
 			return null;
 		}
 
@@ -889,12 +892,12 @@ public class BlockGenericPipe extends BlockContainer {
 		return ((TileGenericPipe) tile).pipe;
 	}
 
-	public static boolean isFullyDefined(Pipe pipe) {
-		return pipe != null && pipe.transport != null && pipe.logic != null;
+	public static boolean isFullyDefined(IPipe pipe2) {
+		return pipe2 != null && pipe2.getTransport() != null && pipe2.getLogic() != null;
 	}
 
-	public static boolean isValid(Pipe pipe) {
-		return isFullyDefined(pipe);
+	public static boolean isValid(IPipe pipe2) {
+		return isFullyDefined(pipe2);
 	}
 
 	@Override

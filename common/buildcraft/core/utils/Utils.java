@@ -36,6 +36,7 @@ import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityBlock;
@@ -422,32 +423,38 @@ public class Utils {
 		}
 	}
 
-	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
-		if (tile1 == null || tile2 == null) {
+	public static boolean checkPipesConnections(IPipeTile container, TileEntity tile2) {
+		if (container == null || tile2 == null) {
 			return false;
 		}
 
-		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection)) {
+		if (!(container instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection)) {
 			return false;
 		}
 
 		ForgeDirection o = ForgeDirection.UNKNOWN;
 
-		if (tile1.xCoord - 1 == tile2.xCoord) {
-			o = ForgeDirection.WEST;
-		} else if (tile1.xCoord + 1 == tile2.xCoord) {
-			o = ForgeDirection.EAST;
-		} else if (tile1.yCoord - 1 == tile2.yCoord) {
-			o = ForgeDirection.DOWN;
-		} else if (tile1.yCoord + 1 == tile2.yCoord) {
-			o = ForgeDirection.UP;
-		} else if (tile1.zCoord - 1 == tile2.zCoord) {
-			o = ForgeDirection.NORTH;
-		} else if (tile1.zCoord + 1 == tile2.zCoord) {
-			o = ForgeDirection.SOUTH;
+		if(container.getXCoord() != tile2.xCoord){
+			if (container.getXCoord() > tile2.xCoord) {
+				o = ForgeDirection.WEST;
+			} else {
+				o = ForgeDirection.EAST;
+			}
+		} else if((container.getYCoord() != tile2.yCoord)){
+			if (container.getYCoord() > tile2.yCoord) {
+				o = ForgeDirection.DOWN;
+			} else {
+				o = ForgeDirection.UP;
+			}
+		} else if((container.getZCoord() != tile2.zCoord)){
+			if (container.getZCoord() > tile2.zCoord) {
+				o = ForgeDirection.NORTH;
+			} else {
+				o = ForgeDirection.SOUTH;
+			}
 		}
 
-		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o)) {
+		if (container instanceof IPipeConnection && !((IPipeConnection) container).isPipeConnected(o)) {
 			return false;
 		}
 
@@ -458,7 +465,7 @@ public class Utils {
 		return true;
 	}
 
-	public static boolean checkPipesConnections(IBlockAccess blockAccess, TileEntity tile1, int x2, int y2, int z2) {
+	public static boolean checkPipesConnections(IBlockAccess blockAccess, IPipeTile tile1, int x2, int y2, int z2) {
 		TileEntity tile2 = blockAccess.getBlockTileEntity(x2, y2, z2);
 
 		return checkPipesConnections(tile1, tile2);
