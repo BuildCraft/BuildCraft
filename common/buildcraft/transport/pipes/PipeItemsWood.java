@@ -11,14 +11,15 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.EntityPassiveItem;
@@ -32,16 +33,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
-	protected PowerProvider powerProvider;
+	protected PowerHandler powerHandler;
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
 	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
 		super(transport, logic, itemID);
 
-		powerProvider = new PowerProvider(this, false);
-		powerProvider.configure(1, 64, 1, 64);
-		powerProvider.configurePowerPerdition(0, 0);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(1, 64, 1, 64);
+		powerHandler.configurePowerPerdition(0, 0);
 	}
 
 	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
@@ -73,17 +74,17 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
-		if (powerProvider.getEnergyStored() <= 0)
+	public void doWork(PowerHandler workProvider) {
+		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
 		extractItems();
-		powerProvider.setEnergy(0);
+		powerHandler.setEnergy(0);
 	}
 
 	private void extractItems() {
@@ -108,7 +109,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			for (ItemStack stack : extracted) {
 				if (stack == null || stack.stackSize == 0) {
-					powerProvider.useEnergy(1, 1, true);
+					powerHandler.useEnergy(1, 1, true);
 					continue;
 				}
 
@@ -132,11 +133,11 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 		/* ISPECIALINVENTORY */
 		if (inventory instanceof ISpecialInventory) {
-			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerProvider.getEnergyStored());
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(doRemove, from, (int) powerHandler.getEnergyStored());
 			if (stacks != null && doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
-						powerProvider.useEnergy(stack.stackSize, stack.stackSize, true);
+						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 					}
 				}
 			}
@@ -164,7 +165,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
 				if (doRemove) {
-					return inventory.decrStackSize(k, (int) powerProvider.useEnergy(1, slot.stackSize, true));
+					return inventory.decrStackSize(k, (int) powerHandler.useEnergy(1, slot.stackSize, true));
 				} else {
 					return slot;
 				}

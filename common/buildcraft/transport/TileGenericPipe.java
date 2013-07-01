@@ -32,7 +32,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
@@ -189,12 +189,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			refreshRenderState = false;
 		}
 
-		PowerProvider provider = getPowerProvider(null);
-
-		if (provider != null) {
-			provider.update();
-		}
-
 		if (pipe != null) {
 			pipe.updateEntity();
 		}
@@ -329,17 +323,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
+	public PowerHandler.PowerReceiver getPowerReceiver(ForgeDirection side) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
-			return ((IPowerReceptor) pipe).getPowerProvider(null);
+			return ((IPowerReceptor) pipe).getPowerReceiver(null);
 		else
 			return null;
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
+	public void doWork(PowerHandler workProvider) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			((IPowerReceptor) pipe).doWork(null);
+			((IPowerReceptor) pipe).doWork(workProvider);
 		}
 	}
 

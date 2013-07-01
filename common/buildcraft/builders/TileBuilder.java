@@ -1,12 +1,10 @@
-/** 
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
- * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
- * License 1.0, or MMPL. Please check the contents of the license located in
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders;
 
 import java.util.Collection;
@@ -25,7 +23,9 @@ import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
@@ -49,18 +49,12 @@ import buildcraft.core.utils.Utils;
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
 
 	private final ItemStack items[] = new ItemStack[28];
-
 	private BptBuilderBase bluePrintBuilder;
-
 	public @TileNetworkData
 	Box box = new Box();
-
-	private PowerProvider powerProvider;
-
+	private PowerHandler powerHandler;
 	private LinkedList<BlockIndex> path;
-
 	private LinkedList<EntityLaser> pathLasers;
-
 	private EntityRobot builderRobot;
 
 	private class PathIterator {
@@ -169,16 +163,14 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			return true;
 		}
 	}
-
 	public PathIterator currentPathIterator;
-
 	private boolean done = true;
 
 	public TileBuilder() {
 		super();
 
-		powerProvider = new PowerProvider(this);
-		powerProvider.configure(25, 25, 25, 25);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(25, 25, 25, 25);
 	}
 
 	@Override
@@ -271,7 +263,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
+	public void doWork(PowerHandler workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
@@ -281,28 +273,28 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		if (builderRobot != null && !builderRobot.readyToBuild())
 			return;
 
-		if (powerProvider.useEnergy(25, 25, true) < 25)
+		if (powerHandler.useEnergy(25, 25, true) < 25)
 			return;
 
 		iterateBpt();
 
 		/* Temp fix to make Builders impotent as the World Destroyers they are
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
-			if (!box.isInitialized()) {
-				box.initialize(bluePrintBuilder);
-			}
+		 if (bluePrintBuilder != null && !bluePrintBuilder.done) {
+		 if (!box.isInitialized()) {
+		 box.initialize(bluePrintBuilder);
+		 }
 
-			if (builderRobot == null) {
-				builderRobot = new EntityRobot(worldObj, box);
-				worldObj.spawnEntityInWorld(builderRobot);
-			}
+		 if (builderRobot == null) {
+		 builderRobot = new EntityRobot(worldObj, box);
+		 worldObj.spawnEntityInWorld(builderRobot);
+		 }
 
-			box.createLasers(worldObj, LaserKind.Stripes);
+		 box.createLasers(worldObj, LaserKind.Stripes);
 
-			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
-					bluePrintBuilder.getContext());
-		}
-		*/
+		 builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
+		 bluePrintBuilder.getContext());
+		 }
+		 */
 	}
 
 	public void iterateBpt() {
@@ -347,9 +339,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 					box.deleteLasers();
 					box.reset();
 					/*
-					box.initialize(bluePrintBuilder);
-					box.createLasers(worldObj, LaserKind.Stripes);
-					*/
+					 box.initialize(bluePrintBuilder);
+					 box.createLasers(worldObj, LaserKind.Stripes);
+					 */
 				}
 
 				if (builderRobot != null) {
@@ -442,7 +434,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public int getInventoryStackLimit() {
 		return 64;
 	}
-	
+
 	@Override
 	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
@@ -525,8 +517,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
@@ -553,12 +545,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 	@Override
 	public void openChest() {
-
 	}
 
 	@Override
 	public void closeChest() {
-
 	}
 
 //	@Override
@@ -568,7 +558,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 //		else
 //			return 0;
 //	}
-
 	@Override
 	public void updateEntity() {
 

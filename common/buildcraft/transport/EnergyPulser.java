@@ -3,6 +3,7 @@ package buildcraft.transport;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler.Type;
 
 public class EnergyPulser {
 
@@ -26,7 +27,7 @@ public class EnergyPulser {
 			return;
 
 		if (!singlePulse || !hasPulsed) {
-			powerReceptor.getPowerProvider(null).receiveEnergy(Math.min(1 << (pulseCount - 1), 64), ForgeDirection.WEST);
+			powerReceptor.getPowerReceiver(null).receiveEnergy(Type.GATE, Math.min(1 << (pulseCount - 1), 64), ForgeDirection.WEST);
 			hasPulsed = true;
 		}
 	}

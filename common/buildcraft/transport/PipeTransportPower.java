@@ -14,7 +14,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -74,10 +75,10 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (tile instanceof IPowerReceptor) {
 			IPowerReceptor receptor = (IPowerReceptor) tile;
-			PowerProvider provider = receptor.getPowerProvider(side.getOpposite());
-			if (provider == null)
+			PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
+			if (receiver == null)
 				return false;
-			if (container.pipe instanceof PipePowerWood || provider.canAcceptPowerFromPipes)
+			if (container.pipe instanceof PipePowerWood || receiver.getType().canReceiveFromPipes())
 				return true;
 		}
 
@@ -150,11 +151,11 @@ public class PipeTransportPower extends PipeTransport {
 							internalPower[i] -= watts;
 						} else if (tiles[j] instanceof IPowerReceptor) {
 							IPowerReceptor pow = (IPowerReceptor) tiles[j];
-							PowerProvider prov = pow.getPowerProvider(ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+							PowerReceiver prov = pow.getPowerReceiver(ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 
-							if (prov != null && prov.canAcceptPowerFromPipes && prov.powerRequest() > 0) {
+							if (prov != null && prov.getType().canReceiveFromPipes() && prov.powerRequest() > 0) {
 								watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-								watts = prov.receiveEnergy(watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+								watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
 								internalPower[i] -= watts;
 							}
 						}
@@ -187,8 +188,8 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
 				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
-				PowerProvider prov = receptor.getPowerProvider(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
-				if (prov != null && prov.canAcceptPowerFromPipes) {
+				PowerReceiver prov = receptor.getPowerReceiver(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
+				if (prov != null && prov.getType().canReceiveFromPipes()) {
 					float request = prov.powerRequest();
 
 					if (request > 0) {

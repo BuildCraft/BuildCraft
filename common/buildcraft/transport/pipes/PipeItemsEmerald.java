@@ -77,11 +77,11 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 		/* ISELECTIVEINVENTORY */
 		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerProvider.getEnergyStored());
+			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
-						powerProvider.useEnergy(stack.stackSize, stack.stackSize, true);
+						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 					}
 				}
 				incrementFilter();
@@ -90,7 +90,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 
 		/* ISPECIALINVENTORY */
 		} else if (inventory instanceof ISpecialInventory) {
-				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerProvider.getEnergyStored());
+				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
 				if (stacks != null) {
 					for (ItemStack stack : stacks) {
 						if(stack == null)
@@ -109,10 +109,10 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 						}
 					}
 					if (doRemove) {
-						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerProvider.getEnergyStored());
+						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerHandler.getEnergyStored());
 						for (ItemStack stack : stacks) {
 							if (stack != null) {
-								powerProvider.useEnergy(stack.stackSize, stack.stackSize, true);
+								powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 							}
 						}
 					}
@@ -168,7 +168,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 				}
 				if (doRemove) {
 					incrementFilter();
-					return inventory.decrStackSize(i, (int) powerProvider.useEnergy(1, stack.stackSize, true));
+					return inventory.decrStackSize(i, (int) powerHandler.useEnergy(1, stack.stackSize, true));
 				} else {
 					return stack;
 				}

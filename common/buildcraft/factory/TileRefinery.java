@@ -23,7 +23,9 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
@@ -43,11 +45,11 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 	private int animationStage = 0;
 	SafeTimeTracker time = new SafeTimeTracker();
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
-	PowerProvider powerProvider;
+	private PowerHandler powerHandler;
 	private boolean isActive;
 
 	public TileRefinery() {
-		powerProvider = new PowerProvider(this);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
 
 		filters[0] = 0;
@@ -57,8 +59,8 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(25, 100, 25, 1000);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler.configure(25, 100, 25, 1000);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -106,12 +108,12 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override
@@ -152,7 +154,7 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 
 		isActive = true;
 
-		if (powerProvider.getEnergyStored() >= currentRecipe.energy) {
+		if (powerHandler.getEnergyStored() >= currentRecipe.energy) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
@@ -161,7 +163,7 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 		if (!time.markTimeIfDelay(worldObj, currentRecipe.delay))
 			return;
 
-		float energyUsed = powerProvider.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
+		float energyUsed = powerHandler.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
 
 		if (energyUsed != 0) {
 			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {
@@ -250,7 +252,7 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 		animationStage = nbttagcompound.getInteger("animationStage");
 		animationSpeed = nbttagcompound.getFloat("animationSpeed");
 
-		powerProvider.readFromNBT(nbttagcompound);
+		powerHandler.readFromNBT(nbttagcompound);
 		initPowerProvider();
 
 		filters[0] = nbttagcompound.getInteger("filters_0");
@@ -277,7 +279,7 @@ public class TileRefinery extends TileBuildCraft implements ITankContainer, IPow
 
 		nbttagcompound.setInteger("animationStage", animationStage);
 		nbttagcompound.setFloat("animationSpeed", animationSpeed);
-		powerProvider.writeToNBT(nbttagcompound);
+		powerHandler.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setInteger("filters_0", filters[0]);
 		nbttagcompound.setInteger("filters_1", filters[1]);

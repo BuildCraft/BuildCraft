@@ -11,7 +11,30 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 
-public final class PowerProvider {
+public final class PowerHandler {
+
+	public static enum Type {
+
+		ENGINE, GATE, MACHINE, PIPE, STORAGE;
+
+		public boolean canReceiveFromPipes() {
+			switch (this) {
+				case MACHINE:
+				case STORAGE:
+					return true;
+			}
+			return false;
+		}
+
+		public boolean eatsEngineExcess() {
+			switch (this) {
+				case MACHINE:
+				case STORAGE:
+					return true;
+			}
+			return false;
+		}
+	}
 
 	public static class PerditionCalculator {
 
@@ -30,7 +53,7 @@ public final class PowerProvider {
 			this.powerLoss = powerLoss;
 		}
 
-		public float applyPerdition(PowerProvider provider, float current) {
+		public float applyPerdition(PowerHandler provider, float current) {
 			current -= powerLoss;
 			if (current < 0) {
 				current = 0;
@@ -44,56 +67,60 @@ public final class PowerProvider {
 	private float maxEnergyStored;
 	private float activationEnergy;
 	private float energyStored = 0;
-	public final boolean canAcceptPowerFromPipes;
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
+	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
+	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
 	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
 	public final IPowerReceptor receptor;
 	private PerditionCalculator perdition;
+	private final PowerReceiver receiver;
+	private final Type type;
 
-	public PowerProvider(IPowerReceptor receptor) {
-		this(receptor, true);
+	public PowerHandler(IPowerReceptor receptor, Type type) {
+		this.receptor = receptor;
+		this.type = type;
+		this.receiver = new PowerReceiver();
 	}
 
-	public PowerProvider(IPowerReceptor receptor, boolean canAcceptPowerFromPipes) {
-		this.canAcceptPowerFromPipes = canAcceptPowerFromPipes;
-		this.receptor = receptor;
+	public PowerReceiver getPowerReceiver() {
+		return receiver;
 	}
 
 	public float getMinEnergyReceived() {
-		return this.minEnergyReceived;
+		return minEnergyReceived;
 	}
 
 	public float getMaxEnergyReceived() {
-		return this.maxEnergyReceived;
+		return maxEnergyReceived;
 	}
 
 	public float getMaxEnergyStored() {
-		return this.maxEnergyStored;
+		return maxEnergyStored;
 	}
 
 	public float getActivationEnergy() {
-		return this.activationEnergy;
+		return activationEnergy;
 	}
 
 	public float getEnergyStored() {
-		return this.energyStored;
+		return energyStored;
 	}
 
 	/**
-	 * Setup your PowerProvider's settings.
+	 * Setup your PowerHandler's settings.
 	 *
 	 * @param minEnergyReceived This is the minimum about of power that will be
-	 * accepted by the PowerProvider. This should generally be greater than the
+	 * accepted by the PowerHandler. This should generally be greater than the
 	 * activationEnergy if you plan to use the doWork() callback. Anything
 	 * greater than 1 will prevent Redstone Engines from powering this Provider.
 	 * @param maxEnergyReceived The maximum amount of power accepted by the
-	 * PowerProvider. This should generally be less than 500. Too low and larger
+	 * PowerHandler. This should generally be less than 500. Too low and larger
 	 * engines will overheat while trying to power the machine. Too high, and
 	 * the engines will never warm up. Greater values also place greater strain
 	 * on the power net.
 	 * @param activationEnergy If the stored energy is greater than this value,
 	 * the doWork() callback is called (once per tick).
-	 * @param maxStoredEnergy The maximum amount of power this PowerProvider can
+	 * @param maxStoredEnergy The maximum amount of power this PowerHandler can
 	 * store. Values tend to range between 100 and 5000. With 1000 and 1500
 	 * being common.
 	 */
@@ -105,17 +132,6 @@ public final class PowerProvider {
 		this.maxEnergyReceived = maxEnergyReceived;
 		this.maxEnergyStored = maxStoredEnergy;
 		this.activationEnergy = activationEnergy;
-	}
-
-	public void update() {
-		applyPerdition();
-		applyWork();
-
-		for (int i = 0; i < 6; ++i) {
-			if (powerSources[i] > 0) {
-				powerSources[i]--;
-			}
-		}
 	}
 
 	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
@@ -138,11 +154,15 @@ public final class PowerProvider {
 
 	private void applyPerdition() {
 		if (energyStored > 0) {
-			float newEnergy = getPerdition().applyPerdition(this, energyStored);
-			if (newEnergy == 0 || newEnergy < energyStored) {
-				energyStored = newEnergy;
-			} else {
-				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored);
+			if (perditionTracker.markTimeIfDelay(receptor.getWorldObj(), 1)) {
+				for (int i = 0; i < perditionTracker.durationOfLastDelay(); i++) {
+					float newEnergy = getPerdition().applyPerdition(this, energyStored);
+					if (newEnergy == 0 || newEnergy < energyStored) {
+						energyStored = newEnergy;
+					} else {
+						energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored);
+					}
+				}
 			}
 		}
 	}
@@ -155,9 +175,23 @@ public final class PowerProvider {
 		}
 	}
 
+	private void updateSources(ForgeDirection source) {
+		if (sourcesTracker.markTimeIfDelay(receptor.getWorldObj(), 1)) {
+			for (int i = 0; i < 6; ++i) {
+				powerSources[i] -= sourcesTracker.durationOfLastDelay();
+				if (powerSources[i] < 0) {
+					powerSources[i] = 0;
+				}
+			}
+		}
+
+		if (source != null)
+			powerSources[source.ordinal()] = 10;
+	}
+
 	/**
-	 * Extract energy from the PowerProvider. You must call this even if
-	 * doWork() triggers.
+	 * Extract energy from the PowerHandler. You must call this even if doWork()
+	 * triggers.
 	 *
 	 * @param min
 	 * @param max
@@ -203,46 +237,76 @@ public final class PowerProvider {
 		data.setCompoundTag(tag, nbt);
 	}
 
-	/**
-	 * The amount of power that this PowerProvider currently needs.
-	 *
-	 * @return
-	 */
-	public float powerRequest() {
-		return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
-	}
+	public final class PowerReceiver {
 
-	public float receiveEnergy(float quantity, ForgeDirection from) {
-		return receiveEnergy(quantity, from, false);
-	}
-
-	/**
-	 * Add power to the Provider from an external source.
-	 *
-	 * @param quantity
-	 * @param from
-	 * @return the amount of power used
-	 */
-	public float receiveEnergy(float quantity, ForgeDirection from, boolean boundsCheck) {
-		if (boundsCheck) {
-			if (quantity < minEnergyReceived) {
-				quantity = minEnergyReceived;
-			} else if (quantity > maxEnergyReceived) {
-				quantity = maxEnergyReceived;
-			}
+		private PowerReceiver() {
 		}
-		if (from != null)
-			powerSources[from.ordinal()] = 2;
 
-		quantity = addEnergy(quantity);
-		applyWork();
+		public float getMinEnergyReceived() {
+			return minEnergyReceived;
+		}
 
-		return quantity;
+		public float getMaxEnergyReceived() {
+			return maxEnergyReceived;
+		}
+
+		public float getMaxEnergyStored() {
+			return maxEnergyStored;
+		}
+
+		public float getActivationEnergy() {
+			return activationEnergy;
+		}
+
+		public float getEnergyStored() {
+			return energyStored;
+		}
+
+		public Type getType() {
+			return type;
+		}
+
+		/**
+		 * The amount of power that this PowerHandler currently needs.
+		 *
+		 * @return
+		 */
+		public float powerRequest() {
+			return Math.min(maxEnergyReceived, maxEnergyStored - energyStored);
+		}
+
+		/**
+		 * Add power to the PowerReceiver from an external source.
+		 *
+		 * @param quantity
+		 * @param from
+		 * @return the amount of power used
+		 */
+		public float receiveEnergy(Type source, final float quantity, ForgeDirection from) {
+			float used = quantity;
+			if (source == Type.ENGINE) {
+				if (used < minEnergyReceived) {
+					return 0;
+				} else if (used > maxEnergyReceived) {
+					used = maxEnergyReceived;
+				}
+			}
+
+			updateSources(from);
+
+			used = addEnergy(used);
+
+			applyWork();
+
+			if (source == Type.ENGINE && type.eatsEngineExcess()) {
+				return Math.min(quantity, maxEnergyReceived);
+			}
+
+			return used;
+		}
 	}
 
 	/**
-	 * Internal use only you should NEVER call this function on a PowerProvider
-	 * you don't own.
 	 *
 	 * @return the amount the power changed by
 	 */
@@ -262,10 +326,6 @@ public final class PowerProvider {
 		return quantity;
 	}
 
-	/**
-	 * Internal use only you should NEVER call this function on a PowerProvider
-	 * you don't own.
-	 */
 	public void setEnergy(float quantity) {
 		this.energyStored = quantity;
 		if (energyStored > maxEnergyStored) {

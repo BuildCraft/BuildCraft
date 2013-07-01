@@ -56,11 +56,6 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 			initialize();
 			init = true;
 		}
-
-		if (this instanceof IPowerReceptor) {
-			IPowerReceptor receptor = ((IPowerReceptor) this);
-			receptor.getPowerProvider(null).update();
-		}
 	}
 
 	@Override

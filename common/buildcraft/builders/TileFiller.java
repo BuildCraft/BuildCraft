@@ -19,7 +19,9 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
@@ -45,18 +47,18 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	public IFillerPattern currentPattern;
 	boolean forceDone = false;
 	private ItemStack contents[];
-	PowerProvider powerProvider;
+	private PowerHandler powerHandler;
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
 	public TileFiller() {
 		contents = new ItemStack[getSizeInventory()];
-		powerProvider = new PowerProvider(this);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(30, 50, 25, 100);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler.configure(30, 50, 25, 100);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -94,20 +96,20 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 				return;
 		}
 
-		if (powerProvider.getEnergyStored() >= 25) {
-			doWork(powerProvider);
+		if (powerHandler.getEnergyStored() >= 25) {
+			doWork(powerHandler);
 		}
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
+	public void doWork(PowerHandler workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
 		if (lastMode == Mode.Off)
 			return;
 
-		if (powerProvider.useEnergy(25, 25, true) < 25)
+		if (powerHandler.useEnergy(25, 25, true) < 25)
 			return;
 
 		if (box.isInitialized() && currentPattern != null && !done) {
@@ -136,7 +138,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 			}
 		}
 
-		if (powerProvider.getEnergyStored() >= 25) {
+		if (powerHandler.getEnergyStored() >= 25) {
 			doWork(workProvider);
 		}
 	}
@@ -322,8 +324,8 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
