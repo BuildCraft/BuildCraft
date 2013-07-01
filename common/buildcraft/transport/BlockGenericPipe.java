@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport;
 
 import java.util.ArrayList;
@@ -51,27 +49,26 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockGenericPipe extends BlockContainer {
+
 	static enum Part {
+
 		Pipe,
 		Gate
 	}
 
 	static class RaytraceResult {
+
 		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition) {
 			this.hitPart = hitPart;
 			this.movingObjectPosition = movingObjectPosition;
 		}
-
 		public Part hitPart;
 		public MovingObjectPosition movingObjectPosition;
 	}
-
 	private static Random rand = new Random();
-
 	private boolean skippedFirstIconRegister;
 
 	/* Defined subprograms ************************************************* */
-
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
 
@@ -263,15 +260,15 @@ public class BlockGenericPipe extends BlockContainer {
 		double pitch = Math.toRadians(entityPlayer.rotationPitch);
 		double yaw = Math.toRadians(entityPlayer.rotationYaw);
 
-        double dirX = -Math.sin(yaw) * Math.cos(pitch);
-        double dirY = -Math.sin(pitch);
-        double dirZ = Math.cos(yaw) * Math.cos(pitch);
+		double dirX = -Math.sin(yaw) * Math.cos(pitch);
+		double dirY = -Math.sin(pitch);
+		double dirZ = Math.cos(yaw) * Math.cos(pitch);
 
-        double reachDistance = 5;
+		double reachDistance = 5;
 
-        if (entityPlayer instanceof EntityPlayerMP) {
-        	reachDistance = ((EntityPlayerMP) entityPlayer).theItemInWorldManager.getBlockReachDistance();
-        }
+		if (entityPlayer instanceof EntityPlayerMP) {
+			reachDistance = ((EntityPlayerMP) entityPlayer).theItemInWorldManager.getBlockReachDistance();
+		}
 
 		Vec3 origin = Vec3.fakePool.getVecFromPool(entityPlayer.posX, entityPlayer.posY + 1.62 - entityPlayer.yOffset, entityPlayer.posZ);
 		Vec3 direction = origin.addVector(dirX * reachDistance, dirY * reachDistance, dirZ * reachDistance);
@@ -290,9 +287,10 @@ public class BlockGenericPipe extends BlockContainer {
 		}
 
 		/**
-		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades]
+		 * pipe hits along x, y, and z axis, gate (all 6 sides) [and
+		 * wires+facades]
 		 */
-		MovingObjectPosition[] hits = new MovingObjectPosition[] { null, null, null, null, null, null, null, null, null };
+		MovingObjectPosition[] hits = new MovingObjectPosition[]{null, null, null, null, null, null, null, null, null};
 
 		boolean needAxisCheck = false;
 		boolean needCenterCheck = true;
@@ -390,7 +388,8 @@ public class BlockGenericPipe extends BlockContainer {
 
 		for (int i = 0; i < hits.length; i++) {
 			MovingObjectPosition hit = hits[i];
-			if (hit == null) continue;
+			if (hit == null)
+				continue;
 
 			double lengthSquared = hit.hitVec.squareDistanceTo(origin);
 
@@ -424,24 +423,24 @@ public class BlockGenericPipe extends BlockContainer {
 		float max = Utils.pipeMaxPos - 0.05F;
 
 		switch (dir) {
-		case DOWN:
-			setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
-			break;
-		case UP:
-			setBlockBounds(min, Utils.pipeMaxPos, min, max, Utils.pipeMaxPos + 0.10F, max);
-			break;
-		case NORTH:
-			setBlockBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos);
-			break;
-		case SOUTH:
-			setBlockBounds(min, min, Utils.pipeMaxPos, max, max, Utils.pipeMaxPos + 0.10F);
-			break;
-		case WEST:
-			setBlockBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos, max, max);
-			break;
-		case EAST:
-			setBlockBounds(Utils.pipeMaxPos, min, min, Utils.pipeMaxPos + 0.10F, max, max);
-			break;
+			case DOWN:
+				setBlockBounds(min, Utils.pipeMinPos - 0.10F, min, max, Utils.pipeMinPos, max);
+				break;
+			case UP:
+				setBlockBounds(min, Utils.pipeMaxPos, min, max, Utils.pipeMaxPos + 0.10F, max);
+				break;
+			case NORTH:
+				setBlockBounds(min, min, Utils.pipeMinPos - 0.10F, max, max, Utils.pipeMinPos);
+				break;
+			case SOUTH:
+				setBlockBounds(min, min, Utils.pipeMaxPos, max, max, Utils.pipeMaxPos + 0.10F);
+				break;
+			case WEST:
+				setBlockBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos, max, max);
+				break;
+			case EAST:
+				setBlockBounds(Utils.pipeMaxPos, min, min, Utils.pipeMaxPos + 0.10F, max, max);
+				break;
 		}
 	}
 
@@ -503,6 +502,7 @@ public class BlockGenericPipe extends BlockContainer {
 		}
 		return list;
 	}
+
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileGenericPipe();
 	}
@@ -554,7 +554,6 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	/* Wrappers ************************************************************ */
-
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int l) {
 		super.onNeighborBlockChange(world, x, y, z, l);
@@ -607,7 +606,6 @@ public class BlockGenericPipe extends BlockContainer {
 					return stripEquipment(pipe);
 
 			} else if (entityplayer.getCurrentEquippedItem() == null) {
-
 				// Fall through the end of the test
 			} else if (entityplayer.getCurrentEquippedItem().itemID == Item.sign.itemID)
 				// Sign will be placed anyway, so lets show the sign gui
@@ -694,7 +692,7 @@ public class BlockGenericPipe extends BlockContainer {
 	private boolean stripEquipment(Pipe pipe) {
 
 		// Try to strip wires first, starting with yellow.
-		for (IPipe.WireColor color : IPipe.WireColor.values())
+		for (IPipe.WireColor color : IPipe.WireColor.values()) {
 			if (pipe.wireSet[color.reverse().ordinal()]) {
 				if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
 					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
@@ -704,6 +702,7 @@ public class BlockGenericPipe extends BlockContainer {
 				pipe.container.scheduleRenderUpdate();
 				return true;
 			}
+		}
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
@@ -726,23 +725,23 @@ public class BlockGenericPipe extends BlockContainer {
 
 		Item wireItem;
 		switch (color) {
-		case Red:
-			wireItem = BuildCraftTransport.redPipeWire;
-			break;
-		case Blue:
-			wireItem = BuildCraftTransport.bluePipeWire;
-			break;
-		case Green:
-			wireItem = BuildCraftTransport.greenPipeWire;
-			break;
-		default:
-			wireItem = BuildCraftTransport.yellowPipeWire;
+			case Red:
+				wireItem = BuildCraftTransport.redPipeWire;
+				break;
+			case Blue:
+				wireItem = BuildCraftTransport.bluePipeWire;
+				break;
+			case Green:
+				wireItem = BuildCraftTransport.greenPipeWire;
+				break;
+			default:
+				wireItem = BuildCraftTransport.yellowPipeWire;
 		}
 		Utils.dropItems(world, new ItemStack(wireItem), i, j, k);
 
 	}
 
-	@SuppressWarnings({ "all" })
+	@SuppressWarnings({"all"})
 	@SideOnly(Side.CLIENT)
 	public Icon getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 
@@ -811,7 +810,7 @@ public class BlockGenericPipe extends BlockContainer {
 			return 0;
 	}
 
-	@SuppressWarnings({ "all" })
+	@SuppressWarnings({"all"})
 	@Override
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		Pipe pipe = getPipe(world, i, j, k);
@@ -822,9 +821,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	/* Registration ******************************************************** */
-
 	public static Map<Integer, Class<? extends Pipe>> pipes = new HashMap<Integer, Class<? extends Pipe>>();
-
 	static long lastRemovedDate = -1;
 	public static Map<BlockIndex, Pipe> pipeRemoved = new HashMap<BlockIndex, Pipe>();
 
@@ -899,17 +896,16 @@ public class BlockGenericPipe extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister)
-	{
-		if (!skippedFirstIconRegister){
+	public void registerIcons(IconRegister iconRegister) {
+		if (!skippedFirstIconRegister) {
 			skippedFirstIconRegister = true;
 			return;
 		}
 		BuildCraftTransport.instance.gateIconProvider.registerIcons(iconRegister);
 		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
-		for (int i : pipes.keySet()){
+		for (int i : pipes.keySet()) {
 			Pipe dummyPipe = createPipe(i);
-			if (dummyPipe != null){
+			if (dummyPipe != null) {
 				dummyPipe.getIconProvider().registerIcons(iconRegister);
 			}
 		}
@@ -922,102 +918,113 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	/**
-     * Spawn a digging particle effect in the world, this is a wrapper around
-     * EffectRenderer.addBlockHitEffects to allow the block more control over
-     * the particles. Useful when you have entirely different texture sheets for
-     * different sides/locations in the world.
-     *
-     * @param world The current world
-     * @param target The target the player is looking at {x/y/z/side/sub}
-     * @param effectRenderer A reference to the current effect renderer.
-     * @return True to prevent vanilla digging particles form spawning.
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
-        int x = target.blockX;
-        int y = target.blockY;
-        int z = target.blockZ;
+	 * Spawn a digging particle effect in the world, this is a wrapper around
+	 * EffectRenderer.addBlockHitEffects to allow the block more control over
+	 * the particles. Useful when you have entirely different texture sheets for
+	 * different sides/locations in the world.
+	 *
+	 * @param world The current world
+	 * @param target The target the player is looking at {x/y/z/side/sub}
+	 * @param effectRenderer A reference to the current effect renderer.
+	 * @return True to prevent vanilla digging particles form spawning.
+	 */
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
+		int x = target.blockX;
+		int y = target.blockY;
+		int z = target.blockZ;
 
-        Pipe pipe = getPipe(worldObj, x, y, z);
-    	if (pipe == null) return false;
+		Pipe pipe = getPipe(worldObj, x, y, z);
+		if (pipe == null)
+			return false;
 
-    	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
+		Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
-        int sideHit = target.sideHit;
+		int sideHit = target.sideHit;
 
-        Block block = BuildCraftTransport.genericPipeBlock;
-        float b = 0.1F;
-        double px = x + rand.nextDouble() * (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (b * 2.0F)) + b + block.getBlockBoundsMinX();
-        double py = y + rand.nextDouble() * (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (b * 2.0F)) + b + block.getBlockBoundsMinY();
-        double pz = z + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block.getBlockBoundsMinZ();
+		Block block = BuildCraftTransport.genericPipeBlock;
+		float b = 0.1F;
+		double px = x + rand.nextDouble() * (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (b * 2.0F)) + b + block.getBlockBoundsMinX();
+		double py = y + rand.nextDouble() * (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (b * 2.0F)) + b + block.getBlockBoundsMinY();
+		double pz = z + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block.getBlockBoundsMinZ();
 
-        if (sideHit == 0) {
-            py = (double) y + block.getBlockBoundsMinY() - (double) b;
-        }
+		if (sideHit == 0) {
+			py = (double) y + block.getBlockBoundsMinY() - (double) b;
+		}
 
-        if (sideHit == 1) {
-            py = (double) y + block.getBlockBoundsMaxY() + (double) b;
-        }
+		if (sideHit == 1) {
+			py = (double) y + block.getBlockBoundsMaxY() + (double) b;
+		}
 
-        if (sideHit == 2) {
-            pz = (double) z + block.getBlockBoundsMinZ() - (double) b;
-        }
+		if (sideHit == 2) {
+			pz = (double) z + block.getBlockBoundsMinZ() - (double) b;
+		}
 
-        if (sideHit == 3) {
-            pz = (double) z + block.getBlockBoundsMaxZ() + (double) b;
-        }
+		if (sideHit == 3) {
+			pz = (double) z + block.getBlockBoundsMaxZ() + (double) b;
+		}
 
-        if (sideHit == 4) {
-            px = (double) x + block.getBlockBoundsMinX() - (double) b;
-        }
+		if (sideHit == 4) {
+			px = (double) x + block.getBlockBoundsMinX() - (double) b;
+		}
 
-        if (sideHit == 5) {
-            px = (double) x + block.getBlockBoundsMaxX() + (double) b;
-        }
+		if (sideHit == 5) {
+			px = (double) x + block.getBlockBoundsMaxX() + (double) b;
+		}
 
-        EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine);
+		EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine);
 		fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
-        effectRenderer.addEffect(fx.func_70596_a(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
-        return true;
-    }
+		effectRenderer.addEffect(fx.func_70596_a(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+		return true;
+	}
 
-    /**
-     * Spawn particles for when the block is destroyed. Due to the nature of how
-     * this is invoked, the x/y/z locations are not always guaranteed to host
-     * your block. So be sure to do proper sanity checks before assuming that
-     * the location is this block.
-     *
-     * @param world The current world
-     * @param x X position to spawn the particle
-     * @param y Y position to spawn the particle
-     * @param z Z position to spawn the particle
-     * @param meta The metadata for the block before it was destroyed.
-     * @param effectRenderer A reference to the current effect renderer.
-     * @return True to prevent vanilla break particles from spawning.
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
-    	Pipe pipe = getPipe(worldObj, x, y, z);
-    	if (pipe == null) return false;
+	/**
+	 * Spawn particles for when the block is destroyed. Due to the nature of how
+	 * this is invoked, the x/y/z locations are not always guaranteed to host
+	 * your block. So be sure to do proper sanity checks before assuming that
+	 * the location is this block.
+	 *
+	 * @param world The current world
+	 * @param x X position to spawn the particle
+	 * @param y Y position to spawn the particle
+	 * @param z Z position to spawn the particle
+	 * @param meta The metadata for the block before it was destroyed.
+	 * @param effectRenderer A reference to the current effect renderer.
+	 * @return True to prevent vanilla break particles from spawning.
+	 */
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean addBlockDestroyEffects(World worldObj, int x, int y, int z, int meta, EffectRenderer effectRenderer) {
+		Pipe pipe = getPipe(worldObj, x, y, z);
+		if (pipe == null)
+			return false;
 
-    	Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
+		Icon icon = pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 
-        byte its = 4;
-        for (int i = 0; i < its; ++i) {
-            for (int j = 0; j < its; ++j) {
-                for (int k = 0; k < its; ++k) {
-                    double px = x + (i + 0.5D) / (double) its;
-                    double py = y + (j + 0.5D) / (double) its;
-                    double pz = z + (k + 0.5D) / (double) its;
-                    int random = rand.nextInt(6);
-                    EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta, Minecraft.getMinecraft().renderEngine);
+		byte its = 4;
+		for (int i = 0; i < its; ++i) {
+			for (int j = 0; j < its; ++j) {
+				for (int k = 0; k < its; ++k) {
+					double px = x + (i + 0.5D) / (double) its;
+					double py = y + (j + 0.5D) / (double) its;
+					double pz = z + (k + 0.5D) / (double) its;
+					int random = rand.nextInt(6);
+					EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta, Minecraft.getMinecraft().renderEngine);
 					fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
-                    effectRenderer.addEffect(fx.func_70596_a(x, y, z));
-                }
-            }
-        }
-        return true;
-    }
+					effectRenderer.addEffect(fx.func_70596_a(x, y, z));
+				}
+			}
+		}
+		return true;
+	}
+	public static int facadeRenderColor = -1;
+
+	@Override
+	public int colorMultiplier(IBlockAccess world, int x, int y, int z) {
+		if (facadeRenderColor != -1) {
+			return facadeRenderColor;
+		}
+		return super.colorMultiplier(world, x, y, z);
+	}
 }
