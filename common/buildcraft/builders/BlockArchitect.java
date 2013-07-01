@@ -26,7 +26,6 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -44,7 +43,7 @@ public class BlockArchitect extends BlockContainer {
 	public BlockArchitect(int i) {
 		super(i, Material.iron);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		//setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 	}
 
 	@Override

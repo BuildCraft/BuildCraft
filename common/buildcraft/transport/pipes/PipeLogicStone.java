@@ -25,7 +25,17 @@ public class PipeLogicStone extends PipeLogic {
 			pipe2 = ((IPipeTile) tile).getPipe();
 		}
 
-		return (pipe2 == null || !(pipe2.getLogic() instanceof PipeLogicCobblestone)) && super.canPipeConnect(tile, side);
+		if (pipe2 != null) {
+			if (pipe2.logic instanceof PipeLogicCobblestone) {
+				return false;
+			}
+
+			if (pipe2.logic instanceof PipeLogicQuartz) {
+				return false;
+			}
+		}
+
+		return super.canPipeConnect(tile, side);
 	}
 
 }

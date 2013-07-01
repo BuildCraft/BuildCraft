@@ -1,0 +1,15 @@
+
+#3.6.0
+
+- Added: Oil biomes! Additional changes to oil generation. (CovertJaguar)
+- Added: Pump control list. Can be used to prohibit the pumping of specific liquids in specific dimensions. (immibis)
+- Changed: Rewrote the Auto Crafting Table from the ground up. Now called "Auto Workbench". 100 % compatible with vanilla hoppers. Items that cannot stack can't be used in them anymore. They will not pull from adjacent inventories anymore, use hoppers/chutes instead. Crafting now has a time cost, the auto workbench does however not require power. (CovertJaguar)
+- Changed: Improved oil physics to produce behaviour between water and lava. (CovertJaguar)
+- Changed: Oil is now flammable. (viliml, Krapht, CovertJaguar)
+- Changed: Stirling engine only accepts valid fuels from pipes. Combustion engines accepts liquids containers and ice.
+- Bugfix: Several fixes to the laser crafting table. (CovertJaguar)
+- Bugfix: Pipe wire state now persists on reload. (target-san)
+- Bugfix: Removed builder crafting recipe, builder from creative inventory. (mcrobin4002, SirSengir)
+- Bugfix: Disabled grass facades. (Krapht)
+- Bugfix: Fixed crash on facade removal. (Flow86)
+- Bugfix: Fixed addToRandomInventory. (Flow86, CovertJaguar)

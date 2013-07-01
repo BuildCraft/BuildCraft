@@ -845,7 +845,7 @@ public class BlockGenericPipe extends BlockContainer {
 		}
 		return item;
 	}
-	
+
 	public static boolean isPipeRegistered(int key) {
 		return pipes.containsKey(key);
 	}
@@ -861,7 +861,7 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 
 		} catch (Throwable t) {
-			t.printStackTrace();
+			BuildCraftCore.bcLog.warning("Failed to create pipe with (" + key + "). No valid constructor found. Possibly a item ID conflit.");
 		}
 
 		return null;

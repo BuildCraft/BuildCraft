@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core;
 
 import net.minecraft.entity.Entity;
@@ -18,11 +16,9 @@ import buildcraft.core.proxy.CoreProxy;
 public abstract class EntityLaser extends Entity {
 
 	protected Position head, tail;
-
 	public double renderSize = 0;
 	public double angleY = 0;
 	public double angleZ = 0;
-
 	private boolean isVisible = false;
 	protected boolean needsUpdate = true;
 
@@ -186,5 +182,10 @@ public abstract class EntityLaser extends Entity {
 	// Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
 	public Position renderOffset() {
 		return new Position(head.x - posX, head.y - posY, head.z - posZ);
+	}
+
+	@Override
+	public int getBrightnessForRender(float par1) {
+		return 210;
 	}
 }

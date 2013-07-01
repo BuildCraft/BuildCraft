@@ -79,19 +79,19 @@ public class OilPopulate {
 
 		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID)
 				|| BiomeDictionary.isBiomeOfType(biome, DESERT)
-				|| BiomeDictionary.isBiomeOfType(biome, WASTELAND)
+				|| (BiomeDictionary.isBiomeOfType(biome, WASTELAND) && !BiomeDictionary.isBiomeOfType(biome, FROZEN))
 				|| (BiomeDictionary.isBiomeOfType(biome, FOREST) && BiomeDictionary.isBiomeOfType(biome, FROZEN));
 
-		double bonus = oilBiome ? 4.0 : 1.0;
+		double bonus = oilBiome ? 3.0 : 1.0;
 		if (excessiveBiomes.contains(biome.biomeID)) {
-			bonus *= 40;
+			bonus *= 30.0;
 		} else if (BuildCraftCore.debugMode) {
-			bonus *= 20;
+			bonus *= 20.0;
 		}
 		GenType type = GenType.NONE;
-		if (rand.nextDouble() <= 0.001 * bonus) {// 0.1%
+		if (rand.nextDouble() <= 0.0004 * bonus) {// 0.04%
 			type = GenType.LARGE;
-		} else if (rand.nextDouble() <= 0.003 * bonus) {// 0.3%
+		} else if (rand.nextDouble() <= 0.001 * bonus) {// 0.1%
 			type = GenType.MEDIUM;
 		} else if (oilBiome && rand.nextDouble() <= 0.02 * bonus) {// 2%
 			type = GenType.LAKE;
@@ -104,7 +104,7 @@ public class OilPopulate {
 
 		// Find ground level
 		int groundLevel = getTopBlock(world, x, z);
-		if (groundLevel < 0) {
+		if (groundLevel < 5) {
 			return;
 		}
 
@@ -238,10 +238,10 @@ public class OilPopulate {
 		// Fill in holes
 		for (int dx = x - radius; dx <= x + radius; ++dx) {
 			for (int dz = z - radius; dz <= z + radius; ++dz) {
-				if (isOil(world, dx, y - 1, dz)) {
+				if (isOil(world, dx, y, dz)) {
 					continue;
 				}
-				if (isOilSurrounded(world, dx, y - 1, dz)) {
+				if (isOilSurrounded(world, dx, y, dz)) {
 					setOilColumnForLake(world, biome, dx, y, dz, depth, 2);
 				}
 			}
@@ -302,7 +302,7 @@ public class OilPopulate {
 
 	private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, int x, int y, int z, int depth) {
 		if (rand.nextFloat() <= proba && world.getBlockId(x, y - depth - 1, z) != 0) {
-			if (isOilAdjacent(world, x, y - 1, z)) {
+			if (isOilAdjacent(world, x, y, z)) {
 				setOilColumnForLake(world, biome, x, y, z, depth, 3);
 			}
 		}
@@ -313,21 +313,20 @@ public class OilPopulate {
 			if (!world.isAirBlock(x, y + 2, z)) {
 				return;
 			}
-			if (isOilOrWater(world, x, y + 1, z)) {
-				world.setBlock(x, y + 1, z, BuildCraftEnergy.oilStill.blockID, 0, update);
-			} else {
-				world.setBlock(x, y + 1, z, 0, 0, 2);
-			}
-			if (isOilOrWater(world, x, y, z)) {
+			if (isOilOrWater(world, x, y, z) || world.isBlockSolidOnSide(x, y - 1, z, ForgeDirection.UP)) {
 				world.setBlock(x, y, z, BuildCraftEnergy.oilStill.blockID, 0, update);
 			} else {
-				world.setBlock(x, y, z, 0, 0, 2);
+				return;
+			}
+			if (!world.isAirBlock(x, y + 1, z)) {
+				world.setBlock(x, y + 1, z, 0, 0, update);
 			}
 
-			for (int d = depth; d > 0; d--) {
-				if (isOilOrWater(world, x, y - d - 1, z) || world.isBlockSolidOnSide(x, y - d - 1, z, ForgeDirection.UP)) {
-					world.setBlock(x, y - d, z, BuildCraftEnergy.oilStill.blockID, 0, d == 1 ? update : 2);
+			for (int d = 1; d <= depth - 1; d++) {
+				if (isOilOrWater(world, x, y - d, z) || !world.isBlockSolidOnSide(x, y - d - 1, z, ForgeDirection.UP)) {
+					return;
 				}
+				world.setBlock(x, y - d, z, BuildCraftEnergy.oilStill.blockID, 0, 2);
 			}
 		}
 	}
@@ -354,7 +353,7 @@ public class OilPopulate {
 			if (block instanceof BlockFlower) {
 				continue;
 			}
-			return y;
+			return y - 1;
 		}
 
 		return -1;

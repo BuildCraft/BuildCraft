@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory;
 
 import java.util.LinkedList;
@@ -28,6 +26,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
+import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -53,6 +52,7 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
 public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
+
 	public @TileNetworkData
 	Box box = new Box();
 	public @TileNetworkData
@@ -65,21 +65,21 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	double speed = 0.03;
 	public @TileNetworkData
 	boolean builderDone = false;
-
 	public EntityRobot builder;
 	BptBuilderBase bluePrintBuilder;
-
 	public EntityMechanicalArm arm;
-
 	public IPowerProvider powerProvider;
-
 	boolean isDigging = false;
-
 	public static final int MAX_ENERGY = 15000;
 
 	public TileQuarry() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(20, 25, 100, 25, MAX_ENERGY);
+		initPowerProvider();
+	}
+
+	private void initPowerProvider() {
+		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
+		powerProvider.configurePowerPerdition(2, 1);
 	}
 
 	public void createUtilsIfNeeded() {
@@ -113,7 +113,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			isDigging = true;
 		}
 	}
-
 	private boolean loadDefaultBoundaries = false;
 	private boolean movingHorizontally;
 	private boolean movingVertically;
@@ -195,7 +194,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	protected void buildFrame() {
 
-		powerProvider.configure(20, 25, 100, 25, MAX_ENERGY);
+		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
 		if (powerProvider.useEnergy(25, 25, true) != 25)
 			return;
 
@@ -212,7 +211,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	protected void dig() {
-		powerProvider.configure(20, 30, 500, 50, MAX_ENERGY);
+		powerProvider.configure(20, 100, 500, 60, MAX_ENERGY);
 		if (powerProvider.useEnergy(60, 60, true) != 60)
 			return;
 
@@ -233,7 +232,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int[] target = getTarget();
 		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
 	}
-
 	private final LinkedList<int[]> visitList = Lists.newLinkedList();
 
 	public boolean findTarget(boolean doSet) {
@@ -323,7 +321,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 						if (!BlockUtil.canChangeBlock(blockID, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
 						} else if (!BlockUtil.isSoftBlock(blockID, worldObj, bx, by, bz)) {
-							visitList.add(new int[] { bx, by, bz });
+							visitList.add(new int[]{bx, by, bz});
 						}
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
 						if (visitList.size() > bluePrintBuilder.bluePrint.sizeZ * bluePrintBuilder.bluePrint.sizeX * 2)
@@ -339,6 +337,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		super.readFromNBT(nbttagcompound);
 
 		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		initPowerProvider();
 
 		if (nbttagcompound.hasKey("box")) {
 			box.initialize(nbttagcompound.getCompoundTag("box"));
@@ -518,7 +517,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
 				PacketDispatcher.sendPacketToPlayer(
 						new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-								xCoord, yCoord, zCoord)), (Player) placedBy);
+						xCoord, yCoord, zCoord)), (Player) placedBy);
 			}
 			sendNetworkUpdate();
 			return;
@@ -547,7 +546,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			if (placedBy != null) {
 				PacketDispatcher.sendPacketToPlayer(
 						new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
-								chunkTicket.getMaxChunkListDepth())), (Player) placedBy);
+						chunkTicket.getMaxChunkListDepth())), (Player) placedBy);
 			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
@@ -571,23 +570,23 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
 			switch (o) {
-			case EAST:
-				xMin = xCoord + 1;
-				zMin = zCoord - 4 - 1;
-				break;
-			case WEST:
-				xMin = xCoord - 9 - 2;
-				zMin = zCoord - 4 - 1;
-				break;
-			case SOUTH:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord + 1;
-				break;
-			case NORTH:
-			default:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord - 9 - 2;
-				break;
+				case EAST:
+					xMin = xCoord + 1;
+					zMin = zCoord - 4 - 1;
+					break;
+				case WEST:
+					xMin = xCoord - 9 - 2;
+					zMin = zCoord - 4 - 1;
+					break;
+				case SOUTH:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord + 1;
+					break;
+				case NORTH:
+				default:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord - 9 - 2;
+					break;
 			}
 
 			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1);
@@ -710,7 +709,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-
 	}
 
 	@Override
@@ -727,7 +725,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public int getInventoryStackLimit() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
 		return false;
@@ -752,7 +750,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return false;
 	}
 
@@ -815,11 +813,11 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	private double[] getHead() {
-		return new double[] { headPosX, headPosY, headPosZ };
+		return new double[]{headPosX, headPosY, headPosZ};
 	}
 
 	private int[] getTarget() {
-		return new int[] { targetX, targetY, targetZ };
+		return new int[]{targetX, targetY, targetZ};
 	}
 
 	private void setTarget(int x, int y, int z) {
@@ -853,5 +851,4 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 		sendNetworkUpdate();
 	}
-
 }

@@ -19,6 +19,9 @@ public class EnergyPulser {
 	}
 
 	public void update() {
+	    if (!isActive && hasPulsed)
+	        hasPulsed = false;
+
 		if (powerReceptor == null || !isActive || tick++ % 10 != 0)
 			return;
 

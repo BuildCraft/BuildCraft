@@ -62,6 +62,7 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 
 	public TileEngine() {
 		provider = PowerFramework.currentFramework.createPowerProvider();
+		provider.configurePowerPerdition(1, 100);
 	}
 
 	@Override
@@ -205,14 +206,12 @@ public class TileEngine extends TileBuildCraft implements IPowerReceptor, IInven
 	}
 
 	public Engine newEngine(int meta) {
-		if (meta == 0)
-			return new EngineWood(this);
-		else if (meta == 1)
+		if (meta == 1)
 			return new EngineStone(this);
 		else if (meta == 2)
 			return new EngineIron(this);
 		else
-			return null;
+			return new EngineWood(this);
 	}
 
 	@Override

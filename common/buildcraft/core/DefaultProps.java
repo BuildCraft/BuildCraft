@@ -66,6 +66,7 @@ public class DefaultProps {
 	public static int PIPE_ITEMS_DIAMOND_ID = 19165;
 	public static int PIPE_ITEMS_OBSIDIAN_ID = 19166;
 	public static int PIPE_ITEMS_EMERALD_ID = 19167;
+	public static int PIPE_ITEMS_QUARTZ_ID = 19168;
 
 	public static int PIPE_LIQUIDS_WOOD_ID = 19180;
 	public static int PIPE_LIQUIDS_COBBLESTONE_ID = 19181;
@@ -75,6 +76,7 @@ public class DefaultProps {
 	public static int PIPE_LIQUIDS_DIAMOND_ID = 19185;
 	public static int PIPE_LIQUIDS_OBSIDIAN_ID = 19186;
 	public static int PIPE_LIQUIDS_EMERALD_ID = 19187;
+	public static int PIPE_LIQUIDS_QUARTZ_ID = 19188;
 
 	public static int PIPE_POWER_WOOD_ID = 19200;
 	public static int PIPE_POWER_COBBLESTONE_ID = 19201;
@@ -83,6 +85,8 @@ public class DefaultProps {
 	public static int PIPE_POWER_GOLD_ID = 19204;
 	public static int PIPE_POWER_DIAMOND_ID = 19205;
 	public static int PIPE_POWER_OBSIDIAN_ID = 19206;
+	public static int PIPE_POWER_EMERALD_ID = 19207;
+	public static int PIPE_POWER_QUARTZ_ID = 19208;
 
 	public static int PIPE_ITEMS_VOID_ID = 19220;
 	public static int PIPE_LIQUIDS_VOID_ID = 19221;
@@ -116,7 +120,9 @@ public class DefaultProps {
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;
 	public static boolean FILLER_DESTROY = false;
-	public static boolean USE_PIPELOSS = true;
+	
+	public static final int FILLER_LIFESPAN_TOUGH = 20;
+	public static final int FILLER_LIFESPAN_NORMAL = 6000;
 
 	public static int TRIGGER_REDSTONE_ACTIVE = 1;
 	public static int TRIGGER_REDSTONE_INACTIVE = 2;
@@ -133,7 +139,7 @@ public class DefaultProps {
 	public static int TRIGGER_PIPE_EMPTY = 13;
 	public static int TRIGGER_PIPE_ITEMS = 14;
 	public static int TRIGGER_PIPE_LIQUIDS = 15;
-	public static int TRIGGER_PIPE_ENERGY = 16;
+	public static int TRIGGER_PIPE_CONTAINS_ENERGY = 16;
 	public static int TRIGGER_RED_SIGNAL_ACTIVE = 17;
 	public static int TRIGGER_RED_SIGNAL_INACTIVE = 18;
 	public static int TRIGGER_BLUE_SIGNAL_ACTIVE = 19;
@@ -146,6 +152,8 @@ public class DefaultProps {
 	public static int TRIGGER_GREEN_ENGINE_HEAT = 26;
 	public static int TRIGGER_YELLOW_ENGINE_HEAT = 27;
 	public static int TRIGGER_RED_ENGINE_HEAT = 28;
+	public static int TRIGGER_PIPE_REQUESTS_ENERGY = 29;
+	public static int TRIGGER_PIPE_TOO_MUCH_ENERGY = 30;
 
 	public static int ACTION_REDSTONE = 1;
 	public static int ACTION_RED_SIGNAL = 2;

@@ -183,7 +183,24 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (state.facadeMatrix.getFacadeBlockId(direction) != 0) {
-				state.currentTexture = Block.blocksList[state.facadeMatrix.getFacadeBlockId(direction)].getIcon(direction.ordinal(), state.facadeMatrix.getFacadeMetaId(direction));
+				Block renderBlock = Block.blocksList[state.facadeMatrix.getFacadeBlockId(direction)];
+                int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
+                state.currentTexture = renderBlock.getIcon(direction.ordinal(), renderMeta);
+
+                if (renderBlock.getRenderType() == 31) {
+                    if ((renderMeta & 12) == 4)
+                    {
+                        renderblocks.uvRotateEast = 1;
+                        renderblocks.uvRotateWest = 1;
+                        renderblocks.uvRotateTop = 1;
+                        renderblocks.uvRotateBottom = 1;
+                    }
+                    else if ((renderMeta & 12) == 8)
+                    {
+                        renderblocks.uvRotateSouth = 1;
+                        renderblocks.uvRotateNorth = 1;
+                    }
+                }
 
 				// Hollow facade
 				if (state.pipeConnectionMatrix.isConnected(direction)) {
@@ -228,6 +245,15 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 					renderblocks.setRenderBoundsFromBlock(block);
 					renderblocks.renderStandardBlock(block, x, y, z);
 				}
+
+                if (renderBlock.getRenderType() == 31) {
+                    renderblocks.uvRotateSouth = 0;
+                    renderblocks.uvRotateEast = 0;
+                    renderblocks.uvRotateWest = 0;
+                    renderblocks.uvRotateNorth = 0;
+                    renderblocks.uvRotateTop = 0;
+                    renderblocks.uvRotateBottom = 0;
+                }
 			}
 		}
 
@@ -256,7 +282,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	}
 
 	private void pipePlugRenderer(RenderBlocks renderblocks, Block block, PipeRenderState state, int x, int y, int z) {
-		
+
 		float zFightOffset = 1F / 4096F;
 
 		float[][] zeroState = new float[3][2];
@@ -269,7 +295,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		// Z START - END
 		zeroState[2][0] = 0.25F + zFightOffset;
 		zeroState[2][1] = 0.75F - zFightOffset;
-		
+
 		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.PipeStructureCobblestone); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
@@ -282,7 +308,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 				renderblocks.renderStandardBlock(block, x, y, z);
 			}
 		}
-		
+
 		// X START - END
 		zeroState[0][0] = 0.25F + 0.125F/2 + zFightOffset;
 		zeroState[0][1] = 0.75F - 0.125F/2 + zFightOffset;
@@ -292,7 +318,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		// Z START - END
 		zeroState[2][0] = 0.25F + 0.125F/2;
 		zeroState[2][1] = 0.75F - 0.125F/2;
-		
+
 		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.PipeStructureCobblestone); // Structure Pipe
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
@@ -305,7 +331,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 				renderblocks.renderStandardBlock(block, x, y, z);
 			}
 		}
-		
+
 	}
 
 	private void pipeWireRender(RenderBlocks renderblocks, Block block, PipeRenderState state, float cx, float cy, float cz, IPipe.WireColor color, int x,
@@ -476,7 +502,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 			renderblocks.renderStandardBlock(block, x, y, z);
 		}
 	}
-	
+
 	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction){
 		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction);
 	}

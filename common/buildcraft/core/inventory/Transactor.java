@@ -22,13 +22,10 @@ public abstract class Transactor implements ITransactor {
 
 		if (object instanceof ISpecialInventory)
 			return new TransactorSpecial((ISpecialInventory) object);
-
 		else if (object instanceof ISidedInventory)
 			return new TransactorSimple((ISidedInventory) object);
-
 		else if (object instanceof net.minecraftforge.common.ISidedInventory)
 			return new TransactorSimple(InventoryWrapper.getWrappedInventory(object));
-
 		else if (object instanceof IInventory)
 			return new TransactorSimple(Utils.getInventory((IInventory) object));
 

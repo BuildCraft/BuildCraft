@@ -43,9 +43,10 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	}
 
 	/* PATH MARKER RENDERING */
-	public static double frontX[][][] = new double[6][3][4];
-	public static double frontZ[][][] = new double[6][3][4];
-	public static double frontY[][][] = new double[6][3][4];
+	public static final double frontX[][][] = new double[6][3][4];
+	public static final double frontZ[][][] = new double[6][3][4];
+	public static final double frontY[][][] = new double[6][3][4];
+	public static final int metaToOld[] = new int[6];
 
 	public static double[][] safeClone(double[][] d) {
 		double ret[][] = new double[d.length][d[0].length];
@@ -60,6 +61,13 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 	}
 
 	public static void initializeMarkerMatrix() {
+		metaToOld[0] = 0;
+		metaToOld[1] = 5;
+		metaToOld[2] = 4;
+		metaToOld[3] = 3;
+		metaToOld[4] = 2;
+		metaToOld[5] = 1;
+		
 		double frontXBase[][] = { { -0.0625, -0.0625, -0.0625, -0.0625 }, { 1, 0, 0, 1 }, { -0.5, -0.5, 0.5, 0.5 } };
 
 		frontX[3] = safeClone(frontXBase);
@@ -119,7 +127,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 		Icon i = block.getBlockTexture(iblockaccess, xCoord, yCoord, zCoord, 1);
 
-		int m = meta;
+		int m = metaToOld[meta];
 		x += 0.5D;
 		z += 0.5D;
 		
@@ -133,32 +141,32 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 
 		double s = 1F / 16F;
 		
-		if (meta == 5) {
+		if (m == 5) {
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z - s, minU, minV);
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, minU, maxV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z + s, maxU, maxV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z - s, maxU, minV);
-		} else if (meta == 0) {
+		} else if (m == 0) {
 			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z - s, maxU, minV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z + s, maxU, maxV);
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z + s, minU, maxV);
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, minU, minV);
-		} else if (meta == 2) {
+		} else if (m == 2) {
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z - s, minU, minV);
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z + s, minU, maxV);
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, maxU, maxV);
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z - s, maxU, minV);
-		} else if (meta == 1) {
+		} else if (m == 1) {
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z - s, maxU, minV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z + s, maxU, maxV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z + s, minU, maxV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z - s, minU, minV);
-		} else if (meta == 3) {
+		} else if (m == 3) {
 			tessellator.addVertexWithUV(x - s, y + 0.5 - s, z + s, minU, minV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z + s, minU, maxV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z + s, maxU, maxV);
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z + s, maxU, minV);
-		} else if (meta == 4) {
+		} else if (m == 4) {
 			tessellator.addVertexWithUV(x - s, y + 0.5 + s, z - s, maxU, minV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 + s, z - s, maxU, maxV);
 			tessellator.addVertexWithUV(x + s, y + 0.5 - s, z - s, minU, maxV);
@@ -174,7 +182,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		minV = i.getMinV();
 		maxV = i.getMaxV();
 
-		if (meta == 5 || meta == 4 || meta == 3 || meta == 0) {
+		if (m == 5 || m == 4 || m == 3 || m == 0) {
 			tessellator.addVertexWithUV(x + frontX[m][0][0], y + frontX[m][1][0], z + frontX[m][2][0], minU, minV);
 			tessellator.addVertexWithUV(x + frontX[m][0][1], y + frontX[m][1][1], z + frontX[m][2][1], minU, maxV);
 			tessellator.addVertexWithUV(x + frontX[m][0][2], y + frontX[m][1][2], z + frontX[m][2][2], maxU, maxV);
@@ -186,7 +194,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			tessellator.addVertexWithUV(x - frontX[m][0][0], y + frontX[m][1][0], z + frontX[m][2][0], minU, minV);
 		}
 
-		if (meta == 5 || meta == 2 || meta == 1 || meta == 0) {
+		if (m == 5 || m == 2 || m == 1 || m == 0) {
 			tessellator.addVertexWithUV(x + frontZ[m][0][0], y + frontZ[m][1][0], z + frontZ[m][2][0], minU, minV);
 			tessellator.addVertexWithUV(x + frontZ[m][0][1], y + frontZ[m][1][1], z + frontZ[m][2][1], minU, maxV);
 			tessellator.addVertexWithUV(x + frontZ[m][0][2], y + frontZ[m][1][2], z + frontZ[m][2][2], maxU, maxV);
@@ -198,7 +206,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			tessellator.addVertexWithUV(x + frontZ[m][0][0], y + frontZ[m][1][0], z - frontZ[m][2][0], minU, minV);
 		}
 
-		if (meta == 4 || meta == 3 || meta == 2 || meta == 1) {
+		if (m == 4 || m == 3 || m == 2 || m == 1) {
 			tessellator.addVertexWithUV(x + frontY[m][0][0], y + 0.5 + frontY[m][1][0], z + frontY[m][2][0], minU, minV);
 			tessellator.addVertexWithUV(x + frontY[m][0][1], y + 0.5 + frontY[m][1][1], z + frontY[m][2][1], minU, maxV);
 			tessellator.addVertexWithUV(x + frontY[m][0][2], y + 0.5 + frontY[m][1][2], z + frontY[m][2][2], maxU, maxV);

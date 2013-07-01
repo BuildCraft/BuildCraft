@@ -31,6 +31,7 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStone.itemID, pipeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsQuartz.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsIron.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsGold.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsDiamond.itemID, pipeItemRenderer);
@@ -45,8 +46,11 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeLiquidsEmerald.itemID, pipeItemRenderer);
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerWood.itemID, pipeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerCobblestone.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerStone.itemID, pipeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerQuartz.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerGold.itemID, pipeItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerDiamond.itemID, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeStructureCobblestone.itemID, pipeItemRenderer);
 		// MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStipes.shiftedIndex, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsVoid.itemID, pipeItemRenderer);

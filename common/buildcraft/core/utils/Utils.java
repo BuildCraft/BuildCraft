@@ -59,6 +59,7 @@ public class Utils {
 	public static float pipeNormalSpeed = 0.01F;
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
+	/* IINVENTORY HELPERS */
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given
 	 * coordinates.
@@ -187,6 +188,7 @@ public class Utils {
 		}
 	}
 
+	/* STACK DROPS */
 	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
 		if (stack.stackSize <= 0) {
 			return;

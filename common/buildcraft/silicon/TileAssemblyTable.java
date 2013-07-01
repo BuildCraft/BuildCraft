@@ -1,6 +1,11 @@
 package buildcraft.silicon;
 
+import buildcraft.api.gates.IAction;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,51 +21,42 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TileNetworkData;
-import buildcraft.core.network.TilePacketWrapper;
+import buildcraft.core.network.PacketNBT;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileEntity implements IMachine, IInventory, IPipeConnection, ILaserTarget {
 
 	ItemStack[] items = new ItemStack[12];
-
-	LinkedList<AssemblyRecipe> plannedOutput = new LinkedList<AssemblyRecipe>();
-
+	LinkedHashSet<AssemblyRecipe> plannedOutput = new LinkedHashSet<AssemblyRecipe>();
 	public AssemblyRecipe currentRecipe;
-
 	private float currentRequiredEnergy = 0;
 	private float energyStored = 0;
 	private float[] recentEnergy = new float[20];
-
 	private int tick = 0;
-
 	private int recentEnergyAverage;
 
 	public static class SelectionMessage {
 
-		/**
-		 * If true, select, if false, unselect
-		 */
-		@TileNetworkData
-		public boolean select = true;
+		public boolean select;
+		public ItemStack stack;
+		public NBTTagCompound getNBT() {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setBoolean("s", select);
+			NBTTagCompound itemNBT = new NBTTagCompound();
+			stack.writeToNBT(itemNBT);
+			nbt.setCompoundTag("i", itemNBT);
+			return nbt;
+		}
+		public void fromNBT(NBTTagCompound nbt) {
+			select = nbt.getBoolean("s");
+			NBTTagCompound itemNBT = nbt.getCompoundTag("i");
+			stack = ItemStack.loadItemStackFromNBT(itemNBT);
+		}
 
-		/**
-		 * Id of the item to be crafted
-		 */
-		@TileNetworkData
-		public int itemID = 0;
-
-		/**
-		 * Dmg of the item to be crafted
-		 */
-		@TileNetworkData
-		public int itemDmg = 0;
 	}
-
-	public static TilePacketWrapper selectionMessageWrapper = new TilePacketWrapper(SelectionMessage.class);
 
 	public LinkedList<AssemblyRecipe> getPotentialOutputs() {
 		LinkedList<AssemblyRecipe> result = new LinkedList<AssemblyRecipe>();
@@ -81,7 +77,12 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public void updateEntity() {
+	public boolean canUpdate() {
+		return !FMLCommonHandler.instance().getEffectiveSide().isClient();
+	}
+
+	@Override
+	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
 		tick++;
 		tick = tick % recentEnergy.length;
 		recentEnergy[tick] = 0.0f;
@@ -113,7 +114,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 							continue; // Broken out of large if statement, increases clarity
 						}
 
-						if (items[i].isItemEqual(in)) {
+						if (StackHelper.instance().isCraftingEquivalent(in, items[i], true)) {
 
 							int supply = items[i].stackSize;
 							int toBeFound = in.stackSize - found;
@@ -152,12 +153,13 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	public float getCompletionRatio(float ratio) {
 		if (currentRecipe == null)
 			return 0;
-		else if (energyStored >= currentRecipe.energy)
+		else if (energyStored >= currentRequiredEnergy)
 			return ratio;
 		else
-			return energyStored / currentRecipe.energy * ratio;
+			return energyStored / currentRequiredEnergy * ratio;
 	}
 
+	/* IINVENTORY */
 	@Override
 	public int getSizeInventory() {
 		return items.length;
@@ -213,14 +215,10 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	@Override
 	public void openChest() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void closeChest() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -241,6 +239,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 			for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 				if (r.output.itemID == stack.itemID && r.output.getItemDamage() == stack.getItemDamage()) {
 					plannedOutput.add(r);
+					break;
 				}
 			}
 		}
@@ -282,20 +281,11 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		}
 	}
 
-	public void cleanPlannedOutput() {
-		plannedOutput.clear();
-	}
-
 	public boolean isPlanned(AssemblyRecipe recipe) {
 		if (recipe == null)
 			return false;
 
-		for (AssemblyRecipe r : plannedOutput) {
-			if (r == recipe)
-				return true;
-		}
-
-		return false;
+		return plannedOutput.contains(recipe);
 	}
 
 	public boolean isAssembling(AssemblyRecipe recipe) {
@@ -328,8 +318,8 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 		plannedOutput.remove(recipe);
 
-		if (plannedOutput.size() != 0) {
-			setCurrentRecipe(plannedOutput.getFirst());
+		if (!plannedOutput.isEmpty()) {
+			setCurrentRecipe(plannedOutput.iterator().next());
 		}
 	}
 
@@ -362,7 +352,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 
 	public void handleSelectionMessage(SelectionMessage message) {
 		for (AssemblyRecipe recipe : AssemblyRecipe.assemblyRecipes) {
-			if (recipe.output.itemID == message.itemID && recipe.output.getItemDamage() == message.itemDmg) {
+			if (recipe.output.isItemEqual(message.stack) && ItemStack.areItemStackTagsEqual(recipe.output, message.stack)) {
 				if (message.select) {
 					planOutput(recipe);
 				} else {
@@ -378,8 +368,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		for (AssemblyRecipe r : AssemblyRecipe.assemblyRecipes) {
 			SelectionMessage message = new SelectionMessage();
 
-			message.itemID = r.output.itemID;
-			message.itemDmg = r.output.getItemDamage();
+			message.stack = r.output;
 
 			if (isPlanned(r)) {
 				message.select = true;
@@ -387,7 +376,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 				message.select = false;
 			}
 
-			PacketUpdate packet = new PacketUpdate(PacketIds.SELECTION_ASSEMBLY_SEND, selectionMessageWrapper.toPayload(xCoord, yCoord, zCoord, message));
+			PacketNBT packet = new PacketNBT(PacketIds.SELECTION_ASSEMBLY_SEND, message.getNBT(), xCoord, yCoord, zCoord);
 			packet.posX = xCoord;
 			packet.posY = yCoord;
 			packet.posZ = zCoord;
@@ -402,28 +391,28 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		int currentStored = (int) (energyStored * 100.0);
 		int requiredEnergy = (int) (currentRequiredEnergy * 100.0);
 		switch (i) {
-		case 0:
-			requiredEnergy = (requiredEnergy & 0xFFFF0000) | (j & 0xFFFF);
-			currentRequiredEnergy = (requiredEnergy / 100.0f);
-			break;
-		case 1:
-			currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
-			energyStored = (currentStored / 100.0f);
-			break;
-		case 2:
-			requiredEnergy = (requiredEnergy & 0xFFFF) | ((j & 0xFFFF) << 16);
-			currentRequiredEnergy = (requiredEnergy / 100.0f);
-			break;
-		case 3:
-			currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
-			energyStored = (currentStored / 100.0f);
-			break;
-		case 4:
-			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
-			break;
-		case 5:
-			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
-			break;
+			case 0:
+				requiredEnergy = (requiredEnergy & 0xFFFF0000) | (j & 0xFFFF);
+				currentRequiredEnergy = (requiredEnergy / 100.0f);
+				break;
+			case 1:
+				currentStored = (currentStored & 0xFFFF0000) | (j & 0xFFFF);
+				energyStored = (currentStored / 100.0f);
+				break;
+			case 2:
+				requiredEnergy = (requiredEnergy & 0xFFFF) | ((j & 0xFFFF) << 16);
+				currentRequiredEnergy = (requiredEnergy / 100.0f);
+				break;
+			case 3:
+				currentStored = (currentStored & 0xFFFF) | ((j & 0xFFFF) << 16);
+				energyStored = (currentStored / 100.0f);
+				break;
+			case 4:
+				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (j & 0xFFFF);
+				break;
+			case 5:
+				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((j & 0xFFFF) << 16);
+				break;
 		}
 	}
 
@@ -458,7 +447,7 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return false;
 	}
 

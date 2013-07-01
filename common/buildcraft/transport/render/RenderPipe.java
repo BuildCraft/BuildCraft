@@ -283,7 +283,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		bindTextureByName("/terrain.png");
 
-		int[] displayList = pow.overload ? displayPowerListOverload : displayPowerList;
+		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
 		for (int i = 0; i < 6; ++i) {
 			GL11.glPushMatrix();
@@ -293,8 +293,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glRotatef(angleZ[i], 0, 0, 1);
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-			if (pow.displayPower[i] >= 1.0) {
-				short stage = pow.displayPower[i];
+			if (pow.clientDisplayPower[i] >= 1.0) {
+				short stage = pow.clientDisplayPower[i];
 
 				if (stage < displayList.length) {
 					GL11.glCallList(displayList[stage]);

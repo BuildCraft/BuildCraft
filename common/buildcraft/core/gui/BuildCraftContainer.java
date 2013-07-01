@@ -9,7 +9,7 @@ package buildcraft.core.gui;
 
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.slots.SlotBase;
-import buildcraft.core.inventory.StackMergeHelper;
+import buildcraft.core.inventory.StackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 
 public abstract class BuildCraftContainer extends Container {
 
-	private final StackMergeHelper MERGE_HELPER = new StackMergeHelper();
 	private int inventorySize;
 
 	public BuildCraftContainer(int inventorySize) {
@@ -59,7 +58,7 @@ public abstract class BuildCraftContainer extends Container {
 				adjustPhantomSlot(slot, mouseButton, modifier);
 				slot.onPickupFromSlot(player, playerInv.getItemStack());
 			} else if (slot.isItemValid(stackHeld)) {
-				if (MERGE_HELPER.canStacksMerge(stackSlot, stackHeld)) {
+				if (StackHelper.instance().canStacksMerge(stackSlot, stackHeld)) {
 					adjustPhantomSlot(slot, mouseButton, modifier);
 				} else {
 					fillPhantomSlot(slot, stackHeld, mouseButton, modifier);
@@ -112,7 +111,7 @@ public abstract class BuildCraftContainer extends Container {
 			for (int slotIndex = start; stackToShift.stackSize > 0 && slotIndex < end; slotIndex++) {
 				Slot slot = (Slot) inventorySlots.get(slotIndex);
 				ItemStack stackInSlot = slot.getStack();
-				if (stackInSlot != null && MERGE_HELPER.canStacksMerge(stackInSlot, stackToShift)) {
+				if (stackInSlot != null && StackHelper.instance().canStacksMerge(stackInSlot, stackToShift)) {
 					int resultingStackSize = stackInSlot.stackSize + stackToShift.stackSize;
 					int max = Math.min(stackToShift.getMaxStackSize(), slot.getSlotStackLimit());
 					if (resultingStackSize <= max) {

@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.factory;
 
 import java.util.List;
@@ -17,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
@@ -28,20 +27,21 @@ import buildcraft.core.utils.Utils;
 public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
 
 	boolean isDigging = true;
-
 	IPowerProvider powerProvider;
 
 	public TileMiningWell() {
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 1, 25, 25, 1000);
+		powerProvider.configure(50, 100, 100, 60, 1000);
+		powerProvider.configurePowerPerdition(1, 1);
 	}
 
 	/**
-	 * Dig the next available piece of land if not done. As soon as it reaches bedrock, lava or goes below 0, it's considered done.
+	 * Dig the next available piece of land if not done. As soon as it reaches
+	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
 	public void doWork() {
-		if (powerProvider.useEnergy(25, 25, true) < 25)
+		if (powerProvider.useEnergy(60, 60, true) != 60)
 			return;
 
 		World world = worldObj;
@@ -52,7 +52,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 			depth = depth - 1;
 		}
 
-		if (depth < 0 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
+		if (depth < 1 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
 			isDigging = false;
 			return;
 		}
@@ -101,6 +101,14 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	@Override
+	public void invalidate() {
+		super.invalidate();
+		if (worldObj != null && yCoord > 2) {
+			BuildCraftFactory.miningWellBlock.removePipes(worldObj, xCoord, yCoord, zCoord);
+		}
+	}
+
+	@Override
 	public boolean isActive() {
 		return isDigging;
 	}
@@ -131,7 +139,7 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return false;
 	}
 }

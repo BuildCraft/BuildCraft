@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.energy;
 
 import java.util.List;
@@ -29,16 +27,18 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
+import buildcraft.core.liquids.LiquidUtils;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
 
 public class BlockEngine extends BlockContainer {
-	
+
 	private static Icon woodTexture;
 	private static Icon stoneTexture;
 	private static Icon ironTexture;
-	
+
 	public BlockEngine(int i) {
 		super(i, Material.iron);
 
@@ -59,8 +59,7 @@ public class BlockEngine extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister)
-	{
+	public void registerIcons(IconRegister par1IconRegister) {
 		woodTexture = par1IconRegister.registerIcon("buildcraft:engineWoodBottom");
 		stoneTexture = par1IconRegister.registerIcon("buildcraft:engineStoneBottom");
 		ironTexture = par1IconRegister.registerIcon("buildcraft:engineIronBottom");
@@ -96,38 +95,54 @@ public class BlockEngine extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float par7, float par8, float par9) {
 
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
+		if (player.isSneaking())
 			return false;
 
 		// Switch orientation if whacked with a wrench.
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, i, j, k)) {
 
 			tile.switchOrientation();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+			((IToolWrench) equipped).wrenchUsed(player, i, j, k);
 			return true;
 
 		} else {
 
 			// Do not open guis when having a pipe in hand
-			if (entityplayer.getCurrentEquippedItem() != null)
-				if (entityplayer.getCurrentEquippedItem().getItem() instanceof IItemPipe)
+			if (player.getCurrentEquippedItem() != null) {
+				if (player.getCurrentEquippedItem().getItem() instanceof IItemPipe) {
 					return false;
+				}
+				if (tile.engine instanceof EngineIron) {
+					ItemStack current = player.getCurrentEquippedItem();
+					if (current != null && current.itemID != Item.bucketEmpty.itemID) {
+						if (CoreProxy.proxy.isSimulating(world)) {
+							if (LiquidUtils.handleRightClick(tile, ForgeDirection.getOrientation(side), player, true, false)) {
+								return true;
+							}
+						} else {
+							if (LiquidContainerRegistry.isContainer(current)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
 
 			if (tile.engine instanceof EngineStone) {
 				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj)) {
-					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
+					player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, world, i, j, k);
 				}
 				return true;
 
 			} else if (tile.engine instanceof EngineIron) {
 				if (!CoreProxy.proxy.isRenderWorld(tile.worldObj)) {
-					entityplayer.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
+					player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, world, i, j, k);
 				}
 				return true;
 			}
@@ -149,7 +164,7 @@ public class BlockEngine extends BlockContainer {
 		return i;
 	}
 
-	@SuppressWarnings({ "all" })
+	@SuppressWarnings({"all"})
 	@Override
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		TileEngine tile = (TileEngine) world.getBlockTileEntity(i, j, k);
@@ -169,7 +184,7 @@ public class BlockEngine extends BlockContainer {
 		world.spawnParticle("reddust", f + f4, f1, f2 + f3, 0.0D, 0.0D, 0.0D);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void getSubBlocks(int blockid, CreativeTabs par2CreativeTabs, List itemList) {
 		itemList.add(new ItemStack(this, 1, 0));
@@ -185,13 +200,11 @@ public class BlockEngine extends BlockContainer {
 			tile.checkRedstonePower();
 		}
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int side, int meta)
-	{
-		switch (meta)
-		{
+	public Icon getIcon(int side, int meta) {
+		switch (meta) {
 			case 0:
 				return woodTexture;
 			case 1:
@@ -201,5 +214,5 @@ public class BlockEngine extends BlockContainer {
 			default:
 				return null;
 		}
-	} 
+	}
 }

@@ -1,19 +1,16 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -26,36 +23,41 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
 import buildcraft.core.Box;
 import buildcraft.core.IMachine;
-import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.ActionMachineControl;
 import buildcraft.core.triggers.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
+import buildcraft.factory.TileMachine;
+import net.minecraft.block.Block;
+import net.minecraft.inventory.ISidedInventory;
 
-public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
+public class TileFiller extends TileMachine implements ISidedInventory, IPowerReceptor, IMachine, IActionReceptor {
 
+	private static int[] SLOTS_GRID = Utils.createSlotArray(0, 9);
+	private static int[] SLOTS_INPUT = Utils.createSlotArray(9, 27);
 	public @TileNetworkData
 	Box box = new Box();
 	public @TileNetworkData
 	int currentPatternId = 0;
 	public @TileNetworkData
 	boolean done = true;
-
 	public IFillerPattern currentPattern;
-
 	boolean forceDone = false;
 	private ItemStack contents[];
 	IPowerProvider powerProvider;
-
 	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
 
 	public TileFiller() {
 		contents = new ItemStack[getSizeInventory()];
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		initPowerProvider();
+	}
+
+	private void initPowerProvider() {
 		powerProvider.configure(20, 25, 50, 25, 100);
-		powerProvider.configurePowerPerdition(25, 40);
+		powerProvider.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -141,7 +143,7 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public int getSizeInventory() {
+	public final int getSizeInventory() {
 		return 36;
 	}
 
@@ -233,11 +235,6 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	@Override
 	public String getInvName() {
 		return "Filler";
-	}
-	
-	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
-		return true;
 	}
 
 	@Override
@@ -352,20 +349,10 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 
 	@Override
 	public void openChest() {
-
 	}
 
 	@Override
 	public void closeChest() {
-
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		if (isActive())
-			return powerProvider.getMaxEnergyReceived();
-		else
-			return 0;
 	}
 
 	@Override
@@ -380,32 +367,35 @@ public class TileFiller extends TileBuildCraft implements ISidedInventory, IPowe
 	}
 
 	@Override
-	public boolean allowActions() {
+	public boolean allowAction(IAction action) {
 		return true;
 	}
 
-	/**
-	 * Get the start of the side inventory.
-	 *
-	 * @param side
-	 *            The global side to get the start of range.
-	 */
-	public int getStartInventorySide(ForgeDirection side) {
-		if (side == ForgeDirection.UP)
-			return 0;
-		return 9;
+	@Override
+	public boolean isStackValidForSlot(int slot, ItemStack stack) {
+		if (slot < 9) {
+			if (getStackInSlot(slot) != null)
+				return false;
+			return stack.itemID == Block.brick.blockID || stack.itemID == Block.glass.blockID;
+		}
+		return true;
 	}
 
-	/**
-	 * Get the size of the side inventory.
-	 *
-	 * @param side
-	 *            The global side.
-	 */
-	public int getSizeInventorySide(ForgeDirection side) {
-		if (side == ForgeDirection.UP)
-			return 9;
-		return getSizeInventory() - 9;
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		if (ForgeDirection.UP.ordinal() == side) {
+			return SLOTS_GRID;
+		}
+		return SLOTS_INPUT;
+	}
 
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		return isStackValidForSlot(slot, stack);
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		return true;
 	}
 }

@@ -19,7 +19,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.core.inventory.StackMergeHelper;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.inventory.SimpleInventory;
@@ -33,7 +33,6 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
 
-	private static final StackMergeHelper MERGE_HELPER = new StackMergeHelper();
 	public static final int SLOT_RESULT = 0;
 	public static final int CRAFT_TIME = 256;
 	public static final int UPDATE_TIME = 16;
@@ -227,6 +226,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 				continue;
 			}
 			if (!gridHasRoomFor(stack)) {
+				slot.setStackInSlot(null);
 				Utils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
 				continue;
 			}
@@ -329,7 +329,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		int space = 0;
 		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
 			ItemStack stack = slot.getStackInSlot();
-			if (MERGE_HELPER.canStacksMerge(stack, input)) {
+			if (StackHelper.instance().canStacksMerge(stack, input)) {
 				space += stack.getMaxStackSize() - stack.stackSize;
 			}
 		}

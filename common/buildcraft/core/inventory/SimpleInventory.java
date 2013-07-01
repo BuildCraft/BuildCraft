@@ -41,23 +41,30 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public ItemStack decrStackSize(int slotId, int count) {
-		if (_contents[slotId] == null) {
-			return null;
-		}
-		if (_contents[slotId].stackSize > count) {
-			ItemStack result =  _contents[slotId].splitStack(count);			
+		if (slotId < _contents.length && _contents[slotId] != null) {
+			if (_contents[slotId].stackSize > count) {
+				ItemStack result = _contents[slotId].splitStack(count);
+				onInventoryChanged();
+				return result;
+			}
+			ItemStack stack = _contents[slotId];
+			_contents[slotId] = null;
 			onInventoryChanged();
-			return result;
+			return stack;
 		}
-		ItemStack stack = _contents[slotId];
-		_contents[slotId] = null;
-		onInventoryChanged();
-		return stack;
+		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slotId, ItemStack itemstack) {
-		_contents[slotId] = itemstack;
+		if (slotId >= _contents.length) {
+			return;
+		}
+		this._contents[slotId] = itemstack;
+
+		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) {
+			itemstack.stackSize = this.getInventoryStackLimit();
+		}
 		onInventoryChanged();
 	}
 
@@ -92,28 +99,43 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		NBTTagList nbttaglist = nbttagcompound.getTagList("items");
+	public void readFromNBT(NBTTagCompound data) {
+		readFromNBT(data, "items");
+	}
+
+	public void readFromNBT(NBTTagCompound data, String tag) {
+		NBTTagList nbttaglist = data.getTagList(tag);
 
 		for (int j = 0; j < nbttaglist.tagCount(); ++j) {
-			NBTTagCompound nbttagcompound2 = (NBTTagCompound) nbttaglist.tagAt(j);
-			int index = nbttagcompound2.getInteger("index");
-			_contents[index] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
+			NBTTagCompound slot = (NBTTagCompound) nbttaglist.tagAt(j);
+			int index;
+			if (slot.hasKey("index")) {
+				index = slot.getInteger("index");
+			} else {
+				index = slot.getByte("Slot");
+			}
+			if (index >= 0 && index < _contents.length) {
+				_contents[index] = ItemStack.loadItemStackFromNBT(slot);
+			}
 		}
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		NBTTagList nbttaglist = new NBTTagList();
-		for (int j = 0; j < _contents.length; ++j) {
-			if (_contents[j] != null && _contents[j].stackSize > 0) {
-				NBTTagCompound nbttagcompound2 = new NBTTagCompound();
-				nbttaglist.appendTag(nbttagcompound2);
-				nbttagcompound2.setInteger("index", j);
-				_contents[j].writeToNBT(nbttagcompound2);
+	public void writeToNBT(NBTTagCompound data) {
+		writeToNBT(data, "items");
+	}
+
+	public void writeToNBT(NBTTagCompound data, String tag) {
+		NBTTagList slots = new NBTTagList();
+		for (byte index = 0; index < _contents.length; ++index) {
+			if (_contents[index] != null && _contents[index].stackSize > 0) {
+				NBTTagCompound slot = new NBTTagCompound();
+				slots.appendTag(slot);
+				slot.setByte("Slot", index);
+				_contents[index].writeToNBT(slot);
 			}
 		}
-		nbttagcompound.setTag("items", nbttaglist);
+		data.setTag(tag, slots);
 	}
 
 	public void addListener(TileEntity listner) {
@@ -121,13 +143,13 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-		if (this._contents[i] == null) {
+	public ItemStack getStackInSlotOnClosing(int slotId) {
+		if (this._contents[slotId] == null) {
 			return null;
 		}
 
-		ItemStack stackToTake = this._contents[i];
-		this._contents[i] = null;
+		ItemStack stackToTake = this._contents[slotId];
+		this._contents[slotId] = null;
 		return stackToTake;
 	}
 

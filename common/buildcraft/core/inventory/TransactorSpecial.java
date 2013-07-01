@@ -3,6 +3,7 @@ package buildcraft.core.inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.core.inventory.filters.IStackFilter;
 
 public class TransactorSpecial extends Transactor {
 
@@ -17,4 +18,15 @@ public class TransactorSpecial extends Transactor {
 		return inventory.addItem(stack, doAdd, orientation);
 	}
 
+	@Override
+	public ItemStack remove(IStackFilter filter, ForgeDirection orientation, boolean doRemove) {
+		ItemStack[] extracted = inventory.extractItem(false, orientation, 1);
+		if (extracted != null && extracted.length > 0 && filter.matches(extracted[0])) {
+			if (doRemove) {
+				inventory.extractItem(true, orientation, 1);
+			}
+			return extracted[0];
+		}
+		return null;
+	}
 }

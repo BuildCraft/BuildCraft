@@ -1,46 +1,47 @@
 /**
  * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
+ * BuildCraft Open Source License. It grants rights to read, modify, compile or
+ * run the code. It does *NOT* grant the right to redistribute this software or
+ * its modifications in any form, binary or source, except if expressively
  * granted by the copyright holder.
  */
-
 package buildcraft.transport.pipes;
 
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerFramework;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
-	private static final int MAX_OVERHEAT_TICKS = 100;
-
 	private IPowerProvider powerProvider;
-	
 	protected int standardIconIndex = PipeIconProvider.PipePowerWood_Standard;
 	protected int solidIconIndex = PipeIconProvider.PipeAllWood_Solid;
-
-
-	private int overheatTicks;
+	private boolean[] powerSources = new boolean[6];
+	private boolean full;
 
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
 		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 2, 1000, 1, 1000);
-		powerProvider.configurePowerPerdition(1, 100);
+		initPowerProvider();
+		((PipeTransportPower) transport).initFromPipe(getClass());
+	}
+
+	private void initPowerProvider() {
+		powerProvider.configure(50, 2, 1000, 1, 1500);
+		powerProvider.configurePowerPerdition(1, 10);
 	}
 
 	@Override
@@ -70,15 +71,12 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public IPowerProvider getPowerProvider() {
-		if (overheatTicks > 0)
-			return null;
 		return powerProvider;
 	}
 
 	@Override
 	public void doWork() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -87,44 +85,62 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		if (worldObj.isRemote)
 			return;
 
-		if (powerProvider.getEnergyStored() == powerProvider.getMaxEnergyStored()) {
-			overheatTicks += overheatTicks < MAX_OVERHEAT_TICKS ? 1 : 0;
-		} else {
-			overheatTicks -= overheatTicks > 0 ? 1 : 0;
-		}
+		if (powerProvider.getEnergyStored() <= 0)
+			return;
 
+		int sources = 0;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (Utils.checkPipesConnections(container, container.getTile(o))) {
-				TileEntity tile = container.getTile(o);
-
-				if (tile instanceof IPipeTile) {
-					if (((IPipeTile) tile).getPipe() == null) {
-						continue; // Null pointer protection
-					}
-
-					PipeTransportPower trans = (PipeTransportPower) ((IPipeTile) tile).getPipe().getTransport();
-
-					float energyToRemove;
-
-					if (powerProvider.getEnergyStored() > 40) {
-						energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
-					} else if (powerProvider.getEnergyStored() > 10) {
-						energyToRemove = powerProvider.getEnergyStored() / 10;
-					} else {
-						energyToRemove = 1;
-					}
-
-					float energyUsable = powerProvider.useEnergy(1, energyToRemove, false);
-
-					float energySend = Math.min(energyUsable, ((PipeTransportPower)transport).powerQuery[o.ordinal()]);
-					if(energySend > 0)
-					{
-						trans.receiveEnergy(o.getOpposite(), energySend);
-						powerProvider.useEnergy(1, energySend, true);
-					}
-				}
+			if (!container.isPipeConnected(o)) {
+				powerSources[o.ordinal()] = false;
+				continue;
+			}
+			if (powerProvider.isPowerSource(o)) {
+				powerSources[o.ordinal()] = true;
+			}
+			if (powerSources[o.ordinal()]) {
+				sources++;
 			}
 		}
+		
+		if (sources <= 0)
+			return;
+		
+		float energyToRemove;
+
+		if (powerProvider.getEnergyStored() > 40) {
+			energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
+		} else if (powerProvider.getEnergyStored() > 10) {
+			energyToRemove = powerProvider.getEnergyStored() / 10;
+		} else {
+			energyToRemove = 1;
+		}
+		energyToRemove /= (float) sources;
+
+		PipeTransportPower trans = (PipeTransportPower) transport;
+
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (!powerSources[o.ordinal()])
+				continue;
+
+			float energyUsable = powerProvider.useEnergy(1, energyToRemove, false);
+
+			float energySend = (float) trans.receiveEnergy(o, energyUsable);
+			if (energySend > 0) {
+				powerProvider.useEnergy(1, energySend, true);
+			}
+		}
+	}
+
+	public boolean requestsPower() {
+		if (full) {
+			boolean request = powerProvider.getEnergyStored() < powerProvider.getMaxEnergyStored() / 2;
+			if (request) {
+				full = false;
+			}
+			return request;
+		}
+		full = powerProvider.getEnergyStored() >= powerProvider.getMaxEnergyStored() - 10;
+		return !full;
 	}
 
 	@Override
@@ -132,4 +148,16 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		return getPowerProvider().getMaxEnergyReceived();
 	}
 
+	@Override
+	public void writeToNBT(NBTTagCompound data) {
+		super.writeToNBT(data);
+		powerProvider.writeToNBT(data);
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound data) {
+		super.readFromNBT(data);
+		PowerFramework.currentFramework.loadPowerProvider(this, data);
+		initPowerProvider();
+	}
 }
