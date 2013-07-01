@@ -195,31 +195,31 @@ public class BlockGenericPipe extends BlockContainer {
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
 		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
-		if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.WEST))) {
-			xMin = 0.0F;
-		}
-
-		if (Utils.checkPipesConnections(world, tile1, i + 1, j, k) || (tileG != null && tileG.hasFacade(ForgeDirection.EAST))) {
-			xMax = 1.0F;
-		}
-
-		if (Utils.checkPipesConnections(world, tile1, i, j - 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.DOWN))) {
-			yMin = 0.0F;
-		}
-
-		if (Utils.checkPipesConnections(world, tile1, i, j + 1, k) || (tileG != null && tileG.hasFacade(ForgeDirection.UP))) {
-			yMax = 1.0F;
-		}
-
-		if (Utils.checkPipesConnections(world, tile1, i, j, k - 1) || (tileG != null && tileG.hasFacade(ForgeDirection.NORTH))) {
-			zMin = 0.0F;
-		}
-
-		if (Utils.checkPipesConnections(world, tile1, i, j, k + 1) || (tileG != null && tileG.hasFacade(ForgeDirection.SOUTH))) {
-			zMax = 1.0F;
-		}
-
 		if (tileG != null) {
+			if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || tileG.hasFacade(ForgeDirection.WEST)) {
+				xMin = 0.0F;
+			}
+
+			if (Utils.checkPipesConnections(world, tile1, i + 1, j, k) || tileG.hasFacade(ForgeDirection.EAST)) {
+				xMax = 1.0F;
+			}
+
+			if (Utils.checkPipesConnections(world, tile1, i, j - 1, k) || tileG.hasFacade(ForgeDirection.DOWN)) {
+				yMin = 0.0F;
+			}
+
+			if (Utils.checkPipesConnections(world, tile1, i, j + 1, k) || tileG.hasFacade(ForgeDirection.UP)) {
+				yMax = 1.0F;
+			}
+
+			if (Utils.checkPipesConnections(world, tile1, i, j, k - 1) || tileG.hasFacade(ForgeDirection.NORTH)) {
+				zMin = 0.0F;
+			}
+
+			if (Utils.checkPipesConnections(world, tile1, i, j, k + 1) || tileG.hasFacade(ForgeDirection.SOUTH)) {
+				zMax = 1.0F;
+			}
+
 			if (tileG.hasFacade(ForgeDirection.EAST) || tileG.hasFacade(ForgeDirection.WEST)) {
 				yMin = 0.0F;
 				yMax = 1.0F;
