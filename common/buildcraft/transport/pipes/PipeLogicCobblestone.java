@@ -23,11 +23,11 @@ public class PipeLogicCobblestone extends PipeLogic {
 		}
 
 		if (pipe2 != null) {
-			if (pipe2.logic instanceof PipeLogicStone) {
+			if (pipe2.getLogic() instanceof PipeLogicStone) {
 				return false;
 			}
 
-			if (pipe2.logic instanceof PipeLogicQuartz) {
+			if (pipe2.getLogic() instanceof PipeLogicQuartz) {
 				return false;
 			}
 		}

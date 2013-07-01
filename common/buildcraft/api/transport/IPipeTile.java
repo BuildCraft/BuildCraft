@@ -28,4 +28,6 @@ public interface IPipeTile {
 	void scheduleRenderUpdate();
 
 	World getWorld();
+
+	boolean hasFacade(ForgeDirection east);
 }
