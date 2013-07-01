@@ -288,7 +288,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 			box.createLasers(worldObj, LaserKind.Stripes);
 
-			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, this), bluePrintBuilder.getContext());
+//			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, this), bluePrintBuilder.getContext());
 		}
 	}
 
@@ -325,7 +325,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				}
 
 				if (bluePrintBuilder != null && builderRobot != null) {
-					builderRobot.markEndOfBlueprint(bluePrintBuilder);
+//					builderRobot.markEndOfBlueprint(bluePrintBuilder);
 				}
 
 				bluePrintBuilder = currentPathIterator.next();
@@ -351,7 +351,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			} else {
 				if (bluePrintBuilder != null && bluePrintBuilder.done) {
 					if (builderRobot != null) {
-						builderRobot.markEndOfBlueprint(bluePrintBuilder);
+//						builderRobot.markEndOfBlueprint(bluePrintBuilder);
 					}
 
 					done = true;

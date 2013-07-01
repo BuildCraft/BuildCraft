@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -31,12 +32,11 @@ public class BlockHandler {
 	}
 
 	public static BlockHandler getHandler(BlockSchematic schematic) {
-//		BlockHandler handler = handlers.get(s); // TODO: replace with mapping -> id code
-//		if (handler == null) {
-//			return DEFAULT_HANDLER;
-//		}
-//		return handler;
-		return null;
+		BlockHandler handler = null; // TODO: replace with mapping -> id code
+		if (handler == null) {
+			return DEFAULT_HANDLER;
+		}
+		return handler;
 	}
 
 	public static void registerHandler(int blockId, BlockHandler handler) {
@@ -83,8 +83,8 @@ public class BlockHandler {
 		if (block == null) {
 			return null;
 		}
-		BlockSchematic schematic = new BlockSchematic(block.getUnlocalizedName());
-		schematic.metadata = world.getBlockMetadata(x, y, z);
+		BlockSchematic schematic = new BlockSchematic(block);
+		schematic.blockMeta = world.getBlockMetadata(x, y, z);
 		return schematic;
 	}
 
@@ -103,7 +103,7 @@ public class BlockHandler {
 		List<ItemStack> cost = new ArrayList<ItemStack>();
 		Block block = null; // TODO: replace with mapping -> id code
 		if (block != null) {
-			cost.add(new ItemStack(block.idDropped(schematic.metadata, Utils.RANDOM, 0), 1, block.damageDropped(schematic.metadata)));
+			cost.add(new ItemStack(block.idDropped(schematic.blockMeta, Utils.RANDOM, 0), 1, block.damageDropped(schematic.blockMeta)));
 		}
 		return cost;
 	}
@@ -157,14 +157,16 @@ public class BlockHandler {
 	}
 
 	/**
-	 * FEEDBACK REQUIRED: Should this place the block or should the block
-	 * already be placed and this just initializes it?
+	 * This function handles the placement of the block in the world.
 	 *
 	 * The ForgeDirection parameter can be use to determine the orientation of
 	 * the blueprint. Blueprints are always saved facing North. This function
 	 * will have to rotate the block accordingly.
 	 */
-	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, BlockSchematic schematic) {
+	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, BlockSchematic schematic, EntityPlayer bcPlayer) {
+		if (schematic.blockId != 0) {
+			return world.setBlock(x, y, z, schematic.blockId, schematic.blockMeta, 3);
+		}
 		return false;
 	}
 
@@ -180,6 +182,6 @@ public class BlockHandler {
 		if (!schematic.blockName.equals(block.getUnlocalizedName())) {
 			return false;
 		}
-		return schematic.metadata == world.getBlockMetadata(x, y, z);
+		return schematic.blockMeta == world.getBlockMetadata(x, y, z);
 	}
 }

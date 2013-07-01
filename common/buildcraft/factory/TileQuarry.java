@@ -24,6 +24,9 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.builder.Blueprint;
+import buildcraft.api.builder.BlueprintBuilder;
+import buildcraft.api.builder.BlueprintBuilder.SchematicBuilder;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
@@ -36,9 +39,6 @@ import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.blueprints.BptBlueprint;
-import buildcraft.core.blueprints.BptBuilderBase;
-import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
@@ -50,6 +50,7 @@ import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import java.util.ListIterator;
 
 public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 
@@ -66,7 +67,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	public @TileNetworkData
 	boolean builderDone = false;
 	public EntityRobot builder;
-	BptBuilderBase bluePrintBuilder;
+	private BlueprintBuilder blueprintBuilder;
+	private ListIterator<SchematicBuilder> blueprintIterator;
 	public EntityMechanicalArm arm;
 	public PowerProvider powerProvider;
 	boolean isDigging = false;
@@ -83,13 +85,13 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	}
 
 	public void createUtilsIfNeeded() {
-		if (bluePrintBuilder == null) {
+		if (blueprintBuilder == null) {
 
 			if (!box.isInitialized()) {
 				setBoundaries(loadDefaultBoundaries);
 			}
 
-			initializeBluePrintBuilder();
+			initializeBlueprintBuilder();
 		}
 
 		if (builderDone) {
@@ -124,8 +126,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	private void createArm() {
 
-		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos, yCoord + bluePrintBuilder.bluePrint.sizeY - 1
-				+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos, bluePrintBuilder.bluePrint.sizeX - 2 + Utils.pipeMinPos * 2, bluePrintBuilder.bluePrint.sizeZ
+		worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + Utils.pipeMaxPos, yCoord + blueprintBuilder.blueprint.sizeY - 1
+				+ Utils.pipeMinPos, box.zMin + Utils.pipeMaxPos, blueprintBuilder.blueprint.sizeX - 2 + Utils.pipeMinPos * 2, blueprintBuilder.blueprint.sizeZ
 				- 2 + Utils.pipeMinPos * 2, this));
 	}
 
@@ -136,15 +138,13 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	@Override
 	public void updateEntity() {
+		super.updateEntity();
 		if (!isAlive && CoreProxy.proxy.isSimulating(worldObj)) {
-			super.updateEntity();
 			return;
 		}
 		if (!CoreProxy.proxy.isSimulating(worldObj) && isAlive) {
-			super.updateEntity();
 			return;
 		}
-		super.updateEntity();
 		if (inProcess) {
 			float energyToUse = 2 + powerProvider.getEnergyStored() / 500;
 
@@ -163,29 +163,28 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		createUtilsIfNeeded();
 
-		if (bluePrintBuilder != null) {
+		if (blueprintBuilder != null) {
 
-			builderDone = bluePrintBuilder.done;
+			builderDone = !blueprintIterator.hasNext();
 			if (!builderDone) {
-
 				buildFrame();
 				return;
-
-			} else {
-
-				if (builder != null && builder.done()) {
-
-					box.deleteLasers();
-					builder.setDead();
-					builder = null;
-				}
+			} else if (builder != null && builder.done()) {
+				killBuilder();
 			}
+
 		}
 
 		if (builder == null) {
 			dig();
 		}
 
+	}
+
+	private void killBuilder() {
+		box.deleteLasers();
+		builder.setDead();
+		builder = null;
 	}
 
 	@Override
@@ -195,7 +194,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	protected void buildFrame() {
 
 		powerProvider.configure(50, 100, 25, MAX_ENERGY);
-		if (powerProvider.useEnergy(25, 25, true) != 25)
+
+		if (!blueprintIterator.hasNext())
+			return;
+
+		if (powerProvider.useEnergy(25, 25, false) != 25)
 			return;
 
 		if (builder == null) {
@@ -204,7 +207,12 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 
 		if (builder.readyToBuild()) {
-			builder.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, this), bluePrintBuilder.getContext());
+			while (blueprintIterator.hasNext()) {
+				if (builder.scheduleContruction(blueprintIterator.next())) {
+					powerProvider.useEnergy(0, 25, true);
+					break;
+				}
+			}
 		}
 	}
 
@@ -275,17 +283,17 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 	private void createColumnVisitList() {
 		visitList.clear();
 
-		Integer[][] columnHeights = new Integer[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
-		boolean[][] blockedColumns = new boolean[bluePrintBuilder.bluePrint.sizeX - 2][bluePrintBuilder.bluePrint.sizeZ - 2];
+		Integer[][] columnHeights = new Integer[blueprintBuilder.blueprint.sizeX - 2][blueprintBuilder.blueprint.sizeZ - 2];
+		boolean[][] blockedColumns = new boolean[blueprintBuilder.blueprint.sizeX - 2][blueprintBuilder.blueprint.sizeZ - 2];
 		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
 			int startX, endX, incX;
 
 			if (searchY % 2 == 0) {
 				startX = 0;
-				endX = bluePrintBuilder.bluePrint.sizeX - 2;
+				endX = blueprintBuilder.blueprint.sizeX - 2;
 				incX = 1;
 			} else {
-				startX = bluePrintBuilder.bluePrint.sizeX - 3;
+				startX = blueprintBuilder.blueprint.sizeX - 3;
 				endX = -1;
 				incX = -1;
 			}
@@ -295,10 +303,10 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 				if (searchX % 2 == searchY % 2) {
 					startZ = 0;
-					endZ = bluePrintBuilder.bluePrint.sizeZ - 2;
+					endZ = blueprintBuilder.blueprint.sizeZ - 2;
 					incZ = 1;
 				} else {
-					startZ = bluePrintBuilder.bluePrint.sizeZ - 3;
+					startZ = blueprintBuilder.blueprint.sizeZ - 3;
 					endZ = -1;
 					incZ = -1;
 				}
@@ -322,7 +330,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 							visitList.add(new int[]{bx, by, bz});
 						}
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
-						if (visitList.size() > bluePrintBuilder.bluePrint.sizeZ * bluePrintBuilder.bluePrint.sizeX * 2)
+						if (visitList.size() > blueprintBuilder.blueprint.sizeZ * blueprintBuilder.blueprint.sizeX * 2)
 							return;
 					}
 				}
@@ -593,38 +601,31 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		forceChunkLoading(chunkTicket);
 	}
 
-	private void initializeBluePrintBuilder() {
-		BptBlueprint bluePrint = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-
-		for (int i = 0; i < bluePrint.sizeX; ++i) {
-			for (int j = 0; j < bluePrint.sizeY; ++j) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					bluePrint.setBlockId(i, j, k, 0);
-				}
-			}
-		}
+	private void initializeBlueprintBuilder() {
+		Blueprint blueprint = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		for (int it = 0; it < 2; it++) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				bluePrint.setBlockId(i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(i, it * (box.sizeY() - 1), bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				blueprint.setBlock(i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock.blockID, 0);
+				blueprint.setBlock(i, it * (box.sizeY() - 1), blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
 			}
 
-			for (int k = 0; k < bluePrint.sizeZ; ++k) {
-				bluePrint.setBlockId(0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID);
-				bluePrint.setBlockId(bluePrint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID);
+			for (int k = 0; k < blueprint.sizeZ; ++k) {
+				blueprint.setBlock(0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID, 0);
+				blueprint.setBlock(blueprint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID, 0);
 
 			}
 		}
 
 		for (int h = 1; h < box.sizeY(); ++h) {
-			bluePrint.setBlockId(0, h, 0, BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(0, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(bluePrint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock.blockID);
-			bluePrint.setBlockId(bluePrint.sizeX - 1, h, bluePrint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID);
+			blueprint.setBlock(0, h, 0, BuildCraftFactory.frameBlock.blockID, 0);
+			blueprint.setBlock(0, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
+			blueprint.setBlock(blueprint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock.blockID, 0);
+			blueprint.setBlock(blueprint.sizeX - 1, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
 		}
 
-		bluePrintBuilder = new BptBuilderBlueprint(bluePrint, worldObj, box.xMin, yCoord, box.zMin);
+		blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, box.xMin, yCoord, box.zMin, ForgeDirection.NORTH, null);
+		blueprintIterator = blueprintBuilder.getBuilders().listIterator();
 	}
 
 	@Override
@@ -659,10 +660,9 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	public void reinitalize() {
 		builderDone = false;
-		initializeBluePrintBuilder();
+		initializeBlueprintBuilder();
 		isDigging = true;
 	}
-
 
 	@Override
 	public PowerProvider getPowerProvider(ForgeDirection side) {

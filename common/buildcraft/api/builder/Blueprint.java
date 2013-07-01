@@ -74,8 +74,8 @@ public class Blueprint {
 		if (block == null) {
 			return;
 		}
-		BlockSchematic schematic = new BlockSchematic(block.getUnlocalizedName());
-		schematic.metadata = meta;
+		BlockSchematic schematic = new BlockSchematic(block);
+		schematic.blockMeta = meta;
 		setBlock(x, y, z, schematic);
 	}
 
@@ -101,7 +101,8 @@ public class Blueprint {
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
 				for (int z = 0; z < sizeZ; z++) {
-					list.add(blocks[x][y][z]);
+					if (blocks[x][y][z] != null)
+						list.add(blocks[x][y][z]);
 				}
 			}
 		}

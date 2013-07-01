@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -100,7 +101,7 @@ public class BlueprintBuilder {
 			return handler.canPlaceNow(worldObj, getX(), getY(), getZ(), orientation, schematic);
 		}
 
-		public boolean build() {
+		public boolean build(EntityPlayer bcPlayer) {
 //			if (blockExists()) {
 //				markComplete();
 //				return false;
@@ -116,7 +117,7 @@ public class BlueprintBuilder {
 				return false;
 			}
 
-			boolean built = handler.readBlockFromSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic);
+			boolean built = handler.readBlockFromSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic, bcPlayer);
 
 			if (built) {
 				markComplete();
