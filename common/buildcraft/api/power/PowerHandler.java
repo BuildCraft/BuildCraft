@@ -53,8 +53,18 @@ public final class PowerHandler {
 			this.powerLoss = powerLoss;
 		}
 
-		public float applyPerdition(PowerHandler provider, float current) {
-			current -= powerLoss;
+		/**
+		 * Apply the perdition algorithm to the current stored energy. This
+		 * function can only be called once per tick, but it might not be called
+		 * every tick. It is triggered by any manipulation of the stored energy.
+		 *
+		 * @param powerHandler the PowerHandler requesting the perdition update
+		 * @param current the current stored energy
+		 * @param ticksPassed ticks since the last time this function was called
+		 * @return
+		 */
+		public float applyPerdition(PowerHandler powerHandler, float current, long ticksPassed) {
+			current -= powerLoss * ticksPassed;
 			if (current < 0) {
 				current = 0;
 			}
@@ -139,9 +149,18 @@ public final class PowerHandler {
 			perdition = new PerditionCalculator(0);
 			return;
 		}
-		perdition = new PerditionCalculator((float) powerLoss / (float) powerLossRegularity * 10.0F);
+		perdition = new PerditionCalculator((float) powerLoss / (float) powerLossRegularity);
 	}
 
+	/**
+	 * Allows you to define a new PerditionCalculator class to handler perdition
+	 * calculations.
+	 *
+	 * For example if you want exponentially increasing loss bases on amount
+	 * stored.
+	 *
+	 * @param perdition
+	 */
 	public void setPerdition(PerditionCalculator perdition) {
 		this.perdition = perdition;
 	}
@@ -153,17 +172,14 @@ public final class PowerHandler {
 	}
 
 	private void applyPerdition() {
-		if (energyStored > 0) {
-			if (perditionTracker.markTimeIfDelay(receptor.getWorldObj(), 1)) {
-				for (int i = 0; i < perditionTracker.durationOfLastDelay(); i++) {
-					float newEnergy = getPerdition().applyPerdition(this, energyStored);
-					if (newEnergy == 0 || newEnergy < energyStored) {
-						energyStored = newEnergy;
-					} else {
-						energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored);
-					}
-				}
+		if (perditionTracker.markTimeIfDelay(receptor.getWorldObj(), 1) && energyStored > 0) {
+			float newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
+			if (newEnergy == 0 || newEnergy < energyStored) {
+				energyStored = newEnergy;
+			} else {
+				energyStored = DEFUALT_PERDITION.applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			}
+			validateEnergy();
 		}
 	}
 
@@ -199,6 +215,8 @@ public final class PowerHandler {
 	 * @return amount used
 	 */
 	public float useEnergy(float min, float max, boolean doUse) {
+		applyPerdition();
+
 		float result = 0;
 
 		if (energyStored >= min) {
@@ -214,6 +232,8 @@ public final class PowerHandler {
 				}
 			}
 		}
+
+		validateEnergy();
 
 		return result;
 	}
@@ -328,14 +348,19 @@ public final class PowerHandler {
 
 	public void setEnergy(float quantity) {
 		this.energyStored = quantity;
-		if (energyStored > maxEnergyStored) {
-			energyStored = maxEnergyStored;
-		} else if (energyStored < 0) {
-			energyStored = 0;
-		}
+		validateEnergy();
 	}
 
 	public boolean isPowerSource(ForgeDirection from) {
 		return powerSources[from.ordinal()] != 0;
+	}
+
+	private void validateEnergy() {
+		if (energyStored < 0) {
+			energyStored = 0;
+		}
+		if (energyStored > maxEnergyStored) {
+			energyStored = maxEnergyStored;
+		}
 	}
 }
