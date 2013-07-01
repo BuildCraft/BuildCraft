@@ -171,6 +171,21 @@ public final class PowerHandler {
 		return perdition;
 	}
 
+	/**
+	 * Ticks the power handler. You should call this if you can, but its not
+	 * required.
+	 *
+	 * If you don't call it, the possibility exists for some weirdness with the
+	 * perdition algorithm and work callback as its possible they will not be
+	 * called on every tick they otherwise would be. You should be able to
+	 * design around this though if you are aware of the limitations.
+	 */
+	public void update() {
+		applyPerdition();
+		applyWork();
+		validateEnergy();
+	}
+
 	private void applyPerdition() {
 		if (perditionTracker.markTimeIfDelay(receptor.getWorldObj(), 1) && energyStored > 0) {
 			float newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
@@ -284,6 +299,10 @@ public final class PowerHandler {
 
 		public Type getType() {
 			return type;
+		}
+
+		public void update() {
+			PowerHandler.this.update();
 		}
 
 		/**
