@@ -19,6 +19,7 @@ import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -35,7 +36,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagFloat;
 
-public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IInventory, IOverrideDefaultTriggers, IPipeConnection {
+public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IInventory, IOverrideDefaultTriggers, IPipeConnection {
 
 	public enum EnergyStage {
 
@@ -493,6 +494,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	@Override
 	public boolean isPipeConnected(ForgeDirection with) {
 		return with != orientation;
+	}
+
+	@Override
+	public boolean canEmitPowerFrom(ForgeDirection side) {
+		return side == orientation;
 	}
 
 	public void checkRedstonePower() {

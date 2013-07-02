@@ -10,6 +10,7 @@ package buildcraft.api.power;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
+import java.util.EnumSet;
 
 public final class PowerHandler {
 
@@ -80,7 +81,7 @@ public final class PowerHandler {
 	private final SafeTimeTracker doWorkTracker = new SafeTimeTracker();
 	private final SafeTimeTracker sourcesTracker = new SafeTimeTracker();
 	private final SafeTimeTracker perditionTracker = new SafeTimeTracker();
-	public final int[] powerSources = {0, 0, 0, 0, 0, 0};
+	public final int[] powerSources = new int[6];
 	public final IPowerReceptor receptor;
 	private PerditionCalculator perdition;
 	private final PowerReceiver receiver;

@@ -13,6 +13,7 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
@@ -76,9 +77,13 @@ public class PipeTransportPower extends PipeTransport {
 		if (tile instanceof IPowerReceptor) {
 			IPowerReceptor receptor = (IPowerReceptor) tile;
 			PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-			if (receiver == null)
-				return false;
-			if (container.pipe instanceof PipePowerWood || receiver.getType().canReceiveFromPipes())
+			if (receiver != null && receiver.getType().canReceiveFromPipes())
+				return true;
+		}
+
+		if (container.pipe instanceof PipePowerWood && tile instanceof IPowerEmitter) {
+			IPowerEmitter emitter = (IPowerEmitter) tile;
+			if (emitter.canEmitPowerFrom(side.getOpposite()))
 				return true;
 		}
 

@@ -50,16 +50,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
-			return standardIconIndex;
-		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == direction.ordinal())
-				return solidIconIndex;
-			else
-				return standardIconIndex;
-		}
+		return standardIconIndex;
 	}
 
 	@Override
