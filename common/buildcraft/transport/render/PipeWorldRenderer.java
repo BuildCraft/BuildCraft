@@ -10,11 +10,14 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipe.WireColor;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IPipeRenderState;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TransportProxy;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
@@ -32,11 +35,11 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	}
 
 	/**
-	 * Shifts the coordinates around effectivly rotating something. Zero state is DOWN then -> NORTH -> WEST Note - To obtain Pos, do a mirrorY() before
+	 * Shifts the coordinates around effectivly rotating something. Zero state
+	 * is DOWN then -> NORTH -> WEST Note - To obtain Pos, do a mirrorY() before
 	 * rotating
 	 *
-	 * @param targetArray
-	 *            the array that should be rotated
+	 * @param targetArray the array that should be rotated
 	 */
 	private void rotate(float[][] targetArray) {
 		for (int i = 0; i < 2; i++) {
@@ -48,8 +51,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	}
 
 	/**
-	 * @param targetArray
-	 *            the array that should be transformed
+	 * @param targetArray the array that should be transformed
 	 * @param direction
 	 */
 	private void transform(float[][] targetArray, ForgeDirection direction) {
@@ -65,8 +67,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	/**
 	 * Clones both dimensions of a float[][]
 	 *
-	 * @param source
-	 *            the float[][] to deepClone
+	 * @param source the float[][] to deepClone
 	 * @return
 	 */
 	private float[][] deepClone(float[][] source) {
@@ -84,7 +85,8 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 		PipeRenderState state = renderState.getRenderState();
 		IIconProvider icons = renderState.getPipeIcons();
-		if (icons == null) return;
+		if (icons == null)
+			return;
 
 
 		state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
@@ -182,25 +184,28 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		zeroState[2][1] = 1.0F;
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.facadeMatrix.getFacadeBlockId(direction) != 0) {
-				Block renderBlock = Block.blocksList[state.facadeMatrix.getFacadeBlockId(direction)];
-                int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
-                state.currentTexture = renderBlock.getIcon(direction.ordinal(), renderMeta);
+			int facadeId = state.facadeMatrix.getFacadeBlockId(direction);
+			if (facadeId != 0) {
+				Block renderBlock = Block.blocksList[facadeId];
+				int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
+				state.currentTexture = renderBlock.getIcon(direction.ordinal(), renderMeta);
 
-                if (renderBlock.getRenderType() == 31) {
-                    if ((renderMeta & 12) == 4)
-                    {
-                        renderblocks.uvRotateEast = 1;
-                        renderblocks.uvRotateWest = 1;
-                        renderblocks.uvRotateTop = 1;
-                        renderblocks.uvRotateBottom = 1;
-                    }
-                    else if ((renderMeta & 12) == 8)
-                    {
-                        renderblocks.uvRotateSouth = 1;
-                        renderblocks.uvRotateNorth = 1;
-                    }
-                }
+				try {
+					BlockGenericPipe.facadeRenderColor = Item.itemsList[state.facadeMatrix.getFacadeBlockId(direction)].getColorFromItemStack(new ItemStack(facadeId, 1, renderMeta), 0);
+				} catch (Throwable error) {
+				}
+
+				if (renderBlock.getRenderType() == 31) {
+					if ((renderMeta & 12) == 4) {
+						renderblocks.uvRotateEast = 1;
+						renderblocks.uvRotateWest = 1;
+						renderblocks.uvRotateTop = 1;
+						renderblocks.uvRotateBottom = 1;
+					} else if ((renderMeta & 12) == 8) {
+						renderblocks.uvRotateSouth = 1;
+						renderblocks.uvRotateNorth = 1;
+					}
+				}
 
 				// Hollow facade
 				if (state.pipeConnectionMatrix.isConnected(direction)) {
@@ -246,15 +251,17 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 					renderblocks.renderStandardBlock(block, x, y, z);
 				}
 
-                if (renderBlock.getRenderType() == 31) {
-                    renderblocks.uvRotateSouth = 0;
-                    renderblocks.uvRotateEast = 0;
-                    renderblocks.uvRotateWest = 0;
-                    renderblocks.uvRotateNorth = 0;
-                    renderblocks.uvRotateTop = 0;
-                    renderblocks.uvRotateBottom = 0;
-                }
+				if (renderBlock.getRenderType() == 31) {
+					renderblocks.uvRotateSouth = 0;
+					renderblocks.uvRotateEast = 0;
+					renderblocks.uvRotateWest = 0;
+					renderblocks.uvRotateNorth = 0;
+					renderblocks.uvRotateTop = 0;
+					renderblocks.uvRotateBottom = 0;
+				}
 			}
+
+			BlockGenericPipe.facadeRenderColor = -1;
 		}
 
 		// X START - END
@@ -310,14 +317,14 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		}
 
 		// X START - END
-		zeroState[0][0] = 0.25F + 0.125F/2 + zFightOffset;
-		zeroState[0][1] = 0.75F - 0.125F/2 + zFightOffset;
+		zeroState[0][0] = 0.25F + 0.125F / 2 + zFightOffset;
+		zeroState[0][1] = 0.75F - 0.125F / 2 + zFightOffset;
 		// Y START - END
 		zeroState[1][0] = 0.25F;
 		zeroState[1][1] = 0.25F + 0.125F;
 		// Z START - END
-		zeroState[2][0] = 0.25F + 0.125F/2;
-		zeroState[2][1] = 0.75F - 0.125F/2;
+		zeroState[2][0] = 0.25F + 0.125F / 2;
+		zeroState[2][1] = 0.75F - 0.125F / 2;
 
 		state.currentTexture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure Pipe
 
@@ -503,14 +510,13 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		}
 	}
 
-	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction){
+	private boolean shouldRenderNormalPipeSide(PipeRenderState state, ForgeDirection direction) {
 		return !state.pipeConnectionMatrix.isConnected(direction) && state.facadeMatrix.getFacadeBlockId(direction) == 0 && !state.plugMatrix.isConnected(direction);
 	}
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

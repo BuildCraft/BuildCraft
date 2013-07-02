@@ -299,8 +299,8 @@ public class BuildCraftBuilders {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
 			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('p'), Item.paper});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
-			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
+//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
+//			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
 			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'), Block.torchRedstoneActive});
@@ -318,13 +318,13 @@ public class BuildCraftBuilders {
 		 Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest });
 		 */
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
-			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
-			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'),
-			new ItemStack(templateItem, 1)});
+//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
+//			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
+//			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'),
+//			new ItemStack(templateItem, 1)});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", Character.valueOf('b'),
-			new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf});
+//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", Character.valueOf('b'),
+//			new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf});
 		
 		// / INIT FILLER PATTERNS
 		FillerManager.registry.addRecipe(new FillerFillAll(), new Object[]{"bbb", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick});
