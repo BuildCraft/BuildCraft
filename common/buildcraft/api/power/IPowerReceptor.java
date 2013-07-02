@@ -34,7 +34,7 @@ public interface IPowerReceptor {
 	public PowerReceiver getPowerReceiver(ForgeDirection side);
 
 	/**
-	 * Call back from the PowerHandler that is called when the store power
+	 * Call back from the PowerHandler that is called when the stored power
 	 * exceeds the activation power.
 	 *
 	 * It can be triggered by update() calls or power modification calls.
