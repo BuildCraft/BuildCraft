@@ -94,8 +94,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 			}
 		}
 
-		if (sources <= 0)
+		if (sources <= 0) {
+			powerHandler.useEnergy(5, 5, true);
 			return;
+		}
 
 		float energyToRemove;
 
@@ -139,6 +141,9 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		powerHandler.writeToNBT(data);
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			data.setBoolean("powerSources[" + i + "]", powerSources[i]);
+		}
 	}
 
 	@Override
@@ -146,5 +151,8 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		super.readFromNBT(data);
 		powerHandler.readFromNBT(data);
 		initPowerProvider();
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			powerSources[i] = data.getBoolean("powerSources[" + i + "]");
+		}
 	}
 }
