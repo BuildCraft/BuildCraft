@@ -5,12 +5,11 @@
  * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.builders.blueprints;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.builder.BlockHandler;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.factory.TileQuarry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -35,7 +34,7 @@ public class Blueprint {
 	private final UUID uuid;
 	private String name;
 	private String creator;
-	private final BlockSchematic[][][] blocks;
+	private final Schematic[][][] schematics;
 	public final int sizeX, sizeY, sizeZ;
 	public int anchorX, anchorY, anchorZ;
 	public ForgeDirection anchorOrientation = ForgeDirection.NORTH;
@@ -50,7 +49,7 @@ public class Blueprint {
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
-		blocks = new BlockSchematic[sizeX][sizeY][sizeZ];
+		schematics = new Schematic[sizeX][sizeY][sizeZ];
 	}
 
 	public String getName() {
@@ -61,25 +60,41 @@ public class Blueprint {
 		this.name = name;
 	}
 
-	private void setBlock(World world, int x, int y, int z, BlockSchematic schematic) {
+	private void setSchematic(int x, int y, int z, Schematic schematic) {
 		if (schematic == null)
 			return;
 		schematic.x = x;
 		schematic.y = y;
 		schematic.z = z;
-		blocks[x][y][z] = schematic;
+		schematics[x][y][z] = schematic;
 	}
 
-	public void setBlock(World world, int x, int y, int z, Block block) {
+	public void setSchematic(int x, int y, int z, World world, Block block) {
 		BlockHandler handler = BlockHandler.get(block);
 		try {
-			if (handler.canSaveBlockToSchematic(world, x, y, z)) {
-				BlockSchematic schematic = new BlockSchematic(block);
-				handler.saveToSchematic(world, x, y, z, schematic.blockData);
-				setBlock(world, x, y, z, schematic);
+			if (handler.canSaveToSchematic(world, x, y, z)) {
+				Schematic schematic = BlockSchematic.create(block);
+				handler.saveToSchematic(world, x, y, z, schematic.data);
+				setSchematic(x, y, z, schematic);
 			}
 		} catch (Throwable error) {
 			BuildCraftCore.bcLog.severe(String.format("Error while trying to save block [%s:%d] to blueprint, skipping.", block.getUnlocalizedName(), block.blockID));
+			BuildCraftCore.bcLog.throwing(getClass().getCanonicalName(), "setBlock", error);
+		}
+	}
+
+	public void setSchematic(int x, int y, int z, ItemStack item) {
+		if (item == null)
+			return;
+		BlockHandler handler = BlockHandler.get(item.getItem());
+		try {
+			if (handler.canSaveToSchematic(item)) {
+				Schematic schematic = ItemSchematic.create(item.getItem());
+				handler.saveToSchematic(item, schematic.data);
+				setSchematic(x, y, z, schematic);
+			}
+		} catch (Throwable error) {
+			BuildCraftCore.bcLog.severe(String.format("Error while trying to save item [%s:%d] to blueprint, skipping.", item.getItem().getUnlocalizedName(), item.itemID));
 			BuildCraftCore.bcLog.throwing(getClass().getCanonicalName(), "setBlock", error);
 		}
 	}
@@ -92,18 +107,18 @@ public class Blueprint {
 	 *
 	 * @see TileQuarry
 	 */
-	public void setBlock(World world, int x, int y, int z, int id, int meta) {
+	public void setSchematic(World world, int x, int y, int z, int id, int meta) {
 		Block block = Block.blocksList[id];
 		if (block == null) {
 			return;
 		}
-		BlockSchematic schematic = new BlockSchematic(block);
-		schematic.blockData.setByte("blockMeta", (byte) meta);
-		setBlock(world, x, y, z, schematic);
+		BlockSchematic schematic = BlockSchematic.create(block);
+		schematic.data.setByte("blockMeta", (byte) meta);
+		setSchematic(x, y, z, schematic);
 	}
 
-	public BlockSchematic getBlock(int x, int y, int z) {
-		return blocks[x][y][z];
+	public Schematic getBlock(int x, int y, int z) {
+		return schematics[x][y][z];
 	}
 
 	public UUID getUUID() {
@@ -119,13 +134,13 @@ public class Blueprint {
 	 *
 	 * @return List<BlockScematic>
 	 */
-	public LinkedList<BlockSchematic> getBuildList() {
-		LinkedList<BlockSchematic> list = new LinkedList<BlockSchematic>();
+	public LinkedList<Schematic> getBuildList() {
+		LinkedList<Schematic> list = new LinkedList<Schematic>();
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
 				for (int z = 0; z < sizeZ; z++) {
-					if (blocks[x][y][z] != null)
-						list.add(blocks[x][y][z]);
+					if (schematics[x][y][z] != null)
+						list.add(schematics[x][y][z]);
 				}
 			}
 		}
@@ -136,9 +151,9 @@ public class Blueprint {
 		if (costs != null)
 			return costs;
 		List<ItemStack> stacks = new ArrayList<ItemStack>();
-		for (BlockSchematic schematic : getBuildList()) {
-			BlockHandler handler = BlockHandler.get(schematic.block);
-			List<ItemStack> requirements = handler.getCostForSchematic(schematic.blockData);
+		for (Schematic schematic : getBuildList()) {
+			BlockHandler handler = BlockHandler.get(schematic.id);
+			List<ItemStack> requirements = handler.getCostForSchematic(schematic.data);
 			for (ItemStack newStack : requirements) {
 				if (newStack.stackSize <= 0)
 					continue;
@@ -160,10 +175,10 @@ public class Blueprint {
 		for (int y = 0; y < sizeY; y++) {
 			for (int x = 0; x < sizeX; x++) {
 				for (int z = 0; z < sizeZ; z++) {
-					if (blocks[x][y][z] == null)
+					if (schematics[x][y][z] == null)
 						continue;
 					NBTTagCompound blockNBT = new NBTTagCompound();
-					blocks[x][y][z].writeToNBT(nbt);
+					schematics[x][y][z].writeToNBT(nbt);
 					blockList.appendTag(blockNBT);
 				}
 			}
@@ -204,8 +219,8 @@ public class Blueprint {
 		NBTTagList blockList = nbt.getTagList("blocks");
 		for (int i = 0; i < blockList.tagCount(); i++) {
 			NBTTagCompound blockNBT = (NBTTagCompound) blockList.tagAt(i);
-			BlockSchematic block = BlockSchematic.readFromNBT(blockNBT);
-			blueprint.blocks[block.x][block.y][block.z] = block;
+			Schematic schematic = Schematic.createSchematicFromNBT(blockNBT);
+			blueprint.schematics[schematic.x][schematic.y][schematic.z] = schematic;
 		}
 		return blueprint;
 	}

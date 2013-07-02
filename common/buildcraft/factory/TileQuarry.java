@@ -24,9 +24,9 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.builders.Blueprint;
-import buildcraft.builders.BlueprintBuilder;
-import buildcraft.builders.BlueprintBuilder.SchematicBuilder;
+import buildcraft.builders.blueprints.Blueprint;
+import buildcraft.builders.blueprints.BlueprintBuilder;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
@@ -606,22 +606,22 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 		for (int it = 0; it < 2; it++) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
-				blueprint.setBlock(worldObj, i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock.blockID, 0);
-				blueprint.setBlock(worldObj, i, it * (box.sizeY() - 1), blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
+				blueprint.setSchematic(worldObj, i, it * (box.sizeY() - 1), 0, BuildCraftFactory.frameBlock.blockID, 0);
+				blueprint.setSchematic(worldObj, i, it * (box.sizeY() - 1), blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
 			}
 
 			for (int k = 0; k < blueprint.sizeZ; ++k) {
-				blueprint.setBlock(worldObj, 0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID, 0);
-				blueprint.setBlock(worldObj, blueprint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID, 0);
+				blueprint.setSchematic(worldObj, 0, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID, 0);
+				blueprint.setSchematic(worldObj, blueprint.sizeX - 1, it * (box.sizeY() - 1), k, BuildCraftFactory.frameBlock.blockID, 0);
 
 			}
 		}
 
 		for (int h = 1; h < box.sizeY(); ++h) {
-			blueprint.setBlock(worldObj, 0, h, 0, BuildCraftFactory.frameBlock.blockID, 0);
-			blueprint.setBlock(worldObj, 0, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
-			blueprint.setBlock(worldObj, blueprint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock.blockID, 0);
-			blueprint.setBlock(worldObj, blueprint.sizeX - 1, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
+			blueprint.setSchematic(worldObj, 0, h, 0, BuildCraftFactory.frameBlock.blockID, 0);
+			blueprint.setSchematic(worldObj, 0, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
+			blueprint.setSchematic(worldObj, blueprint.sizeX - 1, h, 0, BuildCraftFactory.frameBlock.blockID, 0);
+			blueprint.setSchematic(worldObj, blueprint.sizeX - 1, h, blueprint.sizeZ - 1, BuildCraftFactory.frameBlock.blockID, 0);
 		}
 
 		blueprintBuilder = new BlueprintBuilder(blueprint, worldObj, box.xMin, yCoord, box.zMin, ForgeDirection.NORTH, null);

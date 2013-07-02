@@ -15,7 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
-import buildcraft.builders.BlueprintBuilder.SchematicBuilder;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import buildcraft.api.core.Position;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;

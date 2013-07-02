@@ -7,6 +7,8 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -20,24 +22,44 @@ import net.minecraftforge.common.ForgeDirection;
  */
 public class BlockHandler {
 
-	private static final Map<Block, BlockHandler> handlers = new HashMap<Block, BlockHandler>();
-	private final Block block;
+	private static final Map<Integer, BlockHandler> handlers = new HashMap<Integer, BlockHandler>();
+	private final int id;
+
+	public static BlockHandler get(Item item) {
+		if (item == null)
+			return null;
+		return get(item.itemID);
+	}
 
 	public static BlockHandler get(Block block) {
-		BlockHandler handler = handlers.get(block);
+		if (block == null)
+			return null;
+		return get(block.blockID);
+	}
+
+	public static BlockHandler get(int id) {
+		BlockHandler handler = handlers.get(id);
 		if (handler == null) {
-			handler = new BlockHandler(block);
-			registerHandler(block, handler);
+			handler = new BlockHandler(id);
+			registerHandler(id, handler);
 		}
 		return handler;
 	}
 
 	public static void registerHandler(Block block, BlockHandler handler) {
-		handlers.put(block, handler);
+		handlers.put(block.blockID, handler);
 	}
 
-	public BlockHandler(Block block) {
-		this.block = block;
+	public static void registerHandler(Item item, BlockHandler handler) {
+		handlers.put(item.itemID, handler);
+	}
+
+	public static void registerHandler(int id, BlockHandler handler) {
+		handlers.put(id, handler);
+	}
+
+	public BlockHandler(int id) {
+		this.id = id;
 	}
 
 	/**
@@ -45,12 +67,19 @@ public class BlockHandler {
 	 *
 	 * We will also skip any blocks that drop actual items like Ore blocks.
 	 */
-	public boolean canSaveBlockToSchematic(World world, int x, int y, int z) {
+	public boolean canSaveToSchematic(World world, int x, int y, int z) {
+		if (!(Item.itemsList[id] instanceof ItemBlock))
+			return false;
+
+		Block block = Block.blocksList[id];
+		if (block == null)
+			return false;
+
 		int meta = world.getBlockMetadata(x, y, z);
 		try {
-			if (block.idDropped(meta, null, 0) != block.blockID) {
+			if (block.idDropped(meta, null, 0) != id)
 				return false;
-			}
+
 		} catch (NullPointerException ex) {
 			return false;
 		}
@@ -58,12 +87,32 @@ public class BlockHandler {
 	}
 
 	/**
-	 * It is assumed that Blueprints always face North on save.
+	 * By default we will ignore all blocks with Tile Entities.
 	 *
-	 * Store any info you need to reproduce the block in the data tag.
+	 * We will also ignore anything that's not a ItemBlock.
+	 *
+	 * We will also skip any blocks that drop actual items like Ore blocks.
 	 */
-	public void saveToSchematic(World world, int x, int y, int z, NBTTagCompound blockData) {
-		blockData.setByte("blockMeta", (byte) world.getBlockMetadata(x, y, z));
+	public boolean canSaveToSchematic(ItemStack stack) {
+		if (stack == null)
+			return false;
+		if (!(stack.getItem() instanceof ItemBlock))
+			return false;
+
+		if (id > Block.blocksList.length)
+			return false;
+
+		Block block = Block.blocksList[id];
+		if (block == null)
+			return false;
+
+		try {
+			if (block.idDropped(stack.getItemDamage(), null, 0) != id)
+				return false;
+		} catch (NullPointerException ex) {
+			return false;
+		}
+		return !block.hasTileEntity(stack.getItemDamage());
 	}
 
 	/**
@@ -71,9 +120,19 @@ public class BlockHandler {
 	 *
 	 * Store any info you need to reproduce the block in the data tag.
 	 */
-	public void saveToSchematic(ItemStack stack, NBTTagCompound blockData) {
+	public void saveToSchematic(World world, int x, int y, int z, NBTTagCompound data) {
+		data.setByte("blockMeta", (byte) world.getBlockMetadata(x, y, z));
+	}
+
+	/**
+	 * It is assumed that Blueprints always face North on save.
+	 *
+	 * Store any info you need to reproduce the block from this ItemStack in the
+	 * data tag.
+	 */
+	public void saveToSchematic(ItemStack stack, NBTTagCompound data) {
 		if (stack.getHasSubtypes())
-			blockData.setByte("blockMeta", (byte) stack.getItemDamage());
+			data.setByte("blockMeta", (byte) stack.getItemDamage());
 	}
 
 	/**
@@ -87,9 +146,10 @@ public class BlockHandler {
 	 * entities and will in fact break on Ore blocks as well. Which is why those
 	 * blocks can't be saved by default.
 	 */
-	public List<ItemStack> getCostForSchematic(NBTTagCompound blockData) {
+	public List<ItemStack> getCostForSchematic(NBTTagCompound data) {
 		List<ItemStack> cost = new ArrayList<ItemStack>();
-		cost.add(new ItemStack(block.idDropped(blockData.getByte("blockMeta"), BlueprintHelpers.RANDOM, 0), 1, block.damageDropped(blockData.getByte("blockMeta"))));
+		Block block = Block.blocksList[id];
+		cost.add(new ItemStack(block.idDropped(data.getByte("blockMeta"), BlueprintHelpers.RANDOM, 0), 1, block.damageDropped(data.getByte("blockMeta"))));
 		return cost;
 	}
 
@@ -108,7 +168,7 @@ public class BlockHandler {
 	 * Can the block be placed currently or is it waiting on some other block to
 	 * be placed first?
 	 */
-	public boolean canPlaceNow(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound blockData) {
+	public boolean canPlaceNow(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound data) {
 		return true;
 	}
 
@@ -126,9 +186,9 @@ public class BlockHandler {
 	 * modify any ItemStack in the inventory until you have determined that
 	 * everything you require is present.
 	 */
-	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound blockData, IInventory builderInventory, EntityPlayer bcPlayer) {
+	public boolean readBlockFromSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound data, IInventory builderInventory, EntityPlayer bcPlayer) {
 		if (builderInventory != null) {
-			List<ItemStack> requiredItems = getCostForSchematic(blockData);
+			List<ItemStack> requiredItems = getCostForSchematic(data);
 			List<Integer> slotsToConsume = new ArrayList<Integer>();
 			for (ItemStack cost : requiredItems) {
 				boolean found = false;
@@ -146,16 +206,16 @@ public class BlockHandler {
 				builderInventory.setInventorySlotContents(slot, BlueprintHelpers.consumeItem(builderInventory.getStackInSlot(slot)));
 			}
 		}
-		return world.setBlock(x, y, z, block.blockID, blockData.getByte("blockMeta"), 3);
+		return world.setBlock(x, y, z, Block.blocksList[id].blockID, data.getByte("blockMeta"), 3);
 	}
 
 	/**
 	 * Checks if the block matches the schematic.
 	 */
-	public boolean doesBlockMatchSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound blockData) {
-		if (block.blockID != world.getBlockId(x, y, z))
+	public boolean doesBlockMatchSchematic(World world, int x, int y, int z, ForgeDirection blueprintOrientation, NBTTagCompound data) {
+		if (id != world.getBlockId(x, y, z))
 			return false;
 
-		return !blockData.hasKey("blockMeta") || blockData.getByte("blockMeta") == world.getBlockMetadata(x, y, z);
+		return !data.hasKey("blockMeta") || data.getByte("blockMeta") == world.getBlockMetadata(x, y, z);
 	}
 }

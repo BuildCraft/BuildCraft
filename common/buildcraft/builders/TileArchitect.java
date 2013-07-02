@@ -7,6 +7,7 @@
  */
 package buildcraft.builders;
 
+import buildcraft.builders.blueprints.Blueprint;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -143,7 +144,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 					if (!worldObj.isAirBlock(x, y, z)) {
 						Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
 						if (block != null) {
-							blueprint.setBlock(worldObj, x - box.xMin, y - box.yMin, z - box.zMin, block);
+							blueprint.setSchematic(x - box.xMin, y - box.yMin, z - box.zMin, worldObj, block);
 						}
 					}
 				}

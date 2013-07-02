@@ -6,10 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.builders.blueprints;
 
 import buildcraft.api.builder.BlockHandler;
-import buildcraft.builders.BlueprintBuilder.SchematicBuilder;
+import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -31,7 +31,7 @@ public class BlueprintBuilder {
 	public final World worldObj;
 	public final int x, y, z;
 	private final IInventory inv;
-	private final LinkedList<BlockSchematic> buildList;
+	private final LinkedList<Schematic> buildList;
 	private final List<SchematicBuilder> builders;
 
 	public BlueprintBuilder(Blueprint blueprint, World world, int x, int y, int z, ForgeDirection orientation, IInventory inv) {
@@ -44,8 +44,10 @@ public class BlueprintBuilder {
 		this.inv = inv;
 		this.buildList = blueprint.getBuildList();
 		builders = new ArrayList<SchematicBuilder>(buildList.size());
-		for (BlockSchematic schematic : buildList) {
-			builders.add(new SchematicBuilder(schematic));
+		for (Schematic schematic : buildList) {
+			BlockHandler handler = schematic.getHandler();
+			if (handler != null)
+				builders.add(new SchematicBuilder(schematic, handler));
 		}
 	}
 
@@ -55,13 +57,13 @@ public class BlueprintBuilder {
 
 	public class SchematicBuilder {
 
-		public final BlockSchematic schematic;
+		public final Schematic schematic;
 		public final BlockHandler handler;
 		private boolean complete;
 
-		private SchematicBuilder(BlockSchematic schematic) {
+		private SchematicBuilder(Schematic schematic, BlockHandler handler) {
 			this.schematic = schematic;
-			this.handler = BlockHandler.get(schematic.block);
+			this.handler = handler;
 		}
 
 		public int getX() {
@@ -95,11 +97,11 @@ public class BlueprintBuilder {
 		}
 
 		public boolean blockExists() {
-			return handler.doesBlockMatchSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic.blockData);
+			return handler.doesBlockMatchSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic.data);
 		}
 
 		public boolean canBuild() {
-			return handler.canPlaceNow(worldObj, getX(), getY(), getZ(), orientation, schematic.blockData);
+			return handler.canPlaceNow(worldObj, getX(), getY(), getZ(), orientation, schematic.data);
 		}
 
 		public boolean build(EntityPlayer bcPlayer) {
@@ -114,7 +116,7 @@ public class BlueprintBuilder {
 			if (!canBuild())
 				return false;
 
-			boolean built = handler.readBlockFromSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic.blockData, inv, bcPlayer);
+			boolean built = handler.readBlockFromSchematic(worldObj, getX(), getY(), getZ(), orientation, schematic.data, inv, bcPlayer);
 
 			if (built) {
 				markComplete();
