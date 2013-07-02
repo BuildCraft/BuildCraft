@@ -27,7 +27,9 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
@@ -45,17 +47,17 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	LiquidTank tank;
 	double tubeY = Double.NaN;
 	int aimY = 0;
-	private PowerProvider powerProvider;
+	private PowerHandler powerHandler;
 
 	public TilePump() {
-		powerProvider = new PowerProvider(this);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
 		tank = new LiquidTank(MAX_LIQUID);
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(1, 8, 10, 100);
-		powerProvider.configurePowerPerdition(1, 100);
+		powerHandler.configure(1, 8, 10, 100);
+		powerHandler.configurePowerPerdition(1, 100);
 	}
 
 	// TODO, manage this by different levels (pump what's above first...)
@@ -87,7 +89,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 					if (tank.fill(liquidToPump, false) == liquidToPump.amount) {
 
-						if (powerProvider.useEnergy(10, 10, true) == 10) {
+						if (powerHandler.useEnergy(10, 10, true) == 10) {
 							index = getNextIndexToPump(true);
 
 							if (liquidToPump.itemID != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
@@ -286,7 +288,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 		tubeY = nbttagcompound.getFloat("tubeY");
 
-		powerProvider.readFromNBT(nbttagcompound);
+		powerHandler.readFromNBT(nbttagcompound);
 		initPowerProvider();
 	}
 
@@ -294,7 +296,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		powerProvider.writeToNBT(nbttagcompound);
+		powerHandler.writeToNBT(nbttagcompound);
 
 		if (tank.getLiquid() != null) {
 			nbttagcompound.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
@@ -315,12 +317,12 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override

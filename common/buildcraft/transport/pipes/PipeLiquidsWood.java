@@ -18,7 +18,9 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
@@ -32,7 +34,7 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	public @TileNetworkData
 	int liquidToExtract;
 
-	private PowerProvider powerProvider;
+	private PowerHandler powerHandler;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
@@ -47,17 +49,17 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 	protected PipeLiquidsWood(PipeLogic logic, int itemID) {
 		super(new PipeTransportLiquids(), logic, itemID);
 
-		powerProvider = new PowerProvider(this, false);
-		powerProvider.configure(1, 100, 1, 250);
-		powerProvider.configurePowerPerdition(0, 0);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(1, 100, 1, 250);
+		powerHandler.configurePowerPerdition(0, 0);
 	}
 
 	/**
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
 	@Override
-	public void doWork(PowerProvider workProvider) {
-		if (powerProvider.getEnergyStored() <= 0)
+	public void doWork(PowerHandler workProvider) {
+		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
 		World w = worldObj;
@@ -76,15 +78,15 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 				return;
 
 			if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME) {
-				liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
+				liquidToExtract += powerHandler.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
 			}
 		}
-		powerProvider.useEnergy(1, 1, true);
+		powerHandler.useEnergy(1, 1, true);
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override

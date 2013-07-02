@@ -17,7 +17,9 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
@@ -27,12 +29,12 @@ import buildcraft.core.utils.Utils;
 public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection {
 
 	boolean isDigging = true;
-	PowerProvider powerProvider;
+	private PowerHandler powerHandler;
 
 	public TileMiningWell() {
-		powerProvider = new PowerProvider(this);
-		powerProvider.configure(100, 100, 60, 1000);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(100, 100, 60, 1000);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	/**
@@ -40,8 +42,8 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
-	public void doWork(PowerProvider workProvider) {
-		if (powerProvider.useEnergy(60, 60, true) != 60)
+	public void doWork(PowerHandler workProvider) {
+		if (powerHandler.useEnergy(60, 60, true) != 60)
 			return;
 
 		World world = worldObj;
@@ -114,8 +116,8 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override

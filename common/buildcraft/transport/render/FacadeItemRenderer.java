@@ -13,13 +13,23 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
+import net.minecraft.item.Item;
 
 public class FacadeItemRenderer implements IItemRenderer {
 
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
-		
+
 		int decodedMeta = ItemFacade.getMetaData(item);
 		int decodedBlockId = ItemFacade.getBlockId(item);
+
+		try {
+			int color = Item.itemsList[decodedBlockId].getColorFromItemStack(new ItemStack(decodedBlockId, 1, decodedMeta), 0);
+			float r = (float) (color >> 16 & 0xff) / 255F;
+			float g = (float) (color >> 8 & 0xff) / 255F;
+			float b = (float) (color & 0xff) / 255F;
+			GL11.glColor4f(r, g, b, 1.0F);
+		} catch (Throwable error) {
+		}
 
 		Tessellator tessellator = Tessellator.instance;
 
@@ -100,14 +110,14 @@ public class FacadeItemRenderer implements IItemRenderer {
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
 		switch (type) {
-		case ENTITY:
-			return true;
-		case EQUIPPED:
-			return true;
-		case INVENTORY:
-			return true;
-		default:
-			return false;
+			case ENTITY:
+				return true;
+			case EQUIPPED:
+				return true;
+			case INVENTORY:
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -120,19 +130,18 @@ public class FacadeItemRenderer implements IItemRenderer {
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
 
 		switch (type) {
-		case ENTITY:
-			GL11.glScalef(0.50F, 0.50F, 0.50F);
-			renderFacadeItem((RenderBlocks) data[0], item, -0.6F, 0f, -0.6F);
-			break;
-		case EQUIPPED:
-			renderFacadeItem((RenderBlocks) data[0], item, 0F, 0F, 0f);
-			break;
-		case INVENTORY:
-			GL11.glScalef(1.1F, 1.1F, 1.1F);
-			renderFacadeItem((RenderBlocks) data[0], item, -0.3f, -0.35f, -0.7f);
-			break;
-		default:
+			case ENTITY:
+				GL11.glScalef(0.50F, 0.50F, 0.50F);
+				renderFacadeItem((RenderBlocks) data[0], item, -0.6F, 0f, -0.6F);
+				break;
+			case EQUIPPED:
+				renderFacadeItem((RenderBlocks) data[0], item, 0F, 0F, 0f);
+				break;
+			case INVENTORY:
+				GL11.glScalef(1.1F, 1.1F, 1.1F);
+				renderFacadeItem((RenderBlocks) data[0], item, -0.3f, -0.35f, -0.7f);
+				break;
+			default:
 		}
 	}
-
 }

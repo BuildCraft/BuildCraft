@@ -11,7 +11,9 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
@@ -21,7 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 
-	private PowerProvider powerProvider;
+	private PowerHandler powerHandler;
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	private boolean[] powerSources = new boolean[6];
@@ -30,14 +32,14 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	public PipePowerWood(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
-		powerProvider = new PowerProvider(this, false);
+		powerHandler = new PowerHandler(this, Type.PIPE);
 		initPowerProvider();
 		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(2, 1000, 1, 1500);
-		powerProvider.configurePowerPerdition(1, 10);
+		powerHandler.configure(2, 1000, 1, 1500);
+		powerHandler.configurePowerPerdition(1, 10);
 	}
 
 	@Override
@@ -61,13 +63,12 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
-		// TODO Auto-generated method stub
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override
@@ -76,7 +77,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		if (worldObj.isRemote)
 			return;
 
-		if (powerProvider.getEnergyStored() <= 0)
+		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
 		int sources = 0;
@@ -85,7 +86,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 				powerSources[o.ordinal()] = false;
 				continue;
 			}
-			if (powerProvider.isPowerSource(o)) {
+			if (powerHandler.isPowerSource(o)) {
 				powerSources[o.ordinal()] = true;
 			}
 			if (powerSources[o.ordinal()]) {
@@ -98,10 +99,10 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 
 		float energyToRemove;
 
-		if (powerProvider.getEnergyStored() > 40) {
-			energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
-		} else if (powerProvider.getEnergyStored() > 10) {
-			energyToRemove = powerProvider.getEnergyStored() / 10;
+		if (powerHandler.getEnergyStored() > 40) {
+			energyToRemove = powerHandler.getEnergyStored() / 40 + 4;
+		} else if (powerHandler.getEnergyStored() > 10) {
+			energyToRemove = powerHandler.getEnergyStored() / 10;
 		} else {
 			energyToRemove = 1;
 		}
@@ -113,37 +114,37 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 			if (!powerSources[o.ordinal()])
 				continue;
 
-			float energyUsable = powerProvider.useEnergy(0, energyToRemove, false);
+			float energyUsable = powerHandler.useEnergy(0, energyToRemove, false);
 
 			float energySend = trans.receiveEnergy(o, energyUsable);
 			if (energySend > 0) {
-				powerProvider.useEnergy(0, energySend, true);
+				powerHandler.useEnergy(0, energySend, true);
 			}
 		}
 	}
 
 	public boolean requestsPower() {
 		if (full) {
-			boolean request = powerProvider.getEnergyStored() < powerProvider.getMaxEnergyStored() / 2;
+			boolean request = powerHandler.getEnergyStored() < powerHandler.getMaxEnergyStored() / 2;
 			if (request) {
 				full = false;
 			}
 			return request;
 		}
-		full = powerProvider.getEnergyStored() >= powerProvider.getMaxEnergyStored() - 10;
+		full = powerHandler.getEnergyStored() >= powerHandler.getMaxEnergyStored() - 10;
 		return !full;
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		powerProvider.writeToNBT(data);
+		powerHandler.writeToNBT(data);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		powerProvider.readFromNBT(data);
+		powerHandler.readFromNBT(data);
 		initPowerProvider();
 	}
 }

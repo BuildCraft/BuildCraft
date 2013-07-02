@@ -23,7 +23,9 @@ import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerProvider;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
@@ -50,7 +52,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	private BptBuilderBase bluePrintBuilder;
 	public @TileNetworkData
 	Box box = new Box();
-	private PowerProvider powerProvider;
+	private PowerHandler powerHandler;
 	private LinkedList<BlockIndex> path;
 	private LinkedList<EntityLaser> pathLasers;
 	private EntityRobot builderRobot;
@@ -167,8 +169,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	public TileBuilder() {
 		super();
 
-		powerProvider = new PowerProvider(this);
-		powerProvider.configure(25, 25, 25, 25);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(25, 25, 25, 25);
 	}
 
 	@Override
@@ -261,7 +263,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void doWork(PowerProvider workProvider) {
+	public void doWork(PowerHandler workProvider) {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
@@ -271,7 +273,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		if (builderRobot != null && !builderRobot.readyToBuild())
 			return;
 
-		if (powerProvider.useEnergy(25, 25, true) < 25)
+		if (powerHandler.useEnergy(25, 25, true) < 25)
 			return;
 
 		iterateBpt();
@@ -281,12 +283,13 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				box.initialize(bluePrintBuilder);
 			}
 
-			if (builderRobot == null) {
-				builderRobot = new EntityRobot(worldObj, box);
-				worldObj.spawnEntityInWorld(builderRobot);
-			}
+		 if (builderRobot == null) {
+		 builderRobot = new EntityRobot(worldObj, box);
+		 worldObj.spawnEntityInWorld(builderRobot);
+		 }
 
-			box.createLasers(worldObj, LaserKind.Stripes);
+		 box.createLasers(worldObj, LaserKind.Stripes);
+
 
 //			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, this), bluePrintBuilder.getContext());
 		}
@@ -333,8 +336,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				if (bluePrintBuilder != null) {
 					box.deleteLasers();
 					box.reset();
-					box.initialize(bluePrintBuilder);
-					box.createLasers(worldObj, LaserKind.Stripes);
+
+					/*
+					 box.initialize(bluePrintBuilder);
+					 box.createLasers(worldObj, LaserKind.Stripes);
+					 */
 				}
 
 				if (builderRobot != null) {
@@ -509,8 +515,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public PowerProvider getPowerProvider(ForgeDirection side) {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
@@ -550,7 +556,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 //		else
 //			return 0;
 //	}
-
 	@Override
 	public void updateEntity() {
 

@@ -299,8 +299,8 @@ public class BuildCraftBuilders {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
 			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('p'), Item.paper});
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
-			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
+//		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), new Object[]{"ppp", "pip", "ppp", Character.valueOf('i'),
+//			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('p'), Item.paper});
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), new Object[]{"l ", "r ", Character.valueOf('l'),
 			new ItemStack(Item.dyePowder, 1, 4), Character.valueOf('r'), Block.torchRedstoneActive});
