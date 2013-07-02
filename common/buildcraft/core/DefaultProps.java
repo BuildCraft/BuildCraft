@@ -116,6 +116,7 @@ public class DefaultProps {
 	public static int OIL_MOVING_ID = 1520;
 	public static int OIL_STILL_ID = 1521;
 	public static int SPRING_ID = 1522;
+	public static int FILTERED_BUFFER = 1523;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;
@@ -154,6 +155,9 @@ public class DefaultProps {
 	public static int TRIGGER_RED_ENGINE_HEAT = 28;
 	public static int TRIGGER_PIPE_REQUESTS_ENERGY = 29;
 	public static int TRIGGER_PIPE_TOO_MUCH_ENERGY = 30;
+	public static int TRIGGER_INVENTORY_LEVEL_BELOW25 = 31;
+	public static int TRIGGER_INVENTORY_LEVEL_BELOW50 = 32;
+	public static int TRIGGER_INVENTORY_LEVEL_BELOW75 = 33;
 
 	public static int ACTION_REDSTONE = 1;
 	public static int ACTION_RED_SIGNAL = 2;
