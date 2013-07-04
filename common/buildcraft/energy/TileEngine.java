@@ -406,6 +406,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 		if (getEnergyStage() == EnergyStage.OVERHEAT) {
 			worldObj.createExplosion(null, xCoord, yCoord, zCoord, explosionRange(), true);
+			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		}
 
 		if (energy > getMaxEnergy()) {
