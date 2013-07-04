@@ -32,9 +32,9 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory, IClientState {
+public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 
-	private SimpleInventory filters = new SimpleInventory(9, "items", 1);
+	private SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
 
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
@@ -208,92 +208,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISpecialInventory
 			readFromNBT((NBTTagCompound) nbt);
 		}
 	}
-
-	/* ISPECIALINVENTORY */
-	@Override
-	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
-		return 0;
-	}
-
-	@Override
-	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount) {
-		return new ItemStack[0];
-	}
-
-	/* IINVENTORY IMPLEMENTATION */
-	@Override
-	public int getSizeInventory() {
-		return filters.getSizeInventory();
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return filters.getStackInSlot(i);
-	}
-
-	@Override
-	public String getInvName() {
-		return "Filters";
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return filters.getInventoryStackLimit();
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-		return filters.getStackInSlotOnClosing(i);
-	}
-
-	@Override
-	public void onInventoryChanged() {
-		filters.onInventoryChanged();
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer var1) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
-	}
-
-	@Override
-	public void openChest() {
-	}
-
-	@Override
-	public void closeChest() {
-	}
-
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		ItemStack stack = filters.decrStackSize(i, j);
-
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-
-		return stack;
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-
-		filters.setInventorySlotContents(i, itemstack);
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public IInventory getFilters(){
+		return filters;
 	}
 }

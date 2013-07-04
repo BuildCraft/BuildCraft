@@ -322,7 +322,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (!(pipe.pipe.logic instanceof PipeLogicDiamond))
 			return;
 
-		((PipeLogicDiamond) pipe.pipe.logic).setInventorySlotContents(packet.slot, packet.stack);
+		((PipeLogicDiamond) pipe.pipe.logic).getFilters().setInventorySlotContents(packet.slot, packet.stack);
 	}
 	
 	/**
@@ -339,7 +339,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (!(pipe.pipe instanceof PipeItemsEmerald))
 			return;
 
-		((PipeItemsEmerald) pipe.pipe).setInventorySlotContents(packet.slot, packet.stack);
+		((PipeItemsEmerald) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
 	}
 
 	/**
