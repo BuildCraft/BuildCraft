@@ -10,7 +10,6 @@ package buildcraft.api.power;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
-import java.util.EnumSet;
 
 public final class PowerHandler {
 
