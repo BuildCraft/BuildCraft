@@ -330,6 +330,7 @@ public class Utils {
 		}
 
 		EntityBlock block = CoreProxy.proxy.newEntityBlock(world, i, j, k, iSize, jSize, kSize, kind);
+		block.setBrightness(210);
 
 		world.spawnEntityInWorld(block);
 
