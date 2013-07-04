@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core;
 
 import net.minecraft.entity.Entity;
@@ -21,12 +19,11 @@ public class EntityBlock extends Entity {
 	@SideOnly(Side.CLIENT)
 	public Icon texture;
 	public float shadowSize = 0;
-
 	public float rotationX = 0;
 	public float rotationY = 0;
 	public float rotationZ = 0;
-
 	public double iSize, jSize, kSize;
+	private int brightness = -1;
 
 	public EntityBlock(World world) {
 		super(world);
@@ -68,28 +65,31 @@ public class EntityBlock extends Entity {
 		setPosition(posX + d, posY + d1, posZ + d2);
 	}
 
+	public void setBrightness(int brightness) {
+		this.brightness = brightness;
+	}
+
 	@Override
 	protected void entityInit() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		iSize = nbttagcompound.getDouble("iSize");
-		jSize = nbttagcompound.getDouble("jSize");
-		kSize = nbttagcompound.getDouble("kSize");
+	protected void readEntityFromNBT(NBTTagCompound data) {
+		iSize = data.getDouble("iSize");
+		jSize = data.getDouble("jSize");
+		kSize = data.getDouble("kSize");
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setDouble("iSize", iSize);
-		nbttagcompound.setDouble("jSize", jSize);
-		nbttagcompound.setDouble("kSize", kSize);
+	protected void writeEntityToNBT(NBTTagCompound data) {
+		data.setDouble("iSize", iSize);
+		data.setDouble("jSize", jSize);
+		data.setDouble("kSize", kSize);
 	}
 
 	@Override
 	public int getBrightnessForRender(float par1) {
-		return 210;
+		return brightness > 0 ? brightness : super.getBrightnessForRender(par1);
 	}
 }

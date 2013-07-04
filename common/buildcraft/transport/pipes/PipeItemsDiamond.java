@@ -70,7 +70,7 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 			// no breaks here.
 			PipeLogicDiamond diamondLogic = (PipeLogicDiamond) logic;
 			for (int slot = 0; slot < 9; ++slot) {
-				ItemStack stack = diamondLogic.getStackInSlot(dir.ordinal() * 9 + slot);
+				ItemStack stack = diamondLogic.getFilters().getStackInSlot(dir.ordinal() * 9 + slot);
 
 				if (stack != null) {
 					foundFilter = true;

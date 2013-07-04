@@ -40,7 +40,7 @@ public class GuiHandler implements IGuiHandler {
 
 		switch (ID) {
 		case GuiIds.PIPE_DIAMOND:
-			return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond) pipe.pipe.logic);
+			return new ContainerDiamondPipe(player.inventory, ((PipeLogicDiamond) pipe.pipe.logic).getFilters());
 			
 		case GuiIds.PIPE_EMERALD_ITEM:
 			return new ContainerEmeraldPipe(player.inventory, (IInventory) pipe.pipe);

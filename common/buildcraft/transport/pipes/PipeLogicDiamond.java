@@ -1,29 +1,25 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.pipes;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.transport.BlockGenericPipe;
+import net.minecraft.inventory.IInventory;
 
-public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
+public class PipeLogicDiamond extends PipeLogic {
 
-	private SimpleInventory filters = new SimpleInventory(54, "items", 1);
+	private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
 
 	/* PIPE LOGIC */
 	@Override
@@ -57,94 +53,7 @@ public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 		filters.writeToNBT(nbttagcompound);
 	}
 
-	/* ISPECIALINVENTORY */
-	@Override
-	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
-		return 0;
+	public IInventory getFilters() {
+		return filters;
 	}
-
-	@Override
-	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount) {
-		return new ItemStack[0];
-	}
-
-	/* IINVENTORY IMPLEMENTATION */
-	@Override
-	public int getSizeInventory() {
-		return filters.getSizeInventory();
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return filters.getStackInSlot(i);
-	}
-
-	@Override
-	public String getInvName() {
-		return "Filters";
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return filters.getInventoryStackLimit();
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-		return filters.getStackInSlotOnClosing(i);
-	}
-
-	@Override
-	public void onInventoryChanged() {
-		filters.onInventoryChanged();
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer var1) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
-	}
-
-	@Override
-	public void openChest() {
-	}
-
-	@Override
-	public void closeChest() {
-	}
-
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		ItemStack stack = filters.decrStackSize(i, j);
-
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-
-		return stack;
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-
-		filters.setInventorySlotContents(i, itemstack);
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-
-	}
-
-    @Override
-    public boolean isInvNameLocalized()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean isStackValidForSlot(int i, ItemStack itemstack)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
 }

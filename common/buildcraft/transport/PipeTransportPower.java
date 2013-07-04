@@ -13,6 +13,7 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
+import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
@@ -76,9 +77,13 @@ public class PipeTransportPower extends PipeTransport {
 		if (tile instanceof IPowerReceptor) {
 			IPowerReceptor receptor = (IPowerReceptor) tile;
 			PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-			if (receiver == null)
-				return false;
-			if (container.pipe instanceof PipePowerWood || receiver.getType().canReceiveFromPipes())
+			if (receiver != null && receiver.getType().canReceiveFromPipes())
+				return true;
+		}
+
+		if (container.pipe instanceof PipePowerWood && tile instanceof IPowerEmitter) {
+			IPowerEmitter emitter = (IPowerEmitter) tile;
+			if (emitter.canEmitPowerFrom(side.getOpposite()))
 				return true;
 		}
 
@@ -141,7 +146,12 @@ public class PipeTransportPower extends PipeTransport {
 					if (j != i && powerQuery[j] > 0) {
 						float watts = 0.0F;
 
-						if (tiles[j] instanceof TileGenericPipe) {
+						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[j]);
+						if (prov != null && prov.powerRequest() > 0) {
+							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
+							watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+							internalPower[i] -= watts;
+						} else if (tiles[j] instanceof TileGenericPipe) {
 							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
 							TileGenericPipe nearbyTile = (TileGenericPipe) tiles[j];
 
@@ -149,15 +159,6 @@ public class PipeTransportPower extends PipeTransport {
 
 							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 							internalPower[i] -= watts;
-						} else if (tiles[j] instanceof IPowerReceptor) {
-							IPowerReceptor pow = (IPowerReceptor) tiles[j];
-							PowerReceiver prov = pow.getPowerReceiver(ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
-
-							if (prov != null && prov.getType().canReceiveFromPipes() && prov.powerRequest() > 0) {
-								watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
-								watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
-								internalPower[i] -= watts;
-							}
 						}
 
 						displayPower[j] += watts;
@@ -183,18 +184,15 @@ public class PipeTransportPower extends PipeTransport {
 			overload = OVERLOAD_TICKS;
 		}
 
-		// Compute the tiles requesting energy that are not pipes
+		// Compute the tiles requesting energy that are not power pipes
 
 		for (int i = 0; i < 6; ++i) {
-			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
-				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
-				PowerReceiver prov = receptor.getPowerReceiver(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
-				if (prov != null && prov.getType().canReceiveFromPipes()) {
-					float request = prov.powerRequest();
+			PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[i]);
+			if (prov != null) {
+				float request = prov.powerRequest();
 
-					if (request > 0) {
-						requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
-					}
+				if (request > 0) {
+					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
 				}
 			}
 		}
@@ -251,6 +249,19 @@ public class PipeTransportPower extends PipeTransport {
 
 	}
 
+	private PowerReceiver getReceiverOnSide(ForgeDirection side) {
+		TileEntity tile = tiles[side.ordinal()];
+		if (!(tile instanceof IPowerReceptor))
+			return null;
+		IPowerReceptor receptor = (IPowerReceptor) tile;
+		PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
+		if (receiver == null)
+			return null;
+		if (!receiver.getType().canReceiveFromPipes())
+			return null;
+		return receiver;
+	}
+
 	public boolean isOverloaded() {
 		return overload >= OVERLOAD_TICKS;
 	}
@@ -279,6 +290,11 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
+	/**
+	 * Do NOT ever call this from outside Buildcraft unless you are a pipe mod.
+	 * It is NOT part of the API. All power input MUST go through designated
+	 * input pipes, such as Wooden Power Pipes.
+	 */
 	public float receiveEnergy(ForgeDirection from, float val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
