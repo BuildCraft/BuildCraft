@@ -142,7 +142,7 @@ public class BuildCraftTransport {
 	public static Item pipePowerQuartz;
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
-	public static Item facadeItem;
+	public static ItemFacade facadeItem;
 	public static Item plugItem;
 	public static BlockFilteredBuffer filteredBufferBlock;
 	// public static Item pipeItemsStipes;
@@ -355,7 +355,7 @@ public class BuildCraftTransport {
 			Property pipePlugId = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_ITEM, "pipePlug.id", DefaultProps.PIPE_PLUG_ID);
 			plugItem = new ItemPlug(pipePlugId.getInt());
 			plugItem.setUnlocalizedName("pipePlug");
-			
+
 			Property filteredBufferId = BuildCraftCore.mainConfiguration.getBlock("filteredBuffer.id", DefaultProps.FILTERED_BUFFER);
 			filteredBufferBlock = new BlockFilteredBuffer(filteredBufferId.getInt());
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setUnlocalizedName("filteredBufferBlock"));
@@ -429,6 +429,9 @@ public class BuildCraftTransport {
 				new Object[] { "wdw", "wcw", "wpw", Character.valueOf('w'), "plankWood", Character.valueOf('d'),
 						BuildCraftTransport.pipeItemsDiamond, Character.valueOf('c'), Block.chest, Character.valueOf('p'),
 						Block.pistonBase });
+
+		//Facade turning helper
+		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 	}
 
 	@IMCCallback
