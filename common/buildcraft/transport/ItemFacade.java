@@ -10,8 +10,10 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -159,7 +161,7 @@ public class ItemFacade extends ItemBuildCraft {
 	public static void addFacade(ItemStack itemStack) {
 		ItemStack facade = getStack(itemStack.itemID, itemStack.getItemDamage());
 		allFacades.add(facade);
-		
+
 		ItemStack facade6 = facade.copy();
 		facade6.stackSize = 6;
 
@@ -176,13 +178,76 @@ public class ItemFacade extends ItemBuildCraft {
                 ItemStack rotLog2 = getStack(itemStack.itemID, itemStack.getItemDamage() | 8);
                 allFacades.add(rotLog1);
                 allFacades.add(rotLog2);
-                CoreProxy.proxy.addShapelessRecipe(rotLog1, new Object[] { mainLog });
-                CoreProxy.proxy.addShapelessRecipe(rotLog2, new Object[] { rotLog1 });
-                CoreProxy.proxy.addShapelessRecipe(mainLog, new Object[] { rotLog2 });
 	        }
 		}
 	}
 
+    private static final ItemStack NO_MATCH = new ItemStack(0,0,0);
+	public class FacadeRecipe implements IRecipe {
+        @Override
+        public boolean matches(InventoryCrafting inventorycrafting, World world)
+        {
+            ItemStack slotmatch = null;
+            for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
+                ItemStack slot = inventorycrafting.getStackInSlot(i);
+                if (slot != null && slot.itemID == ItemFacade.this.itemID && slotmatch == null) {
+                    slotmatch = slot;
+                } else if (slot != null) {
+                    slotmatch = NO_MATCH;
+                }
+            }
+            if (slotmatch != null && slotmatch != NO_MATCH) {
+                int blockId = ItemFacade.getBlockId(slotmatch);
+                return blockId < Block.blocksList.length && Block.blocksList[blockId] != null && Block.blocksList[blockId].getRenderType() == 31;
+            }
+
+            return false;
+        }
+
+        @Override
+        public ItemStack getCraftingResult(InventoryCrafting inventorycrafting)
+        {
+            ItemStack slotmatch = null;
+            for (int i = 0; i < inventorycrafting.getSizeInventory(); i++) {
+                ItemStack slot = inventorycrafting.getStackInSlot(i);
+                if (slot != null && slot.itemID == ItemFacade.this.itemID && slotmatch == null) {
+                    slotmatch = slot;
+                } else if (slot != null) {
+                    slotmatch = NO_MATCH;
+                }
+            }
+            if (slotmatch != null && slotmatch != NO_MATCH) {
+                int blockId = ItemFacade.getBlockId(slotmatch);
+                int blockMeta = ItemFacade.getMetaData(slotmatch);
+                if (blockId >= Block.blocksList.length)
+                    return null;
+                Block bl = Block.blocksList[blockId];
+                // No Meta
+                if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0xC) == 0)
+                    return getStack(blockId, (blockMeta & 0x3) | 4);
+                // Meta | 4 = true
+                if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x8) == 0)
+                    return getStack(blockId, (blockMeta  & 0x3) | 8);
+                // Meta | 8 = true
+                if (bl != null && bl.getRenderType() == 31 && (blockMeta & 0x4) == 0)
+                    return getStack(blockId, (blockMeta  & 0x3));
+            }
+            return null;
+        }
+
+        @Override
+        public int getRecipeSize()
+        {
+            return 1;
+        }
+
+        @Override
+        public ItemStack getRecipeOutput()
+        {
+            return null;
+        }
+
+	}
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
@@ -196,7 +261,7 @@ public class ItemFacade extends ItemBuildCraft {
     {
         return 0;
     }
-	
+
 	public static ItemStack getStack(int blockID, int metadata) {
 		ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);
 		NBTTagCompound nbt = new NBTTagCompound("tag");
