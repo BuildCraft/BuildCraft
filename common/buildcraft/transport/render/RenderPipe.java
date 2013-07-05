@@ -196,7 +196,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		BlockInterface block = new BlockInterface();
-		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Normal);
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Normal.ordinal());
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -222,7 +222,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.Power_Overload);
+		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Overload.ordinal());
 
 		size = Utils.pipeMaxPos - Utils.pipeMinPos;
 

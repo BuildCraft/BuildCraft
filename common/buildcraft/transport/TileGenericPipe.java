@@ -29,8 +29,9 @@ import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeEntry;
@@ -179,10 +180,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			refreshRenderState = false;
 		}
 
-		IPowerProvider provider = getPowerProvider();
+		PowerReceiver provider = getPowerReceiver(null);
 
 		if (provider != null) {
-			provider.update(this);
+			provider.update();
 		}
 
 		if (pipe != null) {
@@ -319,25 +320,17 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			((IPowerReceptor) pipe).setPowerProvider(provider);
-		}
-
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
+	public PowerHandler.PowerReceiver getPowerReceiver(ForgeDirection side) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
-			return ((IPowerReceptor) pipe).getPowerProvider();
+			return ((IPowerReceptor) pipe).getPowerReceiver(null);
 		else
 			return null;
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			((IPowerReceptor) pipe).doWork();
+			((IPowerReceptor) pipe).doWork(workProvider);
 		}
 	}
 
@@ -410,13 +403,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 			packet.addStateForSerialization((byte) 2, (IClientState) pipe);
 		}
 		return packet.getPacket();
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor)
-			return ((IPowerReceptor) pipe).powerRequest(from);
-		return 0;
 	}
 
 	@Override

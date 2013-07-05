@@ -22,9 +22,10 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.proxy.CoreProxy;
@@ -37,7 +38,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
-	private IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
 
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
@@ -51,9 +52,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			entitiesDropped[i] = -1;
 		}
 
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(25, 1, 64, 1, 256);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(1, 64, 1, 256);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeItemsObsidian;
+		return PipeIconProvider.TYPE.PipeItemsObsidian.ordinal();
 	}
 
 	@Override
@@ -145,12 +146,12 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 		for (int j = 1; j < 5; ++j)
 			if (trySucc(j))
 				return;
 
-		powerProvider.useEnergy(1, 1, true);
+		powerHandler.useEnergy(1, 1, true);
 	}
 
 	private boolean trySucc(int distance) {
@@ -175,7 +176,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 					EntityMinecartChest cart = (EntityMinecartChest) list.get(g);
 					if (!cart.isDead) {
 						ItemStack stack = checkExtractGeneric(cart, true, getOpenOrientation());
-						if (stack != null && powerProvider.useEnergy(1, 1, true) == 1) {
+						if (stack != null && powerHandler.useEnergy(1, 1, true) == 1) {
 							EntityItem entityitem = new EntityItem(worldObj, cart.posX, cart.posY + 0.3F, cart.posZ, stack);
 							entityitem.delayBeforeCanPickup = 10;
 							worldObj.spawnEntityInWorld(entityitem);
@@ -224,7 +225,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 				CoreProxy.proxy.obsidianPipePickup(worldObj, item, this.container);
 
-				float energyUsed = powerProvider.useEnergy(distance, contained.stackSize * distance, true);
+				float energyUsed = powerHandler.useEnergy(distance, contained.stackSize * distance, true);
 
 				if (distance == 0 || energyUsed / distance == contained.stackSize) {
 					stack = contained;
@@ -240,7 +241,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 					speed = 0.01;
 				}
 			} else if (entity instanceof EntityArrow) {
-				powerProvider.useEnergy(distance, distance, true);
+				powerHandler.useEnergy(distance, distance, true);
 				stack = new ItemStack(Item.arrow, 1);
 				CoreProxy.proxy.removeEntity(entity);
 			}
@@ -277,25 +278,15 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				if (item.entityId == entitiesDropped[i])
 					return false;
 
-			return powerProvider.useEnergy(1, distance, false) >= distance;
+			return powerHandler.useEnergy(1, distance, false) >= distance;
 		} else if (entity instanceof EntityArrow)
-			return powerProvider.useEnergy(1, distance, false) >= distance;
+			return powerHandler.useEnergy(1, distance, false) >= distance;
 		else
 			return false;
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
-	}
-
-	@Override
-	public int powerRequest(ForgeDirection from) {
-		return getPowerProvider().getMaxEnergyReceived();
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 }

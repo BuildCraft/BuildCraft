@@ -34,7 +34,7 @@ public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipeLiquidsVoid;
+		return PipeIconProvider.TYPE.PipeLiquidsVoid.ordinal();
 	}
 
 	@Override

@@ -16,23 +16,25 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
+public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection {
 
 	boolean isDigging = true;
-	IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
 
 	public TileMiningWell() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
-		powerProvider.configure(50, 100, 100, 60, 1000);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler = new PowerHandler(this, Type.MACHINE);
+		powerHandler.configure(100, 100, 60, 1000);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	/**
@@ -40,8 +42,8 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
-	public void doWork() {
-		if (powerProvider.useEnergy(60, 60, true) != 60)
+	public void doWork(PowerHandler workProvider) {
+		if (powerHandler.useEnergy(60, 60, true) != 60)
 			return;
 
 		World world = worldObj;
@@ -114,13 +116,8 @@ public class TileMiningWell extends TileMachine implements IMachine, IPowerRecep
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-	}
-
-	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override

@@ -7,19 +7,18 @@ import buildcraft.core.CoreIconProvider;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.Engine;
 import buildcraft.energy.TileEngine;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 
 	protected class EngineLedger extends Ledger {
 
-		Engine engine;
+		TileEngine engine;
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
 		int textColour = 0x000000;
 
-		public EngineLedger(Engine engine) {
+		public EngineLedger(TileEngine engine) {
 			this.engine = engine;
 			maxHeight = 94;
 			overlayColor = 0xd46c1f;
@@ -40,17 +39,17 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
-			fontRenderer.drawString(String.format("%.1f MJ/t", engine.getCurrentOutput()), x + 22, y + 32, textColour);
+			fontRenderer.drawString(String.format("%.1f MJ/t", engine.currentOutput), x + 22, y + 32, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
 			fontRenderer.drawString(String.format("%.1f MJ", engine.getEnergyStored()), x + 22, y + 56, textColour);
 			fontRenderer.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
-			fontRenderer.drawString(String.format("%.2f \u00B0C", (engine.getHeat() / 100.0) + 20.0), x + 22, y + 80, textColour);
+			fontRenderer.drawString(String.format("%.2f \u00B0C", engine.getHeat()), x + 22, y + 80, textColour);
 
 		}
 
 		@Override
 		public String getTooltip() {
-			return engine.getCurrentOutput() + " MJ/t";
+			return String.format("%.1f MJ/t", engine.currentOutput);
 		}
 	}
 
@@ -61,6 +60,6 @@ public abstract class GuiEngine extends GuiBuildCraft {
 	@Override
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);
-		ledgerManager.add(new EngineLedger(((TileEngine) tile).engine));
+		ledgerManager.add(new EngineLedger((TileEngine) tile));
 	}
 }

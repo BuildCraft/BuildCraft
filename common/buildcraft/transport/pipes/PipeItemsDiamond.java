@@ -45,13 +45,13 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
 		switch(direction){
-			case UNKNOWN: return PipeIconProvider.PipeItemsDiamond_Center;
-			case DOWN: return PipeIconProvider.PipeItemsDiamond_Down;
-			case UP: return PipeIconProvider.PipeItemsDiamond_Up;
-			case NORTH: return PipeIconProvider.PipeItemsDiamond_North;
-			case SOUTH: return PipeIconProvider.PipeItemsDiamond_South;
-			case WEST: return PipeIconProvider.PipeItemsDiamond_West;
-			case EAST: return PipeIconProvider.PipeItemsDiamond_East;
+			case UNKNOWN: return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
+			case DOWN: return PipeIconProvider.TYPE.PipeItemsDiamond_Down.ordinal();
+			case UP: return PipeIconProvider.TYPE.PipeItemsDiamond_Up.ordinal();
+			case NORTH: return PipeIconProvider.TYPE.PipeItemsDiamond_North.ordinal();
+			case SOUTH: return PipeIconProvider.TYPE.PipeItemsDiamond_South.ordinal();
+			case WEST: return PipeIconProvider.TYPE.PipeItemsDiamond_West.ordinal();
+			case EAST: return PipeIconProvider.TYPE.PipeItemsDiamond_East.ordinal();
 			default: throw new IllegalArgumentException("direction out of bounds");
 		}
 	}

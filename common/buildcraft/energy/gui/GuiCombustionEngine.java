@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.EngineIron;
+import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.TileEngine;
 
 public class GuiCombustionEngine extends GuiEngine {
@@ -44,15 +44,14 @@ public class GuiCombustionEngine extends GuiEngine {
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 
-		TileEngine engine = (TileEngine) tile;
-		EngineIron engineIron = ((EngineIron) engine.engine);
+		TileEngineIron engine = (TileEngineIron) tile;
 
 		if (engine.getScaledBurnTime(58) > 0) {
-			displayGauge(j, k, 19, 104, engine.getScaledBurnTime(58), engineIron.getFuel());
+			displayGauge(j, k, 19, 104, engine.getScaledBurnTime(58), engine.getFuel());
 		}
 
-		if (engineIron.getScaledCoolant(58) > 0) {
-			displayGauge(j, k, 19, 122, engineIron.getScaledCoolant(58), engineIron.getCoolant());
+		if (engine.getScaledCoolant(58) > 0) {
+			displayGauge(j, k, 19, 122, engine.getScaledCoolant(58), engine.getCoolant());
 		}
 	}
 

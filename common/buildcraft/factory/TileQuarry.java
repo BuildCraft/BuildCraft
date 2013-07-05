@@ -27,15 +27,16 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BptBlueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -51,7 +52,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
-public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
+public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 
 	public @TileNetworkData
 	Box box = new Box();
@@ -68,18 +69,18 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public EntityRobot builder;
 	BptBuilderBase bluePrintBuilder;
 	public EntityMechanicalArm arm;
-	public IPowerProvider powerProvider;
+	public PowerHandler powerHandler;
 	boolean isDigging = false;
 	public static final int MAX_ENERGY = 15000;
 
 	public TileQuarry() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerHandler = new PowerHandler(this, PowerHandler.Type.MACHINE);
 		initPowerProvider();
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
-		powerProvider.configurePowerPerdition(2, 1);
+		powerHandler.configure(50, 100, 25, MAX_ENERGY);
+		powerHandler.configurePowerPerdition(2, 1);
 	}
 
 	public void createUtilsIfNeeded() {
@@ -146,9 +147,9 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		}
 		super.updateEntity();
 		if (inProcess) {
-			float energyToUse = 2 + powerProvider.getEnergyStored() / 500;
+			float energyToUse = 2 + powerHandler.getEnergyStored() / 500;
 
-			float energy = powerProvider.useEnergy(energyToUse, energyToUse, true);
+			float energy = powerHandler.useEnergy(energyToUse, energyToUse, true);
 
 			if (energy > 0) {
 				moveHead(0.1 + energy / 200F);
@@ -189,16 +190,14 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	protected void buildFrame() {
 
-		powerProvider.configure(20, 50, 100, 25, MAX_ENERGY);
-		if (powerProvider.useEnergy(25, 25, true) != 25)
+		powerHandler.configure(50, 100, 25, MAX_ENERGY);
+		if (powerHandler.useEnergy(25, 25, true) != 25)
 			return;
-
-		powerProvider.getTimeTracker().markTime(worldObj);
 
 		if (builder == null) {
 			builder = new EntityRobot(worldObj, box);
@@ -211,8 +210,8 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	}
 
 	protected void dig() {
-		powerProvider.configure(20, 100, 500, 60, MAX_ENERGY);
-		if (powerProvider.useEnergy(60, 60, true) != 60)
+		powerHandler.configure(100, 500, 60, MAX_ENERGY);
+		if (powerHandler.useEnergy(60, 60, true) != 60)
 			return;
 
 		if (!findTarget(true)) {
@@ -336,7 +335,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerHandler.readFromNBT(nbttagcompound);
 		initPowerProvider();
 
 		if (nbttagcompound.hasKey("box")) {
@@ -374,7 +373,7 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerHandler.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setInteger("targetX", targetX);
 		nbttagcompound.setInteger("targetY", targetY);
@@ -402,7 +401,6 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		int blockId = worldObj.getBlockId(i, j, k);
 
 		if (isQuarriableBlock(i, j, k)) {
-			powerProvider.getTimeTracker().markTime(worldObj);
 
 			// Share this with mining well!
 
@@ -666,15 +664,10 @@ public class TileQuarry extends TileMachine implements IMachine, IPowerReceptor,
 		isDigging = true;
 	}
 
-	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
-
-	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override

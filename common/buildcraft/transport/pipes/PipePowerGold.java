@@ -31,6 +31,6 @@ public class PipePowerGold extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipePowerGold;
+		return PipeIconProvider.TYPE.PipePowerGold.ordinal();
 	}
 }

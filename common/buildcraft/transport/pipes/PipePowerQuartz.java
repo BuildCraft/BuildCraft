@@ -31,6 +31,6 @@ public class PipePowerQuartz extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.PipePowerQuartz;
+		return PipeIconProvider.TYPE.PipePowerQuartz.ordinal();
 	}
 }

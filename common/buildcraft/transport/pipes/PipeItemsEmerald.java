@@ -40,8 +40,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
 		super(transport, new PipeLogicEmerald(), itemID);
 
-		standardIconIndex = PipeIconProvider.PipeItemsEmerald_Standard;
-		solidIconIndex = PipeIconProvider.PipeAllEmerald_Solid;
+		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
+		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 	}
 
 	public PipeItemsEmerald(int itemID) {
@@ -77,11 +77,11 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 
 		/* ISELECTIVEINVENTORY */
 		if (inventory instanceof ISelectiveInventory) {
-			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) getPowerProvider().getEnergyStored());
+			ItemStack[] stacks = ((ISelectiveInventory) inventory).extractItem(new ItemStack[]{getCurrentFilter()}, false, doRemove, from, (int) powerHandler.getEnergyStored());
 			if (doRemove) {
 				for (ItemStack stack : stacks) {
 					if (stack != null) {
-						getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+						powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 					}
 				}
 				incrementFilter();
@@ -90,7 +90,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 
 		/* ISPECIALINVENTORY */
 		} else if (inventory instanceof ISpecialInventory) {
-				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) getPowerProvider().getEnergyStored());
+				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
 				if (stacks != null) {
 					for (ItemStack stack : stacks) {
 						if(stack == null)
@@ -109,10 +109,10 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 						}
 					}
 					if (doRemove) {
-						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) getPowerProvider().getEnergyStored());
+						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerHandler.getEnergyStored());
 						for (ItemStack stack : stacks) {
 							if (stack != null) {
-								getPowerProvider().useEnergy(stack.stackSize, stack.stackSize, true);
+								powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 							}
 						}
 					}
@@ -168,7 +168,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 				}
 				if (doRemove) {
 					incrementFilter();
-					return inventory.decrStackSize(i, (int) getPowerProvider().useEnergy(1, stack.stackSize, true));
+					return inventory.decrStackSize(i, (int) powerHandler.useEnergy(1, stack.stackSize, true));
 				} else {
 					return stack;
 				}

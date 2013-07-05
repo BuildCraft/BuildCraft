@@ -26,18 +26,20 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class TilePump extends TileMachine implements IMachine, IPowerReceptor, ITankContainer {
+public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor, ITankContainer {
 
 	public static int MAX_LIQUID = LiquidContainerRegistry.BUCKET_VOLUME;
 	EntityBlock tube;
@@ -45,17 +47,17 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	LiquidTank tank;
 	double tubeY = Double.NaN;
 	int aimY = 0;
-	private IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
 
 	public TilePump() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
 		tank = new LiquidTank(MAX_LIQUID);
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 1, 8, 10, 100);
-		powerProvider.configurePowerPerdition(1, 100);
+		powerHandler.configure(1, 8, 10, 100);
+		powerHandler.configurePowerPerdition(1, 100);
 	}
 
 	// TODO, manage this by different levels (pump what's above first...)
@@ -87,7 +89,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 
 					if (tank.fill(liquidToPump, false) == liquidToPump.amount) {
 
-						if (powerProvider.useEnergy(10, 10, true) == 10) {
+						if (powerHandler.useEnergy(10, 10, true) == 10) {
 							index = getNextIndexToPump(true);
 
 							if (liquidToPump.itemID != Block.waterStill.blockID || BuildCraftCore.consumeWaterSources) {
@@ -286,7 +288,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 
 		tubeY = nbttagcompound.getFloat("tubeY");
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerHandler.readFromNBT(nbttagcompound);
 		initPowerProvider();
 	}
 
@@ -294,7 +296,7 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerHandler.writeToNBT(nbttagcompound);
 
 		if (tank.getLiquid() != null) {
 			nbttagcompound.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
@@ -315,17 +317,12 @@ public class TilePump extends TileMachine implements IMachine, IPowerReceptor, I
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
-	}
-
-	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override

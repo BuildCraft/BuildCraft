@@ -13,10 +13,11 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.power.IPowerProvider;
+import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
@@ -42,15 +43,15 @@ public class PipeTransportPower extends PipeTransport {
 	}
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
-	public double[] displayPower = new double[6];
-	public double[] prevDisplayPower = new double[6];
+	public float[] displayPower = new float[6];
+	public float[] prevDisplayPower = new float[6];
 	public short[] clientDisplayPower = new short[6];
 	public int overload;
 	public int[] powerQuery = new int[6];
 	public int[] nextPowerQuery = new int[6];
 	public long currentDate;
-	public double[] internalPower = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-	public double[] internalNextPower = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	public float[] internalPower = new float[6];
+	public float[] internalNextPower = new float[6];
 	public int maxPower = 8;
 
 	public PipeTransportPower() {
@@ -70,9 +71,23 @@ public class PipeTransportPower extends PipeTransport {
 			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower))
 				return false;
+			return true;
 		}
 
-		return tile instanceof TileGenericPipe || tile instanceof IMachine || tile instanceof IPowerReceptor;
+		if (tile instanceof IPowerReceptor) {
+			IPowerReceptor receptor = (IPowerReceptor) tile;
+			PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
+			if (receiver != null && receiver.getType().canReceiveFromPipes())
+				return true;
+		}
+
+		if (container.pipe instanceof PipePowerWood && tile instanceof IPowerEmitter) {
+			IPowerEmitter emitter = (IPowerEmitter) tile;
+			if (emitter.canEmitPowerFrom(side.getOpposite()))
+				return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -114,11 +129,11 @@ public class PipeTransportPower extends PipeTransport {
 		// Send the power to nearby pipes who requested it
 
 		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
-		Arrays.fill(displayPower, 0.0);
+		Arrays.fill(displayPower, 0.0F);
 
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
-				double totalPowerQuery = 0;
+				float totalPowerQuery = 0;
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0)
@@ -129,27 +144,21 @@ public class PipeTransportPower extends PipeTransport {
 
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
-						double watts = 0.0;
+						float watts = 0.0F;
 
-						if (tiles[j] instanceof TileGenericPipe) {
-							watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
+						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[j]);
+						if (prov != null && prov.powerRequest() > 0) {
+							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
+							watts = prov.receiveEnergy(Type.PIPE, watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
+							internalPower[i] -= watts;
+						} else if (tiles[j] instanceof TileGenericPipe) {
+							watts = (internalPower[i] / totalPowerQuery) * powerQuery[j];
 							TileGenericPipe nearbyTile = (TileGenericPipe) tiles[j];
 
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 
 							watts = nearbyTransport.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(), watts);
 							internalPower[i] -= watts;
-						} else if (tiles[j] instanceof IPowerReceptor) {
-							IPowerReceptor pow = (IPowerReceptor) tiles[j];
-							if (pow.powerRequest(ForgeDirection.VALID_DIRECTIONS[j].getOpposite()) > 0) {
-								watts = (internalPower[i] / totalPowerQuery * powerQuery[j]);
-								IPowerProvider prov = pow.getPowerProvider();
-
-								if (prov != null) {
-									prov.receiveEnergy((float) watts, ForgeDirection.VALID_DIRECTIONS[j].getOpposite());
-									internalPower[i] -= watts;
-								}
-							}
 						}
 
 						displayPower[j] += watts;
@@ -161,7 +170,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		double highestPower = 0;
 		for (int i = 0; i < 6; i++) {
-			displayPower[i] = (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0) + displayPower[i]) / DISPLAY_SMOOTHING;
+			displayPower[i] = (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING;
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
 			}
@@ -175,12 +184,12 @@ public class PipeTransportPower extends PipeTransport {
 			overload = OVERLOAD_TICKS;
 		}
 
-		// Compute the tiles requesting energy that are not pipes
+		// Compute the tiles requesting energy that are not power pipes
 
 		for (int i = 0; i < 6; ++i) {
-			if (tiles[i] instanceof IPowerReceptor && !(tiles[i] instanceof TileGenericPipe)) {
-				IPowerReceptor receptor = (IPowerReceptor) tiles[i];
-				int request = receptor.powerRequest(ForgeDirection.VALID_DIRECTIONS[i].getOpposite());
+			PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[i]);
+			if (prov != null) {
+				float request = prov.powerRequest();
 
 				if (request > 0) {
 					requestEnergy(ForgeDirection.VALID_DIRECTIONS[i], request);
@@ -240,6 +249,19 @@ public class PipeTransportPower extends PipeTransport {
 
 	}
 
+	private PowerReceiver getReceiverOnSide(ForgeDirection side) {
+		TileEntity tile = tiles[side.ordinal()];
+		if (!(tile instanceof IPowerReceptor))
+			return null;
+		IPowerReceptor receptor = (IPowerReceptor) tile;
+		PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
+		if (receiver == null)
+			return null;
+		if (!receiver.getType().canReceiveFromPipes())
+			return null;
+		return receiver;
+	}
+
 	public boolean isOverloaded() {
 		return overload >= OVERLOAD_TICKS;
 	}
@@ -251,7 +273,7 @@ public class PipeTransportPower extends PipeTransport {
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
 
-			double[] next = internalPower;
+			float[] next = internalPower;
 			internalPower = internalNextPower;
 			internalNextPower = next;
 //			for (int i = 0; i < powerQuery.length; i++) {
@@ -268,7 +290,12 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
-	public double receiveEnergy(ForgeDirection from, double val) {
+	/**
+	 * Do NOT ever call this from outside Buildcraft unless you are a pipe mod.
+	 * It is NOT part of the API. All power input MUST go through designated
+	 * input pipes, such as Wooden Power Pipes.
+	 */
+	public float receiveEnergy(ForgeDirection from, float val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			return ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
@@ -283,7 +310,7 @@ public class PipeTransportPower extends PipeTransport {
 		return val;
 	}
 
-	public void requestEnergy(ForgeDirection from, int amount) {
+	public void requestEnergy(ForgeDirection from, float amount) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
@@ -304,8 +331,8 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = nbttagcompound.getInteger("powerQuery[" + i + "]");
 			nextPowerQuery[i] = nbttagcompound.getInteger("nextPowerQuery[" + i + "]");
-			internalPower[i] = nbttagcompound.getDouble("internalPower[" + i + "]");
-			internalNextPower[i] = nbttagcompound.getDouble("internalNextPower[" + i + "]");
+			internalPower[i] = (float) nbttagcompound.getDouble("internalPower[" + i + "]");
+			internalNextPower[i] = (float) nbttagcompound.getDouble("internalNextPower[" + i + "]");
 		}
 
 	}

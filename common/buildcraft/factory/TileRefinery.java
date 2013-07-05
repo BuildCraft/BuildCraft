@@ -22,16 +22,18 @@ import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerFramework;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.recipes.RefineryRecipe;
 import buildcraft.core.IMachine;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileRefinery extends TileMachine implements ITankContainer, IPowerReceptor, IInventory, IMachine {
+public class TileRefinery extends TileBuildCraft implements ITankContainer, IPowerReceptor, IInventory, IMachine {
 
 	private int[] filters = new int[2];
 	private int[] filtersMeta = new int[2];
@@ -43,11 +45,11 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	private int animationStage = 0;
 	SafeTimeTracker time = new SafeTimeTracker();
 	SafeTimeTracker updateNetworkTime = new SafeTimeTracker();
-	IPowerProvider powerProvider;
+	private PowerHandler powerHandler;
 	private boolean isActive;
 
 	public TileRefinery() {
-		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerHandler = new PowerHandler(this, Type.MACHINE);
 		initPowerProvider();
 
 		filters[0] = 0;
@@ -57,8 +59,8 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	private void initPowerProvider() {
-		powerProvider.configure(20, 25, 100, 25, 1000);
-		powerProvider.configurePowerPerdition(1, 1);
+		powerHandler.configure(25, 100, 25, 1000);
+		powerHandler.configurePowerPerdition(1, 1);
 	}
 
 	@Override
@@ -106,17 +108,12 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 	}
 
 	@Override
-	public void setPowerProvider(IPowerProvider provider) {
-		powerProvider = provider;
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return powerHandler.getPowerReceiver();
 	}
 
 	@Override
-	public IPowerProvider getPowerProvider() {
-		return powerProvider;
-	}
-
-	@Override
-	public void doWork() {
+	public void doWork(PowerHandler workProvider) {
 	}
 
 	@Override
@@ -157,7 +154,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 		isActive = true;
 
-		if (powerProvider.getEnergyStored() >= currentRecipe.energy) {
+		if (powerHandler.getEnergyStored() >= currentRecipe.energy) {
 			increaseAnimation();
 		} else {
 			decreaseAnimation();
@@ -166,7 +163,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		if (!time.markTimeIfDelay(worldObj, currentRecipe.delay))
 			return;
 
-		float energyUsed = powerProvider.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
+		float energyUsed = powerHandler.useEnergy(currentRecipe.energy, currentRecipe.energy, true);
 
 		if (energyUsed != 0) {
 			if (consumeInput(currentRecipe.ingredient1) && consumeInput(currentRecipe.ingredient2)) {
@@ -255,7 +252,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 		animationStage = nbttagcompound.getInteger("animationStage");
 		animationSpeed = nbttagcompound.getFloat("animationSpeed");
 
-		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerHandler.readFromNBT(nbttagcompound);
 		initPowerProvider();
 
 		filters[0] = nbttagcompound.getInteger("filters_0");
@@ -282,7 +279,7 @@ public class TileRefinery extends TileMachine implements ITankContainer, IPowerR
 
 		nbttagcompound.setInteger("animationStage", animationStage);
 		nbttagcompound.setFloat("animationSpeed", animationSpeed);
-		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+		powerHandler.writeToNBT(nbttagcompound);
 
 		nbttagcompound.setInteger("filters_0", filters[0]);
 		nbttagcompound.setInteger("filters_1", filters[1]);
