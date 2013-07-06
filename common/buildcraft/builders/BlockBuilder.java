@@ -25,7 +25,6 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.Position;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;

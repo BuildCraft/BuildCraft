@@ -1,6 +1,5 @@
 package buildcraft.transport;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.google.common.base.Throwables;

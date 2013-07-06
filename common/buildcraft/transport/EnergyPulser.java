@@ -55,10 +55,6 @@ public class EnergyPulser {
 		return isActive;
 	}
 
-	private float getPulseSpeed() {
-		return 0.1F;
-	}
-
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setBoolean("SinglePulse", singlePulse);
 		nbttagcompound.setBoolean("IsActive", isActive);

@@ -438,6 +438,7 @@ public class BlockGenericPipe extends BlockContainer {
 			case WEST:
 				setBlockBounds(Utils.pipeMinPos - 0.10F, min, min, Utils.pipeMinPos, max, max);
 				break;
+			default:
 			case EAST:
 				setBlockBounds(Utils.pipeMaxPos, min, min, Utils.pipeMaxPos + 0.10F, max, max);
 				break;

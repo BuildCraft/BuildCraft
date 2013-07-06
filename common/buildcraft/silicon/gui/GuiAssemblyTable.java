@@ -26,8 +26,6 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAssemblyTable;

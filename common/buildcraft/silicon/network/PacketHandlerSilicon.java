@@ -13,7 +13,6 @@ import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketNBT;
 import buildcraft.core.network.PacketSlotChange;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
