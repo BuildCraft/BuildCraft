@@ -14,7 +14,7 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 
 public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IOverrideDefaultTriggers {
-	
+
 	private final SimpleInventory inventoryFilters = new SimpleInventory(9, "FilteredBufferFilters", 1);
 	private final SimpleInventory inventoryStorage = new SimpleInventory(9, "FilteredBufferStorage", 64);
 
@@ -22,7 +22,7 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IO
 	public void updateEntity() {
 		super.updateEntity();
 	}
-	
+
 	public IInventory getFilters() {
 		return inventoryFilters;
 	}
@@ -78,22 +78,22 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory, IO
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 
 		ItemStack filterItemStack = inventoryFilters.getStackInSlot(i);
-		
+
 		if ( filterItemStack == null || filterItemStack.itemID != itemstack.itemID)
 			return false;
-		
+
 		if (Item.itemsList[itemstack.itemID].isDamageable())
 			return true;
-		
+
 		if (filterItemStack.getItemDamage() == itemstack.getItemDamage())
 			return true;
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();

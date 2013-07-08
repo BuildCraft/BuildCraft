@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
@@ -68,7 +69,7 @@ public class RenderEntityBlock extends Render {
 		World world = entity.worldObj;
 		BlockInterface util = new BlockInterface();
 		util.texture = entity.texture;
-		loadTexture("/terrain.png");
+		func_110776_a(TextureMap.field_110575_b);
 
 		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
 			for (int jBase = 0; jBase < entity.jSize; ++jBase) {

@@ -14,13 +14,12 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockOilStill extends BlockStationary implements ILiquid {
+public class BlockOilStill extends BlockStationary implements IFluid {
 
 	public BlockOilStill(int i, Material material) {
 		super(i, material);
@@ -35,7 +34,7 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	}
 
 	@Override
-	public int stillLiquidId() {
+	public int stillFluidId() {
 		return BuildCraftEnergy.oilStill.blockID;
 	}
 
@@ -45,7 +44,7 @@ public class BlockOilStill extends BlockStationary implements ILiquid {
 	}
 
 	@Override
-	public int stillLiquidMeta() {
+	public int stillFluidMeta() {
 		return 0;
 	}
 

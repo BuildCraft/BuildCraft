@@ -7,6 +7,7 @@
  */
 package buildcraft.transport.gui;
 
+import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.inventory.IInventory;
 
 import org.lwjgl.opengl.GL11;
@@ -18,7 +19,7 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 
 public class GuiDiamondPipe extends GuiBuildCraft {
-
+    public static final ResourceLocation gui = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/filter.png");
 	IInventory playerInventory;
 	PipeLogicDiamond filterInventory;
 
@@ -39,7 +40,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/filter.png");
+		mc.renderEngine.func_110577_a(gui);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);

@@ -121,7 +121,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 	}
 
 	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return false;
 	}
 

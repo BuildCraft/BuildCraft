@@ -7,12 +7,12 @@ import buildcraft.core.utils.Utils;
 public class InventoryWrapperSimple extends InventoryWrapper {
 
 	private final int[] slots;
-	
+
 	public InventoryWrapperSimple(IInventory inventory) {
 		super(inventory);
 		slots = Utils.createSlotArray(0, inventory.getSizeInventory());
 	}
-	
+
 	@Override
 	public int[] getAccessibleSlotsFromSide(int var1) {
 		return slots;
@@ -20,7 +20,7 @@ public class InventoryWrapperSimple extends InventoryWrapper {
 
 	@Override
 	public boolean canInsertItem(int slotIndex, ItemStack itemstack, int side) {
-		return isStackValidForSlot(slotIndex, itemstack);
+		return isItemValidForSlot(slotIndex, itemstack);
 	}
 
 	@Override

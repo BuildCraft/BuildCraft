@@ -16,8 +16,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import net.minecraftforge.liquids.LiquidDictionary;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
@@ -27,86 +27,86 @@ import buildcraft.core.render.RenderEntityBlock.BlockInterface;
  *
  * @author CovertJaguar <railcraft.wikispaces.com>
  */
-public class LiquidRenderer {
+public class FluidRenderer {
 
-	private static Map<LiquidStack, int[]> flowingRenderCache = new HashMap<LiquidStack, int[]>();
-	private static Map<LiquidStack, int[]> stillRenderCache = new HashMap<LiquidStack, int[]>();
+	private static Map<FluidStack, int[]> flowingRenderCache = new HashMap<FluidStack, int[]>();
+	private static Map<FluidStack, int[]> stillRenderCache = new HashMap<FluidStack, int[]>();
 	public static final int DISPLAY_STAGES = 100;
 	private static final BlockInterface liquidBlock = new BlockInterface();
 
-	public static class LiquidTextureException extends RuntimeException {
+	public static class FluidTextureException extends RuntimeException {
 
-		private final LiquidStack liquid;
+		private final FluidStack liquid;
 
-		public LiquidTextureException(LiquidStack liquid) {
+		public FluidTextureException(FluidStack liquid) {
 			super();
 			this.liquid = liquid;
 		}
 
 		@Override
 		public String getMessage() {
-			String liquidName = LiquidDictionary.findLiquidName(liquid);
+			String liquidName = FluidRegistry.getFluidName(liquid);
 			if (liquidName == null) {
 				liquidName = String.format("ID: %d Meta: %d", liquid.itemID, liquid.itemMeta);
 			}
-			return String.format("Liquid %s has no icon. Please contact the author of the mod the liquid came from.", liquidName);
+			return String.format("Fluid %s has no icon. Please contact the author of the mod the liquid came from.", liquidName);
 		}
 	}
 
-	public static class LiquidCanonException extends RuntimeException {
+	public static class FluidCanonException extends RuntimeException {
 
-		private final LiquidStack liquid;
+		private final FluidStack liquid;
 
-		public LiquidCanonException(LiquidStack liquid) {
+		public FluidCanonException(FluidStack liquid) {
 			super();
 			this.liquid = liquid;
 		}
 
 		@Override
 		public String getMessage() {
-			String liquidName = LiquidDictionary.findLiquidName(liquid);
+			String liquidName = FluidRegistry.getFluidName(liquid);
 			if (liquidName == null) {
 				liquidName = String.format("ID: %d Meta: %d", liquid.itemID, liquid.itemMeta);
 			}
-			return String.format("Liquid %s is not registered with the Liquid Dictionary. Please contact the author of the mod the liquid came from.", liquidName);
+			return String.format("Fluid %s is not registered with the Fluid Dictionary. Please contact the author of the mod the liquid came from.", liquidName);
 		}
 	}
 
-	public static Icon getLiquidTexture(LiquidStack liquid) {
+	public static Icon getFluidTexture(FluidStack liquid) {
 		if (liquid == null || liquid.itemID <= 0) {
 			return null;
 		}
-		LiquidStack canon = liquid.canonical();
+		FluidStack canon = liquid.canonical();
 		if (canon == null) {
-			throw new LiquidCanonException(liquid);
+			throw new FluidCanonException(liquid);
 		}
 		Icon icon = canon.getRenderingIcon();
 		if (icon == null) {
-			throw new LiquidTextureException(liquid);
+			throw new FluidTextureException(liquid);
 		}
 		return icon;
 	}
-	
-	public static String getLiquidSheet(LiquidStack liquid) {
+
+	public static String getFluidSheet(FluidStack liquid) {
 		if (liquid == null || liquid.itemID <= 0) {
 			return "/terrain.png";
 		}
-		LiquidStack canon = liquid.canonical();
+		FluidStack canon = liquid.canonical();
 		if (canon == null) {
-			throw new LiquidCanonException(liquid);
+			throw new FluidCanonException(liquid);
 		}
 		return canon.getTextureSheet();
 	}
 
-	public static int[] getLiquidDisplayLists(LiquidStack liquid, World world, boolean flowing) {
+	public static int[] getFluidDisplayLists(FluidStack liquid, World world, boolean flowing) {
 		if (liquid == null) {
 			return null;
 		}
 		liquid = liquid.canonical();
 		if(liquid == null){
-			throw new LiquidCanonException(liquid);
+			throw new FluidCanonException(liquid);
 		}
-		Map<LiquidStack, int[]> cache = flowing ? flowingRenderCache : stillRenderCache;
+		Map<FluidStack, int[]> cache = flowing ? flowingRenderCache : stillRenderCache;
 		int[] diplayLists = cache.get(liquid);
 		if (diplayLists != null) {
 			return diplayLists;
@@ -117,11 +117,11 @@ public class LiquidRenderer {
 		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
 			liquidBlock.baseBlock = Block.blocksList[liquid.itemID];
 			if (!flowing) {
-				liquidBlock.texture = getLiquidTexture(liquid);
+				liquidBlock.texture = getFluidTexture(liquid);
 			}
 		} else if (Item.itemsList[liquid.itemID] != null) {
 			liquidBlock.baseBlock = Block.waterStill;
-			liquidBlock.texture = getLiquidTexture(liquid);
+			liquidBlock.texture = getFluidTexture(liquid);
 		} else {
 			return null;
 		}

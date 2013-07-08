@@ -7,29 +7,29 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.InventoryMapper;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.utils.Utils;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.SlotCrafting;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.ForgeDirection;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
 
@@ -63,15 +63,14 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAutoWorkbench.this.worldObj);
+			super(TileAutoWorkbench.this.worldObj,"[BuildCraft]");
 			posX = TileAutoWorkbench.this.xCoord;
 			posY = TileAutoWorkbench.this.yCoord + 1;
 			posZ = TileAutoWorkbench.this.zCoord;
-			username = "[Buildcraft]";
 		}
 
 		@Override
-		public void sendChatToPlayer(String var1) {
+		public void sendChatToPlayer(ChatMessageComponent var1) {
 		}
 
 		@Override
@@ -288,7 +287,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int slot, ItemStack stack) {
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		if (slot == SLOT_RESULT) {
 			return false;
 		}
@@ -311,7 +310,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return isStackValidForSlot(slot, stack);
+		return isItemValidForSlot(slot, stack);
 	}
 
 	@Override

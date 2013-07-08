@@ -14,7 +14,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ITankContainer;
+import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeEntry;
 import buildcraft.transport.Pipe;
@@ -55,7 +55,7 @@ public class PipeLogicIron extends PipeLogic {
 				}
 			}
 
-			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer || tile instanceof TileGenericPipe) {
+			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof IFluidHandler || tile instanceof TileGenericPipe) {
 
 				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, nextMetadata,0);
 				container.scheduleRenderUpdate();

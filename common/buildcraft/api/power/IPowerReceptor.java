@@ -7,9 +7,9 @@
  */
 package buildcraft.api.power;
 
-import buildcraft.api.power.PowerHandler.PowerReceiver;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
 
 /**
  * This interface should be implemented by any Tile Entity that wishes to be

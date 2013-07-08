@@ -13,18 +13,19 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class PipeLiquidsStone extends Pipe {
+public class PipeFluidsGold extends Pipe {
 
-	public PipeLiquidsStone(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicStone(), itemID);
+	public PipeFluidsGold(int itemID) {
+		super(new PipeTransportFluids(), new PipeLogicGold(), itemID);
 
-		// ((PipeTransportLiquids) transport).flowRate = 40;
+		((PipeTransportFluids) transport).flowRate = 40;
+		((PipeTransportFluids) transport).travelDelay = 4;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
@@ -33,7 +34,7 @@ public class PipeLiquidsStone extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.TYPE.PipeLiquidsStone.ordinal();
+		return PipeIconProvider.TYPE.PipeFluidsGold.ordinal();
 	}
 
 }

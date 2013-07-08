@@ -1,18 +1,22 @@
 package buildcraft.silicon.gui;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.ResourceLocation;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
+
+import org.lwjgl.opengl.GL11;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.silicon.TileAdvancedCraftingTable;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
-import org.lwjgl.opengl.GL11;
 
 public class GuiAdvancedCraftingTable extends GuiBuildCraft {
-
+    public static final ResourceLocation gui = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
 	class AssemblyWorkbenchLedger extends Ledger {
 
 		int headerColour = 0xe1c92f;
@@ -31,7 +35,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
+			Minecraft.getMinecraft().renderEngine.func_110577_a(TextureMap.field_110576_c);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())
@@ -72,7 +76,7 @@ public class GuiAdvancedCraftingTable extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
+		mc.renderEngine.func_110577_a(gui);
 		int cornerX = (width - xSize) / 2;
 		int cornerY = (height - ySize) / 2;
 		drawTexturedModalRect(cornerX, cornerY, 0, 0, xSize, ySize);

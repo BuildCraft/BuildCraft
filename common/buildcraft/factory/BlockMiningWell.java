@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
@@ -55,7 +56,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack stack) {
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(),1);
@@ -66,7 +67,7 @@ public class BlockMiningWell extends BlockMachineRoot {
 		super.breakBlock(world, x, y, z, id, meta);
 		removePipes(world, x, y, z);
 	}
-	
+
 	public void removePipes(World world, int x, int y, int z) {
 		for (int depth = y - 1; depth > 0; depth--) {
 			int pipeID = world.getBlockId(x, depth, z);

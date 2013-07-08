@@ -7,6 +7,10 @@
  */
 package buildcraft.transport;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -21,10 +25,12 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
-import buildcraft.transport.pipes.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import buildcraft.transport.pipes.PipePowerCobblestone;
+import buildcraft.transport.pipes.PipePowerDiamond;
+import buildcraft.transport.pipes.PipePowerGold;
+import buildcraft.transport.pipes.PipePowerQuartz;
+import buildcraft.transport.pipes.PipePowerStone;
+import buildcraft.transport.pipes.PipePowerWood;
 
 public class PipeTransportPower extends PipeTransport {
 

@@ -2,37 +2,30 @@ package buildcraft.api.fuels;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.liquids.LiquidDictionary;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
-import net.minecraftforge.liquids.LiquidStack;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public final class IronEngineCoolant {
 
-	public static Map<String, Coolant> liquidCoolants = new HashMap<String, Coolant>();
-	public static Map<ItemData, LiquidStack> solidCoolants = new HashMap<ItemData, LiquidStack>();
+	public static BiMap<String, Coolant> liquidCoolants = HashBiMap.create();
+	public static Map<ItemData, FluidStack> solidCoolants = new HashMap<ItemData, FluidStack>();
 
-	public static LiquidStack getLiquidCoolant(ItemStack stack) {
+	public static FluidStack getFluidCoolant(ItemStack stack) {
 		return solidCoolants.get(new ItemData(stack.itemID, stack.getItemDamage()));
 	}
 
 	public static Coolant getCoolant(ItemStack stack) {
-		return getCoolant(getLiquidCoolant(stack));
+		return getCoolant(getFluidCoolant(stack));
 	}
 
-	public static Coolant getCoolant(LiquidStack liquid) {
-		if (liquid == null)
-			return null;
-		if (liquid.itemID <= 0)
-			return null;
-
-		String fluidId = LiquidDictionary.findLiquidName(liquid);
-		if (fluidId != null) {
-			return liquidCoolants.get(fluidId);
-		}
-
-		return null;
+	public static Coolant getCoolant(FluidStack liquid) {
+	    return liquid != null ? liquidCoolants.get(liquid.getFluid().getName()) : null;
 	}
 
 	private IronEngineCoolant() {
@@ -43,10 +36,9 @@ public final class IronEngineCoolant {
 		float getDegreesCoolingPerMB(float currentHeat);
 	}
 
-	public static void addCoolant(final LiquidStack liquid, final float degreesCoolingPerMB) {
-		String fluidId = LiquidDictionary.findLiquidName(liquid);
-		if (fluidId != null) {
-			liquidCoolants.put(fluidId, new Coolant() {
+	public static void addCoolant(final Fluid liquid, final float degreesCoolingPerMB) {
+		if (liquid != null) {
+			liquidCoolants.put(liquid.getName(), new Coolant() {
 				@Override
 				public float getDegreesCoolingPerMB(float currentHeat) {
 					return degreesCoolingPerMB;
@@ -55,8 +47,8 @@ public final class IronEngineCoolant {
 		}
 	}
 
-	public static void addCoolant(final int itemId, final int metadata, final LiquidStack coolant) {
-		if (Item.itemsList[itemId] != null && coolant != null && coolant.amount > 0) {
+	public static void addCoolant(final int itemId, final int metadata, final FluidStack coolant) {
+		if (Item.itemsList[itemId] != null && coolant != null) {
 			solidCoolants.put(new ItemData(itemId, metadata), coolant);
 		}
 	}
@@ -92,4 +84,9 @@ public final class IronEngineCoolant {
 			return true;
 		}
 	}
+
+    public static boolean isCoolant(Fluid fluid)
+    {
+        return liquidCoolants.inverse().containsKey(fluid);
+    }
 }

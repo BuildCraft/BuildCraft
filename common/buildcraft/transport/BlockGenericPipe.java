@@ -23,6 +23,7 @@ import net.minecraft.client.particle.EntityDiggingFX;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -578,7 +579,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving placer, ItemStack stack) {
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(world, x, y, z, placer, stack);
 		Pipe pipe = getPipe(world, x, y, z);
 
@@ -973,9 +974,9 @@ public class BlockGenericPipe extends BlockContainer {
 			px = (double) x + block.getBlockBoundsMaxX() + (double) b;
 		}
 
-		EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine);
-		fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
-		effectRenderer.addEffect(fx.func_70596_a(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+		EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, 0.0D, 0.0D, 0.0D, block, sideHit, worldObj.getBlockMetadata(x, y, z));
+		fx.func_110125_a(icon);
+		effectRenderer.addEffect(fx.applyColourMultiplier(x, y, z).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
 		return true;
 	}
 
@@ -1010,9 +1011,9 @@ public class BlockGenericPipe extends BlockContainer {
 					double py = y + (j + 0.5D) / (double) its;
 					double pz = z + (k + 0.5D) / (double) its;
 					int random = rand.nextInt(6);
-					EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta, Minecraft.getMinecraft().renderEngine);
-					fx.setParticleIcon(Minecraft.getMinecraft().renderEngine, icon);
-					effectRenderer.addEffect(fx.func_70596_a(x, y, z));
+					EntityDiggingFX fx = new EntityDiggingFX(worldObj, px, py, pz, px - x - 0.5D, py - y - 0.5D, pz - z - 0.5D, BuildCraftTransport.genericPipeBlock, random, meta);
+					fx.func_110125_a(icon);
+					effectRenderer.addEffect(fx.applyColourMultiplier(x, y, z));
 				}
 			}
 		}

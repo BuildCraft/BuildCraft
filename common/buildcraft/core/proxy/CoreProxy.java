@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -101,7 +102,7 @@ public class CoreProxy {
 	public void registerBlock(Block block) {
 		registerBlock(block, ItemBlockBuildCraft.class);
 	}
-	
+
 	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
 		GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
 	}
@@ -174,9 +175,9 @@ public class CoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
 			@Override
-			public void sendChatToPlayer(String var1) {
+			public void sendChatToPlayer(ChatMessageComponent var1) {
 			}
 
 			@Override
@@ -189,14 +190,13 @@ public class CoreProxy {
 				return null;
 			}
 		};
-		player.username = "[BuildCraft]";
 		return player;
 	}
 
 	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
-		EntityPlayer player = new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
 			@Override
-			public void sendChatToPlayer(String var1) {
+			public void sendChatToPlayer(ChatMessageComponent var1) {
 			}
 
 			@Override
@@ -209,7 +209,6 @@ public class CoreProxy {
 				return null;
 			}
 		};
-		player.username = "[BuildCraft]";
 		player.posX = x;
 		player.posY = y;
 		player.posZ = z;

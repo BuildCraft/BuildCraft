@@ -9,11 +9,11 @@ import buildcraft.core.utils.Utils;
 public abstract class InventoryWrapper implements ISidedInventory {
 
 	IInventory inventory;
-	
+
 	public InventoryWrapper(IInventory inventory) {
 		this.inventory = inventory;
 	}
-	
+
 	/* DIRECT MAPPING */
 	@Override public int getSizeInventory() { return inventory.getSizeInventory(); }
 	@Override public ItemStack getStackInSlot(int slotIndex) { return inventory.getStackInSlot(slotIndex); }
@@ -27,7 +27,7 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	@Override public boolean isUseableByPlayer(EntityPlayer entityplayer) { return inventory.isUseableByPlayer(entityplayer); }
 	@Override public void openChest() { inventory.openChest(); }
 	@Override public void closeChest() { inventory.closeChest(); }
-	@Override public boolean isStackValidForSlot(int slotIndex, ItemStack itemstack) { return inventory.isStackValidForSlot(slotIndex, itemstack); }
+	@Override public boolean isItemValidForSlot(int slotIndex, ItemStack itemstack) { return inventory.isItemValidForSlot(slotIndex, itemstack); }
 
 	/* STATIC HELPER */
 	public static ISidedInventory getWrappedInventory(Object inventory) {

@@ -17,11 +17,11 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
 @Deprecated
-public class BptBlockLiquid extends BptBlock {
+public class BptBlockFluid extends BptBlock {
 
 	private final ItemStack bucketStack;
 
-	public BptBlockLiquid(int blockId, ItemStack bucketStack) {
+	public BptBlockFluid(int blockId, ItemStack bucketStack) {
 		super(blockId);
 
 		this.bucketStack = bucketStack;

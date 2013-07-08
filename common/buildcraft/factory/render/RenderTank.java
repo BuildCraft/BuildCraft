@@ -9,11 +9,11 @@ package buildcraft.factory.render;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.render.LiquidRenderer;
+import buildcraft.core.render.FluidRenderer;
 import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {
@@ -23,12 +23,12 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		TileTank tank = ((TileTank) tileentity);
 
-		LiquidStack liquid = tank.tank.getLiquid();
+		FluidStack liquid = tank.tank.getFluid();
 		if (liquid == null || liquid.amount <= 0) {
 			return;
 		}
 
-		int[] displayList = LiquidRenderer.getLiquidDisplayLists(liquid, tileentity.worldObj, false);
+		int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, tileentity.worldObj, false);
 		if (displayList == null) {
 			return;
 		}
@@ -40,12 +40,12 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		bindTextureByName(LiquidRenderer.getLiquidSheet(liquid));
+		bindTextureByName(FluidRenderer.getFluidSheet(liquid));
 
 		GL11.glTranslatef((float) x + 0.125F, (float) y, (float) z + 0.125F);
 		GL11.glScalef(0.75F, 0.999F, 0.75F);
 
-		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (LiquidRenderer.DISPLAY_STAGES - 1))]);
+		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();

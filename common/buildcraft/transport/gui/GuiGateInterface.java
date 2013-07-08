@@ -17,7 +17,6 @@ import net.minecraft.util.Icon;
 
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;

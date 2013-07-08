@@ -1,6 +1,7 @@
 package buildcraft.energy.worldgen;
 
 import java.util.Random;
+
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraftforge.common.BiomeDictionary;

@@ -7,27 +7,31 @@
  */
 package buildcraft.energy.worldgen;
 
-import java.util.Random;
+import static net.minecraftforge.common.BiomeDictionary.Type.DESERT;
+import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
+import static net.minecraftforge.common.BiomeDictionary.Type.FROZEN;
+import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
 
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.terraingen.TerrainGen;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
-import static net.minecraftforge.common.BiomeDictionary.Type.*;
+import net.minecraftforge.event.terraingen.TerrainGen;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 
 public class OilPopulate {
 

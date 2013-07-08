@@ -27,9 +27,9 @@ public abstract class PipeManager {
 	/**
 	 * param extractor can be null
 	 */
-	public static boolean canExtractLiquids(Object extractor, World world, int i, int j, int k) {
+	public static boolean canExtractFluids(Object extractor, World world, int i, int j, int k) {
 		for (IExtractionHandler handler : extractionHandlers)
-			if (!handler.canExtractLiquids(extractor, world, i, j, k))
+			if (!handler.canExtractFluids(extractor, world, i, j, k))
 				return false;
 
 		return true;

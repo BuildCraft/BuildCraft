@@ -227,9 +227,9 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	public int getInventoryStackLimit() {
 		return 64;
 	}
-	
+
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
 		return false;
 	}

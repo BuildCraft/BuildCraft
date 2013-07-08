@@ -1,6 +1,7 @@
 package buildcraft.energy.worldgen;
 
 import java.util.Random;
+
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 

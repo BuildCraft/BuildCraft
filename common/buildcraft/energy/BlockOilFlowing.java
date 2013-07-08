@@ -17,13 +17,12 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquid;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockOilFlowing extends BlockFlowing implements ILiquid {
+public class BlockOilFlowing extends BlockFlowing implements IFluid {
 
 	int numAdjacentSources = 0;
 	boolean isOptimalFlowDirection[] = new boolean[4];
@@ -277,7 +276,7 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 	}
 
 	@Override
-	public int stillLiquidId() {
+	public int stillFluidId() {
 		return BuildCraftEnergy.oilStill.blockID;
 	}
 
@@ -287,7 +286,7 @@ public class BlockOilFlowing extends BlockFlowing implements ILiquid {
 	}
 
 	@Override
-	public int stillLiquidMeta() {
+	public int stillFluidMeta() {
 		return 0;
 	}
 

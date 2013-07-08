@@ -9,10 +9,12 @@ package buildcraft.factory.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotOutput;
 import buildcraft.core.gui.slots.SlotUntouchable;
@@ -21,8 +23,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.factory.TileAutoWorkbench;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.util.EnumChatFormatting;
 
 public class ContainerAutoWorkbench extends BuildCraftContainer {
 

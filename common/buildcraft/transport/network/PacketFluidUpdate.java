@@ -8,28 +8,28 @@ import java.util.BitSet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.FluidStack;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 
-public class PacketLiquidUpdate extends PacketCoordinates {
+public class PacketFluidUpdate extends PacketCoordinates {
 
-	public LiquidStack[] renderCache = new LiquidStack[ForgeDirection.values().length];
+	public FluidStack[] renderCache = new FluidStack[ForgeDirection.values().length];
 	public BitSet delta;
 
-	public PacketLiquidUpdate(int xCoord, int yCoord, int zCoord) {
+	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
 		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
 	}
 
-	public PacketLiquidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket) {
+	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket) {
 		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
 		this.isChunkDataPacket = chunkPacket;
 	}
 
-	public PacketLiquidUpdate() {
+	public PacketFluidUpdate() {
 	}
 
 	@Override
@@ -48,10 +48,10 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 		if (pipe.pipe == null)
 			return;
 
-		if (!(pipe.pipe.transport instanceof PipeTransportLiquids))
+		if (!(pipe.pipe.transport instanceof PipeTransportFluids))
 			return;
 
-		PipeTransportLiquids transLiq = ((PipeTransportLiquids) pipe.pipe.transport);
+		PipeTransportFluids transLiq = ((PipeTransportFluids) pipe.pipe.transport);
 
 		renderCache = transLiq.renderCache;
 
@@ -64,13 +64,13 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			if (delta.get(dir.ordinal() * 3 + 0)) {
 			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
-				renderCache[dir.ordinal()] = new LiquidStack(data.readShort(),amt,data.readShort());
+				renderCache[dir.ordinal()] = new FluidStack(data.readInt(),amt);
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
 			    if (renderCache[dir.ordinal()] == null) {
-			        renderCache[dir.ordinal()] = new LiquidStack(0,0);
+			        renderCache[dir.ordinal()] = new FluidStack(0,0);
 			    }
-		        renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readShort());
+		        renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readInt());
 			}
 		}
 	}
@@ -84,22 +84,20 @@ public class PacketLiquidUpdate extends PacketCoordinates {
 		data.write(dBytes);
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
-			LiquidStack liquid = renderCache[dir.ordinal()];
+			FluidStack liquid = renderCache[dir.ordinal()];
 
 			if (delta.get(dir.ordinal() * 3 + 0)) {
 				if (liquid != null) {
-					data.writeShort(liquid.itemID);
-                    data.writeShort(liquid.itemMeta);
+					data.writeInt(liquid.fluidID);
 				} else {
-					data.writeShort(0);
-                    data.writeShort(0);
+					data.writeInt(0);
 				}
 			}
 			if (delta.get(dir.ordinal() * 3 + 2)) {
 				if (liquid != null) {
-					data.writeShort(liquid.amount);
+					data.writeInt(liquid.amount);
 				} else {
-					data.writeShort(0);
+					data.writeInt(0);
 				}
 			}
 		}

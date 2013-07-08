@@ -1,7 +1,7 @@
 package buildcraft.core.inventory.filters;
 
-import buildcraft.core.inventory.StackHelper;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.inventory.StackHelper;
 
 /**
  * Returns true if the stack matches any one one of the filter stacks.

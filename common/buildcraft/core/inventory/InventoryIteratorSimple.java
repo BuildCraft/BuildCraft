@@ -1,9 +1,10 @@
 package buildcraft.core.inventory;
 
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import java.util.Iterator;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info>
@@ -58,7 +59,7 @@ class InventoryIteratorSimple implements Iterable<IInvSlot> {
 
 		@Override
 		public boolean canPutStackInSlot(ItemStack stack) {
-			return inv.isStackValidForSlot(slot, stack);
+			return inv.isItemValidForSlot(slot, stack);
 		}
 
 		@Override

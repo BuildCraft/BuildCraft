@@ -1,14 +1,19 @@
 package buildcraft.silicon;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionReceptor;
+import static net.minecraftforge.common.ForgeDirection.DOWN;
+import static net.minecraftforge.common.ForgeDirection.EAST;
+import static net.minecraftforge.common.ForgeDirection.NORTH;
+import static net.minecraftforge.common.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.ForgeDirection.WEST;
+
+import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
@@ -16,7 +21,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionReceptor;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
@@ -24,22 +34,19 @@ import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import buildcraft.core.inventory.InventoryMapper;
+import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.CraftingFilter;
+import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.CraftingHelper;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.inventory.filters.CraftingFilter;
-import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.triggers.ActionMachineControl;
+import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.Utils;
+
 import com.google.common.collect.Lists;
-import java.util.EnumSet;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.*;
 
 public class TileAdvancedCraftingTable extends TileEntity implements IInventory, ILaserTarget, IMachine, IActionReceptor, ISidedInventory {
 
@@ -113,15 +120,14 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAdvancedCraftingTable.this.worldObj);
+			super(TileAdvancedCraftingTable.this.worldObj, "[BuildCraft]");
 			posX = TileAdvancedCraftingTable.this.xCoord;
 			posY = TileAdvancedCraftingTable.this.yCoord + 1;
 			posZ = TileAdvancedCraftingTable.this.zCoord;
-			username = "[Buildcraft]";
 		}
 
 		@Override
-		public void sendChatToPlayer(String var1) {
+		public void sendChatToPlayer(ChatMessageComponent var1) {
 		}
 
 		@Override
@@ -442,7 +448,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return false;
 	}
 
@@ -501,7 +507,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return isStackValidForSlot(slot, stack);
+		return isItemValidForSlot(slot, stack);
 	}
 
 	@Override
@@ -510,7 +516,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int slot, ItemStack stack) {
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return slot < 15;
 	}
 

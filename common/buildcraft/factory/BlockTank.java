@@ -21,8 +21,8 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
@@ -93,7 +93,7 @@ public class BlockTank extends BlockContainer {
 		ItemStack current = entityplayer.inventory.getCurrentItem();
 		if (current != null) {
 
-			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(current);
+			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
 			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
@@ -110,11 +110,11 @@ public class BlockTank extends BlockContainer {
 				// Handle empty containers
 			} else {
 
-				LiquidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getLiquid();
+				FluidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getFluid();
 				if (available != null) {
-					ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
+					ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 
-					liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
+					liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
 
 					if (liquid != null) {
 						if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {

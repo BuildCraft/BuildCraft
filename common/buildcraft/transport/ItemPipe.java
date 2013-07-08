@@ -7,6 +7,7 @@
  */
 package buildcraft.transport;
 
+import java.util.List;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -21,10 +22,8 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.transport.pipes.PipePowerCobblestone;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 

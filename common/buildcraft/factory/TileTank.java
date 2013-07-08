@@ -11,11 +11,10 @@ import static net.minecraftforge.common.ForgeDirection.DOWN;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
-import net.minecraftforge.liquids.LiquidTank;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
@@ -26,7 +25,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class TileTank extends TileBuildCraft implements ITankContainer {
 
-	public final LiquidTank tank = new LiquidTank(LiquidContainerRegistry.BUCKET_VOLUME * 16);
+	public final FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * 16);
 	public boolean hasUpdate = false;
 	public SafeTimeTracker tracker = new SafeTimeTracker();
 
@@ -43,8 +42,8 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 		}
 
 		// Have liquid flow down into tanks below if any.
-		if (tank.getLiquid() != null) {
-			moveLiquidBelow();
+		if (tank.getFluid() != null) {
+			moveFluidBelow();
 		}
 	}
 
@@ -52,10 +51,10 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 	@Override
 	public PacketPayload getPacketPayload() {
 		PacketPayload payload = new PacketPayload(3, 0, 0);
-		if (tank.getLiquid() != null) {
-			payload.intPayload[0] = tank.getLiquid().itemID;
-			payload.intPayload[1] = tank.getLiquid().itemMeta;
-			payload.intPayload[2] = tank.getLiquid().amount;
+		if (tank.getFluid() != null) {
+			payload.intPayload[0] = tank.getFluid().itemID;
+			payload.intPayload[1] = tank.getFluid().itemMeta;
+			payload.intPayload[2] = tank.getFluid().amount;
 		} else {
 			payload.intPayload[0] = 0;
 			payload.intPayload[1] = 0;
@@ -67,10 +66,10 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) {
 		if (packet.payload.intPayload[0] > 0) {
-			LiquidStack liquid = new LiquidStack(packet.payload.intPayload[0], packet.payload.intPayload[2], packet.payload.intPayload[1]);
-			tank.setLiquid(liquid);
+			FluidStack liquid = new FluidStack(packet.payload.intPayload[0], packet.payload.intPayload[2], packet.payload.intPayload[1]);
+			tank.setFluid(liquid);
 		} else {
-			tank.setLiquid(null);
+			tank.setFluid(null);
 		}
 	}
 
@@ -80,12 +79,12 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 		super.readFromNBT(data);
 
 		if (data.hasKey("stored") && data.hasKey("liquidId")) {
-			LiquidStack liquid = new LiquidStack(data.getInteger("liquidId"), data.getInteger("stored"), 0);
-			tank.setLiquid(liquid);
+			FluidStack liquid = new FluidStack(data.getInteger("liquidId"), data.getInteger("stored"), 0);
+			tank.setFluid(liquid);
 		} else {
-			LiquidStack liquid = LiquidStack.loadLiquidStackFromNBT(data.getCompoundTag("tank"));
+			FluidStack liquid = FluidStack.loadFluidStackFromNBT(data.getCompoundTag("tank"));
 			if (liquid != null) {
-				tank.setLiquid(liquid);
+				tank.setFluid(liquid);
 			}
 		}
 	}
@@ -93,8 +92,8 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		if (tank.containsValidLiquid()) {
-			data.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
+		if (tank.containsValidFluid()) {
+			data.setTag("tank", tank.getFluid().writeToNBT(new NBTTagCompound()));
 		}
 	}
 
@@ -152,15 +151,15 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 		}
 	}
 
-	public void moveLiquidBelow() {
+	public void moveFluidBelow() {
 		TileTank below = getTankBelow(this);
 		if (below == null) {
 			return;
 		}
 
-		int used = below.tank.fill(tank.getLiquid(), true);
+		int used = below.tank.fill(tank.getFluid(), true);
 		if (used > 0) {
-			hasUpdate = true; // not redundant because tank.drain operates on an ILiquidTank, not a tile
+			hasUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
 			below.hasUpdate = true; // redundant because below.fill sets hasUpdate
 
 			tank.drain(used, true);
@@ -169,12 +168,12 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		return fill(0, resource, doFill);
 	}
 
 	@Override
-	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
+	public int fill(int tankIndex, FluidStack resource, boolean doFill) {
 		if (tankIndex != 0 || resource == null) {
 			return 0;
 		}
@@ -183,8 +182,8 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 		int totalUsed = 0;
 		TileTank tankToFill = getBottomTank();
 
-		LiquidStack liquid = tankToFill.tank.getLiquid();
-		if (liquid != null && liquid.amount > 0 && !liquid.isLiquidEqual(resource)) {
+		FluidStack liquid = tankToFill.tank.getFluid();
+		if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resource)) {
 			return 0;
 		}
 
@@ -202,42 +201,42 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 	}
 
 	@Override
-	public LiquidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
+	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
 		return drain(0, maxEmpty, doDrain);
 	}
 
 	@Override
-	public LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain) {
+	public FluidStack drain(int tankIndex, int maxEmpty, boolean doDrain) {
 		TileTank bottom = getBottomTank();
 		bottom.hasUpdate = true;
 		return bottom.tank.drain(maxEmpty, doDrain);
 	}
 
 	@Override
-	public ILiquidTank[] getTanks(ForgeDirection direction) {
-		LiquidTank compositeTank = new LiquidTank(tank.getCapacity());
+	public IFluidTank[] getTanks(ForgeDirection direction) {
+		FluidTank compositeTank = new FluidTank(tank.getCapacity());
 
 		TileTank tile = getBottomTank();
 
 		int capacity = tank.getCapacity();
 
-		if (tile != null && tile.tank.getLiquid() != null) {
-			compositeTank.setLiquid(tile.tank.getLiquid().copy());
+		if (tile != null && tile.tank.getFluid() != null) {
+			compositeTank.setFluid(tile.tank.getFluid().copy());
 		} else {
-			return new ILiquidTank[]{compositeTank};
+			return new IFluidTank[]{compositeTank};
 		}
 
 		tile = getTankAbove(tile);
 
 		while (tile != null) {
 
-			LiquidStack liquid = tile.tank.getLiquid();
+			FluidStack liquid = tile.tank.getFluid();
 			if (liquid == null || liquid.amount == 0) {
 				// NOOP
-			} else if (!compositeTank.getLiquid().isLiquidEqual(liquid)) {
+			} else if (!compositeTank.getFluid().isFluidEqual(liquid)) {
 				break;
 			} else {
-				compositeTank.getLiquid().amount += liquid.amount;
+				compositeTank.getFluid().amount += liquid.amount;
 			}
 
 			capacity += tile.tank.getCapacity();
@@ -245,11 +244,11 @@ public class TileTank extends TileBuildCraft implements ITankContainer {
 		}
 
 		compositeTank.setCapacity(capacity);
-		return new ILiquidTank[]{compositeTank};
+		return new IFluidTank[]{compositeTank};
 	}
 
 	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+	public IFluidTank getTank(ForgeDirection direction, FluidStack type) {
 		if (direction == DOWN && worldObj != null && worldObj.getBlockId(xCoord, yCoord - 1, zCoord) != BuildCraftFactory.tankBlock.blockID) {
 			return tank;
 		}

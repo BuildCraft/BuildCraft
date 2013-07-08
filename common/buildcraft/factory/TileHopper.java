@@ -8,9 +8,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.inventory.SimpleInventory;
 
 public class TileHopper extends TileBuildCraft implements IInventory {
 
@@ -112,7 +112,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		return true;
 	}
 }

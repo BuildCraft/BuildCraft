@@ -27,9 +27,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquid;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -231,25 +228,25 @@ public class Utils {
 	public static IInventory getInventory(IInventory inv) {
 		if (inv instanceof TileEntityChest) {
 			TileEntityChest chest = (TileEntityChest) inv;
-			
+
 			TileEntityChest adjacent = null;
-			
+
 			if (chest.adjacentChestXNeg != null){
-				adjacent = chest.adjacentChestXNeg;  
+				adjacent = chest.adjacentChestXNeg;
 			}
-			
+
 			if (chest.adjacentChestXPos != null){
-				adjacent = chest.adjacentChestXPos;  
+				adjacent = chest.adjacentChestXPos;
 			}
-			
+
 			if (chest.adjacentChestZNeg != null){
-				adjacent = chest.adjacentChestZNeg;  
+				adjacent = chest.adjacentChestZNeg;
 			}
-			
+
 			if (chest.adjacentChestZPosition != null){
-				adjacent = chest.adjacentChestZPosition;  
+				adjacent = chest.adjacentChestZPosition;
 			}
-			
+
 			if (adjacent != null){
 				return new InventoryLargeChest("", inv, adjacent);
 			}
@@ -377,35 +374,6 @@ public class Utils {
 
 			tileSynch.handleDescriptionPacket(payload);
 			tileSynch.postPacketHandling(payload);
-		}
-	}
-
-	public static int liquidId(int blockId) {
-		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			return Block.waterStill.blockID;
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			return Block.lavaStill.blockID;
-		} else if (Block.blocksList[blockId] instanceof ILiquid) {
-			return ((ILiquid) Block.blocksList[blockId]).stillLiquidId();
-		} else {
-			return 0;
-		}
-	}
-
-	public static LiquidStack liquidFromBlockId(int blockId) {
-		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			return new LiquidStack(Block.waterStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			return new LiquidStack(Block.lavaStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		} else if (Block.blocksList[blockId] instanceof ILiquid) {
-			ILiquid liquid = (ILiquid) Block.blocksList[blockId];
-			if (liquid.isMetaSensitive()) {
-				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, liquid.stillLiquidMeta());
-			} else {
-				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, 0);
-			}
-		} else {
-			return null;
 		}
 	}
 

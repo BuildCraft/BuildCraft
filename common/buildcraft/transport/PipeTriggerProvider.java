@@ -36,9 +36,9 @@ public class PipeTriggerProvider implements ITriggerProvider {
 			if (pipe instanceof PipePowerWood) {
 				result.add(BuildCraftTransport.triggerPipeRequestsEnergy);
 			}
-		} else if (pipe.transport instanceof PipeTransportLiquids) {
+		} else if (pipe.transport instanceof PipeTransportFluids) {
 			result.add(BuildCraftTransport.triggerPipeEmpty);
-			result.add(BuildCraftTransport.triggerPipeLiquids);
+			result.add(BuildCraftTransport.triggerPipeFluids);
 		}
 
 		return result;

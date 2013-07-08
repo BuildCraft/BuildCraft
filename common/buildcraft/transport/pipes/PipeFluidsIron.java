@@ -13,18 +13,18 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class PipeLiquidsIron extends Pipe {
+public class PipeFluidsIron extends Pipe {
 	
-	protected int standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsIron_Standard.ordinal();
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsIron_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
 
 
-	public PipeLiquidsIron(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicIron(), itemID);
+	public PipeFluidsIron(int itemID) {
+		super(new PipeTransportFluids(), new PipeLogicIron(), itemID);
 	}
 
 	@Override

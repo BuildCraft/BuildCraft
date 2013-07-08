@@ -11,7 +11,6 @@ package buildcraft;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -55,10 +54,8 @@ import buildcraft.factory.network.PacketHandlerFactory;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -83,13 +80,13 @@ public class BuildCraftFactory {
 	public static boolean hopperDisabled;
 
 	public static boolean allowMining = true;
-	
+
 	public static PumpDimensionList pumpDimensionList;
 
 	@Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
 
-	@PostInit
+    @EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
 		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
@@ -126,7 +123,7 @@ public class BuildCraftFactory {
 
 	}
 
-	@Init
+    @EventHandler
 	public void load(FMLInitializationEvent evt) {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
@@ -155,10 +152,10 @@ public class BuildCraftFactory {
 		}
 	}
 
-	@PreInit
+    @EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
 		allowMining = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "mining.enabled", true).getBoolean(true);
-		
+
 		pumpDimensionList = new PumpDimensionList(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pumping.controlList", DefaultProps.PUMP_DIMENSION_LIST).getString());
 
 		Property miningWellId = BuildCraftCore.mainConfiguration.getBlock("miningWell.id", DefaultProps.MINING_WELL_ID);
@@ -246,7 +243,7 @@ public class BuildCraftFactory {
 					Character.valueOf('i'), Item.ingotIron,
 					Character.valueOf('T'), tankBlock,
 					Character.valueOf('g'), BuildCraftCore.ironGearItem,
-					Character.valueOf('p'), BuildCraftTransport.pipeLiquidsGold });
+					Character.valueOf('p'), BuildCraftTransport.pipeFluidsGold });
 		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), new Object[] { " g ", "gwg", " g ", Character.valueOf('w'), Block.workbench,
@@ -271,7 +268,7 @@ public class BuildCraftFactory {
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
-	    if (evt.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+	    if (evt.map.textureType == 0) {
 	        TextureMap terrainTextures = evt.map;
 	        FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraft:pump_tube");
 	        FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");

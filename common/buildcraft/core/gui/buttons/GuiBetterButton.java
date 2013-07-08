@@ -3,6 +3,7 @@ package buildcraft.core.gui.buttons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.resources.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -17,7 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiBetterButton extends GuiButton {
 
-	public static final String BUTTON_TEXTURES = "/gfx/buildcraft/gui/buttons.png";
+	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraft","gfx/buildcraft/gui/buttons.png");
 	protected final IButtonTextureSet texture;
 	private ToolTip toolTip;
 
@@ -57,7 +58,7 @@ public class GuiBetterButton extends GuiButton {
 	}
 
 	protected void bindButtonTextures(Minecraft minecraft) {
-		minecraft.renderEngine.bindTexture(BUTTON_TEXTURES);
+		minecraft.renderEngine.func_110577_a(BUTTON_TEXTURES);
 	}
 
 	@Override

@@ -15,6 +15,8 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
@@ -22,23 +24,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.collect.Maps;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.render.LiquidRenderer;
+import buildcraft.core.render.FluidRenderer;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 
@@ -52,7 +58,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	private final RenderItem customRenderItem;
 
-	private class DisplayLiquidList {
+	private class DisplayFluidList {
 
 		public int[] sideHorizontal = new int[LIQUID_STAGES];
 		public int[] sideVertical = new int[LIQUID_STAGES];
@@ -60,7 +66,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
 
-	private final HashMap<Integer, HashMap<Integer, DisplayLiquidList>> displayLiquidLists = new HashMap<Integer, HashMap<Integer, DisplayLiquidList>>();
+	private final HashMap<Integer, DisplayFluidList> displayFluidLists = Maps.newHashMap();
 
 	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
 	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
@@ -82,25 +88,22 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	    customRenderItem.setRenderManager(RenderManager.instance);
 	}
 
-	private DisplayLiquidList getDisplayLiquidLists(int liquidId, int meta, World world) {
-		if (displayLiquidLists.containsKey(liquidId)) {
-			HashMap<Integer, DisplayLiquidList> x = displayLiquidLists.get(liquidId);
-			if (x.containsKey(meta))
-				return x.get(meta);
-		} else {
-			displayLiquidLists.put(liquidId, new HashMap<Integer, DisplayLiquidList>());
+	private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
+		if (displayFluidLists.containsKey(liquidId)) {
+			return displayFluidLists.get(liquidId);
 		}
 
-		DisplayLiquidList d = new DisplayLiquidList();
-		displayLiquidLists.get(liquidId).put(meta, d);
+		DisplayFluidList d = new DisplayFluidList();
+		displayFluidLists.put(liquidId, d);
 
 		BlockInterface block = new BlockInterface();
 
-		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
-			block.baseBlock = Block.blocksList[liquidId];
+		Fluid fluid = FluidRegistry.getFluid(liquidId);
+		if (fluid.getBlockID()!=0) {
+		    block.baseBlock = Block.blocksList[fluid.getBlockID()];
 		} else {
-			block.baseBlock = Block.waterStill;
-			block.texture = Item.itemsList[liquidId].getIconFromDamage(meta);
+		    block.baseBlock = Block.waterStill;
+		    block.texture = fluid.getIcon();
 		}
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
@@ -264,8 +267,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		if (pipe.pipe.transport instanceof PipeTransportItems) {
 			renderSolids(pipe.pipe, x, y, z);
-		} else if (pipe.pipe.transport instanceof PipeTransportLiquids) {
-			renderLiquids(pipe.pipe, x, y, z);
+		} else if (pipe.pipe.transport instanceof PipeTransportFluids) {
+			renderFluids(pipe.pipe, x, y, z);
 		} else if (pipe.pipe.transport instanceof PipeTransportPower) {
 			renderPower(pipe.pipe, x, y, z);
 		}
@@ -278,9 +281,9 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		GL11.glTranslatef((float) x, (float) y, (float) z);		
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
-		bindTextureByName("/terrain.png");
+		func_110628_a(TextureMap.field_110575_b);
 
 		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
@@ -309,8 +312,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderLiquids(Pipe pipe, double x, double y, double z) {
-		PipeTransportLiquids liq = (PipeTransportLiquids) pipe.transport;
+	private void renderFluids(Pipe pipe, double x, double y, double z) {
+		PipeTransportFluids liq = (PipeTransportFluids) pipe.transport;
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -326,14 +329,14 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		boolean sides = false, above = false;
 
 		for (int i = 0; i < 6; ++i) {
-			// ILiquidTank tank = liq.getTanks()[i];
-			// LiquidStack liquid = tank.getLiquid();
-			LiquidStack liquid = liq.renderCache[i];
+			// IFluidTank tank = liq.getTanks()[i];
+			// FluidStack liquid = tank.getFluid();
+			FluidStack liquid = liq.renderCache[i];
 			// int amount = liquid != null ? liquid.amount : 0;
 			// int amount = liquid != null ? liq.renderAmmount[i] : 0;
 
 			if (liquid != null && liquid.amount > 0) {
-				DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
+				DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 				if (d == null) {
 					continue;
@@ -367,31 +370,27 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					break;
 				default:
 				}
-				LiquidStack canon = liquid.canonical();
-				if (canon == null) {
-					throw new LiquidRenderer.LiquidCanonException(liquid);
-				}
-				bindTextureByName(canon.getTextureSheet());
+				func_110628_a(TextureMap.field_110575_b);
 				GL11.glCallList(list);
 				GL11.glPopMatrix();
 			}
 		}
 		// CENTER
-		// ILiquidTank tank = liq.getTanks()[ForgeDirection.Unknown.ordinal()];
-		// LiquidStack liquid = tank.getLiquid();
-		LiquidStack liquid = liq.renderCache[ForgeDirection.UNKNOWN.ordinal()];
+		// IFluidTank tank = liq.getTanks()[ForgeDirection.Unknown.ordinal()];
+		// FluidStack liquid = tank.getFluid();
+		FluidStack liquid = liq.renderCache[ForgeDirection.UNKNOWN.ordinal()];
 
 		// int amount = liquid != null ? liquid.amount : 0;
 		// int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
-			// DisplayLiquidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getLiquid(), pipe.worldObj);
-			DisplayLiquidList d = getListFromBuffer(liquid, pipe.worldObj);
+			// DisplayFluidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getFluid(), pipe.worldObj);
+			DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
 
 			if (d != null) {
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
 
-				bindTextureByName(liquid.canonical().getTextureSheet());
-				
+				func_110628_a(TextureMap.field_110575_b);
+
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
 				}
@@ -402,19 +401,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 
 		}
-		
+
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
 
-	private DisplayLiquidList getListFromBuffer(LiquidStack stack, World world) {
+	private DisplayFluidList getListFromBuffer(FluidStack stack, World world) {
 
-		int liquidId = stack.itemID;
+		int liquidId = stack.fluidID;
 
 		if (liquidId == 0)
 			return null;
 
-		return getDisplayLiquidLists(liquidId, stack.itemMeta, world);
+		return getDisplayFluidLists(liquidId, world);
 	}
 
 	private void renderSolids(Pipe pipe, double x, double y, double z) {

@@ -7,12 +7,12 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.BuildCraftCore;
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
@@ -275,7 +275,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 	}
 
 	@Override
-	public boolean manageLiquids() {
+	public boolean manageFluids() {
 		return false;
 	}
 

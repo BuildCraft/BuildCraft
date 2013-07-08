@@ -1,10 +1,11 @@
 package buildcraft.core.inventory;
 
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import java.util.Iterator;
+
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info>

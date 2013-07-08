@@ -13,15 +13,18 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.IFluidTank;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -51,9 +54,8 @@ import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.network.PipeRenderStatePacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITankContainer, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
 		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
 
 	private class CoreState implements IClientState {
@@ -515,46 +517,55 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	 * ITankContainer implementation *
 	 */
 	@Override
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer && !hasPlug(from))
-			return ((ITankContainer) pipe.transport).fill(from, resource, doFill);
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+			return ((IFluidHandler) pipe.transport).fill(from, resource, doFill);
 		else
 			return 0;
 	}
 
 	@Override
-	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
-			return ((ITankContainer) pipe.transport).fill(tankIndex, resource, doFill);
-		else
-			return 0;
-	}
-
-	@Override
-	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer && !hasPlug(from))
-			return ((ITankContainer) pipe.transport).drain(from, maxDrain, doDrain);
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+			return ((IFluidHandler) pipe.transport).drain(from, maxDrain, doDrain);
 		else
 			return null;
 	}
 
 	@Override
-	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
-			return ((ITankContainer) pipe.transport).drain(tankIndex, maxDrain, doDrain);
-		else
-			return null;
-	}
+    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
+    {
+        if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+            return ((IFluidHandler) pipe.transport).drain(from, resource, doDrain);
+        else
+            return null;
+    }
 
-	@Override
-	public ILiquidTank[] getTanks(ForgeDirection direction) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
-			return ((ITankContainer) pipe.transport).getTanks(direction);
-		else
-			return null;
-	}
+    @Override
+    public boolean canFill(ForgeDirection from, Fluid fluid)
+    {
+        if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+            return ((IFluidHandler) pipe.transport).canFill(from, fluid);
+        else
+            return false;
+    }
 
-	public void scheduleRenderUpdate() {
+    @Override
+    public boolean canDrain(ForgeDirection from, Fluid fluid)
+    {
+        if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+            return ((IFluidHandler) pipe.transport).canDrain(from, fluid);
+        else
+            return false;
+    }
+
+    @Override
+    public FluidTankInfo[] getTankInfo(ForgeDirection from)
+    {
+        return null;
+    }
+
+    public void scheduleRenderUpdate() {
 		refreshRenderState = true;
 	}
 
@@ -651,14 +662,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, ITank
 	@SideOnly(Side.CLIENT)
 	public double getMaxRenderDistanceSquared() {
 		return DefaultProps.PIPE_CONTENTS_RENDER_DIST * DefaultProps.PIPE_CONTENTS_RENDER_DIST;
-	}
-
-	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof ITankContainer)
-			return ((ITankContainer) pipe.transport).getTank(direction, type);
-		else
-			return null;
 	}
 
 	@Override

@@ -14,7 +14,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ITankContainer;
+import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
@@ -35,7 +35,7 @@ public class PipeLogicWood extends PipeLogic {
 
 			if (isInput(tile))
 				if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)
-						|| PipeManager.canExtractLiquids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)) {
+						|| PipeManager.canExtractFluids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)) {
 					newMeta = o.ordinal();
 					break;
 				}
@@ -49,7 +49,7 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	public boolean isInput(TileEntity tile) {
-		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof ITankContainer)
+		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof IFluidHandler)
 				&& Utils.checkPipesConnections(container, tile);
 	}
 
@@ -110,7 +110,7 @@ public class PipeLogicWood extends PipeLogic {
 
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		if (this.container.pipe instanceof PipeLiquidsWood) {
+		if (this.container.pipe instanceof PipeFluidsWood) {
 			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			return meta != to.ordinal();
 		}

@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -22,10 +21,10 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.liquids.LiquidContainerData;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidDictionary;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
+import net.minecraftforge.fluids.FluidRegistry;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.RefineryRecipe;
@@ -47,16 +46,14 @@ import buildcraft.energy.ItemBucketOil;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.OilBucketHandler;
 import buildcraft.energy.TileEngine.EnergyStage;
-import buildcraft.energy.worldgen.BiomeGenOilDesert;
-import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.energy.TriggerEngineHeat;
+import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
+import buildcraft.energy.worldgen.OilPopulate;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -82,8 +79,8 @@ public class BuildCraftEnergy {
 	public static Item bucketOil;
 	public static Item bucketFuel;
 	public static Item fuel;
-	public static LiquidStack oilLiquid;
-	public static LiquidStack fuelLiquid;
+	public static Fluid oilFluid;
+	public static Fluid fuelFluid;
 	public static boolean canOilBurn;
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.BLUE);
@@ -93,7 +90,7 @@ public class BuildCraftEnergy {
 	@Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
-	@PreInit
+    @EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		Property engineId = BuildCraftCore.mainConfiguration.getBlock("engine.id", DefaultProps.ENGINE_ID);
 		Property oilStillId = BuildCraftCore.mainConfiguration.getBlock("oilStill.id", DefaultProps.OIL_STILL_ID);
@@ -166,29 +163,30 @@ public class BuildCraftEnergy {
 		bucketFuel.setMaxStackSize(1);
 		LanguageRegistry.addName(bucketFuel, "Fuel Bucket");
 
-		oilLiquid = LiquidDictionary.getOrCreateLiquid("Oil", new LiquidStack(oilStill, 1));
-		fuelLiquid = LiquidDictionary.getOrCreateLiquid("Fuel", new LiquidStack(fuel, 1));
+		oilFluid = new Fluid("oil");
+		oilFluid.setBlockID(oilStill);
+		FluidRegistry.registerFluid(oilFluid);
+		fuelFluid = new Fluid("fuel");
+		FluidRegistry.registerFluid(fuelFluid);
 
-		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(LiquidDictionary.getLiquid("Oil", 1), null, LiquidDictionary.getLiquid("Fuel", 1), 12, 1));
+		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(FluidRegistry.getFluid("oil"), null, FluidRegistry.getFluid("fuel"), 12, 1));
 
 		// Iron Engine Fuels
-		IronEngineFuel.fuels.add(new IronEngineFuel(Block.lavaStill.blockID, 1, 20000));
-		IronEngineFuel.fuels.add(new IronEngineFuel(LiquidDictionary.getLiquid("Oil", LiquidContainerRegistry.BUCKET_VOLUME), 3, 20000));
-		IronEngineFuel.fuels.add(new IronEngineFuel(LiquidDictionary.getLiquid("Fuel", LiquidContainerRegistry.BUCKET_VOLUME), 6, 100000));
+		IronEngineFuel.addFuel(FluidRegistry.getFluid("lava"), 1, 20000);
+		IronEngineFuel.addFuel(FluidRegistry.getFluid("oil"), 3, 20000);
+		IronEngineFuel.addFuel(FluidRegistry.getFluid("fuel"), 6, 100000);
 
 		// Iron Engine Coolants
-		IronEngineCoolant.addCoolant(new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME), 0.0023F);
-		IronEngineCoolant.addCoolant(Block.ice.blockID, 0, new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME * 2));
+		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);
+		IronEngineCoolant.addCoolant(Block.ice.blockID, 0, FluidRegistry.getFluidStack("water", FluidContainerRegistry.BUCKET_VOLUME * 2));
 
-		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(LiquidDictionary.getLiquid("Oil", LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(
-				bucketOil), new ItemStack(Item.bucketEmpty)));
-		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(LiquidDictionary.getLiquid("Fuel", LiquidContainerRegistry.BUCKET_VOLUME),
-				new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
+		FluidContainerRegistry.registerFluidContainer(new FluidContainerData(FluidRegistry.getFluidStack("oil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Item.bucketEmpty)));
+        FluidContainerRegistry.registerFluidContainer(new FluidContainerData(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty)));
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@Init
+    @EventHandler
 	public void init(FMLInitializationEvent evt) {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 
@@ -201,7 +199,7 @@ public class BuildCraftEnergy {
 		EnergyProxy.proxy.registerTileEntities();
 	}
 
-	@PostInit
+    @EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
@@ -212,10 +210,9 @@ public class BuildCraftEnergy {
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
-		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
-			LiquidDictionary.getCanonicalLiquid("Fuel").setRenderingIcon(fuel.getIconFromDamage(0)).setTextureSheet("/gui/items.png");
-		} else {
-			LiquidDictionary.getCanonicalLiquid("Oil").setRenderingIcon(oilStill.getBlockTextureFromSide(1)).setTextureSheet("/terrain.png");
+		if (event.map.textureType == 0) {
+		    FluidRegistry.getFluid("fuel").setIcons(fuel.getIconFromDamage(0));
+            FluidRegistry.getFluid("oil").setIcons(oilStill.getBlockTextureFromSide(1));
 		}
 	}
 

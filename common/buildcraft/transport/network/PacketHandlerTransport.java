@@ -41,8 +41,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 				onPacketPower((EntityPlayer) player, packetPower);
 				break;
 			case PacketIds.PIPE_LIQUID:
-				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
-				packetLiquid.readData(data);
+				PacketFluidUpdate packetFluid = new PacketFluidUpdate();
+				packetFluid.readData(data);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();

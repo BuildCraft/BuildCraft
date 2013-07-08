@@ -19,8 +19,8 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemRedstoneChipset;
 import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.BlockLaser;
+import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
 import buildcraft.silicon.ItemLaserTable;
 import buildcraft.silicon.SiliconProxy;
@@ -36,7 +36,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)

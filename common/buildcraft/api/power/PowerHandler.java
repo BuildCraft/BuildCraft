@@ -22,8 +22,9 @@ public final class PowerHandler {
 				case MACHINE:
 				case STORAGE:
 					return true;
+				default:
+				    return false;
 			}
-			return false;
 		}
 
 		public boolean eatsEngineExcess() {
@@ -31,8 +32,9 @@ public final class PowerHandler {
 				case MACHINE:
 				case STORAGE:
 					return true;
+				default:
+				    return false;
 			}
-			return false;
 		}
 	}
 

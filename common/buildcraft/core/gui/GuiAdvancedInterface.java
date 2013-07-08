@@ -2,6 +2,7 @@ package buildcraft.core.gui;
 
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -45,7 +46,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			if (getItemStack() != null) {
 				drawStack(getItemStack());
 			} else if (getTexture() != null) {
-			    mc.renderEngine.bindTexture("/gui/items.png");
+			    mc.renderEngine.func_110577_a(TextureMap.field_110576_c);
 			    //System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getTexture().getIconName(), getTexture().getOriginX(),getTexture().getOriginY(),cornerX + x, cornerY + y);
 				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getTexture(), 16, 16);
 			}

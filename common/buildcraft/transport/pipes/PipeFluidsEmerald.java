@@ -9,21 +9,21 @@
 package buildcraft.transport.pipes;
 
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 
 /**
  *
  * @author CovertJaguar <railcraft.wikispaces.com>
  */
-public class PipeLiquidsEmerald extends PipeLiquidsWood {
+public class PipeFluidsEmerald extends PipeFluidsWood {
 
-	public PipeLiquidsEmerald(int itemID) {
+	public PipeFluidsEmerald(int itemID) {
 		super(new PipeLogicEmerald(), itemID);
 
-		standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsEmerald_Standard.ordinal();
+		standardIconIndex = PipeIconProvider.TYPE.PipeFluidsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 
-		((PipeTransportLiquids) transport).flowRate = 40;
-		((PipeTransportLiquids) transport).travelDelay = 4;
+		((PipeTransportFluids) transport).flowRate = 40;
+		((PipeTransportFluids) transport).travelDelay = 4;
 	}
 }

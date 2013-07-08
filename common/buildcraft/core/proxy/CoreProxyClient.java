@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
@@ -143,9 +144,9 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	private EntityPlayer createNewPlayer(World world) {
-		EntityPlayer player = new EntityPlayer(world) {
+		EntityPlayer player = new EntityPlayer(world, "[BuildCraft]") {
 			@Override
-			public void sendChatToPlayer(String var1) {
+			public void sendChatToPlayer(ChatMessageComponent var1) {
 			}
 
 			@Override
@@ -158,7 +159,6 @@ public class CoreProxyClient extends CoreProxy {
 				return null;
 			}
 		};
-		player.username = "[BuildCraft]";
 		return player;
 	}
 
@@ -170,7 +170,7 @@ public class CoreProxyClient extends CoreProxy {
 
 		return CoreProxy.buildCraftPlayer;
 	}
-	
+
 	@Override
 	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
