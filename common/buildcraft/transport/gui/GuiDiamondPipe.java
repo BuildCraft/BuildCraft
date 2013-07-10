@@ -23,7 +23,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 	PipeLogicDiamond filterInventory;
 
 	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe tile) {
-		super(new ContainerDiamondPipe(playerInventory, (IInventory) tile.pipe.logic), (IInventory) tile.pipe.logic);
+		super(new ContainerDiamondPipe(playerInventory, ((PipeLogicDiamond)tile.pipe.logic).getFilters()), ((PipeLogicDiamond)tile.pipe.logic).getFilters());
 		this.playerInventory = playerInventory;
 		this.filterInventory = (PipeLogicDiamond) tile.pipe.logic;
 		xSize = 175;

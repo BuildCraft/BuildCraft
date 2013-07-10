@@ -23,7 +23,7 @@ public class GuiEmeraldPipe extends GuiBuildCraft {
 	PipeItemsEmerald filterInventory;
 
 	public GuiEmeraldPipe(IInventory playerInventory, TileGenericPipe tile) {
-		super(new ContainerEmeraldPipe(playerInventory, (IInventory) tile.pipe), (IInventory) tile.pipe);
+		super(new ContainerEmeraldPipe(playerInventory, ((PipeItemsEmerald) tile.pipe).getFilters()), ((PipeItemsEmerald) tile.pipe).getFilters());
 		this.playerInventory = playerInventory;
 		this.filterInventory = (PipeItemsEmerald) tile.pipe;
 		xSize = 175;
