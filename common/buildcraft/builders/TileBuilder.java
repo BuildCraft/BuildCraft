@@ -220,7 +220,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5), new Position(
 						b.i + 0.5, b.j + 0.5, b.k + 0.5));
 
-				laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+				laser.setTexture(0);
 				laser.show();
 				worldObj.spawnEntityInWorld(laser);
 				pathLasers.add(laser);

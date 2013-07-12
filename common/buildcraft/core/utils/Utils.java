@@ -45,6 +45,10 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 
 public class Utils {
 
@@ -230,23 +234,23 @@ public class Utils {
 
 			TileEntityChest adjacent = null;
 
-			if (chest.adjacentChestXNeg != null){
+			if (chest.adjacentChestXNeg != null) {
 				adjacent = chest.adjacentChestXNeg;
 			}
 
-			if (chest.adjacentChestXPos != null){
+			if (chest.adjacentChestXPos != null) {
 				adjacent = chest.adjacentChestXPos;
 			}
 
-			if (chest.adjacentChestZNeg != null){
+			if (chest.adjacentChestZNeg != null) {
 				adjacent = chest.adjacentChestZNeg;
 			}
 
-			if (chest.adjacentChestZPosition != null){
+			if (chest.adjacentChestZPosition != null) {
 				adjacent = chest.adjacentChestZPosition;
 			}
 
-			if (adjacent != null){
+			if (adjacent != null) {
 				return new InventoryLargeChest("", inv, adjacent);
 			}
 			return inv;
@@ -374,6 +378,26 @@ public class Utils {
 			tileSynch.handleDescriptionPacket(payload);
 			tileSynch.postPacketHandling(payload);
 		}
+	}
+
+	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
+		int blockId = world.getBlockId(x, y, z);
+		if (Block.blocksList[blockId] instanceof IFluidBlock) {
+			IFluidBlock fluidBlock = (IFluidBlock) Block.blocksList[blockId];
+			if (fluidBlock.canDrain(world, x, y, z))
+				return fluidBlock.drain(world, x, y, z, doDrain);
+		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
+			if (doDrain) {
+				world.setBlockToAir(x, y, z);
+			}
+			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
+		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
+			if (doDrain) {
+				world.setBlockToAir(x, y, z);
+			}
+			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
+		}
+		return null;
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {

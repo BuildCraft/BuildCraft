@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders.gui;
 
 import buildcraft.builders.TileFiller;
@@ -14,10 +12,13 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class GuiFiller extends GuiBuildCraft {
 
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
+	private static final ResourceLocation BLOCK_TEXTURE = new ResourceLocation("/terrain.png");
 	IInventory playerInventory;
 	TileFiller filler;
 
@@ -44,13 +45,13 @@ public class GuiFiller extends GuiBuildCraft {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 
-	    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-	    mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.func_110577_a(TEXTURE);
 
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		if (filler.currentPattern != null) {
-		    mc.renderEngine.bindTexture("/terrain.png");
+			mc.renderEngine.func_110577_a(BLOCK_TEXTURE);
 			drawTexturedModelRectFromIcon(guiLeft + patternSymbolX, guiTop + patternSymbolY, filler.currentPattern.getTexture(), 16, 16);
 		}
 
@@ -85,10 +86,8 @@ public class GuiFiller extends GuiBuildCraft {
 		lastX = i;
 		lastY = j;
 	}
-
 	private int lastX = 0;
 	private int lastY = 0;
-
 	public final int patternSymbolX = 125;
 	public final int patternSymbolY = 34;
 }

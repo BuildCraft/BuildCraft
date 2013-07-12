@@ -1,22 +1,21 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core;
 
 import buildcraft.api.core.Position;
+import static buildcraft.core.EntityLaser.LASER_TEXTURES;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class EntityEnergyLaser extends EntityLaser {
 
 	public static final short POWER_AVERAGING = 100;
 	public int displayStage = 0;
-
 	private final float power[] = new float[POWER_AVERAGING];
 	private int powerIndex = 0;
 	private float powerAverage = 0;
@@ -46,16 +45,15 @@ public class EntityEnergyLaser extends EntityLaser {
 	}
 
 	@Override
-	public String getTexture() {
-
+	public ResourceLocation getTexture() {
 		if (getPowerAverage() <= 1.0)
-			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png";
+			return LASER_TEXTURES[0];
 		else if (getPowerAverage() <= 2.0)
-			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png";
+			return LASER_TEXTURES[1];
 		else if (getPowerAverage() <= 3.0)
-			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png";
+			return LASER_TEXTURES[2];
 		else
-			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png";
+			return LASER_TEXTURES[3];
 	}
 
 	@Override

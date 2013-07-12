@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders.gui;
 
 import buildcraft.builders.TileBuilder;
@@ -16,10 +14,13 @@ import buildcraft.core.utils.StringUtils;
 import java.util.Collection;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/builder.png");
+	private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");
 	IInventory playerInventory;
 	TileBuilder builder;
 
@@ -57,16 +58,16 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		int realXSize = 0;
 
 		if (builder.isBuildingBlueprint()) {
-			mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");
+			mc.renderEngine.func_110577_a(BLUEPRINT_TEXTURE);
 			realXSize = 256;
 		} else {
-			mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/builder.png");
+			mc.renderEngine.func_110577_a(TEXTURE);
 			realXSize = 176;
 		}
 
@@ -93,6 +94,5 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		drawBackgroundSlots();
 	}
-
 	int inventoryRows = 6;
 }

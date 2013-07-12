@@ -78,7 +78,7 @@ public class BlockUtil {
 		if (block.getBlockHardness(world, x, y, z) < 0)
 			return false;
 
-		if (blockID == BuildCraftEnergy.oilMoving.blockID || blockID == BuildCraftEnergy.blockOil.blockID)
+		if (blockID == BuildCraftEnergy.blockOil.blockID)
 			return false;
 
 		if (blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID)

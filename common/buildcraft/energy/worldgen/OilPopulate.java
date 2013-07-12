@@ -31,6 +31,8 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.IFluidBlock;
 
 public class OilPopulate {
 
@@ -251,18 +253,15 @@ public class OilPopulate {
 		}
 	}
 
-	/**
-	 * TODO: This might need adjustment when more liquids have blocks
-	 */
-	private boolean isOilOrWater(World world, int x, int y, int z) {
+	private boolean isReplaceableFluid(World world, int x, int y, int z) {
 		int blockId = world.getBlockId(x, y, z);
 		Block block = Block.blocksList[blockId];
-		return block instanceof BlockFluid && block.blockMaterial != Material.lava;
+		return (block instanceof BlockFluid || block instanceof IFluidBlock) && block.blockMaterial != Material.lava;
 	}
 
 	private boolean isOil(World world, int x, int y, int z) {
 		int blockId = world.getBlockId(x, y, z);
-		return (blockId == BuildCraftEnergy.blockOil.blockID || blockId == BuildCraftEnergy.oilMoving.blockID);
+		return (blockId == BuildCraftEnergy.blockOil.blockID);
 	}
 
 	private boolean isReplaceableForLake(World world, BiomeGenBase biome, int x, int y, int z) {
@@ -316,7 +315,7 @@ public class OilPopulate {
 			if (!world.isAirBlock(x, y + 2, z)) {
 				return;
 			}
-			if (isOilOrWater(world, x, y, z) || world.isBlockSolidOnSide(x, y - 1, z, ForgeDirection.UP)) {
+			if (isReplaceableFluid(world, x, y, z) || world.isBlockSolidOnSide(x, y - 1, z, ForgeDirection.UP)) {
 				world.setBlock(x, y, z, BuildCraftEnergy.blockOil.blockID, 0, update);
 			} else {
 				return;
@@ -326,7 +325,7 @@ public class OilPopulate {
 			}
 
 			for (int d = 1; d <= depth - 1; d++) {
-				if (isOilOrWater(world, x, y - d, z) || !world.isBlockSolidOnSide(x, y - d - 1, z, ForgeDirection.UP)) {
+				if (isReplaceableFluid(world, x, y - d, z) || !world.isBlockSolidOnSide(x, y - d - 1, z, ForgeDirection.UP)) {
 					return;
 				}
 				world.setBlock(x, y - d, z, BuildCraftEnergy.blockOil.blockID, 0, 2);
@@ -348,6 +347,9 @@ public class OilPopulate {
 				continue;
 			}
 			if (block instanceof BlockFluid) {
+				return y;
+			}
+			if (block instanceof IFluidBlock) {
 				return y;
 			}
 			if (!block.blockMaterial.blocksMovement()) {
