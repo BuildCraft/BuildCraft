@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftCore;
@@ -44,11 +42,8 @@ import org.lwjgl.opengl.GL11;
 public class RenderPipe extends TileEntitySpecialRenderer {
 
 	final static private int LIQUID_STAGES = 40;
-
 	final static private int MAX_ITEMS_TO_RENDER = 10;
-
 	private final EntityItem dummyEntityItem = new EntityItem(null);
-
 	private final RenderItem customRenderItem;
 
 	private class DisplayFluidList {
@@ -58,27 +53,26 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		public int[] centerHorizontal = new int[LIQUID_STAGES];
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
-
 	private final HashMap<Integer, DisplayFluidList> displayFluidLists = Maps.newHashMap();
-
-	private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
-	private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
-
+	private final int[] angleY = {0, 0, 270, 90, 0, 180};
+	private final int[] angleZ = {90, 270, 0, 0, 0, 0};
 	final static private int POWER_STAGES = 100;
-
 	public int[] displayPowerList = new int[POWER_STAGES];
 	public int[] displayPowerListOverload = new int[POWER_STAGES];
 
 	public RenderPipe() {
-	    customRenderItem = new RenderItem() {
-	        public boolean shouldBob() {
-	            return false;
-	        };
-	        public boolean shouldSpreadItems() {
-	            return false;
-	        };
-	    };
-	    customRenderItem.setRenderManager(RenderManager.instance);
+		customRenderItem = new RenderItem() {
+			@Override
+			public boolean shouldBob() {
+				return false;
+			}
+
+			@Override
+			public boolean shouldSpreadItems() {
+				return false;
+			}
+		};
+		customRenderItem.setRenderManager(RenderManager.instance);
 	}
 
 	private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
@@ -92,12 +86,12 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		BlockInterface block = new BlockInterface();
 
 		Fluid fluid = FluidRegistry.getFluid(liquidId);
-		if (fluid.getBlockID()!=0) {
-		    block.baseBlock = Block.blocksList[fluid.getBlockID()];
+		if (fluid.getBlockID() != 0) {
+			block.baseBlock = Block.blocksList[fluid.getBlockID()];
 		} else {
-		    block.baseBlock = Block.waterStill;
-		    block.texture = fluid.getIcon();
+			block.baseBlock = Block.waterStill;
 		}
+		block.texture = fluid.getStillIcon();
 
 		float size = Utils.pipeMaxPos - Utils.pipeMinPos;
 
@@ -182,7 +176,6 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		return d;
 	}
-
 	boolean initialized = false;
 
 	private void initializeDisplayPowerList(World world) {
@@ -341,27 +334,27 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				int list = 0;
 
 				switch (ForgeDirection.VALID_DIRECTIONS[i]) {
-				case UP:
-					above = true;
-					list = d.sideVertical[stage];
-					break;
-				case DOWN:
-					GL11.glTranslatef(0, -0.75F, 0);
-					list = d.sideVertical[stage];
-					break;
-				case EAST:
-				case WEST:
-				case SOUTH:
-				case NORTH:
-					sides = true;
-					// Yes, this is kind of ugly, but was easier than transform the coordinates above.
-					GL11.glTranslatef(0.5F, 0.0F, 0.5F);
-					GL11.glRotatef(angleY[i], 0, 1, 0);
-					GL11.glRotatef(angleZ[i], 0, 0, 1);
-					GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
-					list = d.sideHorizontal[stage];
-					break;
-				default:
+					case UP:
+						above = true;
+						list = d.sideVertical[stage];
+						break;
+					case DOWN:
+						GL11.glTranslatef(0, -0.75F, 0);
+						list = d.sideVertical[stage];
+						break;
+					case EAST:
+					case WEST:
+					case SOUTH:
+					case NORTH:
+						sides = true;
+						// Yes, this is kind of ugly, but was easier than transform the coordinates above.
+						GL11.glTranslatef(0.5F, 0.0F, 0.5F);
+						GL11.glRotatef(angleY[i], 0, 1, 0);
+						GL11.glRotatef(angleZ[i], 0, 0, 1);
+						GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
+						list = d.sideHorizontal[stage];
+						break;
+					default:
 				}
 				func_110628_a(TextureMap.field_110575_b);
 				GL11.glCallList(list);
