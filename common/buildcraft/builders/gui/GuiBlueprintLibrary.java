@@ -1,18 +1,11 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders.gui;
-
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.entity.player.EntityPlayer;
-
-import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
@@ -24,16 +17,18 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
 	EntityPlayer player;
 	TileBlueprintLibrary library;
-
 	ContainerBlueprintLibrary container;
-
 	boolean computeInput;
-
 	BptPlayerIndex index;
 
 	public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
@@ -47,7 +42,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 		index = BuildCraftBuilders.getPlayerIndex(player.username);
 	}
-
 	private GuiButton nextPageButton;
 	private GuiButton prevPageButton;
 	private GuiButton lockButton;
@@ -110,8 +104,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.func_110577_a(TEXTURE);
 
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
@@ -164,7 +158,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 			if (ySlot >= 0 && ySlot <= 11) {
 				if (ySlot < library.currentNames.length) {
 					PacketPayload payload = new PacketPayload();
-					payload.intPayload = new int[] { ySlot };
+					payload.intPayload = new int[]{ySlot};
 					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, library.xCoord, library.yCoord, library.zCoord);
 					packet.actionId = ySlot;
 					CoreProxy.proxy.sendToServer(packet.getPacket());

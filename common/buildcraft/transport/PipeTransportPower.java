@@ -7,9 +7,6 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
@@ -21,10 +18,18 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
-import buildcraft.transport.pipes.*;
+import buildcraft.transport.pipes.PipePowerCobblestone;
+import buildcraft.transport.pipes.PipePowerDiamond;
+import buildcraft.transport.pipes.PipePowerGold;
+import buildcraft.transport.pipes.PipePowerQuartz;
+import buildcraft.transport.pipes.PipePowerStone;
+import buildcraft.transport.pipes.PipePowerWood;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportPower extends PipeTransport {
 
@@ -44,13 +49,13 @@ public class PipeTransportPower extends PipeTransport {
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
 	public float[] displayPower = new float[6];
-	public float[] prevDisplayPower = new float[6];
+	private float[] prevDisplayPower = new float[6];
 	public short[] clientDisplayPower = new short[6];
 	public int overload;
-	public int[] powerQuery = new int[6];
-	public int[] nextPowerQuery = new int[6];
-	public long currentDate;
-	public float[] internalPower = new float[6];
+	private int[] powerQuery = new int[6];
+	private int[] nextPowerQuery = new int[6];
+	private long currentDate;
+	private float[] internalPower = new float[6];
 	public float[] internalNextPower = new float[6];
 	public int maxPower = 8;
 
@@ -266,7 +271,7 @@ public class PipeTransportPower extends PipeTransport {
 		return overload >= OVERLOAD_TICKS;
 	}
 
-	public void step() {
+	private void step() {
 		if (currentDate != worldObj.getWorldTime()) {
 			currentDate = worldObj.getWorldTime();
 
@@ -291,11 +296,23 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	/**
-	 * Do NOT ever call this from outside Buildcraft unless you are a pipe mod.
-	 * It is NOT part of the API. All power input MUST go through designated
-	 * input pipes, such as Wooden Power Pipes.
+	 * Do NOT ever call this from outside Buildcraft. It is NOT part of the API.
+	 * All power input MUST go through designated input pipes, such as Wooden
+	 * Power Pipes or a subclass thereof.
 	 */
 	public float receiveEnergy(ForgeDirection from, float val) {
+
+		// Keep this in reserve for if too many idiots start bypassing the API
+		// Verify that it is BC calling this method. 
+		// If its someone else take all their power and run!
+		// Note: This should be safe for PipePowerWood subclasses, aka custom input pipes.
+//		StackTraceElement[] stackTrace = (new Throwable()).getStackTrace();
+//		String caller = stackTrace[1].getClassName();
+//		if (!caller.equals("buildcraft.transport.PipeTransportPower")
+//				&& !caller.equals("buildcraft.transport.pipes.PipePowerWood")) {
+//			 return val;
+//		}
+
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			return ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);

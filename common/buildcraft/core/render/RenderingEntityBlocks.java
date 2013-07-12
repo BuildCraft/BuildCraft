@@ -1,21 +1,22 @@
 package buildcraft.core.render;
 
-import java.util.HashMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.world.IBlockAccess;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.utils.Utils;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import java.util.HashMap;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.IBlockAccess;
+import org.lwjgl.opengl.GL11;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
+
+	private static final ResourceLocation BLOCK_TEXTURE = new ResourceLocation("/terrain.png");
+
 	public static class EntityRenderIndex {
 
 		public EntityRenderIndex(Block block, int damage) {
@@ -37,11 +38,9 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 			return i.block == block && i.damage == damage;
 		}
-
 		Block block;
 		int damage;
 	}
-
 	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 
 	@Override
@@ -95,9 +94,8 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 		if (block.getRenderType() == BuildCraftCore.blockByEntityModel) {
 			// renderblocks.renderStandardBlock(block, i, j, k);
-
 		} else if (block.getRenderType() == BuildCraftCore.legacyPipeModel) {
-		    Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
+			Minecraft.getMinecraft().renderEngine.func_110577_a(BLOCK_TEXTURE);
 			legacyPipeRender(renderer, world, x, y, z, block, modelId);
 
 		}
@@ -162,5 +160,4 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
-
 }

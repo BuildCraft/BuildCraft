@@ -4,24 +4,24 @@ import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 
 /**
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class LiquidUtils {
+public class FluidUtils {
 
-	public static boolean handleRightClick(ITankContainer tank, ForgeDirection side, EntityPlayer player, boolean fill, boolean drain) {
+	public static boolean handleRightClick(IFluidHandler tank, ForgeDirection side, EntityPlayer player, boolean fill, boolean drain) {
 		if (player == null) {
 			return false;
 		}
 		ItemStack current = player.inventory.getCurrentItem();
 		if (current != null) {
 
-			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(current);
+			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 
 			if (fill && liquid != null) {
 				int used = tank.fill(side, liquid, true);
@@ -35,11 +35,11 @@ public class LiquidUtils {
 
 			} else if (drain) {
 
-				LiquidStack available = tank.drain(side, Integer.MAX_VALUE, false);
+				FluidStack available = tank.drain(side, Integer.MAX_VALUE, false);
 				if (available != null) {
-					ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
+					ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 
-					liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
+					liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
 					if (liquid != null) {
 
 						if (current.stackSize > 1) {

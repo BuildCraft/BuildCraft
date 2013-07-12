@@ -1,13 +1,13 @@
 package buildcraft.energy;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import buildcraft.core.GuiIds;
 import buildcraft.energy.gui.ContainerEngine;
 import buildcraft.energy.gui.GuiCombustionEngine;
-import buildcraft.energy.gui.GuiSteamEngine;
+import buildcraft.energy.gui.GuiStoneEngine;
 import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -29,7 +29,7 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiCombustionEngine(player.inventory, engine);
 
 		case GuiIds.ENGINE_STONE:
-			return new GuiSteamEngine(player.inventory, engine);
+			return new GuiStoneEngine(player.inventory, engine);
 
 		default:
 			return null;

@@ -1,10 +1,10 @@
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
 
 public class PipeIconProvider implements IIconProvider {
 
@@ -39,14 +39,14 @@ public class PipeIconProvider implements IIconProvider {
 		PipeItemsQuartz("pipeItemsQuartz"),
 		PipeItemsVoid("pipeItemsVoid"),
 		//
-		PipeLiquidsCobblestone("pipeLiquidsCobblestone"),
-		PipeLiquidsWood_Standard("pipeLiquidsWood_standard"),
-		PipeLiquidsEmerald_Standard("pipeLiquidsEmerald_standard"),
-		PipeLiquidsGold("pipeLiquidsGold"),
-		PipeLiquidsIron_Standard("pipeLiquidsIron_standard"),
-		PipeLiquidsSandstone("pipeLiquidsSandstone"),
-		PipeLiquidsStone("pipeLiquidsStone"),
-		PipeLiquidsVoid("pipeLiquidsVoid"),
+		PipeFluidsCobblestone("pipeFluidsCobblestone"),
+		PipeFluidsWood_Standard("pipeFluidsWood_standard"),
+		PipeFluidsEmerald_Standard("pipeFluidsEmerald_standard"),
+		PipeFluidsGold("pipeFluidsGold"),
+		PipeFluidsIron_Standard("pipeFluidsIron_standard"),
+		PipeFluidsSandstone("pipeFluidsSandstone"),
+		PipeFluidsStone("pipeFluidsStone"),
+		PipeFluidsVoid("pipeFluidsVoid"),
 		//
 		PipePowerDiamond("pipePowerDiamond"),
 		PipePowerGold("pipePowerGold"),

@@ -1,16 +1,14 @@
 package buildcraft.transport.render;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.transport.PipeIconProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraftforge.client.IItemRenderer;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.BuildCraftTransport;
-import buildcraft.transport.PipeIconProvider;
 
 public class PlugItemRenderer implements IItemRenderer{
 

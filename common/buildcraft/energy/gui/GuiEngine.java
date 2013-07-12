@@ -1,15 +1,18 @@
 package buildcraft.energy.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.IInventory;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
+import net.minecraft.client.Minecraft;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiEngine extends GuiBuildCraft {
+
+	private static final ResourceLocation ITEM_TEXTURE = new ResourceLocation("/gui/items.png");
 
 	protected class EngineLedger extends Ledger {
 
@@ -31,7 +34,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
+			Minecraft.getMinecraft().renderEngine.func_110577_a(ITEM_TEXTURE);
 			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
 			if (!isFullyOpened())

@@ -1,7 +1,7 @@
 package buildcraft.builders;
 
-import net.minecraft.util.Icon;
 import buildcraft.BuildCraftBuilders;
+import net.minecraft.util.Icon;
 
 public class BuilderProxyClient extends BuilderProxy {
 	public static Icon fillerFillAllTexture;

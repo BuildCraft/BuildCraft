@@ -9,21 +9,21 @@
 
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.transport.IPipeTransportLiquidsHook;
+import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
 
-public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook {
+public class PipeFluidsVoid extends Pipe implements IPipeTransportFluidsHook {
 
-	public PipeLiquidsVoid(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicVoid(), itemID);
+	public PipeFluidsVoid(int itemID) {
+		super(new PipeTransportFluids(), new PipeLogicVoid(), itemID);
 	}
 
 	@Override
@@ -34,11 +34,11 @@ public class PipeLiquidsVoid extends Pipe implements IPipeTransportLiquidsHook {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.TYPE.PipeLiquidsVoid.ordinal();
+		return PipeIconProvider.TYPE.PipeFluidsVoid.ordinal();
 	}
 
 	@Override
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		return resource.amount;
 	}
 }

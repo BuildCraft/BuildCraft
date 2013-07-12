@@ -8,10 +8,10 @@
 
 package buildcraft.factory;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+import net.minecraftforge.common.ForgeDirection;
 
 @Deprecated
 public class BptBlockRefinery extends BptBlock {

@@ -25,11 +25,6 @@ public class DefaultProps {
 	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";
 	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entities";
 
-	public static String TEXTURE_BLOCKS = TEXTURE_PATH_BLOCKS + "/blocks.png";
-	public static String TEXTURE_ITEMS = "/gfx/buildcraft/items/items.png";
-	public static String TEXTURE_ICONS = TEXTURE_PATH_GUI + "/icons.png";
-	public static String TEXTURE_TRIGGERS = TEXTURE_PATH_GUI + "/triggers.png";
-
 	public static final String DEFAULT_LANGUAGE = "en_US";
 
 	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/Lava";
@@ -42,7 +37,6 @@ public class DefaultProps {
 	public static int TEMPLATE_ITEM_ID = 19105;
 	public static int WRENCH_ID = 19106;
 	public static int BUCKET_OIL_ID = 19107;
-	public static int FUEL_ID = 19108;
 	public static int PIPE_WATERPROOF_ID = 19109;
 	public static int BUCKET_FUEL_ID = 19110;
 	public static int GATE_ID = 19111;
@@ -113,15 +107,16 @@ public class DefaultProps {
 	public static int ASSEMBLY_TABLE_ID = 1517;
 	public static int PATH_MARKER_ID = 1518;
 	public static int HOPPER_ID = 1519;
-	public static int OIL_MOVING_ID = 1520;
-	public static int OIL_STILL_ID = 1521;
 	public static int SPRING_ID = 1522;
 	public static int FILTERED_BUFFER = 1523;
+	
+	public static int OIL_ID = 1530;
+	public static int FUEL_ID = 1531;
 
 	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;
 	public static boolean FILLER_DESTROY = false;
-	
+
 	public static final int FILLER_LIFESPAN_TOUGH = 20;
 	public static final int FILLER_LIFESPAN_NORMAL = 6000;
 
@@ -170,4 +165,6 @@ public class DefaultProps {
 	public static int ACTION_ENERGY_PULSER = 9;
 	public static int ACTION_SINGLE_ENERGY_PULSE = 10;
 
+	public static int BIOME_OIL_OCEAN = 160;
+	public static int BIOME_OIL_DESERT = 161;
 }

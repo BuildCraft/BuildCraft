@@ -7,15 +7,15 @@
  */
 package buildcraft.transport.pipes;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.GuiIds;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockGenericPipe;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class PipeLogicDiamond extends PipeLogic {
 
@@ -55,5 +55,9 @@ public class PipeLogicDiamond extends PipeLogic {
 
 	public IInventory getFilters() {
 		return filters;
+	}
+
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
 	}
 }

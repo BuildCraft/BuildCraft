@@ -7,29 +7,6 @@
  */
 package buildcraft.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryLargeChest;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquid;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
@@ -49,6 +26,29 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 
 public class Utils {
 
@@ -231,26 +231,26 @@ public class Utils {
 	public static IInventory getInventory(IInventory inv) {
 		if (inv instanceof TileEntityChest) {
 			TileEntityChest chest = (TileEntityChest) inv;
-			
+
 			TileEntityChest adjacent = null;
-			
-			if (chest.adjacentChestXNeg != null){
-				adjacent = chest.adjacentChestXNeg;  
+
+			if (chest.adjacentChestXNeg != null) {
+				adjacent = chest.adjacentChestXNeg;
 			}
-			
-			if (chest.adjacentChestXPos != null){
-				adjacent = chest.adjacentChestXPos;  
+
+			if (chest.adjacentChestXPos != null) {
+				adjacent = chest.adjacentChestXPos;
 			}
-			
-			if (chest.adjacentChestZNeg != null){
-				adjacent = chest.adjacentChestZNeg;  
+
+			if (chest.adjacentChestZNeg != null) {
+				adjacent = chest.adjacentChestZNeg;
 			}
-			
-			if (chest.adjacentChestZPosition != null){
-				adjacent = chest.adjacentChestZPosition;  
+
+			if (chest.adjacentChestZPosition != null) {
+				adjacent = chest.adjacentChestZPosition;
 			}
-			
-			if (adjacent != null){
+
+			if (adjacent != null) {
 				return new InventoryLargeChest("", inv, adjacent);
 			}
 			return inv;
@@ -380,33 +380,24 @@ public class Utils {
 		}
 	}
 
-	public static int liquidId(int blockId) {
-		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			return Block.waterStill.blockID;
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			return Block.lavaStill.blockID;
-		} else if (Block.blocksList[blockId] instanceof ILiquid) {
-			return ((ILiquid) Block.blocksList[blockId]).stillLiquidId();
-		} else {
-			return 0;
-		}
-	}
-
-	public static LiquidStack liquidFromBlockId(int blockId) {
-		if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			return new LiquidStack(Block.waterStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			return new LiquidStack(Block.lavaStill.blockID, LiquidContainerRegistry.BUCKET_VOLUME, 0);
-		} else if (Block.blocksList[blockId] instanceof ILiquid) {
-			ILiquid liquid = (ILiquid) Block.blocksList[blockId];
-			if (liquid.isMetaSensitive()) {
-				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, liquid.stillLiquidMeta());
-			} else {
-				return new LiquidStack(liquid.stillLiquidId(), LiquidContainerRegistry.BUCKET_VOLUME, 0);
+	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
+		int blockId = world.getBlockId(x, y, z);
+		if (Block.blocksList[blockId] instanceof IFluidBlock) {
+			IFluidBlock fluidBlock = (IFluidBlock) Block.blocksList[blockId];
+			if (fluidBlock.canDrain(world, x, y, z))
+				return fluidBlock.drain(world, x, y, z, doDrain);
+		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
+			if (doDrain) {
+				world.setBlockToAir(x, y, z);
 			}
-		} else {
-			return null;
+			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
+		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
+			if (doDrain) {
+				world.setBlockToAir(x, y, z);
+			}
+			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
 		}
+		return null;
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {

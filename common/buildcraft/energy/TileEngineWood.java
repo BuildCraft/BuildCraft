@@ -9,10 +9,6 @@ package buildcraft.energy;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
-import static buildcraft.energy.TileEngine.EnergyStage.BLUE;
-import static buildcraft.energy.TileEngine.EnergyStage.GREEN;
-import static buildcraft.energy.TileEngine.EnergyStage.RED;
-import static buildcraft.energy.TileEngine.EnergyStage.YELLOW;
 import net.minecraftforge.common.ForgeDirection;
 
 public class TileEngineWood extends TileEngine {

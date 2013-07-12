@@ -1,12 +1,11 @@
 package buildcraft.core.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.BlueprintManager;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+import java.util.LinkedList;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class BptSlot extends BptSlotInfo {
 

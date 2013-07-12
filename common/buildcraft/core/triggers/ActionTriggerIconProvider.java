@@ -1,10 +1,10 @@
 package buildcraft.core.triggers;
 
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
 import buildcraft.api.core.IIconProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
 
 public class ActionTriggerIconProvider implements IIconProvider {
 
@@ -20,15 +20,15 @@ public class ActionTriggerIconProvider implements IIconProvider {
 	public static final int Trigger_Inventory_Contains 			=  8;
 	public static final int Trigger_Inventory_Space 			=  9;
 	public static final int Trigger_Inventory_Full 				= 10;
-	public static final int Trigger_LiquidContainer_Empty 		= 11;
-	public static final int Trigger_LiquidContainer_Contains	= 12;
-	public static final int Trigger_LiquidContainer_Space 		= 13;
-	public static final int Trigger_LiquidContainer_Full 		= 14;
+	public static final int Trigger_FluidContainer_Empty 		= 11;
+	public static final int Trigger_FluidContainer_Contains	= 12;
+	public static final int Trigger_FluidContainer_Space 		= 13;
+	public static final int Trigger_FluidContainer_Full 		= 14;
 	public static final int Trigger_Machine_Active 				= 15;
 	public static final int Trigger_Machine_Inactive 			= 16;
 	public static final int Trigger_PipeContents_Empty 			= 17;
 	public static final int Trigger_PipeContents_ContainsItems 	= 18;
-	public static final int Trigger_PipeContents_ContainsLiquid = 19;
+	public static final int Trigger_PipeContents_ContainsFluid = 19;
 	public static final int Trigger_PipeContents_ContainsEnergy = 20;
 	public static final int Trigger_PipeSignal_Red_Active 		= 21;
 	public static final int Trigger_PipeSignal_Blue_Active 		= 22;
@@ -75,15 +75,15 @@ public class ActionTriggerIconProvider implements IIconProvider {
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Contains] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_contains");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Space] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_space");
 		icons[ActionTriggerIconProvider.Trigger_Inventory_Full] = iconRegister.registerIcon("buildcraft:triggers/trigger_inventory_full");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Empty] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_empty");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Contains] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_contains");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Space] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_space");
-		icons[ActionTriggerIconProvider.Trigger_LiquidContainer_Full] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_full");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Empty] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_empty");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Contains] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_contains");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Space] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_space");
+		icons[ActionTriggerIconProvider.Trigger_FluidContainer_Full] = iconRegister.registerIcon("buildcraft:triggers/trigger_liquidcontainer_full");
 		icons[ActionTriggerIconProvider.Trigger_Machine_Active] = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_active");
 		icons[ActionTriggerIconProvider.Trigger_Machine_Inactive] = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_inactive");
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_Empty] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_empty");
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsitems");
-		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsliquid");
+		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsFluid] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsliquid");
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsenergy");
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_RequestsEnergy] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_requestsenergy");
 		icons[ActionTriggerIconProvider.Trigger_PipeContents_TooMuchEnergy] = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_toomuchenergy");

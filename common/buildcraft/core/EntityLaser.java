@@ -7,14 +7,20 @@
  */
 package buildcraft.core;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import buildcraft.api.core.Position;
 import buildcraft.core.proxy.CoreProxy;
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 public abstract class EntityLaser extends Entity {
 
+	public static final ResourceLocation[] LASER_TEXTURES = new ResourceLocation[]{
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png"),
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png"),
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png"),
+		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png")};
 	protected Position head, tail;
 	public double renderSize = 0;
 	public double angleY = 0;
@@ -142,7 +148,7 @@ public abstract class EntityLaser extends Entity {
 		return this.isVisible;
 	}
 
-	public abstract String getTexture();
+	public abstract ResourceLocation getTexture();
 
 	protected int encodeDouble(double d) {
 		return (int) (d * 8192);

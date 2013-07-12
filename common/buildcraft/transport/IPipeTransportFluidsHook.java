@@ -10,9 +10,9 @@
 package buildcraft.transport;
 
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.FluidStack;
 
-public interface IPipeTransportLiquidsHook {
+public interface IPipeTransportFluidsHook {
 
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill);
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill);
 }

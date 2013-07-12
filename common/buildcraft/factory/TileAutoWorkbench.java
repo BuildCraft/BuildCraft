@@ -8,26 +8,25 @@
 package buildcraft.factory;
 
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.inventory.InventoryConcatenator;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.InventoryIterator.IInvSlot;
-import buildcraft.core.inventory.InventoryMapper;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.CraftingHelper;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.utils.Utils;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -36,12 +35,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public static final int SLOT_RESULT = 0;
 	public static final int CRAFT_TIME = 256;
 	public static final int UPDATE_TIME = 16;
-	private static final int[] SLOTS = Utils.createSlotArray(0, 5);
-	private SimpleInventory inv = new SimpleInventory(5, "Auto Workbench", 64);
-	private IInventory invBuffer = new InventoryMapper(inv, 1, 4);
+	private static final int[] SLOTS = Utils.createSlotArray(0, 10);
+	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
 	public InventoryCrafting craftMatrix = new LocalInventoryCrafting();
+	private IInventory inv = InventoryConcatenator.make().add(resultInv).add(craftMatrix);
 	public boolean useLast;
-	private final TransactorRoundRobin transactor = new TransactorRoundRobin(craftMatrix);
 	private EntityPlayer internalPlayer;
 	private SlotCrafting craftSlot;
 	private InventoryCraftResult craftResult = new InventoryCraftResult();
@@ -63,15 +61,14 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	private final class InternalPlayer extends EntityPlayer {
 
 		public InternalPlayer() {
-			super(TileAutoWorkbench.this.worldObj);
+			super(TileAutoWorkbench.this.worldObj, "[BuildCraft]");
 			posX = TileAutoWorkbench.this.xCoord;
 			posY = TileAutoWorkbench.this.yCoord + 1;
 			posZ = TileAutoWorkbench.this.zCoord;
-			username = "[Buildcraft]";
 		}
 
 		@Override
-		public void sendChatToPlayer(String var1) {
+		public void sendChatToPlayer(ChatMessageComponent var1) {
 		}
 
 		@Override
@@ -93,7 +90,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public int getSizeInventory() {
-		return inv.getSizeInventory();
+		return 10;
 	}
 
 	@Override
@@ -118,13 +115,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public String getInvName() {
-
 		return "";
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-
 		return 64;
 	}
 
@@ -136,7 +131,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		inv.readFromNBT(data);
+		resultInv.readFromNBT(data);
 		Utils.readInvFromNBT(craftMatrix, "matrix", data);
 
 		// Legacy Code
@@ -152,7 +147,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		inv.writeToNBT(data);
+		resultInv.writeToNBT(data);
 		Utils.writeInvToNBT(craftMatrix, "matrix", data);
 	}
 
@@ -197,13 +192,13 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 
-		processHiddenBuffer();
+		balanceSlots();
 
 		if (craftSlot == null) {
 			internalPlayer = new InternalPlayer();
 			craftSlot = new SlotCrafting(internalPlayer, craftMatrix, craftResult, 0, 0, 0);
 		}
-		if (inv.getStackInSlot(SLOT_RESULT) != null) {
+		if (resultInv.getStackInSlot(SLOT_RESULT) != null) {
 			return;
 		}
 		update++;
@@ -217,22 +212,26 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	/**
-	 * Moves items out of the hidden input buffer into the craft grid.
+	 * Evenly redistributes items between all the slots.
 	 */
-	private void processHiddenBuffer() {
-		for (IInvSlot slot : InventoryIterator.getIterable(invBuffer, ForgeDirection.UP)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack == null) {
+	private void balanceSlots() {
+		for (IInvSlot slotA : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
+			ItemStack stackA = slotA.getStackInSlot();
+			if (stackA == null)
 				continue;
-			}
-			if (!gridHasRoomFor(stack)) {
-				slot.setStackInSlot(null);
-				Utils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
-				continue;
-			}
-			stack.stackSize -= transactor.add(stack, ForgeDirection.DOWN, true).stackSize;
-			if (stack.stackSize <= 0) {
-				slot.setStackInSlot(null);
+			for (IInvSlot slotB : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
+				if (slotA.getIndex() == slotB.getIndex())
+					continue;
+				ItemStack stackB = slotB.getStackInSlot();
+				if (stackB == null)
+					continue;
+				if (StackHelper.instance().canStacksMerge(stackA, stackB)) {
+					if (stackA.stackSize > stackB.stackSize + 1) {
+						stackA.stackSize--;
+						stackB.stackSize++;
+						return;
+					}
+				}
 			}
 		}
 	}
@@ -262,7 +261,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		}
 		result = result.copy();
 		craftSlot.onPickupFromSlot(internalPlayer, result);
-		inv.setInventorySlotContents(SLOT_RESULT, result);
+		resultInv.setInventorySlotContents(SLOT_RESULT, result);
 
 		// clean fake player inventory (crafting handler support)
 		for (IInvSlot slot : InventoryIterator.getIterable(internalPlayer.inventory, ForgeDirection.UP)) {
@@ -288,20 +287,18 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int slot, ItemStack stack) {
-		if (slot == SLOT_RESULT) {
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		if (slot == SLOT_RESULT)
 			return false;
-		}
-		if (stack == null) {
+		if (stack == null)
 			return false;
-		}
-		if (!stack.isStackable()) {
+		if (!stack.isStackable())
 			return false;
-		}
-		if (stack.getItem().hasContainerItem()) {
+		if (stack.getItem().hasContainerItem())
 			return false;
-		}
-		return gridHasRoomFor(stack);
+		if (getStackInSlot(slot) == null)
+			return false;
+		return true;
 	}
 
 	@Override
@@ -311,29 +308,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return isStackValidForSlot(slot, stack);
+		return isItemValidForSlot(slot, stack);
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
 		return slot == SLOT_RESULT;
-	}
-
-	/**
-	 * Check if there is room for the stack in the crafting grid.
-	 *
-	 * @param input
-	 * @return true if in grid
-	 */
-	private boolean gridHasRoomFor(ItemStack input) {
-		int space = 0;
-		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (StackHelper.instance().canStacksMerge(stack, input)) {
-				space += stack.getMaxStackSize() - stack.stackSize;
-			}
-		}
-		return space >= input.stackSize;
 	}
 
 	/**

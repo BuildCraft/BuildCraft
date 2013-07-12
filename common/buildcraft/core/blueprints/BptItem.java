@@ -9,11 +9,10 @@
 
 package buildcraft.core.blueprints;
 
-import java.util.LinkedList;
-
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+import java.util.LinkedList;
+import net.minecraft.item.ItemStack;
 
 public class BptItem {
 

@@ -3,7 +3,6 @@ package buildcraft.core.network;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 

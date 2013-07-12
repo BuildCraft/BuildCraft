@@ -8,8 +8,11 @@
 
 package buildcraft.core.utils;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.core.BuildCraftAPI;
+import cpw.mods.fml.common.FMLCommonHandler;
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,10 +22,6 @@ import net.minecraft.network.packet.Packet60Explosion;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.api.core.BuildCraftAPI;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class BlockUtil {
 
@@ -79,7 +78,7 @@ public class BlockUtil {
 		if (block.getBlockHardness(world, x, y, z) < 0)
 			return false;
 
-		if (blockID == BuildCraftEnergy.oilMoving.blockID || blockID == BuildCraftEnergy.oilStill.blockID)
+		if (blockID == BuildCraftEnergy.blockOil.blockID)
 			return false;
 
 		if (blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID)

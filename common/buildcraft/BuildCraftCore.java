@@ -8,27 +8,11 @@
 
 package buildcraft;
 
-import buildcraft.builders.blueprints.BlueprintDatabase;
-import java.io.File;
-import java.util.TreeMap;
-import java.util.logging.Logger;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityList;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
+import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
@@ -57,18 +41,15 @@ import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.triggers.DefaultActionProvider;
 import buildcraft.core.triggers.DefaultTriggerProvider;
+import buildcraft.core.triggers.TriggerFluidContainer;
 import buildcraft.core.triggers.TriggerInventory;
-import buildcraft.core.triggers.TriggerLiquidContainer;
 import buildcraft.core.triggers.TriggerMachine;
 import buildcraft.core.utils.Localization;
 import buildcraft.transport.triggers.TriggerRedstoneInput;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.Mod.ServerStarting;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -80,6 +61,21 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.io.File;
+import java.util.TreeMap;
+import java.util.logging.Logger;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.entity.EntityList;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[7.7.2.682,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -142,10 +138,10 @@ public class BuildCraftCore {
 	public static BCTrigger triggerContainsInventory = new TriggerInventory(DefaultProps.TRIGGER_CONTAINS_INVENTORY, TriggerInventory.State.Contains);
 	public static BCTrigger triggerSpaceInventory = new TriggerInventory(DefaultProps.TRIGGER_SPACE_INVENTORY, TriggerInventory.State.Space);
 	public static BCTrigger triggerFullInventory = new TriggerInventory(DefaultProps.TRIGGER_FULL_INVENTORY, TriggerInventory.State.Full);
-	public static BCTrigger triggerEmptyLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_EMPTY_LIQUID, TriggerLiquidContainer.State.Empty);
-	public static BCTrigger triggerContainsLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_CONTAINS_LIQUID, TriggerLiquidContainer.State.Contains);
-	public static BCTrigger triggerSpaceLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_SPACE_LIQUID, TriggerLiquidContainer.State.Space);
-	public static BCTrigger triggerFullLiquid = new TriggerLiquidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerLiquidContainer.State.Full);
+	public static BCTrigger triggerEmptyFluid = new TriggerFluidContainer(DefaultProps.TRIGGER_EMPTY_LIQUID, TriggerFluidContainer.State.Empty);
+	public static BCTrigger triggerContainsFluid = new TriggerFluidContainer(DefaultProps.TRIGGER_CONTAINS_LIQUID, TriggerFluidContainer.State.Contains);
+	public static BCTrigger triggerSpaceFluid = new TriggerFluidContainer(DefaultProps.TRIGGER_SPACE_LIQUID, TriggerFluidContainer.State.Space);
+	public static BCTrigger triggerFullFluid = new TriggerFluidContainer(DefaultProps.TRIGGER_FULL_LIQUID, TriggerFluidContainer.State.Full);
 	public static BCTrigger triggerRedstoneActive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_ACTIVE, true);
 	public static BCTrigger triggerRedstoneInactive = new TriggerRedstoneInput(DefaultProps.TRIGGER_REDSTONE_INACTIVE, false);
 
@@ -167,7 +163,7 @@ public class BuildCraftCore {
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
-	@PreInit
+    @EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 
 		Version.check();
@@ -264,8 +260,8 @@ public class BuildCraftCore {
 		}
 	}
 
-	@Init
-	public void initialize(FMLInitializationEvent evt) {
+    @EventHandler
+    public void initialize(FMLInitializationEvent evt) {
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 		ActionManager.registerTriggerProvider(new DefaultTriggerProvider());
 		ActionManager.registerActionProvider(new DefaultActionProvider());
@@ -294,7 +290,7 @@ public class BuildCraftCore {
 
 	}
 
-	@PostInit
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		for (Block block : Block.blocksList) {
 			if (block instanceof BlockFluid || block instanceof IPlantable) {
@@ -309,19 +305,19 @@ public class BuildCraftCore {
 
 	}
 
-	@ServerStarting
-	public void serverStarting(FMLServerStartingEvent event) {
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandBuildCraft());
 	}
 
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event){
-		if (event.map == Minecraft.getMinecraft().renderEngine.textureMapItems) {
+		if (event.map.textureType == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
 			actionTriggerIconProvider.registerIcons(event.map);
-		} else if (event.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+		} else if (event.map.textureType == 0) {
 	        BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 	        BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
 	        BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");

@@ -7,10 +7,6 @@
  */
 package buildcraft.transport.triggers;
 
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
@@ -18,16 +14,20 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.pipes.PipePowerWood;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 
 public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 	public enum Kind {
 
-		Empty, ContainsItems, ContainsLiquids, ContainsEnergy, RequestsEnergy, TooMuchEnergy
+		Empty, ContainsItems, ContainsFluids, ContainsEnergy, RequestsEnergy, TooMuchEnergy
 	};
 	Kind kind;
 
@@ -40,7 +40,7 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 	public boolean hasParameter() {
 		switch (kind) {
 			case ContainsItems:
-			case ContainsLiquids:
+			case ContainsFluids:
 				return true;
 			default:
 				return false;
@@ -55,8 +55,8 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 				return StringUtils.localize("gate.pipe.empty");
 			case ContainsItems:
 				return StringUtils.localize("gate.pipe.containsItems");
-			case ContainsLiquids:
-				return StringUtils.localize("gate.pipe.containsLiquids");
+			case ContainsFluids:
+				return StringUtils.localize("gate.pipe.containsFluids");
 			case ContainsEnergy:
 				return StringUtils.localize("gate.pipe.containsEnergy");
 			case RequestsEnergy:
@@ -84,26 +84,26 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 					}
 				} else
 					return !transportItems.travelingEntities.isEmpty();
-		} else if (pipe.transport instanceof PipeTransportLiquids) {
-			PipeTransportLiquids transportLiquids = (PipeTransportLiquids) pipe.transport;
+		} else if (pipe.transport instanceof PipeTransportFluids) {
+			PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 
-			LiquidStack searchedLiquid = null;
+			FluidStack searchedFluid = null;
 
 			if (parameter != null && parameter.getItem() != null) {
-				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItem());
 			}
 
 			if (kind == Kind.Empty) {
-				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN)) {
-					if (b.getLiquid() != null && b.getLiquid().amount != 0)
+				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+					if (b.fluid != null && b.fluid.amount != 0)
 						return false;
 				}
 
 				return true;
 			} else {
-				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN)) {
-					if (b.getLiquid() != null && b.getLiquid().amount != 0)
-						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(b.getLiquid()))
+				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+					if (b.fluid != null && b.fluid.amount != 0)
+						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid))
 							return true;
 				}
 
@@ -145,8 +145,8 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 				return ActionTriggerIconProvider.Trigger_PipeContents_Empty;
 			case ContainsItems:
 				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems;
-			case ContainsLiquids:
-				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsLiquid;
+			case ContainsFluids:
+				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsFluid;
 			case ContainsEnergy:
 				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy;
 			case RequestsEnergy:

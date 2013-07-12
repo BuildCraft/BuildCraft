@@ -7,9 +7,6 @@
  */
 package buildcraft.transport.pipes;
 
-import java.util.LinkedList;
-
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -21,6 +18,8 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.LinkedList;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 

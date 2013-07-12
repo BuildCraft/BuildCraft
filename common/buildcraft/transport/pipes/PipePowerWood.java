@@ -7,7 +7,6 @@
  */
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IPowerReceptor;
@@ -20,6 +19,7 @@ import buildcraft.transport.PipeTransportPower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipePowerWood extends Pipe implements IPowerReceptor {
 

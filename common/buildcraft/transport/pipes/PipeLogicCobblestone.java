@@ -7,10 +7,10 @@
  */
 package buildcraft.transport.pipes;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeLogicCobblestone extends PipeLogic {
 

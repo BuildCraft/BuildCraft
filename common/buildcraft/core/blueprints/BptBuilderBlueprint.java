@@ -9,21 +9,20 @@
 
 package buildcraft.core.blueprints;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.IBuilderInventory;
+import buildcraft.core.blueprints.BptSlot.Mode;
+import buildcraft.core.utils.BlockUtil;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumGameType;
 import net.minecraft.world.World;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.IBuilderInventory;
-import buildcraft.core.blueprints.BptSlot.Mode;
-import buildcraft.core.utils.BlockUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 

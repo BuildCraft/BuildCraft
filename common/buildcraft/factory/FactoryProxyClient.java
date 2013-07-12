@@ -1,9 +1,5 @@
 package buildcraft.factory;
 
-import java.lang.reflect.Method;
-
-import net.minecraft.util.Icon;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.EntityBlock;
@@ -16,6 +12,9 @@ import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import java.lang.reflect.Method;
+import net.minecraft.util.Icon;
+import net.minecraft.world.World;
 
 public class FactoryProxyClient extends FactoryProxy {
 	public static Icon pumpTexture;

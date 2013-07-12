@@ -8,22 +8,23 @@
 
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
-public class PipeLiquidsGold extends Pipe {
+public class PipeFluidsIron extends Pipe {
+	
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsIron_Standard.ordinal();
+	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
 
-	public PipeLiquidsGold(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicGold(), itemID);
 
-		((PipeTransportLiquids) transport).flowRate = 40;
-		((PipeTransportLiquids) transport).travelDelay = 4;
+	public PipeFluidsIron(int itemID) {
+		super(new PipeTransportFluids(), new PipeLogicIron(), itemID);
 	}
 
 	@Override
@@ -34,7 +35,20 @@ public class PipeLiquidsGold extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.TYPE.PipeLiquidsGold.ordinal();
+		if (direction == ForgeDirection.UNKNOWN)
+			return standardIconIndex;
+		else {
+			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+			if (metadata == direction.ordinal())
+				return solidIconIndex;
+			else
+				return standardIconIndex;
+		}
 	}
 
+	@Override
+	public boolean canConnectRedstone() {
+		return true;
+	}
 }

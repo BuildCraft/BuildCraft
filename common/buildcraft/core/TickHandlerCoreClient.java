@@ -1,11 +1,10 @@
 package buildcraft.core;
 
-import java.util.EnumSet;
-
-import net.minecraft.entity.player.EntityPlayer;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import java.util.EnumSet;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class TickHandlerCoreClient implements ITickHandler {
 

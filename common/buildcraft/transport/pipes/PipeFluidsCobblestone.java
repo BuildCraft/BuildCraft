@@ -8,23 +8,19 @@
 
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
 
-public class PipeLiquidsIron extends Pipe {
-	
-	protected int standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsIron_Standard.ordinal();
-	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
+public class PipeFluidsCobblestone extends Pipe {
 
-
-	public PipeLiquidsIron(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicIron(), itemID);
+	public PipeFluidsCobblestone(int itemID) {
+		super(new PipeTransportFluids(), new PipeLogicCobblestone(), itemID);
 	}
 
 	@Override
@@ -35,20 +31,6 @@ public class PipeLiquidsIron extends Pipe {
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
-			return standardIconIndex;
-		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == direction.ordinal())
-				return solidIconIndex;
-			else
-				return standardIconIndex;
-		}
-	}
-
-	@Override
-	public boolean canConnectRedstone() {
-		return true;
+		return PipeIconProvider.TYPE.PipeFluidsCobblestone.ordinal();
 	}
 }

@@ -7,32 +7,17 @@
  */
 package buildcraft;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.TreeMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import net.minecraftforge.event.ForgeSubscribe;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.bptblocks.BptBlockBed;
 import buildcraft.api.bptblocks.BptBlockCustomStack;
 import buildcraft.api.bptblocks.BptBlockDelegate;
 import buildcraft.api.bptblocks.BptBlockDirt;
 import buildcraft.api.bptblocks.BptBlockDoor;
+import buildcraft.api.bptblocks.BptBlockFluid;
 import buildcraft.api.bptblocks.BptBlockIgnore;
 import buildcraft.api.bptblocks.BptBlockIgnoreMeta;
 import buildcraft.api.bptblocks.BptBlockInventory;
 import buildcraft.api.bptblocks.BptBlockLever;
-import buildcraft.api.bptblocks.BptBlockLiquid;
 import buildcraft.api.bptblocks.BptBlockPiston;
 import buildcraft.api.bptblocks.BptBlockPumpkin;
 import buildcraft.api.bptblocks.BptBlockRedstoneRepeater;
@@ -76,9 +61,8 @@ import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.blueprints.BptRootIndex;
 import buildcraft.core.proxy.CoreProxy;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
@@ -88,6 +72,19 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.TreeMap;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
+import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandlerBuilders.class, clientSideRequired = true, serverSideRequired = true)
@@ -112,7 +109,7 @@ public class BuildCraftBuilders {
 	@Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
-	@Init
+	@EventHandler
 	public void load(FMLInitializationEvent evt) {
 		// Create filler registry
 		FillerManager.registry = new FillerRegistry();
@@ -171,10 +168,10 @@ public class BuildCraftBuilders {
 		new BptBlockRedstoneRepeater(Block.redstoneRepeaterActive.blockID);
 		new BptBlockRedstoneRepeater(Block.redstoneRepeaterIdle.blockID);
 
-		new BptBlockLiquid(Block.waterStill.blockID, new ItemStack(Item.bucketWater));
-		new BptBlockLiquid(Block.waterMoving.blockID, new ItemStack(Item.bucketWater));
-		new BptBlockLiquid(Block.lavaStill.blockID, new ItemStack(Item.bucketLava));
-		new BptBlockLiquid(Block.lavaMoving.blockID, new ItemStack(Item.bucketLava));
+		new BptBlockFluid(Block.waterStill.blockID, new ItemStack(Item.bucketWater));
+		new BptBlockFluid(Block.waterMoving.blockID, new ItemStack(Item.bucketWater));
+		new BptBlockFluid(Block.lavaStill.blockID, new ItemStack(Item.bucketLava));
+		new BptBlockFluid(Block.lavaMoving.blockID, new ItemStack(Item.bucketLava));
 
 		new BptBlockIgnoreMeta(Block.rail.blockID);
 		new BptBlockIgnoreMeta(Block.railPowered.blockID);
@@ -217,7 +214,7 @@ public class BuildCraftBuilders {
 
 	}
 
-	@PreInit
+	@EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
 		Property templateItemId = BuildCraftCore.mainConfiguration.getItem("templateItem.id", DefaultProps.TEMPLATE_ITEM_ID);
 		Property blueprintItemId = BuildCraftCore.mainConfiguration.getItem("blueprintItem.id", DefaultProps.BLUEPRINT_ITEM_ID);
@@ -312,11 +309,9 @@ public class BuildCraftBuilders {
 			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
 			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.goldGearItem, Character.valueOf('C'), Block.chest});
 
-
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
 			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
 			Character.valueOf('c'), Block.workbench, Character.valueOf('g'), BuildCraftCore.diamondGearItem, Character.valueOf('C'), Block.chest});
-
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), new Object[]{"btb", "ycy", "gCg", Character.valueOf('b'),
 			new ItemStack(Item.dyePowder, 1, 0), Character.valueOf('t'), markerBlock, Character.valueOf('y'), new ItemStack(Item.dyePowder, 1, 11),
@@ -325,6 +320,7 @@ public class BuildCraftBuilders {
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), new Object[]{"bbb", "bBb", "bbb", Character.valueOf('b'),
 			new ItemStack(blueprintItem), Character.valueOf('B'), Block.bookShelf});
+
 
 		// / INIT FILLER PATTERNS
 		FillerManager.registry.addRecipe(new FillerFillAll(), new Object[]{"bbb", "bbb", "bbb", 'g', Block.glass, 'b', Block.brick});
@@ -386,7 +382,7 @@ public class BuildCraftBuilders {
 		}
 	}
 
-	@Mod.ServerStopping
+	@EventHandler
 	public void ServerStop(FMLServerStoppingEvent event) {
 		TilePathMarker.clearAvailableMarkersList();
 	}
@@ -394,7 +390,7 @@ public class BuildCraftBuilders {
 	@ForgeSubscribe
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
-		if (evt.map == Minecraft.getMinecraft().renderEngine.textureMapBlocks) {
+		if (evt.map.textureType == 0) {
 			TextureMap terrainMap = evt.map;
 			BuilderProxyClient.fillerFillAllTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/fillAll");
 			BuilderProxyClient.fillerClearTexture = terrainMap.registerIcon("buildcraft:fillerPatterns/clear");

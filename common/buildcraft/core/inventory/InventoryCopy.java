@@ -105,8 +105,8 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int slot, ItemStack stack) {
-		return orignal.isStackValidForSlot(slot, stack);
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		return orignal.isItemValidForSlot(slot, stack);
 	}
 
 	public ItemStack[] getItemStacks() {

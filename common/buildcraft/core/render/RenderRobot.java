@@ -1,17 +1,17 @@
 package buildcraft.core.render;
 
+import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityRobot;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
-
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityRobot;
 
 public class RenderRobot extends Render {
 
+	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/robot.png");
 	protected ModelBase model = new ModelBase() {
 	};
 	private ModelRenderer box;
@@ -35,7 +35,7 @@ public class RenderRobot extends Render {
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 		GL11.glTranslated(x, y, z);
 
-		renderManager.renderEngine.bindTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/robot.png");
+		renderManager.renderEngine.func_110577_a(TEXTURE);
 
 		float factor = (float) (1.0 / 16.0);
 
@@ -46,4 +46,8 @@ public class RenderRobot extends Render {
 
 	}
 
+	@Override
+	protected ResourceLocation func_110775_a(Entity entity) {
+		return TEXTURE;
+	}
 }

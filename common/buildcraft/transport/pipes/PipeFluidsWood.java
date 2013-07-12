@@ -8,12 +8,6 @@
 
 package buildcraft.transport.pipes;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ITankContainer;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -25,29 +19,35 @@ import buildcraft.api.transport.PipeManager;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 
-public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
+public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 
 	public @TileNetworkData
 	int liquidToExtract;
 
 	private PowerHandler powerHandler;
 
-	protected int standardIconIndex = PipeIconProvider.TYPE.PipeLiquidsWood_Standard.ordinal();
+	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 
 	long lastMining = 0;
 	boolean lastPower = false;
 
-	public PipeLiquidsWood(int itemID) {
+	public PipeFluidsWood(int itemID) {
 		this(new PipeLogicWood(), itemID);
 	}
-	
-	protected PipeLiquidsWood(PipeLogic logic, int itemID) {
-		super(new PipeTransportLiquids(), logic, itemID);
+
+	protected PipeFluidsWood(PipeLogic logic, int itemID) {
+		super(new PipeTransportFluids(), logic, itemID);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 100, 1, 250);
@@ -73,12 +73,12 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 		pos.moveForwards(1);
 		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-		if (tile instanceof ITankContainer) {
-			if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+		if (tile instanceof IFluidHandler) {
+			if (!PipeManager.canExtractFluids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
 				return;
 
-			if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME) {
-				liquidToExtract += powerHandler.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
+			if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {
+				liquidToExtract += powerHandler.useEnergy(1, 1, true) * FluidContainerRegistry.BUCKET_VOLUME;
 			}
 		}
 		powerHandler.useEnergy(1, 1, true);
@@ -101,16 +101,16 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
 			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (tile instanceof ITankContainer) {
-				ITankContainer container = (ITankContainer) tile;
+			if (tile instanceof IFluidHandler) {
+				IFluidHandler container = (IFluidHandler) tile;
 
-				int flowRate = ((PipeTransportLiquids) transport).flowRate;
+				int flowRate = ((PipeTransportFluids) transport).flowRate;
 
-				LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
+				FluidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
 				int inserted = 0;
 				if (extracted != null) {
-					inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
+					inserted = ((PipeTransportFluids) transport).fill(pos.orientation, extracted, true);
 
 					container.drain(pos.orientation.getOpposite(), inserted, true);
 				}

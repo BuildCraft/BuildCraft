@@ -1,15 +1,5 @@
 package buildcraft.transport.network;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -22,6 +12,15 @@ import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class PacketHandlerTransport implements IPacketHandler {
 
@@ -41,8 +40,8 @@ public class PacketHandlerTransport implements IPacketHandler {
 				onPacketPower((EntityPlayer) player, packetPower);
 				break;
 			case PacketIds.PIPE_LIQUID:
-				PacketLiquidUpdate packetLiquid = new PacketLiquidUpdate();
-				packetLiquid.readData(data);
+				PacketFluidUpdate packetFluid = new PacketFluidUpdate();
+				packetFluid.readData(data);
 				break;
 			case PacketIds.PIPE_DESCRIPTION:
 				PipeRenderStatePacket descPacket = new PipeRenderStatePacket();

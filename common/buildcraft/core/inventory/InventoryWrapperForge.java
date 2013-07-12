@@ -1,8 +1,8 @@
 package buildcraft.core.inventory;
 
+import buildcraft.core.utils.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.core.utils.Utils;
 
 public class InventoryWrapperForge extends InventoryWrapper {
 

@@ -1,10 +1,12 @@
 package buildcraft.core;
 
-import net.minecraft.world.World;
 import buildcraft.api.core.Position;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 public class EntityPowerLaser extends EntityLaser {
-	private String texture;
+
+	private byte texture;
 
 	public EntityPowerLaser(World world) {
 		super(world);
@@ -17,23 +19,23 @@ public class EntityPowerLaser extends EntityLaser {
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		dataWatcher.addObject(15, "");
+		dataWatcher.addObject(15, (byte) 0);
 	}
 
 	@Override
-	public String getTexture() {
-		return texture;
+	public ResourceLocation getTexture() {
+		return LASER_TEXTURES[texture];
 	}
 
-	public void setTexture(String texture) {
-		this.texture = texture;
+	public void setTexture(int texture) {
+		this.texture = (byte) texture;
 		needsUpdate = true;
 	}
 
 	@Override
 	protected void updateDataClient() {
 		super.updateDataClient();
-		texture = dataWatcher.getWatchableObjectString(15);
+		texture = dataWatcher.getWatchableObjectByte(15);
 	}
 
 	@Override

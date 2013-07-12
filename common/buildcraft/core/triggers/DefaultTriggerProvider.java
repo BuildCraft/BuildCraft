@@ -1,19 +1,18 @@
 package buildcraft.core.triggers;
 
-import java.util.LinkedList;
-
-import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.ITankContainer;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IMachine;
+import java.util.LinkedList;
+import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 
@@ -32,13 +31,13 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerFullInventory);
 		}
 
-		if (tile instanceof ITankContainer) {
-			ILiquidTank[] tanks = ((ITankContainer) tile).getTanks(ForgeDirection.UNKNOWN);
+		if (tile instanceof IFluidHandler) {
+			FluidTankInfo[] tanks = ((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN);
 			if (tanks != null && tanks.length > 0) {
-				res.add(BuildCraftCore.triggerEmptyLiquid);
-				res.add(BuildCraftCore.triggerContainsLiquid);
-				res.add(BuildCraftCore.triggerSpaceLiquid);
-				res.add(BuildCraftCore.triggerFullLiquid);
+				res.add(BuildCraftCore.triggerEmptyFluid);
+				res.add(BuildCraftCore.triggerContainsFluid);
+				res.add(BuildCraftCore.triggerSpaceFluid);
+				res.add(BuildCraftCore.triggerFullFluid);
 			}
 		}
 

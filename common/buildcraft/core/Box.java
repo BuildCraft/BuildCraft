@@ -9,11 +9,6 @@
 
 package buildcraft.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.LaserKind;
@@ -21,6 +16,10 @@ import buildcraft.api.core.Position;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class Box implements IBox {
 

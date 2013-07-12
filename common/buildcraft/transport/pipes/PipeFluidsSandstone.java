@@ -9,21 +9,21 @@
 
 package buildcraft.transport.pipes;
 
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.transport.IPipeTransportLiquidsHook;
+import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportLiquids;
+import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
 
-public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsHook {
-	public PipeLiquidsSandstone(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicSandstone(), itemID);
+public class PipeFluidsSandstone extends Pipe implements IPipeTransportFluidsHook {
+	public PipeFluidsSandstone(int itemID) {
+		super(new PipeTransportFluids(), new PipeLogicSandstone(), itemID);
 	}
 
 	@Override
@@ -34,17 +34,17 @@ public class PipeLiquidsSandstone extends Pipe implements IPipeTransportLiquidsH
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.TYPE.PipeLiquidsSandstone.ordinal();
+		return PipeIconProvider.TYPE.PipeFluidsSandstone.ordinal();
 	}
 
 	@Override
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		if (container.tileBuffer == null || container.tileBuffer[from.ordinal()] == null)
 			return 0;
 
 		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe))
 			return 0;
 
-		return ((PipeTransportLiquids) this.transport).getTanks(ForgeDirection.UNKNOWN)[from.ordinal()].fill(resource, doFill);
+		return ((PipeTransportFluids) this.transport).fill(from, resource, doFill);
 	}
 }

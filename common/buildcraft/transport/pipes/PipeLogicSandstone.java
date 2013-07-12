@@ -9,9 +9,9 @@
 
 package buildcraft.transport.pipes;
 
+import buildcraft.transport.TileGenericPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.transport.TileGenericPipe;
 
 public class PipeLogicSandstone extends PipeLogic {
 	@Override

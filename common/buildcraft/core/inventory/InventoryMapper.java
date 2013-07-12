@@ -107,9 +107,9 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public boolean isStackValidForSlot(int slot, ItemStack stack) {
+    public boolean isItemValidForSlot(int slot, ItemStack stack) {
         if (checkItems) {
-            return inv.isStackValidForSlot(start + slot, stack);
+            return inv.isItemValidForSlot(start + slot, stack);
         }
         return true;
     }

@@ -7,11 +7,6 @@
  */
 package buildcraft.core;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraft.network.packet.Packet;
-import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
@@ -20,7 +15,10 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import net.minecraft.world.World;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 

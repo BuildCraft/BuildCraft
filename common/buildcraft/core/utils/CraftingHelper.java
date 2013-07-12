@@ -2,7 +2,6 @@ package buildcraft.core.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

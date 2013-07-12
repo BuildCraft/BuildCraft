@@ -1,14 +1,13 @@
 package buildcraft.core;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.proxy.CoreProxy;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
 import net.minecraftforge.common.Property;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.proxy.CoreProxy;
 
 public class Version implements Runnable {
 

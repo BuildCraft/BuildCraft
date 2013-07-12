@@ -1,15 +1,15 @@
 package buildcraft.transport;
 
-import java.util.LinkedList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.network.PacketPayload;
+import java.util.LinkedList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 public abstract class Gate {
 
@@ -98,7 +98,7 @@ public abstract class Gate {
 	// / TEXTURES
 	public abstract int getTextureIconIndex(boolean isSignalActive);
 
-	public abstract String getGuiFile();
+	public abstract ResourceLocation getGuiFile();
 
 	public static boolean isGateItem(ItemStack stack) {
 		return stack.itemID == BuildCraftTransport.pipeGate.itemID || stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID;

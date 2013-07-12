@@ -9,20 +9,6 @@
 
 package buildcraft.transport;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Random;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -41,12 +27,23 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
 import buildcraft.transport.pipes.PipeLogic;
 import buildcraft.transport.triggers.ActionSignalOutput;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Random;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public abstract class Pipe implements IPipe, IDropControlInventory {
 
@@ -129,7 +126,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		transport.onBlockPlaced();
 	}
 
-	public void onBlockPlacedBy(EntityLiving placer) {}
+	public void onBlockPlacedBy(EntityLivingBase placer) {}
 
 	public void onNeighborBlockChange(int blockId) {
 		logic.onNeighborBlockChange(blockId);
@@ -215,7 +212,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		for (int i = 0; i < 4; ++i)
 			nbttagcompound.setBoolean("wireSet[" + i + "]", wireSet[i]);
-		
+
 		for (int i = 0; i < 8; ++i) {
 			nbttagcompound.setInteger("action[" + i + "]", activatedActions[i] != null ? activatedActions[i].getId() : 0);
 			nbttagcompound.setInteger("trigger[" + i + "]", activatedTriggers[i] != null ? activatedTriggers[i].getId() : 0);
@@ -255,7 +252,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		for (int i = 0; i < 4; ++i)
 			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
-		
+
 		for (int i = 0; i < 8; ++i) {
 			activatedActions[i] = ActionManager.actions[nbttagcompound.getInteger("action[" + i + "]")];
 			activatedTriggers[i] = ActionManager.triggers[nbttagcompound.getInteger("trigger[" + i + "]")];
@@ -728,7 +725,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
         fixedTriggers = true;
 
     }
-	
+
 	public World getWorldObj(){
 		return worldObj;
 	}

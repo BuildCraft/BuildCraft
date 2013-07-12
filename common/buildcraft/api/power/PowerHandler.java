@@ -7,9 +7,9 @@
  */
 package buildcraft.api.power;
 
+import buildcraft.api.core.SafeTimeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.core.SafeTimeTracker;
 
 public final class PowerHandler {
 
@@ -22,8 +22,9 @@ public final class PowerHandler {
 				case MACHINE:
 				case STORAGE:
 					return true;
+				default:
+				    return false;
 			}
-			return false;
 		}
 
 		public boolean eatsEngineExcess() {
@@ -31,8 +32,9 @@ public final class PowerHandler {
 				case MACHINE:
 				case STORAGE:
 					return true;
+				default:
+				    return false;
 			}
-			return false;
 		}
 	}
 

@@ -1,12 +1,5 @@
 package buildcraft.builders;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.TreeSet;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.DefaultProps;
@@ -15,6 +8,12 @@ import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.TreeSet;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class TilePathMarker extends TileMarker {
 
@@ -63,7 +62,7 @@ public class TilePathMarker extends TileMarker {
 				pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
 		laser.show();
 
-		laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+		laser.setTexture(0);
 		worldObj.spawnEntityInWorld(laser);
 
 		connect(pathMarker, laser);

@@ -9,25 +9,7 @@
 
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
@@ -47,9 +29,30 @@ import buildcraft.transport.network.PacketPipeTransportNBT;
 import buildcraft.transport.network.PacketSimpleId;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
 
+	public static final int MAX_PIPE_STACKS = 64;
+	public static final int MAX_PIPE_ITEMS = 1024;
 	public boolean allowBouncing = false;
 	public Map<Integer, EntityData> travelingEntities = new HashMap<Integer, EntityData>();
 	private final List<EntityData> entitiesToLoad = new LinkedList<EntityData>();
@@ -120,16 +123,35 @@ public class PipeTransportItems extends PipeTransport {
 
 		if (!worldObj.isRemote) {
 			sendItemPacket(data);
-		}
 
-		if (!worldObj.isRemote && travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
-			groupEntities();
+			if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
+				groupEntities();
+			}
 
-			if (travelingEntities.size() > BuildCraftTransport.maxItemsInPipes) {
-				BlockUtil.explodeBlock(worldObj, xCoord, yCoord, zCoord);
+			if (travelingEntities.size() > MAX_PIPE_STACKS) {
+				BuildCraftCore.bcLog.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", xCoord, yCoord, zCoord, travelingEntities.size()));
+				destroyPipe();
+				return;
+			}
+
+			int numItems = 0;
+			for (EntityData ed : travelingEntities.values()) {
+				ItemStack stack = ed.item.getItemStack();
+				if (stack != null && stack.stackSize > 0)
+					numItems += stack.stackSize;
+			}
+
+			if (numItems > MAX_PIPE_ITEMS) {
+				BuildCraftCore.bcLog.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", xCoord, yCoord, zCoord, numItems));
+				destroyPipe();
 				return;
 			}
 		}
+	}
+	
+	private void destroyPipe() {
+		BlockUtil.explodeBlock(worldObj, xCoord, yCoord, zCoord);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 	}
 
 	/**

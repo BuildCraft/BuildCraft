@@ -9,16 +9,6 @@ package buildcraft.energy;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
-import net.minecraft.block.Block;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidStack;
-import net.minecraftforge.liquids.LiquidTank;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineCoolant.Coolant;
 import buildcraft.api.fuels.IronEngineFuel;
@@ -26,36 +16,40 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.liquids.LiquidUtils;
+import buildcraft.core.liquids.FluidUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import static buildcraft.energy.TileEngine.EnergyStage.BLUE;
-import static buildcraft.energy.TileEngine.EnergyStage.GREEN;
-import static buildcraft.energy.TileEngine.EnergyStage.RED;
-import static buildcraft.energy.TileEngine.EnergyStage.YELLOW;
-import static buildcraft.energy.TileEngine.IDEAL_HEAT;
-import static buildcraft.energy.TileEngine.MIN_HEAT;
 import buildcraft.energy.gui.ContainerEngine;
 import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.liquids.ITankContainer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileEngineIron extends TileEngine implements ITankContainer {
+public class TileEngineIron extends TileEngine implements IFluidHandler {
 
-	public static int MAX_LIQUID = LiquidContainerRegistry.BUCKET_VOLUME * 10;
+	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
 	public static float HEAT_PER_MJ = 0.0023F;
 	public static float COOLDOWN_RATE = 0.005F;
 	int burnTime = 0;
-	private LiquidTank fuelTank;
-	private LiquidTank coolantTank;
+	private FluidTank fuelTank;
+	private FluidTank coolantTank;
 	private IronEngineFuel currentFuel = null;
 	public int penaltyCooling = 0;
 	boolean lastPowered = false;
 
 	public TileEngineIron() {
 		super(1);
-		fuelTank = new LiquidTank(MAX_LIQUID);
-		coolantTank = new LiquidTank(MAX_LIQUID);
+		fuelTank = new FluidTank(MAX_LIQUID);
+		coolantTank = new FluidTank(MAX_LIQUID);
 	}
 
 	@Override
@@ -72,11 +66,11 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 			ItemStack current = player.getCurrentEquippedItem();
 			if (current != null && current.itemID != Item.bucketEmpty.itemID) {
 				if (CoreProxy.proxy.isSimulating(worldObj)) {
-					if (LiquidUtils.handleRightClick(this, side, player, true, false)) {
+					if (FluidUtils.handleRightClick(this, side, player, true, false)) {
 						return true;
 					}
 				} else {
-					if (LiquidContainerRegistry.isContainer(current)) {
+					if (FluidContainerRegistry.isContainer(current)) {
 						return true;
 					}
 				}
@@ -114,15 +108,15 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 
 	@Override
 	public boolean isBurning() {
-		LiquidStack fuel = fuelTank.getLiquid();
+		FluidStack fuel = fuelTank.getFluid();
 		return fuel != null && fuel.amount > 0 && penaltyCooling == 0 && isRedstonePowered;
 	}
 
 	@Override
 	public void burn() {
-		LiquidStack fuel = this.fuelTank.getLiquid();
+		FluidStack fuel = this.fuelTank.getFluid();
 		if (currentFuel == null) {
-			currentFuel = IronEngineFuel.getFuelForLiquid(fuel);
+			currentFuel = IronEngineFuel.getFuelForFluid(fuel.getFluid());
 		}
 
 		if (currentFuel == null)
@@ -139,9 +133,9 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 				if (burnTime <= 0) {
 					if (fuel != null) {
 						if (--fuel.amount <= 0) {
-							fuelTank.setLiquid(null);
+							fuelTank.setFluid(null);
 						}
-						burnTime = currentFuel.totalBurningTime / LiquidContainerRegistry.BUCKET_VOLUME;
+						burnTime = currentFuel.totalBurningTime / FluidContainerRegistry.BUCKET_VOLUME;
 					} else {
 						currentFuel = null;
 						return;
@@ -169,9 +163,9 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 
 		final ItemStack stack = getStackInSlot(0);
 		if (stack != null) {
-			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(stack);
+			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(stack);
 			if (liquid == null && heat > IDEAL_HEAT) {
-				liquid = IronEngineCoolant.getLiquidCoolant(stack);
+				liquid = IronEngineCoolant.getFluidCoolant(stack);
 			}
 
 			if (liquid != null) {
@@ -185,7 +179,7 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 		if (heat > IDEAL_HEAT) {
 			float extraHeat = heat - IDEAL_HEAT;
 
-			LiquidStack coolant = this.coolantTank.getLiquid();
+			FluidStack coolant = this.coolantTank.getFluid();
 			Coolant currentCoolant = IronEngineCoolant.getCoolant(coolant);
 			if (currentCoolant != null) {
 				float cooling = currentCoolant.getDegreesCoolingPerMB(heat);
@@ -194,7 +188,7 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 					heat = IDEAL_HEAT;
 				} else {
 					heat -= coolant.amount * cooling;
-					coolantTank.setLiquid(null);
+					coolantTank.setFluid(null);
 				}
 			}
 		}
@@ -215,7 +209,7 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 
 	@Override
 	public int getScaledBurnTime(int i) {
-		return this.fuelTank.getLiquid() != null ? (int) (((float) this.fuelTank.getLiquid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return this.fuelTank.getFluid() != null ? (int) (((float) this.fuelTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 
 	@Override
@@ -241,66 +235,55 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 	}
 
 	public int getScaledCoolant(int i) {
-		return coolantTank.getLiquid() != null ? (int) (((float) coolantTank.getLiquid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return coolantTank.getFluid() != null ? (int) (((float) coolantTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 
 	@Override
 	public void getGUINetworkData(int id, int value) {
 		super.getGUINetworkData(id, value);
 		switch (id) {
+		    // Fluid Fuel ID
 			case 15:
-				if (fuelTank.getLiquid() == null) {
-					fuelTank.setLiquid(new LiquidStack(0, value));
+				if (fuelTank.getFluid() == null) {
+					fuelTank.setFluid(new FluidStack(value, 0));
 				} else {
-					fuelTank.getLiquid().amount = value;
+					fuelTank.getFluid().fluidID = value;
 				}
 				break;
+            // Fluid Coolant ID
 			case 16:
-				if (fuelTank.getLiquid() == null) {
-					fuelTank.setLiquid(new LiquidStack(value, 0));
+				if (coolantTank.getFluid() == null) {
+					coolantTank.setFluid(new FluidStack(value, 0));
 				} else {
-					fuelTank.setLiquid(new LiquidStack(value, fuelTank.getLiquid().amount, fuelTank.getLiquid().itemMeta));
+					coolantTank.getFluid().fluidID = value;
 				}
 				break;
+            // Fluid Fuel amount
 			case 17:
-				if (coolantTank.getLiquid() == null) {
-					coolantTank.setLiquid(new LiquidStack(0, value));
+				if (fuelTank.getFluid() == null) {
+					fuelTank.setFluid(new FluidStack(0, value));
 				} else {
-					coolantTank.getLiquid().amount = value;
+					fuelTank.getFluid().amount = value;
 				}
 				break;
+			// Fluid coolant amount
 			case 18:
-				if (coolantTank.getLiquid() == null) {
-					coolantTank.setLiquid(new LiquidStack(value, 0));
+				if (coolantTank.getFluid() == null) {
+					coolantTank.setFluid(new FluidStack(0, value));
 				} else {
-					coolantTank.setLiquid(new LiquidStack(value, coolantTank.getLiquid().amount, coolantTank.getLiquid().itemMeta));
+					coolantTank.getFluid().amount = value;
 				}
 				break;
-			case 19:
-				if (fuelTank.getLiquid() == null) {
-					fuelTank.setLiquid(new LiquidStack(0, 0, value));
-				} else {
-					fuelTank.setLiquid(new LiquidStack(fuelTank.getLiquid().itemID, fuelTank.getLiquid().amount, value));
-				}
-				break;
-			case 20:
-				if (coolantTank.getLiquid() == null) {
-					coolantTank.setLiquid(new LiquidStack(0, 0, value));
-				} else {
-					coolantTank.setLiquid(new LiquidStack(coolantTank.getLiquid().itemID, coolantTank.getLiquid().amount, value));
-				}
 		}
 	}
 
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		super.sendGUINetworkData(containerEngine, iCrafting);
-		iCrafting.sendProgressBarUpdate(containerEngine, 15, fuelTank.getLiquid() != null ? fuelTank.getLiquid().amount : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 16, fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemID : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 17, coolantTank.getLiquid() != null ? coolantTank.getLiquid().amount : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 18, coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemID : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 19, fuelTank.getLiquid() != null ? fuelTank.getLiquid().itemMeta : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 20, coolantTank.getLiquid() != null ? coolantTank.getLiquid().itemMeta : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 15, fuelTank.getFluid() != null ? fuelTank.getFluid().fluidID : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 16, coolantTank.getFluid() != null ? coolantTank.getFluid().fluidID : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 17, fuelTank.getFluid() != null ? fuelTank.getFluid().amount : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 18, coolantTank.getFluid() != null ? coolantTank.getFluid().amount : 0);
 	}
 
 	@Override
@@ -310,65 +293,75 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
-		return 0;
-	}
-
-	@Override
-	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
-		return null;
-	}
+    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
+    {
+        return null;
+    }
 
-	@Override
-	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+    @Override
+    public boolean canDrain(ForgeDirection from, Fluid fluid)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 
 		// Handle coolant
 		if (IronEngineCoolant.getCoolant(resource) != null)
 			return coolantTank.fill(resource, doFill);
 
-		if (IronEngineFuel.getFuelForLiquid(resource) != null)
+		if (IronEngineFuel.getFuelForFluid(resource.getFluid()) != null)
 			return fuelTank.fill(resource, doFill);
 
 		return 0;
 	}
 
 	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+    public boolean canFill(ForgeDirection from, Fluid fluid)
+    {
+        if (IronEngineCoolant.isCoolant(fluid))
+            return true;
+
+        if (IronEngineFuel.getFuelForFluid(fluid) != null)
+            return true;
+
+        return false;
+    }
+
+    @Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
 		switch (direction) {
 			case UP:
-				return fuelTank;
+				return new FluidTankInfo[] { new FluidTankInfo(fuelTank) };
 			case DOWN:
-				return coolantTank;
+				return new FluidTankInfo[] { new FluidTankInfo(coolantTank) };
 			default:
 				return null;
 		}
 	}
 
 	@Override
-	public ILiquidTank[] getTanks(ForgeDirection direction) {
-		return new ILiquidTank[]{fuelTank, coolantTank};
-	}
-
-	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		if (itemstack == null)
 			return false;
-		if (Block.ice.blockID == itemstack.itemID)
+		if (IronEngineCoolant.getCoolant(itemstack)!=null)
 			return true;
-		return LiquidContainerRegistry.getLiquidForFilledItem(itemstack) != null;
+		return FluidContainerRegistry.getFluidForFilledItem(itemstack) != null;
 	}
 
-	public LiquidStack getFuel() {
-		return fuelTank.getLiquid();
+	public FluidStack getFuel() {
+		return fuelTank.getFluid();
 	}
 
-	public LiquidStack getCoolant() {
-		return coolantTank.getLiquid();
+	public FluidStack getCoolant() {
+		return coolantTank.getFluid();
 	}
 
 	@Override
@@ -397,10 +390,10 @@ public class TileEngineIron extends TileEngine implements ITankContainer {
 	@Override
 	public LinkedList<ITrigger> getTriggers() {
 		LinkedList<ITrigger> triggers = super.getTriggers();
-		triggers.add(BuildCraftCore.triggerEmptyLiquid);
-		triggers.add(BuildCraftCore.triggerContainsLiquid);
-		triggers.add(BuildCraftCore.triggerSpaceLiquid);
-		triggers.add(BuildCraftCore.triggerFullLiquid);
+		triggers.add(BuildCraftCore.triggerEmptyFluid);
+		triggers.add(BuildCraftCore.triggerContainsFluid);
+		triggers.add(BuildCraftCore.triggerSpaceFluid);
+		triggers.add(BuildCraftCore.triggerFullFluid);
 
 		return triggers;
 	}

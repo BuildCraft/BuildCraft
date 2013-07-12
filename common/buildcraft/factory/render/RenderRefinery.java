@@ -7,22 +7,22 @@
  */
 package buildcraft.factory.render;
 
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IInventoryRenderer;
+import buildcraft.core.render.FluidRenderer;
+import buildcraft.factory.TileRefinery;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.liquids.LiquidStack;
-
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.render.LiquidRenderer;
-import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 	private static final float pixel = (float) (1.0 / 16.0);
 	private final ModelRenderer tank;
 	private final ModelRenderer magnet[] = new ModelRenderer[4];
@@ -68,22 +68,22 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	}
 
 	private void render(TileRefinery tile, double x, double y, double z) {
-		LiquidStack liquid1 = null, liquid2 = null, liquidResult = null;
+		FluidStack liquid1 = null, liquid2 = null, liquidResult = null;
 
 		float anim = 0;
 		int angle = 0;
 		ModelRenderer theMagnet = magnet[0];
 		if (tile != null) {
-			if (tile.ingredient1.getLiquid() != null) {
-				liquid1 = tile.ingredient1.getLiquid();
+			if (tile.ingredient1.getFluid() != null) {
+				liquid1 = tile.ingredient1.getFluid();
 			}
 
-			if (tile.ingredient2.getLiquid() != null) {
-				liquid2 = tile.ingredient2.getLiquid();
+			if (tile.ingredient2.getFluid() != null) {
+				liquid2 = tile.ingredient2.getFluid();
 			}
 
-			if (tile.result.getLiquid() != null) {
-				liquidResult = tile.result.getLiquid();
+			if (tile.result.getFluid() != null) {
+				liquidResult = tile.result.getFluid();
 			}
 
 			anim = tile.getAnimationStage();
@@ -125,7 +125,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		GL11.glRotatef(angle, 0, 1, 0);
 
-		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
+		func_110628_a(TEXTURE);
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
@@ -178,35 +178,35 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			GL11.glScalef(0.5F, 1, 0.5F);
 
 			if (liquid1 != null && liquid1.amount > 0) {
-				int[] list1 = LiquidRenderer.getLiquidDisplayLists(liquid1, tile.worldObj, false);
+				int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.worldObj, false);
 
 				if (list1 != null) {
-					bindTextureByName(LiquidRenderer.getLiquidSheet(liquid1));
-					GL11.glCallList(list1[(int) ((float) liquid1.amount / (float) TileRefinery.LIQUID_PER_SLOT * (LiquidRenderer.DISPLAY_STAGES - 1))]);
+					func_110628_a(FluidRenderer.getFluidSheet(liquid1));
+					GL11.glCallList(list1[(int) ((float) liquid1.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 				}
 			}
 
 			if (liquid2 != null && liquid2.amount > 0) {
-				int[] list2 = LiquidRenderer.getLiquidDisplayLists(liquid2, tile.worldObj, false);
+				int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.worldObj, false);
 
 				if (list2 != null) {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(0, 0, 1);
-					bindTextureByName(LiquidRenderer.getLiquidSheet(liquid2));
-					GL11.glCallList(list2[(int) ((float) liquid2.amount / (float) TileRefinery.LIQUID_PER_SLOT * (LiquidRenderer.DISPLAY_STAGES - 1))]);
+					func_110628_a(FluidRenderer.getFluidSheet(liquid2));
+					GL11.glCallList(list2[(int) ((float) liquid2.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}
 			}
 
 
 			if (liquidResult != null && liquidResult.amount > 0) {
-				int[] list3 = LiquidRenderer.getLiquidDisplayLists(liquidResult, tile.worldObj, false);
+				int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.worldObj, false);
 
 				if (list3 != null) {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
-					bindTextureByName(LiquidRenderer.getLiquidSheet(liquidResult));
-					GL11.glCallList(list3[(int) ((float) liquidResult.amount / (float) TileRefinery.LIQUID_PER_SLOT * (LiquidRenderer.DISPLAY_STAGES - 1))]);
+					func_110628_a(FluidRenderer.getFluidSheet(liquidResult));
+					GL11.glCallList(list3[(int) ((float) liquidResult.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}
 			}
