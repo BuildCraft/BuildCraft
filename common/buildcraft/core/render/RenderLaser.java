@@ -1,14 +1,12 @@
 package buildcraft.core.render;
 
+import buildcraft.api.core.Position;
+import buildcraft.core.EntityLaser;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.api.core.Position;
-import buildcraft.core.EntityLaser;
 
 public class RenderLaser extends Render {
 

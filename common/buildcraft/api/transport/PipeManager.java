@@ -2,7 +2,6 @@ package buildcraft.api.transport;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.world.World;
 
 public abstract class PipeManager {

@@ -7,9 +7,9 @@
  */
 package buildcraft.energy;
 
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
+import net.minecraftforge.common.ForgeDirection;
 
 public class TileEngineWood extends TileEngine {
 

@@ -1,8 +1,8 @@
 package buildcraft.energy.worldgen;
 
+import buildcraft.BuildCraftEnergy;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
-import buildcraft.BuildCraftEnergy;
 
 /**
  *

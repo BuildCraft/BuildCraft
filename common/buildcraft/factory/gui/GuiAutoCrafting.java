@@ -7,16 +7,14 @@
  */
 package buildcraft.factory.gui;
 
-import net.minecraft.client.resources.ResourceLocation;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.world.World;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileAutoWorkbench;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 

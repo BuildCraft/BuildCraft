@@ -9,14 +9,14 @@
 
 package buildcraft.core.triggers;
 
+import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.core.inventory.InventoryWrapper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.core.inventory.InventoryWrapper;
 
 public class TriggerInventory extends BCTrigger {
 

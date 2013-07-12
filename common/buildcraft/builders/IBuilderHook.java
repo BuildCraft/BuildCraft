@@ -1,8 +1,7 @@
 package buildcraft.builders;
 
-import java.io.IOException;
-
 import buildcraft.core.blueprints.BptRootIndex;
+import java.io.IOException;
 
 public interface IBuilderHook {
 

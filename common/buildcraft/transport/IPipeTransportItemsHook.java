@@ -9,11 +9,10 @@
 
 package buildcraft.transport;
 
-import java.util.LinkedList;
-
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipedItem;
+import java.util.LinkedList;
+import net.minecraftforge.common.ForgeDirection;
 
 public interface IPipeTransportItemsHook {
 

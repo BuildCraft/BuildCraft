@@ -3,7 +3,6 @@ package buildcraft.factory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 

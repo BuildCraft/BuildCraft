@@ -1,33 +1,33 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.render;
 
+import buildcraft.core.EntityBlock;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.EntityBlock;
-
 public class RenderEntityBlock extends Render {
+	
+	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
 
-    private static RenderBlocks renderBlocks = new RenderBlocks();
-    static {
-    }
+	@Override
+	protected ResourceLocation func_110775_a(Entity entity) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 	public static class BlockInterface {
 
 		public double minX;
@@ -36,9 +36,7 @@ public class RenderEntityBlock extends Render {
 		public double maxX;
 		public double maxY;
 		public double maxZ;
-
 		public Block baseBlock = Block.sand;
-
 		public Icon texture = null;
 
 		public Icon getBlockTextureFromSide(int i) {
@@ -53,7 +51,7 @@ public class RenderEntityBlock extends Render {
 		}
 	}
 
-	public RenderEntityBlock() {
+	private RenderEntityBlock() {
 	}
 
 	@Override
@@ -110,19 +108,19 @@ public class RenderEntityBlock extends Render {
 		}
 	}
 
-	public static void renderBlock(BlockInterface block, IBlockAccess blockAccess, int i, int j, int k, boolean doLight, boolean doTessellating) {
+	public void renderBlock(BlockInterface block, IBlockAccess blockAccess, int i, int j, int k, boolean doLight, boolean doTessellating) {
 		float f = 0.5F;
 		float f1 = 1.0F;
 		float f2 = 0.8F;
 		float f3 = 0.6F;
 
-        renderBlocks.renderMaxX = block.maxX;
-        renderBlocks.renderMinX = block.minX;
-        renderBlocks.renderMaxY = block.maxY;
-        renderBlocks.renderMinY = block.minY;
-        renderBlocks.renderMaxZ = block.maxZ;
-        renderBlocks.renderMinZ = block.minZ;
-        renderBlocks.enableAO = false;
+		renderBlocks.renderMaxX = block.maxX;
+		renderBlocks.renderMinX = block.minX;
+		renderBlocks.renderMaxY = block.maxY;
+		renderBlocks.renderMinY = block.minY;
+		renderBlocks.renderMaxZ = block.maxZ;
+		renderBlocks.renderMinZ = block.minZ;
+		renderBlocks.enableAO = false;
 
 
 		Tessellator tessellator = Tessellator.instance;

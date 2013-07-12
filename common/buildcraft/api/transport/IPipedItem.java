@@ -1,12 +1,12 @@
 package buildcraft.api.transport;
 
+import buildcraft.api.core.Position;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.core.Position;
 
 public interface IPipedItem {
 

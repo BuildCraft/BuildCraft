@@ -1,12 +1,11 @@
 package buildcraft.transport.utils;
 
+import buildcraft.api.transport.IPipe;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.BitSet;
-
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.transport.IPipe;
 
 public class WireMatrix {
 

@@ -1,12 +1,11 @@
 package buildcraft.transport.network;
 
+import buildcraft.core.network.PacketCoordinates;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.core.network.PacketCoordinates;
 
 public class PacketPipeTransportNBT extends PacketCoordinates {
 

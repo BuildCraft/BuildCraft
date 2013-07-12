@@ -7,10 +7,16 @@
  */
 package buildcraft.core.proxy;
 
+import buildcraft.api.core.LaserKind;
+import buildcraft.core.EntityBlock;
+import buildcraft.core.ItemBlockBuildCraft;
+import buildcraft.core.network.BuildCraftPacket;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.registry.GameRegistry;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -28,13 +34,6 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import buildcraft.api.core.LaserKind;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.ItemBlockBuildCraft;
-import buildcraft.core.network.BuildCraftPacket;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class CoreProxy {
 

@@ -97,7 +97,7 @@ public class InventoryConcatenator implements IInventory {
 	}
 
 	@Override
-	public boolean isStackValidForSlot(int slot, ItemStack stack) {
-		return invMap.get(slot).isStackValidForSlot(slotMap.get(slot), stack);
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		return invMap.get(slot).isItemValidForSlot(slotMap.get(slot), stack);
 	}
 }

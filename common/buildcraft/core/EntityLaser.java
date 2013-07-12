@@ -7,11 +7,11 @@
  */
 package buildcraft.core;
 
+import buildcraft.api.core.Position;
+import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import buildcraft.api.core.Position;
-import buildcraft.core.proxy.CoreProxy;
 
 public abstract class EntityLaser extends Entity {
 

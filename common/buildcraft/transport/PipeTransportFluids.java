@@ -9,8 +9,16 @@
 
 package buildcraft.transport;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.transport.IPipeEntry;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IMachine;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.network.PacketFluidUpdate;
 import java.util.BitSet;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -22,16 +30,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.IFluidTank;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.transport.IPipeEntry;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.network.PacketFluidUpdate;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
 

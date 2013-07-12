@@ -1,7 +1,7 @@
 package buildcraft.core;
 
-import net.minecraft.world.World;
 import buildcraft.api.core.Position;
+import net.minecraft.world.World;
 
 public class EntityPowerLaser extends EntityLaser {
 	private String texture;

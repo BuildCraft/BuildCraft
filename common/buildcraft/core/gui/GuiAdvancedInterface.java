@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-
 import org.lwjgl.opengl.GL11;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {

@@ -9,13 +9,13 @@
 
 package buildcraft.energy;
 
+import buildcraft.BuildCraftEnergy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
-import buildcraft.BuildCraftEnergy;
 
 public class OilBucketHandler {
 
@@ -35,7 +35,7 @@ public class OilBucketHandler {
 
 		int blockID = world.getBlockId(pos.blockX, pos.blockY, pos.blockZ);
 
-		if ((blockID == BuildCraftEnergy.oilStill.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
+		if ((blockID == BuildCraftEnergy.blockOil.blockID || blockID == BuildCraftEnergy.oilMoving.blockID)
 				&& world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
 
 			world.setBlock(pos.blockX, pos.blockY, pos.blockZ, 0);

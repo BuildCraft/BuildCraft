@@ -1,14 +1,13 @@
 package buildcraft.transport.network;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.EntityData;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import net.minecraft.util.MathHelper;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PacketPipeTransportContent extends BuildCraftPacket {
 

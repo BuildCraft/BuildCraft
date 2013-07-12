@@ -9,8 +9,12 @@
 
 package buildcraft.core;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPassiveItemContribution;
+import buildcraft.api.transport.IPipedItem;
+import buildcraft.core.proxy.CoreProxy;
 import java.util.TreeMap;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,11 +24,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPassiveItemContribution;
-import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.proxy.CoreProxy;
 
 public class EntityPassiveItem implements IPipedItem {
 

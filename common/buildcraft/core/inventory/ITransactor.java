@@ -1,8 +1,8 @@
 package buildcraft.core.inventory;
 
+import buildcraft.core.inventory.filters.IStackFilter;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.core.inventory.filters.IStackFilter;
 
 public interface ITransactor {
 

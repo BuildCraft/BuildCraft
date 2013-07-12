@@ -7,21 +7,19 @@
  */
 package buildcraft.core.render;
 
+import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 
 /**
  *
@@ -87,7 +85,7 @@ public class FluidRenderer {
 		return icon;
 	}
 
-	public static String getFluidSheet(FluidStack liquid) {
+	public static ResourceLocation getFluidSheet(FluidStack liquid) {
 		if (liquid == null || liquid.itemID <= 0) {
 			return "/terrain.png";
 		}

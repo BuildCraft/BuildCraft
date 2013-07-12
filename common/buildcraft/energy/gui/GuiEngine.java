@@ -1,13 +1,13 @@
 package buildcraft.energy.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.IInventory;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
+import net.minecraft.client.Minecraft;
+import net.minecraft.inventory.IInventory;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 

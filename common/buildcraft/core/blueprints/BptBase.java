@@ -9,6 +9,10 @@
 
 package buildcraft.core.blueprints;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.Box;
+import buildcraft.core.Version;
+import buildcraft.core.proxy.CoreProxy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,11 +23,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-
-import buildcraft.BuildCraftCore;
-import buildcraft.core.Box;
-import buildcraft.core.Version;
-import buildcraft.core.proxy.CoreProxy;
 
 public abstract class BptBase {
 

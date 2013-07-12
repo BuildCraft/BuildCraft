@@ -7,14 +7,12 @@
  */
 package buildcraft.factory.render;
 
+import buildcraft.core.render.FluidRenderer;
+import buildcraft.factory.TileTank;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidStack;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.render.FluidRenderer;
-import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {
 
@@ -40,7 +38,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		bindTextureByName(FluidRenderer.getFluidSheet(liquid));
+		func_110628_a(FluidRenderer.getFluidSheet(liquid));
 
 		GL11.glTranslatef((float) x + 0.125F, (float) y, (float) z + 0.125F);
 		GL11.glScalef(0.75F, 0.999F, 0.75F);

@@ -9,17 +9,14 @@
 
 package buildcraft.builders.gui;
 
-import java.util.Collection;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
+import java.util.Collection;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import org.lwjgl.opengl.GL11;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 

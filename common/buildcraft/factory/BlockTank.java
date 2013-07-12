@@ -9,8 +9,12 @@
 
 package buildcraft.factory;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -23,11 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.BuildCraftCore;
-import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.utils.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockTank extends BlockContainer {
 
@@ -110,7 +109,7 @@ public class BlockTank extends BlockContainer {
 				// Handle empty containers
 			} else {
 
-				FluidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getFluid();
+				FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
 				if (available != null) {
 					ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 

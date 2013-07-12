@@ -9,18 +9,16 @@
 
 package buildcraft.energy.gui;
 
+import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.StringUtils;
+import buildcraft.energy.TileEngine;
+import buildcraft.energy.TileEngineIron;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.Icon;
 import net.minecraftforge.fluids.FluidStack;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngineIron;
 
 public class GuiCombustionEngine extends GuiEngine {
 

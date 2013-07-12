@@ -9,12 +9,12 @@
 
 package buildcraft.builders.gui;
 
+import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.gui.slots.SlotLimited;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.slots.SlotLimited;
 
 public class ContainerFiller extends BuildCraftContainer {
 

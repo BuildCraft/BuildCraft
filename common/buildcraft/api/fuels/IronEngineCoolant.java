@@ -1,15 +1,13 @@
 package buildcraft.api.fuels;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
 public final class IronEngineCoolant {
 

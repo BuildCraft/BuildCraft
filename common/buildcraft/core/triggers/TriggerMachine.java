@@ -9,10 +9,10 @@
 
 package buildcraft.core.triggers;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.IMachine;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class TriggerMachine extends BCTrigger {
 

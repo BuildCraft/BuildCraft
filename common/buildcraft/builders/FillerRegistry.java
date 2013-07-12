@@ -9,15 +9,14 @@
 
 package buildcraft.builders;
 
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.filler.IFillerRegistry;
 import java.util.HashMap;
 import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.filler.IFillerRegistry;
 
 public class FillerRegistry implements IFillerRegistry {
 

@@ -9,13 +9,11 @@
 
 package buildcraft.energy.gui;
 
-import net.minecraft.entity.player.InventoryPlayer;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
+import net.minecraft.entity.player.InventoryPlayer;
+import org.lwjgl.opengl.GL11;
 
 public class GuiSteamEngine extends GuiEngine {
 

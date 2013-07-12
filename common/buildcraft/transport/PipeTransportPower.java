@@ -7,13 +7,6 @@
  */
 package buildcraft.transport;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
@@ -31,6 +24,12 @@ import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportPower extends PipeTransport {
 

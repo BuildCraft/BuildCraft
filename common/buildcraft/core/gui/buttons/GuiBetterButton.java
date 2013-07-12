@@ -1,15 +1,14 @@
 package buildcraft.core.gui.buttons;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.resources.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.tooltips.ToolTip;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 /**
  *
@@ -18,7 +17,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiBetterButton extends GuiButton {
 
-	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraft","gfx/buildcraft/gui/buttons.png");
+	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/buttons.png");
 	protected final IButtonTextureSet texture;
 	private ToolTip toolTip;
 

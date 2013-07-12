@@ -9,17 +9,6 @@
 
 package buildcraft.transport.gui;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
@@ -34,6 +23,17 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
+import java.util.Iterator;
+import java.util.LinkedList;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeDirection;
 
 public class ContainerGateInterface extends BuildCraftContainer {
 
@@ -459,7 +459,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	/** GATE INFORMATION **/
-	public String getGateGuiFile() {
+	public ResourceLocation getGateGuiFile() {
 		return pipe.gate.getGuiFile();
 	}
 

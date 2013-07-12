@@ -7,10 +7,6 @@
  */
 package buildcraft.transport.triggers;
 
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
@@ -22,6 +18,10 @@ import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.pipes.PipePowerWood;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 
 public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
@@ -94,16 +94,16 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 			}
 
 			if (kind == Kind.Empty) {
-				for (IFluidTank b : transportFluids.getTanks(ForgeDirection.UNKNOWN)) {
-					if (b.getFluid() != null && b.getFluid().amount != 0)
+				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+					if (b.fluid != null && b.fluid.amount != 0)
 						return false;
 				}
 
 				return true;
 			} else {
-				for (IFluidTank b : transportFluids.getTanks(ForgeDirection.UNKNOWN)) {
-					if (b.getFluid() != null && b.getFluid().amount != 0)
-						if (searchedFluid == null || searchedFluid.isFluidEqual(b.getFluid()))
+				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+					if (b.fluid != null && b.fluid.amount != 0)
+						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid))
 							return true;
 				}
 

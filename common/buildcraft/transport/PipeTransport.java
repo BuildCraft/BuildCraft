@@ -9,11 +9,11 @@
 
 package buildcraft.transport;
 
+import buildcraft.api.transport.IPipedItem;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.transport.IPipedItem;
 
 public abstract class PipeTransport {
 

@@ -9,14 +9,12 @@
 
 package buildcraft.builders.gui;
 
-import net.minecraft.inventory.IInventory;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.inventory.IInventory;
+import org.lwjgl.opengl.GL11;
 
 public class GuiFiller extends GuiBuildCraft {
 

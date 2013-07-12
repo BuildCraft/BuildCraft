@@ -9,10 +9,6 @@
 
 package buildcraft.core;
 
-import net.minecraft.client.resources.ResourceLocation;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 public class DefaultProps {
 
 	public static final String MOD = "BuildCraft";

@@ -1,12 +1,5 @@
 package buildcraft.transport;
 
-import java.util.LinkedList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
@@ -20,6 +13,13 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
+import java.util.LinkedList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 public class GateVanilla extends Gate {
 
@@ -86,22 +86,22 @@ public class GateVanilla extends Gate {
 	@Override
 	public String getName() {
 		switch (kind) {
-		case Single:
-			return StringUtils.localize("item.pipeGate.0");
-		case AND_2:
-			return StringUtils.localize("item.pipeGate.1");
-		case AND_3:
-			return StringUtils.localize("item.pipeGate.3");
-		case AND_4:
-			return StringUtils.localize("item.pipeGate.5");
-		case OR_2:
-			return StringUtils.localize("item.pipeGate.2");
-		case OR_3:
-			return StringUtils.localize("item.pipeGate.4");
-		case OR_4:
-			return StringUtils.localize("item.pipeGate.6");
-		default:
-			return "";
+			case Single:
+				return StringUtils.localize("item.pipeGate.0");
+			case AND_2:
+				return StringUtils.localize("item.pipeGate.1");
+			case AND_3:
+				return StringUtils.localize("item.pipeGate.3");
+			case AND_4:
+				return StringUtils.localize("item.pipeGate.5");
+			case OR_2:
+				return StringUtils.localize("item.pipeGate.2");
+			case OR_3:
+				return StringUtils.localize("item.pipeGate.4");
+			case OR_4:
+				return StringUtils.localize("item.pipeGate.6");
+			default:
+				return "";
 		}
 
 	}
@@ -146,28 +146,28 @@ public class GateVanilla extends Gate {
 
 		int gateDamage = 0;
 		switch (kind) {
-		case Single:
-			gateDamage = 0;
-			break;
-		case AND_2:
-			gateDamage = 1;
-			break;
-		case OR_2:
-			gateDamage = 2;
-			break;
-		case AND_3:
-			gateDamage = 3;
-			break;
-		case OR_3:
-			gateDamage = 4;
-			break;
-		case AND_4:
-			gateDamage = 5;
-			break;
-		case OR_4:
-		default:
-			gateDamage = 6;
-			break;
+			case Single:
+				gateDamage = 0;
+				break;
+			case AND_2:
+				gateDamage = 1;
+				break;
+			case OR_2:
+				gateDamage = 2;
+				break;
+			case AND_3:
+				gateDamage = 3;
+				break;
+			case OR_3:
+				gateDamage = 4;
+				break;
+			case AND_4:
+				gateDamage = 5;
+				break;
+			case OR_4:
+			default:
+				gateDamage = 6;
+				break;
 		}
 
 		Item gateItem;
@@ -265,44 +265,63 @@ public class GateVanilla extends Gate {
 		if (hasPulser() && pulser.isActive()) {
 			isGateActive = true;
 		}
-	
-		if (!hasPulser()){
-			switch (kind){
-				case None: return 0;
-				case Single: return isGateActive ? GateIconProvider.Gate_Lit : GateIconProvider.Gate_Dark;
-				case AND_2: return isGateActive ? GateIconProvider.Gate_Iron_And_Lit : GateIconProvider.Gate_Iron_And_Dark;
-				case OR_2: return isGateActive ? GateIconProvider.Gate_Iron_Or_Lit : GateIconProvider.Gate_Iron_Or_Dark;
-				case AND_3: return isGateActive ? GateIconProvider.Gate_Gold_And_Lit : GateIconProvider.Gate_Gold_And_Dark;
-				case OR_3: return isGateActive ? GateIconProvider.Gate_Gold_Or_Lit : GateIconProvider.Gate_Gold_Or_Dark;
-				case AND_4: return isGateActive ? GateIconProvider.Gate_Diamond_And_Lit : GateIconProvider.Gate_Diamond_And_Dark;
-				case OR_4: return isGateActive ? GateIconProvider.Gate_Diamond_Or_Lit : GateIconProvider.Gate_Diamond_Or_Dark;
+
+		if (!hasPulser()) {
+			switch (kind) {
+				case None:
+					return 0;
+				case Single:
+					return isGateActive ? GateIconProvider.Gate_Lit : GateIconProvider.Gate_Dark;
+				case AND_2:
+					return isGateActive ? GateIconProvider.Gate_Iron_And_Lit : GateIconProvider.Gate_Iron_And_Dark;
+				case OR_2:
+					return isGateActive ? GateIconProvider.Gate_Iron_Or_Lit : GateIconProvider.Gate_Iron_Or_Dark;
+				case AND_3:
+					return isGateActive ? GateIconProvider.Gate_Gold_And_Lit : GateIconProvider.Gate_Gold_And_Dark;
+				case OR_3:
+					return isGateActive ? GateIconProvider.Gate_Gold_Or_Lit : GateIconProvider.Gate_Gold_Or_Dark;
+				case AND_4:
+					return isGateActive ? GateIconProvider.Gate_Diamond_And_Lit : GateIconProvider.Gate_Diamond_And_Dark;
+				case OR_4:
+					return isGateActive ? GateIconProvider.Gate_Diamond_Or_Lit : GateIconProvider.Gate_Diamond_Or_Dark;
 			}
 		} else {
-			switch (kind){
-				case None: return 0; 
-				case Single: return isGateActive ? GateIconProvider.Gate_Autarchic_Lit : GateIconProvider.Gate_Autarchic_Dark;
-				case AND_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_And_Lit : GateIconProvider.Gate_Autarchic_Iron_And_Dark;
-				case OR_2: return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_Or_Lit : GateIconProvider.Gate_Autarchic_Iron_Or_Dark;
-				case AND_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_And_Lit : GateIconProvider.Gate_Autarchic_Gold_And_Dark;
-				case OR_3: return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_Or_Lit : GateIconProvider.Gate_Autarchic_Gold_Or_Dark;
-				case AND_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_And_Lit : GateIconProvider.Gate_Autarchic_Diamond_And_Dark;
-				case OR_4: return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_Or_Lit : GateIconProvider.Gate_Autarchic_Diamond_Or_Dark;
+			switch (kind) {
+				case None:
+					return 0;
+				case Single:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Lit : GateIconProvider.Gate_Autarchic_Dark;
+				case AND_2:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_And_Lit : GateIconProvider.Gate_Autarchic_Iron_And_Dark;
+				case OR_2:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Iron_Or_Lit : GateIconProvider.Gate_Autarchic_Iron_Or_Dark;
+				case AND_3:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_And_Lit : GateIconProvider.Gate_Autarchic_Gold_And_Dark;
+				case OR_3:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Gold_Or_Lit : GateIconProvider.Gate_Autarchic_Gold_Or_Dark;
+				case AND_4:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_And_Lit : GateIconProvider.Gate_Autarchic_Diamond_And_Dark;
+				case OR_4:
+					return isGateActive ? GateIconProvider.Gate_Autarchic_Diamond_Or_Lit : GateIconProvider.Gate_Autarchic_Diamond_Or_Dark;
 			}
 		}
 
 		return 0;
 	}
+	private static final ResourceLocation TEXTURE1 = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_1.png");
+	private static final ResourceLocation TEXTURE2 = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_2.png");
+	private static final ResourceLocation TEXTURE3 = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_3.png");
+	private static final ResourceLocation TEXTURE4 = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_4.png");
 
 	@Override
-	public String getGuiFile() {
+	public ResourceLocation getGuiFile() {
 		if (kind == GateKind.Single)
-			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_1.png";
+			return TEXTURE1;
 		else if (kind == GateKind.AND_2 || kind == GateKind.OR_2)
-			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_2.png";
+			return TEXTURE2;
 		else if (kind == GateKind.AND_3 || kind == GateKind.OR_3)
-			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_3.png";
+			return TEXTURE3;
 		else
-			return DefaultProps.TEXTURE_PATH_GUI + "/gate_interface_4.png";
+			return TEXTURE4;
 	}
-
 }

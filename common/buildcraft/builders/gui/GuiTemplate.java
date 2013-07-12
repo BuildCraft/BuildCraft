@@ -9,12 +9,6 @@
 
 package buildcraft.builders.gui;
 
-import java.util.Date;
-
-import net.minecraft.inventory.IInventory;
-
-import org.lwjgl.opengl.GL11;
-
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
@@ -23,6 +17,9 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
+import java.util.Date;
+import net.minecraft.inventory.IInventory;
+import org.lwjgl.opengl.GL11;
 
 public class GuiTemplate extends GuiBuildCraft {
 

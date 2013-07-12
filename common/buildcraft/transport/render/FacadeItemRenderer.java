@@ -1,5 +1,9 @@
 package buildcraft.transport.render;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.ItemFacade;
+import buildcraft.transport.PipeIconProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -7,13 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraftforge.client.IItemRenderer;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.BuildCraftTransport;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.ItemFacade;
-import buildcraft.transport.PipeIconProvider;
 
 public class FacadeItemRenderer implements IItemRenderer {
 

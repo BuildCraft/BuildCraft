@@ -9,12 +9,10 @@
 
 package buildcraft.api.fuels;
 
+import com.google.common.collect.Maps;
 import java.util.Map;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-
-import com.google.common.collect.Maps;
 
 public class IronEngineFuel {
 

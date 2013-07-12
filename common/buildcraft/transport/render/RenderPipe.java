@@ -9,34 +9,10 @@
 
 package buildcraft.transport.render;
 
-import java.util.HashMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.collect.Maps;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipedItem;
-import buildcraft.core.render.FluidRenderer;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
@@ -47,6 +23,23 @@ import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
+import com.google.common.collect.Maps;
+import java.util.HashMap;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import org.lwjgl.opengl.GL11;
 
 public class RenderPipe extends TileEntitySpecialRenderer {
 
@@ -127,7 +120,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			block.minY = Utils.pipeMinPos + 0.01F;
 			block.maxY = block.minY + (size - 0.02F) * ratio;
 
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
+			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
 
 			GL11.glEndList();
 
@@ -145,7 +138,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			block.minZ = 0.5 - (size / 2 - 0.01) * ratio;
 			block.maxZ = 0.5 + (size / 2 - 0.01) * ratio;
 
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
+			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
 
 			GL11.glEndList();
 
@@ -163,7 +156,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			block.minY = Utils.pipeMinPos + 0.01;
 			block.maxY = block.minY + (size - 0.02F) * ratio;
 
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
+			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
 
 			GL11.glEndList();
 
@@ -181,7 +174,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			block.minZ = 0.5 - (size / 2 - 0.02) * ratio;
 			block.maxZ = 0.5 + (size / 2 - 0.02) * ratio;
 
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
+			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
 
 			GL11.glEndList();
 
@@ -220,7 +213,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			block.minX = 0;
 			block.maxX = 0.5 + (minSize / 2F) + unit * s;
 
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
+			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
 
 			GL11.glEndList();
 		}
@@ -246,7 +239,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			block.minX = 0;
 			block.maxX = 0.5 + (minSize / 2F) + unit * s;
 
-			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
+			RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
 
 			GL11.glEndList();
 		}

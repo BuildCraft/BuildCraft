@@ -1,15 +1,14 @@
 package buildcraft.core.triggers;
 
-import java.util.LinkedList;
-import java.util.logging.Level;
-
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.core.IMachine;
 import cpw.mods.fml.common.FMLLog;
+import java.util.LinkedList;
+import java.util.logging.Level;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 
 public class DefaultActionProvider implements IActionProvider {
 

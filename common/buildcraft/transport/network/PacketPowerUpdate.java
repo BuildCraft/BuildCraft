@@ -1,11 +1,10 @@
 package buildcraft.transport.network;
 
+import buildcraft.core.network.PacketCoordinates;
+import buildcraft.core.network.PacketIds;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import buildcraft.core.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
 
 public class PacketPowerUpdate extends PacketCoordinates {
 

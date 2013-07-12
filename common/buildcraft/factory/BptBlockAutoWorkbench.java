@@ -9,14 +9,13 @@
 
 package buildcraft.factory;
 
-import java.util.LinkedList;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
+import java.util.LinkedList;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 @Deprecated
 public class BptBlockAutoWorkbench extends BptBlock {

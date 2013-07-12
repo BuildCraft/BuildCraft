@@ -1,10 +1,9 @@
 package buildcraft.core.inventory;
 
+import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 import java.util.Iterator;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import buildcraft.core.inventory.InventoryIterator.IInvSlot;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info>

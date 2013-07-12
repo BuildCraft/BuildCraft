@@ -9,13 +9,13 @@
 
 package buildcraft.transport.pipes;
 
+import buildcraft.core.IDropControlInventory;
+import buildcraft.transport.TileGenericPipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.core.IDropControlInventory;
-import buildcraft.transport.TileGenericPipe;
 
 public class PipeLogic implements IDropControlInventory {
 

@@ -9,14 +9,12 @@
 
 package buildcraft.api.recipes;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import net.minecraftforge.fluids.Fluid;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.ComparisonChain;
 
 public class RefineryRecipe implements Comparable<RefineryRecipe> {
 

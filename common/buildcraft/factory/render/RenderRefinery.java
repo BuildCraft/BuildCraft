@@ -7,22 +7,22 @@
  */
 package buildcraft.factory.render;
 
+import buildcraft.core.DefaultProps;
+import buildcraft.core.IInventoryRenderer;
+import buildcraft.core.render.FluidRenderer;
+import buildcraft.factory.TileRefinery;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.core.DefaultProps;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.render.FluidRenderer;
-import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 	private static final float pixel = (float) (1.0 / 16.0);
 	private final ModelRenderer tank;
 	private final ModelRenderer magnet[] = new ModelRenderer[4];
@@ -125,7 +125,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		GL11.glRotatef(angle, 0, 1, 0);
 
-		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
+		func_110628_a(TEXTURE);
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
@@ -181,7 +181,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.worldObj, false);
 
 				if (list1 != null) {
-					bindTextureByName(FluidRenderer.getFluidSheet(liquid1));
+					func_110628_a(FluidRenderer.getFluidSheet(liquid1));
 					GL11.glCallList(list1[(int) ((float) liquid1.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 				}
 			}
@@ -192,7 +192,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				if (list2 != null) {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(0, 0, 1);
-					bindTextureByName(FluidRenderer.getFluidSheet(liquid2));
+					func_110628_a(FluidRenderer.getFluidSheet(liquid2));
 					GL11.glCallList(list2[(int) ((float) liquid2.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}
@@ -205,7 +205,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 				if (list3 != null) {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(1, 0, 0.5F);
-					bindTextureByName(FluidRenderer.getFluidSheet(liquidResult));
+					func_110628_a(FluidRenderer.getFluidSheet(liquidResult));
 					GL11.glCallList(list3[(int) ((float) liquidResult.amount / (float) TileRefinery.LIQUID_PER_SLOT * (FluidRenderer.DISPLAY_STAGES - 1))]);
 					GL11.glPopMatrix();
 				}

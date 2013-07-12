@@ -7,9 +7,9 @@
  */
 package buildcraft.energy;
 
+import buildcraft.core.DefaultProps;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import buildcraft.core.DefaultProps;
 
 /**
  * This class is just intended to update pre 4.0 engines to the design.
