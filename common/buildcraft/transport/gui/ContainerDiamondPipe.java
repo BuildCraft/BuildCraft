@@ -12,20 +12,23 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotPhantom;
+import buildcraft.transport.pipes.PipeLogicDiamond;
 
 public class ContainerDiamondPipe extends BuildCraftContainer {
 
-	IInventory playerIInventory;
-	IInventory filterIInventory;
+	private final PipeLogicDiamond logic;
+	private final IInventory playerInv;
+	private final IInventory filterInv;
 
-	public ContainerDiamondPipe(IInventory playerInventory, IInventory filterInventory) {
-		super(filterInventory.getSizeInventory());
-		this.playerIInventory = playerInventory;
-		this.filterIInventory = filterInventory;
+	public ContainerDiamondPipe(IInventory playerInventory, PipeLogicDiamond logic) {
+		super(logic.getFilters().getSizeInventory());
+		this.logic = logic;
+		this.playerInv = playerInventory;
+		this.filterInv = logic.getFilters();
 
 		for (int y = 0; y < 6; y++) {
 			for (int x = 0; x < 9; x++) {
-				addSlotToContainer(new SlotPhantom(filterInventory, x + y * 9, 8 + x * 18, 18 + y * 18));
+				addSlotToContainer(new SlotPhantom(filterInv, x + y * 9, 8 + x * 18, 18 + y * 18));
 			}
 		}
 
@@ -42,6 +45,6 @@ public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return filterIInventory.isUseableByPlayer(entityplayer);
+		return logic.isUseableByPlayer(entityplayer);
 	}
 }

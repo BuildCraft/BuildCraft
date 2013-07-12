@@ -38,7 +38,8 @@ public class RenderLaser extends Render {
 			return;
 
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /* GL_LIGHTING */);
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glDisable(GL11.GL_LIGHTING);
 
 		Position offset = laser.renderOffset();
 		GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
@@ -65,6 +66,7 @@ public class RenderLaser extends Render {
 
 		iterate(laser);
 
+		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 
 	}

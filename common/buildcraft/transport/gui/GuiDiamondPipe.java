@@ -15,25 +15,24 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 
 public class GuiDiamondPipe extends GuiBuildCraft {
     public static final ResourceLocation gui = new ResourceLocation("buildcraft",DefaultProps.TEXTURE_PATH_GUI + "/filter.png");
 	IInventory playerInventory;
-	PipeLogicDiamond filterInventory;
+	IInventory filterInventory;
 
-	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe tile) {
-		super(new ContainerDiamondPipe(playerInventory, (IInventory) tile.pipe.logic), (IInventory) tile.pipe.logic);
+	public GuiDiamondPipe(IInventory playerInventory, PipeLogicDiamond logic) {
+		super(new ContainerDiamondPipe(playerInventory, logic), logic.getFilters());
 		this.playerInventory = playerInventory;
-		this.filterInventory = (PipeLogicDiamond) tile.pipe.logic;
+		this.filterInventory = logic.getFilters();
 		xSize = 175;
 		ySize = 225;
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		fontRenderer.drawString(filterInventory.getFilters().getInvName(), getCenteredOffset(filterInventory.getFilters().getInvName()), 6, 0x404040);
+		fontRenderer.drawString(filterInventory.getInvName(), getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
 		fontRenderer.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 	}
 

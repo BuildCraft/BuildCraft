@@ -12,19 +12,22 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotPhantom;
+import buildcraft.transport.pipes.PipeItemsEmerald;
 
 public class ContainerEmeraldPipe extends BuildCraftContainer {
 
-	IInventory playerIInventory;
-	IInventory filterIInventory;
+	private final PipeItemsEmerald pipe;
+	private final IInventory playerInv;
+	private final IInventory filterInv;
 
-	public ContainerEmeraldPipe(IInventory playerInventory, IInventory filterInventory) {
-		super(filterInventory.getSizeInventory());
-		this.playerIInventory = playerInventory;
-		this.filterIInventory = filterInventory;
+	public ContainerEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
+		super(pipe.getFilters().getSizeInventory());
+		this.pipe = pipe;
+		this.playerInv = playerInventory;
+		this.filterInv = pipe.getFilters();
 
 		for (int i = 0; i < 9; i++) {
-			addSlotToContainer(new SlotPhantom(filterInventory, i, 8 + i * 18, 18));
+			addSlotToContainer(new SlotPhantom(filterInv, i, 8 + i * 18, 18));
 		}
 
 		for (int l = 0; l < 3; l++) {
@@ -40,6 +43,6 @@ public class ContainerEmeraldPipe extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return filterIInventory.isUseableByPlayer(entityplayer);
+		return pipe.isUseableByPlayer(entityplayer);
 	}
 }

@@ -88,14 +88,14 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 
 		@Override
 		public void setInventorySlotContents(int slot, ItemStack par2ItemStack) {
-			if (tempStacks != null) {
+			if (tempStacks != null && slot >= 0 && slot < 9) {
 				tempStacks[bindings[slot]] = par2ItemStack;
 			}
 		}
 
 		@Override
 		public ItemStack decrStackSize(int slot, int amount) {
-			if (tempStacks != null) {
+			if (tempStacks != null && slot >= 0 && slot < 9) {
 				if (tempStacks[bindings[slot]].stackSize <= amount) {
 					ItemStack result = tempStacks[bindings[slot]];
 					tempStacks[bindings[slot]] = null;

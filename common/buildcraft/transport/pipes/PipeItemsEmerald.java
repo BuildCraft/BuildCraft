@@ -1,9 +1,8 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.pipes;
@@ -88,36 +87,36 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 			}
 			return stacks;
 
-		/* ISPECIALINVENTORY */
+			/* ISPECIALINVENTORY */
 		} else if (inventory instanceof ISpecialInventory) {
-				ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
-				if (stacks != null) {
-					for (ItemStack stack : stacks) {
-						if(stack == null)
-							continue;
+			ItemStack[] stacks = ((ISpecialInventory) inventory).extractItem(false, from, (int) powerHandler.getEnergyStored());
+			if (stacks != null) {
+				for (ItemStack stack : stacks) {
+					if (stack == null)
+						continue;
 
-						boolean matches = false;
-						for (int i = 0; i < filters.getSizeInventory(); i++) {
-							ItemStack filter = filters.getStackInSlot(i);
-							if (filter != null && filter.isItemEqual(stack)) {
-								matches = true;
-								break;
-							}
-						}
-						if (!matches) {
-							return null;
+					boolean matches = false;
+					for (int i = 0; i < filters.getSizeInventory(); i++) {
+						ItemStack filter = filters.getStackInSlot(i);
+						if (filter != null && filter.isItemEqual(stack)) {
+							matches = true;
+							break;
 						}
 					}
-					if (doRemove) {
-						stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerHandler.getEnergyStored());
-						for (ItemStack stack : stacks) {
-							if (stack != null) {
-								powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
-							}
+					if (!matches) {
+						return null;
+					}
+				}
+				if (doRemove) {
+					stacks = ((ISpecialInventory) inventory).extractItem(true, from, (int) powerHandler.getEnergyStored());
+					for (ItemStack stack : stacks) {
+						if (stack != null) {
+							powerHandler.useEnergy(stack.stackSize, stack.stackSize, true);
 						}
 					}
 				}
-				return stacks;
+			}
+			return stacks;
 
 		} else {
 
@@ -208,8 +207,12 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 			readFromNBT((NBTTagCompound) nbt);
 		}
 	}
-	
-	public IInventory getFilters(){
+
+	public IInventory getFilters() {
 		return filters;
+	}
+
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
 	}
 }

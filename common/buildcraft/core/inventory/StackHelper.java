@@ -119,7 +119,7 @@ public class StackHelper {
 	 * @param matchNBT
 	 * @return true if matches
 	 */
-	public static boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT) {
+	public boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT) {
 		if (a == null || b == null) {
 			return false;
 		}
@@ -141,11 +141,11 @@ public class StackHelper {
 		return true;
 	}
 
-	public static boolean isWildcard(ItemStack stack) {
+	public boolean isWildcard(ItemStack stack) {
 		return isWildcard(stack.getItemDamage());
 	}
 
-	public static boolean isWildcard(int damage) {
+	public boolean isWildcard(int damage) {
 		return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
 	}
 }

@@ -108,7 +108,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class BuildCraftTransport {
 
 	public static BlockGenericPipe genericPipeBlock;
-	public static int maxItemsInPipes;
 	public static float pipeDurability;
 	public static Item pipeWaterproof;
 	public static Item pipeGate;
@@ -254,14 +253,8 @@ public class BuildCraftTransport {
 
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
 
-			Property maxItemInPipesProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.maxItems", 100);
-			maxItemInPipesProp.comment = "pipes containing more than this amount of items will explode, not dropping any item";
-
-			maxItemsInPipes = maxItemInPipesProp.getInt();
-
 			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.groupItemsTrigger", 32);
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
-
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
 
