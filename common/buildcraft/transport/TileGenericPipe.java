@@ -531,39 +531,35 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	@Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
-    {
-        if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
-            return ((IFluidHandler) pipe.transport).drain(from, resource, doDrain);
-        else
-            return null;
-    }
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+			return ((IFluidHandler) pipe.transport).drain(from, resource, doDrain);
+		else
+			return null;
+	}
 
-    @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid)
-    {
-        if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
-            return ((IFluidHandler) pipe.transport).canFill(from, fluid);
-        else
-            return false;
-    }
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+			return ((IFluidHandler) pipe.transport).canFill(from, fluid);
+		else
+			return false;
+	}
 
-    @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid)
-    {
-        if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
-            return ((IFluidHandler) pipe.transport).canDrain(from, fluid);
-        else
-            return false;
-    }
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from))
+			return ((IFluidHandler) pipe.transport).canDrain(from, fluid);
+		else
+			return false;
+	}
 
-    @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from)
-    {
-        return null;
-    }
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		return null;
+	}
 
-    public void scheduleRenderUpdate() {
+	public void scheduleRenderUpdate() {
 		refreshRenderState = true;
 	}
 
@@ -713,5 +709,10 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			return block.blockID;
 		}
 		return 0;
+	}
+
+	@Override
+	public World getWorld() {
+		return worldObj;
 	}
 }

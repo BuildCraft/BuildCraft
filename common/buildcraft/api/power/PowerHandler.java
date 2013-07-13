@@ -189,7 +189,7 @@ public final class PowerHandler {
 	}
 
 	private void applyPerdition() {
-		if (perditionTracker.markTimeIfDelay(receptor.getWorldObj(), 1) && energyStored > 0) {
+		if (perditionTracker.markTimeIfDelay(receptor.getWorld(), 1) && energyStored > 0) {
 			float newEnergy = getPerdition().applyPerdition(this, energyStored, perditionTracker.durationOfLastDelay());
 			if (newEnergy == 0 || newEnergy < energyStored) {
 				energyStored = newEnergy;
@@ -202,14 +202,14 @@ public final class PowerHandler {
 
 	private void applyWork() {
 		if (energyStored >= activationEnergy) {
-			if (doWorkTracker.markTimeIfDelay(receptor.getWorldObj(), 1)) {
+			if (doWorkTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
 				receptor.doWork(this);
 			}
 		}
 	}
 
 	private void updateSources(ForgeDirection source) {
-		if (sourcesTracker.markTimeIfDelay(receptor.getWorldObj(), 1)) {
+		if (sourcesTracker.markTimeIfDelay(receptor.getWorld(), 1)) {
 			for (int i = 0; i < 6; ++i) {
 				powerSources[i] -= sourcesTracker.durationOfLastDelay();
 				if (powerSources[i] < 0) {

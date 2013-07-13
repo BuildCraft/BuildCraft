@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 
@@ -108,5 +109,9 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	public boolean isInvNameLocalized() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public World getWorld() {
+		return worldObj;
 	}
 }
