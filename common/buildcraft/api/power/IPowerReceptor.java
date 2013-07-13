@@ -43,5 +43,5 @@ public interface IPowerReceptor {
 	 */
 	public void doWork(PowerHandler workProvider);
 
-	public World getWorldObj();
+	public World getWorld();
 }
