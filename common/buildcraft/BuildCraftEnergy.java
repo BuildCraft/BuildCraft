@@ -149,7 +149,7 @@ public class BuildCraftEnergy {
 
 		if (fluidOil.getBlockID() == -1) {
 			if (blockOilId > 0) {
-				blockOil = new BlockBuildcraftFluid(blockOilId, fluidOil, Material.water);
+				blockOil = new BlockBuildcraftFluid(blockOilId, fluidOil, Material.water).setFlammable(canOilBurn).setFlammability(0);
 				blockOil.setUnlocalizedName("blockOil");
 				CoreProxy.proxy.addName(blockOil, "Oil");
 				CoreProxy.proxy.registerBlock(blockOil);
@@ -168,7 +168,7 @@ public class BuildCraftEnergy {
 
 		if (fluidFuel.getBlockID() == -1) {
 			if (blockFuelId > 0) {
-				blockFuel = new BlockBuildcraftFluid(blockFuelId, fluidFuel, Material.water);
+				blockFuel = new BlockBuildcraftFluid(blockFuelId, fluidFuel, Material.water).setFlammable(true).setFlammability(5);
 				blockFuel.setUnlocalizedName("blockFuel");
 				CoreProxy.proxy.addName(blockFuel, "Fuel");
 				CoreProxy.proxy.registerBlock(blockFuel);
