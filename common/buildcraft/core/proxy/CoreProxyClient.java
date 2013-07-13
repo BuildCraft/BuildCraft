@@ -31,6 +31,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -80,7 +81,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* LOCALIZATION */
 	@Override
 	public String getCurrentLanguage() {
-		return StringTranslate.getInstance().getCurrentLanguage();
+		return Minecraft.getMinecraft().func_135016_M().func_135041_c().func_135034_a();
 	}
 
 	@Override
