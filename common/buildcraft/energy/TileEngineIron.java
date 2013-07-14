@@ -12,6 +12,7 @@ import buildcraft.BuildCraftEnergy;
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineCoolant.Coolant;
 import buildcraft.api.fuels.IronEngineFuel;
+import buildcraft.api.fuels.IronEngineFuel.Fuel;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
@@ -42,7 +43,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	int burnTime = 0;
 	private FluidTank fuelTank;
 	private FluidTank coolantTank;
-	private IronEngineFuel currentFuel = null;
+	private Fuel currentFuel = null;
 	public int penaltyCooling = 0;
 	boolean lastPowered = false;
 

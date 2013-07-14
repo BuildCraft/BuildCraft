@@ -198,9 +198,9 @@ public class BuildCraftEnergy {
 		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(FluidRegistry.getFluid("oil"), null, FluidRegistry.getFluid("fuel"), 12, 1));
 
 		// Iron Engine Fuels
-		IronEngineFuel.addFuel(FluidRegistry.getFluid("lava"), 1, 20000);
-		IronEngineFuel.addFuel(FluidRegistry.getFluid("oil"), 3, 20000);
-		IronEngineFuel.addFuel(FluidRegistry.getFluid("fuel"), 6, 100000);
+		IronEngineFuel.addFuel("lava", 1, 20000);
+		IronEngineFuel.addFuel("oil", 3, 20000);
+		IronEngineFuel.addFuel("fuel", 6, 100000);
 
 		// Iron Engine Coolants
 		IronEngineCoolant.addCoolant(FluidRegistry.getFluid("water"), 0.0023F);

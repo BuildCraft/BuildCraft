@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
+ *
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.api.fuels;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import buildcraft.api.core.StackWrapper;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.item.Item;
@@ -11,19 +17,19 @@ import net.minecraftforge.fluids.FluidStack;
 
 public final class IronEngineCoolant {
 
-	public static BiMap<String, Coolant> liquidCoolants = HashBiMap.create();
-	public static Map<ItemData, FluidStack> solidCoolants = new HashMap<ItemData, FluidStack>();
+	public static Map<String, Coolant> liquidCoolants = new HashMap<String, Coolant>();
+	public static Map<StackWrapper, FluidStack> solidCoolants = new HashMap<StackWrapper, FluidStack>();
 
 	public static FluidStack getFluidCoolant(ItemStack stack) {
-		return solidCoolants.get(new ItemData(stack.itemID, stack.getItemDamage()));
+		return solidCoolants.get(new StackWrapper(stack));
 	}
 
 	public static Coolant getCoolant(ItemStack stack) {
 		return getCoolant(getFluidCoolant(stack));
 	}
 
-	public static Coolant getCoolant(FluidStack liquid) {
-	    return liquid != null ? liquidCoolants.get(liquid.getFluid().getName()) : null;
+	public static Coolant getCoolant(FluidStack fluidStack) {
+		return fluidStack != null ? liquidCoolants.get(fluidStack.getFluid().getName()) : null;
 	}
 
 	private IronEngineCoolant() {
@@ -34,9 +40,9 @@ public final class IronEngineCoolant {
 		float getDegreesCoolingPerMB(float currentHeat);
 	}
 
-	public static void addCoolant(final Fluid liquid, final float degreesCoolingPerMB) {
-		if (liquid != null) {
-			liquidCoolants.put(liquid.getName(), new Coolant() {
+	public static void addCoolant(final Fluid fluid, final float degreesCoolingPerMB) {
+		if (fluid != null) {
+			liquidCoolants.put(fluid.getName(), new Coolant() {
 				@Override
 				public float getDegreesCoolingPerMB(float currentHeat) {
 					return degreesCoolingPerMB;
@@ -45,46 +51,33 @@ public final class IronEngineCoolant {
 		}
 	}
 
+	/**
+	 * Adds a solid coolant like Ice Blocks. The FluidStack must contain a registered
+	 * Coolant Fluid or nothing will happen. You do not need to call this for
+	 * Fluid Containers.
+	 *
+	 * @param stack
+	 * @param coolant
+	 */
+	public static void addCoolant(final ItemStack stack, final FluidStack coolant) {
+		if (stack != null && Item.itemsList[stack.itemID] != null && coolant != null) {
+			solidCoolants.put(new StackWrapper(stack), coolant);
+		}
+	}
+
+	/**
+	 * Adds a solid coolant like Ice Blocks. The FluidStack must contain a registered
+	 * Coolant Fluid or nothing will happen. You do not need to call this for
+	 * Fluid Containers.
+	 *
+	 * @param stack
+	 * @param coolant
+	 */
 	public static void addCoolant(final int itemId, final int metadata, final FluidStack coolant) {
-		if (Item.itemsList[itemId] != null && coolant != null) {
-			solidCoolants.put(new ItemData(itemId, metadata), coolant);
-		}
+		addCoolant(new ItemStack(itemId, 1, metadata), coolant);
 	}
 
-	public static class ItemData {
-
-		public final int itemId, meta;
-
-		public ItemData(int itemId, int meta) {
-			this.itemId = itemId;
-			this.meta = meta;
-		}
-
-		@Override
-		public int hashCode() {
-			int hash = 5;
-			hash = 67 * hash + this.itemId;
-			hash = 67 * hash + this.meta;
-			return hash;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			final ItemData other = (ItemData) obj;
-			if (this.itemId != other.itemId)
-				return false;
-			if (this.meta != other.meta)
-				return false;
-			return true;
-		}
+	public static boolean isCoolant(Fluid fluid) {
+		return liquidCoolants.containsKey(fluid.getName());
 	}
-
-    public static boolean isCoolant(Fluid fluid)
-    {
-        return liquidCoolants.inverse().containsKey(fluid);
-    }
 }
