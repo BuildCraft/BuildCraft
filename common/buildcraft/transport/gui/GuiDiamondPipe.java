@@ -11,10 +11,10 @@ import net.minecraft.inventory.IInventory;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeLogicDiamond;
 
 public class GuiDiamondPipe extends GuiBuildCraft {
@@ -22,10 +22,10 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 	IInventory playerInventory;
 	PipeLogicDiamond filterInventory;
 
-	public GuiDiamondPipe(IInventory playerInventory, TileGenericPipe tile) {
-		super(new ContainerDiamondPipe(playerInventory, (IInventory) tile.pipe.logic), (IInventory) tile.pipe.logic);
+	public GuiDiamondPipe(IInventory playerInventory, IPipeTile tile) {
+		super(new ContainerDiamondPipe(playerInventory, ((PipeLogicDiamond)tile.getPipe().getLogic()).getFilters()), ((PipeLogicDiamond)tile.getPipe().getLogic()).getFilters());
 		this.playerInventory = playerInventory;
-		this.filterInventory = (PipeLogicDiamond) tile.pipe.logic;
+		this.filterInventory = (PipeLogicDiamond) tile.getPipe().getLogic();
 		xSize = 175;
 		ySize = 225;
 	}

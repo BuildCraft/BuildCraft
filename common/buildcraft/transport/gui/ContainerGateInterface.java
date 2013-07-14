@@ -70,7 +70,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
 
-			TileEntity ptile = pipe.worldObj.getBlockTileEntity(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			TileEntity ptile = pipe.worldObj.getBlockTileEntity(pipe.getXPosition(), pipe.getYPosition(), pipe.getZPosition());
 			if (ptile instanceof IOverrideDefaultTriggers) {
 				_potentialTriggers.addAll(((IOverrideDefaultTriggers) ptile).getTriggers());
 			}

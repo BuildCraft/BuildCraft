@@ -9,25 +9,25 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.TileGenericPipe;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 
 public class PipeLogicCobblestone extends PipeLogic {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		Pipe pipe2 = null;
+		IPipe pipe2 = null;
 
-		if (tile instanceof TileGenericPipe) {
-			pipe2 = ((TileGenericPipe) tile).pipe;
+		if (tile instanceof IPipeTile) {
+			pipe2 = ((IPipeTile) tile).getPipe();
 		}
 
 		if (pipe2 != null) {
-			if (pipe2.logic instanceof PipeLogicStone) {
+			if (pipe2.getLogic() instanceof PipeLogicStone) {
 				return false;
 			}
 
-			if (pipe2.logic instanceof PipeLogicQuartz) {
+			if (pipe2.getLogic() instanceof PipeLogicQuartz) {
 				return false;
 			}
 		}

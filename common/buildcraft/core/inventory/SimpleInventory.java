@@ -87,7 +87,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return false;
+		return true;
 	}
 
 	@Override

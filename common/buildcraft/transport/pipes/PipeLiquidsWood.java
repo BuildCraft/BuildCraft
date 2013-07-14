@@ -155,4 +155,5 @@ public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 			return true;
 		return super.canConnectRedstone();
 	}
+
 }
