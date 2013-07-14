@@ -1,10 +1,10 @@
 package buildcraft.transport.network;
 
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.TileGenericPipe;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -40,17 +40,17 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			return;
 
 		TileEntity entity = world.getBlockTileEntity(posX, posY, posZ);
-		if (!(entity instanceof TileGenericPipe))
+		if (!(entity instanceof IPipeTile))
 			return;
 
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null)
+		IPipeTile pipe = (IPipeTile) entity;
+		if (pipe.getPipe() == null)
 			return;
 
-		if (!(pipe.pipe.transport instanceof PipeTransportFluids))
+		if (!(pipe.getPipe().getTransport() instanceof PipeTransportFluids))
 			return;
 
-		PipeTransportFluids transLiq = ((PipeTransportFluids) pipe.pipe.transport);
+		PipeTransportFluids transLiq = ((PipeTransportFluids) pipe.getPipe().getTransport());
 
 		renderCache = transLiq.renderCache;
 

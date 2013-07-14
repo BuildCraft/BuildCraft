@@ -7,7 +7,6 @@
  */
 package buildcraft.energy;
 
-import buildcraft.BuildCraftEnergy;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.block.Block;

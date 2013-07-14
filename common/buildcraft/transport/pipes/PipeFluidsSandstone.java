@@ -11,11 +11,11 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.TileGenericPipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.ForgeDirection;
@@ -42,7 +42,7 @@ public class PipeFluidsSandstone extends Pipe implements IPipeTransportFluidsHoo
 		if (container.tileBuffer == null || container.tileBuffer[from.ordinal()] == null)
 			return 0;
 
-		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe))
+		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof IPipeTile))
 			return 0;
 
 		return ((PipeTransportFluids) this.transport).fill(from, resource, doFill);
