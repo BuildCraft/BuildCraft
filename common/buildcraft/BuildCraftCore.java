@@ -12,6 +12,7 @@ package buildcraft;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
+import buildcraft.builders.blueprints.BlueprintDatabase;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
@@ -172,6 +173,7 @@ public class BuildCraftCore {
 		bcLog.info("Copyright (c) SpaceToad, 2011");
 		bcLog.info("http://www.mod-buildcraft.com");
 		
+		BlueprintDatabase.configFolder = evt.getModConfigurationDirectory();
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
