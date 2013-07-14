@@ -1,35 +1,62 @@
 /**
- * Copyright (c) SpaceToad, 2011-2012 http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011-2012
+ * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License
- * 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
+
 package buildcraft.core;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.builders.blueprints.BlueprintBuilder.SchematicBuilder;
-import buildcraft.api.core.Position;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.blueprints.BptSlotInfo;
+import buildcraft.api.core.Position;
+import buildcraft.core.blueprints.BptBuilderBase;
+import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.BptSlot;
+import buildcraft.core.blueprints.BptSlot.Mode;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BlockUtil;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 
 public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 	private Box box;
 	private int destX, destY, destZ;
+
 	EntityEnergyLaser laser;
-	public LinkedList<SchematicBuilder> targets = new LinkedList<SchematicBuilder>();
+
+	public LinkedList<Action> targets = new LinkedList<Action>();
 	public static int MAX_TARGETS = 20;
 	public int wait = 0;
+
+	private class Action {
+
+		public Action(BptSlot slot, BptContext context) {
+			this.slot = slot;
+			this.context = context;
+		}
+
+		public Action(BptBuilderBase builder) {
+			this.builder = builder;
+		}
+
+		BptSlot slot;
+		BptBuilderBase builder;
+		BptContext context;
+	}
 
 	public EntityRobot(World world) {
 		super(world);
@@ -102,8 +129,6 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 	@Override
 	public void onUpdate() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
-			return;
 
 		move();
 		build();
@@ -174,31 +199,48 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 		updateWait();
 
-		if (wait <= 0 && !targets.isEmpty()) {
+		if (targets.size() > 0) {
 
-			SchematicBuilder target = targets.peek();
-			if (target.blockExists()) {
-				target.markComplete();
-				targets.pop();
-			} else if (BlockUtil.canChangeBlock(worldObj, target.getX(), target.getY(), target.getZ())) {
+			Action a = targets.getFirst();
+			if (a.slot != null) {
+
+				BptSlot target = a.slot;
 				//System.out.printf("RobotChanging %d %d %d %s\n",target.x, target.y, target.z, target.mode);
-				if (!worldObj.isAirBlock(target.getX(), target.getY(), target.getZ())) {
-					BlockUtil.breakBlock(worldObj, target.getX(), target.getY(), target.getZ());
-				} else {
+				if (wait <= 0 && BlockUtil.canChangeBlock(worldObj, target.x, target.y, target.z)) {
+
+					if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+
+						if (target.mode == Mode.ClearIfInvalid) {
+
+							if (!target.isValid(a.context)) {
+								worldObj.setBlock(target.x, target.y, target.z, 0, 0,3);
+							}
+
+						} else if (target.stackToUse != null) {
+
+							worldObj.setBlock(target.x, target.y, target.z, 0);
+							throw new RuntimeException("NOT IMPLEMENTED");
+							// target.stackToUse.getItem().onItemUse(target.stackToUse,
+							// CoreProxy.getBuildCraftPlayer(worldObj), worldObj, target.x, target.y - 1,
+							// target.z, 1);
+						} else {
+
+							try {
+								target.buildBlock(a.context);
+							} catch (Throwable t) {
+								// Defensive code against errors in implementers
+								t.printStackTrace();
+								BuildCraftCore.bcLog.throwing("EntityRobot", "update", t);
+							}
+						}
+					}
+
 					targets.pop();
-					try {
-						target.build(CoreProxy.proxy.getBuildCraftPlayer(worldObj, target.getX(), target.getY() + 2, target.getZ()));
-					} catch (Throwable t) {
-						target.markComplete();
-						targets.pop();
-						// Defensive code against errors in implementers
-						t.printStackTrace();
-						BuildCraftCore.bcLog.throwing("EntityRobot", "update", t);
-					}
-					if (!target.isComplete()) {
-						targets.addLast(target);
-					}
 				}
+
+			} else if (a.builder != null) {
+				a.builder.postProcessing(worldObj);
+				targets.pop();
 			}
 		}
 	}
@@ -220,10 +262,12 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 		if (targets.size() > 0) {
 
-			SchematicBuilder target = targets.getFirst();
+			Action a = targets.getFirst();
+			BptSlotInfo target = a.slot;
 
 			if (target != null) {
-				laser.setPositions(new Position(posX, posY, posZ), new Position(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5));
+
+				laser.setPositions(new Position(posX, posY, posZ), new Position(target.x + 0.5, target.y + 0.5, target.z + 0.5));
 				laser.show();
 			}
 		} else {
@@ -233,14 +277,16 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		laser.pushPower(((float) targets.size()) / ((float) MAX_TARGETS) * 4F);
 	}
 
-	public boolean scheduleContruction(SchematicBuilder schematic) {
-		if (!readyToBuild()) {
-			return false;
+	public void scheduleContruction(BptSlot slot, BptContext context) {
+
+		if (slot != null) {
+			targets.add(new Action(slot, context));
+
 		}
-		if (schematic != null && !schematic.blockExists()) {
-			return targets.add(schematic);
-		}
-		return false;
+	}
+
+	public void markEndOfBlueprint(BptBuilderBase builder) {
+		targets.add(new Action(builder));
 	}
 
 	public boolean readyToBuild() {
@@ -252,15 +298,19 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 	}
 
 	public void setBox(Box box) {
+
 		this.box = box;
 		setDestination((int) box.centerX(), (int) box.centerY(), (int) box.centerZ());
 	}
 
 	@Override
 	public void setDead() {
+
 		if (laser != null) {
 			laser.setDead();
 		}
+
 		super.setDead();
 	}
+
 }
