@@ -5,11 +5,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 
 /**
+ * A collection of helpful functions to make your life easier.
  *
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlueprintHelpers {
-	
+
 	public static final Random RANDOM = new Random();
 
 	/**
@@ -36,7 +37,7 @@ public class BlueprintHelpers {
 
 	/**
 	 * Takes an ItemStack and uses one. Replaces containers as needed.
-	 * 
+	 *
 	 * @return the new ItemStack
 	 */
 	public static ItemStack consumeItem(ItemStack stack) {
