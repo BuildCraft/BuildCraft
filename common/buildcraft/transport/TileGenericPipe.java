@@ -79,7 +79,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
-	public Pipe pipe;
+	protected Pipe pipe;
 	private boolean blockNeighborChange = false;
 	private boolean refreshRenderState = false;
 	private boolean pipeBound = false;
@@ -715,4 +715,20 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public World getWorld() {
 		return worldObj;
 	}
+
+	@Override
+	public final int getXCoord() {
+		return xCoord;
+	}
+
+	@Override
+	public final int getYCoord() {
+		return yCoord;
+	}
+
+	@Override
+	public final int getZCoord() {
+		return zCoord;
+	}
+
 }

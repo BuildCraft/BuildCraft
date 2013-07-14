@@ -49,7 +49,6 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.*;
 
 public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
 

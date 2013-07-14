@@ -10,11 +10,11 @@
 package buildcraft.transport.pipes;
 
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.TileGenericPipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -49,7 +49,7 @@ public class PipeLogicWood extends PipeLogic {
 	}
 
 	public boolean isInput(TileEntity tile) {
-		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof IFluidHandler)
+		return !(tile instanceof IPipeTile) && (tile instanceof IInventory || tile instanceof IFluidHandler)
 				&& Utils.checkPipesConnections(container, tile);
 	}
 
@@ -67,13 +67,13 @@ public class PipeLogicWood extends PipeLogic {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		Pipe pipe2 = null;
+		IPipe pipe2 = null;
 
-		if (tile instanceof TileGenericPipe) {
-			pipe2 = ((TileGenericPipe) tile).pipe;
+		if (tile instanceof IPipeTile) {
+			pipe2 = ((IPipeTile) tile).getPipe();
 		}
 
-		return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood)) && super.canPipeConnect(tile, side);
+		return (pipe2 == null || !(pipe2.getLogic() instanceof PipeLogicWood)) && super.canPipeConnect(tile, side);
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class PipeLogicWood extends PipeLogic {
 
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		if (this.container.pipe instanceof PipeFluidsWood) {
+		if (this.container.getPipe() instanceof PipeFluidsWood) {
 			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			return meta != to.ordinal();
 		}

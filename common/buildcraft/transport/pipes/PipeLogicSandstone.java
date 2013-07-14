@@ -9,13 +9,13 @@
 
 package buildcraft.transport.pipes;
 
-import buildcraft.transport.TileGenericPipe;
+import buildcraft.api.transport.IPipeTile;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeLogicSandstone extends PipeLogic {
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		return (tile instanceof TileGenericPipe) && super.canPipeConnect(tile, side);
+		return (tile instanceof IPipeTile) && super.canPipeConnect(tile, side);
 	}
 }

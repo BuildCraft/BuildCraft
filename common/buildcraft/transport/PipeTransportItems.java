@@ -14,7 +14,9 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.inventory.ISpecialInventory;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeEntry;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
@@ -234,7 +236,7 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean canReceivePipeObjects(ForgeDirection o, IPipedItem item) {
 		TileEntity entity = container.getTile(o);
 
-		if (!Utils.checkPipesConnections(entity, container))
+		if (!Utils.checkPipesConnections(container, entity))
 			return false;
 
 		if (entity instanceof IPipeEntry)
@@ -549,9 +551,9 @@ public class PipeTransportItems extends PipeTransport {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof TileGenericPipe) {
-			Pipe pipe2 = ((TileGenericPipe) tile).pipe;
-			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems))
+		if (tile instanceof IPipeTile) {
+			IPipe pipe2 = ((IPipeTile) tile).getPipe();
+			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.getTransport() instanceof PipeTransportItems))
 				return false;
 		}
 

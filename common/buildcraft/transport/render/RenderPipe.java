@@ -10,17 +10,18 @@ package buildcraft.transport.render;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.IPipeTransport;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.TileGenericPipe;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import net.minecraft.block.Block;
@@ -246,24 +247,22 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 		initializeDisplayPowerList(tileentity.worldObj);
 
-		TileGenericPipe pipe = ((TileGenericPipe) tileentity);
-
-		if (pipe.pipe == null)
+		IPipeTile tile = ((IPipeTile) tileentity);
+		IPipe pipe = tile.getPipe();
+		if (pipe == null)
 			return;
-
-		if (pipe.pipe.transport instanceof PipeTransportItems) {
-			renderSolids(pipe.pipe, x, y, z);
-		} else if (pipe.pipe.transport instanceof PipeTransportFluids) {
-			renderFluids(pipe.pipe, x, y, z);
-		} else if (pipe.pipe.transport instanceof PipeTransportPower) {
-			renderPower(pipe.pipe, x, y, z);
+		IPipeTransport trans = pipe.getTransport();
+		if (trans instanceof PipeTransportItems) {
+			renderSolids(pipe, x, y, z);
+		} else if (trans instanceof PipeTransportFluids) {
+			renderFluids((PipeTransportFluids) trans, x, y, z);
+		} else if (trans instanceof PipeTransportPower) {
+			renderPower((PipeTransportPower)trans, x, y, z);
 		}
 
 	}
 
-	private void renderPower(Pipe pipe, double x, double y, double z) {
-		PipeTransportPower pow = (PipeTransportPower) pipe.transport;
-
+	private void renderPower(PipeTransportPower pow, double x, double y, double z) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
@@ -298,8 +297,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderFluids(Pipe pipe, double x, double y, double z) {
-		PipeTransportFluids liq = (PipeTransportFluids) pipe.transport;
+	private void renderFluids(PipeTransportFluids liq, double x, double y, double z) {
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -322,7 +320,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			// int amount = liquid != null ? liq.renderAmmount[i] : 0;
 
 			if (liquid != null && liquid.amount > 0) {
-				DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
+				DisplayFluidList d = getListFromBuffer(liquid, liq.worldObj);
 
 				if (d == null) {
 					continue;
@@ -370,7 +368,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
 			// DisplayFluidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getFluid(), pipe.worldObj);
-			DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
+			DisplayFluidList d = getListFromBuffer(liquid, liq.worldObj);
 
 			if (d != null) {
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
@@ -402,20 +400,20 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		return getDisplayFluidLists(liquidId, world);
 	}
 
-	private void renderSolids(Pipe pipe, double x, double y, double z) {
+	private void renderSolids(IPipe pipe, double x, double y, double z) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		float light = pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+		float light = pipe.getWorld().getLightBrightness(pipe.getXCoord(), pipe.getYCoord(), pipe.getZCoord());
 
 		int count = 0;
-		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
+		for (EntityData data : ((PipeTransportItems) pipe.getTransport()).travelingEntities.values()) {
 			if (count >= MAX_ITEMS_TO_RENDER) {
 				break;
 			}
 
-			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z
-					- pipe.zCoord, light);
+			doRenderItem(data.item, x + data.item.getPosition().x - pipe.getXCoord(), y + data.item.getPosition().y - pipe.getYCoord(), z + data.item.getPosition().z
+					- pipe.getZCoord(), light);
 			count++;
 		}
 

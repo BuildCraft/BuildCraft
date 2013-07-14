@@ -10,9 +10,9 @@
 package buildcraft.transport.pipes;
 
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeEntry;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.TileGenericPipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -48,14 +48,14 @@ public class PipeLogicIron extends PipeLogic {
 
 			TileEntity tile = container.getTile(ForgeDirection.values()[nextMetadata]);
 
-			if (tile instanceof TileGenericPipe) {
-				Pipe pipe = ((TileGenericPipe) tile).pipe;
-				if (pipe.logic instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone) {
+			if (tile instanceof IPipeTile) {
+				IPipe pipe = ((IPipeTile) tile).getPipe();
+				if (pipe.getLogic() instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone) {
 					continue;
 				}
 			}
 
-			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof IFluidHandler || tile instanceof TileGenericPipe) {
+			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof IFluidHandler || tile instanceof IPipeTile) {
 
 				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, nextMetadata,0);
 				container.scheduleRenderUpdate();

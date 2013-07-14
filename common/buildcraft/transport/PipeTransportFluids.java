@@ -488,7 +488,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		super.onNeighborBlockChange(blockId);
 
 		for (ForgeDirection direction : directions) {
-			if (!Utils.checkPipesConnections(container.getTile(orientations[direction.ordinal()]), container)) {
+			if (!Utils.checkPipesConnections(container, container.getTile(orientations[direction.ordinal()]))) {
 				internalTanks[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
 				renderCache[direction.ordinal()] = null;
