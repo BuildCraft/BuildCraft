@@ -19,7 +19,7 @@ public class BptPlayerIndex {
 	private File file;
 
 	public BptPlayerIndex(String filename, BptRootIndex rootIndex) throws IOException {
-		baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
+		baseDir = new File("./", "blueprints/");
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
 

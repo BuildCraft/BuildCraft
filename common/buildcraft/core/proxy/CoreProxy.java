@@ -149,11 +149,6 @@ public class CoreProxy {
 	public void sendToServer(Packet packet) {
 	}
 
-	/* FILE SYSTEM */
-	public File getBuildCraftBase() {
-		return new File("./");
-	}
-
 	public int addCustomTexture(String pathToTexture) {
 		return 0;
 	}

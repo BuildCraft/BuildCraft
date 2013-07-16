@@ -31,7 +31,6 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -42,7 +41,6 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.StringTranslate;
 import net.minecraft.world.World;
 
 public class CoreProxyClient extends CoreProxy {
@@ -133,12 +131,6 @@ public class CoreProxyClient extends CoreProxy {
 	@Override
 	public void sendToServer(Packet packet) {
 		FMLClientHandler.instance().getClient().getNetHandler().addToSendQueue(packet);
-	}
-
-	/* FILE SYSTEM */
-	@Override
-	public File getBuildCraftBase() {
-		return Minecraft.getMinecraftDir();
 	}
 
 	/* BUILDCRAFT PLAYER */

@@ -46,11 +46,14 @@ public class PipeConnectionBans {
 		banConnection(PipePowerWood.class);
 	}
 
+	private PipeConnectionBans() {
+	}
+
 	/**
 	 * Will ban connection between any set of pipe types provided.
 	 *
-	 * If only one parameter is passed in, it will ban connection to pipes of the
-	 * same type.
+	 * If only one parameter is passed in, it will ban connection to pipes of
+	 * the same type.
 	 *
 	 * @param types
 	 */

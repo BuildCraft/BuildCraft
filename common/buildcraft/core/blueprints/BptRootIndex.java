@@ -33,7 +33,7 @@ public class BptRootIndex {
 	public int maxBpt = 0;
 
 	public BptRootIndex(String filename) throws IOException {
-		baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
+		baseDir = new File("./", "blueprints/");
 		file = new File(baseDir, filename);
 		baseDir.mkdir();
 
