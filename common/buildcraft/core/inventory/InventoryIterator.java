@@ -21,9 +21,7 @@ public class InventoryIterator {
 		if (inv instanceof ISidedInventory) {
 			return new InventoryIteratorSided((ISidedInventory) inv, side);
 		}
-		if (inv instanceof net.minecraftforge.common.ISidedInventory) {
-			return new InventoryIteratorSided(InventoryWrapper.getWrappedInventory(inv), side);
-		}
+		
 		return new InventoryIteratorSimple(inv);
 	}
 

@@ -25,12 +25,12 @@ public class TickHandlerCoreClient implements ITickHandler {
 		// if(!Config.disableVersionCheck) {
 
 		if (Version.needsUpdateNoticeAndMarkAsSeen()) {
-			player.sendChatToPlayer(String.format("\u00A7cNew version of BuildCraft available: %s for Minecraft %s", Version.getRecommendedVersion(),
+			player.addChatMessage(String.format("\u00A7cNew version of BuildCraft available: %s for Minecraft %s", Version.getRecommendedVersion(),
 					CoreProxy.proxy.getMinecraftVersion()));
 			for (String updateLine : Version.getChangelog()) {
-				player.sendChatToPlayer("\u00A79" + updateLine);
+				player.addChatMessage("\u00A79" + updateLine);
 			}
-			player.sendChatToPlayer("\u00A7cThis message only displays once. Type '/buildcraft version' if you want to see it again.");
+			player.addChatMessage("\u00A7cThis message only displays once. Type '/buildcraft version' if you want to see it again.");
 		}
 
 		// }
