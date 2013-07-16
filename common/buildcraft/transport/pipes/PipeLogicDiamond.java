@@ -56,8 +56,4 @@ public class PipeLogicDiamond extends PipeLogic {
 	public IInventory getFilters() {
 		return filters;
 	}
-
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
-	}
 }

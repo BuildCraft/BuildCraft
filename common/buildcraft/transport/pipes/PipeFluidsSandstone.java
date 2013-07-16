@@ -11,6 +11,7 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.core.TileBuffer;
 import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -39,10 +40,7 @@ public class PipeFluidsSandstone extends Pipe implements IPipeTransportFluidsHoo
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if (container.tileBuffer == null || container.tileBuffer[from.ordinal()] == null)
-			return 0;
-
-		if (!(container.tileBuffer[from.ordinal()].getTile() instanceof TileGenericPipe))
+		if (!(container.getTile(from) instanceof TileGenericPipe))
 			return 0;
 
 		return ((PipeTransportFluids) this.transport).fill(from, resource, doFill);

@@ -450,22 +450,22 @@ public class BlockGenericPipe extends BlockContainer {
 			pipe.onBlockRemoval();
 		}
 
-		World world = pipe.worldObj;
+		World world = pipe.container.worldObj;
 
 		if (world == null)
 			return;
 
-		int i = pipe.xCoord;
-		int j = pipe.yCoord;
-		int k = pipe.zCoord;
+		int x = pipe.container.xCoord;
+		int y = pipe.container.yCoord;
+		int z = pipe.container.zCoord;
 
 		if (lastRemovedDate != world.getWorldTime()) {
 			lastRemovedDate = world.getWorldTime();
 			pipeRemoved.clear();
 		}
 
-		pipeRemoved.put(new BlockIndex(i, j, k), pipe);
-		world.removeBlockTileEntity(i, j, k);
+		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
+		world.removeBlockTileEntity(x, y, z);
 	}
 
 	@Override
@@ -692,8 +692,8 @@ public class BlockGenericPipe extends BlockContainer {
 		// Try to strip wires first, starting with yellow.
 		for (IPipe.WireColor color : IPipe.WireColor.values()) {
 			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
-					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+				if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+					dropWire(color.reverse(), pipe);
 				}
 				pipe.wireSet[color.reverse().ordinal()] = false;
 				// pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
@@ -704,8 +704,8 @@ public class BlockGenericPipe extends BlockContainer {
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
-			if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
-				pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+				pipe.gate.dropGate();
 			}
 			pipe.resetGate();
 			return true;
@@ -719,7 +719,7 @@ public class BlockGenericPipe extends BlockContainer {
 	 *
 	 * @param color
 	 */
-	private void dropWire(IPipe.WireColor color, World world, int i, int j, int k) {
+	private void dropWire(IPipe.WireColor color, Pipe pipe) {
 
 		Item wireItem;
 		switch (color) {
@@ -735,7 +735,7 @@ public class BlockGenericPipe extends BlockContainer {
 			default:
 				wireItem = BuildCraftTransport.yellowPipeWire;
 		}
-		Utils.dropItems(world, new ItemStack(wireItem), i, j, k);
+		pipe.dropItem(new ItemStack(wireItem));
 
 	}
 

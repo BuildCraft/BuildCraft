@@ -65,7 +65,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (worldObj.isRemote)
+		if (container.worldObj.isRemote)
 			return;
 
 		if (powerHandler.getEnergyStored() <= 0)

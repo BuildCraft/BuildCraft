@@ -322,7 +322,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			// int amount = liquid != null ? liq.renderAmmount[i] : 0;
 
 			if (liquid != null && liquid.amount > 0) {
-				DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
+				DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
 
 				if (d == null) {
 					continue;
@@ -370,7 +370,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
 			// DisplayFluidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getFluid(), pipe.worldObj);
-			DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
+			DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
 
 			if (d != null) {
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
@@ -406,7 +406,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		float light = pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+		float light = pipe.container.worldObj.getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		int count = 0;
 		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
@@ -414,8 +414,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 				break;
 			}
 
-			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z
-					- pipe.zCoord, light);
+			doRenderItem(data.item, x + data.item.getPosition().x - pipe.container.xCoord, y + data.item.getPosition().y - pipe.container.yCoord, z + data.item.getPosition().z
+					- pipe.container.zCoord, light);
 			count++;
 		}
 

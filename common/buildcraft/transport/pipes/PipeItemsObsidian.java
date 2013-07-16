@@ -82,8 +82,8 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	private AxisAlignedBB getSuckingBox(ForgeDirection orientation, int distance) {
 		if (orientation == ForgeDirection.UNKNOWN)
 			return null;
-		Position p1 = new Position(xCoord, yCoord, zCoord, orientation);
-		Position p2 = new Position(xCoord, yCoord, zCoord, orientation);
+		Position p1 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
+		Position p2 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
 
 		switch (orientation) {
 		case EAST:
@@ -160,7 +160,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			return false;
 
 		@SuppressWarnings("rawtypes")
-		List list = worldObj.getEntitiesWithinAABB(Entity.class, box);
+		List list = container.worldObj.getEntitiesWithinAABB(Entity.class, box);
 
 		for (int g = 0; g < list.size(); g++)
 			if (list.get(g) instanceof Entity) {
@@ -176,9 +176,9 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 					if (!cart.isDead) {
 						ItemStack stack = checkExtractGeneric(cart, true, getOpenOrientation());
 						if (stack != null && powerHandler.useEnergy(1, 1, true) == 1) {
-							EntityItem entityitem = new EntityItem(worldObj, cart.posX, cart.posY + 0.3F, cart.posZ, stack);
+							EntityItem entityitem = new EntityItem(container.worldObj, cart.posX, cart.posY + 0.3F, cart.posZ, stack);
 							entityitem.delayBeforeCanPickup = 10;
-							worldObj.spawnEntityInWorld(entityitem);
+							container.worldObj.spawnEntityInWorld(entityitem);
 							pullItemIntoPipe(entityitem, 1);
 							return true;
 						}
@@ -206,13 +206,13 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (CoreProxy.proxy.isRenderWorld(container.worldObj))
 			return;
 
 		ForgeDirection orientation = getOpenOrientation().getOpposite();
 
 		if (orientation != ForgeDirection.UNKNOWN) {
-			worldObj.playSoundAtEntity(entity, "random.pop", 0.2F, ((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+			container.worldObj.playSoundAtEntity(entity, "random.pop", 0.2F, ((container.worldObj.rand.nextFloat() - container.worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
 			ItemStack stack = null;
 
@@ -222,7 +222,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				EntityItem item = (EntityItem) entity;
 				ItemStack contained = item.getEntityItem();
 
-				CoreProxy.proxy.obsidianPipePickup(worldObj, item, this.container);
+				CoreProxy.proxy.obsidianPipePickup(container.worldObj, item, this.container);
 
 				float energyUsed = powerHandler.useEnergy(distance, contained.stackSize * distance, true);
 
@@ -245,7 +245,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 				CoreProxy.proxy.removeEntity(entity);
 			}
 
-			IPipedItem passive = new EntityPassiveItem(worldObj, xCoord + 0.5, yCoord + Utils.getPipeFloorOf(stack), zCoord + 0.5, stack);
+			IPipedItem passive = new EntityPassiveItem(container.worldObj, container.xCoord + 0.5, container.yCoord + Utils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
 
 			passive.setSpeed((float) speed);
 

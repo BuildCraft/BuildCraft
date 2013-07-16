@@ -79,7 +79,7 @@ public abstract class Gate {
 	// / UPDATING
 	public abstract void update();
 
-	public abstract void dropGate(World world, int i, int j, int k);
+	public abstract void dropGate();
 
 	// / INFORMATION
 	public abstract String getName();

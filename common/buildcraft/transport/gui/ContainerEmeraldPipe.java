@@ -43,6 +43,6 @@ public class ContainerEmeraldPipe extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return pipe.isUseableByPlayer(entityplayer);
+		return pipe.container.isUseableByPlayer(entityplayer);
 	}
 }

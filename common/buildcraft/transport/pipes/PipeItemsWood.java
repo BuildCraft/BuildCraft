@@ -64,7 +64,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		if (direction == ForgeDirection.UNKNOWN)
 			return standardIconIndex;
 		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			int metadata = container.getBlockMetadata();
 
 			if (metadata == direction.ordinal())
 				return solidIconIndex;
@@ -92,18 +92,17 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 		if (meta > 5)
 			return;
-		
-		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
-		pos.moveForwards(1);
-		TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+
+		ForgeDirection side = ForgeDirection.getOrientation(meta);
+		TileEntity tile = container.getTile(side);
 
 		if (tile instanceof IInventory) {
-			if (!PipeManager.canExtractItems(this, worldObj, (int) pos.x, (int) pos.y, (int) pos.z))
+			if (!PipeManager.canExtractItems(this, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
 				return;
 
 			IInventory inventory = (IInventory) tile;
 
-			ItemStack[] extracted = checkExtract(inventory, true, pos.orientation.getOpposite());
+			ItemStack[] extracted = checkExtract(inventory, true, side.getOpposite());
 			if (extracted == null)
 				return;
 
@@ -113,11 +112,11 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 					continue;
 				}
 
-				Position entityPos = new Position(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, pos.orientation.getOpposite());
+				Position entityPos = new Position(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5, side.getOpposite());
 
 				entityPos.moveForwards(0.6);
 
-				IPipedItem entity = new EntityPassiveItem(worldObj, entityPos.x, entityPos.y, entityPos.z, stack);
+				IPipedItem entity = new EntityPassiveItem(container.worldObj, entityPos.x, entityPos.y, entityPos.z, stack);
 
 				((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
 			}

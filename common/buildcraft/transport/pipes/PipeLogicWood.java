@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.pipes;
 
 import buildcraft.api.tools.IToolWrench;
@@ -25,7 +23,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class PipeLogicWood extends PipeLogic {
 
 	public void switchSource() {
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		int meta = container.getBlockMetadata();
 		int newMeta = 6;
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
@@ -42,7 +40,7 @@ public class PipeLogicWood extends PipeLogic {
 		}
 
 		if (newMeta != meta) {
-			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMeta,0);
+			container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, newMeta, 0);
 			container.scheduleRenderUpdate();
 			// worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		}
@@ -56,9 +54,9 @@ public class PipeLogicWood extends PipeLogic {
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, container.xCoord, container.yCoord, container.zCoord)) {
 			switchSource();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, container.xCoord, container.yCoord, container.zCoord);
 			return true;
 		}
 
@@ -80,13 +78,13 @@ public class PipeLogicWood extends PipeLogic {
 	public void initialize() {
 		super.initialize();
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
 			switchSourceIfNeeded();
 		}
 	}
 
 	private void switchSourceIfNeeded() {
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		int meta = container.getBlockMetadata();
 
 		if (meta > 5) {
 			switchSource();
@@ -103,7 +101,7 @@ public class PipeLogicWood extends PipeLogic {
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
 			switchSourceIfNeeded();
 		}
 	}
@@ -111,7 +109,7 @@ public class PipeLogicWood extends PipeLogic {
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
 		if (this.container.pipe instanceof PipeFluidsWood) {
-			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			int meta = container.getBlockMetadata();
 			return meta != to.ordinal();
 		}
 		return super.outputOpen(to);

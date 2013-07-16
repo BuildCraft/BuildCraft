@@ -66,7 +66,7 @@ public class GateVanilla extends Gate {
 	@Override
 	public void openGui(EntityPlayer player) {
 		if (!CoreProxy.proxy.isRenderWorld(player.worldObj)) {
-			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.worldObj, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 		}
 	}
 
@@ -142,9 +142,9 @@ public class GateVanilla extends Gate {
 	 * @param k
 	 */
 	@Override
-	public void dropGate(World world, int i, int j, int k) {
+	public void dropGate() {
 
-		int gateDamage = 0;
+		int gateDamage;
 		switch (kind) {
 			case Single:
 				gateDamage = 0;
@@ -177,7 +177,7 @@ public class GateVanilla extends Gate {
 			gateItem = BuildCraftTransport.pipeGate;
 		}
 
-		Utils.dropItems(world, new ItemStack(gateItem, 1, gateDamage), i, j, k);
+		pipe.dropItem(new ItemStack(gateItem, 1, gateDamage));
 
 	}
 

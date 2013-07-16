@@ -63,20 +63,17 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			_potentialActions.addAll(pipe.getActions());
 			_potentialTriggers.addAll(ActionManager.getPipeTriggers(pipe));
 
-			TileEntity ptile = pipe.worldObj.getBlockTileEntity(pipe.xCoord, pipe.yCoord, pipe.zCoord);
-			if (ptile instanceof IOverrideDefaultTriggers) {
-				_potentialTriggers.addAll(((IOverrideDefaultTriggers) ptile).getTriggers());
+			if (pipe.container instanceof IOverrideDefaultTriggers) {
+				_potentialTriggers.addAll(((IOverrideDefaultTriggers) pipe.container).getTriggers());
 			}
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				Position pos = new Position(pipe.xCoord, pipe.yCoord, pipe.zCoord, o);
-				pos.moveForwards(1.0);
-				TileEntity tile = pipe.worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
-				int blockID = pipe.worldObj.getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
+				TileEntity tile = pipe.container.getTile(o);
+				int blockID = pipe.container.getBlockId(o);
 				Block block = Block.blocksList[blockID];
 
 				LinkedList<ITrigger> nearbyTriggers = ActionManager.getNeighborTriggers(block, tile);
@@ -207,7 +204,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
 		}
 
-		CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload).getPacket());
+		CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.GATE_SELECTION_CHANGE, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload).getPacket());
 	}
 
 	/**
@@ -216,14 +213,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 */
 	public void synchronize() {
 
-		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
+		if (!isNetInitialized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			isNetInitialized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.xCoord, pipe.yCoord, pipe.zCoord).getPacket());
+			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_INIT, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord).getPacket());
 		}
 
-		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
+		if (!isSynchronized && CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			isSynchronized = true;
-			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord).getPacket());
+			CoreProxy.proxy.sendToServer(new PacketCoordinates(PacketIds.GATE_REQUEST_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord).getPacket());
 		}
 	}
 
@@ -320,7 +317,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			payload.intPayload[i + 1] = _potentialActions.get(i).getId();
 		}
 
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
+		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_ACTIONS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
 		// Send to player
 		CoreProxy.proxy.sendToPlayer(player, packet);
@@ -342,7 +339,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			payload.intPayload[i + 1] = _potentialTriggers.get(i).getId();
 		}
 
-		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload);
+		PacketUpdate packet = new PacketUpdate(PacketIds.GATE_TRIGGERS, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload);
 
 		// Send to player
 		CoreProxy.proxy.sendToPlayer(player, packet);
@@ -399,7 +396,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 				payload.intPayload[5] = pipe.triggerParameters[position].getItemStack().getItemDamage();
 			}
 
-			CoreProxy.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.xCoord, pipe.yCoord, pipe.zCoord, payload));
+			CoreProxy.proxy.sendToPlayer(player, new PacketUpdate(PacketIds.GATE_SELECTION, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, payload));
 		}
 
 		// System.out.println("Sending current selection to player");
@@ -430,14 +427,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
 		pipe.setTrigger(position, trigger);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
 		}
 	}
 
 	public void setTriggerParameter(int position, ITriggerParameter parameter, boolean notify) {
 		pipe.setTriggerParameter(position, parameter);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
 		}
 	}
@@ -463,7 +460,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	public void setAction(int position, IAction action, boolean notify) {
 		pipe.setAction(position, action);
-		if (CoreProxy.proxy.isRenderWorld(pipe.worldObj) && notify) {
+		if (CoreProxy.proxy.isRenderWorld(pipe.container.worldObj) && notify) {
 			sendSelectionChange(position);
 		}
 	}

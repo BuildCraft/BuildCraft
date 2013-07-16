@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
@@ -76,7 +77,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	private PipeRenderState renderState = new PipeRenderState();
 	private CoreState coreState = new CoreState();
 	private boolean deletePipe = false;
-	public TileBuffer[] tileBuffer;
+	private TileBuffer[] tileBuffer;
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 	public SafeTimeTracker networkSyncTracker = new SafeTimeTracker();
 	public Pipe pipe;
@@ -134,6 +135,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void invalidate() {
 		initialized = false;
+		tileBuffer = null;
 		if (pipe != null) {
 			pipe.invalidate();
 		}
@@ -143,6 +145,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public void validate() {
 		super.validate();
+		tileBuffer = null;
 		bindPipe();
 		if (pipe != null) {
 			pipe.validate();
@@ -268,15 +271,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 		this.pipe = pipe;
 
-		tileBuffer = new TileBuffer[6];
-
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			Position pos = new Position(xCoord, yCoord, zCoord, o);
-			pos.moveForwards(1.0);
-
-			tileBuffer[o.ordinal()] = new TileBuffer(worldObj, (int) pos.x, (int) pos.y, (int) pos.z, pipe.transport.delveIntoUnloadedChunks());
-		}
-
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = getTile(o);
 
@@ -379,7 +373,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 			renderState = packet.getRenderState();
 			worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
 		}
-		return;
 	}
 
 	@Override
@@ -422,25 +415,33 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		// TODO Auto-generated method stub
 	}
 
+	private TileBuffer[] getTileCache() {
+		if (tileBuffer == null && pipe != null)
+			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, pipe.transport.delveIntoUnloadedChunks());
+		return tileBuffer;
+	}
+
 	@Override
 	public void blockCreated(ForgeDirection from, int blockID, TileEntity tile) {
-		if (tileBuffer != null) {
-			tileBuffer[from.getOpposite().ordinal()].set(blockID, tile);
-		}
+		TileBuffer[] cache = getTileCache();
+		if (cache != null)
+			cache[from.getOpposite().ordinal()].set(blockID, tile);
 	}
 
 	@Override
 	public int getBlockId(ForgeDirection to) {
-		if (tileBuffer != null)
-			return tileBuffer[to.ordinal()].getBlockID();
+		TileBuffer[] cache = getTileCache();
+		if (cache != null)
+			return cache[to.ordinal()].getBlockID();
 		else
 			return 0;
 	}
 
 	@Override
 	public TileEntity getTile(ForgeDirection to) {
-		if (tileBuffer != null)
-			return tileBuffer[to.ordinal()].getTile();
+		TileBuffer[] cache = getTileCache();
+		if (cache != null)
+			return cache[to.ordinal()].getTile();
 		else
 			return null;
 	}
@@ -477,11 +478,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	private void computeConnections() {
-		if (tileBuffer != null) {
+		TileBuffer[] cache = getTileCache();
+		if (cache != null) {
 			pipeConnectionsBuffer = new boolean[6];
 
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-				TileBuffer t = tileBuffer[side.ordinal()];
+				TileBuffer t = cache[side.ordinal()];
 				t.refresh();
 
 				if (t.getTile() != null) {
@@ -714,5 +716,9 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	@Override
 	public World getWorld() {
 		return worldObj;
+	}
+
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 }

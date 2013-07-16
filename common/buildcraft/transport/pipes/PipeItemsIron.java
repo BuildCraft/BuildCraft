@@ -33,7 +33,7 @@ public class PipeItemsIron extends Pipe {
 		if (direction == ForgeDirection.UNKNOWN)
 			return standardIconIndex;
 		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			int metadata = container.getBlockMetadata();
 
 			if (metadata != direction.ordinal())
 				return solidIconIndex;

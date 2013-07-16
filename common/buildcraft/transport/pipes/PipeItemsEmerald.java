@@ -54,12 +54,12 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 			}
 		}
 
-		if (super.blockActivated(worldObj, x, y, z, entityplayer)) {
+		if (super.blockActivated(world, x, y, z, entityplayer)) {
 			return true;
 		}
 
 		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, worldObj, x, y, z);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, world, x, y, z);
 		}
 
 		return true;
@@ -209,9 +209,5 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 
 	public IInventory getFilters() {
 		return filters;
-	}
-
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
 	}
 }
