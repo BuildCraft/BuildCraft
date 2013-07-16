@@ -6,6 +6,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.util.ChatMessageComponent;
 
 public class CommandBuildCraft extends CommandBase {
 
@@ -45,9 +46,9 @@ public class CommandBuildCraft extends CommandBase {
 			commandVersion(sender, arguments);
 			return;
 		} else if (arguments[0].matches("help")) {
-			sender.sendChatToPlayer("Format: '" + this.getCommandName() + " <command> <arguments>'");
-			sender.sendChatToPlayer("Available commands:");
-			sender.sendChatToPlayer("- version : Version information.");
+			sender.sendChatToPlayer(ChatMessageComponent.func_111066_d("Format: '" + this.getCommandName() + " <command> <arguments>'"));
+			sender.sendChatToPlayer(ChatMessageComponent.func_111066_d("Available commands:"));
+			sender.sendChatToPlayer(ChatMessageComponent.func_111066_d("- version : Version information."));
 			return;
 		}
 
@@ -57,11 +58,11 @@ public class CommandBuildCraft extends CommandBase {
 	private void commandVersion(ICommandSender sender, String[] arguments) {
 		String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
 
-		sender.sendChatToPlayer(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(),
-				CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion()));
+		sender.sendChatToPlayer(ChatMessageComponent.func_111066_d(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(),
+				CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
 		if (Version.isOutdated()) {
 			for (String updateLine : Version.getChangelog()) {
-				sender.sendChatToPlayer("\u00A79" + updateLine);
+				sender.sendChatToPlayer(ChatMessageComponent.func_111066_d("\u00A79" + updateLine));
 			}
 		}
 	}
