@@ -43,7 +43,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	private int entitiesDroppedIndex = 0;
 
 	public PipeItemsObsidian(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicObsidian(), itemID);
+		super(new PipeTransportItems(), new PipeLogic(), itemID);
 
 		entitiesDropped = new int[32];
 

@@ -24,7 +24,7 @@ public class PipeLogicIron extends PipeLogic {
 
 	boolean lastPower = false;
 
-	public void switchPower() {
+	private void switchPower() {
 		boolean currentPower = container.worldObj.isBlockIndirectlyGettingPowered(container.xCoord, container.yCoord, container.zCoord);
 
 		if (currentPower != lastPower) {
@@ -34,7 +34,7 @@ public class PipeLogicIron extends PipeLogic {
 		}
 	}
 
-	public void switchPosition() {
+	private void switchPosition() {
 		int metadata = container.worldObj.getBlockMetadata(container.xCoord, container.yCoord, container.zCoord);
 
 		int nextMetadata = metadata;

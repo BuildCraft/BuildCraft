@@ -20,7 +20,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeFluidsGold extends Pipe {
 
 	public PipeFluidsGold(int itemID) {
-		super(new PipeTransportFluids(), new PipeLogicGold(), itemID);
+		super(new PipeTransportFluids(), new PipeLogic(), itemID);
 
 		((PipeTransportFluids) transport).flowRate = 40;
 		((PipeTransportFluids) transport).travelDelay = 4;

@@ -11,7 +11,6 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -61,17 +60,6 @@ public class PipeLogicWood extends PipeLogic {
 		}
 
 		return false;
-	}
-
-	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		Pipe pipe2 = null;
-
-		if (tile instanceof TileGenericPipe) {
-			pipe2 = ((TileGenericPipe) tile).pipe;
-		}
-
-		return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood)) && super.canPipeConnect(tile, side);
 	}
 
 	@Override

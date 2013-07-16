@@ -24,7 +24,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeItemsVoid extends Pipe implements IItemTravelingHook {
 
 	public PipeItemsVoid(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicVoid(), itemID);
+		super(new PipeTransportItems(), new PipeLogic(), itemID);
 		((PipeTransportItems) transport).travelHook = this;
 	}
 

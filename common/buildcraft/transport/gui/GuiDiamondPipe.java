@@ -10,7 +10,7 @@ package buildcraft.transport.gui;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipeLogicDiamond;
+import buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -21,10 +21,10 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 	IInventory playerInventory;
 	IInventory filterInventory;
 
-	public GuiDiamondPipe(IInventory playerInventory, PipeLogicDiamond logic) {
-		super(new ContainerDiamondPipe(playerInventory, logic), logic.getFilters());
+	public GuiDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
+		super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters());
 		this.playerInventory = playerInventory;
-		this.filterInventory = logic.getFilters();
+		this.filterInventory = pipe.getFilters();
 		xSize = 175;
 		ySize = 225;
 	}

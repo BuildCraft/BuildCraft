@@ -27,7 +27,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
@@ -36,7 +35,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 	private int currentFilter = 0;
 
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
-		super(transport, new PipeLogicEmerald(), itemID);
+		super(transport, new PipeLogicWood(), itemID);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
@@ -47,19 +46,19 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityplayer) {
+	public boolean blockActivated(EntityPlayer entityplayer) {
 		if (entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length) {
 			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe) {
 				return false;
 			}
 		}
 
-		if (super.blockActivated(world, x, y, z, entityplayer)) {
+		if (super.blockActivated(entityplayer)) {
 			return true;
 		}
 
 		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, world, x, y, z);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;

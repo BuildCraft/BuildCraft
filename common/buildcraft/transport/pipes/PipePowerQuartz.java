@@ -19,7 +19,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipePowerQuartz extends Pipe {
 
 	public PipePowerQuartz(int itemID) {
-		super(new PipeTransportPower(), new PipeLogicStone(), itemID);
+		super(new PipeTransportPower(), new PipeLogic(), itemID);
 		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
 

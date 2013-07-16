@@ -19,7 +19,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipePowerDiamond extends Pipe {
 
 	public PipePowerDiamond(int itemID) {
-		super(new PipeTransportPower(), new PipeLogicGold(), itemID);
+		super(new PipeTransportPower(), new PipeLogic(), itemID);
 		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
 

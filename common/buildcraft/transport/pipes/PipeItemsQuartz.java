@@ -24,7 +24,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeItemsQuartz extends Pipe implements IPipeTransportItemsHook {
 
 	public PipeItemsQuartz(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicQuartz(), itemID);
+		super(new PipeTransportItems(), new PipeLogic(), itemID);
 
 	}
 

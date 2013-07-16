@@ -23,9 +23,11 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
-import buildcraft.transport.pipes.PipeLogic;
+import buildcraft.transport.pipes.*;
 import buildcraft.transport.triggers.ActionSignalOutput;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -81,7 +83,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		logic.setTile((TileGenericPipe) tile);
 	}
 
-	public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer) {
+	public boolean blockActivated(EntityPlayer entityplayer) {
 		return logic.blockActivated(entityplayer);
 	}
 
@@ -101,6 +103,12 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+		Pipe otherPipe;
+		if (tile instanceof TileGenericPipe) {
+			otherPipe = ((TileGenericPipe) tile).pipe;
+			if (!PipeConnectionBans.canPipesConnect(getClass(), otherPipe.getClass()))
+				return false;
+		}
 		return logic.canPipeConnect(tile, side) && transport.canPipeConnect(tile, side);
 	}
 
@@ -417,8 +425,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			notifyBlocksOfNeighborChange(side);
 		}
 	}
-	
-	public void dropItem(ItemStack stack){
+
+	public void dropItem(ItemStack stack) {
 		Utils.dropItems(container.worldObj, stack, container.xCoord, container.yCoord, container.zCoord);
 	}
 
@@ -661,7 +669,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	@Override
 	public boolean doDrop() {
-		return logic.doDrop();
+		return true;
 	}
 
 	public boolean isGateActive() {

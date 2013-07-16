@@ -8,8 +8,8 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gui.ContainerGateInterface;
+import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import java.io.ByteArrayInputStream;
@@ -318,10 +318,10 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (pipe == null)
 			return;
 
-		if (!(pipe.pipe.logic instanceof PipeLogicDiamond))
+		if (!(pipe.pipe instanceof PipeItemsDiamond))
 			return;
 
-		((PipeLogicDiamond) pipe.pipe.logic).getFilters().setInventorySlotContents(packet.slot, packet.stack);
+		((PipeItemsDiamond) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
 	}
 	
 	/**

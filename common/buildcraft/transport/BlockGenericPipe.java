@@ -586,8 +586,8 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float xOffset, float yOffset, float zOffset) {
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, xOffset, yOffset, zOffset);
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int side, float xOffset, float yOffset, float zOffset) {
+		super.onBlockActivated(world, x, y, z, entityplayer, side, xOffset, yOffset, zOffset);
 
 		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock.blockID);
 
@@ -613,7 +613,7 @@ public class BlockGenericPipe extends BlockContainer {
 			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench)
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
-				return pipe.blockActivated(world, x, y, z, entityplayer);
+				return pipe.blockActivated(entityplayer);
 			else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
@@ -681,7 +681,7 @@ public class BlockGenericPipe extends BlockContainer {
 
 				return true;
 			} else
-				return pipe.blockActivated(world, x, y, z, entityplayer);
+				return pipe.blockActivated(entityplayer);
 		}
 
 		return false;

@@ -23,7 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 public class PipeFluidsVoid extends Pipe implements IPipeTransportFluidsHook {
 
 	public PipeFluidsVoid(int itemID) {
-		super(new PipeTransportFluids(), new PipeLogicVoid(), itemID);
+		super(new PipeTransportFluids(), new PipeLogic(), itemID);
 	}
 
 	@Override
