@@ -367,7 +367,7 @@ public class Utils {
 		return lasers;
 	}
 
-	public static void handleBufferedDescription(ISynchronizedTile tileSynch) throws IOException {
+	public static void handleBufferedDescription(ISynchronizedTile tileSynch) {
 		TileEntity tile = (TileEntity) tileSynch;
 		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);
 
@@ -376,7 +376,11 @@ public class Utils {
 			PacketUpdate payload = BuildCraftCore.bufferedDescriptions.get(index);
 			BuildCraftCore.bufferedDescriptions.remove(index);
 
-			tileSynch.handleDescriptionPacket(payload);
+			try {
+				tileSynch.handleDescriptionPacket(payload);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 			tileSynch.postPacketHandling(payload);
 		}
 	}
