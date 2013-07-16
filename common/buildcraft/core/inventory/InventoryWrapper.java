@@ -33,8 +33,6 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	public static ISidedInventory getWrappedInventory(Object inventory) {
 		if(inventory instanceof ISidedInventory)
 			return (ISidedInventory)inventory;
-		else if(inventory instanceof net.minecraftforge.common.ISidedInventory)
-			return new InventoryWrapperForge((net.minecraftforge.common.ISidedInventory)inventory);
 		else if(inventory instanceof IInventory)
 			return new InventoryWrapperSimple(Utils.getInventory((IInventory)inventory));
 		else
