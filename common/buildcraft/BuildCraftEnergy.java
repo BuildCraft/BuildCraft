@@ -9,7 +9,7 @@ package buildcraft;
 
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.api.recipes.RefineryRecipe;
+import buildcraft.api.recipes.RefineryRecipes;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
@@ -59,6 +59,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -195,7 +196,7 @@ public class BuildCraftEnergy {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty));
 		}
 
-		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(FluidRegistry.getFluid("oil"), null, FluidRegistry.getFluid("fuel"), 12, 1));
+		RefineryRecipes.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
 		// Iron Engine Fuels
 		IronEngineFuel.addFuel("lava", 1, 20000);

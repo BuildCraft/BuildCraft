@@ -9,7 +9,7 @@
 
 package buildcraft.factory.gui;
 
-import buildcraft.api.recipes.RefineryRecipe;
+import buildcraft.api.recipes.RefineryRecipes;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -108,7 +108,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			liquid1 = new FluidStack(filter1.itemID, FluidContainerRegistry.BUCKET_VOLUME, filter1.getItemDamage());
 		}
 
-		RefineryRecipe recipe = RefineryRecipe.findRefineryRecipe(liquid0, liquid1);
+		RefineryRecipes recipe = RefineryRecipes.findRefineryRecipe(liquid0, liquid1);
 
 		if (recipe != null) {
 			((ItemSlot) slots[2]).stack = recipe.result.asItemStack();

@@ -3,6 +3,7 @@ package buildcraft.builders.network;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.network.PacketIds;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
@@ -47,7 +48,7 @@ public class PacketHandlerBuilders implements IPacketHandler {
 	private void onArchitectName(EntityPlayer player, PacketUpdate packet) {
 		TileEntity te = player.worldObj.getBlockTileEntity(packet.posX, packet.posY, packet.posZ);
 		if (te instanceof TileArchitect) {
-			((TileArchitect) te).handleClientInput((char) packet.payload.intPayload[0]);
+			((TileArchitect) te).handleClientInput((char) ((PacketPayloadArrays)packet.payload).intPayload[0]);
 		}
 	}
 

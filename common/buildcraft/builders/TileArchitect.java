@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.builders;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,20 +26,17 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import java.io.IOException;
 
 public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	public @TileNetworkData
 	Box box = new Box();
-
 	private ItemStack items[] = new ItemStack[2];
-
 	private boolean isComputing = false;
 	public int computingTime = 0;
-
 	public @TileNetworkData
 	String name = "";
-
 	// Use that field to avoid creating several times the same template if
 	// they're the same!
 	private int lastBptId = 0;
@@ -343,7 +338,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleDescriptionPacket(packet);
@@ -354,7 +349,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleUpdatePacket(packet);
@@ -366,11 +361,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 
 	@Override
 	public void openChest() {
-
 	}
 
 	@Override
 	public void closeChest() {
-
 	}
 }

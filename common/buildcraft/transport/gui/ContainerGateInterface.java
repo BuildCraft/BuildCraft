@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport.gui;
 
 import buildcraft.api.core.Position;
@@ -20,6 +18,7 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
@@ -39,10 +38,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	IInventory playerIInventory;
 	Pipe pipe;
-
 	private final LinkedList<ITrigger> _potentialTriggers = new LinkedList<ITrigger>();
 	private final LinkedList<IAction> _potentialActions = new LinkedList<IAction>();
-
 	private boolean isSynchronized = false;
 	private boolean isNetInitialized = false;
 	public boolean[] triggerState = new boolean[8];
@@ -84,17 +81,19 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 				LinkedList<ITrigger> nearbyTriggers = ActionManager.getNeighborTriggers(block, tile);
 
-				for (ITrigger t : nearbyTriggers)
+				for (ITrigger t : nearbyTriggers) {
 					if (!_potentialTriggers.contains(t)) {
 						_potentialTriggers.add(t);
 					}
+				}
 
 				LinkedList<IAction> nearbyActions = ActionManager.getNeighborActions(block, tile);
 
-				for (IAction a : nearbyActions)
+				for (IAction a : nearbyActions) {
 					if (!_potentialActions.contains(a)) {
 						_potentialActions.add(a);
 					}
+				}
 			}
 		}
 	}
@@ -104,10 +103,12 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return true;
 	}
 
-	/** CLIENT SIDE **/
-
 	/**
-	 * Marks client side gate container as needing to be synchronized with the server.
+	 * CLIENT SIDE *
+	 */
+	/**
+	 * Marks client side gate container as needing to be synchronized with the
+	 * server.
 	 */
 	public void markDirty() {
 		isSynchronized = false;
@@ -115,41 +116,43 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Clears list of potential actions and refills it according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void updateActions(PacketUpdate packet) {
 
 		_potentialActions.clear();
-		int length = packet.payload.intPayload[0];
+		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
+		int length = payload.intPayload[0];
 
 		for (int i = 0; i < length; i++) {
-			_potentialActions.add(ActionManager.actions[packet.payload.intPayload[i + 1]]);
+			_potentialActions.add(ActionManager.actions[payload.intPayload[i + 1]]);
 		}
 
 	}
 
 	/**
 	 * Clears list of potential triggers and refills it according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void updateTriggers(PacketUpdate packet) {
 		_potentialTriggers.clear();
-		int length = packet.payload.intPayload[0];
+		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
+		int length = payload.intPayload[0];
 
 		for (int i = 0; i < length; i++) {
-			_potentialTriggers.add(ActionManager.triggers[packet.payload.intPayload[i + 1]]);
+			_potentialTriggers.add(ActionManager.triggers[payload.intPayload[i + 1]]);
 		}
 	}
 
 	/**
 	 * Sets the currently selected actions and triggers according to packet.
-	 * 
+	 *
 	 * @param packet
 	 */
 	public void setSelection(PacketUpdate packet) {
-		PacketPayload payload = packet.payload;
+		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
 		int position = payload.intPayload[0];
 
 		if (payload.intPayload[1] >= 0 && payload.intPayload[1] < ActionManager.triggers.length) {
@@ -182,7 +185,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public void sendSelectionChange(int position) {
-		PacketPayload payload = new PacketPayload(6, 0, 0);
+		PacketPayloadArrays payload = new PacketPayloadArrays(6, 0, 0);
 
 		payload.intPayload[0] = position;
 
@@ -208,7 +211,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	/**
-	 * Initializes the list of triggers and actions on the gate and (re-)requests the current selection on the gate if needed.
+	 * Initializes the list of triggers and actions on the gate and
+	 * (re-)requests the current selection on the gate if needed.
 	 */
 	public void synchronize() {
 
@@ -233,7 +237,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	/** SERVER SIDE **/
+	/**
+	 * SERVER SIDE *
+	 */
 	private int calculateTriggerState() {
 		int state = 0;
 		for (int i = 0; i < triggerState.length; i++) {
@@ -266,7 +272,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public void handleSelectionChange(PacketUpdate packet) {
-		PacketPayload payload = packet.payload;
+		PacketPayloadArrays payload = (PacketPayloadArrays)packet.payload;
 		int position = payload.intPayload[0];
 
 		if (payload.intPayload[1] >= 0 && payload.intPayload[1] < ActionManager.triggers.length) {
@@ -300,14 +306,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the list of potential actions to the client
-	 * 
+	 *
 	 * @param player
 	 */
 	private void sendActions(EntityPlayer player) {
 
 		// Compose update packet
 		int length = _potentialActions.size();
-		PacketPayload payload = new PacketPayload(length + 1, 0, 0);
+		PacketPayloadArrays payload = new PacketPayloadArrays(length + 1, 0, 0);
 
 		payload.intPayload[0] = length;
 		for (int i = 0; i < length; i++) {
@@ -322,14 +328,14 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the list of potential triggers to the client
-	 * 
+	 *
 	 * @param player
 	 */
 	private void sendTriggers(EntityPlayer player) {
 
 		// Compose update packet
 		int length = _potentialTriggers.size();
-		PacketPayload payload = new PacketPayload(length + 1, 0, 0);
+		PacketPayloadArrays payload = new PacketPayloadArrays(length + 1, 0, 0);
 
 		payload.intPayload[0] = length;
 		for (int i = 0; i < length; i++) {
@@ -344,7 +350,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 	/**
 	 * Sends the current selection on the gate to the client.
-	 * 
+	 *
 	 * @param player
 	 */
 	public void sendSelection(EntityPlayer player) {
@@ -352,26 +358,26 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			return;
 		int positions = 0;
 		switch (pipe.gate.kind) {
-		case Single:
-			positions = 1;
-			break;
-		case AND_2:
-		case OR_2:
-			positions = 2;
-			break;
-		case AND_3:
-		case OR_3:
-			positions = 4;
-			break;
-		case OR_4:
-		case AND_4:
-		default:
-			positions = 8;
-			break;
+			case Single:
+				positions = 1;
+				break;
+			case AND_2:
+			case OR_2:
+				positions = 2;
+				break;
+			case AND_3:
+			case OR_3:
+				positions = 4;
+				break;
+			case OR_4:
+			case AND_4:
+			default:
+				positions = 8;
+				break;
 		}
 
 		for (int position = 0; position < positions; position++) {
-			PacketPayload payload = new PacketPayload(6, 0, 0);
+			PacketPayloadArrays payload = new PacketPayloadArrays(6, 0, 0);
 
 			payload.intPayload[0] = position;
 
@@ -399,7 +405,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		// System.out.println("Sending current selection to player");
 	}
 
-	/** TRIGGERS **/
+	/**
+	 * TRIGGERS *
+	 */
 	public boolean hasTriggers() {
 		return _potentialTriggers.size() > 0;
 	}
@@ -434,7 +442,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	/** ACTIONS **/
+	/**
+	 * ACTIONS *
+	 */
 	public boolean hasActions() {
 		return _potentialActions.size() > 0;
 	}
@@ -458,7 +468,9 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	/** GATE INFORMATION **/
+	/**
+	 * GATE INFORMATION *
+	 */
 	public ResourceLocation getGateGuiFile() {
 		return pipe.gate.getGuiFile();
 	}
@@ -470,5 +482,4 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public String getGateName() {
 		return pipe.gate.getName();
 	}
-
 }

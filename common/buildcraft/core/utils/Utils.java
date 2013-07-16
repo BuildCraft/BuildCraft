@@ -26,6 +26,7 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -366,7 +367,7 @@ public class Utils {
 		return lasers;
 	}
 
-	public static void handleBufferedDescription(ISynchronizedTile tileSynch) {
+	public static void handleBufferedDescription(ISynchronizedTile tileSynch) throws IOException {
 		TileEntity tile = (TileEntity) tileSynch;
 		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);
 

@@ -4,6 +4,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -67,7 +68,7 @@ public abstract class Gate {
 
 	// / SMP
 	public PacketPayload toPayload() {
-		PacketPayload payload = new PacketPayload(1, 0, 0);
+		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, 0);
 		payload.intPayload[0] = kind.ordinal();
 		return payload;
 	}

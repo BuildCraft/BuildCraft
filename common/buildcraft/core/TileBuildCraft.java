@@ -10,11 +10,13 @@ package buildcraft.core;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.network.packet.Packet;
@@ -93,13 +95,15 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
-		descriptionPacket.fromPayload(this, packet.payload);
+	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
+		if (packet.payload instanceof PacketPayloadArrays)
+			descriptionPacket.fromPayload(this, (PacketPayloadArrays) packet.payload);
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
-		updatePacket.fromPayload(this, packet.payload);
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+		if (packet.payload instanceof PacketPayloadArrays)
+			updatePacket.fromPayload(this, (PacketPayloadArrays) packet.payload);
 	}
 
 	@Override

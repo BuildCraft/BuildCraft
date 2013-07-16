@@ -41,7 +41,7 @@ public class TilePacketWrapper {
 			sizeS += size[2];
 		}
 
-		PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
+		PacketPayloadArrays payload = new PacketPayloadArrays(0, sizeF, sizeS);
 
 		ByteBuffer buf = new ByteBuffer();
 
@@ -82,7 +82,7 @@ public class TilePacketWrapper {
 			sizeS += size[2];
 		}
 
-		PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
+		PacketPayloadArrays payload = new PacketPayloadArrays(0, sizeF, sizeS);
 
 		ByteBuffer buf = new ByteBuffer();
 
@@ -108,7 +108,7 @@ public class TilePacketWrapper {
 		}
 	}
 
-	public void fromPayload(TileEntity tile, PacketPayload packet) {
+	public void fromPayload(TileEntity tile, PacketPayloadArrays packet) {
 		try {
 			ByteBuffer buf = new ByteBuffer();
 			buf.writeIntArray(packet.intPayload);
@@ -124,11 +124,11 @@ public class TilePacketWrapper {
 		}
 	}
 
-	public void fromPayload(Object obj, PacketPayload packet) {
+	public void fromPayload(Object obj, PacketPayloadArrays packet) {
 		fromPayload(new Object[] { obj }, packet);
 	}
 
-	public void fromPayload(Object[] obj, PacketPayload packet) {
+	public void fromPayload(Object[] obj, PacketPayloadArrays packet) {
 		try {
 			ByteBuffer buf = new ByteBuffer();
 			buf.writeIntArray(packet.intPayload);

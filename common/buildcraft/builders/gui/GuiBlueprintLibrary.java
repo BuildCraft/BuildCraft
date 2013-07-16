@@ -15,6 +15,7 @@ import buildcraft.core.blueprints.BptPlayerIndex;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 import net.minecraft.client.gui.GuiButton;
@@ -157,7 +158,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
 			if (ySlot >= 0 && ySlot <= 11) {
 				if (ySlot < library.currentNames.length) {
-					PacketPayload payload = new PacketPayload();
+					PacketPayloadArrays payload = new PacketPayloadArrays();
 					payload.intPayload = new int[]{ySlot};
 					PacketLibraryAction packet = new PacketLibraryAction(PacketIds.LIBRARY_SELECT, library.xCoord, library.yCoord, library.zCoord);
 					packet.actionId = ySlot;

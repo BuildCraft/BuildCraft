@@ -2,12 +2,12 @@ package buildcraft.builders;
 
 import buildcraft.api.core.Position;
 import buildcraft.core.BlockIndex;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -18,15 +18,12 @@ import net.minecraft.world.World;
 public class TilePathMarker extends TileMarker {
 
 	public EntityLaser lasers[] = new EntityLaser[2];
-
 	public int x0, y0, z0, x1, y1, z1;
 	public boolean loadLink0 = false, loadLink1 = false;
 	public @TileNetworkData
 	boolean tryingToConnect = false;
-
 	public TilePathMarker links[] = new TilePathMarker[2];
 	public static int searchSize = 64; // TODO: this should be moved to default props
-
 	// A list with the pathMarkers that aren't fully connected
 	// It only contains markers within the loaded chunks
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
@@ -269,7 +266,7 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		boolean previousState = tryingToConnect;
 
 		super.handleUpdatePacket(packet);

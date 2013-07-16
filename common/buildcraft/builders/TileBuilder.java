@@ -17,7 +17,6 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.EntityPowerLaser;
 import buildcraft.core.EntityRobot;
@@ -34,6 +33,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -282,12 +282,12 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				box.initialize(bluePrintBuilder);
 			}
 
-		 if (builderRobot == null) {
-		 builderRobot = new EntityRobot(worldObj, box);
-		 worldObj.spawnEntityInWorld(builderRobot);
-		 }
+			if (builderRobot == null) {
+				builderRobot = new EntityRobot(worldObj, box);
+				worldObj.spawnEntityInWorld(builderRobot);
+			}
 
-		 box.createLasers(worldObj, LaserKind.Stripes);
+			box.createLasers(worldObj, LaserKind.Stripes);
 
 
 //			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, this), bluePrintBuilder.getContext());
@@ -519,7 +519,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleDescriptionPacket(packet);
@@ -530,7 +530,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleUpdatePacket(packet);

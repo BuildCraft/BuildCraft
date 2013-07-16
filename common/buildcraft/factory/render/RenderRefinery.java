@@ -74,12 +74,12 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		int angle = 0;
 		ModelRenderer theMagnet = magnet[0];
 		if (tile != null) {
-			if (tile.ingredient1.getFluid() != null) {
-				liquid1 = tile.ingredient1.getFluid();
+			if (tile.tank1.getFluid() != null) {
+				liquid1 = tile.tank1.getFluid();
 			}
 
-			if (tile.ingredient2.getFluid() != null) {
-				liquid2 = tile.ingredient2.getFluid();
+			if (tile.tank2.getFluid() != null) {
+				liquid2 = tile.tank2.getFluid();
 			}
 
 			if (tile.result.getFluid() != null) {

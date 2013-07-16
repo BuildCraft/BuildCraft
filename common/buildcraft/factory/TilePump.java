@@ -20,6 +20,7 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -320,7 +321,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(3, 1, 0);
+		PacketPayloadArrays payload = new PacketPayloadArrays(3, 1, 0);
 		if (tank.getFluid() != null) {
 			payload.intPayload[0] = tank.getFluid().getFluid().getID();
 			payload.intPayload[1] = tank.getFluid().amount;
@@ -336,15 +337,16 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) {
-		if (packet.payload.intPayload[0] > 0) {
-			FluidStack liquid = new FluidStack(FluidRegistry.getFluid(packet.payload.intPayload[0]), packet.payload.intPayload[2]);
+		PacketPayloadArrays payload = (PacketPayloadArrays)packet.payload;
+		if (payload.intPayload[0] > 0) {
+			FluidStack liquid = new FluidStack(FluidRegistry.getFluid(payload.intPayload[0]), payload.intPayload[2]);
 			tank.setFluid(liquid);
 		} else {
 			tank.setFluid(null);
 		}
 
-		aimY = packet.payload.intPayload[3];
-		tubeY = packet.payload.floatPayload[0];
+		aimY = payload.intPayload[3];
+		tubeY = payload.floatPayload[0];
 
 		setTubePosition();
 	}

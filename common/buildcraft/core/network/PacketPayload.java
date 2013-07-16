@@ -1,57 +1,30 @@
 package buildcraft.core.network;
 
-import buildcraft.core.utils.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class PacketPayload {
+public abstract class PacketPayload {
 
-	public int[] intPayload = new int[0];
-	public float[] floatPayload = new float[0];
-	public String[] stringPayload = new String[0];
+	public static enum Type {
 
-	public PacketPayload() {
+		NULL, ARRAY, STREAM
 	}
 
-	public PacketPayload(int intSize, int floatSize, int stringSize) {
-		intPayload = new int[intSize];
-		floatPayload = new float[floatSize];
-		stringPayload = new String[stringSize];
+	public static PacketPayload makePayload(int type) {
+		if (type == Type.ARRAY.ordinal())
+			return new PacketPayloadArrays();
+		if (type == Type.STREAM.ordinal())
+			return null;
+		return null;
 	}
 
-	public void append(PacketPayload other) {
-		if (other == null)
-			return;
+	public abstract void writeData(DataOutputStream data) throws IOException;
 
-		if (other.intPayload.length > 0) {
-			this.intPayload = Utils.concat(this.intPayload, other.intPayload);
-		}
-		if (other.floatPayload.length > 0) {
-			this.floatPayload = Utils.concat(this.floatPayload, other.floatPayload);
-		}
-		if (other.stringPayload.length > 0) {
-			this.stringPayload = Utils.concat(this.stringPayload, other.stringPayload);
-		}
+	@SideOnly(Side.CLIENT)
+	public abstract void readData(DataInputStream data) throws IOException;
 
-	}
-
-	public void append(int[] other) {
-		if (other == null || other.length < 0)
-			return;
-
-		this.intPayload = Utils.concat(this.intPayload, other);
-	}
-
-	public void splitTail(IndexInPayload index) {
-		PacketPayload payload = new PacketPayload(intPayload.length - index.intIndex, floatPayload.length - index.floatIndex, stringPayload.length
-				- index.stringIndex);
-
-		if (intPayload.length > 0) {
-			System.arraycopy(intPayload, index.intIndex, payload.intPayload, 0, payload.intPayload.length);
-		}
-		if (floatPayload.length > 0) {
-			System.arraycopy(floatPayload, index.floatIndex, payload.floatPayload, 0, payload.floatPayload.length);
-		}
-		if (stringPayload.length > 0) {
-			System.arraycopy(stringPayload, index.stringIndex, payload.stringPayload, 0, payload.stringPayload.length);
-		}
-	}
+	public abstract Type getType();
 }
