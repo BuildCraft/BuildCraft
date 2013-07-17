@@ -378,7 +378,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	@Override
 	public PacketPayload getPacketPayload() {
 		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
-
 			@Override
 			public void writeData(DataOutputStream data) throws IOException {
 				data.writeFloat(animationSpeed);
@@ -390,11 +389,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		if (packet.payload != null) {
-			DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
-			animationSpeed = stream.readFloat();
-			tankManager.readData(stream);
-		}
+		DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
+		animationSpeed = stream.readFloat();
+		tankManager.readData(stream);
 	}
 
 	@Override

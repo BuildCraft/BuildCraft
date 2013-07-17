@@ -27,6 +27,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -54,8 +55,8 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png";
+	public ResourceLocation getTextureFile() {
+		return IRON_TEXTURE;
 	}
 
 	@Override
