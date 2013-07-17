@@ -74,13 +74,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 		int position = getSlotAtLocation(i - cornerX, j - cornerY);
 
-		AdvancedSlot slot = null;
-
-		if (position != -1 && position != 2) {
-			slot = slots[position];
-		}
-
-		if (slot != null) {
+		if (position >= 0 && position < 2) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(mc.thePlayer.inventory.getItemStack());
 
 			if (liquid == null)
