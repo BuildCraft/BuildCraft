@@ -42,8 +42,6 @@ public class PacketUpdate extends BuildCraftPacket {
 		data.writeInt(posY);
 		data.writeInt(posZ);
 
-		data.writeByte(payload != null ? payload.getType().ordinal() : 0);
-
 		if (payload != null) {
 			data.writeByte(payload.getType().ordinal());
 			payload.writeData(data);
