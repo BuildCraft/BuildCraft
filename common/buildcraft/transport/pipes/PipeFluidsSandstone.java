@@ -9,7 +9,6 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.core.TileBuffer;
 import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -24,7 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 public class PipeFluidsSandstone extends Pipe implements IPipeTransportFluidsHook {
 
 	public PipeFluidsSandstone(int itemID) {
-		super(new PipeTransportFluids(), new PipeLogic(), itemID);
+		super(new PipeTransportFluids(), itemID);
 	}
 
 	@Override

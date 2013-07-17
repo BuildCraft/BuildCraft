@@ -51,11 +51,7 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 	};
 
 	public PipeFluidsWood(int itemID) {
-		this(new PipeLogic(), itemID);
-	}
-
-	protected PipeFluidsWood(PipeLogic logic, int itemID) {
-		super(new PipeTransportFluids(), logic, itemID);
+		super(new PipeTransportFluids(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 100, 1, 250);
@@ -78,7 +74,7 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 		logic.initialize();
 		super.initialize();
 	}
-	
+
 	/**
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */

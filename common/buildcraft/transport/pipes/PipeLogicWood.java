@@ -53,11 +53,6 @@ public abstract class PipeLogicWood {
 	}
 
 	protected abstract boolean isValidFacing(ForgeDirection facing);
-//
-//	private boolean isInput(TileEntity tile) {
-//		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof IFluidHandler)
-//				&& Utils.checkPipesConnections(pipe.container, tile);
-//	}
 
 	public void initialize() {
 		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {

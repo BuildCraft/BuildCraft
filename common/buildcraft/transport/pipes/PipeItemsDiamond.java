@@ -40,7 +40,7 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 	private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
 
 	public PipeItemsDiamond(int itemID) {
-		super(new PipeTransportItems(), new PipeLogic(), itemID);
+		super(new PipeTransportItems(), itemID);
 	}
 
 	public IInventory getFilters() {

@@ -24,7 +24,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
 
 	public PipeItemsStone(int itemID) {
-		super(new PipeTransportItems(), new PipeLogic(), itemID);
+		super(new PipeTransportItems(), itemID);
 	}
 
 	@Override

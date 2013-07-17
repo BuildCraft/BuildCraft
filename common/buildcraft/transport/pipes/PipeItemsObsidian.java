@@ -1,11 +1,10 @@
 /**
  * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
+ * BuildCraft Open Source License. It grants rights to read, modify, compile or
+ * run the code. It does *NOT* grant the right to redistribute this software or
+ * its modifications in any form, binary or source, except if expressively
  * granted by the copyright holder.
  */
-
 package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
@@ -38,12 +37,11 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 	private PowerHandler powerHandler;
-
 	private int[] entitiesDropped;
 	private int entitiesDroppedIndex = 0;
 
 	public PipeItemsObsidian(int itemID) {
-		super(new PipeTransportItems(), new PipeLogic(), itemID);
+		super(new PipeTransportItems(), itemID);
 
 		entitiesDropped = new int[32];
 
@@ -61,7 +59,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
 	}
-	
+
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
 		return PipeIconProvider.TYPE.PipeItemsObsidian.ordinal();
@@ -86,56 +84,56 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		Position p2 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
 
 		switch (orientation) {
-		case EAST:
-			p1.x += distance;
-			p2.x += 1 + distance;
-			break;
-		case WEST:
-			p1.x -= (distance - 1);
-			p2.x -= distance;
-			break;
-		case UP:
-		case DOWN:
-			p1.x += distance + 1;
-			p2.x -= distance;
-			p1.z += distance + 1;
-			p2.z -= distance;
-			break;
-		case SOUTH:
-			p1.z += distance;
-			p2.z += distance + 1;
-			break;
-		case NORTH:
-		default:
-			p1.z -= (distance - 1);
-			p2.z -= distance;
-			break;
+			case EAST:
+				p1.x += distance;
+				p2.x += 1 + distance;
+				break;
+			case WEST:
+				p1.x -= (distance - 1);
+				p2.x -= distance;
+				break;
+			case UP:
+			case DOWN:
+				p1.x += distance + 1;
+				p2.x -= distance;
+				p1.z += distance + 1;
+				p2.z -= distance;
+				break;
+			case SOUTH:
+				p1.z += distance;
+				p2.z += distance + 1;
+				break;
+			case NORTH:
+			default:
+				p1.z -= (distance - 1);
+				p2.z -= distance;
+				break;
 		}
 
 		switch (orientation) {
-		case EAST:
-		case WEST:
-			p1.y += distance + 1;
-			p2.y -= distance;
-			p1.z += distance + 1;
-			p2.z -= distance;
-			break;
-		case UP:
-			p1.y += distance + 1;
-			p2.y += distance;
-			break;
-		case DOWN:
-			p1.y -= (distance - 1);
-			p2.y -= distance;
-			break;
-		case SOUTH:
-		case NORTH:
-		default:
-			p1.y += distance + 1;
-			p2.y -= distance;
-			p1.x += distance + 1;
-			p2.x -= distance;
-			break;
+			case EAST:
+			case WEST:
+				p1.y += distance + 1;
+				p2.y -= distance;
+				p1.z += distance + 1;
+				p2.z -= distance;
+				break;
+			case UP:
+				p1.y += distance + 1;
+				p2.y += distance;
+				break;
+			case DOWN:
+				p1.y -= (distance - 1);
+				p2.y -= distance;
+				break;
+			case SOUTH:
+			case NORTH:
+			default:
+				p1.y += distance + 1;
+				p2.y -= distance;
+				p1.x += distance + 1;
+				p2.x -= distance;
+				break;
 		}
 
 		Position min = p1.min(p2);
@@ -146,9 +144,10 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 	@Override
 	public void doWork(PowerHandler workProvider) {
-		for (int j = 1; j < 5; ++j)
+		for (int j = 1; j < 5; ++j) {
 			if (trySucc(j))
 				return;
+		}
 
 		powerHandler.useEnergy(1, 1, true);
 	}
@@ -162,7 +161,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 		@SuppressWarnings("rawtypes")
 		List list = container.worldObj.getEntitiesWithinAABB(Entity.class, box);
 
-		for (int g = 0; g < list.size(); g++)
+		for (int g = 0; g < list.size(); g++) {
 			if (list.get(g) instanceof Entity) {
 				Entity entity = (Entity) list.get(g);
 
@@ -185,12 +184,13 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 					}
 				}
 			}
+		}
 
 		return false;
 	}
 
 	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from) {
-		for (int k = 0; k < inventory.getSizeInventory(); ++k)
+		for (int k = 0; k < inventory.getSizeInventory(); ++k) {
 			if (inventory.getStackInSlot(k) != null && inventory.getStackInSlot(k).stackSize > 0) {
 
 				ItemStack slot = inventory.getStackInSlot(k);
@@ -201,6 +201,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 					else
 						return slot;
 			}
+		}
 
 		return null;
 	}
@@ -273,9 +274,10 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 			if (item.getEntityItem().stackSize <= 0)
 				return false;
 
-			for (int i = 0; i < entitiesDropped.length; ++i)
+			for (int i = 0; i < entitiesDropped.length; ++i) {
 				if (item.entityId == entitiesDropped[i])
 					return false;
+			}
 
 			return powerHandler.useEnergy(1, distance, false) >= distance;
 		} else if (entity instanceof EntityArrow)

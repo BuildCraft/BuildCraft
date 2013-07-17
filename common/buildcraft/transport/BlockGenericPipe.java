@@ -885,7 +885,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {
-		return pipe != null && pipe.transport != null && pipe.logic != null;
+		return pipe != null && pipe.transport != null;
 	}
 
 	public static boolean isValid(Pipe pipe) {

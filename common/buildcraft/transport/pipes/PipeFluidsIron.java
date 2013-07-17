@@ -42,7 +42,7 @@ public class PipeFluidsIron extends Pipe {
 	};
 
 	public PipeFluidsIron(int itemID) {
-		super(new PipeTransportFluids(), new PipeLogic(), itemID);
+		super(new PipeTransportFluids(), itemID);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class PipeFluidsIron extends Pipe {
 
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		return logic.outputOpen(to);
+		return super.outputOpen(to) && logic.outputOpen(to);
 	}
 
 	@Override

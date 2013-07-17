@@ -30,7 +30,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	private boolean full;
 
 	public PipePowerWood(int itemID) {
-		super(new PipeTransportPower(), new PipeLogic(), itemID);
+		super(new PipeTransportPower(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.PIPE);
 		initPowerProvider();

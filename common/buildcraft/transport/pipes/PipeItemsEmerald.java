@@ -17,7 +17,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportItems;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,15 +33,11 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 	private SimpleInventory filters = new SimpleInventory(9, "Filters", 1);
 	private int currentFilter = 0;
 
-	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
-		super(transport, new PipeLogic(), itemID);
+	public PipeItemsEmerald(int itemID) {
+		super(itemID);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
-	}
-
-	public PipeItemsEmerald(int itemID) {
-		this(itemID, new PipeTransportItems());
 	}
 
 	@Override

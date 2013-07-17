@@ -49,20 +49,12 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 		}
 	};
 
-	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
-		super(transport, logic, itemID);
+	public PipeItemsWood(int itemID) {
+		super(new PipeTransportItems(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 64, 1, 64);
 		powerHandler.configurePowerPerdition(0, 0);
-	}
-
-	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
-		this(transport, new PipeLogic(), itemID);
-	}
-
-	public PipeItemsWood(int itemID) {
-		this(itemID, new PipeTransportItems());
 	}
 
 	@Override

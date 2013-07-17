@@ -44,7 +44,7 @@ public class PipeItemsIron extends Pipe {
 	};
 
 	public PipeItemsIron(int itemID) {
-		super(new PipeTransportItems(), new PipeLogic(), itemID);
+		super(new PipeTransportItems(), itemID);
 
 		((PipeTransportItems) transport).allowBouncing = true;
 	}
@@ -74,7 +74,7 @@ public class PipeItemsIron extends Pipe {
 
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		return logic.outputOpen(to);
+		return super.outputOpen(to) && logic.outputOpen(to);
 	}
 
 	@Override

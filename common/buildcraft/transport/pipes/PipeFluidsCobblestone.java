@@ -19,7 +19,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeFluidsCobblestone extends Pipe {
 
 	public PipeFluidsCobblestone(int itemID) {
-		super(new PipeTransportFluids(), new PipeLogic(), itemID);
+		super(new PipeTransportFluids(), itemID);
 	}
 
 	@Override
