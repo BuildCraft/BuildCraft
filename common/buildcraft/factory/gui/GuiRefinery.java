@@ -16,7 +16,6 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.factory.TileRefinery;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -96,8 +95,8 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		Fluid filter0 = container.getFilter(0);
 		Fluid filter1 = container.getFilter(1);
 
-		((FluidSlot) slots[0]).stack = filter0;
-		((FluidSlot) slots[1]).stack = filter1;
+		((FluidSlot) slots[0]).fluid = filter0;
+		((FluidSlot) slots[1]).fluid = filter1;
 
 		FluidStack liquid0 = null;
 		FluidStack liquid1 = null;
@@ -112,9 +111,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		Recipe recipe = RefineryRecipes.findRefineryRecipe(liquid0, liquid1);
 
 		if (recipe != null) {
-			((FluidSlot) slots[2]).stack = recipe.result.getFluid();
+			((FluidSlot) slots[2]).fluid = recipe.result.getFluid();
 		} else {
-			((FluidSlot) slots[2]).stack = null;
+			((FluidSlot) slots[2]).fluid = null;
 		}
 	}
 

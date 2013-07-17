@@ -19,7 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 
 public class ContainerRefinery extends BuildCraftContainer {
@@ -66,15 +65,11 @@ public class ContainerRefinery extends BuildCraftContainer {
 	}
 
 	public Fluid getFilter(int slot) {
-		Fluid filter = refinery.getFilter(slot);
-		if (filter != null)
-			return filter;
-		else
-			return null;
+		return refinery.getFilter(slot);
 	}
 
 	/* GUI DISPLAY UPDATES */
-	// @Override Client side only
+	@Override
 	public void updateProgressBar(int i, int j) {
 		refinery.getGUINetworkData(i, j);
 	}
