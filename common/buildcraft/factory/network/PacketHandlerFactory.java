@@ -56,9 +56,9 @@ public class PacketHandlerFactory implements IPacketHandler {
 	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) throws IOException {
 
 		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (tile == null)
+		if (tile == null || packet.payload == null)
 			return;
-
+	
 		DataInputStream stream = ((PacketPayloadStream)packet.payload).stream;
 
 		tile.setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));

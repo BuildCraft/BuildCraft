@@ -65,10 +65,10 @@ public class ContainerRefinery extends BuildCraftContainer {
 		}
 	}
 
-	public ItemStack getFilter(int slot) {
+	public Fluid getFilter(int slot) {
 		Fluid filter = refinery.getFilter(slot);
 		if (filter != null)
-			return null; // TODO 1.6: er...what to do with this?
+			return filter;
 		else
 			return null;
 	}
