@@ -80,4 +80,11 @@ public interface IPipedItem {
 
 	public abstract boolean hasContributions();
 
+	
+	/**
+	 * @return the can this item be moved into this specific entity type.
+	 * (basic BuildCraft PipedItems always return true)
+	 */
+	public abstract boolean canSinkTo(TileEntity entity);
+
 }
