@@ -232,8 +232,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 		data.setFloat("animationSpeed", animationSpeed);
 		powerHandler.writeToNBT(data);
 
-		data.setString("filter0", filters[0].getName());
-		data.setString("filter1", filters[1].getName());
+		if (filters[0] != null)
+			data.setString("filter0", filters[0].getName());
+		if (filters[1] != null)
+			data.setString("filter1", filters[1].getName());
 	}
 
 	public int getAnimationStage() {
@@ -376,6 +378,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 	@Override
 	public PacketPayload getPacketPayload() {
 		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+
 			@Override
 			public void writeData(DataOutputStream data) throws IOException {
 				data.writeFloat(animationSpeed);
@@ -387,9 +390,11 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IPowe
 
 	@Override
 	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
-		animationSpeed = stream.readFloat();
-		tankManager.readData(stream);
+		if (packet.payload != null) {
+			DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
+			animationSpeed = stream.readFloat();
+			tankManager.readData(stream);
+		}
 	}
 
 	@Override

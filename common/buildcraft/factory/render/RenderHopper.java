@@ -15,8 +15,8 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderHopper extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private static final ResourceLocation HOPPER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png");
-	private static final ResourceLocation HOPPER_MIDDLE_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png");
+	private static final ResourceLocation HOPPER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png");
+	private static final ResourceLocation HOPPER_MIDDLE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png");
 	private ModelBase model = new ModelBase() {
 	};
 	private final ModelRenderer top;

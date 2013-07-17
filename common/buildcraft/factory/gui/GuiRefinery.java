@@ -10,6 +10,7 @@
 package buildcraft.factory.gui;
 
 import buildcraft.api.recipes.RefineryRecipes;
+import buildcraft.api.recipes.RefineryRecipes.Recipe;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -17,6 +18,7 @@ import buildcraft.factory.TileRefinery;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
@@ -36,9 +38,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 		this.slots = new AdvancedSlot[3];
 
-		this.slots[0] = new ItemSlot(38, 54);
-		this.slots[1] = new ItemSlot(126, 54);
-		this.slots[2] = new ItemSlot(82, 54);
+		this.slots[0] = new FluidSlot(38, 54);
+		this.slots[1] = new FluidSlot(126, 54);
+		this.slots[2] = new FluidSlot(82, 54);
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.func_110577_a(TEXTURE);
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
@@ -85,35 +87,34 @@ public class GuiRefinery extends GuiAdvancedInterface {
 			if (liquid == null)
 				return;
 
-			container.setFilter(position, liquid.itemID, liquid.itemMeta);
+			container.setFilter(position, liquid.getFluid());
 		}
 	}
 
 	private void updateSlots() {
 
-		ItemStack filter0 = container.getFilter(0);
-		ItemStack filter1 = container.getFilter(1);
+		Fluid filter0 = container.getFilter(0);
+		Fluid filter1 = container.getFilter(1);
 
-		((ItemSlot) slots[0]).stack = filter0;
-		((ItemSlot) slots[1]).stack = filter1;
+		((FluidSlot) slots[0]).stack = filter0;
+		((FluidSlot) slots[1]).stack = filter1;
 
 		FluidStack liquid0 = null;
 		FluidStack liquid1 = null;
 
-		// TODO 1.6: Replace these with Phantom slots? -CovertJaguar
 		if (filter0 != null) {
-			liquid0 = new FluidStack(filter0.itemID, FluidContainerRegistry.BUCKET_VOLUME, filter0.getItemDamage());
+			liquid0 = new FluidStack(filter0, FluidContainerRegistry.BUCKET_VOLUME);
 		}
 		if (filter1 != null) {
-			liquid1 = new FluidStack(filter1.itemID, FluidContainerRegistry.BUCKET_VOLUME, filter1.getItemDamage());
+			liquid1 = new FluidStack(filter1, FluidContainerRegistry.BUCKET_VOLUME);
 		}
 
-		RefineryRecipes recipe = RefineryRecipes.findRefineryRecipe(liquid0, liquid1);
+		Recipe recipe = RefineryRecipes.findRefineryRecipe(liquid0, liquid1);
 
 		if (recipe != null) {
-			((ItemSlot) slots[2]).stack = recipe.result.asItemStack();
+			((FluidSlot) slots[2]).stack = recipe.result.getFluid();
 		} else {
-			((ItemSlot) slots[2]).stack = null;
+			((FluidSlot) slots[2]).stack = null;
 		}
 	}
 

@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import net.minecraftforge.fluids.Fluid;
+
 import org.lwjgl.opengl.GL11;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
@@ -160,6 +162,19 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			int k2 = mouseY - cornerY;
 			drawCreativeTabHoveringText(s, i2, k2);
 			RenderHelper.enableGUIStandardItemLighting();
+		}
+	}
+	
+	/**
+	 * For the refinery, a king of phantom slot for fluid.
+	 */
+	//TODO Get this class working well (Now it's just here to let the refinery compil)
+	public class FluidSlot extends AdvancedSlot {
+
+		public Fluid stack;
+
+		public FluidSlot(int x, int y) {
+			super(x, y);
 		}
 	}
 }
