@@ -18,6 +18,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
 import static net.minecraftforge.common.ForgeDirection.DOWN;
 import static net.minecraftforge.common.ForgeDirection.EAST;
@@ -154,7 +155,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 		float factor = (float) (1.0 / 16.0);
 
-		bindTextureByName(baseTexture);
+		this.func_110628_a(new ResourceLocation("buildcraft", baseTexture));
 
 		box.render(factor);
 
@@ -162,7 +163,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		movingBox.render(factor);
 		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
 
-		bindTextureByName(DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png");
+		this.func_110628_a(new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_BLOCKS + "/chamber.png"));
 
 		float chamberf = 2F / 16F;
 
@@ -192,7 +193,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 				break;
 		}
 
-		bindTextureByName(texture);
+		this.func_110628_a(new ResourceLocation("buildcraft", texture));
 
 		trunk.render(factor);
 
