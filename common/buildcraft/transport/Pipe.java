@@ -250,13 +250,15 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 	private boolean initialized = false;
 
+	public boolean needsInit() {
+		return !initialized;
+	}
+
 	public void initialize() {
-		if (!initialized) {
-			transport.initialize();
-			logic.initialize();
-			initialized = true;
-			updateSignalState();
-		}
+		transport.initialize();
+		logic.initialize();
+		updateSignalState();
+		initialized = true;
 	}
 
 	private void readNearbyPipesSignal(WireColor color) {

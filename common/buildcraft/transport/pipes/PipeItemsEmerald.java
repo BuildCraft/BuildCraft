@@ -35,7 +35,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState {
 	private int currentFilter = 0;
 
 	protected PipeItemsEmerald(int itemID, PipeTransportItems transport) {
-		super(transport, new PipeLogicWood(), itemID);
+		super(transport, new PipeLogic(), itemID);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();

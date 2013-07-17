@@ -21,6 +21,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -37,9 +38,20 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	long lastMining = 0;
 	boolean lastPower = false;
+	private PipeLogicWood logic = new PipeLogicWood(this) {
+		@Override
+		protected boolean isValidFacing(ForgeDirection facing) {
+			TileEntity tile = pipe.container.getTile(facing);
+			if (!(tile instanceof IFluidHandler))
+				return false;
+			if (!PipeManager.canExtractFluids(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+				return false;
+			return true;
+		}
+	};
 
 	public PipeFluidsWood(int itemID) {
-		this(new PipeLogicWood(), itemID);
+		this(new PipeLogic(), itemID);
 	}
 
 	protected PipeFluidsWood(PipeLogic logic, int itemID) {
@@ -50,6 +62,23 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 		powerHandler.configurePowerPerdition(0, 0);
 	}
 
+	@Override
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		return logic.blockActivated(entityplayer);
+	}
+
+	@Override
+	public void onNeighborBlockChange(int blockId) {
+		logic.onNeighborBlockChange(blockId);
+		super.onNeighborBlockChange(blockId);
+	}
+
+	@Override
+	public void initialize() {
+		logic.initialize();
+		super.initialize();
+	}
+	
 	/**
 	 * Extracts a random piece of item outside of a nearby chest.
 	 */
@@ -130,5 +159,11 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 			else
 				return standardIconIndex;
 		}
+	}
+
+	@Override
+	public boolean outputOpen(ForgeDirection to) {
+		int meta = container.getBlockMetadata();
+		return super.outputOpen(to) && meta != to.ordinal();
 	}
 }

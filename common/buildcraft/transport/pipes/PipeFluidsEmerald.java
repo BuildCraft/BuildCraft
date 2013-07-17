@@ -18,7 +18,7 @@ import buildcraft.transport.PipeTransportFluids;
 public class PipeFluidsEmerald extends PipeFluidsWood {
 
 	public PipeFluidsEmerald(int itemID) {
-		super(new PipeLogicWood(), itemID);
+		super(new PipeLogic(), itemID);
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeFluidsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
