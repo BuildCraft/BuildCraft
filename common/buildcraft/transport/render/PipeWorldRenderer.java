@@ -3,6 +3,7 @@ package buildcraft.transport.render;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.BuildCraftTransport;
@@ -25,7 +26,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 	/**
 	 * Mirrors the array on the Y axis by calculating offsets from 0.5F
-	 *
+	 * 
 	 * @param targetArray
 	 */
 	private void mirrorY(float[][] targetArray) {
@@ -38,7 +39,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 	 * Shifts the coordinates around effectivly rotating something. Zero state
 	 * is DOWN then -> NORTH -> WEST Note - To obtain Pos, do a mirrorY() before
 	 * rotating
-	 *
+	 * 
 	 * @param targetArray the array that should be rotated
 	 */
 	private void rotate(float[][] targetArray) {
@@ -66,7 +67,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 
 	/**
 	 * Clones both dimensions of a float[][]
-	 *
+	 * 
 	 * @param source the float[][] to deepClone
 	 * @return
 	 */
@@ -76,6 +77,45 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 			target[i] = source[i].clone();
 		}
 		return target;
+	}
+
+	private void renderAllFaceExeptAxe(RenderBlocks renderblocks, Block block, Icon icon, int x, int y, int z, char axe) {
+		float minX = (float) block.getBlockBoundsMinX();
+		float minY = (float) block.getBlockBoundsMinY();
+		float minZ = (float) block.getBlockBoundsMinZ();
+		float maxX = (float) block.getBlockBoundsMaxX();
+		float maxY = (float) block.getBlockBoundsMaxY();
+		float maxZ = (float) block.getBlockBoundsMaxZ();
+		if (axe != 'x') {
+			renderTwoWayXFace(renderblocks, block, icon, x, y, z, minY, minZ, maxY, maxZ, minX);
+			renderTwoWayXFace(renderblocks, block, icon, x, y, z, minY, minZ, maxY, maxZ, maxX);
+		}
+		if (axe != 'y') {
+			renderTwoWayYFace(renderblocks, block, icon, x, y, z, minX, minZ, maxX, maxZ, minY);
+			renderTwoWayYFace(renderblocks, block, icon, x, y, z, minX, minZ, maxX, maxZ, maxY);
+		}
+		if (axe != 'z') {
+			renderTwoWayZFace(renderblocks, block, icon, x, y, z, minX, minY, maxX, maxY, minZ);
+			renderTwoWayZFace(renderblocks, block, icon, x, y, z, minX, minY, maxX, maxY, maxZ);
+		}
+	}
+
+	private void renderTwoWayXFace(RenderBlocks renderblocks, Block block, Icon icon, int xCoord, int yCoord, int zCoord, float minY, float minZ, float maxY, float maxZ, float x) {
+		block.setBlockBounds(x, minY, minZ, x, maxY, maxZ);
+		renderblocks.setRenderBoundsFromBlock(block);
+		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
+	}
+
+	private void renderTwoWayYFace(RenderBlocks renderblocks, Block block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minZ, float maxX, float maxZ, float y) {
+		block.setBlockBounds(minX, y, minZ, maxX, y, maxZ);
+		renderblocks.setRenderBoundsFromBlock(block);
+		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
+	}
+
+	private void renderTwoWayZFace(RenderBlocks renderblocks, Block block, Icon icon, int xCoord, int yCoord, int zCoord, float minX, float minY, float maxX, float maxY, float z) {
+		block.setBlockBounds(minX, minY, z, maxX, maxY, z);
+		renderblocks.setRenderBoundsFromBlock(block);
+		renderblocks.renderStandardBlock(block, xCoord, yCoord, zCoord);
 	}
 
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, Block block, IPipeRenderState renderState, int x, int y, int z) {
@@ -88,53 +128,77 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		if (icons == null)
 			return;
 
-
 		state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
-		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
-		renderblocks.setRenderBoundsFromBlock(block);
-		renderblocks.renderStandardBlock(block, x, y, z);
+
+		boolean west = false;
+		boolean east = false;
+		boolean down = false;
+		boolean up = false;
+		boolean north = false;
+		boolean south = false;
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.WEST)) {
 			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.WEST));
 			block.setBlockBounds(0.0F, minSize, minSize, minSize, maxSize, maxSize);
 			renderblocks.setRenderBoundsFromBlock(block);
-			renderblocks.renderStandardBlock(block, x, y, z);
+			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'x');
+			west = true;
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.EAST)) {
 			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.EAST));
 			block.setBlockBounds(maxSize, minSize, minSize, 1.0F, maxSize, maxSize);
 			renderblocks.setRenderBoundsFromBlock(block);
-			renderblocks.renderStandardBlock(block, x, y, z);
+			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'x');
+			east = true;
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.DOWN)) {
 			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.DOWN));
 			block.setBlockBounds(minSize, 0.0F, minSize, maxSize, minSize, maxSize);
 			renderblocks.setRenderBoundsFromBlock(block);
-			renderblocks.renderStandardBlock(block, x, y, z);
+			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'y');
+			down = true;
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.UP)) {
 			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UP));
 			block.setBlockBounds(minSize, maxSize, minSize, maxSize, 1.0F, maxSize);
 			renderblocks.setRenderBoundsFromBlock(block);
-			renderblocks.renderStandardBlock(block, x, y, z);
+			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'y');
+			up = true;
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.NORTH)) {
 			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.NORTH));
 			block.setBlockBounds(minSize, minSize, 0.0F, maxSize, maxSize, minSize);
 			renderblocks.setRenderBoundsFromBlock(block);
-			renderblocks.renderStandardBlock(block, x, y, z);
+			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'z');
+			north = true;
 		}
 
 		if (state.pipeConnectionMatrix.isConnected(ForgeDirection.SOUTH)) {
 			state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.SOUTH));
 			block.setBlockBounds(minSize, minSize, maxSize, maxSize, maxSize, 1.0F);
 			renderblocks.setRenderBoundsFromBlock(block);
-			renderblocks.renderStandardBlock(block, x, y, z);
+			renderAllFaceExeptAxe(renderblocks, block, state.currentTexture, x, y, z, 'z');
+			south = true;
 		}
+
+		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
+		renderblocks.setRenderBoundsFromBlock(block);
+		if (!west)
+			renderTwoWayXFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, minSize);
+		if (!east)
+			renderTwoWayXFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, maxSize);
+		if (!down)
+			renderTwoWayYFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, minSize);
+		if (!up)
+			renderTwoWayYFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, maxSize);
+		if (!north)
+			renderTwoWayZFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, minSize);
+		if (!south)
+			renderTwoWayZFace(renderblocks, block, state.currentTexture, x, y, z, minSize, minSize, maxSize, maxSize, maxSize);
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
