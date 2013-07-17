@@ -243,7 +243,7 @@ public class PipeTransportItems extends PipeTransport {
 			TileGenericPipe pipe = (TileGenericPipe) entity;
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
-		} else if (entity instanceof IInventory)
+		} else if (entity instanceof IInventory && item.canSinkTo(entity))
 			if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0)
 				return true;
 

@@ -359,4 +359,9 @@ public class EntityPassiveItem implements IPipedItem {
 	public boolean hasContributions() {
 		return contributions.size() > 0;
 	}
+
+	@Override
+	public boolean canSinkTo(TileEntity entity) {
+		return true; // a passive item can sink anywhere
+	}
 }
