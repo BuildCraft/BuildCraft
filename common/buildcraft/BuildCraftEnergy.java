@@ -176,7 +176,7 @@ public class BuildCraftEnergy {
 				fluidFuel.setBlockID(blockFuel);
 			}
 		} else {
-			blockFuel = Block.blocksList[fluidOil.getBlockID()];
+			blockFuel = Block.blocksList[fluidFuel.getBlockID()];
 		}
 
 		// Buckets
