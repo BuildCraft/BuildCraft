@@ -287,7 +287,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		computeConnections();
 		scheduleRenderUpdate();
 
-		pipe.initialize();
+		if (pipe.needsInit())
+			pipe.initialize();
 
 		initialized = true;
 	}

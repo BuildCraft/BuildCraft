@@ -19,7 +19,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeFluidsStone extends Pipe {
 
 	public PipeFluidsStone(int itemID) {
-		super(new PipeTransportFluids(), new PipeLogic(), itemID);
+		super(new PipeTransportFluids(), itemID);
 		// ((PipeTransportFluids) transport).flowRate = 40;
 	}
 

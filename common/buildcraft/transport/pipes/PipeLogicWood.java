@@ -8,98 +8,72 @@
 package buildcraft.transport.pipes;
 
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.Pipe;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.IFluidHandler;
 
-public class PipeLogicWood extends PipeLogic {
+public abstract class PipeLogicWood {
 
-	public void switchSource() {
-		int meta = container.getBlockMetadata();
-		int newMeta = 6;
+	protected final Pipe pipe;
 
-		for (int i = meta + 1; i <= meta + 6; ++i) {
-			ForgeDirection o = ForgeDirection.values()[i % 6];
+	public PipeLogicWood(Pipe pipe) {
+		this.pipe = pipe;
+	}
 
-			TileEntity tile = container.getTile(o);
+	private void switchSource() {
+		int meta = pipe.container.getBlockMetadata();
+		ForgeDirection newFacing = null;
 
-			if (isInput(tile))
-				if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)
-						|| PipeManager.canExtractFluids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)) {
-					newMeta = o.ordinal();
-					break;
-				}
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (isValidFacing(side)) {
+				newFacing = side;
+				break;
+			}
 		}
 
-		if (newMeta != meta) {
-			container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, newMeta, 0);
-			container.scheduleRenderUpdate();
-			// worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+		if (newFacing != null && newFacing.ordinal() != meta) {
+			pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+			pipe.container.scheduleRenderUpdate();
 		}
 	}
 
-	public boolean isInput(TileEntity tile) {
-		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof IFluidHandler)
-				&& Utils.checkPipesConnections(container, tile);
+	private void switchSourceIfNeeded() {
+		int meta = pipe.container.getBlockMetadata();
+
+		if (meta > 5) {
+			switchSource();
+		} else {
+			ForgeDirection facing = ForgeDirection.getOrientation(meta);
+			if (!isValidFacing(facing)) {
+				switchSource();
+			}
+		}
 	}
 
-	@Override
+	protected abstract boolean isValidFacing(ForgeDirection facing);
+
+	public void initialize() {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+			switchSourceIfNeeded();
+		}
+	}
+
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, container.xCoord, container.yCoord, container.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
 			switchSource();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, container.xCoord, container.yCoord, container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 			return true;
 		}
 
 		return false;
 	}
 
-	@Override
-	public void initialize() {
-		super.initialize();
-
-		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-			switchSourceIfNeeded();
-		}
-	}
-
-	private void switchSourceIfNeeded() {
-		int meta = container.getBlockMetadata();
-
-		if (meta > 5) {
-			switchSource();
-		} else {
-			TileEntity tile = container.getTile(ForgeDirection.values()[meta]);
-
-			if (!isInput(tile)) {
-				switchSource();
-			}
-		}
-	}
-
-	@Override
 	public void onNeighborBlockChange(int blockId) {
-		super.onNeighborBlockChange(blockId);
-
-		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
+		if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
 			switchSourceIfNeeded();
 		}
-	}
-
-	@Override
-	public boolean outputOpen(ForgeDirection to) {
-		if (this.container.pipe instanceof PipeFluidsWood) {
-			int meta = container.getBlockMetadata();
-			return meta != to.ordinal();
-		}
-		return super.outputOpen(to);
 	}
 }

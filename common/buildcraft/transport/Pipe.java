@@ -50,7 +50,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final PipeTransport transport;
-	public final PipeLogic logic;
 	public final int itemID;
 	private boolean internalUpdateScheduled = false;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
@@ -64,14 +63,13 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public boolean broadcastRedstone = false;
 	public SafeTimeTracker actionTracker = new SafeTimeTracker();
 
-	public Pipe(PipeTransport transport, PipeLogic logic, int itemID) {
+	public Pipe(PipeTransport transport, int itemID) {
 		this.transport = transport;
-		this.logic = logic;
 		this.itemID = itemID;
 
 		if (!networkWrappers.containsKey(this.getClass())) {
 			networkWrappers
-					.put(this.getClass(), new TilePacketWrapper(new Class[]{TileGenericPipe.class, this.transport.getClass(), this.logic.getClass()}));
+					.put(this.getClass(), new TilePacketWrapper(new Class[]{TileGenericPipe.class, this.transport.getClass()}));
 		}
 	}
 
@@ -80,15 +78,13 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		this.container = (TileGenericPipe) tile;
 
 		transport.setTile((TileGenericPipe) tile);
-		logic.setTile((TileGenericPipe) tile);
 	}
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
-		return logic.blockActivated(entityplayer);
+		return false;
 	}
 
 	public void onBlockPlaced() {
-		logic.onBlockPlaced();
 		transport.onBlockPlaced();
 	}
 
@@ -96,7 +92,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	public void onNeighborBlockChange(int blockId) {
-		logic.onNeighborBlockChange(blockId);
 		transport.onNeighborBlockChange(blockId);
 
 		updateSignalState();
@@ -109,7 +104,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 			if (!PipeConnectionBans.canPipesConnect(getClass(), otherPipe.getClass()))
 				return false;
 		}
-		return logic.canPipeConnect(tile, side) && transport.canPipeConnect(tile, side);
+		return transport.canPipeConnect(tile, side);
 	}
 
 	/**
@@ -145,7 +140,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public void updateEntity() {
 
 		transport.updateEntity();
-		logic.updateEntity();
 
 		if (internalUpdateScheduled) {
 			internalUpdate();
@@ -173,7 +167,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		transport.writeToNBT(nbttagcompound);
-		logic.writeToNBT(nbttagcompound);
 
 		// Save pulser if any
 		if (gate != null) {
@@ -207,7 +200,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		transport.readFromNBT(nbttagcompound);
-		logic.readFromNBT(nbttagcompound);
 
 		// Load pulser if any
 		if (nbttagcompound.hasKey("Gate")) {
@@ -250,13 +242,14 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 	private boolean initialized = false;
 
+	public boolean needsInit() {
+		return !initialized;
+	}
+
 	public void initialize() {
-		if (!initialized) {
-			transport.initialize();
-			logic.initialize();
-			initialized = true;
-			updateSignalState();
-		}
+		transport.initialize();
+		updateSignalState();
+		initialized = true;
 	}
 
 	private void readNearbyPipesSignal(WireColor color) {
@@ -352,11 +345,11 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	public boolean inputOpen(ForgeDirection from) {
-		return transport.inputOpen(from) && logic.inputOpen(from);
+		return transport.inputOpen(from);
 	}
 
 	public boolean outputOpen(ForgeDirection to) {
-		return transport.outputOpen(to) && logic.outputOpen(to);
+		return transport.outputOpen(to);
 	}
 
 	public void onEntityCollidedWithBlock(Entity entity) {

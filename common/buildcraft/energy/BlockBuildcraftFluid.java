@@ -41,7 +41,7 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		this.theIcon = new Icon[]{iconRegister.registerIcon("buildcraft:" + fluidName), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow")};
+		this.theIcon = new Icon[]{iconRegister.registerIcon("buildcraft:" + fluidName + "_still"), iconRegister.registerIcon("buildcraft:" + fluidName + "_flow")};
 	}
 
 	public BlockBuildcraftFluid setFlammable(boolean flammable) {

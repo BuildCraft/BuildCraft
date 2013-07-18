@@ -25,6 +25,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -36,21 +37,41 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 	protected PowerHandler powerHandler;
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
+	private PipeLogicWood logic = new PipeLogicWood(this) {
+		@Override
+		protected boolean isValidFacing(ForgeDirection facing) {
+			TileEntity tile = pipe.container.getTile(facing);
+			if (!(tile instanceof IInventory))
+				return false;
+			if (!PipeManager.canExtractItems(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+				return false;
+			return true;
+		}
+	};
 
-	protected PipeItemsWood(PipeTransportItems transport, PipeLogic logic, int itemID) {
-		super(transport, logic, itemID);
+	public PipeItemsWood(int itemID) {
+		super(new PipeTransportItems(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 64, 1, 64);
 		powerHandler.configurePowerPerdition(0, 0);
 	}
 
-	protected PipeItemsWood(int itemID, PipeTransportItems transport) {
-		this(transport, new PipeLogicWood(), itemID);
+	@Override
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		return logic.blockActivated(entityplayer);
 	}
 
-	public PipeItemsWood(int itemID) {
-		this(itemID, new PipeTransportItems());
+	@Override
+	public void onNeighborBlockChange(int blockId) {
+		logic.onNeighborBlockChange(blockId);
+		super.onNeighborBlockChange(blockId);
+	}
+
+	@Override
+	public void initialize() {
+		logic.initialize();
+		super.initialize();
 	}
 
 	@Override

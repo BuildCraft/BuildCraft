@@ -82,7 +82,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	/**
-	 * More dynamic slot displaying an inventory stack at specified position in the passed IInventory
+	 * More dynamic slot displaying an inventory fluid at specified position in the passed IInventory
 	 */
 	public class IInventorySlot extends AdvancedSlot {
 
@@ -171,7 +171,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	//TODO Get this class working well (Now it's just here to let the refinery compil)
 	public class FluidSlot extends AdvancedSlot {
 
-		public Fluid stack;
+		public Fluid fluid;
 
 		public FluidSlot(int x, int y) {
 			super(x, y);

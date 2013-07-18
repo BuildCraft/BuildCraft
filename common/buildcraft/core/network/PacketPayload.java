@@ -17,7 +17,7 @@ public abstract class PacketPayload {
 		if (type == Type.ARRAY.ordinal())
 			return new PacketPayloadArrays();
 		if (type == Type.STREAM.ordinal())
-			return null;
+			return new PacketPayloadStream();
 		return null;
 	}
 

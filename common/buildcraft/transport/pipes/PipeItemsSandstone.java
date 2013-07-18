@@ -21,7 +21,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeItemsSandstone extends Pipe {
 
 	public PipeItemsSandstone(int itemID) {
-		super(new PipeTransportItems(), new PipeLogic(), itemID);
+		super(new PipeTransportItems(), itemID);
 	}
 
 	@Override

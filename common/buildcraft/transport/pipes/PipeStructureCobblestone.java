@@ -12,7 +12,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipeStructureCobblestone extends Pipe {
 
 	public PipeStructureCobblestone(int itemID) {
-		super(new PipeTransportStructure(), new PipeLogic(), itemID);
+		super(new PipeTransportStructure(), itemID);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class PipePowerCobblestone extends Pipe {
 
 	public PipePowerCobblestone(int itemID) {
-		super(new PipeTransportPower(), new PipeLogic(), itemID);
+		super(new PipeTransportPower(), itemID);
 		((PipeTransportPower) transport).initFromPipe(getClass());
 	}
 

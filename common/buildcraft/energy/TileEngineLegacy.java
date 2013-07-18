@@ -10,6 +10,7 @@ package buildcraft.energy;
 import buildcraft.core.DefaultProps;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * This class is just intended to update pre 4.0 engines to the design.
@@ -46,8 +47,8 @@ public class TileEngineLegacy extends TileEngine {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png";
+	public ResourceLocation getTextureFile() {
+		return WOOD_TEXTURE;
 	}
 
 	@Override
