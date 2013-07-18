@@ -126,6 +126,50 @@ public class Utils {
 			return get2dOrientation(pos1, pos2);
 		}
 	}
+	
+	/**
+	 * Will attempt to add the stack to the pipe in the direction of the to variable. Returns true if successful, false otherwise.
+	 */
+	public static boolean addToPipeEntry(TileEntity tile, ForgeDirection to, ItemStack items) {
+		
+		World w = tile.worldObj;
+
+		Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, to);
+
+		pos.moveForwards(1.0);
+
+		TileEntity pipeTile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+
+		if (pipeTile instanceof IPipeEntry && ((IPipeEntry) pipeTile).acceptItems()) {
+			if (pipeTile instanceof IPipeConnection) {
+				if (!((IPipeConnection) pipeTile).isPipeConnected(to.getOpposite())) {
+					return false;
+				}
+			}
+				
+			Position entityPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, to);
+			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, to);
+
+			entityPos.x += 0.5;
+			entityPos.y += getPipeFloorOf(items);
+			entityPos.z += 0.5;
+
+			entityPos.moveForwards(0.5);
+
+			pipePos.moveForwards(1.0);
+
+			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity((int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
+
+			IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, items);
+
+			pipeEntry.entityEntering(entity, entityPos.orientation);
+			items.stackSize = 0;
+				
+			return true;
+		}
+		return false;
+		
+	}
 
 	/**
 	 * Look around the tile given in parameter in all 6 position, tries to add
