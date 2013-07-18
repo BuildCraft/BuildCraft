@@ -27,7 +27,7 @@ public class DefaultProps {
 
 	public static final String DEFAULT_LANGUAGE = "en_US";
 
-	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/Lava";
+	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/lava";
 
 	public static int WOODEN_GEAR_ID = 19100;
 	public static int STONE_GEAR_ID = 19101;
