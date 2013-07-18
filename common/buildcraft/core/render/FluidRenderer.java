@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -26,7 +27,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class FluidRenderer {
 
-	private static final ResourceLocation BLOCK_TEXTURE = new ResourceLocation("/terrain.png");
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
 	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
 	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 	public static final int DISPLAY_STAGES = 100;
