@@ -117,7 +117,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	@Override
 	public void burn() {
 		FluidStack fuel = this.fuelTank.getFluid();
-		if (currentFuel == null) {
+		if (currentFuel == null && fuel != null) {
 			currentFuel = IronEngineFuel.getFuelForFluid(fuel.getFluid());
 		}
 
