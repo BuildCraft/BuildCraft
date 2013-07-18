@@ -339,13 +339,13 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	public void handleUpdatePacket(PacketUpdate packet) {
 		PacketPayloadArrays payload = (PacketPayloadArrays)packet.payload;
 		if (payload.intPayload[0] > 0) {
-			FluidStack liquid = new FluidStack(FluidRegistry.getFluid(payload.intPayload[0]), payload.intPayload[2]);
+			FluidStack liquid = new FluidStack(FluidRegistry.getFluid(payload.intPayload[0]), payload.intPayload[1]);
 			tank.setFluid(liquid);
 		} else {
 			tank.setFluid(null);
 		}
 
-		aimY = payload.intPayload[3];
+		aimY = payload.intPayload[2];
 		tubeY = payload.floatPayload[0];
 
 		setTubePosition();
