@@ -191,9 +191,9 @@ public class BlockGenericPipe extends BlockContainer {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
-		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
-		if (tileG != null) {
+		if (tile1 instanceof TileGenericPipe) {
+			TileGenericPipe tileG = (TileGenericPipe) tile1;
 			if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || tileG.hasFacade(ForgeDirection.WEST)) {
 				xMin = 0.0F;
 			}
