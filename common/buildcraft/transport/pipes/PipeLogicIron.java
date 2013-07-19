@@ -37,7 +37,8 @@ public abstract class PipeLogicIron {
 
 		ForgeDirection newFacing = null;
 
-		for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
+		for (int i = meta + 1; i <= meta + 6; ++i) {
+			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
 			if (isValidFacing(facing)) {
 				newFacing = facing;
 				break;

@@ -26,9 +26,10 @@ public abstract class PipeLogicWood {
 		int meta = pipe.container.getBlockMetadata();
 		ForgeDirection newFacing = null;
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (isValidFacing(side)) {
-				newFacing = side;
+		for (int i = meta + 1; i <= meta + 6; ++i) {
+			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
+			if (isValidFacing(facing)) {
+				newFacing = facing;
 				break;
 			}
 		}
