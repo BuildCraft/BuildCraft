@@ -392,14 +392,18 @@ public class Utils {
 			if (fluidBlock.canDrain(world, x, y, z))
 				return fluidBlock.drain(world, x, y, z, doDrain);
 		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			if (doDrain) {
+			int meta = world.getBlockMetadata(x, y, z);
+			if (meta != 0)
+				return null;
+			if (doDrain)
 				world.setBlockToAir(x, y, z);
-			}
 			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
 		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			if (doDrain) {
+			int meta = world.getBlockMetadata(x, y, z);
+			if (meta != 0)
+				return null;
+			if (doDrain)
 				world.setBlockToAir(x, y, z);
-			}
 			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
 		}
 		return null;

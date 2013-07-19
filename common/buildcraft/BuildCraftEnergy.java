@@ -140,7 +140,7 @@ public class BuildCraftEnergy {
 
 
 		// Oil and fuel
-		buildcraftFluidOil = new Fluid("oil");
+		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 

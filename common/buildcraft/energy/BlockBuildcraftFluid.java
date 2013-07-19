@@ -9,13 +9,11 @@
 package buildcraft.energy;
 
 import buildcraft.energy.render.EntityDropParticleFX;
-import buildcraft.transport.render.TileEntityPickupFX;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;

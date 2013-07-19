@@ -71,9 +71,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 			currentIterator = it;
 
-			double dx = to.i - from.i;
-			double dy = to.j - from.j;
-			double dz = to.k - from.k;
+			double dx = to.x - from.x;
+			double dy = to.y - from.y;
+			double dz = to.z - from.z;
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -81,11 +81,11 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			cy = dy / size / 10;
 			cz = dz / size / 10;
 
-			ix = from.i;
-			iy = from.j;
-			iz = from.k;
+			ix = from.x;
+			iy = from.y;
+			iz = from.z;
 
-			lastDistance = (ix - to.i) * (ix - to.i) + (iy - to.j) * (iy - to.j) + (iz - to.k) * (iz - to.k);
+			lastDistance = (ix - to.x) * (ix - to.x) + (iy - to.y) * (iy - to.y) + (iz - to.z) * (iz - to.z);
 
 			if (Math.abs(dx) > Math.abs(dz)) {
 				if (dx > 0) {
@@ -132,7 +132,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				iy += cy;
 				iz += cz;
 
-				double distance = (ix - to.i) * (ix - to.i) + (iy - to.j) * (iy - to.j) + (iz - to.k) * (iz - to.k);
+				double distance = (ix - to.x) * (ix - to.x) + (iy - to.y) * (iy - to.y) + (iz - to.z) * (iz - to.z);
 
 				if (distance > lastDistance)
 					return null;
@@ -188,9 +188,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 						path = ((TilePathMarker) tile).getPath();
 
 						for (BlockIndex b : path) {
-							worldObj.setBlock(b.i, b.j, b.k, 0);
+							worldObj.setBlock(b.x, b.y, b.z, 0);
 
-							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.i, b.j, b.k, BuildCraftBuilders.pathMarkerBlock.blockID, 0);
+							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(worldObj, b.x, b.y, b.z, BuildCraftBuilders.pathMarkerBlock.blockID, 0);
 						}
 
 						break;
@@ -200,9 +200,9 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		}
 
 		if (path != null && pathLasers == null) {
-			path.getFirst().i = xCoord;
-			path.getFirst().j = yCoord;
-			path.getFirst().k = zCoord;
+			path.getFirst().x = xCoord;
+			path.getFirst().y = yCoord;
+			path.getFirst().z = zCoord;
 
 			createLasersForPath();
 		}
@@ -217,8 +217,8 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 		for (BlockIndex b : path) {
 			if (previous != null) {
 
-				EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(previous.i + 0.5, previous.j + 0.5, previous.k + 0.5), new Position(
-						b.i + 0.5, b.j + 0.5, b.k + 0.5));
+				EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(previous.x + 0.5, previous.y + 0.5, previous.z + 0.5), new Position(
+						b.x + 0.5, b.y + 0.5, b.z + 0.5));
 
 				laser.setTexture(0);
 				laser.show();

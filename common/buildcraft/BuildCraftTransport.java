@@ -91,6 +91,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.block.Block;
@@ -445,14 +446,6 @@ public class BuildCraftTransport {
 				ItemFacade.addFacade(new ItemStack(blId, 1, metaId));
 			}
 		}
-	}
-
-	@Deprecated
-	public static Item createPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object a, Object b, Object c) {
-		if (c != null) {
-			return buildPipe(defaultID, clas, descr, a, b, c);
-		}
-		return buildPipe(defaultID, clas, descr, a, b);
 	}
 
 	public static Item buildPipe(int defaultID, Class<? extends Pipe> clas, String descr, Object... ingredients) {
