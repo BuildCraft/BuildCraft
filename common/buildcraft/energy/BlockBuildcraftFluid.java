@@ -90,6 +90,7 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	}
 	
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
 		super.randomDisplayTick(world, x, y, z, rand);
 
