@@ -8,9 +8,15 @@
  */
 package buildcraft.energy;
 
+import buildcraft.energy.render.EntityDropParticleFX;
+import buildcraft.transport.render.TileEntityPickupFX;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Random;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
@@ -24,6 +30,10 @@ import net.minecraftforge.fluids.Fluid;
  * @author CovertJaguar <http://www.railcraft.info/>
  */
 public class BlockBuildcraftFluid extends BlockFluidClassic {
+
+	protected float particleRed;
+	protected float particleGreen;
+	protected float particleBlue;
 
 	public BlockBuildcraftFluid(int id, Fluid fluid, Material material) {
 		super(id, fluid, material);
@@ -72,5 +82,26 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	@Override
 	public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side) {
 		return flammable && flammability == 0;
+	}
+
+	public BlockBuildcraftFluid setParticleColor(float particleRed, float particleGreen, float particleBlue){
+		this.particleRed = particleRed;
+		this.particleGreen = particleGreen;
+		this.particleBlue = particleBlue;
+		return this;
+	}
+	
+	@Override
+	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
+		super.randomDisplayTick(world, x, y, z, rand);
+
+		if (rand.nextInt(10) == 0 && world.doesBlockHaveSolidTopSurface(x, y - 1, z) && !world.getBlockMaterial(x, y - 2, z).blocksMovement()) {
+			double px = (double) ((float) x + rand.nextFloat());
+			double py = (double) y - 1.05D;
+			double pz = (double) ((float) z + rand.nextFloat());
+			
+			EntityFX fx = new EntityDropParticleFX(world, px, py, pz, particleRed, particleGreen, particleBlue);
+			FMLClientHandler.instance().getClient().effectRenderer.addEffect(fx);
+		}
 	}
 }

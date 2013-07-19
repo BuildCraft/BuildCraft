@@ -169,7 +169,7 @@ public class BuildCraftEnergy {
 
 		if (fluidFuel.getBlockID() == -1) {
 			if (blockFuelId > 0) {
-				blockFuel = new BlockBuildcraftFluid(blockFuelId, fluidFuel, Material.water).setFlammable(true).setFlammability(5);
+				blockFuel = new BlockBuildcraftFluid(blockFuelId, fluidFuel, Material.water).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 				blockFuel.setUnlocalizedName("blockFuel");
 				CoreProxy.proxy.addName(blockFuel, "Fuel");
 				CoreProxy.proxy.registerBlock(blockFuel);
