@@ -35,18 +35,33 @@ public abstract class PipeLogicIron {
 	private void switchPosition() {
 		int meta = pipe.container.worldObj.getBlockMetadata(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
-		ForgeDirection newFacing = null;
+		ForgeDirection newFacing = findNextValidDirection(meta);
 
-		for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
-			if (isValidFacing(facing)) {
-				newFacing = facing;
-				break;
-			}
-		}
-		if (newFacing != null && newFacing.ordinal() != meta) {
+		if (newFacing.ordinal() != meta) {
 			pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
 			pipe.container.scheduleRenderUpdate();
 		}
+	}
+	
+	private ForgeDirection findNextValidDirection(int oldDirection) {
+		// init new direction
+		int newDirection = oldDirection + 1;
+		// make sure we try every direction only once
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			// start over if you reached the end
+			if (newDirection >= ForgeDirection.VALID_DIRECTIONS.length) {
+				newDirection = 0;
+			}
+			// if the facing is valid, return it otherwise continue you search
+			if (isValidFacing(ForgeDirection.getOrientation(newDirection))) {
+				return ForgeDirection.getOrientation(newDirection);
+			} else {
+				newDirection++;
+			}
+		}
+
+		// in case no valid direction is found, return the original one
+		return ForgeDirection.getOrientation(oldDirection);
 	}
 
 	protected abstract boolean isValidFacing(ForgeDirection facing);
