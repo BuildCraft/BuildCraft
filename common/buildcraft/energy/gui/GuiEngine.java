@@ -7,12 +7,13 @@ import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 
-	private static final ResourceLocation ITEM_TEXTURE = new ResourceLocation("/gui/items.png");
+	private static final ResourceLocation ITEM_TEXTURE = TextureMap.field_110576_c;
 
 	protected class EngineLedger extends Ledger {
 
