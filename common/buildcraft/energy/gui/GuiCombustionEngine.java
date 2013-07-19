@@ -11,6 +11,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngineIron;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
@@ -21,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiCombustionEngine extends GuiEngine {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
-	private static final ResourceLocation BLOCK_TEXTURE = new ResourceLocation("/terrain.png");
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
 
 	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
 		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine);
