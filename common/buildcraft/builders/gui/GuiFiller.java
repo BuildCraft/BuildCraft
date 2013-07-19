@@ -11,6 +11,7 @@ import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -18,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiFiller extends GuiBuildCraft {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
-	private static final ResourceLocation BLOCK_TEXTURE = new ResourceLocation("/terrain.png");
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
 	IInventory playerInventory;
 	TileFiller filler;
 
