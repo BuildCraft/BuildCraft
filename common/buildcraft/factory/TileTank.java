@@ -19,6 +19,8 @@ import buildcraft.core.proxy.CoreProxy;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -51,6 +53,10 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 		// Have liquid flow down into tanks below if any.
 		if (tank.getFluid() != null) {
 			moveFluidBelow();
+		}
+		// Have liquid flow in adjacent tanks.
+		if (tank.getFluid() != null) {
+			moveFluidToAdjacent();
 		}
 	}
 
@@ -152,6 +158,62 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 			tank.drain(used, true);
 		}
+	}
+		
+	public static ArrayList<TileTank> getAdjacentTanks(TileTank tile) {
+		ArrayList<TileTank> adjacents = new ArrayList<TileTank>();
+		if (tile.tank.getFluid() != null)
+			fillWithAdjacentTanks(tile, adjacents, tile.tank.getFluid());
+		return adjacents;
+	}
+
+	/**
+	 * Recursive function, must only be called by getAdjacentTanks(TileTank tile)
+	 */
+	private static void fillWithAdjacentTanks(TileTank tile, ArrayList<TileTank> result, FluidStack fluid) {
+		result.add(tile);
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS)
+		{
+			if (direction == ForgeDirection.DOWN || direction == ForgeDirection.UP)
+				continue;
+			TileEntity other = tile.worldObj.getBlockTileEntity(tile.xCoord + direction.offsetX, tile.yCoord, tile.zCoord + direction.offsetZ);
+			if (other instanceof TileTank && !result.contains(other) && (((TileTank) other).tank.isEmpty() || ((TileTank) other).tank.getFluid().isFluidEqual(fluid))) {
+				fillWithAdjacentTanks((TileTank) other, result, fluid);
+			}
+		}
+	}
+
+	public void moveFluidToAdjacent() {
+		FluidStack fluid = tank.getFluid();
+		if (fluid == null)
+			return;
+		ArrayList<TileTank> adjacents = getAdjacentTanks(this); 
+		if(adjacents.size() <= 1) // Note that this tank will be contained in the list too
+			return;
+		
+		int totalAmount = 0;
+		for(TileTank other : adjacents)
+			totalAmount += other.tank.getFluidAmount();
+
+		int splitAmount = totalAmount / adjacents.size();
+		int balance = 0; // Prevent creation or destruction of fluid cause of Euclidean division 
+		for(TileTank other : adjacents)
+		{
+			if(other.tank.getFluidAmount() < splitAmount)
+				balance += other.tank.fill(new FluidStack(fluid, splitAmount - other.tank.getFluidAmount()), true);
+			else if(other.tank.getFluidAmount() > splitAmount)
+				balance -= other.tank.drain(other.tank.getFluidAmount() - splitAmount, true).amount;
+			else
+				continue;
+			other.hasUpdate = true;
+		}
+		if(balance > 0)
+			tank.drain(balance, true);
+		else if (balance < 0)
+			tank.fill(new FluidStack(fluid, -balance), true);
+		else
+			return;
+		hasUpdate = true;
 	}
 
 	/* ITANKCONTAINER */
