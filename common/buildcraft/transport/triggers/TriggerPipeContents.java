@@ -8,7 +8,6 @@
 package buildcraft.transport.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.core.triggers.ActionTriggerIconProvider;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.EntityData;
@@ -18,6 +17,10 @@ import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.pipes.PipePowerWood;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,12 +30,23 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 
 	public enum Kind {
 
-		Empty, ContainsItems, ContainsFluids, ContainsEnergy, RequestsEnergy, TooMuchEnergy
+		Empty("buildcraft.pipe.contents.empty"),
+		ContainsItems("buildcraft.pipe.contents.containsItems"),
+		ContainsFluids("buildcraft.pipe.contents.containsFluids"),
+		ContainsEnergy("buildcraft.pipe.contents.containsEnergy"),
+		RequestsEnergy("buildcraft.pipe.contents.requestsEnergy"),
+		TooMuchEnergy("buildcraft.pipe.contents.tooMuchEnergy");
+		private Icon icon;
+		public final String tag;
+
+		private Kind(String tag) {
+			this.tag = tag;
+		}
 	};
 	Kind kind;
 
 	public TriggerPipeContents(int id, Kind kind) {
-		super(id);
+		super(id, kind.tag);
 		this.kind = kind;
 	}
 
@@ -139,22 +153,18 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 	}
 
 	@Override
-	public int getIconIndex() {
-		switch (kind) {
-			case Empty:
-				return ActionTriggerIconProvider.Trigger_PipeContents_Empty;
-			case ContainsItems:
-				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsItems;
-			case ContainsFluids:
-				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsFluid;
-			case ContainsEnergy:
-				return ActionTriggerIconProvider.Trigger_PipeContents_ContainsEnergy;
-			case RequestsEnergy:
-				return ActionTriggerIconProvider.Trigger_PipeContents_RequestsEnergy;
-			case TooMuchEnergy:
-			default:
-				return ActionTriggerIconProvider.Trigger_PipeContents_TooMuchEnergy;
+	public Icon getIcon() {
+		return kind.icon;
+	}
 
-		}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister) {
+		Kind.Empty.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_empty");
+		Kind.ContainsItems.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsitems");
+		Kind.ContainsFluids.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsliquid");
+		Kind.ContainsEnergy.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_containsenergy");
+		Kind.RequestsEnergy.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_requestsenergy");
+		Kind.TooMuchEnergy.icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_toomuchenergy");
 	}
 }

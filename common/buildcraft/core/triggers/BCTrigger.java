@@ -1,51 +1,44 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.core.triggers;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.TriggerParameter;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
 /**
- * This class has to be implemented to create new triggers kinds to BuildCraft gates. There is an instance per kind, which will get called wherever the trigger
- * can be active.
+ * This class has to be implemented to create new triggers kinds to BuildCraft
+ * gates. There is an instance per kind, which will get called wherever the
+ * trigger can be active.
  */
 public abstract class BCTrigger implements ITrigger {
 
-	protected int id;
+	protected final int legacyId;
+	protected final String uniqueTag;
 
-	public BCTrigger(int id) {
-		this.id = id;
-		ActionManager.triggers[id] = this;
+	public BCTrigger(int legacyId, String uniqueTag) {
+		this.legacyId = legacyId;
+		this.uniqueTag = uniqueTag;
+		ActionManager.registerTrigger(uniqueTag, this);
 	}
 
 	@Override
-	public int getId() {
-		return this.id;
+	public String getUniqueTag() {
+		return uniqueTag;
 	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
-    	return BuildCraftCore.instance.actionTriggerIconProvider;
-    }
-    
-    @Override
-    public abstract int getIconIndex();
+	@Override
+	public int getLegacyId() {
+		return this.legacyId;
+	}
 
 	@Override
 	public boolean hasParameter() {

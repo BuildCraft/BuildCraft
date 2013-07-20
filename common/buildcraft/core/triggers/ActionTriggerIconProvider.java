@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 
+@Deprecated
 public class ActionTriggerIconProvider implements IIconProvider {
 
 	public static final int Action_MachineControl_On 			=  0;

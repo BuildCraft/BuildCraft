@@ -258,7 +258,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (!(playerEntity.openContainer instanceof ContainerGateInterface))
 			return;
 
-		((ContainerGateInterface) playerEntity.openContainer).handleSelectionChange(packet);
+		((ContainerGateInterface) playerEntity.openContainer).setSelection(packet);
 	}
 
 	/**

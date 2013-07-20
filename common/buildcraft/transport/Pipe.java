@@ -7,7 +7,6 @@
  */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.SafeTimeTracker;
@@ -23,17 +22,15 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.triggers.ActionRedstoneOutput;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Gate.GateConditional;
-import buildcraft.transport.pipes.*;
 import buildcraft.transport.triggers.ActionSignalOutput;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -56,11 +53,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	public Gate gate;
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
-	public ITrigger[] activatedTriggers = new ITrigger[8];
-	public ITriggerParameter[] triggerParameters = new ITriggerParameter[8];
-	public IAction[] activatedActions = new IAction[8];
-	public boolean broadcastSignal[] = new boolean[]{false, false, false, false};
-	public boolean broadcastRedstone = false;
 	public SafeTimeTracker actionTracker = new SafeTimeTracker();
 
 	public Pipe(PipeTransport transport, int itemID) {
@@ -165,78 +157,50 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		updateSignalState();
 	}
 
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		transport.writeToNBT(nbttagcompound);
+	public void writeToNBT(NBTTagCompound data) {
+		transport.writeToNBT(data);
 
 		// Save pulser if any
 		if (gate != null) {
-			NBTTagCompound nbttagcompoundC = new NBTTagCompound();
-			gate.writeToNBT(nbttagcompoundC);
-			nbttagcompound.setTag("Gate", nbttagcompoundC);
-			// Wire states are stored for pipes with gates only
-			for (int i = 0; i < 4; ++i) {
-				nbttagcompound.setBoolean("wireState[" + i + "]", broadcastSignal[i]);
-			}
-			nbttagcompound.setBoolean("redstoneState", broadcastRedstone);
+			NBTTagCompound gateNBT = new NBTTagCompound();
+			gate.writeToNBT(gateNBT);
+			data.setTag("Gate", gateNBT);
 		}
 
 		for (int i = 0; i < 4; ++i) {
-			nbttagcompound.setBoolean("wireSet[" + i + "]", wireSet[i]);
-		}
-
-		for (int i = 0; i < 8; ++i) {
-			nbttagcompound.setInteger("action[" + i + "]", activatedActions[i] != null ? activatedActions[i].getId() : 0);
-			nbttagcompound.setInteger("trigger[" + i + "]", activatedTriggers[i] != null ? activatedTriggers[i].getId() : 0);
-		}
-
-		for (int i = 0; i < 8; ++i) {
-			if (triggerParameters[i] != null) {
-				NBTTagCompound cpt = new NBTTagCompound();
-				triggerParameters[i].writeToNBT(cpt);
-				nbttagcompound.setTag("triggerParameters[" + i + "]", cpt);
-			}
+			data.setBoolean("wireSet[" + i + "]", wireSet[i]);
 		}
 	}
 
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		transport.readFromNBT(nbttagcompound);
+	public void readFromNBT(NBTTagCompound data) {
+		transport.readFromNBT(data);
 
 		// Load pulser if any
-		if (nbttagcompound.hasKey("Gate")) {
-			NBTTagCompound nbttagcompoundP = nbttagcompound.getCompoundTag("Gate");
-			gate = new GateVanilla(this);
-			gate.readFromNBT(nbttagcompoundP);
-		} else if (nbttagcompound.hasKey("gateKind")) {
+		if (data.hasKey("Gate")) {
+			NBTTagCompound gateNBT = data.getCompoundTag("Gate");
+			gate = Gate.makeGateFromNBT(gateNBT, this);
+		} else if (data.hasKey("gateKind")) {
 			// Legacy implementation
-			Gate.GateKind kind = Gate.GateKind.values()[nbttagcompound.getInteger("gateKind")];
+			Gate.GateKind kind = Gate.GateKind.values()[data.getInteger("gateKind")];
 			if (kind != Gate.GateKind.None) {
 				gate = new GateVanilla(this);
 				gate.kind = kind;
 			}
 		}
-		// Wire states are restored for pipes with gates
-		if (gate != null) {
-			for (int i = 0; i < 4; ++i) {
-				broadcastSignal[i] = nbttagcompound.getBoolean("wireState[" + i + "]");
-			}
-			broadcastRedstone = nbttagcompound.getBoolean("redstoneState");
-		}
 
 		for (int i = 0; i < 4; ++i) {
-			wireSet[i] = nbttagcompound.getBoolean("wireSet[" + i + "]");
+			wireSet[i] = data.getBoolean("wireSet[" + i + "]");
 		}
 
+		// Legacy update code
 		for (int i = 0; i < 8; ++i) {
-			activatedActions[i] = ActionManager.actions[nbttagcompound.getInteger("action[" + i + "]")];
-			activatedTriggers[i] = ActionManager.triggers[nbttagcompound.getInteger("trigger[" + i + "]")];
-		}
-
-		// Force any triggers to be resolved
-		fixTriggers();
-		for (int i = 0; i < 8; ++i) {
-			if (nbttagcompound.hasKey("triggerParameters[" + i + "]")) {
-				triggerParameters[i] = new TriggerParameter();
-				triggerParameters[i].readFromNBT(nbttagcompound.getCompoundTag("triggerParameters[" + i + "]"));
+			if (data.hasKey("trigger[" + i + "]"))
+				gate.triggers[i] = ActionManager.getTriggerFromLegacyId(data.getInteger("trigger[" + i + "]"));
+			if (data.hasKey("action[" + i + "]"))
+				gate.actions[i] = ActionManager.getActionFromLegacyId(data.getInteger("action[" + i + "]"));
+			if (data.hasKey("triggerParameters[" + i + "]")) {
+				gate.triggerParameters[i] = new TriggerParameter();
+				gate.triggerParameters[i].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
 			}
 		}
 	}
@@ -287,7 +251,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 	}
 
-	private void updateSignalState() {
+	public void updateSignalState() {
 		for (IPipe.WireColor c : IPipe.WireColor.values()) {
 			updateSignalStateForColor(c);
 		}
@@ -299,7 +263,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 
 		// STEP 1: compute internal signal strength
 
-		if (broadcastSignal[color.ordinal()]) {
+		if (gate != null && gate.broadcastSignal[color.ordinal()]) {
 			receiveSignal(255, color);
 		} else {
 			readNearbyPipesSignal(color);
@@ -362,17 +326,17 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return false;
 	}
 
-	public int isPoweringTo(int l) {
-		if (!broadcastRedstone)
-			return 0;
+	public int isPoweringTo(int side) {
+		if (gate != null && gate.isEmittingRedstone()) {
+			ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
+			TileEntity tile = container.getTile(o);
 
-		ForgeDirection o = ForgeDirection.values()[l].getOpposite();
-		TileEntity tile = container.getTile(o);
+			if (tile instanceof TileGenericPipe && Utils.checkPipesConnections(this.container, tile))
+				return 0;
 
-		if (tile instanceof TileGenericPipe && Utils.checkPipesConnections(this.container, tile))
-			return 0;
-
-		return 15;
+			return 15;
+		}
+		return 0;
 	}
 
 	public int isIndirectlyPoweringTo(int l) {
@@ -441,6 +405,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 
 		if (hasGate()) {
+			resetGate();
 			gate.dropGate();
 		}
 
@@ -452,43 +417,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 				container.removeAndDropPlug(direction);
 			}
 		}
-
-		if (broadcastRedstone) {
-			updateNeighbors(false); // self will update due to block id changing
-		}
-	}
-
-	public void setTrigger(int position, ITrigger trigger) {
-		activatedTriggers[position] = trigger;
-	}
-
-	public ITrigger getTrigger(int position) {
-		return activatedTriggers[position];
-	}
-
-	public void setTriggerParameter(int position, ITriggerParameter p) {
-		triggerParameters[position] = p;
-	}
-
-	public ITriggerParameter getTriggerParameter(int position) {
-		return triggerParameters[position];
-	}
-
-	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		if (trigger instanceof ITriggerPipe)
-			return ((ITriggerPipe) trigger).isTriggerActive(this, parameter);
-		else if (trigger != null) {
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity tile = container.getTile(o);
-
-				if (tile != null && !(tile instanceof TileGenericPipe)) {
-					if (trigger.isTriggerActive(o.getOpposite(), tile, parameter))
-						return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	public boolean isTriggerActive(ITrigger trigger) {
@@ -505,25 +433,9 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return result;
 	}
 
-	public IAction getAction(int position) {
-		return activatedActions[position];
-	}
-
-	public void setAction(int position, IAction action) {
-		activatedActions[position] = action;
-	}
-
 	public void resetGate() {
+		gate.resetGate();
 		gate = null;
-		activatedTriggers = new ITrigger[activatedTriggers.length];
-		triggerParameters = new ITriggerParameter[triggerParameters.length];
-		activatedActions = new IAction[activatedActions.length];
-		broadcastSignal = new boolean[]{false, false, false, false};
-		if (broadcastRedstone) {
-			updateNeighbors(true);
-		}
-		broadcastRedstone = false;
-		// worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
 		container.scheduleRenderUpdate();
 	}
 
@@ -531,79 +443,10 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		if (!hasGate())
 			return;
 
-		boolean oldBroadcastRedstone = broadcastRedstone;
-		boolean[] oldBroadcastSignal = broadcastSignal;
-
-		broadcastRedstone = false;
-		broadcastSignal = new boolean[]{false, false, false, false};
-
-		// Tell the gate to prepare for resolving actions. (Disable pulser)
-		gate.startResolution();
-
-		HashMap<Integer, Boolean> actions = new HashMap<Integer, Boolean>();
-		Multiset<Integer> actionCount = HashMultiset.create();
-
-		// Computes the actions depending on the triggers
-		for (int it = 0; it < 8; ++it) {
-			ITrigger trigger = activatedTriggers[it];
-			IAction action = activatedActions[it];
-			ITriggerParameter parameter = triggerParameters[it];
-
-			if (trigger != null && action != null) {
-				actionCount.add(action.getId());
-				if (!actions.containsKey(action.getId())) {
-					actions.put(action.getId(), isNearbyTriggerActive(trigger, parameter));
-				} else if (gate.getConditional() == GateConditional.AND) {
-					actions.put(action.getId(), actions.get(action.getId()) && isNearbyTriggerActive(trigger, parameter));
-				} else {
-					actions.put(action.getId(), actions.get(action.getId()) || isNearbyTriggerActive(trigger, parameter));
-				}
-			}
-		}
-
-		// Activate the actions
-		for (Integer i : actions.keySet()) {
-			if (actions.get(i)) {
-
-				// Custom gate actions take precedence over defaults.
-				if (gate.resolveAction(ActionManager.actions[i], actionCount.count(i))) {
-					continue;
-				}
-
-				if (ActionManager.actions[i] instanceof ActionRedstoneOutput) {
-					broadcastRedstone = true;
-				} else if (ActionManager.actions[i] instanceof ActionSignalOutput) {
-					broadcastSignal[((ActionSignalOutput) ActionManager.actions[i]).color.ordinal()] = true;
-				} else {
-					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-						TileEntity tile = container.getTile(side);
-						if (tile instanceof IActionReceptor) {
-							IActionReceptor recept = (IActionReceptor) tile;
-							recept.actionActivated(ActionManager.actions[i]);
-						}
-					}
-				}
-			}
-		}
-
-		actionsActivated(actions);
-
-		if (oldBroadcastRedstone != broadcastRedstone) {
-			container.scheduleRenderUpdate();
-			updateNeighbors(true);
-		}
-
-		for (int i = 0; i < oldBroadcastSignal.length; ++i) {
-			if (oldBroadcastSignal[i] != broadcastSignal[i]) {
-				// worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
-				container.scheduleRenderUpdate();
-				updateSignalState();
-				break;
-			}
-		}
+		gate.resolveActions();
 	}
 
-	protected void actionsActivated(HashMap<Integer, Boolean> actions) {
+	protected void actionsActivated(Map<IAction, Boolean> actions) {
 	}
 
 	@Override
@@ -665,14 +508,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		return true;
 	}
 
-	public boolean isGateActive() {
-		for (boolean b : broadcastSignal) {
-			if (b)
-				return true;
-		}
-		return broadcastRedstone;
-	}
-
 	/**
 	 * Called when TileGenericPipe.invalidate() is called
 	 */
@@ -689,24 +524,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	 * Called when TileGenericPipe.onChunkUnload is called
 	 */
 	public void onChunkUnload() {
-	}
-	private static boolean fixedTriggers = false;
-
-	public static void fixTriggers() {
-		if (fixedTriggers)
-			return;
-		for (int i = 0; i < ActionManager.triggers.length; i++) {
-			try {
-				ITrigger t = ActionManager.triggers[i];
-				t = new FallbackWrapper(t);
-				ActionManager.triggers[i] = t;
-				BuildCraftCore.bcLog.severe("Trigger " + t.getClass() + " using OLD API found, using a falling back wrapper!");
-			} catch (RuntimeException e) {
-				// Carry on
-			}
-		}
-		fixedTriggers = true;
-
 	}
 
 	public World getWorld() {
