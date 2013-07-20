@@ -8,6 +8,7 @@
 package buildcraft.core.triggers;
 
 import buildcraft.api.gates.ITriggerParameter;
+import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -23,8 +24,8 @@ public class TriggerFluidContainer extends BCTrigger {
 	};
 	public State state;
 
-	public TriggerFluidContainer(int id, State state) {
-		super(id);
+	public TriggerFluidContainer(int legacyId, State state) {
+		super(legacyId, "buildcraft.fluid." + state.name().toLowerCase(Locale.ENGLISH));
 		this.state = state;
 	}
 

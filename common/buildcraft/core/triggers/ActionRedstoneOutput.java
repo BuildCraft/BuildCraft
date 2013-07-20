@@ -12,8 +12,8 @@ package buildcraft.core.triggers;
 
 public class ActionRedstoneOutput extends BCAction {
 
-	public ActionRedstoneOutput(int id) {
-		super(id);
+	public ActionRedstoneOutput(int legacyId) {
+		super(legacyId, "buildcraft.redstone.output");
 	}
 
 	@Override

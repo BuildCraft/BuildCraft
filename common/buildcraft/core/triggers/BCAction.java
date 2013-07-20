@@ -9,6 +9,10 @@ package buildcraft.core.triggers;
 
 import buildcraft.api.gates.ActionManager;
 import buildcraft.api.gates.IAction;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.util.Icon;
 
 public abstract class BCAction implements IAction {
 
@@ -29,6 +33,22 @@ public abstract class BCAction implements IAction {
 	@Override
 	public int getLegacyId() {
 		return this.legacyId;
+	}
+
+	public int getIconIndex(){
+		return 0;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon() {
+		return ActionTriggerIconProvider.INSTANCE.getIcon(getIconIndex());
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister iconRegister) {
+		ActionTriggerIconProvider.INSTANCE.registerIcons(iconRegister);
 	}
 
 	@Override
