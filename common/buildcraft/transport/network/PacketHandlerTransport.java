@@ -155,7 +155,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (!(container instanceof ContainerGateInterface))
 			return;
 
-		((ContainerGateInterface) container).setSelection(packet);
+		((ContainerGateInterface) container).setSelection(packet, false);
 	}
 
 	private void onPipeContentNBT(EntityPlayer player, PacketPipeTransportNBT packet) {
@@ -258,7 +258,7 @@ public class PacketHandlerTransport implements IPacketHandler {
 		if (!(playerEntity.openContainer instanceof ContainerGateInterface))
 			return;
 
-		((ContainerGateInterface) playerEntity.openContainer).setSelection(packet);
+		((ContainerGateInterface) playerEntity.openContainer).setSelection(packet, true);
 	}
 
 	/**

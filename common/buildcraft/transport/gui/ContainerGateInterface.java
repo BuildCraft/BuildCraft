@@ -117,7 +117,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * @param packet
 	 */
 	public void updateActions(PacketUpdate packet) {
-
 		_potentialActions.clear();
 		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
 		int length = payload.intPayload[0];
@@ -125,7 +124,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		for (int i = 0; i < length; i++) {
 			_potentialActions.add(ActionManager.actions.get(payload.stringPayload[i]));
 		}
-
 	}
 
 	/**
@@ -148,31 +146,31 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 *
 	 * @param packet
 	 */
-	public void setSelection(PacketUpdate packet) {
+	public void setSelection(PacketUpdate packet, boolean notify) {
 		PacketPayloadArrays payload = (PacketPayloadArrays) packet.payload;
 		int position = payload.intPayload[0];
 
-		setTrigger(position, ActionManager.triggers.get(payload.stringPayload[0]), false);
-		setAction(position, ActionManager.actions.get(payload.stringPayload[1]), false);
+		setTrigger(position, ActionManager.triggers.get(payload.stringPayload[0]), notify);
+		setAction(position, ActionManager.actions.get(payload.stringPayload[1]), notify);
 
 		int itemID = payload.intPayload[1];
 		if (itemID <= 0) {
-			setTriggerParameter(position, null, false);
+			setTriggerParameter(position, null, notify);
 			return;
 		}
 
 		ITriggerParameter param = new TriggerParameter();
 		param.set(new ItemStack(itemID, payload.intPayload[2], payload.intPayload[3]));
-		setTriggerParameter(position, param, false);
+		setTriggerParameter(position, param, notify);
 	}
-	
-	private PacketPayload getSelectionPayload(int position){
+
+	private PacketPayload getSelectionPayload(int position) {
 		PacketPayloadArrays payload = new PacketPayloadArrays(4, 0, 2);
 
 		payload.intPayload[0] = position;
 
-		if (pipe.gate.actions[position] != null) {
-			payload.stringPayload[0] = pipe.gate.actions[position].getUniqueTag();
+		if (pipe.gate.triggers[position] != null) {
+			payload.stringPayload[0] = pipe.gate.triggers[position].getUniqueTag();
 		} else {
 			payload.stringPayload[0] = "";
 		}
@@ -270,7 +268,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		int length = _potentialActions.size();
 		PacketPayloadArrays payload = new PacketPayloadArrays(1, 0, length);
 
-		payload.intPayload[1] = length;
+		payload.intPayload[0] = length;
 		for (int i = 0; i < length; i++) {
 			payload.stringPayload[i] = _potentialActions.get(i).getUniqueTag();
 		}
@@ -358,7 +356,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	public boolean isNearbyTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
-		return pipe.gate != null && pipe.gate.isNearbyTriggerActive(trigger, parameter);
+		return pipe.gate.isNearbyTriggerActive(trigger, parameter);
 	}
 
 	public void setTrigger(int position, ITrigger trigger, boolean notify) {
@@ -379,15 +377,15 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	 * ACTIONS *
 	 */
 	public boolean hasActions() {
-		return _potentialActions.size() > 0;
+		return !_potentialActions.isEmpty();
 	}
 
 	public IAction getFirstAction() {
-		return _potentialActions.size() > 0 ? _potentialActions.getFirst() : null;
+		return _potentialActions.peekFirst();
 	}
 
 	public IAction getLastAction() {
-		return _potentialActions.size() > 0 ? _potentialActions.getLast() : null;
+		return _potentialActions.peekLast();
 	}
 
 	public Iterator<IAction> getActionIterator(boolean descending) {
