@@ -678,17 +678,19 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return false;
 	}
 
-	public boolean hasPlug(ForgeDirection forgeDirection) {
+	public boolean hasPlug(ForgeDirection side) {
+		if(side == null || side == ForgeDirection.UNKNOWN)
+			return false;
 		if (this.worldObj.isRemote)
-			return renderState.plugMatrix.isConnected(forgeDirection);
-		return plugs[forgeDirection.ordinal()];
+			return renderState.plugMatrix.isConnected(side);
+		return plugs[side.ordinal()];
 	}
 
-	public void removeAndDropPlug(ForgeDirection forgeDirection) {
-		if (!hasPlug(forgeDirection))
+	public void removeAndDropPlug(ForgeDirection side) {
+		if (!hasPlug(side))
 			return;
 
-		plugs[forgeDirection.ordinal()] = false;
+		plugs[side.ordinal()] = false;
 		Utils.dropItems(worldObj, new ItemStack(BuildCraftTransport.plugItem), this.xCoord, this.yCoord, this.zCoord);
 		worldObj.notifyBlockChange(this.xCoord, this.yCoord, this.zCoord, getBlockId());
 		scheduleNeighborChange(); //To force recalculation of connections
