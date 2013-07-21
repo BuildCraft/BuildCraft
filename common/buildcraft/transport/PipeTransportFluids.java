@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
@@ -36,12 +34,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public class PipeSection extends FluidTank {
 
 		private short currentTime = 0;
-
 		// Tracks how much of the liquid is inbound in timeslots
 		private short[] incomming = new short[travelDelay];
 
 		// Tracks how much is currently available (has spent it's inbound delaytime)
-
 		public PipeSection(int capacity) {
 			super(null, capacity);
 		}
@@ -128,35 +124,29 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	public enum TransferState {
+
 		None, Input, Output
 	}
-
 	/**
-	 * The amount of liquid contained by a pipe section. For simplicity, all pipe sections are assumed to be of the same volume.
+	 * The amount of liquid contained by a pipe section. For simplicity, all
+	 * pipe sections are assumed to be of the same volume.
 	 */
 	public static int LIQUID_IN_PIPE = FluidContainerRegistry.BUCKET_VOLUME / 4;
 	public static short INPUT_TTL = 60; // 100
 	public static short OUTPUT_TTL = 80; // 80
 	public static short OUTPUT_COOLDOWN = 30; // 30
-
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
-
 	public byte initClient = 0;
 	public short travelDelay = 12;
 	public short flowRate = 10;
 	public FluidStack[] renderCache = new FluidStack[orientations.length];
-
 	private final PipeSection[] internalTanks = new PipeSection[orientations.length];
-
 	private final TransferState[] transferState = new TransferState[directions.length];
-
 	private final int[] inputPerTick = new int[directions.length];
-
-	private final short[] inputTTL = new short[] { 0, 0, 0, 0, 0, 0 };
-	private final short[] outputTTL = new short[] { OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL };
-	private final short[] outputCooldown = new short[] { 0, 0, 0, 0, 0, 0 };
-
+	private final short[] inputTTL = new short[]{0, 0, 0, 0, 0, 0};
+	private final short[] outputTTL = new short[]{OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL};
+	private final short[] outputCooldown = new short[]{0, 0, 0, 0, 0, 0};
 	private final SafeTimeTracker tracker = new SafeTimeTracker();
 	private int clientSyncCounter = 0;
 
@@ -216,10 +206,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	/**
 	 * Computes the PacketFluidUpdate packet for transmission to a client
 	 *
-	 * @param initPacket
-	 *            everything is sent, no delta stuff ( first packet )
-	 * @param persistChange
-	 *            The render cache change is persisted
+	 * @param initPacket everything is sent, no delta stuff ( first packet )
+	 * @param persistChange The render cache change is persisted
 	 * @return PacketFluidUpdate liquid update packet
 	 */
 	private PacketFluidUpdate computeFluidUpdate(boolean initPacket, boolean persistChange) {
@@ -267,7 +255,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				changed = true;
 				renderCache[dir.ordinal()] = current;
 				delta.set(dir.ordinal() * 3 + 0);
-                delta.set(dir.ordinal() * 3 + 1);
+				delta.set(dir.ordinal() * 3 + 1);
 			}
 
 			int displayQty = (prev.amount * 4 + current.amount) / 5;
@@ -361,8 +349,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						internalTanks[o.ordinal()].drain(filled, true);
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
-						}
-						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
+						} else
+							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.worldObj, container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -518,8 +506,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		return false;
 	}
 
-	/** ITankContainer implementation **/
-
+	/**
+	 * ITankContainer implementation *
+	 */
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		return fill(from.ordinal(), resource, doFill);
@@ -546,33 +535,23 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		return null;
 	}
 
-	private FluidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
+	@Override
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 
-    @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		return true;
+	}
 
-    @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid)
-    {
-        return true;
-    }
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		return false;
+	}
 
-    @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid)
-    {
-        return false;
-    }
-
-    @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from)
-    {
-        return new FluidTankInfo[] { new FluidTankInfo(internalTanks[from.ordinal()]) };
-    }
-
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		return new FluidTankInfo[]{new FluidTankInfo(internalTanks[from.ordinal()])};
+	}
 }
