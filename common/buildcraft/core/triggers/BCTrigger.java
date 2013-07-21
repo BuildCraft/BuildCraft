@@ -57,7 +57,6 @@ public abstract class BCTrigger implements ITrigger {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		ActionTriggerIconProvider.INSTANCE.registerIcons(iconRegister);
 	}
 
 	@Override

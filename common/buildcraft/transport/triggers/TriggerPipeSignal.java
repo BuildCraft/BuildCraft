@@ -21,7 +21,7 @@ public class TriggerPipeSignal extends BCTrigger implements ITriggerPipe {
 	IPipe.WireColor color;
 
 	public TriggerPipeSignal(int legacyId, boolean active, IPipe.WireColor color) {
-		super(legacyId, "buildcraft.pipe.wire." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
+		super(legacyId, "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
 
 		this.active = active;
 		this.color = color;

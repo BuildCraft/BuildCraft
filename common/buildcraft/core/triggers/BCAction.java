@@ -48,7 +48,6 @@ public abstract class BCAction implements IAction {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		ActionTriggerIconProvider.INSTANCE.registerIcons(iconRegister);
 	}
 
 	@Override

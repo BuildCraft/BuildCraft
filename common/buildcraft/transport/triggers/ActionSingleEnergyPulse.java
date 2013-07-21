@@ -5,8 +5,8 @@ import buildcraft.core.triggers.BCAction;
 
 public class ActionSingleEnergyPulse extends BCAction {
 
-	public ActionSingleEnergyPulse(int id) {
-		super(id);
+	public ActionSingleEnergyPulse(int legacyId) {
+		super(legacyId, "buildcraft.pulser.single");
 	}
 
 	@Override

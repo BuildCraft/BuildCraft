@@ -157,8 +157,6 @@ public class BuildCraftCore {
 
 	public static final Logger bcLog = Logger.getLogger("Buildcraft");
 
-	public IIconProvider actionTriggerIconProvider = new ActionTriggerIconProvider();
-
 	@Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
@@ -314,7 +312,7 @@ public class BuildCraftCore {
 		if (event.map.textureType == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
-			actionTriggerIconProvider.registerIcons(event.map);
+			ActionTriggerIconProvider.INSTANCE.registerIcons(event.map);
 		} else if (event.map.textureType == 0) {
 	        BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
 	        BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
