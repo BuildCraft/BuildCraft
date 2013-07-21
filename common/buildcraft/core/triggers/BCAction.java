@@ -22,7 +22,7 @@ public abstract class BCAction implements IAction {
 	public BCAction(int legacyId, String uniqueTag) {
 		this.legacyId = legacyId;
 		this.uniqueTag = uniqueTag;
-		ActionManager.registerAction(uniqueTag, this);
+		ActionManager.registerAction(this);
 	}
 
 	@Override

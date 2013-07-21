@@ -20,12 +20,12 @@ public class ActionManager {
 		}
 	}
 	
-	public static void registerTrigger(String uniqueTag, ITrigger trigger){
-		triggers.put(uniqueTag, trigger);
+	public static void registerTrigger(ITrigger trigger){
+		triggers.put(trigger.getUniqueTag(), trigger);
 	}
 	
-	public static void registerAction(String uniqueTag, IAction action){
-		actions.put(uniqueTag, action);
+	public static void registerAction(IAction action){
+		actions.put(action.getUniqueTag(), action);
 	}
 
 	public static LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity entity) {

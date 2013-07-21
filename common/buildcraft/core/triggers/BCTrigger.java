@@ -31,7 +31,7 @@ public abstract class BCTrigger implements ITrigger {
 	public BCTrigger(int legacyId, String uniqueTag) {
 		this.legacyId = legacyId;
 		this.uniqueTag = uniqueTag;
-		ActionManager.registerTrigger(uniqueTag, this);
+		ActionManager.registerTrigger(this);
 	}
 
 	@Override
