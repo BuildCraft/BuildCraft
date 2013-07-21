@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatMessageComponent; 
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -514,8 +515,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			isAlive = false;
 			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-						xCoord, yCoord, zCoord)), (Player) placedBy);
+						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
+						xCoord, yCoord, zCoord))), (Player) placedBy);
 			}
 			sendNetworkUpdate();
 			return;
@@ -543,8 +544,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
 			if (placedBy != null) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
-						chunkTicket.getMaxChunkListDepth())), (Player) placedBy);
+						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
+						chunkTicket.getMaxChunkListDepth()))), (Player) placedBy);
 			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
@@ -839,7 +840,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 		if (placedBy != null) {
 			PacketDispatcher.sendPacketToPlayer(
-					new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size())),
+					new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size()))),
 					(Player) placedBy);
 		}
 		sendNetworkUpdate();
