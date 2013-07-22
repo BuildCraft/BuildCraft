@@ -75,6 +75,7 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.fluids.IFluidBlock;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[7.7.2.682,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -289,7 +290,7 @@ public class BuildCraftCore {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		for (Block block : Block.blocksList) {
-			if (block instanceof BlockFluid || block instanceof IPlantable) {
+			if (block instanceof BlockFluid || block instanceof IFluidBlock || block instanceof IPlantable) {
 				BuildCraftAPI.softBlocks[block.blockID] = true;
 			}
 		}
