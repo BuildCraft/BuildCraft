@@ -178,7 +178,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		// Load pulser if any
 		if (data.hasKey("Gate")) {
 			NBTTagCompound gateNBT = data.getCompoundTag("Gate");
-			gate = Gate.makeGateFromNBT(gateNBT, this);
+			gate = Gate.makeGate(this, gateNBT);
 		} else if (data.hasKey("gateKind")) {
 			// Legacy implementation
 			Gate.GateKind kind = Gate.GateKind.values()[data.getInteger("gateKind")];
@@ -362,10 +362,6 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	}
 
 	@Override
-	public boolean hasInterface() {
-		return hasGate();
-	}
-
 	public boolean hasGate() {
 		return gate != null;
 	}

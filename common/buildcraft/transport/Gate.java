@@ -289,9 +289,13 @@ public abstract class Gate {
 		return stack.itemID == BuildCraftTransport.pipeGate.itemID || stack.itemID == BuildCraftTransport.pipeGateAutarchic.itemID;
 	}
 
-	public static Gate makeGateFromNBT(NBTTagCompound data, Pipe pipe) {
+	public static Gate makeGate(Pipe pipe, NBTTagCompound data) {
 		Gate gate = new GateVanilla(pipe);
 		gate.readFromNBT(data);
 		return gate;
+	}
+
+	public static Gate makeGate(Pipe pipe, ItemStack stack) {
+		return new GateVanilla(pipe, stack);
 	}
 }

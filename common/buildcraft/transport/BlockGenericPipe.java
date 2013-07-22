@@ -586,8 +586,8 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int side, float xOffset, float yOffset, float zOffset) {
-		super.onBlockActivated(world, x, y, z, entityplayer, side, xOffset, yOffset, zOffset);
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float xOffset, float yOffset, float zOffset) {
+		super.onBlockActivated(world, x, y, z, player, side, xOffset, yOffset, zOffset);
 
 		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock.blockID);
 
@@ -597,70 +597,70 @@ public class BlockGenericPipe extends BlockContainer {
 
 			// / Right click while sneaking without wrench to strip equipment
 			// from the pipe.
-			if (entityplayer.isSneaking()
-					&& (entityplayer.getCurrentEquippedItem() == null || !(entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench))) {
+			if (player.isSneaking()
+					&& (player.getCurrentEquippedItem() == null || !(player.getCurrentEquippedItem().getItem() instanceof IToolWrench))) {
 
 				if (pipe.hasGate() || pipe.isWired())
 					return stripEquipment(pipe);
 
-			} else if (entityplayer.getCurrentEquippedItem() == null) {
+			} else if (player.getCurrentEquippedItem() == null) {
 				// Fall through the end of the test
-			} else if (entityplayer.getCurrentEquippedItem().itemID == Item.sign.itemID)
+			} else if (player.getCurrentEquippedItem().itemID == Item.sign.itemID)
 				// Sign will be placed anyway, so lets show the sign gui
 				return false;
-			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof ItemPipe)
+			else if (player.getCurrentEquippedItem().getItem() instanceof ItemPipe)
 				return false;
-			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench)
+			else if (player.getCurrentEquippedItem().getItem() instanceof IToolWrench)
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
-				return pipe.blockActivated(entityplayer);
-			else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
+				return pipe.blockActivated(player);
+			else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Red.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
+			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Blue.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Blue.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
+			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Green.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Green.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
+			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Yellow.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.itemID
-					|| entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGateAutarchic.itemID)
-				if (!pipe.hasInterface()) {
+			} else if (player.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.itemID
+					|| player.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGateAutarchic.itemID)
+				if (!pipe.hasGate()) {
 
-					pipe.gate = new GateVanilla(pipe, entityplayer.getCurrentEquippedItem());
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					pipe.gate = Gate.makeGate(pipe, player.getCurrentEquippedItem());
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.container.scheduleRenderUpdate();
 					return true;
@@ -669,7 +669,7 @@ public class BlockGenericPipe extends BlockContainer {
 			boolean openGateGui = false;
 
 			if (pipe.hasGate()) {
-				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, entityplayer);
+				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
 				if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
 					openGateGui = true;
@@ -677,11 +677,11 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 
 			if (openGateGui) {
-				pipe.gate.openGui(entityplayer);
+				pipe.gate.openGui(player);
 
 				return true;
 			} else
-				return pipe.blockActivated(entityplayer);
+				return pipe.blockActivated(player);
 		}
 
 		return false;
