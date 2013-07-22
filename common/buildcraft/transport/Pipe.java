@@ -405,8 +405,8 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 		}
 
 		if (hasGate()) {
-			resetGate();
 			gate.dropGate();
+			resetGate();
 		}
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
