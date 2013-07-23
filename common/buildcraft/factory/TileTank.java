@@ -43,8 +43,8 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			return;
 		
 		// Have liquid flow down into tanks below if any.
-		if (tank.getFluid() != null) {
-			moveFluidBelow();
+		if (!tank.isEmpty()) {
+			moveFluid();
 		}
 		
 		if (hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
@@ -91,10 +91,26 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public TileTank getBottomTank() {
 
 		TileTank lastTank = this;
-
+		
+		if (tank.getFluid() == null) {
+			while (true) {
+				TileTank below = getTankBelow(lastTank);
+				if (below != null && below.tank.getFluid() == null) {
+					lastTank = below;
+				}
+				else if (below != null) {
+					return below.getBottomTank();
+				}
+				else {
+					return lastTank;
+				}
+			}
+		}
+		
 		while (true) {
 			TileTank below = getTankBelow(lastTank);
-			if (below != null) {
+			if (below != null && below.tank.getFluid() != null &&
+					below.tank.getFluid().isFluidEqual(tank.getFluid())) {
 				lastTank = below;
 			} else {
 				break;
@@ -107,10 +123,26 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public TileTank getTopTank() {
 
 		TileTank lastTank = this;
-
+		
+		if (tank.getFluid() == null) {
+			while (true) {
+				TileTank above = getTankBelow(lastTank);
+				if (above != null && above.tank.getFluid() == null) {
+					lastTank = above;
+				}
+				else if (above != null) {
+					return above.getTopTank();
+				}
+				else {
+					return lastTank;
+				}
+			}
+		}
+		
 		while (true) {
 			TileTank above = getTankAbove(lastTank);
-			if (above != null) {
+			if (above != null && (above.tank.getFluid() != null &&
+					above.tank.getFluid().isFluidEqual(tank.getFluid()))) {
 				lastTank = above;
 			} else {
 				break;
@@ -137,19 +169,73 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			return null;
 		}
 	}
-
-	public void moveFluidBelow() {
+	
+	public void moveFluid() {
+		moveFluidBelow();
+		moveFluidAbove();
+	}
+	
+	private void moveFluidBelow() {
 		TileTank below = getTankBelow(this);
-		if (below == null) {
+		if (below == null ||
+				(below.tank.getFluid() != null && 
+					below.tank.getFluid().getFluid().getDensity(below.tank.getFluid()) >=
+						tank.getFluid().getFluid().getDensity(tank.getFluid())) ||
+				(below.tank.getFluid() == null &&
+					tank.getFluid().getFluid().getDensity(tank.getFluid()) <= 0)) {
+			return;
+		}
+		
+		if (below.tank.isEmpty() || below.tank.getFluid().isFluidEqual(tank.getFluid())) {
+			int used = below.tank.fill(tank.getFluid(), true);
+			if (used > 0) {
+				hasUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
+				below.hasUpdate = true; // redundant because below.fill sets hasUpdate
+
+				tank.drain(used, true);
+			}
+		}
+		else
+		{
+			FluidStack temp = below.tank.getFluid().copy();
+			below.tank.setFluid(tank.getFluid().copy());
+			
+			hasUpdate = true;
+			below.hasUpdate = true;
+			
+			tank.setFluid(temp);
+		}
+	}
+
+	private void moveFluidAbove() {
+		TileTank above = getTankAbove(this);
+		if (above == null ||
+				(above.tank.getFluid() != null && 
+					above.tank.getFluid().getFluid().getDensity(above.tank.getFluid()) <=
+					tank.getFluid().getFluid().getDensity(tank.getFluid())) ||
+				(above.tank.getFluid() == null &&
+					tank.getFluid().getFluid().getDensity(tank.getFluid()) >= 0)) {
 			return;
 		}
 
-		int used = below.tank.fill(tank.getFluid(), true);
-		if (used > 0) {
-			hasUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
-			below.hasUpdate = true; // redundant because below.fill sets hasUpdate
+		if (above.tank.isEmpty() || above.tank.getFluid().isFluidEqual(tank.getFluid())) {
+			int used = above.tank.fill(tank.getFluid(), true);
+			if (used > 0) {
+				hasUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
+				above.hasUpdate = true; // redundant because below.fill sets hasUpdate
 
-			tank.drain(used, true);
+				tank.drain(used, true);
+			}
+		}
+		else
+		{
+			FluidStack temp = above.tank.getFluid().copy();
+			above.tank.setFluid(tank.getFluid());
+			
+			hasUpdate = true;
+			above.hasUpdate = true;
+			
+			tank.setFluid(temp);
 		}
 	}
 
@@ -162,7 +248,8 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 		resource = resource.copy();
 		int totalUsed = 0;
-		TileTank tankToFill = getBottomTank();
+		boolean fluidFalls = resource.getFluid().getDensity(resource) > 0;
+		TileTank tankToFill = fluidFalls ? getBottomTank() : getTopTank();
 
 		FluidStack liquid = tankToFill.tank.getFluid();
 		if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resource)) {
@@ -177,7 +264,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			}
 
 			totalUsed += used;
-			tankToFill = getTankAbove(tankToFill);
+			tankToFill = fluidFalls ? getTankAbove(tankToFill) : getTankBelow(tankToFill);
 		}
 		return totalUsed;
 	}
