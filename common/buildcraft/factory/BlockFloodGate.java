@@ -23,13 +23,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
-public class BlockPump extends BlockContainer {
+public class BlockFloodGate extends BlockContainer {
 
 	private Icon textureTop;
 	private Icon textureBottom;
 	private Icon textureSide;
 
-	public BlockPump(int i) {
+	public BlockFloodGate(int i) {
 		super(i, Material.iron);
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
@@ -37,7 +37,7 @@ public class BlockPump extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
-		return new TilePump();
+		return new TileFloodGate();
 	}
 
 	@Override
@@ -62,8 +62,8 @@ public class BlockPump extends BlockContainer {
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 
-		if (tile instanceof TilePump) {
-			TilePump pump = (TilePump) tile;
+		if (tile instanceof TileFloodGate) {
+			TileFloodGate floodGate = (TileFloodGate) tile;
 
 			// Drop through if the player is sneaking
 			if (entityplayer.isSneaking())
@@ -73,7 +73,7 @@ public class BlockPump extends BlockContainer {
 			Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
 
-				pump.tank.reset();
+				floodGate.rebuildQueue();
 				((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
 				return true;
 			}

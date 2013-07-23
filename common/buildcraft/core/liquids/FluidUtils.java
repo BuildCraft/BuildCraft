@@ -1,10 +1,13 @@
 package buildcraft.core.liquids;
 
 import buildcraft.core.utils.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -60,5 +63,13 @@ public class FluidUtils {
 			}
 		}
 		return false;
+	}
+
+	public static int getFluidBlockId(Fluid fluid, boolean moving) {
+		if (fluid == FluidRegistry.WATER)
+			return moving ? Block.waterMoving.blockID : Block.waterStill.blockID;
+		if (fluid == FluidRegistry.LAVA)
+			return moving ? Block.lavaMoving.blockID : Block.lavaStill.blockID;
+		return fluid.getBlockID();
 	}
 }

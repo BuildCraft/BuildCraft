@@ -108,7 +108,8 @@ public class DefaultProps {
 	public static int PATH_MARKER_ID = 1518;
 	public static int HOPPER_ID = 1519;
 	public static int SPRING_ID = 1522;
-	public static int FILTERED_BUFFER = 1523;
+	public static int FILTERED_BUFFER_ID = 1523;
+	public static int FLOOD_GATE_ID = 1524;
 	
 	public static int OIL_ID = 1530;
 	public static int FUEL_ID = 1531;

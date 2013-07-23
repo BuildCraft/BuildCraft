@@ -385,30 +385,6 @@ public class Utils {
 		}
 	}
 
-	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
-		int blockId = world.getBlockId(x, y, z);
-		if (Block.blocksList[blockId] instanceof IFluidBlock) {
-			IFluidBlock fluidBlock = (IFluidBlock) Block.blocksList[blockId];
-			if (fluidBlock.canDrain(world, x, y, z))
-				return fluidBlock.drain(world, x, y, z, doDrain);
-		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			int meta = world.getBlockMetadata(x, y, z);
-			if (meta != 0)
-				return null;
-			if (doDrain)
-				world.setBlockToAir(x, y, z);
-			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			int meta = world.getBlockMetadata(x, y, z);
-			if (meta != 0)
-				return null;
-			if (doDrain)
-				world.setBlockToAir(x, y, z);
-			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
-		}
-		return null;
-	}
-
 	public static void preDestroyBlock(World world, int i, int j, int k) {
 		TileEntity tile = world.getBlockTileEntity(i, j, k);
 

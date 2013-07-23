@@ -36,6 +36,10 @@ public class Tank extends FluidTank {
 		return getFluid() != null && getFluid().amount >= getCapacity();
 	}
 
+	public Fluid getFluidType() {
+		return getFluid() != null ? getFluid().getFluid() : null;
+	}
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound tankData = new NBTTagCompound();

@@ -74,6 +74,7 @@ public class BlockPump extends BlockContainer {
 			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
 
 				pump.tank.reset();
+				pump.rebuildQueue();
 				((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
 				return true;
 			}

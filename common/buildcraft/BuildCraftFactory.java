@@ -29,6 +29,7 @@ import buildcraft.factory.FactoryProxyClient;
 import buildcraft.factory.GuiHandler;
 import buildcraft.factory.PumpDimensionList;
 import buildcraft.factory.TileAutoWorkbench;
+import buildcraft.factory.TileFloodGate;
 import buildcraft.factory.TileHopper;
 import buildcraft.factory.TileMiningWell;
 import buildcraft.factory.TilePump;
@@ -58,7 +59,6 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
 import net.minecraftforge.event.ForgeSubscribe;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -128,6 +128,7 @@ public class BuildCraftFactory {
 		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
 		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
+		CoreProxy.proxy.registerTileEntity(TileFloodGate.class, "net.minecraft.src.buildcraft.factory.TileFloodGate");
 		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
 		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
 
@@ -159,7 +160,7 @@ public class BuildCraftFactory {
 		int frameId = BuildCraftCore.mainConfiguration.getBlock("frame.id", DefaultProps.FRAME_ID).getInt(DefaultProps.FRAME_ID);
 		int quarryId = BuildCraftCore.mainConfiguration.getBlock("quarry.id", DefaultProps.QUARRY_ID).getInt(DefaultProps.QUARRY_ID);
 		int pumpId = BuildCraftCore.mainConfiguration.getBlock("pump.id", DefaultProps.PUMP_ID).getInt(DefaultProps.PUMP_ID);
-//		int floodGateId = BuildCraftCore.mainConfiguration.getBlock("pump.id", DefaultProps.PUMP_ID).getInt(DefaultProps.MINING_WELL_ID);
+		int floodGateId = BuildCraftCore.mainConfiguration.getBlock("floodGate.id", DefaultProps.FLOOD_GATE_ID).getInt(DefaultProps.FLOOD_GATE_ID);
 		int tankId = BuildCraftCore.mainConfiguration.getBlock("tank.id", DefaultProps.TANK_ID).getInt(DefaultProps.TANK_ID);
 		int refineryId = BuildCraftCore.mainConfiguration.getBlock("refinery.id", DefaultProps.REFINERY_ID).getInt(DefaultProps.REFINERY_ID);
 		int hopperId = BuildCraftCore.mainConfiguration.getBlock("hopper.id", DefaultProps.HOPPER_ID).getInt(DefaultProps.HOPPER_ID);
@@ -203,11 +204,11 @@ public class BuildCraftFactory {
 			CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
 			CoreProxy.proxy.addName(pumpBlock, "Pump");
 		}
-//		if (pumpId > 0) {
-//			floodGateBlock = new BlockFloodGate(pumpId);
-//			CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
-//			CoreProxy.proxy.addName(pumpBlock, "Pump");
-//		}
+		if (floodGateId > 0) {
+			floodGateBlock = new BlockFloodGate(floodGateId);
+			CoreProxy.proxy.registerBlock(floodGateBlock.setUnlocalizedName("floodGateBlock"));
+			CoreProxy.proxy.addName(floodGateBlock, "Flood Gate");
+		}
 		if (refineryId > 0) {
 			refineryBlock = new BlockRefinery(refineryId);
 			CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
