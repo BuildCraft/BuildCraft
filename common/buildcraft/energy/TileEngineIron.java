@@ -14,10 +14,11 @@ import buildcraft.api.fuels.IronEngineCoolant.Coolant;
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.fuels.IronEngineFuel.Fuel;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.liquids.FluidUtils;
+import buildcraft.core.liquids.Tank;
+import buildcraft.core.liquids.TankManager;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
@@ -32,7 +33,6 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -42,16 +42,19 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	public static float HEAT_PER_MJ = 0.0023F;
 	public static float COOLDOWN_RATE = 0.005F;
 	int burnTime = 0;
-	private FluidTank fuelTank;
-	private FluidTank coolantTank;
+	private Tank tankFuel;
+	private Tank tankCoolant;
+	private TankManager tankManager = new TankManager();
 	private Fuel currentFuel = null;
 	public int penaltyCooling = 0;
 	boolean lastPowered = false;
 
 	public TileEngineIron() {
 		super(1);
-		fuelTank = new FluidTank(MAX_LIQUID);
-		coolantTank = new FluidTank(MAX_LIQUID);
+		tankFuel = new Tank("tankFuel", MAX_LIQUID);
+		tankCoolant = new Tank("tankCoolant",MAX_LIQUID);
+		tankManager.add(tankFuel);
+		tankManager.add(tankCoolant);
 	}
 
 	@Override
@@ -110,13 +113,13 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 
 	@Override
 	public boolean isBurning() {
-		FluidStack fuel = fuelTank.getFluid();
+		FluidStack fuel = tankFuel.getFluid();
 		return fuel != null && fuel.amount > 0 && penaltyCooling == 0 && isRedstonePowered;
 	}
 
 	@Override
 	public void burn() {
-		FluidStack fuel = this.fuelTank.getFluid();
+		FluidStack fuel = this.tankFuel.getFluid();
 		if (currentFuel == null && fuel != null) {
 			currentFuel = IronEngineFuel.getFuelForFluid(fuel.getFluid());
 		}
@@ -135,7 +138,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 				if (burnTime <= 0) {
 					if (fuel != null) {
 						if (--fuel.amount <= 0) {
-							fuelTank.setFluid(null);
+							tankFuel.setFluid(null);
 						}
 						burnTime = currentFuel.totalBurningTime / FluidContainerRegistry.BUCKET_VOLUME;
 					} else {
@@ -181,7 +184,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 		if (heat > IDEAL_HEAT) {
 			float extraHeat = heat - IDEAL_HEAT;
 
-			FluidStack coolant = this.coolantTank.getFluid();
+			FluidStack coolant = this.tankCoolant.getFluid();
 			Coolant currentCoolant = IronEngineCoolant.getCoolant(coolant);
 			if (currentCoolant != null) {
 				float cooling = currentCoolant.getDegreesCoolingPerMB(heat);
@@ -190,7 +193,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 					heat = IDEAL_HEAT;
 				} else {
 					heat -= coolant.amount * cooling;
-					coolantTank.setFluid(null);
+					tankCoolant.setFluid(null);
 				}
 			}
 		}
@@ -211,14 +214,13 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 
 	@Override
 	public int getScaledBurnTime(int i) {
-		return this.fuelTank.getFluid() != null ? (int) (((float) this.fuelTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return this.tankFuel.getFluid() != null ? (int) (((float) this.tankFuel.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		fuelTank.readFromNBT(data.getCompoundTag("fuelTank"));
-		coolantTank.readFromNBT(data.getCompoundTag("coolantTank"));
+		tankManager.readFromNBT(data);
 
 		burnTime = data.getInteger("burnTime");
 		penaltyCooling = data.getInteger("penaltyCooling");
@@ -228,8 +230,7 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		data.setTag("fuelTank", fuelTank.writeToNBT(new NBTTagCompound()));
-		data.setTag("coolantTank", coolantTank.writeToNBT(new NBTTagCompound()));
+		tankManager.writeToNBT(data);
 
 		data.setInteger("burnTime", burnTime);
 		data.setInteger("penaltyCooling", penaltyCooling);
@@ -237,43 +238,43 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	}
 
 	public int getScaledCoolant(int i) {
-		return coolantTank.getFluid() != null ? (int) (((float) coolantTank.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
+		return tankCoolant.getFluid() != null ? (int) (((float) tankCoolant.getFluid().amount / (float) (MAX_LIQUID)) * i) : 0;
 	}
 
 	@Override
 	public void getGUINetworkData(int id, int value) {
 		super.getGUINetworkData(id, value);
 		switch (id) {
-		    // Fluid Fuel ID
+			// Fluid Fuel ID
 			case 15:
-				if (fuelTank.getFluid() == null) {
-					fuelTank.setFluid(new FluidStack(value, 0));
+				if (tankFuel.getFluid() == null) {
+					tankFuel.setFluid(new FluidStack(value, 0));
 				} else {
-					fuelTank.getFluid().fluidID = value;
+					tankFuel.getFluid().fluidID = value;
 				}
 				break;
-            // Fluid Coolant ID
+			// Fluid Coolant ID
 			case 16:
-				if (coolantTank.getFluid() == null) {
-					coolantTank.setFluid(new FluidStack(value, 0));
+				if (tankCoolant.getFluid() == null) {
+					tankCoolant.setFluid(new FluidStack(value, 0));
 				} else {
-					coolantTank.getFluid().fluidID = value;
+					tankCoolant.getFluid().fluidID = value;
 				}
 				break;
-            // Fluid Fuel amount
+			// Fluid Fuel amount
 			case 17:
-				if (fuelTank.getFluid() == null) {
-					fuelTank.setFluid(new FluidStack(0, value));
+				if (tankFuel.getFluid() == null) {
+					tankFuel.setFluid(new FluidStack(0, value));
 				} else {
-					fuelTank.getFluid().amount = value;
+					tankFuel.getFluid().amount = value;
 				}
 				break;
 			// Fluid coolant amount
 			case 18:
-				if (coolantTank.getFluid() == null) {
-					coolantTank.setFluid(new FluidStack(0, value));
+				if (tankCoolant.getFluid() == null) {
+					tankCoolant.setFluid(new FluidStack(0, value));
 				} else {
-					coolantTank.getFluid().amount = value;
+					tankCoolant.getFluid().amount = value;
 				}
 				break;
 		}
@@ -282,10 +283,10 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		super.sendGUINetworkData(containerEngine, iCrafting);
-		iCrafting.sendProgressBarUpdate(containerEngine, 15, fuelTank.getFluid() != null ? fuelTank.getFluid().fluidID : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 16, coolantTank.getFluid() != null ? coolantTank.getFluid().fluidID : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 17, fuelTank.getFluid() != null ? fuelTank.getFluid().amount : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 18, coolantTank.getFluid() != null ? coolantTank.getFluid().amount : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 15, tankFuel.getFluid() != null ? tankFuel.getFluid().fluidID : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null ? tankCoolant.getFluid().fluidID : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 17, tankFuel.getFluid() != null ? tankFuel.getFluid().amount : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 18, tankCoolant.getFluid() != null ? tankCoolant.getFluid().amount : 0);
 	}
 
 	@Override
@@ -300,70 +301,60 @@ public class TileEngineIron extends TileEngine implements IFluidHandler {
 	}
 
 	@Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
-    {
-        return null;
-    }
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		return null;
+	}
 
-    @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
+	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 
 		// Handle coolant
 		if (IronEngineCoolant.getCoolant(resource) != null)
-			return coolantTank.fill(resource, doFill);
+			return tankCoolant.fill(resource, doFill);
 
 		if (IronEngineFuel.getFuelForFluid(resource.getFluid()) != null)
-			return fuelTank.fill(resource, doFill);
+			return tankFuel.fill(resource, doFill);
 
 		return 0;
 	}
 
 	@Override
-    public boolean canFill(ForgeDirection from, Fluid fluid)
-    {
-        if (IronEngineCoolant.isCoolant(fluid))
-            return true;
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		if (IronEngineCoolant.isCoolant(fluid))
+			return true;
 
-        if (IronEngineFuel.getFuelForFluid(fluid) != null)
-            return true;
+		if (IronEngineFuel.getFuelForFluid(fluid) != null)
+			return true;
 
-        return false;
-    }
+		return false;
+	}
 
-    @Override
+	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
-		switch (direction) {
-			case UP:
-				return new FluidTankInfo[] { new FluidTankInfo(fuelTank) };
-			case DOWN:
-				return new FluidTankInfo[] { new FluidTankInfo(coolantTank) };
-			default:
-				return null;
-		}
+		return tankManager.getTankInfo(direction);
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		if (itemstack == null)
 			return false;
-		if (IronEngineCoolant.getCoolant(itemstack)!=null)
+		if (IronEngineCoolant.getCoolant(itemstack) != null)
 			return true;
 		return FluidContainerRegistry.getFluidForFilledItem(itemstack) != null;
 	}
 
 	public FluidStack getFuel() {
-		return fuelTank.getFluid();
+		return tankFuel.getFluid();
 	}
 
 	public FluidStack getCoolant() {
-		return coolantTank.getFluid();
+		return tankCoolant.getFluid();
 	}
 
 	@Override
