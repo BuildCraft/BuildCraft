@@ -88,8 +88,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			return;
 		}
 
-//		if (worldObj.getWorldTime() % 4 != 0)
-//			return;
+		if (worldObj.getWorldTime() % 4 != 0)
+			return;
 
 		BlockIndex index = getNextIndexToPump(false);
 
