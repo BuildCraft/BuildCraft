@@ -125,9 +125,10 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandler, 
 	public void readData(DataInputStream data) throws IOException {
 		for (Tank tank : tanks) {
 			int fluidId = data.readShort();
-			if (fluidId > 0) {
+			if (fluidId > 0)
 				tank.setFluid(new FluidStack(fluidId, data.readInt()));
-			}
+			else
+				tank.setFluid(null);
 		}
 	}
 }

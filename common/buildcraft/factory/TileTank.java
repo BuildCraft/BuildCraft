@@ -39,18 +39,17 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	/* UPDATING */
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isSimulating(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-			sendNetworkUpdate();
-			hasUpdate = false;
-		}
-
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) 
 			return;
-		}
-
+		
 		// Have liquid flow down into tanks below if any.
 		if (tank.getFluid() != null) {
 			moveFluidBelow();
+		}
+		
+		if (hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+			sendNetworkUpdate();
+			hasUpdate = false;
 		}
 	}
 
