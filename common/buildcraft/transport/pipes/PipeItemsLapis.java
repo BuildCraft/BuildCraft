@@ -10,6 +10,7 @@ package buildcraft.transport.pipes;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
+import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.utils.EnumColor;
@@ -20,9 +21,13 @@ import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.triggers.ActionPipeColor;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -65,9 +70,11 @@ public class PipeItemsLapis extends Pipe implements IItemTravelingHook, IPipeTra
 	}
 
 	public void setColor(EnumColor color) {
-		container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
-		container.scheduleRenderUpdate();
-		container.markBlockForUpdate();
+		if (color.ordinal() != container.getBlockMetadata()) {
+			container.worldObj.setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
+			container.scheduleRenderUpdate();
+			container.markBlockForUpdate();
+		}
 	}
 
 	@Override
@@ -101,5 +108,25 @@ public class PipeItemsLapis extends Pipe implements IItemTravelingHook, IPipeTra
 
 	@Override
 	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+	}
+
+	@Override
+	protected void actionsActivated(Map<IAction, Boolean> actions) {
+		super.actionsActivated(actions);
+
+		for (Entry<IAction, Boolean> action : actions.entrySet()) {
+			if (action.getKey() instanceof ActionPipeColor && action.getValue() != null && action.getValue()) {
+				setColor(((ActionPipeColor) action.getKey()).color);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public LinkedList<IAction> getActions() {
+		LinkedList<IAction> result = super.getActions();
+		result.addAll(Arrays.asList(BuildCraftTransport.actionPipeColor));
+
+		return result;
 	}
 }

@@ -20,6 +20,7 @@ import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.triggers.BCAction;
 import buildcraft.core.triggers.BCTrigger;
+import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.GateIconProvider;
@@ -67,6 +68,7 @@ import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulser;
+import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import buildcraft.transport.triggers.TriggerFilteredBufferInventoryLevel;
@@ -170,6 +172,7 @@ public class BuildCraftTransport {
 	public static BCAction actionYellowSignal = new ActionSignalOutput(DefaultProps.ACTION_YELLOW_SIGNAL, IPipe.WireColor.Yellow);
 	public static BCAction actionEnergyPulser = new ActionEnergyPulser(DefaultProps.ACTION_ENERGY_PULSER);
 	public static BCAction actionSingleEnergyPulse = new ActionSingleEnergyPulse(DefaultProps.ACTION_SINGLE_ENERGY_PULSE);
+	public static BCAction[] actionPipeColor = new BCAction[16];
 	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
@@ -403,6 +406,10 @@ public class BuildCraftTransport {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
+		
+		for(EnumColor color : EnumColor.VALUES){
+			actionPipeColor[color.ordinal()] = new ActionPipeColor(-1, color);
+		}
 	}
 
 	public void loadRecipes() {
