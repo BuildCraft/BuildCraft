@@ -233,7 +233,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		if (this.container.pipe instanceof IPipeTransportItemsHook) {
 			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, data.input);
-			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, data.item);
+			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, data);
 		}
 
 		return result;

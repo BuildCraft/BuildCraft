@@ -16,6 +16,7 @@ import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.EntityData;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -89,7 +90,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IPipeT
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, EntityData data) {
 		LinkedList<ForgeDirection> filteredOrientations = new LinkedList<ForgeDirection>();
 		LinkedList<ForgeDirection> defaultOrientations = new LinkedList<ForgeDirection>();
 
@@ -107,10 +108,10 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IPipeT
 					foundFilter = true;
 				}
 
-				if (stack != null && stack.itemID == item.getItemStack().itemID)
-					if ((Item.itemsList[item.getItemStack().itemID].isDamageable())) {
+				if (stack != null && stack.itemID == data.item.getItemStack().itemID)
+					if ((Item.itemsList[data.item.getItemStack().itemID].isDamageable())) {
 						filteredOrientations.add(dir);
-					} else if (stack.getItemDamage() == item.getItemStack().getItemDamage()) {
+					} else if (stack.getItemDamage() == data.item.getItemStack().getItemDamage()) {
 						filteredOrientations.add(dir);
 					}
 			}

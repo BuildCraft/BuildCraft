@@ -49,6 +49,7 @@ import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.PipeItemsCobblestone;
+import buildcraft.transport.pipes.PipeItemsDaizuli;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsGold;
@@ -95,6 +96,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
@@ -123,6 +125,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsDiamond;
 	public static Item pipeItemsObsidian;
 	public static Item pipeItemsLapis;
+	public static Item pipeItemsDaizuli;
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
 	public static Item pipeFluidsWood;
@@ -266,7 +269,7 @@ public class BuildCraftTransport {
 			pipeWaterproof.setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 			LanguageRegistry.addName(pipeWaterproof, "Pipe Waterproof");
 			genericPipeBlock = new BlockGenericPipe(genericPipeId.getInt());
-			GameRegistry.registerBlock(genericPipeBlock);
+			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
 
 			// Fixing retro-compatiblity
 			pipeItemsWood = buildPipe(DefaultProps.PIPE_ITEMS_WOOD_ID, PipeItemsWood.class, "Wooden Transport Pipe", "plankWood", Block.glass, "plankWood");
@@ -278,7 +281,8 @@ public class BuildCraftTransport {
 			pipeItemsGold = buildPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
 			pipeItemsDiamond = buildPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
 			pipeItemsObsidian = buildPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
-			pipeItemsLapis = buildPipe(DefaultProps.PIPE_ITEMS_LAPIS_ID, PipeItemsLapis.class, "Lapis Transport Pipe", Block.blockLapis, Block.glass,  Block.blockLapis);
+			pipeItemsLapis = buildPipe(DefaultProps.PIPE_ITEMS_LAPIS_ID, PipeItemsLapis.class, "Lapis Transport Pipe", Block.blockLapis, Block.glass, Block.blockLapis);
+			pipeItemsDaizuli = buildPipe(DefaultProps.PIPE_ITEMS_DAIZULI_ID, PipeItemsDaizuli.class, "Daizuli Transport Pipe", Block.blockLapis, Block.glass, Item.diamond);
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
 
@@ -402,8 +406,8 @@ public class BuildCraftTransport {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
-		
-		for(EnumColor color : EnumColor.VALUES){
+
+		for (EnumColor color : EnumColor.VALUES) {
 			actionPipeColor[color.ordinal()] = new ActionPipeColor(-1, color);
 		}
 	}
@@ -423,9 +427,9 @@ public class BuildCraftTransport {
 		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
-				new Object[] { "wdw", "wcw", "wpw", Character.valueOf('w'), "plankWood", Character.valueOf('d'),
-						BuildCraftTransport.pipeItemsDiamond, Character.valueOf('c'), Block.chest, Character.valueOf('p'),
-						Block.pistonBase });
+				new Object[]{"wdw", "wcw", "wpw", Character.valueOf('w'), "plankWood", Character.valueOf('d'),
+			BuildCraftTransport.pipeItemsDiamond, Character.valueOf('c'), Block.chest, Character.valueOf('p'),
+			Block.pistonBase});
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());

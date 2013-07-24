@@ -48,7 +48,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 
 	@Override
 	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
+		if (container == null)
 			return PipeIconProvider.TYPE.PipeItemsLapis_White.ordinal();
 		return PipeIconProvider.TYPE.PipeItemsLapis_Black.ordinal() + container.getBlockMetadata();
 	}
@@ -102,7 +102,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, EntityData data) {
 		return possibleOrientations;
 	}
 

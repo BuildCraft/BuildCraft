@@ -12,6 +12,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.transport.IPipedItem;
 import buildcraft.core.utils.Utils;
+import buildcraft.transport.EntityData;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -39,7 +40,7 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, EntityData data) {
 		return possibleOrientations;
 	}
 
