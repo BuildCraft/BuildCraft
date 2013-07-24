@@ -2,6 +2,7 @@ package buildcraft.transport.network;
 
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
+import buildcraft.core.utils.EnumColor;
 import buildcraft.transport.EntityData;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,6 +19,7 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 	private int itemId;
 	private byte stackSize;
 	private int itemDamage;
+	private EnumColor color;
 	private float itemX;
 	private float itemY;
 	private float itemZ;
@@ -49,6 +51,8 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		data.writeByte((byte) entityData.item.getItemStack().stackSize);
 		data.writeShort(entityData.item.getItemStack().getItemDamage());
 
+		data.writeByte(entityData.color != null ? entityData.color.ordinal() : -1);
+
 		data.writeFloat(entityData.item.getSpeed());
 		data.writeBoolean(entityData.item.getItemStack().hasTagCompound());
 	}
@@ -71,6 +75,10 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		this.itemId = data.readShort();
 		this.stackSize = data.readByte();
 		this.itemDamage = data.readShort();
+
+		byte c = data.readByte();
+		if (c != -1)
+			this.color = EnumColor.fromId(c);
 
 		this.speed = data.readFloat();
 		this.hasNBT = data.readBoolean();
@@ -100,6 +108,10 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		return itemDamage;
 	}
 
+	public EnumColor getColor() {
+		return color;
+	}
+
 	public double getPosX() {
 		return itemX;
 	}
@@ -119,7 +131,7 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 	public boolean hasNBT() {
 		return hasNBT;
 	}
-	
+
 	@Override
 	public int getID() {
 		return PacketIds.PIPE_CONTENTS;

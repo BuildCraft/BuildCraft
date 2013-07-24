@@ -13,6 +13,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
+import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
 import buildcraft.transport.Pipe;
@@ -409,13 +410,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		float light = pipe.container.worldObj.getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		int count = 0;
-		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
+		for (EntityData itemData : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
 			if (count >= MAX_ITEMS_TO_RENDER) {
 				break;
 			}
 
-			doRenderItem(data.item, x + data.item.getPosition().x - pipe.container.xCoord, y + data.item.getPosition().y - pipe.container.yCoord, z + data.item.getPosition().z
-					- pipe.container.zCoord, light);
+			doRenderItem(itemData.item, x + itemData.item.getPosition().x - pipe.container.xCoord, y + itemData.item.getPosition().y - pipe.container.yCoord, z + itemData.item.getPosition().z
+					- pipe.container.zCoord, light, itemData.color);
 			count++;
 		}
 
@@ -423,7 +424,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	public void doRenderItem(IPipedItem entityitem, double d, double d1, double d2, float f1) {
+	public void doRenderItem(IPipedItem entityitem, double x, double y, double z, float light, EnumColor color) {
 
 		if (entityitem == null || entityitem.getItemStack() == null)
 			return;
@@ -431,11 +432,37 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		float renderScale = 0.7f;
 		ItemStack itemstack = entityitem.getItemStack();
 		GL11.glPushMatrix();
-		GL11.glTranslatef((float) d, (float) d1, (float) d2);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 		GL11.glTranslatef(0, 0.25F, 0);
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(itemstack);
 		customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
+		if (color != null) {
+			BlockInterface block = new BlockInterface();
+
+			block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
+
+			float pix = 0.0625F;
+
+			float min = -4 * pix;
+			float max = 4 * pix;
+
+			block.minY = min;
+			block.maxY = max;
+
+			block.minZ = min;
+			block.maxZ = max;
+
+			block.minX = min;
+			block.maxX = max;
+
+			int cHex = color.getLightHex();
+			float r = (float) (cHex >> 16 & 0xff) / 255F;
+			float g = (float) (cHex >> 8 & 0xff) / 255F;
+			float b = (float) (cHex & 0xff) / 255F;
+			GL11.glColor4f(r, g, b, 1.0F);
+			RenderEntityBlock.INSTANCE.renderBlock(block, null, 0, 0, 0, false, true);
+		}
 		GL11.glPopMatrix();
 	}
 }

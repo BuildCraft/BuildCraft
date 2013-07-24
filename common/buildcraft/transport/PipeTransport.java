@@ -7,7 +7,6 @@
  */
 package buildcraft.transport;
 
-import buildcraft.api.transport.IPipedItem;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -53,13 +52,6 @@ public abstract class PipeTransport {
 
 	public boolean outputOpen(ForgeDirection to) {
 		return true;
-	}
-
-	public boolean acceptItems() {
-		return false;
-	}
-
-	public void entityEntering(IPipedItem item, ForgeDirection orientation) {
 	}
 
 	public void dropContents() {

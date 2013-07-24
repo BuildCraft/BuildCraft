@@ -1,12 +1,10 @@
 /**
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
+ * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License
+ * 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-
 package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
@@ -56,10 +54,7 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean allowBouncing = false;
 	public Map<Integer, EntityData> travelingEntities = new HashMap<Integer, EntityData>();
 	private final List<EntityData> entitiesToLoad = new LinkedList<EntityData>();
-
-	private final List<EntityData> delayedEntitiesToLoad = new LinkedList<EntityData>();
-	private int delay = -1;
-
+	private int delay = 0;
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
 
@@ -85,32 +80,40 @@ public class PipeTransportItems extends PipeTransport {
 		item.setSpeed(speed);
 	}
 
-	@Override
-	public void entityEntering(IPipedItem item, ForgeDirection orientation) {
-		if (item.isCorrupted())
+	public void entityEntering(IPipedItem item, ForgeDirection inputOrientation) {
+		EntityData data = travelingEntities.get(item.getEntityId());
+
+		if (data == null) {
+			data = new EntityData(item, inputOrientation);
+		}
+		entityEntering(data, inputOrientation);
+	}
+
+	public void entityEntering(EntityData data, ForgeDirection inputOrientation) {
+		if (data.item.isCorrupted())
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
 
-		readjustSpeed(item);
+		data.reset();
+		data.input = inputOrientation;
 
-		EntityData data = travelingEntities.get(item.getEntityId());
+		EntityData existingData = travelingEntities.get(data.item.getEntityId());
 
-		if (data == null) {
-			data = new EntityData(item, orientation);
-			travelingEntities.put(item.getEntityId(), data);
-
-			if (item.getContainer() != null && item.getContainer() != this.container) {
-				((PipeTransportItems) ((TileGenericPipe) item.getContainer()).pipe.transport).scheduleRemoval(item);
-			}
-
-			item.setContainer(container);
+		if (existingData == null) {
+			travelingEntities.put(data.item.getEntityId(), data);
+		} else {
+			data = existingData;
 		}
+
+		data.item.setContainer(container);
+
+		readjustSpeed(data.item);
 
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
-		if (orientation != ForgeDirection.UP && orientation != ForgeDirection.DOWN) {
-			item.setPosition(item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
+		if (inputOrientation != ForgeDirection.UP && inputOrientation != ForgeDirection.DOWN) {
+			data.item.setPosition(data.item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), data.item.getPosition().z);
 		}
 
 		if (!container.worldObj.isRemote) {
@@ -118,7 +121,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		if (container.pipe instanceof IPipeTransportItemsHook) {
-			((IPipeTransportItemsHook) container.pipe).entityEntered(item, orientation);
+			((IPipeTransportItemsHook) container.pipe).entityEntered(data.item, inputOrientation);
 		}
 
 		if (!container.worldObj.isRemote) {
@@ -148,14 +151,15 @@ public class PipeTransportItems extends PipeTransport {
 			}
 		}
 	}
-	
+
 	private void destroyPipe() {
 		BlockUtil.explodeBlock(container.worldObj, container.xCoord, container.yCoord, container.zCoord);
 		container.worldObj.setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
 	}
 
 	/**
-	 * Bounces the item back into the pipe without changing the travelingEntities map.
+	 * Bounces the item back into the pipe without changing the
+	 * travelingEntities map.
 	 *
 	 * @param data
 	 */
@@ -203,7 +207,8 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	/**
-	 * Returns a list of all possible movements, that is to say adjacent implementers of IPipeEntry or TileEntityChest.
+	 * Returns a list of all possible movements, that is to say adjacent
+	 * implementers of IPipeEntry or TileEntityChest.
 	 */
 	public LinkedList<ForgeDirection> getPossibleMovements(EntityData data) {
 		LinkedList<ForgeDirection> result = new LinkedList<ForgeDirection>();
@@ -254,7 +259,6 @@ public class PipeTransportItems extends PipeTransport {
 	public void updateEntity() {
 		moveSolids();
 	}
-
 	Set<Integer> toRemove = new HashSet<Integer>();
 
 	public void scheduleRemoval(IPipedItem item) {
@@ -271,17 +275,12 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void moveSolids() {
-		if(delay > 0) {
+		if (delay > 0) {
 			delay--;
-			if(delay == 0) {
-				entitiesToLoad.addAll(delayedEntitiesToLoad);
-				delayedEntitiesToLoad.clear();
-				delay = -1;
-			}
-		}
-		if (!entitiesToLoad.isEmpty()) {
+		} else if (!entitiesToLoad.isEmpty()) {
 			for (EntityData data : entitiesToLoad) {
 				data.item.setWorld(container.worldObj);
+				data.item.setContainer(container);
 				travelingEntities.put(data.item.getEntityId(), data);
 			}
 			entitiesToLoad.clear();
@@ -292,6 +291,11 @@ public class PipeTransportItems extends PipeTransport {
 			if (data.item.isCorrupted()) {
 				scheduleRemoval(data.item);
 				data.item.remove();
+				continue;
+			}
+
+			if (data.item.getContainer() != this.container) {
+				scheduleRemoval(data.item);
 				continue;
 			}
 
@@ -349,12 +353,20 @@ public class PipeTransportItems extends PipeTransport {
 		performRemoval();
 	}
 
-	private void handleTileReached(EntityData data, TileEntity tile) {
-		if (tile instanceof IPipeEntry) {
-			((IPipeEntry) tile).entityEntering(data.item, data.output);
-		} else if (tile instanceof TileGenericPipe && ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
+	private boolean passToNextPipe(EntityData data, TileEntity tile) {
+		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipe = (TileGenericPipe) tile;
-			((PipeTransportItems) pipe.pipe.transport).entityEntering(data.item, data.output);
+			if (BlockGenericPipe.isValid(pipe.pipe) && pipe.pipe.transport instanceof PipeTransportItems) {
+				((PipeTransportItems) pipe.pipe.transport).entityEntering(data, data.output);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void handleTileReached(EntityData data, TileEntity tile) {
+		if (passToNextPipe(data, tile)) {
+			// NOOP
 		} else if (tile instanceof IInventory) {
 			if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
 				ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.output.getOpposite(), true);
@@ -418,11 +430,10 @@ public class PipeTransportItems extends PipeTransport {
 
 				entity.setContainer(container);
 
-				EntityData data = new EntityData(entity, ForgeDirection.getOrientation(dataTag.getInteger("input")));
-				data.output = ForgeDirection.getOrientation(dataTag.getInteger("output"));
-				data.toCenter = dataTag.getBoolean("toCenter");
+				EntityData data = new EntityData(entity);
+				data.readFromNBT(dataTag);
 
-				delayedEntitiesToLoad.add(data);
+				entitiesToLoad.add(data);
 			} catch (Throwable t) {
 				t.printStackTrace();
 				// It may be the case that entities cannot be reloaded between
@@ -442,9 +453,7 @@ public class PipeTransportItems extends PipeTransport {
 			NBTTagCompound dataTag = new NBTTagCompound();
 			nbttaglist.appendTag(dataTag);
 			data.item.writeToNBT(dataTag);
-			dataTag.setBoolean("toCenter", data.toCenter);
-			dataTag.setInteger("input", data.input.ordinal());
-			dataTag.setInteger("output", data.output.ordinal());
+			data.writeToNBT(dataTag);
 		}
 
 		nbt.setTag("travelingEntities", nbttaglist);
@@ -463,26 +472,27 @@ public class PipeTransportItems extends PipeTransport {
 		if (packet.getID() != PacketIds.PIPE_CONTENTS)
 			return;
 
-		EntityData data = travelingEntities.remove(packet.getEntityId());
-
 		IPipedItem item;
+		EntityData data = travelingEntities.get(packet.getEntityId());
 		if (data == null) {
 			item = EntityPassiveItem.getOrCreate(container.worldObj, packet.getEntityId());
+			data = new EntityData(item);
+			travelingEntities.put(item.getEntityId(), data);
 		} else {
 			item = data.item;
 		}
 
-		if(item.getItemStack() == null) {
+		if (item.getItemStack() == null) {
 			item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
-			if(packet.hasNBT()) {
+			if (packet.hasNBT()) {
 				PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getEntityId()).getPacket());
 			}
 		} else {
-			if(item.getItemStack().itemID != packet.getItemId() || item.getItemStack().stackSize != packet.getStackSize() || item.getItemStack().getItemDamage() != packet.getItemDamage() || item.getItemStack().hasTagCompound() != packet.hasNBT()) {
+			if (item.getItemStack().itemID != packet.getItemId() || item.getItemStack().stackSize != packet.getStackSize() || item.getItemStack().getItemDamage() != packet.getItemDamage() || item.getItemStack().hasTagCompound() != packet.hasNBT()) {
 				item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
-				if(packet.hasNBT()) {
+				if (packet.hasNBT()) {
 					PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getEntityId()).getPacket());
-				}		
+				}
 			}
 		}
 
@@ -492,14 +502,11 @@ public class PipeTransportItems extends PipeTransport {
 
 		item.setSpeed(packet.getSpeed());
 
-		if (item.getContainer() != null && item.getContainer() != container) {
-			((PipeTransportItems) ((TileGenericPipe) item.getContainer()).pipe.transport).scheduleRemoval(item);
-			item.setContainer(container);
-		}
+		item.setContainer(container);
 
-		data = new EntityData(item, packet.getInputOrientation());
+		data.input = packet.getInputOrientation();
 		data.output = packet.getOutputOrientation();
-		travelingEntities.put(item.getEntityId(), data);
+		data.color = packet.getColor();
 	}
 
 	/**
@@ -507,7 +514,8 @@ public class PipeTransportItems extends PipeTransport {
 	 */
 	public void handleNBTRequestPacket(EntityPlayer player, int entityId) {
 		EntityData data = travelingEntities.get(entityId);
-		if(data == null || data.item == null || data.item.getItemStack() == null) return;
+		if (data == null || data.item == null || data.item.getItemStack() == null)
+			return;
 		PacketDispatcher.sendPacketToPlayer(new PacketPipeTransportNBT(PacketIds.PIPE_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, entityId, data.item.getItemStack().getTagCompound()).getPacket(), (Player) player);
 	}
 
@@ -516,10 +524,11 @@ public class PipeTransportItems extends PipeTransport {
 	 */
 	public void handleNBTPacket(PacketPipeTransportNBT packet) {
 		EntityData data = travelingEntities.get(packet.getEntityId());
-		if(data == null || data.item == null || data.item.getItemStack() == null) return;
+		if (data == null || data.item == null || data.item.getItemStack() == null)
+			return;
 		data.item.getItemStack().setTagCompound(packet.getTagCompound());
 	}
-	
+
 	/**
 	 * Creates a packet describing a stack of items inside a pipe.
 	 *
@@ -559,30 +568,27 @@ public class PipeTransportItems extends PipeTransport {
 				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 
-	@Override
-	public boolean acceptItems() {
-		return true;
-	}
-
 	public boolean isTriggerActive(ITrigger trigger) {
 		return false;
 	}
 
 	/**
-	 * Group all items that are similar, that is to say same dmg, same id, same nbt and no contribution controlling them
+	 * Group all items that are similar, that is to say same dmg, same id, same
+	 * nbt and no contribution controlling them
 	 */
 	public void groupEntities() {
 		// determine groupable entities
 		List<EntityData> entities = new ArrayList<EntityData>();
 
 		for (EntityData entityData : travelingEntities.values()) {
-			if (!entityData.item.hasContributions() &&
-				entityData.item.getItemStack().stackSize < entityData.item.getItemStack().getMaxStackSize()) {
+			if (!entityData.item.hasContributions()
+					&& entityData.item.getItemStack().stackSize < entityData.item.getItemStack().getMaxStackSize()) {
 				entities.add(entityData);
 			}
 		}
 
-		if (entities.isEmpty()) return; // nothing groupable
+		if (entities.isEmpty())
+			return; // nothing groupable
 
 		// sort the groupable entities to have all entities with the same id:dmg next to each other (contiguous range)
 		Collections.sort(entities, new Comparator<EntityData>() {
@@ -627,11 +633,13 @@ public class PipeTransportItems extends PipeTransport {
 	private void groupEntityRange(List<EntityData> entities, int start, int end) {
 		for (int j = start; j < end; j++) {
 			EntityData target = entities.get(j);
-			if (target == null) continue;
+			if (target == null)
+				continue;
 
 			for (int k = j + 1; k < end; k++) {
 				EntityData source = entities.get(k);
-				if (source == null) continue;
+				if (source == null)
+					continue;
 
 				// only merge if the ItemStack tags match
 				if (ItemStack.areItemStackTagsEqual(source.item.getItemStack(), target.item.getItemStack())) {
@@ -670,8 +678,8 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		travelingEntities.clear();
-	}	
-	
+	}
+
 	@Override
 	public boolean delveIntoUnloadedChunks() {
 		return true;

@@ -135,10 +135,11 @@ public class Utils {
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static boolean addToRandomPipeEntry(TileEntity tile, ForgeDirection from, ItemStack items) {
-		World w = tile.worldObj;
+	public static boolean addToRandomPipeEntry(TileEntity source, ForgeDirection from, ItemStack items) {
+		World w = source.worldObj;
 
-		LinkedList<ForgeDirection> possiblePipes = new LinkedList<ForgeDirection>();
+		List<IPipeEntry> possiblePipes = new ArrayList<IPipeEntry>();
+		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
 
 		for (int j = 0; j < 6; ++j) {
 			if (from.getOpposite().ordinal() == j) {
@@ -146,41 +147,29 @@ public class Utils {
 			}
 
 			ForgeDirection o = ForgeDirection.values()[j];
-			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, o);
+			Position pos = new Position(source.xCoord, source.yCoord, source.zCoord, o);
 
 			pos.moveForwards(1.0);
 
-			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems()) {
-				if (pipeEntry instanceof IPipeConnection) {
-					if (!((IPipeConnection) pipeEntry).isPipeConnected(o.getOpposite())) {
+			if (tile instanceof IPipeEntry && ((IPipeEntry) tile).isItemPipe()) {
+				if (tile instanceof IPipeConnection) {
+					if (!((IPipeConnection) tile).isPipeConnected(o.getOpposite())) {
 						continue;
 					}
 				}
-				possiblePipes.add(o);
+				possiblePipes.add((IPipeEntry) tile);
+				pipeDirections.add(o);
 			}
 		}
 
 		if (possiblePipes.size() > 0) {
 			int choice = w.rand.nextInt(possiblePipes.size());
 
-			Position entityPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
-			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
+			IPipeEntry pipeEntry = possiblePipes.get(choice);
 
-			entityPos.x += 0.5;
-			entityPos.y += getPipeFloorOf(items);
-			entityPos.z += 0.5;
-
-			entityPos.moveForwards(0.5);
-
-			pipePos.moveForwards(1.0);
-
-			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity((int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
-
-			IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, items);
-
-			pipeEntry.entityEntering(entity, entityPos.orientation);
+			pipeEntry.entityEntering(items, pipeDirections.get(choice));
 			items.stackSize = 0;
 			return true;
 		} else {

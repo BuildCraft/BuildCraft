@@ -22,6 +22,23 @@ public class PipeIconProvider implements IIconProvider {
 		PipeItemsDiamond_West("pipeItemsDiamond_west"),
 		PipeItemsDiamond_East("pipeItemsDiamond_east"),
 		//
+		PipeItemsLapis_Black("pipeItemsLapisBlack"),
+		PipeItemsLapis_Red("pipeItemsLapisRed"),
+		PipeItemsLapis_Green("pipeItemsLapisGreen"),
+		PipeItemsLapis_Brown("pipeItemsLapisBrown"),
+		PipeItemsLapis_Blue("pipeItemsLapisBlue"),
+		PipeItemsLapis_Purple("pipeItemsLapisPurple"),
+		PipeItemsLapis_Cyan("pipeItemsLapisCyan"),
+		PipeItemsLapis_LightGray("pipeItemsLapisLightGray"),
+		PipeItemsLapis_Gray("pipeItemsLapisGray"),
+		PipeItemsLapis_Pink("pipeItemsLapisPink"),
+		PipeItemsLapis_Lime("pipeItemsLapisLime"),
+		PipeItemsLapis_Yellow("pipeItemsLapisYellow"),
+		PipeItemsLapis_LightBlue("pipeItemsLapisLightBlue"),
+		PipeItemsLapis_Magenta("pipeItemsLapisMagenta"),
+		PipeItemsLapis_Orange("pipeItemsLapisOrange"),
+		PipeItemsLapis_White("pipeItemsLapisWhite"),
+		//
 		PipeItemsWood_Standard("pipeItemsWood_standard"),
 		PipeAllWood_Solid("pipeAllWood_solid"),
 		//
@@ -57,8 +74,9 @@ public class PipeIconProvider implements IIconProvider {
 		//
 		Power_Normal("texture_cyan"),
 		Power_Overload("texture_red_lit"),
-		Stripes("pipeStripes");
+		Stripes("pipeStripes"),
 		//
+		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
 		private Icon icon;
@@ -70,11 +88,17 @@ public class PipeIconProvider implements IIconProvider {
 		private void registerIcon(IconRegister iconRegister) {
 			icon = iconRegister.registerIcon("buildcraft:" + iconTag);
 		}
+
+		public Icon getIcon() {
+			return icon;
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int pipeIconIndex) {
+		if (pipeIconIndex == -1)
+			return null;
 		return TYPE.VALUES[pipeIconIndex].icon;
 	}
 

@@ -17,10 +17,8 @@ import net.minecraftforge.common.ForgeDirection;
  */
 public interface IPipeEntry {
 
-	void entityEntering(ItemStack payload, ForgeDirection orientation);
+	boolean entityEntering(ItemStack payload, ForgeDirection orientation);
 
-	void entityEntering(IPipedItem item, ForgeDirection orientation);
-
-	boolean acceptItems();
+	boolean isItemPipe();
 
 }

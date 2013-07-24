@@ -52,6 +52,7 @@ import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsGold;
 import buildcraft.transport.pipes.PipeItemsIron;
+import buildcraft.transport.pipes.PipeItemsLapis;
 import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsQuartz;
 import buildcraft.transport.pipes.PipeItemsSandstone;
@@ -123,6 +124,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsGold;
 	public static Item pipeItemsDiamond;
 	public static Item pipeItemsObsidian;
+	public static Item pipeItemsLapis;
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
 	public static Item pipeFluidsWood;
@@ -277,6 +279,7 @@ public class BuildCraftTransport {
 			pipeItemsGold = buildPipe(DefaultProps.PIPE_ITEMS_GOLD_ID, PipeItemsGold.class, "Golden Transport Pipe", Item.ingotGold, Block.glass, Item.ingotGold);
 			pipeItemsDiamond = buildPipe(DefaultProps.PIPE_ITEMS_DIAMOND_ID, PipeItemsDiamond.class, "Diamond Transport Pipe", Item.diamond, Block.glass, Item.diamond);
 			pipeItemsObsidian = buildPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
+			pipeItemsLapis = buildPipe(DefaultProps.PIPE_ITEMS_LAPIS_ID, PipeItemsLapis.class, "Lapis Transport Pipe", Block.blockLapis, Block.glass,  Block.blockLapis);
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
 
