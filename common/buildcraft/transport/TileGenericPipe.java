@@ -21,7 +21,6 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;

@@ -10,7 +10,7 @@ package buildcraft.transport.pipes;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipedItem;
+import buildcraft.transport.IPipedItem;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;

@@ -1,6 +1,5 @@
 package buildcraft.transport;
 
-import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.utils.EnumColor;
 import java.util.EnumSet;
 import net.minecraft.nbt.NBTTagCompound;

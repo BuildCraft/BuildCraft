@@ -7,12 +7,11 @@
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
-package buildcraft.core;
+package buildcraft.transport;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPassiveItemContribution;
-import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.proxy.CoreProxy;
 import java.util.TreeMap;
 import net.minecraft.entity.item.EntityItem;

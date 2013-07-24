@@ -1,6 +1,7 @@
-package buildcraft.api.transport;
+package buildcraft.transport;
 
 import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPassiveItemContribution;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

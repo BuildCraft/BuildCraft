@@ -10,7 +10,6 @@
 package buildcraft.transport;
 
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipedItem;
 import java.util.LinkedList;
 import net.minecraftforge.common.ForgeDirection;
 

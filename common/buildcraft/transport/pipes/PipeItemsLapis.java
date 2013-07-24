@@ -12,7 +12,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.IPipedItem;
+import buildcraft.transport.IPipedItem;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.EntityData;
