@@ -128,8 +128,6 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 		if (icons == null)
 			return;
 
-		state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
-
 		boolean west = false;
 		boolean east = false;
 		boolean down = false;
@@ -185,6 +183,7 @@ public class PipeWorldRenderer implements ISimpleBlockRenderingHandler {
 			south = true;
 		}
 
+		state.currentTexture = icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN));
 		block.setBlockBounds(minSize, minSize, minSize, maxSize, maxSize, maxSize);
 		renderblocks.setRenderBoundsFromBlock(block);
 		if (!west)
