@@ -40,15 +40,15 @@ public class FacadeMatrix {
 
 	public void readData(DataInputStream data) throws IOException {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			_blockIds[i] = data.readInt();
-			_blockMetas[i] = data.readInt();
+			_blockIds[i] = data.readShort();
+			_blockMetas[i] = data.readByte();
 		}
 	}
 
 	public void writeData(DataOutputStream data) throws IOException {
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			data.writeInt(_blockIds[i]);
-			data.writeInt(_blockMetas[i]);
+			data.writeShort(_blockIds[i]);
+			data.writeByte(_blockMetas[i]);
 		}
 	}
 }
