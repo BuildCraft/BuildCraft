@@ -91,8 +91,8 @@ public class BlockFloodGate extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
-		textureTop = par1IconRegister.registerIcon("buildcraft:pump_top");
-		textureBottom = par1IconRegister.registerIcon("buildcraft:pump_bottom");
-		textureSide = par1IconRegister.registerIcon("buildcraft:pump_side");
+		textureTop = par1IconRegister.registerIcon("buildcraft:floodgate_top");
+		textureBottom = par1IconRegister.registerIcon("buildcraft:floodgate_bottom");
+		textureSide = par1IconRegister.registerIcon("buildcraft:floodgate_side");
 	}
 }

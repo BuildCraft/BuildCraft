@@ -30,7 +30,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
-	public static final int[] REBUID_DELAY = new int[8];
+	public static final int[] REBUILD_DELAY = new int[8];
 	public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
 	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
 	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
@@ -40,14 +40,14 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	private int tick = Utils.RANDOM.nextInt();
 
 	static {
-		REBUID_DELAY[0] = 128;
-		REBUID_DELAY[1] = 256;
-		REBUID_DELAY[2] = 512;
-		REBUID_DELAY[3] = 1024;
-		REBUID_DELAY[4] = 2048;
-		REBUID_DELAY[5] = 4096;
-		REBUID_DELAY[6] = 8192;
-		REBUID_DELAY[7] = 16384;
+		REBUILD_DELAY[0] = 128;
+		REBUILD_DELAY[1] = 256;
+		REBUILD_DELAY[2] = 512;
+		REBUILD_DELAY[3] = 1024;
+		REBUILD_DELAY[4] = 2048;
+		REBUILD_DELAY[5] = 4096;
+		REBUILD_DELAY[6] = 8192;
+		REBUILD_DELAY[7] = 16384;
 	}
 
 	public TileFloodGate() {
@@ -65,10 +65,10 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		if (tick % 16 == 0) {
 			FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
 			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME && fluidtoFill.getFluid() != null) {
-				if (tick % REBUID_DELAY[rebuildDelay] == 0) {
+				if (tick % REBUILD_DELAY[rebuildDelay] == 0) {
 					rebuildDelay++;
-					if (rebuildDelay >= REBUID_DELAY.length)
-						rebuildDelay = REBUID_DELAY.length - 1;
+					if (rebuildDelay >= REBUILD_DELAY.length)
+						rebuildDelay = REBUILD_DELAY.length - 1;
 					rebuildQueue();
 				}
 				BlockIndex index = getNextIndexToFill(true);
