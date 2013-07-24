@@ -65,7 +65,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(1, 8, 10, 100);
+		powerHandler.configure(1, 15, 10, 100);
 		powerHandler.configurePowerPerdition(1, 100);
 	}
 
@@ -88,7 +88,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			return;
 		}
 
-		if (worldObj.getWorldTime() % 4 != 0)
+		if (worldObj.getWorldTime() % 16 != 0)
 			return;
 
 		BlockIndex index = getNextIndexToPump(false);
@@ -126,17 +126,17 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			}
 		}
 
-		FluidStack liquid = tank.getFluid();
-		if (liquid != null && liquid.amount >= 0) {
+		FluidStack fluidStack = tank.getFluid();
+		if (fluidStack != null && fluidStack.amount >= 0) {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = getTile(side);
 
 				if (tile instanceof IFluidHandler) {
-					int moved = ((IFluidHandler) tile).fill(side.getOpposite(), liquid, true);
+					int moved = ((IFluidHandler) tile).fill(side.getOpposite(), fluidStack, true);
 					if (moved > 0) {
 						tank.drain(moved, true);
-						liquid = tank.getFluid();
-						if (liquid == null || liquid.amount <= 0) {
+						fluidStack = tank.getFluid();
+						if (fluidStack == null || fluidStack.amount <= 0) {
 							break;
 						}
 					}
