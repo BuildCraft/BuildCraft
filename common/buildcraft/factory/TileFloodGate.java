@@ -29,13 +29,23 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
-	public static int REBUID_DELAY = 512;
-	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
+	public static final int[] REBUID_DELAY = new int[7];
+	public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
 	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
 	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
 	private Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
-	private SafeTimeTracker timer = new SafeTimeTracker();
-	Tank tank;
+	private final Tank tank;
+	private int rebuildDelay;
+
+	static {
+		REBUID_DELAY[0] = 128;
+		REBUID_DELAY[1] = 256;
+		REBUID_DELAY[2] = 512;
+		REBUID_DELAY[3] = 1024;
+		REBUID_DELAY[4] = 2048;
+		REBUID_DELAY[5] = 4096;
+		REBUID_DELAY[6] = 8192;
+	}
 
 	public TileFloodGate() {
 		tank = new Tank("tank", MAX_LIQUID);
@@ -48,15 +58,21 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
-		if (worldObj.getWorldTime() % 4 != 0)
-			return;
+		if (worldObj.getWorldTime() % 16 == 0) {
+			FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
+			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME && fluidtoFill.getFluid() != null) {
+				if (worldObj.getWorldTime() % REBUID_DELAY[rebuildDelay] == 0) {
+					rebuildDelay++;
+					if (rebuildDelay >= REBUID_DELAY.length)
+						rebuildDelay = REBUID_DELAY.length - 1;
+					rebuildQueue();
+				}
+				BlockIndex index = getNextIndexToFill(true);
 
-		FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
-		if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME && fluidtoFill.getFluid() != null) {
-			BlockIndex index = getNextIndexToFill(true);
-
-			if (index != null && placeFluid(index.x, index.y, index.z, fluidtoFill.getFluid())) {
-				tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
+				if (index != null && placeFluid(index.x, index.y, index.z, fluidtoFill.getFluid())) {
+					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
+					rebuildDelay = 0;
+				}
 			}
 		}
 	}
@@ -76,12 +92,6 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
 	private BlockIndex getNextIndexToFill(boolean remove) {
 		if (pumpLayerQueues.isEmpty()) {
-			if (timer.markTimeIfDelay(worldObj, REBUID_DELAY)) {
-				rebuildQueue();
-			} else {
-				queueAdjacent(xCoord, yCoord, zCoord);
-				expandQueue();
-			}
 			return null;
 		}
 
@@ -154,7 +164,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			int blockId = worldObj.getBlockId(x, y, z);
 			if (BlockUtil.getFluid(blockId) == tank.getFluidType()) {
 				fluidsFound.add(index);
-			} 
+			}
 			if (canPlaceFluid(blockId, x, y, z)) {
 				getLayerQueue(y).addLast(index);
 			}
