@@ -10,7 +10,7 @@ package buildcraft.transport;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.transport.IPipeEntry;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 import buildcraft.core.proxy.CoreProxy;
@@ -159,6 +159,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 	}
 
+	@Override
+	public PipeType getPipeType() {
+		return PipeType.FLUID;
+	}
+
 	public int getCapacity() {
 		return LIQUID_IN_PIPE;
 	}
@@ -176,7 +181,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				return false;
 		}
 
-		if (entity instanceof IPipeEntry || entity instanceof IFluidHandler)
+		if (entity instanceof IFluidHandler)
 			return true;
 
 		return false;

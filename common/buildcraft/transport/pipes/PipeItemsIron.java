@@ -9,7 +9,6 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.transport.IPipeEntry;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -31,13 +30,13 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 			TileEntity tile = pipe.container.getTile(facing);
 			if (tile instanceof TileGenericPipe) {
 				Pipe otherPipe = ((TileGenericPipe) tile).pipe;
-				if (otherPipe instanceof PipeItemsWood || otherPipe instanceof PipeStructureCobblestone)
+				if (otherPipe instanceof PipeItemsWood)
 					return false;
 				if (otherPipe.transport instanceof PipeTransportItems)
 					return true;
 				return false;
 			}
-			if (tile instanceof IPipeEntry || tile instanceof IInventory)
+			if (tile instanceof IInventory)
 				return true;
 			return false;
 		}

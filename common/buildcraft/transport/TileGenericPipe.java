@@ -18,8 +18,6 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeEntry;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.ISolidSideTile;
 import buildcraft.core.DefaultProps;
@@ -53,8 +51,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeEntry, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
-		IPipeConnection, IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
+public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler, IPipeTile, IOverrideDefaultTriggers, ITileBufferHolder,
+		IDropControlInventory, IPipeRenderState, ISyncedTile, ISolidSideTile {
 
 	private class CoreState implements IClientState {
 
@@ -309,7 +307,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		return pipe;
 	}
 
-	@Override
 	public boolean isInitialized() {
 		return initialized;
 	}
@@ -335,30 +332,30 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 
 	/* IPIPEENTRY */
 	@Override
-	public boolean entityEntering(ItemStack payload, ForgeDirection orientation) {
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems) {
-			/* FIXME: This is untested guesswork */
-			Position itemPos = new Position(xCoord, yCoord, zCoord, orientation);
-			itemPos.moveBackwards(1.0);
+	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from) {
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from)) {
+			if (doAdd) {
+				Position itemPos = new Position(xCoord, yCoord, zCoord, from.getOpposite());
+				itemPos.moveBackwards(1.0);
 
-			itemPos.x += 0.5;
-			itemPos.y += Utils.getPipeFloorOf(payload);
-			itemPos.z += 0.5;
-			itemPos.moveForwards(0.5);
+				itemPos.x += 0.5;
+				itemPos.y += Utils.getPipeFloorOf(payload);
+				itemPos.z += 0.5;
+				itemPos.moveForwards(0.5);
 
-			EntityPassiveItem pipedItem = new EntityPassiveItem(worldObj, itemPos.x, itemPos.y, itemPos.z, payload);
-			((PipeTransportItems) pipe.transport).entityEntering(pipedItem, orientation);
-			return true;
+				EntityPassiveItem pipedItem = new EntityPassiveItem(worldObj, itemPos.x, itemPos.y, itemPos.z, payload);
+				((PipeTransportItems) pipe.transport).entityEntering(pipedItem, from.getOpposite());
+			}
+			return payload.stackSize;
 		}
-		return false;
+		return 0;
 	}
 
 	@Override
-	public boolean isItemPipe() {
+	public PipeType getPipeType() {
 		if (BlockGenericPipe.isValid(pipe))
-			return pipe.transport instanceof PipeTransportItems;
-		else
-			return false;
+			return pipe.transport.getPipeType();
+		return null;
 	}
 
 	/* SMP */

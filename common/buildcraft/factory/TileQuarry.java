@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent; 
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -31,7 +31,6 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
@@ -53,7 +52,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
-public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
+public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IBuilderInventory {
 
 	public @TileNetworkData
 	Box box = new Box();
@@ -442,12 +441,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	private void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
-		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
-		stack.stackSize -= added.stackSize;
+		stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0) {
-			Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
 		}
 
 		// Lastly, throw the object away
@@ -665,7 +663,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		isDigging = true;
 	}
 
-
 	@Override
 	public PowerReceiver getPowerReceiver(ForgeDirection side) {
 		return powerHandler.getPowerReceiver();
@@ -678,11 +675,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	@Override
 	public boolean manageSolids() {
-		return true;
-	}
-
-	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 

@@ -14,6 +14,7 @@ import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -58,13 +59,18 @@ public class PipeTransportPower extends PipeTransport {
 	private float[] internalPower = new float[6];
 	public float[] internalNextPower = new float[6];
 	public int maxPower = 8;
+	SafeTimeTracker tracker = new SafeTimeTracker();
 
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = 0;
 		}
 	}
-	SafeTimeTracker tracker = new SafeTimeTracker();
+
+	@Override
+	public PipeType getPipeType() {
+		return PipeType.POWER;
+	}
 
 	public void initFromPipe(Class<? extends Pipe> pipeClass) {
 		maxPower = powerCapacities.get(pipeClass);

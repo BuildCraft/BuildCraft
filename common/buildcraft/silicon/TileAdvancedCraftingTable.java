@@ -346,7 +346,7 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 		for (ItemStack output : outputs) {
 			output.stackSize -= Transactor.getTransactorFor(invOutput).add(output, ForgeDirection.UP, true).stackSize;
 			if (output.stackSize > 0) {
-				output.stackSize -= Utils.addToRandomInventory(output, worldObj, xCoord, yCoord, zCoord).stackSize;
+				output.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, output);
 			}
 			if (output.stackSize > 0) {
 				Utils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);

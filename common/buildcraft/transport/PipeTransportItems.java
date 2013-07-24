@@ -12,7 +12,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.api.transport.IPipeEntry;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityPassiveItem;
@@ -57,6 +57,11 @@ public class PipeTransportItems extends PipeTransport {
 	private int delay = 0;
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
+
+	@Override
+	public PipeType getPipeType() {
+		return PipeType.ITEM;
+	}
 
 	public void readjustSpeed(IPipedItem item) {
 		if (container.pipe instanceof IPipeTransportItemsHook) {
@@ -242,9 +247,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (!Utils.checkPipesConnections(entity, container))
 			return false;
 
-		if (entity instanceof IPipeEntry)
-			return true;
-		else if (entity instanceof TileGenericPipe) {
+		if (entity instanceof TileGenericPipe) {
 			TileGenericPipe pipe = (TileGenericPipe) entity;
 
 			return pipe.pipe.transport instanceof PipeTransportItems;
@@ -564,7 +567,7 @@ public class PipeTransportItems extends PipeTransport {
 				return false;
 		}
 
-		return tile instanceof TileGenericPipe || tile instanceof IPipeEntry || tile instanceof ISpecialInventory || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
+		return tile instanceof TileGenericPipe || tile instanceof ISpecialInventory || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
 				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
 

@@ -69,7 +69,6 @@ public class BlockGenericPipe extends BlockContainer {
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
-
 	}
 
 	@Override
