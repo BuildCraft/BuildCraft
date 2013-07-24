@@ -19,7 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class PipeFluidsIron extends Pipe {
+public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsIron_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();

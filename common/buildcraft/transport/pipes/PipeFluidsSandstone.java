@@ -20,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
-public class PipeFluidsSandstone extends Pipe implements IPipeTransportFluidsHook {
+public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IPipeTransportFluidsHook {
 
 	public PipeFluidsSandstone(int itemID) {
 		super(new PipeTransportFluids(), itemID);
@@ -42,7 +42,7 @@ public class PipeFluidsSandstone extends Pipe implements IPipeTransportFluidsHoo
 		if (!(container.getTile(from) instanceof TileGenericPipe))
 			return 0;
 
-		return ((PipeTransportFluids) transport).internalTanks[from.ordinal()].fill(resource, doFill);
+		return transport.internalTanks[from.ordinal()].fill(resource, doFill);
 	}
 
 	@Override

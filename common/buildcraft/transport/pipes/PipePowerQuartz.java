@@ -16,11 +16,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipePowerQuartz extends Pipe {
+public class PipePowerQuartz extends Pipe<PipeTransportPower> {
 
 	public PipePowerQuartz(int itemID) {
 		super(new PipeTransportPower(), itemID);
-		((PipeTransportPower) transport).initFromPipe(getClass());
+		transport.initFromPipe(getClass());
 	}
 
 	@Override

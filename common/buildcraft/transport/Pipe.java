@@ -34,11 +34,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public abstract class Pipe implements IPipe, IDropControlInventory {
+public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropControlInventory {
 
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
-	public final PipeTransport transport;
+	public final T transport;
 	public final int itemID;
 	private boolean internalUpdateScheduled = false;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
@@ -47,7 +47,7 @@ public abstract class Pipe implements IPipe, IDropControlInventory {
 	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 	public SafeTimeTracker actionTracker = new SafeTimeTracker();
 
-	public Pipe(PipeTransport transport, int itemID) {
+	public Pipe(T transport, int itemID) {
 		this.transport = transport;
 		this.itemID = itemID;
 

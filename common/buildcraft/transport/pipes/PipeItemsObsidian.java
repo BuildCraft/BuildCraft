@@ -34,7 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
+public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowerReceptor {
 
 	private PowerHandler powerHandler;
 	private int[] entitiesDropped;
@@ -250,7 +250,7 @@ public class PipeItemsObsidian extends Pipe implements IPowerReceptor {
 
 			passive.setSpeed((float) speed);
 
-			((PipeTransportItems) transport).entityEntering(passive, orientation);
+			transport.entityEntering(passive, orientation);
 		}
 	}
 

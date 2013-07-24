@@ -16,11 +16,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipePowerDiamond extends Pipe {
+public class PipePowerDiamond extends Pipe<PipeTransportPower> {
 
 	public PipePowerDiamond(int itemID) {
 		super(new PipeTransportPower(), itemID);
-		((PipeTransportPower) transport).initFromPipe(getClass());
+		transport.initFromPipe(getClass());
 	}
 
 	@Override

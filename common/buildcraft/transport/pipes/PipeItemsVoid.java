@@ -19,11 +19,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsVoid extends Pipe implements IItemTravelingHook {
+public class PipeItemsVoid extends Pipe<PipeTransportItems> implements IItemTravelingHook {
 
 	public PipeItemsVoid(int itemID) {
 		super(new PipeTransportItems(), itemID);
-		((PipeTransportItems) transport).travelHook = this;
+		transport.travelHook = this;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class PipeItemsVoid extends Pipe implements IItemTravelingHook {
 	// This is called when the void pipe is connected to multiple pipes
 	@Override
 	public void centerReached(PipeTransportItems pipe, EntityData data) {
-		((PipeTransportItems) transport).scheduleRemoval(data.item);
+		transport.scheduleRemoval(data.item);
 	}
 
 	@Override

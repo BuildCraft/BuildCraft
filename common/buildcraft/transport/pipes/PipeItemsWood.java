@@ -32,7 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsWood extends Pipe implements IPowerReceptor {
+public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerReceptor {
 
 	protected PowerHandler powerHandler;
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
@@ -139,7 +139,7 @@ public class PipeItemsWood extends Pipe implements IPowerReceptor {
 
 				IPipedItem entity = new EntityPassiveItem(container.worldObj, entityPos.x, entityPos.y, entityPos.z, stack);
 
-				((PipeTransportItems) transport).entityEntering(entity, entityPos.orientation);
+				transport.entityEntering(entity, entityPos.orientation);
 			}
 		}
 	}

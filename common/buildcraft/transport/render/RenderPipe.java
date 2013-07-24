@@ -262,8 +262,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	}
 
-	private void renderPower(Pipe pipe, double x, double y, double z) {
-		PipeTransportPower pow = (PipeTransportPower) pipe.transport;
+	private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
+		PipeTransportPower pow = pipe.transport;
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
@@ -299,8 +299,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderFluids(Pipe pipe, double x, double y, double z) {
-		PipeTransportFluids liq = (PipeTransportFluids) pipe.transport;
+	private void renderFluids(Pipe<PipeTransportFluids> pipe, double x, double y, double z) {
+		PipeTransportFluids liq = pipe.transport;
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -403,14 +403,14 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		return getDisplayFluidLists(liquidId, world);
 	}
 
-	private void renderSolids(Pipe pipe, double x, double y, double z) {
+	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
 		float light = pipe.container.worldObj.getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		int count = 0;
-		for (EntityData itemData : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
+		for (EntityData itemData : pipe.transport.travelingEntities.values()) {
 			if (count >= MAX_ITEMS_TO_RENDER) {
 				break;
 			}

@@ -9,7 +9,6 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -29,7 +28,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class PipeFluidsWood extends Pipe implements IPowerReceptor {
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerReceptor {
 
 	public @TileNetworkData
 	int liquidToExtract;
@@ -121,13 +120,13 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 			if (tile instanceof IFluidHandler) {
 				IFluidHandler fluidHandler = (IFluidHandler) tile;
 
-				int flowRate = ((PipeTransportFluids) transport).flowRate;
+				int flowRate = transport.flowRate;
 
 				FluidStack extracted = fluidHandler.drain(side.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
 				int inserted = 0;
 				if (extracted != null) {
-					inserted = ((PipeTransportFluids) transport).fill(side, extracted, true);
+					inserted = transport.fill(side, extracted, true);
 
 					fluidHandler.drain(side.getOpposite(), inserted, true);
 				}

@@ -21,7 +21,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsIron extends Pipe {
+public class PipeItemsIron extends Pipe<PipeTransportItems> {
 
 	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsIron_Standard.ordinal();
 	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
@@ -46,7 +46,7 @@ public class PipeItemsIron extends Pipe {
 	public PipeItemsIron(int itemID) {
 		super(new PipeTransportItems(), itemID);
 
-		((PipeTransportItems) transport).allowBouncing = true;
+		transport.allowBouncing = true;
 	}
 
 	@Override

@@ -35,7 +35,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, IClientState {
+public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IPipeTransportItemsHook, IClientState {
 
 	private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
 
@@ -130,7 +130,7 @@ public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, I
 
 	@Override
 	public void readjustSpeed(IPipedItem item) {
-		((PipeTransportItems) transport).defaultReajustSpeed(item);
+		transport.defaultReajustSpeed(item);
 	}
 	/* SAVING & LOADING */
 

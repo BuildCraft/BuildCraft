@@ -33,11 +33,11 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeItemsLapis extends Pipe implements IItemTravelingHook, IPipeTransportItemsHook {
+public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTravelingHook, IPipeTransportItemsHook {
 
 	public PipeItemsLapis(int itemID) {
 		super(new PipeTransportItems(), itemID);
-		((PipeTransportItems) transport).travelHook = this;
+		transport.travelHook = this;
 	}
 
 	@Override
