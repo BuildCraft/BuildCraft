@@ -79,11 +79,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.IMCCallback;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
@@ -94,7 +91,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import java.util.LinkedList;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.block.Block;
@@ -227,8 +223,8 @@ public class BuildCraftTransport {
 	}
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
-	@PreInit
-	public void preInitialize(FMLPreInitializationEvent evt) {
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent evt) {
 		try {
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
@@ -365,8 +361,8 @@ public class BuildCraftTransport {
 		}
 	}
 
-	@Init
-	public void load(FMLInitializationEvent evt) {
+	@EventHandler
+	public void init(FMLInitializationEvent evt) {
 		// Register connection handler
 		// MinecraftForge.registerConnectionHandler(new ConnectionHandler());
 
@@ -403,7 +399,7 @@ public class BuildCraftTransport {
 		NetworkRegistry.instance().registerGuiHandler(instance, new GuiHandler());
 	}
 
-	@PostInit
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		ItemFacade.initialize();
 		
@@ -435,7 +431,7 @@ public class BuildCraftTransport {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 	}
 
-	@IMCCallback
+	@EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		Splitter splitter = Splitter.on("@").trimResults();
 		for (IMCMessage m : event.getMessages()) {
