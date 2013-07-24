@@ -14,6 +14,7 @@ import buildcraft.core.liquids.FluidUtils;
 import buildcraft.core.liquids.Tank;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.Utils;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,13 +30,14 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
-	public static final int[] REBUID_DELAY = new int[7];
+	public static final int[] REBUID_DELAY = new int[8];
 	public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
 	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
 	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
 	private Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
 	private final Tank tank;
 	private int rebuildDelay;
+	private int tick = Utils.RANDOM.nextInt();
 
 	static {
 		REBUID_DELAY[0] = 128;
@@ -45,6 +47,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		REBUID_DELAY[4] = 2048;
 		REBUID_DELAY[5] = 4096;
 		REBUID_DELAY[6] = 8192;
+		REBUID_DELAY[7] = 16384;
 	}
 
 	public TileFloodGate() {
@@ -58,10 +61,11 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
 			return;
 
-		if (worldObj.getWorldTime() % 16 == 0) {
+		tick++;
+		if (tick % 16 == 0) {
 			FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
 			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME && fluidtoFill.getFluid() != null) {
-				if (worldObj.getWorldTime() % REBUID_DELAY[rebuildDelay] == 0) {
+				if (tick % REBUID_DELAY[rebuildDelay] == 0) {
 					rebuildDelay++;
 					if (rebuildDelay >= REBUID_DELAY.length)
 						rebuildDelay = REBUID_DELAY.length - 1;
@@ -179,12 +183,14 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		tank.readFromNBT(data);
+		rebuildDelay = data.getByte("rebuildDelay");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		tank.writeToNBT(data);
+		data.setByte("rebuildDelay", (byte) rebuildDelay);
 	}
 
 	@Override

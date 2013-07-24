@@ -57,6 +57,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 	private PowerHandler powerHandler;
 	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker();
+	private int tick = Utils.RANDOM.nextInt();
 
 	public TilePump() {
 		powerHandler = new PowerHandler(this, Type.MACHINE);
@@ -88,7 +89,8 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			return;
 		}
 
-		if (worldObj.getWorldTime() % 16 != 0)
+		tick++;
+		if (tick % 16 != 0)
 			return;
 
 		BlockIndex index = getNextIndexToPump(false);
@@ -108,7 +110,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				}
 			}
 		} else {
-			if (worldObj.getWorldTime() % 128 == 0) {
+			if (tick % 128 == 0) {
 				// TODO: improve that decision
 
 				rebuildQueue();
