@@ -42,7 +42,7 @@ public class PipeFluidsSandstone extends Pipe implements IPipeTransportFluidsHoo
 		if (!(container.getTile(from) instanceof TileGenericPipe))
 			return 0;
 
-		return ((PipeTransportFluids) this.transport).fill(from, resource, doFill);
+		return ((PipeTransportFluids) transport).internalTanks[from.ordinal()].fill(resource, doFill);
 	}
 
 	@Override

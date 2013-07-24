@@ -141,7 +141,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public short travelDelay = 12;
 	public short flowRate = 10;
 	public FluidStack[] renderCache = new FluidStack[orientations.length];
-	private final PipeSection[] internalTanks = new PipeSection[orientations.length];
+	public final PipeSection[] internalTanks = new PipeSection[orientations.length];
 	private final TransferState[] transferState = new TransferState[directions.length];
 	private final int[] inputPerTick = new int[directions.length];
 	private final short[] inputTTL = new short[]{0, 0, 0, 0, 0, 0};
