@@ -438,6 +438,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		dummyEntityItem.setEntityItemStack(itemstack);
 		customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
 		if (color != null) {
+			func_110628_a(TextureMap.field_110575_b);
 			BlockInterface block = new BlockInterface();
 
 			block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
