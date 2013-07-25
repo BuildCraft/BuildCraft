@@ -22,7 +22,7 @@ public abstract class PipeLogicIron {
 		this.pipe = pipe;
 	}
 
-	private void switchPower() {
+	public void switchOnRedstone() {
 		boolean currentPower = pipe.container.worldObj.isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		if (currentPower != lastPower) {
@@ -33,20 +33,13 @@ public abstract class PipeLogicIron {
 	}
 
 	private void switchPosition() {
-		int meta = pipe.container.worldObj.getBlockMetadata(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
-
-		ForgeDirection newFacing = null;
+		int meta = pipe.container.getBlockMetadata();
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
 			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
-			if (isValidFacing(facing)) {
-				newFacing = facing;
-				break;
+			if (setFacing(facing)) {
+				return;
 			}
-		}
-		if (newFacing != null && newFacing.ordinal() != meta) {
-			pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
-			pipe.container.scheduleRenderUpdate();
 		}
 	}
 
@@ -61,6 +54,15 @@ public abstract class PipeLogicIron {
 		switchPosition();
 	}
 
+	public boolean setFacing(ForgeDirection facing) {
+		if (isValidFacing(facing) && facing.ordinal() != pipe.container.getBlockMetadata()) {
+			pipe.container.worldObj.setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, facing.ordinal(), 3);
+			pipe.container.scheduleRenderUpdate();
+			return true;
+		}
+		return false;
+	}
+
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
@@ -72,10 +74,6 @@ public abstract class PipeLogicIron {
 		}
 
 		return false;
-	}
-
-	public void onNeighborBlockChange(int blockId) {
-		switchPower();
 	}
 
 	public boolean outputOpen(ForgeDirection to) {

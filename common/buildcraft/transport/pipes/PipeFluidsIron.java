@@ -47,7 +47,7 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 
 	@Override
 	public void onNeighborBlockChange(int blockId) {
-		logic.onNeighborBlockChange(blockId);
+		logic.switchOnRedstone();
 		super.onNeighborBlockChange(blockId);
 	}
 

@@ -70,6 +70,7 @@ import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 import buildcraft.transport.triggers.ActionPipeColor;
+import buildcraft.transport.triggers.ActionPipeDirection;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
 import buildcraft.transport.triggers.TriggerFilteredBufferInventoryLevel;
@@ -100,6 +101,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.Property;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -172,6 +174,7 @@ public class BuildCraftTransport {
 	public static BCAction actionEnergyPulser = new ActionEnergyPulser(DefaultProps.ACTION_ENERGY_PULSER);
 	public static BCAction actionSingleEnergyPulse = new ActionSingleEnergyPulse(DefaultProps.ACTION_SINGLE_ENERGY_PULSE);
 	public static BCAction[] actionPipeColor = new BCAction[16];
+	public static BCAction[] actionPipeDirection = new BCAction[16];
 	@Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
@@ -409,6 +412,10 @@ public class BuildCraftTransport {
 
 		for (EnumColor color : EnumColor.VALUES) {
 			actionPipeColor[color.ordinal()] = new ActionPipeColor(-1, color);
+		}
+
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(-1, direction);
 		}
 	}
 

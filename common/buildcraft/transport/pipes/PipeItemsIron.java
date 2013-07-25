@@ -9,12 +9,18 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.gates.IAction;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.triggers.ActionPipeColor;
+import buildcraft.transport.triggers.ActionPipeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
@@ -55,7 +61,7 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 
 	@Override
 	public void onNeighborBlockChange(int blockId) {
-		logic.onNeighborBlockChange(blockId);
+		logic.switchOnRedstone();
 		super.onNeighborBlockChange(blockId);
 	}
 
@@ -94,6 +100,28 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
+	}
+
+	@Override
+	protected void actionsActivated(Map<IAction, Boolean> actions) {
+		super.actionsActivated(actions);
+
+		for (Map.Entry<IAction, Boolean> action : actions.entrySet()) {
+			if (action.getKey() instanceof ActionPipeDirection && action.getValue() != null && action.getValue()) {
+				logic.setFacing(((ActionPipeDirection) action.getKey()).direction);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public LinkedList<IAction> getActions() {
+		LinkedList<IAction> action = super.getActions();
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (container.isPipeConnected(direction))
+				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
+		}
+		return action;
 	}
 
 	@Override
