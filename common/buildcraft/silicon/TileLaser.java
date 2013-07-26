@@ -114,7 +114,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	protected boolean isValidTable() {
 
-		if (laserTarget == null || laserTarget.isInvalid() || !laserTarget.hasCurrentWork())
+		if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.hasCurrentWork())
 			return false;
 
 		return true;

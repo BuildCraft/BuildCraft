@@ -525,4 +525,9 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 			lastMode = ActionMachineControl.Mode.Off;
 		}
 	}
+
+	@Override
+	public boolean isInvalidTarget() {
+		return isInvalid();
+	}
 }

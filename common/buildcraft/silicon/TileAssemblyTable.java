@@ -485,4 +485,9 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 		// TODO Auto-generated method stub
 		return true;
 	}
+
+	@Override
+	public boolean isInvalidTarget() {
+		return isInvalid();
+	}
 }
