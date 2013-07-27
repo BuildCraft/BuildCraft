@@ -86,7 +86,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		BlockInterface block = new BlockInterface();
 
 		Fluid fluid = FluidRegistry.getFluid(liquidId);
-		if (fluid.getBlockID() != 0) {
+		if (fluid.getBlockID() > 0) {
 			block.baseBlock = Block.blocksList[fluid.getBlockID()];
 		} else {
 			block.baseBlock = Block.waterStill;
