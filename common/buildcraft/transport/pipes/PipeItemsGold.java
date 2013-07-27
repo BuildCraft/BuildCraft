@@ -10,13 +10,12 @@ package buildcraft.transport.pipes;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.transport.IPipedItem;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.LinkedList;
@@ -40,17 +39,17 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, EntityData data) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem item) {
 		return possibleOrientations;
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+	public void entityEntered(TravelingItem item, ForgeDirection orientation) {
 		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
 	}
 
 	@Override
-	public void readjustSpeed(IPipedItem item) {
+	public void readjustSpeed(TravelingItem item) {
 		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
 	}
 }

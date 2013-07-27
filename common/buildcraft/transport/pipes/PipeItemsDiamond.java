@@ -10,17 +10,16 @@ package buildcraft.transport.pipes;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.transport.IPipedItem;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IClientState;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.io.DataInputStream;
@@ -90,7 +89,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IPipeT
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, EntityData data) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem item) {
 		LinkedList<ForgeDirection> filteredOrientations = new LinkedList<ForgeDirection>();
 		LinkedList<ForgeDirection> defaultOrientations = new LinkedList<ForgeDirection>();
 
@@ -108,10 +107,10 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IPipeT
 					foundFilter = true;
 				}
 
-				if (stack != null && stack.itemID == data.item.getItemStack().itemID)
-					if ((Item.itemsList[data.item.getItemStack().itemID].isDamageable())) {
+				if (stack != null && stack.itemID == item.getItemStack().itemID)
+					if ((Item.itemsList[item.getItemStack().itemID].isDamageable())) {
 						filteredOrientations.add(dir);
-					} else if (stack.getItemDamage() == data.item.getItemStack().getItemDamage()) {
+					} else if (stack.getItemDamage() == item.getItemStack().getItemDamage()) {
 						filteredOrientations.add(dir);
 					}
 			}
@@ -126,11 +125,11 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IPipeT
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+	public void entityEntered(TravelingItem item, ForgeDirection orientation) {
 	}
 
 	@Override
-	public void readjustSpeed(IPipedItem item) {
+	public void readjustSpeed(TravelingItem item) {
 		transport.defaultReajustSpeed(item);
 	}
 	/* SAVING & LOADING */

@@ -3,7 +3,7 @@ package buildcraft.transport.network;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.utils.EnumColor;
-import buildcraft.transport.EntityData;
+import buildcraft.transport.TravelingItem;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class PacketPipeTransportContent extends BuildCraftPacket {
 
-	private EntityData entityData;
+	private TravelingItem item;
 	private int entityId;
 	private ForgeDirection input;
 	private ForgeDirection output;
@@ -32,29 +32,29 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 	public PacketPipeTransportContent() {
 	}
 
-	public PacketPipeTransportContent(EntityData data) {
-		this.entityData = data;
+	public PacketPipeTransportContent(TravelingItem item) {
+		this.item = item;
 	}
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		data.writeFloat((float) entityData.item.getPosition().x);
-		data.writeFloat((float) entityData.item.getPosition().y);
-		data.writeFloat((float) entityData.item.getPosition().z);
+		data.writeFloat((float) item.getPosition().x);
+		data.writeFloat((float) item.getPosition().y);
+		data.writeFloat((float) item.getPosition().z);
 
-		data.writeShort(entityData.item.getEntityId());
+		data.writeShort(item.id);
 
-		data.writeByte((byte) entityData.input.ordinal());
-		data.writeByte((byte) entityData.output.ordinal());
+		data.writeByte((byte) item.input.ordinal());
+		data.writeByte((byte) item.output.ordinal());
 
-		data.writeShort(entityData.item.getItemStack().itemID);
-		data.writeByte((byte) entityData.item.getItemStack().stackSize);
-		data.writeShort(entityData.item.getItemStack().getItemDamage());
+		data.writeShort(item.getItemStack().itemID);
+		data.writeByte((byte) item.getItemStack().stackSize);
+		data.writeShort(item.getItemStack().getItemDamage());
 
-		data.writeByte(entityData.color != null ? entityData.color.ordinal() : -1);
+		data.writeByte(item.color != null ? item.color.ordinal() : -1);
 
-		data.writeFloat(entityData.item.getSpeed());
-		data.writeBoolean(entityData.item.getItemStack().hasTagCompound());
+		data.writeFloat(item.getSpeed());
+		data.writeBoolean(item.getItemStack().hasTagCompound());
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		this.hasNBT = data.readBoolean();
 	}
 
-	public int getEntityId() {
+	public int getTravellingItemId() {
 		return entityId;
 	}
 

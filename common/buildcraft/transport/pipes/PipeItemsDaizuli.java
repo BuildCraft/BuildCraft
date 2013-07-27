@@ -13,16 +13,14 @@ import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.network.TileNetworkData;
-import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.IPipeTransportItemsHook;
-import buildcraft.transport.IPipedItem;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionPipeColor;
 import buildcraft.transport.triggers.ActionPipeDirection;
 import cpw.mods.fml.relauncher.Side;
@@ -122,11 +120,11 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, EntityData data) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem item) {
 		LinkedList<ForgeDirection> newMovements = new LinkedList<ForgeDirection>();
 		EnumColor c = getColor();
 		for (ForgeDirection dir : possibleOrientations) {
-			if (data.color == c) {
+			if (item.color == c) {
 				if (dir.ordinal() == container.getBlockMetadata())
 					newMovements.add(dir);
 			} else if (dir.ordinal() != container.getBlockMetadata()) {
@@ -137,11 +135,11 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+	public void entityEntered(TravelingItem item, ForgeDirection orientation) {
 	}
 
 	@Override
-	public void readjustSpeed(IPipedItem item) {
+	public void readjustSpeed(TravelingItem item) {
 		if (item.getSpeed() > Utils.pipeNormalSpeed) {
 			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 4.0F);
 		}

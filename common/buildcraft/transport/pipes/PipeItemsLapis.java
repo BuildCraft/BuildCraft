@@ -12,15 +12,14 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.transport.IPipedItem;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.triggers.ActionPipeColor;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -83,20 +82,20 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 	}
 
 	@Override
-	public void drop(PipeTransportItems transport, EntityData data) {
+	public void drop(PipeTransportItems transport, TravelingItem data) {
 	}
 
 	@Override
-	public void centerReached(PipeTransportItems transport, EntityData data) {
-		data.color = getColor();
+	public void centerReached(PipeTransportItems transport, TravelingItem item) {
+		item.color = getColor();
 	}
 
 	@Override
-	public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile) {
+	public void endReached(PipeTransportItems pipe, TravelingItem item, TileEntity tile) {
 	}
 
 	@Override
-	public void readjustSpeed(IPipedItem item) {
+	public void readjustSpeed(TravelingItem item) {
 		if (item.getSpeed() > Utils.pipeNormalSpeed) {
 			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 4.0F);
 		}
@@ -107,12 +106,12 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 	}
 
 	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, EntityData data) {
+	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, TravelingItem travellingItem) {
 		return possibleOrientations;
 	}
 
 	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+	public void entityEntered(TravelingItem travellingItem, ForgeDirection orientation) {
 	}
 
 	@Override

@@ -15,9 +15,8 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.transport.IPipedItem;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.transport.EntityPassiveItem;
+import buildcraft.transport.TravelingItem;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
@@ -137,9 +136,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IPowerRec
 
 				entityPos.moveForwards(0.6);
 
-				IPipedItem entity = new EntityPassiveItem(container.worldObj, entityPos.x, entityPos.y, entityPos.z, stack);
+				TravelingItem entity = new TravelingItem( entityPos.x, entityPos.y, entityPos.z, stack);
 
-				transport.entityEntering(entity, entityPos.orientation);
+				transport.injectItem(entity, entityPos.orientation);
 			}
 		}
 	}

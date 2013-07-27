@@ -10,12 +10,12 @@ package buildcraft.transport.triggers;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.triggers.BCTrigger;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.PipePowerWood;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -88,16 +88,16 @@ public class TriggerPipeContents extends BCTrigger implements ITriggerPipe {
 			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
 
 			if (kind == Kind.Empty)
-				return transportItems.travelingEntities.isEmpty();
+				return transportItems.items.isEmpty();
 			else if (kind == Kind.ContainsItems)
 				if (parameter != null && parameter.getItem() != null) {
-					for (EntityData data : transportItems.travelingEntities.values()) {
-						if (data.item.getItemStack().itemID == parameter.getItem().itemID
-								&& data.item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
+					for (TravelingItem item : transportItems.items) {
+						if (item.getItemStack().itemID == parameter.getItem().itemID
+								&& item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
 							return true;
 					}
 				} else
-					return !transportItems.travelingEntities.isEmpty();
+					return !transportItems.items.isEmpty();
 		} else if (pipe.transport instanceof PipeTransportFluids) {
 			PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 

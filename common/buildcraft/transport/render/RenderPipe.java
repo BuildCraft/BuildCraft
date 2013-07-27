@@ -10,18 +10,17 @@ package buildcraft.transport.render;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
-import buildcraft.transport.IPipedItem;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import net.minecraft.block.Block;
@@ -410,13 +409,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		float light = pipe.container.worldObj.getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		int count = 0;
-		for (EntityData itemData : pipe.transport.travelingEntities.values()) {
+		for (TravelingItem travellingItem : pipe.transport.items) {
 			if (count >= MAX_ITEMS_TO_RENDER) {
 				break;
 			}
 
-			doRenderItem(itemData.item, x + itemData.item.getPosition().x - pipe.container.xCoord, y + itemData.item.getPosition().y - pipe.container.yCoord, z + itemData.item.getPosition().z
-					- pipe.container.zCoord, light, itemData.color);
+			doRenderItem(travellingItem, x + travellingItem.getPosition().x - pipe.container.xCoord, y + travellingItem.getPosition().y - pipe.container.yCoord, z + travellingItem.getPosition().z
+					- pipe.container.zCoord, light, travellingItem.color);
 			count++;
 		}
 
@@ -424,13 +423,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	public void doRenderItem(IPipedItem entityitem, double x, double y, double z, float light, EnumColor color) {
+	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
 
-		if (entityitem == null || entityitem.getItemStack() == null)
+		if (travellingItem == null || travellingItem.getItemStack() == null)
 			return;
 
 		float renderScale = 0.7f;
-		ItemStack itemstack = entityitem.getItemStack();
+		ItemStack itemstack = travellingItem.getItemStack();
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 		GL11.glTranslatef(0, 0.25F, 0);

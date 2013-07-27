@@ -9,11 +9,11 @@ package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
@@ -39,17 +39,17 @@ public class PipeItemsVoid extends Pipe<PipeTransportItems> implements IItemTrav
 
 	// This is called if the void pipe is only connected to one pipe
 	@Override
-	public void drop(PipeTransportItems pipe, EntityData data) {
-		data.item.getItemStack().stackSize = 0;
+	public void drop(PipeTransportItems pipe, TravelingItem item) {
+		item.getItemStack().stackSize = 0;
 	}
 
 	// This is called when the void pipe is connected to multiple pipes
 	@Override
-	public void centerReached(PipeTransportItems pipe, EntityData data) {
-		transport.scheduleRemoval(data.item);
+	public void centerReached(PipeTransportItems pipe, TravelingItem item) {
+		transport.items.scheduleRemoval(item);
 	}
 
 	@Override
-	public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile) {
+	public void endReached(PipeTransportItems pipe, TravelingItem item, TileEntity tile) {
 	}
 }

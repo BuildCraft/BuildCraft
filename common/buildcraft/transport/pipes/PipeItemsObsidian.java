@@ -14,8 +14,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.transport.IPipedItem;
-import buildcraft.transport.EntityPassiveItem;
+import buildcraft.transport.TravelingItem;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
@@ -246,11 +245,11 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 				CoreProxy.proxy.removeEntity(entity);
 			}
 
-			IPipedItem passive = new EntityPassiveItem(container.worldObj, container.xCoord + 0.5, container.yCoord + Utils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
+			TravelingItem passive = new TravelingItem(container.xCoord + 0.5, container.yCoord + Utils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
 
 			passive.setSpeed((float) speed);
 
-			transport.entityEntering(passive, orientation);
+			transport.injectItem(passive, orientation);
 		}
 	}
 

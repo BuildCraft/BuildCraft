@@ -342,8 +342,8 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				itemPos.z += 0.5;
 				itemPos.moveForwards(0.5);
 
-				EntityPassiveItem pipedItem = new EntityPassiveItem(worldObj, itemPos.x, itemPos.y, itemPos.z, payload);
-				((PipeTransportItems) pipe.transport).entityEntering(pipedItem, from.getOpposite());
+				TravelingItem pipedItem = new TravelingItem(itemPos.x, itemPos.y, itemPos.z, payload);
+				((PipeTransportItems) pipe.transport).injectItem(pipedItem, from.getOpposite());
 			}
 			return payload.stackSize;
 		}

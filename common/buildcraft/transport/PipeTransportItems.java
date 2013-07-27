@@ -23,16 +23,18 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportContent;
 import buildcraft.transport.network.PacketPipeTransportNBT;
 import buildcraft.transport.network.PacketSimpleId;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.HashBiMap;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import net.minecraft.entity.item.EntityItem;
@@ -50,18 +52,78 @@ public class PipeTransportItems extends PipeTransport {
 	public static final int MAX_PIPE_STACKS = 64;
 	public static final int MAX_PIPE_ITEMS = 1024;
 	public boolean allowBouncing = false;
-	public Map<Integer, EntityData> travelingEntities = new HashMap<Integer, EntityData>();
-	private final List<EntityData> entitiesToLoad = new LinkedList<EntityData>();
-	private int delay = 0;
 	// TODO: generalize the use of this hook in particular for obsidian pipe
 	public IItemTravelingHook travelHook;
+	public final TravelerSet items = new TravelerSet();
+
+	public class TravelerSet extends ForwardingSet<TravelingItem> {
+
+		private final BiMap<Integer, TravelingItem> delegate = HashBiMap.create();
+		private final Set<TravelingItem> toLoad = new HashSet<TravelingItem>();
+		private final Set<TravelingItem> toRemove = new HashSet<TravelingItem>();
+		private int delay = 0;
+
+		@Override
+		protected Set<TravelingItem> delegate() {
+			return delegate.values();
+		}
+
+		@Override
+		public boolean add(TravelingItem item) {
+			if (delegate.containsValue(item))
+				return false;
+			item.setContainer(container);
+			delegate.put(item.id, item);
+			return true;
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends TravelingItem> collection) {
+			boolean changed = false;
+			for (TravelingItem item : collection) {
+				changed |= add(item);
+			}
+			return changed;
+		}
+
+		public TravelingItem get(int id) {
+			return delegate.get(id);
+		}
+
+		private void scheduleLoad(TravelingItem item) {
+			delay = 2;
+			toLoad.add(item);
+		}
+
+		private void performLoad() {
+			if (delay > 0) {
+				delay--;
+				return;
+			}
+			addAll(toLoad);
+			toLoad.clear();
+		}
+
+		public boolean scheduleRemoval(TravelingItem item) {
+			return toRemove.add(item);
+		}
+
+		public boolean unscheduleRemoval(TravelingItem item) {
+			return toRemove.remove(item);
+		}
+
+		private void performRemoval() {
+			removeAll(toRemove);
+			toRemove.clear();
+		}
+	};
 
 	@Override
 	public PipeType getPipeType() {
 		return PipeType.ITEM;
 	}
 
-	public void readjustSpeed(IPipedItem item) {
+	public void readjustSpeed(TravelingItem item) {
 		if (container.pipe instanceof IPipeTransportItemsHook) {
 			((IPipeTransportItemsHook) container.pipe).readjustSpeed(item);
 		} else {
@@ -69,7 +131,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 
-	public void defaultReajustSpeed(IPipedItem item) {
+	public void defaultReajustSpeed(TravelingItem item) {
 		float speed = item.getSpeed();
 
 		if (speed > Utils.pipeNormalSpeed) {
@@ -83,66 +145,49 @@ public class PipeTransportItems extends PipeTransport {
 		item.setSpeed(speed);
 	}
 
-	public void entityEntering(IPipedItem item, ForgeDirection inputOrientation) {
-		EntityData data = travelingEntities.get(item.getEntityId());
-
-		if (data == null) {
-			data = new EntityData(item, inputOrientation);
-		}
-		entityEntering(data, inputOrientation);
-	}
-
-	public void entityEntering(EntityData data, ForgeDirection inputOrientation) {
-		if (data.item.isCorrupted())
+	public void injectItem(TravelingItem item, ForgeDirection inputOrientation) {
+		if (item.isCorrupted())
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
 
-		data.reset();
-		data.input = inputOrientation;
+		item.reset();
+		item.input = inputOrientation;
 
-		EntityData existingData = travelingEntities.get(data.item.getEntityId());
+		items.add(item);
 
-		if (existingData == null) {
-			travelingEntities.put(data.item.getEntityId(), data);
-		} else {
-			data = existingData;
-		}
-
-		data.item.setContainer(container);
-
-		readjustSpeed(data.item);
+		readjustSpeed(item);
 
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
 		if (inputOrientation != ForgeDirection.UP && inputOrientation != ForgeDirection.DOWN) {
-			data.item.setPosition(data.item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), data.item.getPosition().z);
+			item.setPosition(item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
 		}
 
 		if (!container.worldObj.isRemote) {
-			data.output = resolveDestination(data);
+			item.output = resolveDestination(item);
 		}
 
 		if (container.pipe instanceof IPipeTransportItemsHook) {
-			((IPipeTransportItemsHook) container.pipe).entityEntered(data.item, inputOrientation);
+			((IPipeTransportItemsHook) container.pipe).entityEntered(item, inputOrientation);
 		}
 
 		if (!container.worldObj.isRemote) {
-			sendItemPacket(data);
+			sendItemPacket(item);
 
-			if (travelingEntities.size() > BuildCraftTransport.groupItemsTrigger) {
+			if (items.size() > BuildCraftTransport.groupItemsTrigger) {
 				groupEntities();
 			}
 
-			if (travelingEntities.size() > MAX_PIPE_STACKS) {
-				BuildCraftCore.bcLog.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, travelingEntities.size()));
+			if (items.size() > MAX_PIPE_STACKS) {
+				BuildCraftCore.bcLog.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
 				destroyPipe();
 				return;
 			}
 
 			int numItems = 0;
-			for (EntityData ed : travelingEntities.values()) {
-				ItemStack stack = ed.item.getItemStack();
+			for (TravelingItem travellingItem : items) {
+				ItemStack stack = travellingItem.getItemStack();
 				if (stack != null && stack.stackSize > 0)
 					numItems += stack.stackSize;
 			}
@@ -150,7 +195,6 @@ public class PipeTransportItems extends PipeTransport {
 			if (numItems > MAX_PIPE_ITEMS) {
 				BuildCraftCore.bcLog.log(Level.WARNING, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord, container.yCoord, container.zCoord, numItems));
 				destroyPipe();
-				return;
 			}
 		}
 	}
@@ -161,44 +205,43 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	/**
-	 * Bounces the item back into the pipe without changing the
-	 * travelingEntities map.
+	 * Bounces the item back into the pipe without changing the items map.
 	 *
-	 * @param data
+	 * @param item
 	 */
-	protected void reverseItem(EntityData data) {
-		if (data.item.isCorrupted())
+	protected void reverseItem(TravelingItem item) {
+		if (item.isCorrupted())
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
 			return;
 
-		unscheduleRemoval(data.item);
+		items.unscheduleRemoval(item);
 
-		data.toCenter = true;
-		data.input = data.output.getOpposite();
+		item.toCenter = true;
+		item.input = item.output.getOpposite();
 
-		readjustSpeed(data.item);
+		readjustSpeed(item);
 
 		// Reajusting Ypos to make sure the object looks like sitting on the
 		// pipe.
-		if (data.input != ForgeDirection.UP && data.input != ForgeDirection.DOWN) {
-			data.item.setPosition(data.item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), data.item.getPosition().z);
+		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
+			item.setPosition(item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
 		}
 
 		if (!container.worldObj.isRemote) {
-			data.output = resolveDestination(data);
+			item.output = resolveDestination(item);
 		}
 
 		if (container.pipe instanceof IPipeTransportItemsHook) {
-			((IPipeTransportItemsHook) container.pipe).entityEntered(data.item, data.input);
+			((IPipeTransportItemsHook) container.pipe).entityEntered(item, item.input);
 		}
 
 		if (!container.worldObj.isRemote) {
-			sendItemPacket(data);
+			sendItemPacket(item);
 		}
 	}
 
-	public ForgeDirection resolveDestination(EntityData data) {
+	public ForgeDirection resolveDestination(TravelingItem data) {
 		LinkedList<ForgeDirection> listOfPossibleMovements = getPossibleMovements(data);
 
 		if (listOfPossibleMovements.size() == 0)
@@ -213,33 +256,33 @@ public class PipeTransportItems extends PipeTransport {
 	 * Returns a list of all possible movements, that is to say adjacent
 	 * implementers of IPipeEntry or TileEntityChest.
 	 */
-	public LinkedList<ForgeDirection> getPossibleMovements(EntityData data) {
+	public LinkedList<ForgeDirection> getPossibleMovements(TravelingItem item) {
 		LinkedList<ForgeDirection> result = new LinkedList<ForgeDirection>();
 
-		data.blacklist.add(data.input.getOpposite());
+		item.blacklist.add(item.input.getOpposite());
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
-			if (!data.blacklist.contains(o) && container.pipe.outputOpen(o))
-				if (canReceivePipeObjects(o, data.item)) {
+			if (!item.blacklist.contains(o) && container.pipe.outputOpen(o))
+				if (canReceivePipeObjects(o, item)) {
 					result.add(o);
 				}
 		}
 
 		if (result.size() == 0 && allowBouncing) {
-			if (canReceivePipeObjects(data.input.getOpposite(), data.item)) {
-				result.add(data.input.getOpposite());
+			if (canReceivePipeObjects(item.input.getOpposite(), item)) {
+				result.add(item.input.getOpposite());
 			}
 		}
 
 		if (this.container.pipe instanceof IPipeTransportItemsHook) {
-			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, data.input);
-			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, data);
+			Position pos = new Position(container.xCoord, container.yCoord, container.zCoord, item.input);
+			result = ((IPipeTransportItemsHook) this.container.pipe).filterPossibleMovements(result, pos, item);
 		}
 
 		return result;
 	}
 
-	public boolean canReceivePipeObjects(ForgeDirection o, IPipedItem item) {
+	public boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
 		TileEntity entity = container.getTile(o);
 
 		if (!Utils.checkPipesConnections(entity, container))
@@ -260,130 +303,103 @@ public class PipeTransportItems extends PipeTransport {
 	public void updateEntity() {
 		moveSolids();
 	}
-	Set<Integer> toRemove = new HashSet<Integer>();
-
-	public void scheduleRemoval(IPipedItem item) {
-		toRemove.add(item.getEntityId());
-	}
-
-	public void unscheduleRemoval(IPipedItem item) {
-		toRemove.remove(item.getEntityId());
-	}
-
-	public void performRemoval() {
-		travelingEntities.keySet().removeAll(toRemove);
-		toRemove.clear();
-	}
 
 	private void moveSolids() {
-		if (delay > 0) {
-			delay--;
-		} else if (!entitiesToLoad.isEmpty()) {
-			for (EntityData data : entitiesToLoad) {
-				data.item.setWorld(container.worldObj);
-				data.item.setContainer(container);
-				travelingEntities.put(data.item.getEntityId(), data);
-			}
-			entitiesToLoad.clear();
-		}
-		performRemoval();
+		items.performLoad();
+		items.performRemoval();
 
-		for (EntityData data : travelingEntities.values()) {
-			if (data.item.isCorrupted()) {
-				scheduleRemoval(data.item);
-				data.item.remove();
+		for (TravelingItem item : items) {
+			if (item.isCorrupted()) {
+				items.scheduleRemoval(item);
 				continue;
 			}
 
-			if (data.item.getContainer() != this.container) {
-				scheduleRemoval(data.item);
+			if (item.getContainer() != this.container) {
+				items.scheduleRemoval(item);
 				continue;
 			}
 
-			Position motion = new Position(0, 0, 0, data.toCenter ? data.input : data.output);
-			motion.moveForwards(data.item.getSpeed());
+			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
+			motion.moveForwards(item.getSpeed());
 
-			Position pos = data.item.getPosition();
-			data.item.setPosition(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
-			pos = data.item.getPosition();
+			Position pos = item.getPosition();
+			item.setPosition(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
+			pos = item.getPosition();
 
-			if ((data.toCenter && middleReached(data, pos)) || outOfBounds(pos)) {
-				data.toCenter = false;
+			if ((item.toCenter && middleReached(item, pos)) || outOfBounds(pos)) {
+				item.toCenter = false;
 
 				// Reajusting to the middle
-				data.item.setPosition(container.xCoord + 0.5, container.yCoord + Utils.getPipeFloorOf(data.item.getItemStack()), container.zCoord + 0.5);
+				item.setPosition(container.xCoord + 0.5, container.yCoord + Utils.getPipeFloorOf(item.getItemStack()), container.zCoord + 0.5);
 
-				if (data.output == ForgeDirection.UNKNOWN) {
+				if (item.output == ForgeDirection.UNKNOWN) {
 					if (travelHook != null) {
-						travelHook.drop(this, data);
+						travelHook.drop(this, item);
 					}
 
 					EntityItem dropped = null;
 
-					if (!toRemove.contains(data.item.getEntityId())) {
-						dropped = data.item.toEntityItem(data.input);
+					if (items.scheduleRemoval(item)) {
+						dropped = item.toEntityItem(item.input);
 					}
-
-					scheduleRemoval(data.item);
 
 					if (dropped != null) {
 						onDropped(dropped);
 					}
 				} else {
 					if (travelHook != null) {
-						travelHook.centerReached(this, data);
+						travelHook.centerReached(this, item);
 					}
 				}
 
-			} else if (!data.toCenter && endReached(pos)) {
-				TileEntity tile = container.getTile(data.output);
+			} else if (!item.toCenter && endReached(pos)) {
+				TileEntity tile = container.getTile(item.output);
 
 				if (travelHook != null) {
-					travelHook.endReached(this, data, tile);
+					travelHook.endReached(this, item, tile);
 				}
 
 				// If the item has not been scheduled to removal by the hook
-				if (!toRemove.contains(data.item.getEntityId())) {
-					scheduleRemoval(data.item);
-					handleTileReached(data, tile);
+				if (items.scheduleRemoval(item)) {
+					handleTileReached(item, tile);
 				}
 
 			}
 		}
 
-		performRemoval();
+		items.performRemoval();
 	}
 
-	private boolean passToNextPipe(EntityData data, TileEntity tile) {
+	private boolean passToNextPipe(TravelingItem item, TileEntity tile) {
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipe = (TileGenericPipe) tile;
 			if (BlockGenericPipe.isValid(pipe.pipe) && pipe.pipe.transport instanceof PipeTransportItems) {
-				((PipeTransportItems) pipe.pipe.transport).entityEntering(data, data.output);
+				((PipeTransportItems) pipe.pipe.transport).injectItem(item, item.output);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private void handleTileReached(EntityData data, TileEntity tile) {
-		if (passToNextPipe(data, tile)) {
+	private void handleTileReached(TravelingItem item, TileEntity tile) {
+		if (passToNextPipe(item, tile)) {
 			// NOOP
 		} else if (tile instanceof IInventory) {
 			if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-				ItemStack added = Transactor.getTransactorFor(tile).add(data.item.getItemStack(), data.output.getOpposite(), true);
+				ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
 
-				data.item.getItemStack().stackSize -= added.stackSize;
+				item.getItemStack().stackSize -= added.stackSize;
 
-				if (data.item.getItemStack().stackSize > 0) {
-					reverseItem(data);
+				if (item.getItemStack().stackSize > 0) {
+					reverseItem(item);
 				}
 			}
 		} else {
 			if (travelHook != null) {
-				travelHook.drop(this, data);
+				travelHook.drop(this, item);
 			}
 
-			EntityItem dropped = data.item.toEntityItem(data.output);
+			EntityItem dropped = item.toEntityItem(item.output);
 
 			if (dropped != null) {
 				// On SMP, the client side doesn't actually drops
@@ -393,9 +409,9 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 
-	protected boolean middleReached(EntityData entity, Position pos) {
-		float middleLimit = entity.item.getSpeed() * 1.01F;
-		return (Math.abs(container.xCoord + 0.5 - pos.x) < middleLimit && Math.abs(container.yCoord + Utils.getPipeFloorOf(entity.item.getItemStack()) - pos.y) < middleLimit && Math
+	protected boolean middleReached(TravelingItem item, Position pos) {
+		float middleLimit = item.getSpeed() * 1.01F;
+		return (Math.abs(container.xCoord + 0.5 - pos.x) < middleLimit && Math.abs(container.yCoord + Utils.getPipeFloorOf(item.getItemStack()) - pos.y) < middleLimit && Math
 				.abs(container.zCoord + 0.5 - pos.z) < middleLimit);
 	}
 
@@ -421,27 +437,19 @@ public class PipeTransportItems extends PipeTransport {
 			try {
 				NBTTagCompound dataTag = (NBTTagCompound) nbttaglist.tagAt(j);
 
-				IPipedItem entity = new EntityPassiveItem(null);
-				entity.readFromNBT(dataTag);
+				TravelingItem item = new TravelingItem();
+				item.readFromNBT(dataTag);
 
-				if (entity.isCorrupted()) {
-					entity.remove();
+				if (item.isCorrupted()) {
 					continue;
 				}
 
-				entity.setContainer(container);
-
-				EntityData data = new EntityData(entity);
-				data.readFromNBT(dataTag);
-
-				entitiesToLoad.add(data);
+				items.scheduleLoad(item);
 			} catch (Throwable t) {
-				t.printStackTrace();
 				// It may be the case that entities cannot be reloaded between
 				// two versions - ignore these errors.
 			}
 		}
-		delay = 2;
 	}
 
 	@Override
@@ -450,11 +458,10 @@ public class PipeTransportItems extends PipeTransport {
 
 		NBTTagList nbttaglist = new NBTTagList();
 
-		for (EntityData data : travelingEntities.values()) {
+		for (TravelingItem item : items) {
 			NBTTagCompound dataTag = new NBTTagCompound();
 			nbttaglist.appendTag(dataTag);
-			data.item.writeToNBT(dataTag);
-			data.writeToNBT(dataTag);
+			item.writeToNBT(dataTag);
 		}
 
 		nbt.setTag("travelingEntities", nbttaglist);
@@ -473,26 +480,22 @@ public class PipeTransportItems extends PipeTransport {
 		if (packet.getID() != PacketIds.PIPE_CONTENTS)
 			return;
 
-		IPipedItem item;
-		EntityData data = travelingEntities.get(packet.getEntityId());
-		if (data == null) {
-			item = EntityPassiveItem.getOrCreate(container.worldObj, packet.getEntityId());
-			data = new EntityData(item);
-			travelingEntities.put(item.getEntityId(), data);
-		} else {
-			item = data.item;
+		TravelingItem item = items.get(packet.getTravellingItemId());
+		if (item == null) {
+			item = new TravelingItem(packet.getTravellingItemId());
+			items.add(item);
 		}
 
 		if (item.getItemStack() == null) {
 			item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
 			if (packet.hasNBT()) {
-				PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getEntityId()).getPacket());
+				PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getTravellingItemId()).getPacket());
 			}
 		} else {
 			if (item.getItemStack().itemID != packet.getItemId() || item.getItemStack().stackSize != packet.getStackSize() || item.getItemStack().getItemDamage() != packet.getItemDamage() || item.getItemStack().hasTagCompound() != packet.hasNBT()) {
 				item.setItemStack(new ItemStack(packet.getItemId(), packet.getStackSize(), packet.getItemDamage()));
 				if (packet.hasNBT()) {
-					PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getEntityId()).getPacket());
+					PacketDispatcher.sendPacketToServer(new PacketSimpleId(PacketIds.REQUEST_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, packet.getTravellingItemId()).getPacket());
 				}
 			}
 		}
@@ -503,31 +506,29 @@ public class PipeTransportItems extends PipeTransport {
 
 		item.setSpeed(packet.getSpeed());
 
-		item.setContainer(container);
-
-		data.input = packet.getInputOrientation();
-		data.output = packet.getOutputOrientation();
-		data.color = packet.getColor();
+		item.input = packet.getInputOrientation();
+		item.output = packet.getOutputOrientation();
+		item.color = packet.getColor();
 	}
 
 	/**
-	 * Handles the NBT tag Request from player of the entityId
+	 * Handles the NBT tag Request from player of the id
 	 */
 	public void handleNBTRequestPacket(EntityPlayer player, int entityId) {
-		EntityData data = travelingEntities.get(entityId);
-		if (data == null || data.item == null || data.item.getItemStack() == null)
+		TravelingItem item = items.get(entityId);
+		if (item == null || item.item == null || item.getItemStack() == null)
 			return;
-		PacketDispatcher.sendPacketToPlayer(new PacketPipeTransportNBT(PacketIds.PIPE_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, entityId, data.item.getItemStack().getTagCompound()).getPacket(), (Player) player);
+		PacketDispatcher.sendPacketToPlayer(new PacketPipeTransportNBT(PacketIds.PIPE_ITEM_NBT, container.xCoord, container.yCoord, container.zCoord, entityId, item.getItemStack().getTagCompound()).getPacket(), (Player) player);
 	}
 
 	/**
 	 * Handles the Item NBT tag information of the packet
 	 */
 	public void handleNBTPacket(PacketPipeTransportNBT packet) {
-		EntityData data = travelingEntities.get(packet.getEntityId());
-		if (data == null || data.item == null || data.item.getItemStack() == null)
+		TravelingItem item = items.get(packet.getEntityId());
+		if (item == null || item.item == null || item.getItemStack() == null)
 			return;
-		data.item.getItemStack().setTagCompound(packet.getTagCompound());
+		item.getItemStack().setTagCompound(packet.getTagCompound());
 	}
 
 	/**
@@ -536,18 +537,18 @@ public class PipeTransportItems extends PipeTransport {
 	 * @param data
 	 * @return
 	 */
-	public Packet createItemPacket(EntityData data) {
+	public Packet createItemPacket(TravelingItem data) {
 		PacketPipeTransportContent packet = new PacketPipeTransportContent(data);
 		return packet.getPacket();
 	}
 
-	private void sendItemPacket(EntityData data) {
+	private void sendItemPacket(TravelingItem data) {
 		int dimension = container.worldObj.provider.dimensionId;
 		PacketDispatcher.sendPacketToAllAround(container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST, dimension, createItemPacket(data));
 	}
 
 	public int getNumberOfItems() {
-		return travelingEntities.size();
+		return items.size();
 	}
 
 	public void onDropped(EntityItem item) {
@@ -579,12 +580,11 @@ public class PipeTransportItems extends PipeTransport {
 	 */
 	public void groupEntities() {
 		// determine groupable entities
-		List<EntityData> entities = new ArrayList<EntityData>();
+		List<TravelingItem> entities = new ArrayList<TravelingItem>();
 
-		for (EntityData entityData : travelingEntities.values()) {
-			if (!entityData.item.hasContributions()
-					&& entityData.item.getItemStack().stackSize < entityData.item.getItemStack().getMaxStackSize()) {
-				entities.add(entityData);
+		for (TravelingItem item : items) {
+			if (!item.hasExtraData() && item.getItemStack().stackSize < item.getItemStack().getMaxStackSize()) {
+				entities.add(item);
 			}
 		}
 
@@ -592,12 +592,12 @@ public class PipeTransportItems extends PipeTransport {
 			return; // nothing groupable
 
 		// sort the groupable entities to have all entities with the same id:dmg next to each other (contiguous range)
-		Collections.sort(entities, new Comparator<EntityData>() {
+		Collections.sort(entities, new Comparator<TravelingItem>() {
 			@Override
-			public int compare(EntityData a, EntityData b) {
+			public int compare(TravelingItem a, TravelingItem b) {
 				// the item id is always less than 2^15 so the int won't overflow
-				int itemA = (a.item.getItemStack().itemID << 16) | a.item.getItemStack().getItemDamage();
-				int itemB = (b.item.getItemStack().itemID << 16) | b.item.getItemStack().getItemDamage();
+				int itemA = (a.getItemStack().itemID << 16) | a.getItemStack().getItemDamage();
+				int itemB = (b.getItemStack().itemID << 16) | b.getItemStack().getItemDamage();
 
 				return itemA - itemB;
 			}
@@ -605,10 +605,10 @@ public class PipeTransportItems extends PipeTransport {
 
 		// group the entities
 		int matchStart = 0;
-		int lastId = (entities.get(0).item.getItemStack().itemID << 16) | entities.get(0).item.getItemStack().getItemDamage();
+		int lastId = (entities.get(0).getItemStack().itemID << 16) | entities.get(0).getItemStack().getItemDamage();
 
 		for (int i = 1; i < entities.size(); i++) {
-			int id = (entities.get(i).item.getItemStack().itemID << 16) | entities.get(i).item.getItemStack().getItemDamage();
+			int id = (entities.get(i).getItemStack().itemID << 16) | entities.get(i).getItemStack().getItemDamage();
 
 			if (id != lastId) {
 				// merge within the last matching ID range
@@ -631,34 +631,33 @@ public class PipeTransportItems extends PipeTransport {
 	 * @param start start index (inclusive)
 	 * @param end end index (exclusive)
 	 */
-	private void groupEntityRange(List<EntityData> entities, int start, int end) {
+	private void groupEntityRange(List<TravelingItem> entities, int start, int end) {
 		for (int j = start; j < end; j++) {
-			EntityData target = entities.get(j);
+			TravelingItem target = entities.get(j);
 			if (target == null)
 				continue;
 
 			for (int k = j + 1; k < end; k++) {
-				EntityData source = entities.get(k);
+				TravelingItem source = entities.get(k);
 				if (source == null)
 					continue;
 
 				// only merge if the ItemStack tags match
-				if (ItemStack.areItemStackTagsEqual(source.item.getItemStack(), target.item.getItemStack())) {
+				if (ItemStack.areItemStackTagsEqual(source.getItemStack(), target.getItemStack())) {
 					// merge source to target
-					int amount = source.item.getItemStack().stackSize;
-					int space = target.item.getItemStack().getMaxStackSize() - target.item.getItemStack().stackSize;
+					int amount = source.getItemStack().stackSize;
+					int space = target.getItemStack().getMaxStackSize() - target.getItemStack().stackSize;
 
 					if (amount <= space) {
 						// source fits completely into target
-						target.item.getItemStack().stackSize += amount;
+						target.getItemStack().stackSize += amount;
 
-						source.item.remove();
-						travelingEntities.remove(source.item.getEntityId());
+						items.remove(source);
 						entities.set(k, null);
 					} else {
-						target.item.getItemStack().stackSize += space;
+						target.getItemStack().stackSize += space;
 
-						source.item.getItemStack().stackSize -= space;
+						source.getItemStack().stackSize -= space;
 					}
 
 					if (amount >= space) {
@@ -674,11 +673,11 @@ public class PipeTransportItems extends PipeTransport {
 	public void dropContents() {
 		groupEntities();
 
-		for (EntityData data : travelingEntities.values()) {
-			container.pipe.dropItem(data.item.getItemStack());
+		for (TravelingItem item : items) {
+			container.pipe.dropItem(item.getItemStack());
 		}
 
-		travelingEntities.clear();
+		items.clear();
 	}
 
 	@Override
