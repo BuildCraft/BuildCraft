@@ -54,16 +54,16 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 	}
 
 	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, container.xCoord, container.yCoord, container.zCoord)) {
-			if (entityplayer.isSneaking()) {
-				setColor(getColor().fromId(container.getBlockMetadata() - 1));
+	public boolean blockActivated(EntityPlayer player) {
+		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+			if (player.isSneaking()) {
+				setColor(getColor().getPrevious());
 			} else {
 				setColor(getColor().getNext());
 			}
 
-			((IToolWrench) equipped).wrenchUsed(entityplayer, container.xCoord, container.yCoord, container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
 			return true;
 		}
 

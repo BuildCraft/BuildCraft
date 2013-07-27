@@ -31,6 +31,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
 	@Override
 	public void wrenchUsed(EntityPlayer player, int x, int y, int z) {
+		player.swingItem();
 	}
 
 	@Override

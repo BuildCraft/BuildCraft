@@ -136,6 +136,11 @@ public enum EnumColor {
 		return next;
 	}
 
+	public EnumColor getPrevious() {
+		EnumColor previous = VALUES[(ordinal() + VALUES.length - 2) % (VALUES.length - 1)];
+		return previous;
+	}
+
 	public EnumColor inverse() {
 		return EnumColor.VALUES[15 - ordinal()];
 	}
