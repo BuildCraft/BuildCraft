@@ -64,7 +64,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		tick++;
 		if (tick % 16 == 0) {
 			FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
-			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME && fluidtoFill.getFluid() != null) {
+			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME && fluidtoFill.getFluid() != null && fluidtoFill.getFluid().canBePlacedInWorld()) {
 				if (tick % REBUILD_DELAY[rebuildDelay] == 0) {
 					rebuildDelay++;
 					if (rebuildDelay >= REBUILD_DELAY.length)
@@ -83,7 +83,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
 	private boolean placeFluid(int x, int y, int z, Fluid fluid) {
 		int blockId = worldObj.getBlockId(x, y, z);
-		if (canPlaceFluid(blockId, x, y, z)) {
+		if (canPlaceFluidAt(blockId, x, y, z)) {
 			boolean placed = worldObj.setBlock(x, y, z, FluidUtils.getFluidBlockId(fluid, true));
 			if (placed) {
 				queueAdjacent(x, y, z);
@@ -169,13 +169,13 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			if (BlockUtil.getFluid(blockId) == tank.getFluidType()) {
 				fluidsFound.add(index);
 			}
-			if (canPlaceFluid(blockId, x, y, z)) {
+			if (canPlaceFluidAt(blockId, x, y, z)) {
 				getLayerQueue(y).addLast(index);
 			}
 		}
 	}
 
-	private boolean canPlaceFluid(int blockId, int x, int y, int z) {
+	private boolean canPlaceFluidAt(int blockId, int x, int y, int z) {
 		return BlockUtil.isSoftBlock(blockId, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(blockId, worldObj, x, y, z);
 	}
 
