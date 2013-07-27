@@ -279,9 +279,13 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IPowe
 			}
 
 			return powerHandler.useEnergy(1, distance, false) >= distance;
-		} else if (entity instanceof EntityArrow)
-			return powerHandler.useEnergy(1, distance, false) >= distance;
-		else
+		} else if (entity instanceof EntityArrow) {
+			EntityArrow arrow = (EntityArrow) entity;
+			if (arrow.canBePickedUp == 1)
+				return powerHandler.useEnergy(1, distance, false) >= distance;
+			else
+				return false;
+		} else
 			return false;
 	}
 
