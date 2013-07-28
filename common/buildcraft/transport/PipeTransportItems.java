@@ -45,7 +45,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
@@ -92,7 +91,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		private void scheduleLoad(TravelingItem item) {
-			delay = 2;
+			delay = 10;
 			toLoad.add(item);
 		}
 

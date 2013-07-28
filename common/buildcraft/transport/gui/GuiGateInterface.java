@@ -56,7 +56,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
         @SideOnly(Side.CLIENT)
         @Override
-        public Icon getTexture() {
+        public Icon getIcon() {
         	ITrigger trigger = pipe.gate.getTrigger(slot);
         	if (trigger != null)
         		return trigger.getIcon();
@@ -97,7 +97,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@SideOnly(Side.CLIENT)
 		@Override
-		public Icon getTexture() {
+		public Icon getIcon() {
 			IAction action = pipe.gate.getAction(slot);
 			if (action != null)
 				return action.getIcon();
