@@ -45,11 +45,11 @@ public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public void entityEntered(TravelingItem item, ForgeDirection orientation) {
-		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
+		readjustSpeed(item);
 	}
 
 	@Override
 	public void readjustSpeed(TravelingItem item) {
-		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
+		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 20F));
 	}
 }

@@ -16,7 +16,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
@@ -27,7 +26,7 @@ public class TravelingItem {
 	protected float speed = 0.01F;
 	protected ItemStack item;
 	protected TileEntity container;
-	protected Position position;
+	public double xCoord, yCoord, zCoord;
 	public final int id;
 	public boolean toCenter = true;
 	public EnumColor color;
@@ -47,17 +46,23 @@ public class TravelingItem {
 
 	public TravelingItem(double x, double y, double z, ItemStack stack) {
 		this();
-		this.position = new Position(x, y, z);
+		this.xCoord = x;
+		this.yCoord = y;
+		this.zCoord = z;
 		this.item = stack.copy();
 	}
 
 	/* GETTING & SETTING */
-	public Position getPosition() {
-		return position;
+	public void setPosition(double x, double y, double z) {
+		this.xCoord = x;
+		this.yCoord = y;
+		this.zCoord = z;
 	}
 
-	public void setPosition(double x, double y, double z) {
-		position = new Position(x, y, z);
+	public void movePosition(double x, double y, double z) {
+		this.xCoord += x;
+		this.yCoord += y;
+		this.zCoord += z;
 	}
 
 	public float getSpeed() {
@@ -116,27 +121,14 @@ public class TravelingItem {
 		if (c != -1)
 			color = EnumColor.fromId(c);
 
-		NBTTagList contribList = data.getTagList("contribList");
-
-		for (int i = 0; i < contribList.tagCount(); ++i) {
-			NBTTagCompound cpt = (NBTTagCompound) contribList.tagAt(i);
-			String key = cpt.getString("key");
-
-			String className = cpt.getString("class");
-
-			if (getClass().getName().startsWith("net.minecraft.src")) {
-				className = "net.minecraft.src." + className;
-			}
-
-			if (data.hasKey("extraData"))
-				extraData = data.getCompoundTag("extraData");
-		}
+		if (data.hasKey("extraData"))
+			extraData = data.getCompoundTag("extraData");
 	}
 
 	public void writeToNBT(NBTTagCompound data) {
-		data.setDouble("x", position.x);
-		data.setDouble("y", position.y);
-		data.setDouble("z", position.z);
+		data.setDouble("x", xCoord);
+		data.setDouble("y", yCoord);
+		data.setDouble("z", zCoord);
 		data.setFloat("speed", getSpeed());
 		NBTTagCompound nbttagcompound2 = new NBTTagCompound();
 		getItemStack().writeToNBT(nbttagcompound2);
@@ -160,7 +152,7 @@ public class TravelingItem {
 			Position motion = new Position(0, 0, 0, dir);
 			motion.moveForwards(0.1 + getSpeed() * 2F);
 
-			EntityItem entityitem = new EntityItem(container.worldObj, position.x, position.y, position.z, getItemStack());
+			EntityItem entityitem = new EntityItem(container.worldObj, xCoord, yCoord, zCoord, getItemStack());
 
 			entityitem.lifespan = BuildCraftCore.itemLifespan;
 			entityitem.delayBeforeCanPickup = 10;
@@ -176,11 +168,11 @@ public class TravelingItem {
 	}
 
 	public float getEntityBrightness(float f) {
-		int i = MathHelper.floor_double(position.x);
-		int j = MathHelper.floor_double(position.z);
+		int i = MathHelper.floor_double(xCoord);
+		int j = MathHelper.floor_double(zCoord);
 		if (container.worldObj.blockExists(i, 128 / 2, j)) {
 			double d = 0.66000000000000003D;
-			int k = MathHelper.floor_double(position.y + d);
+			int k = MathHelper.floor_double(yCoord + d);
 			return container.worldObj.getLightBrightness(i, k, j);
 		} else
 			return 0.0F;

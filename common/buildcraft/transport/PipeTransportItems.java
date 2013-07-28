@@ -45,6 +45,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.ForgeDirection;
 
 public class PipeTransportItems extends PipeTransport {
@@ -124,11 +125,10 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	public void readjustSpeed(TravelingItem item) {
-		if (container.pipe instanceof IPipeTransportItemsHook) {
+		if (container.pipe instanceof IPipeTransportItemsHook)
 			((IPipeTransportItemsHook) container.pipe).readjustSpeed(item);
-		} else {
+		else
 			defaultReajustSpeed(item);
-		}
 	}
 
 	public void defaultReajustSpeed(TravelingItem item) {
@@ -145,6 +145,26 @@ public class PipeTransportItems extends PipeTransport {
 		item.setSpeed(speed);
 	}
 
+	private void readjustPosition(TravelingItem item) {
+		double x = item.xCoord;
+		double y = item.yCoord;
+		double z = item.zCoord;
+
+		x = Math.max(x, container.xCoord + 0.01);
+		y = Math.max(y, container.yCoord + 0.01);
+		z = Math.max(z, container.zCoord + 0.01);
+
+		x = Math.min(x, container.xCoord + 0.99);
+		y = Math.min(y, container.yCoord + 0.99);
+		z = Math.min(z, container.zCoord + 0.99);
+
+		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
+			y = container.yCoord + Utils.getPipeFloorOf(item.getItemStack());
+		}
+
+		item.setPosition(x, y, z);
+	}
+
 	public void injectItem(TravelingItem item, ForgeDirection inputOrientation) {
 		if (item.isCorrupted())
 			// Safe guard - if for any reason the item is corrupted at this
@@ -157,12 +177,8 @@ public class PipeTransportItems extends PipeTransport {
 		items.add(item);
 
 		readjustSpeed(item);
+		readjustPosition(item);
 
-		// Reajusting Ypos to make sure the object looks like sitting on the
-		// pipe.
-		if (inputOrientation != ForgeDirection.UP && inputOrientation != ForgeDirection.DOWN) {
-			item.setPosition(item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
-		}
 
 		if (!container.worldObj.isRemote) {
 			item.output = resolveDestination(item);
@@ -221,12 +237,7 @@ public class PipeTransportItems extends PipeTransport {
 		item.input = item.output.getOpposite();
 
 		readjustSpeed(item);
-
-		// Reajusting Ypos to make sure the object looks like sitting on the
-		// pipe.
-		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
-			item.setPosition(item.getPosition().x, container.yCoord + Utils.getPipeFloorOf(item.getItemStack()), item.getPosition().z);
-		}
+		readjustPosition(item);
 
 		if (!container.worldObj.isRemote) {
 			item.output = resolveDestination(item);
@@ -322,11 +333,9 @@ public class PipeTransportItems extends PipeTransport {
 			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
 			motion.moveForwards(item.getSpeed());
 
-			Position pos = item.getPosition();
-			item.setPosition(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
-			pos = item.getPosition();
+			item.movePosition(motion.x, motion.y, motion.z);
 
-			if ((item.toCenter && middleReached(item, pos)) || outOfBounds(pos)) {
+			if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
 				item.toCenter = false;
 
 				// Reajusting to the middle
@@ -352,7 +361,7 @@ public class PipeTransportItems extends PipeTransport {
 					}
 				}
 
-			} else if (!item.toCenter && endReached(pos)) {
+			} else if (!item.toCenter && endReached(item)) {
 				TileEntity tile = container.getTile(item.output);
 
 				if (travelHook != null) {
@@ -409,18 +418,18 @@ public class PipeTransportItems extends PipeTransport {
 		}
 	}
 
-	protected boolean middleReached(TravelingItem item, Position pos) {
+	protected boolean middleReached(TravelingItem item) {
 		float middleLimit = item.getSpeed() * 1.01F;
-		return (Math.abs(container.xCoord + 0.5 - pos.x) < middleLimit && Math.abs(container.yCoord + Utils.getPipeFloorOf(item.getItemStack()) - pos.y) < middleLimit && Math
-				.abs(container.zCoord + 0.5 - pos.z) < middleLimit);
+		return (Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit && Math.abs(container.yCoord + Utils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit && Math
+				.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit);
 	}
 
-	protected boolean endReached(Position pos) {
-		return pos.x > container.xCoord + 1 || pos.x < container.xCoord || pos.y > container.yCoord + 1 || pos.y < container.yCoord || pos.z > container.zCoord + 1 || pos.z < container.zCoord;
+	protected boolean endReached(TravelingItem item) {
+		return item.xCoord > container.xCoord + 1 || item.xCoord < container.xCoord || item.yCoord > container.yCoord + 1 || item.yCoord < container.yCoord || item.zCoord > container.zCoord + 1 || item.zCoord < container.zCoord;
 	}
 
-	protected boolean outOfBounds(Position pos) {
-		return pos.x > container.xCoord + 2 || pos.x < container.xCoord - 1 || pos.y > container.yCoord + 2 || pos.y < container.yCoord - 1 || pos.z > container.zCoord + 2 || pos.z < container.zCoord - 1;
+	protected boolean outOfBounds(TravelingItem item) {
+		return item.xCoord > container.xCoord + 2 || item.xCoord < container.xCoord - 1 || item.yCoord > container.yCoord + 2 || item.yCoord < container.yCoord - 1 || item.zCoord > container.zCoord + 2 || item.zCoord < container.zCoord - 1;
 	}
 
 	public Position getPosition() {
@@ -500,9 +509,7 @@ public class PipeTransportItems extends PipeTransport {
 			}
 		}
 
-		if (item.getPosition() == null) {
-			item.setPosition(packet.getPosX(), packet.getPosY(), packet.getPosZ());
-		}
+		item.setPosition(packet.getItemX(), packet.getItemY(), packet.getItemZ());
 
 		item.setSpeed(packet.getSpeed());
 

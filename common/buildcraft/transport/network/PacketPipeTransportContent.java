@@ -38,9 +38,9 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 
 	@Override
 	public void writeData(DataOutputStream data) throws IOException {
-		data.writeFloat((float) item.getPosition().x);
-		data.writeFloat((float) item.getPosition().y);
-		data.writeFloat((float) item.getPosition().z);
+		data.writeFloat((float) item.xCoord);
+		data.writeFloat((float) item.yCoord);
+		data.writeFloat((float) item.zCoord);
 
 		data.writeShort(item.id);
 
@@ -112,15 +112,15 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		return color;
 	}
 
-	public double getPosX() {
+	public double getItemX() {
 		return itemX;
 	}
 
-	public double getPosY() {
+	public double getItemY() {
 		return itemY;
 	}
 
-	public double getPosZ() {
+	public double getItemZ() {
 		return itemZ;
 	}
 

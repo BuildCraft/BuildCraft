@@ -140,13 +140,12 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IPipeT
 
 	@Override
 	public void readjustSpeed(TravelingItem item) {
-		if (item.getSpeed() > Utils.pipeNormalSpeed) {
+		if (item.getSpeed() > Utils.pipeNormalSpeed)
 			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 4.0F);
-		}
 
-		if (item.getSpeed() < Utils.pipeNormalSpeed) {
+
+		if (item.getSpeed() < Utils.pipeNormalSpeed)
 			item.setSpeed(Utils.pipeNormalSpeed);
-		}
 	}
 
 	@Override
