@@ -1,5 +1,6 @@
 package buildcraft.transport.network;
 
+import buildcraft.api.core.Position;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.utils.EnumColor;
@@ -63,10 +64,6 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 		this.itemY = data.readFloat();
 		this.itemZ = data.readFloat();
 
-		posX = MathHelper.floor_float(itemX);
-		posY = MathHelper.floor_float(itemY);
-		posZ = MathHelper.floor_float(itemZ);
-
 		this.entityId = data.readShort();
 
 		this.input = ForgeDirection.getOrientation(data.readByte());
@@ -82,6 +79,12 @@ public class PacketPipeTransportContent extends BuildCraftPacket {
 
 		this.speed = data.readFloat();
 		this.hasNBT = data.readBoolean();
+
+		Position pos = new Position(itemX, itemY, itemZ, input);
+		pos.moveForwards(0.5);
+		posX = MathHelper.floor_double(pos.x);
+		posY = MathHelper.floor_double(pos.y);
+		posZ = MathHelper.floor_double(pos.z);
 	}
 
 	public int getTravellingItemId() {
