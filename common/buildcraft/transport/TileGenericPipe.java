@@ -334,16 +334,11 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from)) {
 			if (doAdd) {
-				Position itemPos = new Position(xCoord, yCoord, zCoord, from.getOpposite());
-				itemPos.moveBackwards(1.0);
-
-				itemPos.x += 0.5;
-				itemPos.y += Utils.getPipeFloorOf(payload);
-				itemPos.z += 0.5;
-				itemPos.moveForwards(0.5);
+				Position itemPos = new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
+				itemPos.moveBackwards(0.4);
 
 				TravelingItem pipedItem = new TravelingItem(itemPos.x, itemPos.y, itemPos.z, payload);
-				((PipeTransportItems) pipe.transport).injectItem(pipedItem, from.getOpposite());
+				((PipeTransportItems) pipe.transport).injectItem(pipedItem, itemPos.orientation);
 			}
 			return payload.stackSize;
 		}
