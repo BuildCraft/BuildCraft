@@ -176,5 +176,14 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		public FluidSlot(int x, int y) {
 			super(x, y);
 		}
+		
+		public Icon getTexture() {
+			if (fluid != null) {
+				mc.renderEngine.func_110577_a(FluidRenderer.getFluidSheet(new FluidStack(fluid, 1)));
+				return fluid.getIcon();
+			} else
+				return null;
+		}
+
 	}
 }
