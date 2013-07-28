@@ -185,14 +185,16 @@ public abstract class Pipe<T extends PipeTransport> implements IPipe, IDropContr
 		}
 
 		// Legacy update code
-		for (int i = 0; i < 8; ++i) {
-			if (data.hasKey("trigger[" + i + "]"))
-				gate.triggers[i] = ActionManager.getTriggerFromLegacyId(data.getInteger("trigger[" + i + "]"));
-			if (data.hasKey("action[" + i + "]"))
-				gate.actions[i] = ActionManager.getActionFromLegacyId(data.getInteger("action[" + i + "]"));
-			if (data.hasKey("triggerParameters[" + i + "]")) {
-				gate.triggerParameters[i] = new TriggerParameter();
-				gate.triggerParameters[i].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
+		if (hasGate()) {
+			for (int i = 0; i < 8; ++i) {
+				if (data.hasKey("trigger[" + i + "]"))
+					gate.triggers[i] = ActionManager.getTriggerFromLegacyId(data.getInteger("trigger[" + i + "]"));
+				if (data.hasKey("action[" + i + "]"))
+					gate.actions[i] = ActionManager.getActionFromLegacyId(data.getInteger("action[" + i + "]"));
+				if (data.hasKey("triggerParameters[" + i + "]")) {
+					gate.triggerParameters[i] = new TriggerParameter();
+					gate.triggerParameters[i].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
+				}
 			}
 		}
 	}
