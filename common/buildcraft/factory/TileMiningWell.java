@@ -14,7 +14,6 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
-import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.BlockUtil;
@@ -25,7 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection {
+public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerReceptor {
 
 	boolean isDigging = true;
 	private PowerHandler powerHandler;
@@ -72,13 +71,12 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 		for (ItemStack stack : stacks) {
 
-			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
-			stack.stackSize -= added.stackSize;
-			if (stack.stackSize <= 0) {
+			stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
+			if (stack.stackSize <= 0)
 				continue;
-			}
 
-			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0)
+			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
+			if (stack.stackSize <= 0)
 				continue;
 
 			// Throw the object away.
@@ -126,11 +124,6 @@ public class TileMiningWell extends TileBuildCraft implements IMachine, IPowerRe
 
 	@Override
 	public boolean manageSolids() {
-		return true;
-	}
-
-	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 

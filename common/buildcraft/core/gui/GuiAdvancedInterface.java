@@ -1,11 +1,15 @@
 package buildcraft.core.gui;
 
+import buildcraft.core.render.FluidRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
+
 import org.lwjgl.opengl.GL11;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
@@ -26,8 +30,12 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 				return "";
 		}
 
-		public Icon getTexture() {
+		public Icon getIcon() {
 			return null;
+		}
+
+		public ResourceLocation getTexture() {
+			return TextureMap.field_110576_c;
 		}
 
 		public ItemStack getItemStack() {
@@ -44,10 +52,10 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 			if (getItemStack() != null) {
 				drawStack(getItemStack());
-			} else if (getTexture() != null) {
-			    mc.renderEngine.func_110577_a(TextureMap.field_110576_c);
-			    //System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getTexture().getIconName(), getTexture().getOriginX(),getTexture().getOriginY(),cornerX + x, cornerY + y);
-				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getTexture(), 16, 16);
+			} else if (getIcon() != null) {
+				mc.renderEngine.func_110577_a(getTexture());
+				//System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getIcon().getIconName(), getIcon().getOriginX(),getIcon().getOriginY(),cornerX + x, cornerY + y);
+				drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getIcon(), 16, 16);
 			}
 
 		}
@@ -80,7 +88,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	}
 
 	/**
-	 * More dynamic slot displaying an inventory stack at specified position in the passed IInventory
+	 * More dynamic slot displaying an inventory fluid at specified position in
+	 * the passed IInventory
 	 */
 	public class IInventorySlot extends AdvancedSlot {
 
@@ -97,9 +106,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		public ItemStack getItemStack() {
 			return tile.getStackInSlot(slot);
 		}
-
 	}
-
 	public AdvancedSlot[] slots;
 
 	public GuiAdvancedInterface(BuildCraftContainer container, IInventory inventory) {
@@ -160,6 +167,29 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			int k2 = mouseY - cornerY;
 			drawCreativeTabHoveringText(s, i2, k2);
 			RenderHelper.enableGUIStandardItemLighting();
+		}
+	}
+
+	/**
+	 * For the refinery, a king of phantom slot for fluid.
+	 */
+	//TODO Get this class working well (Now it's just here to let the refinery compil)
+	public class FluidSlot extends AdvancedSlot {
+
+		public Fluid fluid;
+
+		public FluidSlot(int x, int y) {
+			super(x, y);
+		}
+
+		@Override
+		public Icon getIcon() {
+			return FluidRenderer.getFluidTexture(fluid, false);
+		}
+
+		@Override
+		public ResourceLocation getTexture() {
+			return FluidRenderer.getFluidSheet(fluid);
 		}
 	}
 }

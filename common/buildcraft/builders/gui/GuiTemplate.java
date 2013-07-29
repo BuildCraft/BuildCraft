@@ -12,6 +12,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadArrays;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
@@ -83,7 +84,7 @@ public class GuiTemplate extends GuiBuildCraft {
 				editMode = false;
 				return;
 			}
-			PacketPayload payload = new PacketPayload();
+			PacketPayloadArrays payload = new PacketPayloadArrays();
 			payload.intPayload = new int[]{c};
 			PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME, template.xCoord, template.yCoord, template.zCoord, payload);
 			CoreProxy.proxy.sendToServer(packet.getPacket());

@@ -21,6 +21,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
 
 public class TileEngineStone extends TileEngine {
@@ -48,8 +49,8 @@ public class TileEngineStone extends TileEngine {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png";
+	public ResourceLocation getTextureFile() {
+		return STONE_TEXTURE;
 	}
 
 	@Override

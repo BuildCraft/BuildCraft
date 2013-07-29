@@ -14,6 +14,7 @@ import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
@@ -58,13 +59,18 @@ public class PipeTransportPower extends PipeTransport {
 	private float[] internalPower = new float[6];
 	public float[] internalNextPower = new float[6];
 	public int maxPower = 8;
+	SafeTimeTracker tracker = new SafeTimeTracker();
 
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = 0;
 		}
 	}
-	SafeTimeTracker tracker = new SafeTimeTracker();
+
+	@Override
+	public PipeType getPipeType() {
+		return PipeType.POWER;
+	}
 
 	public void initFromPipe(Class<? extends Pipe> pipeClass) {
 		maxPower = powerCapacities.get(pipeClass);
@@ -124,7 +130,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isRenderWorld(worldObj))
+		if (CoreProxy.proxy.isRenderWorld(container.worldObj))
 			return;
 
 		step();
@@ -239,8 +245,8 @@ public class PipeTransportPower extends PipeTransport {
 			}
 		}
 
-		if (tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-			PacketPowerUpdate packet = new PacketPowerUpdate(xCoord, yCoord, zCoord);
+		if (tracker.markTimeIfDelay(container.worldObj, 2 * BuildCraftCore.updateFactor)) {
+			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
 
 			double displayFactor = MAX_DISPLAY / 1024.0;
 			for (int i = 0; i < clientDisplayPower.length; i++) {
@@ -249,7 +255,7 @@ public class PipeTransportPower extends PipeTransport {
 
 			packet.displayPower = clientDisplayPower;
 			packet.overload = isOverloaded();
-			CoreProxy.proxy.sendToPlayers(packet.getPacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+			CoreProxy.proxy.sendToPlayers(packet.getPacket(), container.worldObj, container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
 
 	}
@@ -272,8 +278,8 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void step() {
-		if (currentDate != worldObj.getWorldTime()) {
-			currentDate = worldObj.getWorldTime();
+		if (currentDate != container.worldObj.getWorldTime()) {
+			currentDate = container.worldObj.getWorldTime();
 
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
@@ -338,7 +344,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void initialize() {
-		currentDate = worldObj.getWorldTime();
+		currentDate = container.worldObj.getWorldTime();
 	}
 
 	@Override

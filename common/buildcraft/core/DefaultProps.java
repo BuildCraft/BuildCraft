@@ -21,13 +21,13 @@ public class DefaultProps {
 	public static int NETWORK_UPDATE_RANGE = 128;
 	public static int PIPE_CONTENTS_RENDER_DIST = 24;
 
-	public static String TEXTURE_PATH_GUI = "/gfx/buildcraft/gui";
-	public static String TEXTURE_PATH_BLOCKS = "/gfx/buildcraft/blocks";
-	public static String TEXTURE_PATH_ENTITIES = "/gfx/buildcraft/entities";
+	public static String TEXTURE_PATH_GUI = "textures/gui";
+	public static String TEXTURE_PATH_BLOCKS = "buildcraft:textures/blocks";
+	public static String TEXTURE_PATH_ENTITIES = "textures/entities";
 
 	public static final String DEFAULT_LANGUAGE = "en_US";
 
-	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/Lava";
+	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/lava";
 
 	public static int WOODEN_GEAR_ID = 19100;
 	public static int STONE_GEAR_ID = 19101;
@@ -61,6 +61,8 @@ public class DefaultProps {
 	public static int PIPE_ITEMS_OBSIDIAN_ID = 19166;
 	public static int PIPE_ITEMS_EMERALD_ID = 19167;
 	public static int PIPE_ITEMS_QUARTZ_ID = 19168;
+	public static int PIPE_ITEMS_LAPIS_ID = 19169;
+	public static int PIPE_ITEMS_DAIZULI_ID = 19170;
 
 	public static int PIPE_LIQUIDS_WOOD_ID = 19180;
 	public static int PIPE_LIQUIDS_COBBLESTONE_ID = 19181;
@@ -71,6 +73,8 @@ public class DefaultProps {
 	public static int PIPE_LIQUIDS_OBSIDIAN_ID = 19186;
 	public static int PIPE_LIQUIDS_EMERALD_ID = 19187;
 	public static int PIPE_LIQUIDS_QUARTZ_ID = 19188;
+	public static int PIPE_LIQUIDS_LAPIS_ID = 19189;
+	public static int PIPE_LIQUIDS_DIAZULI_ID = 19110;
 
 	public static int PIPE_POWER_WOOD_ID = 19200;
 	public static int PIPE_POWER_COBBLESTONE_ID = 19201;
@@ -81,6 +85,8 @@ public class DefaultProps {
 	public static int PIPE_POWER_OBSIDIAN_ID = 19206;
 	public static int PIPE_POWER_EMERALD_ID = 19207;
 	public static int PIPE_POWER_QUARTZ_ID = 19208;
+	public static int PIPE_POWER_LAPIS_ID = 19209;
+	public static int PIPE_POWER_DIAZULI_ID = 19210;
 
 	public static int PIPE_ITEMS_VOID_ID = 19220;
 	public static int PIPE_LIQUIDS_VOID_ID = 19221;
@@ -108,7 +114,8 @@ public class DefaultProps {
 	public static int PATH_MARKER_ID = 1518;
 	public static int HOPPER_ID = 1519;
 	public static int SPRING_ID = 1522;
-	public static int FILTERED_BUFFER = 1523;
+	public static int FILTERED_BUFFER_ID = 1523;
+	public static int FLOOD_GATE_ID = 1524;
 	
 	public static int OIL_ID = 1530;
 	public static int FUEL_ID = 1531;

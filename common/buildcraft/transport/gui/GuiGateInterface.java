@@ -14,7 +14,6 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.FallbackWrapper;
 import buildcraft.transport.Gate.GateKind;
 import buildcraft.transport.Pipe;
 import cpw.mods.fml.relauncher.Side;
@@ -48,7 +47,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public String getDescription() {
-			ITrigger trigger = pipe.getTrigger(slot);
+			ITrigger trigger = pipe.gate.getTrigger(slot);
 			if (trigger != null)
 				return trigger.getDescription();
 			else
@@ -57,24 +56,21 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
         @SideOnly(Side.CLIENT)
         @Override
-        public Icon getTexture() {
-        	ITrigger trigger = pipe.getTrigger(slot);
-        	if (trigger instanceof FallbackWrapper) {
-        	    return ((FallbackWrapper)trigger).getIcon();
-        	}
+        public Icon getIcon() {
+        	ITrigger trigger = pipe.gate.getTrigger(slot);
         	if (trigger != null)
-        		return trigger.getIconProvider().getIcon(trigger.getIconIndex());
+        		return trigger.getIcon();
         	else
         		return null;
         }
 
 		@Override
 		public boolean isDefined() {
-			return pipe.getTrigger(slot) != null;
+			return pipe.gate.getTrigger(slot) != null;
 		}
 
 		public ITrigger getTrigger() {
-			return pipe.getTrigger(slot);
+			return pipe.gate.getTrigger(slot);
 		}
 	}
 
@@ -92,7 +88,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public String getDescription() {
-			IAction action = pipe.getAction(slot);
+			IAction action = pipe.gate.getAction(slot);
 			if (action != null)
 				return action.getDescription();
 			else
@@ -101,21 +97,21 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@SideOnly(Side.CLIENT)
 		@Override
-		public Icon getTexture() {
-			IAction action = pipe.getAction(slot);
+		public Icon getIcon() {
+			IAction action = pipe.gate.getAction(slot);
 			if (action != null)
-				return action.getIconProvider().getIcon(action.getIconIndex());
+				return action.getIcon();
 			else
 				return null;
 		}
 
 		@Override
 		public boolean isDefined() {
-			return pipe.getAction(slot) != null;
+			return pipe.gate.getAction(slot) != null;
 		}
 
 		public IAction getAction() {
-			return pipe.getAction(slot);
+			return pipe.gate.getAction(slot);
 		}
 	}
 
@@ -133,12 +129,12 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public boolean isDefined() {
-			return pipe.getTriggerParameter(slot) != null;
+			return pipe.gate.getTriggerParameter(slot) != null;
 		}
 
 		@Override
 		public ItemStack getItemStack() {
-			ITriggerParameter parameter = pipe.getTriggerParameter(slot);
+			ITriggerParameter parameter = pipe.gate.getTriggerParameter(slot);
 			if (parameter != null)
 				return parameter.getItem();
 			else
@@ -146,14 +142,13 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 
 		public ITriggerParameter getTriggerParameter() {
-			return pipe.getTriggerParameter(slot);
+			return pipe.gate.getTriggerParameter(slot);
 		}
 	}
 
 	public GuiGateInterface(IInventory playerInventory, Pipe pipe) {
 		super(new ContainerGateInterface(playerInventory, pipe), null);
 
-		Pipe.fixTriggers();
 		_container = (ContainerGateInterface) this.inventorySlots;
 
 		this.playerInventory = playerInventory;

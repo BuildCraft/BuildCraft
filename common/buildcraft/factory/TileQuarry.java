@@ -7,6 +7,7 @@
  */
 package buildcraft.factory;
 
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.builders.blueprints.Blueprint;
@@ -18,7 +19,6 @@ import buildcraft.api.gates.IAction;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.transport.IPipeConnection;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.EntityRobot;
@@ -44,6 +44,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -51,7 +52,7 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.ForgeDirection;
 import static net.minecraftforge.common.ForgeDirection.*;
 
-public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IPipeConnection, IBuilderInventory {
+public class TileQuarry extends TileBuildCraft implements IMachine, IPowerReceptor, IBuilderInventory {
 
 	public @TileNetworkData
 	Box box = new Box();
@@ -445,12 +446,11 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	private void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
-		ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord);
-		stack.stackSize -= added.stackSize;
+		stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0) {
-			Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
 		}
 
 		// Lastly, throw the object away
@@ -518,8 +518,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 			isAlive = false;
 			if (placedBy != null && CoreProxy.proxy.isSimulating(worldObj)) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-						xCoord, yCoord, zCoord)), (Player) placedBy);
+						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
+						xCoord, yCoord, zCoord))), (Player) placedBy);
 			}
 			sendNetworkUpdate();
 			return;
@@ -547,8 +547,8 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
 			if (placedBy != null) {
 				PacketDispatcher.sendPacketToPlayer(
-						new Packet3Chat(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
-						chunkTicket.getMaxChunkListDepth())), (Player) placedBy);
+						new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize,
+						chunkTicket.getMaxChunkListDepth()))), (Player) placedBy);
 			}
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
 
@@ -673,11 +673,6 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 
 	@Override
 	public boolean manageSolids() {
-		return true;
-	}
-
-	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
 		return true;
 	}
 
@@ -835,7 +830,7 @@ public class TileQuarry extends TileBuildCraft implements IMachine, IPowerRecept
 		}
 		if (placedBy != null) {
 			PacketDispatcher.sendPacketToPlayer(
-					new Packet3Chat(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size())),
+					new Packet3Chat(ChatMessageComponent.func_111066_d(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", xCoord, yCoord, zCoord, chunks.size()))),
 					(Player) placedBy);
 		}
 		sendNetworkUpdate();

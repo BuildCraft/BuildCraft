@@ -7,8 +7,8 @@
  */
 package buildcraft.energy;
 
-import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
 
 public class TileEngineWood extends TileEngine {
@@ -20,8 +20,8 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png";
+	public ResourceLocation getTextureFile() {
+		return WOOD_TEXTURE;
 	}
 
 	@Override

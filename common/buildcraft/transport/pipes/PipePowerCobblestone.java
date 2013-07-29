@@ -16,11 +16,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipePowerCobblestone extends Pipe {
+public class PipePowerCobblestone extends Pipe<PipeTransportPower> {
 
 	public PipePowerCobblestone(int itemID) {
-		super(new PipeTransportPower(), new PipeLogicStone(), itemID);
-		((PipeTransportPower) transport).initFromPipe(getClass());
+		super(new PipeTransportPower(), itemID);
+		transport.initFromPipe(getClass());
 	}
 
 	@Override

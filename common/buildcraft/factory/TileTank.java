@@ -10,15 +10,20 @@ package buildcraft.factory;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.liquids.Tank;
+import buildcraft.core.liquids.TankManager;
 import buildcraft.core.network.PacketPayload;
+import buildcraft.core.network.PacketPayloadStream;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -26,63 +31,57 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler {
 
-	public final FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME * 16);
+	public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16);
+	public final TankManager tankManager = new TankManager(tank);
 	public boolean hasUpdate = false;
 	public SafeTimeTracker tracker = new SafeTimeTracker();
 
 	/* UPDATING */
 	@Override
 	public void updateEntity() {
-		if (CoreProxy.proxy.isSimulating(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
-			sendNetworkUpdate();
-			hasUpdate = false;
-		}
-
-		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) 
 			return;
-		}
-
+		
 		// Have liquid flow down into tanks below if any.
 		if (tank.getFluid() != null) {
 			moveFluidBelow();
+		}
+		
+		if (hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+			sendNetworkUpdate();
+			hasUpdate = false;
 		}
 	}
 
 	/* NETWORK */
 	@Override
 	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(2, 0, 0);
-		if (tank.getFluid() != null) {
-			payload.intPayload[0] = tank.getFluid().getFluid().getID();
-			payload.intPayload[1] = tank.getFluid().amount;
-		} else {
-			payload.intPayload[0] = 0;
-			payload.intPayload[1] = 0;
-		}
+		PacketPayload payload = new PacketPayloadStream(new PacketPayloadStream.StreamWriter() {
+			@Override
+			public void writeData(DataOutputStream data) throws IOException {
+				tankManager.writeData(data);
+			}
+		});
 		return payload;
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
-		if (packet.payload.intPayload[0] > 0) {
-			FluidStack liquid = new FluidStack(FluidRegistry.getFluid(packet.payload.intPayload[0]), packet.payload.intPayload[2]);
-			tank.setFluid(liquid);
-		} else {
-			tank.setFluid(null);
-		}
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+		DataInputStream stream = ((PacketPayloadStream) packet.payload).stream;
+		tankManager.readData(stream);
 	}
 
 	/* SAVING & LOADING */
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		tank.readFromNBT(data);
+		tankManager.readFromNBT(data);
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		tank.writeToNBT(data);
+		tankManager.writeToNBT(data);
 	}
 
 	/* HELPER FUNCTIONS */

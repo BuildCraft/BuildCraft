@@ -9,22 +9,22 @@ package buildcraft.transport.gui;
 
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotPhantom;
-import buildcraft.transport.pipes.PipeLogicDiamond;
+import buildcraft.transport.pipes.PipeItemsDiamond;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 public class ContainerDiamondPipe extends BuildCraftContainer {
 
-	private final PipeLogicDiamond logic;
+	private final PipeItemsDiamond pipe;
 	private final IInventory playerInv;
 	private final IInventory filterInv;
 
-	public ContainerDiamondPipe(IInventory playerInventory, PipeLogicDiamond logic) {
-		super(logic.getFilters().getSizeInventory());
-		this.logic = logic;
+	public ContainerDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
+		super(pipe.getFilters().getSizeInventory());
+		this.pipe = pipe;
 		this.playerInv = playerInventory;
-		this.filterInv = logic.getFilters();
+		this.filterInv = pipe.getFilters();
 
 		for (int y = 0; y < 6; y++) {
 			for (int x = 0; x < 9; x++) {
@@ -45,6 +45,6 @@ public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return logic.isUseableByPlayer(entityplayer);
+		return pipe.container.isUseableByPlayer(entityplayer);
 	}
 }

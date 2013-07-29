@@ -1,16 +1,8 @@
 /**
-<<<<<<< HEAD
  * Copyright (c) SpaceToad, 2011 http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License
  * 1.0, or MMPL. Please check the contents of the license located in
-=======
- * Copyright (c) SpaceToad, 2011
- * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
->>>>>>> mc16
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.builders;
@@ -29,6 +21,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
+import java.io.IOException;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -350,7 +343,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
+	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleDescriptionPacket(packet);
@@ -361,7 +354,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
+	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
 		boolean initialized = box.isInitialized();
 
 		super.handleUpdatePacket(packet);

@@ -114,7 +114,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 
 	protected boolean isValidTable() {
 
-		if (laserTarget == null || laserTarget.isInvalid() || !laserTarget.hasCurrentWork())
+		if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.hasCurrentWork())
 			return false;
 
 		return true;
@@ -175,7 +175,7 @@ public class TileLaser extends TileBuildCraft implements IPowerReceptor, IAction
 			return;
 
 		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
-		laserTarget = (ILaserTarget) worldObj.getBlockTileEntity(b.i, b.j, b.k);
+		laserTarget = (ILaserTarget) worldObj.getBlockTileEntity(b.x, b.y, b.z);
 	}
 
 	protected void createLaser() {

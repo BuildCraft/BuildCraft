@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipePowerWood extends Pipe implements IPowerReceptor {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerReceptor {
 
 	private PowerHandler powerHandler;
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
@@ -30,11 +30,11 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	private boolean full;
 
 	public PipePowerWood(int itemID) {
-		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
+		super(new PipeTransportPower(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.PIPE);
 		initPowerProvider();
-		((PipeTransportPower) transport).initFromPipe(getClass());
+		transport.initFromPipe(getClass());
 	}
 
 	private void initPowerProvider() {
@@ -65,7 +65,7 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (worldObj.isRemote)
+		if (container.worldObj.isRemote)
 			return;
 
 		if (powerHandler.getEnergyStored() <= 0)
@@ -101,15 +101,13 @@ public class PipePowerWood extends Pipe implements IPowerReceptor {
 		}
 		energyToRemove /= (float) sources;
 
-		PipeTransportPower trans = (PipeTransportPower) transport;
-
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			if (!powerSources[o.ordinal()])
 				continue;
 
 			float energyUsable = powerHandler.useEnergy(0, energyToRemove, false);
 
-			float energySend = trans.receiveEnergy(o, energyUsable);
+			float energySend = transport.receiveEnergy(o, energyUsable);
 			if (energySend > 0) {
 				powerHandler.useEnergy(0, energySend, true);
 			}

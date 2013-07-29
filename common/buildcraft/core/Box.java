@@ -129,7 +129,7 @@ public class Box implements IBox {
 	}
 
 	public boolean contains(BlockIndex i) {
-		return contains(i.i, i.j, i.k);
+		return contains(i.x, i.y, i.z);
 	}
 
 	@Override

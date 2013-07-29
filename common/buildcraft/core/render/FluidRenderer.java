@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -26,7 +27,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class FluidRenderer {
 
-	private static final ResourceLocation BLOCK_TEXTURE = new ResourceLocation("/terrain.png");
+	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.field_110575_b;
 	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
 	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 	public static final int DISPLAY_STAGES = 100;
@@ -34,17 +35,16 @@ public class FluidRenderer {
 
 	public static class MissingFluidTextureException extends RuntimeException {
 
-		private final FluidStack fluidStack;
+		private final Fluid fluid;
 
-		public MissingFluidTextureException(FluidStack fluidStack) {
+		public MissingFluidTextureException(Fluid fluid) {
 			super();
-			this.fluidStack = fluidStack;
+			this.fluid = fluid;
 		}
 
 		@Override
 		public String getMessage() {
-			String fluidName = FluidRegistry.getFluidName(fluidStack);
-			return String.format("Fluid %s has no icon. Please contact the author of the mod the fluid came from.", fluidName);
+			return String.format("Fluid %s has no icon. Please contact the author of the mod the fluid came from.", fluid.getName());
 		}
 	}
 
@@ -52,15 +52,27 @@ public class FluidRenderer {
 		if (fluidStack == null) {
 			return null;
 		}
-		Fluid fluid = fluidStack.getFluid();
+		return getFluidTexture(fluidStack.getFluid(), flowing);
+	}
+
+	public static Icon getFluidTexture(Fluid fluid, boolean flowing) {
+		if (fluid == null) {
+			return null;
+		}
 		Icon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
 		if (icon == null) {
-			throw new MissingFluidTextureException(fluidStack);
+			throw new MissingFluidTextureException(fluid);
 		}
 		return icon;
 	}
 
 	public static ResourceLocation getFluidSheet(FluidStack liquid) {
+		if (liquid == null)
+			return BLOCK_TEXTURE;
+		return getFluidSheet(liquid.getFluid());
+	}
+
+	public static ResourceLocation getFluidSheet(Fluid liquid) {
 		return BLOCK_TEXTURE;
 	}
 

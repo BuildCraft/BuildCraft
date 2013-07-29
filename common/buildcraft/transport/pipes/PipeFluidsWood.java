@@ -1,16 +1,14 @@
 /**
  * BuildCraft is open-source. It is distributed under the terms of the
- * BuildCraft Open Source License. It grants rights to read, modify, compile
- * or run the code. It does *NOT* grant the right to redistribute this software
- * or its modifications in any form, binary or source, except if expressively
+ * BuildCraft Open Source License. It grants rights to read, modify, compile or
+ * run the code. It does *NOT* grant the right to redistribute this software or
+ * its modifications in any form, binary or source, except if expressively
  * granted by the copyright holder.
  */
-
 package buildcraft.transport.pipes;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.Position;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -22,6 +20,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -29,29 +28,50 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class PipeFluidsWood extends Pipe implements IPowerReceptor {
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IPowerReceptor {
 
 	public @TileNetworkData
 	int liquidToExtract;
-
 	private PowerHandler powerHandler;
-
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
-
 	long lastMining = 0;
 	boolean lastPower = false;
+	private PipeLogicWood logic = new PipeLogicWood(this) {
+		@Override
+		protected boolean isValidFacing(ForgeDirection facing) {
+			TileEntity tile = pipe.container.getTile(facing);
+			if (!(tile instanceof IFluidHandler))
+				return false;
+			if (!PipeManager.canExtractFluids(pipe, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+				return false;
+			return true;
+		}
+	};
 
 	public PipeFluidsWood(int itemID) {
-		this(new PipeLogicWood(), itemID);
-	}
-
-	protected PipeFluidsWood(PipeLogic logic, int itemID) {
-		super(new PipeTransportFluids(), logic, itemID);
+		super(new PipeTransportFluids(), itemID);
 
 		powerHandler = new PowerHandler(this, Type.MACHINE);
 		powerHandler.configure(1, 100, 1, 250);
 		powerHandler.configurePowerPerdition(0, 0);
+	}
+
+	@Override
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		return logic.blockActivated(entityplayer);
+	}
+
+	@Override
+	public void onNeighborBlockChange(int blockId) {
+		logic.onNeighborBlockChange(blockId);
+		super.onNeighborBlockChange(blockId);
+	}
+
+	@Override
+	public void initialize() {
+		logic.initialize();
+		super.initialize();
 	}
 
 	/**
@@ -62,19 +82,17 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 		if (powerHandler.getEnergyStored() <= 0)
 			return;
 
-		World w = worldObj;
+		World w = container.worldObj;
 
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		int meta = container.getBlockMetadata();
 
 		if (meta > 5)
 			return;
 
-		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
-		pos.moveForwards(1);
-		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		TileEntity tile = container.getTile(ForgeDirection.getOrientation(meta));
 
 		if (tile instanceof IFluidHandler) {
-			if (!PipeManager.canExtractFluids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+			if (!PipeManager.canExtractFluids(this, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
 				return;
 
 			if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {
@@ -93,26 +111,24 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 	public void updateEntity() {
 		super.updateEntity();
 
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		int meta = container.getBlockMetadata();
 
 		if (liquidToExtract > 0 && meta < 6) {
-			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
-			pos.moveForwards(1);
-
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			ForgeDirection side = ForgeDirection.getOrientation(meta);
+			TileEntity tile = container.getTile(side);
 
 			if (tile instanceof IFluidHandler) {
-				IFluidHandler container = (IFluidHandler) tile;
+				IFluidHandler fluidHandler = (IFluidHandler) tile;
 
-				int flowRate = ((PipeTransportFluids) transport).flowRate;
+				int flowRate = transport.flowRate;
 
-				FluidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
+				FluidStack extracted = fluidHandler.drain(side.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
 				int inserted = 0;
 				if (extracted != null) {
-					inserted = ((PipeTransportFluids) transport).fill(pos.orientation, extracted, true);
+					inserted = transport.fill(side, extracted, true);
 
-					container.drain(pos.orientation.getOpposite(), inserted, true);
+					fluidHandler.drain(side.getOpposite(), inserted, true);
 				}
 
 				liquidToExtract -= inserted;
@@ -131,12 +147,18 @@ public class PipeFluidsWood extends Pipe implements IPowerReceptor {
 		if (direction == ForgeDirection.UNKNOWN)
 			return standardIconIndex;
 		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			int metadata = container.getBlockMetadata();
 
 			if (metadata == direction.ordinal())
 				return solidIconIndex;
 			else
 				return standardIconIndex;
 		}
+	}
+
+	@Override
+	public boolean outputOpen(ForgeDirection to) {
+		int meta = container.getBlockMetadata();
+		return super.outputOpen(to) && meta != to.ordinal();
 	}
 }

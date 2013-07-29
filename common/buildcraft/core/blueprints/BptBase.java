@@ -108,7 +108,7 @@ public abstract class BptBase {
 
 	public File save() {
 		try {
-			File baseDir = CoreProxy.proxy.getBuildCraftBase();
+			File baseDir = new File("./");
 
 			baseDir.mkdir();
 

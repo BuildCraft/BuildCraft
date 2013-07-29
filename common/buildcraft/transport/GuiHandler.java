@@ -10,8 +10,8 @@ import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiEmeraldPipe;
 import buildcraft.transport.gui.GuiFilteredBuffer;
 import buildcraft.transport.gui.GuiGateInterface;
+import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IGuiHandler;
 import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,7 +43,7 @@ public class GuiHandler implements IGuiHandler {
 
 			switch (ID) {
 				case GuiIds.PIPE_DIAMOND:
-					return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond) pipe.pipe.logic);
+					return new ContainerDiamondPipe(player.inventory, (PipeItemsDiamond) pipe.pipe);
 
 				case GuiIds.PIPE_EMERALD_ITEM:
 					return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
@@ -83,7 +83,7 @@ public class GuiHandler implements IGuiHandler {
 
 			switch (ID) {
 				case GuiIds.PIPE_DIAMOND:
-					return new GuiDiamondPipe(player.inventory, (PipeLogicDiamond) pipe.pipe.logic);
+					return new GuiDiamondPipe(player.inventory, (PipeItemsDiamond) pipe.pipe);
 
 				case GuiIds.PIPE_EMERALD_ITEM:
 					return new GuiEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);

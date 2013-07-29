@@ -113,6 +113,9 @@ public class ItemFacade extends ItemBuildCraft {
 							|| b.blockID == 18 //Oak leaves
 							|| b.blockID == 19 //Sponge
 							|| b.blockID == 95 //Locked chest
+							|| b.blockID == Block.redstoneLampIdle.blockID
+							|| b.blockID == Block.redstoneLampActive.blockID
+							|| b.blockID == Block.pumpkinLantern.blockID
 							) {
 						continue;
 					}

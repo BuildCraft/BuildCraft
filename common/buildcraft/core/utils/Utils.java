@@ -11,12 +11,10 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.LaserKind;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeEntry;
-import buildcraft.api.transport.IPipedItem;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.EntityBlock;
-import buildcraft.core.EntityPassiveItem;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.TileBuildCraft;
@@ -26,10 +24,10 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.block.Block;
@@ -45,10 +43,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
 
 public class Utils {
 
@@ -68,9 +62,9 @@ public class Utils {
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @return ItemStack representing what was added.
+	 * @return amount used
 	 */
-	public static ItemStack addToRandomInventory(ItemStack stack, World world, int x, int y, int z) {
+	public static int addToRandomInventoryAround(World world, int x, int y, int z, ItemStack stack) {
 		Collections.shuffle(directions);
 		for (ForgeDirection orientation : directions) {
 			Position pos = new Position(x, y, z, orientation);
@@ -79,13 +73,10 @@ public class Utils {
 			TileEntity tileInventory = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
-				return transactor.add(stack, orientation.getOpposite(), true);
+				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
 			}
 		}
-
-		ItemStack added = stack.copy();
-		added.stackSize = 0;
-		return added;
+		return 0;
 
 	}
 
@@ -134,57 +125,40 @@ public class Utils {
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static boolean addToRandomPipeEntry(TileEntity tile, ForgeDirection from, ItemStack items) {
-		World w = tile.worldObj;
+	public static int addToRandomPipeAround(World world, int x, int y, int z, ForgeDirection from, ItemStack stack) {
+		List<IPipeTile> possiblePipes = new ArrayList<IPipeTile>();
+		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
 
-		LinkedList<ForgeDirection> possiblePipes = new LinkedList<ForgeDirection>();
-
-		for (int j = 0; j < 6; ++j) {
-			if (from.getOpposite().ordinal() == j) {
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (from.getOpposite() == side)
 				continue;
-			}
 
-			ForgeDirection o = ForgeDirection.values()[j];
-			Position pos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, o);
+			Position pos = new Position(x, y, z, side);
 
 			pos.moveForwards(1.0);
 
-			TileEntity pipeEntry = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = world.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (pipeEntry instanceof IPipeEntry && ((IPipeEntry) pipeEntry).acceptItems()) {
-				if (pipeEntry instanceof IPipeConnection) {
-					if (!((IPipeConnection) pipeEntry).isPipeConnected(o.getOpposite())) {
-						continue;
-					}
-				}
-				possiblePipes.add(o);
+			if (tile instanceof IPipeTile) {
+				IPipeTile pipe = (IPipeTile) tile;
+				if (pipe.getPipeType() != PipeType.ITEM)
+					continue;
+				if (!pipe.isPipeConnected(side.getOpposite()))
+					continue;
+
+				possiblePipes.add(pipe);
+				pipeDirections.add(side.getOpposite());
 			}
 		}
 
 		if (possiblePipes.size() > 0) {
-			int choice = w.rand.nextInt(possiblePipes.size());
+			int choice = RANDOM.nextInt(possiblePipes.size());
 
-			Position entityPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
-			Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, possiblePipes.get(choice));
+			IPipeTile pipeEntry = possiblePipes.get(choice);
 
-			entityPos.x += 0.5;
-			entityPos.y += getPipeFloorOf(items);
-			entityPos.z += 0.5;
-
-			entityPos.moveForwards(0.5);
-
-			pipePos.moveForwards(1.0);
-
-			IPipeEntry pipeEntry = (IPipeEntry) w.getBlockTileEntity((int) pipePos.x, (int) pipePos.y, (int) pipePos.z);
-
-			IPipedItem entity = new EntityPassiveItem(w, entityPos.x, entityPos.y, entityPos.z, items);
-
-			pipeEntry.entityEntering(entity, entityPos.orientation);
-			items.stackSize = 0;
-			return true;
-		} else {
-			return false;
+			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice));
 		}
+		return 0;
 	}
 
 	/* STACK DROPS */
@@ -375,29 +349,13 @@ public class Utils {
 			PacketUpdate payload = BuildCraftCore.bufferedDescriptions.get(index);
 			BuildCraftCore.bufferedDescriptions.remove(index);
 
-			tileSynch.handleDescriptionPacket(payload);
+			try {
+				tileSynch.handleDescriptionPacket(payload);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 			tileSynch.postPacketHandling(payload);
 		}
-	}
-
-	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
-		int blockId = world.getBlockId(x, y, z);
-		if (Block.blocksList[blockId] instanceof IFluidBlock) {
-			IFluidBlock fluidBlock = (IFluidBlock) Block.blocksList[blockId];
-			if (fluidBlock.canDrain(world, x, y, z))
-				return fluidBlock.drain(world, x, y, z, doDrain);
-		} else if (blockId == Block.waterStill.blockID || blockId == Block.waterMoving.blockID) {
-			if (doDrain) {
-				world.setBlockToAir(x, y, z);
-			}
-			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
-		} else if (blockId == Block.lavaStill.blockID || blockId == Block.lavaMoving.blockID) {
-			if (doDrain) {
-				world.setBlockToAir(x, y, z);
-			}
-			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
-		}
-		return null;
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {
@@ -419,7 +377,7 @@ public class Utils {
 			return false;
 		}
 
-		if (!(tile1 instanceof IPipeConnection) && !(tile2 instanceof IPipeConnection)) {
+		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile)) {
 			return false;
 		}
 
@@ -439,11 +397,11 @@ public class Utils {
 			o = ForgeDirection.SOUTH;
 		}
 
-		if (tile1 instanceof IPipeConnection && !((IPipeConnection) tile1).isPipeConnected(o)) {
+		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
 			return false;
 		}
 
-		if (tile2 instanceof IPipeConnection && !((IPipeConnection) tile2).isPipeConnected(o.getOpposite())) {
+		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite())) {
 			return false;
 		}
 

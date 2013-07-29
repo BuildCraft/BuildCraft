@@ -3,8 +3,7 @@ package buildcraft.factory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.Fluid;
 
 public class PumpDimensionList {
 	public PumpDimensionList(String string) {
@@ -35,8 +34,8 @@ public class PumpDimensionList {
 			else
 				e.dimID = Integer.parseInt(dimIDString);
 
-			e.liquidName = entryString.substring(i + 1);
-			if(e.liquidName.equals("*"))
+			e.fluidName = entryString.substring(i + 1);
+			if(e.fluidName.equals("*"))
 				e.matchAnyFluid = true;
 
 			entries.add(0, e);
@@ -47,23 +46,14 @@ public class PumpDimensionList {
 
 	private class Entry {
 		boolean isWhitelist;
-		FluidStack liquidStack;
-		String liquidName;
+		String fluidName;
 		int dimID;
 		boolean matchAnyFluid;
 		boolean matchAnyDim;
 
-		private void initFluidStack() {
-			liquidStack = FluidRegistry.getFluidStack(liquidName, 1);
-			if(liquidStack == null)
-				throw new RuntimeException("Configuration error: unknown liquid "+liquidName+" in pumping.controlList");
-		}
-
-		boolean matches(FluidStack liquid, int dim) {
+		boolean matches(Fluid fluid, int dim) {
 			if(!matchAnyFluid) {
-				if(liquidStack == null)
-					initFluidStack();
-				if(!liquidStack.isFluidEqual(liquid))
+				if(!fluid.getName().equals(fluidName))
 					return false;
 			}
 			if(!matchAnyDim && dimID != dim)
@@ -74,9 +64,9 @@ public class PumpDimensionList {
 
 	private List<Entry> entries;
 
-	public boolean isFluidAllowed(FluidStack liquid, int dim) {
+	public boolean isFluidAllowed(Fluid fluid, int dim) {
 		for(Entry e : entries)
-			if(e.matches(liquid, dim))
+			if(e.matches(fluid, dim))
 				return e.isWhitelist;
 		return false;
 	}

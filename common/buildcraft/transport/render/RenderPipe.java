@@ -10,17 +10,17 @@ package buildcraft.transport.render;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.transport.IPipedItem;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
+import buildcraft.core.utils.EnumColor;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.EntityData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import net.minecraft.block.Block;
@@ -86,7 +86,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		BlockInterface block = new BlockInterface();
 
 		Fluid fluid = FluidRegistry.getFluid(liquidId);
-		if (fluid.getBlockID() != 0) {
+		if (fluid.getBlockID() > 0) {
 			block.baseBlock = Block.blocksList[fluid.getBlockID()];
 		} else {
 			block.baseBlock = Block.waterStill;
@@ -261,8 +261,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 
 	}
 
-	private void renderPower(Pipe pipe, double x, double y, double z) {
-		PipeTransportPower pow = (PipeTransportPower) pipe.transport;
+	private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
+		PipeTransportPower pow = pipe.transport;
 
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
@@ -298,8 +298,8 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderFluids(Pipe pipe, double x, double y, double z) {
-		PipeTransportFluids liq = (PipeTransportFluids) pipe.transport;
+	private void renderFluids(Pipe<PipeTransportFluids> pipe, double x, double y, double z) {
+		PipeTransportFluids liq = pipe.transport;
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -322,7 +322,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			// int amount = liquid != null ? liq.renderAmmount[i] : 0;
 
 			if (liquid != null && liquid.amount > 0) {
-				DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
+				DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
 
 				if (d == null) {
 					continue;
@@ -370,7 +370,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		// int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
 			// DisplayFluidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getFluid(), pipe.worldObj);
-			DisplayFluidList d = getListFromBuffer(liquid, pipe.worldObj);
+			DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
 
 			if (d != null) {
 				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
@@ -402,20 +402,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		return getDisplayFluidLists(liquidId, world);
 	}
 
-	private void renderSolids(Pipe pipe, double x, double y, double z) {
+	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z) {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		float light = pipe.worldObj.getLightBrightness(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+		float light = pipe.container.worldObj.getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		int count = 0;
-		for (EntityData data : ((PipeTransportItems) pipe.transport).travelingEntities.values()) {
+		for (TravelingItem item : pipe.transport.items) {
 			if (count >= MAX_ITEMS_TO_RENDER) {
 				break;
 			}
 
-			doRenderItem(data.item, x + data.item.getPosition().x - pipe.xCoord, y + data.item.getPosition().y - pipe.yCoord, z + data.item.getPosition().z
-					- pipe.zCoord, light);
+			doRenderItem(item, x + item.xCoord - pipe.container.xCoord, y + item.yCoord - pipe.container.yCoord, z + item.zCoord - pipe.container.zCoord, light, item.color);
 			count++;
 		}
 
@@ -423,19 +422,46 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	public void doRenderItem(IPipedItem entityitem, double d, double d1, double d2, float f1) {
+	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
 
-		if (entityitem == null || entityitem.getItemStack() == null)
+		if (travellingItem == null || travellingItem.getItemStack() == null)
 			return;
 
 		float renderScale = 0.7f;
-		ItemStack itemstack = entityitem.getItemStack();
+		ItemStack itemstack = travellingItem.getItemStack();
 		GL11.glPushMatrix();
-		GL11.glTranslatef((float) d, (float) d1, (float) d2);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 		GL11.glTranslatef(0, 0.25F, 0);
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(itemstack);
 		customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
+		if (color != null) {
+			func_110628_a(TextureMap.field_110575_b);
+			BlockInterface block = new BlockInterface();
+
+			block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
+
+			float pix = 0.0625F;
+
+			float min = -4 * pix;
+			float max = 4 * pix;
+
+			block.minY = min;
+			block.maxY = max;
+
+			block.minZ = min;
+			block.maxZ = max;
+
+			block.minX = min;
+			block.maxX = max;
+
+			int cHex = color.getLightHex();
+			float r = (float) (cHex >> 16 & 0xff) / 255F;
+			float g = (float) (cHex >> 8 & 0xff) / 255F;
+			float b = (float) (cHex & 0xff) / 255F;
+			GL11.glColor4f(r, g, b, 1.0F);
+			RenderEntityBlock.INSTANCE.renderBlock(block, null, 0, 0, 0, false, true);
+		}
 		GL11.glPopMatrix();
 	}
 }

@@ -17,6 +17,7 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
@@ -33,9 +34,14 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeDirection;
 
 public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter, IInventory, IOverrideDefaultTriggers, IPipeConnection {
+
+	public static final ResourceLocation WOOD_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png");
+	public static final ResourceLocation STONE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png");
+	public static final ResourceLocation IRON_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_iron.png");
 
 	public enum EnergyStage {
 
@@ -78,7 +84,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 		}
 	}
 
-	public abstract String getTextureFile();
+	public abstract ResourceLocation getTextureFile();
 
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		return false;

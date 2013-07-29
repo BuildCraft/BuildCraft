@@ -158,7 +158,7 @@ public final class PowerHandler {
 	 * Allows you to define a new PerditionCalculator class to handler perdition
 	 * calculations.
 	 *
-	 * For example if you want exponentially increasing loss bases on amount
+	 * For example if you want exponentially increasing loss based on amount
 	 * stored.
 	 *
 	 * @param perdition

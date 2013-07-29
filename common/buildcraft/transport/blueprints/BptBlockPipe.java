@@ -112,20 +112,20 @@ public class BptBlockPipe extends BptBlock {
 
 			for (int i = 0; i < 8; ++i) {
 				if (slot.cpt.hasKey("trigger" + i)) {
-					pipe.activatedTriggers[i] = ActionManager.triggers[slot.cpt.getInteger("trigger" + i)];
+//					pipe.gate.actions[i] = ActionManager.triggers[slot.cpt.getInteger("trigger" + i)];
 				}
 
 				if (slot.cpt.hasKey("triggerParameter" + i)) {
 					ItemStack s = ItemStack.loadItemStackFromNBT((NBTTagCompound) slot.cpt.getTag("triggerParameter" + i));
 
 					if (s != null) {
-						pipe.triggerParameters[i] = new TriggerParameter();
-						pipe.triggerParameters[i].set(s);
+//						pipe.triggerParameters[i] = new TriggerParameter();
+//						pipe.triggerParameters[i].set(s);
 					}
 				}
 
 				if (slot.cpt.hasKey("action" + i)) {
-					pipe.activatedActions[i] = ActionManager.actions[slot.cpt.getInteger("action" + i)];
+//					pipe.activatedActions[i] = ActionManager.actions[slot.cpt.getInteger("action" + i)];
 				}
 			}
 		}
@@ -157,20 +157,20 @@ public class BptBlockPipe extends BptBlock {
 				}
 
 				for (int i = 0; i < 8; ++i) {
-					if (pipe.activatedTriggers[i] != null) {
-						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].getId());
-					}
-
-					if (pipe.triggerParameters[i] != null) {
-						NBTTagCompound subCpt = new NBTTagCompound();
-						pipe.triggerParameters[i].getItemStack().writeToNBT(subCpt);
-
-						bptSlot.cpt.setTag("triggerParameter" + i, subCpt);
-					}
-
-					if (pipe.activatedActions[i] != null) {
-						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].getId());
-					}
+//					if (pipe.activatedTriggers[i] != null) {
+//						bptSlot.cpt.setInteger("trigger" + i, pipe.activatedTriggers[i].getId());
+//					}
+//
+//					if (pipe.triggerParameters[i] != null) {
+//						NBTTagCompound subCpt = new NBTTagCompound();
+//						pipe.triggerParameters[i].getItemStack().writeToNBT(subCpt);
+//
+//						bptSlot.cpt.setTag("triggerParameter" + i, subCpt);
+//					}
+//
+//					if (pipe.activatedActions[i] != null) {
+//						bptSlot.cpt.setInteger("action" + i, pipe.activatedActions[i].getId());
+//					}
 				}
 			}
 

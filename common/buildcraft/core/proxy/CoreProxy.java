@@ -120,12 +120,12 @@ public class CoreProxy {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void addCraftingRecipe(ItemStack result, Object[] recipe) {
+	public void addCraftingRecipe(ItemStack result, Object... recipe) {
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
 		//GameRegistry.addRecipe(result, recipe);
 	}
 
-	public void addShapelessRecipe(ItemStack result, Object[] recipe) {
+	public void addShapelessRecipe(ItemStack result, Object... recipe) {
 		GameRegistry.addShapelessRecipe(result, recipe);
 	}
 
@@ -147,11 +147,6 @@ public class CoreProxy {
 	}
 
 	public void sendToServer(Packet packet) {
-	}
-
-	/* FILE SYSTEM */
-	public File getBuildCraftBase() {
-		return new File("./");
 	}
 
 	public int addCustomTexture(String pathToTexture) {

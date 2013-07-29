@@ -22,6 +22,41 @@ public class PipeIconProvider implements IIconProvider {
 		PipeItemsDiamond_West("pipeItemsDiamond_west"),
 		PipeItemsDiamond_East("pipeItemsDiamond_east"),
 		//
+		PipeItemsLapis_Black("pipeItemsLapis_black"),
+		PipeItemsLapis_Red("pipeItemsLapis_red"),
+		PipeItemsLapis_Green("pipeItemsLapis_green"),
+		PipeItemsLapis_Brown("pipeItemsLapis_brown"),
+		PipeItemsLapis_Blue("pipeItemsLapis_blue"),
+		PipeItemsLapis_Purple("pipeItemsLapis_purple"),
+		PipeItemsLapis_Cyan("pipeItemsLapis_cyan"),
+		PipeItemsLapis_LightGray("pipeItemsLapis_lightgray"),
+		PipeItemsLapis_Gray("pipeItemsLapis_gray"),
+		PipeItemsLapis_Pink("pipeItemsLapis_pink"),
+		PipeItemsLapis_Lime("pipeItemsLapis_lime"),
+		PipeItemsLapis_Yellow("pipeItemsLapis_yellow"),
+		PipeItemsLapis_LightBlue("pipeItemsLapis_lightblue"),
+		PipeItemsLapis_Magenta("pipeItemsLapis_magenta"),
+		PipeItemsLapis_Orange("pipeItemsLapis_orange"),
+		PipeItemsLapis_White("pipeItemsLapis_white"),
+		//
+		PipeItemsDaizuli_Black("pipeItemsDaizuli_black"),
+		PipeItemsDaizuli_Red("pipeItemsDaizuli_red"),
+		PipeItemsDaizuli_Green("pipeItemsDaizuli_green"),
+		PipeItemsDaizuli_Brown("pipeItemsDaizuli_brown"),
+		PipeItemsDaizuli_Blue("pipeItemsDaizuli_blue"),
+		PipeItemsDaizuli_Purple("pipeItemsDaizuli_purple"),
+		PipeItemsDaizuli_Cyan("pipeItemsDaizuli_cyan"),
+		PipeItemsDaizuli_LightGray("pipeItemsDaizuli_lightgray"),
+		PipeItemsDaizuli_Gray("pipeItemsDaizuli_gray"),
+		PipeItemsDaizuli_Pink("pipeItemsDaizuli_pink"),
+		PipeItemsDaizuli_Lime("pipeItemsDaizuli_lime"),
+		PipeItemsDaizuli_Yellow("pipeItemsDaizuli_yellow"),
+		PipeItemsDaizuli_LightBlue("pipeItemsDaizuli_lightblue"),
+		PipeItemsDaizuli_Magenta("pipeItemsDaizuli_magenta"),
+		PipeItemsDaizuli_Orange("pipeItemsDaizuli_orange"),
+		PipeItemsDaizuli_White("pipeItemsDaizuli_white"),
+		PipeAllDaizuli_Solid("pipeAllDaizuli_solid"),
+		//
 		PipeItemsWood_Standard("pipeItemsWood_standard"),
 		PipeAllWood_Solid("pipeAllWood_solid"),
 		//
@@ -57,8 +92,9 @@ public class PipeIconProvider implements IIconProvider {
 		//
 		Power_Normal("texture_cyan"),
 		Power_Overload("texture_red_lit"),
-		Stripes("pipeStripes");
+		Stripes("pipeStripes"),
 		//
+		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
 		private Icon icon;
@@ -70,11 +106,17 @@ public class PipeIconProvider implements IIconProvider {
 		private void registerIcon(IconRegister iconRegister) {
 			icon = iconRegister.registerIcon("buildcraft:" + iconTag);
 		}
+
+		public Icon getIcon() {
+			return icon;
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int pipeIconIndex) {
+		if (pipeIconIndex == -1)
+			return null;
 		return TYPE.VALUES[pipeIconIndex].icon;
 	}
 

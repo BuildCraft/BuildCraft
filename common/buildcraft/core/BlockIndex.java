@@ -17,25 +17,25 @@ import net.minecraft.world.World;
  */
 public class BlockIndex implements Comparable<BlockIndex> {
 
-	public int i;
-	public int j;
-	public int k;
+	public int x;
+	public int y;
+	public int z;
 
 	/**
-	 * Creates an index for a block located on i, j. k
+	 * Creates an index for a block located on x, y. z
 	 */
-	public BlockIndex(int i, int j, int k) {
+	public BlockIndex(int x, int y, int z) {
 
-		this.i = i;
-		this.j = j;
-		this.k = k;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	public BlockIndex(NBTTagCompound c) {
 
-		this.i = c.getInteger("i");
-		this.j = c.getInteger("j");
-		this.k = c.getInteger("k");
+		this.x = c.getInteger("i");
+		this.y = c.getInteger("j");
+		this.z = c.getInteger("k");
 	}
 
 	/**
@@ -44,17 +44,17 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	@Override
 	public int compareTo(BlockIndex o) {
 
-		if (o.i < i)
+		if (o.x < x)
 			return 1;
-		else if (o.i > i)
+		else if (o.x > x)
 			return -1;
-		else if (o.k < k)
+		else if (o.z < z)
 			return 1;
-		else if (o.k > k)
+		else if (o.z > z)
 			return -1;
-		else if (o.j < j)
+		else if (o.y < y)
 			return 1;
-		else if (o.j > j)
+		else if (o.y > y)
 			return -1;
 		else
 			return 0;
@@ -62,18 +62,18 @@ public class BlockIndex implements Comparable<BlockIndex> {
 
 	public void writeTo(NBTTagCompound c) {
 
-		c.setInteger("i", i);
-		c.setInteger("j", j);
-		c.setInteger("k", k);
+		c.setInteger("i", x);
+		c.setInteger("j", y);
+		c.setInteger("k", z);
 	}
 
 	public int getBlockId(World world) {
-		return world.getBlockId(i, j, k);
+		return world.getBlockId(x, y, z);
 	}
 
 	@Override
 	public String toString() {
-		return "{" + i + ", " + j + ", " + k + "}";
+		return "{" + x + ", " + y + ", " + z + "}";
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class BlockIndex implements Comparable<BlockIndex> {
 		if (obj instanceof BlockIndex) {
 			BlockIndex b = (BlockIndex) obj;
 
-			return b.i == i && b.j == j && b.k == k;
+			return b.x == x && b.y == y && b.z == z;
 		}
 
 		return super.equals(obj);
@@ -89,6 +89,6 @@ public class BlockIndex implements Comparable<BlockIndex> {
 
 	@Override
 	public int hashCode() {
-		return (i * 37 + j) * 37 + k;
+		return (x * 37 + y) * 37 + z;
 	}
 }

@@ -76,7 +76,7 @@ public class WireMatrix {
 
 		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
 			_wires[i].writeData(data);
-			data.writeInt(_wireIconIndex[i]);
+			data.writeByte(_wireIconIndex[i]);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class WireMatrix {
 		_bitSetCodec.decode(data.readByte(), _hasWire);
 		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
 			_wires[i].readData(data);
-			_wireIconIndex[i] = data.readInt();
+			_wireIconIndex[i] = data.readByte();
 		}
 	}
 }

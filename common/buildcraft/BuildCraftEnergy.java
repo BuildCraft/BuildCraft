@@ -9,7 +9,7 @@ package buildcraft;
 
 import buildcraft.api.fuels.IronEngineCoolant;
 import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.api.recipes.RefineryRecipe;
+import buildcraft.api.recipes.RefineryRecipes;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
@@ -59,6 +59,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 @NetworkMod(channels = {DefaultProps.NET_CHANNEL_NAME}, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
@@ -81,10 +82,10 @@ public class BuildCraftEnergy {
 	public static Item fuel;
 	public static boolean canOilBurn;
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
-	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.BLUE);
-	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.GREEN);
-	public static BCTrigger triggerYellowEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_YELLOW_ENGINE_HEAT, EnergyStage.YELLOW);
-	public static BCTrigger triggerRedEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_RED_ENGINE_HEAT, EnergyStage.RED);
+	public static BCTrigger triggerBlueEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_BLUE_ENGINE_HEAT, EnergyStage.BLUE, "buildcraft.engine.stage.blue");
+	public static BCTrigger triggerGreenEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_GREEN_ENGINE_HEAT, EnergyStage.GREEN, "buildcraft.engine.stage.green");
+	public static BCTrigger triggerYellowEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_YELLOW_ENGINE_HEAT, EnergyStage.YELLOW, "buildcraft.engine.stage.yellow");
+	public static BCTrigger triggerRedEngineHeat = new TriggerEngineHeat(DefaultProps.TRIGGER_RED_ENGINE_HEAT, EnergyStage.RED, "buildcraft.engine.stage.red");
 	@Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
@@ -139,7 +140,7 @@ public class BuildCraftEnergy {
 
 
 		// Oil and fuel
-		buildcraftFluidOil = new Fluid("oil");
+		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);
 		FluidRegistry.registerFluid(buildcraftFluidOil);
 		fluidOil = FluidRegistry.getFluid("oil");
 
@@ -168,14 +169,14 @@ public class BuildCraftEnergy {
 
 		if (fluidFuel.getBlockID() == -1) {
 			if (blockFuelId > 0) {
-				blockFuel = new BlockBuildcraftFluid(blockFuelId, fluidFuel, Material.water).setFlammable(true).setFlammability(5);
+				blockFuel = new BlockBuildcraftFluid(blockFuelId, fluidFuel, Material.water).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 				blockFuel.setUnlocalizedName("blockFuel");
 				CoreProxy.proxy.addName(blockFuel, "Fuel");
 				CoreProxy.proxy.registerBlock(blockFuel);
 				fluidFuel.setBlockID(blockFuel);
 			}
 		} else {
-			blockFuel = Block.blocksList[fluidOil.getBlockID()];
+			blockFuel = Block.blocksList[fluidFuel.getBlockID()];
 		}
 
 		// Buckets
@@ -195,7 +196,7 @@ public class BuildCraftEnergy {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Item.bucketEmpty));
 		}
 
-		RefineryRecipe.registerRefineryRecipe(new RefineryRecipe(FluidRegistry.getFluid("oil"), null, FluidRegistry.getFluid("fuel"), 12, 1));
+		RefineryRecipes.addRecipe(new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 12, 1);
 
 		// Iron Engine Fuels
 		IronEngineFuel.addFuel("lava", 1, 20000);

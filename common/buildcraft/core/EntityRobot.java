@@ -118,7 +118,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 
 			BlockIndex newDesination = getNewDestination();
 			if (newDesination != null) {
-				setDestination(newDesination.i, newDesination.j, newDesination.k);
+				setDestination(newDesination.x, newDesination.y, newDesination.z);
 			}
 
 		}
@@ -137,7 +137,7 @@ public class EntityRobot extends Entity implements IEntityAdditionalSpawnData {
 		List<BlockIndex> potentialDestinations = new ArrayList<BlockIndex>();
 		for (BlockIndex blockIndex : moveArea.getBlocksInArea()) {
 
-			if (BlockUtil.isSoftBlock(worldObj, blockIndex.i, blockIndex.j, blockIndex.k) && movementBoundary.contains(blockIndex)) {
+			if (BlockUtil.isSoftBlock(worldObj, blockIndex.x, blockIndex.y, blockIndex.z) && movementBoundary.contains(blockIndex)) {
 				potentialDestinations.add(blockIndex);
 			}
 		}

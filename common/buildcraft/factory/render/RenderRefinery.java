@@ -22,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
 	private static final float pixel = (float) (1.0 / 16.0);
 	private final ModelRenderer tank;
 	private final ModelRenderer magnet[] = new ModelRenderer[4];
@@ -74,12 +74,12 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 		int angle = 0;
 		ModelRenderer theMagnet = magnet[0];
 		if (tile != null) {
-			if (tile.ingredient1.getFluid() != null) {
-				liquid1 = tile.ingredient1.getFluid();
+			if (tile.tank1.getFluid() != null) {
+				liquid1 = tile.tank1.getFluid();
 			}
 
-			if (tile.ingredient2.getFluid() != null) {
-				liquid2 = tile.ingredient2.getFluid();
+			if (tile.tank2.getFluid() != null) {
+				liquid2 = tile.tank2.getFluid();
 			}
 
 			if (tile.result.getFluid() != null) {

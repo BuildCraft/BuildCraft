@@ -69,7 +69,6 @@ public class BlockGenericPipe extends BlockContainer {
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe(int i) {
 		super(i, Material.glass);
-
 	}
 
 	@Override
@@ -191,9 +190,9 @@ public class BlockGenericPipe extends BlockContainer {
 		float xMin = Utils.pipeMinPos, xMax = Utils.pipeMaxPos, yMin = Utils.pipeMinPos, yMax = Utils.pipeMaxPos, zMin = Utils.pipeMinPos, zMax = Utils.pipeMaxPos;
 
 		TileEntity tile1 = world.getBlockTileEntity(i, j, k);
-		TileGenericPipe tileG = (TileGenericPipe) tile1;
 
-		if (tileG != null) {
+		if (tile1 instanceof TileGenericPipe) {
+			TileGenericPipe tileG = (TileGenericPipe) tile1;
 			if (Utils.checkPipesConnections(world, tile1, i - 1, j, k) || tileG.hasFacade(ForgeDirection.WEST)) {
 				xMin = 0.0F;
 			}
@@ -450,22 +449,22 @@ public class BlockGenericPipe extends BlockContainer {
 			pipe.onBlockRemoval();
 		}
 
-		World world = pipe.worldObj;
+		World world = pipe.container.worldObj;
 
 		if (world == null)
 			return;
 
-		int i = pipe.xCoord;
-		int j = pipe.yCoord;
-		int k = pipe.zCoord;
+		int x = pipe.container.xCoord;
+		int y = pipe.container.yCoord;
+		int z = pipe.container.zCoord;
 
 		if (lastRemovedDate != world.getWorldTime()) {
 			lastRemovedDate = world.getWorldTime();
 			pipeRemoved.clear();
 		}
 
-		pipeRemoved.put(new BlockIndex(i, j, k), pipe);
-		world.removeBlockTileEntity(i, j, k);
+		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
+		world.removeBlockTileEntity(x, y, z);
 	}
 
 	@Override
@@ -586,8 +585,8 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float xOffset, float yOffset, float zOffset) {
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, xOffset, yOffset, zOffset);
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float xOffset, float yOffset, float zOffset) {
+		super.onBlockActivated(world, x, y, z, player, side, xOffset, yOffset, zOffset);
 
 		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock.blockID);
 
@@ -597,70 +596,70 @@ public class BlockGenericPipe extends BlockContainer {
 
 			// / Right click while sneaking without wrench to strip equipment
 			// from the pipe.
-			if (entityplayer.isSneaking()
-					&& (entityplayer.getCurrentEquippedItem() == null || !(entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench))) {
+			if (player.isSneaking()
+					&& (player.getCurrentEquippedItem() == null || !(player.getCurrentEquippedItem().getItem() instanceof IToolWrench))) {
 
 				if (pipe.hasGate() || pipe.isWired())
 					return stripEquipment(pipe);
 
-			} else if (entityplayer.getCurrentEquippedItem() == null) {
+			} else if (player.getCurrentEquippedItem() == null) {
 				// Fall through the end of the test
-			} else if (entityplayer.getCurrentEquippedItem().itemID == Item.sign.itemID)
+			} else if (player.getCurrentEquippedItem().itemID == Item.sign.itemID)
 				// Sign will be placed anyway, so lets show the sign gui
 				return false;
-			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof ItemPipe)
+			else if (player.getCurrentEquippedItem().getItem() instanceof ItemPipe)
 				return false;
-			else if (entityplayer.getCurrentEquippedItem().getItem() instanceof IToolWrench)
+			else if (player.getCurrentEquippedItem().getItem() instanceof IToolWrench)
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
-				return pipe.blockActivated(world, x, y, z, entityplayer);
-			else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
+				return pipe.blockActivated(player);
+			else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.redPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Red.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Red.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Red.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
+			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.bluePipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Blue.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Blue.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Blue.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
+			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.greenPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Green.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Green.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Green.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
+			} else if (player.getCurrentEquippedItem().getItem() == BuildCraftTransport.yellowPipeWire) {
 				if (!pipe.wireSet[IPipe.WireColor.Yellow.ordinal()]) {
 					pipe.wireSet[IPipe.WireColor.Yellow.ordinal()] = true;
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.signalStrength[IPipe.WireColor.Yellow.ordinal()] = 0;
 					pipe.container.scheduleNeighborChange();
 					return true;
 				}
-			} else if (entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.itemID
-					|| entityplayer.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGateAutarchic.itemID)
-				if (!pipe.hasInterface()) {
+			} else if (player.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGate.itemID
+					|| player.getCurrentEquippedItem().itemID == BuildCraftTransport.pipeGateAutarchic.itemID)
+				if (!pipe.hasGate()) {
 
-					pipe.gate = new GateVanilla(pipe, entityplayer.getCurrentEquippedItem());
-					if (!entityplayer.capabilities.isCreativeMode) {
-						entityplayer.getCurrentEquippedItem().splitStack(1);
+					pipe.gate = Gate.makeGate(pipe, player.getCurrentEquippedItem());
+					if (!player.capabilities.isCreativeMode) {
+						player.getCurrentEquippedItem().splitStack(1);
 					}
 					pipe.container.scheduleRenderUpdate();
 					return true;
@@ -669,7 +668,7 @@ public class BlockGenericPipe extends BlockContainer {
 			boolean openGateGui = false;
 
 			if (pipe.hasGate()) {
-				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, entityplayer);
+				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
 				if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
 					openGateGui = true;
@@ -677,11 +676,11 @@ public class BlockGenericPipe extends BlockContainer {
 			}
 
 			if (openGateGui) {
-				pipe.gate.openGui(entityplayer);
+				pipe.gate.openGui(player);
 
 				return true;
 			} else
-				return pipe.blockActivated(world, x, y, z, entityplayer);
+				return pipe.blockActivated(player);
 		}
 
 		return false;
@@ -692,8 +691,8 @@ public class BlockGenericPipe extends BlockContainer {
 		// Try to strip wires first, starting with yellow.
 		for (IPipe.WireColor color : IPipe.WireColor.values()) {
 			if (pipe.wireSet[color.reverse().ordinal()]) {
-				if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
-					dropWire(color.reverse(), pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+				if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+					dropWire(color.reverse(), pipe);
 				}
 				pipe.wireSet[color.reverse().ordinal()] = false;
 				// pipe.worldObj.markBlockNeedsUpdate(pipe.xCoord, pipe.yCoord, pipe.zCoord);
@@ -704,8 +703,8 @@ public class BlockGenericPipe extends BlockContainer {
 
 		// Try to strip gate next
 		if (pipe.hasGate()) {
-			if (!CoreProxy.proxy.isRenderWorld(pipe.worldObj)) {
-				pipe.gate.dropGate(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+			if (!CoreProxy.proxy.isRenderWorld(pipe.container.worldObj)) {
+				pipe.gate.dropGate();
 			}
 			pipe.resetGate();
 			return true;
@@ -719,7 +718,7 @@ public class BlockGenericPipe extends BlockContainer {
 	 *
 	 * @param color
 	 */
-	private void dropWire(IPipe.WireColor color, World world, int i, int j, int k) {
+	private void dropWire(IPipe.WireColor color, Pipe pipe) {
 
 		Item wireItem;
 		switch (color) {
@@ -735,7 +734,7 @@ public class BlockGenericPipe extends BlockContainer {
 			default:
 				wireItem = BuildCraftTransport.yellowPipeWire;
 		}
-		Utils.dropItems(world, new ItemStack(wireItem), i, j, k);
+		pipe.dropItem(new ItemStack(wireItem));
 
 	}
 
@@ -885,7 +884,7 @@ public class BlockGenericPipe extends BlockContainer {
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {
-		return pipe != null && pipe.transport != null && pipe.logic != null;
+		return pipe != null && pipe.transport != null;
 	}
 
 	public static boolean isValid(Pipe pipe) {
