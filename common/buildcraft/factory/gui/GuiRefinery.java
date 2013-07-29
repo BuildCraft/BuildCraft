@@ -75,12 +75,27 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		int position = getSlotAtLocation(i - cornerX, j - cornerY);
 
 		if (position >= 0 && position < 2) {
-			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(mc.thePlayer.inventory.getItemStack());
+			if (k == 0) {
+				if (!this.isShiftKeyDown()) {
+					FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(mc.thePlayer.inventory.getItemStack());
 
-			if (liquid == null)
-				return;
+					if (liquid == null) {
+						return;
+					}
 
-			container.setFilter(position, liquid.getFluid());
+					container.setFilter(position, liquid.getFluid());
+					return;
+				} else {
+					container.setFilter(position, null);
+				}
+			} else {
+				TileRefinery ref = (TileRefinery) this.tile;
+				
+				if (position == 0)
+					container.setFilter(position, ref.tank1.getFluidType());
+				else if (position == 1)
+					container.setFilter(position, ref.tank2.getFluidType());
+			}
 		}
 	}
 
