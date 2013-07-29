@@ -37,11 +37,4 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6) {
 		return true;
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean isFull3D()
-	{
-		return true;
-	}
 }
