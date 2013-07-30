@@ -14,6 +14,7 @@ less time coding and more time doing stuff that makes them less grumpy.
 
 #### Frequently reported
 * java.lang.AbstractMethodError - Incompatibility between BC/Forge/Mod using BC API. Usually not a BC issue
+* java.lang.NoSuchMethodException - Same as above
 * Render issue (Quarry causes flickering) - Try without optifine, if it still flickers, report it
 
 ### Compiling and packaging Buildcraft
