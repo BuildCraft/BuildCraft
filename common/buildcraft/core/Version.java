@@ -67,14 +67,22 @@ public class Version implements Runnable {
 			HttpURLConnection conn = null;
 			while (location != null && !location.isEmpty()) {
 				URL url = new URL(location);
+				
+				if(conn != null)
+					conn.disconnect();
+				
 				conn = (HttpURLConnection) url.openConnection();
 				conn.setRequestProperty("User-Agent",
 						"Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
 				conn.connect();
 				location = conn.getHeaderField("Location");
 			}
+			
+			if(conn == null)
+				throw new NullPointerException();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			conn.disconnect();
 
 			String line = null;
 			String mcVersion = CoreProxy.proxy.getMinecraftVersion();
@@ -121,16 +129,24 @@ public class Version implements Runnable {
 			HttpURLConnection conn = null;
 			while (location != null && !location.isEmpty()) {
 				URL url = new URL(location);
+								
+				if(conn != null)
+					conn.disconnect();
+				
 				conn = (HttpURLConnection) url.openConnection();
 				conn.setRequestProperty("User-Agent",
 						"Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
 				conn.connect();
 				location = conn.getHeaderField("Location");
 			}
-
+			
+			if(conn == null)
+				throw new NullPointerException();
+			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			conn.disconnect();
 
-			String line = null;
+			String line;
 			ArrayList<String> changelog = new ArrayList<String>();
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("#")) {
