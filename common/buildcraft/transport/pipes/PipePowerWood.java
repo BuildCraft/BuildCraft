@@ -38,7 +38,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	}
 
 	private void initPowerProvider() {
-		powerHandler.configure(2, 1000, 1, 1500);
+		powerHandler.configure(2, 250, 1, 1500);
 		powerHandler.configurePowerPerdition(1, 10);
 	}
 
