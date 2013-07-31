@@ -80,7 +80,9 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 
 
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
-			return;
+			return;		
+		
+		pushToConsumers();
 
 		if (tube.posY - aimY > 0.01) {
 			tubeY = tube.posY - 0.01;
@@ -127,9 +129,11 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 				}
 			}
 		}
+	}
 
+	private void pushToConsumers() {
 		FluidStack fluidStack = tank.getFluid();
-		if (fluidStack != null && fluidStack.amount >= 0) {
+		if (fluidStack != null && fluidStack.amount > 0) {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = getTile(side);
 
@@ -276,7 +280,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IPowerReceptor
 			return false;
 
 		FluidStack fluidStack = BlockUtil.drainBlock(blockId, worldObj, x, y, z, false);
-		if (fluidStack == null)
+		if (fluidStack == null || fluidStack.amount <= 0)
 			return false;
 
 		return fluidStack.getFluid() == fluid;
