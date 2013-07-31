@@ -38,6 +38,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	private final Tank tank;
 	private int rebuildDelay;
 	private int tick = Utils.RANDOM.nextInt();
+	private boolean powered = false;
 
 	static {
 		REBUILD_DELAY[0] = 128;
@@ -59,6 +60,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		super.updateEntity();
 
 		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
+
+		if (powered)
 			return;
 
 		tick++;
@@ -179,11 +183,21 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		return BlockUtil.isSoftBlock(blockId, worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(blockId, worldObj, x, y, z);
 	}
 
+	public void onNeighborBlockChange(int id) {
+		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		if (powered != p) {
+			powered = p;
+			if (!p)
+				rebuildQueue();
+		}
+	}
+
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		tank.readFromNBT(data);
 		rebuildDelay = data.getByte("rebuildDelay");
+		powered = data.getBoolean("powered");
 	}
 
 	@Override
@@ -191,6 +205,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		super.writeToNBT(data);
 		tank.writeToNBT(data);
 		data.setByte("rebuildDelay", (byte) rebuildDelay);
+		data.setBoolean("powered", powered);
 	}
 
 	@Override
