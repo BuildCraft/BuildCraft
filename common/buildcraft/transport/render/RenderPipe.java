@@ -244,24 +244,27 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		if (BuildCraftCore.render == RenderMode.NoDynamic)
 			return;
 
-		initializeDisplayPowerList(tileentity.worldObj);
-
-		TileGenericPipe pipe = ((TileGenericPipe) tileentity);
+		TileGenericPipe pipe = (TileGenericPipe) tileentity;
 
 		if (pipe.pipe == null)
 			return;
 
-		if (pipe.pipe.transport instanceof PipeTransportItems) {
-			renderSolids(pipe.pipe, x, y, z);
-		} else if (pipe.pipe.transport instanceof PipeTransportFluids) {
-			renderFluids(pipe.pipe, x, y, z);
-		} else if (pipe.pipe.transport instanceof PipeTransportPower) {
-			renderPower(pipe.pipe, x, y, z);
+		switch (pipe.getPipeType()) {
+			case ITEM:
+				renderSolids(pipe.pipe, x, y, z);
+				break;
+			case FLUID:
+				renderFluids(pipe.pipe, x, y, z);
+				break;
+			case POWER:
+				renderPower(pipe.pipe, x, y, z);
+				break;
 		}
-
 	}
 
 	private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
+		initializeDisplayPowerList(pipe.container.worldObj);
+
 		PipeTransportPower pow = pipe.transport;
 
 		GL11.glPushMatrix();
@@ -299,7 +302,19 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 	}
 
 	private void renderFluids(Pipe<PipeTransportFluids> pipe, double x, double y, double z) {
-		PipeTransportFluids liq = pipe.transport;
+		PipeTransportFluids trans = pipe.transport;
+
+		boolean needsRender = false;
+		for (int i = 0; i < 7; ++i) {
+			FluidStack liquid = trans.renderCache[i];
+			if (liquid != null && liquid.amount > 0) {
+				needsRender = true;
+				break;
+			}
+		}
+
+		if (!needsRender)
+			return;
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -315,11 +330,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		boolean sides = false, above = false;
 
 		for (int i = 0; i < 6; ++i) {
-			// IFluidTank tank = liq.getTanks()[i];
-			// FluidStack liquid = tank.getFluid();
-			FluidStack liquid = liq.renderCache[i];
-			// int amount = liquid != null ? liquid.amount : 0;
-			// int amount = liquid != null ? liq.renderAmmount[i] : 0;
+			FluidStack liquid = trans.renderCache[i];
 
 			if (liquid != null && liquid.amount > 0) {
 				DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
@@ -328,7 +339,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 					continue;
 				}
 
-				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) liquid.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				GL11.glPushMatrix();
 				int list = 0;
@@ -362,18 +373,13 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 			}
 		}
 		// CENTER
-		// IFluidTank tank = liq.getTanks()[ForgeDirection.Unknown.ordinal()];
-		// FluidStack liquid = tank.getFluid();
-		FluidStack liquid = liq.renderCache[ForgeDirection.UNKNOWN.ordinal()];
+		FluidStack liquid = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
 
-		// int amount = liquid != null ? liquid.amount : 0;
-		// int amount = liquid != null ? liq.renderAmmount[ForgeDirection.Unknown.ordinal()] : 0;
 		if (liquid != null && liquid.amount > 0) {
-			// DisplayFluidList d = getListFromBuffer(liq.getTanks()[ForgeDirection.Unknown.ordinal()].getFluid(), pipe.worldObj);
 			DisplayFluidList d = getListFromBuffer(liquid, pipe.container.worldObj);
 
 			if (d != null) {
-				int stage = (int) ((float) liquid.amount / (float) (liq.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) liquid.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				func_110628_a(TextureMap.field_110575_b);
 
