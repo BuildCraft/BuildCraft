@@ -44,6 +44,7 @@ import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
 import buildcraft.transport.pipes.PipeFluidsIron;
+import buildcraft.transport.pipes.PipeFluidsQuartz;
 import buildcraft.transport.pipes.PipeFluidsSandstone;
 import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
@@ -132,6 +133,7 @@ public class BuildCraftTransport {
 	public static Item pipeItemsSandstone;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
+	public static Item pipeFluidsQuartz;
 	public static Item pipeFluidsStone;
 	public static Item pipeFluidsIron;
 	public static Item pipeFluidsGold;
@@ -297,6 +299,7 @@ public class BuildCraftTransport {
 			pipeFluidsEmerald = buildPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeFluidsEmerald.class, "Emerald Waterproof Pipe", pipeWaterproof, pipeItemsEmerald);
 			pipeFluidsSandstone = buildPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", pipeWaterproof, pipeItemsSandstone);
 			pipeFluidsVoid = buildPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeFluidsVoid.class, "Void Waterproof Pipe", pipeWaterproof, pipeItemsVoid);
+			pipeFluidsQuartz = buildPipe(DefaultProps.PIPE_LIQUIDS_QUARTZ_ID, PipeFluidsQuartz.class, "Quartz Waterproof Pipe", pipeWaterproof, pipeItemsQuartz);
 
 			pipePowerWood = buildPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone, pipeItemsWood);
 			pipePowerCobblestone = buildPipe(DefaultProps.PIPE_POWER_COBBLESTONE_ID, PipePowerCobblestone.class, "Cobblestone Conductive Pipe", Item.redstone, pipeItemsCobblestone);

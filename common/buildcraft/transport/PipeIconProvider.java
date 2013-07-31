@@ -82,6 +82,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeFluidsSandstone("pipeFluidsSandstone"),
 		PipeFluidsStone("pipeFluidsStone"),
 		PipeFluidsVoid("pipeFluidsVoid"),
+		PipeFluidsQuartz("pipeFluidsQuartz"),
 		//
 		PipePowerDiamond("pipePowerDiamond"),
 		PipePowerGold("pipePowerGold"),
