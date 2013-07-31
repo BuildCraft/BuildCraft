@@ -23,7 +23,6 @@ public abstract class PacketPayload {
 
 	public abstract void writeData(DataOutputStream data) throws IOException;
 
-	@SideOnly(Side.CLIENT)
 	public abstract void readData(DataInputStream data) throws IOException;
 
 	public abstract Type getType();
