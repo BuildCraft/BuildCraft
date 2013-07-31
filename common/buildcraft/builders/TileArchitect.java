@@ -141,7 +141,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory {
 		for (int x = box.xMin; x <= box.xMax; ++x) {
 			for (int y = box.yMin; y <= box.yMax; ++y) {
 				for (int z = box.zMin; z <= box.zMax; ++z) {
-					if (worldObj.getBlockId(x, y, z) != 0) {
+					if (!worldObj.isAirBlock(x, y, z)) {
 						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask1);
 					} else {
 						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask0);
