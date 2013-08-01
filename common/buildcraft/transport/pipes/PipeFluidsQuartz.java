@@ -16,10 +16,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.ForgeDirection;
 
-public class PipeFluidsQuartz extends Pipe {
+public class PipeFluidsQuartz extends Pipe<PipeTransportFluids> {
 
 	public PipeFluidsQuartz(int itemID) {
 		super(new PipeTransportFluids(), itemID);
+		
+		transport.flowRate = 25;
+		transport.travelDelay = 8;
 	}
 
 	@Override
