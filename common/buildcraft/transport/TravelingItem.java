@@ -183,7 +183,7 @@ public class TravelingItem {
 	public float getEntityBrightness(float f) {
 		int i = MathHelper.floor_double(xCoord);
 		int j = MathHelper.floor_double(zCoord);
-		if (container.worldObj.blockExists(i, 128 / 2, j)) {
+		if (container != null && container.worldObj.blockExists(i, 128 / 2, j)) {
 			double d = 0.66000000000000003D;
 			int k = MathHelper.floor_double(yCoord + d);
 			return container.worldObj.getLightBrightness(i, k, j);
