@@ -363,12 +363,13 @@ public class PipeTransportItems extends PipeTransport {
 			} else if (!item.toCenter && endReached(item)) {
 				TileEntity tile = container.getTile(item.output);
 
+				boolean handleItem = true;
 				if (travelHook != null) {
-					travelHook.endReached(this, item, tile);
+					handleItem = !travelHook.endReached(this, item, tile);
 				}
 
 				// If the item has not been scheduled to removal by the hook
-				if (items.scheduleRemoval(item)) {
+				if (handleItem && items.scheduleRemoval(item)) {
 					handleTileReached(item, tile);
 				}
 

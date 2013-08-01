@@ -91,7 +91,8 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IItemTra
 	}
 
 	@Override
-	public void endReached(PipeTransportItems pipe, TravelingItem item, TileEntity tile) {
+	public boolean endReached(PipeTransportItems pipe, TravelingItem item, TileEntity tile) {
+		return false;
 	}
 
 	@Override
