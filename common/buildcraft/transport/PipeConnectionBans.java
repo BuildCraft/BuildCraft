@@ -9,6 +9,7 @@
 package buildcraft.transport;
 
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
+import buildcraft.transport.pipes.PipeFluidsGold;
 import buildcraft.transport.pipes.PipeFluidsQuartz;
 import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsWood;
@@ -32,7 +33,8 @@ public class PipeConnectionBans {
 
 	static {
 		// Fluid pipes
-		banConnection(PipeFluidsStone.class, PipeFluidsCobblestone.class, PipeFluidsQuartz.class);
+		banConnection(PipeFluidsStone.class, PipeFluidsCobblestone.class);
+		banConnection(PipeFluidsGold.class, PipeFluidsQuartz.class);
 
 		banConnection(PipeFluidsWood.class);
 
