@@ -194,15 +194,7 @@ public class TravelingItem {
 	public boolean isCorrupted() {
 		return getItemStack() == null || getItemStack().stackSize <= 0 || Item.itemsList[getItemStack().itemID] == null;
 	}
-
-	/**
-	 * @return the can this item be moved into this specific inventory type.
-	 * (basic BuildCraft PipedItems always return true)
-	 */
-	public boolean canSinkTo(TileEntity entity) {
-		return true;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		int hash = 7;
