@@ -395,9 +395,10 @@ public class PipeTransportItems extends PipeTransport {
 			// NOOP
 		} else if (tile instanceof IInventory) {
 			if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
-				ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
-
-				item.getItemStack().stackSize -= added.stackSize;
+				if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
+					ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
+					item.getItemStack().stackSize -= added.stackSize;
+				}
 
 				if (item.getItemStack().stackSize > 0) {
 					reverseItem(item);
