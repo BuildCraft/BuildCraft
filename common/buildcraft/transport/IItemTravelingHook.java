@@ -9,7 +9,7 @@ public interface IItemTravelingHook {
 	public void centerReached(PipeTransportItems transport, TravelingItem item);
 
 	/**
-	 * Overrides default handling of what occurs when an Item reaches the end of the time pipe.
+	 * Overrides default handling of what occurs when an Item reaches the end of the pipe.
 	 * 
 	 * @param transport
 	 * @param item
