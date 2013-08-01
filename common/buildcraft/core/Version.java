@@ -20,7 +20,7 @@ public class Version implements Runnable {
 
 	public static final String VERSION = "@VERSION@";
 	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
-	private static final String REMOTE_VERSION_FILE = "http://bit.ly/buildcraftver";
+	private static final String REMOTE_VERSION_FILE = "https://dl.dropboxusercontent.com/u/44760587/buildcraft/version.txt";
 	private static final String REMOTE_CHANGELOG_ROOT = "https://dl.dropbox.com/u/44760587/buildcraft/changelog/";
 
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
