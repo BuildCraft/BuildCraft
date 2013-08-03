@@ -109,11 +109,12 @@ public class FluidRenderer {
 		float c1 = (float) (color >> 16 & 255) / 255.0F;
 		float c2 = (float) (color >> 8 & 255) / 255.0F;
 		float c3 = (float) (color & 255) / 255.0F;
-		GL11.glColor4f(c1, c2, c3, 1);
+		
 		for (int s = 0; s < DISPLAY_STAGES; ++s) {
 			diplayLists[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(diplayLists[s], 4864 /*GL_COMPILE*/);
-
+			GL11.glColor4f(c1, c2, c3, 1);
+                        
 			liquidBlock.minX = 0.01f;
 			liquidBlock.minY = 0;
 			liquidBlock.minZ = 0.01f;
